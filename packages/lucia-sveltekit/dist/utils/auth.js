@@ -1,0 +1,116 @@
+import jwt from "jsonwebtoken";
+import { compare, generateRandomString, hash } from "./crypto.js";
+import cookieLib from "cookie";
+import { LuciaError } from "./error.js";
+const prod = false;
+export const generateAccessToken = async (user, fingerprint, secret) => {
+    const hashedFingerprint = await hash(fingerprint);
+    const value = jwt.sign({
+        ...user,
+        fingerprint_hash: hashedFingerprint,
+    }, secret, {
+        expiresIn: 15 * 60,
+    });
+    const cookie = cookieLib.serialize("access_token", value, {
+        secure: prod,
+        path: "/",
+        maxAge: 60 * 15,
+        httpOnly: true,
+        sameSite: "lax",
+    });
+    return { value, cookie };
+};
+export const getUserFromAccessToken = async (accessToken, fingerprint, secret) => {
+    try {
+        const userSession = jwt.verify(accessToken, secret);
+        await compare(fingerprint, userSession.fingerprint_hash || "");
+        delete userSession.fingerprint_hash;
+        delete userSession.exp, delete userSession.iat;
+        const user = userSession;
+        return user;
+    }
+    catch {
+        throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+    }
+};
+export const generateRefreshToken = async (fingerprint) => {
+    const hashedFingerprint = await hash(fingerprint);
+    const value = `${generateRandomString(36)}:${hashedFingerprint}`; // hashedFingerprint consists of: a-z, A-z, 0-9, $, . , /
+    const cookie = cookieLib.serialize("refresh_token", value, {
+        secure: prod,
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365 * 5,
+        httpOnly: true,
+        sameSite: "lax",
+    });
+    return { cookie, value };
+};
+export const generateFingerprint = () => {
+    const value = generateRandomString(64);
+    const cookie = cookieLib.serialize("fingerprint", value, {
+        secure: prod,
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365 * 5,
+        httpOnly: true,
+        sameSite: "lax",
+    });
+    return {
+        value,
+        cookie,
+    };
+};
+export const validateRefreshTokenFingerprint = async (refreshToken, fingerprint) => {
+    try {
+        const hashedFingerprint = refreshToken.split(":")[1];
+        if (!hashedFingerprint)
+            throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
+        await compare(fingerprint, hashedFingerprint);
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+};
+export const createBlankCookies = () => {
+    return [
+        cookieLib.serialize("fingerprint", "", {
+            secure: prod,
+            path: "/",
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: "lax",
+        }),
+        cookieLib.serialize("access_token", "", {
+            secure: prod,
+            path: "/",
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: "lax",
+        }),
+        cookieLib.serialize("refresh_token", "", {
+            secure: prod,
+            path: "/",
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: "lax",
+        }),
+    ];
+};
+export const getAccountFromDatabaseData = (databaseData) => {
+    const userId = databaseData.id;
+    const hashedPassword = databaseData.hashed_password;
+    const identifierToken = databaseData.identifier_token;
+    const userData = databaseData;
+    delete userData.hashed_password;
+    delete userData.identifier_token;
+    delete userData.id;
+    const user = {
+        user_id: userId,
+        ...userData,
+    };
+    return {
+        user,
+        hashed_password: hashedPassword,
+        identifier_token: identifierToken,
+    };
+};
