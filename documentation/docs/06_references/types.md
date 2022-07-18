@@ -7,7 +7,7 @@ interface LuciaUser {
 }
 ```
 
-### UserDa
+### DatabaseUser
 
 ```ts
 interface DatabaseUser {
