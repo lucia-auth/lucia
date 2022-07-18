@@ -18,7 +18,6 @@ const config = {
 		},
 		prerender: {
 			enabled: true,
-			default: true,
 			entries: [
 				'/',
 				'/introduction',
