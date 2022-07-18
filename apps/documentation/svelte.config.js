@@ -17,6 +17,7 @@ const config = {
 			lib: 'src/lib'
 		},
 		prerender: {
+			enabled: true,
 			default: true,
 			entries: [
 				'/',
