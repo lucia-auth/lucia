@@ -41,12 +41,12 @@ import type { GetSession } from "@sveltejs/kit/types";
 const getAuthSession: GetSession;
 ```
 
-### getUserFromRequest
+### validateRequest
 
 Checks if the request was made by an authenticated user.
 
 ```ts
-const getUserFromRequest: (request: Request) => Promise<LuciaUser>;
+const validateRequest: (request: Request) => Promise<LuciaUser>;
 ```
 
 #### Parameters
@@ -72,7 +72,7 @@ const getUserFromRequest: (request: Request) => Promise<LuciaUser>;
 Gets the user with the corresponding auth id and identifier.
 
 ```ts
-const getUser: (authId: string, identifier: string) => Promise<LuciaUser>;
+const getUser: (authId: string, identifier: string) => Promise<LuciaUser | null>;
 ```
 
 #### Parameters
@@ -84,6 +84,8 @@ const getUser: (authId: string, identifier: string) => Promise<LuciaUser>;
 
 #### Returns
 
+Returns `LuciaUser` if a user exists, `null` is not.
+
 | name | type      | description |
 | ---- | --------- | ----------- |
 |      | LuciaUser |             |
@@ -92,7 +94,6 @@ const getUser: (authId: string, identifier: string) => Promise<LuciaUser>;
 
 | name                          | description                          |
 | ----------------------------- | ------------------------------------ |
-| AUTH_INVALID_IDENTIFIER_TOKEN | The auth id or identifier is invalid |
 | DATABASE_FETCH_FAILED         | Failed to get data from database     |
 
 ### createUser

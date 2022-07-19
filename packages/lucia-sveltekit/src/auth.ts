@@ -1,5 +1,10 @@
 import { GetSession, Handle } from "@sveltejs/kit";
-import { compare, generateRandomString, hash } from "./utils/crypto.js";
+import {
+    compare,
+    generateRandomString,
+    hash,
+    LuciaAccessToken,
+} from "./utils/crypto.js";
 import cookie from "cookie";
 import { Adapter, LuciaUser } from "./types.js";
 import {
@@ -7,7 +12,6 @@ import {
     generateFingerprint,
     generateRefreshToken,
     getAccountFromDatabaseData,
-    getUserFromAccessToken,
     validateRefreshTokenFingerprint,
 } from "./utils/auth.js";
 import { LuciaError } from "./utils/error.js";
@@ -32,15 +36,12 @@ class Lucia {
         const fingerprint = cookies.fingerprint;
         try {
             if (!refreshToken) throw {};
-            const accessToken = cookies.access_token;
-            const user = await getUserFromAccessToken(
-                accessToken,
-                fingerprint,
-                this.secret
-            );
+            const accessToken = new LuciaAccessToken(cookies.access_token);
+            await accessToken.verify(fingerprint, this.secret);
+            const user = accessToken.user;
             event.locals.lucia = {
                 user: user,
-                access_token: accessToken,
+                access_token: accessToken.token,
                 refresh_token: refreshToken,
             };
             const response = await resolve(event);
@@ -49,13 +50,7 @@ class Lucia {
         try {
             // if access token is invalid
             if (!refreshToken) throw {};
-            const validRefreshTokenFingerprint =
-                await validateRefreshTokenFingerprint(
-                    refreshToken,
-                    fingerprint
-                );
-            if (!validRefreshTokenFingerprint)
-                throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
+            await validateRefreshTokenFingerprint(refreshToken, fingerprint);
             const databaseUser = await this.adapter.getUserFromRefreshToken(
                 refreshToken
             );
@@ -105,25 +100,23 @@ class Lucia {
     };
     public handleAuth: Handle = (params: any) =>
         sequence(this.handleTokens, this.handleEndpoints)(params);
-    public getUserFromRequest: (request: Request) => Promise<LuciaUser> =
-        async (request) => {
-            const authorizationHeader =
-                request.headers.get("Authorization") || "";
-            const [tokenType, accessToken] = authorizationHeader.split(" ");
-            if (!tokenType || !accessToken)
-                throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-            if (tokenType !== "Bearer")
-                throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-            if (!accessToken) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-            const cookies = cookie.parse(request.headers.get("cookie") || "");
-            const fingerprint = cookies.fingerprint;
-            const user = await getUserFromAccessToken(
-                accessToken,
-                fingerprint,
-                this.secret
-            );
-            return user;
-        };
+    public verifyRequest: (request: Request) => Promise<LuciaUser> = async (
+        request
+    ) => {
+        const authorizationHeader = request.headers.get("Authorization") || "";
+        const [tokenType, token] = authorizationHeader.split(" ");
+        if (!tokenType || !token)
+            throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+        if (tokenType !== "Bearer")
+            throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+        if (!token) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+        const cookies = cookie.parse(request.headers.get("cookie") || "");
+        const fingerprint = cookies.fingerprint;
+        const accessToken = new LuciaAccessToken(cookies.access_token);
+        await accessToken.verify(fingerprint, this.secret);
+        const user = accessToken.user;
+        return user;
+    };
     public refreshAccessToken: (
         refreshToken: string,
         fingerprint: string
@@ -131,10 +124,7 @@ class Lucia {
         value: string;
         cookie: string;
     }> = async (refreshToken, fingerprint) => {
-        const validRefreshTokenFingerprint =
-            await validateRefreshTokenFingerprint(refreshToken, fingerprint);
-        if (!validRefreshTokenFingerprint)
-            throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
+        await validateRefreshTokenFingerprint(refreshToken, fingerprint);
         const databaseUser = await this.adapter.getUserFromRefreshToken(
             refreshToken
         );
@@ -209,14 +199,13 @@ class Lucia {
             },
         };
     };
-    public getUser: (authId: string, identifier: string) => Promise<LuciaUser> =
+    public getUser: (authId: string, identifier: string) => Promise<LuciaUser | null> =
         async (authId, identifier) => {
             const identifierToken = `${authId}:${identifier}`;
             const databaseData = await this.adapter.getUserFromIdentifierToken(
                 identifierToken
             );
-            if (!databaseData)
-                throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
+            if (!databaseData) return null
             const account = getAccountFromDatabaseData(databaseData);
             return account.user;
         };

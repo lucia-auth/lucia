@@ -1,3 +1,9 @@
+Types can be imported from `lucia-sveltekit/types`
+
+```ts
+import type { User } from "lucia-sveltekit/types";
+```
+
 ### User
 
 ```ts
@@ -25,3 +31,24 @@ Refer to [custom adapters](/adapters/custom)
 ### Configurations
 
 Refer to [Lucia configurations](/configurations)
+
+### LuciaSvelteKitSession
+
+```ts
+export type LuciaSvelteKitSession = {
+    user: LuciaUser;
+    access_token: string;
+    refresh_token: string;
+} | null;
+```
+
+#### Usage
+
+```ts
+// app.d.ts
+declare namespace App {
+    interface Session {
+        lucia: import("lucia-sveltekit/types").LuciaSvelteKitSession;
+    }
+}
+```

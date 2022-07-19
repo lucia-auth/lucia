@@ -32,25 +32,6 @@ export const generateAccessToken = async (
     return { value, cookie };
 };
 
-export const getUserFromAccessToken = async (
-    accessToken: string,
-    fingerprint: string,
-    secret: string
-) => {
-    try {
-        const userSession = jwt.verify(accessToken, secret) as Partial<
-            LuciaUser & LuciaSession
-        >;
-        await compare(fingerprint, userSession.fingerprint_hash || "");
-        delete userSession.fingerprint_hash;
-        delete userSession.exp, delete userSession.iat;
-        const user = userSession as LuciaUser;
-        return user;
-    } catch {
-        throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-    }
-};
-
 export const generateRefreshToken = async (fingerprint: string) => {
     const hashedFingerprint = await hash(fingerprint);
     const value = `${generateRandomString(36)}:${hashedFingerprint}`; // hashedFingerprint consists of: a-z, A-z, 0-9, $, . , /
@@ -88,9 +69,8 @@ export const validateRefreshTokenFingerprint = async (
         if (!hashedFingerprint)
             throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
         await compare(fingerprint, hashedFingerprint);
-        return true;
     } catch (e) {
-        return false;
+        throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
     }
 };
 

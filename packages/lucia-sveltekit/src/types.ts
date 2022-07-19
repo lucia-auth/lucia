@@ -36,3 +36,9 @@ export interface DatabaseUser {
     identifier_token: string;
     [key: string]: any;
 }
+
+export type LuciaSvelteKitSession = {
+    user: LuciaUser;
+    access_token: string;
+    refresh_token: string;
+} | null;
