@@ -1,16 +1,10 @@
 ## Installation
 
 ```bash
-npm i lucia-sveltekit
+npm install lucia-sveltekit
 ```
 
 ## Setting up Lucia
-
-First, import Lucia from NPM.
-
-```bash
-npm install lucia-sveltekit
-```
 
 In `$lib/lucia.js`, import `lucia` and export it (in this case as `auth`). During this step, lucia requires 2 things: an adapter and a secret. An adapter connects lucia to your database, and secret is used to encrypt and hash your data. Different adapters are needed for different databases, and can be easily created if Lucia doesn't provide it.
 
