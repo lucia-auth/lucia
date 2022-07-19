@@ -100,7 +100,7 @@ class Lucia {
     };
     public handleAuth: Handle = (params: any) =>
         sequence(this.handleTokens, this.handleEndpoints)(params);
-    public verifyRequest: (request: Request) => Promise<LuciaUser> = async (
+    public validateRequest: (request: Request) => Promise<LuciaUser> = async (
         request
     ) => {
         const authorizationHeader = request.headers.get("Authorization") || "";
