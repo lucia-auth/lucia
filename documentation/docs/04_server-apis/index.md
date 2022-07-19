@@ -150,7 +150,7 @@ const createUser: (
 
 ### authenticateUser
 
-Authenticates a new user. Throws an error if the authId requires a password and a password is not provided.
+Authenticates a user.
 
 ```ts
 const authenticateUser: (
