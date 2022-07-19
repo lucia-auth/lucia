@@ -133,7 +133,7 @@ export const load = async ({ session }) => {
 
 ### In an endpoint
 
-Lucia provides a function that verifies a request is valid. The access token should be send as a bearer token in the authorization header. Lucia does not rely on http-cookies to verify the user in endpoints to prevent CSRF attacks.
+Lucia provides a function that verifies if a request is valid. The access token should be send as a bearer token in the authorization header. Lucia does not rely on http-only cookies to verify the user in endpoints to prevent CSRF attacks.
 
 ```js
 export const GET = async ({ request }) => {
