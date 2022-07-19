@@ -1,6 +1,6 @@
 {
     "name": "lucia-sveltekit",
-    "version": "0.2.2",
+    "version": "0.2.5",
     "description": "A simple authentication library for SvelteKit",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -20,14 +20,19 @@
     "exports": {
         "./package.json": "./package.json",
         ".": "./dist/index.js",
-        "./client": "./dist/client.js",
-        "./types": "./dist/types.js"
+        "./client": "./dist/client.js"
     },
+    "typesVersions": {
+        "*": {
+          "client": ["dist/client.d.ts"],
+          "types": ["dist/types.d.ts"]
+        }
+      },
     "repository": {
-		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
-		"directory": "packages/lucia-sveltekit"
-	},
+        "type": "git",
+        "url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+        "directory": "packages/lucia-sveltekit"
+    },
     "author": "pilcrowonpaper",
     "license": "MIT",
     "devDependencies": {
