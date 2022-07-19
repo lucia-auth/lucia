@@ -1,0 +1,40 @@
+{
+    "name": "@lucia-sveltekit/adapter-supabase",
+    "version": "0.2.2",
+    "description": "Supabase adapter for Lucia",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "module": "dist/index.js",
+    "type": "module",
+    "files": [
+        "dist/**/*"
+    ],
+    "scripts": {
+        "build": "tsc"
+    },
+    "keywords": [
+        "sveltekit",
+        "lucia",
+        "supabase"
+    ],
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"directory": "packages/adapter-supabase"
+	},
+    "author": "pilcrowonpaper",
+    "license": "MIT",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "devDependencies": {
+        "lucia-sveltekit": "workspace:*"
+    },
+    "dependencies": {
+        "@supabase/postgrest-js": "^0.37.4",
+        "bcryptjs": "^2.4.3",
+        "cookie": "^0.5.0",
+        "jsonwebtoken": "^8.5.1",
+        "nanoid": "^4.0.0"
+    }
+}

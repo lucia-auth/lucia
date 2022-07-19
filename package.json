@@ -1,0 +1,19 @@
+{
+  "name": "lucia-sveltekit",
+  "version": "0.0.1",
+  "description": "monorepo for lucia-sveltekit",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"directory": "packages/adapter-supabase"
+	},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
+}
