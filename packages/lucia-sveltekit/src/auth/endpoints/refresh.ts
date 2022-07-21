@@ -1,46 +1,40 @@
-import { Adapter } from "../types.js";
-import { LuciaError } from "../utils/error.js";
+import { LuciaError } from "../../utils/error.js";
 import cookie from "cookie";
-import {
-    generateAccessToken,
-    getAccountFromDatabaseData,
-    validateRefreshTokenFingerprint,
-} from "../utils/auth.js";
+import { getAccountFromDatabaseData } from "../../utils/auth.js";
 import { RequestEvent } from "@sveltejs/kit";
 import { ErrorResponse } from "./index.js";
+import { Context } from "../index.js";
 
 export const handleRefreshRequest = async (
     event: RequestEvent,
-    adapter: Adapter,
-    options: {
-        secret: string;
-    }
+    context: Context
 ) => {
     try {
         const authorizationHeader =
             event.request.headers.get("Authorization") || "";
-        const [tokenType, refreshToken] = authorizationHeader.split(" ");
-        if (!tokenType || !refreshToken)
-            throw new LuciaError("REQUEST_UNAUTHORIZED");
+        const [tokenType, token] = authorizationHeader.split(" ");
+        if (!tokenType || !token) throw new LuciaError("REQUEST_UNAUTHORIZED");
         if (tokenType !== "Bearer")
             throw new LuciaError("REQUEST_UNAUTHORIZED");
-        if (!refreshToken) throw new LuciaError("REQUEST_UNAUTHORIZED");
+        if (!token) throw new LuciaError("REQUEST_UNAUTHORIZED");
         const cookies = cookie.parse(event.request.headers.get("cookie") || "");
-        const fingerprint = cookies.fingerprint;
+        const fingerprintToken = context.auth.fingerprintToken(
+            cookies.fingerprint_token
+        );
+        const refreshToken = context.auth.refreshToken(token);
         try {
-            await validateRefreshTokenFingerprint(refreshToken, fingerprint);
+            await refreshToken.validateFingerprint(fingerprintToken.value);
         } catch {
-            throw new LuciaError("REQUEST_UNAUTHORIZED")
+            throw new LuciaError("REQUEST_UNAUTHORIZED");
         }
-        const databaseData = await adapter.getUserFromRefreshToken(
-            refreshToken
+        const databaseData = await context.adapter.getUserFromRefreshToken(
+            refreshToken.value
         );
         if (!databaseData) throw new LuciaError("REQUEST_UNAUTHORIZED");
         const account = getAccountFromDatabaseData(databaseData);
-        const accessToken = await generateAccessToken(
+        const accessToken = await context.auth.createAccessToken(
             account.user,
-            fingerprint,
-            options.secret
+            fingerprintToken.value
         );
         return new Response(
             JSON.stringify({
@@ -48,7 +42,7 @@ export const handleRefreshRequest = async (
             }),
             {
                 headers: {
-                    "set-cookie": [accessToken.cookie].join(","),
+                    "set-cookie": [accessToken.createCookie()].join(","),
                 },
             }
         );

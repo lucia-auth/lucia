@@ -42,3 +42,5 @@ export type LuciaSvelteKitSession = {
     access_token: string;
     refresh_token: string;
 } | null;
+
+export type Env = "DEV" | "PROD";
