@@ -1,3 +1,7 @@
+<svelte:head>
+	<title>Lucia</title>
+</svelte:head>
+
 <div>
 	<div class="pt-16 pb-8">
 		<h1 class="text-6xl font-semibold">Lucia</h1>
