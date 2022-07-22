@@ -1,6 +1,6 @@
 This guide will cover how to implement email and password authentication. This will only cover the sign-in part of it as other parts of Lucia and authentication (like token refresh and protected routes) are explained in [getting started](/getting-started).
 
-## Setting up
+## Set up
 
 ### Database
 
@@ -42,7 +42,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 ### Create a new user
 
-Create a new user using [`createUser`](/server-apis#createuser) using the auth id of `email` and an identifier of `email` (refer to [overview](/overview) for an explanation on auth ids and identifiers). Save the user's password using the password options and the user's email using `user_data`. Set the cookies (refresh, access, and fingerprint token) and redirect the user in the response. The `AUTH_DUPLICATE_IDENTIFER_TOKEN` error is thrown when a user tries to create a new account using the same auth id and identifer (in this case, email).
+Create a new user using [`createUser`](/server-apis#createuser) using the auth id of `email` and an identifier of `email` (refer to the [overview](/overview) page for an explanation on auth ids and identifiers). Save the user's password using the password options and the user's email using `user_data`. Set the cookies (refresh, access, and fingerprint token) and redirect the user in the response. The `AUTH_DUPLICATE_IDENTIFER_TOKEN` error is thrown when a user tries to create a new account using the same auth id and identifer (in this case, email).
 
 ```ts
 try {
