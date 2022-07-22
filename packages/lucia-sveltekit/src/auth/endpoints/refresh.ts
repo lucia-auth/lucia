@@ -1,9 +1,10 @@
 import { LuciaError } from "../../utils/error.js";
 import cookie from "cookie";
-import { getAccountFromDatabaseData } from "../../utils/auth.js";
+import { createAccessToken, createRefreshToken, getAccountFromDatabaseData } from "../../utils/auth.js";
 import { RequestEvent } from "@sveltejs/kit";
 import { ErrorResponse } from "./index.js";
 import { Context } from "../index.js";
+import { FingerprintToken, RefreshToken } from "../../utils/token.js";
 
 export const handleRefreshRequest = async (
     event: RequestEvent,
@@ -18,31 +19,51 @@ export const handleRefreshRequest = async (
             throw new LuciaError("REQUEST_UNAUTHORIZED");
         if (!token) throw new LuciaError("REQUEST_UNAUTHORIZED");
         const cookies = cookie.parse(event.request.headers.get("cookie") || "");
-        const fingerprintToken = context.auth.fingerprintToken(
-            cookies.fingerprint_token
+        const fingerprintToken = new FingerprintToken(
+            cookies.fingerprint_token,
+            context
         );
-        const refreshToken = context.auth.refreshToken(token);
+        const refreshToken = new RefreshToken(token, context);
+        let userId: string;
         try {
-            await refreshToken.validateFingerprint(fingerprintToken.value);
+            userId = await refreshToken.userId(fingerprintToken.value);
         } catch {
             throw new LuciaError("REQUEST_UNAUTHORIZED");
         }
         const databaseData = await context.adapter.getUserFromRefreshToken(
             refreshToken.value
         );
-        if (!databaseData) throw new LuciaError("REQUEST_UNAUTHORIZED");
-        const account = getAccountFromDatabaseData(databaseData);
-        const accessToken = await context.auth.createAccessToken(
-            account.user,
-            fingerprintToken.value
+        if (!databaseData) {
+            await context.adapter.deleteUserRefreshTokens(userId);
+            throw new LuciaError("REQUEST_UNAUTHORIZED");
+        }
+        const newRefreshToken = await createRefreshToken(
+            userId,
+            fingerprintToken.value,
+            context
         );
+        await Promise.all([
+            context.adapter.deleteRefreshToken(refreshToken.value),
+            context.adapter.saveRefreshToken(newRefreshToken.value, userId),
+        ]);
+        const account = getAccountFromDatabaseData(databaseData);
+        const accessToken = await createAccessToken(
+            account.user,
+            fingerprintToken.value,
+            context
+        );
+        const newEncryptedRefreshToken = newRefreshToken.encrypt()
         return new Response(
             JSON.stringify({
                 access_token: accessToken.value,
+                refresh_token: newRefreshToken.value,
             }),
             {
                 headers: {
-                    "set-cookie": [accessToken.createCookie()].join(","),
+                    "set-cookie": [
+                        accessToken.createCookie(),
+                        newEncryptedRefreshToken.createCookie(),
+                    ].join(","),
                 },
             }
         );

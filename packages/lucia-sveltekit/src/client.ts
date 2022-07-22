@@ -16,7 +16,7 @@ export const signOut = async () => {
     throw new LuciaError(result.message);
 };
 
-export const autoRefreshAccessToken = (
+export const autoRefreshTokens = (
     session: Writable<App.Session>,
     onError: (error: LuciaError) => void
 ) => {
@@ -44,14 +44,18 @@ export const autoRefreshAccessToken = (
         }
     }, 5000);
     const refresh = async () => {
-        accessToken = await refreshAccessToken(refreshToken).catch(
-            (e: LuciaError) => {
-                return onError(new LuciaError(e.message as any));
-            }
-        );
+        try {
+            const result = await refreshTokens(refreshToken);
+            refreshToken = result.refresh_token;
+            accessToken = result.access_token;
+        } catch (e) {
+            const error = e as LuciaError;
+            return onError(new LuciaError(error.message as any));
+        }
         session.update((val) => {
             if (!val.lucia) return val;
             val.lucia.access_token = accessToken;
+            val.lucia.refresh_token;
             return val;
         });
     };
@@ -66,7 +70,7 @@ const getJwtPayload = (token: string) => {
     return JSON.parse(window.atob(token.split(".")[1]));
 };
 
-const refreshAccessToken = async (refreshToken: string) => {
+const refreshTokens = async (refreshToken: string) => {
     const response = await fetch("/api/auth/refresh", {
         method: "POST",
         headers: {
@@ -84,5 +88,8 @@ const refreshAccessToken = async (refreshToken: string) => {
         throw new LuciaError(result.message);
     }
     const result = await response.json();
-    return result.access_token;
+    return {
+        refresh_token: result.refresh_token,
+        access_token: result.access_token,
+    };
 };

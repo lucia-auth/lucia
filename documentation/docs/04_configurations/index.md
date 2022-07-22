@@ -28,6 +28,21 @@ An [adapter](/adapters).
 adapter: Adapter;
 ```
 
+### env
+
+The environment the app is running in (http or https).
+
+```ts
+env: "DEV" | "PROD"
+```
+
+In general, the value should be defined as the following.
+
+```ts
+import { dev } from "$app/env"
+const env = dev ? "DEV" : "PROD"
+```
+
 ### generateUserId
 
 _(Optional)_ Generates unique ids for users.

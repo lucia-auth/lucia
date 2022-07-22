@@ -1,5 +1,5 @@
-import { LuciaUser } from "../../types.js";
-import { getAccountFromDatabaseData } from "../../utils/auth.js";
+import { User } from "../../types.js";
+import { createAccessToken, createFingerprintToken, createRefreshToken, getAccountFromDatabaseData } from "../../utils/auth.js";
 import { compare } from "../../utils/crypto.js";
 import { LuciaError } from "../../utils/error.js";
 import {
@@ -15,11 +15,11 @@ export type authenticateUser = (
     identifier: string,
     password?: string
 ) => Promise<{
-    user: LuciaUser;
+    user: User;
     access_token: AccessToken;
     refresh_token: RefreshToken;
     encrypted_refresh_token: EncryptedRefreshToken;
-    fingerprint: FingerprintToken;
+    fingerprint_token: FingerprintToken;
     cookies: string[];
 }>;
 
@@ -44,24 +44,28 @@ export const authenticateUserFunction = (context: Context) => {
             }
         }
         const userId = account.user.user_id;
-        const fingerprintToken = context.auth.createFingerprintToken();
-        const refreshToken = await context.auth.createRefreshToken(
-            fingerprintToken.value
+        const fingerprintToken = createFingerprintToken(context);
+        const refreshToken = await createRefreshToken(
+            account.user.user_id,
+            fingerprintToken.value,
+            context
         );
         await context.adapter.saveRefreshToken(refreshToken.value, userId);
-        const encryptedRefreshToken = refreshToken.encrypt()
-        const accessToken = await context.auth.createAccessToken(
+        const encryptedRefreshToken = refreshToken.encrypt();
+        const accessToken = await createAccessToken(
             account.user,
-            fingerprintToken.value
+            fingerprintToken.value,
+            context
         );
         const accessTokenCookie = accessToken.createCookie();
-        const encryptedRefreshTokenCookie = encryptedRefreshToken.createCookie();
+        const encryptedRefreshTokenCookie =
+            encryptedRefreshToken.createCookie();
         const fingerprintTokenCookie = fingerprintToken.createCookie();
         return {
             user: account.user,
             access_token: accessToken,
             refresh_token: refreshToken,
-            fingerprint: fingerprintToken,
+            fingerprint_token: fingerprintToken,
             encrypted_refresh_token: encryptedRefreshToken,
             cookies: [
                 accessTokenCookie,

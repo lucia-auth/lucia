@@ -1,11 +1,11 @@
 <script lang="ts">
 	import '../app.css';
 
-	import { autoRefreshAccessToken } from 'lucia-sveltekit/client';
+	import { autoRefreshTokens } from 'lucia-sveltekit/client';
 	import { session } from '$app/stores';
 	import { onDestroy } from 'svelte';
 
-	const unsubscribe = autoRefreshAccessToken(session, (e) => {
+	const unsubscribe = autoRefreshTokens(session, (e) => {
 		console.log(e);
 	});
 

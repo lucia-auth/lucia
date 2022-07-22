@@ -1,11 +1,11 @@
-import { LuciaUser } from "../../types.js";
+import { User } from "../../types.js";
 import { getAccountFromDatabaseData } from "../../utils/auth.js";
 import { Context } from "../index.js";
 
 export type GetUser = (
     authId: string,
     identifier: string
-) => Promise<LuciaUser | null>;
+) => Promise<User | null>;
 
 export const getUserFunction = (context: Context) => {
     const getUser: GetUser = async (authId, identifier) => {

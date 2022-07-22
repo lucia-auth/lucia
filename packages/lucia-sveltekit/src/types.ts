@@ -19,12 +19,12 @@ export interface Adapter {
     deleteUserRefreshTokens: (userId: string) => Promise<void>;
 }
 
-export interface LuciaUser {
+export interface User {
     user_id: string;
     [key: string]: any;
 }
 
-export interface LuciaSession {
+export interface Session {
     hashed_fingerprint: string;
     iat: number;
     exp: number;
@@ -37,8 +37,8 @@ export interface DatabaseUser {
     [key: string]: any;
 }
 
-export type LuciaSvelteKitSession = {
-    user: LuciaUser;
+export type SvelteKitSession = {
+    user: User;
     access_token: string;
     refresh_token: string;
 } | null;

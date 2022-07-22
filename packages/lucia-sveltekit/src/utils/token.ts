@@ -1,7 +1,7 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import { Context } from "../auth/index.js";
-import { Env, LuciaSession, LuciaUser } from "../types.js";
+import { Env, Session, User } from "../types.js";
 import { compare, Encrypter } from "./crypto.js";
 import { LuciaError } from "./error.js";
 
@@ -42,15 +42,15 @@ export class AccessToken extends Token {
             secure: context.env === "PROD",
         });
     }
-    public user = async (fingerprint: string) => {
+    public user = async (fingerprintToken: string) => {
         try {
             const userSession = jwt.decode(this.value) as Partial<
-                LuciaUser & LuciaSession
+                User & Session
             >;
-            await compare(fingerprint, userSession.fingerprint_hash || "");
+            await compare(fingerprintToken, userSession.fingerprint_hash || "");
             delete userSession.fingerprint_hash;
             delete userSession.exp, delete userSession.iat;
-            const user = userSession as LuciaUser;
+            const user = userSession as User;
             return user;
         } catch {
             throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
@@ -83,17 +83,21 @@ export class RefreshToken extends Token {
     private context: Context;
     private encrypter: Encrypter;
     public encrypt = () => {
-        return new EncryptedRefreshToken(
-            this.encrypter.encrypt(this.value),
-            this.context
-        );
-    };
-    public validateFingerprint = async (fingerprint: string) => {
         try {
-            const hashedFingerprint = this.value.split(":")[1];
-            if (!hashedFingerprint)
-                throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-            await compare(fingerprint, hashedFingerprint);
+            const encryptedValue = this.encrypter.encrypt(this.value);
+            return new EncryptedRefreshToken(encryptedValue, this.context);
+        } catch {
+            return new EncryptedRefreshToken("", this.context);
+        }
+    };
+    public userId = async (fingerprint: string) => {
+        try {
+            const userSession = jwt.decode(this.value) as {
+                fingerprint_hash: string;
+                user_id: string;
+            };
+            await compare(fingerprint, userSession.fingerprint_hash || "");
+            return userSession.user_id;
         } catch (e) {
             throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
         }
@@ -114,10 +118,12 @@ export class EncryptedRefreshToken extends Token {
     private context: Context;
     private encrypter: Encrypter;
     public decrypt = () => {
-        return new RefreshToken(
-            this.encrypter.decrypt(this.value),
-            this.context
-        );
+        try {
+            const decryptedValue = this.encrypter.decrypt(this.value);
+            return new RefreshToken(decryptedValue, this.context);
+        } catch {
+            return new RefreshToken("", this.context);
+        }
     };
 }
 

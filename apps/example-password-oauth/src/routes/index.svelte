@@ -35,7 +35,7 @@
 		loginError = result.error;
 	};
 
-	const githubClientId = dev ? 'f7176f2deee94f36e472' : '54c0606ce6ef78637a38';
+	const githubClientId = dev ? "DEV_GITHUB_CLIENT_ID" : 'PROD_GITHUB_CLIENT_ID';
 	const githubLink = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email`;
 </script>
 

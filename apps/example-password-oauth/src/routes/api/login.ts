@@ -33,6 +33,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				})
 			};
 		}
+		// database connection error
 		return {
 			status: 500,
 			body: JSON.stringify({

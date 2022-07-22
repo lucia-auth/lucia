@@ -1,9 +1,10 @@
 import { LuciaError } from "../utils/error.js";
 import { Context } from "./index.js";
 import cookie from "cookie";
-import { LuciaUser } from "../types.js";
+import { User } from "../types.js";
+import { AccessToken, FingerprintToken } from "../utils/token.js";
 
-export type ValidateRequest = (request: Request) => Promise<LuciaUser>;
+export type ValidateRequest = (request: Request) => Promise<User>;
 export const validateRequestFunction = (context: Context) => {
     const validateRequest: ValidateRequest = async (request) => {
         const authorizationHeader = request.headers.get("Authorization") || "";
@@ -14,12 +15,13 @@ export const validateRequestFunction = (context: Context) => {
             throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
         if (!token) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
         const cookies = cookie.parse(request.headers.get("cookie") || "");
-        const fingerprintToken = context.auth.fingerprintToken(
-            cookies.fingerprint_token
+        const fingerprintToken = new FingerprintToken(
+            cookies.fingerprint_token,
+            context
         );
-        const accessToken = context.auth.accessToken(cookies.access_token);
+        const accessToken = new AccessToken(cookies.access_token, context);
         const user = await accessToken.user(fingerprintToken.value);
         return user;
     };
-    return validateRequest
+    return validateRequest;
 };

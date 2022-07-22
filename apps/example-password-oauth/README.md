@@ -1,38 +1,18 @@
-# create-svelte
-
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+# Lucia Github and password auth example
 
 ```bash
-# create a new project in the current directory
-npm init svelte
-
-# create a new project in my-app
-npm init svelte my-app
+npm install
 ```
 
-## Developing
+## Setting up Supabase.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Follow [this page](https://lucia-sveltekit/adapters/supabase) on setting up supabase. In addition to that, add a `email` varchar column in `users` table with `unique=true`.
 
-```bash
-npm run dev
+Add the Supabase url and service role secret to `lib/lucia.ts`.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Github
 
-## Building
+Create 2 new Github OAuth app, one for development and one for production. The callback url should be `locahost:3000/api/github` for dev and its equivalent for prod.
 
-To create a production version of your app:
+Add the client id and client secret to `routes/index.svelte` and `routes/api/github.ts`.
 
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

@@ -6,19 +6,21 @@ npm install lucia-sveltekit
 
 ## Setting up Lucia
 
-In `$lib/lucia.js`, import `lucia` and export it (in this case as `auth`). During this step, lucia requires 2 things: an adapter and a secret. An adapter connects lucia to your database, and secret is used to encrypt and hash your data. Different adapters are needed for different databases, and can be easily created if Lucia doesn't provide it.
+In `$lib/lucia.js`, import `lucia` and export it (in this case as `auth`). During this step, lucia requires 3 things: an adapter, a secret, and env. An adapter connects lucia to your database, secret is used to encrypt and hash your data, and env tells Lucia if it's running in development or production environment. Different adapters are needed for different databases, and it can be easily created if Lucia doesn't provide one.
 
 ```js
 import lucia from "lucia-sveltekit";
 import supabase from "@lucia-sveltekit/adapter-supabase";
+import { dev } from "$app/env"
 
 export const auth = lucia({
     adapter: supabase(),
     secret: "aWmJoT0gOdjh2-Zc2Zv3BTErb29qQNWEunlj",
+    env: dev ? "DEV" : "PROD"
 });
 ```
 
-For Lucia to work, it needs to intercept requests
+For Lucia to work, its own handle and getSession functions must be added to hooks.
 
 ```js
 export handle = auth.authHandle
@@ -35,7 +37,7 @@ export getSession = auth.getAuthSession
 4. Save the cookies returned by Lucia
 5. In the client, redirect the user
 
-> When redirecting a user after auth state change (signin, signout), use `window.location.href` instead of SvelteKit's `goto()` as `goto()` will not update the cookies.
+> When redirecting a user after auth state change (signin, signout), use `window.location.href` in the client or http respose redirect in the server instead of SvelteKit's `goto()` as `goto()` will not update the cookies.
 
 ### Implementation
 
@@ -57,7 +59,7 @@ export const POST = async () => {
         });
         return {
             headers: {
-                "set-cookie": createUser.cookies.all, // set cookeis
+                "set-cookie": createUser.cookies, // set cookeis
             },
         };
     } catch {
@@ -90,7 +92,7 @@ export const POST = async () => {
         );
         return {
             headers: {
-                "set-cookie": authenticateUser.cookies.all, // set cookeis
+                "set-cookie": authenticateUser.cookies, // set cookeis
             },
         };
     } catch {
@@ -101,11 +103,11 @@ export const POST = async () => {
 
 ## Checking if the user is authenticated
 
-Lucia adds the following to `session.lucia` if the user if authenticated, and `session.lucia` is `null` if not.
+Lucia adds the following to `session.lucia` if the user if authenticated, and `session.lucia` is `null` if not (refer to: [`SvelteKitSession`](/references/types#sveltekitsession))
 
 ```ts
 {
-    user: LuciaUser;
+    user: User;
     access_token: string;
     refresh_token: string;
 }
@@ -138,7 +140,7 @@ Lucia provides a function that verifies if a request is valid. The access token 
 ```js
 export const GET = async ({ request }) => {
     try {
-        const user = await auth.getUserFromRequest(request);
+        const user = await auth.validateRequest(request);
         // authenticated
     } catch {
         // not authenticated
@@ -148,13 +150,13 @@ export const GET = async ({ request }) => {
 
 ## Refreshing the access token
 
-Access tokens expire in 15 minutes. Lucia will refresh the access token (if expired) on server side navigation but not on client side navigation. Lucia provides `autoRefreshAccessToken()` that refreshes the token automatically on expiration in the client and relies on `$session.lucia` to exist. It returns a unsubscribe function that should be called on page/componenet destroy.
+Access tokens expire in 15 minutes. Lucia will refresh the access token (if expired) on server side navigation but not on client side navigation. Lucia provides `autoRefreshTokens()` that refreshes the token automatically on expiration in the client. It returns a unsubscribe function that should be called on page/componenet destroy.
 
 ```js
-import { autoRefreshAccessToken } from "lucia-sveltekit/client";
+import { autoRefreshTokens } from "lucia-sveltekit/client";
 import { session } from "$app/stores";
 
-const unsubscribe = autoRefreshAccessToken(session);
+const unsubscribe = autoRefreshTokens(session);
 
 onDestroy(() => {
     unsubscribe();
@@ -167,8 +169,8 @@ onDestroy(() => {
 import { signOut } from "lucia-sveltekit/client";
 const signOutUser = async () => {
     try {
-        await signOut()
-        window.location.href = "/"
+        await signOut();
+        window.location.href = "/";
     } catch {
         // handle error
     }

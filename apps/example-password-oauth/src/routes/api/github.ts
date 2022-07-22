@@ -3,8 +3,8 @@ import { auth } from '$lib/lucia.js';
 import type { RequestHandler } from '@sveltejs/kit';
 import type { LuciaError } from 'lucia-sveltekit';
 
-const clientId = dev ? 'f7176f2deee94f36e472' : '';
-const clientSecret = dev ? 'd4345fb836cf7a4f54ae2cd949a3e00a1df6402a' : '';
+const clientId = dev ? "DEV_GITHUB_CLIENT_ID" : "PROD_GITHUB_CLIENT_ID";
+const clientSecret = dev ? "DEV_GITHUB_CLIENT_SECRET" : "PROD_GITHUB_CLIENT_SECRET";
 
 export const GET: RequestHandler = async ({ url }) => {
 	const code = url.searchParams.get('code');
@@ -85,8 +85,8 @@ export const GET: RequestHandler = async ({ url }) => {
 			}
 		};
 	} catch (e) {
-		// Cannot connect to database or email is already in use
 		const error = e as LuciaError;
+		// violates email column unqiue constraint
 		if (error.message === 'AUTH_DUPLICATE_USER_DATA') {
 			return {
 				status: 400,
@@ -95,6 +95,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				})
 			};
 		}
+		// database connection error
 		return {
 			status: 500,
 			body: JSON.stringify({

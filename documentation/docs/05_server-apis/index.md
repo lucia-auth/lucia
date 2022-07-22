@@ -46,7 +46,7 @@ const getAuthSession: GetSession;
 Checks if the request was made by an authenticated user.
 
 ```ts
-const validateRequest: (request: Request) => Promise<LuciaUser>;
+const validateRequest: (request: Request) => Promise<User>;
 ```
 
 #### Parameters
@@ -57,9 +57,9 @@ const validateRequest: (request: Request) => Promise<LuciaUser>;
 
 #### Returns
 
-| name | type      | description |
-| ---- | --------- | ----------- |
-|      | LuciaUser |             |
+| name | type                           | description |
+| ---- | ------------------------------ | ----------- |
+|      | [User](/references/types#user) |             |
 
 #### Errors
 
@@ -72,7 +72,7 @@ const validateRequest: (request: Request) => Promise<LuciaUser>;
 Gets the user with the corresponding auth id and identifier.
 
 ```ts
-const getUser: (authId: string, identifier: string) => Promise<LuciaUser | null>;
+const getUser: (authId: string, identifier: string) => Promise<User | null>;
 ```
 
 #### Parameters
@@ -84,17 +84,17 @@ const getUser: (authId: string, identifier: string) => Promise<LuciaUser | null>
 
 #### Returns
 
-Returns `LuciaUser` if a user exists, `null` is not.
+Returns `User` if a user exists, `null` is not.
 
-| name | type      | description |
-| ---- | --------- | ----------- |
-|      | LuciaUser |             |
+| name | type                           | description |
+| ---- | ------------------------------ | ----------- |
+|      | [User](/references/types#user) |             |
 
 #### Errors
 
-| name                          | description                          |
-| ----------------------------- | ------------------------------------ |
-| DATABASE_FETCH_FAILED         | Failed to get data from database     |
+| name                  | description                      |
+| --------------------- | -------------------------------- |
+| DATABASE_FETCH_FAILED | Failed to get data from database |
 
 ### createUser
 
@@ -106,16 +106,11 @@ const createUser: (
     identifier: string,
     options?: { password?: string; user_data?: Record<string, any> }
 ) => Promise<{
-    user: LuciaUser;
-    access_token: string;
-    refresh_token: string;
-    fingerprint: string;
-    cookies: {
-        all: string[];
-        access_token: string;
-        refresh_token: string;
-        fingerprint: string;
-    };
+    user: User;
+    access_token: AccessToken;
+    refresh_token: RefreshToken;
+    fingerprint_token: FingerprintToken;
+    cookies: string[];
 }>;
 ```
 
@@ -130,16 +125,13 @@ const createUser: (
 
 #### Returns
 
-| name                  | type      | description                  |
-| --------------------- | --------- | ---------------------------- |
-| user                  | LuciaUser |                              |
-| access_token          | string    |                              |
-| refresh_token         | string    |                              |
-| fingerprint           | string    |                              |
-| cookies.all           | string[]  | An array of all the cookies  |
-| cookies.access_token  | string    | Cookie for the access token  |
-| cookies.refresh_token | string    | Cookie for the refresh token |
-| cookies.fingerprint   | string    | Cookie for the fingerprint   |
+| name              | type                                                        | description                 |
+| ----------------- | ----------------------------------------------------------- | --------------------------- |
+| user              | [User](/references/types#user)                              |                             |
+| access_token      | [AccessToken](/references/instances#accesstoken)            |                             |
+| refresh_token     | [RefreshToken](/references/instances#refreshtoken)          |                             |
+| fingerprint_token | [Fingerprint_Token](/references/instances#fingerprinttoken) |                             |
+| cookies           | string[]                                                    | An array of all the cookies |
 
 #### Errors
 
@@ -159,16 +151,11 @@ const authenticateUser: (
     identifier: string,
     password?: string
 ) => Promise<{
-    user: LuciaUser;
-    access_token: string;
-    refresh_token: string;
-    fingerprint: string;
-    cookies: {
-        all: string[];
-        access_token: string;
-        refresh_token: string;
-        fingerprint: string;
-    };
+    user: User;
+    access_token: AccessToken;
+    refresh_token: RefreshToken;
+    fingerprint_token: FingerprintToken;
+    cookies: string[];
 }>;
 ```
 
@@ -182,16 +169,13 @@ const authenticateUser: (
 
 #### Returns
 
-| name                  | type      | description                  |
-| --------------------- | --------- | ---------------------------- |
-| user                  | LuciaUser |                              |
-| access_token          | string    |                              |
-| refresh_token         | string    |                              |
-| fingerprint           | string    |                              |
-| cookies.all           | string[]  | An array of all the cookies  |
-| cookies.access_token  | string    | Cookie for the access token  |
-| cookies.refresh_token | string    | Cookie for the refresh token |
-| cookies.fingerprint   | string    | Cookie for the fingerprint   |
+| name              | type                                                       | description                 |
+| ----------------- | ---------------------------------------------------------- | --------------------------- |
+| user              | [User](/references/types#user)                             |                             |
+| access_token      | [AccessToken](/references/instances#accesstoken)           |                             |
+| refresh_token     | [RefreshToken](/references/instances#refreshtoken)         |                             |
+| fingerprint_token | [FingerprintToken](/references/instances#fingerprinttoken) |                             |
+| cookies           | string[]                                                   | An array of all the cookies |
 
 #### Errors
 
@@ -207,28 +191,28 @@ const authenticateUser: (
 Validates the refresh token using the fingerprint and return a new access token.
 
 ```ts
-const refreshAccessToken: (
+const refreshTokens: (
     refreshToken: string,
-    fingerprint: string
+    fingerprintToken: string
 ) => Promise<{
-    value: string;
-    cookie: string;
+    refresh_token: RefreshToken;
+    access_token: AccessToken;
 }>;
 ```
 
 #### Parameters
 
-| name        | type   | description                               |
-| ----------- | ------ | ----------------------------------------- |
-| accessToken | string | A refresh token                           |
-| fingerprint | string | value from `fingerprint` http-only cookie |
+| name             | type   | description       |
+| ---------------- | ------ | ----------------- |
+| accessToken      | string | A refresh token   |
+| fingerprintToken | string | Fingerprint token |
 
 #### Returns
 
-| name   | type   | description            |
-| ------ | ------ | ---------------------- |
-| value  | string | A new access token     |
-| cookie | string | A cookie for the token |
+| name          | type                                               | description |
+| ------------- | -------------------------------------------------- | ----------- |
+| access_token  | [AccessToken](/references/instances#accesstoken)   |             |
+| refresh_token | [RefreshToken](/references/instances#refreshtoken) |             |
 
 #### Errors
 
@@ -236,15 +220,4 @@ const refreshAccessToken: (
 | -------------------------- | -------------------------------- |
 | AUTH_INVALID_REFRESH_TOKEN | Invalid refresh token            |
 | DATABASE_FETCH_FAILED      | Failed to get data from database |
-
-#### Saving the token
-
-```ts
-// in an endpoint
-const refreshAccessToken = await auth.refreshAccessToken();
-return {
-    headers: {
-        "set-cookie": [refreshAccessToken.cookie],
-    },
-};
-```
+| DATABASE_UDPATE_FAILED     | Failed to update database        |

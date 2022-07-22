@@ -2,23 +2,35 @@ import { Handle } from "@sveltejs/kit";
 import { Context } from "./index.js";
 import cookie from "cookie";
 import { LuciaError } from "../utils/error.js";
-import { getAccountFromDatabaseData } from "../utils/auth.js";
+import {
+    createAccessToken,
+    createRefreshToken,
+    getAccountFromDatabaseData,
+} from "../utils/auth.js";
 import { handleRefreshRequest } from "./endpoints/refresh.js";
 import { handleLogoutRequest } from "./endpoints/logout.js";
+import {
+    AccessToken,
+    createBlankCookies,
+    EncryptedRefreshToken,
+    FingerprintToken,
+} from "../utils/token.js";
 
 export const handleTokensFunction = (context: Context) => {
     const handleTokens: Handle = async ({ resolve, event }) => {
         const cookies = cookie.parse(event.request.headers.get("cookie") || "");
-        const fingerprintToken = context.auth.fingerprintToken(
-            cookies.fingerprint_token
+        const fingerprintToken = new FingerprintToken(
+            cookies.fingerprint_token,
+            context
         );
-        const encryptedRefreshToken = context.auth.encryptedRefreshToken(
-            cookies.encrypt_refresh_token
+        const encryptedRefreshToken = new EncryptedRefreshToken(
+            cookies.encrypt_refresh_token,
+            context
         );
+        const refreshToken = encryptedRefreshToken.decrypt();
         try {
-            const accessToken = context.auth.accessToken(cookies.access_token);
+            const accessToken = new AccessToken(cookies.access_token, context);
             const user = await accessToken.user(fingerprintToken.value); // throws an error is invalid
-            const refreshToken = encryptedRefreshToken.decrypt();
             event.locals.lucia = {
                 user: user,
                 access_token: accessToken.value,
@@ -29,30 +41,65 @@ export const handleTokensFunction = (context: Context) => {
         } catch {}
         // if access token is invalid
         try {
-            const refreshToken = encryptedRefreshToken.decrypt();
-            await refreshToken.validateFingerprint(fingerprintToken.value);
-            const databaseUser = await context.adapter.getUserFromRefreshToken(
+            let userId: string;
+            try {
+                userId = await refreshToken.userId(fingerprintToken.value);
+            } catch {
+                if (refreshToken.value && !fingerprintToken.value) {
+                    await context.adapter.deleteRefreshToken(
+                        refreshToken.value
+                    );
+                }
+                throw new LuciaError("REQUEST_UNAUTHORIZED");
+            }
+            const databaseData = await context.adapter.getUserFromRefreshToken(
                 refreshToken.value
             );
-            if (!databaseUser)
-                throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-            const account = getAccountFromDatabaseData(databaseUser);
-            const accessToken = await context.auth.createAccessToken(
+            if (!databaseData) {
+                await context.adapter.deleteUserRefreshTokens(userId);
+                throw new LuciaError("REQUEST_UNAUTHORIZED");
+            }
+            const newRefreshToken = await createRefreshToken(
+                userId,
+                fingerprintToken.value,
+                context
+            );
+            await Promise.all([
+                context.adapter.deleteRefreshToken(refreshToken.value),
+                context.adapter.saveRefreshToken(newRefreshToken.value, userId),
+            ]);
+            const newEncryptedRefreshToken = newRefreshToken.encrypt();
+            const account = getAccountFromDatabaseData(databaseData);
+            const accessToken = await createAccessToken(
                 account.user,
-                fingerprintToken.value
+                fingerprintToken.value,
+                context
             );
             event.locals.lucia = {
                 user: account.user,
                 access_token: accessToken.value,
-                refresh_token: refreshToken.value,
+                refresh_token: newRefreshToken.value,
             };
             const response = await resolve(event);
-            response.headers.set("set-cookie", accessToken.createCookie());
+            response.headers.set(
+                "set-cookie",
+                [
+                    accessToken.createCookie(),
+                    newEncryptedRefreshToken.createCookie(),
+                ].join(",")
+            );
             return response;
         } catch {
             // if refresh token is invalid
             event.locals.lucia = null;
-            return await resolve(event);
+            const response = await resolve(event);
+            if (encryptedRefreshToken.value) {
+                response.headers.set(
+                    "set-cookie",
+                    createBlankCookies(context.env).join(",")
+                );
+            }
+            return response;
         }
     };
     return handleTokens;

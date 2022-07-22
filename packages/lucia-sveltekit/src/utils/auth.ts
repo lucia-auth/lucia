@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import { generateRandomString, hash } from "./crypto.js";
-import { DatabaseUser, LuciaUser } from "../types.js";
+import { DatabaseUser, User } from "../types.js";
 import { AccessToken, FingerprintToken, RefreshToken } from "./token.js";
 import { Context } from "../auth/index.js";
 
 export const createAccessToken = async (
-    user: LuciaUser,
+    user: User,
     fingerprintToken: string,
     context: Context
 ) => {
@@ -24,17 +24,27 @@ export const createAccessToken = async (
 };
 
 export const createRefreshToken = async (
-    fingerprint: string,
+    userId: string,
+    fingerprintToken: string,
     context: Context
 ) => {
-    const hashedFingerprint = await hash(fingerprint);
-    const value = `${generateRandomString(36)}:${hashedFingerprint}`;
+    const hashedFingerprint = await hash(fingerprintToken);
+    const value = jwt.sign(
+        {
+            user_id: userId,
+            fingerprint_hash: hashedFingerprint,
+        },
+        context.secret,
+        {
+            expiresIn: 60 * 60 * 24 * 365, //1 year
+        }
+    );
     return new RefreshToken(value, context);
 };
 
 export const createFingerprintToken = (context: Context) => {
     const value = generateRandomString(64);
-    return new FingerprintToken(value, context)
+    return new FingerprintToken(value, context);
 };
 
 export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
@@ -48,7 +58,7 @@ export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
     const user = {
         user_id: userId,
         ...userData,
-    } as LuciaUser;
+    } as User;
     return {
         user,
         hashed_password: hashedPassword,

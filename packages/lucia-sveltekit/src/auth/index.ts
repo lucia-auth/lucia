@@ -1,18 +1,7 @@
 import { GetSession, Handle } from "@sveltejs/kit";
 import { generateRandomString } from "../utils/crypto.js";
-import { Adapter, Env, LuciaUser } from "../types.js";
-import {
-    createAccessToken,
-    createFingerprintToken,
-    createRefreshToken,
-} from "../utils/auth.js";
+import { Adapter, Env } from "../types.js";
 import { sequence } from "@sveltejs/kit/hooks";
-import {
-    AccessToken,
-    EncryptedRefreshToken,
-    FingerprintToken,
-    RefreshToken,
-} from "../utils/token.js";
 import { handleEndpointsFunction, handleTokensFunction } from "./hooks.js";
 import {
     authenticateUser,
@@ -25,7 +14,7 @@ import {
     getUserFunction,
 } from "./user/index.js";
 import { ValidateRequest, validateRequestFunction } from "./request.js";
-import { RefreshAccessToken, refreshAccessTokenFunction } from "./token.js";
+import { RefreshTokens, refreshTokensFunction } from "./token.js";
 
 export const lucia = (configs: Configurations) => {
     return new Lucia(configs);
@@ -51,27 +40,6 @@ export class Lucia {
             env: this.env,
         };
     }
-    public accessToken = (token: string) => {
-        return new AccessToken(token, this.context);
-    };
-    public fingerprintToken = (token: string) => {
-        return new FingerprintToken(token, this.context);
-    };
-    public refreshToken = (token: string) => {
-        return new RefreshToken(token, this.context);
-    };
-    public encryptedRefreshToken = (token: string) => {
-        return new EncryptedRefreshToken(token, this.context);
-    };
-    public createAccessToken = (user: LuciaUser, fingerprintToken: string) => {
-        return createAccessToken(user, fingerprintToken, this.context);
-    };
-    public createRefreshToken = (fingerprintToken: string) => {
-        return createRefreshToken(fingerprintToken, this.context);
-    };
-    public createFingerprintToken = () => {
-        return createFingerprintToken(this.context);
-    };
     private handleTokens: Handle = async (params) => {
         return handleTokensFunction(this.context)(params);
     };
@@ -101,8 +69,8 @@ export class Lucia {
     public validateRequest: ValidateRequest = async (...params) => {
         return await validateRequestFunction(this.context)(...params);
     };
-    public refreshAccessToken: RefreshAccessToken = async (...params) => {
-        return await refreshAccessTokenFunction(this.context)(...params);
+    public refreshTokens: RefreshTokens = async (...params) => {
+        return await refreshTokensFunction(this.context)(...params);
     };
 }
 

@@ -7,7 +7,7 @@ import type { User } from "lucia-sveltekit/types";
 ### User
 
 ```ts
-interface LuciaUser {
+interface User {
     user_id: string;
     [key: string]: any;
 }
@@ -36,7 +36,7 @@ Refer to [Lucia configurations](/configurations)
 
 ```ts
 export type LuciaSvelteKitSession = {
-    user: LuciaUser;
+    user: User;
     access_token: string;
     refresh_token: string;
 } | null;

@@ -24,12 +24,12 @@ const signOut: () => Promise<void>;
 | DATABASE_UPDATE_FAILED | Failed to update database             |
 | UKNOWN                 | Unknown error, likely a network error |
 
-### autoRefreshAccessToken
+### autoRefreshTokens
 
-Listens for access token expiration and fetches a new token.
+Listens for access token expiration and fetches a new refresh and access token.
 
 ```ts
-const autoRefreshAccessToken: (
+const autoRefreshTokens: (
     session: Writable<App.session>,
     onError?: () => void = () => {}
 ) => () => void;
@@ -47,7 +47,7 @@ const autoRefreshAccessToken: (
 Returns a functions that unsubscribes from the listener, which should be called on component/page destroy (`onDestroy()`).
 
 ```js
-const unsubscribe = autoRefreshAccessToken();
+const unsubscribe = autoRefreshTokens();
 
 onDestroy(() => {
     unsubscribe();
@@ -62,12 +62,14 @@ onDestroy(() => {
 | DATABASE_FETCH_FAILED | Failed to get data from database      |
 | UKNOWN                | Unknown error, likely a network error |
 
-### refreshAccessToken
+### refreshTokens
 
-Refreshes access token.
+Refreshes refresh and access token.
 
 ```ts
-const refreshAccessToken: (refreshToken: string) => string;
+const refreshTokens: (
+    refreshToken: string
+) => Promise<{ refresh_token: string; access_token: string }>;
 ```
 
 #### Parameters
@@ -78,9 +80,10 @@ const refreshAccessToken: (refreshToken: string) => string;
 
 #### Returns
 
-| name        | type   | description        |
-| ----------- | ------ | ------------------ |
-| accessToken | string | A new access token |
+| name          | type   | description         |
+| ------------- | ------ | ------------------- |
+| access_token  | string | A new access token  |
+| refresh_token | string | A new refresh token |
 
 #### Errors
 
@@ -88,4 +91,4 @@ const refreshAccessToken: (refreshToken: string) => string;
 | --------------------- | ------------------------------------- |
 | AUTH_UNAUTHORIZED     | Unauthorized user                     |
 | DATABASE_FETCH_FAILED | Failed to get data from database      |
-| UKNOWN                | Unknown error, likely a network error |
+| UNKNOWN               | Unknown error, likely a network error |
