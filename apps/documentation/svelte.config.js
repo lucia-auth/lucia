@@ -10,10 +10,10 @@ const config = {
 			postcss: true
 		})
 	],
-
 	kit: {
 		adapter: adapter({
 			edge: true,
+			external:["canvas"]
 		}),
 		files: {
 			lib: 'src/lib'
