@@ -39,7 +39,7 @@
 	"type": "module",
 	"dependencies": {
 		"highlight.js": "^11.6.0",
-		"jsdom": "^20.0.0",
-		"marked": "^4.0.18"
+		"marked": "^4.0.18",
+		"node-html-parser": "^5.3.3"
 	}
 }
