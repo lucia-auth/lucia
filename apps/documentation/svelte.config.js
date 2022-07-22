@@ -21,6 +21,7 @@ const config = {
 			entries: [
 				'/',
 				'/introduction',
+				'/overview',
 				'/getting-started',
 				'/adapters',
 				'/adapters/custom',
@@ -31,7 +32,11 @@ const config = {
 				'/references',
 				'/references/error-handling',
 				'/references/types',
-				'/changelog'
+				'/references/instances',
+				'/changelog',
+				'/guides',
+				'/guides/email-and-password',
+				'/guides/oauth'
 			]
 		}
 	}
