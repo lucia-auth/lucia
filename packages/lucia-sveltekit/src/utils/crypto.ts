@@ -1,8 +1,6 @@
 import { random, customRandom } from "nanoid";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { LuciaSession, LuciaUser } from "../types.js";
-import { LuciaError } from "./error.js";
+import crypto from "crypto";
 
 export const generateRandomString = (length: number) => {
     const characters =
@@ -24,32 +22,33 @@ export const safeCompare = async (s: string, s_hash: string) => {
     return await bcrypt.compare(s, s_hash);
 };
 
-export class LuciaAccessToken {
-    constructor(token: string) {
-        this.token = token;
+export class Encrypter {
+    constructor(encryptionKey: string) {
+        this.algorithm = "aes-192-cbc";
+        this.key = crypto.scryptSync(encryptionKey, "salt", 24);
     }
-    public token: string;
-    public verify = async (fingerprint: string, secret: string) => {
-        try {
-            const userSession = jwt.verify(this.token, secret) as Partial<
-                LuciaUser & LuciaSession
-            >;
-            await compare(fingerprint, userSession.fingerprint_hash || "");
-        } catch {
-            throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-        }
-    };
-    get user() {
-        try {
-            const userSession = jwt.decode(this.token) as Partial<
-                LuciaUser & LuciaSession
-            >;
-            delete userSession.fingerprint_hash;
-            delete userSession.exp, delete userSession.iat;
-            const user = userSession as LuciaUser;
-            return user;
-        } catch {
-            throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-        }
+    private algorithm: string;
+    private key: Buffer;
+    encrypt(string: string) {
+        const iv = crypto.randomBytes(16);
+        const cipher = crypto.createCipheriv(this.algorithm, this.key, iv);
+        const encrypted = cipher.update(string, "utf8", "hex");
+        return [
+            encrypted + cipher.final("hex"),
+            Buffer.from(iv).toString("hex"),
+        ].join("|");
+    }
+
+    decrypt(encryptedString: string) {
+        const [encrypted, iv] = encryptedString.split("|");
+        if (!iv) throw new Error("IV not found");
+        const decipher = crypto.createDecipheriv(
+            this.algorithm,
+            this.key,
+            Buffer.from(iv, "hex")
+        );
+        return (
+            decipher.update(encrypted, "hex", "utf8") + decipher.final("utf8")
+        );
     }
 }

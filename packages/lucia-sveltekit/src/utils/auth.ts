@@ -1,103 +1,50 @@
 import jwt from "jsonwebtoken";
-import { compare, generateRandomString, hash } from "./crypto.js";
-import cookieLib from "cookie";
-import { LuciaError } from "./error.js";
-import { DatabaseUser, LuciaSession, LuciaUser } from "../types.js";
+import { generateRandomString, hash } from "./crypto.js";
+import { DatabaseUser, User } from "../types.js";
+import { AccessToken, FingerprintToken, RefreshToken } from "./token.js";
+import { Context } from "../auth/index.js";
 
-const prod = false;
-
-export const generateAccessToken = async (
-    user: LuciaUser,
-    fingerprint: string,
-    secret: string
+export const createAccessToken = async (
+    user: User,
+    fingerprintToken: string,
+    context: Context
 ) => {
-    const hashedFingerprint = await hash(fingerprint);
+    const hashedFingerprint = await hash(fingerprintToken);
     const value = jwt.sign(
         {
             ...user,
             fingerprint_hash: hashedFingerprint,
         },
-        secret,
+        context.secret,
         {
             expiresIn: 15 * 60,
         }
     );
-    const cookie = cookieLib.serialize("access_token", value, {
-        secure: prod,
-        path: "/",
-        maxAge: 60 * 15, // 15 minutes
-        httpOnly: true,
-        sameSite: "lax",
-    });
-    return { value, cookie };
+    return new AccessToken(value, context);
 };
 
-export const generateRefreshToken = async (fingerprint: string) => {
-    const hashedFingerprint = await hash(fingerprint);
-    const value = `${generateRandomString(36)}:${hashedFingerprint}`; // hashedFingerprint consists of: a-z, A-z, 0-9, $, . , /
-    const cookie = cookieLib.serialize("refresh_token", value, {
-        secure: prod,
-        path: "/",
-        maxAge: 60 * 60 * 24 * 365 * 5, // 5 years
-        httpOnly: true,
-        sameSite: "lax",
-    });
-    return { cookie, value };
-};
-
-export const generateFingerprint = () => {
-    const value = generateRandomString(64);
-    const cookie = cookieLib.serialize("fingerprint", value, {
-        secure: prod,
-        path: "/",
-        maxAge: 60 * 60 * 24 * 365 * 5, // 5 years
-        httpOnly: true,
-        sameSite: "lax",
-    });
-    return {
-        value,
-        cookie,
-    };
-};
-
-export const validateRefreshTokenFingerprint = async (
-    refreshToken: string,
-    fingerprint: string
+export const createRefreshToken = async (
+    userId: string,
+    fingerprintToken: string,
+    context: Context
 ) => {
-    try {
-        const hashedFingerprint = refreshToken.split(":")[1];
-        if (!hashedFingerprint)
-            throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-        await compare(fingerprint, hashedFingerprint);
-    } catch (e) {
-        throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-    }
+    const hashedFingerprint = await hash(fingerprintToken);
+    const value = jwt.sign(
+        {
+            user_id: userId,
+            fingerprint_hash: hashedFingerprint,
+        },
+        context.secret,
+        {
+            expiresIn: 60 * 60 * 24 * 365, //1 year
+        }
+    );
+    return new RefreshToken(value, context);
 };
 
-export const createBlankCookies = () => {
-    return [
-        cookieLib.serialize("fingerprint", "", {
-            secure: prod,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-        cookieLib.serialize("access_token", "", {
-            secure: prod,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-        cookieLib.serialize("refresh_token", "", {
-            secure: prod,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-    ];
+export const createFingerprintToken = (context: Context) => {
+    const value = generateRandomString(64);
+    return new FingerprintToken(value, context);
 };
 
 export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
@@ -111,7 +58,7 @@ export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
     const user = {
         user_id: userId,
         ...userData,
-    } as LuciaUser;
+    } as User;
     return {
         user,
         hashed_password: hashedPassword,

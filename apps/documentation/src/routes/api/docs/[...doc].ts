@@ -42,6 +42,12 @@ export const get: RequestHandler = async ({ params }) => {
 		tableWrapperDiv.appendChild(tableTopWrapper);
 		tableWrapperDiv.appendChild(tableBottomWrapper);
 	});
+	dom.window.document.querySelectorAll('li').forEach((element) => {
+		element.innerHTML = element.innerHTML.replaceAll(
+			'[Breaking]',
+			'<span class="breaking">[Breaking]</span>'
+		);
+	});
 	html = dom.serialize();
 	return {
 		body: JSON.stringify({

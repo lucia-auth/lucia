@@ -100,4 +100,7 @@
 	:global(.markdown blockquote) {
 		@apply bg-indigo-100 px-2 py-1 rounded-md text-sm;
 	}
+	:global(.markdown .breaking) {
+		@apply text-red-500 font-medium;
+	}
 </style>

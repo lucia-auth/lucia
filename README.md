@@ -1,14 +1,13 @@
 # Lucia
 
-Lucia is a JWT based authentication library for SvelteKit that works with your code, and not the other way around. It provides the necessary building blocks for implementing authentication, allowing you to customize it to your own needs.
+Lucia is a simple, JWT based authentication library for SvelteKit that connects your SvelteKit app with your database. It handles the bulk of the authentication process, like creating and validating tokens, but only just enough that you can build on top of it to fit your use case. That said, it isn't _just_ a JWT authentication library. It uses short-lived tokens, implements rotating refresh tokens, automatically refreshes tokens, and detects refresh token theft. It's main aim is to simplify the development process while not being a pain in the ass to customize!
+
+It's important to note that this __isn't__ an out-of-the-box authentication library. It does not validate the user's input, it does not provide UI elements, and it does not provide a OAuth authentication (though it's simple to implement). These are out of the scope of this library and is left up to you. What it does provide is a set of tools for handling authentication, like `createUser` which saves the user in the database and generate a set of tokens.
 
 > This library requires a database to work. If you need a free option, check out [Supabase](https://supabase.com), which Lucia supports out of the box.
 
 Documentation: https://lucia-sveltekit.vercel.app
 
-## Why Lucia ?
-
-There are tons of client-side authentication services out there like Firebase, Auth0, or Supabase. But, they don't support SSR (SvelteKit) out of the box, and even if you get it to work, it's usually a very hacky solution that isn't worth the time. On the other hand, there are authentication libraries like NextAuth for Next.js that handles everything once you configure the database. But it's still limited in how it can be customized. Lucia aims to be a flexible customizable solution that is simple and intuitive.
 
 ## Installation
 
