@@ -11,10 +11,7 @@ const config = {
 		})
 	],
 	kit: {
-		adapter: adapter({
-			edge: true,
-			external:["canvas"]
-		}),
+		adapter: adapter(),
 		files: {
 			lib: 'src/lib'
 		},
