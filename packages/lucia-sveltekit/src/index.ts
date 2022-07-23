@@ -1,2 +1,2 @@
 export { lucia as default } from "./auth/index.js";
-export { LuciaError } from "./utils/error.js";
+export { LuciaError as Error } from "./utils/error.js";

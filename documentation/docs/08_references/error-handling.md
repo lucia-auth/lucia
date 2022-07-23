@@ -1,11 +1,11 @@
 ## Throwing exceptions
 
-When creating a custom adapter or provider, an error should be thrown using `LuciaError` which is a normal JavaScript `Error`.
+When creating a custom adapter or provider, an error should be thrown using Lucia's `Error` which is a normal JavaScript `Error`.
 
 ```ts
-import { LuciaError } from "lucia-sveltekit"
+import { Error } from "lucia-sveltekit"
 
-throw new LuciaError("DATABASE_FETCH_FAILED")
+throw new Error("DATABASE_FETCH_FAILED")
 ```
 
 ## Errors

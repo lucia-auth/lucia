@@ -36,7 +36,7 @@ Create `routes/api/github.ts` and accept a GET request. If you change this path,
 import { dev } from "$app/env"; // dev === true if in developmenet
 import { auth } from "$lib/lucia.js"; // Lucia instance
 import type { RequestHandler } from "@sveltejs/kit";
-import type { LuciaError } from "lucia-sveltekit";
+import type { Error } from "lucia-sveltekit";
 
 const clientId = dev ? "DEV_GITHUB_CLIENT_ID" : "PROD_GITHUB_CLIENT_ID";
 const clientSecret = dev
@@ -143,7 +143,7 @@ try {
         },
     };
 } catch (e) {
-    const error = e as LuciaError;
+    const error = e as Error;
     // violates email column unqiue constraint
     if (error.message === "AUTH_DUPLICATE_USER_DATA") {
         return {

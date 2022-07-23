@@ -1,5 +1,5 @@
 import { PostgrestClient } from "@supabase/postgrest-js";
-import { LuciaError } from "lucia-sveltekit";
+import { Error } from "lucia-sveltekit";
 import type { Adapter } from "lucia-sveltekit/dist/types";
 
 const adapter = (url: string, secret: string): Adapter => {
@@ -18,7 +18,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 .maybeSingle();
             if (error) {
                 console.error(error);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                throw new Error("DATABASE_FETCH_FAILED");
             }
             return data?.user || null;
         },
@@ -28,7 +28,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 .select()
                 .eq("identifier_token", identifierToken)
                 .maybeSingle();
-            if (error) throw new LuciaError("DATABASE_FETCH_FAILED");
+            if (error) throw new Error("DATABASE_FETCH_FAILED");
             return data || null;
         },
         createUser: async (
@@ -56,12 +56,12 @@ const adapter = (url: string, secret: string): Adapter => {
                     error.details.includes("(identifier_token)") &&
                     error.details.includes("already exists.")
                 ) {
-                    throw new LuciaError("AUTH_DUPLICATE_IDENTIFIER_TOKEN");
+                    throw new Error("AUTH_DUPLICATE_IDENTIFIER_TOKEN");
                 }
                 if (error.details.includes("already exists.")) {
-                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
+                    throw new Error("AUTH_DUPLICATE_USER_DATA");
                 }
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
         deleteUser: async (userId: string) => {
@@ -73,7 +73,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("id", userId);
             if (error) {
                 console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
         saveRefreshToken: async (refreshToken: string, userId: string) => {
@@ -88,7 +88,7 @@ const adapter = (url: string, secret: string): Adapter => {
             );
             if (error) {
                 console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
         deleteRefreshToken: async (refreshToken: string) => {
@@ -100,7 +100,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("refresh_token", refreshToken);
             if (error) {
                 console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
         deleteUserRefreshTokens: async (userId: string) => {
@@ -112,7 +112,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("user_id", userId);
             if (error) {
                 console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
     };

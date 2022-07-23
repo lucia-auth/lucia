@@ -1,3 +1,9 @@
+## 0.3.2
+
+Jul. 23, 2022
+
+-   Changed `LuciaError` to `Error`
+
 ## 0.3.1
 
 Jul. 23, 2022

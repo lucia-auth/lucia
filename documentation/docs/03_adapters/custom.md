@@ -155,7 +155,7 @@ deleteUserRefreshTokens: (userId: string) => Promise<void>;
 
 ## Errors
 
-Database related errors should be thrown using [`LuciaError`](/references/error-handling)
+Database related errors should be thrown using Lucia's [`Error`](/references/error-handling)
 
 | name                           | description                                   |
 | ------------------------------ | --------------------------------------------- |
