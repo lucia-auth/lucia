@@ -1,3 +1,9 @@
+## 0.3.1
+
+Jul. 23, 2022
+
+-   Fixed `AUTH_DUPLICATE_IDENTIFER_TOKEN` to `AUTH_DUPLICATE_IDENTIFIER_TOKEN`
+
 ## 0.3.0
 
 Lucia now saves an encrypted version of the refresh token inside cookies instead of the refresh token. Lucia also rotates refresh tokens for added security.

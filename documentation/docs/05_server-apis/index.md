@@ -137,7 +137,7 @@ const createUser: (
 
 | name                           | description                            |
 | ------------------------------ | -------------------------------------- |
-| AUTH_DUPLICATE_IDENTIFER_TOKEN | A user with the same identifier exists |
+| AUTH_DUPLICATE_IDENTIFIER_TOKEN | A user with the same identifier exists |
 | AUTH_DUPLICATE_USER_DATA       | The user data violates a unique column |
 | DATABASE_UPDATE_FAILED         | Failed to update database              |
 

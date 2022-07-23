@@ -119,7 +119,7 @@ const user = await auth.getUser("github", email);
 
 ### Creating a new user
 
-If an existing user does not exist, create a new user with [`createUser`](/server-apis#createuser). `"github"` is the auth id and `email` is the identifer (refer to [overview](/overview) for an explanation on auth ids and identifiers).
+If an existing user does not exist, create a new user with [`createUser`](/server-apis#createuser). `"github"` is the auth id and `email` is the identifier (refer to [overview](/overview) for an explanation on auth ids and identifiers).
 
 We're also going to save the user's email in the `email` column in the `users` table, which can be done using `user_data`. You can also see that we ommited the `password` options for `createUser` since we can trust Github that they have correctly authenticated the user.
 

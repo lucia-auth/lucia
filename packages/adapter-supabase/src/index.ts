@@ -56,7 +56,7 @@ const adapter = (url: string, secret: string): Adapter => {
                     error.details.includes("(identifier_token)") &&
                     error.details.includes("already exists.")
                 ) {
-                    throw new LuciaError("AUTH_DUPLICATE_IDENTIFER_TOKEN");
+                    throw new LuciaError("AUTH_DUPLICATE_IDENTIFIER_TOKEN");
                 }
                 if (error.details.includes("already exists.")) {
                     throw new LuciaError("AUTH_DUPLICATE_USER_DATA");

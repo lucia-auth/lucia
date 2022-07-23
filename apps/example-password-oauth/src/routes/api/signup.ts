@@ -28,7 +28,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	} catch (e) {
 		const error = e as Error;
 		if (
-			error.message === 'AUTH_DUPLICATE_IDENTIFER_TOKEN' ||
+			error.message === 'AUTH_DUPLICATE_IDENTIFIER_TOKEN' ||
 			error.message === 'AUTH_DUPLICATE_USER_DATA'
 		) {
 			return {

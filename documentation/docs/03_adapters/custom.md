@@ -161,5 +161,5 @@ Database related errors should be thrown using [`LuciaError`](/references/error-
 | ------------------------------ | --------------------------------------------- |
 | DATABASE_FETCH_FAILED          | Failed to get data from database              |
 | DATABASE_UPDATE_FAILED         | Failed to update database (write, delete)     |
-| AUTH_DUPLICATE_IDENTIFER_TOKEN | Violates `identifier_token` unique constraint |
+| AUTH_DUPLICATE_IDENTIFIER_TOKEN | Violates `identifier_token` unique constraint |
 | AUTH_DUPLICATE_USER_DATA       | Violates some column's unique constraint      |
