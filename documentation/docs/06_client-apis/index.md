@@ -3,7 +3,7 @@
 These can be imported from `lucia-sveltekit/client`.
 
 ```ts
-import { signInWithOAuthProvider } from "lucia-sveltekit/client";
+import { autoRefreshTokens } from "lucia-sveltekit/client";
 ```
 
 ## Reference
