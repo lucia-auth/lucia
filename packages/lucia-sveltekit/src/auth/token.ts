@@ -1,3 +1,4 @@
+import { DatabaseUser } from "../types.js";
 import {
     createAccessToken,
     createRefreshToken,
@@ -7,15 +8,15 @@ import { LuciaError } from "../utils/error.js";
 import { AccessToken, RefreshToken } from "../utils/token.js";
 import { Context } from "./index.js";
 
-export type RefreshTokens = (
+export type RefreshTokens<UserData extends {}> = (
     refreshToken: string,
     fingerprintToken: string
 ) => Promise<{
-    access_token: AccessToken;
+    access_token: AccessToken<UserData>;
     refresh_token: RefreshToken;
 }>;
-export const refreshTokensFunction = (context: Context) => {
-    const refreshAccessToken: RefreshTokens = async (
+export const refreshTokensFunction = <UserData extends {}>(context: Context) => {
+    const refreshAccessToken: RefreshTokens<UserData> = async (
         refreshTokenValue,
         fingerprintToken
     ) => {
@@ -31,7 +32,7 @@ export const refreshTokensFunction = (context: Context) => {
         }
         const databaseData = await context.adapter.getUserFromRefreshToken(
             refreshToken.value
-        );
+        ) as DatabaseUser<UserData> | null;
         if (!databaseData) {
             await context.adapter.deleteUserRefreshTokens(userId);
             throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
@@ -45,8 +46,8 @@ export const refreshTokensFunction = (context: Context) => {
             context.adapter.deleteRefreshToken(refreshToken.value),
             context.adapter.saveRefreshToken(newRefreshToken.value, userId),
         ]);
-        const account = getAccountFromDatabaseData(databaseData);
-        const accessToken = await createAccessToken(
+        const account = getAccountFromDatabaseData<UserData>(databaseData);
+        const accessToken = await createAccessToken<UserData>(
             account.user,
             fingerprintToken,
             context

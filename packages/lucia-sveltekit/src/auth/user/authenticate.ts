@@ -1,5 +1,10 @@
-import { User } from "../../types.js";
-import { createAccessToken, createFingerprintToken, createRefreshToken, getAccountFromDatabaseData } from "../../utils/auth.js";
+import { DatabaseUser, User } from "../../types.js";
+import {
+    createAccessToken,
+    createFingerprintToken,
+    createRefreshToken,
+    getAccountFromDatabaseData,
+} from "../../utils/auth.js";
 import { compare } from "../../utils/crypto.js";
 import { LuciaError } from "../../utils/error.js";
 import {
@@ -10,32 +15,34 @@ import {
 } from "../../utils/token.js";
 import { Context } from "../index.js";
 
-export type authenticateUser = (
+export type authenticateUser<UserData extends {}> = (
     authId: string,
     identifier: string,
     password?: string
 ) => Promise<{
-    user: User;
-    access_token: AccessToken;
+    user: User<UserData>;
+    access_token: AccessToken<UserData>;
     refresh_token: RefreshToken;
     encrypted_refresh_token: EncryptedRefreshToken;
     fingerprint_token: FingerprintToken;
     cookies: string[];
 }>;
 
-export const authenticateUserFunction = (context: Context) => {
-    const authenticateUser: authenticateUser = async (
+export const authenticateUserFunction = <UserData extends {}>(
+    context: Context
+) => {
+    const authenticateUser: authenticateUser<UserData> = async (
         authId,
         identifier,
         password
     ) => {
         const identifierToken = `${authId}:${identifier}`;
-        const databaseData = await context.adapter.getUserFromIdentifierToken(
+        const databaseData = (await context.adapter.getUserFromIdentifierToken(
             identifierToken
-        );
+        )) as DatabaseUser<UserData> | null;
         if (!databaseData)
             throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
-        const account = getAccountFromDatabaseData(databaseData);
+        const account = getAccountFromDatabaseData<UserData>(databaseData);
         if (account.hashed_password) {
             try {
                 await compare(password || "", account.hashed_password);
@@ -52,7 +59,7 @@ export const authenticateUserFunction = (context: Context) => {
         );
         await context.adapter.saveRefreshToken(refreshToken.value, userId);
         const encryptedRefreshToken = refreshToken.encrypt();
-        const accessToken = await createAccessToken(
+        const accessToken = await createAccessToken<UserData>(
             account.user,
             fingerprintToken.value,
             context

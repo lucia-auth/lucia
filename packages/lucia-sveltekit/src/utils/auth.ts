@@ -4,8 +4,8 @@ import { DatabaseUser, User } from "../types.js";
 import { AccessToken, FingerprintToken, RefreshToken } from "./token.js";
 import { Context } from "../auth/index.js";
 
-export const createAccessToken = async (
-    user: User,
+export const createAccessToken = async <UserData>(
+    user: User<UserData>,
     fingerprintToken: string,
     context: Context
 ) => {
@@ -20,7 +20,7 @@ export const createAccessToken = async (
             expiresIn: 15 * 60,
         }
     );
-    return new AccessToken(value, context);
+    return new AccessToken<UserData>(value, context);
 };
 
 export const createRefreshToken = async (
@@ -47,18 +47,18 @@ export const createFingerprintToken = (context: Context) => {
     return new FingerprintToken(value, context);
 };
 
-export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
+export const getAccountFromDatabaseData = <UserData>(databaseData: DatabaseUser<UserData>) => {
     const userId = databaseData.id as string;
     const hashedPassword = databaseData.hashed_password as string | null;
     const identifierToken = databaseData.identifier_token as string;
-    const userData = databaseData as Partial<DatabaseUser>;
+    const userData = databaseData as Partial<DatabaseUser<UserData>>;
     delete userData.hashed_password;
     delete userData.identifier_token;
     delete userData.id;
     const user = {
         user_id: userId,
         ...userData,
-    } as User;
+    } as User<UserData>;
     return {
         user,
         hashed_password: hashedPassword,

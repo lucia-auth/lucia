@@ -16,11 +16,11 @@ import {
 import { ValidateRequest, validateRequestFunction } from "./request.js";
 import { RefreshTokens, refreshTokensFunction } from "./token.js";
 
-export const lucia = (configs: Configurations) => {
-    return new Lucia(configs);
+export const lucia = <UserData extends {}>(configs: Configurations) => {
+    return new Lucia<UserData>(configs);
 };
 
-export class Lucia {
+export class Lucia<UserData extends {}> {
     private adapter: Adapter;
     private secret: string;
     private generateUserId: () => string;
@@ -54,23 +54,25 @@ export class Lucia {
     public handleAuth: Handle = (params: any) => {
         return sequence(this.handleTokens, this.handleEndpoints)(params);
     };
-    public authenticateUser: authenticateUser = async (...params) => {
-        return await authenticateUserFunction(this.context)(...params);
+    public authenticateUser: authenticateUser<UserData> = async (...params) => {
+        return await authenticateUserFunction<UserData>(this.context)(
+            ...params
+        );
     };
-    public createUser: CreateUser = async (...params) => {
-        return await createUserFunction(this.context)(...params);
+    public createUser: CreateUser<UserData> = async (...params) => {
+        return await createUserFunction<UserData>(this.context)(...params);
     };
-    public getUser: GetUser = async (...params) => {
-        return await getUserFunction(this.context)(...params);
+    public getUser: GetUser<UserData> = async (...params) => {
+        return await getUserFunction<UserData>(this.context)(...params);
     };
     public deleteUser: DeleteUser = async (...params) => {
         return await deleteUserFunction(this.context)(...params);
     };
-    public validateRequest: ValidateRequest = async (...params) => {
-        return await validateRequestFunction(this.context)(...params);
+    public validateRequest: ValidateRequest<UserData> = async (...params) => {
+        return await validateRequestFunction<UserData>(this.context)(...params);
     };
-    public refreshTokens: RefreshTokens = async (...params) => {
-        return await refreshTokensFunction(this.context)(...params);
+    public refreshTokens: RefreshTokens<UserData> = async (...params) => {
+        return await refreshTokensFunction<UserData>(this.context)(...params);
     };
 }
 
@@ -82,7 +84,7 @@ interface Configurations {
 }
 
 export interface Context {
-    auth: Lucia;
+    auth: Lucia<any>;
     adapter: Adapter;
     secret: string;
     env: Env;
