@@ -1,14 +1,47 @@
 ## Overview
 
-These are available after initializing `Lucia()`.
+Methods of [`Lucia`](/references/instances) instance.
 
 ```ts
-// $lib/lucia.ts
-export const auth = lucia();
+const auth = lucia();
+auth.getUser();
 ```
 
+## Initializing
+
 ```ts
-import { auth } from "$lib/lucia";
+const lucia = <UserData extends {}>(configurations: Configurations) =>
+    Lucia<UserData>;
+```
+
+#### Parameters
+
+| name    | type                              | description |
+| ------- | --------------------------------- | ----------- |
+| configs | [configurations](/configurations) |             |
+
+#### Returns
+
+| name  | type                                 | description |
+| ----- | ------------------------------------ | ----------- |
+| Lucia | [Lucia](/references/instances#lucia) |             |
+
+#### Types
+
+| name     | type         | description                                                                                                     |
+| -------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
+| UserData | extends `{}` | Any optional key/types stored inside the `Users` table. Every `UserData` in "Reference" refers to this generic. |
+
+#### Example
+
+Where columns `username` and `age` are in the `Users` table as [user_data].
+
+```ts
+const auth = lucia<{ username: string, age: number }>({
+    adapter: adapter(),
+    env: "DEV",
+    secret: "aWmJoT0gOdjh2-Zc2Zv3BTErb29qQNWEunlj"
+})
 ```
 
 ## Reference
@@ -46,7 +79,7 @@ const getAuthSession: GetSession;
 Checks if the request was made by an authenticated user.
 
 ```ts
-const validateRequest: (request: Request) => Promise<User>;
+const validateRequest: (request: Request) => Promise<User<UserData>>;
 ```
 
 #### Parameters
@@ -72,7 +105,10 @@ const validateRequest: (request: Request) => Promise<User>;
 Gets the user with the corresponding auth id and identifier.
 
 ```ts
-const getUser: (authId: string, identifier: string) => Promise<User | null>;
+const getUser: (
+    authId: string,
+    identifier: string
+) => Promise<User<UserData> | null>;
 ```
 
 #### Parameters
@@ -106,7 +142,7 @@ const createUser: (
     identifier: string,
     options?: { password?: string; user_data?: Record<string, any> }
 ) => Promise<{
-    user: User;
+    user: User<UserData>;
     access_token: AccessToken;
     refresh_token: RefreshToken;
     fingerprint_token: FingerprintToken;
@@ -135,11 +171,11 @@ const createUser: (
 
 #### Errors
 
-| name                           | description                            |
-| ------------------------------ | -------------------------------------- |
+| name                            | description                            |
+| ------------------------------- | -------------------------------------- |
 | AUTH_DUPLICATE_IDENTIFIER_TOKEN | A user with the same identifier exists |
-| AUTH_DUPLICATE_USER_DATA       | The user data violates a unique column |
-| DATABASE_UPDATE_FAILED         | Failed to update database              |
+| AUTH_DUPLICATE_USER_DATA        | The user data violates a unique column |
+| DATABASE_UPDATE_FAILED          | Failed to update database              |
 
 ### authenticateUser
 
@@ -151,7 +187,7 @@ const authenticateUser: (
     identifier: string,
     password?: string
 ) => Promise<{
-    user: User;
+    user: User<UserData>;
     access_token: AccessToken;
     refresh_token: RefreshToken;
     fingerprint_token: FingerprintToken;

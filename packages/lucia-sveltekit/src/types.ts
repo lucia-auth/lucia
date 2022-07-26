@@ -1,10 +1,10 @@
 export interface Adapter {
     getUserFromRefreshToken: (
         refreshToken: string
-    ) => Promise<DatabaseUser | null>;
+    ) => Promise<DatabaseUser<Record<string, any>> | null>;
     getUserFromIdentifierToken: (
         identifierToken: string
-    ) => Promise<DatabaseUser | null>;
+    ) => Promise<DatabaseUser<Record<string, any>> | null>;
     createUser: (
         userId: string,
         data: {
@@ -19,26 +19,24 @@ export interface Adapter {
     deleteUserRefreshTokens: (userId: string) => Promise<void>;
 }
 
-export interface User {
+export type User<UserData extends {}> = UserData & {
     user_id: string;
-    [key: string]: any;
-}
+};
 
 export interface Session {
-    hashed_fingerprint: string;
+    fingerprint_hash: string;
     iat: number;
     exp: number;
 }
 
-export interface DatabaseUser {
+export type DatabaseUser<UserData> = {
     id: string;
-    hashed_password: string;
+    hashed_password: string | null;
     identifier_token: string;
-    [key: string]: any;
-}
+} & UserData;
 
-export type SvelteKitSession = {
-    user: User;
+export type SvelteKitSession<UserData extends {}> = {
+    user: User<UserData>;
     access_token: string;
     refresh_token: string;
 } | null;

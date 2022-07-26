@@ -1,3 +1,11 @@
+## Lucia
+
+```ts
+Lucia<UserData extends {}>
+```
+
+Refer to [Server APIs](/server-apis).
+
 ## Token
 
 ### value
@@ -20,12 +28,16 @@ const createCookie: () => string;
 
 Extends [`Token`](/references/instances#token). Represents an access token token.
 
+```ts
+AccessToken<UserData extends {}>
+```
+
 ### user
 
 Validates the access token using the fingerprint token and returns the user of the access token.
 
 ```ts
-const user: (fingerprintToken: string) => Promise<User>;
+const user: (fingerprintToken: string) => Promise<User<UserData>>;
 ```
 
 #### Parameters

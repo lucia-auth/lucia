@@ -2,7 +2,10 @@ import { PostgrestClient } from "@supabase/postgrest-js";
 import { Error } from "lucia-sveltekit";
 import type { Adapter } from "lucia-sveltekit/dist/types";
 
-const adapter = (url: string, secret: string): Adapter => {
+const adapter = (
+    url: string,
+    secret: string
+): Adapter => {
     const supabase = new PostgrestClient(`${url}/rest/v1`, {
         headers: {
             Authorization: `Bearer ${secret}`,
