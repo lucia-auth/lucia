@@ -71,5 +71,5 @@ declare namespace App {
 
 ## Issues
 
--   When using PlanetScale, Lucia (or rather Prisma/Planetscale) will ignore the foreign key constraint on `Refresh_Token.user_id`
+-   When using PlanetScale, Lucia (or rather Prisma/Planetscale) will ignore the foreign key constraint on `Refresh_Token.user_id` (issues [#8](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/8))
 -   When using PlanetScale, `AUTH_DUPLICATE_IDENTIFIER_TOKEN` will be returned as `AUTH_DUPLICATE_USER_DATA`
