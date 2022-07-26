@@ -1,6 +1,6 @@
 ## Overview
 
-An adapter to use with Prisma (for SQL based database).
+An adapter to use with Prisma (for SQL databases).
 
 ```ts
 import prisma from "@lucia-sveltekit/adapter-supabase";
