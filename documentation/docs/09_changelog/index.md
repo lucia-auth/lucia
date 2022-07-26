@@ -1,8 +1,14 @@
+## 0.3.3
+
+Jul. 26, 2022
+
+-   Can now define types for `user_data`
+
 ## 0.3.2
 
 Jul. 23, 2022
 
--   Changed `LuciaError` to `Error`
+-   [Breaking] Changed `LuciaError` to `Error`
 
 ## 0.3.1
 
