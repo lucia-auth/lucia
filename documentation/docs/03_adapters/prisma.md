@@ -3,7 +3,7 @@
 An adapter to use with Prisma (for SQL databases).
 
 ```ts
-import prisma from "@lucia-sveltekit/adapter-supabase";
+import prisma from "@lucia-sveltekit/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
@@ -24,11 +24,14 @@ const auth = lucia({
 
 The following is for MySQL. `@db.VarChar(300)` should be the language's equivalent if you're using another language (refer to [this](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string) page).
 
+`[user_data]` represents any number of additional columns that may be used.
+
 ```http
 model Users {
   id               String           @id @unique
   identifier_token String           @unique
   hashed_password  String?
+  [user_data]      any?
   Refresh_Tokens   Refresh_Tokens[]
 }
 
@@ -46,7 +49,7 @@ model Refresh_Tokens {
 
 ## Types
 
-The following automatically add types to Lucia and the session object from Prisma. 
+The following automatically add types to Lucia and the session object from Prisma.
 
 ```ts
 import type { Users } from "@prisma/client";

@@ -29,12 +29,14 @@ Create 2 tables:
 
 ### users
 
-| column name      | type    | relations | nullable | unique | identity |
-| ---------------- | ------- | --------- | -------- | ------ | -------- |
-| id               | varchar |           |          | true   | true     |
-| identifier_token | varchar |           |          | true   |          |
-| hashed_password  | varchar |           |          |        |          |
-| [user_data]      | any     | any       | true     | any    |          |
+`[user_data]` represents any number of additional columns that may be used.
+
+| column name      | type    | relations | nullable | unique   | identity |
+| ---------------- | ------- | --------- | -------- | -------- | -------- |
+| id               | varchar |           |          | true     | true     |
+| identifier_token | varchar |           |          | true     |          |
+| hashed_password  | varchar |           | true     |          |          |
+| [user_data]      | any     | any       | true     | optional |          |
 
 ### refresh_tokens
 

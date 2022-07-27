@@ -11,21 +11,28 @@ In `$lib/lucia.ts`, import `lucia` and export it (in this case as `auth`). Durin
 ```js
 import lucia from "lucia-sveltekit";
 import supabase from "@lucia-sveltekit/adapter-supabase";
-import { dev } from "$app/env"
+import { dev } from "$app/env";
 
 export const auth = lucia({
     adapter: supabase(),
     secret: "aWmJoT0gOdjh2-Zc2Zv3BTErb29qQNWEunlj",
-    env: dev ? "DEV" : "PROD"
+    env: dev ? "DEV" : "PROD",
 });
 ```
 
-For Lucia to work, its own handle and getSession functions must be added to hooks.
+For Lucia to work, its own handle and getSession functions must be added to hooks. 
 
 ```js
-export handle = auth.authHandle
-export getSession = auth.getAuthSession
+export const handle = auth.handleAuth;
+export const getSession = auth.getAuthSession;
 ```
+
+This is mainly for 2 things:
+
+1. Automatically refresh tokens on server-side navigation
+2. Listen for requests to endpoints that Lucia exposes (creates) for token refresh and sign outs. Make sure to not have existing endpoints that overlaps with them. These endpoints are:
+    - /api/auth/refresh
+    - /api/auth/logout
 
 ## Creating a user
 
