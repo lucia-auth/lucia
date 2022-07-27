@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-prisma",
-    "version": "0.1.1",
+    "version": "0.1.3",
     "description": "Prisma adapter for Lucia",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

@@ -17,6 +17,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return data?.user || (null as any | null);
             } catch (e) {
+                console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
                 throw new Error("DATABASE_FETCH_FAILED");
@@ -31,9 +32,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return data as any | null;
             } catch (e) {
+                console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
-                console.error(e);
                 throw new Error("DATABASE_FETCH_FAILED");
             }
         },
@@ -56,9 +57,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return;
             } catch (e) {
+                console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
-                console.error(e);
                 if (
                     e.code === "P2002" &&
                     e.message.includes("identifier_token")
@@ -80,14 +81,13 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return;
             } catch (e) {
+                console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
-                console.error(e);
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
         saveRefreshToken: async (refreshToken: string, userId: string) => {
-            console.log(refreshToken);
             try {
                 await prisma.refresh_Tokens.create({
                     data: {
@@ -97,9 +97,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return;
             } catch (e) {
+                console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
-                console.error(e);
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
@@ -112,9 +112,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return;
             } catch (e) {
+                console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
-                console.error(e);
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
@@ -127,9 +127,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return;
             } catch (e) {
+                console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
-                console.error(e);
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
