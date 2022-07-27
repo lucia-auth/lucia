@@ -20,21 +20,26 @@ import * as db from "$lib/db";
 const transformMongooseObj = (obj: Record<string, any>) => {
   delete obj.__v;
   delete obj._id;
+  return obj;
 };
 
 const mongoAdapter: Adapter = {
   getUserFromRefreshToken: async (refresh_token) => {
     const token = await RefreshTokens.findOne({ refresh_token }).exec();
     if (!token) return null;
-    const user = await Users.findOne({ id: token.user_id }).lean();
+    const user: DatabaseUser | null = await Users.findOne({
+      id: token.user_id,
+    }).lean();
     if (!user) return null;
-    else return transformMongooseObj(user);
+    return transformMongooseObj(user);
   },
 
   getUserFromIdentifierToken: async (identifier_token) => {
-    const user = await Users.findOne({ identifier_token }).lean();
+    const user: DatabaseUser | null = await Users.findOne({
+      identifier_token,
+    }).lean();
     if (!user) return null;
-    else return transformMongooseObj(user);
+    return transformMongooseObj(user);
   },
 
   createUser: async (id, data) => {
