@@ -1,3 +1,12 @@
+## 4.0.0
+
+Jul. 28, 2022
+
+-   [Breaking] Adapters now need `getUserById` and `updateUser` methods
+-   New `invalidateRefreshToken()`, `updateUserData()`, `updateUserIdentifierToken()`, `resetUserPassword()`, `getUserById()`, and `createUserSession()`.
+-   New `AUTH_INVALID_USER_ID` error message
+-   New `adapterGetUpdateData()` can be used to convert adapter's `updateUserData()` `data` column to a single object.
+
 ## 0.3.5
 
 Jul. 27, 2022

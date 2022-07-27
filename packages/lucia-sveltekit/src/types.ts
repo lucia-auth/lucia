@@ -5,6 +5,9 @@ export interface Adapter {
     getUserFromIdentifierToken: (
         identifierToken: string
     ) => Promise<DatabaseUser<Record<string, any>> | null>;
+    getUserFromId: (
+        identifierToken: string
+    ) => Promise<DatabaseUser<Record<string, any>> | null>;
     createUser: (
         userId: string,
         data: {
@@ -17,6 +20,14 @@ export interface Adapter {
     saveRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
     deleteRefreshToken: (refreshToken: string) => Promise<void>;
     deleteUserRefreshTokens: (userId: string) => Promise<void>;
+    updateUser: (
+        userId: string,
+        data: {
+            identifier_token?: string | null;
+            hashed_password?: string | null;
+            user_data?: Record<string, any>;
+        }
+    ) => Promise<DatabaseUser<Record<string, any>>>;
 }
 
 export type User<UserData extends {}> = UserData & {

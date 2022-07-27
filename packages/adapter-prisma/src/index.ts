@@ -1,11 +1,11 @@
 import { type PrismaClient } from "@prisma/client";
 import pkg from "@prisma/client/runtime/index.js";
 import type { Adapter } from "lucia-sveltekit/types";
-import { Error } from "lucia-sveltekit";
+import { Error, adapterGetUpdateData } from "lucia-sveltekit";
 
 const adapter = (prisma: PrismaClient): Adapter => {
     return {
-        getUserFromRefreshToken: async (refreshToken: string) => {
+        getUserFromRefreshToken: async (refreshToken) => {
             try {
                 const data = await prisma.refresh_Tokens.findUnique({
                     where: {
@@ -23,7 +23,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_FETCH_FAILED");
             }
         },
-        getUserFromIdentifierToken: async (identifierToken: string) => {
+        getUserFromIdentifierToken: async (identifierToken) => {
             try {
                 const data = await prisma.users.findUnique({
                     where: {
@@ -38,14 +38,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_FETCH_FAILED");
             }
         },
-        createUser: async (
-            userId: string,
-            data: {
-                identifier_token: string;
-                hashed_password: string | null;
-                user_data: Record<string, any>;
-            }
-        ) => {
+        createUser: async (userId, data) => {
             try {
                 await prisma.users.create({
                     data: {
@@ -72,7 +65,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteUser: async (userId: string) => {
+        deleteUser: async (userId) => {
             try {
                 await prisma.users.deleteMany({
                     where: {
@@ -87,7 +80,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        saveRefreshToken: async (refreshToken: string, userId: string) => {
+        saveRefreshToken: async (refreshToken, userId) => {
             try {
                 await prisma.refresh_Tokens.create({
                     data: {
@@ -103,7 +96,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteRefreshToken: async (refreshToken: string) => {
+        deleteRefreshToken: async (refreshToken) => {
             try {
                 await prisma.refresh_Tokens.deleteMany({
                     where: {
@@ -118,7 +111,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteUserRefreshTokens: async (userId: string) => {
+        deleteUserRefreshTokens: async (userId) => {
             try {
                 await prisma.refresh_Tokens.deleteMany({
                     where: {
@@ -131,6 +124,41 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
                 throw new Error("DATABASE_UPDATE_FAILED");
+            }
+        },
+        getUserFromId: async (userId) => {
+            try {
+                const data = await prisma.users.findUnique({
+                    where: {
+                        id: userId,
+                    },
+                });
+                return data as any | null;
+            } catch (e) {
+                console.error(e);
+                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                    throw new Error("UNKNOWN_ERROR");
+                throw new Error("DATABASE_FETCH_FAILED");
+            }
+        },
+        updateUser: async (userId, newData) => {
+            const rawData = adapterGetUpdateData(newData);
+            try {
+                const data = await prisma.users.update({
+                    data: rawData,
+                    where: {
+                        id: userId,
+                    },
+                });
+                return data.user
+            } catch (e) {
+                console.error(e);
+                const error = e as any;
+                if (error.detail && error.detail.includes("RecordNotFound"))
+                    throw new Error("AUTH_INVALID_USER_ID");
+                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                    throw new Error("UNKNOWN_ERROR");
+                throw new Error("DATABASE_FETCH_FAILED");
             }
         },
     };

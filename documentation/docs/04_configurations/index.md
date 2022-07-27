@@ -17,7 +17,7 @@ interface Configurations {
 A random string used to hash strings (Eg. `aWmJoT0gOdjh2kZc2Zv3BTErb29qQNWEunlj`).
 
 ```ts
-secret: string;
+const secret: string;
 ```
 
 ### adapter
@@ -25,7 +25,7 @@ secret: string;
 An [adapter](/adapters).
 
 ```ts
-adapter: Adapter;
+const adapter: Adapter;
 ```
 
 ### env
@@ -33,7 +33,7 @@ adapter: Adapter;
 The environment the app is running in (http or https).
 
 ```ts
-env: "DEV" | "PROD"
+const env: "DEV" | "PROD"
 ```
 
 In general, the value should be defined as the following.
@@ -48,5 +48,5 @@ const env = dev ? "DEV" : "PROD"
 _(Optional)_ Generates unique ids for users.
 
 ```ts
-generateUserId: () => Promise<string>;
+const generateUserId: () => Promise<string>;
 ```

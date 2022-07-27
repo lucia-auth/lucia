@@ -19,8 +19,8 @@ Stores user data (including passwords). `[user_data]` may be any number of colum
 
 Stores refresh tokens.
 
-| column        | types         | description           |
-| ------------- | ------------- | --------------------- |
-| id            | string/number | unique                |
-| refresh_token | string        |                       |
-| used_id       | string        | references `users.id` |
+| column        | types            | description           |
+| ------------- | ---------------- | --------------------- |
+| id            | string \| number | unique                |
+| refresh_token | string           |                       |
+| used_id       | string           | references `users.id` |

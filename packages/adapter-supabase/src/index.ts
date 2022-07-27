@@ -1,5 +1,5 @@
 import { PostgrestClient } from "@supabase/postgrest-js";
-import { Error } from "lucia-sveltekit";
+import { Error, adapterGetUpdateData } from "lucia-sveltekit";
 import type { Adapter } from "lucia-sveltekit/dist/types";
 
 const adapter = (url: string, secret: string): Adapter => {
@@ -117,6 +117,31 @@ const adapter = (url: string, secret: string): Adapter => {
                 console.error(error);
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
+        },
+        getUserFromId: async (userId: string) => {
+            const { data, error } = await supabase
+                .from("users")
+                .select()
+                .eq("id", userId)
+                .maybeSingle();
+            if (error) {
+                console.error(error);
+                throw new Error("DATABASE_FETCH_FAILED");
+            }
+            return data || null;
+        },
+        updateUser: async (userId, newData) => {
+            const dbData = adapterGetUpdateData(newData);
+            const { data, error } = await supabase
+                .from("users")
+                .update(dbData)
+                .eq("id", userId)
+                .maybeSingle();
+            if (error) {
+                console.error(error);
+                throw new Error("DATABASE_FETCH_FAILED");
+            }
+            return data || null;
         },
     };
 };
