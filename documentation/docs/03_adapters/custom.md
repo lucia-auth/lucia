@@ -6,10 +6,10 @@ An adapter takes the following structure:
 interface Adapter {
     getUserFromRefreshToken: (
         refreshToken: string
-    ) => Promise<DatabaseUser | null>;
+    ) => Promise<DatabaseUser<any> | null>;
     getUserFromIdentifierToken: (
         identifierToken: string
-    ) => Promise<DatabaseUser | null>;
+    ) => Promise<DatabaseUser<any> | null>;
     createUser: (
         userId: string,
         data: {
