@@ -1,4 +1,10 @@
-## 0.3.3
+## 0.3.5
+
+Jul. 27, 2022
+
+-   Fixed bug where `autoTokenRefresh` was not updating refresh token inside the session object on token refresh
+
+## 0.3.3, 0.3.4
 
 Jul. 26, 2022
 
