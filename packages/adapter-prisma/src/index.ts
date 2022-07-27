@@ -156,14 +156,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
         updateUser: async (userId, newData) => {
             const partialData = adapterGetUpdateData(newData);
             try {
-                const oldData = await prisma.users.findUnique({
-                    where: {
-                        id: userId,
-                    },
-                });
-                const newData = getFullData(oldData, partialData);
                 const data = await prisma.users.update({
-                    data: newData,
+                    data: partialData,
                     where: {
                         id: userId,
                     },
