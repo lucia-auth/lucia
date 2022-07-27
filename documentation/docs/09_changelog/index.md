@@ -1,3 +1,9 @@
+## 0.4.1
+
+Jul. 28, 2022
+
+-   [fix] Fixed `adapterGetUpdateData()`
+
 ## 4.0.0
 
 Jul. 28, 2022

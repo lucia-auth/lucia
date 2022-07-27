@@ -4,7 +4,7 @@ export const getUpdateData = (data: {
     user_data?: Record<string, any>;
 }) => {
     const rawData: Record<string, any> = {
-        identifer_token: data.identifier_token,
+        identifier_token: data.identifier_token,
         hashed_password: data.hashed_password,
         ...data.user_data,
     };

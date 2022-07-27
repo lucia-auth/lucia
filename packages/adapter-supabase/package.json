@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-supabase",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "description": "Supabase adapter for Lucia",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

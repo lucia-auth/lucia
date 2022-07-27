@@ -35,8 +35,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-sveltekit/adapter-prisma": "^0.1.1",
+		"@lucia-sveltekit/adapter-prisma": "^0.1.8",
 		"@prisma/client": "^4.1.0",
-		"lucia-sveltekit": "^0.3.4"
+		"lucia-sveltekit": "^0.4.1"
 	}
 }
