@@ -115,7 +115,7 @@ try {
     return {
         status: 302,
         headers: {
-            "set-cookie": createUser.cookies,
+            "set-cookie": authenticateUser.cookies,
             location: "/",
         },
     };
