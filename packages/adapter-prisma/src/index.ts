@@ -3,18 +3,6 @@ import pkg from "@prisma/client/runtime/index.js";
 import type { Adapter } from "lucia-sveltekit/types";
 import { Error, adapterGetUpdateData } from "lucia-sveltekit";
 
-const getFullData = (
-    oldData: Record<string, any>,
-    partialData: Record<string, any>
-) => {
-    const result: Record<string, any> = {};
-    for (const keys in oldData) {
-        result[keys] =
-            partialData[keys] === undefined ? oldData[keys] : partialData[keys];
-    }
-    return result;
-};
-
 const adapter = (prisma: PrismaClient): Adapter => {
     return {
         getUserFromRefreshToken: async (refreshToken) => {
@@ -165,7 +153,6 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return data;
             } catch (e) {
                 console.error(e);
-                const error = e as any;
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
                 if (e.code === "P2025") throw new Error("AUTH_INVALID_USER_ID")
