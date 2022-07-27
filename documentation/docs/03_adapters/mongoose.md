@@ -3,6 +3,7 @@ A basic example of a working adapter for mongoose (MongoDB).
 ## Prerequisites
 
 1. Set up the mongoose models for the `Users` and `RefreshTokens` collections.
+   - Examples of minimal models are given below.
 2. Have a secret key stored in an environment variable.
 
 ## Mongoose Adapter
@@ -66,4 +67,50 @@ export const auth = lucia({
   secret: LUCIA_SECRET,
   env: dev ? "DEV" : "PROD",
 });
+```
+
+## Model Examples
+
+Here are two minimal examples of working mongoose models:
+
+### Users
+
+```ts
+import mongoose from "mongoose";
+import type { DatabaseUser } from "lucia-sveltekit/types";
+
+export const Users = mongoose.model<DatabaseUser>(
+  "Users",
+  new mongoose.Schema(
+    {
+      id: { type: String, unique: true },
+      hashed_password: String,
+      identifier_token: { type: String, unique: true },
+    },
+    { strict: false } // Allows arbitrary user_data to be added to the user doc
+  ),
+  "users"
+);
+```
+
+### Refresh Tokens
+
+```ts
+import mongoose from "mongoose";
+
+interface RefreshTokenDoc {
+  id: string;
+  refresh_token: string;
+  user_id: string;
+}
+
+export const RefreshTokens = mongoose.model<RefreshTokenDoc>(
+  "RefreshTokens",
+  new mongoose.Schema({
+    id: { type: String, unique: true },
+    refresh_token: String,
+    user_id: String,
+  }),
+  "refresh_tokens"
+);
 ```
