@@ -34,11 +34,11 @@ const mongoAdapter: Adapter = {
       id,
       hashed_password,
       identifier_token,
-      user_data,
+      ...user_data,
     });
     await user.save();
   },
-  
+
   deleteUser: async (id) => {
     await Users.deleteOne({ id }).exec();
   },
