@@ -1,8 +1,20 @@
+## 0.3.5
+
+Jul. 27, 2022
+
+-   Fixed bug where `autoTokenRefresh` was not updating refresh token inside the session object on token refresh
+
+## 0.3.3, 0.3.4
+
+Jul. 26, 2022
+
+-   Can now define types for `user_data`
+
 ## 0.3.2
 
 Jul. 23, 2022
 
--   Changed `LuciaError` to `Error`
+-   [Breaking] Changed `LuciaError` to `Error`
 
 ## 0.3.1
 

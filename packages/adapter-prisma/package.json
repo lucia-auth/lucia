@@ -1,0 +1,41 @@
+{
+    "name": "@lucia-sveltekit/adapter-prisma",
+    "version": "0.1.1",
+    "description": "Prisma adapter for Lucia",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "module": "dist/index.js",
+    "type": "module",
+    "files": [
+        "dist/**/*"
+    ],
+    "scripts": {
+        "build": "tsc"
+    },
+    "keywords": [
+        "sveltekit",
+        "lucia",
+        "prisma"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+        "directory": "packages/adapter-prisma"
+    },
+    "author": "pilcrowonpaper",
+    "license": "MIT",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "devDependencies": {
+        "lucia-sveltekit": "workspace:*"
+    },
+    "dependencies": {
+        "@prisma/client": "^4.1.0",
+        "@supabase/postgrest-js": "^0.37.4",
+        "bcryptjs": "^2.4.3",
+        "cookie": "^0.5.0",
+        "jsonwebtoken": "^8.5.1",
+        "nanoid": "^4.0.0"
+    }
+}

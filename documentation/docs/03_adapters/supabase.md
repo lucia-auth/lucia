@@ -3,19 +3,19 @@
 An adapter to use with Supabase's PostgreSQL database.
 
 ```ts
-import supabase from "@lucia-sveltekit/adapter-supabase"
+import supabase from "@lucia-sveltekit/adapter-supabase";
 
 const auth = Lucia({
-	adapter: supabase(url, secret)
-	// ...
-})
+    adapter: supabase(url, secret),
+    // ...
+});
 ```
 
-### Parameters
+#### Parameters
 
-| name   | type   | description                   |
-| ------ | ------ | ----------------------------- |
-| url    | string | Supabase project url          |
+| name   | type   | description                    |
+| ------ | ------ | ------------------------------ |
+| url    | string | Supabase project url           |
 | secret | string | Supabase "service_role" secret |
 
 ## Setting up the database
@@ -29,16 +29,18 @@ Create 2 tables:
 
 ### users
 
-| column name      | type    | relations | nullable | unique | identity |
-| ---------------- | ------- | -------- | -------- | ------ | -------- |
-| id               | varchar |          |          | true   | true     |
-| identifier_token | varchar |          |          | true   |          |
-| hashed_password  | varchar |          |          |        |          |
-| [user_data]      | any     | any      | true     | any    |          |
+`[user_data]` represents any number of additional columns that may be used.
+
+| column name      | type    | relations | nullable | unique   | identity |
+| ---------------- | ------- | --------- | -------- | -------- | -------- |
+| id               | varchar |           |          | true     | true     |
+| identifier_token | varchar |           |          | true     |          |
+| hashed_password  | varchar |           | true     |          |          |
+| [user_data]      | any     | any       | true     | optional |          |
 
 ### refresh_tokens
 
-| column name   | type    | relations   | nullable | unique | identity |
+| column name   | type    | relations  | nullable | unique | identity |
 | ------------- | ------- | ---------- | -------- | ------ | -------- |
 | id            | int8    |            |          | true   | true     |
 | refresh_token | varchar |            |          | true   |          |

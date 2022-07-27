@@ -7,21 +7,19 @@ import type { User } from "lucia-sveltekit/types";
 ### User
 
 ```ts
-interface User {
+type User<UserData extends {}> = {
     user_id: string;
-    [key: string]: any;
-}
+} & UserData;
 ```
 
 ### DatabaseUser
 
 ```ts
-interface DatabaseUser {
+type DatabaseUser<UserData extends {}> = {
     id: string;
     hashed_password: string;
     identifier_token: string;
-    [key: string]: any;
-}
+} & UserData;
 ```
 
 ### Adapter
@@ -35,8 +33,8 @@ Refer to [Lucia configurations](/configurations)
 ### LuciaSvelteKitSession
 
 ```ts
-export type LuciaSvelteKitSession = {
-    user: User;
+export type LuciaSvelteKitSession<UserData> = {
+    user: User<UserData>;
     access_token: string;
     refresh_token: string;
 } | null;
@@ -48,7 +46,9 @@ export type LuciaSvelteKitSession = {
 // app.d.ts
 declare namespace App {
     interface Session {
-        lucia: import("lucia-sveltekit/types").LuciaSvelteKitSession;
+        lucia: import("lucia-sveltekit/types").LuciaSvelteKitSession<{
+            username: string;
+        }>;
     }
 }
 ```

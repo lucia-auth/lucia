@@ -4,9 +4,13 @@ import cookie from "cookie";
 import { User } from "../types.js";
 import { AccessToken, FingerprintToken } from "../utils/token.js";
 
-export type ValidateRequest = (request: Request) => Promise<User>;
-export const validateRequestFunction = (context: Context) => {
-    const validateRequest: ValidateRequest = async (request) => {
+export type ValidateRequest<UserData extends {}> = (
+    request: Request
+) => Promise<User<UserData>>;
+export const validateRequestFunction = <UserData extends {}>(
+    context: Context
+) => {
+    const validateRequest: ValidateRequest<UserData> = async (request) => {
         const authorizationHeader = request.headers.get("Authorization") || "";
         const [tokenType, token] = authorizationHeader.split(" ");
         if (!tokenType || !token)
@@ -19,7 +23,7 @@ export const validateRequestFunction = (context: Context) => {
             cookies.fingerprint_token,
             context
         );
-        const accessToken = new AccessToken(cookies.access_token, context);
+        const accessToken = new AccessToken<UserData>(cookies.access_token, context);
         const user = await accessToken.user(fingerprintToken.value);
         return user;
     };
