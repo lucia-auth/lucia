@@ -33,7 +33,7 @@ Refer to [Lucia configurations](/configurations)
 ### SvelteKitSession
 
 ```ts
-export type SvelteKitSession<UserData> = {
+type SvelteKitSession<UserData> = {
     user: User<UserData>;
     access_token: string;
     refresh_token: string;
@@ -52,3 +52,23 @@ declare namespace App {
     }
 }
 ```
+
+### Session
+
+```ts
+type Session<UserData> = {
+    user: User<UserData>;
+    access_token: AccessToken;
+    refresh_token: RefreshToken;
+    fingerprint_token: FingerprintToken;
+    cookies: string[];
+};
+```
+
+| name              | type                                                        | description                               |
+| ----------------- | ----------------------------------------------------------- | ----------------------------------------- |
+| user              | [User](/references/types#user)                              |                                           |
+| access_token      | [AccessToken](/references/instances#accesstoken)            |                                           |
+| refresh_token     | [RefreshToken](/references/instances#refreshtoken)          |                                           |
+| fingerprint_token | [Fingerprint_Token](/references/instances#fingerprinttoken) |                                           |
+| cookies           | string[]                                                    | An array of all the cookies of the tokens |

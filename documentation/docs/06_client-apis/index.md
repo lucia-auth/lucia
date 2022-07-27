@@ -37,10 +37,10 @@ const autoRefreshTokens: (
 
 #### Parameters
 
-| name    | type                  | description                    |
-| ------- | --------------------- | ------------------------------ |
-| session | Writable<App.session> | The session stores             |
-| onError | function              | _(optional)_ Callback on error |
+| name    | type                  | description        |
+| ------- | --------------------- | ------------------ |
+| session | Writable<App.session> | The session stores |
+| onError | function \| undefined | Callback on error  |
 
 #### Returns
 

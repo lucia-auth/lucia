@@ -6,10 +6,13 @@ An adapter takes the following structure:
 interface Adapter {
     getUserFromRefreshToken: (
         refreshToken: string
-    ) => Promise<DatabaseUser<any> | null>;
+    ) => Promise<DatabaseUser<Record<string, any>> | null>;
     getUserFromIdentifierToken: (
         identifierToken: string
-    ) => Promise<DatabaseUser<any> | null>;
+    ) => Promise<DatabaseUser<Record<string, any>> | null>;
+    getUserFromId: (
+        identifierToken: string
+    ) => Promise<DatabaseUser<Record<string, any>> | null>;
     createUser: (
         userId: string,
         data: {
@@ -22,6 +25,14 @@ interface Adapter {
     saveRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
     deleteRefreshToken: (refreshToken: string) => Promise<void>;
     deleteUserRefreshTokens: (userId: string) => Promise<void>;
+    updateUser: (
+        userId: string,
+        data: {
+            identifier_token?: string | null;
+            hashed_password?: string | null;
+            user_data?: Record<string, any>;
+        }
+    ) => Promise<DatabaseUser<Record<string, any>>>;
 }
 ```
 
@@ -32,7 +43,9 @@ interface Adapter {
 Gets the row from `users` connected to the refresh token and returns it as an object.
 
 ```ts
-getDataFromRefreshToken: (refreshToken: string) => Promise<DatabaseUser | null>;
+const getDataFromRefreshToken: (
+    refreshToken: string
+) => Promise<DatabaseUser<Record<string, any>> | null>;
 ```
 
 #### Parameters
@@ -54,8 +67,9 @@ Returns `null` if a user does not exist.
 Gets the row from `users` table with the identifier token and returns it as an object.
 
 ```ts
-getDataFromIdentifierToken: (identifierToken: string) =>
-    Promise<DatabaseUser | null>;
+const getDataFromIdentifierToken: (
+    identifierToken: string
+) => Promise<DatabaseUser<Record<string, any>> | null>;
 ```
 
 #### Parameters
@@ -72,12 +86,36 @@ Returns `null` if a user does not exist.
 | ------------ | ------------ | ----------- |
 | DatabaseUser | DatabaseUser |             |
 
+### getUserFromId
+
+Gets the row from `users` table with the user id and returns it as an object.
+
+```ts
+const getDataFromIdentifierToken: (
+    userId: string
+) => Promise<DatabaseUser<Record<string, any>> | null>;
+```
+
+#### Parameters
+
+| name            | type   | description                     |
+| --------------- | ------ | ------------------------------- |
+| identifierToken | string | `users.identifier_token` column |
+
+#### Returns
+
+Returns `null` if a user does not exist.
+
+| name | type                                           | description |
+| ---- | ---------------------------------------------- | ----------- |
+|      | [DatabaseUser](/references/types#databaseuser) |             |
+
 ### createUser
 
 Creates a new row in `users` table.
 
 ```ts
-createAccount: (
+const createAccount: (
     userId: string,
     data: {
         hashed_password: string | null;
@@ -101,7 +139,7 @@ createAccount: (
 Deletes a row in `users` table where the user id matches.
 
 ```ts
-deleteUser: (userId: string) => Promise<void>;
+const deleteUser: (userId: string) => Promise<void>;
 ```
 
 #### Parameters
@@ -115,7 +153,7 @@ deleteUser: (userId: string) => Promise<void>;
 Creates a new row in `refresh_tokens` table.
 
 ```ts
-saveRefreshToken: (userId: string, refreshToken: string) => Promise<void>;
+const saveRefreshToken: (userId: string, refreshToken: string) => Promise<void>;
 ```
 
 #### Parameters
@@ -130,7 +168,7 @@ saveRefreshToken: (userId: string, refreshToken: string) => Promise<void>;
 Deletes a row in `refresh_tokens` table where the refresh token matches.
 
 ```ts
-deleteRefreshToken: (refreshToken: string) => Promise<void>;
+const deleteRefreshToken: (refreshToken: string) => Promise<void>;
 ```
 
 #### Parameters
@@ -144,22 +182,55 @@ deleteRefreshToken: (refreshToken: string) => Promise<void>;
 Deletes all rows in `refresh_tokens` table where the user id matches.
 
 ```ts
-deleteUserRefreshTokens: (userId: string) => Promise<void>;
+const deleteUserRefreshTokens: (userId: string) => Promise<void>;
 ```
 
 #### Parameters
 
-| name   | type   | description      |
-| ------ | ------ | ---------------- |
-| userId | string | `user_id` column |
+| name   | type   | description                     |
+| ------ | ------ | ------------------------------- |
+| userId | string | `refresh_tokens.user_id` column |
+
+### updateUser
+
+Updates user's column where the value is not `undefined` (If the value is `null`, the column value should be set to `null` as it is a value).
+
+```ts
+const updateUser: (
+    userId: string,
+    data: {
+        identifier_token?: string | null;
+        hashed_password?: string | null;
+        user_data?: Record<string, any>;
+    }
+) => Promise<DatabaseUser<Record<string, any>>>;
+```
+
+#### Returns
+
+\*Throws an error if a user doesn't exist.
+
+| name | type                                           | description |
+| ---- | ---------------------------------------------- | ----------- |
+|      | [DatabaseUser](/references/types#databaseuser) |             |
+
+#### Parameters
+
+| name                  | type                           | description                                           |
+| --------------------- | ------------------------------ | ----------------------------------------------------- |
+| userId                | string                         | `user_id` column                                      |
+| data.identifier_token | string, null, undefined        | Value of `users.identifier_token` column              |
+| data.hashed_password  | string, null, undefined        | Value of `users.hashed_password` column               |
+| data.user_data        | Record<string, any>, undefined | Each key/values are their own column in `users` table |
 
 ## Errors
 
 Database related errors should be thrown using Lucia's [`Error`](/references/error-handling)
 
-| name                           | description                                   |
-| ------------------------------ | --------------------------------------------- |
-| DATABASE_FETCH_FAILED          | Failed to get data from database              |
-| DATABASE_UPDATE_FAILED         | Failed to update database (write, delete)     |
+| name                            | description                                   |
+| ------------------------------- | --------------------------------------------- |
+| DATABASE_FETCH_FAILED           | Failed to get data from database              |
+| DATABASE_UPDATE_FAILED          | Failed to update database (write, delete)     |
 | AUTH_DUPLICATE_IDENTIFIER_TOKEN | Violates `identifier_token` unique constraint |
-| AUTH_DUPLICATE_USER_DATA       | Violates some column's unique constraint      |
+| AUTH_DUPLICATE_USER_DATA        | Violates some column's unique constraint      |
+| AUTH_INVALID_USER_ID            | Violates some column's unique constraint      |

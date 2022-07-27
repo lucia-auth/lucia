@@ -1,12 +1,12 @@
-import { DatabaseUser } from "../types.js";
+import { DatabaseUser } from "../../types.js";
 import {
     createAccessToken,
     createRefreshToken,
     getAccountFromDatabaseData,
-} from "../utils/auth.js";
-import { LuciaError } from "../utils/error.js";
-import { AccessToken, RefreshToken } from "../utils/token.js";
-import { Context } from "./index.js";
+} from "../../utils/auth.js";
+import { LuciaError } from "../../utils/error.js";
+import { AccessToken, RefreshToken } from "../../utils/token.js";
+import { Context } from "./../index.js";
 
 export type RefreshTokens<UserData extends {}> = (
     refreshToken: string,
