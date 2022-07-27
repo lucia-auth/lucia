@@ -30,10 +30,10 @@ Refer to [custom adapters](/adapters/custom)
 
 Refer to [Lucia configurations](/configurations)
 
-### LuciaSvelteKitSession
+### SvelteKitSession
 
 ```ts
-export type LuciaSvelteKitSession<UserData> = {
+export type SvelteKitSession<UserData> = {
     user: User<UserData>;
     access_token: string;
     refresh_token: string;
@@ -46,7 +46,7 @@ export type LuciaSvelteKitSession<UserData> = {
 // app.d.ts
 declare namespace App {
     interface Session {
-        lucia: import("lucia-sveltekit/types").LuciaSvelteKitSession<{
+        lucia: import("lucia-sveltekit/types").SvelteKitSession<{
             username: string;
         }>;
     }

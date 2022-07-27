@@ -37,11 +37,11 @@ const lucia = <UserData extends {}>(configurations: Configurations) =>
 Where columns `username` and `age` are in the `Users` table as [user_data].
 
 ```ts
-const auth = lucia<{ username: string, age: number }>({
+const auth = lucia<{ username: string; age: number }>({
     adapter: adapter(),
     env: "DEV",
-    secret: "aWmJoT0gOdjh2-Zc2Zv3BTErb29qQNWEunlj"
-})
+    secret: "aWmJoT0gOdjh2-Zc2Zv3BTErb29qQNWEunlj",
+});
 ```
 
 ## Reference
@@ -257,3 +257,25 @@ const refreshTokens: (
 | AUTH_INVALID_REFRESH_TOKEN | Invalid refresh token            |
 | DATABASE_FETCH_FAILED      | Failed to get data from database |
 | DATABASE_UDPATE_FAILED     | Failed to update database        |
+
+### deleteUser
+
+Deletes user and all refresh tokens connect to them. Will be successful regardless of the validity of the user id.
+
+```ts
+const deleteUser: (userId: string) => Promise<void>
+```
+
+#### Parameters
+
+| name   | type   | description |
+| ------ | ------ | ----------- |
+| userId | string | User id     |
+
+#### Errors
+
+| name                       | description                      |
+| -------------------------- | -------------------------------- |
+| DATABASE_UDPATE_FAILED     | Failed to update database        |
+
+
