@@ -2,10 +2,7 @@ import { PostgrestClient } from "@supabase/postgrest-js";
 import { Error } from "lucia-sveltekit";
 import type { Adapter } from "lucia-sveltekit/dist/types";
 
-const adapter = (
-    url: string,
-    secret: string
-): Adapter => {
+const adapter = (url: string, secret: string): Adapter => {
     const supabase = new PostgrestClient(`${url}/rest/v1`, {
         headers: {
             Authorization: `Bearer ${secret}`,
@@ -31,7 +28,10 @@ const adapter = (
                 .select()
                 .eq("identifier_token", identifierToken)
                 .maybeSingle();
-            if (error) throw new Error("DATABASE_FETCH_FAILED");
+            if (error) {
+                console.error(error);
+                throw new Error("DATABASE_FETCH_FAILED");
+            }
             return data || null;
         },
         createUser: async (
