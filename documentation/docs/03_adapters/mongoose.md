@@ -17,17 +17,25 @@ import { RefreshTokens } from "../models/refreshTokens";
 import { LUCIA_SECRET } from "./_env";
 import * as db from "$lib/db";
 
+const transformMongooseObj = (obj: Record<string, any>) => {
+  delete obj.__v;
+  delete obj._id;
+};
+
 const mongoAdapter: Adapter = {
   getUserFromRefreshToken: async (refresh_token) => {
     const token = await RefreshTokens.findOne({ refresh_token }).exec();
     if (!token) return null;
-    const user = await Users.findOne({ id: token.user_id }).exec();
-    // If no user is found, `user` will be null already
-    return user;
+    const user = await Users.findOne({ id: token.user_id }).lean();
+    if (!user) return null;
+    else return transformMongooseObj(user);
   },
 
-  getUserFromIdentifierToken: async (identifier_token) =>
-    await Users.findOne({ identifier_token }).exec(),
+  getUserFromIdentifierToken: async (identifier_token) => {
+    const user = await Users.findOne({ identifier_token }).lean();
+    if (!user) return null;
+    else return transformMongooseObj(user);
+  },
 
   createUser: async (id, data) => {
     const { hashed_password, identifier_token, user_data } = data;
