@@ -88,7 +88,6 @@ const adapter = (prisma: PrismaClient): Adapter => {
             }
         },
         saveRefreshToken: async (refreshToken: string, userId: string) => {
-            console.log(refreshToken);
             try {
                 await prisma.refresh_Tokens.create({
                     data: {
