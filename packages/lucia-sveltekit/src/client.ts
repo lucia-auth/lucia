@@ -55,7 +55,7 @@ export const autoRefreshTokens = (
         session.update((val) => {
             if (!val.lucia) return val;
             val.lucia.access_token = accessToken;
-            val.lucia.refresh_token;
+            val.lucia.refresh_token = refreshToken;
             return val;
         });
     };
