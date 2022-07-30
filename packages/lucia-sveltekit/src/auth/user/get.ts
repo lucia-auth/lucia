@@ -10,7 +10,7 @@ export type GetUser<UserData extends {}> = (
 export const getUserFunction = <UserData extends {}>(context: Context) => {
     const getUser: GetUser<UserData> = async (authId, identifier) => {
         const identifierToken = `${authId}:${identifier}`;
-        const databaseData = (await context.adapter.getUserFromIdentifierToken(
+        const databaseData = (await context.adapter.getUserByIdentifierToken(
             identifierToken
         )) as DatabaseUser<UserData> | null;
         if (!databaseData) return null;
@@ -26,7 +26,7 @@ export type GetUserById<UserData extends {}> = (
 
 export const getUserByIdFunction = <UserData extends {}>(context: Context) => {
     const getUserById: GetUserById<UserData> = async (userId: string) => {
-        const databaseData = (await context.adapter.getUserFromId(
+        const databaseData = (await context.adapter.getUserById(
             userId
         )) as DatabaseUser<UserData> | null;
         if (!databaseData) return null;

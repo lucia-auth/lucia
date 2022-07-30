@@ -1,4 +1,4 @@
-import { PostgrestClient } from "@supabase/postgrest-js";
+import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
 import { Error, adapterGetUpdateData } from "lucia-sveltekit";
 import type { Adapter } from "lucia-sveltekit/dist/types";
 
@@ -10,10 +10,10 @@ const adapter = (url: string, secret: string): Adapter => {
         },
     });
     return {
-        getUserFromRefreshToken: async (refreshToken: string) => {
+        getUserByRefreshToken: async (refreshToken: string) => {
             const { data, error } = await supabase
-                .from("refresh_tokens")
-                .select("user: users(*)")
+                .from("refresh_token")
+                .select("user(*)")
                 .eq("refresh_token", refreshToken)
                 .maybeSingle();
             if (error) {
@@ -22,9 +22,9 @@ const adapter = (url: string, secret: string): Adapter => {
             }
             return data?.user || null;
         },
-        getUserFromIdentifierToken: async (identifierToken: string) => {
+        getUserByIdentifierToken: async (identifierToken: string) => {
             const { data, error } = await supabase
-                .from("users")
+                .from("user")
                 .select()
                 .eq("identifier_token", identifierToken)
                 .maybeSingle();
@@ -34,7 +34,7 @@ const adapter = (url: string, secret: string): Adapter => {
             }
             return data || null;
         },
-        createUser: async (
+        setUser: async (
             userId: string,
             data: {
                 hashed_password: string | null;
@@ -42,7 +42,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 user_data: Record<string, any>;
             }
         ) => {
-            const { error } = await supabase.from("users").insert(
+            const { error } = await supabase.from("user").insert(
                 {
                     id: userId,
                     identifier_token: data.identifier_token,
@@ -69,7 +69,7 @@ const adapter = (url: string, secret: string): Adapter => {
         },
         deleteUser: async (userId: string) => {
             const { error } = await supabase
-                .from("users")
+                .from("user")
                 .delete({
                     returning: "minimal",
                 })
@@ -79,8 +79,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        saveRefreshToken: async (refreshToken: string, userId: string) => {
-            const { error } = await supabase.from("refresh_tokens").insert(
+        setRefreshToken: async (refreshToken: string, userId: string) => {
+            const { error } = await supabase.from("refresh_token").insert(
                 {
                     user_id: userId,
                     refresh_token: refreshToken,
@@ -96,7 +96,7 @@ const adapter = (url: string, secret: string): Adapter => {
         },
         deleteRefreshToken: async (refreshToken: string) => {
             const { error } = await supabase
-                .from("refresh_tokens")
+                .from("refresh_token")
                 .delete({
                     returning: "minimal",
                 })
@@ -108,7 +108,7 @@ const adapter = (url: string, secret: string): Adapter => {
         },
         deleteUserRefreshTokens: async (userId: string) => {
             const { error } = await supabase
-                .from("refresh_tokens")
+                .from("refresh_token")
                 .delete({
                     returning: "minimal",
                 })
@@ -118,9 +118,9 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        getUserFromId: async (userId: string) => {
+        getUserById: async (userId: string) => {
             const { data, error } = await supabase
-                .from("users")
+                .from("user")
                 .select()
                 .eq("id", userId)
                 .maybeSingle();
@@ -133,7 +133,7 @@ const adapter = (url: string, secret: string): Adapter => {
         updateUser: async (userId, newData) => {
             const dbData = adapterGetUpdateData(newData);
             const { data, error } = await supabase
-                .from("users")
+                .from("user")
                 .update(dbData)
                 .eq("id", userId)
                 .maybeSingle();

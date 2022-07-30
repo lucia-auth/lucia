@@ -52,7 +52,7 @@ export const handleTokensFunction = (context: Context) => {
                 }
                 throw new LuciaError("REQUEST_UNAUTHORIZED");
             }
-            const databaseData = await context.adapter.getUserFromRefreshToken(
+            const databaseData = await context.adapter.getUserByRefreshToken(
                 refreshToken.value
             );
             if (!databaseData) {
@@ -66,7 +66,7 @@ export const handleTokensFunction = (context: Context) => {
             );
             await Promise.all([
                 context.adapter.deleteRefreshToken(refreshToken.value),
-                context.adapter.saveRefreshToken(newRefreshToken.value, userId),
+                context.adapter.setRefreshToken(newRefreshToken.value, userId),
             ]);
             const newEncryptedRefreshToken = newRefreshToken.encrypt();
             const account = getAccountFromDatabaseData(databaseData);

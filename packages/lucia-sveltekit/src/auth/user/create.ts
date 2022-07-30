@@ -51,12 +51,12 @@ export const createUserFunction = <UserData extends {}>(context: Context) => {
             ? await hash(options.password)
             : null;
 
-        await context.adapter.createUser(userId, {
+        await context.adapter.setUser(userId, {
             identifier_token: identifierToken,
             hashed_password: hashedPassword,
             user_data: userData,
         });
-        await context.adapter.saveRefreshToken(refreshToken.value, userId);
+        await context.adapter.setRefreshToken(refreshToken.value, userId);
         const accessToken = await createAccessToken<UserData>(
             user,
             fingerprintToken.value,

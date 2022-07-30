@@ -1,10 +1,18 @@
+## 0.5.0
+
+Jul 30, 2022
+
+-   [Breaking] `getUserFromId`, `getUserFromRefreshToken`, `getUserFromIdentifierToken`, `createUser`, and `saveRefreshToken` are renamed to `getUserById`, `getUserByRefreshToken`, `getUserByIdentifierToken`, `setUser`, and `setRefreshToken`.
+-   [Breaking] `users` and `refresh_tokens` tables are renamed to `user` to `refresh_token`
+-   New testing package for adapters
+
 ## 0.4.1
 
 Jul. 28, 2022
 
 -   [fix] Fixed `adapterGetUpdateData()`
 
-## 4.0.0
+## 0.4.0
 
 Jul. 28, 2022
 

@@ -30,7 +30,7 @@ export const refreshTokensFunction = <UserData extends {}>(context: Context) => 
             }
             throw e;
         }
-        const databaseData = await context.adapter.getUserFromRefreshToken(
+        const databaseData = await context.adapter.getUserByRefreshToken(
             refreshToken.value
         ) as DatabaseUser<UserData> | null;
         if (!databaseData) {
@@ -44,7 +44,7 @@ export const refreshTokensFunction = <UserData extends {}>(context: Context) => 
         );
         await Promise.all([
             context.adapter.deleteRefreshToken(refreshToken.value),
-            context.adapter.saveRefreshToken(newRefreshToken.value, userId),
+            context.adapter.setRefreshToken(newRefreshToken.value, userId),
         ]);
         const account = getAccountFromDatabaseData<UserData>(databaseData);
         const accessToken = await createAccessToken<UserData>(

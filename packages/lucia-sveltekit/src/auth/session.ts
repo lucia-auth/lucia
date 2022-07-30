@@ -29,7 +29,7 @@ export const createUserSessionFunction = <UserData extends {}>(
     context: Context
 ) => {
     const createUserSession: CreateUserSession<UserData> = async (authId) => {
-        const databaseData = (await context.adapter.getUserFromId(
+        const databaseData = (await context.adapter.getUserById(
             authId
         )) as DatabaseUser<UserData> | null;
         if (!databaseData)
@@ -42,7 +42,7 @@ export const createUserSessionFunction = <UserData extends {}>(
             fingerprintToken.value,
             context
         );
-        await context.adapter.saveRefreshToken(refreshToken.value, userId);
+        await context.adapter.setRefreshToken(refreshToken.value, userId);
         const encryptedRefreshToken = refreshToken.encrypt();
         const accessToken = await createAccessToken<UserData>(
             account.user,
