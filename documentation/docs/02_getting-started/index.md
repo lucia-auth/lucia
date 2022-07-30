@@ -50,7 +50,7 @@ This is mainly for 2 things:
 
 `auth.createUser` creates a new user and returns a few tokens and cookies.
 
-The first parameter is the auth id, and the second parameter is the identifier. The third paramter is optional, and you can provide a password and user data to be saved alongside other data. In the example below, `email` will be saved as its own column in the `users` table.
+The first parameter is the auth id, and the second parameter is the identifier. The third paramter is optional, and you can provide a password and user data to be saved alongside other data. In the example below, `email` will be saved as its own column in the `user` table.
 
 After creating a user, Lucia will return a set of tokens and cookies. These cookies should be saved to the user using the `set-cookie` headers.
 

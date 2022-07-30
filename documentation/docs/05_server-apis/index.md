@@ -30,11 +30,11 @@ const lucia = <UserData extends {}>(configurations: Configurations) =>
 
 | name     | type         | description                                                                                                     |
 | -------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
-| UserData | extends `{}` | Any optional key/types stored inside the `Users` table. Every `UserData` in "Reference" refers to this generic. |
+| UserData | extends `{}` | Any optional key/types stored inside the `user` table. Every `UserData` in "Reference" refers to this generic. |
 
 #### Example
 
-Where columns `username` and `age` are in the `Users` table as [user_data].
+Where columns `username` and `age` are in the `user` table as [user_data].
 
 ```ts
 const auth = lucia<{ username: string; age: number }>({

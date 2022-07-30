@@ -37,7 +37,7 @@ export const authenticateUserFunction = <UserData extends {}>(
         password
     ) => {
         const identifierToken = `${authId}:${identifier}`;
-        const databaseData = (await context.adapter.getUserFromIdentifierToken(
+        const databaseData = (await context.adapter.getUserByIdentifierToken(
             identifierToken
         )) as DatabaseUser<UserData> | null;
         if (!databaseData)
@@ -57,7 +57,7 @@ export const authenticateUserFunction = <UserData extends {}>(
             fingerprintToken.value,
             context
         );
-        await context.adapter.saveRefreshToken(refreshToken.value, userId);
+        await context.adapter.setRefreshToken(refreshToken.value, userId);
         const encryptedRefreshToken = refreshToken.encrypt();
         const accessToken = await createAccessToken<UserData>(
             account.user,

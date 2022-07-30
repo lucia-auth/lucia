@@ -5,9 +5,9 @@ import { Error, adapterGetUpdateData } from "lucia-sveltekit";
 
 const adapter = (prisma: PrismaClient): Adapter => {
     return {
-        getUserFromRefreshToken: async (refreshToken) => {
+        getUserByRefreshToken: async (refreshToken) => {
             try {
-                const data = await prisma.refresh_Tokens.findUnique({
+                const data = await prisma.refreshToken.findUnique({
                     where: {
                         refresh_token: refreshToken,
                     },
@@ -23,9 +23,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_FETCH_FAILED");
             }
         },
-        getUserFromIdentifierToken: async (identifierToken) => {
+        getUserByIdentifierToken: async (identifierToken) => {
             try {
-                const data = await prisma.users.findUnique({
+                const data = await prisma.user.findUnique({
                     where: {
                         identifier_token: identifierToken,
                     },
@@ -38,15 +38,15 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_FETCH_FAILED");
             }
         },
-        createUser: async (userId, data) => {
+        setUser: async (userId, data) => {
             try {
-                await prisma.users.create({
+                await prisma.user.create({
                     data: {
                         id: userId,
                         identifier_token: data.identifier_token,
                         hashed_password: data.hashed_password,
                         ...data.user_data,
-                    },
+                    } as any, // ignore Prisma schema 
                 });
                 return;
             } catch (e) {
@@ -67,7 +67,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
         },
         deleteUser: async (userId) => {
             try {
-                await prisma.users.deleteMany({
+                await prisma.user.deleteMany({
                     where: {
                         id: userId,
                     },
@@ -80,9 +80,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        saveRefreshToken: async (refreshToken, userId) => {
+        setRefreshToken: async (refreshToken, userId) => {
             try {
-                await prisma.refresh_Tokens.create({
+                await prisma.refreshToken.create({
                     data: {
                         refresh_token: refreshToken,
                         user_id: userId,
@@ -98,7 +98,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
         },
         deleteRefreshToken: async (refreshToken) => {
             try {
-                await prisma.refresh_Tokens.deleteMany({
+                await prisma.refreshToken.deleteMany({
                     where: {
                         refresh_token: refreshToken,
                     },
@@ -113,7 +113,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
         },
         deleteUserRefreshTokens: async (userId) => {
             try {
-                await prisma.refresh_Tokens.deleteMany({
+                await prisma.refreshToken.deleteMany({
                     where: {
                         user_id: userId,
                     },
@@ -126,9 +126,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        getUserFromId: async (userId) => {
+        getUserById: async (userId) => {
             try {
-                const data = await prisma.users.findUnique({
+                const data = await prisma.user.findUnique({
                     where: {
                         id: userId,
                     },
@@ -144,7 +144,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
         updateUser: async (userId, newData) => {
             const partialData = adapterGetUpdateData(newData);
             try {
-                const data = await prisma.users.update({
+                const data = await prisma.user.update({
                     data: partialData,
                     where: {
                         id: userId,
@@ -155,7 +155,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 console.error(e);
                 if (!(e instanceof pkg.PrismaClientKnownRequestError))
                     throw new Error("UNKNOWN_ERROR");
-                if (e.code === "P2025") throw new Error("AUTH_INVALID_USER_ID")
+                if (e.code === "P2025") throw new Error("AUTH_INVALID_USER_ID");
                 throw new Error("DATABASE_FETCH_FAILED");
             }
         },

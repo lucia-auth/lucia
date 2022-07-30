@@ -1,14 +1,14 @@
 export interface Adapter {
-    getUserFromRefreshToken: (
+    getUserByRefreshToken: (
         refreshToken: string
     ) => Promise<DatabaseUser<Record<string, any>> | null>;
-    getUserFromIdentifierToken: (
+    getUserByIdentifierToken: (
         identifierToken: string
     ) => Promise<DatabaseUser<Record<string, any>> | null>;
-    getUserFromId: (
+    getUserById: (
         identifierToken: string
     ) => Promise<DatabaseUser<Record<string, any>> | null>;
-    createUser: (
+    setUser: (
         userId: string,
         data: {
             identifier_token: string;
@@ -17,7 +17,7 @@ export interface Adapter {
         }
     ) => Promise<void>;
     deleteUser: (userId: string) => Promise<void>;
-    saveRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
+    setRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
     deleteRefreshToken: (refreshToken: string) => Promise<void>;
     deleteUserRefreshTokens: (userId: string) => Promise<void>;
     updateUser: (

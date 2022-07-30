@@ -9,3 +9,11 @@ Lucia documentation: https://lucia-sveltekit.vercel.app
 ```
 npm install @lucia-sveltekit/adapter-prisma
 ```
+
+## Testing
+
+Add a postgresql database url to `.env`.
+
+```
+npm run test
+```

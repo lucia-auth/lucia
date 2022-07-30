@@ -22,12 +22,12 @@ const auth = Lucia({
 
 Create 2 tables:
 
--   `users`
--   `refresh_tokens`
+-   `user`
+-   `refresh_token`
 
 > > **Make sure to enable row-level security for all of them.**
 
-### users
+### user
 
 `[user_data]` represents any number of additional columns that may be used.
 
@@ -38,10 +38,10 @@ Create 2 tables:
 | hashed_password  | varchar |           | true     |          |          |
 | [user_data]      | any     | any       | true     | optional |          |
 
-### refresh_tokens
+### refresh_token
 
-| column name   | type    | relations  | nullable | unique | identity |
-| ------------- | ------- | ---------- | -------- | ------ | -------- |
-| id            | int8    |            |          | true   | true     |
-| refresh_token | varchar |            |          | true   |          |
-| user_id       | varchar | `users.id` |          |        |          |
+| column name   | type    | relations | nullable | unique | identity |
+| ------------- | ------- | --------- | -------- | ------ | -------- |
+| id            | int8    |           |          | true   | true     |
+| refresh_token | varchar |           |          | true   |          |
+| user_id       | varchar | `user.id` |          |        |          |

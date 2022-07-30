@@ -12,7 +12,7 @@ npm install @lucia-sveltekit/adapter-supabase
 
 ## Testing
 
-Add a postgresql database url to `.env`.
+Add a mongodb url to `url`.
 
 ```
 npm run test

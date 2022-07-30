@@ -1,6 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// for tests only
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,12 +13,12 @@ datasource db {
 }
 
 model User {
-  id               String         @id @unique
-  identifier_token String         @unique
+  id               String          @id @unique
+  identifier_token String          @unique
   hashed_password  String?
-  email            String         @unique
-  username         String         @unique
-  RefreshToken     RefreshToken[]
+  email            String          @unique
+  username         String          @unique
+  Refresh_Tokens   RefreshToken[]
 
   @@map("user")
 }
