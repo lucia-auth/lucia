@@ -21,7 +21,7 @@ const auth = lucia({
 
 ### user
 
-`User` may have additional columns (which are represented by `[user_data]`).
+`user` may have additional columns (which are represented by `[user_data]`).
 
 ```ts
 {

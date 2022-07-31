@@ -1,7 +1,8 @@
 const dictionary = {
     "apis": "APIs",
     "oauth": "OAuth",
-    "mongodb": "MongoDB"
+    "mongodb": "MongoDB",
+    "appwrite": "AppWrite"
 }
 
 
