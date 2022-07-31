@@ -1,6 +1,6 @@
 # Lucia
 
-v0.5.0 will be somewhat stable and breaking changes will be avoided if possible.**
+**v0.5.0 will be (somewhat) stable and breaking changes will be avoided if possible.**
 
 Lucia is a simple, JWT based authentication library for SvelteKit that connects your SvelteKit app with your database. It handles the bulk of the authentication process, like creating and validating tokens, but only just enough that you can build on top of it to fit your use case. That said, it isn't _just_ a JWT authentication library. It uses short-lived tokens, implements rotating refresh tokens, automatically refreshes tokens, and detects refresh token theft. It's main aim is to simplify the development process while not being a pain in the ass to customize!
 
