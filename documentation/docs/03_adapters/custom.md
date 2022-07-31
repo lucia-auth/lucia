@@ -237,7 +237,11 @@ Database related errors should be thrown using Lucia's [`Error`](/references/err
 
 ## Tests
 
-Tests should be done using `@lucia-sveltekit/adapter-test`.
+Tests should be done using `@lucia-sveltekit/adapter-test`. For the database, `users` table should also have a `email` and `username` column (string, unqiue).
+
+```bash
+import { testAdapter } from "@lucia-sveltekit/adapter-test"
+```
 
 ### testAdapter
 

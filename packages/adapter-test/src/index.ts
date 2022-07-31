@@ -174,7 +174,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         await db.clearUsers();
     });
     await test(
-        "getUserFrom()",
+        "getUserById()",
         "Return null if user id is invalid",
         async () => {
             const user = await adapter.getUserById(invalidInput);
@@ -286,6 +286,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                         email: testUser2.email,
                     },
                 });
+                throw new Error("No error was thrown")
             } catch (e) {
                 const error = e as Error;
                 try {
@@ -319,6 +320,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                         email: testUser1.email,
                     },
                 });
+                throw new Error("No error was thrown")
             } catch (e) {
                 const error = e as Error;
                 validate.isEqual(
@@ -509,6 +511,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         async () => {
             try {
                 await adapter.updateUser(invalidInput, {});
+                throw new Error("No error was thrown")
             } catch (e) {
                 const error = e as Error;
                 validate.isEqual(
