@@ -22,4 +22,4 @@ Stores refresh tokens.
 | column        | types  | description          |
 | ------------- | ------ | -------------------- |
 | refresh_token | string |                      |
-| used_id       | string | references `user.id` |
+| user_id       | string | references `user.id` |
