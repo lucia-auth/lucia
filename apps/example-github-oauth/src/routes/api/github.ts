@@ -93,7 +93,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		};
 	} catch (e) {
 		const error = e as Error;
-		// violates email column unqiue constraint
+		// violates email column unique constraint
 		if (error.message === 'AUTH_DUPLICATE_USER_DATA') {
 			return {
 				status: 400,
