@@ -58,7 +58,7 @@
 </div>
 <div>
 	<div
-		class="fixed z-40 h-screen shrink-0 border-r bg-white pr-4 pl-4 pt-28 sm:pl-8 md:pt-16 md:shadow-none lg:pl-12"
+		class="fixed z-40 h-screen shrink-0 border-r bg-white pr-4 pl-4 pt-28 pb-12 sm:pl-8 md:pt-16 md:shadow-none lg:pl-12 overflow-y-auto"
 		class:hidden={toggleMenu % 2 === 0}
 		class:md:block={toggleMenu % 2 === 0}
 		class:block={toggleMenu % 2 === 1}
