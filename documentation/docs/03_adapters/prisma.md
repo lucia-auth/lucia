@@ -24,6 +24,8 @@ const auth = lucia({
 
 The following is for MySQL. `@db.VarChar(300)` should be the language's equivalent if you're using another language (refer to [this](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string) page). Note that the table names are `user` and `refresh_token`.
 
+### users
+
 `[user_data]` represents any number of additional columns that may be used.
 
 ```http
@@ -35,7 +37,11 @@ model User {
   RefreshToken     RefreshToken[]
   @@map("user")
 }
+```
 
+### refresh_token
+
+```http
 model RefreshToken {
   id            Int    @id @unique @default(autoincrement())
   refresh_token String @unique @db.VarChar(300)

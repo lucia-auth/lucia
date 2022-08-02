@@ -1,31 +1,6 @@
 import { Error, adapterGetUpdateData } from "lucia-sveltekit";
 import type { Adapter, DatabaseUser } from "lucia-sveltekit/dist/types";
-import mongoose, { MongooseError } from "mongoose";
-
-const User = mongoose.model(
-    "user",
-    new mongoose.Schema(
-        {
-            _id: String,
-            identifier_token: {
-                type: String,
-                unique: true,
-                required: true,
-            },
-            hashed_password: String
-        },
-        {
-            strict: false, // Allows arbitrary user_data to be added to the user doc
-        }
-    )
-);
-const RefreshToken = mongoose.model(
-    "refresh_token",
-    new mongoose.Schema({
-        refresh_token: String,
-        user_id: String,
-    })
-);
+import type { Mongoose, MongooseError } from "mongoose";
 
 export const transformUserDoc = (obj: Record<string, any>) => {
     delete obj.__v;
@@ -37,7 +12,9 @@ export const transformUserDoc = (obj: Record<string, any>) => {
     };
 };
 
-const adapter = (url: string): Adapter => {
+const adapter = (mongoose: Mongoose, url: string): Adapter => {
+    const RefreshToken = mongoose.model("refresh_token");
+    const User = mongoose.model("user");
     const clientPromise = mongoose.connect(url);
     return {
         getUserByRefreshToken: async (refreshToken) => {
@@ -90,6 +67,7 @@ const adapter = (url: string): Adapter => {
                     ...data.user_data,
                 });
                 await userDoc.save();
+                console.log(await User.find().lean());
                 return;
             } catch (e) {
                 console.error(e);

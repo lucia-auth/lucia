@@ -4,8 +4,39 @@ import mongodb, { transformUserDoc } from "../src/index.js";
 
 const url = "";
 
-const User = mongoose.model("user");
-const RefreshToken = mongoose.model("refresh_token");
+const User = mongoose.model(
+    "user",
+    new mongoose.Schema(
+        {
+            _id: String,
+            identifier_token: {
+                type: String,
+                unique: true,
+                required: true,
+            },
+            hashed_password: String,
+            username: {
+                unique: true,
+                type: String,
+                required: true,
+            },
+            email: {
+                unique: true,
+                type: String,
+                required: true,
+            },
+        },
+        { _id: false }
+    )
+);
+const RefreshToken = mongoose.model(
+    "refresh_token",
+    new mongoose.Schema({
+        refresh_token: String,
+        user_id: String,
+    })
+);
+
 const clientPromise = mongoose.connect(url);
 
 const inputToMongooseDoc = (obj: Record<string, any>) => {
@@ -54,4 +85,4 @@ const db: Database = {
     },
 };
 
-testAdapter(mongodb(url), db);
+testAdapter(mongodb(mongoose, url), db);

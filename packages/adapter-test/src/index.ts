@@ -286,7 +286,6 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                         email: testUser2.email,
                     },
                 });
-                throw new Error("No error was thrown")
             } catch (e) {
                 const error = e as Error;
                 try {
@@ -302,8 +301,10 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                         "Error message did not match"
                     );
                 }
+                await db.clearUsers();
+                return
             }
-            await db.clearUsers();
+            throw new Error("No error was thrown");
         }
     );
     await test(
@@ -320,7 +321,6 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                         email: testUser1.email,
                     },
                 });
-                throw new Error("No error was thrown")
             } catch (e) {
                 const error = e as Error;
                 validate.isEqual(
@@ -328,8 +328,10 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                     "AUTH_DUPLICATE_USER_DATA",
                     "Error message did not match"
                 );
+                await db.clearUsers();
+                return
             }
-            await db.clearUsers();
+            throw new Error("No error was thrown");
         }
     );
     await test("deleteUser()", "Delete a user from Users DB", async () => {
@@ -511,7 +513,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         async () => {
             try {
                 await adapter.updateUser(invalidInput, {});
-                throw new Error("No error was thrown")
+                throw new Error("No error was thrown");
             } catch (e) {
                 const error = e as Error;
                 validate.isEqual(
