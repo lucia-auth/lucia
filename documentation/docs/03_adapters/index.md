@@ -12,7 +12,7 @@ Stores user data (including passwords). `[user_data]` may be any number of colum
 | ---------------- | ------ | ------------------------------------------- |
 | id               | string | unique                                      |
 | hashed_password  | string |                                             |
-| identifier_token | string | unqiue                                      |
+| identifier_token | string | unique                                      |
 | [user_data]      | any    | Will be passed on to `session` object as is |
 
 ### refresh_token
@@ -22,4 +22,4 @@ Stores refresh tokens.
 | column        | types  | description          |
 | ------------- | ------ | -------------------- |
 | refresh_token | string |                      |
-| used_id       | string | references `user.id` |
+| user_id       | string | references `user.id` |
