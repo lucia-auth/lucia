@@ -145,6 +145,7 @@ export const load = async ({ session }) => {
 Lucia provides a function that verifies if a request is valid. The access token should be send as a bearer token in the authorization header. Lucia does not rely on http-only cookies to verify the user in endpoints to prevent CSRF attacks.
 
 ```js
+// endpoint
 export const GET = async ({ request }) => {
     try {
         const user = await auth.validateRequest(request);
@@ -153,6 +154,15 @@ export const GET = async ({ request }) => {
         // not authenticated
     }
 };
+```
+
+```js
+// send request
+await fetch("/some-endpoint", {
+    headers: {
+        Authorization: `Bearer ${access_token}`
+    }
+}
 ```
 
 ## Refreshing the access token
