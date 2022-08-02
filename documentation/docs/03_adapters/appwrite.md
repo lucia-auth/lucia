@@ -2,6 +2,14 @@
 
 An adapter to use with AppWrite's document database.
 
+### Installation
+
+```bash
+npm i @lucia-sveltekit/adapter-appwrite
+```
+
+## Usage
+
 ```ts
 import appwrite from "@lucia-sveltekit/adapter-appwrite";
 

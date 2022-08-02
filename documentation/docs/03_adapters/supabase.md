@@ -2,6 +2,14 @@
 
 An adapter to use with Supabase's PostgreSQL database.
 
+### Installation
+
+```bash
+npm i @lucia-sveltekit/adapter-supabase
+```
+
+## Usage
+
 ```ts
 import supabase from "@lucia-sveltekit/adapter-supabase";
 
