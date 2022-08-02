@@ -2,7 +2,11 @@
 module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
-		extend: {}
+		extend: {
+			colors: {
+				'discord-blurple': '#5865F2'
+			}
+		}
 	},
 	plugins: []
 };

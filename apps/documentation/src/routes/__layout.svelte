@@ -17,6 +17,7 @@
 	import 'highlight.js/styles/base16/onedark.css';
 	import Github from '$components/icons/Github.svelte';
 	import Menu from '$components/icons/Menu.svelte';
+	import Discord from '$components/icons/Discord.svelte';
 	import Contents from '$components/docs/Contents.svelte';
 	import { afterNavigate } from '$app/navigation';
 
@@ -38,11 +39,24 @@
 	/>
 </svelte:head>
 
-<div class="fixed z-50  w-screen divide-y border-b bg-white">
+<div class="fixed z-50 w-screen divide-y border-b bg-white">
 	<div class="flex place-items-center justify-between px-4 py-2 sm:px-8 lg:px-12">
 		<a class="text-2xl font-semibold" href="/">Lucia</a>
-		<div class="">
-			<a href="https://github.com/pilcrowOnPaper/lucia-sveltekit" target="_blank" class="cursor-pointer"> <Github /></a>
+		<div class="flex gap-x-4 place-content-center">
+			<a
+				href="https://github.com/pilcrowOnPaper/lucia-sveltekit"
+				target="_blank"
+				class="cursor-pointer"
+			>
+				<Github /></a
+			>
+			<a
+				href="https://discord.gg/PwrK3kpVR3"
+				target="_blank"
+				class="cursor-pointer"
+			>
+				<Discord /></a
+			>
 		</div>
 	</div>
 	<div class="px-4 pt-1 sm:px-8 md:hidden lg:px-12">
