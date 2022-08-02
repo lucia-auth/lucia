@@ -2,6 +2,14 @@
 
 An adapter to use with Prisma (for SQL databases).
 
+### Installation
+
+```bash
+npm i @lucia-sveltekit/adapter-prisma
+```
+
+## Usage
+
 ```ts
 import prisma from "@lucia-sveltekit/adapter-prisma";
 import { PrismaClient } from "@prisma/client";

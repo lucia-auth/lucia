@@ -2,6 +2,14 @@
 
 An adapter to use with MongoDB via Mongoose.
 
+### Installation
+
+```bash
+npm i @lucia-sveltekit/adapter-mongoose
+```
+
+## Usage
+
 ```ts
 import adapter from "@lucia-sveltekit/adapter-mongoose";
 import mongoose from "mongoose";
