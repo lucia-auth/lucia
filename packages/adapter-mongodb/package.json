@@ -1,7 +1,7 @@
 {
-    "name": "@lucia-sveltekit/adapter-mongodb",
-    "version": "0.1.1",
-    "description": "MongoDB adapter for Lucia",
+    "name": "@lucia-sveltekit/adapter-mongoose",
+    "version": "0.1.0",
+    "description": "Mongoose (MongoDB) adapter for Lucia",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "module": "dist/index.js",
@@ -30,14 +30,14 @@
     },
     "devDependencies": {
         "lucia-sveltekit": "workspace:*",
-        "@lucia-sveltekit/adapter-test": "workspace:*"
+        "@lucia-sveltekit/adapter-test": "workspace:*",
+        "mongoose": "^6.5.0"
     },
     "dependencies": {
         "@supabase/postgrest-js": "^0.37.4",
         "bcryptjs": "^2.4.3",
         "cookie": "^0.5.0",
         "jsonwebtoken": "^8.5.1",
-        "mongoose": "^6.5.0",
         "nanoid": "^4.0.0"
     }
 }
