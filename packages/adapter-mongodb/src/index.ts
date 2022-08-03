@@ -67,7 +67,6 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                     ...data.user_data,
                 });
                 await userDoc.save();
-                console.log(await User.find().lean());
                 return;
             } catch (e) {
                 console.error(e);
