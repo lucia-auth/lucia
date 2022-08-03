@@ -18,7 +18,9 @@ export const signOut = async () => {
 
 export const autoRefreshTokens = (
     session: Writable<App.Session>,
-    onError: (error: LuciaError) => void
+    onError: (error: LuciaError) => void = (e) => {
+        console.error(e)
+    }
 ) => {
     let accessToken: string;
     let refreshToken: string;
