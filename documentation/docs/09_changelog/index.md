@@ -2,7 +2,7 @@
 
 Aug. 3, 2022
 
--   [Breaking] Replaced `autoRefreshTokens` with `Lucia` wrapper.
+-   [Breaking] Replaced `autoRefreshTokens` with `Lucia` wrapper
 
 ## 0.5.1
 
@@ -15,7 +15,7 @@ Aug. 3, 2022
 
 Jul. 30, 2022
 
--   [Breaking] `getUserFromId`, `getUserFromRefreshToken`, `getUserFromIdentifierToken`, `createUser`, and `saveRefreshToken` are renamed to `getUserById`, `getUserByRefreshToken`, `getUserByIdentifierToken`, `setUser`, and `setRefreshToken`.
+-   [Breaking] `getUserFromId`, `getUserFromRefreshToken`, `getUserFromIdentifierToken`, `createUser`, and `saveRefreshToken` are renamed to `getUserById`, `getUserByRefreshToken`, `getUserByIdentifierToken`, `setUser`, and `setRefreshToken`
 -   [Breaking] `users` and `refresh_tokens` tables are renamed to `user` to `refresh_token`
 -   New testing package for adapters
 
