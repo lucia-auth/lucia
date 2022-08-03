@@ -1,8 +1,8 @@
-## 0.5.2
+## 0.5.3
 
 Aug. 3, 2022
 
--   Replaced `autoRefreshTokens` with `Lucia` wrapper.
+-   [Breaking] Replaced `autoRefreshTokens` with `Lucia` wrapper.
 
 ## 0.5.1
 
