@@ -198,7 +198,7 @@ Access tokens expire in 15 minutes. Lucia will refresh the access token (if expi
 import { Lucia } from "lucia-sveltekit/client";
 import { session } from "$app/stores";
 ```
-```html
+```tsx
 <Lucia {session}>
     <slot/>
 </Lucia>

@@ -63,8 +63,8 @@ Handles token refresh. Should be used inside layouts.
 import { Lucia } from "lucia-sveltekit/client";
 ```
 
-```html
-<Lucia {session} on:error="{handleError}">
+```tsx
+<Lucia {session} on:error={handleError}>
     <slot />
 </Lucia>
 ```
