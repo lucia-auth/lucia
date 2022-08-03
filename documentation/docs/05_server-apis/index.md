@@ -28,8 +28,8 @@ const lucia = <UserData extends {}>(configurations: Configurations) =>
 
 #### Types
 
-| name     | type         | description                                                                                                     |
-| -------- | ------------ | --------------------------------------------------------------------------------------------------------------- |
+| name     | type         | description                                                                                                    |
+| -------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
 | UserData | extends `{}` | Any optional key/types stored inside the `user` table. Every `UserData` in "Reference" refers to this generic. |
 
 #### Example
@@ -317,9 +317,9 @@ const updateUserData: (
 
 #### Parameters
 
-| name     | type              | description          |
-| -------- | ----------------- | -------------------- |
-| userId   | string            | Target user id       |
+| name     | type                | description          |
+| -------- | ------------------- | -------------------- |
+| userId   | string              | Target user id       |
 | userData | Partial\<UserData\> | Key/values to update |
 
 #### Errors
@@ -358,7 +358,7 @@ const updateUserIdentifierToken: (
 
 ### validateRequest
 
-Checks if the request was made by an authenticated user.
+Checks if the request was made by an authenticated user using the authorization header. The access token should be sent as a bearer token inside the authorization header. For GET and POST requests.
 
 ```ts
 const validateRequest: (request: Request) => Promise<User<UserData>>;
@@ -381,3 +381,30 @@ const validateRequest: (request: Request) => Promise<User<UserData>>;
 | name                      | description                                              |
 | ------------------------- | -------------------------------------------------------- |
 | AUTH_INVALID_ACCESS_TOKEN | The access token in the authorization headers in invalid |
+
+### validateRequestByCookie
+
+Checks if the request was made by an authenticated user using cookies. **Do NOT use this for POST or PUT requests as it is vulnerable to CSRF attacks**, and it will throw an error if it is not a GET request for preventive measures.
+
+```ts
+const validateRequest: (request: Request) => Promise<User<UserData>>;
+```
+
+#### Parameters
+
+| name    | type    | description                                       |
+| ------- | ------- | ------------------------------------------------- |
+| request | Request | `event.request` from SvelteKit's `RequestHandler` |
+
+#### Returns
+
+| name | type                           | description |
+| ---- | ------------------------------ | ----------- |
+|      | [User](/references/types#user) |             |
+
+#### Errors
+
+| name                      | description                                              |
+| ------------------------- | -------------------------------------------------------- |
+| AUTH_INVALID_ACCESS_TOKEN | The access token in the authorization headers in invalid |
+| AUTH_INVALID_REQUEST      | The request method is not "GET"                          |

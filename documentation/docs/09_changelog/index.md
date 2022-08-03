@@ -1,3 +1,10 @@
+## 0.5.1
+
+Aug 3, 2022
+
+-   [fix] `validateRequest` now checks for the authorization header as stated in the headers instead of cookies
+-   New `validateRequestByCookie` to validate requests using cookies - for GET requests
+
 ## 0.5.0
 
 Jul 30, 2022
