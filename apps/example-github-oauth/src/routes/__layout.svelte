@@ -1,20 +1,13 @@
 <script lang="ts">
 	import '../app.css';
 
-	import { autoRefreshTokens } from 'lucia-sveltekit/client';
+	import { Lucia } from 'lucia-sveltekit/client';
 	import { session } from '$app/stores';
-	import { onDestroy } from 'svelte';
-
-	const unsubscribe = autoRefreshTokens(session, (e) => {
-		console.log(e);
-	});
-
-	onDestroy(() => {
-		unsubscribe();
-	});
 </script>
 
-<slot />
+<Lucia {session}>
+	<slot />
+</Lucia>
 
 <style lang="postcss">
 	/* I've used @apply to apply tailwind classes for demo purposes to remove/hide as much non-lucia related things
