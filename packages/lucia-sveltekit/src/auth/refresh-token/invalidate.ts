@@ -1,4 +1,4 @@
-import { Context } from "./../index.js";
+import type { Context } from "./../index.js";
 
 export type InvalidateRefreshToken = (refreshToken: string) => Promise<void>;
 export const invalidateRefreshTokenFunction = (context: Context) => {

@@ -3,7 +3,7 @@
 These can be imported from `lucia-sveltekit/client`.
 
 ```ts
-import { autoRefreshTokens } from "lucia-sveltekit/client";
+import { signOut } from "lucia-sveltekit/client";
 ```
 
 ## Reference
@@ -23,44 +23,6 @@ const signOut: () => Promise<void>;
 | AUTH_UNAUTHORIZED      | Unauthorized user                     |
 | DATABASE_UPDATE_FAILED | Failed to update database             |
 | UKNOWN                 | Unknown error, likely a network error |
-
-### autoRefreshTokens
-
-Listens for access token expiration and fetches a new refresh and access token.
-
-```ts
-const autoRefreshTokens: (
-    session: Writable<App.session>,
-    onError?: () => void = () => {}
-) => () => void;
-```
-
-#### Parameters
-
-| name    | type                  | description        |
-| ------- | --------------------- | ------------------ |
-| session | Writable<App.session> | The session stores |
-| onError | function \| undefined | Callback on error  |
-
-#### Returns
-
-Returns a functions that unsubscribes from the listener, which should be called on component/page destroy (`onDestroy()`).
-
-```js
-const unsubscribe = autoRefreshTokens();
-
-onDestroy(() => {
-    unsubscribe();
-});
-```
-
-#### Errors
-
-| name                  | description                           |
-| --------------------- | ------------------------------------- |
-| AUTH_UNAUTHORIZED     | Unauthorized user                     |
-| DATABASE_FETCH_FAILED | Failed to get data from database      |
-| UKNOWN                | Unknown error, likely a network error |
 
 ### refreshTokens
 
@@ -86,6 +48,48 @@ const refreshTokens: (
 | refresh_token | string | A new refresh token |
 
 #### Errors
+
+| name                  | description                           |
+| --------------------- | ------------------------------------- |
+| AUTH_UNAUTHORIZED     | Unauthorized user                     |
+| DATABASE_FETCH_FAILED | Failed to get data from database      |
+| UNKNOWN               | Unknown error, likely a network error |
+
+### Lucia (Component)
+
+Handles token refresh. Should be used inside layouts.
+
+```ts
+import { Lucia } from "lucia-sveltekit/client";
+```
+
+```html
+<Lucia {session} on:error="{handleError}">
+    <slot />
+</Lucia>
+```
+
+#### Props
+
+| name    | type          | description |
+| ------- | ------------- | ----------- |
+| session | session store |             |
+
+#### Events
+
+| name  | description |
+| ----- | ----------- |
+| error | On error    |
+
+#### Error
+
+The following error name can be accessed via `e.detail`.
+
+```ts
+const handleError = (e) => {
+    const error = e.detail;
+};
+```
 
 | name                  | description                           |
 | --------------------- | ------------------------------------- |

@@ -1,13 +1,19 @@
+## 0.5.2
+
+Aug. 3, 2022
+
+-   Replaced `autoRefreshTokens` with `Lucia` wrapper.
+
 ## 0.5.1
 
-Aug 3, 2022
+Aug. 3, 2022
 
 -   [fix] `validateRequest` now checks for the authorization header as stated in the headers instead of cookies
 -   New `validateRequestByCookie` to validate requests using cookies - for GET requests
 
 ## 0.5.0
 
-Jul 30, 2022
+Jul. 30, 2022
 
 -   [Breaking] `getUserFromId`, `getUserFromRefreshToken`, `getUserFromIdentifierToken`, `createUser`, and `saveRefreshToken` are renamed to `getUserById`, `getUserByRefreshToken`, `getUserByIdentifierToken`, `setUser`, and `setRefreshToken`.
 -   [Breaking] `users` and `refresh_tokens` tables are renamed to `user` to `refresh_token`

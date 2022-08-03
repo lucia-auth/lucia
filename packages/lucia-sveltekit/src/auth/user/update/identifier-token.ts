@@ -1,6 +1,6 @@
-import { DatabaseUser, User } from "../../../types.js";
+import type { DatabaseUser, User } from "../../../types.js";
 import { getAccountFromDatabaseData } from "../../../utils/auth.js";
-import { Context } from "../../index.js";
+import type { Context } from "../../index.js";
 
 export type UpdateUserIdentifierToken<UserData extends {}> = (
     userId: string,

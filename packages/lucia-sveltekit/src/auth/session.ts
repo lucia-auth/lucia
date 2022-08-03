@@ -1,4 +1,4 @@
-import { DatabaseUser, User } from "../types.js";
+import type { DatabaseUser, User } from "../types.js";
 import {
     createAccessToken,
     createFingerprintToken,
@@ -6,13 +6,13 @@ import {
     getAccountFromDatabaseData,
 } from "../utils/auth.js";
 import { LuciaError } from "../utils/error.js";
-import {
+import type {
     AccessToken,
     EncryptedRefreshToken,
     FingerprintToken,
     RefreshToken,
 } from "../utils/token.js";
-import { Context } from "./index.js";
+import type { Context } from "./index.js";
 
 export type CreateUserSession<UserData extends {}> = (
     authId: string

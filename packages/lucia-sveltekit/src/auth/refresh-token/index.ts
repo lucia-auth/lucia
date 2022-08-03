@@ -1,4 +1,4 @@
-import { DatabaseUser } from "../../types.js";
+import type { DatabaseUser } from "../../types.js";
 import {
     createAccessToken,
     createRefreshToken,
@@ -6,7 +6,7 @@ import {
 } from "../../utils/auth.js";
 import { LuciaError } from "../../utils/error.js";
 import { AccessToken, RefreshToken } from "../../utils/token.js";
-import { Context } from "./../index.js";
+import type { Context } from "./../index.js";
 
 export type RefreshTokens<UserData extends {}> = (
     refreshToken: string,

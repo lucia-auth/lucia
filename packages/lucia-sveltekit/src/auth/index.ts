@@ -1,38 +1,39 @@
-import { GetSession, Handle } from "@sveltejs/kit";
+import type { GetSession, Handle } from "@sveltejs/kit";
 import { generateRandomString } from "../utils/crypto.js";
-import { Adapter, Env, User } from "../types.js";
+import type { Adapter, Env, User } from "../types.js";
 import { sequence } from "@sveltejs/kit/hooks";
 import { handleEndpointsFunction, handleTokensFunction } from "./hooks.js";
-import {
+import type {
     authenticateUser,
-    authenticateUserFunction,
     CreateUser,
-    createUserFunction,
     DeleteUser,
-    deleteUserFunction,
     GetUser,
+} from "./user/index.js";
+import {
+    authenticateUserFunction,
+    createUserFunction,
+    deleteUserFunction,
     getUserFunction,
 } from "./user/index.js";
-import { ValidateRequest, ValidateRequestByCookie, validateRequestByCookieFunction, validateRequestFunction } from "./request.js";
-import { RefreshTokens, refreshTokensFunction } from "./refresh-token/index.js";
+import type { ValidateRequest, ValidateRequestByCookie } from "./request.js";
 import {
-    InvalidateRefreshToken,
-    invalidateRefreshTokenFunction,
-} from "./refresh-token/invalidate.js";
-import { CreateUserSession, createUserSessionFunction } from "./session.js";
-import {
-    UpdateUserData,
-    updateUserDataFunction,
-} from "./user/update/user-data.js";
-import {
-    UpdateUserIdentifierToken,
-    updateUserIdentifierTokenFunction,
-} from "./user/update/identifier-token.js";
-import {
-    ResetUserPassword,
-    resetUserPasswordFunction,
-} from "./user/reset-password.js";
-import { GetUserById, getUserByIdFunction } from "./user/get.js";
+    validateRequestByCookieFunction,
+    validateRequestFunction,
+} from "./request.js";
+import type { RefreshTokens } from "./refresh-token/index.js";
+import { refreshTokensFunction } from "./refresh-token/index.js";
+import type { InvalidateRefreshToken } from "./refresh-token/invalidate.js";
+import { invalidateRefreshTokenFunction } from "./refresh-token/invalidate.js";
+import { createUserSessionFunction } from "./session.js";
+import type { CreateUserSession } from "./session.js";
+import type { UpdateUserData } from "./user/update/user-data.js";
+import { updateUserDataFunction } from "./user/update/user-data.js";
+import type { UpdateUserIdentifierToken } from "./user/update/identifier-token.js";
+import { updateUserIdentifierTokenFunction } from "./user/update/identifier-token.js";
+import type { ResetUserPassword } from "./user/reset-password.js";
+import { resetUserPasswordFunction } from "./user/reset-password.js";
+import { getUserByIdFunction } from "./user/get.js";
+import type { GetUserById } from "./user/get.js";
 
 export const lucia = <UserData extends {}>(configs: Configurations) => {
     return new Lucia<UserData>(configs);
@@ -119,9 +120,13 @@ export class Lucia<UserData extends {}> {
     public resetUserPassword: ResetUserPassword = async (...params) => {
         return await resetUserPasswordFunction(this.context)(...params);
     };
-    public validateRequestByCookie: ValidateRequestByCookie<UserData> = async (...params) => {
-        return await validateRequestByCookieFunction<UserData>(this.context)(...params)
-    }
+    public validateRequestByCookie: ValidateRequestByCookie<UserData> = async (
+        ...params
+    ) => {
+        return await validateRequestByCookieFunction<UserData>(this.context)(
+            ...params
+        );
+    };
 }
 
 interface Configurations {

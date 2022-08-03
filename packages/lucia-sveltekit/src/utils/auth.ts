@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import { generateRandomString, hash } from "./crypto.js";
-import { DatabaseUser, User } from "../types.js";
+import type { DatabaseUser, User } from "../types.js";
 import { AccessToken, FingerprintToken, RefreshToken } from "./token.js";
-import { Context } from "../auth/index.js";
+import type { Context } from "../auth/index.js";
 
 export const createAccessToken = async <UserData>(
     user: User<UserData>,

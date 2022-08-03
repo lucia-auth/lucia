@@ -1,5 +1,5 @@
-import { Handle } from "@sveltejs/kit";
-import { Context } from "./index.js";
+import type { Handle } from "@sveltejs/kit";
+import type { Context } from "./index.js";
 import cookie from "cookie";
 import { LuciaError } from "../utils/error.js";
 import {

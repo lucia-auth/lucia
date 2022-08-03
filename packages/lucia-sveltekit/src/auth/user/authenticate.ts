@@ -1,4 +1,4 @@
-import { DatabaseUser, User } from "../../types.js";
+import type { DatabaseUser, User } from "../../types.js";
 import {
     createAccessToken,
     createFingerprintToken,
@@ -7,13 +7,13 @@ import {
 } from "../../utils/auth.js";
 import { compare } from "../../utils/crypto.js";
 import { LuciaError } from "../../utils/error.js";
-import {
+import type {
     AccessToken,
     EncryptedRefreshToken,
     FingerprintToken,
     RefreshToken,
 } from "../../utils/token.js";
-import { Context } from "../index.js";
+import type { Context } from "../index.js";
 
 export type authenticateUser<UserData extends {}> = (
     authId: string,
