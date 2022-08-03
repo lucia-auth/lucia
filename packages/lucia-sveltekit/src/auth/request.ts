@@ -3,6 +3,7 @@ import { Context } from "./index.js";
 import cookie from "cookie";
 import { User } from "../types.js";
 import { AccessToken, FingerprintToken } from "../utils/token.js";
+import { Error } from "../index.js";
 
 export type ValidateRequest<UserData extends {}> = (
     request: Request
@@ -23,9 +24,37 @@ export const validateRequestFunction = <UserData extends {}>(
             cookies.fingerprint_token,
             context
         );
-        const accessToken = new AccessToken<UserData>(cookies.access_token, context);
+        const accessToken = new AccessToken<UserData>(token, context);
         const user = await accessToken.user(fingerprintToken.value);
         return user;
     };
     return validateRequest;
+};
+
+export type ValidateRequestByCookie<UserData extends {}> = (
+    request: Request
+) => Promise<User<UserData>>;
+
+export const validateRequestByCookieFunction = <UserData extends {}>(
+    context: Context
+) => {
+    const validateRequestByCookie: ValidateRequest<UserData> = async (
+        request
+    ) => {
+        const method = request.method;
+        if (method !== "GET")
+            throw new Error("AUTH_INVALID_REQUEST");
+        const cookies = cookie.parse(request.headers.get("cookie") || "");
+        const fingerprintToken = new FingerprintToken(
+            cookies.fingerprint_token,
+            context
+        );
+        const accessToken = new AccessToken<UserData>(
+            cookies.access_token,
+            context
+        );
+        const user = await accessToken.user(fingerprintToken.value);
+        return user;
+    };
+    return validateRequestByCookie;
 };

@@ -13,7 +13,7 @@ import {
     GetUser,
     getUserFunction,
 } from "./user/index.js";
-import { ValidateRequest, validateRequestFunction } from "./request.js";
+import { ValidateRequest, ValidateRequestByCookie, validateRequestByCookieFunction, validateRequestFunction } from "./request.js";
 import { RefreshTokens, refreshTokensFunction } from "./refresh-token/index.js";
 import {
     InvalidateRefreshToken,
@@ -119,6 +119,9 @@ export class Lucia<UserData extends {}> {
     public resetUserPassword: ResetUserPassword = async (...params) => {
         return await resetUserPasswordFunction(this.context)(...params);
     };
+    public validateRequestByCookie: ValidateRequestByCookie<UserData> = async (...params) => {
+        return await validateRequestByCookieFunction<UserData>(this.context)(...params)
+    }
 }
 
 interface Configurations {
