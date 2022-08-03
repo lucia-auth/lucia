@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-mongoose",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Mongoose (MongoDB) adapter for Lucia",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
