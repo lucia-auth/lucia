@@ -1,7 +1,7 @@
 import { LuciaError } from "../utils/error.js";
-import { Context } from "./index.js";
+import type { Context } from "./index.js";
 import cookie from "cookie";
-import { User } from "../types.js";
+import type { User } from "../types.js";
 import { AccessToken, FingerprintToken } from "../utils/token.js";
 import { Error } from "../index.js";
 

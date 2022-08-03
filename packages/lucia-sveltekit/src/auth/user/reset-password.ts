@@ -1,5 +1,5 @@
 import { hash } from "../../utils/crypto.js";
-import { Context } from "../index.js";
+import type { Context } from "../index.js";
 
 export type ResetUserPassword = (
     userId: string,

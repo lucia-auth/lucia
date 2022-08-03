@@ -1,7 +1,7 @@
-import { RequestEvent } from "@sveltejs/kit";
+import type { RequestEvent } from "@sveltejs/kit";
 import { LuciaError } from "../../utils/error.js";
 import { createBlankCookies } from "../../utils/token.js";
-import { Context } from "../index.js";
+import type { Context } from "../index.js";
 import { ErrorResponse } from "./index.js";
 
 export const handleLogoutRequest = async (

@@ -192,17 +192,16 @@ await fetch("/some-endpoint")
 
 ## Refreshing the access token
 
-Access tokens expire in 15 minutes. Lucia will refresh the access token (if expired) on server side navigation but not on client side navigation. Lucia provides `autoRefreshTokens()` that refreshes the token automatically on expiration in the client. It returns a unsubscribe function that should be called on page/componenet destroy.
+Access tokens expire in 15 minutes. Lucia will refresh the access token (if expired) on server side navigation but not on client side navigation. Lucia provides a wrapper that refreshes the token automatically on expiration in the client. This should be placed inside the top layout file.
 
 ```js
-import { autoRefreshTokens } from "lucia-sveltekit/client";
+import { Lucia } from "lucia-sveltekit/client";
 import { session } from "$app/stores";
-
-const unsubscribe = autoRefreshTokens(session);
-
-onDestroy(() => {
-    unsubscribe();
-});
+```
+```tsx
+<Lucia {session}>
+    <slot/>
+</Lucia>
 ```
 
 ## Signing out users

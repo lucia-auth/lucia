@@ -1,7 +1,7 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
-import { Context } from "../auth/index.js";
-import { Env, Session, User } from "../types.js";
+import type { Context } from "../auth/index.js";
+import type { Env, Session, User } from "../types.js";
 import { compare, Encrypter } from "./crypto.js";
 import { LuciaError } from "./error.js";
 
