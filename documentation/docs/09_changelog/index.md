@@ -1,3 +1,15 @@
+## 0.5.6
+
+Aug. 4, 2022
+
+-   `lucia-sveltekit/types` exports type `Error`
+
+## 0.5.5
+
+Aug. 4, 2022
+
+-   Fixed broken package.
+
 ## 0.5.3
 
 Aug. 3, 2022

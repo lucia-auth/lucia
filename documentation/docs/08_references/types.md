@@ -72,3 +72,7 @@ type Session<UserData> = {
 | refresh_token     | [RefreshToken](/references/instances#refreshtoken)          |                                           |
 | fingerprint_token | [Fingerprint_Token](/references/instances#fingerprinttoken) |                                           |
 | cookies           | string[]                                                    | An array of all the cookies of the tokens |
+
+### Error
+
+Tyoe of error instance thrown by Lucia.

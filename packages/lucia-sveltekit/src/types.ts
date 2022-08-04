@@ -1,3 +1,5 @@
+import type { LuciaError } from "./utils/error.js";
+
 export interface Adapter {
     getUserByRefreshToken: (
         refreshToken: string
@@ -53,3 +55,4 @@ export type SvelteKitSession<UserData extends {}> = {
 } | null;
 
 export type Env = "DEV" | "PROD";
+export type Error = typeof LuciaError
