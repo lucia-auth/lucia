@@ -37,6 +37,6 @@
 	"dependencies": {
 		"@lucia-sveltekit/adapter-prisma": "^0.3.0",
 		"@prisma/client": "^4.1.0",
-		"lucia-sveltekit": "^0.5.7"
+		"lucia-sveltekit": "^0.5.8"
 	}
 }
