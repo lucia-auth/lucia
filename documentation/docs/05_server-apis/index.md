@@ -361,7 +361,7 @@ const updateUserIdentifierToken: (
 Checks if the request was made by an authenticated user using the authorization header. The access token should be sent as a bearer token inside the authorization header. For GET and POST requests.
 
 ```ts
-const validateRequest: (request: Request) => Promise<User<UserData>>;
+const validateRequest: (request: Request) => Promise<Session<UserData>>;
 ```
 
 #### Parameters
@@ -372,9 +372,9 @@ const validateRequest: (request: Request) => Promise<User<UserData>>;
 
 #### Returns
 
-| name | type                           | description |
-| ---- | ------------------------------ | ----------- |
-|      | [User](/references/types#user) |             |
+| name | type                                 | description |
+| ---- | ------------------------------------ | ----------- |
+|      | [Session](/references/types#session) |             |
 
 #### Errors
 
@@ -387,7 +387,7 @@ const validateRequest: (request: Request) => Promise<User<UserData>>;
 Checks if the request was made by an authenticated user using cookies. **Do NOT use this for POST or PUT requests as it is vulnerable to CSRF attacks**, and it will throw an error if it is not a GET request for preventive measures.
 
 ```ts
-const validateRequest: (request: Request) => Promise<User<UserData>>;
+const validateRequest: (request: Request) => Promise<Session<UserData>>;
 ```
 
 #### Parameters
@@ -398,9 +398,9 @@ const validateRequest: (request: Request) => Promise<User<UserData>>;
 
 #### Returns
 
-| name | type                           | description |
-| ---- | ------------------------------ | ----------- |
-|      | [User](/references/types#user) |             |
+| name | type                                 | description |
+| ---- | ------------------------------------ | ----------- |
+|      | [Session](/references/types#session) |             |
 
 #### Errors
 

@@ -11,8 +11,6 @@
 </script>
 
 <script lang="ts">
-	import { dev } from '$app/env';
-
 	let error = '';
 	let username: string, password: string;
 

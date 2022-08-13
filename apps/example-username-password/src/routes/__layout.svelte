@@ -5,7 +5,7 @@
 	import { session } from '$app/stores';
 </script>
 
-<Lucia {session}>
+<Lucia {session} on:error={(e) => {console.log(e)}}>
 	<slot />
 </Lucia>
 
