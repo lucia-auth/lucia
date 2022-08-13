@@ -9,7 +9,7 @@ Aug 14, 2022
 Aug. 14, 2022
 
 -   Fixed issues with `Lucia.svelte` wrapper 
--   `validateRequest` and `validateRequestByCookie` returns a `Session` instead of `User`
+-   [Breaking] `validateRequest` and `validateRequestByCookie` returns a `Session` instead of `User`
 
 
 ## 0.5.8
