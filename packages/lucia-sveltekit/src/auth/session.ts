@@ -20,7 +20,6 @@ export type CreateUserSession<UserData extends {}> = (
     user: User<UserData>;
     access_token: AccessToken<UserData>;
     refresh_token: RefreshToken;
-    encrypted_refresh_token: EncryptedRefreshToken;
     fingerprint_token: FingerprintToken;
     cookies: string[];
 }>;
@@ -58,7 +57,6 @@ export const createUserSessionFunction = <UserData extends {}>(
             access_token: accessToken,
             refresh_token: refreshToken,
             fingerprint_token: fingerprintToken,
-            encrypted_refresh_token: encryptedRefreshToken,
             cookies: [
                 accessTokenCookie,
                 encryptedRefreshTokenCookie,

@@ -1,3 +1,17 @@
+## 0.6.1
+
+Aug 14, 2022
+
+-   `Session.cookie` returned by `validateRequest` and `validateRequestByCookie` are the values of existing cookies instead of new cookies
+
+## 0.6.0
+
+Aug. 14, 2022
+
+-   Fixed issues with `Lucia.svelte` wrapper 
+-   `validateRequest` and `validateRequestByCookie` returns a `Session` instead of `User`
+
+
 ## 0.5.8
 
 Aug. 4, 2022
