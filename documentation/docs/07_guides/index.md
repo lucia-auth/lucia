@@ -15,3 +15,5 @@
 - [SvelteKit authentication, the better way - Tutorial (by Pilcrow on Youtube)](https://youtu.be/Y98KipzwVdM)
 
 ### To read
+
+- [Implementing password reset (by SkepticMystic)](https://hackmd.io/@NUrzCnE5Q7SGfgxKFQLtDQ/rk5JibLC5)
