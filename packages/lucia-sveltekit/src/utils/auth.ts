@@ -4,7 +4,7 @@ import type { DatabaseUser, User } from "../types.js";
 import { AccessToken, FingerprintToken, RefreshToken } from "./token.js";
 import type { Context } from "../auth/index.js";
 
-export const createAccessToken = async <UserData>(
+export const createAccessToken = async <UserData extends {}>(
     user: User<UserData>,
     fingerprintToken: string,
     context: Context
@@ -47,7 +47,9 @@ export const createFingerprintToken = (context: Context) => {
     return new FingerprintToken(value, context);
 };
 
-export const getAccountFromDatabaseData = <UserData>(databaseData: DatabaseUser<UserData>) => {
+export const getAccountFromDatabaseData = <UserData extends {}>(
+    databaseData: DatabaseUser<UserData>
+) => {
     const userId = databaseData.id as string;
     const hashedPassword = databaseData.hashed_password as string | null;
     const identifierToken = databaseData.identifier_token as string;
