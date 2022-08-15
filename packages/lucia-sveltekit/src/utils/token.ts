@@ -1,7 +1,7 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import type { Context } from "../auth/index.js";
-import type { Env, Session, User } from "../types.js";
+import type { Env, TokenData, User } from "../types.js";
 import { compare, Encrypter } from "./crypto.js";
 import { LuciaError } from "./error.js";
 
@@ -45,11 +45,13 @@ export class AccessToken<UserData extends {}> extends Token {
     public user = async (fingerprintToken: string) => {
         try {
             const userSession = jwt.decode(this.value) as Partial<
-                User<UserData> & Session
+                User<UserData> & TokenData
             >;
             await compare(fingerprintToken, userSession.fingerprint_hash || "");
+            if (userSession.role !== "access_token") throw new Error();
             delete userSession.fingerprint_hash;
             delete userSession.exp, delete userSession.iat;
+            delete userSession.role;
             const user = userSession as User<UserData>;
             return user;
         } catch {
@@ -95,8 +97,10 @@ export class RefreshToken extends Token {
             const userSession = jwt.decode(this.value) as {
                 fingerprint_hash: string;
                 user_id: string;
+                role: string;
             };
             await compare(fingerprint, userSession.fingerprint_hash || "");
+            if (userSession.role !== "refresh_token") throw new Error();
             return userSession.user_id;
         } catch (e) {
             throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");

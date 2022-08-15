@@ -1,3 +1,10 @@
+## 0.6.2
+
+Aug 15, 2022
+
+-   [Breaking] All tokens issued before this update is invalid
+-   [Fix] `validateRequest` and `validateRequestByCookie` rejects refresh tokens
+
 ## 0.6.1
 
 Aug 14, 2022
@@ -34,7 +41,7 @@ Aug. 3, 2022
 
 Aug. 3, 2022
 
--   [fix] `validateRequest` now checks for the authorization header as stated in the headers instead of cookies
+-   [Fix] `validateRequest` now checks for the authorization header as stated in the headers instead of cookies
 -   New `validateRequestByCookie` to validate requests using cookies - for GET requests
 
 ## 0.5.0
@@ -49,7 +56,7 @@ Jul. 30, 2022
 
 Jul. 28, 2022
 
--   [fix] Fixed `adapterGetUpdateData()`
+-   [Fix] Fixed `adapterGetUpdateData()`
 
 ## 0.4.0
 
