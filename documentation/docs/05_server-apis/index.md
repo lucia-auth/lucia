@@ -120,7 +120,7 @@ const createUser: (
 
 ### createUserSession
 
-Creates a new session.
+Creates a new session. Reload the page or update the session object for `$session.lucia` (such as `$session.lucia.access_token`) to update.
 
 ```ts
 const createUserSession: (userId: string) => Promise<Session<UserData>>;
