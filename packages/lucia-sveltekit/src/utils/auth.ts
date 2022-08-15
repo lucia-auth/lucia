@@ -14,6 +14,7 @@ export const createAccessToken = async <UserData extends {}>(
         {
             ...user,
             fingerprint_hash: hashedFingerprint,
+            role: "access_token",
         },
         context.secret,
         {
@@ -33,6 +34,7 @@ export const createRefreshToken = async (
         {
             user_id: userId,
             fingerprint_hash: hashedFingerprint,
+            role: "refresh_token",
         },
         context.secret,
         {

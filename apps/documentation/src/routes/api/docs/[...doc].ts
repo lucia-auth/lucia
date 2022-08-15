@@ -45,6 +45,10 @@ export const get: RequestHandler = async ({ params }) => {
 			'[Breaking]',
 			'<span class="breaking">[Breaking]</span>'
 		);
+		element.innerHTML = element.innerHTML.replaceAll(
+			'[Fix]',
+			'<span class="fix">[Fix]</span>'
+		);
 	});
 	html = document.toString()
 	return {

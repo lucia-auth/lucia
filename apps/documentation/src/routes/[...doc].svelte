@@ -103,4 +103,7 @@
 	:global(.markdown .breaking) {
 		@apply text-red-500 font-medium;
 	}
+	:global(.markdown .fix) {
+		@apply text-blue-500 font-medium;
+	}
 </style>
