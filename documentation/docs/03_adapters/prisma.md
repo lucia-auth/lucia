@@ -57,7 +57,7 @@ model RefreshToken {
   user_id       String
 
   @@index([user_id])
-  @@map("refresh_token)
+  @@map("refresh_token")
 }
 ```
 
