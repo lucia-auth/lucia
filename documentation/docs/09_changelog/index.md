@@ -2,7 +2,7 @@
 
 Aug. 18, 2022
 
-Add support for `SvelteKit@next-417`+.
+Add support for `SvelteKit@next-417`+
 
 -   [Breaking] SvelteKit session store is replaced by Lucia's own `session` store
 -   [Breaking] `getAuthSession()` is for load function in `/+layout.server.ts`
