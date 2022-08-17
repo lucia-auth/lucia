@@ -49,7 +49,7 @@ export type DatabaseUser<UserData> = {
     identifier_token: string;
 } & UserData;
 
-export type SvelteKitSession<UserData extends {}> = {
+export type Session<UserData extends {}> = {
     user: User<UserData>;
     access_token: string;
     refresh_token: string;

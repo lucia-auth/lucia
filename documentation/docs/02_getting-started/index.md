@@ -20,11 +20,10 @@ export const auth = lucia({
 });
 ```
 
-For Lucia to work, its own handle and getSession functions must be added to hooks. 
+For Lucia to work, its own handle functions must be added to hooks (`/src/hooks/index.js`).
 
 ```js
 export const handle = auth.handleAuth;
-export const getSession = auth.getAuthSession;
 ```
 
 This is mainly for 2 things:
@@ -33,6 +32,28 @@ This is mainly for 2 things:
 2. Listen for requests to endpoints that Lucia exposes (creates) for token refresh and sign outs. Make sure to not have existing endpoints that overlaps with them. These endpoints are:
     - /api/auth/refresh
     - /api/auth/logout
+
+Finally, create `/+layout.svelte` and `/+layout.server.js`. 
+
+In `/+layout.svelte`, import the `Lucia` wrapper. Access tokens expire in 15 minutes. Lucia will refresh the access token (if expired) on server side navigation using hooks and the wrapper will refresh the token automatically on expiration in the client. This should be placed inside the top layout file.
+
+```tsx
+import { Lucia } from "lucia-sveltekit/client";
+```
+
+```tsx
+<Lucia>
+    <slot />
+</Lucia>
+```
+
+In `/+layout.server.ts`, create a load function. This makes users' data available both in load functions and in pages.
+
+```ts
+import { auth } from "$lib/lucia.js";
+
+export const load = auth.getAuthSession
+```
 
 ## Creating a user
 
@@ -75,6 +96,19 @@ export const POST = async () => {
 };
 ```
 
+```ts
+// for POST actions
+export const POST = async ({ setHeaders }) => {
+    // ...
+    try {
+        // same as above
+        setHeaders("set-cookie", createUser.cookies)
+        return;
+    } catch {
+        // handle errors
+    }
+```
+
 ## Authenticating a user
 
 ### The basic steps
@@ -108,6 +142,19 @@ export const POST = async () => {
 };
 ```
 
+```ts
+// for POST actions
+export const POST = async ({ setHeaders }) => {
+    // ...
+    try {
+        // same as above
+        setHeaders("set-cookie", createUser.cookies)
+        return;
+    } catch {
+        // handle errors
+    }
+```
+
 ## Checking if the user is authenticated
 
 Lucia adds the following to `session.lucia` if the user if authenticated, and `session.lucia` is `null` if not (refer to: [`SvelteKitSession`](/references/types#sveltekitsession))
@@ -123,9 +170,11 @@ Lucia adds the following to `session.lucia` if the user if authenticated, and `s
 ### In the client
 
 ```js
-import { session } from "$app/stores";
+import { getSession } from "lucia-sveltekit/client";
 
-if ($session.lucia) {
+const lucia = getSession();
+
+if ($lucia) {
     // authenticated
 }
 ```
@@ -133,8 +182,9 @@ if ($session.lucia) {
 ### In a load function
 
 ```js
-export const load = async ({ session }) => {
-    if (session.lucia) {
+export const load = async ({ parent }) => {
+    const { lucia } = await parent();
+    if (lucia) {
         // authenticated
     }
 };
@@ -164,9 +214,9 @@ export const GET = async ({ request }) => {
 // send request
 await fetch("/some-endpoint", {
     headers: {
-        Authorization: `Bearer ${access_token}`
-    }
-})
+        Authorization: `Bearer ${access_token}`,
+    },
+});
 ```
 
 #### GET requests
@@ -187,21 +237,7 @@ export const GET = async ({ request }) => {
 
 ```js
 // send request
-await fetch("/some-endpoint")
-```
-
-## Refreshing the access token
-
-Access tokens expire in 15 minutes. Lucia will refresh the access token (if expired) on server side navigation but not on client side navigation. Lucia provides a wrapper that refreshes the token automatically on expiration in the client. This should be placed inside the top layout file.
-
-```js
-import { Lucia } from "lucia-sveltekit/client";
-import { session } from "$app/stores";
-```
-```tsx
-<Lucia {session}>
-    <slot/>
-</Lucia>
+await fetch("/some-endpoint");
 ```
 
 ## Signing out users
@@ -217,3 +253,17 @@ const signOutUser = async () => {
     }
 };
 ```
+
+## Types
+
+`User` and `Session` returned by Lucia's APIs can be typed using the `Lucia` namespace. In `src/app.d.ts`, copy the following:
+
+```ts
+declare namespace Lucia {
+	interface UserData {}
+}
+```
+
+Any data inside `Lucia.UserData` will represent `user_data` (`createUser()`) and `UserData` in [types](/references/types).
+
+

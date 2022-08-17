@@ -8,6 +8,20 @@ import { signOut } from "lucia-sveltekit/client";
 
 ## Reference
 
+### getSession
+
+Retrieves the current session.
+
+```ts
+const getSession = () => Writable<ClientSession | null>;
+```
+
+#### Returns
+
+| name | type                            | description                                                   |
+| ---- | ------------------------------- | ------------------------------------------------------------- |
+|      | Writable<ClientSession \| null> | A writable store with [`UserSession`](/references/types#clientsession) or `null` if unauthorized |
+
 ### signOut
 
 Signs out a user.
@@ -64,16 +78,10 @@ import { Lucia } from "lucia-sveltekit/client";
 ```
 
 ```tsx
-<Lucia {session} on:error={handleError}>
+<Lucia on:error={handleError}>
     <slot />
 </Lucia>
 ```
-
-#### Props
-
-| name    | type          | description |
-| ------- | ------------- | ----------- |
-| session | session store |             |
 
 #### Events
 

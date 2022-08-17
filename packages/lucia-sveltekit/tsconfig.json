@@ -9,7 +9,8 @@
         "allowSyntheticDefaultImports": true,
         "declaration": true,
         "outDir": "./dist",
-        "strict": true
+        "strict": true,
+        "isolatedModules": false
     },
     "include": ["src"],
     "exclude": ["node_modules/", "**/__tests__/*"],

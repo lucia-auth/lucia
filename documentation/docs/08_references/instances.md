@@ -1,7 +1,7 @@
 ## Lucia
 
 ```ts
-Lucia<UserData extends {}>
+Lucia
 ```
 
 Refer to [Server APIs](/server-apis).

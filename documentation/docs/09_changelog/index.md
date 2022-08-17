@@ -1,13 +1,24 @@
+## 0.7.0
+
+Aug. 18, 2022
+
+Add support for `SvelteKit@next-417`+
+
+-   [Breaking] SvelteKit session store is replaced by Lucia's own `session` store
+-   [Breaking] `getAuthSession()` is for load function in `/+layout.server.ts`
+-   [Breaking] `Lucia` no longer takes in a generic for `UserData`
+-   New `Lucia` namespace
+
 ## 0.6.2
 
-Aug 15, 2022
+Aug. 15, 2022
 
 -   [Breaking] All tokens issued before this update is invalid
 -   [Fix] `validateRequest` and `validateRequestByCookie` rejects refresh tokens
 
 ## 0.6.1
 
-Aug 14, 2022
+Aug. 14, 2022
 
 -   `Session.cookie` returned by `validateRequest` and `validateRequestByCookie` are the values of existing cookies instead of new cookies
 
