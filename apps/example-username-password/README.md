@@ -30,14 +30,12 @@ Create 2 tables:
 
 #### user
 
-`[user_data]` represents any number of additional columns that may be used.
-
-| column name      | type    | relations | nullable | unique   | identity |
-| ---------------- | ------- | --------- | -------- | -------- | -------- |
-| id               | varchar |           |          | true     | true     |
-| identifier_token | varchar |           |          | true     |          |
-| hashed_password  | varchar |           | true     |          |          |
-| [user_data]      | any     | any       | true     | optional |          |
+| column name      | type    | relations | nullable | unique | identity |
+| ---------------- | ------- | --------- | -------- | ------ | -------- |
+| id               | varchar |           |          | true   | true     |
+| identifier_token | varchar |           |          | true   |          |
+| hashed_password  | varchar |           | true     |        |          |
+| `username`       | varchar |           |          | true   |          |
 
 #### refresh_token
 

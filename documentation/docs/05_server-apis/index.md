@@ -57,7 +57,7 @@ const authenticateUser: (
     authId: string,
     identifier: string,
     password?: string
-) => Promise<Session<UserData>>;
+) => Promise<ServerSession<UserData>>;
 ```
 
 #### Parameters
@@ -72,7 +72,7 @@ const authenticateUser: (
 
 | name | type                                 | description |
 | ---- | ------------------------------------ | ----------- |
-|      | [Session](/references/types#session) |             |
+|      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
 
@@ -92,7 +92,7 @@ const createUser: (
     authId: string,
     identifier: string,
     options?: { password?: string; user_data?: Record<string, any> }
-) => Promise<Session<UserData>>;
+) => Promise<ServerSession<UserData>>;
 ```
 
 #### Parameters
@@ -108,7 +108,7 @@ const createUser: (
 
 | name | type                                 | description |
 | ---- | ------------------------------------ | ----------- |
-|      | [Session](/references/types#session) |             |
+|      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
 
@@ -123,7 +123,7 @@ const createUser: (
 Creates a new session. Reload the page or update the session object for `$session.lucia` (such as `$session.lucia.access_token`) to update.
 
 ```ts
-const createUserSession: (userId: string) => Promise<Session<UserData>>;
+const createUserSession: (userId: string) => Promise<ServerSession<UserData>>;
 ```
 
 #### Parameters
@@ -136,7 +136,7 @@ const createUserSession: (userId: string) => Promise<Session<UserData>>;
 
 | name | type                                 | description |
 | ---- | ------------------------------------ | ----------- |
-|      | [Session](/references/types#session) |             |
+|      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
 
@@ -168,11 +168,11 @@ const deleteUser: (userId: string) => Promise<void>;
 
 ### getSession
 
-SvelteKit's getSession function. Refer to [SvelteKit's getSession](https://kit.svelte.dev/docs/hooks#getsession).
+SvelteKit's server load function for `/+layout.server.ts`. Refer to [SvelteKit's ServerLoad](https://kit.svelte.dev/docs/types#sveltejs-kit-serverload).
 
 ```ts
-import type { GetSession } from "@sveltejs/kit/types";
-const getAuthSession: GetSession;
+import type { ServerLoad } from "@sveltejs/kit/types";
+const getAuthSession: ServerLoad;
 ```
 
 ### getUser
@@ -361,7 +361,7 @@ const updateUserIdentifierToken: (
 Checks if the request was made by an authenticated user using the authorization header. The access token should be sent as a bearer token inside the authorization header. For GET and POST requests.
 
 ```ts
-const validateRequest: (request: Request) => Promise<Session<UserData>>;
+const validateRequest: (request: Request) => Promise<ServerSession<UserData>>;
 ```
 
 #### Parameters
@@ -374,7 +374,7 @@ const validateRequest: (request: Request) => Promise<Session<UserData>>;
 
 | name | type                                 | description |
 | ---- | ------------------------------------ | ----------- |
-|      | [Session](/references/types#session) |             |
+|      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
 
@@ -387,7 +387,7 @@ const validateRequest: (request: Request) => Promise<Session<UserData>>;
 Checks if the request was made by an authenticated user using cookies. **Do NOT use this for POST or PUT requests as it is vulnerable to CSRF attacks**, and it will throw an error if it is not a GET request for preventive measures.
 
 ```ts
-const validateRequest: (request: Request) => Promise<Session<UserData>>;
+const validateRequest: (request: Request) => Promise<ServerSession<UserData>>;
 ```
 
 #### Parameters
@@ -400,7 +400,7 @@ const validateRequest: (request: Request) => Promise<Session<UserData>>;
 
 | name | type                                 | description |
 | ---- | ------------------------------------ | ----------- |
-|      | [Session](/references/types#session) |             |
+|      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
 

@@ -1,6 +1,6 @@
 {
     "name": "lucia-sveltekit",
-    "version": "0.6.2",
+    "version": "0.7.0",
     "description": "A simple authentication library for SvelteKit",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -42,7 +42,7 @@
     "license": "MIT",
     "devDependencies": {
         "@rollup/plugin-typescript": "^8.2.1",
-        "@sveltejs/kit": "^1.0.0-next.375",
+        "@sveltejs/kit": "1.0.0-next.415",
         "@types/bcryptjs": "^2.4.2",
         "@types/cookie": "^0.5.1",
         "@types/jsonwebtoken": "^8.5.1",

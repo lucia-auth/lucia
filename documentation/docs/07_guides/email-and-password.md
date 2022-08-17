@@ -1,4 +1,4 @@
-This guide will cover how to implement email and password authentication. This will only cover the sign-in part of it as other parts of Lucia and authentication (like token refresh and protected routes) are explained in [getting started](/getting-started).
+This guide will cover how to implement email and password authentication. This will only cover the API parts of it as other parts of Lucia and authentication (like token refresh and protected routes) are explained in [getting started](/getting-started). In addition, this guide will use `+server.ts` syntax but can be adapted to `+page.server.ts`.
 
 ## Set up
 
@@ -33,9 +33,7 @@ import { auth } from "$lib/lucia";
 export const POST: RequestHandler = async ({ request }) => {
     const { email, password } = await request.json();
     if (!email || !password) {
-        return {
-            status: 400,
-        };
+        return new Response(null, 400);
     }
 };
 ```
@@ -52,32 +50,36 @@ try {
             email,
         },
     });
-    return {
+    return new Response(null, {
         status: 302,
         headers: {
             "set-cookie": createUser.cookies,
             location: "/",
         },
-    };
+    };)
 } catch (e) {
     const error = e as Error;
     if (
         error.message === "AUTH_DUPLICATE_IDENTIFIER_TOKEN" ||
         error.message === "AUTH_DUPLICATE_USER_DATA"
     ) {
-        return {
-            status: 400,
-            body: JSON.stringify({
-                error: "Email already in use.",
-            }),
-        };
+        return new Response(
+	        JSON.stringify({
+		        error: 'Email already in use.'
+	        }),
+	        {
+		        status: 400
+	        }
+        );
     }
-    return {
-        status: 500,
-        body: JSON.stringify({
+    return new Response(
+	    JSON.stringify({
             error: "Unknown error.",
         }),
-    };
+	    {
+		    status: 500,
+	    }
+    );
 }
 ```
 
@@ -94,9 +96,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();
     if (!email || !password) {
-        return {
-            status: 400,
-        };
+        return new Response(400);
     }
 };
 ```
@@ -112,32 +112,36 @@ try {
         email,
         password
     );
-    return {
+    return new Response(null, {
         status: 302,
         headers: {
             "set-cookie": authenticateUser.cookies,
             location: "/",
         },
-    };
+    });
 } catch (e) {
     const error = e as Error;
     if (
         error.message === "AUTH_INVALID_IDENTIFIER_TOKEN" ||
         error.message === "AUTH_INVALID_PASSWORD"
     ) {
-        return {
-            status: 400,
-            body: JSON.stringify({
+        return new Response(
+            JSON.stringify({
                 error: "Incorrect email or password.",
             }),
-        };
+            {
+                status: 400,
+            }
+        );
     }
     // database connection error
-    return {
-        status: 500,
-        body: JSON.stringify({
+    return new Response(
+        JSON.stringify({
             error: "Unknown error.",
         }),
-    };
+        {
+            status: 500,
+        }
+    );
 }
 ```

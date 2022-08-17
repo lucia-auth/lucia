@@ -30,10 +30,10 @@ Refer to [custom adapters](/adapters/custom)
 
 Refer to [Lucia configurations](/configurations)
 
-### SvelteKitSession
+### ClientSession
 
 ```ts
-type SvelteKitSession<UserData> = {
+type ClientSession<UserData> = {
     user: User<UserData>;
     access_token: string;
     refresh_token: string;
@@ -56,7 +56,7 @@ declare namespace App {
 ### Session
 
 ```ts
-type Session<UserData> = {
+type ServerSession<UserData> = {
     user: User<UserData>;
     access_token: AccessToken;
     refresh_token: RefreshToken;

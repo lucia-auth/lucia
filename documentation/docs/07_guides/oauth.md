@@ -1,4 +1,4 @@
-This guide will cover how to implement OAuth authentication using Github as an example. This will only cover the sign-in part of it as other parts of Lucia and authentication (like token refresh and protected routes) are explained in [getting started](/getting-started).
+This guide will cover how to implement email and password authentication. This will only cover the API parts of it as other parts of Lucia and authentication (like token refresh and protected routes) are explained in [getting started](/getting-started). In addition, this guide will use `+server.ts` syntax but can be adapted to `+page.server.ts`.
 
 ## Setting up
 
@@ -55,12 +55,14 @@ Github will send the user to your callback url with a `code` parameter. This cod
 ```ts
 const code = url.searchParams.get("code");
 if (!code) {
-    return {
-        status: 400,
-        body: JSON.stringify({
+    return new Response(
+        JSON.stringify({
             message: "Invalid request url parameters.",
         }),
-    };
+        {
+            status: 400,
+        }
+    );
 }
 const getAccessTokenResponse = await fetch(
     `https://github.com/login/oauth/access_token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}`,
@@ -72,12 +74,14 @@ const getAccessTokenResponse = await fetch(
     }
 );
 if (!getAccessTokenResponse.ok) {
-    return {
-        status: 500,
-        body: JSON.stringify({
+    return new Response(
+        JSON.stringify({
             message: "Failed to fetch data from Github",
         }),
-    };
+        {
+            status: 500,
+        }
+    );
 }
 const getAccessToken = await getAccessTokenResponse.json();
 const accessToken = getAccessToken.access_token;
@@ -95,12 +99,14 @@ const getUserEmailsResponse = await fetch(
     }
 );
 if (!getUserEmailsResponse.ok) {
-    return {
-        status: 500,
-        body: JSON.stringify({
+    return new Response(
+        JSON.stringify({
             message: "Failed to fetch data from Github",
         }),
-    };
+        {
+            status: 500,
+        }
+    );
 }
 const emails = (await getUserEmailsResponse.json()) as {
     email: string;
@@ -135,31 +141,33 @@ try {
             email,
         },
     });
-    return {
+    return new Response(null, {
         status: 302,
         headers: {
             "set-cookie": createUser.cookies,
             location: "/",
         },
-    };
+    });
 } catch (e) {
     const error = e as Error;
     // violates email column unique constraint
     if (error.message === "AUTH_DUPLICATE_USER_DATA") {
-        return {
-            status: 400,
-            body: JSON.stringify({
+        return new Response(
+            JSON.stringify({
                 message: "Email already in use",
             }),
-        };
+            400
+        );
     }
     // database connection error
-    return {
-        status: 500,
-        body: JSON.stringify({
+    return new Response(
+        JSON.stringify({
             message: "An unknown error occured",
         }),
-    };
+        {
+            status: 500,
+        }
+    );
 }
 ```
 
@@ -171,21 +179,23 @@ Inside the if block, authenticate the user using [`authenticateUser`](/server-ap
 if (user) {
     try {
         const authenticateUser = await auth.authenticateUser("github", email);
-        return {
+        return new Response(null, {
             status: 302,
             headers: {
                 "set-cookie": authenticateUser.cookies,
                 location: "/",
             },
-        };
+        });
     } catch {
         // Cannot connect to database
-        return {
-            status: 500,
-            body: JSON.stringify({
+        return new Response(
+            JSON.stringify({
                 message: "An unknown error occured",
             }),
-        };
+            {
+                status: 500,
+            }
+        );
     }
 }
 ```

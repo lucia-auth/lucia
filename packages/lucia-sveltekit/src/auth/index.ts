@@ -1,6 +1,6 @@
-import type { GetSession, Handle } from "@sveltejs/kit";
+import type { Handle, ServerLoad } from "@sveltejs/kit";
 import { generateRandomString } from "../utils/crypto.js";
-import type { Adapter, Env, User } from "../types.js";
+import type { Adapter, Env } from "../types.js";
 import { sequence } from "@sveltejs/kit/hooks";
 import { handleEndpointsFunction, handleTokensFunction } from "./hooks.js";
 import type {
@@ -35,8 +35,8 @@ import { resetUserPasswordFunction } from "./user/reset-password.js";
 import { getUserByIdFunction } from "./user/get.js";
 import type { GetUserById } from "./user/get.js";
 
-export const lucia = <UserData extends {}>(configs: Configurations) => {
-    return new Lucia<UserData>(configs);
+export const lucia = (configs: Configurations) => {
+    return new Lucia<Lucia.UserData>(configs);
 };
 
 export class Lucia<UserData extends {}> {
@@ -65,7 +65,7 @@ export class Lucia<UserData extends {}> {
     private handleEndpoints: Handle = async (params) => {
         return handleEndpointsFunction(this.context)(params);
     };
-    public getAuthSession: GetSession = async ({ locals }) => {
+    public getAuthSession: ServerLoad = async ({ locals }) => {
         return {
             lucia: locals.lucia,
         };
