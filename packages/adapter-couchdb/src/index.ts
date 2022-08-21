@@ -243,7 +243,7 @@ const setUpUserDB = async (couch: ServerScope) => {
             _id: '_design/userView',
             views: {
                 'user-view': {
-                    map: 'function (doc) {\n  emit(doc._id, 1);\n  emit(doc.email);\n  emit(doc.identifier_token);\n}'
+                    map: 'function (doc) {\n  emit(\"email\", doc.email);\n  emit(\"identifier_token\", doc.identifier_token);\n}'
                 }
             },
             language: 'javascript'
