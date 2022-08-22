@@ -216,16 +216,12 @@ export const setUpDatabase = async (couch: ServerScope) => {
     // check if databases exist
     const databases = await couch.db.list();
     if (
-        !databases.some((elem: string) => {
-            return elem === 'user';
-        })
+        !databases.includes('user')
     ) {
         await setUpUserDB(couch);
     }
     if (
-        !databases.some((elem: string) => {
-            return elem === 'refresh_token';
-        })
+        !databases.includes('refresh_token')
     ) {
         await setUpRefreshTokenDB(couch);
     }
