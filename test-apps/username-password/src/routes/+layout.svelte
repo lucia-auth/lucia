@@ -3,11 +3,12 @@
 
 	import { Lucia } from 'lucia-sveltekit/client';
 </script>
+
 <svelte:head>
 	<title>Lucia demo</title>
 </svelte:head>
 <Lucia on:error={(e) => console.error(e)}>
-	<slot/>
+	<slot />
 </Lucia>
 
 <style lang="postcss">
@@ -22,7 +23,9 @@
 	:global(input) {
 		@apply border appearance-none outline-none my-1 rounded p-1 w-full;
 	}
-	:global(.github), :global(.button), :global(button) {
+	:global(.github),
+	:global(.button),
+	:global(button) {
 		@apply bg-black text-white my-1 rounded py-1 cursor-pointer w-full text-center hover:opacity-80;
 	}
 	:global(.link) {

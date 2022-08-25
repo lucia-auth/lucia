@@ -2,35 +2,35 @@ import type { DatabaseUser, User } from "../../types.js";
 import { getAccountFromDatabaseData } from "../../utils/auth.js";
 import type { Context } from "../index.js";
 
-export type GetUser<UserData extends {}> = (
+type GetUser = (
     authId: string,
     identifier: string
-) => Promise<User<UserData> | null>;
+) => Promise<User | null>;
 
-export const getUserFunction = <UserData extends {}>(context: Context) => {
-    const getUser: GetUser<UserData> = async (authId, identifier) => {
+export const getUserFunction = (context: Context) => {
+    const getUser: GetUser = async (authId, identifier) => {
         const identifierToken = `${authId}:${identifier}`;
         const databaseData = (await context.adapter.getUserByIdentifierToken(
             identifierToken
-        )) as DatabaseUser<UserData> | null;
+        )) as DatabaseUser | null;
         if (!databaseData) return null;
-        const account = getAccountFromDatabaseData<UserData>(databaseData);
+        const account = getAccountFromDatabaseData(databaseData);
         return account.user;
     };
     return getUser;
 };
 
-export type GetUserById<UserData extends {}> = (
+type GetUserById = (
     userId: string
-) => Promise<User<UserData> | null>;
+) => Promise<User| null>;
 
-export const getUserByIdFunction = <UserData extends {}>(context: Context) => {
-    const getUserById: GetUserById<UserData> = async (userId: string) => {
+export const getUserByIdFunction = (context: Context) => {
+    const getUserById: GetUserById = async (userId: string) => {
         const databaseData = (await context.adapter.getUserById(
             userId
-        )) as DatabaseUser<UserData> | null;
+        )) as DatabaseUser | null;
         if (!databaseData) return null;
-        const account = getAccountFromDatabaseData<UserData>(databaseData);
+        const account = getAccountFromDatabaseData(databaseData);
         return account.user;
     };
     return getUserById;

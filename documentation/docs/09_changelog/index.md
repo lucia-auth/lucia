@@ -1,3 +1,10 @@
+## 0.7.1
+
+Aug. 25, 2022
+
+-   [Breaking] Replaced `auth.getAuthSession` with `auth.load`
+-   [Fix] Tokens no longer refreshed automatically on API requests
+
 ## 0.7.0
 
 Aug. 18, 2022

@@ -1,6 +1,6 @@
 import type { Context } from "./../index.js";
 
-export type InvalidateRefreshToken = (refreshToken: string) => Promise<void>;
+type InvalidateRefreshToken = (refreshToken: string) => Promise<void>;
 export const invalidateRefreshTokenFunction = (context: Context) => {
     const invalidateRefreshToken: InvalidateRefreshToken = async (
         refreshToken: string

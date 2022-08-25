@@ -12,6 +12,7 @@ declare namespace App {
 	// interface Stuff {}
 }
 
+
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
 	interface UserData {

@@ -33,6 +33,7 @@ export const POST: Action = async ({request, setHeaders}) => {
 			};
 		}
 		// database connection error
+		console.log(error)
 		return {
 			status: 500,
 			errors: {

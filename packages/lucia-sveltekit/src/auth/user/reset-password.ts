@@ -1,7 +1,7 @@
 import { hash } from "../../utils/crypto.js";
 import type { Context } from "../index.js";
 
-export type ResetUserPassword = (
+type ResetUserPassword = (
     userId: string,
     password: string | null
 ) => Promise<void>;

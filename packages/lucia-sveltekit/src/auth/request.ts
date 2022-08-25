@@ -1,28 +1,21 @@
 import { LuciaError } from "../utils/error.js";
 import type { Context } from "./index.js";
 import cookie from "cookie";
-import type { User } from "../types.js";
+import type { ServerSession } from "../types.js";
 import {
     AccessToken,
     FingerprintToken,
     EncryptedRefreshToken,
-    RefreshToken,
 } from "../utils/token.js";
 import { Error } from "../index.js";
 
-export type ValidateRequest<UserData extends {}> = (
+type ValidateRequest = (
     request: Request
-) => Promise<{
-    user: User<UserData>;
-    access_token: AccessToken<UserData>;
-    refresh_token: RefreshToken;
-    fingerprint_token: FingerprintToken;
-    cookies: string[];
-}>;
-export const validateRequestFunction = <UserData extends {}>(
+) => Promise<ServerSession>;
+export const validateRequestFunction = (
     context: Context
 ) => {
-    const validateRequest: ValidateRequest<UserData> = async (request) => {
+    const validateRequest: ValidateRequest = async (request) => {
         const clonedReq = request.clone();
         const authorizationHeader =
             clonedReq.headers.get("Authorization") || "";
@@ -37,7 +30,7 @@ export const validateRequestFunction = <UserData extends {}>(
             cookies.fingerprint_token,
             context
         );
-        const accessToken = new AccessToken<UserData>(token, context);
+        const accessToken = new AccessToken(token, context);
         const encryptedRefreshToken = new EncryptedRefreshToken(
             cookies.encrypt_refresh_token,
             context
@@ -59,20 +52,14 @@ export const validateRequestFunction = <UserData extends {}>(
     return validateRequest;
 };
 
-export type ValidateRequestByCookie<UserData extends {}> = (
+export type ValidateRequestByCookie = (
     request: Request
-) => Promise<{
-    user: User<UserData>;
-    access_token: AccessToken<UserData>;
-    refresh_token: RefreshToken;
-    fingerprint_token: FingerprintToken;
-    cookies: string[];
-}>;
+) => Promise<ServerSession>;
 
-export const validateRequestByCookieFunction = <UserData extends {}>(
+export const validateRequestByCookieFunction = (
     context: Context
 ) => {
-    const validateRequestByCookie: ValidateRequest<UserData> = async (
+    const validateRequestByCookie: ValidateRequest = async (
         request
     ) => {
         const clonedReq = request.clone();
@@ -83,7 +70,7 @@ export const validateRequestByCookieFunction = <UserData extends {}>(
             cookies.fingerprint_token,
             context
         );
-        const accessToken = new AccessToken<UserData>(
+        const accessToken = new AccessToken(
             cookies.access_token,
             context
         );

@@ -4,15 +4,15 @@ import {
 } from "../../../utils/auth.js";
 import type { Context } from "../../index.js";
 
-export type UpdateUserData<UserData extends {}> = (
+type UpdateUserData = (
     userId: string,
-    userData: Partial<UserData>
-) => Promise<User<UserData>>;
+    userData: Partial<Lucia.UserData>
+) => Promise<User>;
 
-export const updateUserDataFunction = <UserData extends {}>(context: Context) => {
-    const updateUserData: UpdateUserData<UserData> = async (userId, userData) => {
-        const databaseData = await context.adapter.updateUser(userId, { user_data: userData}) as DatabaseUser<UserData>
-        const account = getAccountFromDatabaseData<UserData>(databaseData);
+export const updateUserDataFunction = (context: Context) => {
+    const updateUserData: UpdateUserData= async (userId, userData) => {
+        const databaseData = await context.adapter.updateUser(userId, { user_data: userData}) as DatabaseUser
+        const account = getAccountFromDatabaseData(databaseData);
         return account.user
     };
     return updateUserData

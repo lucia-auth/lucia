@@ -41,7 +41,7 @@ In `/+layout.svelte`, import the `Lucia` wrapper. Access tokens expire in 15 min
 import { Lucia } from "lucia-sveltekit/client";
 ```
 
-```tsx
+```html
 <Lucia>
     <slot />
 </Lucia>
@@ -52,7 +52,7 @@ In `/+layout.server.ts`, create a load function. This makes users' data availabl
 ```ts
 import { auth } from "$lib/lucia.js";
 
-export const load = auth.getAuthSession
+export const load = auth.load
 ```
 
 ## Creating a user

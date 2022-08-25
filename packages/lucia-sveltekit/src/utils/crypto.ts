@@ -1,6 +1,6 @@
 import { random, customRandom } from "nanoid";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
+import crypto from "node:crypto"
 
 export const generateRandomString = (length: number) => {
     const characters =

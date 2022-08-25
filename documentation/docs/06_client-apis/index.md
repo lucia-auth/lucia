@@ -13,14 +13,14 @@ import { signOut } from "lucia-sveltekit/client";
 Retrieves the current session.
 
 ```ts
-const getSession = () => Writable<ClientSession | null>;
+const getSession: () => Writable<Session | null>;
 ```
 
 #### Returns
 
-| name | type                            | description                                                   |
-| ---- | ------------------------------- | ------------------------------------------------------------- |
-|      | Writable<ClientSession \| null> | A writable store with [`UserSession`](/references/types#clientsession) or `null` if unauthorized |
+| name | type                            | description                                                                            |
+| ---- | ------------------------------- | -------------------------------------------------------------------------------------- |
+|      | Writable<ClientSession \| null> | A writable store with [`Session`](/references/types#session) or `null` if unauthorized |
 
 ### signOut
 
@@ -77,7 +77,7 @@ Handles token refresh. Should be used inside layouts.
 import { Lucia } from "lucia-sveltekit/client";
 ```
 
-```tsx
+```html
 <Lucia on:error={handleError}>
     <slot />
 </Lucia>
