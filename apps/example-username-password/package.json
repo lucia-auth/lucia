@@ -37,6 +37,6 @@
 		"@fontsource/fira-mono": "^4.5.0",
 		"@lucia-sveltekit/adapter-supabase": "^0.3.1",
 		"cookie": "^0.4.1",
-		"lucia-sveltekit": "^0.7.0"
+		"lucia-sveltekit": "^0.7.1"
 	}
 }

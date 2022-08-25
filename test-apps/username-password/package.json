@@ -13,30 +13,30 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "next",
+		"@sveltejs/kit": "1.0.0-next.426",
 		"@types/cookie": "^0.5.1",
-		"@typescript-eslint/eslint-plugin": "^5.27.0",
-		"@typescript-eslint/parser": "^5.27.0",
+		"@typescript-eslint/eslint-plugin": "^5.35.1",
+		"@typescript-eslint/parser": "^5.35.1",
 		"autoprefixer": "^10.4.8",
-		"eslint": "^8.16.0",
-		"eslint-config-prettier": "^8.3.0",
+		"eslint": "^8.22.0",
+		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"postcss": "^8.4.16",
-		"prettier": "^2.6.2",
+		"prettier": "^2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
-		"svelte": "^3.46.0",
-		"svelte-check": "^2.7.1",
+		"svelte": "^3.49.0",
+		"svelte-check": "^2.8.1",
 		"svelte-preprocess": "^4.10.7",
 		"tailwindcss": "^3.1.8",
-		"tslib": "^2.3.1",
+		"tslib": "^2.4.0",
 		"typescript": "^4.7.4",
-		"vite": "^3.0.0"
+		"vite": "^3.0.9"
 	},
 	"type": "module",
 	"dependencies": {
-		"@fontsource/fira-mono": "^4.5.0",
-		"@lucia-sveltekit/adapter-supabase": "^0.3.1",
-		"cookie": "^0.4.1",
-		"lucia-sveltekit": "workspace:*"
+		"@fontsource/fira-mono": "^4.5.9",
+		"@lucia-sveltekit/adapter-supabase": "workspace:^0.3.1",
+		"cookie": "^0.4.2",
+		"lucia-sveltekit": "workspace:0.7.1"
 	}
 }

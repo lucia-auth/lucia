@@ -1,6 +1,6 @@
 import type { Context } from "../index.js";
 
-export type DeleteUser = (userId: string) => Promise<void>
+type DeleteUser = (userId: string) => Promise<void>
 
 export const deleteUserFunction = (context: Context) => {
     const deleteUser : DeleteUser = async (userId: string) => {

@@ -34,10 +34,6 @@
         "mongoose": "^6.5.0"
     },
     "dependencies": {
-        "@supabase/postgrest-js": "^0.37.4",
-        "bcryptjs": "^2.4.3",
-        "cookie": "^0.5.0",
-        "jsonwebtoken": "^8.5.1",
-        "nanoid": "^4.0.0"
+        "@supabase/postgrest-js": "^0.37.4"
     }
 }

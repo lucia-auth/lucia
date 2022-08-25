@@ -33,7 +33,7 @@ class Token {
     }
 }
 
-export class AccessToken<UserData extends {}> extends Token {
+export class AccessToken extends Token {
     constructor(value: string | null, context: Context) {
         super(value, context.secret, {
             name: "access_token",
@@ -45,14 +45,14 @@ export class AccessToken<UserData extends {}> extends Token {
     public user = async (fingerprintToken: string) => {
         try {
             const userSession = jwt.decode(this.value) as Partial<
-                User<UserData> & TokenData
+                User & TokenData
             >;
             await compare(fingerprintToken, userSession.fingerprint_hash || "");
             if (userSession.role !== "access_token") throw new Error();
             delete userSession.fingerprint_hash;
             delete userSession.exp, delete userSession.iat;
             delete userSession.role;
-            const user = userSession as User<UserData>;
+            const user = userSession as User;
             return user;
         } catch {
             throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");

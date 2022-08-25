@@ -1,4 +1,3 @@
-import type { DatabaseUser, User } from "../types.js";
 import {
     createAccessToken,
     createFingerprintToken,
@@ -6,34 +5,24 @@ import {
     getAccountFromDatabaseData,
 } from "../utils/auth.js";
 import { LuciaError } from "../utils/error.js";
-import type {
-    AccessToken,
-    EncryptedRefreshToken,
-    FingerprintToken,
-    RefreshToken,
-} from "../utils/token.js";
+
+import type { DatabaseUser, ServerSession } from "../types.js";
 import type { Context } from "./index.js";
 
-export type CreateUserSession<UserData extends {}> = (
+type CreateUserSession = (
     authId: string
-) => Promise<{
-    user: User<UserData>;
-    access_token: AccessToken<UserData>;
-    refresh_token: RefreshToken;
-    fingerprint_token: FingerprintToken;
-    cookies: string[];
-}>;
+) => Promise<ServerSession>;
 
-export const createUserSessionFunction = <UserData extends {}>(
+export const createUserSessionFunction = (
     context: Context
 ) => {
-    const createUserSession: CreateUserSession<UserData> = async (authId) => {
+    const createUserSession: CreateUserSession = async (authId) => {
         const databaseData = (await context.adapter.getUserById(
             authId
-        )) as DatabaseUser<UserData> | null;
+        )) as DatabaseUser | null;
         if (!databaseData)
             throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
-        const account = getAccountFromDatabaseData<UserData>(databaseData);
+        const account = getAccountFromDatabaseData(databaseData);
         const userId = account.user.user_id;
         const fingerprintToken = createFingerprintToken(context);
         const refreshToken = await createRefreshToken(
@@ -43,7 +32,7 @@ export const createUserSessionFunction = <UserData extends {}>(
         );
         await context.adapter.setRefreshToken(refreshToken.value, userId);
         const encryptedRefreshToken = refreshToken.encrypt();
-        const accessToken = await createAccessToken<UserData>(
+        const accessToken = await createAccessToken(
             account.user,
             fingerprintToken.value,
             context

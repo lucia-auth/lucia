@@ -26,26 +26,6 @@ const lucia = <UserData extends {}>(configurations: Configurations) =>
 | ----- | ------------------------------------ | ----------- |
 | Lucia | [Lucia](/references/instances#lucia) |             |
 
-#### Types
-
-| name     | type         | description                                                                                                    |
-| -------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
-| UserData | extends `{}` | Any optional key/types stored inside the `user` table. Every `UserData` in "Reference" refers to this generic. |
-
-#### Example
-
-Where columns `username` and `age` are in the `user` table as [user_data].
-
-```ts
-const auth = lucia<{ username: string; age: number }>({
-    adapter: adapter(),
-    env: "DEV",
-    secret: "aWmJoT0gOdjh2-Zc2Zv3BTErb29qQNWEunlj",
-});
-```
-
-abcdefghijklmnopqrstucwxyz
-
 ## Reference
 
 ### authenticateUser
@@ -166,13 +146,12 @@ const deleteUser: (userId: string) => Promise<void>;
 | ---------------------- | ------------------------- |
 | DATABASE_UDPATE_FAILED | Failed to update database |
 
-### getSession
+### Load
 
 SvelteKit's server load function for `/+layout.server.ts`. Refer to [SvelteKit's ServerLoad](https://kit.svelte.dev/docs/types#sveltejs-kit-serverload).
 
 ```ts
-import type { ServerLoad } from "@sveltejs/kit/types";
-const getAuthSession: ServerLoad;
+const load: ServerLoad;
 ```
 
 ### getUser

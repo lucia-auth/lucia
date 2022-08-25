@@ -18,5 +18,5 @@
         <input type="submit" value="Continue" class="button"/>
 	</form>
 	<p class="error">{errors?.message || ""}</p>
-	<a href="/login" class="link">Create a new account</a>
+	<a href="/signup" class="link">Create a new account</a>
 </div>

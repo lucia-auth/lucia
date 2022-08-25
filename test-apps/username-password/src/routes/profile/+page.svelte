@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { signOut, getSession } from 'lucia-sveltekit/client';
+	import { onMount } from 'svelte';
 
 	const signOutUser = async () => {
 		await signOut();
@@ -8,7 +9,7 @@
 
 	let number = 0;
 
-	const lucia = getSession()
+	const lucia = getSession();
 
 	const fetchNumber = async () => {
 		const response = await fetch('/api/random-number', {
@@ -18,11 +19,22 @@
 		});
 		const result = await response.json();
 		if (result.error) {
-			console.error(result.error)
-			return
+			console.error(result.error);
+			return;
 		}
 		number = result.number;
+		console.log(new Date().toLocaleString());
+		console.log(number);
 	};
+
+	const fetchNumberTimeout = () => {
+		setTimeout(async () => {
+			await fetchNumber();
+			fetchNumberTimeout();
+		}, 5000);
+	};
+
+	onMount(fetchNumberTimeout);
 </script>
 
 <h2>Profile</h2>

@@ -1,45 +1,34 @@
 import type { Handle, ServerLoad } from "@sveltejs/kit";
-import { generateRandomString } from "../utils/crypto.js";
 import type { Adapter, Env } from "../types.js";
+
+import { generateRandomString } from "../utils/crypto.js";
 import { sequence } from "@sveltejs/kit/hooks";
 import { handleEndpointsFunction, handleTokensFunction } from "./hooks.js";
-import type {
-    authenticateUser,
-    CreateUser,
-    DeleteUser,
-    GetUser,
-} from "./user/index.js";
 import {
     authenticateUserFunction,
     createUserFunction,
     deleteUserFunction,
     getUserFunction,
 } from "./user/index.js";
-import type { ValidateRequest, ValidateRequestByCookie } from "./request.js";
 import {
     validateRequestByCookieFunction,
     validateRequestFunction,
 } from "./request.js";
-import type { RefreshTokens } from "./refresh-token/index.js";
 import { refreshTokensFunction } from "./refresh-token/index.js";
-import type { InvalidateRefreshToken } from "./refresh-token/invalidate.js";
 import { invalidateRefreshTokenFunction } from "./refresh-token/invalidate.js";
 import { createUserSessionFunction } from "./session.js";
-import type { CreateUserSession } from "./session.js";
-import type { UpdateUserData } from "./user/update/user-data.js";
 import { updateUserDataFunction } from "./user/update/user-data.js";
-import type { UpdateUserIdentifierToken } from "./user/update/identifier-token.js";
 import { updateUserIdentifierTokenFunction } from "./user/update/identifier-token.js";
-import type { ResetUserPassword } from "./user/reset-password.js";
 import { resetUserPasswordFunction } from "./user/reset-password.js";
 import { getUserByIdFunction } from "./user/get.js";
-import type { GetUserById } from "./user/get.js";
+import { AccessToken } from "$lib/utils/token.js";
+import { loadFunction } from "./load.js";
 
 export const lucia = (configs: Configurations) => {
-    return new Lucia<Lucia.UserData>(configs);
+    return new Auth(configs);
 };
 
-export class Lucia<UserData extends {}> {
+export class Auth {
     private adapter: Adapter;
     private secret: string;
     private generateUserId: () => string;
@@ -58,74 +47,64 @@ export class Lucia<UserData extends {}> {
             generateUserId: this.generateUserId,
             env: this.env,
         };
+        this.authenticateUser = authenticateUserFunction(this.context);
+        this.createUser = createUserFunction(this.context);
+        this.getUser = getUserFunction(this.context);
+        this.getUserById = getUserByIdFunction(this.context);
+        this.deleteUser = deleteUserFunction(this.context);
+        this.validateRequest = validateRequestFunction(this.context);
+        this.validateRequestByCookie = validateRequestByCookieFunction(
+            this.context
+        );
+        this.refreshTokens = refreshTokensFunction(this.context);
+        this.invalidateRefreshToken = invalidateRefreshTokenFunction(
+            this.context
+        );
+        this.createUserSession = createUserSessionFunction(this.context);
+        this.updateUserData = updateUserDataFunction(this.context);
+        this.updateUserIdentifierToken = updateUserIdentifierTokenFunction(
+            this.context
+        );
+        this.resetUserPassword = resetUserPasswordFunction(this.context);
+        this.handleTokens = handleTokensFunction(this.context);
+        this.handleEndpoints = handleEndpointsFunction(this.context);
+        this.load = loadFunction(this.context)
+        this.handleAuth = sequence(this.handleTokens, this.handleEndpoints);
     }
-    private handleTokens: Handle = async (params) => {
-        return handleTokensFunction(this.context)(params);
-    };
-    private handleEndpoints: Handle = async (params) => {
-        return handleEndpointsFunction(this.context)(params);
+    private handleTokens: ReturnType<typeof handleTokensFunction>;
+    private handleEndpoints: ReturnType<typeof handleEndpointsFunction>;
+    public handleAuth: Handle;
+    public authenticateUser: ReturnType<typeof authenticateUserFunction>;
+    public createUser: ReturnType<typeof createUserFunction>;
+    public getUser: ReturnType<typeof getUserFunction>;
+    public getUserById: ReturnType<typeof getUserByIdFunction>;
+    public deleteUser: ReturnType<typeof deleteUserFunction>;
+    public validateRequest: ReturnType<typeof validateRequestFunction>;
+    public validateRequestByCookie: ReturnType<
+        typeof validateRequestByCookieFunction
+    >;
+    public refreshTokens: ReturnType<typeof refreshTokensFunction>;
+    public invalidateRefreshToken: ReturnType<
+        typeof invalidateRefreshTokenFunction
+    >;
+    public createUserSession: ReturnType<typeof createUserSessionFunction>;
+    public updateUserData: ReturnType<typeof updateUserDataFunction>;
+    public updateUserIdentifierToken: ReturnType<
+        typeof updateUserIdentifierTokenFunction
+    >;
+    public resetUserPassword: ReturnType<typeof resetUserPasswordFunction>;
+    public load: ReturnType<typeof loadFunction>
+    public validateAccessToken = async (
+        accessToken: string,
+        fingerprintToken: string
+    ) => {
+        const accessTokenInstance = new AccessToken(accessToken, this.context);
+        return await accessTokenInstance.user(fingerprintToken);
     };
     public getAuthSession: ServerLoad = async ({ locals }) => {
         return {
             lucia: locals.lucia,
         };
-    };
-    public handleAuth: Handle = (params: any) => {
-        return sequence(this.handleTokens, this.handleEndpoints)(params);
-    };
-    public authenticateUser: authenticateUser<UserData> = async (...params) => {
-        return await authenticateUserFunction<UserData>(this.context)(
-            ...params
-        );
-    };
-    public createUser: CreateUser<UserData> = async (...params) => {
-        return await createUserFunction<UserData>(this.context)(...params);
-    };
-    public getUser: GetUser<UserData> = async (...params) => {
-        return await getUserFunction<UserData>(this.context)(...params);
-    };
-    public getUserById: GetUserById<UserData> = async (...params) => {
-        return await getUserByIdFunction<UserData>(this.context)(...params);
-    };
-    public deleteUser: DeleteUser = async (...params) => {
-        return await deleteUserFunction(this.context)(...params);
-    };
-    public validateRequest: ValidateRequest<UserData> = async (...params) => {
-        return await validateRequestFunction<UserData>(this.context)(...params);
-    };
-    public refreshTokens: RefreshTokens<UserData> = async (...params) => {
-        return await refreshTokensFunction<UserData>(this.context)(...params);
-    };
-    public invalidateRefreshToken: InvalidateRefreshToken = async (
-        ...params
-    ) => {
-        return await invalidateRefreshTokenFunction(this.context)(...params);
-    };
-    public createUserSession: CreateUserSession<UserData> = async (
-        ...params
-    ) => {
-        return await createUserSessionFunction<UserData>(this.context)(
-            ...params
-        );
-    };
-    public updateUserData: UpdateUserData<UserData> = async (...params) => {
-        return await updateUserDataFunction<UserData>(this.context)(...params);
-    };
-    public updateUserIdentifierToken: UpdateUserIdentifierToken<UserData> =
-        async (...params) => {
-            return await updateUserIdentifierTokenFunction<UserData>(
-                this.context
-            )(...params);
-        };
-    public resetUserPassword: ResetUserPassword = async (...params) => {
-        return await resetUserPasswordFunction(this.context)(...params);
-    };
-    public validateRequestByCookie: ValidateRequestByCookie<UserData> = async (
-        ...params
-    ) => {
-        return await validateRequestByCookieFunction<UserData>(this.context)(
-            ...params
-        );
     };
 }
 
@@ -137,7 +116,7 @@ interface Configurations {
 }
 
 export interface Context {
-    auth: Lucia<any>;
+    auth: Auth;
     adapter: Adapter;
     secret: string;
     env: Env;

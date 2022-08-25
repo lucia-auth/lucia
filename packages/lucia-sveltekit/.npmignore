@@ -1,4 +1,7 @@
 /src
-/gitignore
+/test
+/node_modules
+.gitignore
+.npmignore
 .DS_Store
-/.svelte-kit
+tsconfig.json

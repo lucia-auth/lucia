@@ -1,6 +1,5 @@
-import { getContext, setContext } from "svelte";
-import { writable } from "svelte/store";
-import type { Writable } from "svelte/store"
+import { getContext } from "svelte";
+import type { Writable } from "svelte/store";
 import type { Session } from "./types.js";
 import { LuciaError } from "./utils/error.js";
 export { default as Lucia } from "./Lucia.svelte";
@@ -46,5 +45,5 @@ export const refreshTokens = async (refreshToken: string) => {
 
 export const getSession = () => {
     const stores = getContext("__lucia__") as Record<string, Writable<any>>;
-    return stores.session as Writable<Session<Lucia.UserData>>;
+    return stores.session as Writable<Session>;
 };

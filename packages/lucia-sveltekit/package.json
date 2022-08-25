@@ -1,14 +1,14 @@
 {
     "name": "lucia-sveltekit",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "description": "A simple authentication library for SvelteKit",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "module": "dist/index.js",
-    "svelte": "dist/index.js",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "module": "index.js",
+    "svelte": "index.js",
     "type": "module",
     "files": [
-        "dist/**/*"
+        "**/*"
     ],
     "scripts": {
         "build": " svelte-kit package"
@@ -19,17 +19,17 @@
         "authentication"
     ],
     "exports": {
-        "./package.json": "./dist/package.json",
-        ".": "./dist/index.js",
-        "./client": "./dist/client.js"
+        "./package.json": "./package.json",
+        ".": "./index.js",
+        "./client": "./client.js"
     },
     "typesVersions": {
         "*": {
             "client": [
-                "dist/client.d.ts"
+                "client.d.ts"
             ],
             "types": [
-                "dist/types.d.ts"
+                "types.d.ts"
             ]
         }
     },

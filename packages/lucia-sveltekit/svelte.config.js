@@ -8,6 +8,7 @@ export default {
     files: {
       lib: 'src'
     },
+    
 
     package: {
       dir: 'dist',
