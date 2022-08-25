@@ -1,5 +1,5 @@
 {
-	"name": "adapter-couchdb",
+	"name": "@lucia-sveltekit/adapter-couchdb",
 	"version": "0.1.0",
 	"description": "CouchDB adapter for Lucia using nano",
 	"main": "dist/index.js",
