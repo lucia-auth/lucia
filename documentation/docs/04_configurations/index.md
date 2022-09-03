@@ -39,7 +39,7 @@ const env: "DEV" | "PROD"
 In general, the value should be defined as the following.
 
 ```ts
-import { dev } from "$app/env"
+import { dev } from "$app/environment"
 const env = dev ? "DEV" : "PROD"
 ```
 

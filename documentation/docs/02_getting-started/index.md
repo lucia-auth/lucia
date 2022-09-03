@@ -11,7 +11,7 @@ In `$lib/lucia.ts`, import `lucia` and export it (in this case as `auth`). Durin
 ```js
 import lucia from "lucia-sveltekit";
 import supabase from "@lucia-sveltekit/adapter-supabase";
-import { dev } from "$app/env";
+import { dev } from "$app/environment";
 
 export const auth = lucia({
     adapter: supabase(),

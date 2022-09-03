@@ -33,7 +33,7 @@ The link will send the user to Github's login page and they will be sent to your
 Create `routes/api/github.ts` and accept a GET request. If you change this path, make sure to change the callback url. Include your Github OAuth app's id and secret as well.
 
 ```ts
-import { dev } from "$app/env"; // dev === true if in developmenet
+import { dev } from "$app/environment"; // dev === true if in developmenet
 import { auth } from "$lib/lucia.js"; // Lucia instance
 import type { RequestHandler } from "@sveltejs/kit";
 import type { Error } from "lucia-sveltekit";
