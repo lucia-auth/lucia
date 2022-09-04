@@ -5,7 +5,7 @@ Sep. 4, 2022
 -   [Breaking] Replaced bcrypt (`bcryptjs`) hashing algorithm with Argon2id (`argon2`). **Password-based accounts made pre-v0.8.0 are incompatible.**
 -   [Breaking] `signOut()` requires an access token
 -   [Fix] `signOut()` no longer throws an error on successful attempt
--   new `validateAccessToken()` method
+-   New `validateAccessToken()` method
 -   `locals` no longer includes token data
 -   Throw additional error/warning message in console
 
