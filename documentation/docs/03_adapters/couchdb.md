@@ -27,7 +27,7 @@ const auth = lucia({
 
 | name  | type             | description      |
 | ----- | ---------------- | ---------------- |
-| couch | nano.ServerScope | CouchDB instance |
+| couch | `nano.ServerScope` | CouchDB instance |
 
 ## Database
 

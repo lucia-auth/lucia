@@ -34,6 +34,7 @@ Create `routes/api/github.ts` and accept a GET request. If you change this path,
 
 ```ts
 import { dev } from "$app/environment"; // dev === true if in development
+
 import { auth } from "$lib/lucia.js"; // Lucia instance
 import type { RequestHandler } from "@sveltejs/kit";
 import type { Error } from "lucia-sveltekit";
