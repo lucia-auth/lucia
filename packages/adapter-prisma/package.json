@@ -30,11 +30,11 @@
     },
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",
-        "lucia-sveltekit": "workspace:*",
         "ts-node": "^10.9.1"
     },
     "dependencies": {
         "@prisma/client": "^4.1.0",
-        "prisma": "^4.1.1"
+        "prisma": "^4.1.1",
+        "lucia-sveltekit": "workspace:*"
     }
 }

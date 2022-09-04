@@ -34,9 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@fontsource/fira-mono": "^4.5.9",
-		"@lucia-sveltekit/adapter-supabase": "workspace:^0.3.1",
-		"cookie": "^0.4.2",
-		"lucia-sveltekit": "workspace:0.7.1"
+		"@lucia-sveltekit/adapter-supabase": "workspace:*",
+		"lucia-sveltekit": "workspace:*"
 	}
 }

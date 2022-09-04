@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { signOut, getSession } from 'lucia-sveltekit/client';
 
+	const lucia = getSession();
 	const signOutUser = async () => {
-		await signOut();
+		await signOut($lucia?.access_token || '');
 		window.location.href = '/';
 	};
 
 	let number = 0;
-
-	const lucia = getSession()
 
 	const fetchNumber = async () => {
 		const response = await fetch('/api/random-number', {
@@ -18,8 +17,8 @@
 		});
 		const result = await response.json();
 		if (result.error) {
-			console.error(result.error)
-			return
+			console.error(result.error);
+			return;
 		}
 		number = result.number;
 	};

@@ -2,7 +2,7 @@ import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import type { Context } from "../auth/index.js";
 import type { Env, TokenData, User } from "../types.js";
-import { compare, Encrypter } from "./crypto.js";
+import { verify, Encrypter } from "./crypto.js";
 import { LuciaError } from "./error.js";
 
 class Token {
@@ -47,7 +47,8 @@ export class AccessToken extends Token {
             const userSession = jwt.decode(this.value) as Partial<
                 User & TokenData
             >;
-            await compare(fingerprintToken, userSession.fingerprint_hash || "");
+            const isValid = await verify(fingerprintToken, userSession.fingerprint_hash || "");
+            if (!isValid) throw new Error()
             if (userSession.role !== "access_token") throw new Error();
             delete userSession.fingerprint_hash;
             delete userSession.exp, delete userSession.iat;
@@ -99,7 +100,8 @@ export class RefreshToken extends Token {
                 user_id: string;
                 role: string;
             };
-            await compare(fingerprint, userSession.fingerprint_hash || "");
+            const isValid = await verify(fingerprint, userSession.fingerprint_hash || "");
+            if (!isValid) throw new Error()
             if (userSession.role !== "refresh_token") throw new Error();
             return userSession.user_id;
         } catch (e) {

@@ -1,5 +1,5 @@
 import { Error, adapterGetUpdateData } from "lucia-sveltekit";
-import type { Adapter, DatabaseUser } from "lucia-sveltekit/dist/types";
+import type { Adapter, DatabaseUser } from "lucia-sveltekit/types";
 import type { Mongoose, MongooseError } from "mongoose";
 
 export const transformUserDoc = (obj: Record<string, any>) => {
@@ -28,9 +28,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                     _id: tokenDoc.user_id,
                 }).lean();
                 if (!user) return null;
-                const dbUser = transformUserDoc(user) as DatabaseUser<
-                    Record<string, any>
-                >;
+                const dbUser = transformUserDoc(user) as DatabaseUser;
                 return dbUser;
             } catch {
                 throw new Error("DATABASE_FETCH_FAILED");
@@ -38,14 +36,12 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
         },
         getUserByIdentifierToken: async (identifierToken: string) => {
             try {
-                const user: DatabaseUser<Record<string, any>> | null =
+                const user: DatabaseUser | null =
                     await User.findOne({
                         identifier_token: identifierToken,
                     }).lean();
                 if (!user) return null;
-                const dbUser = transformUserDoc(user) as DatabaseUser<
-                    Record<string, any>
-                >;
+                const dbUser = transformUserDoc(user) as DatabaseUser;
                 return dbUser;
             } catch {
                 throw new Error("DATABASE_FETCH_FAILED");
@@ -121,14 +117,12 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
         },
         getUserById: async (userId: string) => {
             try {
-                const userDoc: DatabaseUser<Record<string, any>> | null =
+                const userDoc: DatabaseUser | null =
                     await User.findOne({
                         _id: userId,
                     }).lean();
                 if (!userDoc) return null;
-                return transformUserDoc(userDoc) as DatabaseUser<
-                    Record<string, any>
-                >;
+                return transformUserDoc(userDoc) as DatabaseUser;
             } catch (e) {
                 console.error(e);
                 throw new Error("DATABASE_FETCH_FAILED");
@@ -136,7 +130,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
         },
         updateUser: async (userId, newData) => {
             const partialData = adapterGetUpdateData(newData);
-            let userDoc: DatabaseUser<Record<string, any>> | null;
+            let userDoc: DatabaseUser | null;
             try {
                 userDoc = await User.findOneAndUpdate(
                     {
@@ -149,9 +143,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                 throw new Error("DATABASE_FETCH_FAILED");
             }
             if (!userDoc) throw new Error("AUTH_INVALID_USER_ID");
-            return transformUserDoc(userDoc) as DatabaseUser<
-                Record<string, any>
-            >;
+            return transformUserDoc(userDoc) as DatabaseUser;
         },
     };
 };

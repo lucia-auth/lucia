@@ -1,38 +1,36 @@
-import type { Session } from "$lib/types.js";
+import type { Session } from "../types.js";
 import {
     createAccessToken,
     createRefreshToken,
     getAccountFromDatabaseData,
-} from "$lib/utils/auth.js";
+} from "../utils/auth.js";
 import {
     AccessToken,
     createBlankCookies,
+    EncryptedRefreshToken,
     FingerprintToken,
-    RefreshToken,
-} from "$lib/utils/token.js";
-import type { ServerLoadEvent } from "@sveltejs/kit";
+} from "../utils/token.js";
+import type { ServerLoadEvent } from "../kit.js";
 import type { Context } from "./index.js";
+import cookie from "cookie";
 
 export type Load = (event: ServerLoadEvent) => Promise<{
     lucia: Session | null;
 }>;
 
 export const loadFunction = (context: Context) => {
-    const load: Load = async ({ locals, setHeaders }) => {
-        if (!locals.lucia) {
-            return {
-                lucia: null,
-            };
-        }
-        const accessToken = new AccessToken(locals.lucia.access_token, context);
-        const refreshToken = new RefreshToken(
-            locals.lucia.refresh_token,
-            context
-        );
+    const load: Load = async ({ setHeaders, request }) => {
+        const cookies = cookie.parse(request.headers.get("cookie") || "");
         const fingerprintToken = new FingerprintToken(
-            locals.lucia.fingerprint_token,
+            cookies.fingerprint_token,
             context
         );
+        const encryptedRefreshToken = new EncryptedRefreshToken(
+            cookies.encrypt_refresh_token,
+            context
+        );
+        const refreshToken = encryptedRefreshToken.decrypt();
+        const accessToken = new AccessToken(cookies.access_token, context);
         try {
             const user = await accessToken.user(fingerprintToken.value); // throws an error is invalid
             return {

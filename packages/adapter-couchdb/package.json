@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-sveltekit/adapter-couchdb",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "CouchDB adapter for Lucia using nano",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -10,7 +10,8 @@
 		"test": "test"
 	},
 	"scripts": {
-		"test": "npx ts-node --esm -T test/index.ts"
+		"test": "npx ts-node --esm -T test/index.ts",
+		"build": "tsc"
 	},
 	"repository": {
 		"type": "git",
@@ -28,9 +29,11 @@
 		".": "./dist/index.js"
 	},
 	"devDependencies": {
-		"@lucia-sveltekit/adapter-test": "^0.2.1",
-		"lucia-sveltekit": "^0.7.0",
-		"nano": "^10.0.0",
+		"@lucia-sveltekit/adapter-test": "workspace:*",
 		"ts-node": "^10.9.1"
+	},
+	"dependencies": {
+		"nano": "^10.0.0",
+		"lucia-sveltekit": "workspace:*"
 	}
 }

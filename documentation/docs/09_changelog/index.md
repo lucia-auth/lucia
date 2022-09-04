@@ -1,3 +1,14 @@
+## 0.8.1
+
+Sep. 4, 2022
+
+-   [Breaking] Replaced bcrypt (`bcryptjs`) hashing algorithm with Argon2id (`argon2`). **Password-based accounts made pre-v0.8.0 are incompatible.**
+-   [Breaking] `signOut()` requires an access token
+-   [Fix] `signOut()` no longer throws an error on successful attempt
+-   new `validateAccessToken()` method
+-   `locals` no longer includes token data
+-   Throw additional error/warning message in console
+
 ## 0.7.1
 
 Aug. 25, 2022
@@ -33,9 +44,8 @@ Aug. 14, 2022
 
 Aug. 14, 2022
 
--   Fixed issues with `Lucia.svelte` wrapper 
+-   Fixed issues with `Lucia.svelte` wrapper
 -   [Breaking] `validateRequest` and `validateRequestByCookie` returns a `Session` instead of `User`
-
 
 ## 0.5.8
 

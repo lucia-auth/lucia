@@ -1,20 +1,18 @@
-import sveltePreprocess from 'svelte-preprocess';
+import sveltePreprocess from "svelte-preprocess";
 
 /** @type {import('@sveltejs/kit').Config} */
 export default {
-  preprocess: sveltePreprocess(),
+    preprocess: sveltePreprocess(),
 
-  kit: {
-    files: {
-      lib: 'src'
+    kit: {
+        files: {
+            lib: "src",
+        },
     },
-    
-
     package: {
-      dir: 'dist',
-      exports: (file) => {
-        return file === 'index.ts';
-      }
-    }
-  }
+        dir: "dist",
+        exports: (file) => {
+            return file === "index.ts";
+        },
+    },
 };

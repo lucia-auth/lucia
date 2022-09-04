@@ -6,7 +6,7 @@ import {
     AppwriteException, 
 } from "node-appwrite";
 import { Error, adapterGetUpdateData } from "lucia-sveltekit";
-import type { Adapter } from "lucia-sveltekit/dist/types";
+import type { Adapter } from "lucia-sveltekit/types";
 
 export const transformUserDoc = (doc: { $id: string; [data: string]: any }) => {
     const docCopy = structuredClone(doc);
