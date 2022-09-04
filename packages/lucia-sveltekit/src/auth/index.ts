@@ -73,7 +73,7 @@ export class Auth {
         const handleDevWarnings = handleDevWarningsFunction(this.context);
         const handleAuthRequests = handleAuthRequestsFunction(this.context);
         this.handleAuth = async (event) => {
-            await handleDevWarnings(event);
+            handleDevWarnings(event);
             return await handleAuthRequests(event);
         };
     }

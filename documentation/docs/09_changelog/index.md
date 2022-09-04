@@ -1,3 +1,9 @@
+## 0.8.2
+
+Sep. 4, 2022
+
+-   [Fix] `handleAuth()` resolves the event only once
+
 ## 0.8.1
 
 Sep. 4, 2022

@@ -1,12 +1,14 @@
 import type { Handle } from "../kit.js";
 import type { Context } from "./index.js";
-import chalk from "chalk"
+import chalk from "chalk";
 
 import { handleRefreshRequest } from "./endpoints/refresh.js";
 import { handleLogoutRequest } from "./endpoints/logout.js";
 
 export const handleDevWarningsFunction = (context: Context) => {
-    const handleWarnings: Handle = async ({ resolve, event }) => {
+    const handleWarnings = ({
+        event,
+    }: Parameters<Handle>[0]) : void => {
         if (!context.secret) {
             console.log(
                 `${chalk.red.bold("[LUCIA_ERROR]")} ${chalk.red(
@@ -45,7 +47,6 @@ export const handleDevWarningsFunction = (context: Context) => {
                 )}`
             );
         }
-        return await resolve(event);
     };
     return handleWarnings;
 };
