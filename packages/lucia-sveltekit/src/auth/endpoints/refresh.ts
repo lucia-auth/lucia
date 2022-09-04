@@ -1,7 +1,7 @@
 import { LuciaError } from "../../utils/error.js";
 import cookie from "cookie";
 import { createAccessToken, createRefreshToken, getAccountFromDatabaseData } from "../../utils/auth.js";
-import type { RequestEvent } from "@sveltejs/kit";
+import type { RequestEvent } from "../../kit.js";
 import { ErrorResponse } from "./index.js";
 import type { Context } from "../index.js";
 import { FingerprintToken, RefreshToken } from "../../utils/token.js";

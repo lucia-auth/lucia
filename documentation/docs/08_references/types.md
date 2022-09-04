@@ -62,4 +62,4 @@ interface ServerSession {
 
 ### Error
 
-Tyoe of error instance thrown by Lucia.
+Type of error instance thrown by Lucia.

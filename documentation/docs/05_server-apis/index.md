@@ -10,8 +10,7 @@ auth.getUser();
 ## Initializing
 
 ```ts
-const lucia = <UserData extends {}>(configurations: Configurations) =>
-    Lucia<UserData>;
+const lucia = (configurations: Configurations) => Lucia;
 ```
 
 #### Parameters
@@ -22,9 +21,9 @@ const lucia = <UserData extends {}>(configurations: Configurations) =>
 
 #### Returns
 
-| name  | type                                 | description |
-| ----- | ------------------------------------ | ----------- |
-| Lucia | [Lucia](/references/instances#lucia) |             |
+| name | type                                 | description |
+| ---- | ------------------------------------ | ----------- |
+|      | [Lucia](/references/instances#lucia) |             |
 
 ## Reference
 
@@ -37,7 +36,7 @@ const authenticateUser: (
     authId: string,
     identifier: string,
     password?: string
-) => Promise<ServerSession<UserData>>;
+) => Promise<ServerSession>;
 ```
 
 #### Parameters
@@ -50,8 +49,8 @@ const authenticateUser: (
 
 #### Returns
 
-| name | type                                 | description |
-| ---- | ------------------------------------ | ----------- |
+| name | type                                             | description |
+| ---- | ------------------------------------------------ | ----------- |
 |      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
@@ -72,7 +71,7 @@ const createUser: (
     authId: string,
     identifier: string,
     options?: { password?: string; user_data?: Record<string, any> }
-) => Promise<ServerSession<UserData>>;
+) => Promise<ServerSession>;
 ```
 
 #### Parameters
@@ -86,8 +85,8 @@ const createUser: (
 
 #### Returns
 
-| name | type                                 | description |
-| ---- | ------------------------------------ | ----------- |
+| name | type                                             | description |
+| ---- | ------------------------------------------------ | ----------- |
 |      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
@@ -103,7 +102,7 @@ const createUser: (
 Creates a new session. Reload the page or update the session object for `$session.lucia` (such as `$session.lucia.access_token`) to update.
 
 ```ts
-const createUserSession: (userId: string) => Promise<ServerSession<UserData>>;
+const createUserSession: (userId: string) => Promise<ServerSession>;
 ```
 
 #### Parameters
@@ -114,8 +113,8 @@ const createUserSession: (userId: string) => Promise<ServerSession<UserData>>;
 
 #### Returns
 
-| name | type                                 | description |
-| ---- | ------------------------------------ | ----------- |
+| name | type                                             | description |
+| ---- | ------------------------------------------------ | ----------- |
 |      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
@@ -146,13 +145,20 @@ const deleteUser: (userId: string) => Promise<void>;
 | ---------------------- | ------------------------- |
 | DATABASE_UDPATE_FAILED | Failed to update database |
 
-### Load
+### load
 
 SvelteKit's server load function for `/+layout.server.ts`. Refer to [SvelteKit's ServerLoad](https://kit.svelte.dev/docs/types#sveltejs-kit-serverload).
 
 ```ts
 const load: ServerLoad;
 ```
+
+#### Returns
+
+| name           | type                                           | description |
+| -------------- | ---------------------------------------------- | ----------- |
+| pageData       |                                                |             |
+| pageData.lucia | [Session](/references/types#session) or `null` |             |
 
 ### getUser
 
@@ -162,7 +168,7 @@ Gets the user with the corresponding auth id and identifier.
 const getUser: (
     authId: string,
     identifier: string
-) => Promise<User<UserData> | null>;
+) => Promise<User | null>;
 ```
 
 #### Parameters
@@ -335,12 +341,34 @@ const updateUserIdentifierToken: (
 | AUTH_INVALID_USER_ID   | A user that matches the user id does not exist |
 | DATABASE_UDPATE_FAILED | Failed to update database                      |
 
+### validateAccessToken
+
+Validates access token and returns the user if valid.
+
+```ts
+const validateAccessToken = (accessToken: string, fingerprintToken: string) =>
+    Promise<User>;
+```
+
+#### Parameters
+
+| name             | type   | description       |
+| ---------------- | ------ | ----------------- |
+| accessToken      | string | access token      |
+| fingerprintToken | string | fingerprint token |
+
+#### Returns
+
+| name | type                           | description |
+| ---- | ------------------------------ | ----------- |
+|      | [User](/references/types#user) |             |
+
 ### validateRequest
 
 Checks if the request was made by an authenticated user using the authorization header. The access token should be sent as a bearer token inside the authorization header. For GET and POST requests.
 
 ```ts
-const validateRequest: (request: Request) => Promise<ServerSession<UserData>>;
+const validateRequest: (request: Request) => Promise<ServerSession>;
 ```
 
 #### Parameters
@@ -351,8 +379,8 @@ const validateRequest: (request: Request) => Promise<ServerSession<UserData>>;
 
 #### Returns
 
-| name | type                                 | description |
-| ---- | ------------------------------------ | ----------- |
+| name | type                                             | description |
+| ---- | ------------------------------------------------ | ----------- |
 |      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors
@@ -366,7 +394,7 @@ const validateRequest: (request: Request) => Promise<ServerSession<UserData>>;
 Checks if the request was made by an authenticated user using cookies. **Do NOT use this for POST or PUT requests as it is vulnerable to CSRF attacks**, and it will throw an error if it is not a GET request for preventive measures.
 
 ```ts
-const validateRequest: (request: Request) => Promise<ServerSession<UserData>>;
+const validateRequest: (request: Request) => Promise<ServerSession>;
 ```
 
 #### Parameters
@@ -377,8 +405,8 @@ const validateRequest: (request: Request) => Promise<ServerSession<UserData>>;
 
 #### Returns
 
-| name | type                                 | description |
-| ---- | ------------------------------------ | ----------- |
+| name | type                                             | description |
+| ---- | ------------------------------------------------ | ----------- |
 |      | [ServerSession](/references/types#serversession) |             |
 
 #### Errors

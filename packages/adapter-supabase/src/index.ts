@@ -1,6 +1,6 @@
 import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
 import { Error, adapterGetUpdateData } from "lucia-sveltekit";
-import type { Adapter } from "lucia-sveltekit/dist/types";
+import type { Adapter } from "lucia-sveltekit/types";
 
 const adapter = (url: string, secret: string): Adapter => {
     const supabase = new PostgrestClient(`${url}/rest/v1`, {

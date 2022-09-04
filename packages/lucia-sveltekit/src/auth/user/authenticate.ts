@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import type { DatabaseUser, ServerSession } from "../../types.js";
 import {
     createAccessToken,
@@ -5,7 +6,7 @@ import {
     createRefreshToken,
     getAccountFromDatabaseData,
 } from "../../utils/auth.js";
-import { compare } from "../../utils/crypto.js";
+import { verify } from "../../utils/crypto.js";
 import { LuciaError } from "../../utils/error.js";
 import type { Context } from "../index.js";
 
@@ -15,9 +16,7 @@ type authenticateUser = (
     password?: string
 ) => Promise<ServerSession>;
 
-export const authenticateUserFunction = (
-    context: Context
-) => {
+export const authenticateUserFunction = (context: Context) => {
     const authenticateUser: authenticateUser = async (
         authId,
         identifier,
@@ -31,11 +30,19 @@ export const authenticateUserFunction = (
             throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
         const account = getAccountFromDatabaseData(databaseData);
         if (account.hashed_password) {
-            try {
-                await compare(password || "", account.hashed_password);
-            } catch {
-                throw new LuciaError("AUTH_INVALID_PASSWORD");
+            if (account.hashed_password.startsWith("$2a")) {
+                console.log(
+                    `${chalk.red.bold("[LUCIA_ERROR]")} ${chalk.red(
+                        "The hashing algorithm used for passwords has changed as of v0.8.0, and all accounts made pre-v0.8.0 that uses passwords are invalid."
+                    )}`
+                );
+                process.exit(1);
             }
+            const isValid = await verify(
+                password || "",
+                account.hashed_password
+            );
+            if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
         }
         const userId = account.user.user_id;
         const fingerprintToken = createFingerprintToken(context);

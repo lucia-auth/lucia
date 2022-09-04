@@ -1,6 +1,6 @@
 import { random, customRandom } from "nanoid";
-import bcrypt from "bcryptjs";
-import crypto from "node:crypto"
+import crypto from "crypto";
+import { promisify } from "util";
 
 export const generateRandomString = (length: number) => {
     const characters =
@@ -8,18 +8,22 @@ export const generateRandomString = (length: number) => {
     return customRandom(characters, length, random)();
 };
 
+// converts callback to async/await
+const scrypt = promisify(crypto.scrypt);
+
 export const hash = async (s: string) => {
-    const salt = await bcrypt.genSalt();
-    return await bcrypt.hash(s, salt);
+    const salt = generateRandomString(16);
+    const derivedKey = (await scrypt(s, salt, 64)) as Buffer;
+    return salt + ":" + derivedKey.toString("hex");
 };
 
-export const compare = async (s: string, s_hash: string) => {
-    const isValid = await bcrypt.compare(s, s_hash);
-    if (!isValid) throw Error("Input strings does not match");
-};
-
-export const safeCompare = async (s: string, s_hash: string) => {
-    return await bcrypt.compare(s, s_hash);
+export const verify = async (s: string, sHash: string) => {
+    const [salt, key] = sHash.split(":");
+    const keyBuffer = Buffer.from(key, "hex");
+    const derivedKey = (await scrypt(s, salt, 64)) as Buffer;
+    // comparison operation takes the same amount of time every time
+    // attackers can analyze the amount of time
+    return crypto.timingSafeEqual(keyBuffer, derivedKey);
 };
 
 export class Encrypter {

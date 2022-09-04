@@ -30,10 +30,11 @@
     },
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",
-        "lucia-sveltekit": "workspace:*",
         "ts-node": "^10.9.1"
     },
     "dependencies": {
-        "@supabase/postgrest-js": "^0.37.4"
+        "@supabase/postgrest-js": "^0.37.4",
+        "lucia-sveltekit": "workspace:*"
+        
     }
 }

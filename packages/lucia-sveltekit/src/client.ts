@@ -4,9 +4,12 @@ import type { Session } from "./types.js";
 import { LuciaError } from "./utils/error.js";
 export { default as Lucia } from "./Lucia.svelte";
 
-export const signOut = async () => {
+export const signOut = async (accessToken: string) => {
     const response = await fetch("/api/auth/logout", {
         method: "POST",
+        headers: {
+            Authorization: `Bearer ${accessToken || ""}`,
+        },
     });
     if (response.ok) return { error: null };
     let result;
@@ -16,7 +19,7 @@ export const signOut = async () => {
         console.error(e);
         throw new LuciaError("UNKNOWN_ERROR");
     }
-    throw new LuciaError(result.message);
+    if (result.message) throw new LuciaError(result.message);
 };
 
 export const refreshTokens = async (refreshToken: string) => {

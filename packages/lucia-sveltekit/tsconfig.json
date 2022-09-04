@@ -15,8 +15,4 @@
     "include": ["src"],
     "exclude": ["node_modules/", "**/__tests__/*"],
     "extends": "./.svelte-kit/tsconfig.json",
-    "paths": {
-        "$lib": ["src"],
-        "$lib/*": ["src/*"]
-    }
 }

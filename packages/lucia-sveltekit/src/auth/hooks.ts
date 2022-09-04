@@ -1,37 +1,57 @@
-import type { Handle } from "@sveltejs/kit";
+import type { Handle } from "../kit.js";
 import type { Context } from "./index.js";
+import chalk from "chalk"
 
-import cookie from "cookie";
 import { handleRefreshRequest } from "./endpoints/refresh.js";
 import { handleLogoutRequest } from "./endpoints/logout.js";
-import { EncryptedRefreshToken } from "../utils/token.js";
 
-export const handleTokensFunction = (context: Context) => {
-    const handleTokens: Handle = async ({ resolve, event }) => {
-        const cookies = cookie.parse(event.request.headers.get("cookie") || "");
-        const fingerprintToken = cookies.fingerprint_token;
-        const encryptedRefreshToken = new EncryptedRefreshToken(
-            cookies.encrypt_refresh_token,
-            context
-        );
-        const refreshToken = encryptedRefreshToken.decrypt();
-        const accessToken = cookies.access_token;
-        if (fingerprintToken && accessToken && refreshToken.value) {
-            event.locals.lucia = {
-                access_token: accessToken,
-                refresh_token: refreshToken.value,
-                fingerprint_token: fingerprintToken,
-            };
-        } else {
-            event.locals.lucia = null;
+export const handleDevWarningsFunction = (context: Context) => {
+    const handleWarnings: Handle = async ({ resolve, event }) => {
+        if (!context.secret) {
+            console.log(
+                `${chalk.red.bold("[LUCIA_ERROR]")} ${chalk.red(
+                    `Secret key is not defined in configuration ("config.secret").`
+                )}`
+            );
+            process.exit(0);
+        }
+        if (!context.adapter) {
+            console.log(
+                `${chalk.red.bold("[LUCIA_ERROR]")} ${chalk.red(
+                    `Adapter is not defined in configuration ("config.adapter").`
+                )}`
+            );
+            process.exit(1);
+        }
+        if (context.secret.length < 32 && context.env === "DEV") {
+            console.log(
+                `${chalk.yellow.bold("[LUCIA_WARNING]")} ${chalk.yellow(
+                    "Secret key should be longer than 32 chars."
+                )}`
+            );
+        }
+        if (context.secret.length < 32 && context.env === "PROD") {
+            console.log(
+                `${chalk.yellow.bold("[LUCIA_WARNING]")} ${chalk.yellow(
+                    "Secret key must be longer than 32 chars."
+                )}`
+            );
+            process.exit(1);
+        }
+        if (context.env === "PROD" && event.url.protocol === "http:") {
+            console.log(
+                `${chalk.yellow.bold("[LUCIA_WARNING]")} ${chalk.yellow(
+                    `Current environment ("config.env") is set to "PROD" in configuration but the app is hosted on http. Cookies can only be saved in https when set to "PROD".`
+                )}`
+            );
         }
         return await resolve(event);
     };
-    return handleTokens;
+    return handleWarnings;
 };
 
-export const handleEndpointsFunction = (context: Context) => {
-    const handleEndpoints: Handle = async ({ resolve, event }) => {
+export const handleAuthRequestsFunction = (context: Context) => {
+    const handleAuthRequests: Handle = async ({ resolve, event }) => {
         if (
             event.url.pathname === "/api/auth/refresh" &&
             event.request.method === "POST"
@@ -46,5 +66,5 @@ export const handleEndpointsFunction = (context: Context) => {
         }
         return await resolve(event);
     };
-    return handleEndpoints;
+    return handleAuthRequests;
 };

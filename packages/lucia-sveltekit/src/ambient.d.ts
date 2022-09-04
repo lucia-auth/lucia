@@ -1,3 +1,3 @@
 declare namespace Lucia {
-    export interface UserData {}
+    export interface UserData {} 
 }

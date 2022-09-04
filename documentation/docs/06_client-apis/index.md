@@ -18,17 +18,23 @@ const getSession: () => Writable<Session | null>;
 
 #### Returns
 
-| name | type                            | description                                                                            |
-| ---- | ------------------------------- | -------------------------------------------------------------------------------------- |
-|      | Writable<ClientSession \| null> | A writable store with [`Session`](/references/types#session) or `null` if unauthorized |
+| name | type                      | description                                                                            |
+| ---- | ------------------------- | -------------------------------------------------------------------------------------- |
+|      | Writable<Session \| null> | A writable store with [`Session`](/references/types#session) or `null` if unauthorized |
 
 ### signOut
 
 Signs out a user.
 
 ```ts
-const signOut: () => Promise<void>;
+const signOut: (accessToken: string) => Promise<void>;
 ```
+
+#### Parameters
+
+| name        | type   | description  |
+| ----------- | ------ | ------------ |
+| accessToken | string | access token |
 
 #### Errors
 
@@ -36,7 +42,7 @@ const signOut: () => Promise<void>;
 | ---------------------- | ------------------------------------- |
 | AUTH_UNAUTHORIZED      | Unauthorized user                     |
 | DATABASE_UPDATE_FAILED | Failed to update database             |
-| UKNOWN                 | Unknown error, likely a network error |
+| UNKNOWN                | Unknown error, likely a network error |
 
 ### refreshTokens
 
@@ -50,9 +56,9 @@ const refreshTokens: (
 
 #### Parameters
 
-| name         | type   | description |
-| ------------ | ------ | ----------- |
-| refreshToken | string |             |
+| name         | type   | description   |
+| ------------ | ------ | ------------- |
+| refreshToken | string | refresh token |
 
 #### Returns
 
@@ -78,7 +84,7 @@ import { Lucia } from "lucia-sveltekit/client";
 ```
 
 ```html
-<Lucia on:error={handleError}>
+<Lucia on:error="{handleError}">
     <slot />
 </Lucia>
 ```

@@ -33,7 +33,8 @@ The link will send the user to Github's login page and they will be sent to your
 Create `routes/api/github.ts` and accept a GET request. If you change this path, make sure to change the callback url. Include your Github OAuth app's id and secret as well.
 
 ```ts
-import { dev } from "$app/environment"; // dev === true if in developmenet
+import { dev } from "$app/environment"; // dev === true if in development
+
 import { auth } from "$lib/lucia.js"; // Lucia instance
 import type { RequestHandler } from "@sveltejs/kit";
 import type { Error } from "lucia-sveltekit";
@@ -87,7 +88,7 @@ const getAccessToken = await getAccessTokenResponse.json();
 const accessToken = getAccessToken.access_token;
 ```
 
-### Retieving the user's email
+### Retrieving the user's email
 
 ```ts
 const getUserEmailsResponse = await fetch(
@@ -162,7 +163,7 @@ try {
     // database connection error
     return new Response(
         JSON.stringify({
-            message: "An unknown error occured",
+            message: "An unknown error occurred",
         }),
         {
             status: 500,
@@ -190,7 +191,7 @@ if (user) {
         // Cannot connect to database
         return new Response(
             JSON.stringify({
-                message: "An unknown error occured",
+                message: "An unknown error occurred",
             }),
             {
                 status: 500,

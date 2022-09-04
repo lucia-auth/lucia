@@ -3,13 +3,14 @@
         "allowJs": true,
 		"checkJs": true,
 		"noImplicitAny": true,
-		"module": "es2022",
-		"moduleResolution": "node",
-		"target": "es2022",
+		"module": "es2020",
+		"moduleResolution": "Node",
+		"target": "es2020",
 		"allowSyntheticDefaultImports": true,
         "declaration": true,
         "outDir": "./dist",
         "strict": true,
+        "skipLibCheck": false
     },
     "include": ["src"],
     "exclude": ["node_modules/", "**/__tests__/*"]

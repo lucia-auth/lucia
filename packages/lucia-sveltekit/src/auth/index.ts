@@ -1,9 +1,11 @@
-import type { Handle, ServerLoad } from "@sveltejs/kit";
+import type { Handle, ServerLoad } from "../kit.js";
 import type { Adapter, Env } from "../types.js";
 
 import { generateRandomString } from "../utils/crypto.js";
-import { sequence } from "@sveltejs/kit/hooks";
-import { handleEndpointsFunction, handleTokensFunction } from "./hooks.js";
+import {
+    handleAuthRequestsFunction,
+    handleDevWarningsFunction,
+} from "./hooks.js";
 import {
     authenticateUserFunction,
     createUserFunction,
@@ -21,11 +23,12 @@ import { updateUserDataFunction } from "./user/update/user-data.js";
 import { updateUserIdentifierTokenFunction } from "./user/update/identifier-token.js";
 import { resetUserPasswordFunction } from "./user/reset-password.js";
 import { getUserByIdFunction } from "./user/get.js";
-import { AccessToken } from "$lib/utils/token.js";
+import { AccessToken } from "../utils/token.js";
 import { loadFunction } from "./load.js";
+import chalk from "chalk";
 
 export const lucia = (configs: Configurations) => {
-    return new Auth(configs);
+    return new Auth(configs) as Omit<Auth, "getAuthSession">;
 };
 
 export class Auth {
@@ -66,13 +69,14 @@ export class Auth {
             this.context
         );
         this.resetUserPassword = resetUserPasswordFunction(this.context);
-        this.handleTokens = handleTokensFunction(this.context);
-        this.handleEndpoints = handleEndpointsFunction(this.context);
-        this.load = loadFunction(this.context)
-        this.handleAuth = sequence(this.handleTokens, this.handleEndpoints);
+        this.load = loadFunction(this.context);
+        const handleDevWarnings = handleDevWarningsFunction(this.context);
+        const handleAuthRequests = handleAuthRequestsFunction(this.context);
+        this.handleAuth = async (event) => {
+            await handleDevWarnings(event);
+            return await handleAuthRequests(event);
+        };
     }
-    private handleTokens: ReturnType<typeof handleTokensFunction>;
-    private handleEndpoints: ReturnType<typeof handleEndpointsFunction>;
     public handleAuth: Handle;
     public authenticateUser: ReturnType<typeof authenticateUserFunction>;
     public createUser: ReturnType<typeof createUserFunction>;
@@ -93,7 +97,7 @@ export class Auth {
         typeof updateUserIdentifierTokenFunction
     >;
     public resetUserPassword: ReturnType<typeof resetUserPasswordFunction>;
-    public load: ReturnType<typeof loadFunction>
+    public load: ReturnType<typeof loadFunction>;
     public validateAccessToken = async (
         accessToken: string,
         fingerprintToken: string
@@ -101,10 +105,13 @@ export class Auth {
         const accessTokenInstance = new AccessToken(accessToken, this.context);
         return await accessTokenInstance.user(fingerprintToken);
     };
-    public getAuthSession: ServerLoad = async ({ locals }) => {
-        return {
-            lucia: locals.lucia,
-        };
+    /** @deprecated */
+    public getAuthSession: ServerLoad = async () => {
+        console.log(
+            `${chalk.red.bold("[LUCIA_Error]")} ${chalk.red(
+                ".getAuthSession() is replaced by .load() in v0.7.1 . Check the documentation for details."
+            )}`
+        );
     };
 }
 
