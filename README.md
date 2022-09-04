@@ -19,4 +19,4 @@ npm install lucia-sveltekit
 
 ## Contributing
 
-**[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CONTRIBUTING.md)**s
+**[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CONTRIBUTING.md)**
