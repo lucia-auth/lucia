@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-test",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "Tests for adapters for Lucia",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
