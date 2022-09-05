@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-supabase",
-    "version": "0.3.1",
+    "version": "0.3.3",
     "description": "Supabase adapter for Lucia",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -35,6 +35,5 @@
     "dependencies": {
         "@supabase/postgrest-js": "^0.37.4",
         "lucia-sveltekit": "workspace:*"
-        
     }
 }

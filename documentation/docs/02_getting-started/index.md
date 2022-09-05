@@ -22,32 +22,18 @@ export const auth = lucia({
 
 For Lucia to work, its own handle functions must be added to hooks (`/src/hooks/index.js`).
 
-```js
-export const handle = auth.handleAuthRequests;
+```ts
+export const handle = auth.handleAuth;
 ```
 
-This is mainly for 2 things:
+This is so Lucia can listen for requests to endpoints that Lucia exposes (creates) for token refresh and sign outs. Make sure to not have existing endpoints that overlaps with them:
 
-1. Automatically refresh tokens on server-side navigation
-2. Listen for requests to endpoints that Lucia exposes (creates) for token refresh and sign outs. Make sure to not have existing endpoints that overlaps with them. These endpoints are:
-    - /api/auth/refresh
-    - /api/auth/logout
+- /api/auth/refresh
+- /api/auth/logout
 
 Finally, create `/+layout.svelte` and `/+layout.server.js`.
 
-In `/+layout.svelte`, import the `Lucia` wrapper. Access tokens expire in 15 minutes. Lucia will refresh the access token (if expired) on server side navigation using hooks and the wrapper will refresh the token automatically on expiration in the client. This should be placed inside the top layout file.
-
-```tsx
-import { Lucia } from "lucia-sveltekit/client";
-```
-
-```html
-<Lucia>
-    <slot />
-</Lucia>
-```
-
-In `/+layout.server.ts`, create a load function. This makes users' data available both in load functions and in pages.
+In `/+layout.server.ts`, create a load function. This will check if the access token has expired and refresh it if so. This also exposes the user data to the client.
 
 ```ts
 import { auth } from "$lib/lucia.js";
@@ -65,6 +51,18 @@ export const load = async (event) => {
         ...loadData,
     };
 };
+```
+
+In `/+layout.svelte`, import the `Lucia` wrapper. This will check if the access token has expired on the client and refresh it automatically if it's close to expiration. 
+
+```tsx
+import { Lucia } from "lucia-sveltekit/client";
+```
+
+```html
+<Lucia>
+    <slot />
+</Lucia>
 ```
 
 ## Creating a user
@@ -280,8 +278,6 @@ declare namespace Lucia {
 }
 ```
 
-Any data inside `Lucia.UserData` will represent `user_data` (`createUser()`) and `UserData` in [types](/references/types).
+## Deploying the app
 
-## Deploying apps
-
-Apps using Lucia cannot be deployed to edge functions (CloudFlare Workers, Vercel Edge Functions, Netlify Edge Functions) due to having a dependency on Node's crypto module. 
+Apps using Lucia cannot be deployed to edge functions (CloudFlare Workers, Vercel Edge Functions, Netlify Edge Functions) because it has a dependency on Node's crypto module and other Node native APIs. 

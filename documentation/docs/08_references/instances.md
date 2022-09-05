@@ -1,12 +1,18 @@
 ## Lucia
 
 ```ts
-Lucia
+class Lucia
 ```
 
 Refer to [Server APIs](/server-apis).
 
 ## Token
+
+The base class for tokens.
+
+```ts
+class Token
+```
 
 ### value
 
@@ -29,7 +35,7 @@ const createCookie: () => string;
 Extends [`Token`](/references/instances#token). Represents an access token token.
 
 ```ts
-AccessToken<UserData extends {}>
+class AccessToken extends Token
 ```
 
 ### user
@@ -37,7 +43,7 @@ AccessToken<UserData extends {}>
 Validates the access token using the fingerprint token and returns the user of the access token.
 
 ```ts
-const user: (fingerprintToken: string) => Promise<User<UserData>>;
+const user: (fingerprintToken: string) => Promise<User>;
 ```
 
 #### Parameters
@@ -61,6 +67,10 @@ const user: (fingerprintToken: string) => Promise<User<UserData>>;
 ## RefreshToken
 
 Extends [`Token`](/references/instances#token). Represents a refresh token token.
+
+```ts
+class RefreshToken extends Token
+```
 
 > Note: While this also has `createCookie` method, it returns an empty cookie and should not be used.
 
@@ -108,6 +118,10 @@ const encrypt: () => EncryptedRefreshToken;
 
 Extends [`Token`](/references/instances#token). Represents an encrypted refresh token.
 
+```ts
+class EncryptedRefreshToken extends Token
+```
+
 ### decrypt
 
 Decrypts the encrypted refresh token and creates a new refresh token.
@@ -127,3 +141,7 @@ Will return a `RefreshToken` with a `value` of `""` if the encrypted refresh tok
 ## FingerprintToken
 
 Extends [`Token`](/references/instances#token). Represents a fingerprint token.
+
+```ts
+class FingerprintToken extends Token
+```

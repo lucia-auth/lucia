@@ -4,6 +4,18 @@ Types can be imported from `lucia-sveltekit/types`
 import type { User } from "lucia-sveltekit/types";
 ```
 
+### Lucia (namespace)
+
+```ts
+declare namespace Lucia {
+    interface UserData {}
+}
+```
+
+| interface | type         | description                                      |
+| --------- | ------------ | ------------------------------------------------ |
+| UserData  | extends `{}` | Represent the additional data saved to the user. |
+
 ### User
 
 ```ts
