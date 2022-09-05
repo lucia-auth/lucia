@@ -34,7 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-sveltekit/adapter-supabase": "^0.3.1",
+		"@lucia-sveltekit/adapter-supabase": "^0.3.2",
 		"lucia-sveltekit": "^0.8.2"
 	}
 }
