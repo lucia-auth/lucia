@@ -30,7 +30,7 @@ const auth = lucia({
 
 ## Schemas
 
-The following is for MySQL. `@db.VarChar(329)` should be the language's equivalent if you're using another language (refer to [this](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string) page). Note that the table names are `user` and `refresh_token`.
+The following is for MySQL. `@db.VarChar(320)` should be the language's equivalent if you're using another language (refer to [this](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string) page). Note that the table names are `user` and `refresh_token`.
 
 ### users
 
