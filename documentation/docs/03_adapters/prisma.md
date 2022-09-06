@@ -30,7 +30,7 @@ const auth = lucia({
 
 ## Schemas
 
-The following is for MySQL. `@db.VarChar(300)` should be the language's equivalent if you're using another language (refer to [this](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string) page). Note that the table names are `user` and `refresh_token`.
+The following is for MySQL. `@db.VarChar(329)` should be the language's equivalent if you're using another language (refer to [this](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string) page). Note that the table names are `user` and `refresh_token`.
 
 ### users
 
@@ -52,7 +52,7 @@ model User {
 ```http
 model RefreshToken {
   id            Int    @id @unique @default(autoincrement())
-  refresh_token String @unique @db.VarChar(300)
+  refresh_token String @unique @db.VarChar(320)
   user          User  @relation(references: [id], fields: [user_id], onDelete: Cascade)
   user_id       String
 
@@ -65,25 +65,13 @@ model RefreshToken {
 
 ## Types
 
-The following automatically add types to Lucia and the session object from Prisma.
+The following automatically add types to Lucia from Prisma.
 
 ```ts
 import type { User } from "@prisma/client";
 
-const auth = lucia<Omit<User, "id" | "identifier_token" | "hashed_password">>();
-```
-
-```ts
-import type { User } from "@prisma/client";
-
-declare namespace App {
-    interface Session {
-        lucia:
-            | import("lucia-sveltekit/types").SvelteKitSession<
-                  Omit<User, "id" | "identifier_token" | "hashed_password">
-              >
-            | null;
-    }
+declare namespace Lucia {
+    interface UserData extends Omit<User, "id" | "identifier_token" | "hashed_password">
 }
 ```
 
