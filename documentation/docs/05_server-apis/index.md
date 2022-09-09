@@ -55,12 +55,13 @@ const authenticateUser: (
 
 #### Errors
 
-| name                          | description                                                     |
-| ----------------------------- | --------------------------------------------------------------- |
-| AUTH_INVALID_IDENTIFIER_TOKEN | A user that matches the auth id and identifier does not exist   |
-| AUTH_INVALID_PASSWORD         | Incorrect password (**DO NOT** return this error to the client) |
-| DATABASE_UPDATE_FAILED        | Failed to update database                                       |
-| DATABASE_FETCH_FAILED         | Failed to get data from database                                |
+| name                          | description                                                               |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| AUTH_INVALID_IDENTIFIER_TOKEN | A user that matches the auth id and identifier does not exist             |
+| AUTH_INVALID_PASSWORD         | Incorrect password (**DO NOT** return this error to the client)           |
+| AUTH_OUTDATED_PASSWORD        | The user's password is using an old hashing algorithm and should be reset |
+| DATABASE_UPDATE_FAILED        | Failed to update database                                                 |
+| DATABASE_FETCH_FAILED         | Failed to get data from database                                          |
 
 ### createUser
 
@@ -165,10 +166,7 @@ const load: ServerLoad;
 Gets the user with the corresponding auth id and identifier.
 
 ```ts
-const getUser: (
-    authId: string,
-    identifier: string
-) => Promise<User | null>;
+const getUser: (authId: string, identifier: string) => Promise<User | null>;
 ```
 
 #### Parameters

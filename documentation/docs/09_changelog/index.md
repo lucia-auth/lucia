@@ -1,3 +1,9 @@
+## 0.8.3
+
+Sep. 9, 2022
+
+-   `authenticateUse()` throws an error if the user's password was hashed using the old algorithm (pre-v0.8.0)
+
 ## 0.8.2
 
 Sep. 4, 2022

@@ -30,14 +30,8 @@ export const authenticateUserFunction = (context: Context) => {
             throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
         const account = getAccountFromDatabaseData(databaseData);
         if (account.hashed_password) {
-            if (account.hashed_password.startsWith("$2a")) {
-                console.log(
-                    `${chalk.red.bold("[LUCIA_ERROR]")} ${chalk.red(
-                        "The hashing algorithm used for passwords has changed as of v0.8.0, and all accounts made pre-v0.8.0 that uses passwords are invalid."
-                    )}`
-                );
-                process.exit(1);
-            }
+            if (account.hashed_password.startsWith("$2a"))
+                throw new LuciaError("AUTH_OUTDATED_PASSWORD");
             const isValid = await verify(
                 password || "",
                 account.hashed_password
