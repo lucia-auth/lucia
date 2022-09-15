@@ -44,7 +44,7 @@ Create a new user using [`createUser`](/server-apis#createuser) using the auth i
 
 ```ts
 try {
-    const createUser = await auth.createUser("email", email, {
+    const userSession = await auth.createUser("email", email, {
         password,
         user_data: {
             email,
@@ -53,7 +53,7 @@ try {
     return new Response(null, {
         status: 302,
         headers: {
-            "set-cookie": createUser.cookies,
+            "set-cookie": userSession.cookies.join(),
             location: "/",
         },
     };)
@@ -115,7 +115,7 @@ try {
     return new Response(null, {
         status: 302,
         headers: {
-            "set-cookie": authenticateUser.cookies,
+            "set-cookie": authenticateUser.cookies.join(),
             location: "/",
         },
     });

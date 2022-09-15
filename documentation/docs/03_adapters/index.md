@@ -1,12 +1,12 @@
 ## Overview
 
-Adapters are set of functions that Lucia can call to update the database and allows Lucia to be used with any databases.
+Adapters provide a set of functions that Lucia can call to interact with the database and allows Lucia to be used with (almost) all relational and document-based databases.
 
 ## Database structure
 
 ### user
 
-Stores user data (including passwords). `[user_data]` may be any number of columns that represent any data, which will be accessible in `session` store (`getSession()` and `parent()`).
+Stores user data (including passwords). `[user_data]` may be any number of columns that represent any data, which will be accessible in `session`.
 
 | column           | types  | description                                |
 | ---------------- | ------ | ------------------------------------------ |

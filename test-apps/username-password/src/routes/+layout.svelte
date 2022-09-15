@@ -1,15 +1,14 @@
 <script lang="ts">
 	import '../app.css';
 
-	import { Lucia } from 'lucia-sveltekit/client';
+	import { handleSilentRefresh } from 'lucia-sveltekit/client';
+	handleSilentRefresh()
 </script>
 
 <svelte:head>
 	<title>Lucia demo</title>
 </svelte:head>
-<Lucia on:error={(e) => console.error(e)}>
-	<slot />
-</Lucia>
+<slot />
 
 <style lang="postcss">
 	/* I've used @apply to apply tailwind classes for demo purposes to remove/hide as much non-lucia related things

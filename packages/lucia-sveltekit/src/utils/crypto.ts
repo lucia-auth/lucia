@@ -40,11 +40,11 @@ export class Encrypter {
         return [
             encrypted + cipher.final("hex"),
             Buffer.from(iv).toString("hex"),
-        ].join("|");
+        ].join(".");
     }
 
     decrypt(encryptedString: string) {
-        const [encrypted, iv] = encryptedString.split("|");
+        const [encrypted, iv] = encryptedString.split(".");
         if (!iv) throw new Error("IV not found");
         const decipher = crypto.createDecipheriv(
             this.algorithm,

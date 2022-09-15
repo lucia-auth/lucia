@@ -31,26 +31,17 @@ export const createUserSessionFunction = (
             context
         );
         await context.adapter.setRefreshToken(refreshToken.value, userId);
-        const encryptedRefreshToken = refreshToken.encrypt();
         const accessToken = await createAccessToken(
             account.user,
             fingerprintToken.value,
             context
         );
-        const accessTokenCookie = accessToken.createCookie();
-        const encryptedRefreshTokenCookie =
-            encryptedRefreshToken.createCookie();
-        const fingerprintTokenCookie = fingerprintToken.createCookie();
         return {
             user: account.user,
             access_token: accessToken,
             refresh_token: refreshToken,
             fingerprint_token: fingerprintToken,
-            cookies: [
-                accessTokenCookie,
-                encryptedRefreshTokenCookie,
-                fingerprintTokenCookie,
-            ],
+            cookies: [accessToken.cookie(), refreshToken.cookie(), fingerprintToken.cookie()]
         };
     };
     return createUserSession;

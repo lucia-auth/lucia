@@ -65,8 +65,8 @@ export const handleRefreshRequest = async (
             {
                 headers: {
                     "set-cookie": [
-                        accessToken.createCookie(),
-                        newEncryptedRefreshToken.createCookie(),
+                        accessToken.cookie(),
+                        newEncryptedRefreshToken.cookie(),
                     ].join(","),
                 },
             }

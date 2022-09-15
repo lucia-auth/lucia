@@ -1,9 +1,6 @@
-declare namespace App {
-	interface Locals {
-		lucia: import('lucia-sveltekit/types').Session | null;
-	}
-}
-
+/// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-	type UserData = { username: string };
+	interface UserData {
+		username: string
+	}
 }

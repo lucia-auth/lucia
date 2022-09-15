@@ -1,0 +1,1 @@
+export { handleLoad } from "./client.js"

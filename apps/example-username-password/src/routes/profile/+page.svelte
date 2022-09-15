@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { signOut, getSession } from 'lucia-sveltekit/client';
+	const session = getSession();
 
-	const lucia = getSession();
 	const signOutUser = async () => {
-		await signOut($lucia?.access_token || '');
+		await signOut();
 		window.location.href = '/';
 	};
 
@@ -12,7 +12,7 @@
 	const fetchNumber = async () => {
 		const response = await fetch('/api/random-number', {
 			headers: {
-				Authorization: `Bearer ${$lucia?.access_token}`
+				Authorization: `Bearer ${$session?.access_token}`
 			}
 		});
 		const result = await response.json();
@@ -27,8 +27,8 @@
 <h2>Profile</h2>
 <p>This page is protected and can only be accessed by authenticated users.</p>
 <div>
-	<p>user id: {$lucia?.user.user_id}</p>
-	<p>username: {$lucia?.user.username}</p>
+	<p>user id: {$session?.user.user_id}</p>
+	<p>username: {$session?.user.username}</p>
 </div>
 
 <div>
