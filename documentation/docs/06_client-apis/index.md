@@ -10,39 +10,27 @@ import { signOut } from "lucia-sveltekit/client";
 
 ### getSession
 
-Retrieves the current session.
+Returns a session store.
 
 ```ts
-const getSession: () => Writable<Session | null>;
+const getSession: () => Writable<Session>;
 ```
-
-#### Returns
-
-| name | type                      | description                                                                            |
-| ---- | ------------------------- | -------------------------------------------------------------------------------------- |
-|      | Writable<Session \| null> | A writable store with [`Session`](/references/types#session) or `null` if unauthorized |
 
 ### signOut
 
-Signs out a user.
+Signs out a user. Can only be called in a browser context (cannot be called during SSR).
 
 ```ts
-const signOut: (accessToken: string) => Promise<void>;
+const signOut: () => Promise<void>;
 ```
-
-#### Parameters
-
-| name        | type   | description  |
-| ----------- | ------ | ------------ |
-| accessToken | string | access token |
 
 #### Errors
 
-| name                   | description                           |
-| ---------------------- | ------------------------------------- |
-| AUTH_UNAUTHORIZED      | Unauthorized user                     |
-| DATABASE_UPDATE_FAILED | Failed to update database             |
-| UNKNOWN                | Unknown error, likely a network error |
+| name                   | description                              |
+| ---------------------- | ---------------------------------------- |
+| AUTH_NOT_AUTHENTICATED | Not authenticated (invalid access token) |
+| DATABASE_UPDATE_FAILED | Failed to update database                |
+| UNKNOWN                | Unknown error, likely a network error    |
 
 ### refreshTokens
 
@@ -54,19 +42,6 @@ const refreshTokens: (
 ) => Promise<{ refresh_token: string; access_token: string }>;
 ```
 
-#### Parameters
-
-| name         | type   | description   |
-| ------------ | ------ | ------------- |
-| refreshToken | string | refresh token |
-
-#### Returns
-
-| name          | type   | description         |
-| ------------- | ------ | ------------------- |
-| access_token  | string | A new access token  |
-| refresh_token | string | A new refresh token |
-
 #### Errors
 
 | name                  | description                           |
@@ -75,35 +50,17 @@ const refreshTokens: (
 | DATABASE_FETCH_FAILED | Failed to get data from database      |
 | UNKNOWN               | Unknown error, likely a network error |
 
-### Lucia (Component)
+### handleSilentRefresh
 
-Handles token refresh. Should be used inside layouts.
+Automatically refreshes access token when expiration nears (1 min.). Only runs on the browser and not during SSR.
 
 ```ts
-import { Lucia } from "lucia-sveltekit/client";
+const handleSilentRefresh: (onError?: (e: LuciaError) => void) => void;
 ```
-
-```html
-<Lucia on:error="{handleError}">
-    <slot />
-</Lucia>
-```
-
-#### Events
-
-| name  | description |
-| ----- | ----------- |
-| error | On error    |
 
 #### Error
 
-The following error name can be accessed via `e.detail`.
-
-```ts
-const handleError = (e) => {
-    const error = e.detail;
-};
-```
+Possible error.
 
 | name                  | description                           |
 | --------------------- | ------------------------------------- |

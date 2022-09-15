@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import type { DatabaseUser, ServerSession } from "../../types.js";
 import {
     createAccessToken,
@@ -46,27 +45,17 @@ export const authenticateUserFunction = (context: Context) => {
             context
         );
         await context.adapter.setRefreshToken(refreshToken.value, userId);
-        const encryptedRefreshToken = refreshToken.encrypt();
         const accessToken = await createAccessToken(
             account.user,
             fingerprintToken.value,
             context
         );
-        const accessTokenCookie = accessToken.createCookie();
-        const encryptedRefreshTokenCookie =
-            encryptedRefreshToken.createCookie();
-        const fingerprintTokenCookie = fingerprintToken.createCookie();
         return {
             user: account.user,
             access_token: accessToken,
             refresh_token: refreshToken,
             fingerprint_token: fingerprintToken,
-            encrypted_refresh_token: encryptedRefreshToken,
-            cookies: [
-                accessTokenCookie,
-                encryptedRefreshTokenCookie,
-                fingerprintTokenCookie,
-            ],
+            cookies: [accessToken.cookie(), refreshToken.encrypt().cookie(), fingerprintToken.cookie()]
         };
     };
     return authenticateUser;

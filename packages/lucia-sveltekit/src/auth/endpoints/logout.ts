@@ -1,5 +1,5 @@
 import type { RequestEvent } from "../../kit.js";
-import { createBlankCookies } from "../../utils/token.js";
+import { createBlankCookies } from "../../utils/cookie.js";
 import type { Context } from "../index.js";
 import { ErrorResponse } from "./index.js";
 import type { LuciaError } from "../../utils/error.js"
@@ -17,10 +17,9 @@ export const handleLogoutRequest = async (
         }
         const session = await context.auth.validateRequest(event.request)
         await context.adapter.deleteRefreshToken(session.refresh_token.value);
-        const cookies = createBlankCookies(context.env);
         return new Response(null, {
             headers: {
-                "set-cookie": cookies.join(","),
+                "set-cookie": createBlankCookies().join(","),
             },
         });
     } catch (e) {

@@ -9,12 +9,8 @@ import {
 } from "../utils/token.js";
 import { Error } from "../index.js";
 
-type ValidateRequest = (
-    request: Request
-) => Promise<ServerSession>;
-export const validateRequestFunction = (
-    context: Context
-) => {
+type ValidateRequest = (request: Request) => Promise<ServerSession>;
+export const validateRequestFunction = (context: Context) => {
     const validateRequest: ValidateRequest = async (request) => {
         const clonedReq = request.clone();
         const authorizationHeader =
@@ -35,18 +31,14 @@ export const validateRequestFunction = (
             cookies.encrypt_refresh_token,
             context
         );
-        const refreshToken = encryptedRefreshToken.decrypt();
-        const user = await accessToken.user(fingerprintToken.value);
+        const refreshToken = encryptedRefreshToken.decrypt(); // throws AUTH_INVALID_REFRESH_TOKEN if invalid
+        const user = await accessToken.user(fingerprintToken.value); // throws AUTH_INVALID_ACCESS_TOKEN if either token is invalid
         return {
             user,
             access_token: accessToken,
             refresh_token: refreshToken,
             fingerprint_token: fingerprintToken,
-            cookies: [
-                cookies.access_token,
-                cookies.encrypt_refresh_token,
-                cookies.fingerprint_token,
-            ],
+            cookies: [accessToken.cookie(), refreshToken.cookie(), fingerprintToken.cookie()]
         };
     };
     return validateRequest;
@@ -56,41 +48,34 @@ export type ValidateRequestByCookie = (
     request: Request
 ) => Promise<ServerSession>;
 
-export const validateRequestByCookieFunction = (
-    context: Context
-) => {
-    const validateRequestByCookie: ValidateRequest = async (
-        request
-    ) => {
+export const validateRequestByCookieFunction = (context: Context) => {
+    const validateRequestByCookie: ValidateRequest = async (request) => {
         const clonedReq = request.clone();
         const method = clonedReq.method;
-        if (method !== "GET") throw new Error("AUTH_INVALID_REQUEST");
+        if (method !== "GET") throw new Error("AUTH_INVALID_REQUEST_METHOD");
         const cookies = cookie.parse(clonedReq.headers.get("cookie") || "");
         const fingerprintToken = new FingerprintToken(
             cookies.fingerprint_token,
             context
         );
-        const accessToken = new AccessToken(
-            cookies.access_token,
-            context
-        );
+        const accessToken = new AccessToken(cookies.access_token, context);
         const user = await accessToken.user(fingerprintToken.value);
         const encryptedRefreshToken = new EncryptedRefreshToken(
             cookies.encrypt_refresh_token,
             context
         );
-        const refreshToken = encryptedRefreshToken.decrypt();
-        return {
-            user,
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            fingerprint_token: fingerprintToken,
-            cookies: [
-                cookies.access_token,
-                cookies.encrypt_refresh_token,
-                cookies.fingerprint_token,
-            ],
-        };
+        try {
+            const refreshToken = encryptedRefreshToken.decrypt();
+            return {
+                user,
+                access_token: accessToken,
+                refresh_token: refreshToken,
+                fingerprint_token: fingerprintToken,
+                cookies: [accessToken.cookie(), refreshToken.cookie(), fingerprintToken.cookie()]
+            };
+        } catch {
+            throw new Error("AUTH_INVALID_REFRESH_TOKEN");
+        }
     };
     return validateRequestByCookie;
 };

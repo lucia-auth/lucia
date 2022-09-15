@@ -1,5 +1,10 @@
+import type { LoadEvent, ServerLoadEvent } from "./kit.js";
 import type { LuciaError } from "./utils/error.js";
 import type { FingerprintToken, RefreshToken, AccessToken } from "./utils/token.js";
+
+type getSession = () => Promise<Session>
+export type AuthServerLoadEvent = ServerLoadEvent & { getSession: getSession }
+export type AuthLoadEvent = LoadEvent & { getSession: getSession }
 
 export interface Adapter {
     getUserByRefreshToken: (
@@ -61,7 +66,7 @@ export interface ServerSession {
     access_token: AccessToken;
     refresh_token: RefreshToken;
     fingerprint_token: FingerprintToken;
-    cookies: string[];
+    cookies: string[]
 }
 
 export type Env = "DEV" | "PROD";

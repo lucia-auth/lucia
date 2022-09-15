@@ -2,10 +2,7 @@ import type { Handle, ServerLoad } from "../kit.js";
 import type { Adapter, Env } from "../types.js";
 
 import { generateRandomString } from "../utils/crypto.js";
-import {
-    handleAuthRequestsFunction,
-    handleDevWarningsFunction,
-} from "./hooks.js";
+import { handleHooksFunction } from "./hooks.js";
 import {
     authenticateUserFunction,
     createUserFunction,
@@ -24,7 +21,7 @@ import { updateUserIdentifierTokenFunction } from "./user/update/identifier-toke
 import { resetUserPasswordFunction } from "./user/reset-password.js";
 import { getUserByIdFunction } from "./user/get.js";
 import { AccessToken } from "../utils/token.js";
-import { loadFunction } from "./load.js";
+import { handleServerLoadFunction } from "./load.js";
 import chalk from "chalk";
 
 export const lucia = (configs: Configurations) => {
@@ -69,15 +66,10 @@ export class Auth {
             this.context
         );
         this.resetUserPassword = resetUserPasswordFunction(this.context);
-        this.load = loadFunction(this.context);
-        const handleDevWarnings = handleDevWarningsFunction(this.context);
-        const handleAuthRequests = handleAuthRequestsFunction(this.context);
-        this.handleAuth = async (event) => {
-            handleDevWarnings(event);
-            return await handleAuthRequests(event);
-        };
+        this.handleServerLoad = handleServerLoadFunction(this.context);
+        this.handleHooks = handleHooksFunction(this.context);
     }
-    public handleAuth: Handle;
+    public handleHooks: () => Handle;
     public authenticateUser: ReturnType<typeof authenticateUserFunction>;
     public createUser: ReturnType<typeof createUserFunction>;
     public getUser: ReturnType<typeof getUserFunction>;
@@ -97,8 +89,8 @@ export class Auth {
         typeof updateUserIdentifierTokenFunction
     >;
     public resetUserPassword: ReturnType<typeof resetUserPasswordFunction>;
-    public load: ReturnType<typeof loadFunction>;
-    public validateAccessToken = async (
+    public handleServerLoad: ReturnType<typeof handleServerLoadFunction>;
+    public getUserFromAccessToken = async (
         accessToken: string,
         fingerprintToken: string
     ) => {

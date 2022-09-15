@@ -145,7 +145,7 @@ try {
     return new Response(null, {
         status: 302,
         headers: {
-            "set-cookie": createUser.cookies,
+            "set-cookie": createUser.cookies.join(),
             location: "/",
         },
     });
@@ -183,7 +183,7 @@ if (user) {
         return new Response(null, {
             status: 302,
             headers: {
-                "set-cookie": authenticateUser.cookies,
+                "set-cookie": authenticateUser.cookies.join(),
                 location: "/",
             },
         });

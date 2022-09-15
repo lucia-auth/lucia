@@ -1,14 +1,14 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import type { Context } from "../auth/index.js";
-import type { Env, TokenData, User } from "../types.js";
+import type { TokenData, User } from "../types.js";
 import { verify, Encrypter } from "./crypto.js";
 import { LuciaError } from "./error.js";
 
 class Token {
     public value: string;
     private secret: string;
-    public createCookie: () => string;
+    public cookie: () => string;
     constructor(
         value: string | null,
         secret: string,
@@ -21,7 +21,7 @@ class Token {
     ) {
         this.value = value || "";
         this.secret = secret;
-        this.createCookie = () => {
+        this.cookie = () => {
             return cookie.serialize(cookieOptions.name, this.value, {
                 secure: cookieOptions.secure,
                 path: cookieOptions.path,
@@ -47,8 +47,11 @@ export class AccessToken extends Token {
             const userSession = jwt.decode(this.value) as Partial<
                 User & TokenData
             >;
-            const isValid = await verify(fingerprintToken, userSession.fingerprint_hash || "");
-            if (!isValid) throw new Error()
+            const isValid = await verify(
+                fingerprintToken,
+                userSession.fingerprint_hash || ""
+            );
+            if (!isValid) throw new Error();
             if (userSession.role !== "access_token") throw new Error();
             delete userSession.fingerprint_hash;
             delete userSession.exp, delete userSession.iat;
@@ -76,7 +79,7 @@ export class RefreshToken extends Token {
     constructor(value: string | null, context: Context) {
         super(value, context.secret, {
             name: "refresh_token",
-            path: "",
+            path: "/",
             max_age: 0,
             secure: context.env === "PROD",
         });
@@ -100,8 +103,11 @@ export class RefreshToken extends Token {
                 user_id: string;
                 role: string;
             };
-            const isValid = await verify(fingerprint, userSession.fingerprint_hash || "");
-            if (!isValid) throw new Error()
+            const isValid = await verify(
+                fingerprint,
+                userSession.fingerprint_hash || ""
+            );
+            if (!isValid) throw new Error();
             if (userSession.role !== "refresh_token") throw new Error();
             return userSession.user_id;
         } catch (e) {
@@ -124,45 +130,7 @@ export class EncryptedRefreshToken extends Token {
     private context: Context;
     private encrypter: Encrypter;
     public decrypt = () => {
-        try {
-            const decryptedValue = this.encrypter.decrypt(this.value);
-            return new RefreshToken(decryptedValue, this.context);
-        } catch {
-            return new RefreshToken("", this.context);
-        }
+        const decryptedValue = this.encrypter.decrypt(this.value);
+        return new RefreshToken(decryptedValue, this.context);
     };
 }
-
-export const createBlankCookies = (env: Env) => {
-    const prod = env === "PROD";
-    return [
-        cookie.serialize("access_token", "", {
-            secure: prod,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-        cookie.serialize("refresh_token", "", {
-            secure: prod,
-            path: "",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-        cookie.serialize("encrypt_refresh_token", "", {
-            secure: prod,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-        cookie.serialize("fingerprint_token", "", {
-            secure: prod,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-    ];
-};

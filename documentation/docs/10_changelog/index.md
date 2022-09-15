@@ -1,3 +1,22 @@
+## 0.8.4
+
+Sep.15, 2022
+
+Major changes to Lucia!
+
+-   [Breaking] Removed `Lucia.svelte` wrapper component
+-   [Breaking] Replaced `handleAuth` with `handleHooks()`
+-   [Breaking] Removed `load`
+-   [Breaking] Renamed error `AUTH_INVALID_REQUEST` to `AUTH_INVALID_REQUEST_METHOD`
+-   [Breaking] AppWrite adapter is now community supported. the package has been deprecated and moved
+-   [Breaking] Renamed `Token.createCookie()` to `Token.cookie()`
+-   [Fix] Updated session object is now available in load functions [#63](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/63)
+-   [Fix] Support latest SvelteKit's `cookies` with `setCookie()` [#69](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/69)
+-   Silent refresh is handled with `handleSilentRefresh()`
+-   New `handleLoad()`, `handleServerLoad()`, `deleteAllCookies()`
+-   `getSession()` can be called from anywhere in the app [#66](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/66)
+-   Token refresh on the server is handled by `handleSession()` inside server load functions
+
 ## 0.8.3
 
 Sep. 9, 2022

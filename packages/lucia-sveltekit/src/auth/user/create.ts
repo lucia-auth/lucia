@@ -35,7 +35,6 @@ export const createUserFunction = (context: Context) => {
             fingerprintToken.value,
             context
         );
-        const encryptedRefreshToken = refreshToken.encrypt();
         const hashedPassword = options.password
             ? await hash(options.password)
             : null;
@@ -51,21 +50,12 @@ export const createUserFunction = (context: Context) => {
             fingerprintToken.value,
             context
         );
-        const accessTokenCookie = accessToken.createCookie();
-        const encryptedRefreshTokenCookie =
-            encryptedRefreshToken.createCookie();
-        const fingerprintTokenCookie = fingerprintToken.createCookie();
         return {
             user: user,
             access_token: accessToken,
             refresh_token: refreshToken,
             fingerprint_token: fingerprintToken,
-            encrypted_refresh_token: encryptedRefreshToken,
-            cookies: [
-                accessTokenCookie,
-                encryptedRefreshTokenCookie,
-                fingerprintTokenCookie,
-            ],
+            cookies: [accessToken.cookie(), refreshToken.encrypt().cookie(), fingerprintToken.cookie()]
         };
     };
     return createUser;
