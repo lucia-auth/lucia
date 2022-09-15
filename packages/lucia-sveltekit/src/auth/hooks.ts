@@ -1,6 +1,6 @@
 import type { Handle, RequestEvent } from "../kit.js";
 import type { Context } from "./index.js";
-import chalk from "chalk";
+import clc from "cli-color";
 
 import { handleRefreshRequest } from "./endpoints/refresh.js";
 import { handleLogoutRequest } from "./endpoints/logout.js";
@@ -8,7 +8,7 @@ import { handleLogoutRequest } from "./endpoints/logout.js";
 const handleWarnings = (event: RequestEvent, context: Context): void => {
     if (!context.secret) {
         console.log(
-            `${chalk.red.bold("[LUCIA_ERROR]")} ${chalk.red(
+            `${clc.red.bold("[LUCIA_ERROR]")} ${clc.red(
                 `Secret key is not defined in configuration ("config.secret").`
             )}`
         );
@@ -16,7 +16,7 @@ const handleWarnings = (event: RequestEvent, context: Context): void => {
     }
     if (!context.adapter) {
         console.log(
-            `${chalk.red.bold("[LUCIA_ERROR]")} ${chalk.red(
+            `${clc.red.bold("[LUCIA_ERROR]")} ${clc.red(
                 `Adapter is not defined in configuration ("config.adapter").`
             )}`
         );
@@ -24,14 +24,14 @@ const handleWarnings = (event: RequestEvent, context: Context): void => {
     }
     if (context.secret.length < 32 && context.env === "DEV") {
         console.log(
-            `${chalk.yellow.bold("[LUCIA_WARNING]")} ${chalk.yellow(
+            `${clc.yellow.bold("[LUCIA_WARNING]")} ${clc.yellow(
                 "Secret key should be longer than 32 chars."
             )}`
         );
     }
     if (context.secret.length < 32 && context.env === "PROD") {
         console.log(
-            `${chalk.yellow.bold("[LUCIA_WARNING]")} ${chalk.yellow(
+            `${clc.yellow.bold("[LUCIA_WARNING]")} ${clc.yellow(
                 "Secret key must be longer than 32 chars."
             )}`
         );
@@ -39,7 +39,7 @@ const handleWarnings = (event: RequestEvent, context: Context): void => {
     }
     if (context.env === "PROD" && event.url.protocol === "http:") {
         console.log(
-            `${chalk.yellow.bold("[LUCIA_WARNING]")} ${chalk.yellow(
+            `${clc.yellow.bold("[LUCIA_WARNING]")} ${clc.yellow(
                 `Current environment ("config.env") is set to "PROD" in configuration but the app is hosted on http. Cookies can only be saved in https when set to "PROD".`
             )}`
         );

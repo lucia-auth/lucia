@@ -22,7 +22,7 @@ import { resetUserPasswordFunction } from "./user/reset-password.js";
 import { getUserByIdFunction } from "./user/get.js";
 import { AccessToken } from "../utils/token.js";
 import { handleServerLoadFunction } from "./load.js";
-import chalk from "chalk";
+import clc from "cli-color";
 
 export const lucia = (configs: Configurations) => {
     return new Auth(configs) as Omit<Auth, "getAuthSession">;
@@ -100,7 +100,7 @@ export class Auth {
     /** @deprecated */
     public getAuthSession: ServerLoad = async () => {
         console.log(
-            `${chalk.red.bold("[LUCIA_Error]")} ${chalk.red(
+            `${clc.red.bold("[LUCIA_Error]")} ${clc.red(
                 ".getAuthSession() is replaced by .load() in v0.7.1 . Check the documentation for details."
             )}`
         );

@@ -3,7 +3,7 @@ import { createBlankCookies } from "../../utils/cookie.js";
 import type { Context } from "../index.js";
 import { ErrorResponse } from "./index.js";
 import type { LuciaError } from "../../utils/error.js"
-import chalk from "chalk";
+import clc from "cli-color";
 
 export const handleLogoutRequest = async (
     event: RequestEvent,
@@ -12,7 +12,7 @@ export const handleLogoutRequest = async (
     try {
         const [_, accessToken] = (event.request.clone().headers.get("Authorization") || "").split(" ")
         if (!accessToken) {
-            console.log(`${chalk.red.bold("[ERROR]")} ${chalk.red("signOut() requires an access token as of v0.8.0")}`)
+            console.log(`${clc.red.bold("[ERROR]")} ${clc.red("signOut() requires an access token as of v0.8.0")}`)
             throw new Error("Missing access token")
         }
         const session = await context.auth.validateRequest(event.request)

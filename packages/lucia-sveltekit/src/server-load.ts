@@ -7,7 +7,7 @@ import {
 import {
     AccessToken,
     EncryptedRefreshToken,
-    FingerprintToken
+    FingerprintToken,
 } from "./utils/token.js";
 import type { Context } from "./auth/index.js";
 import { deleteAllCookies, setCookie } from "./utils/cookie.js";
@@ -27,6 +27,12 @@ export const handleSession = () => {
                 cookies.get("access_token") || "",
                 context
             );
+            if (
+                !accessToken.value &&
+                !fingerprintToken.value &&
+                !encryptedRefreshToken.value
+            )
+                return { _lucia: null };
             const refreshToken = encryptedRefreshToken.decrypt();
             try {
                 const user = await accessToken.user(fingerprintToken.value); // throws an error is invalid
@@ -91,7 +97,7 @@ export const handleSession = () => {
             return {
                 _lucia: result,
             };
-        } catch  {
+        } catch {
             // invalid token or network error
             deleteAllCookies(cookies);
             return {

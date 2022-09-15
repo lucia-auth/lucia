@@ -5,18 +5,24 @@ export const setCookie = (targetCookies: Cookies, ...cookies: string[]) => {
     cookies.forEach((cookieString) => {
         const entries = cookieString
             .split(";")
-            .map((pair) => pair.split("=") as [string, string | boolean]);
+            .map((pair) => pair.split("=") as [string, string | boolean])
+            .map((pair) => [pair[0].replaceAll(" ", ""), pair[1]] as [string, string | boolean])
         const [[valueEntry], attributeEntries] = splitArrayAt(entries, 1);
         const cookieName = valueEntry[0];
         const cookieValue = valueEntry[1] as string;
         // If secure === false, the secure attribute won't be included in the cookie string
-        if (!attributeEntries.some((val) => val[0] === "Secure")) {
+        const secureIndex = attributeEntries.findIndex(
+            (val) => val[0] === "Secure"
+        ); // returns -1 if none satisfies
+        if (secureIndex > -1) {
+            attributeEntries[secureIndex][1] = true;
+        } else {
             attributeEntries.push(["Secure", false]);
         }
         const options = Object.fromEntries(
             attributeEntries.map((val) => [
-                getOptionNameFromAttribute(val[0].replace(" ", "")),
-                val[1] === "" ? false : val[1], // ["httpOnly", ""] => ["httpOnly", false]
+                getOptionNameFromAttribute(val[0]),
+                val[1] === undefined ? true : val[1], // ["httpOnly", ""] => ["httpOnly", true]
             ])
         );
         targetCookies.set(cookieName, cookieValue, options);
