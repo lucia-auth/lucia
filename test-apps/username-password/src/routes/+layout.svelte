@@ -1,8 +1,11 @@
 <script lang="ts">
 	import '../app.css';
+	import { page } from "$app/stores"
 
 	import { handleSilentRefresh } from 'lucia-sveltekit/client';
 	handleSilentRefresh()
+
+	console.log($page.data.message)
 </script>
 
 <svelte:head>
