@@ -20,6 +20,7 @@ Major changes to Lucia!
 -   [Breaking] Renamed error `AUTH_INVALID_REQUEST` to `AUTH_INVALID_REQUEST_METHOD`
 -   [Breaking] AppWrite adapter is now community supported. the package has been deprecated and moved
 -   [Breaking] Renamed `Token.createCookie()` to `Token.cookie()`
+-   [Breaking] `signOut()` does not require an access token
 -   [Fix] Updated session object is now available in load functions [#63](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/63)
 -   [Fix] Support latest SvelteKit's `cookies` with `setCookie()` [#69](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/69)
 -   Silent refresh is handled with `handleSilentRefresh()`
