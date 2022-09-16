@@ -2,6 +2,12 @@
 
 An adapter to use with Prisma (for SQL databases).
 
+```ts
+const adapter: (
+  client: PrismaClient // new PrismaClient()
+) => Adapter
+```
+
 ### Installation
 
 ```bash
@@ -21,12 +27,6 @@ const auth = lucia({
     // ...
 });
 ```
-
-#### Parameters
-
-| name   | type         | description          |
-| ------ | ------------ | -------------------- |
-| client | PrismaClient | `new PrismaClient()` |
 
 ## Schemas
 

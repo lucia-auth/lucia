@@ -2,6 +2,13 @@
 
 An adapter to use with Supabase's PostgreSQL database.
 
+```ts
+const adapter: (
+    url: string, // project url
+    secret: string // service_role secret; NOT anon key
+) => Adapter
+```
+
 ### Installation
 
 ```bash
@@ -11,20 +18,13 @@ npm i @lucia-sveltekit/adapter-supabase
 ## Usage
 
 ```ts
-import supabase from "@lucia-sveltekit/adapter-supabase";
+import adapter from "@lucia-sveltekit/adapter-supabase";
 
 const auth = Lucia({
-    adapter: supabase(url, secret),
+    adapter: adapter(url, secret),
     // ...
 });
 ```
-
-#### Parameters
-
-| name   | type   | description                    |
-| ------ | ------ | ------------------------------ |
-| url    | string | Supabase project url           |
-| secret | string | Supabase "service_role" secret |
 
 ## Setting up the database
 

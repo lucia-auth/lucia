@@ -153,7 +153,9 @@ For standalone endpoints, cookies can be set using `setHeaders()`.
 ```ts
 export const POST = async ({ setHeaders }) => {
     const userSession = await auth.authenticateUser("email", email, password);
-    setHeaders("set-cookie", userSession.cookies.join());
+    setHeaders({
+        "set-cookie", userSession.cookies.join()
+    });
 };
 ```
 

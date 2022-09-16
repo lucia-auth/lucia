@@ -2,6 +2,13 @@
 
 An adapter to use with MongoDB via Mongoose.
 
+```ts
+const adapter: (
+    mongoose: Mongoose, // Mongoose instance
+    url: string // MongoDB connection URL
+) => Adapter
+```
+
 ### Installation
 
 ```bash
@@ -22,16 +29,9 @@ const auth = lucia({
 });
 ```
 
-#### Parameters
-
-| name     | type     | description            |
-| -------- | -------- | ---------------------- |
-| mongoose | Mongoose | Mongoose instance      |
-| url      | string   | MongoDB connection URL |
-
 ## Models
 
-Set these models before setting the adapter. Note that the table names are `user` and `refresh_token`. 
+Set these models before setting the adapter. Note that the table names are `user` and `refresh_token`.
 
 ### users
 

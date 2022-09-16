@@ -64,15 +64,14 @@ An instance of [`LuciaError`](/references/instances#luciaerror).
 throw new LuciaError("LUCIA_INVALID_ACCESS_TOKEN");
 ```
 
-### setCookies
+### setCookie
 
 Sets http cookie strings to SvelteKit's `cookies`. Can be used in endpoints, server load functions, and actions.
 
 ```ts
 const setCookie: (
     target: Cookies,
-    // http cookie strings
-    ...cookieStrings: string[]
+    ...cookieStrings: string[] // http cookie strings
 ) => void;
 ```
 
