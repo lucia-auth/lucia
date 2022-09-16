@@ -138,6 +138,49 @@ export const handle = sequence(
 
 ### handleServerLoad
 
+Similar to [`handleLoad()`](/load#handleload) but for server load functions. When provided with multiple load functions, `handleServerLoad` will automatically merge the returned object and return that as load function's result. `redirect()` and `error()` exception can be used as normal.
+
+```ts
+const handleServerLoad: (
+    /*
+    provided load functions will run in sequence when there are more than 1.
+    */
+    ...loadHandler: LoadHandler[]
+) => Load;
+```
+
+#### Types
+
+```ts
+/*
+a normal load function with added parameters
+sveltekit's redirect() and error() can be used inside as well
+*/
+type LoadHandler = (event: LuciaServerLoadEvent) => Promise<Record<string, any>>;
+```
+
+```ts
+type LuciaLoadEvent = ServerLoadEvent & {
+    /*
+    gets the current user session
+    will run immediately and not wait for the parent load function
+    */
+    getSession: () => Promise<Session>;
+};
+```
+
+#### Example
+
+```ts
+import { redirect } from "@sveltejs/kit";
+
+export const load = handleServerLoad(async ({ getSession, parent }) => {
+    const session = await getSession();
+    if (!session) throw redirect(302, "/login")
+    return {}
+});
+```
+
 ### invalidateRefreshToken
 
 Invalidates a refresh token. Should be used before creating a new session using [`createUserSession()`](/server-apis#createusersession) if the previous refresh token hasn't been invalidated. Will succeed regardless of the validity of the refresh token.

@@ -10,7 +10,7 @@ import { handleLoad } from "lucia-sveltekit/load";
 
 ### handleLoad
 
-For normal load functions (both page and layout). Refer to [`handleServerLoad`]() for server load functions.
+For normal load functions (both page and layout). Refer to [`handleServerLoad`](/server-apis/lucia#handleserverload) for server load functions. When provided with multiple load functions, `handleLoad` will automatically merge the returned object and return that as load function's result. `redirect()` and `error()` exception can be used as normal.
 
 ```ts
 const handleLoad: (

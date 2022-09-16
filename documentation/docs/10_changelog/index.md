@@ -1,6 +1,16 @@
+## 0.8.5
+
+Sep. 16, 2022
+
+Patches for v0.8.4.
+
+-   [Fix] `getSession()` in `handleServerLoad()` correctly gets tokens [#76](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/76#issuecomment-1249177890)
+-   [Fix] `getSession()` in `handleServerLoad()` gets user from token instead from the database [#78](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/78)
+-   [Fix] Fix types with `setCookie` [#77](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/77) 
+
 ## 0.8.4
 
-Sep.15, 2022
+Sep. 16, 2022
 
 Major changes to Lucia!
 
