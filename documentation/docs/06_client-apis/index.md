@@ -26,11 +26,11 @@ const signOut: () => Promise<void>;
 
 #### Errors
 
-| name                   | description                              |
-| ---------------------- | ---------------------------------------- |
-| AUTH_NOT_AUTHENTICATED | Not authenticated (invalid access token) |
-| DATABASE_UPDATE_FAILED | Failed to update database                |
-| UNKNOWN                | Unknown error, likely a network error    |
+| name                   | description                           |
+| ---------------------- | ------------------------------------- |
+| AUTH_NOT_AUTHENTICATED | Session is `null`                     |
+| DATABASE_UPDATE_FAILED | Failed to update database             |
+| UNKNOWN                | Unknown error, likely a network error |
 
 ### refreshTokens
 
