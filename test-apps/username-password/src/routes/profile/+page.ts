@@ -3,6 +3,7 @@ import { handleLoad } from 'lucia-sveltekit/load';
 import type { PageLoad } from './$types.js';
 
 export const load: PageLoad = handleLoad(async ({ getSession }) => {
+	console.log("profile")
 	const session = await getSession();
 	if (!session) throw redirect(302, '/login');
 	return {};
