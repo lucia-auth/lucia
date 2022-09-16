@@ -1,4 +1,6 @@
+import { deleteAllCookies } from "$lib/index.js";
 import type { ServerLoadEvent } from "$lib/kit.js";
+import { AccessToken, EncryptedRefreshToken, FingerprintToken } from "$lib/utils/token.js";
 import type { AuthServerLoadEvent, Session } from "../types.js";
 import type { Context } from "./index.js";
 
@@ -13,22 +15,23 @@ export const handleServerLoadFunction = (context: Context) => {
     ) => {
         return async (event: ServerLoadEvent) => {
             const getSession = async (): Promise<Session> => {
-                const accessToken = event.cookies.get("access_token");
-                const fingerprintToken = event.cookies.get("fingerprint_token");
-                const refreshToken = event.cookies.get("refresh_token");
-                if (!accessToken || !fingerprintToken || !refreshToken)
-                    return null;
+                const accessToken = new AccessToken(event.cookies.get("access_token") || "", context)
+                const encryptedRefreshToken = new EncryptedRefreshToken(event.cookies.get("encrypt_refresh_token") || "", context)
+                const fingerprintToken = new FingerprintToken(event.cookies.get("fingerprint_token") || "", context)
+                if (!accessToken.value || !fingerprintToken.value || !encryptedRefreshToken.value) {
+                    deleteAllCookies(event.cookies)
+                    return null
+                }
                 try {
-                    const user = await context.auth.getUserFromAccessToken(
-                        accessToken,
-                        fingerprintToken
-                    );
+                    const refreshToken = encryptedRefreshToken.decrypt()
+                    const user = await accessToken.user(fingerprintToken.value)
                     return {
                         user,
-                        access_token: accessToken,
-                        refresh_token: refreshToken,
+                        access_token: accessToken.value,
+                        refresh_token: refreshToken.value,
                     };
                 } catch {
+                    deleteAllCookies(event.cookies)
                     return null;
                 }
             };

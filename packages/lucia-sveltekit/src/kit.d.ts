@@ -3,7 +3,7 @@
 import type { Session } from "./types.js";
 
 export interface Cookies {
-	get(name: string, opts?: import('cookie').CookieParseOptions): string | undefined;
+	get(name: string, opts?: import('cookie').CookieParseOptions): string | void;
 	set(name: string, value: string, opts?: import('cookie').CookieSerializeOptions): void;
 	delete(name: string): void;
 }

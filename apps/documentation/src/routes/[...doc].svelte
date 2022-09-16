@@ -58,7 +58,7 @@
 		@apply overflow-auto rounded text-indigo-600 bg-indigo-200 py-0.5 px-1 text-sm;
 	}
 	:global(.markdown code:not(pre * , a > code)) {
-		@apply overflow-auto rounded bg-gray-900 py-0.5 px-1 text-sm;
+		@apply overflow-auto rounded bg-gray-900 py-0.5 px-1 text-sm whitespace-nowrap;
 		color: #ced5e0;
 	}
 	:global(.markdown ul:not(li > ul)) {
@@ -98,7 +98,7 @@
 		@apply appearance-none bg-gray-50;
 	}
 	:global(.markdown blockquote) {
-		@apply bg-indigo-100 px-2 py-1 rounded-md text-sm;
+		@apply bg-indigo-100 p-4 rounded-md text-sm;
 	}
 	:global(.markdown .breaking) {
 		@apply text-red-500 font-medium;
