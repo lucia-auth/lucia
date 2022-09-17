@@ -37,6 +37,7 @@ Finally, create `/+layout.svelte` and `/+layout.server.js`.
 In `/+layout.server.js`, create a load function. This will check if the access token has expired and refresh it if so. This also exposes the user data to the client.
 
 ```ts
+import { auth } from "$lib/lucia";
 import { handleSession } from "lucia-sveltekit";
 
 export const load = auth.handleServerLoad(handleSession());
@@ -81,6 +82,7 @@ The first parameter is the auth id, and the second parameter is the identifier. 
 After creating a user, Lucia will return a set of tokens and cookies. These cookies should be saved to the user using the `set-cookie` headers.
 
 ```js
+// for +server endpoints
 export const POST = async () => {
     // ...
     try {
@@ -103,6 +105,8 @@ export const POST = async () => {
 
 ```ts
 // for POST actions
+import { setCookie } from "lucia-sveltekit"
+
 export const POST = async ({ cookies }) => {
     // ...
     try {
@@ -180,7 +184,7 @@ if ($session) {
 [`handleLoad()`](/load#handleLoad) takes a normal load function (but with added params like `getSession()`).
 
 ```ts
-import { handleLoad } from "lucia-sveltekit";
+import { handleLoad } from 'lucia-sveltekit/load'
 
 export const load = handleLoad(async ({ getSession }) => {
     const session = await getSession();
