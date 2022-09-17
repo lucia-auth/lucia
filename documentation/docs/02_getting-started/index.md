@@ -184,7 +184,7 @@ if ($session) {
 [`handleLoad()`](/load#handleLoad) takes a normal load function (but with added params like `getSession()`).
 
 ```ts
-import { handleLoad } from 'lucia-sveltekit/load'
+import { handleLoad } from "lucia-sveltekit/load"
 
 export const load = handleLoad(async ({ getSession }) => {
     const session = await getSession();
