@@ -2,18 +2,19 @@
 
 ### Official guides
 
-- [OAuth authentication](/guides/oauth)
-- [Email and password authentication](/guides/email-and-password)
+-   [OAuth authentication](/guides/oauth)
+-   [Email and password authentication](/guides/email-and-password)
+-   [Working with forms](/guides/working-with-forms)
 
 ### Official examples
 
-- [Username and password](/) (Supabase adapter)
-- [Github OAuth](/) (Prisma adapter)
+-   [Username and password](/) (Supabase adapter)
+-   [Github OAuth](/) (Prisma adapter)
 
 ### To watch
 
-- [SvelteKit authentication, the better way - Tutorial (by Pilcrow on Youtube)](https://youtu.be/Y98KipzwVdM)
+-   [SvelteKit authentication, the better way - Tutorial (by Pilcrow on Youtube)](https://youtu.be/Y98KipzwVdM)
 
 ### To read
 
-- [Implementing password reset (by SkepticMystic)](https://hackmd.io/@NUrzCnE5Q7SGfgxKFQLtDQ/rk5JibLC5)
+-   [Implementing password reset (by SkepticMystic)](https://hackmd.io/@NUrzCnE5Q7SGfgxKFQLtDQ/rk5JibLC5)

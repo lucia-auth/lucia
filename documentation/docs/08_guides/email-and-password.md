@@ -6,35 +6,41 @@ This guide will cover how to implement email and password authentication. This w
 
 Follow the adapter's instruction. Add a new column called `email` (text/varchar) where the values are unique.
 
-### Frontend
+### Page
 
-Send a POST request to the signup or login endpoint with a JSON body.
+Create a form that takes in email and password, one in the sign up page and another in the login page.
 
-```ts
-const signup = async () => {
-    await fetch("/api/signup", {
-        method: "POST",
-        body: JSON.stringify({
-            email,
-            password,
-        }),
-    });
-};
+```html
+<form method="post">
+    <label for="email">email</label>
+    <input type="text" name="email" id="email" />
+    <label for="password">password</label>
+    <input type="password" name="password" id="password" />
+    <input type="submit" />
+</form>
 ```
 
 ## Sign up
 
-Create `routes/api/signup.ts` and accept a POST request. Get the email and password from the body data.
+Create `+page.server.ts` in the same route folder as the sign up page and accept a POST request. Get the email and password from the form data.
 
 ```ts
-import type { RequestHandler } from "@sveltejs/kit";
+import { type Actions, invalid, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/lucia";
+import { setCookie } from "lucia-sveltekit";
 
-export const POST: RequestHandler = async ({ request }) => {
-    const { email, password } = await request.json();
-    if (!email || !password) {
-        return new Response(null, 400);
-    }
+export const actions: Actions = {
+    default: async ({ cookies, request }) => {
+        const form = await request.formData();
+        const email = form.get("email")?.toString() || "";
+        const password = form.get("password")?.toString() || "";
+        if (!email || !password) {
+            throw invalid(400, {
+                message: "Missing input",
+            });
+        }
+        // ...
+    },
 };
 ```
 
@@ -43,61 +49,62 @@ export const POST: RequestHandler = async ({ request }) => {
 Create a new user using [`createUser`](/server-apis#createuser) using the auth id of `email` and an identifier of `email` (refer to the [overview](/overview) page for an explanation on auth ids and identifiers). Save the user's password using the password options and the user's email using `user_data`. Set the cookies (refresh, access, and fingerprint token) and redirect the user in the response. The `AUTH_DUPLICATE_IDENTIFIER_TOKEN` error is thrown when a user tries to create a new account using the same auth id and identifier (in this case, email).
 
 ```ts
-try {
-    const userSession = await auth.createUser("email", email, {
-        password,
-        user_data: {
-            email,
-        },
-    });
-    return new Response(null, {
-        status: 302,
-        headers: {
-            "set-cookie": userSession.cookies.join(),
-            location: "/",
-        },
-    };)
-} catch (e) {
-    const error = e as Error;
-    if (
-        error.message === "AUTH_DUPLICATE_IDENTIFIER_TOKEN" ||
-        error.message === "AUTH_DUPLICATE_USER_DATA"
-    ) {
-        return new Response(
-	        JSON.stringify({
-		        error: 'Email already in use.'
-	        }),
-	        {
-		        status: 400
-	        }
-        );
-    }
-    return new Response(
-	    JSON.stringify({
-            error: "Unknown error.",
-        }),
-	    {
-		    status: 500,
-	    }
-    );
-}
+import { type Actions, invalid, redirect } from "@sveltejs/kit";
+import { auth } from "$lib/lucia";
+import { setCookie } from "lucia-sveltekit";
+
+export const actions: Actions = {
+    default: async ({ cookies, request }) => {
+        // ...
+        try {
+            const userSession = await auth.createUser("email", email, {
+                password,
+                user_data: {
+                    email,
+                },
+            });
+            setCookie(cookies, ...userSession.cookies);
+            throw redirect(302, "/"); // redirect to protected page
+        } catch (e) {
+            const error = e as Error;
+            if (
+                error.message === "AUTH_INVALID_IDENTIFIER_TOKEN" ||
+                error.message === "AUTH_INVALID_PASSWORD"
+            ) {
+                throw invalid(400, {
+                    message: "Incorrect email or password",
+                });
+            }
+            // database connection error
+            throw invalid(400, {
+                message: "Unknown error",
+            });
+        }
+    },
+};
 ```
 
 ## Sign in
 
-Create `routes/api/login.ts` and accept a POST request. Get the user's email and password from the body.
+Create `+page.server.ts` in the same route folder as the login page and accept POST requests. Get the user's email and password from the body.
 
 ```ts
-import type { RequestHandler } from "@sveltejs/kit";
+import { type Actions, invalid, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/lucia";
+import { setCookie } from "lucia-sveltekit";
 
-export const POST: RequestHandler = async ({ request }) => {
-    const form = await request.formData();
-    const email = form.get("email")?.toString();
-    const password = form.get("password")?.toString();
-    if (!email || !password) {
-        return new Response(400);
-    }
+export const actions: Actions = {
+    default: async ({ cookies, request }) => {
+        const form = await request.formData();
+        const email = form.get("email")?.toString() || "";
+        const password = form.get("password")?.toString() || "";
+        if (!email || !password) {
+            throw invalid(400, {
+                message: "Missing input",
+            });
+        }
+        // ...
+    },
 };
 ```
 
@@ -106,42 +113,36 @@ export const POST: RequestHandler = async ({ request }) => {
 Authenticate the user using [`authenticateUser`](/server-apis#authenticateuser), which will require a password this time. It's important to NOT tell the user if the email was incorrect or if the password was incorrect.
 
 ```ts
-try {
-    const authenticateUser = await auth.authenticateUser(
-        "email",
-        email,
-        password
-    );
-    return new Response(null, {
-        status: 302,
-        headers: {
-            "set-cookie": authenticateUser.cookies.join(),
-            location: "/",
-        },
-    });
-} catch (e) {
-    const error = e as Error;
-    if (
-        error.message === "AUTH_INVALID_IDENTIFIER_TOKEN" ||
-        error.message === "AUTH_INVALID_PASSWORD"
-    ) {
-        return new Response(
-            JSON.stringify({
-                error: "Incorrect email or password.",
-            }),
-            {
-                status: 400,
+import { type Actions, invalid, redirect } from "@sveltejs/kit";
+import { auth } from "$lib/lucia";
+import { setCookie } from "lucia-sveltekit";
+
+export const actions: Actions = {
+    default: async ({ cookies, request }) => {
+        // ...
+        try {
+            const userSession = await auth.authenticateUser(
+                "email",
+                email,
+                password
+            );
+            setCookie(cookies, ...userSession.cookies);
+            throw redirect(302, "/"); // redirect to protected page
+        } catch (e) {
+            const error = e as Error;
+            if (
+                error.message === "AUTH_INVALID_IDENTIFIER_TOKEN" ||
+                error.message === "AUTH_INVALID_PASSWORD"
+            ) {
+                throw invalid(400, {
+                    message: "Incorrect email or password",
+                });
             }
-        );
-    }
-    // database connection error
-    return new Response(
-        JSON.stringify({
-            error: "Unknown error.",
-        }),
-        {
-            status: 500,
+            // database connection error
+            throw invalid(400, {
+                message: "Unknown error",
+            });
         }
-    );
-}
+    },
+};
 ```

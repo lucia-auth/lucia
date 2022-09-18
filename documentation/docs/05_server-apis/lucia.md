@@ -3,7 +3,10 @@
 Methods of [`Lucia`](/references/instances) instance.
 
 ```ts
-const auth = lucia();
+const auth = lucia({
+    // ...
+});
+
 auth.getUser();
 ```
 
@@ -95,10 +98,7 @@ const deleteUser: (userId: string) => Promise<void>;
 Gets the user with the corresponding auth id and identifier.
 
 ```ts
-const getUser: (
-    authMethod: string,
-    identifier: string
-) => Promise<User | null>; // null if user does not exist
+const getUser: (authMethod: string, identifier: string) => Promise<User | null>; // null if user does not exist
 ```
 
 #### Errors
@@ -156,7 +156,9 @@ const handleServerLoad: (
 a normal load function with added parameters
 sveltekit's redirect() and error() can be used inside as well
 */
-type LoadHandler = (event: LuciaServerLoadEvent) => Promise<Record<string, any>>;
+type LoadHandler = (
+    event: LuciaServerLoadEvent
+) => Promise<Record<string, any>>;
 ```
 
 ```ts
@@ -176,8 +178,8 @@ import { redirect } from "@sveltejs/kit";
 
 export const load = handleServerLoad(async ({ getSession, parent }) => {
     const session = await getSession();
-    if (!session) throw redirect(302, "/login")
-    return {}
+    if (!session) throw redirect(302, "/login");
+    return {};
 });
 ```
 
@@ -272,13 +274,15 @@ const updateUserIdentifierToken: (
 | AUTH_INVALID_USER_ID   | A user that matches the user id does not exist |
 | DATABASE_UPDATE_FAILED | Failed to update database                      |
 
-### validateAccessToken
+### getUserFromAccessToken
 
 Validates access token and returns the user if valid.
 
 ```ts
-const validateAccessToken = (accessToken: string, fingerprintToken: string) =>
-    Promise<User>;
+const getUserFromAccessToken: (
+    accessToken: string,
+    fingerprintToken: string
+) => Promise<User>;
 ```
 
 #### Returns
@@ -286,6 +290,12 @@ const validateAccessToken = (accessToken: string, fingerprintToken: string) =>
 | name | type                           | description |
 | ---- | ------------------------------ | ----------- |
 |      | [User](/references/types#user) |             |
+
+#### Errors
+
+| name                      | description                 |
+| ------------------------- | --------------------------- |
+| AUTH_INVALID_ACCESS_TOKEN | One of the token is invalid |
 
 ### validateRequest
 
