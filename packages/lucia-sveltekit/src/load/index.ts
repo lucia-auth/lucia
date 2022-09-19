@@ -1,1 +1,1 @@
-export { handleLoad } from "./client.js"
+export { getSession } from "./client.js"

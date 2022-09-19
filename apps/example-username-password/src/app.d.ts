@@ -4,3 +4,6 @@ declare namespace Lucia {
 		username: string
 	}
 }
+
+/// <reference types="@sveltejs/kit" />
+declare namespace App {}

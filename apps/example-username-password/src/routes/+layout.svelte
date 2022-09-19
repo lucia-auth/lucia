@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import { page } from "$app/stores"
 
 	import { handleSilentRefresh } from 'lucia-sveltekit/client';
 	handleSilentRefresh()
@@ -16,10 +17,13 @@
 	:global(body) {
 		@apply px-4 pt-8 flex flex-col w-full place-items-center;
 	}
-	:global(h2) {
+	:global(h1) {
 		@apply text-3xl font-semibold w-full;
 	}
-	:global(input) {
+	:global(h2) {
+		@apply text-2xl font-semibold w-full;
+	}
+	:global(input:not(.checkbox)) {
 		@apply border appearance-none outline-none my-1 rounded p-1 w-full;
 	}
 	:global(.github),
@@ -36,7 +40,7 @@
 	:global(.github) {
 		@apply py-1;
 	}
-	:global(div) {
+	:global(div:not(.ignore)) {
 		@apply py-4 max-w-sm w-full flex flex-col place-items-center;
 	}
 	:global(form) {

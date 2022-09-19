@@ -4,17 +4,22 @@ import { getClientSession, getSSRSession } from "./session.js";
 import type { Session } from "./types.js";
 import { LuciaError } from "./utils/error.js";
 
-export const signOut = async () => {
-    const sessionStore = getClientSession()
-    const session = get(sessionStore)
-    if (!session) throw new LuciaError("AUTH_NOT_AUTHENTICATED")
+export const signOut = async (redirect?: string): Promise<void> => {
+    const sessionStore = getClientSession();
+    const session = get(sessionStore);
+    if (!session) throw new LuciaError("AUTH_NOT_AUTHENTICATED");
     const response = await fetch("/api/auth/logout", {
         method: "POST",
         headers: {
             Authorization: `Bearer ${session?.access_token || ""}`,
         },
     });
-    if (response.ok) return { error: null };
+    if (response.ok) {
+        if (redirect) {
+            globalThis.location.href = redirect;
+        }
+        return;
+    }
     let result;
     try {
         result = await response.json();
