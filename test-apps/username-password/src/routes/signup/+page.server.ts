@@ -1,5 +1,5 @@
 import { auth } from '$lib/lucia';
-import type { Actions } from "@sveltejs/kit";
+import { invalid, redirect, type Actions } from '@sveltejs/kit';
 import { setCookie } from 'lucia-sveltekit';
 
 export const actions: Actions = {
@@ -8,12 +8,9 @@ export const actions: Actions = {
 		const username = form.get('username');
 		const password = form.get('password');
 		if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
-			return {
-				errors: {
-					message: 'Invalid input',
-					username: ''
-				}
-			};
+			return invalid(400, {
+				message: 'Invalid input'
+			});
 		}
 		try {
 			const createUser = await auth.createUser('username', username, {
@@ -22,31 +19,22 @@ export const actions: Actions = {
 					username
 				}
 			});
-			setCookie(cookies, ... createUser.cookies)
-			return {
-				location: "/profile"
-			}
+			setCookie(cookies, ...createUser.cookies);
 		} catch (e) {
 			const error = e as Error;
 			if (
 				error.message === 'AUTH_DUPLICATE_IDENTIFIER_TOKEN' ||
 				error.message === 'AUTH_DUPLICATE_USER_DATA'
 			) {
-				return {
-					errors: {
-						username: 'Username already taken',
-						message: ''
-					}
-				};
+				return invalid(400, {
+					message: 'Username unavailable'
+				});
 			}
-			console.error(error)
-			return {
-				status: 500,
-				errors: {
-					message: 'Unknown error',
-					username: ''
-				}
-			};
+			console.error(error);
+			return invalid(500, {
+				message: 'Unknown error occurred'
+			});
 		}
+		throw redirect(302, '/login');
 	}
-}
+};

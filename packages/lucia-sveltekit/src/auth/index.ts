@@ -21,8 +21,8 @@ import { updateUserIdentifierTokenFunction } from "./user/update/identifier-toke
 import { resetUserPasswordFunction } from "./user/reset-password.js";
 import { getUserByIdFunction } from "./user/get.js";
 import { AccessToken } from "../utils/token.js";
-import { handleServerLoadFunction } from "./load.js";
-import clc from "cli-color";
+import { handleServerSessionFunction } from "./load.js";
+import { validateFormSubmissionFunction } from "./form";
 
 export const lucia = (configs: Configurations) => {
     return new Auth(configs) as Omit<Auth, "getAuthSession">;
@@ -56,6 +56,9 @@ export class Auth {
         this.validateRequestByCookie = validateRequestByCookieFunction(
             this.context
         );
+        this.validateFormSubmission = validateFormSubmissionFunction(
+            this.context
+        );
         this.refreshTokens = refreshTokensFunction(this.context);
         this.invalidateRefreshToken = invalidateRefreshTokenFunction(
             this.context
@@ -66,8 +69,8 @@ export class Auth {
             this.context
         );
         this.resetUserPassword = resetUserPasswordFunction(this.context);
-        this.handleServerLoad = handleServerLoadFunction(this.context);
         this.handleHooks = handleHooksFunction(this.context);
+        this.handleServerSession = handleServerSessionFunction(this.context);
     }
     public handleHooks: () => Handle;
     public authenticateUser: ReturnType<typeof authenticateUserFunction>;
@@ -79,6 +82,9 @@ export class Auth {
     public validateRequestByCookie: ReturnType<
         typeof validateRequestByCookieFunction
     >;
+    public validateFormSubmission: ReturnType<
+        typeof validateFormSubmissionFunction
+    >;
     public refreshTokens: ReturnType<typeof refreshTokensFunction>;
     public invalidateRefreshToken: ReturnType<
         typeof invalidateRefreshTokenFunction
@@ -89,21 +95,13 @@ export class Auth {
         typeof updateUserIdentifierTokenFunction
     >;
     public resetUserPassword: ReturnType<typeof resetUserPasswordFunction>;
-    public handleServerLoad: ReturnType<typeof handleServerLoadFunction>;
+    public handleServerSession: ReturnType<typeof handleServerSessionFunction>;
     public getUserFromAccessToken = async (
         accessToken: string,
         fingerprintToken: string
     ) => {
         const accessTokenInstance = new AccessToken(accessToken, this.context);
         return await accessTokenInstance.user(fingerprintToken);
-    };
-    /** @deprecated */
-    public getAuthSession: ServerLoad = async () => {
-        console.log(
-            `${clc.red.bold("[LUCIA_Error]")} ${clc.red(
-                ".getAuthSession() is replaced by .load() in v0.7.1 . Check the documentation for details."
-            )}`
-        );
     };
 }
 

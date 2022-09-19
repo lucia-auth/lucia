@@ -109,23 +109,25 @@ const getUser: (authMethod: string, identifier: string) => Promise<User | null>;
 
 ### handleHooks
 
-Returns SvelteKit's handle function. Reference [SvelteKit's handle](https://kit.svelte.dev/docs/hooks#handle). Required to be placed in `hooks.server.js` for Lucia to work.
+Returns SvelteKit's handle function. Reference [SvelteKit's handle](https://kit.svelte.dev/docs/hooks#handle). Required to be placed in `hooks.server.ts` for Lucia to work. This will also modify the html to expose global variable `_lucia_page_data`.
 
 ```ts
-import type { Handle } from "@sveltejs/kit/types";
 const handleHooks: () => Handle;
 ```
 
 #### Example
 
 ```ts
-//  src/server.hooks.js
-export const handle = handleHooks();
+//  src/hooks.server.ts
+import { auth } from "$lib/lucia";
+
+export const handle = auth.handleHooks();
 ```
 
 #### With other handle functions
 
 ```ts
+//  src/hooks.server.ts
 import { sequence } from "@sveltejs/kit";
 import { auth } from "$lib/lucia";
 
@@ -136,50 +138,34 @@ export const handle = sequence(
 );
 ```
 
-### handleServerLoad
+### handleServerSession
 
-Similar to [`handleLoad()`](/load#handleload) but for server load functions. When provided with multiple load functions, `handleServerLoad` will automatically merge the returned object and return that as load function's result. `redirect()` and `error()` exception can be used as normal.
-
-```ts
-const handleServerLoad: (
-    /*
-    provided load functions will run in sequence when there are more than 1.
-    */
-    ...loadHandler: LoadHandler[]
-) => Load;
-```
-
-#### Types
+Reads cookies inside server load function and returns the session data for page data. Automatically refreshes the tokens if one is expired. Will run the server load function afterward if provided. This will set property `_lucia` (equal to ServerSession) to the page data which will be used set the session store. The returned function will be correctly typed so SvelteKit will know what the load function will return.
 
 ```ts
-/*
-a normal load function with added parameters
-sveltekit's redirect() and error() can be used inside as well
-*/
-type LoadHandler = (
-    event: LuciaServerLoadEvent
-) => Promise<Record<string, any>>;
-```
-
-```ts
-type LuciaLoadEvent = ServerLoadEvent & {
-    /*
-    gets the current user session
-    will run immediately and not wait for the parent load function
-    */
-    getSession: () => Promise<Session>;
-};
+const handleServerSession: (serverLoad?: ServerLoad) => ServerLoad;
 ```
 
 #### Example
 
 ```ts
-import { redirect } from "@sveltejs/kit";
+// +page.server.ts
+import { auth } from "$lib/lucia.js";
 
-export const load = handleServerLoad(async ({ getSession, parent }) => {
-    const session = await getSession();
-    if (!session) throw redirect(302, "/login");
-    return {};
+export const load = auth.handleServerSession();
+```
+
+```ts
+// +page.server.ts
+import { auth } from "$lib/lucia.js";
+
+/*
+sveltekit will know this load function will return an object with property message, _lucia
+*/
+export const load = auth.handleServerSession(async () => {
+    return {
+        message: "hello",
+    };
 });
 ```
 
@@ -285,21 +271,62 @@ const getUserFromAccessToken: (
 ) => Promise<User>;
 ```
 
-#### Returns
-
-| name | type                           | description |
-| ---- | ------------------------------ | ----------- |
-|      | [User](/references/types#user) |             |
-
 #### Errors
 
 | name                      | description                 |
 | ------------------------- | --------------------------- |
 | AUTH_INVALID_ACCESS_TOKEN | One of the token is invalid |
 
+### validateFormSubmission
+
+Checks if the form submission was made by an authenticated user. The access token should be sent inside the form with a name of "\_lucia". Works both in actions and endpoints. The request body should not be tampered with (`formData()`) before calling it.
+
+```ts
+const validateFormSubmission: (
+    request: Request // sveltekit RequestEvent.Request
+) => Promise<ServerSession>;
+```
+
+#### Errors
+
+| name                       | description                                              |
+| -------------------------- | -------------------------------------------------------- |
+| AUTH_INVALID_ACCESS_TOKEN  | The access token in the authorization headers in invalid |
+| AUTH_INVALID_REFRESH_TOKEN | The refresh token in the cookies in invalid              |
+
+#### Example
+
+```html
+<script>
+    import { getSession } from "lucia-sveltekit/client";
+
+    const session = getSession();
+</script>
+
+<form method="post">
+    <input name="_lucia" value="{$session?.access_token}" hidden />
+</form>
+```
+
+```ts
+// +page.server.ts
+import { auth } from "$lib/lucia";
+import type { Actions } from "@sveltejs/kit";
+
+export const actions: Actions = {
+    default: async ({ request }) => {
+        try {
+            const session = await auth.validateFormSubmission(request);
+        } catch {
+            // ...
+        }
+    },
+};
+```
+
 ### validateRequest
 
-Checks if the request was made by an authenticated user using the authorization header. The access token should be sent as a bearer token inside the authorization header. For GET and POST requests.
+Checks if the request was made by an authenticated user using the authorization header. The access token should be sent as a bearer token inside the authorization header. For GET and POST requests. The request body should not be tampered with (`json()`, `text()`, `formData()`) before calling it.
 
 ```ts
 const validateRequest: (
@@ -309,13 +336,31 @@ const validateRequest: (
 
 #### Errors
 
-| name                      | description                                              |
-| ------------------------- | -------------------------------------------------------- |
-| AUTH_INVALID_ACCESS_TOKEN | The access token in the authorization headers in invalid |
+| name                       | description                                              |
+| -------------------------- | -------------------------------------------------------- |
+| AUTH_INVALID_ACCESS_TOKEN  | The access token in the authorization headers in invalid |
+| AUTH_INVALID_REFRESH_TOKEN | The refresh token in the cookies in invalid              |
+
+#### Example
+
+```ts
+// +server.ts
+import { auth } from "$lib/lucia";
+import { getSession } from "lucia-sveltekit/load";
+import type { RequestHandler } from "@sveltejs/kit";
+
+export const POST: RequestHandler = async ({ request }) => {
+    try {
+        const session = await auth.validateRequest(request);
+    } catch {
+        // ...
+    }
+};
+```
 
 ### validateRequestByCookie
 
-Checks if the request was made by an authenticated user using cookies. **Do NOT use this for POST or PUT requests as it is vulnerable to CSRF attacks**, and it will throw an error if it is not a GET request for preventive measures.
+Checks if the request was made by an authenticated user using cookies. This can be used in endpoints or server load functions (equivalent to `getSession()`). **Do NOT use this for POST or PUT requests as it is vulnerable to CSRF attacks**, and it will throw an error if it is not a GET request for preventive measures. The request body should not be tampered with (`json()`, `text()`, `formData()`) before calling it.
 
 ```ts
 const validateRequest: (
@@ -325,7 +370,38 @@ const validateRequest: (
 
 #### Errors
 
-| name                      | description                                              |
-| ------------------------- | -------------------------------------------------------- |
-| AUTH_INVALID_ACCESS_TOKEN | The access token in the authorization headers in invalid |
-| AUTH_INVALID_REQUEST      | The request method is not "GET"                          |
+| name                        | description                                              |
+| --------------------------- | -------------------------------------------------------- |
+| AUTH_INVALID_ACCESS_TOKEN   | The access token in the authorization headers in invalid |
+| AUTH_INVALID_REFRESH_TOKEN  | The refresh token in the cookies in invalid              |
+| AUTH_INVALID_REQUEST_METHOD | The request method is not "GET"                          |
+
+#### Example
+
+```ts
+// +page.server.ts
+import { auth } from "$lib/lucia";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ request }) => {
+    try {
+        const session = await auth.validateRequestByCookie(request);
+    } catch {
+        // ...
+    }
+};
+```
+
+```ts
+// +server.ts
+import { auth } from "$lib/lucia";
+import type { RequestHandler } from "@sveltejs/kit";
+
+export const GET: RequestHandler = async ({ request }) => {
+    try {
+        const session = await auth.validateRequestByCookie(request);
+    } catch {
+        // ...
+    }
+};
+```

@@ -1,59 +1,131 @@
-import { deleteAllCookies } from "$lib/index.js";
-import type { ServerLoadEvent } from "$lib/kit.js";
-import { AccessToken, EncryptedRefreshToken, FingerprintToken } from "$lib/utils/token.js";
-import type { AuthServerLoadEvent, Session } from "../types.js";
+import { deleteAllCookies, setCookie } from "$lib/utils/cookie.js";
+import type { Session } from "$lib/types.js";
+import {
+    FingerprintToken,
+    EncryptedRefreshToken,
+    AccessToken,
+} from "$lib/utils/token.js";
 import type { Context } from "./index.js";
+import {
+    createAccessToken,
+    createRefreshToken,
+    getAccountFromDatabaseData,
+} from "$lib/utils/auth.js";
+import type { ServerLoad, ServerLoadEvent } from "$lib/kit.js";
 
-export const handleServerLoadFunction = (context: Context) => {
-    const handleServerLoad = <
-        LoadFunctions extends ((
-            event: AuthServerLoadEvent,
-            context: Context
-        ) => Promise<Record<string, any>>)[]
-    >(
-        ...loadFunctions: LoadFunctions
-    ) => {
-        return async (event: ServerLoadEvent) => {
-            const getSession = async (): Promise<Session> => {
-                const accessToken = new AccessToken(event.cookies.get("access_token") || "", context)
-                const encryptedRefreshToken = new EncryptedRefreshToken(event.cookies.get("encrypt_refresh_token") || "", context)
-                const fingerprintToken = new FingerprintToken(event.cookies.get("fingerprint_token") || "", context)
-                if (!accessToken.value || !fingerprintToken.value || !encryptedRefreshToken.value) {
-                    deleteAllCookies(event.cookies)
-                    return null
-                }
-                try {
-                    const refreshToken = encryptedRefreshToken.decrypt()
-                    const user = await accessToken.user(fingerprintToken.value)
-                    return {
-                        user,
+type HandleServerSession = <LoadFn extends ServerLoad = () => Promise<{}>>(
+    serverLoad?: LoadFn
+) => (
+    event: ServerLoadEvent
+) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & { _lucia: Session }>;
+
+export const handleServerSessionFunction = (context: Context) => {
+    const handleServerSessionCore = async ({
+        cookies,
+    }: ServerLoadEvent): Promise<{ _lucia: Session }> => {
+        const fingerprintToken = new FingerprintToken(
+            cookies.get("fingerprint_token") || "",
+            context
+        );
+        const encryptedRefreshToken = new EncryptedRefreshToken(
+            cookies.get("encrypt_refresh_token") || "",
+            context
+        );
+        try {
+            const accessToken = new AccessToken(
+                cookies.get("access_token") || "",
+                context
+            );
+            if (
+                !accessToken.value &&
+                !fingerprintToken.value &&
+                !encryptedRefreshToken.value
+            )
+                return { _lucia: null };
+            const refreshToken = encryptedRefreshToken.decrypt();
+            try {
+                const user = await accessToken.user(fingerprintToken.value); // throws an error is invalid
+                return {
+                    _lucia: {
+                        user: user,
                         access_token: accessToken.value,
                         refresh_token: refreshToken.value,
-                    };
-                } catch {
-                    deleteAllCookies(event.cookies)
-                    return null;
+                    },
+                };
+            } catch {}
+            // if access token is invalid
+            let userId: string;
+            try {
+                userId = await refreshToken.userId(fingerprintToken.value);
+            } catch {
+                // refresh token doesn't belong to the user
+                if (refreshToken.value && !fingerprintToken.value) {
+                    await context.adapter.deleteRefreshToken(
+                        refreshToken.value
+                    );
                 }
-            };
-            let parentData: null | Record<string, any> = null;
-            const parent = async () => {
-                if (parentData) return parentData;
-                const data = await event.parent();
-                parentData = Object.freeze(data);
-                return data;
-            };
-            event.parent = parent;
-            const returnData = {};
-            const customLoadEvent = {
-                ...event,
-                getSession,
-            };
-            for (const load of loadFunctions) {
-                const data = await load(customLoadEvent, context);
-                Object.assign(returnData, data);
+                throw Error();
             }
-            return returnData;
+            const databaseData = await context.adapter.getUserByRefreshToken(
+                refreshToken.value
+            );
+            if (!databaseData) {
+                /* refresh token belongs to the user
+                BUT is expired. Likely stolen so delete all refresh tokens belonging to the user
+                */
+                await context.adapter.deleteUserRefreshTokens(userId);
+                throw Error();
+            }
+            const newRefreshToken = await createRefreshToken(
+                userId,
+                fingerprintToken.value,
+                context
+            );
+            // delete old refresh token and set new one
+            await Promise.all([
+                context.adapter.deleteRefreshToken(refreshToken.value),
+                context.adapter.setRefreshToken(newRefreshToken.value, userId),
+            ]);
+            const newEncryptedRefreshToken = newRefreshToken.encrypt();
+            const account = getAccountFromDatabaseData(databaseData);
+            const newAccessToken = await createAccessToken(
+                account.user,
+                fingerprintToken.value,
+                context
+            );
+            const result = {
+                user: account.user,
+                access_token: newAccessToken.value,
+                refresh_token: newRefreshToken.value,
+            };
+            setCookie(
+                cookies,
+                newAccessToken.cookie(),
+                newEncryptedRefreshToken.cookie()
+            );
+            return {
+                _lucia: result,
+            };
+        } catch {
+            // invalid token or network error
+            deleteAllCookies(cookies);
+            return {
+                _lucia: null,
+            };
+        }
+    };
+    const handleServerSession: HandleServerSession = (fn?) => {
+        return async (event: ServerLoadEvent) => {
+            const { _lucia } = await handleServerSessionCore(event);
+            const loadFunction = fn || (async () => {});
+            const result = (await loadFunction(event)) || {};
+            return {
+                _lucia,
+                ...result,
+            } as Exclude<Awaited<ReturnType<typeof loadFunction>>, void> & {
+                _lucia: Session;
+            };
         };
     };
-    return handleServerLoad;
+    return handleServerSession;
 };

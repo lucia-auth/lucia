@@ -1,13 +1,13 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { signOut, getSession } from 'lucia-sveltekit/client';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	const session = getSession();
 
-	const signOutUser = async () => {
-		await signOut();
-		window.location.href = '/';
-	};
+	export let form: { error?: string; success?: string } | null;
 
-	let number = 0;
+	let number = 'fetching...';
 
 	const fetchNumber = async () => {
 		const response = await fetch('/api/random-number', {
@@ -20,22 +20,41 @@
 			console.error(result.error);
 			return;
 		}
+		await new Promise((resolve) => {
+			setTimeout(resolve, 1000);
+		});
 		number = result.number;
 	};
+
+	onMount(fetchNumber);
+
+	let addAccessTokenToFrom = true;
 </script>
 
-<h2>Profile</h2>
+<h1>Profile</h1>
 <p>This page is protected and can only be accessed by authenticated users.</p>
 <div>
-	<p>user id: {$session?.user.user_id}</p>
-	<p>username: {$session?.user.username}</p>
+	<p>User id: {$session?.user.user_id}</p>
+	<p>Username: {$session?.user.username}</p>
+	<p>Random number API: {number}</p>
 </div>
 
 <div>
-	<form on:submit|preventDefault={fetchNumber} action="/api/random-number" method="get">
-		<input type="submit" value="Get random number" class="button" />
+	<h2>Notes</h2>
+	<div class="ignore w-full">
+		<label for="add_auth">Include access token</label>
+		<input type="checkbox" id="add_auth" class="checkbox" bind:checked={addAccessTokenToFrom} />
+	</div>
+	<form method="post" use:enhance>
+		{#if addAccessTokenToFrom}
+			<input value={$session?.access_token} name="_lucia" hidden />
+		{/if}
+		<input value={$page.data.notes} name="notes" />
+		<input type="submit" value="Save" class="button" />
+		{#if form?.error}
+			<p class="error">{form?.error}</p>
+		{/if}
 	</form>
-	<p>result: {number}</p>
 </div>
 
-<button on:click={signOutUser}>Sign out</button>
+<button on:click={() => signOut('/')}>Sign out</button>

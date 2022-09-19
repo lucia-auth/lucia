@@ -38,7 +38,11 @@ export const validateRequestFunction = (context: Context) => {
             access_token: accessToken,
             refresh_token: refreshToken,
             fingerprint_token: fingerprintToken,
-            cookies: [accessToken.cookie(), refreshToken.cookie(), fingerprintToken.cookie()]
+            cookies: [
+                accessToken.cookie(),
+                refreshToken.cookie(),
+                fingerprintToken.cookie(),
+            ],
         };
     };
     return validateRequest;
@@ -71,7 +75,11 @@ export const validateRequestByCookieFunction = (context: Context) => {
                 access_token: accessToken,
                 refresh_token: refreshToken,
                 fingerprint_token: fingerprintToken,
-                cookies: [accessToken.cookie(), refreshToken.cookie(), fingerprintToken.cookie()]
+                cookies: [
+                    accessToken.cookie(),
+                    refreshToken.cookie(),
+                    fingerprintToken.cookie(),
+                ],
             };
         } catch {
             throw new Error("AUTH_INVALID_REFRESH_TOKEN");

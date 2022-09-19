@@ -24,22 +24,6 @@ For adapters. Removes all keys with a value of `undefined` (does not include `nu
 const getUpdateData: (target: Record<string, any>) => Record<string, any>;
 ```
 
-### handleSession
-
-Reads cookies inside server load function and returns the session data for page data. Automatically refreshes the tokens if one is expired.
-
-```ts
-const handleSession: () => ServerLoad;
-```
-
-#### Example
-
-```ts
-import { auth } from "$lib/lucia.js";
-
-export const load = auth.handleServerLoad(handleSession());
-```
-
 ### lucia
 
 Creates a new [`Lucia`](/references/instances) instance. [Methods reference](/server-apis/lucia).
@@ -78,13 +62,19 @@ const setCookie: (
 #### Example
 
 ```ts
-export const POST = async ({ cookies }) => {
-    const userSession = await auth.createUser();
-    setCookie(
-        cookies,
-        userSession.access_token.cookie(),
-        userSession.access_token.cookie()
-    );
-    // ...
+// +page.server.ts
+import { auth } from "$lib/lucia";
+import type { Actions } from "@sveltejs/kit";
+
+export const actions: Actions = {
+    default: async ({ cookies }) => {
+        const userSession = await auth.createUser();
+        setCookie(
+            cookies,
+            userSession.access_token.cookie(),
+            userSession.access_token.cookie()
+        );
+        // ...
+    },
 };
 ```
