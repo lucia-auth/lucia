@@ -53,7 +53,7 @@ import { auth } from "$lib/lucia";
 export const load = auth.handleServerSession();
 ```
 
-`handleServerLoad()` can also take a server load function which will run like a normal load function.
+`handleServerSession()` can also take a server load function which will run like a normal load function.
 
 ```ts
 // +layout.server.ts
