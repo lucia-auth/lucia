@@ -1,3 +1,9 @@
+## 0.8.8
+
+Sep. 24, 2022
+
+-   [Fix] Fixed issue where `getSession()` (client) was not getting populated on newer versions of SvelteKit and large page data
+
 ## 0.8.7
 
 Sep. 24, 2022
