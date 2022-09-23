@@ -1,10 +1,14 @@
 import type { LoadEvent, ServerLoadEvent } from "./kit.js";
 import type { LuciaError } from "./utils/error.js";
-import type { FingerprintToken, RefreshToken, AccessToken } from "./utils/token.js";
+import type {
+    FingerprintToken,
+    RefreshToken,
+    AccessToken,
+} from "./utils/token.js";
 
-type getSession = () => Promise<Session>
-export type AuthServerLoadEvent = ServerLoadEvent & { getSession: getSession }
-export type AuthLoadEvent = LoadEvent & { getSession: getSession }
+type getSession = () => Promise<Session>;
+export type AuthServerLoadEvent = ServerLoadEvent & { getSession: getSession };
+export type AuthLoadEvent = LoadEvent & { getSession: getSession };
 
 export interface Adapter {
     getUserByRefreshToken: (
@@ -13,9 +17,7 @@ export interface Adapter {
     getUserByIdentifierToken: (
         identifierToken: string
     ) => Promise<DatabaseUser | null>;
-    getUserById: (
-        identifierToken: string
-    ) => Promise<DatabaseUser | null>;
+    getUserById: (identifierToken: string) => Promise<DatabaseUser | null>;
     setUser: (
         userId: string,
         data: {
@@ -46,9 +48,14 @@ export interface TokenData {
     fingerprint_hash: string;
     iat: number;
     exp: number;
-    role: "access_token" | "refresh_token"
+    role: "access_token" | "refresh_token";
 }
 
+export interface AccessTokenJwtV2 extends TokenData {
+    user: User;
+    ver: 2;
+    role: "access_token";
+}
 export type DatabaseUser = {
     id: string;
     hashed_password: string | null;
@@ -66,8 +73,8 @@ export interface ServerSession {
     access_token: AccessToken;
     refresh_token: RefreshToken;
     fingerprint_token: FingerprintToken;
-    cookies: string[]
+    cookies: string[];
 }
 
 export type Env = "DEV" | "PROD";
-export type Error = typeof LuciaError
+export type Error = typeof LuciaError;

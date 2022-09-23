@@ -1,7 +1,11 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import type { Context } from "../auth/index.js";
-import type { TokenData, User } from "../types.js";
+import type {
+    AccessTokenJwtV2,
+    TokenData,
+    User,
+} from "../types.js";
 import { verify, Encrypter } from "./crypto.js";
 import { LuciaError } from "./error.js";
 
@@ -44,20 +48,31 @@ export class AccessToken extends Token {
     }
     public user = async (fingerprintToken: string) => {
         try {
-            const userSession = jwt.decode(this.value) as Partial<
-                User & TokenData
-            >;
+            const token = jwt.decode(this.value) as { ver?: 2 };
+            if (!token.ver) {
+                // TODO: remove support for v1 token
+                const userSession = token as Partial<User & TokenData>;
+                const isValid = await verify(
+                    fingerprintToken,
+                    userSession.fingerprint_hash || ""
+                );
+                if (!isValid) throw new Error();
+                if (userSession.role !== "access_token") throw new Error();
+                delete userSession.fingerprint_hash;
+                delete userSession.exp, delete userSession.iat;
+                delete userSession.role;
+                const user = userSession as User;
+                return user;
+            }
+            // version 2
+            const accessToken = token as AccessTokenJwtV2;
             const isValid = await verify(
                 fingerprintToken,
-                userSession.fingerprint_hash || ""
+                accessToken.fingerprint_hash || ""
             );
             if (!isValid) throw new Error();
-            if (userSession.role !== "access_token") throw new Error();
-            delete userSession.fingerprint_hash;
-            delete userSession.exp, delete userSession.iat;
-            delete userSession.role;
-            const user = userSession as User;
-            return user;
+            if (accessToken.role !== "access_token") throw new Error();
+            return accessToken.user;
         } catch {
             throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
         }

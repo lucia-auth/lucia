@@ -1,3 +1,9 @@
+## 0.8.7
+
+Sep. 24, 2022
+
+-   Update access token version (v2) - all new tokens issued will be v2 but both version will work (will remove support for v1 in some time)
+
 ## 0.8.6
 
 Sep. 20, 2022

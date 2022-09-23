@@ -42,13 +42,6 @@ export const createBlankCookies = () => {
             httpOnly: true,
             sameSite: "lax",
         }),
-        cookie.serialize("refresh_token", "", {
-            secure: false,
-            path: "",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
         cookie.serialize("encrypt_refresh_token", "", {
             secure: false,
             path: "/",
@@ -66,13 +59,6 @@ export const createBlankCookies = () => {
         cookie.serialize("access_token", "", {
             secure: true,
             path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-        cookie.serialize("refresh_token", "", {
-            secure: true,
-            path: "",
             maxAge: 0,
             httpOnly: true,
             sameSite: "lax",
