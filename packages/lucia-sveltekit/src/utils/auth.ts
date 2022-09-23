@@ -5,7 +5,7 @@ import { AccessToken, FingerprintToken, RefreshToken } from "./token.js";
 import type { DatabaseUser, User } from "../types.js";
 import type { Context } from "../auth/index.js";
 
-export const createAccessToken = async(
+export const createAccessToken = async (
     user: User,
     fingerprintToken: string,
     context: Context
@@ -13,7 +13,8 @@ export const createAccessToken = async(
     const hashedFingerprint = await hash(fingerprintToken);
     const value = jwt.sign(
         {
-            ...user,
+            ver: 2,
+            user,
             fingerprint_hash: hashedFingerprint,
             role: "access_token",
         },
@@ -50,9 +51,7 @@ export const createFingerprintToken = (context: Context) => {
     return new FingerprintToken(value, context);
 };
 
-export const getAccountFromDatabaseData = (
-    databaseData: DatabaseUser
-) => {
+export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
     const userId = databaseData.id as string;
     const hashedPassword = databaseData.hashed_password as string | null;
     const identifierToken = databaseData.identifier_token as string;
