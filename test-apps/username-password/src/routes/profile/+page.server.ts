@@ -34,6 +34,7 @@ export const actions: Actions = {
 				success: true
 			};
 		} catch (e) {
+			console.log(e)
 			return invalid(403, {
 				error: 'Authentication required'
 			});

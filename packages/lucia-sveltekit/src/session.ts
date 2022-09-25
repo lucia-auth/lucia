@@ -1,4 +1,4 @@
-import { getContext, hasContext, setContext } from "svelte/internal";
+import { getContext, hasContext, setContext } from "svelte";
 import { get, type Readable, writable, type Writable } from "svelte/store";
 import type { Session } from "./types.js";
 

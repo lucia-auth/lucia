@@ -1,4 +1,4 @@
-import { onDestroy } from "svelte/internal";
+import { onDestroy } from "svelte";
 import { get, type Writable } from "svelte/store";
 import { getClientSession, getSSRSession } from "./session.js";
 import type { Session } from "./types.js";

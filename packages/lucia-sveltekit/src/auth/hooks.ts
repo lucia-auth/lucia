@@ -31,7 +31,7 @@ const handleWarnings = (event: RequestEvent, context: Context): void => {
     }
     if (context.secret.length < 32 && context.env === "PROD") {
         console.log(
-            `${clc.yellow.bold("[LUCIA_WARNING]")} ${clc.yellow(
+            `${clc.red.bold("[LUCIA_ERROR]")} ${clc.red(
                 "Secret key must be longer than 32 chars."
             )}`
         );

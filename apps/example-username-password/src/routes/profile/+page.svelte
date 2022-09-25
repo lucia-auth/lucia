@@ -47,7 +47,7 @@
 	</div>
 	<form method="post" use:enhance>
 		{#if addAccessTokenToFrom}
-			<input value={$session?.access_token} name="_lucia" hidden />
+			<input value={$session?.access_token} name="_lucia" type="hidden" />
 		{/if}
 		<input value={$page.data.notes} name="notes" />
 		<input type="submit" value="Save" class="button" />

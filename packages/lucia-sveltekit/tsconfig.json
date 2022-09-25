@@ -3,9 +3,9 @@
         "allowJs": true,
         "checkJs": true,
         "noImplicitAny": true,
-        "module": "ES2020",
+        "module": "ES2022",
         "moduleResolution": "NodeNext",
-        "target": "ES2020",
+        "target": "ES2022",
         "allowSyntheticDefaultImports": true,
         "declaration": true,
         "outDir": "./dist",
@@ -13,6 +13,5 @@
         "isolatedModules": false
     },
     "include": ["src"],
-    "exclude": ["node_modules/", "**/__tests__/*"],
-    "extends": "./.svelte-kit/tsconfig.json",
+    "exclude": ["node_modules/", "**/__tests__/*"]
 }

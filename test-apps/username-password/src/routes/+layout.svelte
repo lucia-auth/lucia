@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { page } from "$app/stores"
-
+	
 	import { handleSilentRefresh } from 'lucia-sveltekit/client';
 	handleSilentRefresh()
 </script>
