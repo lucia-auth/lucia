@@ -12,8 +12,8 @@ npm run dev
 ### Environment variables
 
 ```bash
-SUPABASE_URL=""
-SUPABSE_SECRET="" # service_role
+VITE_SUPABASE_URL=""
+VITE_SUPABASE_SECRET="" # service_role
 
 # something long (> 64 char) and random
 VITE_LUCIA_SECRET=""
