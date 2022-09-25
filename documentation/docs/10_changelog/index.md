@@ -1,3 +1,9 @@
+## 0.8.9
+
+Sep. 25, 2022
+
+-   [Fix] formData can be accessed from request body after using `validateFormSubmission` [#95](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/95)
+
 ## 0.8.8
 
 Sep. 24, 2022

@@ -1,4 +1,4 @@
-import type { Handle, ServerLoad } from "../kit.js";
+import type { Handle } from "../kit.js";
 import type { Adapter, Env } from "../types.js";
 
 import { generateRandomString } from "../utils/crypto.js";
@@ -22,7 +22,7 @@ import { resetUserPasswordFunction } from "./user/reset-password.js";
 import { getUserByIdFunction } from "./user/get.js";
 import { AccessToken } from "../utils/token.js";
 import { handleServerSessionFunction } from "./load.js";
-import { validateFormSubmissionFunction } from "./form";
+import { validateFormSubmissionFunction } from "./form.js";
 
 export const lucia = (configs: Configurations) => {
     return new Auth(configs) as Omit<Auth, "getAuthSession">;

@@ -1,4 +1,4 @@
-import type { Cookies } from "$lib/kit.js";
+import type { Cookies } from "../kit.js";
 import cookie from "cookie";
 
 export const setCookie = (targetCookies: Cookies, ...cookies: string[]) => {

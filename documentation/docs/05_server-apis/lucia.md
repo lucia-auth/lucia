@@ -304,7 +304,7 @@ const validateFormSubmission: (
 </script>
 
 <form method="post">
-    <input name="_lucia" value="{$session?.access_token}" hidden />
+    <input name="_lucia" value="{$session?.access_token}" type="hidden" />
 </form>
 ```
 

@@ -1,6 +1,6 @@
 // installing and importing modules from @sveltejs/kit caused TS errors
 
-import type { Session } from "./types";
+import type { Session } from "./types.js";
 
 export interface Cookies {
     get(

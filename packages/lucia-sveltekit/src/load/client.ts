@@ -1,4 +1,4 @@
-import type { LoadEvent } from "$lib/kit.js";
+import type { LoadEvent } from "../kit.js";
 import { get } from "svelte/store";
 
 import { getSession as getClientSession } from "../client.js";

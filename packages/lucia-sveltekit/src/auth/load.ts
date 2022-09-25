@@ -1,17 +1,17 @@
-import { deleteAllCookies, setCookie } from "$lib/utils/cookie.js";
-import type { Session } from "$lib/types.js";
+import { deleteAllCookies, setCookie } from "../utils/cookie.js";
+import type { Session } from "../types.js";
 import {
     FingerprintToken,
     EncryptedRefreshToken,
     AccessToken,
-} from "$lib/utils/token.js";
+} from "../utils/token.js";
 import type { Context } from "./index.js";
 import {
     createAccessToken,
     createRefreshToken,
     getAccountFromDatabaseData,
-} from "$lib/utils/auth.js";
-import type { ServerLoad, ServerLoadEvent } from "$lib/kit.js";
+} from "../utils/auth.js";
+import type { ServerLoad, ServerLoadEvent } from "../kit.js";
 
 type HandleServerSession = <LoadFn extends ServerLoad = () => Promise<{}>>(
     serverLoad?: LoadFn
