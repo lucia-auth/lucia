@@ -1,3 +1,9 @@
+## 0.9.0
+
+Sep. 25, 2022
+
+-   [Fix] Fix issue where type files were not included
+
 ## 0.8.9
 
 Sep. 25, 2022
