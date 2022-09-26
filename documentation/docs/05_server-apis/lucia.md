@@ -279,7 +279,7 @@ const getUserFromAccessToken: (
 
 ### validateFormSubmission
 
-Checks if the form submission was made by an authenticated user. The access token should be sent inside the form with a name of "\_lucia". Works both in actions and endpoints. The request body should not be tampered with (`formData()`) before calling it.
+Checks if the form submission was made by an authenticated user. An input with a name of "\_lucia" should hold the value of the access token. Works both in actions and endpoints. The request body should not be tampered with (`formData()`) before calling it.
 
 ```ts
 const validateFormSubmission: (

@@ -298,7 +298,7 @@ export const GET: RequestHandler = async ({ request }) => {
 
 #### Form submissions
 
-Forms should be sent with an hidden input holding the access token.
+Form submissions can be validated using [`validateFormSubmission`](/server-apis/lucia#validateformsubmission). Forms should be sent with an hidden input named `_lucia` with the access token as its value.
 
 ```html
 <script>
