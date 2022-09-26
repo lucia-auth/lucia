@@ -46,7 +46,7 @@ export const actions: Actions = {
 
 ### Create a new user
 
-Create a new user using [`createUser`](/server-apis#createuser) using the auth id of `email` and an identifier of `email` (refer to the [overview](/overview) page for an explanation on auth ids and identifiers). Save the user's password using the password options and the user's email using `user_data`. Set the cookies (refresh, access, and fingerprint token) and redirect the user in the response. The `AUTH_DUPLICATE_IDENTIFIER_TOKEN` error is thrown when a user tries to create a new account using the same auth id and identifier (in this case, email).
+Create a new user using [`createUser`](/server-apis#createuser) using the auth method of `email` and an identifier of `email` (refer to the [overview](/overview) page for an explanation on auth methods and identifiers). Save the user's password using the password options and the user's email using `user_data`. Set the cookies (refresh, access, and fingerprint token) and redirect the user in the response. The `AUTH_DUPLICATE_IDENTIFIER_TOKEN` error is thrown when a user tries to create a new account using the same auth method and identifier (in this case, email).
 
 ```ts
 import { type Actions, invalid, redirect } from "@sveltejs/kit";

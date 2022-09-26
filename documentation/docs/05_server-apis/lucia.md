@@ -34,7 +34,7 @@ const authenticateUser: (
 
 | name                          | description                                                               |
 | ----------------------------- | ------------------------------------------------------------------------- |
-| AUTH_INVALID_IDENTIFIER_TOKEN | A user that matches the auth id and identifier does not exist             |
+| AUTH_INVALID_IDENTIFIER_TOKEN | A user that matches the auth method and identifier does not exist         |
 | AUTH_INVALID_PASSWORD         | Incorrect password (**DO NOT** return this error to the client)           |
 | AUTH_OUTDATED_PASSWORD        | The user's password is using an old hashing algorithm and should be reset |
 | DATABASE_UPDATE_FAILED        | Failed to update database                                                 |
@@ -95,7 +95,7 @@ const deleteUser: (userId: string) => Promise<void>;
 
 ### getUser
 
-Gets the user with the corresponding auth id and identifier.
+Gets the user with the corresponding auth method and identifier.
 
 ```ts
 const getUser: (authMethod: string, identifier: string) => Promise<User | null>; // null if user does not exist
@@ -225,7 +225,7 @@ const resetUserPassword: (
 
 ### updateUserData
 
-Update a user's identifier token (auth id and identifier).
+Update a user's data. To update the session, delete the current refresh token with [`invalidateRefreshToken`](/server-apis/lucia#invalidaterefreshtoken), create a new session with [`createUserSession`](/server-apis/lucia#createusersession), and refresh the page.
 
 ```ts
 const updateUserData: (
@@ -243,7 +243,7 @@ const updateUserData: (
 
 ### updateUserIdentifierToken
 
-Update a user's identifier token (auth id and identifier).
+Update a user's identifier token (auth method and identifier). To update the session, delete the current refresh token with [`invalidateRefreshToken`](/server-apis/lucia#invalidaterefreshtoken), create a new session with [`createUserSession`](/server-apis/lucia#createusersession), and refresh the page.
 
 ```ts
 const updateUserIdentifierToken: (

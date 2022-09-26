@@ -136,7 +136,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 ### Creating a new user
 
-If an existing user does not exist, create a new user with [`createUser`](/server-apis#createuser). `"github"` is the auth id and `email` is the identifier (refer to [overview](/overview) for an explanation on auth ids and identifiers).
+If an existing user does not exist, create a new user with [`createUser`](/server-apis#createuser). `"github"` is the auth method and `email` is the identifier (refer to [overview](/overview) for an explanation on auth methods and identifiers).
 
 We're also going to save the user's email in the `email` column in the `users` table, which can be done using `user_data`. You can also see that we omitted the `password` options for `createUser` since we can trust Github that they have correctly authenticated the user.
 
@@ -187,7 +187,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 ### Authenticating an existing user
 
-Inside the if block, authenticate the user using [`authenticateUser`](/server-apis#authenticateuser). We're going to use the same auth id used when creating our users from Github. Save the cookies and redirect the user.
+Inside the if block, authenticate the user using [`authenticateUser`](/server-apis#authenticateuser). We're going to use the same auth method used when creating our users from Github. Save the cookies and redirect the user.
 
 ```ts
 export const GET: RequestHandler = async ({ url }) => {

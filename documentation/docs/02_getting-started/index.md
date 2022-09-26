@@ -94,7 +94,7 @@ In `/+layout.svelte`, import `handleSilentRefresh`. This will refresh the access
 
 `auth.createUser` creates a new user and returns a few tokens and cookies.
 
-The first parameter is the auth id, and the second parameter is the identifier. The third parameter is optional, and you can provide a password and user data to be saved alongside other data. In the example below, `email` will be saved as its own column in the `user` table.
+The first parameter is the auth method, and the second parameter is the identifier. The third parameter is optional, and you can provide a password and user data to be saved alongside other data. In the example below, `email` will be saved as its own column in the `user` table.
 
 After creating a user, Lucia will return a set of tokens and cookies. These cookies should be saved to the user using the `set-cookie` headers.
 
@@ -143,7 +143,7 @@ export const actions: Actions = {
 
 `auth.authenticateUser` authenticates a user using an identifier and (if necessary) a password.
 
-The first parameter is the auth id and the second parameter is the identifier. The third parameter is the password (if used for that auth id).
+The first parameter is the auth method and the second parameter is the identifier. The third parameter is the password (if used for that auth method).
 
 ```js
 import { auth } from "$lib/lucia";
