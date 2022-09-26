@@ -1,3 +1,9 @@
+## 0.9.1
+
+Sep. 26, 2022
+
+-   [Fix] Update regex parser for getting page data [#102](https://github.com/pilcrowOnPaper/lucia-sveltekit/issues/102)
+
 ## 0.9.0
 
 Sep. 25, 2022
