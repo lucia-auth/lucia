@@ -72,7 +72,7 @@ export const handleHooksFunction = (context: Context) => {
                 transformPageChunk: ({ html }) => {
                     // finds hydrate.data value from parameter of start()
                     const pageDataFunctionRegex = new RegExp(
-                        /(<script type="module" data-sveltekit-hydrate=".*?">)[\s\S]*start\(\s*\{[\s\S]*?hydrate:[\s\S]*?data:\s*\(\s*(function\([\s\S]*?\)\s*{\s*return[\s\S]*)\),\s*form:[\s\S]*?\}\);\s*<\/script>/gm
+                        /(<script type="module" data-sveltekit-hydrate=".*?">)[\s\S]*start\(\s*\{[\s\S]*?hydrate:[\s\S]*?data:\s*\(\s*(function\([\s\S]*?\)\s*{[\s\S]*?return[\s\S]*)\),\s*form:[\s\S]*?\}\);\s*<\/script>/gm
                     );
                     const matches = pageDataFunctionRegex.exec(html);
                     if (!matches) return html;
