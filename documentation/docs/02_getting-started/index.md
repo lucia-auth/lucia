@@ -332,7 +332,7 @@ export const actions: Actions = {
 
 If a location parameter is provided, `signOut()` will also redirect the user.
 
-```js
+```ts
 import { signOut } from "lucia-sveltekit/client";
 
 const signOutUser = async () => {
@@ -341,6 +341,36 @@ const signOutUser = async () => {
     } catch {
         // handle error
     }
+};
+```
+
+## Updating user data
+
+Lucia provides 2 methods to update the user, [`updateUserData`](/server-apis/lucia#updateuserdata) and [`updateUserIdentifierToken`](/server-apis/lucia#updateuseridentifiertoken). While calling these will update the data in the database, the change will not be applied to the user session (ie. `getSession`) until the access token is refreshed. To manually update the session, invalidate the current session's refresh token, create a new session, set the new cookies, and refresh the page.
+
+```ts
+// +page.server.ts
+import { auth } from "$lib/lucia";
+import { setCookie } from "lucia-sveltekit";
+import type { Actions } from "@sveltejs/kit";
+
+export const actions: Actions = {
+    default: async ({ request, cookies }) => {
+        try {
+            const session = await auth.validateFormSubmission(request);
+            await auth.updateUserData(session.user.user_id, {
+                email: newEmail,
+            });
+            await auth.invalidateRefreshToken(session.refresh_token);
+            const newSession = await auth.createUserSession(
+                session.user.user_id
+            );
+            setCookie(cookies, ...newSession.cookies);
+            throw redirect(302, "/");
+        } catch {
+            // ...
+        }
+    },
 };
 ```
 
