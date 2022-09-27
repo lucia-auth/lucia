@@ -1,5 +1,5 @@
 import { invalid, redirect, type Actions } from '@sveltejs/kit';
-import { auth } from '$lib/lucia.js';
+import { auth } from '$lib/server/lucia';
 import { setCookie } from 'lucia-sveltekit';
 
 export const actions: Actions = {

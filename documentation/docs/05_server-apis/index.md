@@ -63,7 +63,7 @@ const setCookie: (
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {

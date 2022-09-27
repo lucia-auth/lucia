@@ -119,7 +119,7 @@ const handleHooks: () => Handle;
 
 ```ts
 //  src/hooks.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 
 export const handle = auth.handleHooks();
 ```
@@ -129,7 +129,7 @@ export const handle = auth.handleHooks();
 ```ts
 //  src/hooks.server.ts
 import { sequence } from "@sveltejs/kit";
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 
 export const handle = sequence(
     auth.handleHooks(),
@@ -150,14 +150,14 @@ const handleServerSession: (serverLoad?: ServerLoad) => ServerLoad;
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia.js";
+import { auth } from "$lib/server/lucia";
 
 export const load = auth.handleServerSession();
 ```
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia.js";
+import { auth } from "$lib/server/lucia";
 
 /*
 sveltekit will know this load function will return an object with property message, _lucia
@@ -310,7 +310,7 @@ const validateFormSubmission: (
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
@@ -345,7 +345,7 @@ const validateRequest: (
 
 ```ts
 // +server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { getSession } from "lucia-sveltekit/load";
 import type { RequestHandler } from "@sveltejs/kit";
 
@@ -380,7 +380,7 @@ const validateRequest: (
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ request }) => {
@@ -394,7 +394,7 @@ export const load: PageServerLoad = async ({ request }) => {
 
 ```ts
 // +server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ request }) => {

@@ -26,7 +26,7 @@ Create `+page.server.ts` in the same route folder as the sign up page and accept
 
 ```ts
 import { type Actions, invalid, redirect } from "@sveltejs/kit";
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { setCookie } from "lucia-sveltekit";
 
 export const actions: Actions = {
@@ -50,7 +50,7 @@ Create a new user using [`createUser`](/server-apis#createuser) using the auth m
 
 ```ts
 import { type Actions, invalid, redirect } from "@sveltejs/kit";
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { setCookie } from "lucia-sveltekit";
 
 export const actions: Actions = {
@@ -90,7 +90,7 @@ Create `+page.server.ts` in the same route folder as the login page and accept P
 
 ```ts
 import { type Actions, invalid, redirect } from "@sveltejs/kit";
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { setCookie } from "lucia-sveltekit";
 
 export const actions: Actions = {
@@ -114,7 +114,7 @@ Authenticate the user using [`authenticateUser`](/server-apis#authenticateuser),
 
 ```ts
 import { type Actions, invalid, redirect } from "@sveltejs/kit";
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { setCookie } from "lucia-sveltekit";
 
 export const actions: Actions = {

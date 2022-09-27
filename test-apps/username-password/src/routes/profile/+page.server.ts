@@ -1,5 +1,5 @@
 import { dev } from '$app/environment';
-import { auth } from '$lib/lucia.js';
+import { auth } from '$lib/server/lucia';
 import { invalid, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

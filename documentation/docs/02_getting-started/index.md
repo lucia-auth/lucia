@@ -6,7 +6,7 @@ npm install lucia-sveltekit
 
 ## Set up Lucia
 
-In `$lib/lucia`, import `lucia` and export it (in this case as `auth`). During this step, lucia requires 3 things: an adapter, a secret key, and the current environment. An adapter connects lucia to your database, secret is used to encrypt and hash your data, and env tells Lucia if it's running in development or production environment. Different adapters are needed for different databases, and it can be easily created if Lucia doesn't provide one.
+In `$lib/server/lucia`, import `lucia` and export it (in this case as `auth`). During this step, lucia requires 3 things: an adapter, a secret key, and the current environment. An adapter connects lucia to your database, secret is used to encrypt and hash your data, and env tells Lucia if it's running in development or production environment. Different adapters are needed for different databases, and it can be easily created if Lucia doesn't provide one.
 
 ```js
 import lucia from "lucia-sveltekit";
@@ -23,7 +23,7 @@ export const auth = lucia({
 For Lucia to work, its own handle functions must be added to hooks (`/src/hooks.server.ts`).
 
 ```ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 
 export const handle = auth.handleHooks();
 ```
@@ -31,7 +31,7 @@ export const handle = auth.handleHooks();
 `sequence()` can be used to chain multiple handle functions.
 
 ```ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { sequence } from "@sveltejs/kit";
 
 export const handle = sequence(auth.handleHooks(), customHandle);
@@ -48,7 +48,7 @@ In `/+layout.server.ts`, create a load function. This will check if the access t
 
 ```ts
 // +layout.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 
 export const load = auth.handleServerSession();
 ```
@@ -57,7 +57,7 @@ export const load = auth.handleServerSession();
 
 ```ts
 // +layout.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 
 export const load = auth.handleServerSession(async () => {
     return {
@@ -100,7 +100,7 @@ After creating a user, Lucia will return a set of tokens and cookies. These cook
 
 ```js
 // +server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { setCookie } from "lucia-sveltekit";
 import type { Actions } from "@sveltejs/kit";
 
@@ -146,7 +146,7 @@ export const actions: Actions = {
 The first parameter is the auth method and the second parameter is the identifier. The third parameter is the password (if used for that auth method).
 
 ```js
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { setCookie } from "lucia-sveltekit"
 import type { Actions } from "@sveltejs/kit";
 
@@ -171,7 +171,7 @@ export const actions: Actions = {
 For standalone endpoints, cookies can be set using `setHeaders()`.
 
 ```ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({ setHeaders }) => {
@@ -223,7 +223,7 @@ While `getSession` will also work in a sever load function, since it has to wait
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ request }) => {
@@ -248,7 +248,7 @@ The access token should be send as a bearer token in the authorization header.
 
 ```ts
 // +server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ request }) => {
@@ -283,7 +283,7 @@ await fetch("/some-endpoint");
 
 ```ts
 // +server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ request }) => {
@@ -314,7 +314,7 @@ Form submissions can be validated using [`validateFormSubmission`](/server-apis/
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import type { Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
@@ -350,7 +350,7 @@ Lucia provides 2 methods to update the user, [`updateUserData`](/server-apis/luc
 
 ```ts
 // +page.server.ts
-import { auth } from "$lib/lucia";
+import { auth } from "$lib/server/lucia";
 import { setCookie } from "lucia-sveltekit";
 import type { Actions } from "@sveltejs/kit";
 
