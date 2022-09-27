@@ -1,4 +1,4 @@
-import { auth } from '$lib/lucia.js';
+import { auth } from '$lib/server/lucia';
 import type { RequestHandler } from '@sveltejs/kit';
 
 const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;

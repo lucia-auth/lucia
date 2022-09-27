@@ -35,7 +35,7 @@ Create `routes/api/github/+server.ts` and accept a GET request. If you change th
 ```ts
 import { dev } from "$app/environment"; // dev === true if in development
 
-import { auth } from "$lib/lucia.js"; // Lucia instance
+import { auth } from "$lib/server/lucia"; // Lucia instance
 import type { RequestHandler } from "@sveltejs/kit";
 
 const clientId = dev ? "DEV_GITHUB_CLIENT_ID" : "PROD_GITHUB_CLIENT_ID";
