@@ -1,0 +1,48 @@
+---
+import Contents from "../components/Contents.svelte";
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Lucia</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin="anonymous"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div class="fixed border-b z-50 bg-white w-full divide-y">
+            <div class="py-3">
+                <a
+                    class="text-2xl font-semibold px-4 sm:px-8 lg:px-12"
+                    href="/">Lucia</a
+                >
+            </div>
+            <div class="py-2 px-4 sm:px-8 lg:px-12 sm:hidden">
+                <p>menu</p>
+            </div>
+        </div>
+        <div class="min-h-screen flex divide-x">
+            <div class="w-64 hidden sm:block">
+                <Contents client:load/>
+            </div>
+            <div class="grow px-4 sm:px-8 lg:px-12">
+                <slot />
+            </div>
+        </div>
+        <style>
+            body {
+                font-family: "IBM Plex Sans", sans-serif;
+            }
+        </style>
+    </body>
+</html>
