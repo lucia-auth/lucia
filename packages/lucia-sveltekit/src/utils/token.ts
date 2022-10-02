@@ -30,7 +30,7 @@ export const createRefreshTokenCookie = (
     refreshToken: string,
     context: Context
 ) => {
-    return cookie.serialize("access_token", refreshToken, {
+    return cookie.serialize("refresh_token", refreshToken, {
         maxAge: 60 * 24 * 365,
         secure: context.env === "PROD",
         httpOnly: true,
