@@ -28,6 +28,7 @@ import {
     deleteExpiredUserSessionsFunction,
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
+import { deleteAllCookiesFunction } from "./cookie.js";
 
 export const lucia = (configs: Configurations) => {
     return new Auth(configs) as Omit<Auth, "getAuthSession">;
@@ -85,6 +86,7 @@ export class Auth {
         this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
             this.context
         );
+        this.deleteAllCookies = deleteAllCookiesFunction(this.context)
     }
     public handleHooks: () => Handle;
     public authenticateUser: ReturnType<typeof authenticateUserFunction>;
@@ -120,6 +122,7 @@ export class Auth {
     public invalidateAllUserSessions: ReturnType<
         typeof invalidateAllUserSessionsFunction
     >;
+    public deleteAllCookies: ReturnType<typeof deleteAllCookiesFunction>
 }
 
 interface Configurations {

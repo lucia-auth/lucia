@@ -18,7 +18,7 @@ export const handleLogoutRequest = async (
         ]);
         return new Response(null, {
             headers: {
-                "set-cookie": createBlankCookies().join(","),
+                "set-cookie": createBlankCookies(context.env === "PROD").join(","),
             },
         });
     } catch (e) {

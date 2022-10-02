@@ -35,40 +35,22 @@ export const setCookie = (targetCookies: Cookies, ...cookies: string[]) => {
     });
 };
 
-export const deleteAllCookies = (targetCookies: Cookies) => {
-    setCookie(targetCookies, ...createBlankCookies());
-};
-
-export const createBlankCookies = () => {
+export const createBlankCookies = (secure: boolean) => {
     return [
         cookie.serialize("access_token", "", {
-            secure: false,
+            secure,
             path: "/",
             maxAge: 0,
             httpOnly: true,
             sameSite: "lax",
         }),
         cookie.serialize("refresh_token", "", {
-            secure: false,
+            secure,
             path: "/",
             maxAge: 0,
             httpOnly: true,
             sameSite: "lax",
-        }),
-        cookie.serialize("access_token", "", {
-            secure: true,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
-        cookie.serialize("refresh_token", "", {
-            secure: true,
-            path: "/",
-            maxAge: 0,
-            httpOnly: true,
-            sameSite: "lax",
-        }),
+        })
     ];
 };
 

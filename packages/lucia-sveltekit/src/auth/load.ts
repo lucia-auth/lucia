@@ -1,4 +1,4 @@
-import { createBlankCookies, setCookie } from "../utils/cookie.js";
+import { setCookie } from "../utils/cookie.js";
 import type { Session } from "../types.js";
 import type { Context } from "./index.js";
 import type { ServerLoad, ServerLoadEvent } from "../kit.js";
@@ -37,8 +37,7 @@ export const handleServerSessionFunction = (context: Context) => {
                 },
             };
         } catch {
-            const blankCookies = createBlankCookies();
-            setCookie(cookies, ...blankCookies);
+            context.auth.deleteAllCookies(cookies)
             return {
                 _lucia: null,
             };
