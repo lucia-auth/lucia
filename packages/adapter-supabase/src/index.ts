@@ -63,7 +63,7 @@ const adapter = (url: string, secret: string): Adapter => {
         },
     });
     return {
-        getUserById: async (userId: string) => {
+        getUserById: async (userId) => {
             const { data, error } = await supabase
                 .from<UserRow>("user")
                 .select()
@@ -76,7 +76,7 @@ const adapter = (url: string, secret: string): Adapter => {
             if (!data) return null;
             return convertUserRow(data);
         },
-        getUserByRefreshToken: async (refreshToken: string) => {
+        getUserByRefreshToken: async (refreshToken) => {
             const { data, error } = await supabase
                 .from<
                     RefreshTokenRow & {
@@ -93,7 +93,7 @@ const adapter = (url: string, secret: string): Adapter => {
             if (!data) return null;
             return convertUserRow(data.user);
         },
-        getUserByIdentifierToken: async (identifierToken: string) => {
+        getUserByIdentifierToken: async (identifierToken) => {
             const { data, error } = await supabase
                 .from<UserRow>("user")
                 .select()
@@ -165,7 +165,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteUser: async (userId: string) => {
+        deleteUser: async (userId) => {
             const { error } = await supabase
                 .from("user")
                 .delete({
@@ -193,13 +193,13 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteSessionByAccessToken: async (accessToken) => {
+        deleteSessionByAccessToken: async (...accessTokens) => {
             const { error } = await supabase
                 .from("session")
                 .delete({
                     returning: "minimal",
                 })
-                .eq("access_token", accessToken);
+                .in("access_token", accessTokens);
             if (error) {
                 console.error(error);
                 throw new Error("DATABASE_UPDATE_FAILED");
@@ -217,7 +217,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        setRefreshToken: async (refreshToken: string, userId: string) => {
+        setRefreshToken: async (refreshToken, userId) => {
             const { error } = await supabase.from("refresh_token").insert(
                 {
                     user_id: userId,
@@ -232,19 +232,19 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteRefreshToken: async (refreshToken: string) => {
+        deleteRefreshToken: async (...refreshTokens) => {
             const { error } = await supabase
                 .from("refresh_token")
                 .delete({
                     returning: "minimal",
                 })
-                .eq("refresh_token", refreshToken);
+                .in("refresh_token", refreshTokens);
             if (error) {
                 console.error(error);
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteUserRefreshTokens: async (userId: string) => {
+        deleteUserRefreshTokens: async (userId) => {
             const { error } = await supabase
                 .from("refresh_token")
                 .delete({
