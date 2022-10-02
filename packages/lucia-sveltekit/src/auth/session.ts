@@ -74,14 +74,14 @@ export const deleteExpiredUserSessionsFunction = (context: Context) => {
     const deleteExpiredUserSessions: DeleteExpiredUserSessions = async (
         userId
     ) => {
-        const session = await context.adapter.getUserSessions(
+        const sessions = await context.adapter.getUserSessions(
             userId
         );
         const currentTime = new Date().getTime();
-        const expiredUserAccessTokens = session
+        const expiredUserAccessTokens = sessions
             .filter((val) => val.expires < currentTime)
             .map((val) => val.accessToken);
-        await context.adapter.deleteRefreshToken(...expiredUserAccessTokens)
+        await context.adapter.deleteSessionByAccessToken(...expiredUserAccessTokens)
     };
     return deleteExpiredUserSessions;
 };

@@ -12,6 +12,9 @@ export const validateAccessTokenFunction = (context: Context) => {
             accessToken
         );
         if (!databaseSession) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+        const currentTime = new Date().getTime();
+        if (currentTime > databaseSession.expires)
+            throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
         const { user: databaseUser, expires } = databaseSession;
         return {
             user: getAccountFromDatabaseData(databaseUser).user,
