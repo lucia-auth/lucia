@@ -30,11 +30,11 @@ export const verifyScrypt = async (s: string, hash: string) => {
 
 export const hashSHA256 = (s: string, secret: string) => {
     const hmac = crypto.createHmac("sha256", secret)
-    return hmac.update(s).digest("base64")
+    return hmac.update(s).digest("hex")
 };
 
 export const verifySHA256 = (s: string, hash: string, secret: string) => {
     const hmac = crypto.createHmac("sha256", secret)
-    const derivedHash = hmac.update(s).digest("base64")
+    const derivedHash = hmac.update(s).digest("hex")
     return derivedHash === hash
 }

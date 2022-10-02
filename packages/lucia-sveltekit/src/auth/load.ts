@@ -36,7 +36,7 @@ export const handleServerSessionFunction = (context: Context) => {
                     user: session.user,
                 },
             };
-        } catch {
+        } catch (e) {
             context.auth.deleteAllCookies(cookies)
             return {
                 _lucia: null,
