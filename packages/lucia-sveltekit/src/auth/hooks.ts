@@ -2,8 +2,7 @@ import type { Handle, RequestEvent } from "../kit.js";
 import type { Context } from "./index.js";
 import clc from "cli-color";
 
-import { handleRefreshRequest } from "./endpoints/refresh.js";
-import { handleLogoutRequest } from "./endpoints/logout.js";
+import { handleRefreshRequest, handleLogoutRequest } from "./endpoints/index.js";
 
 const handleWarnings = (event: RequestEvent, context: Context): void => {
     if (!context.secret) {

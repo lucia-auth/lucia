@@ -1,10 +1,11 @@
 import type { ServerSession, User } from "../../types.js";
+import { hashScrypt } from "../../utils/crypto.js";
 import {
     createAccessToken,
-    createFingerprintToken,
+    createAccessTokenCookie,
     createRefreshToken,
-} from "../../utils/auth.js";
-import { hash } from "../../utils/crypto.js";
+    createRefreshTokenCookie,
+} from "../../utils/token.js";
 import type { Context } from "../index.js";
 
 type CreateUser = (
@@ -12,50 +13,51 @@ type CreateUser = (
     identifier: string,
     options: {
         password?: string;
-        user_data?: Lucia.UserData;
+        userData?: Lucia.UserData;
     }
 ) => Promise<ServerSession>;
 
 export const createUserFunction = (context: Context) => {
-    const createUser: CreateUser = async (
-        authId,
-        identifier,
-        options
-    ) => {
+    const createUser: CreateUser = async (authId, identifier, options) => {
         const identifierToken = `${authId}:${identifier}`;
-        const userId = context.generateUserId();
-        const fingerprintToken = createFingerprintToken(context);
-        const userData = options.user_data || {};
+        const userData = options.userData || {};
         const user = {
-            user_id: userId,
+            userId: context.generateUserId(),
             ...userData,
         } as User;
-        const refreshToken = await createRefreshToken(
-            user.user_id,
-            fingerprintToken.value,
+        const [accessToken, accessTokenExpires] = createAccessToken();
+        const refreshToken = createRefreshToken(user.userId, context);
+        const hashedPassword = options.password
+            ? await hashScrypt(options.password)
+            : null;
+        await context.adapter.setUser(user.userId, {
+            identifierToken: identifierToken,
+            hashedPassword: hashedPassword,
+            userData: userData,
+        });
+        await Promise.all([
+            context.adapter.setRefreshToken(refreshToken, user.userId),
+            context.adapter.setAccessToken(
+                accessToken,
+                accessTokenExpires,
+                user.userId
+            ),
+        ]);
+        const accessTokenCookie = createAccessTokenCookie(
+            accessToken,
+            accessTokenExpires,
             context
         );
-        const hashedPassword = options.password
-            ? await hash(options.password)
-            : null;
-
-        await context.adapter.setUser(userId, {
-            identifier_token: identifierToken,
-            hashed_password: hashedPassword,
-            user_data: userData,
-        });
-        await context.adapter.setRefreshToken(refreshToken.value, userId);
-        const accessToken = await createAccessToken(
-            user,
-            fingerprintToken.value,
+        const refreshTokenCookie = createRefreshTokenCookie(
+            refreshToken,
             context
         );
         return {
             user: user,
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            fingerprint_token: fingerprintToken,
-            cookies: [accessToken.cookie(), refreshToken.encrypt().cookie(), fingerprintToken.cookie()]
+            accessToken: [accessToken, accessTokenCookie],
+            refreshToken: [refreshToken, refreshTokenCookie],
+            cookies: [accessTokenCookie, refreshTokenCookie],
+            expires: accessTokenExpires
         };
     };
     return createUser;

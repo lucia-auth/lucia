@@ -1,4 +1,5 @@
 packages: 
+  - "packages/lucia-sveltekit/dist"
   - "packages/**"
   - "apps/**"
   - "test-apps/**"

@@ -1,6 +1,6 @@
 import { getContext, hasContext, setContext } from "svelte";
-import { get, type Readable, writable, type Writable } from "svelte/store";
-import type { Session } from "./types.js";
+import { get, type Readable, writable } from "svelte/store";
+import type { Session, SessionStore } from "./types.js";
 
 /* 
 sessions are only stored in a variable in a browser context
@@ -14,9 +14,9 @@ however, since the session store has to be able to be accessible in load functio
 and contexts only works within components (specifically on initialization),
 we store it in a local variable.
 */
-let clientSession: null | Writable<Session> = null;
+let clientSession: SessionStore;
 
-export const getClientSession = (): Writable<Session> => {
+export const getClientSession = (): SessionStore => {
     if (!clientSession) {
         setClientSession();
     }
@@ -36,16 +36,16 @@ const setClientSession = (): void => {
     const pageData = dataArr.reduce((prev, curr) => {
         if (curr) return { ...prev, ...curr.data };
         return prev;
-    }, {}) as { _lucia?: Session };
+    }, {}) as { _lucia?: Session | null };
     clientSession = writable(pageData._lucia);
 };
 
 /* this function will be only called when SSRing pages/components */
-export const getSSRSession = (): Writable<Session> => {
+export const getSSRSession = (): SessionStore => {
     if (!hasContext("__lucia__")) {
         setSSRContext();
     }
-    const luciaContext = getContext<{ session: Writable<Session> }>(
+    const luciaContext = getContext<{ session: SessionStore }>(
         "__lucia__"
     );
     return luciaContext.session;
@@ -59,7 +59,7 @@ const setSSRContext = (): void => {
     const svelteStores = getContext("__svelte__") as {
         page: Readable<{
             data: {
-                _lucia?: Session;
+                _lucia?: Session | null;
             };
         }>;
     };

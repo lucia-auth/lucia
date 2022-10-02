@@ -1,12 +1,13 @@
 import type { DatabaseUser, ServerSession } from "../../types.js";
+import { getAccountFromDatabaseData } from "../../utils/auth.js";
+import { verifyScrypt } from "../../utils/crypto.js";
+import { LuciaError } from "../../utils/error.js";
 import {
     createAccessToken,
-    createFingerprintToken,
+    createAccessTokenCookie,
     createRefreshToken,
-    getAccountFromDatabaseData,
-} from "../../utils/auth.js";
-import { verify } from "../../utils/crypto.js";
-import { LuciaError } from "../../utils/error.js";
+    createRefreshTokenCookie,
+} from "../../utils/token.js";
 import type { Context } from "../index.js";
 
 type authenticateUser = (
@@ -24,39 +25,22 @@ export const authenticateUserFunction = (context: Context) => {
         const identifierToken = `${authId}:${identifier}`;
         const databaseData = (await context.adapter.getUserByIdentifierToken(
             identifierToken
-        )) as DatabaseUser | null;
+        ));
         if (!databaseData)
             throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
         const account = getAccountFromDatabaseData(databaseData);
-        if (account.hashed_password) {
-            if (account.hashed_password.startsWith("$2a"))
+        if (account.hashedPassword) {
+            if (account.hashedPassword.startsWith("$2a"))
                 throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-            const isValid = await verify(
+            const isValid = await verifyScrypt(
                 password || "",
-                account.hashed_password
+                account.hashedPassword
             );
             if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
         }
-        const userId = account.user.user_id;
-        const fingerprintToken = createFingerprintToken(context);
-        const refreshToken = await createRefreshToken(
-            account.user.user_id,
-            fingerprintToken.value,
-            context
-        );
-        await context.adapter.setRefreshToken(refreshToken.value, userId);
-        const accessToken = await createAccessToken(
-            account.user,
-            fingerprintToken.value,
-            context
-        );
-        return {
-            user: account.user,
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            fingerprint_token: fingerprintToken,
-            cookies: [accessToken.cookie(), refreshToken.encrypt().cookie(), fingerprintToken.cookie()]
-        };
+        const user = account.user;
+        const session = await context.auth.createSession(user.userId)
+        return session
     };
     return authenticateUser;
 };

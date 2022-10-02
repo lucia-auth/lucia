@@ -1,48 +1,87 @@
+import type { ServerSession, Tokens } from "../types.js";
+import type { Context } from "./index.js";
 import {
     createAccessToken,
-    createFingerprintToken,
+    createAccessTokenCookie,
     createRefreshToken,
-    getAccountFromDatabaseData,
-} from "../utils/auth.js";
-import { LuciaError } from "../utils/error.js";
+    createRefreshTokenCookie,
+} from "../utils/token.js";
 
-import type { DatabaseUser, ServerSession } from "../types.js";
-import type { Context } from "./index.js";
+type CreateSessionTokens = (userId: string) => Promise<Tokens>;
 
-type CreateUserSession = (
-    authId: string
-) => Promise<ServerSession>;
-
-export const createUserSessionFunction = (
-    context: Context
-) => {
-    const createUserSession: CreateUserSession = async (authId) => {
-        const databaseData = (await context.adapter.getUserById(
-            authId
-        )) as DatabaseUser | null;
-        if (!databaseData)
-            throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
-        const account = getAccountFromDatabaseData(databaseData);
-        const userId = account.user.user_id;
-        const fingerprintToken = createFingerprintToken(context);
-        const refreshToken = await createRefreshToken(
-            account.user.user_id,
-            fingerprintToken.value,
+export const createSessionTokensFunction = (context: Context) => {
+    const createSessionTokens: CreateSessionTokens = async (userId) => {
+        const refreshToken = createRefreshToken(userId, context);
+        const [accessToken, accessTokenExpires] = createAccessToken();
+        await context.adapter.setAccessToken(
+            accessToken,
+            accessTokenExpires,
+            userId
+        );
+        await context.adapter.setRefreshToken(refreshToken, userId);
+        const accessTokenCookie = createAccessTokenCookie(
+            accessToken,
+            accessTokenExpires,
             context
         );
-        await context.adapter.setRefreshToken(refreshToken.value, userId);
-        const accessToken = await createAccessToken(
-            account.user,
-            fingerprintToken.value,
+        const refreshTokenCookie = createRefreshTokenCookie(
+            refreshToken,
             context
         );
         return {
-            user: account.user,
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            fingerprint_token: fingerprintToken,
-            cookies: [accessToken.cookie(), refreshToken.cookie(), fingerprintToken.cookie()]
+            accessToken: [accessToken, accessTokenCookie],
+            refreshToken: [refreshToken, refreshTokenCookie],
+            cookies: [accessTokenCookie, refreshTokenCookie],
+            expires: accessTokenExpires,
         };
     };
-    return createUserSession;
+    return createSessionTokens;
+};
+
+type CreateSession = (userId: string) => Promise<ServerSession>;
+
+export const createSessionFunction = (context: Context) => {
+    const createSession: CreateSession = async (userId) => {
+        const [user, tokens] = await Promise.all([
+            context.auth.getUser(userId),
+            context.auth.createSessionTokens(userId),
+        ]);
+        return {
+            user,
+            ...tokens,
+        };
+    };
+    return createSession;
+};
+
+type InvalidateAllUserSessions = (userId: string) => Promise<void>;
+
+export const invalidateAllUserSessionsFunction = (context: Context) => {
+    const invalidateAllUserSessions: InvalidateAllUserSessions = async (
+        userId: string
+    ) => {
+        await Promise.all([
+            context.adapter.deleteUserAccessTokens(userId),
+            context.adapter.deleteUserRefreshTokens(userId),
+        ]);
+    };
+    return invalidateAllUserSessions;
+};
+
+type DeleteExpiredUserSessions = (userId: string) => Promise<void>;
+
+export const deleteExpiredUserSessionsFunction = (context: Context) => {
+    const deleteExpiredUserSessions: DeleteExpiredUserSessions = async (
+        userId
+    ) => {
+        const userAccessTokens = await context.adapter.getAccessTokensByUserId(
+            userId
+        );
+        const currentTime = new Date().getTime();
+        const expiredUserAccessTokens = userAccessTokens
+            .filter((val) => val.expires < currentTime)
+            .map((val) => val.accessToken);
+        await context.adapter.deleteRefreshToken(...expiredUserAccessTokens)
+    };
+    return deleteExpiredUserSessions;
 };

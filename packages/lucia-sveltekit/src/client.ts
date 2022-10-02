@@ -1,7 +1,7 @@
 import { onDestroy } from "svelte";
-import { get, type Writable } from "svelte/store";
+import { get } from "svelte/store";
 import { getClientSession, getSSRSession } from "./session.js";
-import type { Session } from "./types.js";
+import type { Session, SessionStore } from "./types.js";
 import { LuciaError } from "./utils/error.js";
 
 export const signOut = async (redirect?: string): Promise<void> => {
@@ -9,10 +9,7 @@ export const signOut = async (redirect?: string): Promise<void> => {
     const session = get(sessionStore);
     if (!session) throw new LuciaError("AUTH_NOT_AUTHENTICATED");
     const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${session?.access_token || ""}`,
-        },
+        method: "POST"
     });
     if (response.ok) {
         if (redirect) {
@@ -30,12 +27,11 @@ export const signOut = async (redirect?: string): Promise<void> => {
     if (result.message) throw new LuciaError(result.message);
 };
 
-export const refreshTokens = async (refreshToken: string) => {
+export const refreshTokens = async (): Promise<{
+    expires: number
+}> => {
     const response = await fetch("/api/auth/refresh", {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${refreshToken}`,
-        },
+        method: "POST"
     });
     if (!response.ok) {
         let result;
@@ -47,14 +43,15 @@ export const refreshTokens = async (refreshToken: string) => {
         }
         throw new LuciaError(result.message);
     }
-    const result = await response.json();
+    const result = await response.json() as {
+        expires: number
+    }
     return {
-        refresh_token: result.refresh_token,
-        access_token: result.access_token,
+        expires: result.expires
     };
 };
 
-export const getSession = (): Writable<Session> => {
+export const getSession = (): SessionStore => {
     if (typeof window === "undefined") {
         // server
         return getSSRSession();
@@ -71,16 +68,14 @@ export const handleSilentRefresh = (errorHandler: () => void = () => {}) => {
         setTimeout(async () => {
             const session = get(sessionStore);
             try {
-                if (!session?.access_token || !session?.refresh_token) return;
-                const tokenData = getJwtPayload(session?.access_token);
                 const currentTime = new Date().getTime();
-                if (!tokenData) {
+                if (!session) {
                     throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
                 }
-                if (!tokenData.exp) {
+                if (!session.expires) {
                     throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
                 }
-                if (currentTime + 60 * 1000 > tokenData.exp * 1000) {
+                if (currentTime + 60 * 1000 * 5 > session.expires * 1000) {
                     await refresh(session);
                 }
                 checkAccessToken();
@@ -90,22 +85,17 @@ export const handleSilentRefresh = (errorHandler: () => void = () => {}) => {
                 errorHandler();
                 clearInterval(interval);
             }
-        }, 5000);
+        }, 60 * 1000);
     };
 
     const refresh = async (session: Session) => {
         if (!session) return;
-        const result = await refreshTokens(session.refresh_token);
+        const result = await refreshTokens();
         sessionStore.update((val) => {
             if (!val) return val;
-            val.refresh_token = result.refresh_token;
-            val.access_token = result.access_token;
+            val.expires = result.expires
             return val;
         });
-    };
-
-    const getJwtPayload = (token: string) => {
-        return JSON.parse(window.atob(token.split(".")[1]));
     };
 
     onDestroy(() => {

@@ -8,21 +8,26 @@ import {
     createUserFunction,
     deleteUserFunction,
     getUserFunction,
+    getUserByIdentifierFunction,
+    updateUserDataFunction,
+    updateUserIdentifierTokenFunction,
+    updateUserPasswordFunction,
 } from "./user/index.js";
+import { validateRequestFunction } from "./request.js";
 import {
-    validateRequestByCookieFunction,
-    validateRequestFunction,
-} from "./request.js";
-import { refreshTokensFunction } from "./refresh-token/index.js";
-import { invalidateRefreshTokenFunction } from "./refresh-token/invalidate.js";
-import { createUserSessionFunction } from "./session.js";
-import { updateUserDataFunction } from "./user/update/user-data.js";
-import { updateUserIdentifierTokenFunction } from "./user/update/identifier-token.js";
-import { resetUserPasswordFunction } from "./user/reset-password.js";
-import { getUserByIdFunction } from "./user/get.js";
-import { AccessToken } from "../utils/token.js";
+    refreshTokensFunction,
+    invalidateAccessTokenFunction,
+    invalidateRefreshTokenFunction,
+    validateAccessTokenFunction,
+    validateRefreshTokenFunction,
+} from "./token/index.js";
+import {
+    createSessionFunction,
+    createSessionTokensFunction,
+    invalidateAllUserSessionsFunction,
+    deleteExpiredUserSessionsFunction,
+} from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
-import { validateFormSubmissionFunction } from "./form.js";
 
 export const lucia = (configs: Configurations) => {
     return new Auth(configs) as Omit<Auth, "getAuthSession">;
@@ -50,59 +55,71 @@ export class Auth {
         this.authenticateUser = authenticateUserFunction(this.context);
         this.createUser = createUserFunction(this.context);
         this.getUser = getUserFunction(this.context);
-        this.getUserById = getUserByIdFunction(this.context);
+        this.getUser = getUserFunction(this.context);
+        this.getUserByIdentifierToken = getUserByIdentifierFunction(
+            this.context
+        );
         this.deleteUser = deleteUserFunction(this.context);
         this.validateRequest = validateRequestFunction(this.context);
-        this.validateRequestByCookie = validateRequestByCookieFunction(
-            this.context
-        );
-        this.validateFormSubmission = validateFormSubmissionFunction(
-            this.context
-        );
         this.refreshTokens = refreshTokensFunction(this.context);
         this.invalidateRefreshToken = invalidateRefreshTokenFunction(
             this.context
         );
-        this.createUserSession = createUserSessionFunction(this.context);
+        this.createSession = createSessionFunction(this.context);
+        this.createSessionTokens = createSessionTokensFunction(this.context);
+        this.deleteExpiredUserSessions = deleteExpiredUserSessionsFunction(
+            this.context
+        );
+        this.validateAccessToken = validateAccessTokenFunction(this.context);
+        this.validateRefreshToken = validateRefreshTokenFunction(this.context);
         this.updateUserData = updateUserDataFunction(this.context);
         this.updateUserIdentifierToken = updateUserIdentifierTokenFunction(
             this.context
         );
-        this.resetUserPassword = resetUserPasswordFunction(this.context);
+        this.updateUserPassword = updateUserPasswordFunction(this.context);
         this.handleHooks = handleHooksFunction(this.context);
         this.handleServerSession = handleServerSessionFunction(this.context);
+        this.invalidateAccessToken = invalidateAccessTokenFunction(
+            this.context
+        );
+        this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
+            this.context
+        );
     }
     public handleHooks: () => Handle;
     public authenticateUser: ReturnType<typeof authenticateUserFunction>;
     public createUser: ReturnType<typeof createUserFunction>;
     public getUser: ReturnType<typeof getUserFunction>;
-    public getUserById: ReturnType<typeof getUserByIdFunction>;
+    public getUserByIdentifierToken: ReturnType<
+        typeof getUserByIdentifierFunction
+    >;
     public deleteUser: ReturnType<typeof deleteUserFunction>;
     public validateRequest: ReturnType<typeof validateRequestFunction>;
-    public validateRequestByCookie: ReturnType<
-        typeof validateRequestByCookieFunction
-    >;
-    public validateFormSubmission: ReturnType<
-        typeof validateFormSubmissionFunction
-    >;
     public refreshTokens: ReturnType<typeof refreshTokensFunction>;
     public invalidateRefreshToken: ReturnType<
         typeof invalidateRefreshTokenFunction
     >;
-    public createUserSession: ReturnType<typeof createUserSessionFunction>;
+    public createSession: ReturnType<typeof createSessionFunction>;
+    public createSessionTokens: ReturnType<typeof createSessionTokensFunction>;
+    public deleteExpiredUserSessions: ReturnType<
+        typeof deleteExpiredUserSessionsFunction
+    >;
+    public validateAccessToken: ReturnType<typeof validateAccessTokenFunction>;
+    public validateRefreshToken: ReturnType<
+        typeof validateRefreshTokenFunction
+    >;
     public updateUserData: ReturnType<typeof updateUserDataFunction>;
     public updateUserIdentifierToken: ReturnType<
         typeof updateUserIdentifierTokenFunction
     >;
-    public resetUserPassword: ReturnType<typeof resetUserPasswordFunction>;
+    public updateUserPassword: ReturnType<typeof updateUserPasswordFunction>;
     public handleServerSession: ReturnType<typeof handleServerSessionFunction>;
-    public getUserFromAccessToken = async (
-        accessToken: string,
-        fingerprintToken: string
-    ) => {
-        const accessTokenInstance = new AccessToken(accessToken, this.context);
-        return await accessTokenInstance.user(fingerprintToken);
-    };
+    public invalidateAccessToken: ReturnType<
+        typeof invalidateAccessTokenFunction
+    >;
+    public invalidateAllUserSessions: ReturnType<
+        typeof invalidateAllUserSessionsFunction
+    >;
 }
 
 interface Configurations {

@@ -1,37 +1,38 @@
-import type { DatabaseUser, User } from "../../types.js";
+import type { User } from "../../types.js";
 import { getAccountFromDatabaseData } from "../../utils/auth.js";
+import { LuciaError } from "../../utils/error.js";
 import type { Context } from "../index.js";
 
 type GetUser = (
     authId: string,
     identifier: string
-) => Promise<User | null>;
+) => Promise<User>;
 
-export const getUserFunction = (context: Context) => {
-    const getUser: GetUser = async (authId, identifier) => {
-        const identifierToken = `${authId}:${identifier}`;
+export const getUserByIdentifierFunction = (context: Context) => {
+    const getUserByIdentifier: GetUser = async (authMethod, identifier) => {
+        const identifierToken = `${authMethod}:${identifier}`;
         const databaseData = (await context.adapter.getUserByIdentifierToken(
             identifierToken
-        )) as DatabaseUser | null;
-        if (!databaseData) return null;
+        ))
+        if (!databaseData) throw new LuciaError("AUTH_INVALID_IDENTIFIER_TOKEN");
         const account = getAccountFromDatabaseData(databaseData);
         return account.user;
     };
-    return getUser;
+    return getUserByIdentifier;
 };
 
 type GetUserById = (
     userId: string
-) => Promise<User| null>;
+) => Promise<User>;
 
-export const getUserByIdFunction = (context: Context) => {
-    const getUserById: GetUserById = async (userId: string) => {
+export const getUserFunction = (context: Context) => {
+    const getUser: GetUserById = async (userId: string) => {
         const databaseData = (await context.adapter.getUserById(
             userId
-        )) as DatabaseUser | null;
-        if (!databaseData) return null;
+        ))
+        if (!databaseData) throw new LuciaError("AUTH_INVALID_USER_ID")
         const account = getAccountFromDatabaseData(databaseData);
         return account.user;
     };
-    return getUserById;
+    return getUser;
 };

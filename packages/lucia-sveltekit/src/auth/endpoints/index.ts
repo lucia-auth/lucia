@@ -11,3 +11,6 @@ export class ErrorResponse extends Response {
         );
     }
 }
+
+export { handleLogoutRequest } from "./logout.js";
+export { handleRefreshRequest } from "./refresh.js";
