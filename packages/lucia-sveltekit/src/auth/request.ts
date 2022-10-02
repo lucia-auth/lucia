@@ -15,6 +15,12 @@ export const validateRequestFunction = (context: Context) => {
         const cookies = cookie.parse(clonedReq.headers.get("cookie") || "");
         const refreshToken = cookies.refresh_token;
         const accessToken = cookies.access_token;
+        if (clonedReq.method !== "GET" && clonedReq.method !== "HEAD") {
+            const origin = clonedReq.headers.get("Origin");
+            const url = new URL(clonedReq.url);
+            if (!origin) throw new LuciaError("AUTH_INVALID_REQUEST")
+            if (url.origin !== origin) throw new LuciaError("AUTH_INVALID_REQUEST")
+        }
         if (!refreshToken) throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
         if (!accessToken) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
         const session = await context.auth.validateAccessToken(accessToken);
