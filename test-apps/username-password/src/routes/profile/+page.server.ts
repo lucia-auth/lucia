@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies, request }) => {
 	try {
-		await auth.validateRequestByCookie(request);
+		await auth.validateRequest(request);
 		const notes = cookies.get('notes') || '';
 		return {
 			notes
@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ cookies, request }) => {
 export const actions: Actions = {
 	default: async ({ cookies, request }) => {
 		try {
-			await auth.validateFormSubmission(request);
+			await auth.validateRequest(request);
 			const formData = await request.formData();
 			const notes = formData.get('notes')?.toString();
 			if (notes === undefined)
