@@ -1,8 +1,5 @@
-import {
-    createBlankCookies,
-    setCookie,
-} from "../utils/cookie.js";
-import type {  Session } from "../types.js";
+import { createBlankCookies, setCookie } from "../utils/cookie.js";
+import type { Session } from "../types.js";
 import type { Context } from "./index.js";
 import type { ServerLoad, ServerLoadEvent } from "../kit.js";
 import { LuciaError } from "../utils/error.js";
@@ -27,10 +24,11 @@ export const handleServerSessionFunction = (context: Context) => {
             };
         } catch {}
         try {
-            if (!refreshToken) throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN")
-            const session = await context.auth.refreshTokens(refreshToken)
-            const [, accessTokenCookie] = session.accessToken
-            const [, refreshTokenCookie] = session.refreshToken
+            if (!refreshToken)
+                throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
+            const session = await context.auth.refreshTokens(refreshToken);
+            const [, accessTokenCookie] = session.accessToken;
+            const [, refreshTokenCookie] = session.refreshToken;
             setCookie(cookies, accessTokenCookie, refreshTokenCookie);
             return {
                 _lucia: {

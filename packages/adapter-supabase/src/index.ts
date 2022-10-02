@@ -109,7 +109,7 @@ const adapter = (url: string, secret: string): Adapter => {
         getSessionByAccessToken: async (accessToken) => {
             const { data, error } = await supabase
                 .from<SessionRow>("session")
-                .select()
+                .select("*, user(*)")
                 .eq("access_token", accessToken)
                 .maybeSingle();
             if (error) {
