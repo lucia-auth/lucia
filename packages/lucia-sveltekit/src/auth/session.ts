@@ -61,7 +61,7 @@ export const invalidateAllUserSessionsFunction = (context: Context) => {
         userId: string
     ) => {
         await Promise.all([
-            context.adapter.deleteSessionByAccessToken(userId),
+            context.adapter.deleteUserSessions(userId),
             context.adapter.deleteUserRefreshTokens(userId),
         ]);
     };
@@ -74,11 +74,11 @@ export const deleteExpiredUserSessionsFunction = (context: Context) => {
     const deleteExpiredUserSessions: DeleteExpiredUserSessions = async (
         userId
     ) => {
-        const userAccessTokens = await context.adapter.getSessionsByUserId(
+        const session = await context.adapter.getUserSessions(
             userId
         );
         const currentTime = new Date().getTime();
-        const expiredUserAccessTokens = userAccessTokens
+        const expiredUserAccessTokens = session
             .filter((val) => val.expires < currentTime)
             .map((val) => val.accessToken);
         await context.adapter.deleteRefreshToken(...expiredUserAccessTokens)

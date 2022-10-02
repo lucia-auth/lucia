@@ -14,7 +14,6 @@ export const actions: Actions = {
 		}
 		try {
 			const userSession = await auth.authenticateUser('username', username, password);
-			console.log(userSession)
 			setCookie(cookies, ...userSession.cookies);
 		} catch (e) {
 			const error = e as Error;

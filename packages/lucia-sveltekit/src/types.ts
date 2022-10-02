@@ -15,7 +15,7 @@ export interface Adapter {
         identifierToken: string
     ) => Promise<DatabaseUser | null>;
     getSessionByAccessToken: (accessToken: string) => Promise<DatabaseSession | null>;
-    getSessionsByUserId: (userId: string) => Promise<DatabaseSession[]>
+    getUserSessions: (userId: string) => Promise<DatabaseSession[]>
     setUser: (
         userId: string,
         data: {
@@ -31,7 +31,7 @@ export interface Adapter {
         userId: string
     ) => Promise<void>;
     deleteSessionByAccessToken: (...accessToken: string[]) => Promise<void>;
-    deleteSessionByUserId: (userId: string) => Promise<void>;
+    deleteUserSessions: (userId: string) => Promise<void>;
     setRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
     deleteRefreshToken: (...refreshToken: string[]) => Promise<void>;
     deleteUserRefreshTokens: (userId: string) => Promise<void>;

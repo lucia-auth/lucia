@@ -32,7 +32,6 @@ export const validateRefreshTokenFunction = (context: Context) => {
             refreshToken
         );
         if (databaseUser) return getAccountFromDatabaseData(databaseUser).user;
-
         /*
         is a token issued by Lucia, but is invalid
         we can assume

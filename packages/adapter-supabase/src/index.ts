@@ -113,19 +113,19 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("access_token", accessToken)
                 .maybeSingle();
             if (error) {
-                console.log(error);
+                console.error(error);
                 throw new Error("DATABASE_FETCH_FAILED");
             }
             if (!data) return null;
             return convertSessionRow(data)
         },
-        getSessionsByUserId: async (userId) => {
+        getUserSessions: async (userId) => {
             const { data, error } = await supabase
                 .from<SessionRow>("session")
                 .select("*, user(*)")
                 .eq("user_id", userId);
             if (error) {
-                console.log(error);
+                console.error(error);
                 throw new Error("DATABASE_FETCH_FAILED");
             }
             return data?.map((val) => {
@@ -189,7 +189,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 }
             );
             if (error) {
-                console.log(error);
+                console.error(error);
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
@@ -205,7 +205,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new Error("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteSessionByUserId: async (userId) => {
+        deleteUserSessions: async (userId) => {
             const { error } = await supabase
                 .from("session")
                 .delete({
