@@ -14,8 +14,8 @@ export interface Adapter {
     getUserByIdentifierToken: (
         identifierToken: string
     ) => Promise<DatabaseUser | null>;
-    getSessionByAccessToken: (accessToken: string) => Promise<DatabaseSession>;
-    getAccessTokensByUserId: (userId: string) => Promise<DatabaseSession[]>
+    getSessionByAccessToken: (accessToken: string) => Promise<DatabaseSession | null>;
+    getSessionsByUserId: (userId: string) => Promise<DatabaseSession[]>
     setUser: (
         userId: string,
         data: {
@@ -25,22 +25,22 @@ export interface Adapter {
         }
     ) => Promise<void>;
     deleteUser: (userId: string) => Promise<void>;
-    setAccessToken: (
+    setSession: (
         accessToken: string,
         expires: number,
         userId: string
     ) => Promise<void>;
+    deleteSessionByAccessToken: (...accessToken: string[]) => Promise<void>;
+    deleteSessionByUserId: (userId: string) => Promise<void>;
     setRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
-    deleteAccessToken: (...accessToken: string[]) => Promise<void>;
-    deleteUserAccessTokens: (userId: string) => Promise<void>;
     deleteRefreshToken: (...refreshToken: string[]) => Promise<void>;
     deleteUserRefreshTokens: (userId: string) => Promise<void>;
     updateUser: (
         userId: string,
         data: {
-            identifier_token?: string | null;
-            hashed_password?: string | null;
-            user_data?: Record<string, any>;
+            identifierToken?: string | null;
+            hashedPassword?: string | null;
+            userData?: Record<string, any>;
         }
     ) => Promise<DatabaseUser>;
 }
@@ -57,9 +57,10 @@ export type DatabaseUser = {
 } & Lucia.UserData;
 
 export type DatabaseSession = {
-    id: string;
+    id: number;
     accessToken: string;
     expires: number;
+    userId: string;
     user: DatabaseUser;
 };
 

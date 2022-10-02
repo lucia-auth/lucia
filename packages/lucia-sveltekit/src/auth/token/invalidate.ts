@@ -17,7 +17,7 @@ export const invalidateAccessTokenFunction = (context: Context) => {
     const invalidateAccessToken: InvalidateAccessToken = async (
         refreshToken
     ) => {
-        await context.adapter.deleteAccessToken(refreshToken)
+        await context.adapter.deleteSessionByAccessToken(refreshToken)
     };
     return invalidateAccessToken
 };

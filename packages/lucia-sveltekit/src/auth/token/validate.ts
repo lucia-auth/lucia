@@ -8,8 +8,11 @@ type ValidateAccessToken = (accessToken: string) => Promise<Session>;
 
 export const validateAccessTokenFunction = (context: Context) => {
     const validateAccessToken: ValidateAccessToken = async (accessToken) => {
-        const { user: databaseUser, expires } =
-            await context.adapter.getSessionByAccessToken(accessToken);
+        const databaseSession = await context.adapter.getSessionByAccessToken(
+            accessToken
+        );
+        if (!databaseSession) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+        const { user: databaseUser, expires } = databaseSession;
         return {
             user: getAccountFromDatabaseData(databaseUser).user,
             expires,
@@ -42,5 +45,5 @@ export const validateRefreshTokenFunction = (context: Context) => {
         await context.auth.invalidateAllUserSessions(userId);
         throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
     };
-    return validateRefreshToken
+    return validateRefreshToken;
 };

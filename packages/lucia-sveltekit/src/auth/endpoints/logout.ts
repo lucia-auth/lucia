@@ -14,7 +14,7 @@ export const handleLogoutRequest = async (
         const [refreshToken] = session.refreshToken;
         await Promise.allSettled([
             context.adapter.deleteRefreshToken(refreshToken),
-            context.adapter.deleteAccessToken(accessToken),
+            context.adapter.deleteSessionByAccessToken(accessToken),
         ]);
         return new Response(null, {
             headers: {

@@ -2,3 +2,7 @@
 declare namespace Lucia {
 	interface UserData {}
 }
+
+declare namespace App {
+	interface Locals {}
+}

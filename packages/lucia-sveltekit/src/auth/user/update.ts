@@ -17,7 +17,7 @@ export const updateUserIdentifierTokenFunction = (context: Context) => {
     ) => {
         const identifierToken = `${auth_id}:${identifier}`;
         const databaseData = await context.adapter.updateUser(userId, {
-            identifier_token: identifierToken,
+            identifierToken,
         });
         const account = getAccountFromDatabaseData(databaseData);
         return account.user;
@@ -31,12 +31,14 @@ type UpdateUserData = (
 ) => Promise<User>;
 
 export const updateUserDataFunction = (context: Context) => {
-    const updateUserData: UpdateUserData= async (userId, userData) => {
-        const databaseData = await context.adapter.updateUser(userId, { user_data: userData})
+    const updateUserData: UpdateUserData = async (userId, userData) => {
+        const databaseData = await context.adapter.updateUser(userId, {
+            userData,
+        });
         const account = getAccountFromDatabaseData(databaseData);
-        return account.user
+        return account.user;
     };
-    return updateUserData
+    return updateUserData;
 };
 
 type UpdateUserPassword = (
@@ -49,7 +51,7 @@ export const updateUserPasswordFunction = (context: Context) => {
         const hashedPassword = password ? await hashScrypt(password) : null;
         await Promise.all([
             context.adapter.updateUser(userId, {
-                hashed_password: hashedPassword,
+                hashedPassword,
             }),
             context.adapter.deleteUserRefreshTokens(userId),
         ]);

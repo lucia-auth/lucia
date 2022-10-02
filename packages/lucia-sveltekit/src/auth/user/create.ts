@@ -37,7 +37,7 @@ export const createUserFunction = (context: Context) => {
         });
         await Promise.all([
             context.adapter.setRefreshToken(refreshToken, user.userId),
-            context.adapter.setAccessToken(
+            context.adapter.setSession(
                 accessToken,
                 accessTokenExpires,
                 user.userId
