@@ -1,10 +1,10 @@
 export const getUpdateData = (data: {
-    identifierToken?: string | null;
+    providerId?: string | null;
     hashedPassword?: string | null;
     userData?: Record<string, any>;
 }) => {
     const rawData: Record<string, any> = {
-        identifier_token: data.identifierToken,
+        provider_id: data.providerId,
         hashed_password: data.hashedPassword,
         ...data.userData,
     };

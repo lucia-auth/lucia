@@ -1,28 +1,28 @@
 import type { User } from "../../types.js";
-import { getAccountFromDatabaseData } from "../../utils/auth.js";
+import { getAccountFromDatabaseUser } from "../../utils/auth.js";
 import type { Context } from "../index.js";
 import { hashScrypt } from "../../utils/crypto.js";
 
 type UpdateUserIdentifierToken = (
     userId: string,
-    auth_id: string,
+    provider: string,
     identifier: string
 ) => Promise<User>;
 
-export const updateUserIdentifierTokenFunction = (context: Context) => {
-    const updateUserIdentifierToken: UpdateUserIdentifierToken = async (
+export const updateUserProviderIdFunction = (context: Context) => {
+    const updateUserProviderId: UpdateUserIdentifierToken = async (
         userId,
-        auth_id,
+        provider,
         identifier
     ) => {
-        const identifierToken = `${auth_id}:${identifier}`;
+        const providerId = `${provider}:${identifier}`;
         const databaseData = await context.adapter.updateUser(userId, {
-            identifierToken,
+            providerId,
         });
-        const account = getAccountFromDatabaseData(databaseData);
+        const account = getAccountFromDatabaseUser(databaseData);
         return account.user;
     };
-    return updateUserIdentifierToken;
+    return updateUserProviderId;
 };
 
 type UpdateUserData = (
@@ -35,7 +35,7 @@ export const updateUserDataFunction = (context: Context) => {
         const databaseData = await context.adapter.updateUser(userId, {
             userData,
         });
-        const account = getAccountFromDatabaseData(databaseData);
+        const account = getAccountFromDatabaseUser(databaseData);
         return account.user;
     };
     return updateUserData;

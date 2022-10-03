@@ -1,4 +1,4 @@
-import { generateRandomString, hashSHA256, verifySHA256 } from "./crypto.js";
+import { generateRandomString, hashSHA256 } from "./crypto.js";
 import type { Context } from "../auth/index.js";
 import cookie from "cookie";
 import { getTimeAfterSeconds } from "./date.js";
@@ -10,29 +10,29 @@ export const createAccessToken = () => {
 export const createAccessTokenCookie = (
     accessToken: string,
     expires: number,
-    context: Context
+    secure: boolean
 ) => {
     return cookie.serialize("access_token", accessToken, {
         expires: new Date(expires),
-        secure: context.env === "PROD",
+        secure,
         httpOnly: true,
         sameSite: "lax",
         path: "/",
     });
 };
 
-export const createRefreshToken = (userId: string, context: Context) => {
-    const hashedUserId = hashSHA256(userId, context.secret);
+export const createRefreshToken = (userId: string, secret: string) => {
+    const hashedUserId = hashSHA256(userId, secret);
     return `rt_${generateRandomString(40)}.${hashedUserId}.${userId}`;
 };
 
 export const createRefreshTokenCookie = (
     refreshToken: string,
-    context: Context
+    secure: boolean
 ) => {
     return cookie.serialize("refresh_token", refreshToken, {
         maxAge: 60 * 24 * 365,
-        secure: context.env === "PROD",
+        secure,
         httpOnly: true,
         sameSite: "lax",
         path: "/",

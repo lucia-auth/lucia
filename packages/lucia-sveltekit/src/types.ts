@@ -11,15 +11,15 @@ export interface Adapter {
     getUserByRefreshToken: (
         refreshToken: string
     ) => Promise<DatabaseUser | null>;
-    getUserByIdentifierToken: (
-        identifierToken: string
+    getUserByProviderId: (
+        providerId: string
     ) => Promise<DatabaseUser | null>;
     getSessionByAccessToken: (accessToken: string) => Promise<DatabaseSession | null>;
-    getUserSessions: (userId: string) => Promise<DatabaseSession[]>
+    getSessionsByUserId: (userId: string) => Promise<DatabaseSession[]>
     setUser: (
         userId: string,
         data: {
-            identifierToken: string;
+            providerId: string;
             hashedPassword: string | null;
             userData: Record<string, any>;
         }
@@ -38,7 +38,7 @@ export interface Adapter {
     updateUser: (
         userId: string,
         data: {
-            identifierToken?: string | null;
+            providerId?: string | null;
             hashedPassword?: string | null;
             userData?: Record<string, any>;
         }
@@ -47,13 +47,13 @@ export interface Adapter {
 
 export type User = Lucia.UserData & {
     userId: string;
-    identifierToken: string;
+    providerId: string;
 };
 
 export type DatabaseUser = {
     id: string;
     hashedPassword: string | null;
-    identifierToken: string;
+    providerId: string;
 } & Lucia.UserData;
 
 export type DatabaseSession = {

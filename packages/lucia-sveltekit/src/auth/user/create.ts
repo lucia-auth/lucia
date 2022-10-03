@@ -9,7 +9,7 @@ import {
 import type { Context } from "../index.js";
 
 type CreateUser = (
-    authId: string,
+    provider: string,
     identifier: string,
     options: {
         password?: string;
@@ -18,20 +18,20 @@ type CreateUser = (
 ) => Promise<ServerSession>;
 
 export const createUserFunction = (context: Context) => {
-    const createUser: CreateUser = async (authId, identifier, options) => {
-        const identifierToken = `${authId}:${identifier}`;
+    const createUser: CreateUser = async (provider, identifier, options) => {
+        const providerId = `${provider}:${identifier}`;
         const userData = options.userData || {};
         const user = {
             userId: context.generateUserId(),
             ...userData,
         } as User;
         const [accessToken, accessTokenExpires] = createAccessToken();
-        const refreshToken = createRefreshToken(user.userId, context);
+        const refreshToken = createRefreshToken(user.userId, context.secret);
         const hashedPassword = options.password
             ? await hashScrypt(options.password)
             : null;
         await context.adapter.setUser(user.userId, {
-            identifierToken: identifierToken,
+            providerId,
             hashedPassword: hashedPassword,
             userData: userData,
         });
@@ -46,18 +46,18 @@ export const createUserFunction = (context: Context) => {
         const accessTokenCookie = createAccessTokenCookie(
             accessToken,
             accessTokenExpires,
-            context
+            context.env === "PROD"
         );
         const refreshTokenCookie = createRefreshTokenCookie(
             refreshToken,
-            context
+            context.env === "PROD"
         );
         return {
             user: user,
             accessToken: [accessToken, accessTokenCookie],
             refreshToken: [refreshToken, refreshTokenCookie],
             cookies: [accessTokenCookie, refreshTokenCookie],
-            expires: accessTokenExpires
+            expires: accessTokenExpires,
         };
     };
     return createUser;

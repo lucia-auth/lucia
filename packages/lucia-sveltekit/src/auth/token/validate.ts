@@ -1,5 +1,5 @@
 import { Session, User } from "../../types.js";
-import { getAccountFromDatabaseData } from "../../utils/auth.js";
+import { getAccountFromDatabaseUser } from "../../utils/auth.js";
 import { verifySHA256 } from "../../utils/crypto.js";
 import { LuciaError } from "../../utils/error.js";
 import { Context } from "../index.js";
@@ -17,7 +17,7 @@ export const validateAccessTokenFunction = (context: Context) => {
             throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
         const { user: databaseUser, expires } = databaseSession;
         return {
-            user: getAccountFromDatabaseData(databaseUser).user,
+            user: getAccountFromDatabaseUser(databaseUser).user,
             expires,
         };
     };
@@ -34,7 +34,7 @@ export const validateRefreshTokenFunction = (context: Context) => {
         const databaseUser = await context.adapter.getUserByRefreshToken(
             refreshToken
         );
-        if (databaseUser) return getAccountFromDatabaseData(databaseUser).user;
+        if (databaseUser) return getAccountFromDatabaseUser(databaseUser).user;
         /*
         is a token issued by Lucia, but is invalid
         we can assume

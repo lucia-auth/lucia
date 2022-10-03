@@ -1,10 +1,10 @@
 import { DatabaseUser, User } from "../types.js";
 
-export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
+export const getAccountFromDatabaseUser = (databaseData: DatabaseUser) => {
     const {
         id: userId,
         hashedPassword,
-        identifierToken,
+        providerId,
         ...userData
     } = databaseData;
     const user = {
@@ -14,6 +14,6 @@ export const getAccountFromDatabaseData = (databaseData: DatabaseUser) => {
     return {
         user,
         hashedPassword: hashedPassword,
-        identifierToken: identifierToken,
+        providerId: providerId,
     };
 };

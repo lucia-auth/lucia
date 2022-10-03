@@ -5,7 +5,7 @@ import type { Adapter, DatabaseUser } from "lucia-sveltekit/types";
 interface UserRow {
     id: string;
     hashed_password: string;
-    identifier_token: string;
+    provider_id: string;
     [user_data: string]: any;
 }
 
@@ -27,13 +27,13 @@ const convertUserRow = (row: UserRow): DatabaseUser => {
     const {
         id,
         hashed_password: hashedPassword,
-        identifier_token: identifierToken,
+        provider_id: providerId,
         ...userData
     } = row;
     return {
         id,
         hashedPassword,
-        identifierToken,
+        providerId,
         ...userData,
     };
 };
@@ -93,11 +93,11 @@ const adapter = (url: string, secret: string): Adapter => {
             if (!data) return null;
             return convertUserRow(data.user);
         },
-        getUserByIdentifierToken: async (identifierToken) => {
+        getUserByProviderId: async (providerId) => {
             const { data, error } = await supabase
                 .from<UserRow>("user")
                 .select()
-                .eq("identifier_token", identifierToken)
+                .eq("provider_id", providerId)
                 .maybeSingle();
             if (error) {
                 console.error(error);
@@ -119,7 +119,7 @@ const adapter = (url: string, secret: string): Adapter => {
             if (!data) return null;
             return convertSessionRow(data)
         },
-        getUserSessions: async (userId) => {
+        getSessionsByUserId: async (userId) => {
             const { data, error } = await supabase
                 .from<SessionRow>("session")
                 .select("*, user(*)")
@@ -136,14 +136,14 @@ const adapter = (url: string, secret: string): Adapter => {
             userId: string,
             data: {
                 hashedPassword: string | null;
-                identifierToken: string;
+                providerId: string;
                 userData: Record<string, any>;
             }
         ) => {
             const { error } = await supabase.from("user").insert(
                 {
                     id: userId,
-                    identifier_token: data.identifierToken,
+                    provider_id: data.providerId,
                     hashed_password: data.hashedPassword,
                     ...data.userData,
                 },
@@ -154,10 +154,10 @@ const adapter = (url: string, secret: string): Adapter => {
             if (error) {
                 console.error(error);
                 if (
-                    error.details.includes("(identifier_token)") &&
+                    error.details.includes("(provider_id)") &&
                     error.details.includes("already exists.")
                 ) {
-                    throw new Error("AUTH_DUPLICATE_IDENTIFIER_TOKEN");
+                    throw new Error("AUTH_DUPLICATE_PROVIDER_ID");
                 }
                 if (error.details.includes("already exists.")) {
                     throw new Error("AUTH_DUPLICATE_USER_DATA");

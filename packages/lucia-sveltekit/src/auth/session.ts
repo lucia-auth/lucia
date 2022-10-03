@@ -11,7 +11,7 @@ type CreateSessionTokens = (userId: string) => Promise<Tokens>;
 
 export const createSessionTokensFunction = (context: Context) => {
     const createSessionTokens: CreateSessionTokens = async (userId) => {
-        const refreshToken = createRefreshToken(userId, context);
+        const refreshToken = createRefreshToken(userId, context.secret);
         const [accessToken, accessTokenExpires] = createAccessToken();
         await context.adapter.setSession(
             accessToken,
@@ -22,11 +22,11 @@ export const createSessionTokensFunction = (context: Context) => {
         const accessTokenCookie = createAccessTokenCookie(
             accessToken,
             accessTokenExpires,
-            context
+            context.env === "PROD"
         );
         const refreshTokenCookie = createRefreshTokenCookie(
             refreshToken,
-            context
+            context.env === "PROD"
         );
         return {
             accessToken: [accessToken, accessTokenCookie],
@@ -74,14 +74,14 @@ export const deleteExpiredUserSessionsFunction = (context: Context) => {
     const deleteExpiredUserSessions: DeleteExpiredUserSessions = async (
         userId
     ) => {
-        const sessions = await context.adapter.getUserSessions(
-            userId
-        );
+        const sessions = await context.adapter.getSessionsByUserId(userId);
         const currentTime = new Date().getTime();
         const expiredUserAccessTokens = sessions
             .filter((val) => val.expires < currentTime)
             .map((val) => val.accessToken);
-        await context.adapter.deleteSessionByAccessToken(...expiredUserAccessTokens)
+        await context.adapter.deleteSessionByAccessToken(
+            ...expiredUserAccessTokens
+        );
     };
     return deleteExpiredUserSessions;
 };

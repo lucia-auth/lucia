@@ -1,17 +1,15 @@
 import type { Handle } from "../kit.js";
 import type { Adapter, Env } from "../types.js";
-
-import { generateRandomString } from "../utils/crypto.js";
 import { handleHooksFunction } from "./hooks.js";
 import {
     authenticateUserFunction,
     createUserFunction,
     deleteUserFunction,
     getUserFunction,
-    getUserByIdentifierFunction,
+    getUserByProviderIdFunction,
     updateUserDataFunction,
-    updateUserIdentifierTokenFunction,
     updateUserPasswordFunction,
+    updateUserProviderIdFunction,
 } from "./user/index.js";
 import { validateRequestFunction } from "./request.js";
 import {
@@ -29,9 +27,41 @@ import {
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
 import { deleteAllCookiesFunction } from "./cookie.js";
+import { generateRandomString } from "../utils/crypto.js";
+import clc from "cli-color";
 
 export const lucia = (configs: Configurations) => {
     return new Auth(configs) as Omit<Auth, "getAuthSession">;
+};
+
+const validateConfigurations = (configs: Configurations) => {
+    const isSecretUndefined = !configs.secret;
+    if (isSecretUndefined) {
+        console.log(
+            `${clc.red.bold("[LUCIA_ERROR]")} ${clc.red(
+                `Secret key is not defined in configuration ("config.secret").`
+            )}`
+        );
+        process.exit(0);
+    }
+    const isAdapterIdentified = !configs.adapter;
+    if (isAdapterIdentified) {
+        console.log(
+            `${clc.red.bold("[LUCIA_ERROR]")} ${clc.red(
+                `Adapter is not defined in configuration ("config.adapter").`
+            )}`
+        );
+        process.exit(1);
+    }
+    const isDevAndUnsafeSecret =
+        configs.secret.length < 32 && configs.env === "DEV";
+    if (isDevAndUnsafeSecret) {
+        console.log(
+            `${clc.yellow.bold("[LUCIA_WARNING]")} ${clc.yellow(
+                "Secret key should be longer than 32 chars."
+            )}`
+        );
+    }
 };
 
 export class Auth {
@@ -41,6 +71,7 @@ export class Auth {
     private context: Context;
     private env: Env;
     constructor(configs: Configurations) {
+        validateConfigurations(configs);
         this.adapter = configs.adapter;
         this.secret = configs.secret;
         this.generateUserId =
@@ -57,9 +88,7 @@ export class Auth {
         this.createUser = createUserFunction(this.context);
         this.getUser = getUserFunction(this.context);
         this.getUser = getUserFunction(this.context);
-        this.getUserByIdentifierToken = getUserByIdentifierFunction(
-            this.context
-        );
+        this.getUserByProviderId = getUserByProviderIdFunction(this.context);
         this.deleteUser = deleteUserFunction(this.context);
         this.validateRequest = validateRequestFunction(this.context);
         this.refreshTokens = refreshTokensFunction(this.context);
@@ -74,9 +103,7 @@ export class Auth {
         this.validateAccessToken = validateAccessTokenFunction(this.context);
         this.validateRefreshToken = validateRefreshTokenFunction(this.context);
         this.updateUserData = updateUserDataFunction(this.context);
-        this.updateUserIdentifierToken = updateUserIdentifierTokenFunction(
-            this.context
-        );
+        this.updateUserProviderId = updateUserProviderIdFunction(this.context);
         this.updateUserPassword = updateUserPasswordFunction(this.context);
         this.handleHooks = handleHooksFunction(this.context);
         this.handleServerSession = handleServerSessionFunction(this.context);
@@ -86,15 +113,13 @@ export class Auth {
         this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
             this.context
         );
-        this.deleteAllCookies = deleteAllCookiesFunction(this.context)
+        this.deleteAllCookies = deleteAllCookiesFunction(this.context);
     }
     public handleHooks: () => Handle;
     public authenticateUser: ReturnType<typeof authenticateUserFunction>;
     public createUser: ReturnType<typeof createUserFunction>;
     public getUser: ReturnType<typeof getUserFunction>;
-    public getUserByIdentifierToken: ReturnType<
-        typeof getUserByIdentifierFunction
-    >;
+    public getUserByProviderId: ReturnType<typeof getUserByProviderIdFunction>;
     public deleteUser: ReturnType<typeof deleteUserFunction>;
     public validateRequest: ReturnType<typeof validateRequestFunction>;
     public refreshTokens: ReturnType<typeof refreshTokensFunction>;
@@ -111,8 +136,8 @@ export class Auth {
         typeof validateRefreshTokenFunction
     >;
     public updateUserData: ReturnType<typeof updateUserDataFunction>;
-    public updateUserIdentifierToken: ReturnType<
-        typeof updateUserIdentifierTokenFunction
+    public updateUserProviderId: ReturnType<
+        typeof updateUserProviderIdFunction
     >;
     public updateUserPassword: ReturnType<typeof updateUserPasswordFunction>;
     public handleServerSession: ReturnType<typeof handleServerSessionFunction>;
@@ -122,7 +147,7 @@ export class Auth {
     public invalidateAllUserSessions: ReturnType<
         typeof invalidateAllUserSessionsFunction
     >;
-    public deleteAllCookies: ReturnType<typeof deleteAllCookiesFunction>
+    public deleteAllCookies: ReturnType<typeof deleteAllCookiesFunction>;
 }
 
 interface Configurations {
