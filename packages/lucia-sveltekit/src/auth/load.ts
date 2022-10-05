@@ -27,14 +27,14 @@ export const handleServerSessionFunction = (context: Context) => {
             if (!refreshToken)
                 throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
             const session = await context.auth.refreshTokens(refreshToken);
-            await context.auth.deleteExpiredUserSessions(session.user.userId)
+            await context.auth.deleteExpiredUserSessions(session.userId)
             const [, accessTokenCookie] = session.accessToken;
             const [, refreshTokenCookie] = session.refreshToken;
             setCookie(cookies, accessTokenCookie, refreshTokenCookie);
             return {
                 _lucia: {
                     expires: session.expires,
-                    user: session.user,
+                    userId: session.userId
                 },
             };
         } catch (e) {

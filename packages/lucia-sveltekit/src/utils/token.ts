@@ -1,5 +1,4 @@
-import { generateRandomString, hashSHA256 } from "./crypto.js";
-import type { Context } from "../auth/index.js";
+import { generateRandomString } from "./crypto.js";
 import cookie from "cookie";
 import { getTimeAfterSeconds } from "./date.js";
 
@@ -21,9 +20,8 @@ export const createAccessTokenCookie = (
     });
 };
 
-export const createRefreshToken = (userId: string, secret: string) => {
-    const hashedUserId = hashSHA256(userId, secret);
-    return `rt_${generateRandomString(40)}.${hashedUserId}.${userId}`;
+export const createRefreshToken = () => {
+    return [`rt_${generateRandomString(40)}`] as const;
 };
 
 export const createRefreshTokenCookie = (

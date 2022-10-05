@@ -1,6 +1,6 @@
-import { DatabaseUser, User } from "../types.js";
+import { UserSchema, User } from "../types.js";
 
-export const getAccountFromDatabaseUser = (databaseData: DatabaseUser) => {
+export const getAccountFromDatabaseUser = (databaseData: UserSchema) => {
     const {
         id: userId,
         hashedPassword,

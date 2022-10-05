@@ -1,4 +1,4 @@
-import type { ServerSession, Tokens } from "../types.js";
+import type { ServerSession, Session } from "../types.js";
 import type { Context } from "./index.js";
 import {
     createAccessToken,
@@ -6,17 +6,18 @@ import {
     createRefreshToken,
     createRefreshTokenCookie,
 } from "../utils/token.js";
+import { LuciaError } from "../utils/error.js";
 
-type CreateSessionTokens = (userId: string) => Promise<Tokens>;
+type CreateSession = (userId: string) => Promise<ServerSession>;
 
-export const createSessionTokensFunction = (context: Context) => {
-    const createSessionTokens: CreateSessionTokens = async (userId) => {
-        const refreshToken = createRefreshToken(userId, context.secret);
+export const createSessionFunction = (context: Context) => {
+    const createSession: CreateSession = async (userId) => {
+        const [refreshToken] = createRefreshToken();
         const [accessToken, accessTokenExpires] = createAccessToken();
         await context.adapter.setSession(
+            userId,
             accessToken,
-            accessTokenExpires,
-            userId
+            accessTokenExpires
         );
         await context.adapter.setRefreshToken(refreshToken, userId);
         const accessTokenCookie = createAccessTokenCookie(
@@ -29,29 +30,23 @@ export const createSessionTokensFunction = (context: Context) => {
             context.env === "PROD"
         );
         return {
+            userId,
             accessToken: [accessToken, accessTokenCookie],
             refreshToken: [refreshToken, refreshTokenCookie],
             cookies: [accessTokenCookie, refreshTokenCookie],
             expires: accessTokenExpires,
         };
     };
-    return createSessionTokens;
+    return createSession;
 };
 
-type CreateSession = (userId: string) => Promise<ServerSession>;
+type InvalidateSession = (refreshToken: string) => Promise<void>;
 
-export const createSessionFunction = (context: Context) => {
-    const createSession: CreateSession = async (userId) => {
-        const [user, tokens] = await Promise.all([
-            context.auth.getUser(userId),
-            context.auth.createSessionTokens(userId),
-        ]);
-        return {
-            user,
-            ...tokens,
-        };
+export const invalidateSessionFunction = (context: Context) => {
+    const invalidateSession: InvalidateSession = async (refreshToken) => {
+        await context.adapter.deleteSessionByAccessToken(refreshToken);
     };
-    return createSession;
+    return invalidateSession;
 };
 
 type InvalidateAllUserSessions = (userId: string) => Promise<void>;
@@ -61,8 +56,8 @@ export const invalidateAllUserSessionsFunction = (context: Context) => {
         userId: string
     ) => {
         await Promise.all([
-            context.adapter.deleteUserSessions(userId),
-            context.adapter.deleteUserRefreshTokens(userId),
+            context.adapter.deleteSessionsByUserId(userId),
+            context.adapter.deleteRefreshTokensByUserId(userId),
         ]);
     };
     return invalidateAllUserSessions;
@@ -84,4 +79,17 @@ export const deleteExpiredUserSessionsFunction = (context: Context) => {
         );
     };
     return deleteExpiredUserSessions;
+};
+
+type GetSession = (accessToken: string) => Promise<Session>;
+
+export const getSessionFunction = (context: Context) => {
+    const getSession: GetSession = async (accessToken) => {
+        const session = await context.adapter.getSessionByAccessToken(
+            accessToken
+        );
+        if (!session) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+        return session;
+    };
+    return getSession;
 };

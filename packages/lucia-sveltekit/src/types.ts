@@ -7,15 +7,9 @@ export type AuthServerLoadEvent = ServerLoadEvent & { getSession: getSession };
 export type AuthLoadEvent = LoadEvent & { getSession: getSession };
 
 export interface Adapter {
-    getUserById: (userId: string) => Promise<DatabaseUser | null>;
-    getUserByRefreshToken: (
-        refreshToken: string
-    ) => Promise<DatabaseUser | null>;
-    getUserByProviderId: (
-        providerId: string
-    ) => Promise<DatabaseUser | null>;
-    getSessionByAccessToken: (accessToken: string) => Promise<DatabaseSession | null>;
-    getSessionsByUserId: (userId: string) => Promise<DatabaseSession[]>
+    getUserById: (userId: string) => Promise<UserSchema | null>;
+    getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
+    getUserByAccessToken: (accessToken: string) => Promise<UserSchema | null>;
     setUser: (
         userId: string,
         data: {
@@ -25,16 +19,6 @@ export interface Adapter {
         }
     ) => Promise<void>;
     deleteUser: (userId: string) => Promise<void>;
-    setSession: (
-        accessToken: string,
-        expires: number,
-        userId: string
-    ) => Promise<void>;
-    deleteSessionByAccessToken: (...accessToken: string[]) => Promise<void>;
-    deleteUserSessions: (userId: string) => Promise<void>;
-    setRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
-    deleteRefreshToken: (...refreshToken: string[]) => Promise<void>;
-    deleteUserRefreshTokens: (userId: string) => Promise<void>;
     updateUser: (
         userId: string,
         data: {
@@ -42,7 +26,22 @@ export interface Adapter {
             hashedPassword?: string | null;
             userData?: Record<string, any>;
         }
-    ) => Promise<DatabaseUser>;
+    ) => Promise<UserSchema>;
+    getSessionByAccessToken: (
+        accessToken: string
+    ) => Promise<SessionSchema | null>;
+    getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
+    setSession: (
+        userId: string,
+        accessToken: string,
+        expires: number
+    ) => Promise<void>;
+    deleteSessionByAccessToken: (...accessToken: string[]) => Promise<void>;
+    deleteSessionsByUserId: (userId: string) => Promise<void>;
+    getUserIdByRefreshToken: (refreshToken: string) => Promise<string | null>;
+    setRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
+    deleteRefreshToken: (...refreshToken: string[]) => Promise<void>;
+    deleteRefreshTokensByUserId: (userId: string) => Promise<void>;
 }
 
 export type User = Lucia.UserData & {
@@ -50,30 +49,26 @@ export type User = Lucia.UserData & {
     providerId: string;
 };
 
-export type DatabaseUser = {
+export type UserSchema = {
     id: string;
     hashedPassword: string | null;
     providerId: string;
 } & Lucia.UserData;
 
-export type DatabaseSession = {
-    id: number;
+export type SessionSchema = {
     accessToken: string;
     expires: number;
     userId: string;
-    user: DatabaseUser;
 };
 
-export type ServerSession = Tokens & Session;
-
-export interface Tokens {
+export type ServerSession = {
     accessToken: [string, string];
     refreshToken: [string, string];
     cookies: string[];
-    expires: number;
-}
+} & Session;
+
 export interface Session {
-    user: User;
+    userId: string;
     expires: number;
 }
 

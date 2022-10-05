@@ -6,9 +6,9 @@ type RefreshTokens = (
 ) => Promise<ServerSession>;
 export const refreshTokensFunction = (context: Context) => {
     const refreshAccessToken: RefreshTokens = async (refreshToken) => {
-        const user = await context.auth.validateRefreshToken(refreshToken)
+        const userId = await context.auth.validateRefreshToken(refreshToken)
         await context.adapter.deleteRefreshToken(refreshToken);
-        const session = await context.auth.createSession(user.userId)
+        const session = await context.auth.createSession(userId)
         return session
     };
     return refreshAccessToken;

@@ -11,11 +11,11 @@ type GetUser = (
 export const getUserByProviderIdFunction = (context: Context) => {
     const getUserByProviderId: GetUser = async (provider, identifier) => {
         const providerId = `${provider}:${identifier}`;
-        const databaseData = (await context.adapter.getUserByProviderId(
+        const databaseUser = (await context.adapter.getUserByProviderId(
             providerId
         ))
-        if (!databaseData) throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
-        const account = getAccountFromDatabaseUser(databaseData);
+        if (!databaseUser) throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
+        const account = getAccountFromDatabaseUser(databaseUser);
         return account.user;
     };
     return getUserByProviderId;
@@ -27,12 +27,25 @@ type GetUserById = (
 
 export const getUserFunction = (context: Context) => {
     const getUser: GetUserById = async (userId: string) => {
-        const databaseData = (await context.adapter.getUserById(
+        const databaseUser = (await context.adapter.getUserById(
             userId
         ))
-        if (!databaseData) throw new LuciaError("AUTH_INVALID_USER_ID")
-        const account = getAccountFromDatabaseUser(databaseData);
+        if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID")
+        const account = getAccountFromDatabaseUser(databaseUser);
         return account.user;
     };
     return getUser;
 };
+
+
+type GetSessionUser = (accessToken: string) => Promise<User>
+
+export const getSessionUserFunction = (context: Context) => {
+    const getSessionUser: GetSessionUser = async (accessToken) => {
+        const databaseUser = await context.adapter.getUserByAccessToken(accessToken)
+        if (!databaseUser) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN")
+        const account = getAccountFromDatabaseUser(databaseUser)
+        return account.user
+    }
+    getSessionUser
+}

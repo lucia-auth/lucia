@@ -53,7 +53,7 @@ export const updateUserPasswordFunction = (context: Context) => {
             context.adapter.updateUser(userId, {
                 hashedPassword,
             }),
-            context.adapter.deleteUserRefreshTokens(userId),
+            context.adapter.deleteRefreshTokensByUserId(userId),
         ]);
     };
     return updateUserPassword;

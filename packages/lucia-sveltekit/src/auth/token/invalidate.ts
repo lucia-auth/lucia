@@ -10,14 +10,3 @@ export const invalidateRefreshTokenFunction = (context: Context) => {
     };
     return invalidateRefreshToken;
 };
-
-type InvalidateAccessToken = (refreshToken: string) => Promise<void>;
-
-export const invalidateAccessTokenFunction = (context: Context) => {
-    const invalidateAccessToken: InvalidateAccessToken = async (
-        refreshToken
-    ) => {
-        await context.adapter.deleteSessionByAccessToken(refreshToken)
-    };
-    return invalidateAccessToken
-};

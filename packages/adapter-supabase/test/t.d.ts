@@ -1,17 +1,10 @@
-/// <reference types="lucia-sveltekit" />
-declare namespace Lucia {
-	interface UserData {}
-}
-
-declare namespace App {
-	interface Locals {}
-}
 
 interface UserRow {
     id: string;
     hashed_password: string;
     provider_id: string;
-    [user_data: string]: any;
+    username: string,
+    email: string
 }
 
 interface SessionRow {

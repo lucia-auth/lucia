@@ -8,10 +8,10 @@ export const handleRefreshRequest = async (
     context: Context
 ) => {
     try {
-        const refreshToken = event.cookies.get("refresh_token");
+        const { refreshToken } = await context.auth.parseRequest(event.request)
         if (!refreshToken) throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN")
         const session = await context.auth.refreshTokens(refreshToken)
-        await context.auth.deleteExpiredUserSessions(session.user.userId)
+        await context.auth.deleteExpiredUserSessions(session.userId)
         return new Response(null, {
             headers: {
                 "set-cookie": session.cookies.join(","),
