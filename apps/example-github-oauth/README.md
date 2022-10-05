@@ -16,13 +16,13 @@ npm run dev
 ```bash
 DATABASE_URL=""
 VITE_GITHUB_CLIENT_ID=""
-VITE_GITHUB_SECRET=""
-VITE_LUCIA_SECRET=""
+GITHUB_SECRET=""
+LUCIA_SECRET=""
 ```
 
 ### Github
 
-Create Github OAuth app: https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app
+Create Github OAuth app: <https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app>
 
 ### Prisma
 

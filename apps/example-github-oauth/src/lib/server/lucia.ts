@@ -7,6 +7,6 @@ const client = new PrismaClient();
 
 export const auth = lucia<{ username: string; email: string }>({
 	adapter: prisma(client),
-	secret: import.meta.env.VITE_LUCIA_SECRET, // should be long and random
+	secret: process.env.LUCIA_SECRET, // should be long and random
 	env: dev ? 'DEV' : 'PROD'
 });
