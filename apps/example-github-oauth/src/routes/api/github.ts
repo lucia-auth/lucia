@@ -2,7 +2,7 @@ import { auth } from '$lib/server/lucia';
 import type { RequestHandler } from '@sveltejs/kit';
 
 const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-const clientSecret = import.meta.env.VITE_GITHUB_SECRET;
+const clientSecret = process.env.GITHUB_SECRET;
 
 export const GET: RequestHandler = async ({ url }) => {
 	const code = url.searchParams.get('code');
@@ -39,11 +39,11 @@ export const GET: RequestHandler = async ({ url }) => {
 				Authorization: `Bearer ${accessToken}`
 			}
 		}),
-        fetch('https://api.github.com/user', {
-            headers: {
+		fetch('https://api.github.com/user', {
+			headers: {
 				Authorization: `Bearer ${accessToken}`
 			}
-        })
+		})
 	]);
 	if (!responses[0].ok || !responses[1].ok) {
 		return {
@@ -54,7 +54,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		};
 	}
 	const emails = (await responses[0].json()) as { email: string; primary: boolean }[];
-    const username = (await responses[1].json()).login
+	const username = (await responses[1].json()).login
 	const email = emails.find((val) => val.primary)?.email || emails[0].email;
 	const user = await auth.getUser('github', email);
 	if (user) {
@@ -81,7 +81,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		const createUser = await auth.createUser('github', email, {
 			user_data: {
 				email,
-                username
+				username
 			}
 		});
 		return {
