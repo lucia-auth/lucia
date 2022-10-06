@@ -24,20 +24,21 @@ export const createUserFunction = (context: Context) => {
     const createUser: CreateUser = async (provider, identifier, options) => {
         const providerId = `${provider}:${identifier}`;
         const userData = options.userData || {};
-        const user = {
-            userId: context.generateUserId(),
-            ...userData,
-        } as User;
+        const userId = await context.generateCustomUserId()
         const [accessToken, accessTokenExpires] = createAccessToken();
         const [refreshToken] = createRefreshToken();
         const hashedPassword = options.password
             ? await hashScrypt(options.password)
             : null;
-        await context.adapter.setUser(user.userId, {
+        const dbUserId = await context.adapter.setUser(userId, {
             providerId,
             hashedPassword: hashedPassword,
             userData: userData,
         });
+        const user = {
+            userId: dbUserId,
+            ...userData
+        } as User
         await Promise.all([
             context.adapter.setRefreshToken(refreshToken, user.userId),
             context.adapter.setSession(

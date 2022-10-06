@@ -11,13 +11,13 @@ export interface Adapter {
     getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
     getUserByAccessToken: (accessToken: string) => Promise<UserSchema | null>;
     setUser: (
-        userId: string,
+        userId: string | null,
         data: {
             providerId: string;
             hashedPassword: string | null;
             userData: Record<string, any>;
         }
-    ) => Promise<void>;
+    ) => Promise<string>;
     deleteUser: (userId: string) => Promise<void>;
     updateUser: (
         userId: string,

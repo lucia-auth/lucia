@@ -28,7 +28,6 @@ import {
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
 import { deleteAllCookiesFunction } from "./cookie.js";
-import { generateRandomString } from "../utils/crypto.js";
 import clc from "cli-color";
 
 export const lucia = (configs: Configurations) => {
@@ -73,7 +72,7 @@ export class Auth {
             auth: this,
             adapter: configs.adapter,
             secret: configs.secret,
-            generateUserId: configs.generateUserId || (() => generateRandomString(8)),
+            generateCustomUserId: configs.generateCustomUserId || (async () => null),
             env: configs.env,
             addCsrfProtection: configs.addCsrfProtection || true
         };
@@ -148,7 +147,7 @@ interface Configurations {
     adapter: Adapter;
     secret: string;
     env: Env;
-    generateUserId?: () => string;
+    generateCustomUserId?: () => Promise<string | null>;
     addCsrfProtection?: boolean;
 }
 
