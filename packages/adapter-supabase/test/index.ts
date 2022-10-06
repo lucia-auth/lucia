@@ -21,7 +21,7 @@ const client = new PostgrestClient(`${url}/rest/v1`, {
     },
 });
 
-export const supabaseAdapterClient = supabase(url, secret);
+export const adapter = supabase(url, secret);
 
 export const db: Database = {
     getUsers: async () => {
