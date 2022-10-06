@@ -9,7 +9,7 @@ declare namespace App {
 
 interface UserRow {
     id: string;
-    hashed_password: string;
+    hashed_password: string | null;
     provider_id: string;
     [user_data: string]: any;
 }

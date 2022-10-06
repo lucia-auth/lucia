@@ -95,25 +95,20 @@ const adapter = (url: string, secret: string): Adapter => {
                 }) || []
             );
         },
-        setUser: async (
-            userId: string,
-            data: {
-                hashedPassword: string | null;
-                providerId: string;
-                userData: Record<string, any>;
-            }
-        ) => {
-            const { error } = await supabase.from("user").insert(
-                {
-                    id: userId,
-                    provider_id: data.providerId,
-                    hashed_password: data.hashedPassword,
-                    ...data.userData,
-                },
-                {
-                    returning: "minimal",
-                }
-            );
+        setUser: async (userId, data) => {
+            const { data: dbData, error } = await supabase
+                .from<UserRow>("user")
+                .insert(
+                    {
+                        id: userId || undefined,
+                        provider_id: data.providerId,
+                        hashed_password: data.hashedPassword,
+                        ...data.userData,
+                    },
+                    {
+                        returning: "representation",
+                    }
+                );
             if (error) {
                 console.error(error);
                 if (
@@ -127,6 +122,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 }
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
+            return dbData[0].id;
         },
         deleteUser: async (userId) => {
             const { error } = await supabase
@@ -153,11 +149,17 @@ const adapter = (url: string, secret: string): Adapter => {
             );
             if (error) {
                 console.error(error);
-                if (error.details.includes("is not present in table") && error.details.includes("user_id")) {
-                    throw new LuciaError("AUTH_INVALID_USER_ID")
+                if (
+                    error.details.includes("is not present in table") &&
+                    error.details.includes("user_id")
+                ) {
+                    throw new LuciaError("AUTH_INVALID_USER_ID");
                 }
-                if (error.details.includes("(access_token)") && error.details.includes("already exists.")) {
-                    throw new LuciaError("AUTH_DUPLICATE_ACCESS_TOKEN")
+                if (
+                    error.details.includes("(access_token)") &&
+                    error.details.includes("already exists.")
+                ) {
+                    throw new LuciaError("AUTH_DUPLICATE_ACCESS_TOKEN");
                 }
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
@@ -198,11 +200,17 @@ const adapter = (url: string, secret: string): Adapter => {
             );
             if (error) {
                 console.error(error);
-                if (error.details.includes("is not present in table") && error.details.includes("user_id")) {
-                    throw new LuciaError("AUTH_INVALID_USER_ID")
+                if (
+                    error.details.includes("is not present in table") &&
+                    error.details.includes("user_id")
+                ) {
+                    throw new LuciaError("AUTH_INVALID_USER_ID");
                 }
-                if (error.details.includes("(access_token)") && error.details.includes("already exists.")) {
-                    throw new LuciaError("AUTH_DUPLICATE_REFRESH_TOKEN")
+                if (
+                    error.details.includes("(access_token)") &&
+                    error.details.includes("already exists.")
+                ) {
+                    throw new LuciaError("AUTH_DUPLICATE_REFRESH_TOKEN");
                 }
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
@@ -242,8 +250,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 console.error(error);
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
-            if (!data) throw new LuciaError("AUTH_INVALID_USER_ID")
-            return data
+            if (!data) throw new LuciaError("AUTH_INVALID_USER_ID");
+            return data;
         },
     };
 };

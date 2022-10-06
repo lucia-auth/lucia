@@ -11,7 +11,8 @@
     ],
     "scripts": {
         "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist",
-        "test": "npx ts-node --esm -T test/index.ts"
+        "test-core": "npx ts-node --esm -T test/main.ts",
+        "test-userid": "npx ts-node --esm -T test/userid.ts"
     },
     "keywords": [
         "sveltekit",

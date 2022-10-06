@@ -1,10 +1,9 @@
-
 interface UserRow {
     id: string;
-    hashed_password: string;
+    hashed_password: string | null;
     provider_id: string;
-    username: string,
-    email: string
+    username: string;
+    email: string;
 }
 
 interface SessionRow {
