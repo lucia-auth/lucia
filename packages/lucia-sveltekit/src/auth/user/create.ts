@@ -1,11 +1,5 @@
-import type { ServerSession, User } from "../../types.js";
+import type { User } from "../../types.js";
 import { hashScrypt } from "../../utils/crypto.js";
-import {
-    createAccessToken,
-    createAccessTokenCookie,
-    createRefreshToken,
-    createRefreshTokenCookie,
-} from "../../utils/token.js";
 import type { Context } from "../index.js";
 
 type CreateUser = (

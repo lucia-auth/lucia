@@ -163,7 +163,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
     });
     await test(
         "setUser()",
-        "Insert a user into Users DB with a null password",
+        "Insert a user into table user with a null password",
         async () => {
             const user = new User(true);
             await adapter.setUser(user.id, {
@@ -184,6 +184,19 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await clearAll();
         }
     );
+    await test("setUser()", "Returns the created user id", async () => {
+        const user = new User();
+        const createdUserId = await adapter.setUser(user.id, {
+            providerId: user.providerId,
+            hashedPassword: user.hashedPassword,
+            userData: {
+                username: user.username,
+                email: user.email,
+            },
+        });
+        validate.isNonEmptyString(createdUserId, "Returned value is not a non-empty string")
+        await clearAll();
+    });
     await test(
         "setUser()",
         "Throw AUTH_DUPLICATE_PROVIDER_ID or AUTH_DUPLICATE_USER_DATA if provider id violates unique key",

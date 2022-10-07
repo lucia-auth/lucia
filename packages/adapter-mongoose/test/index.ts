@@ -13,12 +13,13 @@ const url = process.env.MONGODB_URL;
 
 if (!url) throw new Error(".env is not set up");
 
-
 const User = mongoose.model(
     "user",
     new mongoose.Schema(
         {
-            _id: String,
+            _id: {
+                type: String,
+            },
             provider_id: {
                 type: String,
                 unique: true,

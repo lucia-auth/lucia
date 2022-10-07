@@ -1,4 +1,5 @@
 import type { UserSchema } from "lucia-sveltekit/types";
+import mongoose from "mongoose";
 
 export const convertUserDoc = (row: UserDoc): UserSchema => {
     const {
@@ -31,18 +32,15 @@ export const convertSessionDoc = (row: SessionDoc) => {
     };
 };
 
-export const convertRefreshTokenDoc = (row: RefreshTokenDoc): {
-    refreshToken: string,
-    userId: string
+export const convertRefreshTokenDoc = (
+    row: RefreshTokenDoc
+): {
+    refreshToken: string;
+    userId: string;
 } => {
-    const {
-        _id,
-        __v: _v,
-        user_id: userId,
-        refresh_token: refreshToken,
-    } = row;
+    const { _id, __v: _v, user_id: userId, refresh_token: refreshToken } = row;
     return {
         userId,
-        refreshToken
+        refreshToken,
     };
 };

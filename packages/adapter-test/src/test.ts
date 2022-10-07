@@ -24,7 +24,6 @@ export const end = () => {
     process.exit();
 };
 
-
 const isTrueValidation = (result: boolean, error: string, ...log: any[]) => {
     if (result) return;
     console.log(...log);
@@ -38,12 +37,7 @@ export const validate = {
         error: string,
         ...log: any[]
     ) => {
-        isTrueValidation(
-            arr.some(validate),
-            error,
-            arr,
-            ...log
-        );
+        isTrueValidation(arr.some(validate), error, arr, ...log);
     },
     notIncludesSomeItem: <T extends any>(
         arr: T[],
@@ -51,12 +45,7 @@ export const validate = {
         error: string,
         ...log: any[]
     ) => {
-        isTrueValidation(
-            !arr.some(validate),
-            error,
-            arr,
-            log
-        );
+        isTrueValidation(!arr.some(validate), error, arr, log);
     },
     isTrue: <T>(target: T, error: string) => {
         isTrueValidation(Object.is(target, true), error, target);
@@ -66,16 +55,19 @@ export const validate = {
     },
     isNull: (target: any, error: string) => {
         isTrueValidation(Object.is(target, null), error, target);
-        return target as null
+        return target as null;
     },
     isNotNull: <T>(target: T, error: string) => {
-        isTrueValidation(!Object.is(target, null), error, target); 
-        return target as Exclude<T, null>
+        isTrueValidation(!Object.is(target, null), error, target);
+        return target as Exclude<T, null>;
     },
     isEqual: (p1: any, p2: any, error: string) => {
         return isTrueValidation(Object.is(p1, p2), error, p1, p2);
     },
     isNotEqual: (p1: any, p2: any, error: string) => {
-        return isTrueValidation(!Object.is(p1, p2), error), p1, p2;
+        return isTrueValidation(!Object.is(p1, p2), error, p1, p2);
+    },
+    isNonEmptyString: (target: string, error: string) => {
+        return isTrueValidation(!!target && typeof target === "string", error, target);
     },
 };

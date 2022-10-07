@@ -78,14 +78,15 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
         },
         setUser: async (userId, data) => {
             try {
-                const userDoc = new User({
+                const newUserDoc = new User({
                     _id: userId || undefined,
                     hashed_password: data.hashedPassword,
                     provider_id: data.providerId,
                     ...data.userData,
                 });
-                const user = await userDoc.save();
-                return user._id;
+                const userDoc = await newUserDoc.save();
+                const user = convertUserDoc(userDoc);
+                return user.id;
             } catch (e) {
                 console.error(e);
                 const error = e as MongooseError;
