@@ -1,4 +1,4 @@
-import type { ServerSession, Session } from "../types.js";
+import type { Session, Tokens } from "../types.js";
 import type { Context } from "./index.js";
 import {
     createAccessToken,
@@ -6,9 +6,11 @@ import {
     createRefreshToken,
     createRefreshTokenCookie,
 } from "../utils/token.js";
-import { LuciaError } from "../utils/error.js";
 
-type CreateSession = (userId: string) => Promise<ServerSession>;
+type CreateSession = (userId: string) => Promise<{
+    session: Session;
+    tokens: Tokens;
+}>;
 
 export const createSessionFunction = (context: Context) => {
     const createSession: CreateSession = async (userId) => {
@@ -30,11 +32,16 @@ export const createSessionFunction = (context: Context) => {
             context.env === "PROD"
         );
         return {
-            userId,
-            accessToken: [accessToken, accessTokenCookie],
-            refreshToken: [refreshToken, refreshTokenCookie],
-            cookies: [accessTokenCookie, refreshTokenCookie],
-            expires: accessTokenExpires,
+            session: {
+                userId,
+                expires: accessTokenExpires,
+                accessToken,
+            },
+            tokens: {
+                accessToken: [accessToken, accessTokenCookie],
+                refreshToken: [refreshToken, refreshTokenCookie],
+                cookies: [accessTokenCookie, refreshTokenCookie],
+            },
         };
     };
     return createSession;
@@ -79,17 +86,4 @@ export const deleteExpiredUserSessionsFunction = (context: Context) => {
         );
     };
     return deleteExpiredUserSessions;
-};
-
-type GetSession = (accessToken: string) => Promise<Session>;
-
-export const getSessionFunction = (context: Context) => {
-    const getSession: GetSession = async (accessToken) => {
-        const session = await context.adapter.getSessionByAccessToken(
-            accessToken
-        );
-        if (!session) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-        return session;
-    };
-    return getSession;
 };

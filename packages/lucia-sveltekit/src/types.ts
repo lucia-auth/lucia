@@ -23,11 +23,11 @@ export type SessionSchema = {
     userId: string;
 };
 
-export type ServerSession = {
+export type Tokens = {
     accessToken: [string, string];
     refreshToken: [string, string];
     cookies: string[];
-} & Session;
+}
 
 export interface Session {
     userId: string;

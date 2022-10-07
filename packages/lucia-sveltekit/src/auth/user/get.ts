@@ -47,5 +47,5 @@ export const getSessionUserFunction = (context: Context) => {
         const account = getAccountFromDatabaseUser(databaseUser)
         return account.user
     }
-    getSessionUser
+    return getSessionUser
 }

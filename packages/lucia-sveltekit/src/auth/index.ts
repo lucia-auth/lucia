@@ -12,7 +12,7 @@ import {
     updateUserProviderIdFunction,
     getSessionUserFunction,
 } from "./user/index.js";
-import { parseRequestFunction } from "./request.js";
+import { parseRequestFunction, validateRequestFunction } from "./request.js";
 import {
     refreshTokensFunction,
     invalidateRefreshTokenFunction,
@@ -23,7 +23,6 @@ import {
     createSessionFunction,
     invalidateAllUserSessionsFunction,
     deleteExpiredUserSessionsFunction,
-    getSessionFunction,
     invalidateSessionFunction,
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
@@ -88,8 +87,8 @@ export class Auth {
         this.updateUserProviderId = updateUserProviderIdFunction(this.context);
         this.updateUserPassword = updateUserPasswordFunction(this.context);
         this.parseRequest = parseRequestFunction(this.context);
+        this.validateRequest = validateRequestFunction(this.context);
         this.refreshTokens = refreshTokensFunction(this.context);
-        this.getSession = getSessionFunction(this.context);
         this.createSession = createSessionFunction(this.context);
         this.invalidateSession = invalidateSessionFunction(this.context);
         this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
@@ -115,11 +114,11 @@ export class Auth {
     public getSessionUser: ReturnType<typeof getSessionUserFunction>;
     public deleteUser: ReturnType<typeof deleteUserFunction>;
     public parseRequest: ReturnType<typeof parseRequestFunction>;
+    public validateRequest: ReturnType<typeof validateRequestFunction>;
     public refreshTokens: ReturnType<typeof refreshTokensFunction>;
     public invalidateRefreshToken: ReturnType<
         typeof invalidateRefreshTokenFunction
     >;
-    public getSession: ReturnType<typeof getSessionFunction>;
     public createSession: ReturnType<typeof createSessionFunction>;
     public deleteExpiredUserSessions: ReturnType<
         typeof deleteExpiredUserSessionsFunction

@@ -1,6 +1,7 @@
 import { LuciaError } from "../utils/error.js";
 import type { Context } from "./index.js";
 import cookie from "cookie";
+import { Session } from "../types.js";
 
 type ParseRequest = (request: Request) => Promise<{
     accessToken: string | null,
@@ -28,3 +29,15 @@ export const parseRequestFunction = (context: Context) => {
     };
     return parseRequest;
 };
+
+type ValidateRequest = (request: Request) => Promise<Session>
+
+export const validateRequestFunction = (context:Context) => {
+    const validateRequest: ValidateRequest = async (request) => {
+        const { accessToken } = await context.auth.parseRequest(request)
+        if (!accessToken) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN")
+        const session = await context.auth.validateAccessToken(accessToken)
+        return session
+    }
+    return validateRequest
+}

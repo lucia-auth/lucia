@@ -13,8 +13,9 @@ export const actions: Actions = {
 			});
 		}
 		try {
-			const userSession = await auth.authenticateUser('username', username, password);
-			setCookie(cookies, ...userSession.cookies);
+			const user = await auth.authenticateUser('username', username, password);
+			const session = await auth.createSession(user.userId);
+			setCookie(cookies, ...session.cookies);
 		} catch (e) {
 			const error = e as Error;
 			if (
