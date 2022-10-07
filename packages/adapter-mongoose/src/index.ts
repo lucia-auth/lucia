@@ -8,7 +8,7 @@ import type { Mongoose, MongooseError } from "mongoose";
 import { convertSessionDoc, convertUserDoc } from "./utils.js";
 
 const adapter = (mongoose: Mongoose, url: string): Adapter => {
-    const RefreshToken = mongoose.model("refresh_token");
+    const RefreshToken = mongoose.model<RefreshTokenDoc>("refresh_token");
     const User = mongoose.model<UserDoc>("user");
     const Session = mongoose.model<SessionDoc>("session");
     const clientPromise = mongoose.connect(url);
@@ -26,7 +26,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
         getUserIdByRefreshToken: async (refreshToken) => {
             try {
                 await clientPromise;
-                const token = await RefreshToken.findOne<RefreshTokenDoc>({
+                const token = await RefreshToken.findOne({
                     refresh_token: refreshToken,
                 }).lean();
                 if (!token) return null;
@@ -37,7 +37,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
         },
         getUserByProviderId: async (providerId) => {
             try {
-                const user = await User.findOne<UserDoc>({
+                const user = await User.findOne({
                     provider_id: providerId,
                 }).lean();
                 if (!user) return null;
@@ -52,7 +52,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                     access_token: accessToken,
                 }).lean();
                 if (!session) return null;
-                const user = await User.findById(session.user_id);
+                const user = await User.findById(session.user_id).lean();
                 if (!user) return null;
                 return convertUserDoc(user);
             } catch (e) {
@@ -74,7 +74,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
             try {
                 const sessions = await Session.find({
                     user_id: userId,
-                });
+                }).lean();
                 return sessions.map((val) => convertSessionDoc(val));
             } catch (e) {
                 throw new LuciaError("DATABASE_FETCH_FAILED");
@@ -176,7 +176,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
             try {
                 await RefreshToken.deleteOne({
                     refresh_token: refreshToken,
-                }).exec();
+                });
             } catch (e) {
                 console.error(e);
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
@@ -184,7 +184,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
         },
         deleteRefreshTokensByUserId: async (userId: string) => {
             try {
-                await RefreshToken.deleteMany({ user_id: userId }).exec();
+                await RefreshToken.deleteMany({ user_id: userId });
             } catch (e) {
                 console.error(e);
                 throw new LuciaError("DATABASE_UPDATE_FAILED");

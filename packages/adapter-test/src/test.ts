@@ -47,11 +47,11 @@ export const validate = {
     ) => {
         isTrueValidation(!arr.some(validate), error, arr, log);
     },
-    isTrue: <T>(target: T, error: string) => {
-        isTrueValidation(Object.is(target, true), error, target);
+    isTrue: <T>(target: T, error: string, ...log: any[]) => {
+        isTrueValidation(Object.is(target, true), error, ...log);
     },
-    isFalse: (target: any, error: string) => {
-        isTrueValidation(Object.is(target, false), error, target);
+    isFalse: (target: any, error: string, ...log: any[]) => {
+        isTrueValidation(Object.is(target, false), error, ...log);
     },
     isNull: (target: any, error: string) => {
         isTrueValidation(Object.is(target, null), error, target);
@@ -68,6 +68,10 @@ export const validate = {
         return isTrueValidation(!Object.is(p1, p2), error, p1, p2);
     },
     isNonEmptyString: (target: string, error: string) => {
-        return isTrueValidation(!!target && typeof target === "string", error, target);
+        return isTrueValidation(
+            !!target && typeof target === "string",
+            error,
+            target
+        );
     },
 };

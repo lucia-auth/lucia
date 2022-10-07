@@ -23,7 +23,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         );
         validate.isTrue(
             user.validateSchema(nonNullReturnedUser),
-            "Target was not returned"
+            "Target was not the expected value"
         );
         await clearAll();
     });
@@ -71,7 +71,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         )
         validate.isTrue(
             user.validateSchema(returnedUser as UserSchema),
-            "Target was not returned"
+            "Target was not the expected value"
         );
         await clearAll();
     });
@@ -96,7 +96,9 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         )
         validate.isTrue(
             user.validateSchema(returnedUser as UserSchema),
-            "Target was not returned"
+            "Target was not the expected value",
+            user.getSchema(),
+            returnedUser
         );
         await clearAll();
     });
