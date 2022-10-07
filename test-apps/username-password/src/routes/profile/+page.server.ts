@@ -1,14 +1,11 @@
 import { dev } from '$app/environment';
 import { auth } from '$lib/server/lucia';
 import { invalid, redirect, type Actions } from '@sveltejs/kit';
-import { LuciaError } from 'lucia-sveltekit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies, request }) => {
 	try {
-		const { accessToken } = await auth.parseRequest(request);
-		if (!accessToken) throw new LuciaError('AUTH_INVALID_ACCESS_TOKEN');
-		await auth.getSession(accessToken);
+		await auth.validateRequest(request);
 		const notes = cookies.get('notes') || '';
 		return {
 			notes
@@ -21,9 +18,7 @@ export const load: PageServerLoad = async ({ cookies, request }) => {
 export const actions: Actions = {
 	default: async ({ cookies, request }) => {
 		try {
-			const { accessToken } = await auth.parseRequest(request);
-			if (!accessToken) throw new LuciaError('AUTH_INVALID_ACCESS_TOKEN');
-			await auth.getSession(accessToken);
+			await auth.validateRequest(request);
 			const formData = await request.formData();
 			const notes = formData.get('notes')?.toString();
 			if (notes === undefined)

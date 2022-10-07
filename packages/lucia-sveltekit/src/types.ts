@@ -27,14 +27,14 @@ export type Tokens = {
     accessToken: [string, string];
     refreshToken: [string, string];
     cookies: string[];
-}
+};
 
 export interface Session {
     userId: string;
     expires: number;
 }
 
-export type SessionStore = Writable<Session | null>;
+export type UserStore = Writable<User | null>;
 
 export type Env = "DEV" | "PROD";
 export type Error = typeof LuciaError;

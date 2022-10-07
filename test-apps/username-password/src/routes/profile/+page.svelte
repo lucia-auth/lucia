@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { signOut, getSession } from 'lucia-sveltekit/client';
+	import { signOut, getUser } from 'lucia-sveltekit/client';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	const session = getSession();
+	const user = getUser();
 
 	export let form: { error?: string; success?: string } | null;
 
@@ -28,8 +28,8 @@
 <h1>Profile</h1>
 <p>This page is protected and can only be accessed by authenticated users.</p>
 <div>
-	<p>User id: {$session?.user.userId}</p>
-	<p>Username: {$session?.user.username}</p>
+	<p>User id: {$user?.userId}</p>
+	<p>Username: {$user?.username}</p>
 	<p>Random number API: {number}</p>
 </div>
 

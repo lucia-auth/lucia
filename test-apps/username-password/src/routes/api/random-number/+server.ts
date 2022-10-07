@@ -4,9 +4,7 @@ import { LuciaError } from 'lucia-sveltekit';
 
 export const GET: RequestHandler = async ({ request }) => {
 	try {
-		const { accessToken } = await auth.parseRequest(request);
-		if (!accessToken) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN")
-		await auth.getSession(accessToken)
+		await auth.validateRequest(request)
 		const number = Math.floor(Math.random() * 100);
 		return new Response(
 			JSON.stringify({

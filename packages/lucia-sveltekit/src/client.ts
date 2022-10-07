@@ -1,11 +1,9 @@
-import { onDestroy } from "svelte";
 import { get } from "svelte/store";
-import { getClientSession, getSSRSession } from "./session.js";
-import type { Session, SessionStore } from "./types.js";
+import { getClientUserStore, getSSRUser } from "./session.js";
 import { LuciaError } from "./utils/error.js";
 
 export const signOut = async (redirect?: string): Promise<void> => {
-    const sessionStore = getClientSession();
+    const sessionStore = getClientUserStore();
     const session = get(sessionStore);
     if (!session) throw new LuciaError("AUTH_NOT_AUTHENTICATED");
     const response = await fetch("/api/auth/logout", {
@@ -51,54 +49,11 @@ export const refreshTokens = async (): Promise<{
     };
 };
 
-export const getSession = (): SessionStore => {
+export const getUser = () => {
     if (typeof window === "undefined") {
         // server
-        return getSSRSession();
+        return getSSRUser();
     }
     // browser
-    return getClientSession();
-};
-
-export const handleSilentRefresh = (errorHandler: () => void = () => {}) => {
-    if (typeof window === "undefined") return;
-    const sessionStore = getSession();
-    let interval: NodeJS.Timer;
-    const checkAccessToken = () => {
-        setTimeout(async () => {
-            const session = get(sessionStore);
-            try {
-                const currentTime = new Date().getTime();
-                if (!session) {
-                    throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-                }
-                if (!session.expires) {
-                    throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-                }
-                if (currentTime + 60 * 1000 * 5 > session.expires * 1000) {
-                    await refresh(session);
-                }
-                checkAccessToken();
-            } catch (e) {
-                const error = e as LuciaError;
-                console.error(error);
-                errorHandler();
-                clearInterval(interval);
-            }
-        }, 60 * 1000);
-    };
-    checkAccessToken()
-    const refresh = async (session: Session) => {
-        if (!session) return;
-        const result = await refreshTokens();
-        sessionStore.update((val) => {
-            if (!val) return val;
-            val.expires = result.expires
-            return val;
-        });
-    };
-
-    onDestroy(() => {
-        clearInterval(interval);
-    });
+    return getClientUserStore();
 };

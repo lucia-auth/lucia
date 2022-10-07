@@ -13,13 +13,14 @@ export const actions: Actions = {
 			});
 		}
 		try {
-			const createUser = await auth.createUser('username', username, {
+			const user = await auth.createUser('username', username, {
 				password,
 				userData: {
 					username
 				}
 			});
-			setCookie(cookies, ...createUser.cookies);
+			const { tokens } = await auth.createSession(user.userId);
+			setCookie(cookies, ...tokens.cookies);
 		} catch (e) {
 			const error = e as Error;
 			if (

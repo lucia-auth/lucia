@@ -64,9 +64,9 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
     await test("getUserByProviderId()", "Return the correct user", async () => {
         const user = new User();
         await db.insertUser(user.getDbSchema());
-        let returnedUser = await adapter.getUserByProviderId(user.providerId);
+        const returnedUser = await adapter.getUserByProviderId(user.providerId);
         validate.isNotNull(
-            user,
+            returnedUser,
             "Target was not returned"
         )
         validate.isTrue(
@@ -80,6 +80,31 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         "Return null if user id is invalid",
         async () => {
             const user = await adapter.getUserByProviderId(INVALID_INPUT);
+            validate.isNull(user, "Null was not returned");
+            await clearAll();
+        }
+    );
+    await test("getUserByAccessToken()", "Return the correct user", async () => {
+        const user = new User();
+        const session = user.createSession()
+        await db.insertUser(user.getDbSchema());
+        await db.insertSession(session.getDbSchema())
+        const returnedUser = await adapter.getUserByAccessToken(session.accessToken);
+        validate.isNotNull(
+            returnedUser,
+            "Target was not returned"
+        )
+        validate.isTrue(
+            user.validateSchema(returnedUser as UserSchema),
+            "Target was not returned"
+        );
+        await clearAll();
+    });
+    await test(
+        "getUserByAccessToken()",
+        "Return null if user id is invalid",
+        async () => {
+            const user = await adapter.getUserByAccessToken(INVALID_INPUT);
             validate.isNull(user, "Null was not returned");
             await clearAll();
         }
