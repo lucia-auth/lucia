@@ -248,6 +248,15 @@ const adapter = (url: string, secret: string): Adapter => {
                 .maybeSingle();
             if (error) {
                 console.error(error);
+                if (
+                    error.details.includes("(provider_id)") &&
+                    error.details.includes("already exists.")
+                ) {
+                    throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+                }
+                if (error.details.includes("already exists.")) {
+                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
+                }
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
             if (!data) throw new LuciaError("AUTH_INVALID_USER_ID");

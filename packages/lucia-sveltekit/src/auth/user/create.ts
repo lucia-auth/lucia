@@ -15,18 +15,13 @@ type CreateUser = (
         password?: string;
         userData?: Lucia.UserData;
     }
-) => Promise<{
-    session: ServerSession;
-    user: User;
-}>;
+) => Promise<User>;
 
 export const createUserFunction = (context: Context) => {
     const createUser: CreateUser = async (provider, identifier, options) => {
         const providerId = `${provider}:${identifier}`;
         const userData = options.userData || {};
         const userId = await context.generateCustomUserId()
-        const [accessToken, accessTokenExpires] = createAccessToken();
-        const [refreshToken] = createRefreshToken();
         const hashedPassword = options.password
             ? await hashScrypt(options.password)
             : null;
@@ -39,33 +34,7 @@ export const createUserFunction = (context: Context) => {
             userId: dbUserId,
             ...userData
         } as User
-        await Promise.all([
-            context.adapter.setRefreshToken(refreshToken, user.userId),
-            context.adapter.setSession(
-                user.userId,
-                accessToken,
-                accessTokenExpires
-            ),
-        ]);
-        const accessTokenCookie = createAccessTokenCookie(
-            accessToken,
-            accessTokenExpires,
-            context.env === "PROD"
-        );
-        const refreshTokenCookie = createRefreshTokenCookie(
-            refreshToken,
-            context.env === "PROD"
-        );
-        return {
-            user: user,
-            session: {
-                accessToken: [accessToken, accessTokenCookie],
-                refreshToken: [refreshToken, refreshTokenCookie],
-                cookies: [accessTokenCookie, refreshTokenCookie],
-                expires: accessTokenExpires,
-                userId: user.userId
-            },
-        };
+        return user
     };
     return createUser;
 };

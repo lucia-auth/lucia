@@ -186,7 +186,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
     );
     await test(
         "setUser()",
-        "Throw AUTH_DUPLICATE_PROVIDER_ID AUTH_DUPLICATE_USER_DATA if provider id violates unique key",
+        "Throw AUTH_DUPLICATE_PROVIDER_ID or AUTH_DUPLICATE_USER_DATA if provider id violates unique key",
         async () => {
             const user1 = new User();
             const user2 = new User();
@@ -358,7 +358,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.notIncludesSomeItem(
                 sessions,
                 session.validateDbSchema,
-                "Target does not exist in Users DB",
+                "Target was not deleted from user table",
                 session.getDbSchema()
             );
             await clearAll();
@@ -551,6 +551,56 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 validate.isEqual(
                     error.message,
                     "AUTH_INVALID_USER_ID",
+                    "Error message did not match"
+                );
+            }
+            await clearAll();
+        }
+    );
+    await test(
+        "updateUser()",
+        "Throw AUTH_DUPLICATE_PROVIDER_ID if user data violates unique key",
+        async () => {
+            const user1 = new User()
+            const user2 = new User()
+            await db.insertUser(user1.getDbSchema())
+            await db.insertUser(user2.getDbSchema())
+            try {
+                await adapter.updateUser(user2.id, {
+                    providerId: user1.providerId
+                });
+                throw new Error("No error was thrown");
+            } catch (e) {
+                const error = e as Error;
+                validate.isEqual(
+                    error.message,
+                    "AUTH_DUPLICATE_PROVIDER_ID",
+                    "Error message did not match"
+                );
+            }
+            await clearAll();
+        }
+    );
+    await test(
+        "updateUser()",
+        "Throw AUTH_DUPLICATE_USER_DATA if user data violates unique key",
+        async () => {
+            const user1 = new User()
+            const user2 = new User()
+            await db.insertUser(user1.getDbSchema())
+            await db.insertUser(user2.getDbSchema())
+            try {
+                await adapter.updateUser(user2.id, {
+                    userData: {
+                        email: user1.email
+                    }
+                });
+                throw new Error("No error was thrown");
+            } catch (e) {
+                const error = e as Error;
+                validate.isEqual(
+                    error.message,
+                    "AUTH_DUPLICATE_USER_DATA",
                     "Error message did not match"
                 );
             }

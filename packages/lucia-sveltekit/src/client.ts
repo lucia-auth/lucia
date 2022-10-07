@@ -87,7 +87,7 @@ export const handleSilentRefresh = (errorHandler: () => void = () => {}) => {
             }
         }, 60 * 1000);
     };
-
+    checkAccessToken()
     const refresh = async (session: Session) => {
         if (!session) return;
         const result = await refreshTokens();

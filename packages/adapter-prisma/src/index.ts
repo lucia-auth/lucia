@@ -270,6 +270,12 @@ const adapter = (prisma: PrismaClient): Adapter => {
                     throw new LuciaError("UNKNOWN_ERROR");
                 if (e.code === "P2025")
                     throw new LuciaError("AUTH_INVALID_USER_ID");
+                if (e.code === "P2002" && e.message.includes("provider_id")) {
+                    throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+                }
+                if (e.code === "P2002") {
+                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
+                }
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
         },
