@@ -1,5 +1,9 @@
-import { LuciaError, adapterGetUpdateData } from "lucia-sveltekit";
-import type { Adapter } from "lucia-sveltekit/types";
+import { LuciaError } from "lucia-sveltekit";
+import {
+    type Adapter,
+    getUpdateData,
+    convertCamelCaseKeysToSnakeCase,
+} from "lucia-sveltekit/adapter";
 import type { Mongoose, MongooseError } from "mongoose";
 import { convertSessionDoc, convertUserDoc } from "./utils.js";
 
@@ -82,7 +86,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                     _id: userId || undefined,
                     hashed_password: data.hashedPassword,
                     provider_id: data.providerId,
-                    ...data.userData,
+                    ...convertCamelCaseKeysToSnakeCase(data.userData),
                 });
                 const userDoc = await newUserDoc.save();
                 const user = convertUserDoc(userDoc);
@@ -187,7 +191,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
             }
         },
         updateUser: async (userId, newData) => {
-            const partialData = adapterGetUpdateData(newData);
+            const partialData = getUpdateData(newData);
             try {
                 const userDoc = await User.findByIdAndUpdate(
                     userId,

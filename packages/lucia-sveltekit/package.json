@@ -11,7 +11,7 @@
         "**/*"
     ],
     "scripts": {
-        "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist"
+        "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist"
     },
     "keywords": [
         "sveltekit",
@@ -22,7 +22,8 @@
         "./package.json": "./package.json",
         ".": "./index.js",
         "./client": "./client.js",
-        "./load": "./load/index.js"
+        "./load": "./load/index.js",
+        "./adapter": "./adapter/index.js"
     },
     "typesVersions": {
         "*": {
@@ -34,6 +35,9 @@
             ],
             "load": [
                 "load/index.d.ts"
+            ],
+            "adapter": [
+                "adapter/index.d.ts"
             ]
         }
     },

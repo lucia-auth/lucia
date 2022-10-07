@@ -3,7 +3,7 @@ interface UserRow {
     hashed_password: string | null;
     provider_id: string;
     username: string;
-    email: string;
+    user_email: string;
 }
 
 interface SessionRow {

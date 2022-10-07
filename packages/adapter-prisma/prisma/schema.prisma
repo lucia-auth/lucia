@@ -17,7 +17,7 @@ model User {
   provider_id     String         @unique
   hashed_password String?
   username        String         @unique
-  email           String         @unique
+  user_email      String         @unique
   refresh_token   RefreshToken[]
   session         Session[]
 

@@ -1,9 +1,9 @@
 import { Database } from "@lucia-sveltekit/adapter-test";
 import { PrismaClient } from "@prisma/client";
-import prisma from "../src/index.js"
+import prisma from "../src/index.js";
 
 const client = new PrismaClient();
-export const adapter = prisma(client)
+export const adapter = prisma(client);
 
 export const db: Database = {
     getUsers: async () => {
@@ -11,14 +11,17 @@ export const db: Database = {
     },
     getRefreshTokens: async () => {
         const refreshTokens = await client.refreshToken.findMany();
-        return refreshTokens
+        return refreshTokens;
     },
     getSessions: async () => {
-        const sessions = await client.session.findMany()
-        return sessions.map(val => {
-            val.expires = Number(val.expires)
-            return val
-        })
+        const sessions = await client.session.findMany();
+        return sessions.map((val) => {
+            const { expires, ...other } = val;
+            return {
+                expires: Number(expires),
+                ...other,
+            };
+        });
     },
     insertUser: async (user) => {
         await client.user.create({
@@ -32,8 +35,8 @@ export const db: Database = {
     },
     insertSession: async (session) => {
         await client.session.create({
-            data: session
-        })
+            data: session,
+        });
     },
     clearUsers: async () => {
         await client.user.deleteMany();
@@ -42,6 +45,6 @@ export const db: Database = {
         await client.refreshToken.deleteMany();
     },
     clearSessions: async () => {
-        await client.session.deleteMany()
-    }
+        await client.session.deleteMany();
+    },
 };

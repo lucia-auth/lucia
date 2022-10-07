@@ -3,6 +3,10 @@ declare namespace Lucia {
     interface UserData {}
 }
 
+declare namespace App {
+	interface Locals {}
+}
+
 interface UserDoc {
 	__v: any,
 	_id: string,

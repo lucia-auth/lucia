@@ -1,4 +1,4 @@
-import type { Adapter } from "lucia-sveltekit/types";
+import type { Adapter } from "lucia-sveltekit/adapter"
 import { test, end, validate } from "./../test.js";
 import { User } from "./../db.js";
 import { Database } from "../index.js";
@@ -19,7 +19,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 hashedPassword: user.hashedPassword,
                 userData: {
                     username: user.username,
-                    email: user.email,
+                    email: user.user_email,
                 },
             });
             user.update({

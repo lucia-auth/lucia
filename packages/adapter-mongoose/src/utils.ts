@@ -1,5 +1,5 @@
+import { convertSnakeCaseKeysToCamelCase } from "lucia-sveltekit/adapter";
 import type { UserSchema } from "lucia-sveltekit/types";
-import mongoose from "mongoose";
 
 export const convertUserDoc = (row: UserDoc): UserSchema => {
     const {
@@ -13,7 +13,7 @@ export const convertUserDoc = (row: UserDoc): UserSchema => {
         id,
         hashedPassword,
         providerId,
-        ...userData,
+        ...convertSnakeCaseKeysToCamelCase(userData),
     };
 };
 

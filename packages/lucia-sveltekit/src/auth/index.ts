@@ -1,5 +1,5 @@
 import type { Handle } from "../kit.js";
-import type { Adapter, Env } from "../types.js";
+import type { Env } from "../types.js";
 import { handleHooksFunction } from "./hooks.js";
 import {
     authenticateUserFunction,
@@ -10,7 +10,7 @@ import {
     updateUserDataFunction,
     updateUserPasswordFunction,
     updateUserProviderIdFunction,
-    getSessionUserFunction
+    getSessionUserFunction,
 } from "./user/index.js";
 import { parseRequestFunction } from "./request.js";
 import {
@@ -24,11 +24,12 @@ import {
     invalidateAllUserSessionsFunction,
     deleteExpiredUserSessionsFunction,
     getSessionFunction,
-    invalidateSessionFunction
+    invalidateSessionFunction,
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
 import { deleteAllCookiesFunction } from "./cookie.js";
 import clc from "cli-color";
+import { Adapter } from "../adapter/index.js";
 
 export const lucia = (configs: Configurations) => {
     return new Auth(configs) as Omit<Auth, "getAuthSession">;
@@ -72,9 +73,10 @@ export class Auth {
             auth: this,
             adapter: configs.adapter,
             secret: configs.secret,
-            generateCustomUserId: configs.generateCustomUserId || (async () => null),
+            generateCustomUserId:
+                configs.generateCustomUserId || (async () => null),
             env: configs.env,
-            addCsrfProtection: configs.addCsrfProtection || true
+            addCsrfProtection: configs.addCsrfProtection || true,
         };
         this.getUser = getUserFunction(this.context);
         this.getUserByProviderId = getUserByProviderIdFunction(this.context);
@@ -87,11 +89,9 @@ export class Auth {
         this.updateUserPassword = updateUserPasswordFunction(this.context);
         this.parseRequest = parseRequestFunction(this.context);
         this.refreshTokens = refreshTokensFunction(this.context);
-        this.getSession = getSessionFunction(this.context)
+        this.getSession = getSessionFunction(this.context);
         this.createSession = createSessionFunction(this.context);
-        this.invalidateSession = invalidateSessionFunction(
-            this.context
-        );
+        this.invalidateSession = invalidateSessionFunction(this.context);
         this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
             this.context
         );
@@ -112,14 +112,14 @@ export class Auth {
     public createUser: ReturnType<typeof createUserFunction>;
     public getUser: ReturnType<typeof getUserFunction>;
     public getUserByProviderId: ReturnType<typeof getUserByProviderIdFunction>;
-    public getSessionUser: ReturnType<typeof getSessionUserFunction>
+    public getSessionUser: ReturnType<typeof getSessionUserFunction>;
     public deleteUser: ReturnType<typeof deleteUserFunction>;
     public parseRequest: ReturnType<typeof parseRequestFunction>;
     public refreshTokens: ReturnType<typeof refreshTokensFunction>;
     public invalidateRefreshToken: ReturnType<
         typeof invalidateRefreshTokenFunction
     >;
-    public getSession: ReturnType<typeof getSessionFunction>
+    public getSession: ReturnType<typeof getSessionFunction>;
     public createSession: ReturnType<typeof createSessionFunction>;
     public deleteExpiredUserSessions: ReturnType<
         typeof deleteExpiredUserSessionsFunction
@@ -134,9 +134,7 @@ export class Auth {
     >;
     public updateUserPassword: ReturnType<typeof updateUserPasswordFunction>;
     public handleServerSession: ReturnType<typeof handleServerSessionFunction>;
-    public invalidateSession: ReturnType<
-        typeof invalidateSessionFunction
-    >;
+    public invalidateSession: ReturnType<typeof invalidateSessionFunction>;
     public invalidateAllUserSessions: ReturnType<
         typeof invalidateAllUserSessionsFunction
     >;
@@ -153,4 +151,4 @@ interface Configurations {
 
 export type Context = {
     auth: Auth;
-} & Required<Configurations>
+} & Required<Configurations>;

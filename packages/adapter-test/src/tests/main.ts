@@ -1,4 +1,5 @@
-import type { Adapter, SessionSchema, UserSchema } from "lucia-sveltekit/types";
+import type { SessionSchema, UserSchema } from "lucia-sveltekit/types";
+import type { Adapter } from "lucia-sveltekit/adapter"
 import { test, end, validate } from "./../test.js";
 import { User } from "./../db.js";
 import { Database } from "../index.js";
@@ -64,12 +65,12 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         const user = new User();
         await db.insertUser(user.getDbSchema());
         let returnedUser = await adapter.getUserByProviderId(user.providerId);
-        returnedUser = validate.isNotNull(
+        validate.isNotNull(
             user,
             "Target was not returned"
-        ) as UserSchema;
+        )
         validate.isTrue(
-            user.validateSchema(returnedUser),
+            user.validateSchema(returnedUser as UserSchema),
             "Target was not returned"
         );
         await clearAll();
@@ -149,7 +150,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             hashedPassword: user.hashedPassword,
             userData: {
                 username: user.username,
-                email: user.email,
+                userEmail: user.user_email,
             },
         });
         const users = await db.getUsers();
@@ -171,7 +172,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 hashedPassword: user.hashedPassword,
                 userData: {
                     username: user.username,
-                    email: user.email,
+                    userEmail: user.user_email,
                 },
             });
             const users = await db.getUsers();
@@ -191,7 +192,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             hashedPassword: user.hashedPassword,
             userData: {
                 username: user.username,
-                email: user.email,
+                userEmail: user.user_email,
             },
         });
         validate.isNonEmptyString(createdUserId, "Returned value is not a non-empty string")
@@ -210,7 +211,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                     hashedPassword: user2.hashedPassword,
                     userData: {
                         username: user2.username,
-                        email: user2.email,
+                        userEmail: user2.user_email,
                     },
                 });
             } catch (e) {
@@ -247,7 +248,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                     hashedPassword: user2.hashedPassword,
                     userData: {
                         username: user2.username,
-                        email: user1.email,
+                        userEmail: user1.user_email,
                     },
                 });
             } catch (e) {
@@ -477,10 +478,10 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         const user = new User();
         await db.insertUser(user.getDbSchema());
         await adapter.updateUser(user.id, {
-            providerId: "update:" + user.email,
+            providerId: "update:" + user.user_email,
         });
         user.update({
-            providerId: "update:" + user.email,
+            providerId: "update:" + user.user_email,
         });
         const users = await db.getUsers();
         validate.includesSomeItem(
@@ -605,7 +606,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             try {
                 await adapter.updateUser(user2.id, {
                     userData: {
-                        email: user1.email
+                        userEmail: user1.user_email
                     }
                 });
                 throw new Error("No error was thrown");

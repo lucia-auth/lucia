@@ -11,10 +11,10 @@ export class User {
     public providerId: string;
     public hashedPassword: string | null;
     public username: string;
-    public email: string;
+    public user_email: string;
     constructor(nullPassword = false) {
         this.id = generateRandomString(4);
-        this.email = `user${this.id}@example.com`;
+        this.user_email = `user${this.id}@example.com`;
         this.hashedPassword = nullPassword ? null : "HASHED";
         this.providerId = `test:user${this.id}@example.com`;
         this.username = `user${this.id}`;
@@ -25,13 +25,13 @@ export class User {
             provider_id: this.providerId,
             hashed_password: this.hashedPassword,
             username: this.username,
-            email: this.email,
+            user_email: this.user_email,
         } as const;
     };
     public getSchema = (): UserSchema => {
         return {
             id: this.id,
-            email: this.email,
+            userEmail: this.user_email,
             hashedPassword: this.hashedPassword,
             providerId: this.providerId,
             username: this.username
@@ -43,7 +43,7 @@ export class User {
             row.provider_id === this.providerId &&
             row.hashed_password === this.hashedPassword &&
             row.username === this.username &&
-            row.email === this.email
+            row.user_email === this.user_email
         )
             return true;
         return false;
@@ -54,13 +54,13 @@ export class User {
             row.providerId === this.providerId &&
             row.hashedPassword === this.hashedPassword &&
             row.username === this.username &&
-            row.email === this.email
+            row.userEmail === this.user_email
         )
             return true;
         return false;
     };
     public update = (fields: Partial<UserSchema>) => {
-        if (fields.email !== undefined) this.email = fields.email
+        if (fields.userEmail !== undefined) this.user_email = fields.userEmail
         if (fields.hashedPassword !== undefined) this.hashedPassword = fields.hashedPassword
         if (fields.id !== undefined) this.id = fields.id
         if (fields.providerId !== undefined) this.providerId = fields.providerId

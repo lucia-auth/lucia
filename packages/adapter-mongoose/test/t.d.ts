@@ -1,15 +1,10 @@
-/// <reference types="lucia-sveltekit" />
-declare namespace Lucia {
-    interface UserData {}
-}
-
 interface UserDoc {
     __v: any;
     _id: string;
     hashed_password: string | null;
     provider_id: string;
     username: string;
-    email: string;
+    user_email: string;
 }
 
 interface SessionDoc {

@@ -3,7 +3,7 @@ export interface UserRow {
     provider_id: string;
     hashed_password: string | null;
     username: string;
-    email: string;
+    user_email: string;
 }
 
 export interface RefreshTokenRow {

@@ -1,5 +1,6 @@
 import type { UserSchema } from "lucia-sveltekit/types";
-import { RefreshToken, Session, User} from "@prisma/client";
+import { convertSnakeCaseKeysToCamelCase } from "lucia-sveltekit/adapter";
+import { RefreshToken, Session, User } from "@prisma/client";
 
 export const convertUserRow = (row: User): UserSchema => {
     const {
@@ -12,17 +13,12 @@ export const convertUserRow = (row: User): UserSchema => {
         id,
         hashedPassword,
         providerId,
-        ...userData,
+        ...convertSnakeCaseKeysToCamelCase(userData),
     };
 };
 
 export const convertSessionRow = (row: Session) => {
-    const {
-        id: _,
-        access_token: accessToken,
-        user_id: userId,
-        expires,
-    } = row;
+    const { id: _, access_token: accessToken, user_id: userId, expires } = row;
     return {
         accessToken,
         userId,
@@ -30,17 +26,15 @@ export const convertSessionRow = (row: Session) => {
     };
 };
 
-export const convertRefreshTokenRow = (row: RefreshToken): {
-    refreshToken: string,
-    userId: string
+export const convertRefreshTokenRow = (
+    row: RefreshToken
+): {
+    refreshToken: string;
+    userId: string;
 } => {
-    const {
-        id: _,
-        user_id: userId,
-        refresh_token: refreshToken,
-    } = row;
+    const { id: _, user_id: userId, refresh_token: refreshToken } = row;
     return {
         userId,
-        refreshToken
+        refreshToken,
     };
 };

@@ -2,7 +2,7 @@
 declare namespace Lucia {
     interface UserData {
         username: string;
-        email: string;
+        userEmail: string;
     }
 }
 

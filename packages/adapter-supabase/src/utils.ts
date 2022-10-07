@@ -1,3 +1,4 @@
+import { convertSnakeCaseKeysToCamelCase } from "lucia-sveltekit/adapter";
 import type { UserSchema } from "lucia-sveltekit/types";
 
 export const convertUserRow = (row: UserRow): UserSchema => {
@@ -11,7 +12,7 @@ export const convertUserRow = (row: UserRow): UserSchema => {
         id,
         hashedPassword,
         providerId,
-        ...userData,
+        ...convertSnakeCaseKeysToCamelCase(userData) as Lucia.UserData,
     };
 };
 

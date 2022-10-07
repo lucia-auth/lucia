@@ -31,7 +31,7 @@ const User = mongoose.model(
                 type: String,
                 required: true,
             },
-            email: {
+            user_email: {
                 unique: true,
                 type: String,
                 required: true,
