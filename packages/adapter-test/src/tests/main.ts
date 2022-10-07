@@ -102,7 +102,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
     });
     await test(
         "getUserByAccessToken()",
-        "Return null if user id is invalid",
+        "Return null if access token is invalid",
         async () => {
             const user = await adapter.getUserByAccessToken(INVALID_INPUT);
             validate.isNull(user, "Null was not returned");
@@ -168,7 +168,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.isEqual(sessions.length, 0, "Target was not returned");
         }
     );
-    await test("setUser()", "Insert a user into Users DB", async () => {
+    await test("setUser()", "Insert a user into user table", async () => {
         const user = new User();
         await adapter.setUser(user.id, {
             providerId: user.providerId,
@@ -182,7 +182,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         validate.includesSomeItem(
             users,
             user.validateDbSchema,
-            "Target does not exist in Users DB",
+            "Target does not exist in user table",
             user.getDbSchema()
         );
         await clearAll();
@@ -204,7 +204,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.includesSomeItem(
                 users,
                 user.validateDbSchema,
-                "Target does not exist in Users DB",
+                "Target does not exist in user table",
                 user.getDbSchema()
             );
             await clearAll();
@@ -289,7 +289,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             throw new Error("No error was thrown");
         }
     );
-    await test("deleteUser()", "Delete a user from Users DB", async () => {
+    await test("deleteUser()", "Delete a user from user table", async () => {
         const user1 = new User();
         const user2 = new User();
         await db.insertUser(user1.getDbSchema());
@@ -299,20 +299,20 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         validate.notIncludesSomeItem(
             users,
             user1.validateDbSchema,
-            "Target does not exist in Users DB",
+            "Target does not exist in user table",
             user1.getDbSchema()
         );
         validate.includesSomeItem(
             users,
             user2.validateDbSchema,
-            "Non-target was deleted from Users DB",
+            "Non-target was deleted from user table",
             user2.getDbSchema()
         );
         await clearAll();
     });
     await test(
         "setSession()",
-        "Insert a user's session into session DB",
+        "Insert a user's session into session table",
         async () => {
             const user = new User();
             const session = user.createSession();
@@ -326,7 +326,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.includesSomeItem(
                 sessions,
                 session.validateDbSchema,
-                "Non-target was deleted from Users DB",
+                "Non-target was deleted from user table",
                 session.getDbSchema()
             );
             await clearAll();
@@ -416,7 +416,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.notIncludesSomeItem(
                 sessions,
                 session.validateDbSchema,
-                "Target does not exist in Users DB",
+                "Target does not exist in user table",
                 session.getDbSchema()
             );
             await clearAll();
@@ -424,7 +424,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
     );
     await test(
         "setRefreshToken()",
-        "Insert a user's refresh token into refresh_token DB",
+        "Insert a user's refresh token into refresh_token table",
         async () => {
             const user = new User();
             const refreshToken = user.createRefreshToken();
@@ -437,7 +437,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.includesSomeItem(
                 refreshTokens,
                 refreshToken.validateDbSchema,
-                "Target was not inserted into refresh_token DB",
+                "Target was not inserted into refresh_token table",
                 refreshToken.getDbSchema()
             );
             await clearAll();
@@ -445,7 +445,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
     );
     await test(
         "deleteRefreshToken()",
-        "Delete a token from Refresh_Token DB",
+        "Delete a token from refresh_token table",
         async () => {
             const user = new User();
             const refreshToken1 = user.createRefreshToken();
@@ -458,13 +458,13 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.notIncludesSomeItem(
                 refreshTokens,
                 refreshToken1.validateDbSchema,
-                "Target was not deleted from refresh_token DB",
+                "Target was not deleted from refresh_token table",
                 refreshToken2.getDbSchema()
             );
             validate.includesSomeItem(
                 refreshTokens,
                 refreshToken2.validateDbSchema,
-                "Non-target was not deleted from refresh_token DB",
+                "Non-target was not deleted from refresh_token table",
                 refreshToken2.getDbSchema()
             );
             await clearAll();
@@ -487,13 +487,13 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             validate.notIncludesSomeItem(
                 refreshTokens,
                 user1RefreshToken.validateDbSchema,
-                "Target was not deleted from refresh_token DB",
+                "Target was not deleted from refresh_token table",
                 user1RefreshToken.getDbSchema()
             );
             validate.includesSomeItem(
                 refreshTokens,
                 user2RefreshToken.validateDbSchema,
-                "Non-target was not deleted from refresh_token DB",
+                "Non-target was not deleted from refresh_token table",
                 user2RefreshToken.getDbSchema()
             );
             await clearAll();
