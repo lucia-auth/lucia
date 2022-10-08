@@ -1,5 +1,5 @@
 ---
-order: 5
+order: 4
 layout: "@layouts/DocumentLayout.astro"
-title: "Sign out users"
+title: "Sessions in the client"
 ---

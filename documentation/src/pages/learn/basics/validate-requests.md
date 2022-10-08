@@ -1,5 +1,5 @@
 ---
-order: 2
+order: 3
 layout: "@layouts/DocumentLayout.astro"
-title: "Get current session and user"
+title: "Validate requests"
 ---

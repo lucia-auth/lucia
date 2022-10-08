@@ -2,7 +2,11 @@
 import Content from "@components/Content.svelte";
 import { getContent, getPages, getSections } from "src/lib/content.js";
 
-const { frontmatter } = Astro.props;
+const props = Astro.props;
+
+interface Props {
+    title: string | null;
+}
 
 const learnSections = getSections(
     await Astro.glob("/src/pages/learn/*/index.md"),
@@ -24,6 +28,9 @@ const referencePages = getPages(
 const learnContent = getContent(learnSections, learnPages);
 
 const referenceContent = getContent(referenceSections, referencePages);
+const tab: "learn" | "reference" =
+    (Astro.url.pathname.match(/^\/(\w+)\//)?.[1] as any) || "learn";
+console.log(Astro.url.href)
 ---
 
 <html lang="en">
@@ -32,7 +39,7 @@ const referenceContent = getContent(referenceSections, referencePages);
         <meta name="viewport" content="width=device-width" />
         <meta name="generator" content={Astro.generator} />
         <title>
-            {frontmatter?.title ? `${frontmatter.title} | Lucia` : "Lucia"}
+            {props.title || "Lucia"}
         </title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -56,11 +63,17 @@ const referenceContent = getContent(referenceSections, referencePages);
                 <p>menu</p>
             </div>
         </div>
-        <div class="min-h-screen flex divide-x">
-            <div class="w-72 hidden md:block shrink-0 pt-20">
-                <Content client:load {learnContent} />
+        <div class="min-h-screen px-4 sm:px-8 lg:px-12 ">
+            <div class="hidden md:block shrink-0 pt-20 fixed w-72 h-screen">
+                <Content
+                    client:load
+                    {learnContent}
+                    {referenceContent}
+                    tab={tab}
+                    currentTitle={props.title}
+                />
             </div>
-            <main class="px-4 sm:px-8 lg:px-12 pt-36 min-w-0 pb-24">
+            <main class="px-4 pt-36 min-w-0 pb-24 ml-72">
                 <slot />
             </main>
         </div>

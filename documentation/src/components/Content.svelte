@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let tab: "learn" | "reference" = "learn";
+    export let tab: typeof tabs[number]["tab"] = "learn";
 
     const selectTab = (t: typeof tab) => {
         tab = t;
@@ -7,10 +7,22 @@
 
     export let learnContent: Content = [];
     export let referenceContent: Content = [];
+    export let currentTitle: string | null = null;
+
+    const tabs = [
+        {
+            tab: "learn",
+            content: learnContent,
+        },
+        {
+            tab: "reference",
+            content: referenceContent,
+        },
+    ] as const;
 </script>
 
-<div class="w-full px-4">
-    <div class="grid grid-cols-2 gap-x-1">
+<div class="overflow-auto h-full relative overscroll-contain pr-4">
+    <div class="grid grid-cols-2 gap-x-1 sticky top-0 w-full bg-white">
         <div class="w-full pb-1 border-b-2" class:border-main={tab === "learn"}>
             <a
                 href="/learn"
@@ -31,19 +43,27 @@
         </div>
     </div>
     <div class="pt-4">
-        {#if tab === "learn"}
-        {#each learnContent as section}
-            <div class="mb-6">
-                <p class="font-medium">{section.title}</p>
-                <li class=" list-none pl-4">
-                    {#each section.pages as page}
-                        <ul class="my-1">
-                            <a href={page.url}>{page.title}</a>
-                        </ul>
-                    {/each}
-                </li>
-            </div>
+        {#each tabs as { tab: tabName, content }}
+            {#if tabName === tab}
+                {#each content as section}
+                    <div class="mb-10">
+                        <p class="font-medium">{section.title}</p>
+                        <li class="list-none mt-2">
+                            {#each section.pages as page}
+                                {@const isSlected = currentTitle === page.title}
+                                <ul
+                                    class="my-1 pl-4 border-l-2"
+                                    class:text-main={isSlected}
+                                    class:border-main={isSlected}
+                                    class:hover:border-black={!isSlected}
+                                >
+                                    <a href={page.url}>{page.title}</a>
+                                </ul>
+                            {/each}
+                        </li>
+                    </div>
+                {/each}
+            {/if}
         {/each}
-        {/if}
     </div>
 </div>

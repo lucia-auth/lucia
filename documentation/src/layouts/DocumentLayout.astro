@@ -9,7 +9,7 @@ type Props = MarkdownLayoutProps<{
 const { frontmatter } = Astro.props;
 ---
 
-<BaseLayout>
+<BaseLayout title={frontmatter.title}>
     <section id="md">
         <h1>{frontmatter.title}</h1>
         <slot />
