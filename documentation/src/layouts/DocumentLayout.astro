@@ -1,0 +1,45 @@
+---
+import BaseLayout from "@components/BaseLayout.astro";
+import type { MarkdownLayoutProps } from "astro";
+
+type Props = MarkdownLayoutProps<{
+    title: string;
+    order: number;
+}>;
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout>
+    <section id="md">
+        <h1>{frontmatter.title}</h1>
+        <slot />
+    </section>
+    <div class="mt-8">
+        <a
+            href={`https://github.com/pilcrowOnPaper/lucia-sveltekit/tree/main/apps/documentation/src/pages${Astro.url.pathname}.md`}
+            class="text-main hover:underline cursor-pointer;"
+            >Contribute to this page</a
+        >
+    </div>
+</BaseLayout>
+<style>
+    :global(#md > h1) {
+        @apply font-semibold text-5xl mb-8;
+    }
+    :global(#md > h2) {
+        @apply font-semibold text-3xl mb-4;
+    }
+    :global(#md > p) {
+        @apply mb-6;
+    }
+    :global(#md > pre) {
+        @apply overflow-scroll rounded-md px-4 py-2 mb-4 text-sm;
+        scrollbar-width: none;
+    }
+    :global(#md > pre::-webkit-scrollbar) {
+        display: none;
+    }
+    :global(#md > a) {
+        @apply text-main hover:underline cursor-pointer;
+    }
+</style>
