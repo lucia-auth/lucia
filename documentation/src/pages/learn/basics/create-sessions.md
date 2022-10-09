@@ -1,5 +1,85 @@
 ---
-order: 2
+order: 3
 layout: "@layouts/DocumentLayout.astro"
 title: "Create Sessions"
 ---
+
+Upon session creation, a new access token (as well as a refresh token) that is connected to the session will be issued. These tokens should be stored in a http-only cookie.
+
+A new session can be created using `createSession()` method, which takes in a user id.
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+const { session, tokens } = await auth.createSession("userId");
+```
+
+## Create a new session
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+const { session, tokens } = await auth.createSession("123456");
+```
+
+## Store the tokens as cookies
+
+The tokens has to be manually stored as cookies, and the cookie strings (array) can be accessed from `tokens.cookies`.
+
+```ts
+const { session, tokens } = await auth.createSession("123456");
+const cookieStrings = tokens.cookies // [accessTokenCookie, refreshTokenCookie]
+```
+
+Lucia provides a helper function called `setCookie` which allows you to set cookies using SvelteKit's cookie.
+
+```ts
+import { setCookie } from "lucia-sveltekit";
+
+await setCookie(cookie, ...cookieStrings)
+```
+
+## Update the current user on the client
+
+`createSession` creates a new session *on the server*, but the client cannot listen for server side events (including new cookies). So, the client will not automatically update the current user when a session, a user, or a cookie was modified. Both the hooks and the root layout server function must run as well for it update as well. To update the session in the client (ie. for `getUser()` to work), you must refresh the entire page. In short, refresh the page when you modify the session, the user, or cookies.
+
+## Example
+
+Make sure to spread `tokens.cookies` when calling `setCookie`. Since a new session was created, and a new cookie was set, refresh the page.
+
+### Actions
+
+```ts
+// +page.server.ts
+import { auth } from "$lib/server/lucia";
+import { setCookie } from "lucia-sveltekit";
+import { redirect, type Actions } from "@sveltejs/kit";
+
+export const actions: Actions = {
+    default: async ({ cookie }) => {
+        // ...
+        const { tokens } = await auth.createSession(userId);
+        setCookie(cookie, ...tokens.cookies);
+        throw redirect(302, "/"); // refresh the page by redirecting the user
+    },
+};
+```
+
+### Standalone endpoints
+
+In a standalone endpoint, the cookies can be set by adding the cookie strings to the `set-cookie` headers.
+
+```ts
+import { auth } from "$lib/server/lucia";
+import { setCookie } from "lucia-sveltekit";
+import { redirect, type Actions } from "@sveltejs/kit";
+
+export const actions: Actions = {
+    default: async ({ cookie }) => {
+        // ...
+        const { tokens } = await auth.createSession(userId);
+        setCookie(cookie, ...tokens.cookies);
+        throw redirect(302, "/"); // refresh the page by redirecting the user
+    },
+};
+```
