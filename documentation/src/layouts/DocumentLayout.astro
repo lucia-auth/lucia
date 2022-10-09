@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "@components/BaseLayout.astro";
-import Headings from "@components/Headings.svelte"
+import Headings from "@components/Headings.svelte";
 import type { MarkdownLayoutProps } from "astro";
 
 type Props = MarkdownLayoutProps<{
@@ -25,26 +25,29 @@ const { frontmatter, headings } = Astro.props;
         </div>
     </div>
 
-    <Headings headings={headings}/>
+    <Headings headings={headings} />
 </BaseLayout>
 <style>
-    :global(#md > h1) {
+    :global(#md h1) {
         @apply font-semibold text-5xl mb-8;
     }
-    :global(#md > h2) {
-        @apply font-semibold text-3xl mb-4;
+    :global(#md h2) {
+        @apply font-semibold text-3xl mb-4 mt-16;
     }
-    :global(#md > p) {
+    :global(#md h3) {
+        @apply font-semibold text-2xl mb-4 mt-8;
+    }
+    :global(#md p) {
         @apply mb-6;
     }
-    :global(#md > pre) {
+    :global(#md pre) {
         @apply overflow-scroll rounded-md px-4 py-2 mb-4 text-sm;
         scrollbar-width: none;
     }
-    :global(#md > pre::-webkit-scrollbar) {
+    :global(#md pre::-webkit-scrollbar) {
         display: none;
     }
-    :global(#md > a) {
+    :global(#md a) {
         @apply text-main hover:underline cursor-pointer;
     }
 </style>
