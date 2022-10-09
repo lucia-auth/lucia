@@ -1,6 +1,6 @@
 ---
 import Content from "@components/Content.svelte";
-import MenuButton from "@components/MenuButton.svelte"
+import MenuButton from "@components/MenuButton.svelte";
 import { getContent, getPages, getSections } from "src/lib/content.js";
 
 const props = Astro.props;
@@ -53,26 +53,26 @@ const tab: "learn" | "reference" =
         />
     </head>
     <body>
-        <div class="fixed border-b z-50 bg-white w-full divide-y">
-            <div class="py-3">
-                <a class="text-2xl font-semibold px-4 sm:px-8 lg:px-12" href="/"
-                    >Lucia</a
-                >
-            </div>
-            <div class="pt-1 px-4 sm:px-8 lg:px-12 sm:hidden">
-                <MenuButton client:load/>
+        <div class="fixed z-50 w-full bg-white lg:bg-transparent">
+            <div
+                class="py-3 flex w-full place-content-between px-4 sm:px-8 lg:px-12"
+            >
+                <a class="text-2xl font-semibold" href="/">Lucia</a>
+                <div>
+                    <MenuButton client:load />
+                </div>
             </div>
         </div>
         <div class="min-h-screen">
             <Content
-                    client:load
-                    {learnContent}
-                    {referenceContent}
-                    tab={tab}
-                    currentTitle={props.title}
-                />
-            <main class="pt-36 min-w-0 pb-24 md:ml-72 px-4 sm:px-8 lg:px-12">
-                <div class="md:pl-4">
+                client:load
+                {learnContent}
+                {referenceContent}
+                tab={tab}
+                currentTitle={props.title}
+            />
+            <main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:ml-72 px-4 sm:px-8 lg:px-12">
+                <div class="lg:pl-4">
                     <slot />
                 </div>
             </main>

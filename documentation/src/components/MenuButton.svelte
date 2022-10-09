@@ -6,6 +6,7 @@
     on:click={() => {
         isMenuOpen.toggle();
     }}
+    class="lg:hidden"
 >
     <div class="h-8 w-8">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"

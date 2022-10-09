@@ -24,7 +24,7 @@
 </script>
 
 <div
-    class=" border-r md:border-r-0 md:block shrink-0 pt-28 md:pt-20 fixed w-72 h-screen ml-4 sm:ml-8 lg:ml-12 bg-white"
+    class=" border-r lg:border-r-0 lg:block shrink-0 pt-20 fixed w-72 h-screen ml-4 sm:ml-8 lg:ml-12 bg-white"
     class:hidden={!$isMenuOpen}
 >
     <div class="overflow-auto h-full relative overscroll-contain pr-4">

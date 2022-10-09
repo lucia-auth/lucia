@@ -1,16 +1,17 @@
 ---
 import BaseLayout from "@components/BaseLayout.astro";
+import Headings from "@components/Headings.svelte"
 import type { MarkdownLayoutProps } from "astro";
 
 type Props = MarkdownLayoutProps<{
     title: string;
     order: number;
 }>;
-const { frontmatter } = Astro.props;
+const { frontmatter, headings } = Astro.props;
 ---
 
 <BaseLayout title={frontmatter.title}>
-    <div class="mr-64">
+    <div class="xl:mr-64 xl:pr-8">
         <section id="md">
             <h1>{frontmatter.title}</h1>
             <slot />
@@ -24,9 +25,7 @@ const { frontmatter } = Astro.props;
         </div>
     </div>
 
-    <div class="w-64 mr px-4 fixed h-screen top-0 right-0 bg-blue-500">
-
-    </div>
+    <Headings headings={headings}/>
 </BaseLayout>
 <style>
     :global(#md > h1) {
