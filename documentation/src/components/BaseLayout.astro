@@ -1,5 +1,6 @@
 ---
 import Content from "@components/Content.svelte";
+import MenuButton from "@components/MenuButton.svelte"
 import { getContent, getPages, getSections } from "src/lib/content.js";
 
 const props = Astro.props;
@@ -30,7 +31,6 @@ const learnContent = getContent(learnSections, learnPages);
 const referenceContent = getContent(referenceSections, referencePages);
 const tab: "learn" | "reference" =
     (Astro.url.pathname.match(/^\/(\w+)\//)?.[1] as any) || "learn";
-console.log(Astro.url.href)
 ---
 
 <html lang="en">
@@ -59,22 +59,22 @@ console.log(Astro.url.href)
                     >Lucia</a
                 >
             </div>
-            <div class="py-2 px-4 sm:px-8 lg:px-12 sm:hidden">
-                <p>menu</p>
+            <div class="pt-1 px-4 sm:px-8 lg:px-12 sm:hidden">
+                <MenuButton client:load/>
             </div>
         </div>
-        <div class="min-h-screen px-4 sm:px-8 lg:px-12 ">
-            <div class="hidden md:block shrink-0 pt-20 fixed w-72 h-screen">
-                <Content
+        <div class="min-h-screen">
+            <Content
                     client:load
                     {learnContent}
                     {referenceContent}
                     tab={tab}
                     currentTitle={props.title}
                 />
-            </div>
-            <main class="px-4 pt-36 min-w-0 pb-24 ml-72">
-                <slot />
+            <main class="pt-36 min-w-0 pb-24 md:ml-72 px-4 sm:px-8 lg:px-12">
+                <div class="md:pl-4">
+                    <slot />
+                </div>
             </main>
         </div>
         <style>

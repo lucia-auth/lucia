@@ -10,16 +10,22 @@ const { frontmatter } = Astro.props;
 ---
 
 <BaseLayout title={frontmatter.title}>
-    <section id="md">
-        <h1>{frontmatter.title}</h1>
-        <slot />
-    </section>
-    <div class="mt-8">
-        <a
-            href={`https://github.com/pilcrowOnPaper/lucia-sveltekit/tree/main/apps/documentation/src/pages${Astro.url.pathname}.md`}
-            class="text-main hover:underline cursor-pointer;"
-            >Contribute to this page</a
-        >
+    <div class="mr-64">
+        <section id="md">
+            <h1>{frontmatter.title}</h1>
+            <slot />
+        </section>
+        <div class="mt-8">
+            <a
+                href={`https://github.com/pilcrowOnPaper/lucia-sveltekit/tree/main/apps/documentation/src/pages${Astro.url.pathname}.md`}
+                class="text-main hover:underline cursor-pointer;"
+                >Contribute to this page</a
+            >
+        </div>
+    </div>
+
+    <div class="w-64 mr px-4 fixed h-screen top-0 right-0 bg-blue-500">
+
     </div>
 </BaseLayout>
 <style>
