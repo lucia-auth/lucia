@@ -1,5 +1,5 @@
 ---
-order: 8
+order: 9
 layout: "@layouts/DocumentLayout.astro"
-title: "Sign out users"
+title: "Sign out users (client)"
 ---

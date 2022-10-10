@@ -1,29 +1,26 @@
 import { getContext, hasContext, setContext } from "svelte";
-import { get, type Readable, writable } from "svelte/store";
-import type { UserStore, User } from "./types.js";
+import { get, type Readable } from "svelte/store";
+import type { User } from "./types.js";
 
 /* 
 user is only stored in a variable in a browser context
-as it'll be shared across multiple requests when inside a server requests
+as it'll be shared across multiple requests when inside a server context
 which means it's possible for a users to read another user's data.
 
 the general consensus is to store user data in svelte contexts
 and lucia does that when running in the server.
-
-however, since the user store has to be able to be accessible in load functions
-and contexts only works within components (specifically on initialization),
-we store it in a local variable.
 */
-let clientUserStore: UserStore;
 
-export const getClientUserStore = (): UserStore => {
-    if (!clientUserStore) {
-        setClientAuthStore();
+let clientUser: Readonly<User> | null;
+
+export const getClientUser = (): User | null => {
+    if (!clientUser) {
+        setClientUser();
     }
-    return clientUserStore!;
+    return clientUser;
 };
 
-const setClientAuthStore = (): void => {
+const setClientUser = (): void => {
     const w = globalThis as any as { _lucia_page_data: { data: any }[] };
     if (!w._lucia_page_data)
         throw new Error("_lucia_page_data is undefined", {
@@ -43,15 +40,21 @@ const setClientAuthStore = (): void => {
     }, {}) as {
         _lucia?: User | null;
     };
-    clientUserStore = writable(pageData._lucia);
+    if (!pageData._lucia) {
+        clientUser = null;
+        return;
+    }
+    clientUser = Object.freeze(pageData._lucia);
 };
 
 /* this function will be only called when SSRing pages/components */
-export const getSSRUser = (): UserStore => {
+export const getSSRUser = (): Readonly<User> | null => {
     if (!hasContext("__lucia__")) {
         setSSRContext();
     }
-    const luciaContext = getContext<{ user: UserStore }>("__lucia__");
+    const luciaContext = getContext<{ user: Readonly<User> | null }>(
+        "__lucia__"
+    );
     return luciaContext.user;
 };
 
@@ -68,7 +71,13 @@ const setSSRContext = (): void => {
         }>;
     };
     const page = get(svelteStores.page);
+    if (!page.data._lucia) {
+        setContext("__lucia__", {
+            user: null,
+        });
+        return;
+    }
     setContext("__lucia__", {
-        user: writable(page.data._lucia || null),
+        user: Object.freeze(page.data._lucia),
     });
 };

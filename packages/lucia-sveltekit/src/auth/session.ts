@@ -6,6 +6,7 @@ import {
     createRefreshToken,
     createRefreshTokenCookie,
 } from "../utils/token.js";
+import { LuciaError } from "../index.js";
 
 type CreateSession = (userId: string) => Promise<{
     session: Session;

@@ -34,7 +34,5 @@ export interface Session {
     expires: number;
 }
 
-export type UserStore = Writable<User | null>;
-
 export type Env = "DEV" | "PROD";
 export type Error = typeof LuciaError;
