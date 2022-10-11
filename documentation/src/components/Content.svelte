@@ -55,12 +55,12 @@
                     {#each content as section}
                         <div class="mb-10">
                             <p class="font-medium">{section.title}</p>
-                            <li class="list-none mt-2">
+                            <li class="list-none mt-2 text-gray-500">
                                 {#each section.pages as page}
                                     {@const isSlected =
                                         currentTitle === page.title}
                                     <ul
-                                        class="my-1 pl-4 border-l-2"
+                                        class="my-1 pl-4 border-l-2 hover:text-black"
                                         class:text-main={isSlected}
                                         class:border-main={isSlected}
                                         class:hover:border-black={!isSlected}

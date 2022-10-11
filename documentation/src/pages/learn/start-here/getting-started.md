@@ -47,7 +47,7 @@ This module and the file that holds it **should NOT be imported from the client*
 
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with `handleHooks()` method. This will handle token refresh and sign out requests, as well as exposing the user's data to the client.
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with `handleHooks()` method. This will expose some endpoints (like for refreshing sessions) and will provide the client with the current user. 
 
 ```ts
 // hooks.server.ts

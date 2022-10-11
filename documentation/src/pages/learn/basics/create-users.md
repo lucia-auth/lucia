@@ -68,8 +68,12 @@ The following example uses `email` as the provider name and the provided email a
 import { auth } from "$lib/server/lucia";
 
 const createUser = async (email: string, password: string) => {
-    const user = await auth.createUser("email", email, {
-        password,
-    });
+    try {
+        const user = await auth.createUser("email", email, {
+            password,
+        });
+    } catch {
+        // error (user already exists, etc)
+    }
 };
 ```

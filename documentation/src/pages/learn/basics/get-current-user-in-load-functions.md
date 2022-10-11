@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Get current user in load functions"
 ---
 
-This page is for normal load functions, and not _server_ load functions.
+This page is for normal load functions, and not _server_ load functions. For server load functions, refer to [Validate server requests](/learn/basics/validate-server-requests).
 
 To get the current user, import `getUser` from `lucia-sveltekit/load`. `lucia-sveltekit/client` also exports a similar function but this cannot be used in the load function. This function takes in the load function event, and returns a readonly `User`, or `null` if the user does not exist.
 

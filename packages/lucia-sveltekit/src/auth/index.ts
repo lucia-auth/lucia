@@ -14,7 +14,6 @@ import {
 } from "./user/index.js";
 import { parseRequestFunction, validateRequestFunction } from "./request.js";
 import {
-    refreshTokensFunction,
     invalidateRefreshTokenFunction,
     validateAccessTokenFunction,
     validateRefreshTokenFunction,
@@ -24,6 +23,7 @@ import {
     invalidateAllUserSessionsFunction,
     deleteExpiredUserSessionsFunction,
     invalidateSessionFunction,
+    refreshSessionFunction
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
 import { deleteAllCookiesFunction } from "./cookie.js";
@@ -88,7 +88,7 @@ export class Auth {
         this.updateUserPassword = updateUserPasswordFunction(this.context);
         this.parseRequest = parseRequestFunction(this.context);
         this.validateRequest = validateRequestFunction(this.context);
-        this.refreshTokens = refreshTokensFunction(this.context);
+        this.refreshSession = refreshSessionFunction(this.context);
         this.createSession = createSessionFunction(this.context);
         this.invalidateSession = invalidateSessionFunction(this.context);
         this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
@@ -115,7 +115,7 @@ export class Auth {
     public deleteUser: ReturnType<typeof deleteUserFunction>;
     public parseRequest: ReturnType<typeof parseRequestFunction>;
     public validateRequest: ReturnType<typeof validateRequestFunction>;
-    public refreshTokens: ReturnType<typeof refreshTokensFunction>;
+    public refreshSession: ReturnType<typeof refreshSessionFunction>;
     public invalidateRefreshToken: ReturnType<
         typeof invalidateRefreshTokenFunction
     >;

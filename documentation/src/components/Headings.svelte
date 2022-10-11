@@ -14,7 +14,7 @@
             <h3 class="font-medium">On this page</h3>
         </div>
         <div class="pt-4">
-            <ul class="list-none">
+            <ul class="list-none text-gray-500">
                 <li class="my-1">
                     <!-- svelte-ignore a11y-invalid-attribute -->
                     <a href="#"> Overview </a>
@@ -26,7 +26,7 @@
                         class:ml-6={heading.depth === 4}
                         class="my-1"
                     >
-                        <a href="#{hash}"> {heading.text}</a>
+                        <a href="#{hash}" class="hover:text-black"> {heading.text}</a>
                     </li>
                 {/each}
             </ul>

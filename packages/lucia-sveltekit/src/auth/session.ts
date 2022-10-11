@@ -88,3 +88,18 @@ export const deleteExpiredUserSessionsFunction = (context: Context) => {
     };
     return deleteExpiredUserSessions;
 };
+
+
+type RefreshSession = (refreshToken: string) => Promise<{
+    session: Session;
+    tokens: Tokens;
+}>;
+export const refreshSessionFunction = (context: Context) => {
+    const refreshSession: RefreshSession = async (refreshToken) => {
+        const userId = await context.auth.validateRefreshToken(refreshToken);
+        await context.adapter.deleteRefreshToken(refreshToken);
+        const session = await context.auth.createSession(userId);
+        return session;
+    };
+    return refreshSession;
+};

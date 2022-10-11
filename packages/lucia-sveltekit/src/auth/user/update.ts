@@ -3,14 +3,14 @@ import { getAccountFromDatabaseUser } from "../../utils/auth.js";
 import type { Context } from "../index.js";
 import { hashScrypt } from "../../utils/crypto.js";
 
-type UpdateUserIdentifierToken = (
+type UpdateUserProviderIdToken = (
     userId: string,
     provider: string,
     identifier: string
 ) => Promise<User>;
 
 export const updateUserProviderIdFunction = (context: Context) => {
-    const updateUserProviderId: UpdateUserIdentifierToken = async (
+    const updateUserProviderId: UpdateUserProviderIdToken = async (
         userId,
         provider,
         identifier
@@ -44,17 +44,19 @@ export const updateUserDataFunction = (context: Context) => {
 type UpdateUserPassword = (
     userId: string,
     password: string | null
-) => Promise<void>;
+) => Promise<User>;
 
 export const updateUserPasswordFunction = (context: Context) => {
     const updateUserPassword: UpdateUserPassword = async (userId, password) => {
         const hashedPassword = password ? await hashScrypt(password) : null;
-        await Promise.all([
+        const [databaseData] = await Promise.all([
             context.adapter.updateUser(userId, {
                 hashedPassword,
             }),
             context.adapter.deleteRefreshTokensByUserId(userId),
         ]);
+        const account = getAccountFromDatabaseUser(databaseData)
+        return account.user
     };
     return updateUserPassword;
 };

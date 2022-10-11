@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Validate server requests"
 ---
 
-To validate a request, you'll have to read the access token and validate it. This page is for: Actions, standalone endpoints, and server load functions (ie. for +page.server.ts and +server.ts files). For getting the current user in a load function or in the client, refer to [Get current user in the client](/learn/basics/get-current-user-in-the-client).
+This page is for: Actions, standalone endpoints, and server load functions (ie. for +page.server.ts and +server.ts files). To get the current user in a normal load function refer to [Get current user in load functions](/learn/basics/get-current-user-in-load-functions). To get the current user in the client, refer to [Get current user in the client](/learn/basics/get-current-user-in-the-client).
 
 ## Validate requests
 
@@ -35,7 +35,7 @@ const { accessToken, refreshToken } = await auth.parseRequest(request);
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const session = await auth.getSession(request);
+const session = await auth.getSession(accessToken);
 ```
 
 ### Get current user
@@ -43,7 +43,7 @@ const session = await auth.getSession(request);
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const user = await auth.getSessionUser(request);
+const user = await auth.getSessionUser(accessToken);
 ```
 
 ## Example

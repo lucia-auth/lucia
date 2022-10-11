@@ -12,7 +12,7 @@ import { auth } from "$lib/server/lucia.ts";
 await auth.authenticateUser(providerName, identifier, password);
 ```
 
-## Implementation
+## Example
 
 The following example uses `email` as the provider name and the provided email as the identifier.
 
@@ -20,6 +20,10 @@ The following example uses `email` as the provider name and the provided email a
 import { auth } from "$lib/server/lucia.ts";
 
 const authenticateUser = async (email: string, password: string) => {
-    await auth.authenticateUser("email", email, password);
-}
+    try {
+        await auth.authenticateUser("email", email, password);
+    } catch {
+        // error (invalid provider id or password, etc)
+    }
+};
 ```

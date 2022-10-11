@@ -1,5 +1,5 @@
 ---
-order: 9
+order: 11
 layout: "@layouts/DocumentLayout.astro"
-title: "Sign out users (client)"
+title: "Configure Lucia"
 ---

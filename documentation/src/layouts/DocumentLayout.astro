@@ -13,7 +13,7 @@ const { frontmatter, headings } = Astro.props;
 <BaseLayout title={frontmatter.title}>
     <div class="xl:mr-64 xl:pr-8">
         <section id="md" class="overflow-hidden">
-            <h1>{frontmatter.title}</h1>
+            <h1 class="mb-10 font-semibold text-5xl">{frontmatter.title}</h1>
             <slot />
         </section>
         <div class="mt-8">
@@ -28,14 +28,14 @@ const { frontmatter, headings } = Astro.props;
     <Headings headings={headings} />
 </BaseLayout>
 <style>
-    :global(#md h1) {
-        @apply font-semibold text-5xl mb-8;
-    }
     :global(#md h2) {
         @apply font-semibold text-3xl mb-4 mt-16;
     }
     :global(#md h3) {
         @apply font-semibold text-2xl mb-4 mt-8;
+    }
+    :global(#md h4) {
+        @apply font-semibold text-xl mb-3 mt-6;
     }
     :global(#md p) {
         @apply mb-6;
@@ -59,14 +59,17 @@ const { frontmatter, headings } = Astro.props;
     :global(#md table) {
         @apply w-full text-left table-auto border-collapse mb-6;
     }
+    :global(#md .table-wrapper) {
+        @apply overflow-auto whitespace-nowrap w-full;
+    }
     :global(#md table thead tr) {
-        @apply border-b;
+        @apply border-b w-full;
     }
     :global(#md table tr:not(:last-of-type)) {
         @apply border-b;
     }
     :global(#md table td, th) {
-        @apply py-1.5;
+        @apply py-1.5 px-1;
     }
     :global(#md table th) {
         @apply font-medium text-sm;

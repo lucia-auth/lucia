@@ -26,7 +26,7 @@ export const handleServerSessionFunction = (context: Context) => {
         try {
             if (!refreshToken)
                 throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-            const { session, tokens } = await context.auth.refreshTokens(
+            const { session, tokens } = await context.auth.refreshSession(
                 refreshToken
             );
             const [accessToken, accessTokenCookie] = tokens.accessToken;
