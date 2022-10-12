@@ -1,4 +1,4 @@
-import { LuciaError } from "../utils/error.js";
+import { LuciaError } from "../error.js";
 import type { Context } from "./index.js";
 import cookie from "cookie";
 import { Session } from "../types.js";
@@ -16,7 +16,7 @@ export const parseRequestFunction = (context: Context) => {
         const accessToken = cookies.access_token || "";
         const checkForCsrf =
             clonedReq.method !== "GET" && clonedReq.method !== "HEAD";
-        if (checkForCsrf && context.addCsrfProtection) {
+        if (checkForCsrf && context.csrfProtection) {
             const origin = clonedReq.headers.get("Origin");
             const url = new URL(clonedReq.url);
             if (!origin) throw new LuciaError("AUTH_INVALID_REQUEST");

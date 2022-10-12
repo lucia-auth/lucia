@@ -75,7 +75,7 @@ export class Auth {
             generateCustomUserId:
                 configs.generateCustomUserId || (async () => null),
             env: configs.env,
-            addCsrfProtection: configs.addCsrfProtection || true,
+            csrfProtection: configs.csrfProtection || true,
         };
         this.getUser = getUserFunction(this.context);
         this.getUserByProviderId = getUserByProviderIdFunction(this.context);
@@ -145,7 +145,7 @@ interface Configurations {
     secret: string;
     env: Env;
     generateCustomUserId?: () => Promise<string | null>;
-    addCsrfProtection?: boolean;
+    csrfProtection?: boolean;
 }
 
 export type Context = {

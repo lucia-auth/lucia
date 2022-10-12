@@ -1,11 +1,10 @@
 import { get } from "svelte/store";
-import { getClientUserStore, getSSRUser } from "./session.js";
-import { LuciaError } from "./utils/error.js";
+import { getClientUser, getSSRUser } from "./user.js";
+import { LuciaError } from "./error.js";
 
 export const signOut = async (redirect?: string): Promise<void> => {
-    const sessionStore = getClientUserStore();
-    const session = get(sessionStore);
-    if (!session) throw new LuciaError("AUTH_NOT_AUTHENTICATED");
+    const user = getClientUser();
+    if (!user) throw new LuciaError("AUTH_NOT_AUTHENTICATED");
     const response = await fetch("/api/auth/logout", {
         method: "POST"
     });
@@ -55,5 +54,5 @@ export const getUser = () => {
         return getSSRUser();
     }
     // browser
-    return getClientUserStore();
+    return getClientUser();
 };

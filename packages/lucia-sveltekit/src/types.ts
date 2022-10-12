@@ -1,6 +1,6 @@
 import { Writable } from "svelte/store";
 import type { LoadEvent, ServerLoadEvent } from "./kit.js";
-import type { LuciaError } from "./utils/error.js";
+import type { LuciaError } from "./error.js";
 
 type getSession = () => Promise<Session>;
 export type AuthServerLoadEvent = ServerLoadEvent & { getSession: getSession };
