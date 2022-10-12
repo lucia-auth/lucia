@@ -1,5 +1,5 @@
 import { Session } from "../../types.js";
-import { LuciaError } from "../../utils/error.js";
+import { LuciaError } from "../../error.js";
 import { Context } from "../index.js";
 
 type ValidateAccessToken = (accessToken: string) => Promise<Session>;

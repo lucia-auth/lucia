@@ -8,7 +8,7 @@ Install Lucia using your package manager of your choice.
 
 ```bash
 npm i lucia-sveltekit
-pnpm i lucia-sveltekit
+pnpm add lucia-sveltekit
 yarn add lucia-sveltekit
 ```
 

@@ -1,4 +1,4 @@
-import { LuciaError } from "../../utils/error.js";
+import { LuciaError } from "../../error.js";
 import type { RequestEvent } from "../../kit.js";
 import { ErrorResponse } from "./index.js";
 import type { Context } from "../index.js";
@@ -10,7 +10,7 @@ export const handleRefreshRequest = async (
     try {
         const { refreshToken } = await context.auth.parseRequest(event.request);
         if (!refreshToken) throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-        const { session, tokens } = await context.auth.refreshTokens(
+        const { session, tokens } = await context.auth.refreshSession(
             refreshToken
         );
         await context.auth.deleteExpiredUserSessions(session.userId);

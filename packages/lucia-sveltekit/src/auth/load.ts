@@ -2,7 +2,8 @@ import { setCookie } from "../utils/cookie.js";
 import type { User } from "../types.js";
 import type { Context } from "./index.js";
 import type { ServerLoad, ServerLoadEvent } from "../kit.js";
-import { LuciaError } from "..tils/error.js";
+import { LuciaError } from "../error.js";
+
 type HandleServerSession = <LoadFn extends ServerLoad = () => Promise<{}>>(
     serverLoad?: LoadFn
 ) => (

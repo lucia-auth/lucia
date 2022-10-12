@@ -1,7 +1,7 @@
 import type { User } from "../../types.js";
 import { getAccountFromDatabaseUser } from "../../utils/auth.js";
 import { verifyScrypt } from "../../utils/crypto.js";
-import { LuciaError } from "../../utils/error.js";
+import { LuciaError } from "../../error.js";
 import type { Context } from "../index.js";
 
 type authenticateUser = (

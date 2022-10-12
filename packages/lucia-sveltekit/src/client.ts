@@ -1,4 +1,3 @@
-import { get } from "svelte/store";
 import { getClientUser, getSSRUser } from "./user.js";
 import { LuciaError } from "./error.js";
 
@@ -24,9 +23,7 @@ export const signOut = async (redirect?: string): Promise<void> => {
     if (result.message) throw new LuciaError(result.message);
 };
 
-export const refreshTokens = async (): Promise<{
-    expires: number
-}> => {
+export const refreshSession = async (): Promise<number> => {
     const response = await fetch("/api/auth/refresh", {
         method: "POST"
     });
@@ -43,9 +40,7 @@ export const refreshTokens = async (): Promise<{
     const result = await response.json() as {
         expires: number
     }
-    return {
-        expires: result.expires
-    };
+    return result.expires
 };
 
 export const getUser = () => {

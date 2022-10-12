@@ -2,7 +2,7 @@ import type { RequestEvent } from "../../kit.js";
 import { createBlankCookies } from "../../utils/cookie.js";
 import type { Context } from "../index.js";
 import { ErrorResponse } from "./index.js";
-import { LuciaError } from "../../utils/error.js";
+import { LuciaError } from "../../error.js";
 
 export const handleLogoutRequest = async (
     event: RequestEvent,

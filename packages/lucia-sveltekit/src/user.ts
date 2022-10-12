@@ -13,7 +13,7 @@ and lucia does that when running in the server.
 
 let clientUser: Readonly<User> | null;
 
-export const getClientUser = (): User | null => {
+export const getClientUser = (): Readonly<User> | null => {
     if (!clientUser) {
         setClientUser();
     }

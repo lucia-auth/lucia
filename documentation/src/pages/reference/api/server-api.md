@@ -4,7 +4,11 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Server API"
 ---
 
-These can be imported from `lucia-sveltekit`.
+These can be imported from `lucia-sveltekit`. Can only be used inside a server context (.server.ts).
+
+```ts
+import { generateRandomString } from "lucia-sveltekit";
+```
 
 ## `generateRandomString()`
 
@@ -569,6 +573,7 @@ const parseRequest: (request: Request) => Promise<Session>;
 Refer to [Error reference](/reference/types/errors).
 
 ```ts
-class LuciaError extends Error 
+class LuciaError extends Error
 ```
+
 ## `setCookie()`
