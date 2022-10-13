@@ -22,4 +22,5 @@ export default defineConfig({
         extendDefaultPlugins: true,
     },
     adapter: vercel(),
+    output: 'server',
 });
