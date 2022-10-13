@@ -13,7 +13,6 @@
   "dependencies": {
     "@astrojs/svelte": "^1.0.0",
     "@astrojs/tailwind": "^2.0.1",
-    "@astrojs/vercel": "^2.1.1",
     "astro": "^1.3.0",
     "rehype-wrap-all": "^1.1.0",
     "svelte": "^3.46.4",
