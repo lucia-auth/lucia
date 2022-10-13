@@ -8,7 +8,7 @@ import {
 
 export const getRequestHandler = (event: RequestEvent) => {
     const isRefreshPOSTRequest =
-        event.url.pathname === "/api/auth/refresh" &&
+        event.url.pathname === "/api/auth/refresh-session" &&
         event.request.method === "POST";
     if (isRefreshPOSTRequest) return handleRefreshRequest;
     const isLogoutPOSTRequest =

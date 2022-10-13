@@ -1,10 +1,4 @@
-import { Writable } from "svelte/store";
-import type { LoadEvent, ServerLoadEvent } from "./kit.js";
 import type { LuciaError } from "./error.js";
-
-type getSession = () => Promise<Session>;
-export type AuthServerLoadEvent = ServerLoadEvent & { getSession: getSession };
-export type AuthLoadEvent = LoadEvent & { getSession: getSession };
 
 export type User = Lucia.UserData & {
     userId: string;
@@ -29,7 +23,7 @@ export type Tokens = {
     cookies: string[];
 };
 
-export interface Session {
+export type Session = {
     userId: string;
     expires: number;
 }

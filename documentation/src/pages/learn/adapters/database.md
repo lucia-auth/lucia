@@ -21,11 +21,11 @@ The `user` table stores the users. The `[any]` column represents the any number 
 
 The `session` table stores the user's sessions (including the access token).
 
-| name         | type          | description                             | reference |
-| ------------ | ------------- | --------------------------------------- | --------- |
-| user_id      | string        |                                         | user.id   |
-| access_token | string        |                                         |           |
-| expires      | number (int8) | The expiration date of the access token |           |
+| name         | type          | description                                    | reference |
+| ------------ | ------------- | ---------------------------------------------- | --------- |
+| user_id      | string        |                                                | user.id   |
+| access_token | string        |                                                |           |
+| expires      | number (int8) | The expiration time (Unix) of the access token |           |
 
 ## `refresh_token`
 

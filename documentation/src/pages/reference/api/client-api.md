@@ -24,6 +24,15 @@ const getUser: () => User | null;
 | -------------- | --------------------------------------------- |
 | `User \| null` | Returns null if a current user does not exist |
 
+#### Example
+
+```ts
+import { getUser } from "lucia-sveltekit/client";
+
+const user = getUser();
+const userId = user?.userId;
+```
+
 ## refreshSession()
 
 Refreshes the current session.
@@ -47,6 +56,18 @@ const refreshSession: () => Promise<number>;
 | DATABASE_FETCH_FAILED      | Failed to fetch data from the database |
 | UNKNOWN_ERROR              |                                        |
 
+#### Example
+
+```ts
+import { refreshSession } from "lucia-sveltekit/client";
+
+try {
+    await refreshSession();
+} catch {
+    // error
+}
+```
+
 ## signOut()
 
 Signs the user out the current session. Refresh the page for the current state to update.
@@ -67,3 +88,11 @@ const signOut: (redirect?: string) => Promise<void>;
 | ------------------------- | -------------------- |
 | AUTH_INVALID_ACCESS_TOKEN | Unauthorized request |
 | UNKNOWN_ERROR             |                      |
+
+#### Example
+
+```ts
+import { signOut } from "lucia-sveltekit/client";
+
+await signOut("/login");
+```

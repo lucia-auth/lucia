@@ -24,7 +24,7 @@ export const signOut = async (redirect?: string): Promise<void> => {
 };
 
 export const refreshSession = async (): Promise<number> => {
-    const response = await fetch("/api/auth/refresh", {
+    const response = await fetch("/api/auth/refresh-session", {
         method: "POST"
     });
     if (!response.ok) {

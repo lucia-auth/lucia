@@ -1,5 +1,5 @@
 ---
-order: 1
+order: 2
 layout: "@layouts/DocumentLayout.astro"
 title: "Getting started"
 ---
@@ -26,7 +26,7 @@ import lucia from "lucia-sveltekit";
 import prisma from "@lucia-sveltekit/adapter-prisma";
 ```
 
-Initialize it by calling `lucia()` and export it as `auth`. The `secret` should be something long and random, and `env` tells Lucia what environment the server is running in. Checking if `dev` is true is usually sufficient.
+Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database, and `env` tells Lucia what environment the server is running in. Checking if `dev` is true is usually sufficient.
 
 ```ts
 // lib/server/lucia.ts
@@ -36,7 +36,6 @@ import { dev } from "$app/environment";
 
 export const auth = lucia({
     adapter: prisma(),
-    secret: "aWmJoT0gOdjh2-Zc2Zv3BTErb29qQNWEunlj",
     env: dev ? "DEV" : "PROD",
 });
 ```

@@ -35,15 +35,6 @@ export const lucia = (configs: Configurations) => {
 };
 
 const validateConfigurations = (configs: Configurations) => {
-    const isSecretUndefined = !configs.secret;
-    if (isSecretUndefined) {
-        console.log(
-            `${clc.red.bold("[LUCIA_ERROR]")} ${clc.red(
-                `Secret key is not defined in configuration ("config.secret").`
-            )}`
-        );
-        process.exit(0);
-    }
     const isAdapterIdentified = !configs.adapter;
     if (isAdapterIdentified) {
         console.log(
@@ -52,15 +43,6 @@ const validateConfigurations = (configs: Configurations) => {
             )}`
         );
         process.exit(1);
-    }
-    const isDevAndUnsafeSecret =
-        configs.secret.length < 32 && configs.env === "DEV";
-    if (isDevAndUnsafeSecret) {
-        console.log(
-            `${clc.yellow.bold("[LUCIA_WARNING]")} ${clc.yellow(
-                "Secret key should be longer than 32 chars."
-            )}`
-        );
     }
 };
 
@@ -71,7 +53,6 @@ export class Auth {
         this.context = {
             auth: this,
             adapter: configs.adapter,
-            secret: configs.secret,
             generateCustomUserId:
                 configs.generateCustomUserId || (async () => null),
             env: configs.env,
@@ -142,7 +123,6 @@ export class Auth {
 
 interface Configurations {
     adapter: Adapter;
-    secret: string;
     env: Env;
     generateCustomUserId?: () => Promise<string | null>;
     csrfProtection?: boolean;

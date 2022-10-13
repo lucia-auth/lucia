@@ -32,16 +32,16 @@ const { frontmatter, headings } = Astro.props;
         @apply font-semibold text-3xl mb-4 mt-16;
     }
     :global(#md h3) {
-        @apply font-semibold text-2xl mb-4 mt-8;
+        @apply font-semibold text-2xl mb-4 mt-12;
     }
     :global(#md h4) {
-        @apply font-semibold text-xl mb-3 mt-2;
+        @apply font-medium text-xl mt-3;
     }
     :global(#md p) {
-        @apply mb-6;
+        @apply my-3;
     }
     :global(#md pre) {
-        @apply overflow-scroll rounded-md px-4 py-2 mb-4 text-sm;
+        @apply overflow-scroll rounded-md px-4 py-2 my-2 text-sm;
         scrollbar-width: none;
     }
     :global(#md pre::-webkit-scrollbar) {
@@ -57,7 +57,7 @@ const { frontmatter, headings } = Astro.props;
         @apply my-0.5;
     }
     :global(#md table) {
-        @apply w-full text-left table-auto border-collapse mb-6;
+        @apply w-full text-left table-auto border-collapse my-2;
     }
     :global(#md .table-wrapper) {
         @apply overflow-auto whitespace-nowrap w-full;

@@ -16,8 +16,6 @@ const { tokens } = await auth.createSession(user.userId);
 setCookie(cookie, ...tokens.cookies);
 ```
 
-Since understanding the concepts of the library is crucial to fully utilizing it (and of course making it secure), we recommend reading the section below before diving in.
-
 ## Understanding Lucia
 
-Once a user signs in, an access token and a refresh token is issued. The access token can be used to identify the user and is valid for the duration of the session (8 hours). Once the access token expires, the refresh token can be exchange for a new access token, thus creating a new session. Both of these tokens are stored as http-only cookies and can only be read from the server. Lucia will only considered cookies valid if the request is coming from a trusted domain.
+Once a user signs in, an access token and a refresh token is issued. The access token can be used to identify the user and is valid for the duration of the session (8 hours). Once the access token expires, the one-time refresh token can be used to create a new session, thus creating a new access and refresh token. Both of these tokens are stored as http-only cookies and can only be read from the server. Lucia will only considered cookies valid if the request is coming from a trusted domain.

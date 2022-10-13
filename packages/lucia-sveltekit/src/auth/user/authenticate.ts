@@ -7,7 +7,7 @@ import type { Context } from "../index.js";
 type authenticateUser = (
     authId: string,
     identifier: string,
-    password?: string
+    password: string
 ) => Promise<User>;
 
 export const authenticateUserFunction = (context: Context) => {
