@@ -4,7 +4,9 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Authenticate users"
 ---
 
-Users with passwords can be authenticated using `authenticateUser()`. This method will only work if the user has a password. The provider name and an identifier declared during creation is necessary, both of which are explained in [Create users](/learn/basics/create-users). An error will be thrown if the password is incorrect.
+Users with passwords can be authenticated using `authenticateUser()`. This method will only work if the user has a password (the password is not `null`). The provider name and an identifier declared during creation is necessary, both of which are explained in [Create users](/learn/basics/create-users). An error will be thrown if the password is incorrect.
+
+This method will not create a new session (tokens). To create a new session after authenticating a user, refer to [Create sessions](/learn/basics/authenticate-users).
 
 ```ts
 import { auth } from "$lib/server/lucia.ts";

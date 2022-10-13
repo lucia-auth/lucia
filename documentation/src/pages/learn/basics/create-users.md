@@ -4,9 +4,9 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Create users"
 ---
 
-It's important to start off by noting that users and sessions, while connected, are different things. Creating a user does not automatically create a new session, and deleting a session does not delete a user.
+The `createUser` method can be used to create users, which requires a provider name and identifier. Lucia (or rather the database) will automatically generate a user id for your users on creation. However, you can generate your own user id using [`configurations.generateCustomUserId`]().
 
- The `createUser` method can be used to create users, which requires a provider name and identifier. Lucia (or rather the database) will automatically generate a user id for your users on creation. However, you can generate your own user id using [`configurations.generateCustomUserId`]().
+This method will not create a new session (tokens). To create a new session after creating a user, refer to [Create sessions](/learn/basics/authenticate-users).
 
 ```ts
 import { auth } from "$lib/server/lucia.ts";

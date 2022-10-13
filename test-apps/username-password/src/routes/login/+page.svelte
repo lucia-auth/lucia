@@ -20,9 +20,7 @@
 				if (result.type === 'redirect') {
 					window.location.href = result.location; // invalidateAll() + goto() will not work
 				}
-				if (result.type === 'invalid') {
-					applyAction(result);
-				}
+				applyAction(result);
 			};
 		}}
 	>

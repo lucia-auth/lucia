@@ -1,5 +1,5 @@
 ---
-order: 10
+order: 11
 layout: "@layouts/DocumentLayout.astro"
 title: "Refresh session in the client"
 ---

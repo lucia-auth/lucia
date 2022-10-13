@@ -41,7 +41,9 @@ await setCookie(cookie, ...cookieStrings);
 
 ## Update the current user on the client
 
-`createSession` creates a new session _on the server_, but the client cannot listen for server side events (including new cookies). So, the client will not automatically update the current user when a session, a user, or a cookie was modified. Both the hooks and the root layout server function must run as well for it update as well. To update the session in the client (ie. for `getUser()` to work), you must refresh the entire page. In short, refresh the page when you modify the session, the user, or cookies.
+`createSession` creates a new session _on the server_, but the client cannot listen for server side events (including new cookies). So, the client will not automatically update the current user when a session, a user, or a cookie was modified. Both the hooks and the root layout server function must run as well for it update as well. To update the session in the client (ie. for `getUser()` to work), you must refresh the entire page. This means you have to cause a server side navigation (using `window.location.href` for example) rather than `goto()` or `invalidate()`. In short, refresh the page when you modify the session, the user, or cookies.
+
+However, when using forms with SvelteKit's `use:enhance` form actions, the default behavior is to redirect using `goto()`. You must override this behavior if you're using forms for sign ins and account creation. Refer to [Using forms](/learn/basics/using-forms).
 
 ## Example
 
