@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Prisma"
 ---
 
-An adapter for Prisma ORM. Can be used with any relational database.
+An adapter for Prisma ORM. Can be used with: SQL, MySQL, PostgreSQL, and SQLite.
 
 ```ts
 const adapter: (client: PrismaClient) => Adapter;
@@ -41,7 +41,7 @@ const auth = lucia({
 
 ### `user`
 
-You may add additional columns to store custom user data. Refer to [Store additional user data](/learn/basics/store-additional-user-data).
+You may add additional columns to store custom user data. Refer to [Store additional user data](/learn/basics/store-additional-user-data). `id` may be `String` if you generate your own user id.
 
 ```prisma
 model User {

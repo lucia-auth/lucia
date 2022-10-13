@@ -14,7 +14,7 @@ yarn add lucia-sveltekit
 
 ## Set up the database
 
-Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Supabase](/learn/adapters/supabase), [Mongoose](/learn/adapters/mongoose) (MongoDB), and [CouchDB](/learn/adapters/couchdb). Please follow each adapter's instruction for this step.
+Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Supabase](/learn/adapters/supabase), and [Mongoose](/learn/adapters/mongoose) (MongoDB). Please follow each adapter's instruction for this step.
 
 ## Initialize Lucia
 
@@ -26,7 +26,7 @@ import lucia from "lucia-sveltekit";
 import prisma from "@lucia-sveltekit/adapter-prisma";
 ```
 
-Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database, and `env` tells Lucia what environment the server is running in. Checking if `dev` is true is usually sufficient.
+Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database adapters, and `env` tells Lucia what environment the server is running on. Checking if `dev` is true is usually sufficient.
 
 ```ts
 // lib/server/lucia.ts

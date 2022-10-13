@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Supabase"
 ---
 
-An adapter for Supabase (v1) PostgreSQL database.
+An adapter for Supabase (v1) PostgreSQL database. **Make sure to enable row level security for all tables!**
 
 ```ts
 const adapter: (url: string, secret: string) => Adapter;
@@ -16,7 +16,6 @@ const adapter: (url: string, secret: string) => Adapter;
 | ------ | -------- | ----------------------------------- |
 | url    | `string` | Supabase project url                |
 | secret | `string` | `service_role` secret; NOT anon key |
-
 
 ## Installation
 
@@ -42,7 +41,7 @@ const auth = lucia({
 
 ### `user`
 
-You may add additional columns to store custom user data. Refer to [Store additional user data](/learn/basics/store-additional-user-data).
+You may add additional columns to store custom user data. Refer to [Store additional user data](/learn/basics/store-additional-user-data). `id` may be `varchar` if you generate your own user id.
 
 | name            | type      | foreign constraint | default              | nullable | unique | identity |
 | --------------- | --------- | ------------------ | -------------------- | -------- | ------ | -------- |
