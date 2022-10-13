@@ -28,8 +28,8 @@
 <h1>Profile</h1>
 <p>This page is protected and can only be accessed by authenticated users.</p>
 <div>
-	<p>User id: {$user?.userId}</p>
-	<p>Username: {$user?.username}</p>
+	<p>User id: {user?.userId}</p>
+	<p>Username: {user?.username}</p>
 	<p>Random number API: {number}</p>
 </div>
 
