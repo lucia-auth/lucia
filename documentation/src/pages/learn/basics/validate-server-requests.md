@@ -8,7 +8,7 @@ This page is for: Actions, standalone endpoints, and server load functions (ie. 
 
 ## Validate requests
 
-The easiest way is to use the `validateRequest()` method. This returns the current session (not the user) from the access token.
+The easiest way is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This returns the current session (not the user) from the access token.
 
 ```ts
 import { auth } from "$lib/server/lucia";
@@ -22,28 +22,44 @@ Alternatively, you can get the access token from the request and validate the to
 
 ### Get access token from request
 
-`parseRequest()` method will return both the access token and refresh token from the provided request. Note that this method does not check the validity of the tokens. The tokens' value will be an empty string if the cookie does not exist. This method will also check if the request is coming from a trusted domain (the domain as where the app is)
+[`parseRequest()`](/reference/api/server-api#parserequest) method will return both the access token and refresh token from the provided request. Note that this method does not check the validity of the tokens. The tokens' value will be an empty string if the cookie does not exist. This method will also check if the request is coming from a trusted domain (the domain as where the app is)
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const { accessToken, refreshToken } = await auth.parseRequest(request);
+try {
+    const { accessToken, refreshToken } = await auth.parseRequest(request);
+} catch {
+    // invalid request
+}
 ```
 
 ### Get current session
 
+Use [`validateAccessToken()`](/reference/api/server-api#validateaccesstoken) to get the session from the access token.
+
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const session = await auth.getSession(accessToken);
+try {
+    const session = await auth.validateAccessToken(accessToken);
+} catch {
+    // invalid access token
+}
 ```
 
 ### Get current user
 
+Use [`getSessionUser()`](/reference/api/server-api#getsessionuser) to get the user of the session from the access token.
+
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const user = await auth.getSessionUser(accessToken);
+try {
+    const user = await auth.getSessionUser(accessToken);
+} catch {
+    // invalid access token
+}
 ```
 
 ## Example

@@ -18,7 +18,7 @@ Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (S
 
 ## Initialize Lucia
 
-In `$lib/server/lucia.ts`, import `lucia` from the lucia module and an adapter (the adapters are provided as a different npm package).
+In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia) and an adapter (the adapters are provided as a different npm package).
 
 ```ts
 // lib/server/lucia.ts
@@ -26,7 +26,7 @@ import lucia from "lucia-sveltekit";
 import prisma from "@lucia-sveltekit/adapter-prisma";
 ```
 
-Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database adapters, and `env` tells Lucia what environment the server is running on. Checking if `dev` is true is usually sufficient.
+Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database adapters, and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. Checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient.
 
 ```ts
 // lib/server/lucia.ts
@@ -46,7 +46,7 @@ This module and the file that holds it **should NOT be imported from the client*
 
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with `handleHooks()` method. This will expose some endpoints (like for refreshing sessions) and will provide the client with the current user. 
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks) method. This will expose some endpoints (like for refreshing sessions) and will provide the client with the current user. 
 
 ```ts
 // hooks.server.ts
@@ -55,19 +55,19 @@ import { auth } from "$lib/server/lucia";
 export const handle = auth.handleHooks();
 ```
 
-If you have your own handle function, SvelteKit's `sequence` can be used to chain multiple handle functions. Make sure Lucia's handle function is the first one.
+If you have your own handle function, SvelteKit's [`sequence`](https://kit.svelte.dev/docs/modules#sveltejs-kit-hooks-sequence) can be used to chain multiple handle functions. Make sure Lucia's handle function is the first one.
 
 ```ts
 // hooks.server.ts
 import { auth } from "$lib/server/lucia";
-import { sequence } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
 
 export const handle = sequence(auth.handleHooks(), customHandle);
 ```
 
 ### Root layout
 
-In your route root layout, create and export a server load function. `handleServerSession()` method will read the token and validate them, allowing you to check for the user in load functions. This will also automatically refresh the access token if its expired.
+In your route root layout, create and export a server load function. [`handleServerSession()`](/reference/api/server-api#handleserversession) method will read the token and validate them, allowing you to check for the user in load functions. This will also automatically refresh the access token if its expired.
 
 ```ts
 // +layout.server.ts

@@ -12,17 +12,21 @@ Lucia provides few methods to update the user, one for each user attribute. Luci
 
 ### Provider id
 
-The provider id can be updated using the `updateUserProviderId()` method. Both the provider name and identifier must be provided.
+The provider id can be updated using the [`updateUserProviderId()`](/reference/api/server-api#updateuserproviderid) method. Both the provider name and identifier must be provided.
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const user = await auth.updateUserProviderId(userId, provider, identifier);
+try {
+    const user = await auth.updateUserProviderId(userId, provider, identifier);
+} catch {
+    // invalid input
+}
 ```
 
 ### Password
 
-The password can be updated using the `updateUserProviderId()` method. Lucia will handle the hashing.
+The password can be updated using the [`updateUserPassword()`](/reference/api/server-api#updateuserpassword) method. Lucia will handle the hashing.
 
 ```ts
 import { auth } from "$lib/server/lucia";
@@ -32,7 +36,9 @@ const user = await auth.updateUserPassword(userId, password);
 
 ### User data
 
-Additional user data stored in the database can be updated using the `updateUserData()` method. Only the user data attribute (column) that needs to updated has to be password. `undefined` values will be ignored, while `null` will not.
+Additional user data stored in the database can be updated using the [`updateUserData()`](/reference/api/server-api#updateuserdata) method. Only the user data attribute (column) that needs to updated has to be password. `undefined` values will be ignored, while `null` will not.
+
+Refer to [Store additional user data](/learn/basics/store-additional-user-data) for more information on storing additional user data.
 
 ```ts
 import { auth } from "$lib/server/lucia";
@@ -45,15 +51,19 @@ const user = await auth.updateUserData(userId, partialUserData);
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const user = await auth.updateUserData(userId, {
-    phoneNumber: "000-0000-0000",
-    profilePicture: null,
-});
+try {
+    const user = await auth.updateUserData(userId, {
+        phoneNumber: "000-0000-0000",
+        profilePicture: null,
+    });
+} catch {
+    // invalid input
+}
 ```
 
 ## Delete user
 
-Users can be deleted using the `deleteUser()` method. All sessions and refresh tokens of the target user will be deleted as well. This method will succeed regardless of the validity of the user id.
+Users can be deleted using the [`deleteUser()`](/reference/api/server-api#deleteuser) method. All sessions and refresh tokens of the target user will be deleted as well. This method will succeed regardless of the validity of the user id.
 
 ```ts
 import { auth } from "$lib/server/lucia";
