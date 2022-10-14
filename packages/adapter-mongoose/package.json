@@ -17,7 +17,7 @@
     "keywords": [
         "sveltekit",
         "lucia",
-        "mongo"
+        "mongodb"
     ],
     "repository": {
         "type": "git",
