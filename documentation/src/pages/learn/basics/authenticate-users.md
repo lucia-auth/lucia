@@ -8,7 +8,7 @@ Users with passwords can be authenticated using [`authenticateUser()`](/referenc
 
 While Lucia will tell you (via an error) if the provider id or the password was incorrect, **never expose such data to the client**. Make the error message vague as possible (eg. "Invalid credentials").
 
-This method will not create a new session (tokens). To create a new session after authenticating a user, refer to [Create sessions](/learn/basics/authenticate-users).
+This method will not create a new session (tokens). To create a new session after authenticating a user, refer to [Create sessions](/learn/basics/create-sessions).
 
 ```ts
 import { auth } from "$lib/server/lucia.ts";
