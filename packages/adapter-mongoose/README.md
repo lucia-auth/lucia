@@ -1,6 +1,6 @@
 # Mongoose (MongoDB) adapter for Lucia
 
-Adapter documentation: https://lucia-sveltekit.vercel.app/adapters/mongoose
+Adapter documentation: https://lucia-sveltekit.vercel.app/learn/adapters/mongoose
 
 Lucia documentation: https://lucia-sveltekit.vercel.app
 

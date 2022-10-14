@@ -1,6 +1,6 @@
 # Prisma adapter for Lucia
 
-Adapter documentation: https://lucia-sveltekit.vercel.app/adapters/prisma
+Adapter documentation: https://lucia-sveltekit.vercel.app/learn/adapters/prisma
 
 Lucia documentation: https://lucia-sveltekit.vercel.app
 

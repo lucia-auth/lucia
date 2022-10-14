@@ -29,7 +29,7 @@ Errors thrown from database clients should be directly logged in the console via
 
 ### Tests
 
-The testing package are documented at the end of [custom adapters](https://lucia-sveltekit.vercel.app/adapters/custom) . They check if they return the appropriate data and throw the appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must be passed.
+The testing package are documented at the end of [custom adapters](https://lucia-sveltekit.vercel.app/learn/adapters/custom) . They check if they return the appropriate data and throw the appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must be passed.
 
 ### Documentation
 
