@@ -78,9 +78,9 @@ const authenticateUser: (
 
 #### Returns
 
-| type   | description            |
-| ------ | ---------------------- |
-| `User` | The authenticated user |
+| type                                        | description            |
+| ------------------------------------------- | ---------------------- |
+| [`User`](/reference/types/lucia-types#user) | The authenticated user |
 
 #### Errors
 
@@ -108,7 +108,10 @@ try {
 Creates a new session of a user.
 
 ```ts
-const createSession: (userId: string) => Promise<Session>;
+const createSession: (userId: string) => Promise<{
+    session: Session;
+    tokens: Tokens;
+}>;
 ```
 
 #### Parameter
@@ -119,9 +122,10 @@ const createSession: (userId: string) => Promise<Session>;
 
 #### Returns
 
-| type      | description               |
-| --------- | ------------------------- |
-| `Session` | The newly created session |
+| name    | type                                            | description                           |
+| ------- | ----------------------------------------------- | ------------------------------------- |
+| session | [`Session`](/reference/types/lucia-types#session)                                       | The newly created session             |
+| tokens  | [`Tokens`](/reference/types/lucia-types#tokens) | The tokens and cookies of the session |
 
 #### Errors
 
@@ -167,9 +171,9 @@ const createUser: (
 
 #### Returns
 
-| type   | description            |
-| ------ | ---------------------- |
-| `User` | The newly created user |
+| type                                        | description            |
+| ------------------------------------------- | ---------------------- |
+| [`User`](/reference/types/lucia-types#user) | The newly created user |
 
 #### Errors
 
@@ -288,7 +292,7 @@ try {
 
 ### `getSessionUser()`
 
-Gets the user of an access token.
+Validates the access token, and gets the user of the session.
 
 ```ts
 const getSessionUser: (accessToken: userId) => Promise<User>;
@@ -302,9 +306,9 @@ const getSessionUser: (accessToken: userId) => Promise<User>;
 
 #### Returns
 
-| type   | description                                 |
-| ------ | ------------------------------------------- |
-| `User` | The user of the session of the access token |
+| type                                        | description                                 |
+| ------------------------------------------- | ------------------------------------------- |
+| [`User`](/reference/types/lucia-types#user) | The user of the session of the access token |
 
 #### Errors
 
@@ -341,9 +345,9 @@ const getUser: (userId: string) => Promise<User>;
 
 #### Returns
 
-| type   | description               |
-| ------ | ------------------------- |
-| `User` | The user with the user id |
+| type                                        | description               |
+| ------------------------------------------- | ------------------------- |
+| [`User`](/reference/types/lucia-types#user) | The user with the user id |
 
 #### Errors
 
@@ -384,9 +388,9 @@ const getUserByProviderId: (
 
 #### Returns
 
-| type   | description                   |
-| ------ | ----------------------------- |
-| `User` | The user with the provider id |
+| type                                        | description                   |
+| ------------------------------------------- | ----------------------------- |
+| [`User`](/reference/types/lucia-types#user) | The user with the provider id |
 
 #### Errors
 
@@ -583,7 +587,10 @@ const action: Action = async ({ request }) => {
 Checks the validity of the refresh token and refreshes the session.
 
 ```ts
-const refreshSession: (refreshToken: string) => Promise<Session>;
+const refreshSession: (refreshToken: string) => Promise<{
+    session: Session;
+    tokens: Tokens;
+}>;
 ```
 
 #### Parameter
@@ -591,6 +598,13 @@ const refreshSession: (refreshToken: string) => Promise<Session>;
 | name         | type     | description     |
 | ------------ | -------- | --------------- |
 | refreshToken | `string` | A refresh token |
+
+#### Returns
+
+| name    | type                                            | description                           |
+| ------- | ----------------------------------------------- | ------------------------------------- |
+| session | [`Session`](/reference/types/lucia-types#session)                                       | The newly created session             |
+| tokens  | [`Tokens`](/reference/types/lucia-types#tokens) | The tokens and cookies of the session |
 
 #### Errors
 
@@ -632,9 +646,9 @@ const updateUserData: (
 
 #### Returns
 
-| type   | description      |
-| ------ | ---------------- |
-| `User` | The updated user |
+| type                                        | description      |
+| ------------------------------------------- | ---------------- |
+| [`User`](/reference/types/lucia-types#user) | The updated user |
 
 #### Errors
 
@@ -678,9 +692,9 @@ const updateUserPassword: (
 
 #### Returns
 
-| type   | description      |
-| ------ | ---------------- |
-| `User` | The updated user |
+| type                                        | description      |
+| ------------------------------------------- | ---------------- |
+| [`User`](/reference/types/lucia-types#user) | The updated user |
 
 #### Errors
 
@@ -724,9 +738,9 @@ const updateUserProviderId: (
 
 #### Returns
 
-| type   | description      |
-| ------ | ---------------- |
-| `User` | The updated user |
+| type                                        | description      |
+| ------------------------------------------- | ---------------- |
+| [`User`](/reference/types/lucia-types#user) | The updated user |
 
 #### Errors
 
@@ -765,7 +779,7 @@ const validateAccessToken: (accessToken: string) => Promise<Session>;
 
 | type      | description                     |
 | --------- | ------------------------------- |
-| `Session` | The session of the access token |
+| [`Session`](/reference/types/lucia-types#session) | The session of the access token |
 
 #### Errors
 
@@ -827,7 +841,7 @@ await auth.validateRefreshToken(refreshToken);
 
 ### `validateRequest()`
 
-Runs `parseRequest()` and `validateAccessToken()`.
+Checks if the request is from a trusted domain, and if so, validates the access token. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateAccessToken()`](/reference/api/server-api#validateaccesstoken).
 
 ```ts
 const parseRequest: (request: Request) => Promise<Session>;

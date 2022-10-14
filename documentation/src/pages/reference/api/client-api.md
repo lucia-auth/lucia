@@ -20,9 +20,9 @@ const getUser: () => Readonly<User> | null;
 
 #### Returns
 
-| type           | description                                   |
-| -------------- | --------------------------------------------- |
-| `User \| null` | Returns null if a current user does not exist |
+| type                                                  | description                                   |
+| ----------------------------------------------------- | --------------------------------------------- |
+| `Readonly<`[`User`](/reference/types/lucia-types#user)`> \| null` | Returns null if a current user does not exist |
 
 #### Example
 
