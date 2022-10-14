@@ -1,21 +1,22 @@
 {
     "name": "@lucia-sveltekit/adapter-test",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "description": "Tests for adapters for Lucia",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "module": "dist/index.js",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "module": "index.js",
     "type": "module",
     "files": [
-        "dist/**/*"
+        "**/*"
     ],
     "scripts": {
-        "build": "tsc"
+        "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist"
     },
     "keywords": [
         "sveltekit",
         "lucia",
-        "supabase"
+        "supabase",
+        "adapter"
     ],
     "repository": {
         "type": "git",
@@ -25,11 +26,13 @@
     "author": "pilcrowonpaper",
     "license": "MIT",
     "exports": {
-        ".": "./dist/index.js"
+        ".": "./index.js"
     },
     "devDependencies": {
         "@types/cli-color": "^2.0.2",
+        "@types/lodash": "^4.14.186",
         "@types/node": "^18.6.2",
+        "lodash": "^4.17.21",
         "lucia-sveltekit": "workspace:*"
     },
     "dependencies": {

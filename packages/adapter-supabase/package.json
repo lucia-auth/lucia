@@ -1,22 +1,24 @@
 {
     "name": "@lucia-sveltekit/adapter-supabase",
-    "version": "0.3.3",
+    "version": "0.4.0",
     "description": "Supabase adapter for Lucia",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "module": "dist/index.js",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "module": "index.js",
     "type": "module",
     "files": [
-        "dist/**/*"
+        "**/*"
     ],
     "scripts": {
-        "build": "tsc",
-        "test": "npx ts-node --esm -T test/index.ts"
+        "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist",
+        "test-core": "npx ts-node --esm -T test/main.ts",
+        "test-userid": "npx ts-node --esm -T test/userid.ts"
     },
     "keywords": [
         "sveltekit",
         "lucia",
-        "supabase"
+        "supabase",
+        "adapter"
     ],
     "repository": {
         "type": "git",
@@ -26,10 +28,11 @@
     "author": "pilcrowonpaper",
     "license": "MIT",
     "exports": {
-        ".": "./dist/index.js"
+        ".": "./index.js"
     },
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",
+        "dotenv": "^16.0.3",
         "ts-node": "^10.9.1"
     },
     "dependencies": {

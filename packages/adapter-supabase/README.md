@@ -1,6 +1,6 @@
 # Supabase adapter for Lucia
 
-Adapter documentation: https://lucia-sveltekit.vercel.app/adapters/supabase
+Adapter documentation: https://lucia-sveltekit.vercel.app/learn/adapters/supabase
 
 Lucia documentation: https://lucia-sveltekit.vercel.app
 

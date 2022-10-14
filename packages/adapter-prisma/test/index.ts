@@ -1,23 +1,27 @@
-import { Database, testAdapter } from "@lucia-sveltekit/adapter-test";
+import { Database } from "@lucia-sveltekit/adapter-test";
 import { PrismaClient } from "@prisma/client";
 import prisma from "../src/index.js";
 
 const client = new PrismaClient();
+export const adapter = prisma(client);
 
-const transformRefreshTokenPrismaData = (refreshToken: Record<string, any>) => {
-    delete refreshToken.id;
-    return refreshToken;
-};
-
-const db: Database = {
+export const db: Database = {
     getUsers: async () => {
         return await client.user.findMany();
     },
     getRefreshTokens: async () => {
         const refreshTokens = await client.refreshToken.findMany();
-        return refreshTokens.map((refreshToken) =>
-            transformRefreshTokenPrismaData(refreshToken)
-        ) as any;
+        return refreshTokens;
+    },
+    getSessions: async () => {
+        const sessions = await client.session.findMany();
+        return sessions.map((val) => {
+            const { expires, ...other } = val;
+            return {
+                expires: Number(expires),
+                ...other,
+            };
+        });
     },
     insertUser: async (user) => {
         await client.user.create({
@@ -29,12 +33,18 @@ const db: Database = {
             data: refreshToken,
         });
     },
+    insertSession: async (session) => {
+        await client.session.create({
+            data: session,
+        });
+    },
     clearUsers: async () => {
         await client.user.deleteMany();
     },
     clearRefreshTokens: async () => {
         await client.refreshToken.deleteMany();
     },
+    clearSessions: async () => {
+        await client.session.deleteMany();
+    },
 };
-
-testAdapter(prisma(client), db);

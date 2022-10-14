@@ -1,79 +1,31 @@
-import type { LoadEvent, ServerLoadEvent } from "./kit.js";
-import type { LuciaError } from "./utils/error.js";
-import type {
-    FingerprintToken,
-    RefreshToken,
-    AccessToken,
-} from "./utils/token.js";
-
-type getSession = () => Promise<Session>;
-export type AuthServerLoadEvent = ServerLoadEvent & { getSession: getSession };
-export type AuthLoadEvent = LoadEvent & { getSession: getSession };
-
-export interface Adapter {
-    getUserByRefreshToken: (
-        refreshToken: string
-    ) => Promise<DatabaseUser | null>;
-    getUserByIdentifierToken: (
-        identifierToken: string
-    ) => Promise<DatabaseUser | null>;
-    getUserById: (identifierToken: string) => Promise<DatabaseUser | null>;
-    setUser: (
-        userId: string,
-        data: {
-            identifier_token: string;
-            hashed_password: string | null;
-            user_data: Record<string, any>;
-        }
-    ) => Promise<void>;
-    deleteUser: (userId: string) => Promise<void>;
-    setRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
-    deleteRefreshToken: (refreshToken: string) => Promise<void>;
-    deleteUserRefreshTokens: (userId: string) => Promise<void>;
-    updateUser: (
-        userId: string,
-        data: {
-            identifier_token?: string | null;
-            hashed_password?: string | null;
-            user_data?: Record<string, any>;
-        }
-    ) => Promise<DatabaseUser>;
-}
+import type { LuciaError } from "./error.js";
 
 export type User = Lucia.UserData & {
-    user_id: string;
+    userId: string;
+    providerId: string;
 };
 
-export interface TokenData {
-    fingerprint_hash: string;
-    iat: number;
-    exp: number;
-    role: "access_token" | "refresh_token";
-}
-
-export interface AccessTokenJwtV2 extends TokenData {
-    user: User;
-    ver: 2;
-    role: "access_token";
-}
-export type DatabaseUser = {
+export type UserSchema = {
     id: string;
-    hashed_password: string | null;
-    identifier_token: string;
+    hashedPassword: string | null;
+    providerId: string;
 } & Lucia.UserData;
 
-export type Session = {
-    user: User;
-    access_token: string;
-    refresh_token: string;
-} | null;
+export type SessionSchema = {
+    accessToken: string;
+    expires: number;
+    userId: string;
+};
 
-export interface ServerSession {
-    user: User;
-    access_token: AccessToken;
-    refresh_token: RefreshToken;
-    fingerprint_token: FingerprintToken;
+export type Tokens = {
+    accessToken: [string, string];
+    refreshToken: [string, string];
     cookies: string[];
+};
+
+export type Session = {
+    userId: string;
+    expires: number;
 }
 
 export type Env = "DEV" | "PROD";

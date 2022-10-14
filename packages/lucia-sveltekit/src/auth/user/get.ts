@@ -1,37 +1,51 @@
-import type { DatabaseUser, User } from "../../types.js";
-import { getAccountFromDatabaseData } from "../../utils/auth.js";
+import type { User } from "../../types.js";
+import { getAccountFromDatabaseUser } from "../../utils/auth.js";
+import { LuciaError } from "../../error.js";
 import type { Context } from "../index.js";
 
 type GetUser = (
-    authId: string,
+    provider: string,
     identifier: string
-) => Promise<User | null>;
+) => Promise<User>;
+
+export const getUserByProviderIdFunction = (context: Context) => {
+    const getUserByProviderId: GetUser = async (provider, identifier) => {
+        const providerId = `${provider}:${identifier}`;
+        const databaseUser = (await context.adapter.getUserByProviderId(
+            providerId
+        ))
+        if (!databaseUser) throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
+        const account = getAccountFromDatabaseUser(databaseUser);
+        return account.user;
+    };
+    return getUserByProviderId;
+};
+
+type GetUserById = (
+    userId: string
+) => Promise<User>;
 
 export const getUserFunction = (context: Context) => {
-    const getUser: GetUser = async (authId, identifier) => {
-        const identifierToken = `${authId}:${identifier}`;
-        const databaseData = (await context.adapter.getUserByIdentifierToken(
-            identifierToken
-        )) as DatabaseUser | null;
-        if (!databaseData) return null;
-        const account = getAccountFromDatabaseData(databaseData);
+    const getUser: GetUserById = async (userId: string) => {
+        const databaseUser = (await context.adapter.getUserById(
+            userId
+        ))
+        if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID")
+        const account = getAccountFromDatabaseUser(databaseUser);
         return account.user;
     };
     return getUser;
 };
 
-type GetUserById = (
-    userId: string
-) => Promise<User| null>;
 
-export const getUserByIdFunction = (context: Context) => {
-    const getUserById: GetUserById = async (userId: string) => {
-        const databaseData = (await context.adapter.getUserById(
-            userId
-        )) as DatabaseUser | null;
-        if (!databaseData) return null;
-        const account = getAccountFromDatabaseData(databaseData);
-        return account.user;
-    };
-    return getUserById;
-};
+type GetSessionUser = (accessToken: string) => Promise<User>
+
+export const getSessionUserFunction = (context: Context) => {
+    const getSessionUser: GetSessionUser = async (accessToken) => {
+        const databaseUser = await context.adapter.getUserByAccessToken(accessToken)
+        if (!databaseUser) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN")
+        const account = getAccountFromDatabaseUser(databaseUser)
+        return account.user
+    }
+    return getSessionUser
+}

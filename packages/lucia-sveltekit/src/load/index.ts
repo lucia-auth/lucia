@@ -1,1 +1,1 @@
-export { getSession } from "./client.js"
+export { getUser } from "./client.js"

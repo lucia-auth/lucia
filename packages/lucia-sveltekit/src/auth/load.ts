@@ -1,114 +1,47 @@
-import { deleteAllCookies, setCookie } from "../utils/cookie.js";
-import type { Session } from "../types.js";
-import {
-    FingerprintToken,
-    EncryptedRefreshToken,
-    AccessToken,
-} from "../utils/token.js";
+import { setCookie } from "../utils/cookie.js";
+import type { User } from "../types.js";
 import type { Context } from "./index.js";
-import {
-    createAccessToken,
-    createRefreshToken,
-    getAccountFromDatabaseData,
-} from "../utils/auth.js";
 import type { ServerLoad, ServerLoadEvent } from "../kit.js";
+import { LuciaError } from "../error.js";
 
 type HandleServerSession = <LoadFn extends ServerLoad = () => Promise<{}>>(
     serverLoad?: LoadFn
 ) => (
     event: ServerLoadEvent
-) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & { _lucia: Session }>;
+) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & { _lucia: User }>;
 
 export const handleServerSessionFunction = (context: Context) => {
     const handleServerSessionCore = async ({
         cookies,
-    }: ServerLoadEvent): Promise<{ _lucia: Session }> => {
-        const fingerprintToken = new FingerprintToken(
-            cookies.get("fingerprint_token") || "",
-            context
-        );
-        const encryptedRefreshToken = new EncryptedRefreshToken(
-            cookies.get("encrypt_refresh_token") || "",
-            context
-        );
+    }: ServerLoadEvent): Promise<{ _lucia: User | null }> => {
+        const accessToken = cookies.get("access_token");
+        const refreshToken = cookies.get("refresh_token");
+        if (!accessToken && !refreshToken) return { _lucia: null };
         try {
-            const accessToken = new AccessToken(
-                cookies.get("access_token") || "",
-                context
-            );
-            if (
-                !accessToken.value &&
-                !fingerprintToken.value &&
-                !encryptedRefreshToken.value
-            )
-                return { _lucia: null };
-            const refreshToken = encryptedRefreshToken.decrypt();
-            try {
-                const user = await accessToken.user(fingerprintToken.value); // throws an error is invalid
-                return {
-                    _lucia: {
-                        user: user,
-                        access_token: accessToken.value,
-                        refresh_token: refreshToken.value,
-                    },
-                };
-            } catch {}
-            // if access token is invalid
-            let userId: string;
-            try {
-                userId = await refreshToken.userId(fingerprintToken.value);
-            } catch {
-                // refresh token doesn't belong to the user
-                if (refreshToken.value && !fingerprintToken.value) {
-                    await context.adapter.deleteRefreshToken(
-                        refreshToken.value
-                    );
-                }
-                throw Error();
-            }
-            const databaseData = await context.adapter.getUserByRefreshToken(
-                refreshToken.value
-            );
-            if (!databaseData) {
-                /* refresh token belongs to the user
-                BUT is expired. Likely stolen so delete all refresh tokens belonging to the user
-                */
-                await context.adapter.deleteUserRefreshTokens(userId);
-                throw Error();
-            }
-            const newRefreshToken = await createRefreshToken(
-                userId,
-                fingerprintToken.value,
-                context
-            );
-            // delete old refresh token and set new one
-            await Promise.all([
-                context.adapter.deleteRefreshToken(refreshToken.value),
-                context.adapter.setRefreshToken(newRefreshToken.value, userId),
-            ]);
-            const newEncryptedRefreshToken = newRefreshToken.encrypt();
-            const account = getAccountFromDatabaseData(databaseData);
-            const newAccessToken = await createAccessToken(
-                account.user,
-                fingerprintToken.value,
-                context
-            );
-            const result = {
-                user: account.user,
-                access_token: newAccessToken.value,
-                refresh_token: newRefreshToken.value,
-            };
-            setCookie(
-                cookies,
-                newAccessToken.cookie(),
-                newEncryptedRefreshToken.cookie()
-            );
+            if (!accessToken) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
+            const user = await context.auth.getSessionUser(accessToken); // throws an error is invalid
             return {
-                _lucia: result,
+                _lucia: user,
             };
-        } catch {
-            // invalid token or network error
-            deleteAllCookies(cookies);
+        } catch {}
+        try {
+            if (!refreshToken)
+                throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
+            const { session, tokens } = await context.auth.refreshSession(
+                refreshToken
+            );
+            const [accessToken, accessTokenCookie] = tokens.accessToken;
+            const [_, refreshTokenCookie] = tokens.refreshToken;
+            const [user] = await Promise.all([
+                context.auth.getSessionUser(accessToken),
+                context.auth.deleteExpiredUserSessions(session.userId),
+            ]);
+            setCookie(cookies, accessTokenCookie, refreshTokenCookie);
+            return {
+                _lucia: user,
+            };
+        } catch (e) {
+            context.auth.deleteAllCookies(cookies);
             return {
                 _lucia: null,
             };
@@ -123,7 +56,7 @@ export const handleServerSessionFunction = (context: Context) => {
                 _lucia,
                 ...result,
             } as Exclude<Awaited<ReturnType<typeof loadFunction>>, void> & {
-                _lucia: Session;
+                _lucia: User;
             };
         };
     };

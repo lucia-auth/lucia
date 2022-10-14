@@ -1,15 +1,26 @@
 import mongoose from "mongoose";
-import { testAdapter, type Database } from "@lucia-sveltekit/adapter-test";
-import mongodb, { transformUserDoc } from "../src/index.js";
+import type { Database } from "@lucia-sveltekit/adapter-test";
+import mongodb from "../src/index.js";
 
-const url = "";
+import dotenv from "dotenv";
+import { resolve } from "path";
+
+dotenv.config({
+    path: `${resolve()}/.env`,
+});
+
+const url = process.env.MONGODB_URL;
+
+if (!url) throw new Error(".env is not set up");
 
 const User = mongoose.model(
     "user",
     new mongoose.Schema(
         {
-            _id: String,
-            identifier_token: {
+            _id: {
+                type: String,
+            },
+            provider_id: {
                 type: String,
                 unique: true,
                 required: true,
@@ -20,7 +31,7 @@ const User = mongoose.model(
                 type: String,
                 required: true,
             },
-            email: {
+            user_email: {
                 unique: true,
                 type: String,
                 required: true,
@@ -32,10 +43,38 @@ const User = mongoose.model(
 const RefreshToken = mongoose.model(
     "refresh_token",
     new mongoose.Schema({
-        refresh_token: String,
-        user_id: String,
+        refresh_token: {
+            unique: true,
+            required: true,
+            type: String,
+        },
+        user_id: {
+            required: true,
+            type: String,
+        },
     })
 );
+
+const Session = mongoose.model(
+    "session",
+    new mongoose.Schema({
+        access_token: {
+            type: String,
+            unique: true,
+            required: true,
+        },
+        user_id: {
+            type: String,
+            required: true,
+        },
+        expires: {
+            type: Number,
+            required: true,
+        },
+    })
+);
+
+export const adapter = mongodb(mongoose, url);
 
 const clientPromise = mongoose.connect(url);
 
@@ -48,24 +87,33 @@ const inputToMongooseDoc = (obj: Record<string, any>) => {
     };
 };
 
-const transformRefreshTokenDoc = (obj: Record<string, any>) => {
-    delete obj.__v;
-    delete obj._id;
-    return obj;
-};
-
-const db: Database = {
+export const db: Database = {
     getUsers: async () => {
         await clientPromise;
         const userDocs = await User.find().lean();
-        return userDocs.map((user) => transformUserDoc(user)) as any[];
+        return userDocs.map((doc) => {
+            const { _id: id, ...expectedValue } = doc;
+            return {
+                id,
+                ...expectedValue,
+            } as Required<{ id: string } & typeof expectedValue>;
+        });
     },
     getRefreshTokens: async () => {
         await clientPromise;
         const refreshTokenDocs = await RefreshToken.find().lean();
-        return refreshTokenDocs.map((refreshToken) =>
-            transformRefreshTokenDoc(refreshToken)
-        ) as any[];
+        return refreshTokenDocs.map((doc) => {
+            const { _id: id, ...expectedValue } = doc;
+            return expectedValue as Required<typeof expectedValue>;
+        });
+    },
+    getSessions: async () => {
+        await clientPromise;
+        const sessionDocs = await Session.find().lean();
+        return sessionDocs.map((doc) => {
+            const { _id: id, ...expectedValue } = doc;
+            return expectedValue as Required<typeof expectedValue>;
+        });
     },
     insertUser: async (user) => {
         const userDoc = new User(inputToMongooseDoc(user));
@@ -77,12 +125,17 @@ const db: Database = {
         );
         await refreshTokenDoc.save();
     },
+    insertSession: async (session) => {
+        const sessionDoc = new Session(inputToMongooseDoc(session));
+        await sessionDoc.save();
+    },
     clearUsers: async () => {
         await User.deleteMany().lean();
     },
     clearRefreshTokens: async () => {
         await RefreshToken.deleteMany().lean();
     },
+    clearSessions: async () => {
+        await Session.deleteMany().lean();
+    },
 };
-
-testAdapter(mongodb(mongoose, url), db);

@@ -1,0 +1,47 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout>
+    <div class="mt-12 sm:mt-0 pt-16 sm:pt-24 pb-20 sm:pb-28">
+        <h1 class="text-7xl md:text-8xl font-bold title">Lucia</h1>
+        <p class="text-xl my-4 font-medium">
+            A simple authentication library for SvelteKit
+        </p>
+        <p class="my-8">
+            Barebones by design, it makes managaing users and sessions simple.
+            It it easy to use and understand, yet, providing the flexibility
+            that many other libraries lack. It's the authentication solution
+            that works with you and your app, not the other way around. Get
+            started by reading the <a href="/learn/start-here/introduction" class="text-main hover:underline"
+                >introduction page.</a
+            >
+        </p>
+    </div>
+</MainLayout>
+<style>
+    .title {
+        background: linear-gradient(60deg, #654aff, #63a7ff);
+        background-size: 200% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradient 8s linear infinite;
+    }
+    @keyframes gradient {
+        0% {
+            background-position: 0% 0%;
+        }
+        25% {
+            background-position: 20% 100%;
+        }
+        50% {
+            background-position: 100% 0%;
+        }
+        75% {
+            background-position: 50% 80%;
+        }
+        100% {
+            background-position: 0% 0%;
+        }
+    }
+</style>
