@@ -29,6 +29,10 @@
     "exports": {
         ".": "./dist/index.js"
     },
+    "peerDependencies": {
+        "lucia-sveltekit": "workspace:*",
+        "@lucia-sveltekit/adapter-test": "workspace:*"
+    },
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",
         "dotenv": "^16.0.3"
