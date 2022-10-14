@@ -70,7 +70,7 @@ jobs:
                   npm i -g pnpm
                   cd packages/lucia-sveltekit && pnpm install --no-frozen-lockfile && pnpm build && cd $dir
                   pkg_string="${{ needs.check_pkgs.outputs.packages }}"
-                  build_cmd="pnpm install --no-frozen-lockfile && pnpm build && cd dist && pnpm publish --no-git-checks --access public && cd $dir"
+                  build_cmd="pnpm install --no-frozen-lockfile && pnpm build && cd dist && pnpm install && pnpm publish --no-git-checks --access public && cd $dir"
 
                   if [[ $pkg_string == *"lucia-sveltekit"* ]]; then
                     cd packages/lucia-sveltekit && cd dist && pnpm publish --no-git-checks --access public && cd $dir

@@ -4,8 +4,8 @@ import cookie from "cookie";
 import { Session } from "../types.js";
 
 type ParseRequest = (request: Request) => Promise<{
-    accessToken: string | null;
-    refreshToken: string | null;
+    accessToken: string;
+    refreshToken: string;
 }>;
 
 export const parseRequestFunction = (context: Context) => {
