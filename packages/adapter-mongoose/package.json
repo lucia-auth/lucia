@@ -31,8 +31,7 @@
     },
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",
-        "dotenv": "^16.0.3",
-        "lucia-sveltekit": "workspace:*"
+        "dotenv": "^16.0.3"
     },
     "dependencies": {
         "lucia-sveltekit": "workspace:*",
