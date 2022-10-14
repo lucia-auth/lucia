@@ -8,7 +8,7 @@ This page is for: Actions, standalone endpoints, and server load functions (ie. 
 
 ## Validate requests
 
-The easiest way is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This returns the current session (not the user) from the access token.
+The easiest way to validate requests is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This returns the current session (not the user) from the access token.
 
 ```ts
 import { auth } from "$lib/server/lucia";
