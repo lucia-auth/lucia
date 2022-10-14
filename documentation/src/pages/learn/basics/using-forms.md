@@ -16,6 +16,7 @@ When using forms for sign in and account creation, the page has to be refreshed 
 		return async ({ result }) => {
 			if (result.type === 'redirect') {
 				window.location.href = result.location;
+				return
 			}
 			applyAction(result);
 		};

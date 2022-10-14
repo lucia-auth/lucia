@@ -19,6 +19,7 @@
 			return async ({ result }) => {
 				if (result.type === 'redirect') {
 					window.location.href = result.location; // invalidateAll() + goto() will not work
+					return;
 				}
 				applyAction(result);
 			};
