@@ -14,7 +14,7 @@ yarn add @lucia-sveltekit/adapter-mongoose
 
 ## Testing
 
-Add a MongoDB url to `url`.
+Add MongoDB url to `url`.
 
 ```
 npm run test
