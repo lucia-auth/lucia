@@ -2,12 +2,12 @@
     "name": "@lucia-sveltekit/adapter-prisma",
     "version": "0.4.1",
     "description": "Prisma adapter for Lucia",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "module": "dist/index.js",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "module": "index.js",
     "type": "module",
     "files": [
-        "dist/**/*"
+        "**/*"
     ],
     "scripts": {
         "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
