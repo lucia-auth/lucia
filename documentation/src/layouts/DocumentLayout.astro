@@ -8,6 +8,10 @@ type Props = MarkdownLayoutProps<{
     order: number;
 }>;
 const { frontmatter, headings } = Astro.props;
+
+//FIXME: problem: on ASTRO DEV url.pathname not having trailing slash, on ASTRO PREVIEW it has and breaking link.
+//INFO: temporary hotfix
+const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.slice(0, -1) : Astro.url.pathname
 ---
 
 <BaseLayout title={frontmatter.title}>
@@ -18,7 +22,7 @@ const { frontmatter, headings } = Astro.props;
         </section>
         <div class="mt-8">
             <a
-                href={`https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/documentation/src/pages${Astro.url.pathname}.md`}
+                href={`https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/documentation/src/pages${contributePageUrl}.md`}
                 class="text-main hover:underline cursor-pointer;"
                 >Contribute to this page</a
             >
