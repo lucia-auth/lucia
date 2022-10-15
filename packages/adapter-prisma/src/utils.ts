@@ -1,40 +1,36 @@
-import type { UserSchema } from "lucia-sveltekit/types";
-import { convertSnakeCaseKeysToCamelCase } from "lucia-sveltekit/adapter";
+import type { RefreshTokenSchema, SessionSchema, UserSchema } from "lucia-sveltekit/types";
 import { RefreshToken, Session, User } from "@prisma/client";
 
 export const convertUserRow = (row: User): UserSchema => {
     const {
         id,
-        hashed_password: hashedPassword,
-        provider_id: providerId,
+        hashed_password,
+        provider_id,
         ...userData
     } = row;
     return {
         id,
-        hashedPassword,
-        providerId,
-        ...convertSnakeCaseKeysToCamelCase(userData),
+        hashed_password,
+        provider_id,
+        ...userData,
     };
 };
 
-export const convertSessionRow = (row: Session) => {
-    const { id: _, access_token: accessToken, user_id: userId, expires } = row;
+export const convertSessionRow = (row: Session): SessionSchema => {
+    const { id: _, access_token, user_id, expires } = row;
     return {
-        accessToken,
-        userId,
+        access_token,
+        user_id,
         expires: Number(expires),
     };
 };
 
 export const convertRefreshTokenRow = (
     row: RefreshToken
-): {
-    refreshToken: string;
-    userId: string;
-} => {
-    const { id: _, user_id: userId, refresh_token: refreshToken } = row;
+): RefreshTokenSchema => {
+    const { id: _, user_id, refresh_token } = row;
     return {
-        userId,
-        refreshToken,
+        user_id,
+        refresh_token,
     };
 };

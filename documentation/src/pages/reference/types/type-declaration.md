@@ -12,7 +12,7 @@ declare namespace Lucia {
 
 ### `UserData`
 
-Extends `{}`. The additional user data stored in the `user` table. The keys should be a `camelCase` of the column name.
+Extends `{}`. The additional user data stored in the `user` table. The keys should be the name of the columns.
 
 ## Declaration
 

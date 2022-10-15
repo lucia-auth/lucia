@@ -46,7 +46,7 @@ export const getUpdateData = (data: {
     const rawData: Record<string, any> = {
         provider_id: data.providerId,
         hashed_password: data.hashedPassword,
-        ...convertCamelCaseKeysToSnakeCase(data.userData || {}),
+        ...(data.userData || {}),
     };
     const result: Record<string, any> = {};
     for (const key in rawData) {
@@ -54,32 +54,4 @@ export const getUpdateData = (data: {
         result[key] = rawData[key];
     }
     return result;
-};
-
-export const convertSnakeCaseKeysToCamelCase = (obj: Record<string, any>) => {
-    return Object.fromEntries(
-        Object.entries(obj).map(([key, values]) => {
-            return [
-                key.replace(/([-_][a-z])/g, (group: string) =>
-                    group.toUpperCase().replace("-", "").replace("_", "")
-                ),
-                values,
-            ];
-        })
-    );
-};
-
-export const convertCamelCaseKeysToSnakeCase = (obj: Record<string, any>) => {
-    return Object.fromEntries(
-        Object.entries(obj).map(([key, value]) => {
-            return [
-                key
-                    .replace(/([A-Z])/g, " $1")
-                    .split(" ")
-                    .join("_")
-                    .toLowerCase(),
-                value,
-            ];
-        })
-    );
 };

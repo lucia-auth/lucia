@@ -19,7 +19,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 hashedPassword: user.hashedPassword,
                 userData: {
                     username: user.username,
-                    email: user.user_email,
+                    email: user.userEmail,
                 },
             });
             user.update({
@@ -28,9 +28,9 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             const users = await db.getUsers();
             validate.includesSomeItem(
                 users,
-                user.validateDbSchema,
+                user.validateSchema,
                 "Target does not exist in Users DB",
-                user.getDbSchema()
+                user.getSchema()
             );
             await clearAll();
         }

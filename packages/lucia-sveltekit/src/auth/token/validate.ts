@@ -13,7 +13,7 @@ export const validateAccessTokenFunction = (context: Context) => {
         const currentTime = new Date().getTime();
         if (currentTime > databaseSession.expires)
             throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-        const { userId, expires } = databaseSession;
+        const { user_id: userId, expires } = databaseSession;
         return {
             userId,
             expires,
@@ -34,7 +34,7 @@ export const validateRefreshTokenFunction = (context: Context) => {
             refreshToken
         );
         if (!userId) throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-        return userId
+        return userId;
     };
     return validateRefreshToken;
 };

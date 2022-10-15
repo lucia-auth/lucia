@@ -628,7 +628,7 @@ try {
 
 ### `updateUserData()`
 
-Updates one of the custom fields in the `user` table. The keys of `userData` should be the `camelCase` version of the `snake_case` column in the `user` table, and the values of it can be `null` but not `undefined`.
+Updates one of the custom fields in the `user` table. The keys of `userData` should be one of the additional columns `user` table, and the values of it can be `null` but not `undefined`.
 
 ```ts
 const updateUserData: (

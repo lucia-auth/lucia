@@ -3,8 +3,8 @@ import { UserSchema, User } from "../types.js";
 export const getAccountFromDatabaseUser = (databaseData: UserSchema) => {
     const {
         id: userId,
-        hashedPassword,
-        providerId,
+        hashed_password: hashedPassword,
+        provider_id: providerId,
         ...userData
     } = databaseData;
     const user = {
