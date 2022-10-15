@@ -11,59 +11,39 @@ export class User {
     public providerId: string;
     public hashedPassword: string | null;
     public username: string;
-    public user_email: string;
+    public userEmail: string;
     constructor(nullPassword = false) {
         this.id = generateRandomString(4);
-        this.user_email = `user${this.id}@example.com`;
+        this.userEmail = `user${this.id}@example.com`;
         this.hashedPassword = nullPassword ? null : "HASHED";
         this.providerId = `test:user${this.id}@example.com`;
         this.username = `user${this.id}`;
     }
-    public getDbSchema = (): UserRow => {
+    public getSchema = (): UserRow => {
         return {
             id: this.id,
             provider_id: this.providerId,
             hashed_password: this.hashedPassword,
             username: this.username,
-            user_email: this.user_email,
+            user_email: this.userEmail,
         } as const;
     };
-    public getSchema = (): UserSchema => {
-        return {
-            id: this.id,
-            userEmail: this.user_email,
-            hashedPassword: this.hashedPassword,
-            providerId: this.providerId,
-            username: this.username
-        }
-    }
-    public validateDbSchema = (row: UserRow) => {
+    public validateSchema = (row: UserRow) => {
         if (
             row.id === this.id &&
             row.provider_id === this.providerId &&
             row.hashed_password === this.hashedPassword &&
             row.username === this.username &&
-            row.user_email === this.user_email
-        )
-            return true;
-        return false;
-    };
-    public validateSchema = (row: UserSchema) => {
-        if (
-            row.id === this.id &&
-            row.providerId === this.providerId &&
-            row.hashedPassword === this.hashedPassword &&
-            row.username === this.username &&
-            row.userEmail === this.user_email
+            row.user_email === this.userEmail
         )
             return true;
         return false;
     };
     public update = (fields: Partial<UserSchema>) => {
-        if (fields.userEmail !== undefined) this.user_email = fields.userEmail
-        if (fields.hashedPassword !== undefined) this.hashedPassword = fields.hashedPassword
+        if (fields.user_email !== undefined) this.userEmail = fields.user_email
+        if (fields.hashed_password !== undefined) this.hashedPassword = fields.hashed_password
         if (fields.id !== undefined) this.id = fields.id
-        if (fields.providerId !== undefined) this.providerId = fields.providerId
+        if (fields.provider_id !== undefined) this.providerId = fields.provider_id
         if (fields.username !== undefined) this.username = fields.username 
     }
     public createRefreshToken = () => {
@@ -71,19 +51,13 @@ export class User {
         class RefreshToken {
             public userId = userId;
             public refreshToken = `rt_${generateRandomString(20)}`;
-            public getDbSchema = (): RefreshTokenRow => {
-                return {
-                    user_id: this.userId,
-                    refresh_token: this.refreshToken,
-                } as const;
-            };
             public getSchema = () => {
                 return {
-                    refreshToken: this.refreshToken,
-                    userId: this.userId
+                    refresh_token: this.refreshToken,
+                    user_id: this.userId
                 } as const
             }
-            public validateDbSchema = (row: RefreshTokenRow) => {
+            public validateSchema = (row: RefreshTokenRow) => {
                 if (
                     row.user_id === this.userId &&
                     row.refresh_token === this.refreshToken
@@ -100,33 +74,17 @@ export class User {
             public userId = userId;
             public accessToken = `at_${generateRandomString(20)}`;
             public expires = new Date().getTime() + 1000 * 60 * 60 * 8;
-            public getDbSchema = (): SessionRow => {
+            public getSchema = (): SessionSchema => {
                 return {
                     user_id: this.userId,
                     access_token: this.accessToken,
-                    expires: this.expires,
-                } as const;
-            };
-            public getSchema = (): SessionSchema => {
-                return {
-                    userId: this.userId,
-                    accessToken: this.accessToken,
                     expires: this.expires
                 }
             }
-            public validateDbSchema = (row: SessionRow) => {
+            public validateSchema = (row: SessionSchema) => {
                 if (
                     row.user_id === this.userId &&
                     row.access_token === this.accessToken &&
-                    row.expires === this.expires
-                )
-                    return true;
-                return false;
-            };
-            public validateSchema = (row: SessionSchema) => {
-                if (
-                    row.userId === this.userId &&
-                    row.accessToken === this.accessToken &&
                     row.expires === this.expires
                 )
                     return true;

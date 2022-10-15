@@ -7,14 +7,14 @@ export type User = Lucia.UserData & {
 
 export type UserSchema = {
     id: string;
-    hashedPassword: string | null;
-    providerId: string;
+    hashed_password: string | null;
+    provider_id: string;
 } & Lucia.UserData;
 
 export type SessionSchema = {
-    accessToken: string;
+    access_token: string;
     expires: number;
-    userId: string;
+    user_id: string;
 };
 
 export type Tokens = {
