@@ -116,7 +116,6 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 if (userId === null) {
                     const createdUser = await prisma.user.create({
                         data: {
-                            id: "",
                             provider_id: data.providerId,
                             hashed_password: data.hashedPassword,
                             ...convertCamelCaseKeysToSnakeCase(data.userData),
