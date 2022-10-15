@@ -72,7 +72,7 @@ In your route root layout, create and export a server load function. [`handleSer
 ```ts
 // +layout.server.ts
 import { auth } from "$lib/server/lucia";
-import type { ServerLoad } from "@sveltejs/kit"
+import type { ServerLoad } from "@sveltejs/kit";
 
-export const load: ServerLoad = auth.handleServerSession()
+export const load: ServerLoad = auth.handleServerSession();
 ```
