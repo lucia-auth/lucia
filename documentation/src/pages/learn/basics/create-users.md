@@ -57,7 +57,7 @@ try {
     await auth.createUser("github", "user@example.com", {
         userData: {
             username: "user",
-            phoneNumber: "000-0000-0000",
+            phone_number: "000-0000-0000",
         },
     });
 } catch {
