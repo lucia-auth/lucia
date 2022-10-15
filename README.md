@@ -12,6 +12,8 @@ It's important to note that this __isn't__ an out-of-the-box authentication libr
 
 **[Documentation](https://lucia-sveltekit.vercel.app)**
 
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CHANGELOG.md)**
+
 
 ## Installation
 
