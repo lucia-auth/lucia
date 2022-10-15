@@ -1,46 +1,42 @@
-import { convertSnakeCaseKeysToCamelCase } from "lucia-sveltekit/adapter";
-import type { UserSchema } from "lucia-sveltekit/types";
+import type { RefreshTokenSchema, SessionSchema, UserSchema } from "lucia-sveltekit/types";
 
 export const convertUserDoc = (row: UserDoc): UserSchema => {
     const {
         _id: id,
         __v: _,
-        hashed_password: hashedPassword,
-        provider_id: providerId,
+        hashed_password,
+        provider_id,
         ...userData
     } = row;
     return {
         id,
-        hashedPassword,
-        providerId,
-        ...convertSnakeCaseKeysToCamelCase(userData),
+        hashed_password,
+        provider_id,
+        ...userData,
     };
 };
 
-export const convertSessionDoc = (row: SessionDoc) => {
+export const convertSessionDoc = (row: SessionDoc): SessionSchema => {
     const {
-        _id,
+        _id: _,
         __v: _v,
-        access_token: accessToken,
-        user_id: userId,
+        access_token,
+        user_id,
         expires,
     } = row;
     return {
-        accessToken,
-        userId,
+        access_token,
+        user_id,
         expires,
     };
 };
 
 export const convertRefreshTokenDoc = (
     row: RefreshTokenDoc
-): {
-    refreshToken: string;
-    userId: string;
-} => {
-    const { _id, __v: _v, user_id: userId, refresh_token: refreshToken } = row;
+): RefreshTokenSchema => {
+    const { _id, __v: _v, user_id, refresh_token } = row;
     return {
-        userId,
-        refreshToken,
+        user_id,
+        refresh_token,
     };
 };
