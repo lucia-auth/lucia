@@ -21,6 +21,6 @@ const user = getUser();
     import { getUser } from "lucia-sveltekit/client";
 
     const user = getUser();
-    const userId = user?.userId
+    const userId = user?.userId;
 </script>
 ```
