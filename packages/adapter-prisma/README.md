@@ -8,6 +8,8 @@ Lucia documentation: https://lucia-sveltekit.vercel.app
 
 ```
 npm install @lucia-sveltekit/adapter-prisma
+pnpm add @lucia-sveltekit/adapter-prisma
+yarn add @lucia-sveltekit/adapter-prisma
 ```
 
 ## Testing
