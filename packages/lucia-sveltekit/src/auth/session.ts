@@ -82,13 +82,13 @@ export const deleteExpiredUserSessionsFunction = (context: Context) => {
         const expiredUserAccessTokens = sessions
             .filter((val) => val.expires < currentTime)
             .map((val) => val.access_token);
+        if (expiredUserAccessTokens.length === 0) return;
         await context.adapter.deleteSessionByAccessToken(
             ...expiredUserAccessTokens
         );
     };
     return deleteExpiredUserSessions;
 };
-
 
 type RefreshSession = (refreshToken: string) => Promise<{
     session: Session;

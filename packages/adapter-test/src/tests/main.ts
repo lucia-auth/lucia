@@ -23,7 +23,9 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         );
         validate.isTrue(
             user.validateSchema(nonNullReturnedUser),
-            "Target was not the expected value"
+            "Target was not the expected value",
+            user.getSchema(),
+            nonNullReturnedUser,
         );
         await clearAll();
     });
@@ -71,7 +73,9 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         )
         validate.isTrue(
             user.validateSchema(returnedUser as UserSchema),
-            "Target was not the expected value"
+            "Target was not the expected value",
+            user.getSchema(),
+            returnedUser,
         );
         await clearAll();
     });
@@ -128,7 +132,9 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             );
             validate.isTrue(
                 session.validateSchema(returnedSession),
-                "Target is not the expected value"
+                "Target is not the expected value",
+                session.getSchema(),
+                returnedSession,
             );
             await clearAll();
         }
@@ -177,7 +183,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             hashedPassword: user.hashedPassword,
             userData: {
                 username: user.username,
-                userEmail: user.userEmail,
+                user_email: user.userEmail,
             },
         });
         const users = await db.getUsers();
@@ -199,7 +205,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 hashedPassword: user.hashedPassword,
                 userData: {
                     username: user.username,
-                    userEmail: user.userEmail,
+                    user_email: user.userEmail,
                 },
             });
             const users = await db.getUsers();
@@ -219,7 +225,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             hashedPassword: user.hashedPassword,
             userData: {
                 username: user.username,
-                userEmail: user.userEmail,
+                user_email: user.userEmail,
             },
         });
         validate.isNonEmptyString(createdUserId, "Returned value is not a non-empty string")
@@ -238,7 +244,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                     hashedPassword: user2.hashedPassword,
                     userData: {
                         username: user2.username,
-                        userEmail: user2.userEmail,
+                        user_email: user2.userEmail,
                     },
                 });
             } catch (e) {
@@ -275,7 +281,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                     hashedPassword: user2.hashedPassword,
                     userData: {
                         username: user2.username,
-                        userEmail: user1.userEmail,
+                        user_email: user1.userEmail,
                     },
                 });
             } catch (e) {
@@ -633,7 +639,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             try {
                 await adapter.updateUser(user2.id, {
                     userData: {
-                        userEmail: user1.userEmail
+                        user_email: user1.userEmail
                     }
                 });
                 throw new Error("No error was thrown");

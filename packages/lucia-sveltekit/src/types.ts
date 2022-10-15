@@ -17,6 +17,11 @@ export type SessionSchema = {
     user_id: string;
 };
 
+export type RefreshTokenSchema = {
+    refresh_token: string,
+    user_id: string
+}
+
 export type Tokens = {
     accessToken: [string, string];
     refreshToken: [string, string];

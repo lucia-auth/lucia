@@ -1,6 +1,6 @@
 import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
 import { LuciaError } from "lucia-sveltekit";
-import { type Adapter, getUpdateData, convertCamelCaseKeysToSnakeCase } from "lucia-sveltekit/adapter";
+import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
 import { convertSessionRow, convertUserRow } from "./utils.js";
 
 const adapter = (url: string, secret: string): Adapter => {
@@ -103,7 +103,7 @@ const adapter = (url: string, secret: string): Adapter => {
                         id: userId || undefined,
                         provider_id: data.providerId,
                         hashed_password: data.hashedPassword,
-                        ...convertCamelCaseKeysToSnakeCase(data.userData),
+                        ...data.userData,
                     },
                     {
                         returning: "representation",
