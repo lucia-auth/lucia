@@ -8,6 +8,7 @@ type Props = MarkdownLayoutProps<{
     order: number;
 }>;
 const { frontmatter, headings } = Astro.props;
+const pageLink = `https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/documentation/src/pages${Astro.url.pathname}.md`
 ---
 
 <BaseLayout title={frontmatter.title}>
@@ -18,7 +19,7 @@ const { frontmatter, headings } = Astro.props;
         </section>
         <div class="mt-8">
             <a
-                href={`https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/documentation/src/pages${Astro.url.pathname}.md`}
+                href={pageLink}
                 class="text-main hover:underline cursor-pointer;"
                 >Contribute to this page</a
             >
