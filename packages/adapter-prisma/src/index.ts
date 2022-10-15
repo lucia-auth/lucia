@@ -2,8 +2,7 @@ import { type PrismaClient } from "@prisma/client";
 import pkg from "@prisma/client/runtime/index.js";
 import {
     type Adapter,
-    getUpdateData,
-    convertCamelCaseKeysToSnakeCase,
+    getUpdateData
 } from "lucia-sveltekit/adapter";
 import { LuciaError } from "lucia-sveltekit";
 import { convertSessionRow, convertUserRow } from "./utils.js";
@@ -118,7 +117,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                         data: {
                             provider_id: data.providerId,
                             hashed_password: data.hashedPassword,
-                            ...convertCamelCaseKeysToSnakeCase(data.userData),
+                            ...data.userData,
                         } as any,
                     });
                     return createdUser.id;
@@ -128,7 +127,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                         id: userId,
                         provider_id: data.providerId,
                         hashed_password: data.hashedPassword,
-                        ...convertCamelCaseKeysToSnakeCase(data.userData),
+                        ...data.userData,
                     } as any,
                 });
                 return userId;
