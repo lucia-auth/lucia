@@ -137,10 +137,10 @@ const setSessionCookie: (
 
 #### Errors
 
-| name                    | description               |
-| ----------------------- | ------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid session id        |
-| DATABASE_UPDATE_FAILED  | Failed to update database |
+| name                   | description               |
+| ---------------------- | ------------------------- |
+| AUTH_INVALID_USER_ID   | Invalid user id           |
+| DATABASE_UPDATE_FAILED | Failed to update database |
 
 #### Example
 
@@ -316,7 +316,7 @@ const generateSessionId: () => [string, number, number];
 
 ### `getSessionUser()`
 
-Validates the session id, and gets the session and the user in one database call.
+Validates an active session id, and gets the session and the user in one database call.
 
 ```ts
 const getSessionUser: (
@@ -339,10 +339,10 @@ const getSessionUser: (
 
 #### Errors
 
-| name                    | description                                    |
-| ----------------------- | ---------------------------------------------- |
-| AUTH_INVALID_SESSION_ID | The session with the session id does not exist |
-| DATABASE_FETCH_FAILED   | Failed to fetch data from the database         |
+| name                    | description                            |
+| ----------------------- | -------------------------------------- |
+| AUTH_INVALID_SESSION_ID | A valid active session id              |
+| DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
 
 #### Example
 
@@ -816,7 +816,7 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 | name                    | description                            |
 | ----------------------- | -------------------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid session id                     |
+| AUTH_INVALID_SESSION_ID | Invalid active session id              |
 | DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
 
 #### Example
@@ -833,7 +833,7 @@ try {
 
 ### `validateRequest()`
 
-Checks if the request is from a trusted domain, and if so, validates the session id stored inside cookies. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession). This method will not attempt to renew the session if the id is invalid.
+Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession). This method will not attempt to renew the session if the id is invalid/not-active.
 
 ```ts
 const validateRequest: (request: Request) => Promise<Session>;
@@ -853,11 +853,11 @@ const validateRequest: (request: Request) => Promise<Session>;
 
 #### Errors
 
-| name                    | description                                                 |
-| ----------------------- | ----------------------------------------------------------- |
-| AUTH_INVALID_REQUEST    | The request is not from a trusted origin                    |
-| AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid session id |
-| DATABASE_FETCH_FAILED   | Failed to fetch data from the database                      |
+| name                    | description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| AUTH_INVALID_REQUEST    | The request is not from a trusted origin                           |
+| AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid active session id |
+| DATABASE_FETCH_FAILED   | Failed to fetch data from the database                             |
 
 #### Example
 
