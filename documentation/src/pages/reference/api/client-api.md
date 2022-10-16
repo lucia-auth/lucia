@@ -20,8 +20,8 @@ const getUser: () => Readonly<User> | null;
 
 #### Returns
 
-| type                                                  | description                                   |
-| ----------------------------------------------------- | --------------------------------------------- |
+| type                                                              | description                                   |
+| ----------------------------------------------------------------- | --------------------------------------------- |
 | `Readonly<`[`User`](/reference/types/lucia-types#user)`> \| null` | Returns null if a current user does not exist |
 
 #### Example
@@ -33,12 +33,12 @@ const user = getUser();
 const userId = user?.userId;
 ```
 
-## refreshSession()
+## renewSession()
 
-Refreshes the current session.
+Renews the current session.
 
 ```ts
-const refreshSession: () => Promise<number>;
+const renewSession: () => Promise<number>;
 ```
 
 #### Returns
@@ -49,20 +49,20 @@ const refreshSession: () => Promise<number>;
 
 #### Errors
 
-| name                       | description                            |
-| -------------------------- | -------------------------------------- |
-| AUTH_INVALID_REFRESH_TOKEN | Invalid refresh token                  |
-| DATABASE_UPDATE_FAILED     | Failed to update database              |
-| DATABASE_FETCH_FAILED      | Failed to fetch data from the database |
-| UNKNOWN_ERROR              |                                        |
+| name                    | description                            |
+| ----------------------- | -------------------------------------- |
+| AUTH_INVALID_SESSION_ID | Invalid active session id              |
+| DATABASE_UPDATE_FAILED  | Failed to update database              |
+| DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
+| UNKNOWN_ERROR           |                                        |
 
 #### Example
 
 ```ts
-import { refreshSession } from "lucia-sveltekit/client";
+import { renewSession } from "lucia-sveltekit/client";
 
 try {
-    await refreshSession();
+    await renewSession();
 } catch {
     // error
 }
