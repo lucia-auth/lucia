@@ -53,7 +53,7 @@ export class User {
                 return {
                     user_id: this.userId,
                     id: this.id,
-                    renewal_expires: this.renewalExpires,
+                    renew_expires: this.renewalExpires,
                     expires: this.expires,
                 };
             };
@@ -62,7 +62,7 @@ export class User {
                     row.user_id === this.userId &&
                     row.id === this.id &&
                     row.expires === this.expires &&
-                    row.renewal_expires === this.renewalExpires
+                    row.renew_expires === this.renewalExpires
                 )
                     return true;
                 return false;

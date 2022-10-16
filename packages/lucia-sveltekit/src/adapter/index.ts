@@ -7,7 +7,7 @@ export type UserSchema = {
 export type SessionSchema = {
     id: string;
     expires: number;
-    renewal_expires: number;
+    renew_expires: number;
     user_id: string;
 };
 

@@ -1,36 +1,11 @@
-import type { RefreshTokenSchema, SessionSchema, UserSchema } from "lucia-sveltekit/types";
-import { RefreshToken, Session, User } from "@prisma/client";
+import { Session } from "@prisma/client";
+import { SessionSchema } from "lucia-sveltekit/adapter";
 
-export const convertUserRow = (row: User): UserSchema => {
-    const {
-        id,
-        hashed_password,
-        provider_id,
-        ...userData
-    } = row;
+export const convertSession = (session: Session): SessionSchema => {
+    const { expires, renew_expires, ...data } = session
     return {
-        id,
-        hashed_password,
-        provider_id,
-        ...userData,
-    };
-};
-
-export const convertSessionRow = (row: Session): SessionSchema => {
-    const { id: _, access_token, user_id, expires } = row;
-    return {
-        access_token,
-        user_id,
         expires: Number(expires),
-    };
-};
-
-export const convertRefreshTokenRow = (
-    row: RefreshToken
-): RefreshTokenSchema => {
-    const { id: _, user_id, refresh_token } = row;
-    return {
-        user_id,
-        refresh_token,
-    };
-};
+        renew_expires: Number(renew_expires),
+        ...data
+    }
+}

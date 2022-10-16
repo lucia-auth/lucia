@@ -60,19 +60,19 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         const session = user.createSession();
         await db.insertUser(user.getSchema());
         await db.insertSession(session.getSchema());
-        const returnedUser = await adapter.getSessionAndUserBySessionId(session.id);
-        validate.isNotNull(returnedUser, "Target was not returned");
+        const returnedData = await adapter.getSessionAndUserBySessionId(session.id);
+        validate.isNotNull(returnedData, "Target was not returned");
         validate.isTrue(
-            user.validateSchema(returnedUser?.user as UserSchema),
-            "Target was not the expected value",
+            user.validateSchema(returnedData?.user as UserSchema),
+            "Target (user) was not the expected value",
             user.getSchema(),
-            returnedUser
+            returnedData?.user
         );
         validate.isTrue(
-            session.validateSchema(returnedUser?.session as SessionSchema),
-            "Target was not the expected value",
-            user.getSchema(),
-            returnedUser
+            session.validateSchema(returnedData?.session as SessionSchema),
+            "Target (session) was not the expected value",
+            session.getSchema(),
+            returnedData?.session
         );
         await clearAll();
     });

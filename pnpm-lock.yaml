@@ -39,6 +39,21 @@ importers:
       '@lucia-sveltekit/adapter-test': link:../../adapter-test/dist
       dotenv: 16.0.3
 
+  packages/adapter-prisma:
+    specifiers:
+      '@lucia-sveltekit/adapter-test': workspace:*
+      '@prisma/client': ^4.3.1
+      lucia-sveltekit: workspace:*
+      prisma: ^4.1.1
+      ts-node: ^10.9.1
+    dependencies:
+      '@prisma/client': 4.3.1_prisma@4.3.1
+      lucia-sveltekit: link:../lucia-sveltekit/dist
+      prisma: 4.3.1
+    devDependencies:
+      '@lucia-sveltekit/adapter-test': link:../adapter-test/dist
+      ts-node: 10.9.1_bidgzm5cq2du6gnjtweqqjrrn4
+
   packages/adapter-prisma/dist:
     specifiers:
       '@lucia-sveltekit/adapter-test': workspace:*
@@ -52,21 +67,6 @@ importers:
       prisma: 4.3.1
     devDependencies:
       '@lucia-sveltekit/adapter-test': link:../../adapter-test/dist
-      ts-node: 10.9.1_bidgzm5cq2du6gnjtweqqjrrn4
-
-  packages/adapter-supabase:
-    specifiers:
-      '@lucia-sveltekit/adapter-test': workspace:*
-      '@supabase/postgrest-js': ^0.37.4
-      dotenv: ^16.0.3
-      lucia-sveltekit: workspace:*
-      ts-node: ^10.9.1
-    dependencies:
-      '@supabase/postgrest-js': 0.37.4
-      lucia-sveltekit: link:../lucia-sveltekit/dist
-    devDependencies:
-      '@lucia-sveltekit/adapter-test': link:../adapter-test/dist
-      dotenv: 16.0.3
       ts-node: 10.9.1_bidgzm5cq2du6gnjtweqqjrrn4
 
   packages/adapter-supabase/dist:

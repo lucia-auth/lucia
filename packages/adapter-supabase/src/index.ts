@@ -134,7 +134,7 @@ const adapter = (url: string, secret: string): Adapter => {
                     {
                         id: sessionId,
                         expires: data.expires,
-                        renewal_expires: data.renewalPeriodExpires,
+                        renew_expires: data.renewalPeriodExpires,
                         user_id: data.userId,
                     },
                     {

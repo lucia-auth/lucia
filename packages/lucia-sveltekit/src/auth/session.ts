@@ -98,7 +98,7 @@ export const deleteDeadUserSessionsFunction = (context: Context) => {
         const sessions = await context.adapter.getSessionsByUserId(userId);
         const currentTime = new Date().getTime();
         const renewalExpiredSessionIds = sessions
-            .filter((val) => val.renewal_expires < currentTime)
+            .filter((val) => val.renew_expires < currentTime)
             .map((val) => val.id);
         if (renewalExpiredSessionIds.length === 0) return;
         await context.adapter.deleteSession(...renewalExpiredSessionIds);
@@ -116,7 +116,7 @@ export const renewSessionFunction = (context: Context) => {
     const renewSession: RenewSession = async (sessionId) => {
         const databaseSession = await context.adapter.getSession(sessionId);
         if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-        if (new Date().getTime() > databaseSession.renewal_expires ) {
+        if (new Date().getTime() > databaseSession.renew_expires ) {
             await context.adapter.deleteSession(sessionId);
             throw new LuciaError("AUTH_INVALID_SESSION_ID");
         }
