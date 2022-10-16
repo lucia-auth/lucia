@@ -29,7 +29,7 @@ export const generateSessionIdFunction = (context: Context) => {
         const sessionId = generateRandomString(40);
         const sessionExpires = new Date().getTime() + context.sessionTimeout;
         const renewalPeriodExpires =
-            sessionExpires + context.renewalPeriodTimeout;
+            sessionExpires + context.renewalPeriod;
         return [sessionId, sessionExpires, renewalPeriodExpires];
     };
     return generateSessionId;
