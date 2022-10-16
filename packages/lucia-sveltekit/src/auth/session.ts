@@ -82,13 +82,13 @@ export const invalidateSessionFunction = (context: Context) => {
 
 type InvalidateAllUserSessions = (userId: string) => Promise<void>;
 
-export const invalidateUserSessionsFunction = (context: Context) => {
-    const invalidateUserSessions: InvalidateAllUserSessions = async (
+export const invalidateAllUserSessionsFunction = (context: Context) => {
+    const invalidateAllUserSessions: InvalidateAllUserSessions = async (
         userId: string
     ) => {
         await context.adapter.deleteSessionsByUserId(userId);
     };
-    return invalidateUserSessions;
+    return invalidateAllUserSessions;
 };
 
 type DeleteDeadUserSessions = (userId: string) => Promise<void>;

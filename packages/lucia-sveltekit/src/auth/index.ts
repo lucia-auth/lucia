@@ -17,7 +17,7 @@ import {
     createSessionFunction,
     deleteDeadUserSessionsFunction,
     renewSessionFunction,
-    invalidateUserSessionsFunction,
+    invalidateAllUserSessionsFunction,
     validateSessionFunction,
     invalidateSessionFunction,
     generateSessionIdFunction,
@@ -72,7 +72,7 @@ export class Auth {
         this.createSession = createSessionFunction(this.context);
         this.renewSession = renewSessionFunction(this.context);
         this.invalidateSession = invalidateSessionFunction(this.context);
-        this.invalidateUserSessions = invalidateUserSessionsFunction(
+        this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
             this.context
         );
         this.deleteDeadUserSessions = deleteDeadUserSessionsFunction(
@@ -103,8 +103,8 @@ export class Auth {
     public createSession: ReturnType<typeof createSessionFunction>;
     public renewSession: ReturnType<typeof renewSessionFunction>;
     public invalidateSession: ReturnType<typeof invalidateSessionFunction>;
-    public invalidateUserSessions: ReturnType<
-        typeof invalidateUserSessionsFunction
+    public invalidateAllUserSessions: ReturnType<
+        typeof invalidateAllUserSessionsFunction
     >;
     public deleteDeadUserSessions: ReturnType<
         typeof deleteDeadUserSessionsFunction
