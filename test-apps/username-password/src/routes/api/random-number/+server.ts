@@ -1,6 +1,5 @@
 import { auth } from '$lib/server/lucia';
 import type { RequestHandler } from '@sveltejs/kit';
-import { LuciaError } from 'lucia-sveltekit';
 
 export const GET: RequestHandler = async ({ request }) => {
 	try {

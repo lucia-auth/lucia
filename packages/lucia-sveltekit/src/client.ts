@@ -23,8 +23,8 @@ export const signOut = async (redirect?: string): Promise<void> => {
     if (result.message) throw new LuciaError(result.message);
 };
 
-export const refreshSession = async (): Promise<number> => {
-    const response = await fetch("/api/auth/refresh-session", {
+export const renewSession = async (): Promise<number> => {
+    const response = await fetch("/api/auth/renew-session", {
         method: "POST"
     });
     if (!response.ok) {

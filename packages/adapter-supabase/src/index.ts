@@ -1,7 +1,11 @@
 import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
 import { LuciaError } from "lucia-sveltekit";
-import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
-import { convertSessionRow, convertUserRow } from "./utils.js";
+import {
+    type Adapter,
+    getUpdateData,
+    UserSchema,
+    SessionSchema,
+} from "lucia-sveltekit/adapter";
 
 const adapter = (url: string, secret: string): Adapter => {
     const supabase = new PostgrestClient(`${url}/rest/v1`, {
@@ -11,9 +15,9 @@ const adapter = (url: string, secret: string): Adapter => {
         },
     });
     return {
-        getUserById: async (userId) => {
+        getUser: async (userId) => {
             const { data, error } = await supabase
-                .from<UserRow>("user")
+                .from<UserSchema>("user")
                 .select()
                 .eq("id", userId)
                 .maybeSingle();
@@ -22,28 +26,11 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
             if (!data) return null;
-            return convertUserRow(data);
-        },
-        getUserIdByRefreshToken: async (refreshToken) => {
-            const { data, error } = await supabase
-                .from<
-                    RefreshTokenRow & {
-                        user: UserRow;
-                    }
-                >("refresh_token")
-                .select("user_id")
-                .eq("refresh_token", refreshToken)
-                .maybeSingle();
-            if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
-            }
-            if (!data) return null;
-            return data.user_id;
+            return data;
         },
         getUserByProviderId: async (providerId) => {
             const { data, error } = await supabase
-                .from<UserRow>("user")
+                .from<UserSchema>("user")
                 .select()
                 .eq("provider_id", providerId)
                 .maybeSingle();
@@ -52,37 +39,41 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
             if (!data) return null;
-            return convertUserRow(data);
+            return data;
         },
-        getUserByAccessToken: async (accessToken) => {
+        getSessionAndUserBySessionId: async (sessionId) => {
             const { data, error } = await supabase
-                .from<SessionRow & { user: UserRow }>("session")
-                .select("user(*)")
-                .eq("access_token", accessToken)
+                .from<SessionSchema & { user: UserSchema }>("session")
+                .select("user(*), *")
+                .eq("id", sessionId)
                 .maybeSingle();
             if (error) {
                 console.error(error);
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
             if (!data) return null;
-            return convertUserRow(data.user);
+            const { user, ...session } = data;
+            return {
+                user,
+                session,
+            };
         },
-        getSessionByAccessToken: async (accessToken) => {
+        getSession: async (sessionId) => {
             const { data, error } = await supabase
-                .from<SessionRow>("session")
+                .from<SessionSchema>("session")
                 .select("*, user(*)")
-                .eq("access_token", accessToken)
+                .eq("id", sessionId)
                 .maybeSingle();
             if (error) {
                 console.error(error);
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
             if (!data) return null;
-            return convertSessionRow(data);
+            return data;
         },
         getSessionsByUserId: async (userId) => {
             const { data, error } = await supabase
-                .from<SessionRow>("session")
+                .from<SessionSchema>("session")
                 .select("*, user(*)")
                 .eq("user_id", userId);
             if (error) {
@@ -91,13 +82,13 @@ const adapter = (url: string, secret: string): Adapter => {
             }
             return (
                 data?.map((val) => {
-                    return convertSessionRow(val);
+                    return val;
                 }) || []
             );
         },
         setUser: async (userId, data) => {
             const { data: dbData, error } = await supabase
-                .from<UserRow>("user")
+                .from<UserSchema>("user")
                 .insert(
                     {
                         id: userId || undefined,
@@ -136,17 +127,20 @@ const adapter = (url: string, secret: string): Adapter => {
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
         },
-        setSession: async (userId, accessToken, expires) => {
-            const { error } = await supabase.from("session").insert(
-                {
-                    access_token: accessToken,
-                    user_id: userId,
-                    expires,
-                },
-                {
-                    returning: "minimal",
-                }
-            );
+        setSession: async (sessionId, data) => {
+            const { error } = await supabase
+                .from<SessionSchema>("session")
+                .insert(
+                    {
+                        id: sessionId,
+                        expires: data.expires,
+                        renewal_expires: data.renewalPeriodExpires,
+                        user_id: data.userId,
+                    },
+                    {
+                        returning: "minimal",
+                    }
+                );
             if (error) {
                 console.error(error);
                 if (
@@ -156,21 +150,21 @@ const adapter = (url: string, secret: string): Adapter => {
                     throw new LuciaError("AUTH_INVALID_USER_ID");
                 }
                 if (
-                    error.details.includes("(access_token)") &&
+                    error.details.includes("(id)") &&
                     error.details.includes("already exists.")
                 ) {
-                    throw new LuciaError("AUTH_DUPLICATE_ACCESS_TOKEN");
+                    throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
                 }
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteSessionByAccessToken: async (...accessTokens) => {
+        deleteSession: async (...sessionIds) => {
             const { error } = await supabase
                 .from("session")
                 .delete({
                     returning: "minimal",
                 })
-                .in("access_token", accessTokens);
+                .in("id", sessionIds);
             if (error) {
                 console.error(error);
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
@@ -179,57 +173,6 @@ const adapter = (url: string, secret: string): Adapter => {
         deleteSessionsByUserId: async (userId) => {
             const { error } = await supabase
                 .from("session")
-                .delete({
-                    returning: "minimal",
-                })
-                .eq("user_id", userId);
-            if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
-            }
-        },
-        setRefreshToken: async (refreshToken, userId) => {
-            const { error } = await supabase.from("refresh_token").insert(
-                {
-                    user_id: userId,
-                    refresh_token: refreshToken,
-                },
-                {
-                    returning: "minimal",
-                }
-            );
-            if (error) {
-                console.error(error);
-                if (
-                    error.details.includes("is not present in table") &&
-                    error.details.includes("user_id")
-                ) {
-                    throw new LuciaError("AUTH_INVALID_USER_ID");
-                }
-                if (
-                    error.details.includes("(access_token)") &&
-                    error.details.includes("already exists.")
-                ) {
-                    throw new LuciaError("AUTH_DUPLICATE_REFRESH_TOKEN");
-                }
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
-            }
-        },
-        deleteRefreshToken: async (...refreshTokens) => {
-            const { error } = await supabase
-                .from("refresh_token")
-                .delete({
-                    returning: "minimal",
-                })
-                .in("refresh_token", refreshTokens);
-            if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
-            }
-        },
-        deleteRefreshTokensByUserId: async (userId) => {
-            const { error } = await supabase
-                .from("refresh_token")
                 .delete({
                     returning: "minimal",
                 })

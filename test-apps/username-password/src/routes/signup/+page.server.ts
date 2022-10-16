@@ -1,6 +1,5 @@
 import { auth } from '$lib/server/lucia';
 import { invalid, redirect, type Actions } from '@sveltejs/kit';
-import { setCookie } from 'lucia-sveltekit';
 
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {
@@ -19,8 +18,8 @@ export const actions: Actions = {
 					username
 				}
 			});
-			const { tokens } = await auth.createSession(user.userId);
-			setCookie(cookies, ...tokens.cookies);
+			const { setSessionCookie } = await auth.createSession(user.userId);
+			setSessionCookie(cookies)
 		} catch (e) {
 			const error = e as Error;
 			if (
@@ -36,6 +35,6 @@ export const actions: Actions = {
 				message: 'Unknown error occurred'
 			});
 		}
-		throw redirect(302, '/login');
+		throw redirect(302, '/profile');
 	}
 };

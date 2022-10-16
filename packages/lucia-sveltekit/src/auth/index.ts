@@ -14,16 +14,13 @@ import {
 } from "./user/index.js";
 import { parseRequestFunction, validateRequestFunction } from "./request.js";
 import {
-    invalidateRefreshTokenFunction,
-    validateAccessTokenFunction,
-    validateRefreshTokenFunction,
-} from "./token/index.js";
-import {
     createSessionFunction,
-    invalidateAllUserSessionsFunction,
-    deleteExpiredUserSessionsFunction,
+    deleteDeadUserSessionsFunction,
+    renewSessionFunction,
+    invalidateUserSessionsFunction,
+    validateSessionFunction,
     invalidateSessionFunction,
-    refreshSessionFunction
+    generateSessionIdFunction,
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
 import { deleteAllCookiesFunction } from "./cookie.js";
@@ -57,6 +54,8 @@ export class Auth {
                 configs.generateCustomUserId || (async () => null),
             env: configs.env,
             csrfProtection: configs.csrfProtection || true,
+            sessionTimeout: configs.sessionTimeout || 1000 * 60 * 60 * 24 * 7,
+            renewalPeriodTimeout: configs.renewalPeriodTimeout || 1000 * 60 * 60 * 24 * 7,
         };
         this.getUser = getUserFunction(this.context);
         this.getUserByProviderId = getUserByProviderIdFunction(this.context);
@@ -69,20 +68,17 @@ export class Auth {
         this.updateUserPassword = updateUserPasswordFunction(this.context);
         this.parseRequest = parseRequestFunction(this.context);
         this.validateRequest = validateRequestFunction(this.context);
-        this.refreshSession = refreshSessionFunction(this.context);
+        this.renewSession = renewSessionFunction(this.context);
         this.createSession = createSessionFunction(this.context);
         this.invalidateSession = invalidateSessionFunction(this.context);
-        this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(
+        this.invalidateUserSessions = invalidateUserSessionsFunction(
             this.context
         );
-        this.deleteExpiredUserSessions = deleteExpiredUserSessionsFunction(
+        this.deleteDeadUserSessions = deleteDeadUserSessionsFunction(
             this.context
         );
-        this.validateAccessToken = validateAccessTokenFunction(this.context);
-        this.validateRefreshToken = validateRefreshTokenFunction(this.context);
-        this.invalidateRefreshToken = invalidateRefreshTokenFunction(
-            this.context
-        );
+        this.generateSessionId = generateSessionIdFunction(this.context);
+        this.validateSession = validateSessionFunction(this.context);
         this.handleHooks = handleHooksFunction(this.context);
         this.handleServerSession = handleServerSessionFunction(this.context);
         this.deleteAllCookies = deleteAllCookiesFunction(this.context);
@@ -96,18 +92,13 @@ export class Auth {
     public deleteUser: ReturnType<typeof deleteUserFunction>;
     public parseRequest: ReturnType<typeof parseRequestFunction>;
     public validateRequest: ReturnType<typeof validateRequestFunction>;
-    public refreshSession: ReturnType<typeof refreshSessionFunction>;
-    public invalidateRefreshToken: ReturnType<
-        typeof invalidateRefreshTokenFunction
-    >;
+    public renewSession: ReturnType<typeof renewSessionFunction>;
     public createSession: ReturnType<typeof createSessionFunction>;
-    public deleteExpiredUserSessions: ReturnType<
-        typeof deleteExpiredUserSessionsFunction
+    public deleteDeadUserSessions: ReturnType<
+        typeof deleteDeadUserSessionsFunction
     >;
-    public validateAccessToken: ReturnType<typeof validateAccessTokenFunction>;
-    public validateRefreshToken: ReturnType<
-        typeof validateRefreshTokenFunction
-    >;
+    public generateSessionId: ReturnType<typeof generateSessionIdFunction>;
+    public validateSession: ReturnType<typeof validateSessionFunction>;
     public updateUserData: ReturnType<typeof updateUserDataFunction>;
     public updateUserProviderId: ReturnType<
         typeof updateUserProviderIdFunction
@@ -115,8 +106,8 @@ export class Auth {
     public updateUserPassword: ReturnType<typeof updateUserPasswordFunction>;
     public handleServerSession: ReturnType<typeof handleServerSessionFunction>;
     public invalidateSession: ReturnType<typeof invalidateSessionFunction>;
-    public invalidateAllUserSessions: ReturnType<
-        typeof invalidateAllUserSessionsFunction
+    public invalidateUserSessions: ReturnType<
+        typeof invalidateUserSessionsFunction
     >;
     public deleteAllCookies: ReturnType<typeof deleteAllCookiesFunction>;
 }
@@ -126,6 +117,8 @@ interface Configurations {
     env: Env;
     generateCustomUserId?: () => Promise<string | null>;
     csrfProtection?: boolean;
+    sessionTimeout?: number;
+    renewalPeriodTimeout?: number;
 }
 
 export type Context = {

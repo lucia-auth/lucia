@@ -1,105 +1,127 @@
-import type { Session, Tokens } from "../types.js";
+import type { Session } from "../types.js";
 import type { Context } from "./index.js";
-import {
-    createAccessToken,
-    createAccessTokenCookie,
-    createRefreshToken,
-    createRefreshTokenCookie,
-} from "../utils/token.js";
-import { LuciaError } from "../index.js";
+import { generateRandomString, LuciaError } from "../index.js";
+import { Cookies } from "../kit.js";
+
+type ValidateSession = (sessionId: string) => Promise<Session>;
+
+export const validateSessionFunction = (context: Context) => {
+    const validateSession: ValidateSession = async (sessionId) => {
+        const databaseSession = await context.adapter.getSession(sessionId);
+        if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+        const currentTime = new Date().getTime();
+        if (currentTime > databaseSession.expires)
+            throw new LuciaError("AUTH_INVALID_SESSION_ID");
+        const { user_id: userId, expires } = databaseSession;
+        return {
+            userId,
+            expires,
+            sessionId,
+        };
+    };
+    return validateSession;
+};
+
+type GenerateSessionId = () => [string, number, number];
+
+export const generateSessionIdFunction = (context: Context) => {
+    const generateSessionId: GenerateSessionId = () => {
+        const sessionId = generateRandomString(40);
+        const sessionExpires = new Date().getTime() + context.sessionTimeout;
+        const renewalPeriodExpires =
+            sessionExpires + context.renewalPeriodTimeout;
+        return [sessionId, sessionExpires, renewalPeriodExpires];
+    };
+    return generateSessionId;
+};
 
 type CreateSession = (userId: string) => Promise<{
     session: Session;
-    tokens: Tokens;
+    setSessionCookie: (cookies: Cookies) => void;
+    renewalPeriodExpires: number;
 }>;
 
 export const createSessionFunction = (context: Context) => {
     const createSession: CreateSession = async (userId) => {
-        const [refreshToken] = createRefreshToken();
-        const [accessToken, accessTokenExpires] = createAccessToken();
-        await context.adapter.setSession(
+        const [sessionId, sessionExpires, renewalPeriodExpires] =
+            context.auth.generateSessionId();
+        await context.adapter.setSession(sessionId, {
             userId,
-            accessToken,
-            accessTokenExpires
-        );
-        await context.adapter.setRefreshToken(refreshToken, userId);
-        const accessTokenCookie = createAccessTokenCookie(
-            accessToken,
-            accessTokenExpires,
-            context.env === "PROD"
-        );
-        const refreshTokenCookie = createRefreshTokenCookie(
-            refreshToken,
-            context.env === "PROD"
-        );
+            expires: sessionExpires,
+            renewalPeriodExpires,
+        });
         return {
             session: {
                 userId,
-                expires: accessTokenExpires,
-                accessToken,
+                expires: sessionExpires,
+                sessionId,
             },
-            tokens: {
-                accessToken: [accessToken, accessTokenCookie],
-                refreshToken: [refreshToken, refreshTokenCookie],
-                cookies: [accessTokenCookie, refreshTokenCookie],
+            renewalPeriodExpires,
+            setSessionCookie: (cookies) => {
+                cookies.set("auth_session", sessionId, {
+                    httpOnly: true,
+                    expires: new Date(renewalPeriodExpires),
+                    secure: context.env === "PROD",
+                    path: "/",
+                    sameSite: "lax",
+                });
             },
         };
     };
     return createSession;
 };
 
-type InvalidateSession = (refreshToken: string) => Promise<void>;
+type InvalidateSession = (sessionId: string) => Promise<void>;
 
 export const invalidateSessionFunction = (context: Context) => {
-    const invalidateSession: InvalidateSession = async (refreshToken) => {
-        await context.adapter.deleteSessionByAccessToken(refreshToken);
+    const invalidateSession: InvalidateSession = async (sessionId) => {
+        await context.adapter.deleteSession(sessionId);
     };
     return invalidateSession;
 };
 
 type InvalidateAllUserSessions = (userId: string) => Promise<void>;
 
-export const invalidateAllUserSessionsFunction = (context: Context) => {
-    const invalidateAllUserSessions: InvalidateAllUserSessions = async (
+export const invalidateUserSessionsFunction = (context: Context) => {
+    const invalidateUserSessions: InvalidateAllUserSessions = async (
         userId: string
     ) => {
-        await Promise.all([
-            context.adapter.deleteSessionsByUserId(userId),
-            context.adapter.deleteRefreshTokensByUserId(userId),
-        ]);
+        await context.adapter.deleteSessionsByUserId(userId);
     };
-    return invalidateAllUserSessions;
+    return invalidateUserSessions;
 };
 
-type DeleteExpiredUserSessions = (userId: string) => Promise<void>;
+type DeleteDeadUserSessions = (userId: string) => Promise<void>;
 
-export const deleteExpiredUserSessionsFunction = (context: Context) => {
-    const deleteExpiredUserSessions: DeleteExpiredUserSessions = async (
-        userId
-    ) => {
+export const deleteDeadUserSessionsFunction = (context: Context) => {
+    const deleteDeadUserSessions: DeleteDeadUserSessions = async (userId) => {
         const sessions = await context.adapter.getSessionsByUserId(userId);
         const currentTime = new Date().getTime();
-        const expiredUserAccessTokens = sessions
-            .filter((val) => val.expires < currentTime)
-            .map((val) => val.access_token);
-        if (expiredUserAccessTokens.length === 0) return;
-        await context.adapter.deleteSessionByAccessToken(
-            ...expiredUserAccessTokens
-        );
+        const renewalExpiredSessionIds = sessions
+            .filter((val) => val.renewal_expires < currentTime)
+            .map((val) => val.id);
+        if (renewalExpiredSessionIds.length === 0) return;
+        await context.adapter.deleteSession(...renewalExpiredSessionIds);
     };
-    return deleteExpiredUserSessions;
+    return deleteDeadUserSessions;
 };
 
-type RefreshSession = (refreshToken: string) => Promise<{
+type RenewSession = (sessionId: string) => Promise<{
     session: Session;
-    tokens: Tokens;
+    setSessionCookie: (cookies: Cookies) => void;
+    renewalPeriodExpires: number;
 }>;
-export const refreshSessionFunction = (context: Context) => {
-    const refreshSession: RefreshSession = async (refreshToken) => {
-        const userId = await context.auth.validateRefreshToken(refreshToken);
-        await context.adapter.deleteRefreshToken(refreshToken);
-        const session = await context.auth.createSession(userId);
-        return session;
+
+export const renewSessionFunction = (context: Context) => {
+    const renewSession: RenewSession = async (sessionId) => {
+        const databaseSession = await context.adapter.getSession(sessionId);
+        if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+        if (new Date().getTime() > databaseSession.renewal_expires ) {
+            await context.adapter.deleteSession(sessionId);
+            throw new LuciaError("AUTH_INVALID_SESSION_ID");
+        }
+        await context.adapter.deleteSession(sessionId);
+        return await context.auth.createSession(databaseSession.user_id);
     };
-    return refreshSession;
+    return renewSession;
 };

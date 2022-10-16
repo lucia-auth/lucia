@@ -1,4 +1,5 @@
-import { UserSchema, User } from "../types.js";
+import { UserSchema } from "../adapter/index.js";
+import { User } from "../types.js";
 
 export const getAccountFromDatabaseUser = (databaseData: UserSchema) => {
     const {

@@ -2,15 +2,15 @@ import type { Handle, RequestEvent } from "../kit.js";
 import type { Context } from "./index.js";
 
 import {
-    handleRefreshRequest,
+    handleRenewRequest,
     handleLogoutRequest,
 } from "./endpoints/index.js";
 
 export const getRequestHandler = (event: RequestEvent) => {
-    const isRefreshPOSTRequest =
-        event.url.pathname === "/api/auth/refresh-session" &&
+    const isRenewPOSTRequest =
+        event.url.pathname === "/api/auth/renew-session" &&
         event.request.method === "POST";
-    if (isRefreshPOSTRequest) return handleRefreshRequest;
+    if (isRenewPOSTRequest) return handleRenewRequest;
     const isLogoutPOSTRequest =
         event.url.pathname === "/api/auth/logout" &&
         event.request.method === "POST";

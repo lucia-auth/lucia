@@ -53,7 +53,7 @@ export const updateUserPasswordFunction = (context: Context) => {
             context.adapter.updateUser(userId, {
                 hashedPassword,
             }),
-            context.adapter.deleteRefreshTokensByUserId(userId),
+            context.adapter.deleteSessionsByUserId(userId),
         ]);
         const account = getAccountFromDatabaseUser(databaseData)
         return account.user

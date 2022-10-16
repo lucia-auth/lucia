@@ -1,9 +1,23 @@
-import { SessionSchema, UserSchema } from "../types.js";
+export type UserSchema = {
+    id: string;
+    hashed_password: string | null;
+    provider_id: string;
+} & Lucia.UserData;
+
+export type SessionSchema = {
+    id: string;
+    expires: number;
+    renewal_expires: number;
+    user_id: string;
+};
 
 export interface Adapter {
-    getUserById: (userId: string) => Promise<UserSchema | null>;
+    getUser: (userId: string) => Promise<UserSchema | null>;
     getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
-    getUserByAccessToken: (accessToken: string) => Promise<UserSchema | null>;
+    getSessionAndUserBySessionId: (sessionId: string) => Promise<{
+        user: UserSchema,
+        session: SessionSchema
+    } | null>;
     setUser: (
         userId: string | null,
         data: {
@@ -21,21 +35,18 @@ export interface Adapter {
             userData?: Record<string, any>;
         }
     ) => Promise<UserSchema>;
-    getSessionByAccessToken: (
-        accessToken: string
-    ) => Promise<SessionSchema | null>;
+    getSession: (sessionId: string) => Promise<SessionSchema | null>;
     getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
     setSession: (
-        userId: string,
-        accessToken: string,
-        expires: number
+        sessionId: string,
+        data: {
+            userId: string;
+            expires: number;
+            renewalPeriodExpires: number;
+        }
     ) => Promise<void>;
-    deleteSessionByAccessToken: (...accessToken: string[]) => Promise<void>;
+    deleteSession: (...sessionIds: string[]) => Promise<void>;
     deleteSessionsByUserId: (userId: string) => Promise<void>;
-    getUserIdByRefreshToken: (refreshToken: string) => Promise<string | null>;
-    setRefreshToken: (refreshToken: string, userId: string) => Promise<void>;
-    deleteRefreshToken: (...refreshToken: string[]) => Promise<void>;
-    deleteRefreshTokensByUserId: (userId: string) => Promise<void>;
 }
 
 export const getUpdateData = (data: {
