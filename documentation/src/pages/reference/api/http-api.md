@@ -31,9 +31,9 @@ interface ResponseBody {
 }
 ```
 
-| error message           | description        |
-| ----------------------- | ------------------ |
-| AUTH_INVALID_SESSION_ID | Invalid session id |
+| error message           | description               |
+| ----------------------- | ------------------------- |
+| AUTH_INVALID_SESSION_ID | Invalid active session id |
 
 ### Renew the current session
 
@@ -68,6 +68,6 @@ interface ResponseBody {
 
 | error message           | description                            |
 | ----------------------- | -------------------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid session id                     |
+| AUTH_INVALID_SESSION_ID | Invalid active or idle session id      |
 | DATABASE_UPDATE_FAILED  | Failed to update database              |
 | DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
