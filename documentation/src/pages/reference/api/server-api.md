@@ -111,7 +111,7 @@ Creates a new session of a user.
 const createSession: (userId: string) => Promise<{
     session: Session;
     setSessionCookie: (cookies: Cookies) => void;
-    renewalPeriodExpires: number;
+    idlePeriodExpires: number;
 }>;
 ```
 
@@ -123,11 +123,11 @@ const createSession: (userId: string) => Promise<{
 
 #### Returns
 
-| name                 | type                                              | description                                                |
-| -------------------- | ------------------------------------------------- | ---------------------------------------------------------- |
-| session              | [`Session`](/reference/types/lucia-types#session) | The newly created session                                  |
-| setSessionCookie     | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                      |
-| renewalPeriodExpires | `number`                                          | The expiration time (unix) of the session's renewal period |
+| name              | type                                              | description                                             |
+| ----------------- | ------------------------------------------------- | ------------------------------------------------------- |
+| session           | [`Session`](/reference/types/lucia-types#session) | The newly created session                               |
+| setSessionCookie  | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                   |
+| idlePeriodExpires | `number`                                          | The expiration time (unix) of the session's idle period |
 
 ```ts
 const setSessionCookie: (
@@ -236,7 +236,7 @@ const action: Action = async ({ cookies }) => {
 
 ### `deleteDeadUserSessions()`
 
-Deletes all sessions that are expired and their renewal period has passed. Will succeed regardless of the validity of the user id.
+Deletes all sessions that are expired and their idle period has passed (dead sessions). Will succeed regardless of the validity of the user id.
 
 ```ts
 const deleteDeadUserSessions: (userId: string) => Promise<void>;
@@ -308,11 +308,11 @@ const generateSessionId: () => [string, number, number];
 
 #### Returns
 
-| name | type     | description                                                |
-| ---- | -------- | ---------------------------------------------------------- |
-| [0]  | `string` | The session id                                             |
-| [1]  | `number` | The session's expiration time                              |
-| [2]  | `number` | The expiration time (unix) of the session's renewal period |
+| name | type     | description                                             |
+| ---- | -------- | ------------------------------------------------------- |
+| [0]  | `string` | The session id                                          |
+| [1]  | `number` | The session's expiration time                           |
+| [2]  | `number` | The expiration time (unix) of the session's idle period |
 
 ### `getSessionUser()`
 
@@ -326,9 +326,9 @@ const getSessionUser: (
 
 #### Parameter
 
-| name      | type     | description           |
-| --------- | -------- | --------------------- |
-| sessionId | `string` | The id of the session |
+| name      | type     | description               |
+| --------- | -------- | ------------------------- |
+| sessionId | `string` | A valid active session id |
 
 #### Returns
 
@@ -542,9 +542,9 @@ const invalidateSession: (sessionId: string) => Promise<void>;
 
 #### Parameter
 
-| name      | type     | description           |
-| --------- | -------- | --------------------- |
-| sessionId | `string` | The id of the session |
+| name      | type     | description  |
+| --------- | -------- | ------------ |
+| sessionId | `string` | A session id |
 
 #### Errors
 
@@ -607,29 +607,29 @@ const action: Action = async ({ request }) => {
 
 ### `renewSession()`
 
-Takes and validates an active or renewable session id, and renews the session. The used session id (and its session) is invalidated.
+Takes and validates an active or idle session id, and renews the session. The used session id (and its session) is invalidated.
 
 ```ts
 const renewSession: (sessionId: string) => Promise<{
     session: Session;
     setSessionCookie: (cookies: Cookies) => void;
-    renewalPeriodExpires: number;
+    idlePeriodExpires: number;
 }>;
 ```
 
 #### Parameter
 
-| name      | type     | description        |
-| --------- | -------- | ------------------ |
-| sessionId | `string` | A valid session id |
+| name      | type     | description                       |
+| --------- | -------- | --------------------------------- |
+| sessionId | `string` | A valid active or idle session id |
 
 #### Returns
 
-| name                 | type                                              | description                                                |
-| -------------------- | ------------------------------------------------- | ---------------------------------------------------------- |
-| session              | [`Session`](/reference/types/lucia-types#session) | The newly created session                                  |
-| setSessionCookie     | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                      |
-| renewalPeriodExpires | `number`                                          | The expiration time (unix) of the session's renewal period |
+| name              | type                                              | description                                             |
+| ----------------- | ------------------------------------------------- | ------------------------------------------------------- |
+| session           | [`Session`](/reference/types/lucia-types#session) | The newly created session                               |
+| setSessionCookie  | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                   |
+| idlePeriodExpires | `number`                                          | The expiration time (unix) of the session's idle period |
 
 ```ts
 const setSessionCookie: (
@@ -794,7 +794,7 @@ try {
 
 ### `validateSession()`
 
-Validates a session id. Sessions that are expired but can be renewed are considered invalid.
+Validates an active session id. Idle sessions are considered invalid.
 
 ```ts
 const validateSession: (sessionId: string) => Promise<Session>;
@@ -802,9 +802,9 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 #### Parameter
 
-| name      | type     | description        |
-| --------- | -------- | ------------------ |
-| sessionId | `string` | A valid session id |
+| name      | type     | description               |
+| --------- | -------- | ------------------------- |
+| sessionId | `string` | A valid active session id |
 
 #### Returns
 
