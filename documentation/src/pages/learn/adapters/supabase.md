@@ -45,7 +45,7 @@ You may add additional columns to store custom user data. Refer to [Store additi
 
 | name            | type      | foreign constraint | default              | nullable | unique | identity |
 | --------------- | --------- | ------------------ | -------------------- | -------- | ------ | -------- |
-| id              | `uuid`    |                    | `generate_uuid_v4()` |          | true   | true     |
+| id              | `uuid`    |                    | `uuid_generate_v4()` |          | true   | true     |
 | provider_id     | `varchar` |                    |                      |          | true   |          |
 | hashed_password | `string`  |                    |                      | true     |        |          |
 
