@@ -21,5 +21,5 @@ interface SessionDoc {
     __v?: any;
     expires: number;
     user_id: string;
-    renew_expires: number;
+    idle_expires: number;
 }

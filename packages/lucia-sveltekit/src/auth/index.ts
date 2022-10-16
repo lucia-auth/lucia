@@ -55,7 +55,7 @@ export class Auth {
             env: configs.env,
             csrfProtection: configs.csrfProtection || true,
             sessionTimeout: configs.sessionTimeout || 1000 * 60 * 60 * 24 * 7,
-            renewalPeriod: configs.renewalPeriod || 1000 * 60 * 60 * 24 * 7,
+            idlePeriodTimeout: configs.idlePeriodTimeout || 1000 * 60 * 60 * 24 * 7,
         };
         this.getUser = getUserFunction(this.context);
         this.getUserByProviderId = getUserByProviderIdFunction(this.context);
@@ -124,7 +124,7 @@ interface Configurations {
     generateCustomUserId?: () => Promise<string | null>;
     csrfProtection?: boolean;
     sessionTimeout?: number;
-    renewalPeriod?: number;
+    idlePeriodTimeout?: number;
 }
 
 export type Context = {

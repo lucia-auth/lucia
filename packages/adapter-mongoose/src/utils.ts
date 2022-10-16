@@ -20,14 +20,14 @@ export const convertSessionDoc = (row: SessionDoc): SessionSchema => {
     const {
         _id: id,
         __v: _,
-        user_id,
+        user_id: userId,
         expires,
-        renew_expires
+        idle_expires: idleExpires
     } = row;
     return {
         id,
-        user_id,
+        user_id: userId,
         expires,
-        renew_expires
+        idle_expires: idleExpires
     };
 };

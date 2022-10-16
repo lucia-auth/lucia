@@ -48,12 +48,12 @@ export class User {
             public userId = userId;
             public id = `at_${generateRandomString(20)}`;
             public expires = new Date().getTime() + 1000 * 60 * 60 * 8;
-            public renewalExpires = this.expires + 1000 * 60 * 60 * 24;
+            public idlePeriodExpires = this.expires + 1000 * 60 * 60 * 24;
             public getSchema = (): SessionSchema => {
                 return {
                     user_id: this.userId,
                     id: this.id,
-                    renew_expires: this.renewalExpires,
+                    idle_expires: this.idlePeriodExpires,
                     expires: this.expires,
                 };
             };
@@ -62,7 +62,7 @@ export class User {
                     row.user_id === this.userId &&
                     row.id === this.id &&
                     row.expires === this.expires &&
-                    row.renew_expires === this.renewalExpires
+                    row.idle_expires === this.idlePeriodExpires
                 )
                     return true;
                 return false;

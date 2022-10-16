@@ -29,7 +29,7 @@ export const generateSessionIdFunction = (context: Context) => {
         const sessionId = generateRandomString(40);
         const sessionExpires = new Date().getTime() + context.sessionTimeout;
         const renewalPeriodExpires =
-            sessionExpires + context.renewalPeriod;
+            sessionExpires + context.idlePeriodTimeout;
         return [sessionId, sessionExpires, renewalPeriodExpires];
     };
     return generateSessionId;
@@ -38,17 +38,17 @@ export const generateSessionIdFunction = (context: Context) => {
 type CreateSession = (userId: string) => Promise<{
     session: Session;
     setSessionCookie: (cookies: Cookies) => void;
-    renewalPeriodExpires: number;
+    idlePeriodExpires: number;
 }>;
 
 export const createSessionFunction = (context: Context) => {
     const createSession: CreateSession = async (userId) => {
-        const [sessionId, sessionExpires, renewalPeriodExpires] =
+        const [sessionId, sessionExpires, idlePeriodExpires] =
             context.auth.generateSessionId();
         await context.adapter.setSession(sessionId, {
             userId,
             expires: sessionExpires,
-            renewalPeriodExpires,
+            idlePeriodExpires,
         });
         return {
             session: {
@@ -56,11 +56,11 @@ export const createSessionFunction = (context: Context) => {
                 expires: sessionExpires,
                 sessionId,
             },
-            renewalPeriodExpires,
+            idlePeriodExpires,
             setSessionCookie: (cookies) => {
                 cookies.set("auth_session", sessionId, {
                     httpOnly: true,
-                    expires: new Date(renewalPeriodExpires),
+                    expires: new Date(idlePeriodExpires),
                     secure: context.env === "PROD",
                     path: "/",
                     sameSite: "lax",
@@ -97,11 +97,11 @@ export const deleteDeadUserSessionsFunction = (context: Context) => {
     const deleteDeadUserSessions: DeleteDeadUserSessions = async (userId) => {
         const sessions = await context.adapter.getSessionsByUserId(userId);
         const currentTime = new Date().getTime();
-        const renewalExpiredSessionIds = sessions
-            .filter((val) => val.renew_expires < currentTime)
+        const deadSessionIds = sessions
+            .filter((val) => val.idle_expires < currentTime)
             .map((val) => val.id);
-        if (renewalExpiredSessionIds.length === 0) return;
-        await context.adapter.deleteSession(...renewalExpiredSessionIds);
+        if (deadSessionIds.length === 0) return;
+        await context.adapter.deleteSession(...deadSessionIds);
     };
     return deleteDeadUserSessions;
 };
@@ -109,14 +109,14 @@ export const deleteDeadUserSessionsFunction = (context: Context) => {
 type RenewSession = (sessionId: string) => Promise<{
     session: Session;
     setSessionCookie: (cookies: Cookies) => void;
-    renewalPeriodExpires: number;
+    idlePeriodExpires: number;
 }>;
 
 export const renewSessionFunction = (context: Context) => {
     const renewSession: RenewSession = async (sessionId) => {
         const databaseSession = await context.adapter.getSession(sessionId);
         if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-        if (new Date().getTime() > databaseSession.renew_expires ) {
+        if (new Date().getTime() > databaseSession.idle_expires ) {
             await context.adapter.deleteSession(sessionId);
             throw new LuciaError("AUTH_INVALID_SESSION_ID");
         }

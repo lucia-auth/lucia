@@ -288,7 +288,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await adapter.setSession(session.id, {
                 userId: session.userId,
                 expires: session.expires,
-                renewalPeriodExpires: session.renewalExpires,
+                idlePeriodExpires: session.idlePeriodExpires,
             });
             const sessions = await db.getSessions();
             validate.includesSomeItem(
@@ -309,7 +309,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 await adapter.setSession(session.id, {
                     expires: session.expires,
                     userId: INVALID_INPUT,
-                    renewalPeriodExpires: session.renewalExpires,
+                    idlePeriodExpires: session.idlePeriodExpires,
                 });
                 throw new Error("No error was thrown");
             } catch (e) {
@@ -338,7 +338,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 await adapter.setSession(user1Session.id, {
                     userId: user2Session.userId,
                     expires: user2Session.expires,
-                    renewalPeriodExpires: user2Session.renewalExpires,
+                    idlePeriodExpires: user2Session.idlePeriodExpires,
                 });
                 throw new Error("No error was thrown");
             } catch (e) {

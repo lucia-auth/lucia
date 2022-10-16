@@ -7,7 +7,7 @@ export type UserSchema = {
 export type SessionSchema = {
     id: string;
     expires: number;
-    renew_expires: number;
+    idle_expires: number;
     user_id: string;
 };
 
@@ -42,7 +42,7 @@ export interface Adapter {
         data: {
             userId: string;
             expires: number;
-            renewalPeriodExpires: number;
+            idlePeriodExpires: number;
         }
     ) => Promise<void>;
     deleteSession: (...sessionIds: string[]) => Promise<void>;

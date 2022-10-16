@@ -148,7 +148,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                         id: sessionId,
                         user_id: data.userId,
                         expires: data.expires,
-                        renew_expires: data.renewalPeriodExpires,
+                        idle_expires: data.idlePeriodExpires,
                     },
                 });
             } catch (e) {

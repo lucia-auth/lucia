@@ -23,11 +23,11 @@ model User {
 }
 
 model Session {
-  id            String @id @unique
-  user_id       String
-  expires       BigInt
-  renew_expires BigInt
-  user          User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id           String @id @unique
+  user_id      String
+  expires      BigInt
+  idle_expires BigInt
+  user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("session")

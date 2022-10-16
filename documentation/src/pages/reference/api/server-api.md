@@ -607,7 +607,7 @@ const action: Action = async ({ request }) => {
 
 ### `renewSession()`
 
-Checks the validity of the session id and creates a new session. The used session id (and its session) is invalidated.
+Takes and validates an active or renewable session id, and renews the session. The used session id (and its session) is invalidated.
 
 ```ts
 const renewSession: (sessionId: string) => Promise<{

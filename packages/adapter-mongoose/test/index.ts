@@ -52,7 +52,7 @@ const Session = mongoose.model(
                 type: Number,
                 required: true,
             },
-            renew_expires: {
+            idle_expires: {
                 type: Number,
                 required: true,
             },
