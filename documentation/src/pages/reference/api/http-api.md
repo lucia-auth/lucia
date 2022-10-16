@@ -31,15 +31,15 @@ interface ResponseBody {
 }
 ```
 
-| error message             | description          |
-| ------------------------- | -------------------- |
-| AUTH_INVALID_ACCESS_TOKEN | Invalid access token |
+| error message           | description        |
+| ----------------------- | ------------------ |
+| AUTH_INVALID_SESSION_ID | Invalid session id |
 
-### Refresh the current session
+### Renew the current session
 
 ```bash
 POST
-/api/auth/refresh-session
+/api/auth/renew-session
 ```
 
 #### Response
@@ -66,8 +66,8 @@ interface ResponseBody {
 }
 ```
 
-| error message              | description                            |
-| -------------------------- | -------------------------------------- |
-| AUTH_INVALID_REFRESH_TOKEN | Invalid refresh token                  |
-| DATABASE_UPDATE_FAILED     | Failed to update database              |
-| DATABASE_FETCH_FAILED      | Failed to fetch data from the database |
+| error message           | description                            |
+| ----------------------- | -------------------------------------- |
+| AUTH_INVALID_SESSION_ID | Invalid session id                     |
+| DATABASE_UPDATE_FAILED  | Failed to update database              |
+| DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
