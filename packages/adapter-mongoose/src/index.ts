@@ -1,36 +1,19 @@
 import { LuciaError } from "lucia-sveltekit";
-import {
-    type Adapter,
-    getUpdateData,
-} from "lucia-sveltekit/adapter";
+import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
 import type { Mongoose, MongooseError } from "mongoose";
 import { convertSessionDoc, convertUserDoc } from "./utils.js";
 
 const adapter = (mongoose: Mongoose, url: string): Adapter => {
-    const RefreshToken = mongoose.model<RefreshTokenDoc>("refresh_token");
     const User = mongoose.model<UserDoc>("user");
     const Session = mongoose.model<SessionDoc>("session");
-    const clientPromise = mongoose.connect(url);
     return {
-        getUserById: async (userId: string) => {
+        getUser: async (userId: string) => {
             try {
                 const userDoc = await User.findById(userId).lean();
                 if (!userDoc) return null;
                 return convertUserDoc(userDoc);
             } catch (e) {
                 console.error(e);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
-            }
-        },
-        getUserIdByRefreshToken: async (refreshToken) => {
-            try {
-                await clientPromise;
-                const token = await RefreshToken.findOne({
-                    refresh_token: refreshToken,
-                }).lean();
-                if (!token) return null;
-                return token.user_id;
-            } catch (e) {
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
         },
@@ -45,24 +28,23 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
         },
-        getUserByAccessToken: async (accessToken) => {
+        getSessionAndUserBySessionId: async (sessionId) => {
             try {
-                const session = await Session.findOne({
-                    access_token: accessToken,
-                }).lean();
+                const session = await Session.findById(sessionId).lean();
                 if (!session) return null;
                 const user = await User.findById(session.user_id).lean();
                 if (!user) return null;
-                return convertUserDoc(user);
+                return {
+                    user: convertUserDoc(user),
+                    session: convertSessionDoc(session),
+                };
             } catch (e) {
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
         },
-        getSessionByAccessToken: async (accessToken) => {
+        getSession: async (sessionId) => {
             try {
-                const session = await Session.findOne({
-                    access_token: accessToken,
-                }).lean();
+                const session = await Session.findById(sessionId).lean();
                 if (!session) return null;
                 return convertSessionDoc(session);
             } catch (e) {
@@ -113,37 +95,36 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
         },
-        setSession: async (userId, accessToken, expires) => {
+        setSession: async (sessionId, data) => {
             let userDoc: UserDoc | null = null;
             try {
-                userDoc = await User.findById(userId);
+                userDoc = await User.findById(data.userId);
             } catch (e) {
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
             if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
             try {
                 const sessionDoc = new Session({
-                    user_id: userId,
-                    access_token: accessToken,
-                    expires,
+                    _id: sessionId,
+                    user_id: data.userId,
+                    expires: data.expires,
+                    renew_expires: data.renewalPeriodExpires,
                 });
                 await Session.create(sessionDoc);
             } catch (e) {
-                console.error(e);
                 const error = e as MongooseError;
+                console.error(e);
                 if (
                     error.message.includes("E11000") &&
-                    error.message.includes("access_token")
+                    error.message.includes("id")
                 )
-                    throw new LuciaError("AUTH_DUPLICATE_ACCESS_TOKEN");
+                    throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
         },
-        deleteSessionByAccessToken: async (accessToken) => {
+        deleteSession: async (sessionId) => {
             try {
-                await Session.deleteOne({
-                    access_token: accessToken,
-                });
+                await Session.findByIdAndDelete(sessionId);
             } catch (e) {
                 console.error(e);
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
@@ -154,36 +135,6 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                 await Session.deleteMany({
                     user_id: userId,
                 });
-            } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
-            }
-        },
-        setRefreshToken: async (refreshToken: string, userId: string) => {
-            try {
-                const refreshTokenDoc = new RefreshToken({
-                    refresh_token: refreshToken,
-                    user_id: userId,
-                });
-                await refreshTokenDoc.save();
-            } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
-            }
-        },
-        deleteRefreshToken: async (refreshToken: string) => {
-            try {
-                await RefreshToken.deleteOne({
-                    refresh_token: refreshToken,
-                });
-            } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
-            }
-        },
-        deleteRefreshTokensByUserId: async (userId: string) => {
-            try {
-                await RefreshToken.deleteMany({ user_id: userId });
             } catch (e) {
                 console.error(e);
                 throw new LuciaError("DATABASE_UPDATE_FAILED");

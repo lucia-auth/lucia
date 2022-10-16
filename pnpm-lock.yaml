@@ -26,6 +26,19 @@ importers:
       svelte: 3.50.1
       tailwindcss: 3.1.8_postcss@8.4.16
 
+  packages/adapter-mongoose:
+    specifiers:
+      '@lucia-sveltekit/adapter-test': workspace:*
+      dotenv: ^16.0.3
+      lucia-sveltekit: workspace:*
+      mongoose: ^6.6.1
+    dependencies:
+      lucia-sveltekit: link:../lucia-sveltekit/dist
+      mongoose: 6.6.1
+    devDependencies:
+      '@lucia-sveltekit/adapter-test': link:../adapter-test/dist
+      dotenv: 16.0.3
+
   packages/adapter-mongoose/dist:
     specifiers:
       '@lucia-sveltekit/adapter-test': workspace:*

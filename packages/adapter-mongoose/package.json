@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-mongoose",
-    "version": "0.2.4",
+    "version": "0.3.0",
     "description": "Mongoose (MongoDB) adapter for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
@@ -35,6 +35,6 @@
     },
     "dependencies": {
         "lucia-sveltekit": "workspace:*",
-        "mongoose": "^6.5.0"
+        "mongoose": "^6.6.1"
     }
 }
