@@ -71,39 +71,25 @@ const User = mongoose.model(
 ```ts
 const Session = mongoose.model(
     "session",
-    new mongoose.Schema({
-        access_token: {
-            type: String,
-            unique: true,
-            required: true,
+    new mongoose.Schema(
+        {
+            _id: {
+                type: String,
+            },
+            user_id: {
+                type: String,
+                required: true,
+            },
+            expires: {
+                type: Number,
+                required: true,
+            },
+            idle_expires: {
+                type: Number,
+                required: true,
+            },
         },
-        user_id: {
-            type: String,
-            required: true,
-        },
-        expires: {
-            type: Number,
-            required: true,
-        },
-    })
-);
-```
-
-### `refresh_token`
-
-```ts
-const RefreshToken = mongoose.model(
-    "refresh_token",
-    new mongoose.Schema({
-        refresh_token: {
-            unique: true,
-            required: true,
-            type: String,
-        },
-        user_id: {
-            required: true,
-            type: String,
-        },
-    })
+        { _id: false }
+    )
 );
 ```
