@@ -831,19 +831,23 @@ try {
 }
 ```
 
-### `validateRequest()`
+### `validateRequestEvent()`
 
 Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession). This method will attempt to renew the session if the id is invalid.
 
 ```ts
-const validateRequest: (request: Request) => Promise<Session>;
+const validateRequest: (event: {
+    request: Request;
+    cookies: Cookies;
+}) => Promise<Session>;
 ```
 
 #### Parameter
 
-| name    | type      | description                            |
-| ------- | --------- | -------------------------------------- |
-| request | `Request` | Request from SvelteKit's `ServerEvent` |
+| name          | type      | description                            |
+| ------------- | --------- | -------------------------------------- |
+| event.request | `Request` | Request from SvelteKit's `ServerEvent` |
+| event.cookies | `Cookies` | SvelteKit cookies module               |
 
 #### Returns
 
@@ -865,9 +869,21 @@ const validateRequest: (request: Request) => Promise<Session>;
 import { auth } from "lucia-sveltekit";
 import type { Action } from "@sveltejs/kit";
 
-const action: Action = async ({ request }) => {
+const action: Action = async ({ request, cookies }) => {
     try {
-        await auth.validateRequest(request);
+        await auth.validateRequestEvent({ request, cookies });
+    } catch {
+        // unauthenticated
+    }
+};
+```
+
+Alternatively, you can just pass the request event:
+
+```ts
+const action: Action = async (event) => {
+    try {
+        await auth.validateRequestEvent(event);
     } catch {
         // unauthenticated
     }

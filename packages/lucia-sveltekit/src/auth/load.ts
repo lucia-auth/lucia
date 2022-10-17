@@ -16,7 +16,6 @@ export const handleServerSessionFunction = (context: Context) => {
         if (!sessionId) return { _lucia: null };
         try {
             const { user } = await context.auth.getSessionUser(sessionId); // throws an error is invalid
-            console.log(user);
             return {
                 _lucia: user,
             };
@@ -28,7 +27,7 @@ export const handleServerSessionFunction = (context: Context) => {
                 context.auth.getUser(session.userId),
                 context.auth.deleteDeadUserSessions(session.userId),
             ]);
-            setSessionCookie(cookies);
+            setSessionCookie(cookies)
             return {
                 _lucia: user,
             };

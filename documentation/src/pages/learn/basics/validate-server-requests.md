@@ -8,12 +8,12 @@ This page is for: Actions, standalone endpoints, and server load functions (ie. 
 
 ## Validate requests
 
-The easiest way to validate requests is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This validates the session cookie and returns the current session (not the user). This method will also attempt renew the session if it's invalid.
+The easiest way to validate request event is to use the [`validateRequestEvent()`](/reference/api/server-api#validaterequest) method. This validates the session cookie and returns the current session (not the user). This method will also attempt renew the session if it's invalid.
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
-await auth.validateRequest(request);
+await auth.validateRequestEvent({ cookies, request });
 ```
 
 ## Validate requests using session id
@@ -73,9 +73,19 @@ The following example uses server load functions. However, the same code can be 
 import { auth } from "$lib/server/lucia";
 import type { ServerLoad } from "@sveltejs/kit";
 
-export const load: ServerLoad = async ({ request }) => {
+export const load: ServerLoad = async ({ cookies, request }) => {
     try {
-        const session = await auth.validateRequest(request);
+        const session = await auth.validateRequestEvent({ cookies, request });
+    } catch {
+        // invalid
+    }
+};
+```
+
+```ts
+export const load: ServerLoad = async (event) => {
+    try {
+        const session = await auth.validateRequestEvent(event);
     } catch {
         // invalid
     }

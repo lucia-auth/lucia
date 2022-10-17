@@ -1,8 +1,7 @@
 import type { LuciaError } from "./error.js";
 
-export type User = Lucia.UserData & {
+export type User = Required<Lucia.UserData> & {
     userId: string;
-    providerId: string;
 };
 
 export type Session = {
