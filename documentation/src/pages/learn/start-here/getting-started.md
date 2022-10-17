@@ -46,7 +46,7 @@ This module and the file that holds it **should NOT be imported from the client*
 
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks) method. This will expose some endpoints (like for refreshing sessions) and will provide the client with the current user. 
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks) method. This will expose some endpoints (like for refreshing sessions) and will provide the client with the current user.
 
 ```ts
 // hooks.server.ts
@@ -76,3 +76,5 @@ import type { ServerLoad } from "@sveltejs/kit";
 
 export const load: ServerLoad = auth.handleServerSession();
 ```
+
+To learn how Lucia can be used in a SvelteKit project, continue to [Quick start](/learn/start-here/quick-start). Or, if you want to dive straight in, start reading [Create users](/learn/basics/create-users).
