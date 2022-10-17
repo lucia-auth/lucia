@@ -6,7 +6,7 @@ title: "Concepts"
 
 ## How Lucia works under the hood
 
-Once a user signs in, a new session is created for the user. The session is stored in the database, and the user stores the id of it inside cookies. When a user makes a request to the server, Lucia can check the validity of the session id by cross-checking with the database. Sessions expire after some time, and need to be renewed, and so inactive users will be logged out. 
+Once a user signs in, a new session is issued for the user. The session is stored in the database, and the session id is stored as a cookie. When a user makes a request to the server, Lucia can check the validity of the session id by cross-checking with the database. Sessions expire after some time, and need to be renewed, and so inactive users will be logged out. 
 
 ## Session states
 
