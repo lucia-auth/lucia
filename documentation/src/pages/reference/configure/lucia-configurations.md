@@ -12,6 +12,8 @@ interface Configurations {
     env: Env;
     generateCustomUserId?: () => Promise<string | null>;
     csrfProtection?: boolean;
+    sessionTimeout?: number;
+    idlePeriodTimeout?: number;
 }
 ```
 
@@ -53,8 +55,24 @@ Checks if the request is from a trusted origin (where the app is hosted) in [`pa
 
 ### `generateCustomUserId`
 
-The database will create its own user id if the returned value is `null`
+A function that generates a random user id. The database will create its own user id if the returned value is `null`
 
-| type                            | description                                | default            |
-| ------------------------------- | ------------------------------------------ | ------------------ |
-| `() => Promise<string \| null>` | A function that generates a random user id | `async () => null` |
+| type                            | default            |
+| ------------------------------- | ------------------ |
+| `() => Promise<string \| null>` | `async () => null` |
+
+### `sessionTimeout`
+
+The time in milliseconds the active period lasts for.
+
+| type     | default                          |
+| -------- | -------------------------------- |
+| `number` | `1000 * 60 * 60 * 24` (24 hours) |
+
+### `idlePeriodTimeout`
+
+The time in milliseconds the idle period lasts for - or the time since session expiration the user can continue without signing in again. The session can be renewed if the it's under `sessionTimeout + idlePeriodTimeout` since when issued.
+
+| type     | default                              |
+| -------- | ------------------------------------ |
+| `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |

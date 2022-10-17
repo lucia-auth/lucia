@@ -12,7 +12,10 @@ import {
     updateUserProviderIdFunction,
     getSessionUserFunction,
 } from "./user/index.js";
-import { parseRequestFunction, validateRequestEventFunction } from "./request.js";
+import {
+    parseRequestFunction,
+    validateRequestEventFunction,
+} from "./request.js";
 import {
     createSessionFunction,
     deleteDeadUserSessionsFunction,
@@ -54,8 +57,9 @@ export class Auth {
                 configs.generateCustomUserId || (async () => null),
             env: configs.env,
             csrfProtection: configs.csrfProtection || true,
-            sessionTimeout: configs.sessionTimeout || 1000 * 60 * 60 * 8,
-            idlePeriodTimeout: configs.idlePeriodTimeout || 1000 * 60 * 60 * 24 * 14,
+            sessionTimeout: configs.sessionTimeout || 1000 * 60 * 60 * 24,
+            idlePeriodTimeout:
+                configs.idlePeriodTimeout || 1000 * 60 * 60 * 24 * 14,
         };
         this.getUser = getUserFunction(this.context);
         this.getUserByProviderId = getUserByProviderIdFunction(this.context);
@@ -111,7 +115,9 @@ export class Auth {
     >;
 
     public parseRequest: ReturnType<typeof parseRequestFunction>;
-    public validateRequestEvent: ReturnType<typeof validateRequestEventFunction>;
+    public validateRequestEvent: ReturnType<
+        typeof validateRequestEventFunction
+    >;
 
     public handleHooks: () => Handle;
     public handleServerSession: ReturnType<typeof handleServerSessionFunction>;
