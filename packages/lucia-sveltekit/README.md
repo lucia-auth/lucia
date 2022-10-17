@@ -8,4 +8,6 @@ Documentation: https://lucia-sveltekit.vercel.app
 
 ```
 npm install lucia-sveltekit
+pnpm add lucia-sveltekit
+yarn add lucia-sveltekit
 ```
