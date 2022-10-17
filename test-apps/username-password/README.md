@@ -16,4 +16,4 @@ SUPABASE_SECRET="" # service_role
 
 ### Database
 
-Add a `username` column to `user` table (varchar, unique).
+Add a `username` column to `user` table (string, unique).
