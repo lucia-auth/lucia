@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.11.0
+## v0.12.0
 
 -   [Breaking] The `session` table should be reset and rebuilt
 -   [Breaking] The `refresh_token` table is no longer required
