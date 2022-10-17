@@ -2,7 +2,9 @@
 
 A simple authentication library for sveltekit
 
-Documentation: https://lucia-sveltekit.vercel.app
+**Documentation**: https://lucia-sveltekit.vercel.app
+
+**Changelog**: https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CHANGELOG.md
 
 ## Installation
 
