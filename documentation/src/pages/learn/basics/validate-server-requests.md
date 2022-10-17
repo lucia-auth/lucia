@@ -8,7 +8,7 @@ This page is for: Actions, standalone endpoints, and server load functions (ie. 
 
 ## Validate requests
 
-The easiest way to validate requests is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This returns the current session (not the user) from the access token.
+The easiest way to validate requests is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This validates the session cookie and returns the current session (not the user).
 
 ```ts
 import { auth } from "$lib/server/lucia";
@@ -16,19 +16,19 @@ import { auth } from "$lib/server/lucia";
 await auth.validateRequest(request);
 ```
 
-## Validate requests using access tokens
+## Validate requests using session id
 
-Alternatively, you can get the access token from the request and validate the token. Using this method allows you to directly get the user from the token.
+Alternatively, you can get the session id from the request and validate it independently. Using this method allows you to directly get the user from the token as well.
 
-### Get access token from request
+### Get session id from request
 
-[`parseRequest()`](/reference/api/server-api#parserequest) method will return both the access token and refresh token from the provided request. Note that this method does not check the validity of the tokens. The tokens' value will be an empty string if the cookie does not exist. This method will also check if the request is coming from a trusted domain (the domain as where the app is)
+[`parseRequest()`](/reference/api/server-api#parserequest) method will read the cookies and return the session id. Note that this method does not check the validity of the session id, and the returned value will be an empty string if the cookie does not exist. This method will also check if the request is coming from a trusted domain (the domain as where the app is hosted).
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
 try {
-    const { accessToken, refreshToken } = await auth.parseRequest(request);
+    const sessionId = await auth.parseRequest(request);
 } catch {
     // invalid request
 }
@@ -36,29 +36,29 @@ try {
 
 ### Get current session
 
-Use [`validateAccessToken()`](/reference/api/server-api#validateaccesstoken) to get the session from the access token.
+Use [`validateSession()`](/reference/api/server-api#validatesession) to validate and get the session.
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
 try {
-    const session = await auth.validateAccessToken(accessToken);
+    const session = await auth.validateSession(sessionId);
 } catch {
-    // invalid access token
+    // invalid session id
 }
 ```
 
 ### Get current user
 
-Use [`getSessionUser()`](/reference/api/server-api#getsessionuser) to get the user of the session from the access token.
+Use [`getSessionUser()`](/reference/api/server-api#getsessionuser) to get the session and user from the session id.
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
 try {
-    const user = await auth.getSessionUser(accessToken);
+    const { user, session } = await auth.getSessionUser(sessionId);
 } catch {
-    // invalid access token
+    // invalid session id
 }
 ```
 
@@ -91,8 +91,8 @@ import type { ServerLoad } from "@sveltejs/kit";
 
 export const load: ServerLoad = async ({ request }) => {
     try {
-        const { accessToken } = await auth.parseRequest(request);
-        const user = await auth.getSessionUser(accessToken);
+        const sessionId = await auth.parseRequest(request);
+        const { user } = await auth.getSessionUser(sessionId);
     } catch {
         // invalid token
     }

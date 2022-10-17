@@ -8,8 +8,7 @@ A list of error messages
 
 | name                              |
 | --------------------------------- |
-| `AUTH_INVALID_ACCESS_TOKEN`       |
-| `AUTH_INVALID_REFRESH_TOKEN`      |
+| `AUTH_INVALID_SESSION_ID`         |
 | `AUTH_INVALID_PASSWORD`           |
 | `AUTH_OUTDATED_PASSWORD`          |
 | `AUTH_INVALID_IDENTIFIER_TOKEN`   |
@@ -18,8 +17,7 @@ A list of error messages
 | `AUTH_INVALID_REQUEST`            |
 | `AUTH_INVALID_USER_ID`            |
 | `AUTH_NOT_AUTHENTICATED`          |
-| `AUTH_DUPLICATE_REFRESH_TOKEN`    |
-| `AUTH_DUPLICATE_ACCESS_TOKEN`     |
+| `AUTH_DUPLICATE_SESSION_ID`       |
 | `DATABASE_FETCH_FAILED`           |
 | `DATABASE_UPDATE_FAILED`          |
 | `REQUEST_UNAUTHORIZED`            |

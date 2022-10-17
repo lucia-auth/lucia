@@ -23,22 +23,22 @@ Refer to [Type declaration](/reference/types/type-declaration).
 
 ## Example
 
-To store user's phone number, for example, a `phone_number` column should be added to the `user` table:
+To store user's username, for example, a `username` column should be added to the `user` table:
 
 | column          | type   |
 | --------------- | ------ |
 | id              | string |
 | hashed_password | string |
 | provider_id     | string |
-| phone_number    | string |
+| username        | string |
 
-The phone number column can be accessed with `user.phone_number`:
+The username column can be accessed with `user.username`:
 
 ```ts
 import { auth } from "$lib/server/lucia.ts";
 
 const user = await auth.getUser();
-const phoneNumber = user.phone_number;
+const username = user.username;
 ```
 
 This can be typed by:
@@ -47,7 +47,7 @@ This can be typed by:
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
     interface UserData {
-        phone_number: string;
+        username: string;
     }
 }
 ```

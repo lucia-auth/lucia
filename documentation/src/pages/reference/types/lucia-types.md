@@ -38,24 +38,6 @@ type Session = {
 | userId  | `string` | User id of the user of the session  |
 | expires | `number` | Unix time of the session expiration |
 
-## `Tokens`
-
-```ts
-type Tokens = {
-    accessToken: [string, string];
-    refreshToken: [string, string];
-    cookies: string[];
-};
-```
-
-| name            | type       | description                                                |
-| --------------- | ---------- | ---------------------------------------------------------- |
-| accessToken[0]  | `string`   | The access token                                           |
-| accessToken[1]  | `string`   | The cookie string of the access token                      |
-| refreshToken[0] | `string`   | The refresh token                                          |
-| refreshToken[1] | `string`   | The cookie string of the refresh token                     |
-| cookies         | `string[]` | An array of all the cookie strings (access, refresh token) |
-
 ## `User`
 
 ```ts

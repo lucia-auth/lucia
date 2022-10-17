@@ -10,7 +10,7 @@ Once a user signs in, a new session is created for the user. The session is stor
 
 ## Session states
 
-Sessions (and their ids) can be in one of 3 states: active, idle, and dead. Active sessions can be used to check the validity of requests and get the current user. These expire after a while, and once they do, they are considered idle. Within some set time frame, idle sessions can be renewed for a new active session. Idle sessions that have went by that time frame, however, are considered dead, and cannot be used in any way. This makes sure inactive sessions (users) are logged out, while active user's sessions are persisted.
+Sessions (and their ids) can be in one of 3 states: active, idle, and dead. Active sessions can be used to check the validity of requests and get the current user. These expire after a while, and once they do, they are considered idle. For some period of time, idle sessions can be renewed for a new active session. Idle sessions that have passed that period, however, are considered dead and cannot be used in any way. This makes sure inactive users are logged out, while active user sessions are persisted.
 
 ## Provider ids
 

@@ -84,10 +84,10 @@ const signOut: (redirect?: string) => Promise<void>;
 
 #### Errors
 
-| name                      | description          |
-| ------------------------- | -------------------- |
-| AUTH_INVALID_ACCESS_TOKEN | Unauthorized request |
-| UNKNOWN_ERROR             |                      |
+| name                    | description          |
+| ----------------------- | -------------------- |
+| AUTH_INVALID_SESSION_ID | Unauthorized request |
+| UNKNOWN_ERROR           |                      |
 
 #### Example
 
