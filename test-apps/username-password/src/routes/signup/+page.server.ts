@@ -23,11 +23,11 @@ export const actions: Actions = {
 		} catch (e) {
 			const error = e as Error;
 			if (
-				error.message === 'AUTH_DUPLICATE_IDENTIFIER_TOKEN' ||
+				error.message === 'AUTH_DUPLICATE_PROVIDER_ID' ||
 				error.message === 'AUTH_DUPLICATE_USER_DATA'
 			) {
 				return invalid(400, {
-					message: 'Username unavailable'
+					message: 'Username already in use'
 				});
 			}
 			console.error(error);
