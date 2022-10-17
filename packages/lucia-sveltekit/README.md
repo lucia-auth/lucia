@@ -1,6 +1,6 @@
 # Lucia
 
-A simple authentication library for sveltekit
+A simple authentication library for SvelteKit
 
 **Documentation**: https://lucia-sveltekit.vercel.app
 
