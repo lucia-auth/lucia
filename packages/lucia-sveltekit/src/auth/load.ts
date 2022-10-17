@@ -1,8 +1,6 @@
-import { setCookie } from "../utils/cookie.js";
 import type { User } from "../types.js";
 import type { Context } from "./index.js";
 import type { ServerLoad, ServerLoadEvent } from "../kit.js";
-import { LuciaError } from "../error.js";
 
 type HandleServerSession = <LoadFn extends ServerLoad = () => Promise<{}>>(
     serverLoad?: LoadFn
@@ -14,29 +12,22 @@ export const handleServerSessionFunction = (context: Context) => {
     const handleServerSessionCore = async ({
         cookies,
     }: ServerLoadEvent): Promise<{ _lucia: User | null }> => {
-        const accessToken = cookies.get("access_token");
-        const refreshToken = cookies.get("refresh_token");
-        if (!accessToken && !refreshToken) return { _lucia: null };
+        const sessionId = cookies.get("auth_session") || "";
+        if (!sessionId) return { _lucia: null };
         try {
-            if (!accessToken) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-            const user = await context.auth.getSessionUser(accessToken); // throws an error is invalid
+            const { user } = await context.auth.getSessionUser(sessionId); // throws an error is invalid
             return {
                 _lucia: user,
             };
         } catch {}
         try {
-            if (!refreshToken)
-                throw new LuciaError("AUTH_INVALID_REFRESH_TOKEN");
-            const { session, tokens } = await context.auth.refreshSession(
-                refreshToken
-            );
-            const [accessToken, accessTokenCookie] = tokens.accessToken;
-            const [_, refreshTokenCookie] = tokens.refreshToken;
+            const { session, setSessionCookie } =
+                await context.auth.renewSession(sessionId);
             const [user] = await Promise.all([
-                context.auth.getSessionUser(accessToken),
-                context.auth.deleteExpiredUserSessions(session.userId),
+                context.auth.getUser(session.userId),
+                context.auth.deleteDeadUserSessions(session.userId),
             ]);
-            setCookie(cookies, accessTokenCookie, refreshTokenCookie);
+            setSessionCookie(cookies)
             return {
                 _lucia: user,
             };

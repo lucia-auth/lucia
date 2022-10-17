@@ -23,26 +23,6 @@ export const signOut = async (redirect?: string): Promise<void> => {
     if (result.message) throw new LuciaError(result.message);
 };
 
-export const refreshSession = async (): Promise<number> => {
-    const response = await fetch("/api/auth/refresh-session", {
-        method: "POST"
-    });
-    if (!response.ok) {
-        let result;
-        try {
-            result = await response.json();
-        } catch (e) {
-            console.error(e);
-            throw new LuciaError("UNKNOWN_ERROR");
-        }
-        throw new LuciaError(result.message);
-    }
-    const result = await response.json() as {
-        expires: number
-    }
-    return result.expires
-};
-
 export const getUser = () => {
     if (typeof window === "undefined") {
         // server

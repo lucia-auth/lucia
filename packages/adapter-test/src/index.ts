@@ -1,15 +1,12 @@
-import { RefreshTokenRow, SessionRow, UserRow } from "./types.js";
+import { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
 export { testAdapter as coreTest } from "./tests/main.js";
 export { testAdapter as userIdTest } from "./tests/userid.js";
 
 export interface Database {
-    getRefreshTokens: () => Promise<RefreshTokenRow[]>;
-    getSessions: () => Promise<SessionRow[]>;
-    getUsers: () => Promise<UserRow[]>;
-    clearRefreshTokens: () => Promise<void>;
+    getSessions: () => Promise<SessionSchema[]>;
+    getUsers: () => Promise<UserSchema[]>;
     clearUsers: () => Promise<void>;
     clearSessions: () => Promise<void>;
-    insertRefreshToken: (data: RefreshTokenRow) => Promise<void>;
-    insertUser: (data: UserRow) => Promise<void>;
-    insertSession: (data: SessionRow) => Promise<void>;
+    insertUser: (data: UserSchema) => Promise<void>;
+    insertSession: (data: SessionSchema) => Promise<void>;
 }

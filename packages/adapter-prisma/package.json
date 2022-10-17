@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-prisma",
-    "version": "0.4.5",
+    "version": "0.5.0s",
     "description": "Prisma adapter for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
@@ -34,7 +34,7 @@
         "ts-node": "^10.9.1"
     },
     "dependencies": {
-        "@prisma/client": "^4.1.0",
+        "@prisma/client": "^4.3.1",
         "lucia-sveltekit": "workspace:*",
         "prisma": "^4.1.1"
     }

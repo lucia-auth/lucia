@@ -20,8 +20,8 @@ const getUser: () => Readonly<User> | null;
 
 #### Returns
 
-| type                                                  | description                                   |
-| ----------------------------------------------------- | --------------------------------------------- |
+| type                                                              | description                                   |
+| ----------------------------------------------------------------- | --------------------------------------------- |
 | `Readonly<`[`User`](/reference/types/lucia-types#user)`> \| null` | Returns null if a current user does not exist |
 
 #### Example
@@ -31,41 +31,6 @@ import { getUser } from "lucia-sveltekit/client";
 
 const user = getUser();
 const userId = user?.userId;
-```
-
-## refreshSession()
-
-Refreshes the current session.
-
-```ts
-const refreshSession: () => Promise<number>;
-```
-
-#### Returns
-
-| type     | description                                        |
-| -------- | -------------------------------------------------- |
-| `number` | The expiration time (Unix time) of the new session |
-
-#### Errors
-
-| name                       | description                            |
-| -------------------------- | -------------------------------------- |
-| AUTH_INVALID_REFRESH_TOKEN | Invalid refresh token                  |
-| DATABASE_UPDATE_FAILED     | Failed to update database              |
-| DATABASE_FETCH_FAILED      | Failed to fetch data from the database |
-| UNKNOWN_ERROR              |                                        |
-
-#### Example
-
-```ts
-import { refreshSession } from "lucia-sveltekit/client";
-
-try {
-    await refreshSession();
-} catch {
-    // error
-}
 ```
 
 ## signOut()
@@ -84,10 +49,10 @@ const signOut: (redirect?: string) => Promise<void>;
 
 #### Errors
 
-| name                      | description          |
-| ------------------------- | -------------------- |
-| AUTH_INVALID_ACCESS_TOKEN | Unauthorized request |
-| UNKNOWN_ERROR             |                      |
+| name                    | description          |
+| ----------------------- | -------------------- |
+| AUTH_INVALID_SESSION_ID | Unauthorized request |
+| UNKNOWN_ERROR           |                      |
 
 #### Example
 

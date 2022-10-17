@@ -4,14 +4,13 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Create Sessions"
 ---
 
-Upon session creation, a new access token (as well as a refresh token) that is connected to the session will be issued. These tokens should be stored in a http-only cookie.
-
-A new session can be created using [`createSession()`](/reference/api/server-api#createsession) method, which takes a user id.
+A new session can be created using [`createSession()`](/reference/api/server-api#createsession) method, which takes a user id. After creating a new session, the id of the session should be stored as a http-only cookie.
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const { session, tokens } = await auth.createSession("userId");
+const { session, setSessionCookie, idlePeriodExpires } =
+    await auth.createSession("userId");
 ```
 
 ## Create a new session
@@ -20,7 +19,7 @@ const { session, tokens } = await auth.createSession("userId");
 import { auth } from "$lib/server/lucia";
 
 try {
-    const { session, tokens } = await auth.createSession("123456");
+    const { session } = await auth.createSession("123456");
 } catch {
     // invalid user id
 }
@@ -28,19 +27,11 @@ try {
 
 ## Store the tokens as cookies
 
-The tokens has to be manually stored as cookies, and the cookie strings (array) can be accessed from `tokens.cookies`.
+The tokens should be manually stored as a cookie using `setSessionCookie()` returned from the method, which takes SvelteKit's cookies module.
 
 ```ts
-const { session, tokens } = await auth.createSession("123456");
-const cookieStrings = tokens.cookies; // [accessTokenCookie, refreshTokenCookie]
-```
-
-Lucia provides a helper function called [`setCookie`](/reference/api/server-api#setcookie) which allows you to set cookies using SvelteKit's cookie.
-
-```ts
-import { setCookie } from "lucia-sveltekit";
-
-await setCookie(cookie, ...cookieStrings);
+const { setSessionCookie } = await auth.createSession("123456");
+setSessionCookie(cookies);
 ```
 
 ## Update the current user on the client
@@ -51,8 +42,6 @@ However, when using forms with SvelteKit's [`use:enhance`](https://kit.svelte.de
 
 ## Example
 
-Make sure to spread `tokens.cookies` when calling `setCookie()`. Since a new session was created, and a new cookie was set, refresh the page.
-
 ```ts
 // +page.server.ts
 import { auth } from "$lib/server/lucia";
@@ -60,11 +49,11 @@ import { setCookie } from "lucia-sveltekit";
 import { redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
-    default: async ({ cookie }) => {
+    default: async ({ cookies }) => {
         // ...
         try {
-            const { tokens } = await auth.createSession(userId);
-            setCookie(cookie, ...tokens.cookies);
+            const { setSessionCookie } = await auth.createSession(userId);
+            setSessionCookie(cookies);
         } catch {
             // error
         }

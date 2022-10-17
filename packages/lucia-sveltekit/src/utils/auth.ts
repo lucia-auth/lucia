@@ -1,4 +1,5 @@
-import { UserSchema, User } from "../types.js";
+import { UserSchema } from "../adapter/index.js";
+import { User } from "../types.js";
 
 export const getAccountFromDatabaseUser = (databaseData: UserSchema) => {
     const {
@@ -7,10 +8,10 @@ export const getAccountFromDatabaseUser = (databaseData: UserSchema) => {
         provider_id: providerId,
         ...userData
     } = databaseData;
-    const user = {
+    const user: User = {
         userId,
         ...userData,
-    } as User;
+    };
     return {
         user,
         hashedPassword: hashedPassword,

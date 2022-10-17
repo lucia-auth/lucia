@@ -1,22 +1,21 @@
-import type {  UserSchema } from "lucia-sveltekit/types";
-import type { Adapter } from "lucia-sveltekit/adapter"
+import type { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
+import type { Adapter } from "lucia-sveltekit/adapter";
 import { test, end, validate } from "./../test.js";
 import { User } from "./../db.js";
 import { Database } from "../index.js";
-
 
 const INVALID_INPUT = "INVALID_INPUT";
 
 export const testAdapter = async (adapter: Adapter, db: Database) => {
     const clearAll = async () => {
-        await Promise.all([db.clearSessions(), db.clearRefreshTokens()]);
+        await db.clearSessions();
         await db.clearUsers();
     };
     await clearAll();
-    await test("getUserById()", "Return the correct user", async () => {
+    await test("getUser()", "Return the correct user", async () => {
         const user = new User();
         await db.insertUser(user.getSchema());
-        const returnedUser = await adapter.getUserById(user.id);
+        const returnedUser = await adapter.getUser(user.id);
         const nonNullReturnedUser = validate.isNotNull(
             returnedUser,
             "Target was not returned"
@@ -25,57 +24,25 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             user.validateSchema(nonNullReturnedUser),
             "Target was not the expected value",
             user.getSchema(),
-            nonNullReturnedUser,
+            nonNullReturnedUser
         );
         await clearAll();
     });
-    await test(
-        "getUserById()",
-        "Return null if user id is invalid",
-        async () => {
-            const user = await adapter.getUserById(INVALID_INPUT);
-            validate.isNull(user, "Returned data was not null");
-            await clearAll();
-        }
-    );
-    await test(
-        "getUserByRefreshToken()",
-        "Return the correct user",
-        async () => {
-            const user = new User();
-            const refreshToken = user.createRefreshToken();
-            await db.insertUser(user.getSchema());
-            await db.insertRefreshToken(refreshToken.getSchema());
-            const userId = await adapter.getUserIdByRefreshToken(
-                refreshToken.refreshToken
-            );
-            validate.isNotNull(userId, "Target was not returned");
-            validate.isEqual(userId, user.id, "Target was not returned");
-            await clearAll();
-        }
-    );
-    await test(
-        "getUserByRefreshToken()",
-        "Return null if user id is invalid",
-        async () => {
-            const user = await adapter.getUserById(INVALID_INPUT);
-            validate.isNull(user, "");
-            await clearAll();
-        }
-    );
+    await test("getUser()", "Return null if user id is invalid", async () => {
+        const user = await adapter.getUser(INVALID_INPUT);
+        validate.isNull(user, "Returned data was not null");
+        await clearAll();
+    });
     await test("getUserByProviderId()", "Return the correct user", async () => {
         const user = new User();
         await db.insertUser(user.getSchema());
         const returnedUser = await adapter.getUserByProviderId(user.providerId);
-        validate.isNotNull(
-            returnedUser,
-            "Target was not returned"
-        )
+        validate.isNotNull(returnedUser, "Target was not returned");
         validate.isTrue(
             user.validateSchema(returnedUser as UserSchema),
             "Target was not the expected value",
             user.getSchema(),
-            returnedUser,
+            returnedUser
         );
         await clearAll();
     });
@@ -88,64 +55,59 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await clearAll();
         }
     );
-    await test("getUserByAccessToken()", "Return the correct user", async () => {
+    await test("getSessionAndUserBySessionId()", "Return the correct user and session", async () => {
         const user = new User();
-        const session = user.createSession()
+        const session = user.createSession();
         await db.insertUser(user.getSchema());
-        await db.insertSession(session.getSchema())
-        const returnedUser = await adapter.getUserByAccessToken(session.accessToken);
-        validate.isNotNull(
-            returnedUser,
-            "Target was not returned"
-        )
+        await db.insertSession(session.getSchema());
+        const returnedData = await adapter.getSessionAndUserBySessionId(session.id);
+        validate.isNotNull(returnedData, "Target was not returned");
         validate.isTrue(
-            user.validateSchema(returnedUser as UserSchema),
-            "Target was not the expected value",
+            user.validateSchema(returnedData?.user as UserSchema),
+            "Target (user) was not the expected value",
             user.getSchema(),
-            returnedUser
+            returnedData?.user
+        );
+        validate.isTrue(
+            session.validateSchema(returnedData?.session as SessionSchema),
+            "Target (session) was not the expected value",
+            session.getSchema(),
+            returnedData?.session
         );
         await clearAll();
     });
     await test(
-        "getUserByAccessToken()",
-        "Return null if access token is invalid",
+        "getSessionAndUserBySessionId()",
+        "Return null if session id is invalid",
         async () => {
-            const user = await adapter.getUserByAccessToken(INVALID_INPUT);
+            const user = await adapter.getSessionAndUserBySessionId(INVALID_INPUT);
             validate.isNull(user, "Null was not returned");
             await clearAll();
         }
     );
+    await test("getSession()", "Return the correct session", async () => {
+        const user = new User();
+        const session = user.createSession();
+        await db.insertUser(user.getSchema());
+        await db.insertSession(session.getSchema());
+        let returnedSession = await adapter.getSession(session.id);
+        returnedSession = validate.isNotNull(
+            returnedSession,
+            "Target was not returned"
+        );
+        validate.isTrue(
+            session.validateSchema(returnedSession),
+            "Target is not the expected value",
+            session.getSchema(),
+            returnedSession
+        );
+        await clearAll();
+    });
     await test(
-        "getSessionByAccessToken()",
-        "Return the correct session",
+        "getSession()",
+        "Return null if session id is invalid",
         async () => {
-            const user = new User();
-            const session = user.createSession();
-            await db.insertUser(user.getSchema());
-            await db.insertSession(session.getSchema());
-            let returnedSession = await adapter.getSessionByAccessToken(
-                session.accessToken
-            );
-            returnedSession = validate.isNotNull(
-                returnedSession,
-                "Target was not returned"
-            );
-            validate.isTrue(
-                session.validateSchema(returnedSession),
-                "Target is not the expected value",
-                session.getSchema(),
-                returnedSession,
-            );
-            await clearAll();
-        }
-    );
-    await test(
-        "getSessionByAccessToken()",
-        "Return null if access token in invalid",
-        async () => {
-            const session = await adapter.getSessionByAccessToken(
-                INVALID_INPUT
-            );
+            const session = await adapter.getSession(INVALID_INPUT);
             validate.isNull(session, "Target was not returned");
             await clearAll();
         }
@@ -183,7 +145,6 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             hashedPassword: user.hashedPassword,
             userData: {
                 username: user.username,
-                user_email: user.userEmail,
             },
         });
         const users = await db.getUsers();
@@ -205,7 +166,6 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 hashedPassword: user.hashedPassword,
                 userData: {
                     username: user.username,
-                    user_email: user.userEmail,
                 },
             });
             const users = await db.getUsers();
@@ -225,10 +185,12 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             hashedPassword: user.hashedPassword,
             userData: {
                 username: user.username,
-                user_email: user.userEmail,
             },
         });
-        validate.isNonEmptyString(createdUserId, "Returned value is not a non-empty string")
+        validate.isNonEmptyString(
+            createdUserId,
+            "Returned value is not a non-empty string"
+        );
         await clearAll();
     });
     await test(
@@ -244,7 +206,6 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                     hashedPassword: user2.hashedPassword,
                     userData: {
                         username: user2.username,
-                        user_email: user2.userEmail,
                     },
                 });
             } catch (e) {
@@ -280,8 +241,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                     providerId: user2.providerId,
                     hashedPassword: user2.hashedPassword,
                     userData: {
-                        username: user2.username,
-                        user_email: user1.userEmail,
+                        username: user1.username,
                     },
                 });
             } catch (e) {
@@ -325,16 +285,16 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             const user = new User();
             const session = user.createSession();
             await db.insertUser(user.getSchema());
-            await adapter.setSession(
-                session.userId,
-                session.accessToken,
-                session.expires
-            );
+            await adapter.setSession(session.id, {
+                userId: session.userId,
+                expires: session.expires,
+                idlePeriodExpires: session.idlePeriodExpires,
+            });
             const sessions = await db.getSessions();
             validate.includesSomeItem(
                 sessions,
                 session.validateSchema,
-                "Non-target was deleted from user table",
+                "Target not found",
                 session.getSchema()
             );
             await clearAll();
@@ -346,11 +306,11 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         async () => {
             const session = new User().createSession();
             try {
-                await adapter.setSession(
-                    INVALID_INPUT,
-                    session.accessToken,
-                    session.expires
-                );
+                await adapter.setSession(session.id, {
+                    expires: session.expires,
+                    userId: INVALID_INPUT,
+                    idlePeriodExpires: session.idlePeriodExpires,
+                });
                 throw new Error("No error was thrown");
             } catch (e) {
                 const error = e as Error;
@@ -365,7 +325,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
     );
     await test(
         "setSession()",
-        "Throw AUTH_DUPLICATE_ACCESS_TOKEN if access token is already in use",
+        "Throw AUTH_DUPLICATE_SESSION_ID if session id is already in use",
         async () => {
             const user1 = new User();
             const user2 = new User();
@@ -375,17 +335,17 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await db.insertUser(user2.getSchema());
             await db.insertSession(user1Session.getSchema());
             try {
-                await adapter.setSession(
-                    user2Session.userId,
-                    user1Session.accessToken,
-                    user2Session.expires
-                );
+                await adapter.setSession(user1Session.id, {
+                    userId: user2Session.userId,
+                    expires: user2Session.expires,
+                    idlePeriodExpires: user2Session.idlePeriodExpires,
+                });
                 throw new Error("No error was thrown");
             } catch (e) {
                 const error = e as Error;
                 validate.isEqual(
                     error.message,
-                    "AUTH_DUPLICATE_ACCESS_TOKEN",
+                    "AUTH_DUPLICATE_SESSION_ID",
                     "Unexpected error message"
                 );
             }
@@ -412,14 +372,14 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         }
     );
     await test(
-        "deleteSessionByAccessToken(",
+        "deleteSession(",
         "Delete a user's session from session table",
         async () => {
             const user = new User();
             const session = user.createSession();
             await db.insertUser(user.getSchema());
             await db.insertSession(session.getSchema());
-            await adapter.deleteSessionByAccessToken(session.accessToken);
+            await adapter.deleteSession(session.id);
             const sessions = await db.getSessions();
             validate.notIncludesSomeItem(
                 sessions,
@@ -430,91 +390,14 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await clearAll();
         }
     );
-    await test(
-        "setRefreshToken()",
-        "Insert a user's refresh token into refresh_token table",
-        async () => {
-            const user = new User();
-            const refreshToken = user.createRefreshToken();
-            await db.insertUser(user.getSchema());
-            await adapter.setRefreshToken(
-                refreshToken.refreshToken,
-                refreshToken.userId
-            );
-            const refreshTokens = await db.getRefreshTokens();
-            validate.includesSomeItem(
-                refreshTokens,
-                refreshToken.validateSchema,
-                "Target was not inserted into refresh_token table",
-                refreshToken.getSchema()
-            );
-            await clearAll();
-        }
-    );
-    await test(
-        "deleteRefreshToken()",
-        "Delete a token from refresh_token table",
-        async () => {
-            const user = new User();
-            const refreshToken1 = user.createRefreshToken();
-            const refreshToken2 = user.createRefreshToken();
-            await db.insertUser(user.getSchema());
-            await db.insertRefreshToken(refreshToken1.getSchema());
-            await db.insertRefreshToken(refreshToken2.getSchema());
-            await adapter.deleteRefreshToken(refreshToken1.refreshToken);
-            const refreshTokens = await db.getRefreshTokens();
-            validate.notIncludesSomeItem(
-                refreshTokens,
-                refreshToken1.validateSchema,
-                "Target was not deleted from refresh_token table",
-                refreshToken2.getSchema()
-            );
-            validate.includesSomeItem(
-                refreshTokens,
-                refreshToken2.validateSchema,
-                "Non-target was not deleted from refresh_token table",
-                refreshToken2.getSchema()
-            );
-            await clearAll();
-        }
-    );
-    await test(
-        "deleteUserRefreshTokens()",
-        "Delete a user's refresh tokens",
-        async () => {
-            const user1 = new User();
-            const user2 = new User();
-            const user1RefreshToken = user1.createRefreshToken();
-            const user2RefreshToken = user2.createRefreshToken();
-            await db.insertUser(user1.getSchema());
-            await db.insertUser(user2.getSchema());
-            await db.insertRefreshToken(user1RefreshToken.getSchema());
-            await db.insertRefreshToken(user2RefreshToken.getSchema());
-            await adapter.deleteRefreshTokensByUserId(user1RefreshToken.userId);
-            const refreshTokens = await db.getRefreshTokens();
-            validate.notIncludesSomeItem(
-                refreshTokens,
-                user1RefreshToken.validateSchema,
-                "Target was not deleted from refresh_token table",
-                user1RefreshToken.getSchema()
-            );
-            validate.includesSomeItem(
-                refreshTokens,
-                user2RefreshToken.validateSchema,
-                "Non-target was not deleted from refresh_token table",
-                user2RefreshToken.getSchema()
-            );
-            await clearAll();
-        }
-    );
     await test("updateUser()", "Update a user's provider id", async () => {
         const user = new User();
         await db.insertUser(user.getSchema());
         await adapter.updateUser(user.id, {
-            providerId: "update:" + user.userEmail,
+            providerId: "update:" + user.username,
         });
         user.update({
-            provider_id: "update:" + user.userEmail,
+            provider_id: "update:" + user.username,
         });
         const users = await db.getUsers();
         validate.includesSomeItem(
@@ -608,13 +491,13 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         "updateUser()",
         "Throw AUTH_DUPLICATE_PROVIDER_ID if user data violates unique key",
         async () => {
-            const user1 = new User()
-            const user2 = new User()
-            await db.insertUser(user1.getSchema())
-            await db.insertUser(user2.getSchema())
+            const user1 = new User();
+            const user2 = new User();
+            await db.insertUser(user1.getSchema());
+            await db.insertUser(user2.getSchema());
             try {
                 await adapter.updateUser(user2.id, {
-                    providerId: user1.providerId
+                    providerId: user1.providerId,
                 });
                 throw new Error("No error was thrown");
             } catch (e) {
@@ -632,15 +515,15 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         "updateUser()",
         "Throw AUTH_DUPLICATE_USER_DATA if user data violates unique key",
         async () => {
-            const user1 = new User()
-            const user2 = new User()
-            await db.insertUser(user1.getSchema())
-            await db.insertUser(user2.getSchema())
+            const user1 = new User();
+            const user2 = new User();
+            await db.insertUser(user1.getSchema());
+            await db.insertUser(user2.getSchema());
             try {
                 await adapter.updateUser(user2.id, {
                     userData: {
-                        user_email: user1.userEmail
-                    }
+                        username: user1.username,
+                    },
                 });
                 throw new Error("No error was thrown");
             } catch (e) {
@@ -654,6 +537,6 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await clearAll();
         }
     );
-    await clearAll()
+    await clearAll();
     end();
 };

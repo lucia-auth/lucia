@@ -1,4 +1,4 @@
-import type { RefreshTokenSchema, SessionSchema, UserSchema } from "lucia-sveltekit/types";
+import type { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
 
 export const convertUserDoc = (row: UserDoc): UserSchema => {
     const {
@@ -18,25 +18,16 @@ export const convertUserDoc = (row: UserDoc): UserSchema => {
 
 export const convertSessionDoc = (row: SessionDoc): SessionSchema => {
     const {
-        _id: _,
-        __v: _v,
-        access_token,
-        user_id,
+        _id: id,
+        __v: _,
+        user_id: userId,
         expires,
+        idle_expires: idleExpires
     } = row;
     return {
-        access_token,
-        user_id,
+        id,
+        user_id: userId,
         expires,
-    };
-};
-
-export const convertRefreshTokenDoc = (
-    row: RefreshTokenDoc
-): RefreshTokenSchema => {
-    const { _id, __v: _v, user_id, refresh_token } = row;
-    return {
-        user_id,
-        refresh_token,
+        idle_expires: idleExpires
     };
 };

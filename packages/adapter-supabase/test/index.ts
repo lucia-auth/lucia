@@ -4,6 +4,7 @@ import supabase from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
+import { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
 
 dotenv.config({
     path: `${resolve()}/.env`,
@@ -25,42 +26,23 @@ export const adapter = supabase(url, secret);
 
 export const db: Database = {
     getUsers: async () => {
-        const { data } = await client.from<UserRow>("user").select();
+        const { data } = await client.from<UserSchema>("user").select();
         if (!data) throw new Error("Failed to fetch from database");
         return data;
     },
-    getRefreshTokens: async () => {
-        const { data } = await client
-            .from<RefreshTokenRow>("refresh_token")
-            .select();
-        if (!data) throw new Error("Failed to fetch from database");
-        return data.map((val) => {
-            const { id: _, ...expectedValue } = val;
-            return expectedValue;
-        });
-    },
     getSessions: async () => {
-        const { data } = await client.from<SessionRow>("session").select();
+        const { data } = await client.from<SessionSchema>("session").select();
         if (!data) throw new Error("Failed to fetch from database");
-        return data.map((val) => {
-            const { id: _, ...expectedValue } = val;
-            return expectedValue;
-        });
+        return data
     },
     insertUser: async (user) => {
         await client.from("user").insert(user);
-    },
-    insertRefreshToken: async (refreshToken) => {
-        await client.from("refresh_token").insert(refreshToken);
     },
     insertSession: async (session) => {
         await client.from("session").insert(session);
     },
     clearUsers: async () => {
         await client.from("user").delete().like("username", "user%");
-    },
-    clearRefreshTokens: async () => {
-        await client.from("refresh_token").delete().gte("id", 0);
     },
     clearSessions: async () => {
         await client.from("session").delete().gte("id", 0);

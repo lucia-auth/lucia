@@ -1,10 +1,15 @@
 import { Cookies } from "../kit.js";
-import { createBlankCookies, setCookie } from "../utils/cookie.js";
 import { Context } from "./index.js";
 
-export const deleteAllCookiesFunction = (context:Context) => {
-    const deleteAllCookies = (targetCookies: Cookies) => {
-        setCookie(targetCookies, ...createBlankCookies(context.env === "PROD"));
-    }
-    return deleteAllCookies
-}
+export const deleteAllCookiesFunction = (context: Context) => {
+    const deleteAllCookies = (cookies: Cookies) => {
+        cookies.set("auth_session", "", {
+            httpOnly: true,
+            maxAge: 0,
+            secure: context.env === "PROD",
+            path: "/",
+            sameSite: "lax",
+        });
+    };
+    return deleteAllCookies;
+};

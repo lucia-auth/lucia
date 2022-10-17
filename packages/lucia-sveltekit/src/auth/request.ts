@@ -2,18 +2,15 @@ import { LuciaError } from "../error.js";
 import type { Context } from "./index.js";
 import cookie from "cookie";
 import { Session } from "../types.js";
+import { Cookies } from "../kit.js";
 
-type ParseRequest = (request: Request) => Promise<{
-    accessToken: string;
-    refreshToken: string;
-}>;
+type ParseRequest = (request: Request) => string;
 
 export const parseRequestFunction = (context: Context) => {
-    const parseRequest: ParseRequest = async (request) => {
+    const parseRequest: ParseRequest = (request) => {
         const clonedReq = request.clone();
         const cookies = cookie.parse(clonedReq.headers.get("cookie") || "");
-        const refreshToken = cookies.refresh_token || "";
-        const accessToken = cookies.access_token || "";
+        const sessionId = cookies.auth_session || "";
         const checkForCsrf =
             clonedReq.method !== "GET" && clonedReq.method !== "HEAD";
         if (checkForCsrf && context.csrfProtection) {
@@ -23,22 +20,32 @@ export const parseRequestFunction = (context: Context) => {
             if (url.origin !== origin)
                 throw new LuciaError("AUTH_INVALID_REQUEST");
         }
-        return {
-            accessToken,
-            refreshToken,
-        };
+        return sessionId;
     };
     return parseRequest;
 };
 
-type ValidateRequest = (request: Request) => Promise<Session>;
+type ValidateRequestEvent = (event: {
+    request: Request;
+    cookies: Cookies;
+}) => Promise<Session>;
 
-export const validateRequestFunction = (context: Context) => {
-    const validateRequest: ValidateRequest = async (request) => {
-        const { accessToken } = await context.auth.parseRequest(request);
-        if (!accessToken) throw new LuciaError("AUTH_INVALID_ACCESS_TOKEN");
-        const session = await context.auth.validateAccessToken(accessToken);
+export const validateRequestEventFunction = (context: Context) => {
+    const validateRequestEvent: ValidateRequestEvent = async ({ request, cookies }) => {
+        const sessionId = context.auth.parseRequest(request);
+        if (!sessionId) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+        try {
+            const session = await context.auth.validateSession(sessionId);
+            return session;
+        } catch (e) {
+            const error = e as LuciaError;
+            if (error.message !== "AUTH_INVALID_SESSION_ID") throw error;
+        }
+        const { session, setSessionCookie } = await context.auth.renewSession(
+            sessionId
+        );
+        setSessionCookie(cookies)
         return session;
     };
-    return validateRequest;
+    return validateRequestEvent;
 };
