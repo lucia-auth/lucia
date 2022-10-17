@@ -68,10 +68,8 @@ jobs:
               run: |
                   dir=$(pwd)
                   npm i -g pnpm
-                  pnpm install --no-frozen-lockfile
-                  cd packages/lucia-sveltekit && pnpm install --no-frozen-lockfile && pnpm build && cd $dir
                   pkg_string="${{ needs.check_pkgs.outputs.packages }}"
-                  build_cmd="pnpm install --no-frozen-lockfile && pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd $dir"
+                  build_cmd="pnpm install --no-frozen-lockfile && pnpm build && cd dist && pnpm publish --no-git-checks --access public && cd $dir"
 
                   if [[ $pkg_string == *"lucia-sveltekit"* ]]; then
                     cd packages/lucia-sveltekit && eval "$build_cmd"
@@ -83,7 +81,7 @@ jobs:
                     cd packages/adapter-mongoose && eval "$build_cmd"
                   fi
                   if [[ $pkg_string == *"adapter-prisma"* ]]; then
-                    cd packages/adapter-prisma && npx prisma generate && eval "$build_cmd"
+                    cd packages/adapter-prisma && eval "$build_cmd"
                   fi
                   if [[ $pkg_string == *"adapter-supabase"* ]]; then
                     cd packages/adapter-supabase && eval "$build_cmd"
