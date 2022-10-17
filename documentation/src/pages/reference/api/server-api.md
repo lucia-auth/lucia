@@ -833,7 +833,7 @@ try {
 
 ### `validateRequest()`
 
-Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession). This method will not attempt to renew the session if the id is invalid/not-active.
+Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession). This method will attempt to renew the session if the id is invalid.
 
 ```ts
 const validateRequest: (request: Request) => Promise<Session>;

@@ -8,7 +8,7 @@ This page is for: Actions, standalone endpoints, and server load functions (ie. 
 
 ## Validate requests
 
-The easiest way to validate requests is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This validates the session cookie and returns the current session (not the user).
+The easiest way to validate requests is to use the [`validateRequest()`](/reference/api/server-api#validaterequest) method. This validates the session cookie and returns the current session (not the user). This method will also attempt renew the session if it's invalid.
 
 ```ts
 import { auth } from "$lib/server/lucia";
