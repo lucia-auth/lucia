@@ -119,7 +119,7 @@ export const load: PageLoad = async (event) => {
 };
 ```
 
-## 3. Sign in page
+## 4. Sign in page
 
 Create `routes/login/` route dir. This route will handle sign ins. Create 3 folders inside it: `+page.svelte`. `+page.server.ts`, and `+page.ts`.
 
@@ -211,7 +211,7 @@ export const load: PageLoad = async (event) => {
 };
 ```
 
-## 4. Profile page (protected)
+## 5. Profile page (protected)
 
 This page will be the root (`/`). This route will show the user's data and have the note-taking portion of the app. Create 3 folders inside the root `/routes` dir: `+page.svelte`. `+page.server.ts`, and `+page.ts`. We'll make this route only accessible to authenticated users.
 
@@ -269,11 +269,11 @@ Add a button that calls `signOut()`. `/login` will tell Lucia to redirect the us
 <button on:click={() => signOut('/login')}>Sign out</button>
 ```
 
-## 5. Form submissions
+## 6. Request validation
 
 Let's also add a note-taking functionality to the app. This "feature" should only be available to authenticated users. We're going to make this super simple and save the input as a cookie on the server.
 
-### Forms
+### Input form
 
 The input will have a default value of `$page.data.notes`. We'll cover this in a later step, but this will be the note saved to the cookie.
 

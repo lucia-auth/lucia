@@ -4,7 +4,12 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Errors"
 ---
 
-A list of error messages
+A list of error messages, which can be accessed with `.message`.
+
+```ts
+const error: LuciaError
+const errorMessage = error.message
+```
 
 | name                              |
 | --------------------------------- |

@@ -33,41 +33,6 @@ const user = getUser();
 const userId = user?.userId;
 ```
 
-## renewSession()
-
-Renews the current session.
-
-```ts
-const renewSession: () => Promise<number>;
-```
-
-#### Returns
-
-| type     | description                                        |
-| -------- | -------------------------------------------------- |
-| `number` | The expiration time (Unix time) of the new session |
-
-#### Errors
-
-| name                    | description                            |
-| ----------------------- | -------------------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid active session id              |
-| DATABASE_UPDATE_FAILED  | Failed to update database              |
-| DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
-| UNKNOWN_ERROR           |                                        |
-
-#### Example
-
-```ts
-import { renewSession } from "lucia-sveltekit/client";
-
-try {
-    await renewSession();
-} catch {
-    // error
-}
-```
-
 ## signOut()
 
 Signs the user out the current session. Refresh the page for the current state to update.

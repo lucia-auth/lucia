@@ -13,4 +13,3 @@ export class ErrorResponse extends Response {
 }
 
 export { handleLogoutRequest } from "./logout.js";
-export { handleRenewRequest } from "./renew.js";
