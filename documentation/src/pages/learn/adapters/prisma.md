@@ -45,12 +45,10 @@ You may add additional columns to store custom user data. Refer to [Store additi
 
 ```prisma
 model User {
-  id              String         @id @unique @default(cuid())
-  provider_id     String         @unique
+  id              String    @id @unique @default(cuid())
+  provider_id     String    @unique
   hashed_password String?
-  username        String         @unique
-  user_email      String         @unique
-  refresh_token   RefreshToken[]
+  username        String    @unique
   session         Session[]
 
   @@map("user")
@@ -61,27 +59,13 @@ model User {
 
 ```prisma
 model Session {
-  id           Int    @id @unique @default(autoincrement())
-  access_token String @unique
+  id           String @id @unique
   user_id      String
   expires      BigInt
+  idle_expires BigInt
   user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("session")
-}
-```
-
-### `refresh_token`
-
-```prisma
-model RefreshToken {
-  id            Int    @id @unique @default(autoincrement())
-  refresh_token String @unique
-  user_id       String
-  user          User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
-
-  @@index([user_id])
-  @@map("refresh_token")
 }
 ```
