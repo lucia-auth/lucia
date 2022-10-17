@@ -1,6 +1,6 @@
 {
     "name": "lucia-sveltekit",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "description": "A simple authentication library for SvelteKit",
     "main": "index.js",
     "types": "index.d.ts",
