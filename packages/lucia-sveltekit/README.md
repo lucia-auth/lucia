@@ -8,7 +8,7 @@ A simple authentication library for SvelteKit
 
 ## Installation
 
-```
+```bash
 npm install lucia-sveltekit
 pnpm add lucia-sveltekit
 yarn add lucia-sveltekit

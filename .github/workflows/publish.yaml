@@ -68,6 +68,7 @@ jobs:
               run: |
                   dir=$(pwd)
                   npm i -g pnpm
+                  pnpm install --no-frozen-lockfile
                   cd packages/lucia-sveltekit && pnpm install --no-frozen-lockfile && pnpm build && cd $dir
                   pkg_string="${{ needs.check_pkgs.outputs.packages }}"
                   build_cmd="pnpm install --no-frozen-lockfile && pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd $dir"
