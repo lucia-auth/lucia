@@ -1,14 +1,18 @@
 # Changelog
 
-## v0.12.1
+## v0.13.0
 
--   [Breaking] `User` is `{userId: string}` by default - additional data stored in `user` table are no longer automatically added to it
+-   [Breaking] `handleHooks()` automatically validates and renew session 
+-   [Breaking] `User` is `{ userId: string }` by default - additional data stored in `user` table are no longer automatically added
 -   [Breaking] Renamed `userData` fields to `attributes` for `createUser()`
 -   [Breaking] Renamed `updateUserData()` to `updateUserAttributes()`
 -   [Breaking] `setUser()` adapter method returns `User` instead of user id
 -   [Breaking] Renamed `Lucia.UserData` to `Lucia.UserAttributesSchema`
--   new `transformUserData()` config
--   `Lucia.User` type must be configured for `transformUserData()`
+-   [Breaking] Renamed `userData` to `attributes` field for `updateUser()` adapter method
+-   [Breaking] `Lucia.Auth` and `Lucia.UserAttributesSchema type must be configured for `transformUserData()`
+-   [Breaking] Removed `validateRequestEvent()` method
+-   Added `validateRequest()` method
+-   New `transformUserData()` config
 
 ## v0.12.0
 
