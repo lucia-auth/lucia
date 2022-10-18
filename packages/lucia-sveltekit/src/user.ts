@@ -1,7 +1,6 @@
 import { getContext, hasContext, setContext } from "svelte";
 import { get, type Readable } from "svelte/store";
-import type { User } from "./types.js";
-
+import { User } from "./types.js";
 /* 
 user is only stored in a variable in a browser context
 as it'll be shared across multiple requests when inside a server context

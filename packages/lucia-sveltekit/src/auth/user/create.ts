@@ -1,4 +1,4 @@
-import type { User } from "../../types.js";
+import { User } from "../../types.js";
 import { hashScrypt } from "../../utils/crypto.js";
 import type { Context } from "../index.js";
 
@@ -7,27 +7,24 @@ type CreateUser = (
     identifier: string,
     options?: {
         password?: string;
-        userData?: Lucia.UserData;
+        attributes?: Lucia.UserAttributesSchema;
     }
 ) => Promise<User>;
 
 export const createUserFunction = (context: Context) => {
     const createUser: CreateUser = async (provider, identifier, options) => {
         const providerId = `${provider}:${identifier}`;
-        const userData = options?.userData || {};
+        const attributes = options?.attributes || {};
         const userId = await context.generateCustomUserId()
         const hashedPassword = options?.password
             ? await hashScrypt(options.password)
             : null;
-        const dbUserId = await context.adapter.setUser(userId, {
+        const userData = await context.adapter.setUser(userId, {
             providerId,
             hashedPassword: hashedPassword,
-            userData: userData,
+            attributes,
         });
-        const user = {
-            userId: dbUserId,
-            ...userData
-        } as User
+        const user = context.transformUserData(userData)
         return user
     };
     return createUser;

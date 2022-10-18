@@ -14,7 +14,7 @@ export const actions: Actions = {
 		try {
 			const user = await auth.createUser('username', username, {
 				password,
-				userData: {
+				attributes: {
 					username
 				}
 			});

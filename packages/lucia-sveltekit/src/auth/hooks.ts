@@ -2,6 +2,8 @@ import type { Handle, RequestEvent } from "../kit.js";
 import type { Context } from "./index.js";
 
 import { handleLogoutRequest } from "./endpoints/index.js";
+import { LuciaError } from "../error.js";
+import { Session } from "../types.js";
 
 export const getRequestHandler = (event: RequestEvent) => {
     const isLogoutPOSTRequest =
@@ -32,6 +34,22 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 export const handleHooksFunction = (context: Context) => {
     const handleHooks = () => {
         return async ({ event, resolve }: Parameters<Handle>[0]) => {
+            const sessionId = event.cookies.get("auth_session") || "";
+            let session: Session | null = null
+            try {
+                session = await context.auth.validateSession(sessionId); // throws an error is invalid
+            } catch {
+                try {
+                    const { session: renewedSession, setSessionCookie } =
+                        await context.auth.renewSession(sessionId);
+                    await context.auth.deleteDeadUserSessions(renewedSession.userId);
+                    setSessionCookie(event.cookies);
+                    session = renewedSession
+                } catch (e) {
+                    context.auth.deleteAllCookies(event.cookies);
+                }
+            }
+            event.locals.getSession = () => Object.freeze(session)
             const requestHandler = getRequestHandler(event);
             if (requestHandler) return await requestHandler(event, context);
             return await resolve(event, {

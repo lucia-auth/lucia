@@ -7,6 +7,8 @@ type ValidateSession = (sessionId: string) => Promise<Session>;
 
 export const validateSessionFunction = (context: Context) => {
     const validateSession: ValidateSession = async (sessionId) => {
+        if (sessionId.length !== 40)
+            throw new LuciaError("AUTH_INVALID_SESSION_ID");
         const databaseSession = await context.adapter.getSession(sessionId);
         if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
         const currentTime = new Date().getTime();
@@ -28,8 +30,7 @@ export const generateSessionIdFunction = (context: Context) => {
     const generateSessionId: GenerateSessionId = () => {
         const sessionId = generateRandomString(40);
         const sessionExpires = new Date().getTime() + context.sessionTimeout;
-        const renewalPeriodExpires =
-            sessionExpires + context.idlePeriodTimeout;
+        const renewalPeriodExpires = sessionExpires + context.idlePeriodTimeout;
         return [sessionId, sessionExpires, renewalPeriodExpires];
     };
     return generateSessionId;
@@ -114,9 +115,10 @@ type RenewSession = (sessionId: string) => Promise<{
 
 export const renewSessionFunction = (context: Context) => {
     const renewSession: RenewSession = async (sessionId) => {
+        if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
         const databaseSession = await context.adapter.getSession(sessionId);
         if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-        if (new Date().getTime() > databaseSession.idle_expires ) {
+        if (new Date().getTime() > databaseSession.idle_expires) {
             await context.adapter.deleteSession(sessionId);
             throw new LuciaError("AUTH_INVALID_SESSION_ID");
         }

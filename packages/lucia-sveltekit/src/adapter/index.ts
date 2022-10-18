@@ -2,7 +2,9 @@ export type UserSchema = {
     id: string;
     hashed_password: string | null;
     provider_id: string;
-} & Lucia.UserData;
+} & Lucia.UserAttributesSchema;
+
+export type UserData = Omit<UserSchema, "hashed_password" | "provider_id">
 
 export type SessionSchema = {
     id: string;
@@ -23,16 +25,16 @@ export interface Adapter {
         data: {
             providerId: string;
             hashedPassword: string | null;
-            userData: Record<string, any>;
+            attributes: Record<string, any>;
         }
-    ) => Promise<string>;
+    ) => Promise<UserSchema>;
     deleteUser: (userId: string) => Promise<void>;
     updateUser: (
         userId: string,
         data: {
             providerId?: string | null;
             hashedPassword?: string | null;
-            userData?: Record<string, any>;
+            attributes?: Record<string, any>;
         }
     ) => Promise<UserSchema>;
     getSession: (sessionId: string) => Promise<SessionSchema | null>;
@@ -52,12 +54,12 @@ export interface Adapter {
 export const getUpdateData = (data: {
     providerId?: string | null;
     hashedPassword?: string | null;
-    userData?: Record<string, any>;
+    attributes?: Record<string, any>;
 }) => {
     const rawData: Record<string, any> = {
         provider_id: data.providerId,
         hashed_password: data.hashedPassword,
-        ...(data.userData || {}),
+        ...(data.attributes || {}),
     };
     const result: Record<string, any> = {};
     for (const key in rawData) {

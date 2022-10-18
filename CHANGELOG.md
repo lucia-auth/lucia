@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.12.1
+
+-   [Breaking] `User` is `{userId: string}` by default - additional data stored in `user` table are no longer automatically added to it
+-   [Breaking] Renamed `userData` fields to `attributes` for `createUser()`
+-   [Breaking] Renamed `updateUserData()` to `updateUserAttributes()`
+-   [Breaking] `setUser()` adapter method returns `User` instead of user id
+-   [Breaking] Renamed `Lucia.UserData` to `Lucia.UserAttributesSchema`
+-   new `transformUserData()` config
+-   `Lucia.User` type must be configured for `transformUserData()`
+
 ## v0.12.0
 
 -   [Breaking] The `session` table should be reset and rebuilt

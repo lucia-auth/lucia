@@ -1,9 +1,11 @@
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-	interface UserData {
-		username: string
-	}
+
 }
 
 /// <reference types="@sveltejs/kit" />
-declare namespace App {}
+declare namespace App {
+    interface Locals {
+        getSession: () => import("lucia-sveltekit/types").Session | null
+    }
+}

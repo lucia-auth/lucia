@@ -8,4 +8,10 @@ export const auth = lucia({
 	env: dev ? 'DEV' : 'PROD',
 	generateCustomUserId: async () => generateRandomString(8),
 	sessionTimeout: 1000 * 5,
+	transformUserData: (userData) => {
+		return {
+			userId: userData.id,
+			username: userData.username
+		}
+	}
 });

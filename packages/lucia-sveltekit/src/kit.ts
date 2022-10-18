@@ -19,11 +19,10 @@ export interface RequestEvent<
     Params extends Partial<Record<string, string>> = Partial<
         Record<string, string>
     >,
-    Locals extends {} = {}
 > {
     cookies: Cookies;
     getClientAddress: () => string;
-    locals: App.Locals & Locals; // we don't set { _lucia: Session } here since it's _lucia is not set in handle/hooks
+    locals: App.Locals
     params: Params;
     platform: Readonly<{}>;
     request: Request;
@@ -65,7 +64,7 @@ export interface ServerLoadEvent<
         Record<string, string>
     >,
     ParentData extends Record<string, any> = Record<string, any>
-> extends RequestEvent<Params, { _lucia: Session }> {
+> extends RequestEvent<Params> {
     parent: () => Promise<ParentData>;
 }
 

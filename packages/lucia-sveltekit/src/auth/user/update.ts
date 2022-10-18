@@ -1,7 +1,6 @@
-import type { User } from "../../types.js";
-import { getAccountFromDatabaseUser } from "../../utils/auth.js";
 import type { Context } from "../index.js";
 import { hashScrypt } from "../../utils/crypto.js";
+import { User } from "../../types.js";
 
 type UpdateUserProviderIdToken = (
     userId: string,
@@ -16,47 +15,50 @@ export const updateUserProviderIdFunction = (context: Context) => {
         identifier
     ) => {
         const providerId = `${provider}:${identifier}`;
-        const databaseData = await context.adapter.updateUser(userId, {
+        const userData = await context.adapter.updateUser(userId, {
             providerId,
         });
-        const account = getAccountFromDatabaseUser(databaseData);
-        return account.user;
+        const user = context.transformUserData(userData);
+        return user;
     };
     return updateUserProviderId;
 };
 
-type UpdateUserData = (
+type UpdateUserAttributes = (
     userId: string,
-    userData: Partial<Lucia.UserData>
+    userData: Partial<Lucia.UserAttributesSchema>
 ) => Promise<User>;
 
-export const updateUserDataFunction = (context: Context) => {
-    const updateUserData: UpdateUserData = async (userId, userData) => {
-        const databaseData = await context.adapter.updateUser(userId, {
-            userData,
+export const updateUserAttributesFunction = (context: Context) => {
+    const updateUserAttributes: UpdateUserAttributes = async (
+        userId,
+        attributes
+    ) => {
+        const userData = await context.adapter.updateUser(userId, {
+            attributes,
         });
-        const account = getAccountFromDatabaseUser(databaseData);
-        return account.user;
+        const user = context.transformUserData(userData);
+        return user;
     };
-    return updateUserData;
+    return updateUserAttributes;
 };
 
 type UpdateUserPassword = (
     userId: string,
     password: string | null
-) => Promise<User>;
+) => Promise<Lucia.User>;
 
 export const updateUserPasswordFunction = (context: Context) => {
     const updateUserPassword: UpdateUserPassword = async (userId, password) => {
         const hashedPassword = password ? await hashScrypt(password) : null;
-        const [databaseData] = await Promise.all([
+        const [userData] = await Promise.all([
             context.adapter.updateUser(userId, {
                 hashedPassword,
             }),
             context.adapter.deleteSessionsByUserId(userId),
         ]);
-        const account = getAccountFromDatabaseUser(databaseData)
-        return account.user
+        const user = context.transformUserData(userData);
+        return user;
     };
     return updateUserPassword;
 };
