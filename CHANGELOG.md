@@ -2,7 +2,7 @@
 
 ## v0.13.1
 
--   [Fix] Fix issue where hooks wasn't validating request origin
+-   [Fix] Fixed issue where hooks wasn't validating request origin
 
 ## v0.13.0
 
