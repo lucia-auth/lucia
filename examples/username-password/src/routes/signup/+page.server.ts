@@ -14,10 +14,11 @@ export const actions: Actions = {
 		try {
 			const user = await auth.createUser('username', username, {
 				password,
-				userData: {
+				attributes: {
 					username
 				}
 			});
+			console.log(user)
 			const { setSessionCookie } = await auth.createSession(user.userId);
 			setSessionCookie(cookies)
 		} catch (e) {
