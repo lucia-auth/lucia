@@ -7,14 +7,13 @@ type ParseRequest = (request: Request) => string;
 
 export const parseRequestFunction = (context: Context) => {
     const parseRequest: ParseRequest = (request) => {
-        const clonedReq = request.clone();
-        const cookies = cookie.parse(clonedReq.headers.get("cookie") || "");
+        const cookies = cookie.parse(request.headers.get("cookie") || "");
         const sessionId = cookies.auth_session || "";
         const checkForCsrf =
-            clonedReq.method !== "GET" && clonedReq.method !== "HEAD";
+            request.method !== "GET" && request.method !== "HEAD";
         if (checkForCsrf && context.csrfProtection) {
-            const origin = clonedReq.headers.get("Origin");
-            const url = new URL(clonedReq.url);
+            const origin = request.headers.get("Origin");
+            const url = new URL(request.url);
             if (!origin) throw new LuciaError("AUTH_INVALID_REQUEST");
             if (url.origin !== origin)
                 throw new LuciaError("AUTH_INVALID_REQUEST");
