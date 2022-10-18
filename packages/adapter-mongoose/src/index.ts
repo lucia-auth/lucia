@@ -67,7 +67,7 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                     _id: userId || undefined,
                     hashed_password: data.hashedPassword,
                     provider_id: data.providerId,
-                    ...data.userData,
+                    ...data.attributes,
                 });
                 const userDoc = await newUserDoc.save();
                 const user = convertUserDoc(userDoc);

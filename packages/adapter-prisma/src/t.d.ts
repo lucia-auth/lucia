@@ -4,7 +4,6 @@ declare namespace Lucia {
     type UserAttributesSchema = any;
 }
 
-
 declare namespace App {
 	interface Locals {}
 }
