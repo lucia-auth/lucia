@@ -94,7 +94,7 @@ const adapter = (url: string, secret: string): Adapter => {
                         id: userId || undefined,
                         provider_id: data.providerId,
                         hashed_password: data.hashedPassword,
-                        ...data.userData,
+                        ...data.attributes,
                     },
                     {
                         returning: "representation",
