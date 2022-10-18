@@ -10,3 +10,5 @@ export type Session = {
 
 export type Env = "DEV" | "PROD";
 export type Error = typeof LuciaError;
+
+export type GetSession = () => Session | null
