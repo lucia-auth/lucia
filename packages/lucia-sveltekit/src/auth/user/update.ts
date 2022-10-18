@@ -26,7 +26,7 @@ export const updateUserProviderIdFunction = (context: Context) => {
 
 type UpdateUserAttributes = (
     userId: string,
-    userData: Partial<Lucia.UserAttributesSchema>
+    userData: Partial<Lucia.UserAttributes>
 ) => Promise<User>;
 
 export const updateUserAttributesFunction = (context: Context) => {

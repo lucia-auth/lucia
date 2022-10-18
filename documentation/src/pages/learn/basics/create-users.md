@@ -55,7 +55,7 @@ import { auth } from "$lib/server/lucia";
 
 try {
     await auth.createUser("github", "user@example.com", {
-        userData: {
+        attributes: {
             username: "user",
             phone_number: "000-0000-0000",
         },

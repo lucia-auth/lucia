@@ -7,7 +7,7 @@ type CreateUser = (
     identifier: string,
     options?: {
         password?: string;
-        attributes?: Lucia.UserAttributesSchema;
+        attributes?: Lucia.UserAttributes;
     }
 ) => Promise<User>;
 

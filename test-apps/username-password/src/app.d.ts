@@ -1,7 +1,7 @@
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
 	type Auth = import('$lib/server/lucia.js').Auth;
-	type UserAttributesSchema = {
+	type UserAttributes = {
 		username: string;
 	}
 }

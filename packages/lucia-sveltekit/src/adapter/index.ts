@@ -2,7 +2,7 @@ export type UserSchema = {
     id: string;
     hashed_password: string | null;
     provider_id: string;
-} & Lucia.UserAttributesSchema;
+} & Lucia.UserAttributes;
 
 export type UserData = Omit<UserSchema, "hashed_password" | "provider_id">
 

@@ -8,13 +8,13 @@ export const convertUserDoc = (row: UserDoc): UserSchema => {
         _doc,
         hashed_password,
         provider_id,
-        ...userData
+        ...attributes
     } = row;
     return {
         id,
         hashed_password,
         provider_id,
-        ...userData,
+        ...attributes,
     };
 };
 
