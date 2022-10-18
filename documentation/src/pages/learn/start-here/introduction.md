@@ -12,6 +12,7 @@ Working with Lucia looks something like this. In the code below, you're creating
 const user = await auth.createUser("email", email, {
     password,
 });
-const { setSessionCookie } = await auth.createSession(user.userId);
-setSessionCookie(cookies);
+
+const { tokens } = await auth.createSession(user.userId);
+setCookie(cookies, ...tokens.cookies);
 ```
