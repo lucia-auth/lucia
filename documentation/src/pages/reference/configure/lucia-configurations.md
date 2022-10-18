@@ -14,6 +14,7 @@ interface Configurations {
     csrfProtection?: boolean;
     sessionTimeout?: number;
     idlePeriodTimeout?: number;
+    transformUserData?: (userData: UserData) => Record<any, any>;
 }
 ```
 
@@ -61,6 +62,14 @@ A function that generates a random user id. The database will create its own use
 | ------------------------------- | ------------------ |
 | `() => Promise<string \| null>` | `async () => null` |
 
+### `idlePeriodTimeout`
+
+The time in milliseconds the idle period lasts for - or the time since session expiration the user can continue without signing in again. The session can be renewed if the it's under `sessionTimeout + idlePeriodTimeout` since when issued.
+
+| type     | default                              |
+| -------- | ------------------------------------ |
+| `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |
+
 ### `sessionTimeout`
 
 The time in milliseconds the active period lasts for.
@@ -69,10 +78,10 @@ The time in milliseconds the active period lasts for.
 | -------- | -------------------------------- |
 | `number` | `1000 * 60 * 60 * 24` (24 hours) |
 
-### `idlePeriodTimeout`
+### `transformUserData()`
 
-The time in milliseconds the idle period lasts for - or the time since session expiration the user can continue without signing in again. The session can be renewed if the it's under `sessionTimeout + idlePeriodTimeout` since when issued.
+This will be called to transform the raw data from `user` table to the `User` object.
 
-| type     | default                              |
-| -------- | ------------------------------------ |
-| `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |
+| type                                                                                    | default                          |
+| --------------------------------------------------------------------------------------- | -------------------------------- |
+| `(userData: `[`UserData`](/reference/types/lucia-types#userdata)`) => Record<any, any>` | `async () => { userId: string }` |
