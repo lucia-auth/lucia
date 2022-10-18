@@ -101,9 +101,9 @@ const adapter = (prisma: PrismaClient): Adapter => {
                             ...data.attributes,
                         } as any,
                     });
-                    return createdUser.id;
+                    return createdUser;
                 }
-                await prisma.user.create({
+                const createdUser = await prisma.user.create({
                     data: {
                         id: userId,
                         provider_id: data.providerId,
@@ -111,7 +111,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                         ...data.attributes,
                     } as any,
                 });
-                return userId;
+                return createdUser;
             } catch (e) {
                 console.error(e);
                 if (!(e instanceof Prisma.PrismaClientKnownRequestError))

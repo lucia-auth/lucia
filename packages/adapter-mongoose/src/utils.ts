@@ -4,6 +4,8 @@ export const convertUserDoc = (row: UserDoc): UserSchema => {
     const {
         _id: id,
         __v: _,
+        $__,
+        _doc,
         hashed_password,
         provider_id,
         ...userData

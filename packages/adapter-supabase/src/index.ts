@@ -99,7 +99,7 @@ const adapter = (url: string, secret: string): Adapter => {
                     {
                         returning: "representation",
                     }
-                );
+                ).single();
             if (error) {
                 console.error(error);
                 if (
@@ -113,7 +113,7 @@ const adapter = (url: string, secret: string): Adapter => {
                 }
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
-            return dbData[0].id;
+            return dbData
         },
         deleteUser: async (userId) => {
             const { error } = await supabase

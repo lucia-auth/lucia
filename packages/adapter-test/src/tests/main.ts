@@ -178,18 +178,20 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await clearAll();
         }
     );
-    await test("setUser()", "Returns the created user id", async () => {
+    await test("setUser()", "Returns the created user", async () => {
         const user = new User();
-        const createdUserId = await adapter.setUser(user.id, {
+        const createdUser = await adapter.setUser(user.id, {
             providerId: user.providerId,
             hashedPassword: user.hashedPassword,
             attributes: {
                 username: user.username,
             },
         });
-        validate.isNonEmptyString(
-            createdUserId,
-            "Returned value is not a non-empty string"
+        validate.isTrue(
+            user.validateSchema(createdUser),
+            "Expected value was not returned",
+            createdUser,
+            user.getSchema()
         );
         await clearAll();
     });

@@ -18,6 +18,7 @@ export const actions: Actions = {
 					username
 				}
 			});
+			console.log(user)
 			const { setSessionCookie } = await auth.createSession(user.userId);
 			setSessionCookie(cookies)
 		} catch (e) {

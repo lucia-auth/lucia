@@ -1,7 +1,7 @@
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
     type Auth = any;
-    type UserAttributesSchema = any;
+    type UserAttributesSchema = {};
 }
 
 declare namespace App {
@@ -11,6 +11,8 @@ declare namespace App {
 interface UserDoc {
     _id: string;
     __v?: any;
+    _doc?: any;
+    $__?: any;
     hashed_password: string | null;
     provider_id: string;
     username: string;

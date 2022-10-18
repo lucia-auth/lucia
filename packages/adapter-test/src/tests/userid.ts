@@ -14,7 +14,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         "Insert a user with a null user id into Users DB",
         async () => {
             const user = new User();
-            const userId = await adapter.setUser(null, {
+            const createdUser = await adapter.setUser(null, {
                 providerId: user.providerId,
                 hashedPassword: user.hashedPassword,
                 attributes: {
@@ -22,7 +22,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 },
             });
             user.update({
-                id: userId,
+                id: createdUser.id,
             });
             const users = await db.getUsers();
             validate.includesSomeItem(
