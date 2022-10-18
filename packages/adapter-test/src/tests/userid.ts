@@ -17,7 +17,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             const userId = await adapter.setUser(null, {
                 providerId: user.providerId,
                 hashedPassword: user.hashedPassword,
-                userData: {
+                attributes: {
                     username: user.username,
                 },
             });
