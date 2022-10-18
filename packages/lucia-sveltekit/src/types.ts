@@ -1,6 +1,6 @@
 import type { LuciaError } from "./error.js";
 
-export type User = Lucia.User extends never ? { userId: string } : Lucia.User;
+export type User = ReturnType<Lucia.Auth["context"]["transformUserData"]>;
 
 export type Session = {
     sessionId: string;

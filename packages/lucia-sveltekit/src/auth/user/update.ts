@@ -46,7 +46,7 @@ export const updateUserAttributesFunction = (context: Context) => {
 type UpdateUserPassword = (
     userId: string,
     password: string | null
-) => Promise<Lucia.User>;
+) => Promise<User>;
 
 export const updateUserPasswordFunction = (context: Context) => {
     const updateUserPassword: UpdateUserPassword = async (userId, password) => {

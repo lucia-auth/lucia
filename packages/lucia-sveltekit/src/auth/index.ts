@@ -27,8 +27,8 @@ import { deleteAllCookiesFunction } from "./cookie.js";
 import clc from "cli-color";
 import { Adapter, UserData, UserSchema } from "../adapter/index.js";
 
-export const lucia = (configs: Configurations) => {
-    return new Auth(configs) as Omit<Auth, "getAuthSession">;
+export const lucia = <C extends Configurations>(configs: C) => {
+    return new Auth(configs) as Omit<Auth<C>, "getAuthSession">;
 };
 
 const validateConfigurations = (configs: Configurations) => {
@@ -43,9 +43,9 @@ const validateConfigurations = (configs: Configurations) => {
     }
 };
 
-export class Auth {
-    private context: Context;
-    constructor(configs: Configurations) {
+export class Auth<C extends Configurations = any> {
+    public context: Context<C>;
+    constructor(configs: C) {
         validateConfigurations(configs);
         this.context = {
             auth: this,
@@ -70,7 +70,7 @@ export class Auth {
                             userId: id,
                         };
                     });
-                return transform({ id, ...attributes });
+                return transform({ id, ...attributes }) as User;
             },
         };
         this.getUser = getUserFunction(this.context);
@@ -143,10 +143,20 @@ interface Configurations {
     csrfProtection?: boolean;
     sessionTimeout?: number;
     idlePeriodTimeout?: number;
-    transformUserData?: (userData: UserData) => User;
+    transformUserData?: (userData: UserData) => Record<string, any>;
 }
 
-export type Context = {
-    auth: Auth;
-    transformUserData: (userData: UserSchema) => User;
-} & Required<Omit<Configurations, "transformUserData">>;
+export type Context<C extends Configurations = any> = {
+    auth: Auth<C>;
+    adapter: Adapter;
+    env: Env;
+    generateCustomUserId: () => Promise<string | null>;
+    csrfProtection: boolean;
+    sessionTimeout: number;
+    idlePeriodTimeout: number;
+    transformUserData: (
+        userData: UserSchema
+    ) => C["transformUserData"] extends {}
+        ? ReturnType<C["transformUserData"]>
+        : { userId: string };
+};

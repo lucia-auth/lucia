@@ -9,7 +9,9 @@ type authenticateUser = (
     password: string
 ) => Promise<User>;
 
-export const authenticateUserFunction = (context: Context) => {
+export const authenticateUserFunction = (
+    context: Context
+) => {
     const authenticateUser: authenticateUser = async (
         provider,
         identifier,

@@ -1,6 +1,6 @@
 declare namespace Lucia {
     export interface UserAttributesSchema {} 
-    export interface User {}
+    export class Auth extends (await import("./auth/index.js")).Auth {}
 }
 
 /// <reference types="@sveltejs/kit" />

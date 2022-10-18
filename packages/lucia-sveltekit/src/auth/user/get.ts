@@ -3,7 +3,7 @@ import { LuciaError } from "../../error.js";
 import type { Context } from "../index.js";
 import { User } from "../../types.js";
 
-type GetUser = (provider: string, identifier: string) => Promise<Lucia.User>;
+type GetUser = (provider: string, identifier: string) => Promise<User>;
 
 export const getUserByProviderIdFunction = (context: Context) => {
     const getUserByProviderId: GetUser = async (provider, identifier) => {
