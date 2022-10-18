@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.1
+
+-   [Fix] Fix issue where hooks wasn't validating request origin
+
 ## v0.13.0
 
 -   [Breaking] `handleHooks()` automatically validates and renew session 

@@ -34,22 +34,24 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 export const handleHooksFunction = (context: Context) => {
     const handleHooks = () => {
         return async ({ event, resolve }: Parameters<Handle>[0]) => {
-            const sessionId = event.cookies.get("auth_session") || "";
-            let session: Session | null = null
+            let session: Session | null = null;
             try {
-                session = await context.auth.validateSession(sessionId); // throws an error is invalid
+                session = await context.auth.validateRequest(event.request)
             } catch {
                 try {
+                    const sessionId = event.cookies.get("auth_session") || "";
                     const { session: renewedSession, setSessionCookie } =
                         await context.auth.renewSession(sessionId);
-                    await context.auth.deleteDeadUserSessions(renewedSession.userId);
+                    await context.auth.deleteDeadUserSessions(
+                        renewedSession.userId
+                    );
                     setSessionCookie(event.cookies);
-                    session = renewedSession
+                    session = renewedSession;
                 } catch (e) {
                     context.auth.deleteAllCookies(event.cookies);
                 }
             }
-            event.locals.getSession = () => Object.freeze(session)
+            event.locals.getSession = () => Object.freeze(session);
             const requestHandler = getRequestHandler(event);
             if (requestHandler) return await requestHandler(event, context);
             return await resolve(event, {
