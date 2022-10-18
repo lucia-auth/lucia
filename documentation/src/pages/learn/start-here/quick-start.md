@@ -37,7 +37,7 @@ This form will have an input field for username and password. For the session to
 
 ```svelte
 <script lang="ts">
-    import { enhance } from "$app/forms";
+    import { applyAction, enhance } from '$app/forms';
 </script>
 
 <div>
@@ -50,7 +50,7 @@ This form will have an input field for username and password. For the session to
                     window.location.href = result.location; // invalidateAll() + goto() will not work
                     return;
                 }
-                update(result);
+                applyAction(result);
             };
         }}
     >
@@ -129,7 +129,7 @@ This form will also have an input field for username and password.
 
 ```svelte
 <script lang="ts">
-    import { enhance } from "$app/forms";
+    import { applyAction, enhance } from '$app/forms';
 </script>
 
 <div>
@@ -142,7 +142,7 @@ This form will also have an input field for username and password.
                     window.location.href = result.location; // invalidateAll() + goto() will not work
                     return;
                 }
-                update(result);
+                applyAction(result);
             };
         }}
     >
