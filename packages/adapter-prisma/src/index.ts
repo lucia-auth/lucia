@@ -1,5 +1,4 @@
-import { type PrismaClient } from "@prisma/client";
-import pkg from "@prisma/client/runtime/index.js";
+import { type PrismaClient, Prisma } from "@prisma/client";
 import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
 import { LuciaError } from "lucia-sveltekit";
 import { convertSession } from "./utils.js";
@@ -17,7 +16,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return data;
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
@@ -40,7 +39,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 };
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
@@ -56,7 +55,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return data;
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
@@ -72,7 +71,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return convertSession(session);
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
@@ -87,7 +86,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return sessions.map((session) => convertSession(session));
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("DATABASE_FETCH_FAILED");
             }
@@ -115,7 +114,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return userId;
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 if (e.code === "P2002" && e.message.includes("provider_id")) {
                     throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
@@ -136,7 +135,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return;
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("DATABASE_UPDATE_FAILED");
             }
@@ -153,7 +152,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 if (
                     e.code === "P2003" &&
@@ -174,7 +173,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("UNKNOWN_ERROR");
             }
@@ -188,7 +187,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 throw new LuciaError("UNKNOWN_ERROR");
             }
@@ -205,7 +204,7 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 return data;
             } catch (e) {
                 console.error(e);
-                if (!(e instanceof pkg.PrismaClientKnownRequestError))
+                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
                     throw new LuciaError("UNKNOWN_ERROR");
                 if (e.code === "P2025")
                     throw new LuciaError("AUTH_INVALID_USER_ID");
