@@ -9,7 +9,7 @@
 -   [Breaking] `setUser()` adapter method returns `User` instead of user id
 -   [Breaking] Renamed `Lucia.UserData` to `Lucia.UserAttributes`
 -   [Breaking] Renamed `userData` to `attributes` field for `updateUser()` adapter method
--   [Breaking] `Lucia.Auth` and `Lucia.UserAttributes type must be configured for `transformUserData()`
+-   [Breaking] `Lucia.Auth` and `Lucia.UserAttributes` type must be configured for `transformUserData()`
 -   [Breaking] Removed `validateRequestEvent()` method
 -   [Breaking] `setUser()` adapter method returns created `User` instead of user id
 -   Added `validateRequest()` method
