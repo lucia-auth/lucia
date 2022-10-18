@@ -10,7 +10,20 @@ The [username/password example project](https://github.com/pilcrowOnPaper/lucia-
 
 ## 1. Set up Lucia
 
-Follow [the previous page](/learn/start-here/getting-started) to set up Lucia and your database.
+Follow [the previous page](/learn/start-here/getting-started) to set up Lucia and your database. Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). This function will run whenever Lucia returns a user.
+
+```ts
+export const auth = lucia({
+    adapter: prisma(),
+    env: dev ? "DEV" : "PROD",
+    transformUserData: (userData) => {
+        return {
+            userId: userData.id,
+            username: userData.username,
+        };
+    },
+});
+```
 
 ## 2. Configure your database
 
@@ -21,9 +34,10 @@ Additionally, in `src/app.d.ts` add the following to add types:
 ```ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-    interface UserData {
+    type Auth = import("$lib/server/lucia.js").Auth;
+    type UserAttributes = {
         username: string;
-    }
+    };
 }
 ```
 
@@ -50,7 +64,7 @@ This form will have an input field for username and password. For the session to
                     window.location.href = result.location; // invalidateAll() + goto() will not work
                     return;
                 }
-                applyAction(result);
+                update(result);
             };
         }}
     >
@@ -65,7 +79,7 @@ This form will have an input field for username and password. For the session to
 
 ### Create users
 
-We'll set the provider id as `username` and the username as the identifier. This tells Lucia that user was created using username/password auth method and the unique identifier is the username. After creating a new user, create a new session and store the session id as a cookie.
+We'll set the provider id as `username` and the username as the identifier. This tells Lucia that user was created using username/password auth method and the unique identifier is the username. Let's also set the password and store the username. After creating a new user, create a new session and store the session id as a cookie.
 
 ```ts
 // +page.server.ts
@@ -86,11 +100,12 @@ export const actions: Actions = {
         )
             return invalid(400);
         try {
-            const user = await auth.authenticateUser(
-                "username",
-                username,
-                password
-            );
+            const user = await auth.createUser("username", username, {
+                password,
+                attributes: {
+                    username,
+                },
+            });
             const { setSessionCookie } = await auth.createSession(user.userId);
             setSessionCookie(cookies);
         } catch {
@@ -305,7 +320,7 @@ The input will have a default value of `$page.data.notes`. We'll cover this in a
 
 ### Validate requests and save notes
 
-We can validate requests using the `validateRequestEvent()` method. This will automatically attempt to renew the session if needed.
+We can get the user's session using the `getSession()` method, which is provided by `locals`. The user is unauthenticated if `session` is `null`.
 
 ```ts
 // +page.server.ts
@@ -314,21 +329,17 @@ import { auth } from "$lib/server/lucia";
 import { invalid, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
-    default: async ({ cookies, request }) => {
-        try {
-            await auth.validateRequestEvent({ request, cookies });
-            const formData = await request.formData();
-            const notes = formData.get("notes")?.toString();
-            if (notes === undefined) return invalid(400);
-            cookies.set("notes", notes, {
-                httpOnly: true,
-                secure: !dev,
-                path: "/",
-            });
-        } catch (e) {
-            console.log(e);
-            return invalid(403);
-        }
+    default: async ({ cookies, request, locals }) => {
+        const session = locals.getSession();
+        if (!session) return invalid(403);
+        const formData = await request.formData();
+        const notes = formData.get("notes")?.toString();
+        if (notes === undefined) return invalid(400);
+        cookies.set("notes", notes, {
+            httpOnly: true,
+            secure: !dev,
+            path: "/",
+        });
     },
 };
 ```
@@ -344,16 +355,13 @@ import { auth } from "$lib/server/lucia";
 import { invalid, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ cookies, request }) => {
-    try {
-        await auth.validateRequestEvent({ request, cookies });
-        const notes = cookies.get("notes") || "";
-        return {
-            notes,
-        };
-    } catch {
-        throw redirect(302, "/login");
-    }
+export const load: PageServerLoad = async ({ cookies, locals }) => {
+    const session = locals.getSession();
+    if (!session) throw redirect(302, "/login");
+    const notes = cookies.get("notes") || "";
+    return {
+        notes,
+    };
 };
 
 export const actions: Actions = {

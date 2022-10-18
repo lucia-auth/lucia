@@ -67,11 +67,11 @@ const adapter = (mongoose: Mongoose, url: string): Adapter => {
                     _id: userId || undefined,
                     hashed_password: data.hashedPassword,
                     provider_id: data.providerId,
-                    ...data.userData,
+                    ...data.attributes,
                 });
                 const userDoc = await newUserDoc.save();
-                const user = convertUserDoc(userDoc);
-                return user.id;
+                const user = convertUserDoc(userDoc.toObject());
+                return user;
             } catch (e) {
                 console.error(e);
                 const error = e as MongooseError;

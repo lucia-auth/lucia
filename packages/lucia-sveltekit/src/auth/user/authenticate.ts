@@ -1,8 +1,7 @@
-import type { User } from "../../types.js";
-import { getAccountFromDatabaseUser } from "../../utils/auth.js";
 import { verifyScrypt } from "../../utils/crypto.js";
 import { LuciaError } from "../../error.js";
 import type { Context } from "../index.js";
+import { User } from "../../types.js";
 
 type authenticateUser = (
     authId: string,
@@ -10,7 +9,9 @@ type authenticateUser = (
     password: string
 ) => Promise<User>;
 
-export const authenticateUserFunction = (context: Context) => {
+export const authenticateUserFunction = (
+    context: Context
+) => {
     const authenticateUser: authenticateUser = async (
         provider,
         identifier,
@@ -21,17 +22,17 @@ export const authenticateUserFunction = (context: Context) => {
             providerId
         );
         if (!databaseData) throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
-        const account = getAccountFromDatabaseUser(databaseData);
-        if (!account.hashedPassword)
+        if (!databaseData.hashed_password)
             throw new LuciaError("AUTH_INVALID_PASSWORD");
-        if (account.hashedPassword.startsWith("$2a"))
+        if (databaseData.hashed_password.startsWith("$2a"))
             throw new LuciaError("AUTH_OUTDATED_PASSWORD");
         const isValid = await verifyScrypt(
             password || "",
-            account.hashedPassword
+            databaseData.hashed_password
         );
         if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
-        return account.user;
+        const user = context.transformUserData(databaseData);
+        return user;
     };
     return authenticateUser;
 };

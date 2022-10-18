@@ -18,7 +18,7 @@ export const actions: Actions = {
 		} catch (e) {
 			const error = e as Error;
 			if (
-				error.message === 'AUTH_INVALID_IDENTIFIER_TOKEN' ||
+				error.message === 'AUTH_INVALID_PROVIDER_ID' ||
 				error.message === 'AUTH_INVALID_PASSWORD'
 			) {
 				return invalid(400, {

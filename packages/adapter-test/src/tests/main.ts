@@ -143,7 +143,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         await adapter.setUser(user.id, {
             providerId: user.providerId,
             hashedPassword: user.hashedPassword,
-            userData: {
+            attributes: {
                 username: user.username,
             },
         });
@@ -164,7 +164,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await adapter.setUser(user.id, {
                 providerId: user.providerId,
                 hashedPassword: user.hashedPassword,
-                userData: {
+                attributes: {
                     username: user.username,
                 },
             });
@@ -178,18 +178,20 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await clearAll();
         }
     );
-    await test("setUser()", "Returns the created user id", async () => {
+    await test("setUser()", "Returns the created user", async () => {
         const user = new User();
-        const createdUserId = await adapter.setUser(user.id, {
+        const createdUser = await adapter.setUser(user.id, {
             providerId: user.providerId,
             hashedPassword: user.hashedPassword,
-            userData: {
+            attributes: {
                 username: user.username,
             },
         });
-        validate.isNonEmptyString(
-            createdUserId,
-            "Returned value is not a non-empty string"
+        validate.isTrue(
+            user.validateSchema(createdUser),
+            "Expected value was not returned",
+            createdUser,
+            user.getSchema()
         );
         await clearAll();
     });
@@ -204,7 +206,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 await adapter.setUser(user2.id, {
                     providerId: user1.providerId,
                     hashedPassword: user2.hashedPassword,
-                    userData: {
+                    attributes: {
                         username: user2.username,
                     },
                 });
@@ -240,7 +242,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
                 await adapter.setUser(user2.id, {
                     providerId: user2.providerId,
                     hashedPassword: user2.hashedPassword,
-                    userData: {
+                    attributes: {
                         username: user1.username,
                     },
                 });
@@ -453,7 +455,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
         await db.insertUser(user.getSchema());
         const newUsername = new User().username;
         await adapter.updateUser(user.id, {
-            userData: {
+            attributes: {
                 username: newUsername,
             },
         });
@@ -521,7 +523,7 @@ export const testAdapter = async (adapter: Adapter, db: Database) => {
             await db.insertUser(user2.getSchema());
             try {
                 await adapter.updateUser(user2.id, {
-                    userData: {
+                    attributes: {
                         username: user1.username,
                     },
                 });

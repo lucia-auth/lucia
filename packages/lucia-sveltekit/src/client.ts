@@ -1,5 +1,6 @@
 import { getClientUser, getSSRUser } from "./user.js";
 import { LuciaError } from "./error.js";
+import { User } from "./types.js";
 
 export const signOut = async (redirect?: string): Promise<void> => {
     const user = getClientUser();
@@ -23,7 +24,7 @@ export const signOut = async (redirect?: string): Promise<void> => {
     if (result.message) throw new LuciaError(result.message);
 };
 
-export const getUser = () => {
+export const getUser = (): Required<User> | null => {
     if (typeof window === "undefined") {
         // server
         return getSSRUser();

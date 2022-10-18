@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Concepts"
 ---
 
-## How Lucia works under the hood
+## How Lucia works
 
 Once a user signs in, a new session is issued for the user. The session is stored in the database, and the session id is stored as a cookie. When a user makes a request to the server, Lucia can check the validity of the session id by cross-checking with the database. Sessions expire after some time, and need to be renewed, and so inactive users will be logged out. 
 

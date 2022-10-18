@@ -1,7 +1,7 @@
-import type { Session, User } from "../../types.js";
-import { getAccountFromDatabaseUser } from "../../utils/auth.js";
+import type { Session } from "../../types.js";
 import { LuciaError } from "../../error.js";
 import type { Context } from "../index.js";
+import { User } from "../../types.js";
 
 type GetUser = (provider: string, identifier: string) => Promise<User>;
 
@@ -12,8 +12,8 @@ export const getUserByProviderIdFunction = (context: Context) => {
             providerId
         );
         if (!databaseUser) throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
-        const account = getAccountFromDatabaseUser(databaseUser);
-        return account.user;
+        const user = context.transformUserData(databaseUser);
+        return user;
     };
     return getUserByProviderId;
 };
@@ -24,8 +24,8 @@ export const getUserFunction = (context: Context) => {
     const getUser: GetUserById = async (userId: string) => {
         const databaseUser = await context.adapter.getUser(userId);
         if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
-        const account = getAccountFromDatabaseUser(databaseUser);
-        return account.user;
+        const user = context.transformUserData(databaseUser);
+        return user;
     };
     return getUser;
 };
@@ -44,9 +44,9 @@ export const getSessionUserFunction = (context: Context) => {
         const { user: databaseUser, session: databaseSession } = userSession;
         if (new Date().getTime() > databaseSession.expires)
             throw new LuciaError("AUTH_INVALID_SESSION_ID");
-        const account = getAccountFromDatabaseUser(databaseUser);
+        const user = context.transformUserData(databaseUser);
         return {
-            user: account.user,
+            user,
             session: {
                 sessionId: databaseSession.id,
                 expires: databaseSession.expires,

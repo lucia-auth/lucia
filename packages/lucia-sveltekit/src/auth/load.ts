@@ -1,6 +1,6 @@
-import type { User } from "../types.js";
 import type { Context } from "./index.js";
 import type { ServerLoad, ServerLoadEvent } from "../kit.js";
+import { User } from "../types.js";
 
 type HandleServerSession = <LoadFn extends ServerLoad = () => Promise<{}>>(
     serverLoad?: LoadFn
@@ -10,29 +10,19 @@ type HandleServerSession = <LoadFn extends ServerLoad = () => Promise<{}>>(
 
 export const handleServerSessionFunction = (context: Context) => {
     const handleServerSessionCore = async ({
-        cookies,
+        locals,
     }: ServerLoadEvent): Promise<{ _lucia: User | null }> => {
-        const sessionId = cookies.get("auth_session") || "";
-        if (!sessionId) return { _lucia: null };
+        const session = locals.getSession();
+        if (!session)
+            return {
+                _lucia: null,
+            };
         try {
-            const { user } = await context.auth.getSessionUser(sessionId); // throws an error is invalid
+            const user = await context.auth.getUser(session.userId);
             return {
                 _lucia: user,
             };
-        } catch {}
-        try {
-            const { session, setSessionCookie } =
-                await context.auth.renewSession(sessionId);
-            const [user] = await Promise.all([
-                context.auth.getUser(session.userId),
-                context.auth.deleteDeadUserSessions(session.userId),
-            ]);
-            setSessionCookie(cookies)
-            return {
-                _lucia: user,
-            };
-        } catch (e) {
-            context.auth.deleteAllCookies(cookies);
+        } catch {
             return {
                 _lucia: null,
             };

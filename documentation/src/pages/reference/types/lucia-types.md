@@ -40,15 +40,33 @@ type Session = {
 
 ## `User`
 
+Return type of [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) config.
+
+```ts
+type User = ReturnType<typeof transformUserData>;
+```
+
+### Default
+
+If `transformUserData()` is undefined.
+
 ```ts
 type User = {
     userId: string;
-    providerId: string;
-} & Lucia.UserData;
+};
 ```
 
-| name       | type                                                           | description                                      |
-| ---------- | -------------------------------------------------------------- | ------------------------------------------------ |
-| userId     | `string`                                                       | The user id of the user                          |
-| providerId | `string`                                                       | The provider id: `${providerName}:${identifier}` |
-|            | [`Lucia.UserData`](/reference/types/type-declaration#userdata) |                                                  |
+## `UserData`
+
+The columns of `user` table excluding `hashed_password` and `provider_id`.
+
+```ts
+type UserData = {
+    id: string;
+} & Lucia.UserAttributes;
+```
+
+| name | type                                                                       | description                        |
+| ---- | -------------------------------------------------------------------------- | ---------------------------------- |
+| id   | `string`                                                                   | User id of the user                |
+|      | [`Lucia.UserAttributes`](/reference/types/type-declaration#userattributes) | Additional columns in `user` table |

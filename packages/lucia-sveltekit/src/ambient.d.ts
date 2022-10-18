@@ -1,8 +1,11 @@
 declare namespace Lucia {
-    export interface UserData {} 
+    export type UserAttributes = {};
+    export class Auth extends (await import("./auth/index.js")).Auth {}
 }
 
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
-	export interface Locals {}
+    export interface Locals {
+        getSession: () => import("./types.js").Session | null;
+    }
 }

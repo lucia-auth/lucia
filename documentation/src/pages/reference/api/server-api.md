@@ -163,19 +163,19 @@ const createUser: (
     identifier: string,
     options?: {
         password?: string;
-        userData?: Lucia.UserData;
+        attributes?: Lucia.UserData;
     }
 ) => Promise<User>;
 ```
 
 #### Parameter
 
-| name             | type             | description                                             | optional |
-| ---------------- | ---------------- | ------------------------------------------------------- | -------- |
-| provider         | `string`         | The provider of the user to create                      |          |
-| identifier       | `string`         | The identifier of the user˝ to create                   |          |
-| options.password | `string`         | The password of the user - can be undefined to omit it. | true     |
-| options.userData | `Lucia.UserData` | Additional user data to store in `user` table           | true     |
+| name               | type             | description                                             | optional |
+| ------------------ | ---------------- | ------------------------------------------------------- | -------- |
+| provider           | `string`         | The provider of the user to create                      |          |
+| identifier         | `string`         | The identifier of the user˝ to create                   |          |
+| options.password   | `string`         | The password of the user - can be undefined to omit it. | true     |
+| options.attributes | `Lucia.UserData` | Additional user data to store in `user` table           | true     |
 
 #### Returns
 
@@ -199,7 +199,7 @@ import { auth } from "$lib/server/lucia";
 try {
     await auth.createUser("email", "user@example.com", {
         password: "123456",
-        userData: {
+        attributes: {
             username: "user123",
             isAdmin: true,
         },
@@ -440,7 +440,7 @@ try {
 
 ### `handleHooks()`
 
-For the handle function in hooks. Handles requests to Lucia's APIs and creates a new global variable in the browser.
+For the handle function in hooks. Reads the session id from cookies and validates it, attempting to renew it if the session id has expired. This also creates handles requests to Lucia's api endpoints and creates an internal global variable in the client.
 
 ```ts
 const handleHooks: () => Handle;
@@ -469,7 +469,7 @@ export const handle: Handle = sequence(auth.handleHooks(), customHandle);
 
 ### `handleServerSession()`
 
-For the root layout server load function. Reads the session id from cookies and gets the user of the session. Refreshes the session if the session id has expired. If a server load function is provided (which can return some data), Lucia will run it after it finishes handling sessions
+For the root layout server load function. Reads the sessions passed on from hooks (`handleHooks()`), gets the user, and passes on to child load functions and the client. If a server load function is provided (which can return some data), Lucia will run it after it finishes handling sessions.
 
 ```ts
 const handleServerSession: (serverLoad?: ServerLoad) => ServerLoad;
@@ -657,23 +657,23 @@ try {
 }
 ```
 
-### `updateUserData()`
+### `updateUserAttributes()`
 
 Updates one of the custom fields in the `user` table. The keys of `userData` should be one of the additional columns `user` table, and the values of it can be `null` but not `undefined`.
 
 ```ts
 const updateUserData: (
     userId: string,
-    userData: Partial<Lucia.UserData>
+    attributes: Partial<Lucia.UserAttributes>
 ) => Promise<User>;
 ```
 
 #### Parameter
 
-| name     | type                              | description                                                             |
-| -------- | --------------------------------- | ----------------------------------------------------------------------- |
-| userId   | `string`                          | A refresh token                                                         |
-| userData | `Partial<`[`Lucia.UserData`]()`>` | Key-value pairs of some or all of the column in `user` table to update. |
+| name       | type                              | description                                                             |
+| ---------- | --------------------------------- | ----------------------------------------------------------------------- |
+| userId     | `string`                          | A refresh token                                                         |
+| attributes | `Partial<`[`Lucia.UserData`]()`>` | Key-value pairs of some or all of the column in `user` table to update. |
 
 #### Returns
 
@@ -831,23 +831,19 @@ try {
 }
 ```
 
-### `validateRequestEvent()`
+### `validateRequest()`
 
-Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession). This method will attempt to renew the session if the id is invalid.
+Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession).
 
 ```ts
-const validateRequest: (event: {
-    request: Request;
-    cookies: Cookies;
-}) => Promise<Session>;
+const validateRequest: (request: Request) => Promise<Session>;
 ```
 
 #### Parameter
 
-| name          | type      | description                            |
-| ------------- | --------- | -------------------------------------- |
-| event.request | `Request` | Request from SvelteKit's `ServerEvent` |
-| event.cookies | `Cookies` | SvelteKit cookies module               |
+| name    | type      | description                            |
+| ------- | --------- | -------------------------------------- |
+| request | `Request` | Request from SvelteKit's `ServerEvent` |
 
 #### Returns
 

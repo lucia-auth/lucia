@@ -1,4 +1,4 @@
-import { type PrismaClient, Prisma } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
 import { LuciaError } from "lucia-sveltekit";
 import { convertSession } from "./utils.js";
@@ -98,20 +98,20 @@ const adapter = (prisma: PrismaClient): Adapter => {
                         data: {
                             provider_id: data.providerId,
                             hashed_password: data.hashedPassword,
-                            ...data.userData,
+                            ...data.attributes,
                         } as any,
                     });
-                    return createdUser.id;
+                    return createdUser;
                 }
-                await prisma.user.create({
+                const createdUser = await prisma.user.create({
                     data: {
                         id: userId,
                         provider_id: data.providerId,
                         hashed_password: data.hashedPassword,
-                        ...data.userData,
+                        ...data.attributes,
                     } as any,
                 });
-                return userId;
+                return createdUser;
             } catch (e) {
                 console.error(e);
                 if (!(e instanceof Prisma.PrismaClientKnownRequestError))

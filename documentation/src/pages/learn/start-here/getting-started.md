@@ -26,7 +26,7 @@ import lucia from "lucia-sveltekit";
 import prisma from "@lucia-sveltekit/adapter-prisma";
 ```
 
-Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database adapters, and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. Checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient.
+Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database adapters, and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. Checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
 
 ```ts
 // lib/server/lucia.ts
@@ -38,6 +38,8 @@ export const auth = lucia({
     adapter: prisma(),
     env: dev ? "DEV" : "PROD",
 });
+
+export type Auth = typeof auth
 ```
 
 This module and the file that holds it **should NOT be imported from the client**.
@@ -46,7 +48,7 @@ This module and the file that holds it **should NOT be imported from the client*
 
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks) method. This will expose some endpoints (like for refreshing sessions) and will provide the client with the current user.
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks) method. This will read and validate the session of incoming requests (including page render). This will also automatically renew idle sessions.
 
 ```ts
 // hooks.server.ts
@@ -67,7 +69,7 @@ export const handle = sequence(auth.handleHooks(), customHandle);
 
 ### Root layout
 
-In your route root layout, create and export a server load function. [`handleServerSession()`](/reference/api/server-api#handleserversession) method will read the session cookies and validate them, allowing you to check for the user in load functions. This will also automatically renew idle sessions.
+In your route root layout, create and export a server load function. [`handleServerSession()`](/reference/api/server-api#handleserversession) method will pass on the session data from hooks to load functions.
 
 ```ts
 // +layout.server.ts
@@ -78,3 +80,22 @@ export const load: ServerLoad = auth.handleServerSession();
 ```
 
 To learn how Lucia can be used in a SvelteKit project, continue to [Quick start](/learn/start-here/quick-start). Or, if you want to dive straight in, start reading [Create users](/learn/basics/create-users).
+
+### Types
+
+In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.js').Auth;` is where you exported `auth` (`lucia()`).
+
+```ts
+/// <reference types="lucia-sveltekit" />
+declare namespace Lucia {
+	type Auth = import('$lib/server/lucia.js').Auth;
+	type UserAttributes = {}
+}
+
+/// <reference types="@sveltejs/kit" />
+declare namespace App {
+	interface Locals {
+		getSession: import("lucia-sveltekit/types").GetSession
+	}
+}
+```
