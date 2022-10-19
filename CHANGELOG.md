@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.2
+
+-   `UserData` type removes optionality from user attributes
+
 ## v0.13.1
 
 -   [Fix] Fixed issue where hooks wasn't validating request origin

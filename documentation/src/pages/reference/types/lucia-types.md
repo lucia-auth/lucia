@@ -63,10 +63,10 @@ The columns of `user` table excluding `hashed_password` and `provider_id`.
 ```ts
 type UserData = {
     id: string;
-} & Lucia.UserAttributes;
+} & Required<Lucia.UserAttributes>;
 ```
 
-| name | type                                                                       | description                        |
-| ---- | -------------------------------------------------------------------------- | ---------------------------------- |
-| id   | `string`                                                                   | User id of the user                |
+| name | type                                                                      | description                        |
+| ---- | ------------------------------------------------------------------------- | ---------------------------------- |
+| id   | `string`                                                                  | User id of the user                |
 |      | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional columns in `user` table |
