@@ -8,14 +8,15 @@ This will guide you how to implement a simple username/password auth and cover t
 
 The [username/password example project](https://github.com/pilcrowOnPaper/lucia-sveltekit/tree/main/examples/username-password) in the repo expands on this guide.
 
+Start off by following the steps in [the previous page](/learn/start-here/getting-started) to set up Lucia and your database.
 
 ## 1. Configure your database
 
 Since we're implementing a username based auth, add a `username` column in the `user` table. This should be a text column with a unique constraint.
 
-## 2. Set up Lucia
+## 2. Configure Lucia
 
-Follow [the previous page](/learn/start-here/getting-started) to set up Lucia and your database. In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` column to `user` table:
+ In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` column to `user` table:
 
 ```ts
 /// <reference types="lucia-sveltekit" />
