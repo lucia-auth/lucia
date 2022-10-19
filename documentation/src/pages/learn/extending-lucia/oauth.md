@@ -125,6 +125,7 @@ export const GET: RequestHandler = async ({ url }) => {
 Since the authentication steps are the same for new and existing users (sign in with Github), and [`createUser()`](/reference/api/server-api#createuser) will throw an error if provider id is already used, we'll have to check if the user exists before creating a user. We can get the user from the provider id using [`getUserByProviderId()`](/reference/api/server-api#getuserbyproviderid).
 
 ```ts
+// /routes/api/github-callback/+server.ts
 import type { User } from "lucia-sveltekit/types";
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -149,6 +150,7 @@ export const GET: RequestHandler = async ({ url }) => {
 Finally, we can create a new session using [`createSession()`](/reference/api/server-api#createsession).
 
 ```ts
+// /routes/api/github-callback/+server.ts
 export const GET: RequestHandler = async ({ url, cookies }) => {
     // ...
     let user: User;
