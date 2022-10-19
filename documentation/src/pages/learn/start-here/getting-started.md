@@ -74,9 +74,9 @@ In your route root layout, create and export a server load function. [`handleSer
 ```ts
 // +layout.server.ts
 import { auth } from "$lib/server/lucia";
-import type { ServerLoad } from "@sveltejs/kit";
+import type { LayoutServerLoad } from "@sveltejs/kit";
 
-export const load: ServerLoad = auth.handleServerSession();
+export const load: LayoutServerLoad = auth.handleServerSession();
 ```
 
 To learn how Lucia can be used in a SvelteKit project, continue to [Quick start](/learn/start-here/quick-start). Or, if you want to dive straight in, start reading [Create users](/learn/basics/create-users).
