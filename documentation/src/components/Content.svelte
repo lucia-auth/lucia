@@ -57,13 +57,14 @@
                             <p class="font-medium">{section.title}</p>
                             <li class="list-none mt-2 text-gray-500">
                                 {#each section.pages as page}
-                                    {@const isSlected =
+                                    {@const isSelected =
                                         currentTitle === page.title}
                                     <ul
-                                        class="my-1 pl-4 border-l-2 hover:text-black"
-                                        class:text-main={isSlected}
-                                        class:border-main={isSlected}
-                                        class:hover:border-black={!isSlected}
+                                        class="my-1 pl-4 border-l-2"
+                                        class:text-main={isSelected}
+                                        class:border-main={isSelected}
+                                        class:hover:border-black={!isSelected}
+                                        class:hover:text-black={!isSelected}
                                     >
                                         <a href={page.url}>{page.title}</a>
                                     </ul>
