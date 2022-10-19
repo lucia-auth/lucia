@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Server API"
 ---
 
-These can be imported from `lucia-sveltekit`. Can only be used inside a server context (.server.ts).
+These can be imported from `lucia-sveltekit`. Can only be used inside a server context (.server.ts). The errors list is for Lucia client using official adapters.
 
 ```ts
 import { generateRandomString } from "lucia-sveltekit";

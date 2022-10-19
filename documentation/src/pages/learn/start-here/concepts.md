@@ -4,9 +4,11 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Concepts"
 ---
 
+At first glance, it looks like Lucia only supports traditional identifier/password authentication. However, if you look closely at Lucia, you’ll realize it can support any authentication methods, including popular ones like OAuth. The main focus of Lucia is session and user management, not user authentication (= is the user who they claim to be?). While it does provide a way to use passwords since it’s a very common and basic, it’s 100% optional. If you know for sure who the user is (via user id from OAuth, email from magic links, email/phone number from OTP, username from username/password), you can create a new user and session based on it. This is a very deliberate design choice and the core idea behind Lucia.
+
 ## How Lucia works
 
-Once a user signs in, a new session is issued for the user. The session is stored in the database, and the session id is stored as a cookie. When a user makes a request to the server, Lucia can check the validity of the session id by cross-checking with the database. Sessions expire after some time, and need to be renewed, and so inactive users will be logged out. 
+Once a user signs in, a new session is issued for the user. The session is stored in the database, and the session id is stored as a cookie. When a user makes a request to the server, Lucia can check the validity of the session id by cross-checking with the database. Sessions expire after some time, and need to be renewed, and so inactive users will be logged out.
 
 ## Session states
 

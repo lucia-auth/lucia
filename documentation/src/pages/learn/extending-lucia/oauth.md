@@ -4,10 +4,6 @@ layout: "@layouts/DocumentLayout.astro"
 title: "OAuth"
 ---
 
-At first glance, it looks like Lucia only supports traditional identifier/password authentication and it doesn't support OAuth. However, if you look closely at Lucia, you'll realize it can support any authentication methods, including OAuth. The main focus of Lucia is session and user management, not user authentication (= is the user who they claim to be?). While it does provide a way to use passwords since it's a very common and basic, it's 100% optional. If you know for sure who the user is (via OAuth, email from magic links, email/phone number from OTP, username from username/password), you can create a new user and session based on it. This is a very deliberate design choice and the core of Lucia.
-
-And this is how OAuth can be added with Lucia. You authenticate the user using OAuth and then create users/sessions using Lucia.
-
 The main steps of authenticating users with OAuth + Lucia are:
 
 1. Redirect user to the OAuth provider's login page
