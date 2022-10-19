@@ -163,19 +163,19 @@ const createUser: (
     identifier: string,
     options?: {
         password?: string;
-        attributes?: Lucia.UserData;
+        attributes?: Lucia.UserAttributes;
     }
 ) => Promise<User>;
 ```
 
 #### Parameter
 
-| name               | type             | description                                             | optional |
-| ------------------ | ---------------- | ------------------------------------------------------- | -------- |
-| provider           | `string`         | The provider of the user to create                      |          |
-| identifier         | `string`         | The identifier of the user˝ to create                   |          |
-| options.password   | `string`         | The password of the user - can be undefined to omit it. | true     |
-| options.attributes | `Lucia.UserData` | Additional user data to store in `user` table           | true     |
+| name               | type                                                                      | description                                             | optional |
+| ------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------- | -------- |
+| provider           | `string`                                                                  | The provider of the user to create                      |          |
+| identifier         | `string`                                                                  | The identifier of the user˝ to create                   |          |
+| options.password   | `string`                                                                  | The password of the user - can be undefined to omit it. | true     |
+| options.attributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional user data to store in `user` table           | true     |
 
 #### Returns
 
@@ -659,10 +659,10 @@ try {
 
 ### `updateUserAttributes()`
 
-Updates one of the custom fields in the `user` table. The keys of `userData` should be one of the additional columns `user` table, and the values of it can be `null` but not `undefined`.
+Updates one of the custom fields in the `user` table. The keys of `attributes` should include one or more of the additional columns inside `user` table, and the values can be `null` but not `undefined`.
 
 ```ts
-const updateUserData: (
+const updateUserAttributes: (
     userId: string,
     attributes: Partial<Lucia.UserAttributes>
 ) => Promise<User>;
@@ -670,10 +670,10 @@ const updateUserData: (
 
 #### Parameter
 
-| name       | type                              | description                                                             |
-| ---------- | --------------------------------- | ----------------------------------------------------------------------- |
-| userId     | `string`                          | A refresh token                                                         |
-| attributes | `Partial<`[`Lucia.UserData`]()`>` | Key-value pairs of some or all of the column in `user` table to update. |
+| name       | type                                                                                   | description                                                             |
+| ---------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| userId     | `string`                                                                               | A refresh token                                                         |
+| attributes | `Partial<`[`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)`>` | Key-value pairs of some or all of the column in `user` table to update. |
 
 #### Returns
 
@@ -695,7 +695,7 @@ const updateUserData: (
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.updateUserData(userId, {
+    await auth.updateUserAttributes(userId, {
         username: "user123",
     });
 } catch {

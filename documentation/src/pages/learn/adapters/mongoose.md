@@ -44,7 +44,7 @@ const auth = lucia({
 
 ### `user`
 
-You may add additional fields to store custom user data. Refer to [Store additional user data](/learn/basics/store-additional-user-data).
+You may add additional fields to store user attributes. Refer to [[Store user attributes](/learn/basics/store-user-attributes)
 
 ```ts
 const User = mongoose.model(

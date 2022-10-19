@@ -43,7 +43,7 @@ declare namespace Lucia {
 }
 ```
 
-Refer to [Type declaration](/reference/types/type-declaration).
+Refer to [Type declaration](/reference/types/lucia-namespace).
 
 ## Example
 

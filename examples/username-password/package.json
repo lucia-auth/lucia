@@ -34,7 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-sveltekit/adapter-supabase": "workspace:*",
-		"lucia-sveltekit": "workspace:*"
+		"@lucia-sveltekit/adapter-supabase": "0.6.0",
+		"lucia-sveltekit": "0.13.1"
 	}
 }

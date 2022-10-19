@@ -46,9 +46,9 @@ try {
 }
 ```
 
-## Store additional user data
+## Store user attributes
 
-By default, Lucia will store the user id, provider id, and the hashed password (if a password is provided). The components of the provider id - the provider name and identifier - are not stored in its own column, and is combined so as to be stored in a single column. Storing additional data of the users is not automatically supported and some minimal work is needed to configure your database. Lucia will throw an error if the provided user data violates a unique constraint of a column. Refer to [Store additional user data](/learn/basics/store-additional-user-data) for more information.
+By default, Lucia will store the user id, provider id, and the hashed password (if a password is provided). The components of the provider id - the provider name and identifier - are not stored in its own column, and is combined so as to be stored in a single column. You can add additional columns to the `user` table to store the user's attributes. Lucia will throw an error if the provided user data violates a unique constraint of a column as well when creating and updating `users`. Refer to [Store additional user data](/learn/basics/store-additional-user-data) for more information.
 
 ```ts
 import { auth } from "$lib/server/lucia";
@@ -57,7 +57,6 @@ try {
     await auth.createUser("github", "user@example.com", {
         attributes: {
             username: "user",
-            phone_number: "000-0000-0000",
         },
     });
 } catch {

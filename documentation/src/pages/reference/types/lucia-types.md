@@ -69,4 +69,4 @@ type UserData = {
 | name | type                                                                       | description                        |
 | ---- | -------------------------------------------------------------------------- | ---------------------------------- |
 | id   | `string`                                                                   | User id of the user                |
-|      | [`Lucia.UserAttributes`](/reference/types/type-declaration#userattributes) | Additional columns in `user` table |
+|      | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional columns in `user` table |

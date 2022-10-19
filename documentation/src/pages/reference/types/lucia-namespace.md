@@ -1,7 +1,7 @@
 ---
 order: 1
 layout: "@layouts/DocumentLayout.astro"
-title: "Type declaration"
+title: "Lucia namespace"
 ---
 
 ```ts

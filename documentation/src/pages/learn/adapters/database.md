@@ -8,7 +8,7 @@ Lucia uses adapters to connect to your database. The following chart shows the b
 
 ## `user`
 
-The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user data. Refer to [Store additional user data](/learn/basics/store-additional-user-data). For `id`, use a auto-generated uuid or auto-increment int8, or `string` if you generate your own user id.
+The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). For `id`, use a auto-generated uuid/cuid, or `string` if you generate your own user id.
 
 | name            | type               | description                                                      | reference |
 | --------------- | ------------------ | ---------------------------------------------------------------- | --------- |
@@ -21,17 +21,9 @@ The `user` table stores the users. The `[any]` column represents the any number 
 
 The `session` table stores the user's sessions (including the access token).
 
-| name         | type          | description                                    | reference |
-| ------------ | ------------- | ---------------------------------------------- | --------- |
-| user_id      | string        |                                                | user.id   |
-| access_token | string        |                                                |           |
-| expires      | number (int8) | The expiration time (Unix) of the access token |           |
-
-## `refresh_token`
-
-The `refresh_token` table stores the user's refresh tokens.
-
-| name          | type   | description | reference |
-| ------------- | ------ | ----------- | --------- |
-| user_id       | string |             | user.id   |
-| refresh_token | string |             |           |
+| name         | type          | description                                        | reference |
+| ------------ | ------------- | -------------------------------------------------- | --------- |
+| id           | string        |                                                    |           |
+| user_id      | string        |                                                    | user.id   |
+| expires      | number (int8) | The expiration time (unix) of the session (active) |           |
+| idle_expires | number (int8) | The expiration time (unix) for the idle period     |           |

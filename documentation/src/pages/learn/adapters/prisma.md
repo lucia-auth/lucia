@@ -41,7 +41,7 @@ const auth = lucia({
 
 ### `user`
 
-You may add additional columns to store custom user data. Refer to [Store additional user data](/learn/basics/store-additional-user-data). `id` may be `String` if you generate your own user id.
+You may add additional columns to store user attributes. Refer to [[Store user attributes](/learn/basics/store-user-attributes). `id` may be `String` if you generate your own user id.
 
 ```prisma
 model User {

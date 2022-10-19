@@ -34,16 +34,16 @@ import { auth } from "$lib/server/lucia";
 const user = await auth.updateUserPassword(userId, password);
 ```
 
-### User data
+### User attributes
 
-Additional user data stored in the database can be updated using the [`updateUserData()`](/reference/api/server-api#updateuserdata) method. Only the user data attribute (column) that needs to updated has to be password. `undefined` values will be ignored, while `null` will not.
+Additional user attributes stored in the database can be updated using the [`updateUserAttributes()`](/reference/api/server-api#updateuserattributes) method. Only the user data attribute (column) that needs to updated has to be passed. `undefined` values will be ignored, while `null` will not.
 
-Refer to [Store additional user data](/learn/basics/store-additional-user-data) for more information on storing additional user data.
+Refer to [Store user attributes](/learn/basics/store-user-attributes) for more information on storing additional user data.
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const user = await auth.updateUserData(userId, partialUserData);
+const user = await auth.updateUserAttributes(userId, partialUserAttributes);
 ```
 
 #### Example
@@ -52,9 +52,9 @@ const user = await auth.updateUserData(userId, partialUserData);
 import { auth } from "$lib/server/lucia";
 
 try {
-    const user = await auth.updateUserData(userId, {
-        phoneNumber: "000-0000-0000",
-        profilePicture: null,
+    const user = await auth.updateUserAttributes(userId, {
+        username: "",
+        profile_picture: null,
     });
 } catch {
     // invalid input

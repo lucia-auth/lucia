@@ -8,7 +8,24 @@ This will guide you how to implement a simple username/password auth and cover t
 
 The [username/password example project](https://github.com/pilcrowOnPaper/lucia-sveltekit/tree/main/examples/username-password) in the repo expands on this guide.
 
-## 1. Set up Lucia
+
+## 1. Configure your database
+
+Since we're implementing a username based auth, add a `username` column in the `user` table. This should be a text column with a unique constraint.
+
+Additionally, in `src/app.d.ts` add the following to add types:
+
+```ts
+/// <reference types="lucia-sveltekit" />
+declare namespace Lucia {
+    type Auth = import("$lib/server/lucia.js").Auth;
+    type UserAttributes = {
+        username: string;
+    };
+}
+```
+
+## 2. Set up Lucia
 
 Follow [the previous page](/learn/start-here/getting-started) to set up Lucia and your database. Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). This function will run whenever Lucia returns a user.
 
@@ -25,21 +42,6 @@ export const auth = lucia({
 });
 ```
 
-## 2. Configure your database
-
-Since we're implementing a username based auth, add a `username` column in the `user` table. This should be a text column with a unique constraint.
-
-Additionally, in `src/app.d.ts` add the following to add types:
-
-```ts
-/// <reference types="lucia-sveltekit" />
-declare namespace Lucia {
-    type Auth = import("$lib/server/lucia.js").Auth;
-    type UserAttributes = {
-        username: string;
-    };
-}
-```
 
 ## 3. Sign up page
 
