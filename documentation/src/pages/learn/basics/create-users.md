@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Create users"
 ---
 
-The [`createUser()`](/reference/api/server-api#createuser) method can be used to create users, which requires a provider name and identifier. Lucia (or rather the database) will automatically generate a user id for your users on creation. However, you can generate your own user id using [`configurations.generateCustomUserId`](/reference/configure/lucia-configurations#generatecustomuserid).
+The [`createUser()`](/reference/api/server-api#createuser) method can be used to create users, which requires a provider name and identifier. Lucia (or rather the database) will automatically generate a user id for your users on creation. However, you can generate your own user id using [`configurations.generateCustomUserId()`](/reference/configure/lucia-configurations#generatecustomuserid).
 
 This method will not create a new session (tokens). To create a new session after creating a user, refer to [Create sessions](/learn/basics/authenticate-users).
 
