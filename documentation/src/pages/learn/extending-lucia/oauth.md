@@ -173,7 +173,7 @@ import { auth } from "$lib/server/lucia";
 import type { RequestHandler } from "@sveltejs/kit";
 import type { User } from "lucia-sveltekit/types";
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, cookies }) => {
     const code = url.searchParams.get("code");
     const response = await fetch(
         "https://github.com/login/oauth/access_token",
