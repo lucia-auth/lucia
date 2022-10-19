@@ -13,7 +13,9 @@ The [username/password example project](https://github.com/pilcrowOnPaper/lucia-
 
 Since we're implementing a username based auth, add a `username` column in the `user` table. This should be a text column with a unique constraint.
 
-Additionally, in `src/app.d.ts` add the following to add types:
+## 2. Set up Lucia
+
+Follow [the previous page](/learn/start-here/getting-started) to set up Lucia and your database. In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` column to `user` table:
 
 ```ts
 /// <reference types="lucia-sveltekit" />
@@ -25,9 +27,7 @@ declare namespace Lucia {
 }
 ```
 
-## 2. Set up Lucia
-
-Follow [the previous page](/learn/start-here/getting-started) to set up Lucia and your database. Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). This function will run whenever Lucia returns a user.
+Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
 export const auth = lucia({
