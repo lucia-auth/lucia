@@ -4,7 +4,7 @@ export type UserSchema = {
     provider_id: string;
 } & Lucia.UserAttributes;
 
-export type UserData = Omit<UserSchema, "hashed_password" | "provider_id">
+export type UserData = { id: string } & Required<Lucia.UserAttributes>;
 
 export type SessionSchema = {
     id: string;
@@ -17,8 +17,8 @@ export interface Adapter {
     getUser: (userId: string) => Promise<UserSchema | null>;
     getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
     getSessionAndUserBySessionId: (sessionId: string) => Promise<{
-        user: UserSchema,
-        session: SessionSchema
+        user: UserSchema;
+        session: SessionSchema;
     } | null>;
     setUser: (
         userId: string | null,
