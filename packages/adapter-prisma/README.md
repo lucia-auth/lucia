@@ -12,6 +12,12 @@ pnpm add @lucia-sveltekit/adapter-prisma
 yarn add @lucia-sveltekit/adapter-prisma
 ```
 
+## Lucia version compatibility
+
+| Prisma adapter version | Lucia version |
+| ---------------------- | ------------- |
+| v0.6.x                 | v0.13.0+      |
+
 ## Testing
 
 Add a postgresql database url to `.env`.
