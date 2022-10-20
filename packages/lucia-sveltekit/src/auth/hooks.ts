@@ -2,8 +2,8 @@ import type { Handle, RequestEvent } from "../kit.js";
 import type { Context } from "./index.js";
 
 import { handleLogoutRequest } from "./endpoints/index.js";
-import { LuciaError } from "../error.js";
 import { Session } from "../types.js";
+import cookie from "cookie";
 
 export const getRequestHandler = (event: RequestEvent) => {
     const isLogoutPOSTRequest =
@@ -34,29 +34,64 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 export const handleHooksFunction = (context: Context) => {
     const handleHooks = () => {
         return async ({ event, resolve }: Parameters<Handle>[0]) => {
+            let sessionToSet: Session | null = null;
+            let clearSession = false;
+            event.locals.getSession = () => Object.freeze(session);
+            event.locals.setSession = (session: Session) => {
+                clearSession = false;
+                sessionToSet = session;
+            };
+            event.locals.clearSession = () => {
+                clearSession = true;
+            };
             let session: Session | null = null;
             try {
-                session = await context.auth.validateRequest(event.request)
+                session = await context.auth.validateRequest(event.request);
             } catch {
                 try {
                     const sessionId = event.cookies.get("auth_session") || "";
-                    const { session: renewedSession, setSessionCookie } =
-                        await context.auth.renewSession(sessionId);
+                    const renewedSession = await context.auth.renewSession(
+                        sessionId
+                    );
                     await context.auth.deleteDeadUserSessions(
                         renewedSession.userId
                     );
-                    setSessionCookie(event.cookies);
                     session = renewedSession;
                 } catch (e) {
-                    context.auth.deleteAllCookies(event.cookies);
+                    event.locals.clearSession();
                 }
             }
-            event.locals.getSession = () => Object.freeze(session);
             const requestHandler = getRequestHandler(event);
             if (requestHandler) return await requestHandler(event, context);
-            return await resolve(event, {
+            const response = await resolve(event, {
                 transformPageChunk: setPageDataGlobalVariable,
             });
+            if (sessionToSet) {
+                const target: Session = sessionToSet;
+                response.headers.append(
+                    "set-cookie",
+                    cookie.serialize("auth_session", target.sessionId, {
+                        httpOnly: true,
+                        expires: new Date(target.idlePeriodExpires),
+                        secure: context.env === "PROD",
+                        path: "/",
+                        sameSite: "lax",
+                    })
+                );
+            }
+            if (clearSession) {
+                response.headers.append(
+                    "set-cookie",
+                    cookie.serialize("auth_session", "", {
+                        httpOnly: true,
+                        maxAge: 0,
+                        secure: context.env === "PROD",
+                        path: "/",
+                        sameSite: "lax",
+                    })
+                );
+            }
+            return response;
         };
     };
     return handleHooks;

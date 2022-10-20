@@ -23,7 +23,6 @@ import {
     generateSessionIdFunction,
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
-import { deleteAllCookiesFunction } from "./cookie.js";
 import clc from "cli-color";
 import { Adapter, UserData, UserSchema } from "../adapter/index.js";
 
@@ -100,7 +99,6 @@ export class Auth<C extends Configurations = any> {
 
         this.handleHooks = handleHooksFunction(this.context);
         this.handleServerSession = handleServerSessionFunction(this.context);
-        this.deleteAllCookies = deleteAllCookiesFunction(this.context);
     }
     public getUser: ReturnType<typeof getUserFunction>;
     public getUserByProviderId: ReturnType<typeof getUserByProviderIdFunction>;
@@ -133,7 +131,6 @@ export class Auth<C extends Configurations = any> {
 
     public handleHooks: () => Handle;
     public handleServerSession: ReturnType<typeof handleServerSessionFunction>;
-    public deleteAllCookies: ReturnType<typeof deleteAllCookiesFunction>;
 }
 
 interface Configurations {

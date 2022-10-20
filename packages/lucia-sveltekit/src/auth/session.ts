@@ -1,7 +1,6 @@
 import type { Session } from "../types.js";
 import type { Context } from "./index.js";
 import { generateRandomString, LuciaError } from "../index.js";
-import { Cookies } from "../kit.js";
 
 type ValidateSession = (sessionId: string) => Promise<Session>;
 
@@ -14,11 +13,16 @@ export const validateSessionFunction = (context: Context) => {
         const currentTime = new Date().getTime();
         if (currentTime > databaseSession.expires)
             throw new LuciaError("AUTH_INVALID_SESSION_ID");
-        const { user_id: userId, expires } = databaseSession;
+        const {
+            user_id: userId,
+            expires,
+            idle_expires: idlePeriodExpires,
+        } = databaseSession;
         return {
             userId,
             expires,
             sessionId,
+            idlePeriodExpires,
         };
     };
     return validateSession;
@@ -36,11 +40,7 @@ export const generateSessionIdFunction = (context: Context) => {
     return generateSessionId;
 };
 
-type CreateSession = (userId: string) => Promise<{
-    session: Session;
-    setSessionCookie: (cookies: Cookies) => void;
-    idlePeriodExpires: number;
-}>;
+type CreateSession = (userId: string) => Promise<Session>;
 
 export const createSessionFunction = (context: Context) => {
     const createSession: CreateSession = async (userId) => {
@@ -52,21 +52,10 @@ export const createSessionFunction = (context: Context) => {
             idlePeriodExpires,
         });
         return {
-            session: {
-                userId,
-                expires: sessionExpires,
-                sessionId,
-            },
+            userId,
+            expires: sessionExpires,
+            sessionId,
             idlePeriodExpires,
-            setSessionCookie: (cookies) => {
-                cookies.set("auth_session", sessionId, {
-                    httpOnly: true,
-                    expires: new Date(idlePeriodExpires),
-                    secure: context.env === "PROD",
-                    path: "/",
-                    sameSite: "lax",
-                });
-            },
         };
     };
     return createSession;
@@ -107,15 +96,12 @@ export const deleteDeadUserSessionsFunction = (context: Context) => {
     return deleteDeadUserSessions;
 };
 
-type RenewSession = (sessionId: string) => Promise<{
-    session: Session;
-    setSessionCookie: (cookies: Cookies) => void;
-    idlePeriodExpires: number;
-}>;
+type RenewSession = (sessionId: string) => Promise<Session>;
 
 export const renewSessionFunction = (context: Context) => {
     const renewSession: RenewSession = async (sessionId) => {
-        if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+        if (sessionId.length !== 40)
+            throw new LuciaError("AUTH_INVALID_SESSION_ID");
         const databaseSession = await context.adapter.getSession(sessionId);
         if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
         if (new Date().getTime() > databaseSession.idle_expires) {

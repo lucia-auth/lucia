@@ -51,6 +51,7 @@ export const getSessionUserFunction = (context: Context) => {
                 sessionId: databaseSession.id,
                 expires: databaseSession.expires,
                 userId: databaseSession.user_id,
+                idlePeriodExpires: databaseSession.idle_expires,
             },
         };
     };

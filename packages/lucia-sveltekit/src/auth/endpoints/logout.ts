@@ -11,7 +11,7 @@ export const handleLogoutRequest = async (
         const sessionid = context.auth.parseRequest(event.request);
         if (!sessionid) throw new LuciaError("AUTH_INVALID_SESSION_ID");
         await context.adapter.deleteSession(sessionid);
-        context.auth.deleteAllCookies(event.cookies)
+        event.locals.clearSession()
         return new Response(null);
     } catch (e) {
         const error = e as LuciaError;
