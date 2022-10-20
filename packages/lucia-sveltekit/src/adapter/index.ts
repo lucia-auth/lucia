@@ -55,7 +55,7 @@ export const getUpdateData = (data: {
     providerId?: string | null;
     hashedPassword?: string | null;
     attributes?: Record<string, any>;
-}) => {
+}): Partial<UserSchema> => {
     const rawData: Record<string, any> = {
         provider_id: data.providerId,
         hashed_password: data.hashedPassword,

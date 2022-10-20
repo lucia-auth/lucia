@@ -143,17 +143,17 @@ export const GET: RequestHandler = async ({ url }) => {
 
 ## 8. Create a new session
 
-Finally, we can create a new session using [`createSession()`](/reference/api/server-api#createsession).
+Finally, we can create a new session using [`createSession()`](/reference/api/server-api#createsession) and store it as a cookie using [`setSession`](/reference/api/locals-api#setsession).
 
 ```ts
 // /routes/api/github-callback/+server.ts
-export const GET: RequestHandler = async ({ url, cookies }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
     // ...
     let user: User;
     // ...
     try {
-        const { setSessionCookie } = await auth.createSession(user.userId);
-        setSessionCookie(cookies);
+        const session = await auth.createSession(user.userId);
+        locals.setSession(session);
     } catch {
         // error - return error response
     }
@@ -169,7 +169,7 @@ import { auth } from "$lib/server/lucia";
 import type { RequestHandler } from "@sveltejs/kit";
 import type { User } from "lucia-sveltekit/types";
 
-export const GET: RequestHandler = async ({ url, cookies }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
     const code = url.searchParams.get("code");
     const response = await fetch(
         "https://github.com/login/oauth/access_token",
@@ -212,8 +212,8 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
         }
     }
     try {
-        const { setSessionCookie } = await auth.createSession(user.userId);
-        setSessionCookie(cookies);
+        const session = await auth.createSession(user.userId);
+        locals.setSession(session);
     } catch {
         // error
         return new Response(500);

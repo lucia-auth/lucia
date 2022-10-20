@@ -12,6 +12,8 @@ import { signOut } from "lucia-sveltekit/client";
 await signOut(redirectUrl);
 ```
 
+`signOut()` invalidates the session id and clears the cookie.
+
 ## Example
 
 The user will be redirected to /login on successful sign out.

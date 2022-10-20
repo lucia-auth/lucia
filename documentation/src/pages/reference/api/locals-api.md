@@ -14,6 +14,26 @@ const action: Action = async ({ locals }) => {
 };
 ```
 
+## `clearSession()`
+
+Deletes the session cookie if it exists.
+
+```ts
+const setSession: () => void;
+```
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+import type { Action } from "@sveltejs/kit";
+
+const action: Action = async ({ locals }) => {
+    locals.clearSession();
+};
+```
+
+
 ## `getSession()`
 
 Gets the session from the request. This will be from the session id sent with the request, or renewed session if the one sent was idle. Returns `null` if invalid.
@@ -38,5 +58,31 @@ const action: Action = async ({ locals }) => {
     if (!session) {
         // invalid
     }
+};
+```
+
+## `setSession()`
+
+Sets the session as a cookie.
+
+```ts
+const setSession: (session: Session) => void;
+```
+
+#### Parameter
+
+| name    | type                                              | description                   |
+| ------- | ------------------------------------------------- | ----------------------------- |
+| session | [`Session`](/reference/types/lucia-types#session) | The session to set to cookies |
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+import type { Action } from "@sveltejs/kit";
+
+const action: Action = async ({ locals }) => {
+    const session = await auth.createSession();
+    locals.setSession(session);
 };
 ```

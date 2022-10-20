@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.13.3
+
+-   [Breaking] `createSession()` and `renewSession()` returns `Session`
+-   [Breaking] Removed `deleteAllCookies()`
+-   Added `setSession()` and `clearSession()` method inside `locals`
+
 ## v0.13.2
 
 -   `UserData` type removes optionality from user attributes
@@ -10,7 +16,7 @@
 
 ## v0.13.0
 
--   [Breaking] `handleHooks()` automatically validates and renew session 
+-   [Breaking] `handleHooks()` automatically validates and renew session
 -   [Breaking] `User` is `{ userId: string }` by default - additional data stored in `user` table are no longer automatically added
 -   [Breaking] Renamed `userData` fields to `attributes` for `createUser()`
 -   [Breaking] Renamed `updateUserData()` to `updateUserAttributes()`

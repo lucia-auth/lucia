@@ -7,5 +7,7 @@ declare namespace Lucia {
 declare namespace App {
     export interface Locals {
         getSession: () => import("./types.js").Session | null;
+        setSession: (session: import("./types.js").Session) => void;
+        clearSession: () => void;
     }
 }

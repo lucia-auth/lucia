@@ -108,11 +108,7 @@ try {
 Creates a new session of a user.
 
 ```ts
-const createSession: (userId: string) => Promise<{
-    session: Session;
-    setSessionCookie: (cookies: Cookies) => void;
-    idlePeriodExpires: number;
-}>;
+const createSession: (userId: string) => Promise<Session>;
 ```
 
 #### Parameter
@@ -123,17 +119,9 @@ const createSession: (userId: string) => Promise<{
 
 #### Returns
 
-| name              | type                                              | description                                             |
-| ----------------- | ------------------------------------------------- | ------------------------------------------------------- |
-| session           | [`Session`](/reference/types/lucia-types#session) | The newly created session                               |
-| setSessionCookie  | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                   |
-| idlePeriodExpires | `number`                                          | The expiration time (unix) of the session's idle period |
-
-```ts
-const setSessionCookie: (
-    cookies: Cookies // SvelteKit's cookies module
-) => void;
-```
+| type                                              | description               |
+| ------------------------------------------------- | ------------------------- |
+| [`Session`](/reference/types/lucia-types#session) | The newly created session |
 
 #### Errors
 
@@ -207,31 +195,6 @@ try {
 } catch {
     // error
 }
-```
-
-### `deleteAllCookies()`
-
-Deletes all cookies created by Lucia.
-
-```ts
-const deleteAllCookies: (cookies: Cookies) => Promise<void>;
-```
-
-#### Parameter
-
-| name    | type    | description                  |
-| ------- | ------- | ---------------------------- |
-| cookies | Cookies | SvelteKit's `cookies` module |
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-import type { Action } from "@sveltejs/kit";
-
-const action: Action = async ({ cookies }) => {
-    auth.deleteAllCookies(cookies);
-};
 ```
 
 ### `deleteDeadUserSessions()`
@@ -610,11 +573,7 @@ const action: Action = async ({ request }) => {
 Takes and validates an active or idle session id, and renews the session. The used session id (and its session) is invalidated.
 
 ```ts
-const renewSession: (sessionId: string) => Promise<{
-    session: Session;
-    setSessionCookie: (cookies: Cookies) => void;
-    idlePeriodExpires: number;
-}>;
+const renewSession: (sessionId: string) => Promise<Session>;
 ```
 
 #### Parameter
@@ -625,17 +584,9 @@ const renewSession: (sessionId: string) => Promise<{
 
 #### Returns
 
-| name              | type                                              | description                                             |
-| ----------------- | ------------------------------------------------- | ------------------------------------------------------- |
-| session           | [`Session`](/reference/types/lucia-types#session) | The newly created session                               |
-| setSessionCookie  | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                   |
-| idlePeriodExpires | `number`                                          | The expiration time (unix) of the session's idle period |
-
-```ts
-const setSessionCookie: (
-    cookies: Cookies // SvelteKit's cookies module
-) => void;
-```
+| type                                              | description               |
+| ------------------------------------------------- | ------------------------- |
+| [`Session`](/reference/types/lucia-types#session) | The newly created session |
 
 #### Errors
 
@@ -651,7 +602,7 @@ const setSessionCookie: (
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.refreshSession(refreshToken);
+    const session = await auth.renewSession(refreshToken);
 } catch {
     // error
 }
@@ -892,30 +843,4 @@ Refer to [Error reference](/reference/types/errors).
 
 ```ts
 class LuciaError extends Error
-```
-
-## `setCookie()`
-
-A helper function to set cookie strings using SvelteKit's `Cookie`.
-
-```ts
-const setCookie: (cookie: Cookie, ...cookies: string[]) => void;
-```
-
-#### Parameter
-
-| name    | type          | description                |
-| ------- | ------------- | -------------------------- |
-| cookie  | `Cookie`      | SvelteKit's cookie module  |
-| cookies | `...string[]` | An array of cookie strings |
-
-#### Example
-
-```ts
-import { setCookie } from "lucia-sveltekit";
-import type { Action } from "@sveltejs/kit";
-
-const action: Action = async ({ cookie }) => {
-    setCookie(cookie, "cookie1=value;", "cookie2=value; path=/;");
-};
 ```
