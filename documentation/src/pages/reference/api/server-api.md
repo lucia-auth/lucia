@@ -844,29 +844,3 @@ Refer to [Error reference](/reference/types/errors).
 ```ts
 class LuciaError extends Error
 ```
-
-## `setCookie()`
-
-A helper function to set cookie strings using SvelteKit's `Cookie`.
-
-```ts
-const setCookie: (cookie: Cookie, ...cookies: string[]) => void;
-```
-
-#### Parameter
-
-| name    | type          | description                |
-| ------- | ------------- | -------------------------- |
-| cookie  | `Cookie`      | SvelteKit's cookie module  |
-| cookies | `...string[]` | An array of cookie strings |
-
-#### Example
-
-```ts
-import { setCookie } from "lucia-sveltekit";
-import type { Action } from "@sveltejs/kit";
-
-const action: Action = async ({ cookie }) => {
-    setCookie(cookie, "cookie1=value;", "cookie2=value; path=/;");
-};
-```
