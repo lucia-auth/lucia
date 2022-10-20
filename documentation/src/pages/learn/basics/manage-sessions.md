@@ -8,14 +8,13 @@ Updating the current session will not be automatically reflected in the client. 
 
 ## Renew sessions
 
-Sessions can be renewed using the [`renewSession()`](/reference/api/server-api#renewsession) method. This takes in an active or idle session, and the used session will be invalidated. 
+Sessions can be renewed using the [`renewSession()`](/reference/api/server-api#renewsession) method. This takes in an active or idle session, and the used session will be invalidated. This session should be stored as a cookie.
 
 ```ts
 import { auth } from "$lib/server/lucia";
 
 try {
-    const { session, setSessionCookie, idlePeriodExpires } =
-        await auth.renewSession(sessionId);
+    const session = await auth.renewSession(sessionId);
 } catch {
     // invalid refresh token
 }

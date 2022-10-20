@@ -9,8 +9,7 @@ A new session can be created using [`createSession()`](/reference/api/server-api
 ```ts
 import { auth } from "$lib/server/lucia";
 
-const { session, setSessionCookie, idlePeriodExpires } =
-    await auth.createSession("userId");
+const session = await auth.createSession("userId");
 ```
 
 ## Create a new session
@@ -19,7 +18,7 @@ const { session, setSessionCookie, idlePeriodExpires } =
 import { auth } from "$lib/server/lucia";
 
 try {
-    const { session } = await auth.createSession("123456");
+    const session = await auth.createSession("123456");
 } catch {
     // invalid user id
 }
@@ -27,11 +26,11 @@ try {
 
 ## Store the tokens as cookies
 
-The tokens should be manually stored as a cookie using `setSessionCookie()` returned from the method, which takes SvelteKit's cookies module.
+The tokens should be manually stored as a cookie using `setSession()` method available inside `locals`, which takes the returned `Session`.
 
 ```ts
-const { setSessionCookie } = await auth.createSession("123456");
-setSessionCookie(cookies);
+const session = await auth.createSession("123456");
+locals.setSession(session);
 ```
 
 ## Update the current user on the client
@@ -49,11 +48,11 @@ import { setCookie } from "lucia-sveltekit";
 import { redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
-    default: async ({ cookies }) => {
+    default: async ({ locals }) => {
         // ...
         try {
-            const { setSessionCookie } = await auth.createSession(userId);
-            setSessionCookie(cookies);
+            const session = await auth.createSession(userId);
+            locals.setSession(session);
         } catch {
             // error
         }

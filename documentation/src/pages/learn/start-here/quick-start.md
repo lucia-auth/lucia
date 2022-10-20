@@ -16,7 +16,7 @@ Since we're implementing a username based auth, add a `username` column in the `
 
 ## 2. Configure Lucia
 
- In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` column to `user` table:
+In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` column to `user` table:
 
 ```ts
 /// <reference types="lucia-sveltekit" />
@@ -42,7 +42,6 @@ export const auth = lucia({
     },
 });
 ```
-
 
 ## 3. Sign up page
 
@@ -90,7 +89,7 @@ import { invalid, redirect, type Actions } from "@sveltejs/kit";
 import { auth } from "$lib/server/lucia";
 
 export const actions: Actions = {
-    default: async ({ request, cookies }) => {
+    default: async ({ request, locals }) => {
         const form = await request.formData();
         const username = form.get("username");
         const password = form.get("password");
@@ -109,8 +108,8 @@ export const actions: Actions = {
                     username,
                 },
             });
-            const { setSessionCookie } = await auth.createSession(user.userId);
-            setSessionCookie(cookies);
+            const session = await auth.createSession(user.userId);
+            locals.setSession(session);
         } catch {
             // username already in use
             return invalid(400);
@@ -183,7 +182,7 @@ import { invalid, redirect, type Actions } from "@sveltejs/kit";
 import { auth } from "$lib/server/lucia";
 
 export const actions: Actions = {
-    default: async ({ request, cookies }) => {
+    default: async ({ request, locals }) => {
         const form = await request.formData();
         const username = form.get("username");
         const password = form.get("password");
@@ -201,8 +200,8 @@ export const actions: Actions = {
                 username,
                 password
             );
-            const { setSessionCookie } = await auth.createSession(user.userId);
-            setSessionCookie(cookies);
+            const session = await auth.createSession(user.userId);
+            locals.setSession(session);
         } catch {
             // username already in use
             return invalid(400);

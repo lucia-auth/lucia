@@ -108,11 +108,7 @@ try {
 Creates a new session of a user.
 
 ```ts
-const createSession: (userId: string) => Promise<{
-    session: Session;
-    setSessionCookie: (cookies: Cookies) => void;
-    idlePeriodExpires: number;
-}>;
+const createSession: (userId: string) => Promise<Session>;
 ```
 
 #### Parameter
@@ -123,17 +119,9 @@ const createSession: (userId: string) => Promise<{
 
 #### Returns
 
-| name              | type                                              | description                                             |
-| ----------------- | ------------------------------------------------- | ------------------------------------------------------- |
-| session           | [`Session`](/reference/types/lucia-types#session) | The newly created session                               |
-| setSessionCookie  | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                   |
-| idlePeriodExpires | `number`                                          | The expiration time (unix) of the session's idle period |
-
-```ts
-const setSessionCookie: (
-    cookies: Cookies // SvelteKit's cookies module
-) => void;
-```
+| type                                              | description               |
+| ------------------------------------------------- | ------------------------- |
+| [`Session`](/reference/types/lucia-types#session) | The newly created session |
 
 #### Errors
 
@@ -610,11 +598,7 @@ const action: Action = async ({ request }) => {
 Takes and validates an active or idle session id, and renews the session. The used session id (and its session) is invalidated.
 
 ```ts
-const renewSession: (sessionId: string) => Promise<{
-    session: Session;
-    setSessionCookie: (cookies: Cookies) => void;
-    idlePeriodExpires: number;
-}>;
+const renewSession: (sessionId: string) => Promise<Session>;
 ```
 
 #### Parameter
@@ -625,17 +609,9 @@ const renewSession: (sessionId: string) => Promise<{
 
 #### Returns
 
-| name              | type                                              | description                                             |
-| ----------------- | ------------------------------------------------- | ------------------------------------------------------- |
-| session           | [`Session`](/reference/types/lucia-types#session) | The newly created session                               |
-| setSessionCookie  | `(cookies: Cookies) => void`                      | The tokens and cookies of the session                   |
-| idlePeriodExpires | `number`                                          | The expiration time (unix) of the session's idle period |
-
-```ts
-const setSessionCookie: (
-    cookies: Cookies // SvelteKit's cookies module
-) => void;
-```
+| type                                              | description               |
+| ------------------------------------------------- | ------------------------- |
+| [`Session`](/reference/types/lucia-types#session) | The newly created session |
 
 #### Errors
 
@@ -651,7 +627,7 @@ const setSessionCookie: (
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.refreshSession(refreshToken);
+    const session = await auth.renewSession(refreshToken);
 } catch {
     // error
 }
