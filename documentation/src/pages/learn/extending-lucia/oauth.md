@@ -85,15 +85,15 @@ To create users using Lucia, you need an identifier as part of the provider id. 
 export const GET: RequestHandler = async ({ url }) => {
     // ...
     const accessToken = result.access_token;
-    const userResponse = await fetch("https://api.github.com/user", {
+    const githubUserResponse = await fetch("https://api.github.com/user", {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
     });
-    const user = (await userResponse.json()) as {
+    const githubUser = (await githubUserResponse.json()) as {
         id: string;
     };
-    const githubUserId = user.id;
+    const githubUserId = githubUser.id;
 };
 ```
 
@@ -190,15 +190,15 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
         access_token: string;
     };
     const accessToken = result.access_token;
-    const userResponse = await fetch("https://api.github.com/user", {
+    const githubUserResponse = await fetch("https://api.github.com/user", {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
     });
-    const user = (await userResponse.json()) as {
+    const githubUser = (await githubUserResponse.json()) as {
         id: string;
     };
-    const githubUserId = user.id;
+    const githubUserId = githubUser.id;
     let user: User;
     try {
         user = await auth.getUserByProviderId("github", userId);
