@@ -197,31 +197,6 @@ try {
 }
 ```
 
-### `deleteAllCookies()`
-
-Deletes all cookies created by Lucia.
-
-```ts
-const deleteAllCookies: (cookies: Cookies) => Promise<void>;
-```
-
-#### Parameter
-
-| name    | type    | description                  |
-| ------- | ------- | ---------------------------- |
-| cookies | Cookies | SvelteKit's `cookies` module |
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-import type { Action } from "@sveltejs/kit";
-
-const action: Action = async ({ cookies }) => {
-    auth.deleteAllCookies(cookies);
-};
-```
-
 ### `deleteDeadUserSessions()`
 
 Deletes all sessions that are expired and their idle period has passed (dead sessions). Will succeed regardless of the validity of the user id.
