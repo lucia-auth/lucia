@@ -39,7 +39,7 @@ export const auth = lucia({
     env: dev ? "DEV" : "PROD",
 });
 
-export type Auth = typeof auth
+export type Auth = typeof auth;
 ```
 
 This module and the file that holds it **should NOT be imported from the client**.
@@ -88,14 +88,18 @@ In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.
 ```ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-	type Auth = import('$lib/server/lucia.js').Auth;
-	type UserAttributes = {}
+    type Auth = import("$lib/server/lucia.js").Auth;
+    type UserAttributes = {};
 }
 
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
-	interface Locals {
-		getSession: import("lucia-sveltekit/types").GetSession
-	}
+    interface Locals {
+        getSession: import("lucia-sveltekit/types").GetSession;
+        setSession: import("lucia-sveltekit/types").SetSession;
+        clearSession: import("lucia-sveltekit/types").ClearSession;
+    }
 }
 ```
+
+(From the maintainer: If you know a way to add types to `App.Locals` without manually adding them, please let us know!)
