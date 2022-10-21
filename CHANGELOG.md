@@ -1,6 +1,10 @@
 # Changelog
 
-## v0.13.3
+## v0.14.1
+
+-   Added `sessionCookieOptions` and `deleteCookieOptions` config
+
+## v0.14.0
 
 -   [Breaking] `createSession()` and `renewSession()` returns `Session`
 -   [Breaking] Removed `deleteAllCookies()`
