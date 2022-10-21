@@ -2,18 +2,21 @@
 
 **[Join the Discord server!](https://discord.gg/PwrK3kpVR3)**
 
-**Thank you for 200 github stars, and counting!**
+**Thank you for 300 GitHub stars, and counting!**
 
-Lucia is an authentication library for SvelteKit that handle the bulk of the authentication process. It is bare-bone by design, allowing it to be used in many ways, but simple and straight forward enough to be easy to understand and to use. That said, it implements token theft detection, rotating refresh token, and silent refresh, to make sure your authentication system is secure.
+Lucia is a library that makes user and session management simple and
+clean. It's bare bones by design, making it easy to use and
+understand, while providing the flexibility that many other
+authentication libraries lack. It's the authentication solution that
+works with you and your app.
 
-It's important to note that this __isn't__ an out-of-the-box authentication library. It does not validate the user's input nor does it not provide UI elements or OAuth authentication (though it can be implemented using Lucia). These are out of the scope of this library and is left up to you. 
+One thing important to note that this **isn't** an out-of-the-box authentication library. It does not validate the user's input nor does it not provide UI elements or OAuth authentication (though it can be implemented using Lucia). These are out of the scope of this library and is left up to you.
 
 ## Documentation
 
 **[Documentation](https://lucia-sveltekit.vercel.app)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CHANGELOG.md)**
-
 
 ## Installation
 

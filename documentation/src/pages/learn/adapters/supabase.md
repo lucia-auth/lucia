@@ -58,7 +58,7 @@ You may add additional columns to store user attributes. Refer to [[Store user a
 | expires      | `int8` |                    |          |        |          |
 | idle_expires | `int8` |                    |          |        |          |
 
-## SupaBase SQL Editor
+## Supabase SQL Editor
 
 `UUID` in `user` table should be changed to `TEXT` if you use custom user ids.
 You may add additional columns to store custom user data in `user` table. Refer to [Store additional user data](/learn/basics/store-additional-user-data).

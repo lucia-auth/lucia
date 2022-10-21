@@ -5,12 +5,12 @@ import {
 } from "lucia-sveltekit/adapter";
 import type { RedisClientType } from "redis";
 
-const adapter = (redisInstances: {
+const adapter = (redisClient: {
     session: RedisClientType<any, any, any>;
-    userSession: RedisClientType<any, any, any>;
+    userSessions: RedisClientType<any, any, any>;
 }): SessionAdapter => {
-    const { session: sessionRedis, userSession: userSessionRedis } =
-        redisInstances;
+    const { session: sessionRedis, userSessions: userSessionsRedis } =
+        redisClient;
     return {
         getSession: async (sessionId) => {
             try {
@@ -26,7 +26,11 @@ const adapter = (redisInstances: {
         },
         getSessionsByUserId: async (userId) => {
             try {
-                const sessionIds = await userSessionRedis.lRange(userId, 0, -1);
+                const sessionIds = await userSessionsRedis.lRange(
+                    userId,
+                    0,
+                    -1
+                );
                 const sessionData = await Promise.all(
                     sessionIds.map((id) => sessionRedis.get(id))
                 );
@@ -42,7 +46,7 @@ const adapter = (redisInstances: {
         setSession: async (sessionId, data) => {
             try {
                 Promise.all([
-                    userSessionRedis.lPush(data.userId, sessionId),
+                    userSessionsRedis.lPush(data.userId, sessionId),
                     sessionRedis.set(
                         sessionId,
                         JSON.stringify({
@@ -72,7 +76,7 @@ const adapter = (redisInstances: {
                 await Promise.all([
                     ...sessionIds.map((id) => sessionRedis.del(id)),
                     ...sessions.map((session) =>
-                        userSessionRedis.lRem(session.user_id, 1, session.id)
+                        userSessionsRedis.lRem(session.user_id, 1, session.id)
                     ),
                 ]);
             } catch (e) {
@@ -82,10 +86,14 @@ const adapter = (redisInstances: {
         },
         deleteSessionsByUserId: async (userId) => {
             try {
-                const sessionIds = await userSessionRedis.lRange(userId, 0, -1);
+                const sessionIds = await userSessionsRedis.lRange(
+                    userId,
+                    0,
+                    -1
+                );
                 await Promise.all([
                     ...sessionIds.map((id) => sessionRedis.del(id)),
-                    userSessionRedis.del(userId),
+                    userSessionsRedis.del(userId),
                 ]);
             } catch (e) {
                 console.error(e);

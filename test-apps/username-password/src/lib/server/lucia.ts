@@ -22,7 +22,7 @@ export const auth = lucia({
 		user: supabase(SUPABASE_URL, SUPABASE_SECRET),
 		session: redis({
 			session: sessionInstance,
-			userSession: userSessionInstance
+			userSessions: userSessionInstance
 		})
 	},
 	env: dev ? 'DEV' : 'PROD',

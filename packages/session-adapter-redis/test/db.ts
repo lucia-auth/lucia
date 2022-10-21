@@ -2,7 +2,6 @@ import type { Database } from "@lucia-sveltekit/adapter-test";
 import type { SessionSchema } from "lucia-sveltekit/adapter";
 
 import { createClient } from "redis";
-
 import redis from "../src/index.js";
 
 const sessionInstance = createClient({
@@ -22,7 +21,7 @@ await userSessionInstance.connect();
 
 export const adapter = redis({
     session: sessionInstance,
-    userSession: userSessionInstance,
+    userSessions: userSessionInstance,
 });
 
 export const db: Database = {

@@ -36,6 +36,8 @@
 	"dependencies": {
 		"@lucia-sveltekit/adapter-supabase": "workspace:*",
 		"@lucia-sveltekit/session-adapter-redis": "workspace:*",
+		"@sveltejs/adapter-node": "1.0.0-next.99",
+		"devalue": "^4.0.1",
 		"lucia-sveltekit": "workspace:*",
 		"redis": "^4.3.1"
 	}
