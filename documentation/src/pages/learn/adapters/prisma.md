@@ -57,6 +57,8 @@ model User {
 
 ### `session`
 
+You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+
 ```prisma
 model Session {
   id           String @id @unique

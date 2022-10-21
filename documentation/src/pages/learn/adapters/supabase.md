@@ -51,6 +51,8 @@ You may add additional columns to store user attributes. Refer to [[Store user a
 
 ### `session`
 
+You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+
 | name         | type   | foreign constraint | nullable | unique | identity |
 | ------------ | ------ | ------------------ | -------- | ------ | -------- |
 | id           | `text` |                    |          | true   | true     |
