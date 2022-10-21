@@ -2,6 +2,7 @@ import type { Session } from "../../types.js";
 import { LuciaError } from "../../error.js";
 import type { Context } from "../index.js";
 import { User } from "../../types.js";
+import { SessionSchema, UserSchema } from "../../adapter/index.js";
 
 type GetUser = (provider: string, identifier: string) => Promise<User>;
 
@@ -37,11 +38,26 @@ type GetSessionUser = (sessionId: string) => Promise<{
 
 export const getSessionUserFunction = (context: Context) => {
     const getSessionUser: GetSessionUser = async (sessionId) => {
-        const userSession = await context.adapter.getSessionAndUserBySessionId(
-            sessionId
-        );
-        if (!userSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-        const { user: databaseUser, session: databaseSession } = userSession;
+        let userSessionData: {
+            user: UserSchema;
+            session: SessionSchema;
+        } | null;
+        if (context.adapter.getSessionAndUserBySessionId !== undefined) {
+            userSessionData =
+                await context.adapter.getSessionAndUserBySessionId(sessionId);
+        } else {
+            const sessionData = await context.adapter.getSession(sessionId);
+            if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+            const userData = await context.adapter.getUser(sessionData.user_id);
+            if (!userData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+            userSessionData = {
+                user: userData,
+                session: sessionData,
+            };
+        }
+        if (!userSessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+        const { user: databaseUser, session: databaseSession } =
+            userSessionData;
         if (new Date().getTime() > databaseSession.expires)
             throw new LuciaError("AUTH_INVALID_SESSION_ID");
         const user = context.transformUserData(databaseUser);

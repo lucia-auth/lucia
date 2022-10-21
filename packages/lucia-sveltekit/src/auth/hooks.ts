@@ -34,6 +34,7 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 export const handleHooksFunction = (context: Context) => {
     const handleHooks = () => {
         return async ({ event, resolve }: Parameters<Handle>[0]) => {
+            let session: Session | null = null;
             let sessionToSet: Session | null = null;
             let clearSession = false;
             event.locals.getSession = () => Object.freeze(session);
@@ -44,7 +45,6 @@ export const handleHooksFunction = (context: Context) => {
             event.locals.clearSession = () => {
                 clearSession = true;
             };
-            let session: Session | null = null;
             try {
                 session = await context.auth.validateRequest(event.request);
             } catch {
@@ -57,6 +57,7 @@ export const handleHooksFunction = (context: Context) => {
                         renewedSession.userId
                     );
                     session = renewedSession;
+                    event.locals.setSession(session)
                 } catch (e) {
                     event.locals.clearSession();
                 }

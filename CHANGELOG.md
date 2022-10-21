@@ -9,6 +9,8 @@
 -   [Breaking] `createSession()` and `renewSession()` returns `Session`
 -   [Breaking] Remove `deleteAllCookies()`
 -   Add `setSession()` and `clearSession()` method inside `locals`
+-   Add `adapter.user` and `adapter.session` config
+-   [Fix] Sessions renewed inside hooks are properly being set
 
 ## v0.13.2
 

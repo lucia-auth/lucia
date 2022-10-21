@@ -4,7 +4,10 @@ import { dev } from '$app/environment';
 import { SUPABASE_URL, SUPABASE_SECRET } from '$env/static/private';
 
 export const auth = lucia({
-	adapter: supabase(SUPABASE_URL, SUPABASE_SECRET),
+	adapter: {
+		user: supabase(SUPABASE_URL, SUPABASE_SECRET),
+		session: supabase(SUPABASE_URL, SUPABASE_SECRET)
+	},
 	env: dev ? 'DEV' : 'PROD',
 	generateCustomUserId: async () => generateRandomString(8),
 	sessionTimeout: 1000 * 5,
