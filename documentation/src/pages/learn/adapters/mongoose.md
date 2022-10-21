@@ -7,17 +7,18 @@ title: "Mongoose (MongoDB)"
 An adapter for Mongoose (MongoDB).
 
 ```ts
-const adapter: (mongoose: Mongoose, url: string) => Adapter;
+const adapter: (mongoose: Mongoose) => Adapter;
 ```
 
 **This adapter does NOT support auto user id generation.** Please generate your own user id using Lucia's `generateUserId()` in the configurations or use Mongoose's default field value. In either cases, the returned value **MUST** be a string (not `ObjectId`).
 
+This adapter will not handle database connection and you will need to connect to the database manually.
+
 ### Parameter
 
-| name     | type       | description            |
-| -------- | ---------- | ---------------------- |
-| mongoose | `Mongoose` | Mongoose client        |
-| url      | `string`   | MongoDB connection url |
+| name     | type       | description     |
+| -------- | ---------- | --------------- |
+| mongoose | `Mongoose` | Mongoose client |
 
 ## Installation
 
@@ -36,8 +37,20 @@ import mongoose from "mongoose";
 // set model here
 
 const auth = lucia({
-    adapter: adapter(mongoose, url),
+    adapter: adapter(mongoose),
 });
+```
+
+You'll need to connect to the database inside hooks as well:
+
+```ts
+// hooks.server.ts
+import mongoose from "mongoose";
+import { auth } from "$lib/auth/lucia";
+
+mongoose.connect(mongoUri, options);
+
+export const handle = auth.handleHooks();
 ```
 
 ## Models
