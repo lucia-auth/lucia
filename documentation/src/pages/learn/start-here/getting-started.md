@@ -16,9 +16,11 @@ yarn add lucia-sveltekit
 
 Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Supabase](/learn/adapters/supabase), and [Mongoose](/learn/adapters/mongoose) (MongoDB). Please follow each adapter's instruction for this step.
 
+You can also use a different database for storing sessions, such as [Redis](/learn/session-adapters/redis). Refer to [`configs.adapter`](/reference/configure/lucia-configurations#adapter).
+
 ## Initialize Lucia
 
-In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia) and an adapter (the adapters are provided as a different npm package).
+In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia) and an adapter (the adapters are provided as a different NPM package).
 
 ```ts
 // lib/server/lucia.ts

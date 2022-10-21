@@ -24,7 +24,13 @@ import {
 } from "./session.js";
 import { handleServerSessionFunction } from "./load.js";
 import clc from "cli-color";
-import { Adapter, UserData, UserSchema } from "../adapter/index.js";
+import {
+    Adapter,
+    SessionAdapter,
+    UserAdapter,
+    UserData,
+    UserSchema,
+} from "../adapter/index.js";
 
 export const lucia = <C extends Configurations>(configs: C) => {
     return new Auth(configs) as Omit<Auth<C>, "getAuthSession">;
@@ -46,9 +52,16 @@ export class Auth<C extends Configurations = any> {
     public context: Context<C>;
     constructor(configs: C) {
         validateConfigurations(configs);
+        const defaultCookieOption: CookieOption = {
+            sameSite: "lax",
+            path: "/",
+        };
         this.context = {
             auth: this,
-            adapter: configs.adapter,
+            adapter:
+                "user" in configs.adapter
+                    ? { ...configs.adapter.user, ...configs.adapter.session }
+                    : configs.adapter,
             generateCustomUserId:
                 configs.generateCustomUserId || (async () => null),
             env: configs.env,
@@ -71,6 +84,10 @@ export class Auth<C extends Configurations = any> {
                     });
                 return transform({ id, ...attributes }) as User;
             },
+            sessionCookieOptions: configs.sessionCookieOptions || [
+                defaultCookieOption,
+            ],
+            deleteCookieOptions: configs.deleteCookieOptions || [],
         };
         this.getUser = getUserFunction(this.context);
         this.getUserByProviderId = getUserByProviderIdFunction(this.context);
@@ -134,14 +151,27 @@ export class Auth<C extends Configurations = any> {
 }
 
 interface Configurations {
-    adapter: Adapter;
+    adapter:
+        | Adapter
+        | {
+              user: UserAdapter;
+              session: SessionAdapter;
+          };
     env: Env;
     generateCustomUserId?: () => Promise<string | null>;
     csrfProtection?: boolean;
     sessionTimeout?: number;
     idlePeriodTimeout?: number;
     transformUserData?: (userData: UserData) => Record<string, any>;
+    sessionCookieOptions?: CookieOption[];
+    deleteCookieOptions?: CookieOption[];
 }
+
+type CookieOption = {
+    sameSite?: "strict" | "lax";
+    path?: string;
+    domain?: string;
+};
 
 export type Context<C extends Configurations = any> = {
     auth: Auth<C>;
@@ -151,6 +181,8 @@ export type Context<C extends Configurations = any> = {
     csrfProtection: boolean;
     sessionTimeout: number;
     idlePeriodTimeout: number;
+    sessionCookieOptions: CookieOption[];
+    deleteCookieOptions: CookieOption[];
     transformUserData: (
         userData: UserSchema
     ) => C["transformUserData"] extends {}

@@ -8,25 +8,47 @@ Configurations for `lucia()`.
 
 ```ts
 interface Configurations {
-    adapter: Adapter;
+    adapter:
+        | Adapter
+        | {
+              user: UserAdapter;
+              session: SessionAdapter;
+          };
     env: Env;
-    generateCustomUserId?: () => Promise<string | null>;
     csrfProtection?: boolean;
-    sessionTimeout?: number;
+    deleteCookieOptions?: CookieOption[];
+    generateCustomUserId?: () => Promise<string | null>;
     idlePeriodTimeout?: number;
+    sessionCookieOptions?: CookieOption[];
+    sessionTimeout?: number;
     transformUserData?: (userData: UserData) => Record<any, any>;
 }
+```
+
+```ts
+type CookieOption = {
+    sameSite?: "strict" | "lax";
+    path?: string;
+    domain?: string;
+};
 ```
 
 ## Required
 
 ### `adapter`
 
-An adapter for your database.
+An adapter for your database. If you're using a single database:
 
 | type      | description        |
 | --------- | ------------------ |
 | `Adapter` | A database adapter |
+
+or, if you're using a different adapter for `user` and `session` table. A normal `Adapter` can be used for both `adapter.user` and `adapter.session`
+
+| name            | type                 | description                                                              |
+| --------------- | -------------------- | ------------------------------------------------------------------------ |
+| adapter.user    | [`UserAdapter`]()    | An adapter for the database that stores users - usually a normal adapter |
+| adapter.session | [`SessionAdapter`]() | An adapter for the database that stores sessions                         |
 
 ### `env`
 
@@ -54,6 +76,14 @@ Checks if the request is from a trusted origin (where the app is hosted) in [`pa
 | --------- | ------- |
 | `boolean` | `true`  |
 
+### `deleteCookieOptions`
+
+A list of additional cookie options to [`sessionCookieOptions`](/reference/configure/lucia-configurations#sessioncookieoptions) for deleting session cookie(s).
+
+| type             | default                            |
+| ---------------- | ---------------------------------- |
+| `CookieOption[]` | `[]` |
+
 ### `generateCustomUserId`
 
 A function that generates a random user id. The database will create its own user id if the returned value is `null`
@@ -64,11 +94,19 @@ A function that generates a random user id. The database will create its own use
 
 ### `idlePeriodTimeout`
 
-The time in milliseconds the idle period lasts for - or the time since session expiration the user can continue without signing in again. The session can be renewed if the it's under `sessionTimeout + idlePeriodTimeout` since when issued.
+The time in milliseconds the idle period lasts for - or the time since session expiration the user can continue without signing in again. The session can be renewed if it's under `sessionTimeout + idlePeriodTimeout` since when issued.
 
 | type     | default                              |
 | -------- | ------------------------------------ |
 | `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |
+
+### `sessionCookieOptions`
+
+A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to ***all*** subdomains, which is a major security issue. Some options cannot be configured for security reasons.
+
+| type             | default                            |
+| ---------------- | ---------------------------------- |
+| `CookieOption[]` | `[{ sameSite: "lax", path: "/" }]` |
 
 ### `sessionTimeout`
 

@@ -1,5 +1,5 @@
 import type { Handle, RequestEvent } from "../kit.js";
-import type { Context } from "./index.js";
+import { Context, lucia } from "./index.js";
 
 import { handleLogoutRequest } from "./endpoints/index.js";
 import { Session } from "../types.js";
@@ -34,6 +34,7 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 export const handleHooksFunction = (context: Context) => {
     const handleHooks = () => {
         return async ({ event, resolve }: Parameters<Handle>[0]) => {
+            let session: Session | null = null;
             let sessionToSet: Session | null = null;
             let clearSession = false;
             event.locals.getSession = () => Object.freeze(session);
@@ -44,7 +45,6 @@ export const handleHooksFunction = (context: Context) => {
             event.locals.clearSession = () => {
                 clearSession = true;
             };
-            let session: Session | null = null;
             try {
                 session = await context.auth.validateRequest(event.request);
             } catch {
@@ -57,6 +57,7 @@ export const handleHooksFunction = (context: Context) => {
                         renewedSession.userId
                     );
                     session = renewedSession;
+                    event.locals.setSession(session)
                 } catch (e) {
                     event.locals.clearSession();
                 }
@@ -68,28 +69,34 @@ export const handleHooksFunction = (context: Context) => {
             });
             if (sessionToSet) {
                 const target: Session = sessionToSet;
-                response.headers.append(
-                    "set-cookie",
-                    cookie.serialize("auth_session", target.sessionId, {
-                        httpOnly: true,
-                        expires: new Date(target.idlePeriodExpires),
-                        secure: context.env === "PROD",
-                        path: "/",
-                        sameSite: "lax",
-                    })
-                );
+                context.sessionCookieOptions.forEach((option) => {
+                    const cookieString = cookie.serialize(
+                        "auth_session",
+                        target.sessionId,
+                        {
+                            ...option,
+                            httpOnly: true,
+                            expires: new Date(target.idlePeriodExpires),
+                            secure: context.env === "PROD",
+                        }
+                    );
+                    response.headers.append("set-cookie", cookieString);
+                });
             }
             if (clearSession) {
-                response.headers.append(
-                    "set-cookie",
-                    cookie.serialize("auth_session", "", {
+                const options = [
+                    ...context.sessionCookieOptions,
+                    context.deleteCookieOptions,
+                ];
+                options.forEach((option) => {
+                    const cookieString = cookie.serialize("auth_session", "", {
+                        ...option,
                         httpOnly: true,
                         maxAge: 0,
                         secure: context.env === "PROD",
-                        path: "/",
-                        sameSite: "lax",
-                    })
-                );
+                    });
+                    response.headers.append("set-cookie", cookieString);
+                });
             }
             return response;
         };

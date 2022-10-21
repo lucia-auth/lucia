@@ -1,7 +1,7 @@
 {
-    "name": "@lucia-sveltekit/adapter-supabase",
-    "version": "0.6.1",
-    "description": "Supabase adapter for Lucia",
+    "name": "@lucia-sveltekit/session-adapter-redis",
+    "version": "0.1.0",
+    "description": "Redis session adapter for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
     "module": "index.js",
@@ -36,10 +36,10 @@
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",
         "dotenv": "^16.0.3",
+        "redis": "^4.3.1",
         "ts-node": "^10.9.1"
     },
     "dependencies": {
-        "@supabase/postgrest-js": "^0.37.4",
         "lucia-sveltekit": "workspace:*"
     }
 }

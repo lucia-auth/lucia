@@ -13,13 +13,17 @@ export type SessionSchema = {
     user_id: string;
 };
 
-export interface Adapter {
-    getUser: (userId: string) => Promise<UserSchema | null>;
-    getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
-    getSessionAndUserBySessionId: (sessionId: string) => Promise<{
+export type Adapter = {
+    getSessionAndUserBySessionId?: (sessionId: string) => Promise<{
         user: UserSchema;
         session: SessionSchema;
     } | null>;
+} & SessionAdapter &
+    UserAdapter;
+
+export type UserAdapter = {
+    getUser: (userId: string) => Promise<UserSchema | null>;
+    getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
     setUser: (
         userId: string | null,
         data: {
@@ -37,6 +41,9 @@ export interface Adapter {
             attributes?: Record<string, any>;
         }
     ) => Promise<UserSchema>;
+};
+
+export type SessionAdapter = {
     getSession: (sessionId: string) => Promise<SessionSchema | null>;
     getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
     setSession: (
@@ -49,7 +56,7 @@ export interface Adapter {
     ) => Promise<void>;
     deleteSession: (...sessionIds: string[]) => Promise<void>;
     deleteSessionsByUserId: (userId: string) => Promise<void>;
-}
+};
 
 export const getUpdateData = (data: {
     providerId?: string | null;

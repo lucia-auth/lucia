@@ -57,7 +57,7 @@ export const handle = auth.handleHooks();
 
 ### `user`
 
-You may add additional fields to store user attributes. Refer to [[Store user attributes](/learn/basics/store-user-attributes)
+You may add additional fields to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
 
 ```ts
 const User = mongoose.model(
@@ -80,6 +80,8 @@ const User = mongoose.model(
 ```
 
 ### `session`
+
+You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
 
 ```ts
 const Session = mongoose.model(

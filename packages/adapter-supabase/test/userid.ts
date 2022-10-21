@@ -1,4 +1,4 @@
-import { userIdTest } from "@lucia-sveltekit/adapter-test";
-import { db, adapter } from "./index.js";
+import { testAdapterUserIdGeneration } from "@lucia-sveltekit/adapter-test";
+import { db, adapter } from "./db.js";
 
-userIdTest(adapter, db);
+testAdapterUserIdGeneration(adapter, db);
