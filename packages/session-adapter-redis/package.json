@@ -1,0 +1,45 @@
+{
+    "name": "@lucia-sveltekit/session-adapter-redis",
+    "version": "0.1.0",
+    "description": "Redis session adapter for Lucia",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "module": "index.js",
+    "type": "module",
+    "files": [
+        "**/*"
+    ],
+    "scripts": {
+        "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist",
+        "test-main": "npx ts-node --esm -T test/index.ts",
+        "test-userid": "npx ts-node --esm -T test/userid.ts"
+    },
+    "keywords": [
+        "sveltekit",
+        "lucia",
+        "supabase",
+        "adapter"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+        "directory": "packages/adapter-supabase"
+    },
+    "author": "pilcrowonpaper",
+    "license": "MIT",
+    "exports": {
+        ".": "./index.js"
+    },
+    "peerDependencies": {
+        "lucia-sveltekit": "~0.14.0"
+    },
+    "devDependencies": {
+        "@lucia-sveltekit/adapter-test": "workspace:*",
+        "dotenv": "^16.0.3",
+        "redis": "^4.3.1",
+        "ts-node": "^10.9.1"
+    },
+    "dependencies": {
+        "lucia-sveltekit": "workspace:*"
+    }
+}

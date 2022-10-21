@@ -6,17 +6,20 @@ import { Database } from "../index.js";
 import { testUserAdapter } from "./user/index.js";
 import { testSessionAdapter } from "./session/index.js";
 
-
 const INVALID_INPUT = "INVALID_INPUT";
 
-export const testAdapter = async (adapter: Adapter, db: Database, endProcess = true) => {
+export const testAdapter = async (
+    adapter: Adapter,
+    db: Database,
+    endProcess = true
+) => {
     const clearAll = async () => {
         await db.clearSessions();
         await db.clearUsers();
     };
     await clearAll();
-    await testUserAdapter(adapter, db)
-    await testSessionAdapter(adapter, db)
+    await testUserAdapter(adapter, db);
+    await testSessionAdapter(adapter, db);
     await test(
         "getSessionAndUserBySessionId()",
         "Return the correct user and session",
@@ -58,6 +61,6 @@ export const testAdapter = async (adapter: Adapter, db: Database, endProcess = t
         }
     );
     await clearAll();
-    if (!endProcess) return
+    if (!endProcess) return;
     end();
 };

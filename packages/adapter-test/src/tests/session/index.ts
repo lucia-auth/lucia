@@ -1,11 +1,15 @@
-import type { Adapter } from "lucia-sveltekit/adapter";
+import type { SessionAdapter } from "lucia-sveltekit/adapter";
 import { test, end, validate } from "./../../test.js";
 import { User } from "./../../db.js";
 import { Database } from "../../index.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
 
-export const testSessionAdapter = async (adapter: Adapter, db: Database, endProcess = true) => {
+export const testSessionAdapter = async (
+    adapter: SessionAdapter,
+    db: Database,
+    endProcess = true
+) => {
     const clearAll = async () => {
         await db.clearSessions();
         await db.clearUsers();
@@ -64,84 +68,6 @@ export const testSessionAdapter = async (adapter: Adapter, db: Database, endProc
             validate.isEqual(sessions.length, 0, "Target was not returned");
         }
     );
-    await test("setUser()", "Insert a user into user table", async () => {
-        const user = new User();
-        await adapter.setUser(user.id, {
-            providerId: user.providerId,
-            hashedPassword: user.hashedPassword,
-            attributes: {
-                username: user.username,
-            },
-        });
-        const users = await db.getUsers();
-        validate.includesSomeItem(
-            users,
-            user.validateSchema,
-            "Target does not exist in user table",
-            user.getSchema()
-        );
-        await clearAll();
-    });
-    await test(
-        "setUser()",
-        "Insert a user into table user with a null password",
-        async () => {
-            const user = new User(true);
-            await adapter.setUser(user.id, {
-                providerId: user.providerId,
-                hashedPassword: user.hashedPassword,
-                attributes: {
-                    username: user.username,
-                },
-            });
-            const users = await db.getUsers();
-            validate.includesSomeItem(
-                users,
-                user.validateSchema,
-                "Target does not exist in user table",
-                user.getSchema()
-            );
-            await clearAll();
-        }
-    );
-    await test("setUser()", "Returns the created user", async () => {
-        const user = new User();
-        const createdUser = await adapter.setUser(user.id, {
-            providerId: user.providerId,
-            hashedPassword: user.hashedPassword,
-            attributes: {
-                username: user.username,
-            },
-        });
-        validate.isTrue(
-            user.validateSchema(createdUser),
-            "Expected value was not returned",
-            createdUser,
-            user.getSchema()
-        );
-        await clearAll();
-    });
-    await test("deleteUser()", "Delete a user from user table", async () => {
-        const user1 = new User();
-        const user2 = new User();
-        await db.insertUser(user1.getSchema());
-        await db.insertUser(user2.getSchema());
-        await adapter.deleteUser(user1.id);
-        const users = await db.getUsers();
-        validate.notIncludesSomeItem(
-            users,
-            user1.validateSchema,
-            "Target does not exist in user table",
-            user1.getSchema()
-        );
-        validate.includesSomeItem(
-            users,
-            user2.validateSchema,
-            "Non-target was deleted from user table",
-            user2.getSchema()
-        );
-        await clearAll();
-    });
     await test(
         "setSession()",
         "Insert a user's session into session table",
@@ -203,6 +129,6 @@ export const testSessionAdapter = async (adapter: Adapter, db: Database, endProc
         }
     );
     await clearAll();
-    if (!endProcess) return
+    if (!endProcess) return;
     end();
 };

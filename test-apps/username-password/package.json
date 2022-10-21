@@ -35,6 +35,8 @@
 	"type": "module",
 	"dependencies": {
 		"@lucia-sveltekit/adapter-supabase": "workspace:*",
-		"lucia-sveltekit": "workspace:*"
+		"@lucia-sveltekit/session-adapter-redis": "workspace:*",
+		"lucia-sveltekit": "workspace:*",
+		"redis": "^4.3.1"
 	}
 }

@@ -39,6 +39,6 @@ export const testAdapterUserIdGeneration = async (
         }
     );
     await clearAll();
-    if (!endProcess) return
+    if (!endProcess) return;
     end();
 };

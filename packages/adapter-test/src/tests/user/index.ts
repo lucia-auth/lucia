@@ -1,12 +1,18 @@
-import type { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
-import type { Adapter } from "lucia-sveltekit/adapter";
+import type {
+    UserAdapter,
+    UserSchema,
+} from "lucia-sveltekit/adapter";
 import { test, end, validate } from "../../test.js";
 import { User } from "../../db.js";
 import { Database } from "../../index.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
 
-export const testUserAdapter = async (adapter: Adapter, db: Database, endProcess = true) => {
+export const testUserAdapter = async (
+    adapter: UserAdapter,
+    db: Database,
+    endProcess = true
+) => {
     const clearAll = async () => {
         await db.clearSessions();
         await db.clearUsers();
@@ -53,99 +59,6 @@ export const testUserAdapter = async (adapter: Adapter, db: Database, endProcess
             const user = await adapter.getUserByProviderId(INVALID_INPUT);
             validate.isNull(user, "Null was not returned");
             await clearAll();
-        }
-    );
-    await test(
-        "getSessionAndUserBySessionId()",
-        "Return the correct user and session",
-        async () => {
-            if (!adapter.getSessionAndUserBySessionId) return;
-            const user = new User();
-            const session = user.createSession();
-            await db.insertUser(user.getSchema());
-            await db.insertSession(session.getSchema());
-            const returnedData = await adapter.getSessionAndUserBySessionId(
-                session.id
-            );
-            validate.isNotNull(returnedData, "Target was not returned");
-            validate.isTrue(
-                user.validateSchema(returnedData?.user as UserSchema),
-                "Target (user) was not the expected value",
-                user.getSchema(),
-                returnedData?.user
-            );
-            validate.isTrue(
-                session.validateSchema(returnedData?.session as SessionSchema),
-                "Target (session) was not the expected value",
-                session.getSchema(),
-                returnedData?.session
-            );
-            await clearAll();
-        }
-    );
-    await test(
-        "getSessionAndUserBySessionId()",
-        "Return null if session id is invalid",
-        async () => {
-            if (!adapter.getSessionAndUserBySessionId) return;
-            const user = await adapter.getSessionAndUserBySessionId(
-                INVALID_INPUT
-            );
-            validate.isNull(user, "Null was not returned");
-            await clearAll();
-        }
-    );
-    await test("getSession()", "Return the correct session", async () => {
-        const user = new User();
-        const session = user.createSession();
-        await db.insertUser(user.getSchema());
-        await db.insertSession(session.getSchema());
-        let returnedSession = await adapter.getSession(session.id);
-        returnedSession = validate.isNotNull(
-            returnedSession,
-            "Target was not returned"
-        );
-        validate.isTrue(
-            session.validateSchema(returnedSession),
-            "Target is not the expected value",
-            session.getSchema(),
-            returnedSession
-        );
-        await clearAll();
-    });
-    await test(
-        "getSession()",
-        "Return null if session id is invalid",
-        async () => {
-            const session = await adapter.getSession(INVALID_INPUT);
-            validate.isNull(session, "Target was not returned");
-            await clearAll();
-        }
-    );
-    await test(
-        "getSessionsByUserId()",
-        "Return the correct session",
-        async () => {
-            const user = new User();
-            const session = user.createSession();
-            await db.insertUser(user.getSchema());
-            await db.insertSession(session.getSchema());
-            const sessions = await adapter.getSessionsByUserId(session.userId);
-            validate.includesSomeItem(
-                sessions,
-                session.validateSchema,
-                "Target is not included in the returned value",
-                session.getSchema()
-            );
-            await clearAll();
-        }
-    );
-    await test(
-        "getSessionsByUserId()",
-        "Returns an empty array if no sessions exist",
-        async () => {
-            const sessions = await adapter.getSessionsByUserId(INVALID_INPUT);
-            validate.isEqual(sessions.length, 0, "Target was not returned");
         }
     );
     await test("setUser()", "Insert a user into user table", async () => {
@@ -306,6 +219,6 @@ export const testUserAdapter = async (adapter: Adapter, db: Database, endProcess
         await clearAll();
     });
     await clearAll();
-    if (!endProcess) return
+    if (!endProcess) return;
     end();
 };

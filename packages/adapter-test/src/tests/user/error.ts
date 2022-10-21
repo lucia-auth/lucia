@@ -1,11 +1,15 @@
-import type { Adapter } from "lucia-sveltekit/adapter";
+import type { UserAdapter } from "lucia-sveltekit/adapter";
 import { test, end, validate } from "../../test.js";
 import { User } from "../../db.js";
 import { Database } from "../../index.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
 
-export const testUserAdapterErrors = async (adapter: Adapter, db: Database, endProcess = true) => {
+export const testUserAdapterErrors = async (
+    adapter: UserAdapter,
+    db: Database,
+    endProcess = true
+) => {
     const clearAll = async () => {
         await db.clearSessions();
         await db.clearUsers();
@@ -144,6 +148,6 @@ export const testUserAdapterErrors = async (adapter: Adapter, db: Database, endP
         }
     );
     await clearAll();
-    if (!endProcess) return
+    if (!endProcess) return;
     end();
 };
