@@ -11,7 +11,7 @@ Refer to [Database model](/reference/adapters/database-model) for database model
 ```ts
 // type imported from "lucia-sveltekit/adapter"
 type Adapter = {
-    getSessionAndUserBySessionId: (sessionId: string) => Promise<{
+    getSessionAndUserBySessionId?: (sessionId: string) => Promise<{
         user: UserSchema;
         session: SessionSchema;
     } | null>;
