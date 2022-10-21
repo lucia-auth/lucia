@@ -3,15 +3,16 @@
 ## v0.14.1
 
 -   Add `sessionCookieOptions` and `deleteCookieOptions` config
+-   Add support for session adapters
+-   Add `adapter.user` and `adapter.session` config
+-   Make `getSessionAndUserBySessionId()` adapter method optional
+-   [Fix] Sessions renewed inside hooks are properly being set
 
 ## v0.14.0
 
 -   [Breaking] `createSession()` and `renewSession()` returns `Session`
 -   [Breaking] Remove `deleteAllCookies()`
 -   Add `setSession()` and `clearSession()` method inside `locals`
--   Add `adapter.user` and `adapter.session` config
--   Make `getSessionAndUserBySessionId()` adapter method optional
--   [Fix] Sessions renewed inside hooks are properly being set
 
 ## v0.13.2
 
