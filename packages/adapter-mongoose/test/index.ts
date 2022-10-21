@@ -60,10 +60,9 @@ const Session = mongoose.model(
         { _id: false }
     )
 );
-
-export const adapter = mongodb(mongoose, url);
-
 const clientPromise = mongoose.connect(url);
+
+export const adapter = mongodb(mongoose);
 
 const inputToMongooseDoc = (obj: Record<string, any>) => {
     if (obj.id === undefined) return obj;

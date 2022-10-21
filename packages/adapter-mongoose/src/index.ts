@@ -3,7 +3,7 @@ import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
 import type { Mongoose, MongooseError } from "mongoose";
 import { convertSessionDoc, convertUserDoc } from "./utils.js";
 
-const adapter = (mongoose: Mongoose, url: string): Adapter => {
+const adapter = (mongoose: Mongoose): Adapter => {
     const User = mongoose.model<UserDoc>("user");
     const Session = mongoose.model<SessionDoc>("session");
     return {

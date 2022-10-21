@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-mongoose",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "Mongoose (MongoDB) adapter for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
@@ -28,6 +28,9 @@
     "license": "MIT",
     "exports": {
         ".": "./index.js"
+    },
+    "peerDependencies": {
+        "lucia-sveltekit": "~0.14.0"
     },
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",
