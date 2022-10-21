@@ -149,8 +149,8 @@ interface Configurations {
     sessionTimeout?: number;
     idlePeriodTimeout?: number;
     transformUserData?: (userData: UserData) => Record<string, any>;
-    sessionCookieOptions: CookieOption[];
-    deleteCookieOptions: CookieOption[];
+    sessionCookieOptions?: CookieOption[];
+    deleteCookieOptions?: CookieOption[];
 }
 
 type CookieOption = {
