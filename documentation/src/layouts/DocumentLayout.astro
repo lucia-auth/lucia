@@ -11,12 +11,14 @@ const { frontmatter, headings } = Astro.props;
 
 //FIXME: problem: on ASTRO DEV url.pathname not having trailing slash, on ASTRO PREVIEW it has and breaking link.
 //INFO: temporary hotfix
-const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.slice(0, -1) : Astro.url.pathname
+const contributePageUrl = Astro.url.pathname.endsWith("/")
+    ? Astro.url.pathname.slice(0, -1)
+    : Astro.url.pathname;
 ---
 
 <BaseLayout title={frontmatter.title}>
     <div class="xl:mr-64 xl:pr-8">
-        <section id="md" class="overflow-hidden ">
+        <section id="md" class="overflow-hidden">
             <h1 class="mb-10 font-semibold text-5xl">{frontmatter.title}</h1>
             <slot />
         </section>
@@ -70,7 +72,7 @@ const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.
         @apply overflow-auto whitespace-nowrap w-full;
     }
     :global(#md table thead tr) {
-        @apply border-b w-full ;
+        @apply border-b w-full;
     }
     :global(.dark #md tr) {
         @apply border-zinc-800;
@@ -78,7 +80,7 @@ const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.
     :global(#md table td, th) {
         @apply py-1.5 px-1 border-b;
     }
-    :global(.dark #md table td, th) {
+    :global(.dark #md table (td, th)) {
         @apply border-zinc-800;
     }
     :global(#md table th) {
