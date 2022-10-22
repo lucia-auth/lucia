@@ -43,10 +43,10 @@ const contributors = (await contributorsResponse.json()) as {
             <div class="flex w-full gap-2 flex-wrap mt-2">
                 {
                     contributors.map((val) => (
-                        <a href={val.html_url}>
+                        <a href={val.html_url} target="_blank">
                             <img
                                 src={val.avatar_url}
-                                class="w-8 h-8 rounded-full border hover:border-main"
+                                class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main"
                             />
                         </a>
                     ))
