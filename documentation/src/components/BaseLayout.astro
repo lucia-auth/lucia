@@ -1,7 +1,7 @@
 ---
 import Content from "@components/Content.svelte";
 import MenuButton from "@components/MenuButton.svelte";
-import ThemeButton from "@components/ThemeButton.svelte"
+import ThemeButton from "@components/ThemeButton.svelte";
 import { getContent, getPages, getSections } from "src/lib/content.js";
 
 const props = Astro.props;
@@ -34,56 +34,64 @@ const tab: "learn" | "reference" =
     (Astro.url.pathname.match(/^\/(\w+)\//)?.[1] as any) || "learn";
 ---
 
-<script is:inline>
-    const getTheme = () => {
-        if (
-            typeof localStorage !== "undefined" &&
-            localStorage.getItem("theme")
-        ) {
-            const storedTheme = localStorage.getItem("theme");
-            if (storedTheme === "dark") return "dark";
-        }
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            return "dark";
-        }
-        return "light";
-    };
-    window.theme = getTheme();
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>
+        {props.title ? `${props.title} | Lucia` : "Lucia"}
+    </title>
+    <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin="anonymous"
+    />
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
 
-    if (theme === "light") {
-        document.documentElement.classList.remove("dark");
-    } else {
-        document.documentElement.classList.add("dark");
-    }
-    window.localStorage.setItem("theme", theme);
-</script>
+    <script is:inline>
+        const getTheme = () => {
+            if (
+                typeof localStorage !== "undefined" &&
+                localStorage.getItem("theme")
+            ) {
+                const storedTheme = localStorage.getItem("theme");
+                if (storedTheme === "dark") return "dark";
+            }
+            if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                return "dark";
+            }
+            return "light";
+        };
+        window.theme = getTheme();
 
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width" />
-<meta name="generator" content={Astro.generator} />
-<title>
-    {props.title ? `${props.title} | Lucia` : "Lucia"}
-</title>
-<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin="anonymous"
-/>
-<link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-/>
+        if (theme === "light") {
+            document.documentElement.classList.remove("dark");
+        } else {
+            document.documentElement.classList.add("dark");
+        }
+        window.localStorage.setItem("theme", theme);
+    </script>
+</head>
 
 <body class="dark:bg-black-zinc dark:text-zinc-200">
-    <div class="fixed z-50 w-full bg-white dark:bg-black-zinc lg:bg-transparent">
+    <div
+        class="fixed z-50 w-full bg-white dark:bg-black-zinc lg:bg-transparent"
+    >
         <div
             class="py-3 flex w-full place-content-between px-4 sm:px-8 lg:px-12"
         >
             <div class="flex place-items-end gap-x-1">
                 <a class="text-2xl font-semibold" href="/">Lucia</a>
-                <p class="text-gray-400 dark:text-zinc-700 font-medium text-sm mb-0.5">v0.14.2</p>
+                <p
+                    class="text-gray-400 dark:text-zinc-700 font-medium text-sm mb-0.5"
+                >
+                    v0.14.2
+                </p>
             </div>
             <div class="flex gap-x-4 place-items-center">
                 <a
@@ -127,7 +135,7 @@ const tab: "learn" | "reference" =
                         </svg>
                     </div>
                 </a>
-                <ThemeButton client:load/>
+                <ThemeButton client:load />
                 <div class="pl-2 lg:pl-0">
                     <MenuButton client:load />
                 </div>
