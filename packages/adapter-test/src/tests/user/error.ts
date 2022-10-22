@@ -1,4 +1,4 @@
-import type { UserAdapter } from "lucia-sveltekit/adapter";
+import type { UserAdapter } from "lucia-sveltekit/types";
 import { test, end, validate } from "../../test.js";
 import { User } from "../../db.js";
 import { Database } from "../../index.js";

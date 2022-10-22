@@ -24,4 +24,4 @@ Provider id is the combination of the provider name (the authentication method u
 
 To support multiple databases, Lucia uses database adapters. These adapters provide a set of identical methods to read from and update the database. Custom adapters can be created as well if Lucia does not provide one.
 
-In additional to normal "complete" adapters, table-specific adapters can be provided for more granular control. This means sessions can be stored in a database than where users are stored.
+In additional to normal "complete" adapters, table-specific adapters can be provided for more granular control. This means sessions can be stored in a different database than where users are stored.

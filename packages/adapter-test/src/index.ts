@@ -1,4 +1,4 @@
-import { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
+import { SessionSchema, UserSchema } from "lucia-sveltekit/types";
 export { testAdapter } from "./tests/index.js";
 export { testAdapterErrors } from "./tests/error.js";
 export { testAdapterUserIdGeneration } from "./tests/userid/index.js";

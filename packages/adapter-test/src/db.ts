@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import type { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
+import type { SessionSchema, UserSchema } from "lucia-sveltekit/types";
 
 const generateRandomString = (bytes: number) => {
     return crypto.randomBytes(bytes).toString("hex");

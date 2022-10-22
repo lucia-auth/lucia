@@ -30,7 +30,7 @@ import {
     UserAdapter,
     UserData,
     UserSchema,
-} from "../adapter/index.js";
+} from "../types.js";
 
 export const lucia = <C extends Configurations>(configs: C) => {
     return new Auth(configs) as Omit<Auth<C>, "getAuthSession">;
