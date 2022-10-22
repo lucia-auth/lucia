@@ -2,7 +2,7 @@
 
 ## v0.14.2
 
--   Move types exported from `lucia-sveltekit/adapter` to `lucia-sveltekit/types`
+-   [Breaking] Move types exported from `lucia-sveltekit/adapter` to `lucia-sveltekit/types`
 
 ## v0.14.1
 
