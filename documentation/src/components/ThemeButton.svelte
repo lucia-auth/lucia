@@ -1,12 +1,9 @@
 <script lang="ts">
-    import { fade } from "svelte/transition";
-
-    let theme: "dark" | "light";
-    $: if (typeof window !== "undefined") {
+    let theme: "dark" | "light" = "light";
+    if (typeof window !== "undefined") {
         const globalWindow = window as any as Window & {
             theme: "dark" | "light";
         };
-        console.log(globalWindow.theme);
         theme = globalWindow.theme;
     }
 
