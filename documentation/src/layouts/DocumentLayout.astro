@@ -16,7 +16,7 @@ const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.
 
 <BaseLayout title={frontmatter.title}>
     <div class="xl:mr-64 xl:pr-8">
-        <section id="md" class="overflow-hidden">
+        <section id="md" class="overflow-hidden ">
             <h1 class="mb-10 font-semibold text-5xl">{frontmatter.title}</h1>
             <slot />
         </section>
@@ -31,7 +31,7 @@ const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.
 
     <Headings headings={headings} />
 </BaseLayout>
-<style>
+<style lang="postcss">
     :global(#md h2) {
         @apply font-semibold text-3xl mb-4 mt-16;
     }
@@ -44,9 +44,12 @@ const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.
     :global(#md p) {
         @apply my-3;
     }
-    :global(#md pre) {
+    :global(#md .astro-code) {
         @apply overflow-scroll rounded-md px-4 py-2 my-2 text-sm;
         scrollbar-width: none;
+    }
+    :global(.dark #md .astro-code) {
+        @apply !bg-zinc-900;
     }
     :global(#md pre::-webkit-scrollbar) {
         display: none;
@@ -67,13 +70,16 @@ const contributePageUrl = Astro.url.pathname.endsWith("/") ? Astro.url.pathname.
         @apply overflow-auto whitespace-nowrap w-full;
     }
     :global(#md table thead tr) {
-        @apply border-b w-full;
+        @apply border-b w-full ;
     }
-    :global(#md table tr:not(:last-of-type)) {
-        @apply border-b;
+    :global(.dark #md tr) {
+        @apply border-zinc-800;
     }
     :global(#md table td, th) {
-        @apply py-1.5 px-1;
+        @apply py-1.5 px-1 border-b;
+    }
+    :global(.dark #md table td, th) {
+        @apply border-zinc-800;
     }
     :global(#md table th) {
         @apply font-medium text-sm;
