@@ -2,7 +2,7 @@ import type { Session } from "../../types.js";
 import { LuciaError } from "../../error.js";
 import type { Context } from "../index.js";
 import { User } from "../../types.js";
-import { SessionSchema, UserSchema } from "../../adapter/index.js";
+import { SessionSchema, UserSchema } from "../../types.js";
 
 type GetUser = (provider: string, identifier: string) => Promise<User>;
 

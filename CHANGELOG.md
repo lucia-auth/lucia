@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.14.2
+
+-   [Breaking] Move types exported from `lucia-sveltekit/adapter` to `lucia-sveltekit/types`
+
 ## v0.14.1
 
 -   Add `sessionCookieOptions` and `deleteCookieOptions` config
