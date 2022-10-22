@@ -4,11 +4,13 @@ module.exports = {
 	theme: {
 		extend: {
 			colors: {
-				main: "#654aff",
+				main: "#7057ff",
 				"main-darker": "#643ce8",
-				"main-black": "#0b0a26"
+				"main-black": "#0b0a26",
+				"black-zinc": "#121214"
 			}
 		},
 	},
+	darkMode: "class",
 	plugins: [],
 }
