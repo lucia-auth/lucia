@@ -183,7 +183,7 @@ export const handleCodeVerificationRequest: Action = async ({
 
 ### Resend code
 
-In the front end, you should have a resend button, which will delete the existing code, generate a new one, and send it to the user
+In the front end, you should have a resend-code button, which will delete the existing code, generate a new one, and send it to the user
 
 ```ts
 import { auth } from "$lib/server/lucia";
@@ -213,7 +213,7 @@ export const handleResendCodeRequest: RequestHandler = async ({
 
 ## 5. Protected pages
 
-Make to check if the user has verified their email on requests.
+Make sure to check if the user has verified their email on requests.
 
 ```ts
 import { getUser } from "lucia-sveltekit/load";
