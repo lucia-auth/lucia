@@ -1,5 +1,6 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
-import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
+import { type Adapter } from "lucia-sveltekit/types";
+import { getUpdateData } from "lucia-sveltekit/adapter"
 import { LuciaError } from "lucia-sveltekit";
 import { convertSession } from "./utils.js";
 
