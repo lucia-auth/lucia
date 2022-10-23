@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/session-adapter-redis",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Redis session adapter for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
@@ -31,7 +31,7 @@
         ".": "./index.js"
     },
     "peerDependencies": {
-        "lucia-sveltekit": "~0.14.0"
+        "lucia-sveltekit": "~0.14.3"
     },
     "devDependencies": {
         "@lucia-sveltekit/adapter-test": "workspace:*",

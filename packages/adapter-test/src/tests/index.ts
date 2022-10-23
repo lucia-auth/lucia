@@ -2,8 +2,8 @@ import type { SessionSchema, UserSchema, Adapter } from "lucia-sveltekit/types";
 import { test, end, validate } from "./../test.js";
 import { User } from "./../db.js";
 import { Database } from "../index.js";
-import { testUserAdapter } from "./user/index.js";
-import { testSessionAdapter } from "./session/index.js";
+import { testUserAdapter } from "./user.js";
+import { testSessionAdapter } from "./session.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
 

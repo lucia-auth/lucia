@@ -4,7 +4,7 @@ import supabase from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
+import type { SessionSchema, UserSchema } from "lucia-sveltekit/types";
 
 dotenv.config({
     path: `${resolve()}/.env`,

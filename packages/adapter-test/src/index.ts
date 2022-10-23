@@ -1,11 +1,9 @@
 import { SessionSchema, UserSchema } from "lucia-sveltekit/types";
 export { testAdapter } from "./tests/index.js";
-export { testAdapterErrors } from "./tests/error.js";
-export { testAdapterUserIdGeneration } from "./tests/userid/index.js";
-export { testSessionAdapter } from "./tests/session/index.js";
-export { testSessionAdapterErrors } from "./tests/session/error.js";
-export { testUserAdapter } from "./tests/user/index.js";
-export { testUserAdapterErrors } from "./tests/user/error.js";
+export { testAdapterUserIdGeneration } from "./tests/user-id.js";
+export { testSessionAdapter } from "./tests/session.js";
+export { testUserAdapter } from "./tests/user.js";
+
 
 export interface Database {
     getSessions: () => Promise<SessionSchema[]>;

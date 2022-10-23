@@ -16,6 +16,7 @@ yarn add @lucia-sveltekit/adapter-mongoose
 
 | Mongoose adapter version | Lucia version |
 | ------------------------ | ------------- |
+| v0.5.x                   | v0.14.3+      |
 | v0.4.x                   | v0.13.0+      |
 
 ## Testing

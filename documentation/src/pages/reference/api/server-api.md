@@ -38,7 +38,7 @@ const randomString = generateRandomString(8);
 
 ## `lucia()`
 
-Creates a new `Lucia` instance.
+Creates a new `Lucia` instance. Methods for `Lucia` can throw adapter-specific database errors.
 
 ```ts
 const lucia: (configs: Configurations) => Lucia;
@@ -89,7 +89,6 @@ const authenticateUser: (
 | AUTH_INVALID_PROVIDER_ID | The user with the provider does not exist           |
 | AUTH_INVALID_PASSWORD    | Incorrect password                                  |
 | AUTH_OUTDATED_PASSWORD   | The user's password is hashed with an old algorithm |
-| DATABASE_FETCH_FAILED    | Failed to fetch data from the database              |
 
 #### Example
 
@@ -128,7 +127,6 @@ const createSession: (userId: string) => Promise<Session>;
 | name                   | description               |
 | ---------------------- | ------------------------- |
 | AUTH_INVALID_USER_ID   | Invalid user id           |
-| DATABASE_UPDATE_FAILED | Failed to update database |
 
 #### Example
 
@@ -176,8 +174,6 @@ const createUser: (
 | name                       | description                                           |
 | -------------------------- | ----------------------------------------------------- |
 | AUTH_DUPLICATE_PROVIDER_ID | The user with the provider and identifier exists      |
-| AUTH_DUPLICATE_USER_DATA   | One of the user data value violates unique constraint |
-| DATABASE_UPDATE_FAILED     | Failed to update database                             |
 
 #### Example
 
@@ -211,11 +207,6 @@ const deleteDeadUserSessions: (userId: string) => Promise<void>;
 | ------ | -------- | ------------------- |
 | userId | `string` | User id of the user |
 
-#### Errors
-
-| name                   | description               |
-| ---------------------- | ------------------------- |
-| DATABASE_UPDATE_FAILED | Failed to update database |
 
 #### Example
 
@@ -242,12 +233,6 @@ const deleteUser: (userId: string) => Promise<void>;
 | name   | type     | description                   |
 | ------ | -------- | ----------------------------- |
 | userId | `string` | User id of the user to delete |
-
-#### Errors
-
-| name                   | description               |
-| ---------------------- | ------------------------- |
-| DATABASE_UPDATE_FAILED | Failed to update database |
 
 #### Example
 
@@ -305,7 +290,6 @@ const getSessionUser: (
 | name                    | description                            |
 | ----------------------- | -------------------------------------- |
 | AUTH_INVALID_SESSION_ID | A valid active session id              |
-| DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
 
 #### Example
 
@@ -344,7 +328,6 @@ const getUser: (userId: string) => Promise<User>;
 | name                  | description                              |
 | --------------------- | ---------------------------------------- |
 | AUTH_INVALID_USER_ID  | The user with the user id does not exist |
-| DATABASE_FETCH_FAILED | Failed to fetch data from the database   |
 
 #### Example
 
@@ -387,7 +370,6 @@ const getUserByProviderId: (
 | name                     | description                                  |
 | ------------------------ | -------------------------------------------- |
 | AUTH_INVALID_PROVIDER_ID | The user with the provider id does not exist |
-| DATABASE_FETCH_FAILED    | Failed to fetch data from the database       |
 
 #### Example
 
@@ -477,12 +459,6 @@ const invalidateAllUserSessions: (userId: string) => Promise<void>;
 | ------ | -------- | ------------------- |
 | userId | `string` | User id of the user |
 
-#### Errors
-
-| name                   | description               |
-| ---------------------- | ------------------------- |
-| DATABASE_UPDATE_FAILED | Failed to update database |
-
 #### Example
 
 ```ts
@@ -508,12 +484,6 @@ const invalidateSession: (sessionId: string) => Promise<void>;
 | name      | type     | description  |
 | --------- | -------- | ------------ |
 | sessionId | `string` | A session id |
-
-#### Errors
-
-| name                   | description               |
-| ---------------------- | ------------------------- |
-| DATABASE_UPDATE_FAILED | Failed to update database |
 
 #### Example
 
@@ -593,8 +563,6 @@ const renewSession: (sessionId: string) => Promise<Session>;
 | name                    | description                            |
 | ----------------------- | -------------------------------------- |
 | AUTH_INVALID_SESSION_ID | Invalid session id                     |
-| DATABASE_UPDATE_FAILED  | Failed to update database              |
-| DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
 
 #### Example
 
@@ -637,8 +605,6 @@ const updateUserAttributes: (
 | name                     | description                                  |
 | ------------------------ | -------------------------------------------- |
 | AUTH_INVALID_USER_ID     | Invalid refresh token                        |
-| AUTH_DUPLICATE_USER_DATA | One of the column violates unique constraint |
-| DATABASE_UPDATE_FAILED   | Failed to update database                    |
 
 #### Example
 
@@ -683,7 +649,6 @@ const updateUserPassword: (
 | name                   | description               |
 | ---------------------- | ------------------------- |
 | AUTH_INVALID_USER_ID   | Invalid refresh token     |
-| DATABASE_UPDATE_FAILED | Failed to update database |
 
 #### Example
 
@@ -729,7 +694,6 @@ const updateUserProviderId: (
 | name                   | description               |
 | ---------------------- | ------------------------- |
 | AUTH_INVALID_USER_ID   | Invalid refresh token     |
-| DATABASE_UPDATE_FAILED | Failed to update database |
 
 #### Example
 
@@ -768,7 +732,6 @@ const validateSession: (sessionId: string) => Promise<Session>;
 | name                    | description                            |
 | ----------------------- | -------------------------------------- |
 | AUTH_INVALID_SESSION_ID | Invalid active session id              |
-| DATABASE_FETCH_FAILED   | Failed to fetch data from the database |
 
 #### Example
 
@@ -808,7 +771,6 @@ const validateRequest: (request: Request) => Promise<Session>;
 | ----------------------- | ------------------------------------------------------------------ |
 | AUTH_INVALID_REQUEST    | The request is not from a trusted origin                           |
 | AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid active session id |
-| DATABASE_FETCH_FAILED   | Failed to fetch data from the database                             |
 
 #### Example
 

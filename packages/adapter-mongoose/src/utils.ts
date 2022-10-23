@@ -1,4 +1,4 @@
-import type { SessionSchema, UserSchema } from "lucia-sveltekit/adapter";
+import type { SessionSchema, UserSchema } from "lucia-sveltekit/types";
 
 export const convertUserDoc = (row: UserDoc): UserSchema => {
     const {

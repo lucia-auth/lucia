@@ -14,6 +14,7 @@ npm install @lucia-sveltekit/session-adapter-redis
 
 | Session adapter version | Lucia version |
 | ----------------------- | ------------- |
+| v0.2.x                  | v0.14.3+      |
 | v0.1.x                  | v0.13.1+      |
 
 ## Testing

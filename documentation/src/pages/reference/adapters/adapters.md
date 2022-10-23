@@ -68,7 +68,7 @@ The return types must be exactly conform to the documentation.
 
 ### `getSessionAndUserBySessionId()`
 
-*optional* - Gets a session (`session` table) and user (`user` table) with the session id. Returns `null` if the session doesn't exist. While this is optional, Lucia will fetch the session and then user if this method is not provided, which may not be the fastest way of getting both user and session.
+_optional_ - Gets a session (`session` table) and user (`user` table) with the session id. Returns `null` if the session doesn't exist. While this is optional, Lucia will fetch the session and then user if this method is not provided, which may not be the fastest way of getting both user and session.
 
 ```ts
 const getSessionAndUserBySessionId: (sessionId: string) => Promise<{
@@ -200,6 +200,12 @@ const setUser: (
 | -------------------------------------------------------------- | ------------------------ |
 | [`UserSchema`](/reference/adapters/database-model#schema-type) | Data of the created user |
 
+#### Errors
+
+| type                       |
+| -------------------------- |
+| AUTH_DUPLICATE_PROVIDER_ID |
+
 ### `updateUser()`
 
 Updates a user (`user` table) with the user id. Only the target to update will be provided in `data` and some key/values inside `data` and `data.attributes` may be undefined. Keys in `data` with a value of `undefined` should be ignored, while `null` should not.
@@ -229,6 +235,13 @@ const updateUser: (
 | type                                                           | description              |
 | -------------------------------------------------------------- | ------------------------ |
 | [`UserSchema`](/reference/adapters/database-model#schema-type) | Data of the updated user |
+
+#### Errors
+
+| type                       |
+| -------------------------- |
+| AUTH_DUPLICATE_PROVIDER_ID |
+| AUTH_INVALID_USER_ID       |
 
 ## `SessionAdapter`
 
@@ -339,3 +352,10 @@ const setSession: (
 | data.userId            | `string`              | target: `session(user_id)`      |
 | data.expires           | `string \| null`      | target: `session(expires)`      |
 | data.idlePeriodExpires | `Record<string, any>` | target: `session(idle_expires)` |
+
+#### Errors
+
+| type                      |
+| ------------------------- |
+| AUTH_INVALID_USER_ID      |
+| AUTH_DUPLICATE_SESSION_ID |

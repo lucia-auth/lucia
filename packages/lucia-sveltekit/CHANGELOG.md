@@ -1,4 +1,8 @@
-# Changelog
+# CHANGELOG
+
+## v0.14.3
+
+-   [Breaking] Removed `AUTH_DUPLICATE_USER_DATA`, `DATABASE_FETCH_FAILED`, `DATABASE_UPDATED_FAILED`
 
 ## v0.14.2
 
