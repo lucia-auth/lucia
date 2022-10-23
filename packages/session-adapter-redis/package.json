@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/session-adapter-redis",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Redis session adapter for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
