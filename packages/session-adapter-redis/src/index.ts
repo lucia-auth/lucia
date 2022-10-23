@@ -1,6 +1,5 @@
-import { LuciaError } from "lucia-sveltekit";
 import type { SessionSchema, SessionAdapter } from "lucia-sveltekit/types";
-import type { RedisClientType, ErrorReply } from "redis";
+import type { RedisClientType } from "redis";
 
 const adapter = (
     redisClient: {

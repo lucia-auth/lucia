@@ -7,7 +7,10 @@ title: "Mongoose (MongoDB)"
 An adapter for Mongoose (MongoDB).
 
 ```ts
-const adapter: (mongoose: Mongoose) => Adapter;
+const adapter: (
+    mongoose: Mongoose,
+    handleError?: (error: MongooseError) => void
+) => Adapter;
 ```
 
 **This adapter does NOT support auto user id generation.** Please generate your own user id using Lucia's `generateUserId()` in the configurations or use Mongoose's default field value. In either cases, the returned value **MUST** be a string (not `ObjectId`).
@@ -16,9 +19,16 @@ This adapter will not handle database connection and you will need to connect to
 
 ### Parameter
 
-| name     | type       | description     |
-| -------- | ---------- | --------------- |
-| mongoose | `Mongoose` | Mongoose client |
+`handleError()` may be provided which will be called on [unknown errors](/learn/basics/handle-errors#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia) methods.
+
+| name        | type       | description     | optional |
+| ----------- | ---------- | --------------- | -------- |
+| mongoose    | `Mongoose` | Mongoose client |          |
+| handleError | `Function` |                 | true     |
+
+### Errors
+
+When an adapter encounters an unknown error (described above), it will throw `MongooseError`.
 
 ## Installation
 

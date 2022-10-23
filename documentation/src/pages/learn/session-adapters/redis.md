@@ -7,18 +7,22 @@ title: "Redis"
 A session adapter for Redis.
 
 ```ts
-const adapter: (redisClient: {
-    session: RedisClientType;
-    userSessions: RedisClientType;
-}) => SessionAdapter;
+const adapter: (
+    redisClient: {
+        session: RedisClientType;
+        userSessions: RedisClientType;
+    },
+    handleError?: (error: any) => void
+) => SessionAdapter;
 ```
 
 #### Parameter
 
-| name                     | type            | description                                                   |
-| ------------------------ | --------------- | ------------------------------------------------------------- |
-| redisClient.session      | RedisClientType | Client for Redis database for storing sessions                |
-| redisClient.userSessions | RedisClientType | Client for Redis database for storing user-sessions relations |
+| name                     | type            | description                                                   | optional |
+| ------------------------ | --------------- | ------------------------------------------------------------- | -------- |
+| redisClient.session      | RedisClientType | Client for Redis database for storing sessions                |          |
+| redisClient.userSessions | RedisClientType | Client for Redis database for storing user-sessions relations |          |
+| handleError              | `Function`      |                                                               | true     |
 
 ## Installation
 
