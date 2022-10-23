@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-test",
-    "version": "0.8.0",
+    "version": "0.10.0",
     "description": "Tests for adapters for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
@@ -10,7 +10,8 @@
         "**/*"
     ],
     "scripts": {
-        "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist"
+        "build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+        "publish": "cd dist && pnpm publish"
     },
     "keywords": [
         "sveltekit",
