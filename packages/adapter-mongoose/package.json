@@ -12,7 +12,7 @@
     "scripts": {
         "build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
         "test-main": "npx ts-node --esm -T test/index.ts",
-        "publish": "cd dist && pnpm publish && cd -"
+        "publish-package": "cd dist && pnpm publish && cd -"
     },
     "keywords": [
         "sveltekit",

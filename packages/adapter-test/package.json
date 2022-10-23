@@ -11,7 +11,7 @@
     ],
     "scripts": {
         "build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-        "publish": "cd dist && pnpm publish && cd -"
+        "publish-package": "cd dist && pnpm publish && cd -"
     },
     "keywords": [
         "sveltekit",
