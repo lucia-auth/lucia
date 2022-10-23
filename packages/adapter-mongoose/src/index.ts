@@ -1,9 +1,13 @@
 import { LuciaError } from "lucia-sveltekit";
-import { type Adapter, getUpdateData } from "lucia-sveltekit/adapter";
-import type { Mongoose, MongooseError } from "mongoose";
+import { getUpdateData } from "lucia-sveltekit/adapter";
+import type { Adapter } from "lucia-sveltekit/types";
+import Mongoose from "mongoose";
 import { convertSessionDoc, convertUserDoc } from "./utils.js";
 
-const adapter = (mongoose: Mongoose): Adapter => {
+const adapter = (
+    mongoose: Mongoose.Mongoose,
+    errorHandler: (error: Mongoose.MongooseError) => void = () => {}
+): Adapter => {
     const User = mongoose.model<UserDoc>("user");
     const Session = mongoose.model<SessionDoc>("session");
     return {
@@ -13,8 +17,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
                 if (!userDoc) return null;
                 return convertUserDoc(userDoc);
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getUserByProviderId: async (providerId) => {
@@ -25,7 +29,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
                 if (!user) return null;
                 return convertUserDoc(user);
             } catch (e) {
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getSessionAndUserBySessionId: async (sessionId) => {
@@ -39,7 +44,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
                     session: convertSessionDoc(session),
                 };
             } catch (e) {
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getSession: async (sessionId) => {
@@ -48,7 +54,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
                 if (!session) return null;
                 return convertSessionDoc(session);
             } catch (e) {
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getSessionsByUserId: async (userId) => {
@@ -58,7 +65,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
                 }).lean();
                 return sessions.map((val) => convertSessionDoc(val));
             } catch (e) {
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         setUser: async (userId, data) => {
@@ -73,16 +81,16 @@ const adapter = (mongoose: Mongoose): Adapter => {
                 const user = convertUserDoc(userDoc.toObject());
                 return user;
             } catch (e) {
-                console.error(e);
-                const error = e as MongooseError;
+                const isKnownMongooseError =
+                    e instanceof Mongoose.MongooseError;
                 if (
-                    error.message.includes("E11000") &&
-                    error.message.includes("provider_id")
+                    isKnownMongooseError &&
+                    e.message.includes("E11000") &&
+                    e.message.includes("provider_id")
                 )
                     throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
-                if (error.message.includes("E11000"))
-                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteUser: async (userId: string) => {
@@ -91,8 +99,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
                     _id: userId,
                 });
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         setSession: async (sessionId, data) => {
@@ -100,7 +108,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
             try {
                 userDoc = await User.findById(data.userId);
             } catch (e) {
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
             if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
             try {
@@ -112,22 +121,24 @@ const adapter = (mongoose: Mongoose): Adapter => {
                 });
                 await Session.create(sessionDoc);
             } catch (e) {
-                const error = e as MongooseError;
-                console.error(e);
+                const isKnownMongooseError =
+                    e instanceof Mongoose.MongooseError;
                 if (
-                    error.message.includes("E11000") &&
-                    error.message.includes("id")
+                    isKnownMongooseError &&
+                    e.message.includes("E11000") &&
+                    e.message.includes("id")
                 )
                     throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteSession: async (sessionId) => {
             try {
                 await Session.findByIdAndDelete(sessionId);
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteSessionsByUserId: async (userId) => {
@@ -136,8 +147,8 @@ const adapter = (mongoose: Mongoose): Adapter => {
                     user_id: userId,
                 });
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         updateUser: async (userId, newData) => {
@@ -150,17 +161,17 @@ const adapter = (mongoose: Mongoose): Adapter => {
                 if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
                 return convertUserDoc(userDoc);
             } catch (e) {
-                console.error(e);
                 if (e instanceof LuciaError) throw e;
-                const error = e as MongooseError;
+                const isKnownMongooseError =
+                    e instanceof Mongoose.MongooseError;
                 if (
-                    error.message.includes("E11000") &&
-                    error.message.includes("provider_id")
+                    isKnownMongooseError &&
+                    e.message.includes("E11000") &&
+                    e.message.includes("provider_id")
                 )
                     throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
-                if (error.message.includes("E11000"))
-                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
     };

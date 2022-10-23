@@ -1,6 +1,6 @@
 {
     "name": "@lucia-sveltekit/adapter-prisma",
-    "version": "0.6.1",
+    "version": "0.7.0",
     "description": "Prisma adapter for Lucia",
     "main": "index.js",
     "types": "index.d.ts",
@@ -11,8 +11,7 @@
     ],
     "scripts": {
         "build": "tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-        "test-core": "npx ts-node --esm -T test/main.ts",
-        "test-userid": "npx ts-node --esm -T test/userid.ts"
+        "test-main": "npx ts-node --esm -T test/index.ts"
     },
     "keywords": [
         "sveltekit",

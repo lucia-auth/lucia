@@ -1,10 +1,20 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
 import { type Adapter } from "lucia-sveltekit/types";
-import { getUpdateData } from "lucia-sveltekit/adapter"
+import { getUpdateData } from "lucia-sveltekit/adapter";
 import { LuciaError } from "lucia-sveltekit";
 import { convertSession } from "./utils.js";
 
-const adapter = (prisma: PrismaClient): Adapter => {
+const adapter = (
+    prisma: PrismaClient,
+    errorHandler: (
+        error:
+            | Prisma.PrismaClientKnownRequestError
+            | Prisma.PrismaClientValidationError
+            | Prisma.PrismaClientUnknownRequestError
+            | Prisma.PrismaClientInitializationError
+            | Prisma.PrismaClientRustPanicError
+    ) => void = () => {}
+): Adapter => {
     return {
         getUser: async (userId) => {
             try {
@@ -16,10 +26,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 if (!data) return null;
                 return data;
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getSessionAndUserBySessionId: async (sessionId) => {
@@ -39,10 +47,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                     session: convertSession(session),
                 };
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getUserByProviderId: async (providerId) => {
@@ -55,10 +61,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 if (!data) return null;
                 return data;
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getSession: async (sessionId) => {
@@ -71,10 +75,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 if (!session) return null;
                 return convertSession(session);
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getSessionsByUserId: async (userId) => {
@@ -86,10 +88,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return sessions.map((session) => convertSession(session));
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         setUser: async (userId, data) => {
@@ -114,16 +114,17 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return createdUser;
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                if (e.code === "P2002" && e.message.includes("provider_id")) {
+                const isKnownPrismaError =
+                    e instanceof Prisma.PrismaClientKnownRequestError;
+                if (
+                    isKnownPrismaError &&
+                    e.code === "P2002" &&
+                    e.message.includes("provider_id")
+                ) {
                     throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
                 }
-                if (e.code === "P2002") {
-                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
-                }
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteUser: async (userId) => {
@@ -135,10 +136,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return;
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         setSession: async (sessionId, data) => {
@@ -152,17 +151,22 @@ const adapter = (prisma: PrismaClient): Adapter => {
                     },
                 });
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
+                const isKnownPrismaError =
+                    e instanceof Prisma.PrismaClientKnownRequestError;
                 if (
+                    isKnownPrismaError &&
                     e.code === "P2003" &&
                     e.message.includes("session_user_id_fkey (index)")
                 )
                     throw new LuciaError("AUTH_INVALID_USER_ID");
-                if (e.code === "P2002" && e.message.includes("id"))
+                if (
+                    isKnownPrismaError &&
+                    e.code === "P2002" &&
+                    e.message.includes("id")
+                )
                     throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
-                throw new LuciaError("UNKNOWN_ERROR");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteSession: async (sessionId) => {
@@ -173,10 +177,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                     },
                 });
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("UNKNOWN_ERROR");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteSessionsByUserId: async (userId) => {
@@ -187,10 +189,8 @@ const adapter = (prisma: PrismaClient): Adapter => {
                     },
                 });
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                throw new LuciaError("UNKNOWN_ERROR");
+                errorHandler(e as any);
+                throw e;
             }
         },
         updateUser: async (userId, newData) => {
@@ -204,18 +204,19 @@ const adapter = (prisma: PrismaClient): Adapter => {
                 });
                 return data;
             } catch (e) {
-                console.error(e);
-                if (!(e instanceof Prisma.PrismaClientKnownRequestError))
-                    throw new LuciaError("UNKNOWN_ERROR");
-                if (e.code === "P2025")
+                const isKnownPrismaError =
+                    e instanceof Prisma.PrismaClientKnownRequestError;
+                if (isKnownPrismaError && e.code === "P2025")
                     throw new LuciaError("AUTH_INVALID_USER_ID");
-                if (e.code === "P2002" && e.message.includes("provider_id")) {
+                if (
+                    isKnownPrismaError &&
+                    e.code === "P2002" &&
+                    e.message.includes("provider_id")
+                ) {
                     throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
                 }
-                if (e.code === "P2002") {
-                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
-                }
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
     };

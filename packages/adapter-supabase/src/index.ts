@@ -1,13 +1,13 @@
-import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
+import { PostgrestClient, PostgrestError } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
 import { LuciaError } from "lucia-sveltekit";
-import {
-    type Adapter,
-    getUpdateData,
-    UserSchema,
-    SessionSchema,
-} from "lucia-sveltekit/adapter";
+import { getUpdateData } from "lucia-sveltekit/adapter";
+import type { Adapter, UserSchema, SessionSchema } from "lucia-sveltekit/types";
 
-const adapter = (url: string, secret: string): Adapter => {
+const adapter = (
+    url: string,
+    secret: string,
+    errorHandler: (error: PostgrestError) => void = () => {}
+): Adapter => {
     const supabase = new PostgrestClient(`${url}/rest/v1`, {
         headers: {
             Authorization: `Bearer ${secret}`,
@@ -22,8 +22,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("id", userId)
                 .maybeSingle();
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(error);
+                throw error;
             }
             if (!data) return null;
             return data;
@@ -35,8 +35,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("provider_id", providerId)
                 .maybeSingle();
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(error);
+                throw error;
             }
             if (!data) return null;
             return data;
@@ -48,8 +48,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("id", sessionId)
                 .maybeSingle();
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(error);
+                throw error;
             }
             if (!data) return null;
             const { user, ...session } = data;
@@ -65,8 +65,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("id", sessionId)
                 .maybeSingle();
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(error);
+                throw error;
             }
             if (!data) return null;
             return data;
@@ -77,8 +77,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 .select("*, user(*)")
                 .eq("user_id", userId);
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(error);
+                throw error;
             }
             return (
                 data?.map((val) => {
@@ -99,21 +99,19 @@ const adapter = (url: string, secret: string): Adapter => {
                     {
                         returning: "representation",
                     }
-                ).single();
+                )
+                .single();
             if (error) {
-                console.error(error);
                 if (
                     error.details.includes("(provider_id)") &&
                     error.details.includes("already exists.")
                 ) {
                     throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
                 }
-                if (error.details.includes("already exists.")) {
-                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
-                }
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(error);
+                throw error;
             }
-            return dbData
+            return dbData;
         },
         deleteUser: async (userId) => {
             const { error } = await supabase
@@ -123,8 +121,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 })
                 .eq("id", userId);
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(error);
+                throw error;
             }
         },
         setSession: async (sessionId, data) => {
@@ -142,7 +140,6 @@ const adapter = (url: string, secret: string): Adapter => {
                     }
                 );
             if (error) {
-                console.error(error);
                 if (
                     error.details.includes("is not present in table") &&
                     error.details.includes("user_id")
@@ -155,7 +152,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 ) {
                     throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
                 }
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(error);
+                throw error;
             }
         },
         deleteSession: async (...sessionIds) => {
@@ -166,8 +164,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 })
                 .in("id", sessionIds);
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(error);
+                throw error;
             }
         },
         deleteSessionsByUserId: async (userId) => {
@@ -178,8 +176,8 @@ const adapter = (url: string, secret: string): Adapter => {
                 })
                 .eq("user_id", userId);
             if (error) {
-                console.error(error);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(error);
+                throw error;
             }
         },
         updateUser: async (userId, newData) => {
@@ -190,17 +188,14 @@ const adapter = (url: string, secret: string): Adapter => {
                 .eq("id", userId)
                 .maybeSingle();
             if (error) {
-                console.error(error);
                 if (
                     error.details.includes("(provider_id)") &&
                     error.details.includes("already exists.")
                 ) {
                     throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
                 }
-                if (error.details.includes("already exists.")) {
-                    throw new LuciaError("AUTH_DUPLICATE_USER_DATA");
-                }
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(error);
+                throw error;
             }
             if (!data) throw new LuciaError("AUTH_INVALID_USER_ID");
             return data;

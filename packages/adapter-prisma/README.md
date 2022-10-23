@@ -16,6 +16,7 @@ yarn add @lucia-sveltekit/adapter-prisma
 
 | Prisma adapter version | Lucia version |
 | ---------------------- | ------------- |
+| v0.7.x                 | v0.14.3+      |
 | v0.6.x                 | v0.13.0+      |
 
 ## Testing

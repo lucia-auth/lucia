@@ -17,7 +17,7 @@ export const testUserAdapterErrors = async (
     await clearAll();
     await test(
         "setUser()",
-        "Throw AUTH_DUPLICATE_PROVIDER_ID or AUTH_DUPLICATE_USER_DATA if provider id violates unique key",
+        "Throw AUTH_DUPLICATE_PROVIDER_ID if provider id violates unique key",
         async () => {
             const user1 = new User();
             const user2 = new User();
@@ -32,45 +32,9 @@ export const testUserAdapterErrors = async (
                 });
             } catch (e) {
                 const error = e as Error;
-                try {
-                    validate.isEqual(
-                        error.message,
-                        "AUTH_DUPLICATE_PROVIDER_ID",
-                        "Error message did not match"
-                    );
-                } catch {
-                    validate.isEqual(
-                        error.message,
-                        "AUTH_DUPLICATE_USER_DATA",
-                        "Error message did not match"
-                    );
-                }
-                await clearAll();
-                return;
-            }
-            throw new Error("No error was thrown");
-        }
-    );
-    await test(
-        "setUser()",
-        "Throw AUTH_DUPLICATE_USER_DATA if user data violates unique key",
-        async () => {
-            const user1 = new User();
-            const user2 = new User();
-            await db.insertUser(user1.getSchema());
-            try {
-                await adapter.setUser(user2.id, {
-                    providerId: user2.providerId,
-                    hashedPassword: user2.hashedPassword,
-                    attributes: {
-                        username: user1.username,
-                    },
-                });
-            } catch (e) {
-                const error = e as Error;
                 validate.isEqual(
                     error.message,
-                    "AUTH_DUPLICATE_USER_DATA",
+                    "AUTH_DUPLICATE_PROVIDER_ID",
                     "Error message did not match"
                 );
                 await clearAll();
@@ -115,32 +79,6 @@ export const testUserAdapterErrors = async (
                 validate.isEqual(
                     error.message,
                     "AUTH_DUPLICATE_PROVIDER_ID",
-                    "Error message did not match"
-                );
-            }
-            await clearAll();
-        }
-    );
-    await test(
-        "updateUser()",
-        "Throw AUTH_DUPLICATE_USER_DATA if user data violates unique key",
-        async () => {
-            const user1 = new User();
-            const user2 = new User();
-            await db.insertUser(user1.getSchema());
-            await db.insertUser(user2.getSchema());
-            try {
-                await adapter.updateUser(user2.id, {
-                    attributes: {
-                        username: user1.username,
-                    },
-                });
-                throw new Error("No error was thrown");
-            } catch (e) {
-                const error = e as Error;
-                validate.isEqual(
-                    error.message,
-                    "AUTH_DUPLICATE_USER_DATA",
                     "Error message did not match"
                 );
             }

@@ -1,14 +1,14 @@
 import { LuciaError } from "lucia-sveltekit";
-import {
-    type SessionSchema,
-    type SessionAdapter,
-} from "lucia-sveltekit/adapter";
-import type { RedisClientType } from "redis";
+import type { SessionSchema, SessionAdapter } from "lucia-sveltekit/types";
+import type { RedisClientType, ErrorReply } from "redis";
 
-const adapter = (redisClient: {
-    session: RedisClientType<any, any, any>;
-    userSessions: RedisClientType<any, any, any>;
-}): SessionAdapter => {
+const adapter = (
+    redisClient: {
+        session: RedisClientType<any, any, any>;
+        userSessions: RedisClientType<any, any, any>;
+    },
+    errorHandler: (error: any) => void = () => {}
+): SessionAdapter => {
     const { session: sessionRedis, userSessions: userSessionsRedis } =
         redisClient;
     return {
@@ -19,9 +19,8 @@ const adapter = (redisClient: {
                 const session = JSON.parse(sessionData) as SessionSchema;
                 return session;
             } catch (e) {
-                if (e instanceof LuciaError) throw e;
-                console.error(e);
-                throw new LuciaError("DATABASE_FETCH_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         getSessionsByUserId: async (userId) => {
@@ -39,8 +38,8 @@ const adapter = (redisClient: {
                     .map((val) => JSON.parse(val) as SessionSchema);
                 return sessions;
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         setSession: async (sessionId, data) => {
@@ -61,8 +60,8 @@ const adapter = (redisClient: {
                     ),
                 ]);
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteSession: async (...sessionIds) => {
@@ -80,8 +79,8 @@ const adapter = (redisClient: {
                     ),
                 ]);
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
         deleteSessionsByUserId: async (userId) => {
@@ -96,8 +95,8 @@ const adapter = (redisClient: {
                     userSessionsRedis.del(userId),
                 ]);
             } catch (e) {
-                console.error(e);
-                throw new LuciaError("DATABASE_UPDATE_FAILED");
+                errorHandler(e as any);
+                throw e;
             }
         },
     };
