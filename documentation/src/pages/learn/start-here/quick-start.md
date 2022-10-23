@@ -21,7 +21,7 @@ In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` 
 ```ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-    type Auth = import("$lib/server/lucia.js").Auth;
+    type Auth = import("$lib/server/lucia.ts").Auth;
     type UserAttributes = {
         username: string;
     };
@@ -31,8 +31,10 @@ declare namespace Lucia {
 Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
+import { PrismaClient } from "@prisma/client";
+
 export const auth = lucia({
-    adapter: prisma(),
+    adapter: prisma(new PrismaClient()),
     env: dev ? "DEV" : "PROD",
     transformUserData: (userData) => {
         return {
@@ -45,7 +47,7 @@ export const auth = lucia({
 
 ## 3. Sign up page
 
-Create `routes/signup/` route dir. This route will handle account creation. Create 3 folders inside it: `+page.svelte`. `+page.server.ts`, and `+page.ts`.
+Create `routes/signup/` route dir. This route will handle account creation. Create 3 files inside it: `+page.svelte`. `+page.server.ts`, and `+page.ts`.
 
 ### Sign up form
 
@@ -138,7 +140,7 @@ export const load: PageLoad = async (event) => {
 
 ## 4. Sign in page
 
-Create `routes/login/` route dir. This route will handle sign ins. Create 3 folders inside it: `+page.svelte`. `+page.server.ts`, and `+page.ts`.
+Create `routes/login/` route dir. This route will handle sign ins. Create 3 files inside it: `+page.svelte`. `+page.server.ts`, and `+page.ts`.
 
 ### Sign in form
 
@@ -150,7 +152,7 @@ This form will also have an input field for username and password.
 </script>
 
 <div>
-    <h1>Create an account</h1>
+    <h1>Sign in</h1>
     <form
         method="post"
         use:enhance={() => {
@@ -230,7 +232,7 @@ export const load: PageLoad = async (event) => {
 
 ## 5. Profile page (protected)
 
-This page will be the root (`/`). This route will show the user's data and have the note-taking portion of the app. Create 3 folders inside the root `/routes` dir: `+page.svelte`. `+page.server.ts`, and `+page.ts`. We'll make this route only accessible to authenticated users.
+This page will be the root (`/`). This route will show the user's data and have the note-taking portion of the app. Create 3 files inside the root `/routes` dir: `+page.svelte`. `+page.server.ts`, and `+page.ts`. We'll make this route only accessible to authenticated users.
 
 ### Get current user
 
