@@ -1,6 +1,7 @@
 import { invalid, redirect, type Actions } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 
+
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const form = await request.formData();
@@ -31,6 +32,5 @@ export const actions: Actions = {
 				message: 'Unknown error occurred'
 			});
 		}
-		throw redirect(302, '/login');
 	}
 };

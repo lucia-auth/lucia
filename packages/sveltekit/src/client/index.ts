@@ -1,34 +1,34 @@
 import type { User } from "lucia-auth";
-import { get, type Readable, derived } from "svelte/store";
-import { getContext, setContext } from "svelte";
-import type { LuciaContext } from "../types.js";
+import { get, type Readable, readable } from "svelte/store";
+import { getContext, setContext, onDestroy } from "svelte";
+import type { GlobalWindow, LuciaContext } from "../types.js";
 
 export const signOut = async (redirect?: string): Promise<void> => {
-	const user = get(getUser());
-	if (!user) throw new Error("AUTH_NOT_AUTHENTICATED");
-	const response = await fetch("/api/auth/logout", {
+	await fetch("/api/auth/logout", {
 		method: "POST"
 	});
-	if (response.ok) {
-		if (redirect) {
-			globalThis.location.href = redirect;
-		}
-		return;
+	if (redirect) {
+		globalThis.location.href = redirect;
 	}
-	let result;
-	try {
-		result = await response.json();
-	} catch (e) {
-		console.error(e);
-		throw new Error("UNKNOWN_ERROR");
-	}
-	if (result.message) throw new Error(result.message);
+	return;
 };
 
-export const getUser = (): Readable<User | null> => {
+type ClientUser = Readonly<User> | null;
+
+export const getUser = (): Readable<ClientUser> => {
 	const luciaContext = getContext("__lucia__") as LuciaContext | undefined;
 	if (!luciaContext) throw new Error("Lucia context undefined");
 	return luciaContext.user;
+};
+
+const generateRandomNumber = (): number => {
+	const randomNumber = Math.random();
+	if (randomNumber !== 0) return randomNumber;
+	return generateRandomNumber();
+};
+
+const generateId = (): string => {
+	return generateRandomNumber().toString(36).slice(2, 7);
 };
 
 export const lucia = (
@@ -36,18 +36,48 @@ export const lucia = (
 		data: Record<string, any>;
 	}>
 ) => {
+	const tabId = generateId();
+	const initialPageStoreValue = get(pageStore);
+	const initialPageData = initialPageStoreValue.data as { _lucia?: User | null };
+	const initialUser = initialPageData?._lucia || null;
+	const setUserGlobal = (user: ClientUser) => {
+		if (typeof window === "undefined") return;
+		const globalWindow = window as GlobalWindow;
+		globalWindow._lucia = user;
+	};
+	let setUserStore: (user: ClientUser) => void = () => {};
 	setContext("__lucia__", {
-		user: derived(pageStore, (pageStoreValue) => {
-			const pageData = pageStoreValue.data as { _lucia?: User | null };
-			const user = pageData?._lucia || null;
-			if (typeof window === "undefined") return user;
-			const globalWindow = window as Window & {
-				_lucia?: LuciaContext;
-			};
-			globalWindow._lucia = {
-				user
-			};
-			return user;
+		user: readable<ClientUser>(initialUser, (set) => {
+			setUserStore = set;
 		})
+	});
+	const pageStoreUnsubscribe = pageStore.subscribe((pageStoreValue) => {
+		const pageData = pageStoreValue.data as { _lucia?: User | null };
+		const user = pageData?._lucia || null;
+		setUserGlobal(user);
+		setUserStore(user);
+	});
+	const userStore = getUser();
+	if (typeof window === "undefined") return;
+	const broadcastChannel = new BroadcastChannel("__lucia__");
+	const userStoreUnsubscribe = userStore.subscribe((userStoreValue) => {
+		broadcastChannel?.postMessage({
+			user: userStoreValue,
+			id: tabId
+		});
+	});
+	broadcastChannel.addEventListener("message", ({ data }) => {
+		const messageData = data as {
+			user: ClientUser;
+			id: string;
+		};
+		if (messageData.id === tabId) return;
+		setUserGlobal(messageData.user);
+		setUserStore(messageData.user);
+	});
+	onDestroy(() => {
+		broadcastChannel.close();
+		pageStoreUnsubscribe();
+		userStoreUnsubscribe();
 	});
 };

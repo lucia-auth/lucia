@@ -1,7 +1,8 @@
 import type { Session, User } from "lucia-auth";
+import type { Readable } from "svelte/store"
 
 export type LuciaContext = {
-	user: User | null;
+	user: Readable<User | null>
 };
 
 export type RequestEvent = {
@@ -16,4 +17,11 @@ export type RequestEvent = {
 		get: (name: string) => string | undefined;
 		set: (name: string, value: string, options: any) => void;
 	};
+};
+
+export type GlobalWindow = Window & {
+	_lucia?: User | null;
+	_luciaPageData?: {
+		data: any;
+	}[];
 };

@@ -35,6 +35,5 @@ export const actions: Actions = {
 				message: 'Unknown error occurred'
 			});
 		}
-		throw redirect(302, '/profile');
 	}
 };

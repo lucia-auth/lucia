@@ -6,13 +6,21 @@ export const getUser = async (event) => {
     }
     // client
     const globalWindow = window;
+    // if lucia() in +layout.svelte hasn't run yet
     if (globalWindow._lucia === undefined) {
         const initialUser = getInitialClientUser();
-        globalWindow._lucia = {
-            user: initialUser
-        };
+        globalWindow._lucia = initialUser;
     }
-    return globalWindow._lucia ? Object.freeze(globalWindow._lucia.user) : null;
+    // if hooks ran after before new session set
+    if (globalWindow._lucia)
+        return Object.freeze(globalWindow._lucia);
+    const data = (await event.parent());
+    if (!data._lucia)
+        return null;
+    globalWindow._lucia = {
+        user: data._lucia
+    };
+    return data._lucia;
 };
 const getInitialClientUser = () => {
     const globalWindow = window;
@@ -32,8 +40,5 @@ const getInitialClientUser = () => {
             return { ...prev, ...curr.data };
         return prev;
     }, {});
-    if (!pageData._lucia) {
-        return null;
-    }
-    return Object.freeze(pageData._lucia);
+    return pageData._lucia || null;
 };

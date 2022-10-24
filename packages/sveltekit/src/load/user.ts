@@ -1,12 +1,5 @@
 import type { User } from "lucia-auth";
-import type { LuciaContext } from "../types.js";
-
-type GlobalWindow = Window & {
-	_lucia?: LuciaContext;
-	_luciaPageData?: {
-		data: any;
-	}[];
-};
+import type { GlobalWindow } from "../types.js";
 
 export const getUser = async (event: {
 	parent: () => Promise<any>;
@@ -20,16 +13,24 @@ export const getUser = async (event: {
 	}
 	// client
 	const globalWindow = window as GlobalWindow;
+	// if lucia() in +layout.svelte hasn't run yet
 	if (globalWindow._lucia === undefined) {
 		const initialUser = getInitialClientUser();
-		globalWindow._lucia = {
-			user: initialUser
-		};
+		globalWindow._lucia = initialUser
 	}
-	return globalWindow._lucia ? Object.freeze(globalWindow._lucia.user) : null;
+	// if hooks ran after before new session set
+	if (globalWindow._lucia) return Object.freeze(globalWindow._lucia);
+	const data = (await event.parent()) as {
+		_lucia: User | null;
+	};
+	if (!data._lucia) return null;
+	globalWindow._lucia = {
+		user: data._lucia
+	};
+	return data._lucia;
 };
 
-const getInitialClientUser = (): Readonly<User> | null => {
+const getInitialClientUser = (): User | null => {
 	const globalWindow = window as GlobalWindow;
 	if (!globalWindow._luciaPageData)
 		throw new Error("_luciaPageData is undefined", {
@@ -48,8 +49,5 @@ const getInitialClientUser = (): Readonly<User> | null => {
 	}, {}) as {
 		_lucia?: User | null;
 	};
-	if (!pageData._lucia) {
-		return null;
-	}
-	return Object.freeze(pageData._lucia);
+	return pageData._lucia || null
 };
