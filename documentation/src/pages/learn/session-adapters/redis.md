@@ -8,11 +8,11 @@ A session adapter for Redis.
 
 ```ts
 const adapter: (
-    redisClient: {
-        session: RedisClientType;
-        userSessions: RedisClientType;
-    },
-    handleError?: (error: any) => void
+	redisClient: {
+		session: RedisClientType;
+		userSessions: RedisClientType;
+	},
+	handleError?: (error: any) => void
 ) => SessionAdapter;
 ```
 
@@ -47,13 +47,13 @@ export const sessionClient = createClient();
 export const userSessionsClient = createClient();
 
 export const auth = lucia({
-    adapter: {
-        user: prisma(), // any adapter
-        session: redis({
-            session: sessionClient,
-            userSessions: userSessionsClient,
-        }),
-    },
+	adapter: {
+		user: prisma(), // any adapter
+		session: redis({
+			session: sessionClient,
+			userSessions: userSessionsClient
+		})
+	}
 });
 ```
 

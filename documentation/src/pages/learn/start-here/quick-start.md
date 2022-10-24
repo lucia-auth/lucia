@@ -21,10 +21,10 @@ In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` 
 ```ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-    type Auth = import("$lib/server/lucia.js").Auth;
-    type UserAttributes = {
-        username: string;
-    };
+	type Auth = import("$lib/server/lucia.js").Auth;
+	type UserAttributes = {
+		username: string;
+	};
 }
 ```
 
@@ -32,14 +32,14 @@ Add `transformUserData()` to your Lucia config to expose the user's id and usern
 
 ```ts
 export const auth = lucia({
-    adapter: prisma(),
-    env: dev ? "DEV" : "PROD",
-    transformUserData: (userData) => {
-        return {
-            userId: userData.id,
-            username: userData.username,
-        };
-    },
+	adapter: prisma(),
+	env: dev ? "DEV" : "PROD",
+	transformUserData: (userData) => {
+		return {
+			userId: userData.id,
+			username: userData.username
+		};
+	}
 });
 ```
 
@@ -53,29 +53,29 @@ This form will have an input field for username and password. For the session to
 
 ```svelte
 <script lang="ts">
-    import { applyAction, enhance } from '$app/forms';
+	import { applyAction, enhance } from "$app/forms";
 </script>
 
 <div>
-    <h1>Create an account</h1>
-    <form
-        method="post"
-        use:enhance={() => {
-            return async ({ result, update }) => {
-                if (result.type === "redirect") {
-                    window.location.href = result.location; // invalidateAll() + goto() will not work
-                    return;
-                }
-                update(result);
-            };
-        }}
-    >
-        <label for="username">username</label><br />
-        <input id="username" name="username" /><br />
-        <label for="password">password</label><br />
-        <input type="password" id="password" name="password" /><br />
-        <input type="submit" value="Continue" class="button" />
-    </form>
+	<h1>Create an account</h1>
+	<form
+		method="post"
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				if (result.type === "redirect") {
+					window.location.href = result.location; // invalidateAll() + goto() will not work
+					return;
+				}
+				update(result);
+			};
+		}}
+	>
+		<label for="username">username</label><br />
+		<input id="username" name="username" /><br />
+		<label for="password">password</label><br />
+		<input type="password" id="password" name="password" /><br />
+		<input type="submit" value="Continue" class="button" />
+	</form>
 </div>
 ```
 
@@ -89,33 +89,28 @@ import { invalid, redirect, type Actions } from "@sveltejs/kit";
 import { auth } from "$lib/server/lucia";
 
 export const actions: Actions = {
-    default: async ({ request, locals }) => {
-        const form = await request.formData();
-        const username = form.get("username");
-        const password = form.get("password");
-        // check for empty values
-        if (
-            !username ||
-            !password ||
-            typeof username !== "string" ||
-            typeof password !== "string"
-        )
-            return invalid(400);
-        try {
-            const user = await auth.createUser("username", username, {
-                password,
-                attributes: {
-                    username,
-                },
-            });
-            const session = await auth.createSession(user.userId);
-            locals.setSession(session);
-        } catch {
-            // username already in use
-            return invalid(400);
-        }
-        throw redirect(302, "/");
-    },
+	default: async ({ request, locals }) => {
+		const form = await request.formData();
+		const username = form.get("username");
+		const password = form.get("password");
+		// check for empty values
+		if (!username || !password || typeof username !== "string" || typeof password !== "string")
+			return invalid(400);
+		try {
+			const user = await auth.createUser("username", username, {
+				password,
+				attributes: {
+					username
+				}
+			});
+			const session = await auth.createSession(user.userId);
+			locals.setSession(session);
+		} catch {
+			// username already in use
+			return invalid(400);
+		}
+		throw redirect(302, "/");
+	}
 };
 ```
 
@@ -130,9 +125,9 @@ import { getUser } from "lucia-sveltekit/load";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
-    const user = await getUser(event);
-    if (user) throw redirect(302, "/");
-    return {};
+	const user = await getUser(event);
+	if (user) throw redirect(302, "/");
+	return {};
 };
 ```
 
@@ -146,29 +141,29 @@ This form will also have an input field for username and password.
 
 ```svelte
 <script lang="ts">
-    import { applyAction, enhance } from '$app/forms';
+	import { applyAction, enhance } from "$app/forms";
 </script>
 
 <div>
-    <h1>Create an account</h1>
-    <form
-        method="post"
-        use:enhance={() => {
-            return async ({ result, update }) => {
-                if (result.type === "redirect") {
-                    window.location.href = result.location; // invalidateAll() + goto() will not work
-                    return;
-                }
-                applyAction(result);
-            };
-        }}
-    >
-        <label for="username">username</label><br />
-        <input id="username" name="username" /><br />
-        <label for="password">password</label><br />
-        <input type="password" id="password" name="password" /><br />
-        <input type="submit" value="Continue" class="button" />
-    </form>
+	<h1>Create an account</h1>
+	<form
+		method="post"
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				if (result.type === "redirect") {
+					window.location.href = result.location; // invalidateAll() + goto() will not work
+					return;
+				}
+				applyAction(result);
+			};
+		}}
+	>
+		<label for="username">username</label><br />
+		<input id="username" name="username" /><br />
+		<label for="password">password</label><br />
+		<input type="password" id="password" name="password" /><br />
+		<input type="submit" value="Continue" class="button" />
+	</form>
 </div>
 ```
 
@@ -182,32 +177,23 @@ import { invalid, redirect, type Actions } from "@sveltejs/kit";
 import { auth } from "$lib/server/lucia";
 
 export const actions: Actions = {
-    default: async ({ request, locals }) => {
-        const form = await request.formData();
-        const username = form.get("username");
-        const password = form.get("password");
-        // check for empty values
-        if (
-            !username ||
-            !password ||
-            typeof username !== "string" ||
-            typeof password !== "string"
-        )
-            return invalid(400);
-        try {
-            const user = await auth.authenticateUser(
-                "username",
-                username,
-                password
-            );
-            const session = await auth.createSession(user.userId);
-            locals.setSession(session);
-        } catch {
-            // username already in use
-            return invalid(400);
-        }
-        throw redirect(302, "/");
-    },
+	default: async ({ request, locals }) => {
+		const form = await request.formData();
+		const username = form.get("username");
+		const password = form.get("password");
+		// check for empty values
+		if (!username || !password || typeof username !== "string" || typeof password !== "string")
+			return invalid(400);
+		try {
+			const user = await auth.authenticateUser("username", username, password);
+			const session = await auth.createSession(user.userId);
+			locals.setSession(session);
+		} catch {
+			// username already in use
+			return invalid(400);
+		}
+		throw redirect(302, "/");
+	}
 };
 ```
 
@@ -222,9 +208,9 @@ import { getUser } from "lucia-sveltekit/load";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
-    const user = await getUser(event);
-    if (user) throw redirect(302, "/");
-    return {};
+	const user = await getUser(event);
+	if (user) throw redirect(302, "/");
+	return {};
 };
 ```
 
@@ -238,8 +224,8 @@ You can get the current user using `getUser()`. Notice that you can get the `use
 
 ```svelte
 <script lang="ts">
-	import { getUser } from 'lucia-sveltekit/client';
-	import { page } from '$app/stores';
+	import { getUser } from "lucia-sveltekit/client";
+	import { page } from "$app/stores";
 
 	const user = getUser();
 </script>
@@ -260,8 +246,8 @@ import { getUser } from "lucia-sveltekit/load";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
-    const user = await getUser(event);
-    if (!user) throw redirect(302, "/login");
+	const user = await getUser(event);
+	if (!user) throw redirect(302, "/login");
 };
 ```
 
@@ -271,8 +257,8 @@ Add a button that calls `signOut()`. `/login` will tell Lucia to redirect the us
 
 ```svelte
 <script lang="ts">
-	import { signOut, getUser } from 'lucia-sveltekit/client';
-	import { page } from '$app/stores';
+	import { signOut, getUser } from "lucia-sveltekit/client";
+	import { page } from "$app/stores";
 
 	const user = getUser();
 </script>
@@ -283,7 +269,7 @@ Add a button that calls `signOut()`. `/login` will tell Lucia to redirect the us
 	<p>Username: {user?.username}</p>
 </div>
 
-<button on:click={() => signOut('/login')}>Sign out</button>
+<button on:click={() => signOut("/login")}>Sign out</button>
 ```
 
 ## 6. Request validation
@@ -296,9 +282,9 @@ The input will have a default value of `$page.data.notes`. We'll cover this in a
 
 ```svelte
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { signOut, getUser } from 'lucia-sveltekit/client';
-	import { page } from '$app/stores';
+	import { enhance } from "$app/forms";
+	import { signOut, getUser } from "lucia-sveltekit/client";
+	import { page } from "$app/stores";
 
 	const user = getUser();
 </script>
@@ -317,7 +303,7 @@ The input will have a default value of `$page.data.notes`. We'll cover this in a
 	</form>
 </div>
 
-<button on:click={() => signOut('/')}>Sign out</button>
+<button on:click={() => signOut("/")}>Sign out</button>
 ```
 
 ### Validate requests and save notes
@@ -331,18 +317,18 @@ import { auth } from "$lib/server/lucia";
 import { invalid, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
-    default: async ({ cookies, request, locals }) => {
-        const session = locals.getSession();
-        if (!session) return invalid(403);
-        const formData = await request.formData();
-        const notes = formData.get("notes")?.toString();
-        if (notes === undefined) return invalid(400);
-        cookies.set("notes", notes, {
-            httpOnly: true,
-            secure: !dev,
-            path: "/",
-        });
-    },
+	default: async ({ cookies, request, locals }) => {
+		const session = locals.getSession();
+		if (!session) return invalid(403);
+		const formData = await request.formData();
+		const notes = formData.get("notes")?.toString();
+		if (notes === undefined) return invalid(400);
+		cookies.set("notes", notes, {
+			httpOnly: true,
+			secure: !dev,
+			path: "/"
+		});
+	}
 };
 ```
 
@@ -358,15 +344,15 @@ import { invalid, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
-    const session = locals.getSession();
-    if (!session) throw redirect(302, "/login");
-    const notes = cookies.get("notes") || "";
-    return {
-        notes,
-    };
+	const session = locals.getSession();
+	if (!session) throw redirect(302, "/login");
+	const notes = cookies.get("notes") || "";
+	return {
+		notes
+	};
 };
 
 export const actions: Actions = {
-    // ...
+	// ...
 };
 ```

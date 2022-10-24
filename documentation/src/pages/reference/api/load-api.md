@@ -26,8 +26,8 @@ const getUser: (event: LoadEvent) => Promise<Readonly<User> | null>;
 
 #### Returns
 
-| type                     | description                                     |
-| ------------------------ | ----------------------------------------------- |
+| type                                                         | description                                     |
+| ------------------------------------------------------------ | ----------------------------------------------- |
 | `Readonly<`[`User`](/reference/types/lucia-types)`> \| null` | Returns `null` if a current user does not exist |
 
 #### Example
@@ -37,9 +37,9 @@ import { getUser } from "lucia-sveltekit/load";
 import type { Load } from "@sveltejs/kit";
 
 export const load: Load = async (event) => {
-    const user = await getUser(event);
-    if (!user) {
-        // not authenticated
-    }
+	const user = await getUser(event);
+	if (!user) {
+		// not authenticated
+	}
 };
 ```

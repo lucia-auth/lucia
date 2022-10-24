@@ -16,9 +16,9 @@ Takes the `data` argument of [`updateUser()`] adapter method and converts it to 
 
 ```ts
 const getUpdateData: (data: {
-    providerId?: string | null;
-    hashedPassword?: string | null;
-    attributes?: Record<string, any>;
+	providerId?: string | null;
+	hashedPassword?: string | null;
+	attributes?: Record<string, any>;
 }) => Partial<UserSchema>;
 ```
 

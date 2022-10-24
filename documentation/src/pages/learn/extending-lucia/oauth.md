@@ -27,7 +27,7 @@ Redirect the user to the provider's login page. For Github, it's `https://github
 
 ```svelte
 <a href="https://github.com/login/oauth/authorize?client_id={GITHUB_CLIENT_ID}"
-    >Sign in with Github</a
+	>Sign in with Github</a
 >
 ```
 
@@ -50,28 +50,25 @@ Within the callback, the provider has included a secret code. This code can be u
 // /routes/api/github-callback/+server.ts
 
 export const GET: RequestHandler = async ({ url }) => {
-    const code = url.searchParams.get("code");
-    const response = await fetch(
-        "https://github.com/login/oauth/access_token",
-        {
-            body: JSON.stringify({
-                client_id: GITHUB_CLIENT_ID,
-                client_secret: GITHUB_CLIENT_SECRET,
-                code,
-            }),
-            headers: {
-                Accept: "application/json",
-            },
-            method: "POST",
-        }
-    );
-    if (!response.ok) {
-        // error - return error response
-    }
-    const result = (await response.json()) as {
-        access_token: string;
-    };
-    const accessToken = result.access_token;
+	const code = url.searchParams.get("code");
+	const response = await fetch("https://github.com/login/oauth/access_token", {
+		body: JSON.stringify({
+			client_id: GITHUB_CLIENT_ID,
+			client_secret: GITHUB_CLIENT_SECRET,
+			code
+		}),
+		headers: {
+			Accept: "application/json"
+		},
+		method: "POST"
+	});
+	if (!response.ok) {
+		// error - return error response
+	}
+	const result = (await response.json()) as {
+		access_token: string;
+	};
+	const accessToken = result.access_token;
 };
 ```
 
@@ -83,17 +80,17 @@ To create users using Lucia, you need an identifier as part of the provider id. 
 // /routes/api/github-callback/+server.ts
 
 export const GET: RequestHandler = async ({ url }) => {
-    // ...
-    const accessToken = result.access_token;
-    const githubUserResponse = await fetch("https://api.github.com/user", {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    });
-    const githubUser = (await githubUserResponse.json()) as {
-        id: string;
-    };
-    const githubUserId = githubUser.id;
+	// ...
+	const accessToken = result.access_token;
+	const githubUserResponse = await fetch("https://api.github.com/user", {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		}
+	});
+	const githubUser = (await githubUserResponse.json()) as {
+		id: string;
+	};
+	const githubUserId = githubUser.id;
 };
 ```
 
@@ -106,13 +103,13 @@ Now you know who signed in and a unique identifier of them, you can create a new
 import { auth } from "$lib/server/lucia";
 
 export const GET: RequestHandler = async ({ url }) => {
-    // ...
-    const githubUserId = user.id;
-    try {
-        const user = await auth.createUser("github", githubUserId);
-    } catch {
-        // error
-    }
+	// ...
+	const githubUserId = user.id;
+	try {
+		const user = await auth.createUser("github", githubUserId);
+	} catch {
+		// error
+	}
 };
 ```
 
@@ -125,19 +122,19 @@ Since the authentication steps are the same for new and existing users (sign in 
 import type { User } from "lucia-sveltekit/types";
 
 export const GET: RequestHandler = async ({ url }) => {
-    // ...
-    const githubUserId = user.id;
-    let user: User;
-    try {
-        user = await auth.getUserByProviderId("github", userId);
-    } catch {
-        // user does not exist
-        try {
-            user = await auth.createUser("github", githubUserId);
-        } catch {
-            // error - return error response
-        }
-    }
+	// ...
+	const githubUserId = user.id;
+	let user: User;
+	try {
+		user = await auth.getUserByProviderId("github", userId);
+	} catch {
+		// user does not exist
+		try {
+			user = await auth.createUser("github", githubUserId);
+		} catch {
+			// error - return error response
+		}
+	}
 };
 ```
 
@@ -148,16 +145,16 @@ Finally, we can create a new session using [`createSession()`](/reference/api/se
 ```ts
 // /routes/api/github-callback/+server.ts
 export const GET: RequestHandler = async ({ url, locals }) => {
-    // ...
-    let user: User;
-    // ...
-    try {
-        const session = await auth.createSession(user.userId);
-        locals.setSession(session);
-    } catch {
-        // error - return error response
-    }
-    // success - redirect user
+	// ...
+	let user: User;
+	// ...
+	try {
+		const session = await auth.createSession(user.userId);
+		locals.setSession(session);
+	} catch {
+		// error - return error response
+	}
+	// success - redirect user
 };
 ```
 
@@ -170,59 +167,56 @@ import type { RequestHandler } from "@sveltejs/kit";
 import type { User } from "lucia-sveltekit/types";
 
 export const GET: RequestHandler = async ({ url, locals }) => {
-    const code = url.searchParams.get("code");
-    const response = await fetch(
-        "https://github.com/login/oauth/access_token",
-        {
-            body: JSON.stringify({
-                client_id: GITHUB_CLIENT_ID,
-                client_secret: GITHUB_CLIENT_SECRET,
-                code,
-            }),
-            headers: {
-                Accept: "application/json",
-            },
-            method: "POST",
-        }
-    );
-    if (!response.ok) return new Response(400);
-    const result = (await response.json()) as {
-        access_token: string;
-    };
-    const accessToken = result.access_token;
-    const githubUserResponse = await fetch("https://api.github.com/user", {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    });
-    const githubUser = (await githubUserResponse.json()) as {
-        id: string;
-    };
-    const githubUserId = githubUser.id;
-    let user: User;
-    try {
-        user = await auth.getUserByProviderId("github", userId);
-    } catch {
-        // user does not exist
-        try {
-            user = await auth.createUser("github", githubUserId);
-        } catch {
-            // error
-            return new Response(500);
-        }
-    }
-    try {
-        const session = await auth.createSession(user.userId);
-        locals.setSession(session);
-    } catch {
-        // error
-        return new Response(500);
-    }
-    // success - redirect to main page
-    return new Response(302, {
-        headers: {
-            location: "/",
-        },
-    });
+	const code = url.searchParams.get("code");
+	const response = await fetch("https://github.com/login/oauth/access_token", {
+		body: JSON.stringify({
+			client_id: GITHUB_CLIENT_ID,
+			client_secret: GITHUB_CLIENT_SECRET,
+			code
+		}),
+		headers: {
+			Accept: "application/json"
+		},
+		method: "POST"
+	});
+	if (!response.ok) return new Response(400);
+	const result = (await response.json()) as {
+		access_token: string;
+	};
+	const accessToken = result.access_token;
+	const githubUserResponse = await fetch("https://api.github.com/user", {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		}
+	});
+	const githubUser = (await githubUserResponse.json()) as {
+		id: string;
+	};
+	const githubUserId = githubUser.id;
+	let user: User;
+	try {
+		user = await auth.getUserByProviderId("github", userId);
+	} catch {
+		// user does not exist
+		try {
+			user = await auth.createUser("github", githubUserId);
+		} catch {
+			// error
+			return new Response(500);
+		}
+	}
+	try {
+		const session = await auth.createSession(user.userId);
+		locals.setSession(session);
+	} catch {
+		// error
+		return new Response(500);
+	}
+	// success - redirect to main page
+	return new Response(302, {
+		headers: {
+			location: "/"
+		}
+	});
 };
 ```

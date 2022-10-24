@@ -27,7 +27,7 @@ status: 500
 
 ```ts
 interface ResponseBody {
-    message?: string;
+	message?: string;
 }
 ```
 

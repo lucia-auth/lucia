@@ -18,9 +18,9 @@ const user = getUser();
 
 ```svelte
 <script lang="ts">
-    import { getUser } from "lucia-sveltekit/client";
+	import { getUser } from "lucia-sveltekit/client";
 
-    const user = getUser();
-    const userId = user?.userId;
+	const user = getUser();
+	const userId = user?.userId;
 </script>
 ```

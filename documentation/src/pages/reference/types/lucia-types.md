@@ -54,8 +54,8 @@ A session.
 
 ```ts
 type Session = {
-    userId: string;
-    expires: number;
+	userId: string;
+	expires: number;
 };
 ```
 
@@ -94,7 +94,7 @@ If `transformUserData()` is undefined.
 
 ```ts
 type User = {
-    userId: string;
+	userId: string;
 };
 ```
 
@@ -108,7 +108,7 @@ The columns of `user` table excluding `hashed_password` and `provider_id`.
 
 ```ts
 type UserData = {
-    id: string;
+	id: string;
 } & Required<Lucia.UserAttributes>;
 ```
 
@@ -116,7 +116,6 @@ type UserData = {
 | ---- | ------------------------------------------------------------------------- | ---------------------------------- |
 | id   | `string`                                                                  | User id of the user                |
 |      | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional columns in `user` table |
-
 
 ## `UserSchema`
 

@@ -8,8 +8,8 @@ title: "Lucia namespace"
 // src/app.d.ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-	type Auth = import('$lib/server/lucia.js').Auth;
-	type UserAttributes = {}
+	type Auth = import("$lib/server/lucia.js").Auth;
+	type UserAttributes = {};
 }
 ```
 
@@ -19,7 +19,7 @@ declare namespace Lucia {
 
 ```ts
 declare namespace Lucia {
-	type Auth = import('$lib/server/lucia.js').Auth;
+	type Auth = import("$lib/server/lucia.js").Auth;
 }
 ```
 
@@ -34,7 +34,7 @@ If you have a `username` column in `user` table:
 ```ts
 declare namespace Lucia {
 	interface UserAttributes {
-		username: string
+		username: string;
 	}
 }
 ```

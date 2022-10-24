@@ -1,45 +1,45 @@
 {
-    "name": "@lucia-sveltekit/adapter-supabase",
-    "version": "0.10.1",
-    "description": "Supabase adapter for Lucia",
-    "main": "index.js",
-    "types": "index.d.ts",
-    "module": "index.js",
-    "type": "module",
-    "files": [
-        "**/*"
-    ],
-    "scripts": {
-        "build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-        "test-main": "npx ts-node --esm -T test/index.ts",
-        "publish-package": "cd dist && pnpm publish && cd -"
-    },
-    "keywords": [
-        "sveltekit",
-        "lucia",
-        "supabase",
-        "adapter"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
-        "directory": "packages/adapter-supabase"
-    },
-    "author": "pilcrowonpaper",
-    "license": "MIT",
-    "exports": {
-        ".": "./index.js"
-    },
-    "peerDependencies": {
-        "lucia-sveltekit": "~0.14.0"
-    },
-    "devDependencies": {
-        "@lucia-sveltekit/adapter-test": "workspace:*",
-        "dotenv": "^16.0.3",
-        "ts-node": "^10.9.1"
-    },
-    "dependencies": {
-        "@supabase/postgrest-js": "^0.37.4",
-        "lucia-sveltekit": "workspace:*"
-    }
+	"name": "@lucia-sveltekit/adapter-supabase",
+	"version": "0.10.1",
+	"description": "Supabase adapter for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"test-main": "npx ts-node --esm -T test/index.ts",
+		"publish-package": "cd dist && pnpm publish && cd -"
+	},
+	"keywords": [
+		"sveltekit",
+		"lucia",
+		"supabase",
+		"adapter"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"directory": "packages/adapter-supabase"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-sveltekit": "~0.14.0"
+	},
+	"devDependencies": {
+		"@lucia-sveltekit/adapter-test": "workspace:*",
+		"dotenv": "^16.0.3",
+		"ts-node": "^10.9.1"
+	},
+	"dependencies": {
+		"@supabase/postgrest-js": "^0.37.4",
+		"@lucia-auth/lucia": "workspace:*"
+	}
 }

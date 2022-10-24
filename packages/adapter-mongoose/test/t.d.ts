@@ -1,1 +1,1 @@
-import "../src/t.js"
+import "../src/t.js";

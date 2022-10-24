@@ -1,9 +1,9 @@
-/// <reference types="lucia-sveltekit" />
+/// <reference types="@lucia-auth/lucia" />
 declare namespace Lucia {
-    type Auth = any;
-    type UserAttributes = {};
+	type Auth = any;
+	type UserAttributes = {};
 }
 
 declare namespace App {
-    interface Locals {}
+	interface Locals {}
 }

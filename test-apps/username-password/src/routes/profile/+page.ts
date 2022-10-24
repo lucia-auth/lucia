@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { getUser } from 'lucia-sveltekit/load';
+import { getUser } from '@lucia-auth/sveltekit/load';
 import type { PageLoad } from './$types.js';
 
 export const load: PageLoad = async (event) => {

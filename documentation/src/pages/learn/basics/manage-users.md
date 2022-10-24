@@ -18,9 +18,9 @@ The provider id can be updated using the [`updateUserProviderId()`](/reference/a
 import { auth } from "$lib/server/lucia";
 
 try {
-    const user = await auth.updateUserProviderId(userId, provider, identifier);
+	const user = await auth.updateUserProviderId(userId, provider, identifier);
 } catch {
-    // invalid input
+	// invalid input
 }
 ```
 
@@ -52,12 +52,12 @@ const user = await auth.updateUserAttributes(userId, partialUserAttributes);
 import { auth } from "$lib/server/lucia";
 
 try {
-    const user = await auth.updateUserAttributes(userId, {
-        username: "",
-        profile_picture: null,
-    });
+	const user = await auth.updateUserAttributes(userId, {
+		username: "",
+		profile_picture: null
+	});
 } catch {
-    // invalid input
+	// invalid input
 }
 ```
 

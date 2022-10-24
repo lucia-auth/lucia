@@ -1,1 +1,0 @@
-export { getUser } from "./client.js"

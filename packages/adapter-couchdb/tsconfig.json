@@ -1,17 +1,17 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
+	"compilerOptions": {
+		"allowJs": true,
 		"checkJs": true,
 		"noImplicitAny": true,
 		"module": "es2020",
 		"moduleResolution": "Node",
 		"target": "es2020",
 		"allowSyntheticDefaultImports": true,
-        "declaration": true,
-        "outDir": "./dist",
-        "strict": true,
-        "skipLibCheck": false
-    },
-    "include": ["src"],
-    "exclude": ["node_modules/", "**/__tests__/*"]
+		"declaration": true,
+		"outDir": "./dist",
+		"strict": true,
+		"skipLibCheck": false
+	},
+	"include": ["src"],
+	"exclude": ["node_modules/", "**/__tests__/*"]
 }

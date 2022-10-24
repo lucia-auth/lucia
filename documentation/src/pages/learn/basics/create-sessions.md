@@ -18,9 +18,9 @@ const session = await auth.createSession("userId");
 import { auth } from "$lib/server/lucia";
 
 try {
-    const session = await auth.createSession("123456");
+	const session = await auth.createSession("123456");
 } catch {
-    // invalid user id
+	// invalid user id
 }
 ```
 
@@ -48,15 +48,15 @@ import { setCookie } from "lucia-sveltekit";
 import { redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
-    default: async ({ locals }) => {
-        // ...
-        try {
-            const session = await auth.createSession(userId);
-            locals.setSession(session);
-        } catch {
-            // error
-        }
-        throw redirect(302, "/"); // refresh the page by redirecting the user
-    },
+	default: async ({ locals }) => {
+		// ...
+		try {
+			const session = await auth.createSession(userId);
+			locals.setSession(session);
+		} catch {
+			// error
+		}
+		throw redirect(302, "/"); // refresh the page by redirecting the user
+	}
 };
 ```

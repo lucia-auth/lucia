@@ -6,12 +6,12 @@ This is a monorepo and requires the use of [pnpm](https://pnpm.io).
 
 ## General conventions
 
--   **TypeScript**
--   Variables and functions should use `camelCase`
--   Use arrow functions whenever possible
--   Use async/await instead of callbacks
--   Installed Prettier should be used for formatting
--   Use ESM over CommonJS
+- **TypeScript**
+- Variables and functions should use `camelCase`
+- Use arrow functions whenever possible
+- Use async/await instead of callbacks
+- Installed Prettier should be used for formatting
+- Use ESM over CommonJS
 
 ## Adapters
 

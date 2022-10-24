@@ -24,9 +24,9 @@ This is useful when you can trust the input for the provider name and identifier
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.createUser("github", "user@example.com");
+	await auth.createUser("github", "user@example.com");
 } catch {
-    // invalid input
+	// invalid input
 }
 ```
 
@@ -38,11 +38,11 @@ This is useful for the simple email/username and password approach. The password
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.createUser("email", "user@example.com", {
-        password: "123456",
-    });
+	await auth.createUser("email", "user@example.com", {
+		password: "123456"
+	});
 } catch {
-    // invalid input
+	// invalid input
 }
 ```
 
@@ -54,13 +54,13 @@ By default, Lucia will store the user id, provider id, and the hashed password (
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.createUser("github", "user@example.com", {
-        attributes: {
-            username: "user",
-        },
-    });
+	await auth.createUser("github", "user@example.com", {
+		attributes: {
+			username: "user"
+		}
+	});
 } catch {
-    // invalid input
+	// invalid input
 }
 ```
 
@@ -73,12 +73,12 @@ The following example uses `email` as the provider name and the provided email a
 import { auth } from "$lib/server/lucia";
 
 const createUser = async (email: string, password: string) => {
-    try {
-        const user = await auth.createUser("email", email, {
-            password,
-        });
-    } catch {
-        // error (user already exists, etc)
-    }
+	try {
+		const user = await auth.createUser("email", email, {
+			password
+		});
+	} catch {
+		// error (user already exists, etc)
+	}
 };
 ```

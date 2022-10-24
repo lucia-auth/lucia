@@ -8,15 +8,15 @@ When using forms for sign in and account creation, the page has to be refreshed 
 
 ```svelte
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
+	import { applyAction, enhance } from "$app/forms";
 </script>
 
 <form
 	use:enhance={() => {
 		return async ({ result }) => {
-			if (result.type === 'redirect') {
+			if (result.type === "redirect") {
 				window.location.href = result.location;
-				return
+				return;
 			}
 			applyAction(result);
 		};

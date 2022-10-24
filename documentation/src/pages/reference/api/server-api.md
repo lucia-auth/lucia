@@ -61,11 +61,7 @@ const auth = lucia(configs);
 Validates the user's password using the provider id. Will not work with users without a password.
 
 ```ts
-const authenticateUser: (
-    provider: string,
-    identifier: string,
-    password: string
-) => Promise<User>;
+const authenticateUser: (provider: string, identifier: string, password: string) => Promise<User>;
 ```
 
 #### Parameter
@@ -96,9 +92,9 @@ const authenticateUser: (
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.authenticateUser("email", "user@example.com", "123456");
+	await auth.authenticateUser("email", "user@example.com", "123456");
 } catch {
-    // invalid credentials
+	// invalid credentials
 }
 ```
 
@@ -124,18 +120,18 @@ const createSession: (userId: string) => Promise<Session>;
 
 #### Errors
 
-| name                   | description               |
-| ---------------------- | ------------------------- |
-| AUTH_INVALID_USER_ID   | Invalid user id           |
+| name                 | description     |
+| -------------------- | --------------- |
+| AUTH_INVALID_USER_ID | Invalid user id |
 
 #### Example
 
 ```ts
 import { auth } from "$lib/server/lucia";
 try {
-    await auth.createSession(userId);
+	await auth.createSession(userId);
 } catch {
-    // invalid user id
+	// invalid user id
 }
 ```
 
@@ -145,12 +141,12 @@ Creates a new user.
 
 ```ts
 const createUser: (
-    provider: string,
-    identifier: string,
-    options?: {
-        password?: string;
-        attributes?: Lucia.UserAttributes;
-    }
+	provider: string,
+	identifier: string,
+	options?: {
+		password?: string;
+		attributes?: Lucia.UserAttributes;
+	}
 ) => Promise<User>;
 ```
 
@@ -171,9 +167,9 @@ const createUser: (
 
 #### Errors
 
-| name                       | description                                           |
-| -------------------------- | ----------------------------------------------------- |
-| AUTH_DUPLICATE_PROVIDER_ID | The user with the provider and identifier exists      |
+| name                       | description                                      |
+| -------------------------- | ------------------------------------------------ |
+| AUTH_DUPLICATE_PROVIDER_ID | The user with the provider and identifier exists |
 
 #### Example
 
@@ -181,15 +177,15 @@ const createUser: (
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.createUser("email", "user@example.com", {
-        password: "123456",
-        attributes: {
-            username: "user123",
-            isAdmin: true,
-        },
-    });
+	await auth.createUser("email", "user@example.com", {
+		password: "123456",
+		attributes: {
+			username: "user123",
+			isAdmin: true
+		}
+	});
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -207,16 +203,15 @@ const deleteDeadUserSessions: (userId: string) => Promise<void>;
 | ------ | -------- | ------------------- |
 | userId | `string` | User id of the user |
 
-
 #### Example
 
 ```ts
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.deleteExpiredUserSession(userId);
+	await auth.deleteExpiredUserSession(userId);
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -240,9 +235,9 @@ const deleteUser: (userId: string) => Promise<void>;
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.deleteUser(userId);
+	await auth.deleteUser(userId);
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -267,9 +262,7 @@ const generateSessionId: () => [string, number, number];
 Validates an active session id, and gets the session and the user in one database call.
 
 ```ts
-const getSessionUser: (
-    sessionId: string
-) => Promise<{ user: User; session: Session }>;
+const getSessionUser: (sessionId: string) => Promise<{ user: User; session: Session }>;
 ```
 
 #### Parameter
@@ -287,9 +280,9 @@ const getSessionUser: (
 
 #### Errors
 
-| name                    | description                            |
-| ----------------------- | -------------------------------------- |
-| AUTH_INVALID_SESSION_ID | A valid active session id              |
+| name                    | description               |
+| ----------------------- | ------------------------- |
+| AUTH_INVALID_SESSION_ID | A valid active session id |
 
 #### Example
 
@@ -297,9 +290,9 @@ const getSessionUser: (
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.getSessionUser(sessionId);
+	await auth.getSessionUser(sessionId);
 } catch {
-    // invalid session id
+	// invalid session id
 }
 ```
 
@@ -325,9 +318,9 @@ const getUser: (userId: string) => Promise<User>;
 
 #### Errors
 
-| name                  | description                              |
-| --------------------- | ---------------------------------------- |
-| AUTH_INVALID_USER_ID  | The user with the user id does not exist |
+| name                 | description                              |
+| -------------------- | ---------------------------------------- |
+| AUTH_INVALID_USER_ID | The user with the user id does not exist |
 
 #### Example
 
@@ -335,9 +328,9 @@ const getUser: (userId: string) => Promise<User>;
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.getUser(userId);
+	await auth.getUser(userId);
 } catch {
-    // invalid user id
+	// invalid user id
 }
 ```
 
@@ -346,10 +339,7 @@ try {
 Get a user by the provider id (provider name, identifier).
 
 ```ts
-const getUserByProviderId: (
-    provider: string,
-    identifier: string
-) => Promise<User>;
+const getUserByProviderId: (provider: string, identifier: string) => Promise<User>;
 ```
 
 #### Parameter
@@ -377,9 +367,9 @@ const getUserByProviderId: (
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.getUserByProviderId("email", "user@example.com");
+	await auth.getUserByProviderId("email", "user@example.com");
 } catch {
-    // invalid provider id
+	// invalid provider id
 }
 ```
 
@@ -439,9 +429,9 @@ import { auth } from "$lib/server/lucia";
 import type { ServerLoad } from "@sveltejs/kit";
 
 export const Load: ServerLoad = auth.handleServerSession(async (event) => {
-    return {
-        message: "hi",
-    };
+	return {
+		message: "hi"
+	};
 });
 ```
 
@@ -465,9 +455,9 @@ const invalidateAllUserSessions: (userId: string) => Promise<void>;
 import { auth } from "$lib/server/lucia";
 
 try {
-    await auth.invalidateAllUserSession(userId);
+	await auth.invalidateAllUserSession(userId);
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -491,9 +481,9 @@ const invalidateSession: (sessionId: string) => Promise<void>;
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.invalidateSession(sessionId);
+	await auth.invalidateSession(sessionId);
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -530,11 +520,11 @@ import { auth } from "lucia-sveltekit";
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ request }) => {
-    try {
-        const sessionId = auth.parseRequest(request);
-    } catch {
-        // request from untrusted domain
-    }
+	try {
+		const sessionId = auth.parseRequest(request);
+	} catch {
+		// request from untrusted domain
+	}
 };
 ```
 
@@ -560,9 +550,9 @@ const renewSession: (sessionId: string) => Promise<Session>;
 
 #### Errors
 
-| name                    | description                            |
-| ----------------------- | -------------------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid session id                     |
+| name                    | description        |
+| ----------------------- | ------------------ |
+| AUTH_INVALID_SESSION_ID | Invalid session id |
 
 #### Example
 
@@ -570,9 +560,9 @@ const renewSession: (sessionId: string) => Promise<Session>;
 import { auth } from "lucia-sveltekit";
 
 try {
-    const session = await auth.renewSession(refreshToken);
+	const session = await auth.renewSession(refreshToken);
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -582,8 +572,8 @@ Updates one of the custom fields in the `user` table. The keys of `attributes` s
 
 ```ts
 const updateUserAttributes: (
-    userId: string,
-    attributes: Partial<Lucia.UserAttributes>
+	userId: string,
+	attributes: Partial<Lucia.UserAttributes>
 ) => Promise<User>;
 ```
 
@@ -602,9 +592,9 @@ const updateUserAttributes: (
 
 #### Errors
 
-| name                     | description                                  |
-| ------------------------ | -------------------------------------------- |
-| AUTH_INVALID_USER_ID     | Invalid refresh token                        |
+| name                 | description           |
+| -------------------- | --------------------- |
+| AUTH_INVALID_USER_ID | Invalid refresh token |
 
 #### Example
 
@@ -612,11 +602,11 @@ const updateUserAttributes: (
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.updateUserAttributes(userId, {
-        username: "user123",
-    });
+	await auth.updateUserAttributes(userId, {
+		username: "user123"
+	});
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -625,10 +615,7 @@ try {
 Updates a user's password.
 
 ```ts
-const updateUserPassword: (
-    userId: string,
-    password: string | null
-) => Promise<User>;
+const updateUserPassword: (userId: string, password: string | null) => Promise<User>;
 ```
 
 #### Parameter
@@ -646,9 +633,9 @@ const updateUserPassword: (
 
 #### Errors
 
-| name                   | description               |
-| ---------------------- | ------------------------- |
-| AUTH_INVALID_USER_ID   | Invalid refresh token     |
+| name                 | description           |
+| -------------------- | --------------------- |
+| AUTH_INVALID_USER_ID | Invalid refresh token |
 
 #### Example
 
@@ -656,10 +643,10 @@ const updateUserPassword: (
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.updateUserPassword(userId, "123456");
-    await auth.updateUserPassword(userId, null);
+	await auth.updateUserPassword(userId, "123456");
+	await auth.updateUserPassword(userId, null);
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -668,11 +655,7 @@ try {
 Updates a user's provider id.
 
 ```ts
-const updateUserProviderId: (
-    userId: string,
-    provider: string,
-    identifier: string
-) => Promise<User>;
+const updateUserProviderId: (userId: string, provider: string, identifier: string) => Promise<User>;
 ```
 
 #### Parameter
@@ -691,9 +674,9 @@ const updateUserProviderId: (
 
 #### Errors
 
-| name                   | description               |
-| ---------------------- | ------------------------- |
-| AUTH_INVALID_USER_ID   | Invalid refresh token     |
+| name                 | description           |
+| -------------------- | --------------------- |
+| AUTH_INVALID_USER_ID | Invalid refresh token |
 
 #### Example
 
@@ -701,9 +684,9 @@ const updateUserProviderId: (
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.updateUserProviderId(userId, "email", "user@example.com");
+	await auth.updateUserProviderId(userId, "email", "user@example.com");
 } catch {
-    // error
+	// error
 }
 ```
 
@@ -729,9 +712,9 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 #### Errors
 
-| name                    | description                            |
-| ----------------------- | -------------------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid active session id              |
+| name                    | description               |
+| ----------------------- | ------------------------- |
+| AUTH_INVALID_SESSION_ID | Invalid active session id |
 
 #### Example
 
@@ -739,9 +722,9 @@ const validateSession: (sessionId: string) => Promise<Session>;
 import { auth } from "lucia-sveltekit";
 
 try {
-    await auth.validateSession(sessionId);
+	await auth.validateSession(sessionId);
 } catch {
-    // invalid
+	// invalid
 }
 ```
 
@@ -779,11 +762,11 @@ import { auth } from "lucia-sveltekit";
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ request, cookies }) => {
-    try {
-        await auth.validateRequestEvent({ request, cookies });
-    } catch {
-        // unauthenticated
-    }
+	try {
+		await auth.validateRequestEvent({ request, cookies });
+	} catch {
+		// unauthenticated
+	}
 };
 ```
 
@@ -791,11 +774,11 @@ Alternatively, you can just pass the request event:
 
 ```ts
 const action: Action = async (event) => {
-    try {
-        await auth.validateRequestEvent(event);
-    } catch {
-        // unauthenticated
-    }
+	try {
+		await auth.validateRequestEvent(event);
+	} catch {
+		// unauthenticated
+	}
 };
 ```
 

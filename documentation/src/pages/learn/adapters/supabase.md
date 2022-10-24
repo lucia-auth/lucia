@@ -4,13 +4,13 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Supabase"
 ---
 
-An adapter for Supabase (v1) PostgreSQL database. **Make sure to enable row level security for all tables!**. 
+An adapter for Supabase (v1) PostgreSQL database. **Make sure to enable row level security for all tables!**.
 
 ```ts
 const adapter: (
-    url: string,
-    secret: string,
-    errorHandler?: (error: PostgrestError) => void
+	url: string,
+	secret: string,
+	errorHandler?: (error: PostgrestError) => void
 ) => Adapter;
 ```
 
@@ -42,7 +42,7 @@ yarn add @lucia-sveltekit/adapter-supabase
 import supabase from "@lucia-sveltekit/adapter-supabase";
 
 const auth = lucia({
-    adapter: supabase(url, secret),
+	adapter: supabase(url, secret)
 });
 ```
 

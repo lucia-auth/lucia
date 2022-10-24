@@ -1,44 +1,44 @@
 {
-    "name": "@lucia-sveltekit/adapter-prisma",
-    "version": "0.10.0",
-    "description": "Prisma adapter for Lucia",
-    "main": "index.js",
-    "types": "index.d.ts",
-    "module": "index.js",
-    "type": "module",
-    "files": [
-        "**/*"
-    ],
-    "scripts": {
-        "build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-        "test-main": "npx ts-node --esm -T test/index.ts",
-        "publish-package": "cd dist && pnpm publish && cd -"
-    },
-    "keywords": [
-        "sveltekit",
-        "lucia",
-        "prisma"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
-        "directory": "packages/adapter-prisma"
-    },
-    "author": "pilcrowonpaper",
-    "license": "MIT",
-    "exports": {
-        ".": "./index.js"
-    },
-    "peerDependencies": {
-        "lucia-sveltekit": "~0.14.0"
-    },
-    "devDependencies": {
-        "@lucia-sveltekit/adapter-test": "workspace:*",
-        "ts-node": "^10.9.1"
-    },
-    "dependencies": {
-        "@prisma/client": "^4.3.1",
-        "lucia-sveltekit": "workspace:*",
-        "prisma": "^4.1.1"
-    }
+	"name": "@lucia-sveltekit/adapter-prisma",
+	"version": "0.10.0",
+	"description": "Prisma adapter for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"test-main": "npx ts-node --esm -T test/index.ts",
+		"publish-package": "cd dist && pnpm publish && cd -"
+	},
+	"keywords": [
+		"sveltekit",
+		"lucia",
+		"prisma"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"directory": "packages/adapter-prisma"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-sveltekit": "~0.14.0"
+	},
+	"devDependencies": {
+		"@lucia-sveltekit/adapter-test": "workspace:*",
+		"ts-node": "^10.9.1"
+	},
+	"dependencies": {
+		"@prisma/client": "^4.3.1",
+		"lucia-sveltekit": "workspace:*",
+		"prisma": "^4.1.1"
+	}
 }

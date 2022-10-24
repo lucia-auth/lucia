@@ -1,0 +1,49 @@
+{
+	"name": "@lucia-auth/sveltekit",
+	"version": "0.1.0",
+	"description": "Lucia for SvelteKit",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"test-main": "npx ts-node --esm -T test/index.ts",
+		"publish-package": "cd dist && pnpm publish && cd -",
+		"lint": "prettier --plugin-search-dir . --check . && eslint .",
+		"format": "prettier --plugin-search-dir . --write ."
+	},
+	"keywords": [
+		"lucia",
+		"auth"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
+		"directory": "packages/lucia"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		"./package.json": "./package.json",
+		".": "./index.js",
+		"./load": "./load/index.js",
+		"./client": "./client/index.js"
+	},
+	"typesVersions": {
+		"*": {
+			"client": [
+				"client/index.d.ts"
+			],
+			"load": [
+				"load/index.d.ts"
+			]
+		}
+	},
+	"devDependencies": {
+		"lucia-auth": "workspace:*"
+	}
+}

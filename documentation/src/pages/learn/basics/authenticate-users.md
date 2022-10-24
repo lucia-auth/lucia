@@ -24,10 +24,10 @@ The following example uses `email` as the provider name and the provided email a
 import { auth } from "$lib/server/lucia.ts";
 
 const authenticateUser = async (email: string, password: string) => {
-    try {
-        await auth.authenticateUser("email", email, password);
-    } catch {
-        // error (invalid provider id or password, etc)
-    }
+	try {
+		await auth.authenticateUser("email", email, password);
+	} catch {
+		// error (invalid provider id or password, etc)
+	}
 };
 ```

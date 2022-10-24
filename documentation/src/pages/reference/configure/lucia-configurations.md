@@ -8,28 +8,28 @@ Configurations for `lucia()`.
 
 ```ts
 interface Configurations {
-    adapter:
-        | Adapter
-        | {
-              user: UserAdapter;
-              session: SessionAdapter;
-          };
-    env: Env;
-    csrfProtection?: boolean;
-    deleteCookieOptions?: CookieOption[];
-    generateCustomUserId?: () => Promise<string | null>;
-    idlePeriodTimeout?: number;
-    sessionCookieOptions?: CookieOption[];
-    sessionTimeout?: number;
-    transformUserData?: (userData: UserData) => Record<any, any>;
+	adapter:
+		| Adapter
+		| {
+				user: UserAdapter;
+				session: SessionAdapter;
+		  };
+	env: Env;
+	csrfProtection?: boolean;
+	deleteCookieOptions?: CookieOption[];
+	generateCustomUserId?: () => Promise<string | null>;
+	idlePeriodTimeout?: number;
+	sessionCookieOptions?: CookieOption[];
+	sessionTimeout?: number;
+	transformUserData?: (userData: UserData) => Record<any, any>;
 }
 ```
 
 ```ts
 type CookieOption = {
-    sameSite?: "strict" | "lax";
-    path?: string;
-    domain?: string;
+	sameSite?: "strict" | "lax";
+	path?: string;
+	domain?: string;
 };
 ```
 
@@ -80,9 +80,9 @@ Checks if the request is from a trusted origin (where the app is hosted) in [`pa
 
 A list of additional cookie options to [`sessionCookieOptions`](/reference/configure/lucia-configurations#sessioncookieoptions) for deleting session cookie(s).
 
-| type             | default                            |
-| ---------------- | ---------------------------------- |
-| `CookieOption[]` | `[]` |
+| type             | default |
+| ---------------- | ------- |
+| `CookieOption[]` | `[]`    |
 
 ### `generateCustomUserId`
 
@@ -102,7 +102,7 @@ The time in milliseconds the idle period lasts for - or the time since session e
 
 ### `sessionCookieOptions`
 
-A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to ***all*** subdomains, which is a major security issue. Some options cannot be configured for security reasons.
+A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to **_all_** subdomains, which is a major security issue. Some options cannot be configured for security reasons.
 
 | type             | default                            |
 | ---------------- | ---------------------------------- |

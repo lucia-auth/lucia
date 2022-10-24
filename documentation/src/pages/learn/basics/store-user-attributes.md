@@ -14,7 +14,7 @@ By default, the `User` object only includes the user id:
 
 ```ts
 type User = {
-    userId: string;
+	userId: string;
 };
 ```
 
@@ -22,11 +22,11 @@ We can customize this object by providing a `transformUserData()` function to th
 
 ```ts
 export const auth = lucia({
-    transformUserData: (userData) => {
-        return {
-            userId: userData.id
-        };
-    },
+	transformUserData: (userData) => {
+		return {
+			userId: userData.id
+		};
+	}
 });
 ```
 
@@ -39,7 +39,7 @@ To type `User`, add the column names and the value type inside `Lucia.UserAttrib
 ```ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-    interface UserAttributes {}
+	interface UserAttributes {}
 }
 ```
 
@@ -61,9 +61,9 @@ This should be typed in `Lucia.UserAttributes`:
 ```ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-    interface UserData {
-        username: string;
-    }
+	interface UserData {
+		username: string;
+	}
 }
 ```
 
@@ -71,12 +71,12 @@ This username column can be accessed with `userData.username` inside `transformU
 
 ```ts
 export const auth = lucia({
-    transformUserData: (userData) => {
-        return {
-            userId: userData.id,
-            username: userData.username
-        };
-    },
+	transformUserData: (userData) => {
+		return {
+			userId: userData.id,
+			username: userData.username
+		};
+	}
 });
 ```
 

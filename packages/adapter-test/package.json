@@ -1,42 +1,42 @@
 {
-    "name": "@lucia-sveltekit/adapter-test",
-    "version": "0.10.2",
-    "description": "Tests for adapters for Lucia",
-    "main": "index.js",
-    "types": "index.d.ts",
-    "module": "index.js",
-    "type": "module",
-    "files": [
-        "**/*"
-    ],
-    "scripts": {
-        "build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-        "publish-package": "cd dist && pnpm publish && cd -"
-    },
-    "keywords": [
-        "sveltekit",
-        "lucia",
-        "supabase",
-        "adapter"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
-        "directory": "packages/adapter-test"
-    },
-    "author": "pilcrowonpaper",
-    "license": "MIT",
-    "exports": {
-        ".": "./index.js"
-    },
-    "devDependencies": {
-        "@types/cli-color": "^2.0.2",
-        "@types/lodash": "^4.14.186",
-        "@types/node": "^18.6.2",
-        "lodash": "^4.17.21",
-        "lucia-sveltekit": "workspace:*"
-    },
-    "dependencies": {
-        "cli-color": "^2.0.3"
-    }
+	"name": "@lucia-sveltekit/adapter-test",
+	"version": "0.10.2",
+	"description": "Tests for adapters for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"publish-package": "cd dist && pnpm publish && cd -"
+	},
+	"keywords": [
+		"sveltekit",
+		"lucia",
+		"supabase",
+		"adapter"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"directory": "packages/adapter-test"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"devDependencies": {
+		"@types/cli-color": "^2.0.2",
+		"@types/lodash": "^4.14.186",
+		"@types/node": "^18.6.2",
+		"lodash": "^4.17.21",
+		"lucia-sveltekit": "workspace:*"
+	},
+	"dependencies": {
+		"cli-color": "^2.0.3"
+	}
 }

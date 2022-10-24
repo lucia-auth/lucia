@@ -11,54 +11,54 @@ Refer to [Database model](/reference/adapters/database-model) for database model
 ```ts
 // type imported from "lucia-sveltekit/adapter"
 type Adapter = {
-    getSessionAndUserBySessionId?: (sessionId: string) => Promise<{
-        user: UserSchema;
-        session: SessionSchema;
-    } | null>;
+	getSessionAndUserBySessionId?: (sessionId: string) => Promise<{
+		user: UserSchema;
+		session: SessionSchema;
+	} | null>;
 } & UserAdapter &
-    SessionAdapter;
+	SessionAdapter;
 ```
 
 ```ts
 // type imported from "lucia-sveltekit/adapter"
 type UserAdapter = {
-    deleteUser: (userId: string) => Promise<void>;
-    getUser: (userId: string) => Promise<UserSchema | null>;
-    getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
-    setUser: (
-        userId: string | null,
-        data: {
-            providerId: string;
-            hashedPassword: string | null;
-            attributes: Record<string, any>;
-        }
-    ) => Promise<UserSchema>;
-    updateUser: (
-        userId: string,
-        data: {
-            providerId?: string | null;
-            hashedPassword?: string | null;
-            attributes?: Record<string, any>;
-        }
-    ) => Promise<UserSchema>;
+	deleteUser: (userId: string) => Promise<void>;
+	getUser: (userId: string) => Promise<UserSchema | null>;
+	getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
+	setUser: (
+		userId: string | null,
+		data: {
+			providerId: string;
+			hashedPassword: string | null;
+			attributes: Record<string, any>;
+		}
+	) => Promise<UserSchema>;
+	updateUser: (
+		userId: string,
+		data: {
+			providerId?: string | null;
+			hashedPassword?: string | null;
+			attributes?: Record<string, any>;
+		}
+	) => Promise<UserSchema>;
 };
 ```
 
 ```ts
 // type imported from "lucia-sveltekit/adapter"
 type SessionAdapter = {
-    deleteSession: (...sessionIds: string[]) => Promise<void>;
-    deleteSessionsByUserId: (userId: string) => Promise<void>;
-    getSession: (sessionId: string) => Promise<SessionSchema | null>;
-    getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
-    setSession: (
-        sessionId: string,
-        data: {
-            userId: string;
-            expires: number;
-            idlePeriodExpires: number;
-        }
-    ) => Promise<void>;
+	deleteSession: (...sessionIds: string[]) => Promise<void>;
+	deleteSessionsByUserId: (userId: string) => Promise<void>;
+	getSession: (sessionId: string) => Promise<SessionSchema | null>;
+	getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
+	setSession: (
+		sessionId: string,
+		data: {
+			userId: string;
+			expires: number;
+			idlePeriodExpires: number;
+		}
+	) => Promise<void>;
 };
 ```
 
@@ -72,8 +72,8 @@ _optional_ - Gets a session (`session` table) and user (`user` table) with the s
 
 ```ts
 const getSessionAndUserBySessionId: (sessionId: string) => Promise<{
-    user: UserSchema;
-    session: SessionSchema;
+	user: UserSchema;
+	session: SessionSchema;
 } | null>;
 ```
 
@@ -176,12 +176,12 @@ Creates a new user in `user` table. Each values of `data.attributes` should be s
 
 ```ts
 const setUser: (
-    userId: string,
-    data: {
-        providerId: string;
-        hashedPassword: string | null;
-        attributes: Record<string, any>;
-    }
+	userId: string,
+	data: {
+		providerId: string;
+		hashedPassword: string | null;
+		attributes: Record<string, any>;
+	}
 ) => Promise<UserSchema>;
 ```
 
@@ -212,12 +212,12 @@ Updates a user (`user` table) with the user id. Only the target to update will b
 
 ```ts
 const updateUser: (
-    userId: string,
-    data: {
-        providerId?: string | null;
-        hashedPassword?: string | null;
-        attributes?: Record<string, any>;
-    }
+	userId: string,
+	data: {
+		providerId?: string | null;
+		hashedPassword?: string | null;
+		attributes?: Record<string, any>;
+	}
 ) => Promise<UserSchema>;
 ```
 
@@ -335,12 +335,12 @@ Creates a new session in `session` table.
 
 ```ts
 const setSession: (
-    sessionId: string,
-    data: {
-        userId: string;
-        expires: number;
-        idlePeriodExpires: number;
-    }
+	sessionId: string,
+	data: {
+		userId: string;
+		expires: number;
+		idlePeriodExpires: number;
+	}
 ) => Promise<void>;
 ```
 

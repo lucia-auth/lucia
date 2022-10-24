@@ -7,10 +7,7 @@ title: "Mongoose (MongoDB)"
 An adapter for Mongoose (MongoDB).
 
 ```ts
-const adapter: (
-    mongoose: Mongoose,
-    handleError?: (error: MongooseError) => void
-) => Adapter;
+const adapter: (mongoose: Mongoose, handleError?: (error: MongooseError) => void) => Adapter;
 ```
 
 **This adapter does NOT support auto user id generation.** Please generate your own user id using Lucia's `generateUserId()` in the configurations or use Mongoose's default field value. In either cases, the returned value **MUST** be a string (not `ObjectId`).
@@ -47,7 +44,7 @@ import mongoose from "mongoose";
 // set model here
 
 const auth = lucia({
-    adapter: adapter(mongoose),
+	adapter: adapter(mongoose)
 });
 ```
 
@@ -71,21 +68,21 @@ You may add additional fields to store user attributes. Refer to [Store user att
 
 ```ts
 const User = mongoose.model(
-    "user",
-    new mongoose.Schema(
-        {
-            _id: {
-                type: String,
-            },
-            provider_id: {
-                type: String,
-                unique: true,
-                required: true,
-            },
-            hashed_password: String,
-        },
-        { _id: false }
-    )
+	"user",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			provider_id: {
+				type: String,
+				unique: true,
+				required: true
+			},
+			hashed_password: String
+		},
+		{ _id: false }
+	)
 );
 ```
 
@@ -95,26 +92,26 @@ You do not need this if you're using the adapter for [`adapter.user`](/reference
 
 ```ts
 const Session = mongoose.model(
-    "session",
-    new mongoose.Schema(
-        {
-            _id: {
-                type: String,
-            },
-            user_id: {
-                type: String,
-                required: true,
-            },
-            expires: {
-                type: Number,
-                required: true,
-            },
-            idle_expires: {
-                type: Number,
-                required: true,
-            },
-        },
-        { _id: false }
-    )
+	"session",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			user_id: {
+				type: String,
+				required: true
+			},
+			expires: {
+				type: Number,
+				required: true
+			},
+			idle_expires: {
+				type: Number,
+				required: true
+			}
+		},
+		{ _id: false }
+	)
 );
 ```

@@ -10,7 +10,7 @@ Working with Lucia looks something like this. In the code below, you're creating
 
 ```ts
 const user = await auth.createUser("email", email, {
-    password,
+	password
 });
 const session = await auth.createSession(user.userId);
 locals.setSession(session);

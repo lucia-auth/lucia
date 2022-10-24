@@ -37,8 +37,8 @@ import prisma from "@lucia-sveltekit/adapter-prisma";
 import { dev } from "$app/environment";
 
 export const auth = lucia({
-    adapter: prisma(),
-    env: dev ? "DEV" : "PROD",
+	adapter: prisma(),
+	env: dev ? "DEV" : "PROD"
 });
 
 export type Auth = typeof auth;
@@ -90,17 +90,17 @@ In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.
 ```ts
 /// <reference types="lucia-sveltekit" />
 declare namespace Lucia {
-    type Auth = import("$lib/server/lucia.js").Auth;
-    type UserAttributes = {};
+	type Auth = import("$lib/server/lucia.js").Auth;
+	type UserAttributes = {};
 }
 
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
-    interface Locals {
-        getSession: import("lucia-sveltekit/types").GetSession;
-        setSession: import("lucia-sveltekit/types").SetSession;
-        clearSession: import("lucia-sveltekit/types").ClearSession;
-    }
+	interface Locals {
+		getSession: import("lucia-sveltekit/types").GetSession;
+		setSession: import("lucia-sveltekit/types").SetSession;
+		clearSession: import("lucia-sveltekit/types").ClearSession;
+	}
 }
 ```
 

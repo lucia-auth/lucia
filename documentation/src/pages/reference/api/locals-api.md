@@ -10,7 +10,7 @@ These are available inside `locals` from SvelteKit's `ServerRequest`.
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-    const session = locals.getSession();
+	const session = locals.getSession();
 };
 ```
 
@@ -29,10 +29,9 @@ import { auth } from "$lib/server/lucia";
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-    locals.clearSession();
+	locals.clearSession();
 };
 ```
-
 
 ## `getSession()`
 
@@ -54,10 +53,10 @@ const getSession: () => Session | null;
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-    const session = locals.getSession();
-    if (!session) {
-        // invalid
-    }
+	const session = locals.getSession();
+	if (!session) {
+		// invalid
+	}
 };
 ```
 
@@ -82,7 +81,7 @@ import { auth } from "$lib/server/lucia";
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-    const session = await auth.createSession();
-    locals.setSession(session);
+	const session = await auth.createSession();
+	locals.setSession(session);
 };
 ```

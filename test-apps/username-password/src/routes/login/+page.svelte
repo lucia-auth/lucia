@@ -16,13 +16,6 @@
 				form.message = 'Invalid input';
 				cancel();
 			}
-			return async ({ result, update }) => {
-				if (result.type === 'redirect') {
-					window.location.href = result.location; // invalidateAll() + goto() will not work
-					return;
-				}
-				update(result);
-			};
 		}}
 	>
 		<label for="username">username</label><br />
