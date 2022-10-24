@@ -1,4 +1,4 @@
-import { invalid, redirect, type Actions } from '@sveltejs/kit';
+import { invalid, type Actions } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 
 
