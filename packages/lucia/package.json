@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-		"package": "pnpm build && pnpm i && cd dist && pnpm publish && cd -"
+		"package": "pnpm build && pnpm install --no-frozen-lockfile && cd dist && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"sveltekit",
