@@ -62,7 +62,7 @@
 										class:hover:text-black={!isSelected}
 										class:dark:hover:text-zinc-200={!isSelected}
 									>
-										<a href={page.url} target={page.target}>{page.title}</a>
+										<a href={page.url}>{page.title}</a>
 									</li>
 								{/each}
 							</ul>

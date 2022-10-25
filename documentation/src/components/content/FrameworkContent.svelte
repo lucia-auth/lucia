@@ -9,8 +9,13 @@
 	class=" border-r lg:border-r-0 dark:border-zinc-900 lg:block shrink-0 pt-20 fixed w-72 h-screen ml-4 sm:ml-8 lg:ml-12 bg-white dark:bg-black-zinc"
 	class:hidden={!$isMenuOpen}
 >
-	{#if framework === "sveltekit"}
-		<h3 class="text-lg font-medium text-svelte">SvelteKit Integration</h3>
+	{#if framework}
+		<h3 class="text-lg font-medium">
+			{#if framework === "sveltekit"}
+				SvelteKit
+			{/if}
+			Integration
+		</h3>
 	{/if}
 	<div class="overflow-auto h-full relative overscroll-contain pr-4">
 		{#each content as section}
