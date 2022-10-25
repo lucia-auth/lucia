@@ -84,9 +84,9 @@ CREATE TABLE public.user (
 );
 
 CREATE TABLE public.session (
-  	id TEXT PRIMARY KEY
+  	id TEXT PRIMARY KEY,
 	user_id UUID REFERENCES public.user(id),
-	expires INT8 NOT NULL
+	expires INT8 NOT NULL,
 	idle_expires INT8 NOT NULL
 );
 
