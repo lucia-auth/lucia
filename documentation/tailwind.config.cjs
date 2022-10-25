@@ -7,7 +7,8 @@ module.exports = {
 				main: "#7057ff",
 				"main-darker": "#643ce8",
 				"main-black": "#0b0a26",
-				"black-zinc": "#121214"
+				"black-zinc": "#121214",
+				"svelte": "#ff6430"
 			}
 		}
 	},

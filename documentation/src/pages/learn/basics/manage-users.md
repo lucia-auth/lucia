@@ -1,5 +1,5 @@
 ---
-order: 7
+order: 5
 layout: "@layouts/DocumentLayout.astro"
 title: "Manage users"
 ---

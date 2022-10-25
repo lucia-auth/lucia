@@ -28,7 +28,7 @@ export const getContent = (sections: Section[], pages: Page[]): Content => {
 				.map((page) => {
 					return {
 						title: page.title,
-						url: page.url
+						url: page.url,
 					};
 				})
 		};
@@ -38,6 +38,7 @@ export const getContent = (sections: Section[], pages: Page[]): Content => {
 type MarkdownProps = {
 	title: string;
 	order: number;
+	redirect?: string;
 };
 
 export const getSections = (
@@ -57,13 +58,13 @@ export const getSections = (
 };
 
 export const getPages = (markdownDocs: MarkdownInstance<MarkdownProps>[], name: string): Page[] => {
-	return markdownDocs.map((doc) => {
-		const sectionIdMatches = doc.url?.match(new RegExp(`^\\/${name}\\/(?!index\\.md)(.*)\/`)) || [];
+	return markdownDocs.filter(doc => doc.url && doc.url.split("/").length > 3).map((doc) => {
+		const sectionIdMatches = doc.url?.match(new RegExp(`^\\/${name}\\/(?!index\\.md)(.*)\\/`)) || [];
 		return {
 			sectionId: sectionIdMatches[1],
 			title: doc.frontmatter.title,
-			url: doc.url || "",
-			order: doc.frontmatter.order
+			url: doc.frontmatter.redirect || doc.url || "",
+			order: doc.frontmatter.order,
 		};
 	});
 };

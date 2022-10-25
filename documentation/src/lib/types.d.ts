@@ -6,3 +6,5 @@ type Content = {
 		url: string;
 	}[];
 }[];
+
+type Framework = "sveltekit" | "express" | "nextjs"

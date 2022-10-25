@@ -1,0 +1,23 @@
+---
+import { getContent, getPages, getSections } from "src/lib/content.js";
+
+interface Props {
+	title?: string;
+}
+import Content from "@components/content/Content.svelte";
+
+const learnSections = getSections(await Astro.glob("/src/pages/learn/*/index.md"), "learn");
+const learnPages = getPages(await Astro.glob("/src/pages/learn/*/*.md"), "learn");
+const referenceSections = getSections(
+	await Astro.glob("/src/pages/reference/*/index.md"),
+	"reference"
+);
+const referencePages = getPages(await Astro.glob("/src/pages/reference/*/*.md"), "reference");
+
+const learnContent = getContent(learnSections, learnPages);
+
+const referenceContent = getContent(referenceSections, referencePages);
+const tab: "learn" | "reference" = (Astro.url.pathname.match(/^\/(\w+)\//)?.[1] as any) || "learn";
+---
+
+<Content client:load tab={tab} {learnContent} {referenceContent} currentTitle={Astro.props.title} />

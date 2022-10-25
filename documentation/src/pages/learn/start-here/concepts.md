@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Concepts"
 ---
 
-At first glance, it looks like Lucia only supports traditional identifier/password authentication. However, if you look closely at Lucia, you’ll realize it can support any authentication methods, including popular ones like OAuth. The main focus of Lucia is session and user management, not user authentication (= is the user who they claim to be?). While it does provide a way to use passwords since it’s a very common and basic, it’s 100% optional. If you know for sure who the user is (via user id from OAuth, email from magic links, email/phone number from OTP, username from username/password), you can create a new user and session based on it. This is a very deliberate design choice and the core idea behind Lucia.
+At first it may look like Lucia only supports traditional identifier/password authentication, but it can seamlessly support any authentication methods, including popular ones like OAuth. The main focus of Lucia is session and user management, not user authentication (=is the user who they claim to be?). While it does provide a way to use passwords since it’s a very common and basic strategy, it’s 100% optional. If you know for sure who the user is (via user id from OAuth, email from magic links, email/phone number from OTP, username from username/password, etc), you can create a new user and session based on that info. This is a very deliberate design choice and the core idea behind Lucia.
 
 ## How Lucia works
 

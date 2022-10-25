@@ -1,0 +1,51 @@
+---
+interface Props {
+	title?: string;
+}
+---
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<meta name="generator" content={Astro.generator} />
+	<title>
+		{Astro.props.title ? `${Astro.props.title} | Lucia` : "Lucia"}
+	</title>
+	<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+		rel="stylesheet"
+	/>
+
+	<script is:inline>
+		const getTheme = () => {
+			if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+				const storedTheme = localStorage.getItem("theme");
+				if (storedTheme === "dark") return "dark";
+			}
+			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+				return "dark";
+			}
+			return "light";
+		};
+		window.theme = getTheme();
+
+		if (theme === "light") {
+			document.documentElement.classList.remove("dark");
+		} else {
+			document.documentElement.classList.add("dark");
+		}
+		window.localStorage.setItem("theme", theme);
+	</script>
+</head>
+
+<body class="dark:bg-black-zinc dark:text-zinc-200">
+	<slot />
+	<style>
+		body {
+			font-family: "IBM Plex Sans", sans-serif;
+		}
+	</style>
+</body>

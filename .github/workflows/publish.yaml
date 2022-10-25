@@ -30,9 +30,6 @@ jobs:
               elif [[ $line == packages/sveltekit* ]];
               then
                   pkg_array+=("sveltekit")
-              elif [[ $line == packages/adapter-couchdb* ]];
-              then
-                  pkg_array+=("adapter-couchdb")
               elif [[ $line == packages/adapter-mongoose* ]];
               then
                   pkg_array+=("adapter-mongoose")
@@ -82,9 +79,6 @@ jobs:
           fi
           if [[ $pkg_string == *"sveltekit"* ]]; then
             cd packages/sveltekit && eval "$build_cmd"
-          fi
-          if [[ $pkg_string == *"adapter-couchdb"* ]]; then
-            cd packages/adapter-couchdb && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"adapter-mongoose"* ]]; then
             cd packages/adapter-mongoose && eval "$build_cmd"
