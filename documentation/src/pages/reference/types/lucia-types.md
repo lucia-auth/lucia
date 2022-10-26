@@ -4,31 +4,15 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Lucia types"
 ---
 
-Types can be imported from `lucia-sveltekit/types`.
+Types can be imported from `lucia-auth/types`.
 
 ```ts
-import type { Adapter } from "lucia-sveltekit/types";
+import type { Adapter } from "lucia-auth/types";
 ```
 
 ## `Adapter`
 
 Refer to [Adapters](/reference/adapters/adapters) reference.
-
-## `ClearSession`
-
-Type for [`clearSessions()`](/reference/api/locals-api#clearsession) locals method.
-
-```ts
-type ClearSession = () => void;
-```
-
-## `GetSession`
-
-Type for [`getSession()`](/reference/api/locals-api#getsession) locals method.
-
-```ts
-type GetSession = () => Session | null;
-```
 
 ## `LuciaError`
 
@@ -71,14 +55,6 @@ Refer to [Adapters](/reference/adapters/adapters) reference.
 ## `SessionSchema`
 
 Refer to [Database model](/reference/adapters/database-model#schema-type-1) reference.
-
-## `SetSession`
-
-Type for [`setSession()`](/reference/api/locals-api#setsession) locals method.
-
-```ts
-type SetSession = (session: Session) => void;
-```
 
 ## `User`
 

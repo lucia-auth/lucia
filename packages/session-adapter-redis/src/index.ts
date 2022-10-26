@@ -1,4 +1,4 @@
-import type { SessionSchema, SessionAdapter } from "lucia-sveltekit/types";
+import type { SessionSchema, SessionAdapter } from "lucia-auth/types";
 import type { RedisClientType } from "redis";
 
 const adapter = (

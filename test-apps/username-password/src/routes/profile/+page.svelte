@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { signOut, getUser } from '@lucia-auth/sveltekit/client';
+	import { invalidateAll } from "$app/navigation";
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	const user = getUser();
@@ -44,4 +45,9 @@
 	</form>
 </div>
 
-<button on:click={() => signOut('/')}>Sign out</button>
+<button
+	on:click={async () => {
+		await signOut();
+		invalidateAll();
+	}}>Sign out</button
+>

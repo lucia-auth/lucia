@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { Database } from "@lucia-sveltekit/adapter-test";
+import type { Database } from "@lucia-auth/adapter-test";
 import mongodb from "../src/index.js";
 
 import dotenv from "dotenv";

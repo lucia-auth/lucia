@@ -42,15 +42,15 @@ When an adapter encounters an unknown error (described above), it will throw one
 ## Installation
 
 ```bash
-npm i @lucia-sveltekit/adapter-prisma
-pnpm add @lucia-sveltekit/adapter-prisma
-yarn add @lucia-sveltekit/adapter-prisma
+npm i @lucia-auth/adapter-prisma
+pnpm add @lucia-auth/adapter-prisma
+yarn add @lucia-auth/adapter-prisma
 ```
 
 ## Usage
 
 ```ts
-import prisma from "@lucia-sveltekit/adapter-prisma";
+import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();

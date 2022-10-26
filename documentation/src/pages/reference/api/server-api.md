@@ -4,15 +4,15 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Server API"
 ---
 
-These can be imported from `lucia-sveltekit`. Can only be used inside a server context (.server.ts). The errors list is for Lucia client using official adapters.
+These can be imported from `lucia-auth`. Can only be used inside a server context (.server.ts). The errors list is for Lucia client using official adapters.
 
 ```ts
-import { generateRandomString } from "lucia-sveltekit";
+import { generateRandomString } from "lucia-auth";
 ```
 
 ## `generateRandomString()`
 
-Generates a random string of a defined length. Is cryptographically random.
+Generates a random string of a defined length using [`nanoid`](https://github.com/ai/nanoid). The output is cryptographically random.
 
 ```ts
 const generateRandomString: (length: number) => string;
@@ -98,6 +98,33 @@ try {
 }
 ```
 
+### `createBlankSessionCookies()`
+
+Creates an array of stringified cookies that will remove existing session cookies when set. Cookie options are based on [`deleteCookieOptions`]().
+
+```ts
+const createBlankSessionCookies: () => string[];
+```
+
+#### Returns
+
+| type       | description                     |
+| ---------- | ------------------------------- |
+| `string[]` | An array of stringified cookies |
+
+#### Example
+
+```ts
+import { auth } from "./lucia.js";
+
+const cookies = auth.createBlankSessionCookies(session);
+const response = new Response(null, {
+	headers: {
+		"Set-Cookie": cookies.join()
+	}
+});
+```
+
 ### `createSession()`
 
 Creates a new session of a user.
@@ -133,6 +160,39 @@ try {
 } catch {
 	// invalid user id
 }
+```
+
+### `createSessionCookies()`
+
+Creates an array of stringified session cookies. Cookie options are based on [`sessionCookieOptions`]().
+
+```ts
+const createSessionCookies: (session: Session) => string[];
+```
+
+#### Parameter
+
+| name    | type                                              | description |
+| ------- | ------------------------------------------------- | ----------- |
+| session | [`Session`](/reference/types/lucia-types#session) |             |
+
+#### Returns
+
+| type       | description                             |
+| ---------- | --------------------------------------- |
+| `string[]` | An array of stringified session cookies |
+
+#### Example
+
+```ts
+import { auth } from "./lucia.js";
+
+const cookies = auth.createSessionCookies(session);
+const response = new Response(null, {
+	headers: {
+		"Set-Cookie": cookies.join()
+	}
+});
 ```
 
 ### `createUser()`
@@ -206,7 +266,7 @@ const deleteDeadUserSessions: (userId: string) => Promise<void>;
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 
 try {
 	await auth.deleteExpiredUserSession(userId);
@@ -373,68 +433,6 @@ try {
 }
 ```
 
-### `handleHooks()`
-
-For the handle function in hooks. Reads the session id from cookies and validates it, attempting to renew it if the session id has expired. This also creates handles requests to Lucia's api endpoints and creates an internal global variable in the client.
-
-```ts
-const handleHooks: () => Handle;
-```
-
-#### Returns
-
-| type     | description       |
-| -------- | ----------------- |
-| `Handle` | A handle function |
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-
-export const handle: Handle = auth.handleHooks();
-```
-
-```ts
-import { auth } from "$lib/server/lucia";
-import { sequence } from "@sveltejs/kit";
-
-export const handle: Handle = sequence(auth.handleHooks(), customHandle);
-```
-
-### `handleServerSession()`
-
-For the root layout server load function. Reads the sessions passed on from hooks (`handleHooks()`), gets the user, and passes on to child load functions and the client. If a server load function is provided (which can return some data), Lucia will run it after it finishes handling sessions.
-
-```ts
-const handleServerSession: (serverLoad?: ServerLoad) => ServerLoad;
-```
-
-#### Parameter
-
-| name       | type         | description            | optional |
-| ---------- | ------------ | ---------------------- | -------- |
-| serverLoad | `ServerLoad` | A server load function | true     |
-
-#### Returns
-
-| type         | description            |
-| ------------ | ---------------------- |
-| `ServerLoad` | A server load function |
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-import type { ServerLoad } from "@sveltejs/kit";
-
-export const Load: ServerLoad = auth.handleServerSession(async (event) => {
-	return {
-		message: "hi"
-	};
-});
-```
-
 ### `invalidateAllUserSessions()`
 
 Invalidates all sessions of a user. Will succeed regardless of the validity of the user id.
@@ -478,7 +476,7 @@ const invalidateSession: (sessionId: string) => Promise<void>;
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 
 try {
 	await auth.invalidateSession(sessionId);
@@ -516,7 +514,7 @@ const parseRequest: (request: Request) => string;
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ request }) => {
@@ -557,7 +555,7 @@ const renewSession: (sessionId: string) => Promise<Session>;
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 
 try {
 	const session = await auth.renewSession(refreshToken);
@@ -599,7 +597,7 @@ const updateUserAttributes: (
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 
 try {
 	await auth.updateUserAttributes(userId, {
@@ -640,7 +638,7 @@ const updateUserPassword: (userId: string, password: string | null) => Promise<U
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 
 try {
 	await auth.updateUserPassword(userId, "123456");
@@ -681,7 +679,7 @@ const updateUserProviderId: (userId: string, provider: string, identifier: strin
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 
 try {
 	await auth.updateUserProviderId(userId, "email", "user@example.com");
@@ -719,7 +717,7 @@ const validateSession: (sessionId: string) => Promise<Session>;
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 
 try {
 	await auth.validateSession(sessionId);
@@ -730,7 +728,7 @@ try {
 
 ### `validateRequest()`
 
-Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. Runs [`parseRequest()`](/reference/api/server-api#parserequest) and [`validateSession()`](/reference/api/server-api#validatesession).
+Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. If the session is invalid, it attempts to renew the session.
 
 ```ts
 const validateRequest: (request: Request) => Promise<Session>;
@@ -758,7 +756,7 @@ const validateRequest: (request: Request) => Promise<Session>;
 #### Example
 
 ```ts
-import { auth } from "lucia-sveltekit";
+import { auth } from "lucia-auth";
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ request, cookies }) => {

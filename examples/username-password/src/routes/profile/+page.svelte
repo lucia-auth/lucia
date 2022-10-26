@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { signOut, getUser } from 'lucia-sveltekit/client';
+	import { signOut, getUser } from 'lucia-auth/client';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	const user = getUser();

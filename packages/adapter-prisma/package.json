@@ -1,5 +1,5 @@
 {
-	"name": "@lucia-sveltekit/adapter-prisma",
+	"name": "@lucia-auth/adapter-prisma",
 	"version": "0.1.0",
 	"description": "Prisma adapter for Lucia",
 	"main": "index.js",
@@ -21,7 +21,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
 		"directory": "packages/adapter-prisma"
 	},
 	"author": "pilcrowonpaper",
@@ -30,15 +30,15 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-sveltekit": "~0.14.0"
+		"lucia-auth": "~0.14.0"
 	},
 	"devDependencies": {
-		"@lucia-sveltekit/adapter-test": "workspace:*",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.3.1",
-		"lucia-sveltekit": "workspace:*",
+		"lucia-auth": "workspace:*",
 		"prisma": "^4.1.1"
 	}
 }

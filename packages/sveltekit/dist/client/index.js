@@ -1,13 +1,11 @@
 import { get, readable } from "svelte/store";
 import { getContext, setContext, onDestroy } from "svelte";
-export const signOut = async (redirect) => {
+export const signOut = async () => {
     await fetch("/api/auth/logout", {
         method: "POST"
     });
-    if (redirect) {
-        globalThis.location.href = redirect;
-    }
-    return;
+    const globalWindow = window;
+    globalWindow._lucia = null;
 };
 export const getUser = () => {
     const luciaContext = getContext("__lucia__");
@@ -24,7 +22,7 @@ const generateRandomNumber = () => {
 const generateId = () => {
     return generateRandomNumber().toString(36).slice(2, 7);
 };
-export const lucia = (pageStore) => {
+export const handleSession = (pageStore) => {
     const tabId = generateId();
     const initialPageStoreValue = get(pageStore);
     const initialPageData = initialPageStoreValue.data;

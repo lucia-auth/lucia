@@ -1,14 +1,14 @@
 ---
-order: 3
+order: 1
 layout: "@layouts/DocumentLayout.astro"
 title: "Quick start"
 ---
 
 This will guide you how to implement a simple username/password auth and cover the basics of Lucia. The app we're creating will be a simple note taking app with 3 pages: a sign up page, sign in page, and a profile page (this page will need auth).
 
-The [username/password example project](https://github.com/pilcrowOnPaper/lucia-sveltekit/tree/main/examples/username-password) in the repo expands on this guide.
+The [username/password example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/username-password) in the repo expands on this guide.
 
-Start off by following the steps in [the previous page](/learn/start-here/getting-started) to set up Lucia and your database.
+Start off by following the steps in [the previous page](/sveltekit/start-here/getting-started) to set up Lucia and your database.
 
 ## 1. Configure your database
 
@@ -19,7 +19,8 @@ Since we're implementing a username based auth, add a `username` column in the `
 In `src/app.d.ts`, add `username` in `UserAttributes` since we added `username` column to `user` table:
 
 ```ts
-/// <reference types="lucia-sveltekit" />
+// src/app.d.ts
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {
@@ -31,6 +32,7 @@ declare namespace Lucia {
 Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
+// lib/server/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
 	env: dev ? "DEV" : "PROD",
@@ -45,31 +47,20 @@ export const auth = lucia({
 
 ## 3. Sign up page
 
-Create `routes/signup/` route dir. This route will handle account creation. Create 3 folders inside it: `+page.svelte`. `+page.server.ts`, and `+page.ts`.
+Create `routes/signup/` route dir. This route will handle account creation. Create 3 folders inside it: `+page.svelte`, `+page.server.ts`, and `+page.ts`.
 
 ### Sign up form
 
-This form will have an input field for username and password. For the session to update after a session has been created and set, the page must refresh (server side navigation) so we'll redirect using `window.location.href`. The default behavior of `use:enhance` uses `goto()` for redirects, which triggers client side navigation.
+This form will have an input field for username and password.
 
 ```svelte
 <script lang="ts">
-	import { applyAction, enhance } from "$app/forms";
+	import { enhance } from "$app/forms";
 </script>
 
 <div>
 	<h1>Create an account</h1>
-	<form
-		method="post"
-		use:enhance={() => {
-			return async ({ result, update }) => {
-				if (result.type === "redirect") {
-					window.location.href = result.location; // invalidateAll() + goto() will not work
-					return;
-				}
-				update(result);
-			};
-		}}
-	>
+	<form method="post" use:enhance>
 		<label for="username">username</label><br />
 		<input id="username" name="username" /><br />
 		<label for="password">password</label><br />
@@ -82,6 +73,8 @@ This form will have an input field for username and password. For the session to
 ### Create users
 
 We'll set the provider id as `username` and the username as the identifier. This tells Lucia that user was created using username/password auth method and the unique identifier is the username. Let's also set the password and store the username. After creating a new user, create a new session and store the session id as a cookie.
+
+For the session to update in the client, we need to call [`invalidateAll()`]() or refresh the page entirely. `use:enhance` will only call `invalidateAll()` when the server returns a success response, and a redirect response is not considered as a success response. Since we're just using the default behavior of `use:enhance`, the action will not return a redirect, and the load function (explained below) will handle redirect after sign up.
 
 ```ts
 // +page.server.ts
@@ -109,19 +102,18 @@ export const actions: Actions = {
 			// username already in use
 			return invalid(400);
 		}
-		throw redirect(302, "/");
 	}
 };
 ```
 
 ### Redirect authenticated users
 
-Redirect authenticated users to the profile page.
+[`getUser()`]() can be used to get the user inside shared load functions (server load functions should use [`locals.getSession()`](). This will await for the parent load functions in a server but run immediately on the client. If the user exists, redirect authenticated users to the profile page.
 
 ```ts
 // +page.ts
 import { redirect } from "@sveltejs/kit";
-import { getUser } from "lucia-sveltekit/load";
+import { getUser } from "@lucia-auth/sveltekit/load";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
@@ -133,7 +125,7 @@ export const load: PageLoad = async (event) => {
 
 ## 4. Sign in page
 
-Create `routes/login/` route dir. This route will handle sign ins. Create 3 folders inside it: `+page.svelte`. `+page.server.ts`, and `+page.ts`.
+Create `routes/login/` route dir. This route will handle sign ins. Create 3 folders inside it: `+page.svelte`, `+page.server.ts`, and `+page.ts`.
 
 ### Sign in form
 
@@ -141,23 +133,12 @@ This form will also have an input field for username and password.
 
 ```svelte
 <script lang="ts">
-	import { applyAction, enhance } from "$app/forms";
+	import { enhance } from "$app/forms";
 </script>
 
 <div>
 	<h1>Create an account</h1>
-	<form
-		method="post"
-		use:enhance={() => {
-			return async ({ result, update }) => {
-				if (result.type === "redirect") {
-					window.location.href = result.location; // invalidateAll() + goto() will not work
-					return;
-				}
-				applyAction(result);
-			};
-		}}
-	>
+	<form method="post" use:enhance>
 		<label for="username">username</label><br />
 		<input id="username" name="username" /><br />
 		<label for="password">password</label><br />
@@ -192,19 +173,18 @@ export const actions: Actions = {
 			// username already in use
 			return invalid(400);
 		}
-		throw redirect(302, "/");
 	}
 };
 ```
 
 ### Redirect authenticated users
 
-Redirect authenticated users to the profile page.
+If the user exists, redirect authenticated users to the profile page.
 
 ```ts
 // +page.ts
 import { redirect } from "@sveltejs/kit";
-import { getUser } from "lucia-sveltekit/load";
+import { getUser } from "@lucia-auth/sveltekit/load";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
@@ -216,24 +196,23 @@ export const load: PageLoad = async (event) => {
 
 ## 5. Profile page (protected)
 
-This page will be the root (`/`). This route will show the user's data and have the note-taking portion of the app. Create 3 folders inside the root `/routes` dir: `+page.svelte`. `+page.server.ts`, and `+page.ts`. We'll make this route only accessible to authenticated users.
+This page will be the root (`/`). This route will show the user's data and have the note-taking portion of the app. Create 3 folders inside the root `/routes` dir: `+page.svelte`, `+page.server.ts`, and `+page.ts`. We'll make this route only accessible to authenticated users.
 
 ### Get current user
 
-You can get the current user using `getUser()`. Notice that you can get the `username` since the `username` column exists in `user` table.
+You can get the current user using `getUser()`. Notice that the `username` property exists because it was included in the returned value of `transformPageData()`.
 
 ```svelte
 <script lang="ts">
-	import { getUser } from "lucia-sveltekit/client";
-	import { page } from "$app/stores";
+	import { getUser } from "@lucia-auth/sveltekit/client";
 
 	const user = getUser();
 </script>
 
 <h1>Profile</h1>
 <div>
-	<p>User id: {user?.userId}</p>
-	<p>Username: {user?.username}</p>
+	<p>User id: {$user?.userId}</p>
+	<p>Username: {$user?.username}</p>
 </div>
 ```
 
@@ -242,7 +221,7 @@ You can get the current user using `getUser()`. Notice that you can get the `use
 ```ts
 // +page.ts
 import { redirect } from "@sveltejs/kit";
-import { getUser } from "lucia-sveltekit/load";
+import { getUser } from "@lucia-auth/sveltekit/load";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
@@ -253,12 +232,12 @@ export const load: PageLoad = async (event) => {
 
 ### Sign out
 
-Add a button that calls `signOut()`. `/login` will tell Lucia to redirect the user to `/login` route on successful sign out.
+Add a button that calls [`signOut()`](). Call [`invalidateAll()`]() afterward to re-run load functions and update the session in the client so that the user gets redirected to the login page. `invalidateAll()` for updating the session after sign out will only work if it was preceded by `signOut()`.
 
 ```svelte
 <script lang="ts">
-	import { signOut, getUser } from "lucia-sveltekit/client";
-	import { page } from "$app/stores";
+	import { signOut, getUser } from "@lucia-auth/sveltekit/client";
+	import { invalidateAll } from "$app/navigation";
 
 	const user = getUser();
 </script>
@@ -269,7 +248,12 @@ Add a button that calls `signOut()`. `/login` will tell Lucia to redirect the us
 	<p>Username: {user?.username}</p>
 </div>
 
-<button on:click={() => signOut("/login")}>Sign out</button>
+<button
+	on:click={async () => {
+		await signOut();
+		invalidateAll();
+	}}>Sign out</button
+>
 ```
 
 ## 6. Request validation
@@ -283,7 +267,7 @@ The input will have a default value of `$page.data.notes`. We'll cover this in a
 ```svelte
 <script lang="ts">
 	import { enhance } from "$app/forms";
-	import { signOut, getUser } from "lucia-sveltekit/client";
+	import { signOut, getUser } from "@lucia-auth/sveltekit/client";
 	import { page } from "$app/stores";
 
 	const user = getUser();

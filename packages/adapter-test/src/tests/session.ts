@@ -1,4 +1,4 @@
-import type { SessionAdapter } from "lucia-sveltekit/types";
+import type { SessionAdapter } from "lucia-auth/types";
 import { test, end, validate } from "../test.js";
 import { User } from "../db.js";
 import { Database } from "../index.js";

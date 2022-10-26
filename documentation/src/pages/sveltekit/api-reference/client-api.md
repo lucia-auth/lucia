@@ -4,10 +4,10 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Client API"
 ---
 
-These can be imported from `lucia-sveltekit/client`. Can only be used inside pages (+page.svelte).
+These can be imported from `@lucia-auth/sveltekit/client`. Can only be used inside pages (+page.svelte).
 
 ```ts
-import { getUser } from "lucia-sveltekit/client";
+import { getUser } from "@lucia-auth/sveltekit/client";
 ```
 
 ## getUser()
@@ -27,7 +27,7 @@ const getUser: () => Readonly<User> | null;
 #### Example
 
 ```ts
-import { getUser } from "lucia-sveltekit/client";
+import { getUser } from "@lucia-auth/sveltekit/client";
 
 const user = getUser();
 const userId = user?.userId;
@@ -57,7 +57,7 @@ const signOut: (redirect?: string) => Promise<void>;
 #### Example
 
 ```ts
-import { signOut } from "lucia-sveltekit/client";
+import { signOut } from "@lucia-auth/sveltekit/client";
 
 await signOut("/login");
 ```

@@ -1,5 +1,5 @@
-import type { Database } from "@lucia-sveltekit/adapter-test";
-import type { SessionSchema } from "lucia-sveltekit/adapter";
+import type { Database } from "@lucia-auth/adapter-test";
+import type { SessionSchema } from "lucia-auth/adapter";
 
 import { createClient } from "redis";
 import redis from "../src/index.js";

@@ -10,6 +10,7 @@ import SvelteKitContent from "@components/content/SvelteKitContent.astro";
 type Props = MarkdownLayoutProps<{
 	title: string;
 	order: number;
+	redirect?: string
 }>;
 const { frontmatter, headings } = Astro.props;
 
@@ -23,13 +24,15 @@ const frameworkParam = Astro.url.pathname.split("/")[1];
 const framework = (
 	["sveltekit", "nextjs", "express"].includes(frameworkParam) ? frameworkParam : null
 ) as Framework | null;
+
+const title = Astro.props.frontmatter.title;
 ---
 
 <BaseLayout title={frontmatter.title}>
-	<Header/>
+	<Header />
 	<div class="min-h-screen">
-		{framework === "sveltekit" && <SvelteKitContent title={Astro.props.frontmatter.title} />}
-		{framework === null && <MainContent title={Astro.props.frontmatter.title} />}
+		{framework === "sveltekit" && <SvelteKitContent title={title} />}
+		{framework === null && <MainContent title={title} />}
 		<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:ml-72 px-4 sm:px-8 lg:px-12">
 			<div class="lg:pl-4 overflow-hidden">
 				<MarkdownArticle

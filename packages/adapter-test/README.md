@@ -27,8 +27,8 @@ interface RefreshTokensSchema {
 ```
 
 ```ts
-import { testAdapter } from "@lucia-sveltekit/adapter-test";
-import type { Adapter } from "lucia-sveltekit/types";
+import { testAdapter } from "@lucia-auth/adapter-test";
+import type { Adapter } from "lucia-auth/types";
 
 const db: Database;
 const adapter: Adapter;

@@ -13,10 +13,6 @@ export type Session = {
 export type Env = "DEV" | "PROD";
 export type Error = typeof LuciaError;
 
-export type GetSession = () => Session | null;
-export type SetSession = (session: Session) => void;
-export type ClearSession = () => void;
-
 export type UserSchema = {
 	id: string;
 	hashed_password: string | null;

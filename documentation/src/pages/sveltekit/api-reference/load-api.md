@@ -4,10 +4,10 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Load API"
 ---
 
-These can be imported from `lucia-sveltekit/load`. Should only be for non server-only functions (+page/layout.ts).
+These can be imported from `@lucia-auth/sveltekit/load`. Should only be for non server-only functions (+page/layout.ts).
 
 ```ts
-import { getUser } from "lucia-sveltekit/load";
+import { getUser } from "@lucia-auth/sveltekit/load";
 ```
 
 ## getUser
@@ -33,7 +33,7 @@ const getUser: (event: LoadEvent) => Promise<Readonly<User> | null>;
 #### Example
 
 ```ts
-import { getUser } from "lucia-sveltekit/load";
+import { getUser } from "@lucia-auth/sveltekit/load";
 import type { Load } from "@sveltejs/kit";
 
 export const load: Load = async (event) => {

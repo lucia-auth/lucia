@@ -1,5 +1,5 @@
 {
-	"name": "@lucia-sveltekit/adapter-supabase",
+	"name": "@lucia-auth/adapter-supabase",
 	"version": "0.1.0",
 	"description": "Supabase adapter for Lucia",
 	"main": "index.js",
@@ -22,7 +22,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
 		"directory": "packages/adapter-supabase"
 	},
 	"author": "pilcrowonpaper",
@@ -31,15 +31,15 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-sveltekit": "~0.14.0"
+		"lucia-auth": "~0.1.0"
 	},
 	"devDependencies": {
-		"@lucia-sveltekit/adapter-test": "workspace:*",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"dotenv": "^16.0.3",
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
 		"@supabase/postgrest-js": "^0.37.4",
-		"@lucia-auth/lucia": "workspace:*"
+		"lucia-auth": "workspace:*"
 	}
 }

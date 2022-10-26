@@ -1,5 +1,5 @@
 {
-	"name": "@lucia-sveltekit/adapter-test",
+	"name": "@lucia-auth/adapter-test",
 	"version": "0.1.0",
 	"description": "Tests for adapters for Lucia",
 	"main": "index.js",
@@ -10,7 +10,7 @@
 		"**/*"
 	],
 	"scripts": {
-		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"build": "npx prisma generate && rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
 		"publish-package": "cd dist && pnpm publish && cd -"
 	},
 	"keywords": [
@@ -21,7 +21,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
+		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
 		"directory": "packages/adapter-test"
 	},
 	"author": "pilcrowonpaper",
@@ -34,7 +34,7 @@
 		"@types/lodash": "^4.14.186",
 		"@types/node": "^18.6.2",
 		"lodash": "^4.17.21",
-		"lucia-sveltekit": "workspace:*"
+		"lucia-auth": "workspace:*"
 	},
 	"dependencies": {
 		"cli-color": "^2.0.3"

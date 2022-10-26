@@ -1,5 +1,5 @@
 import { Session } from "@prisma/client";
-import type { SessionSchema } from "lucia-sveltekit/types";
+import type { SessionSchema } from "lucia-auth/types";
 
 export const convertSession = (session: Session): SessionSchema => {
 	const { expires, idle_expires: idleExpires, ...data } = session;

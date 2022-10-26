@@ -15,6 +15,10 @@ export declare type RequestEvent = {
         get: (name: string) => string | undefined;
         set: (name: string, value: string, options: any) => void;
     };
+    fetch: any;
+    getClientAddress: any;
+    params: any;
+    platform: any;
 };
 export declare type GlobalWindow = Window & {
     _lucia?: User | null;

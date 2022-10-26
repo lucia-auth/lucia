@@ -1,7 +1,7 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
-import { type Adapter } from "lucia-sveltekit/types";
-import { getUpdateData } from "lucia-sveltekit/adapter";
-import { LuciaError } from "lucia-sveltekit";
+import { type Adapter } from "lucia-auth/types";
+import { getUpdateData } from "lucia-auth/adapter";
+import { LuciaError } from "lucia-auth";
 import { convertSession } from "./utils.js";
 
 const adapter = (

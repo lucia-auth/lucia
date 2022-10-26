@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Supabase"
 ---
 
-An adapter for Supabase (v1) PostgreSQL database. **Make sure to enable row level security for all tables!**.
+An adapter for Supabase PostgreSQL database - can be used regardless of the Supabase version. **Make sure to enable row level security for all tables!**.
 
 ```ts
 const adapter: (
@@ -31,15 +31,15 @@ When an adapter encounters an unknown error (described above), it will throw `Po
 ## Installation
 
 ```bash
-npm i @lucia-sveltekit/adapter-supabase
-pnpm add @lucia-sveltekit/adapter-supabase
-yarn add @lucia-sveltekit/adapter-supabase
+npm i @lucia-auth/adapter-supabase
+pnpm add @lucia-auth/adapter-supabase
+yarn add @lucia-auth/adapter-supabase
 ```
 
 ## Usage
 
 ```ts
-import supabase from "@lucia-sveltekit/adapter-supabase";
+import supabase from "@lucia-auth/adapter-supabase";
 
 const auth = lucia({
 	adapter: supabase(url, secret)

@@ -27,9 +27,9 @@ const adapter: (
 ## Installation
 
 ```bash
-npm i @lucia-sveltekit/session-adapter-redis
-pnpm add @lucia-sveltekit/session-adapter-redis
-yarn add @lucia-sveltekit/session-adapter-redis
+npm i @lucia-auth/session-adapter-redis
+pnpm add @lucia-auth/session-adapter-redis
+yarn add @lucia-auth/session-adapter-redis
 ```
 
 ## Usage
@@ -37,10 +37,10 @@ yarn add @lucia-sveltekit/session-adapter-redis
 You will need to set up a different adapter for storing users.
 
 ```ts
-// lib/server/lucia.ts
-import lucia from "lucia-sveltekit";
-import redis from "@lucia-sveltekit/session-adapter-redis";
-import prisma from "@lucia-sveltekit/adapter-prisma";
+// lucia.js
+import lucia from "lucia-auth";
+import redis from "@lucia-auth/session-adapter-redis";
+import prisma from "@lucia-auth/adapter-prisma";
 import { createClient } from "redis";
 
 export const sessionClient = createClient();
@@ -57,11 +57,11 @@ export const auth = lucia({
 });
 ```
 
-You can connect to your Redis instance inside hooks.
+You will have to handle the database connection as well.
 
 ```ts
-// hooks.server.ts
-import { sessionClient, userSessionsClient } from "$lib/server/lucia";
+// db.ts
+import { sessionClient, userSessionsClient } from "./lucia.js";
 
 sessionClient.connect();
 userSessionsClient.connect();

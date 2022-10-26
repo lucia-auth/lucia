@@ -1,10 +1,10 @@
-import { Database } from "@lucia-sveltekit/adapter-test";
+import { Database } from "@lucia-auth/adapter-test";
 import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
 import supabase from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
-import type { SessionSchema, UserSchema } from "@lucia-auth/lucia";
+import type { SessionSchema, UserSchema } from "lucia-auth";
 
 dotenv.config({
 	path: `${resolve()}/.env`

@@ -4,10 +4,10 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Adapter API"
 ---
 
-These can be imported from `lucia-sveltekit/adapter`.
+These can be imported from `lucia-auth/adapter`.
 
 ```ts
-import { getUpdateData } from "lucia-sveltekit/adapter";
+import { getUpdateData } from "lucia-auth/adapter";
 ```
 
 ## `getUpdateData()`

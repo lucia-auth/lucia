@@ -29,8 +29,8 @@ Known errors (errors related to user id, provider id, session id) should be caug
 
 ### Tests
 
-The testing package are documented at the end of [custom adapters](https://lucia-sveltekit.vercel.app/learn/adapters/custom) . They check if they return the appropriate data and throw the appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must be passed.
+The testing package are documented at the end of [custom adapters](https://lucia-auth.vercel.app/learn/adapters/custom) . They check if they return the appropriate data and throw the appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must be passed.
 
 ### Documentation
 
-Documentation for it should go inside `lucia-sveltekit/documentation/docs/<database_name>.md`. Names within file names that should be capitalized should be defined in [`formate.ts`](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/apps/documentation/src/lib/format.ts)
+Documentation for it should go inside `lucia-auth/documentation/docs/<database_name>.md`. Names within file names that should be capitalized should be defined in [`formate.ts`](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/apps/documentation/src/lib/format.ts)

@@ -1,4 +1,4 @@
-import { Database } from "@lucia-sveltekit/adapter-test";
+import { Database } from "@lucia-auth/adapter-test";
 import { PrismaClient } from "@prisma/client";
 import prisma from "../src/index.js";
 import { convertSession } from "../src/utils.js";

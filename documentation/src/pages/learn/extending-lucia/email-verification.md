@@ -51,7 +51,7 @@ Create a new table to store user's verification code.
 ```ts
 // app.d.ts
 
-/// <reference types="lucia-sveltekit" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {
@@ -205,7 +205,7 @@ export const handleResendCodeRequest: RequestHandler = async ({ request, locals 
 Make sure to check if the user has verified their email on requests.
 
 ```ts
-import { getUser } from "lucia-sveltekit/load";
+import { getUser } from "@lucia-auth/sveltekit/load";
 
 export const load: PageLoad = async () => {
 	const user = await getUser();

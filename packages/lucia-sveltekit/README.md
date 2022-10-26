@@ -4,14 +4,14 @@
 
 A simple authentication library for SvelteKit
 
-**[Documentation](https://lucia-sveltekit.vercel.app)**
+**[Documentation](https://lucia-auth.vercel.app)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CHANGELOG.md)**
 
 ## Installation
 
 ```bash
-npm install lucia-sveltekit
-pnpm add lucia-sveltekit
-yarn add lucia-sveltekit
+npm install lucia-auth
+pnpm add lucia-auth
+yarn add lucia-auth
 ```

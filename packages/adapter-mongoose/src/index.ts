@@ -1,6 +1,6 @@
-import { LuciaError } from "lucia-sveltekit";
-import { getUpdateData } from "lucia-sveltekit/adapter";
-import type { Adapter } from "lucia-sveltekit/types";
+import { LuciaError } from "lucia-auth";
+import { getUpdateData } from "lucia-auth/adapter";
+import type { Adapter } from "lucia-auth/types";
 import Mongoose from "mongoose";
 import { convertSessionDoc, convertUserDoc } from "./utils.js";
 

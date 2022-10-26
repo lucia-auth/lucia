@@ -6,7 +6,7 @@
 
 ## v0.14.2
 
-- [Breaking] Move types exported from `lucia-sveltekit/adapter` to `lucia-sveltekit/types`
+- [Breaking] Move types exported from `lucia-auth/adapter` to `lucia-auth/types`
 
 ## v0.14.1
 

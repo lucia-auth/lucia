@@ -1,5 +1,4 @@
 import { handleLogoutRequest } from "./endpoints/index.js";
-import cookie from "cookie";
 const setPageDataGlobalVariable = ({ html }) => {
     // finds hydrate.data value from parameter of start()
     const pageDataFunctionRegex = new RegExp(/(<script type="module" data-sveltekit-hydrate=".*?">)[\s\S]*start\(\s*\{[\s\S]*?hydrate:[\s\S]*?data:\s*\(\s*(function\([\s\S]*?\)\s*{[\s\S]*?return[\s\S]*)\),\s*form:[\s\S]*?\}\);\s*<\/script>/gm);
@@ -35,18 +34,10 @@ export const handleHooks = (auth) => {
         };
         try {
             session = await auth.validateRequest(event.request);
+            event.locals.setSession(session);
         }
         catch {
-            try {
-                const sessionId = event.cookies.get("auth_session") || "";
-                const renewedSession = await auth.renewSession(sessionId);
-                await auth.deleteDeadUserSessions(renewedSession.userId);
-                session = renewedSession;
-                event.locals.setSession(session);
-            }
-            catch (e) {
-                event.locals.clearSession();
-            }
+            event.locals.clearSession();
         }
         const requestHandler = getRequestHandler(event);
         if (requestHandler)
@@ -55,28 +46,13 @@ export const handleHooks = (auth) => {
             transformPageChunk: setPageDataGlobalVariable
         });
         if (sessionToSet) {
-            const target = sessionToSet;
-            auth.configs.sessionCookieOptions.forEach((option) => {
-                const cookieString = cookie.serialize("auth_session", target.sessionId, {
-                    ...option,
-                    httpOnly: true,
-                    expires: new Date(target.idlePeriodExpires),
-                    secure: auth.configs.env === "PROD"
-                });
-                response.headers.append("set-cookie", cookieString);
-            });
+            const targetSession = sessionToSet;
+            const serializedCookies = auth.createSessionCookies(targetSession);
+            response.headers.append("set-cookie", serializedCookies.join());
         }
         if (clearSession) {
-            const options = [...auth.configs.sessionCookieOptions, ...auth.configs.deleteCookieOptions];
-            options.forEach((option) => {
-                const cookieString = cookie.serialize("auth_session", "", {
-                    ...option,
-                    httpOnly: true,
-                    maxAge: 0,
-                    secure: auth.configs.env === "PROD"
-                });
-                response.headers.append("set-cookie", cookieString);
-            });
+            const serializedCookies = auth.createBlankSessionCookies();
+            response.headers.append("set-cookie", serializedCookies.join());
         }
         return response;
     };

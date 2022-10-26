@@ -1,7 +1,7 @@
 import { PostgrestClient, PostgrestError } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
-import { LuciaError } from "@lucia-auth/lucia";
-import { getUpdateData } from "@lucia-auth/lucia/adapter";
-import type { Adapter, UserSchema, SessionSchema } from "@lucia-auth/lucia";
+import { LuciaError } from "lucia-auth";
+import { getUpdateData } from "lucia-auth/adapter";
+import type { Adapter, UserSchema, SessionSchema } from "lucia-auth";
 
 const adapter = (
 	url: string,

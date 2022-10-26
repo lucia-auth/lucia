@@ -1,5 +1,5 @@
 import lucia, { generateRandomString } from 'lucia-auth';
-import supabase from '@lucia-sveltekit/adapter-supabase';
+import supabase from '@lucia-auth/adapter-supabase';
 import { dev } from '$app/environment';
 import { SUPABASE_URL, SUPABASE_SECRET } from '$env/static/private';
 

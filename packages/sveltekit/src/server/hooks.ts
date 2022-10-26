@@ -1,5 +1,4 @@
 import { handleLogoutRequest } from "./endpoints/index.js";
-import cookie from "cookie";
 import type { Auth, Session } from "lucia-auth";
 import type { RequestEvent } from "../types.js";
 
@@ -53,16 +52,9 @@ export const handleHooks = (auth: Auth) => {
 		};
 		try {
 			session = await auth.validateRequest(event.request);
+			event.locals.setSession(session);
 		} catch {
-			try {
-				const sessionId = event.cookies.get("auth_session") || "";
-				const renewedSession = await auth.renewSession(sessionId);
-				await auth.deleteDeadUserSessions(renewedSession.userId);
-				session = renewedSession;
-				event.locals.setSession(session);
-			} catch (e) {
-				event.locals.clearSession();
-			}
+			event.locals.clearSession();
 		}
 		const requestHandler = getRequestHandler(event);
 		if (requestHandler) return await requestHandler(event, auth);
@@ -70,28 +62,13 @@ export const handleHooks = (auth: Auth) => {
 			transformPageChunk: setPageDataGlobalVariable
 		});
 		if (sessionToSet) {
-			const target: Session = sessionToSet;
-			auth.configs.sessionCookieOptions.forEach((option) => {
-				const cookieString = cookie.serialize("auth_session", target.sessionId, {
-					...option,
-					httpOnly: true,
-					expires: new Date(target.idlePeriodExpires),
-					secure: auth.configs.env === "PROD"
-				});
-				response.headers.append("set-cookie", cookieString);
-			});
+			const targetSession: Session = sessionToSet;
+			const serializedCookies = auth.createSessionCookies(targetSession);
+			response.headers.append("set-cookie", serializedCookies.join());
 		}
 		if (clearSession) {
-			const options = [...auth.configs.sessionCookieOptions, ...auth.configs.deleteCookieOptions];
-			options.forEach((option) => {
-				const cookieString = cookie.serialize("auth_session", "", {
-					...option,
-					httpOnly: true,
-					maxAge: 0,
-					secure: auth.configs.env === "PROD"
-				});
-				response.headers.append("set-cookie", cookieString);
-			});
+			const serializedCookies = auth.createBlankSessionCookies();
+			response.headers.append("set-cookie", serializedCookies.join());
 		}
 		return response;
 	};

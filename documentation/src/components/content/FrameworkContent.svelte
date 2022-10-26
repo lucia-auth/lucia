@@ -17,7 +17,7 @@
 			Integration
 		</h3>
 	{/if}
-	<div class="overflow-auto h-full relative overscroll-contain pr-4">
+	<div class="overflow-auto h-full relative overscroll-contain pr-4 mt-2">
 		{#each content as section}
 			<div class="mb-10">
 				<p class="font-medium">{section.title}</p>

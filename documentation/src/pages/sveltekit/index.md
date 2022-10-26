@@ -1,3 +1,0 @@
----
-layout: "@layouts/DocumentLayout.astro"
----

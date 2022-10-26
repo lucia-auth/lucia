@@ -7,9 +7,9 @@ title: "Testing adapters"
 Lucia provides a package for testing adapters.
 
 ```bash
-npm i @lucia-sveltekit/adapter-test
-pnpm add @lucia-sveltekit/adapter-test
-yarn add @lucia-sveltekit/adapter-test
+npm i @lucia-auth/adapter-test
+pnpm add @lucia-auth/adapter-test
+yarn add @lucia-auth/adapter-test
 ```
 
 ## Testing
@@ -40,7 +40,7 @@ declare namespace App {
 The can be imported from the package:
 
 ```ts
-import { testAdapter } from "@lucia-sveltekit/adapter-test";
+import { testAdapter } from "@lucia-auth/adapter-test";
 ```
 
 ### `testAdapter()`

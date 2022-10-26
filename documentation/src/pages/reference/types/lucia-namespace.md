@@ -6,7 +6,7 @@ title: "Lucia namespace"
 
 ```ts
 // src/app.d.ts
-/// <reference types="lucia-sveltekit" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {};

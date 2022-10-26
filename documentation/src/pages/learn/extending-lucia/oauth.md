@@ -119,7 +119,7 @@ Since the authentication steps are the same for new and existing users (sign in 
 
 ```ts
 // /routes/api/github-callback/+server.ts
-import type { User } from "lucia-sveltekit/types";
+import type { User } from "lucia-auth/types";
 
 export const GET: RequestHandler = async ({ url }) => {
 	// ...
@@ -164,7 +164,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 // /routes/api/github-callback/+server.ts
 import { auth } from "$lib/server/lucia";
 import type { RequestHandler } from "@sveltejs/kit";
-import type { User } from "lucia-sveltekit/types";
+import type { User } from "lucia-auth/types";
 
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const code = url.searchParams.get("code");

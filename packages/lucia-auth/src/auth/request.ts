@@ -25,8 +25,17 @@ type ValidateRequest = (request: Request) => Promise<Session>;
 export const validateRequestFunction = (auth: Auth) => {
 	const validateRequest: ValidateRequest = async (request) => {
 		const sessionId = auth.parseRequest(request);
-		const session = await auth.validateSession(sessionId);
-		return session;
+		try {
+			const session = await auth.validateSession(sessionId);
+			return session;
+		} catch (e) {
+			if (e instanceof LuciaError) {
+				const renewedSession = await auth.renewSession(sessionId);
+				await auth.deleteDeadUserSessions(renewedSession.userId);
+				return renewedSession;
+			}
+			throw e;
+		}
 	};
 	return validateRequest;
 };

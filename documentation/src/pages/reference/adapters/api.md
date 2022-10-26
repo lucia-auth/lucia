@@ -9,7 +9,7 @@ Adapters are just objects with a handful of methods that interact with the datab
 Refer to [Database model](/reference/adapters/database-model) for database model and types.
 
 ```ts
-// type imported from "lucia-sveltekit/adapter"
+// type imported from "lucia-auth/adapter"
 type Adapter = {
 	getSessionAndUserBySessionId?: (sessionId: string) => Promise<{
 		user: UserSchema;
@@ -20,7 +20,7 @@ type Adapter = {
 ```
 
 ```ts
-// type imported from "lucia-sveltekit/adapter"
+// type imported from "lucia-auth/adapter"
 type UserAdapter = {
 	deleteUser: (userId: string) => Promise<void>;
 	getUser: (userId: string) => Promise<UserSchema | null>;
@@ -45,7 +45,7 @@ type UserAdapter = {
 ```
 
 ```ts
-// type imported from "lucia-sveltekit/adapter"
+// type imported from "lucia-auth/adapter"
 type SessionAdapter = {
 	deleteSession: (...sessionIds: string[]) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;

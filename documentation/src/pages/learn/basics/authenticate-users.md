@@ -11,7 +11,7 @@ While Lucia will tell you (via an error) if the provider id or the password was 
 This method will not create a new session (tokens). To create a new session after authenticating a user, refer to [Create sessions](/learn/basics/create-sessions).
 
 ```ts
-import { auth } from "$lib/server/lucia.ts";
+import { auth } from "./lucia.js";
 
 await auth.authenticateUser(providerName, identifier, password);
 ```
@@ -21,7 +21,7 @@ await auth.authenticateUser(providerName, identifier, password);
 The following example uses `email` as the provider name and the provided email as the identifier.
 
 ```ts
-import { auth } from "$lib/server/lucia.ts";
+import { auth } from "./lucia.js";
 
 const authenticateUser = async (email: string, password: string) => {
 	try {

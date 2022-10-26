@@ -12,9 +12,7 @@
 	"scripts": {
 		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
 		"test-main": "npx ts-node --esm -T test/index.ts",
-		"publish-package": "cd dist && pnpm publish && cd -",
-		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"package": "pnpm build && pnpm install --no-frozen-lockfile && cd dist && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
@@ -44,6 +42,7 @@
 		}
 	},
 	"devDependencies": {
-		"lucia-auth": "workspace:*"
+		"lucia-auth": "workspace:*",
+		"svelte": "^3.52.0"
 	}
 }

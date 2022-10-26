@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { lucia } from '@lucia-auth/sveltekit/client';
+	import { handleSession } from '@lucia-auth/sveltekit/client';
 	import '../app.css';
-	
-	lucia(page);
+
+	handleSession(page);
 </script>
 
 <svelte:head>

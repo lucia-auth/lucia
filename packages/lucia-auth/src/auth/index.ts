@@ -20,6 +20,7 @@ import {
 	invalidateSessionFunction,
 	generateSessionIdFunction
 } from "./session.js";
+import { createSessionCookiesFunction, createBlankSessionCookiesFunction } from "./cookie.js";
 import clc from "cli-color";
 import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
 
@@ -90,6 +91,9 @@ export class Auth<C extends Configurations = any> {
 
 		this.parseRequest = parseRequestFunction(this);
 		this.validateRequest = validateRequestFunction(this);
+
+		this.createSessionCookies = createSessionCookiesFunction(this);
+		this.createBlankSessionCookies = createBlankSessionCookiesFunction(this);
 	}
 	public getUser: ReturnType<typeof getUserFunction>;
 	public getUserByProviderId: ReturnType<typeof getUserByProviderIdFunction>;
@@ -111,6 +115,9 @@ export class Auth<C extends Configurations = any> {
 
 	public parseRequest: ReturnType<typeof parseRequestFunction>;
 	public validateRequest: ReturnType<typeof validateRequestFunction>;
+
+	public createSessionCookies: ReturnType<typeof createSessionCookiesFunction>;
+	public createBlankSessionCookies: ReturnType<typeof createBlankSessionCookiesFunction>;
 }
 
 interface Configurations {

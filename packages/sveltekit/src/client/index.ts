@@ -3,14 +3,12 @@ import { get, type Readable, readable } from "svelte/store";
 import { getContext, setContext, onDestroy } from "svelte";
 import type { GlobalWindow, LuciaContext } from "../types.js";
 
-export const signOut = async (redirect?: string): Promise<void> => {
+export const signOut = async (): Promise<void> => {
 	await fetch("/api/auth/logout", {
 		method: "POST"
 	});
-	if (redirect) {
-		globalThis.location.href = redirect;
-	}
-	return;
+	const globalWindow = window as GlobalWindow;
+	globalWindow._lucia = null;
 };
 
 type ClientUser = Readonly<User> | null;
@@ -31,7 +29,7 @@ const generateId = (): string => {
 	return generateRandomNumber().toString(36).slice(2, 7);
 };
 
-export const lucia = (
+export const handleSession = (
 	pageStore: Readable<{
 		data: Record<string, any>;
 	}>

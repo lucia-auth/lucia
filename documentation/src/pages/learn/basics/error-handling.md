@@ -9,15 +9,15 @@ Errors are handled by throwing [`LuciaError`](/reference/types/lucia-types#lucia
 Using a try-catch block, the error message can be read with like so:
 
 ```ts
-import { LuciaError } from "lucia-sveltekit";
-import { auth } from "$lib/server/lucia";
+import { LuciaError } from "lucia-auth";
+import { auth } from "./lucia.js";
 
 try {
-    await auth.createUser()
-} (e) catch {
-    if (e instanceof LuciaError) {
-        const message = e.message
-    }
+	await auth.createUser();
+} catch (e) {
+	if (e instanceof LuciaError) {
+		const message = e.message;
+	}
 }
 ```
 
@@ -26,6 +26,8 @@ However, as Lucia uses external database adapters, it cannot catch every single 
 For example, you may have a `username` unique column inside the `user` table. If you are using Prisma and try to create a user with an existing username using `createUser()`, it will throw a Prisma error and not `LuciaError`. This can be handled outside of Lucia or by providing an error handler to your database adapter.
 
 ```ts
+import { auth } from "./lucia.js";
+
 try {
 	await auth.createUser();
 } catch (e) {

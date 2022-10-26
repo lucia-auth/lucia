@@ -1,4 +1,4 @@
-import type { SessionSchema, UserSchema, Adapter } from "lucia-sveltekit/types";
+import type { SessionSchema, UserSchema, Adapter } from "lucia-auth/types";
 import { test, end, validate } from "./../test.js";
 import { User } from "./../db.js";
 import { Database } from "../index.js";

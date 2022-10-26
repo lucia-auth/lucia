@@ -30,35 +30,34 @@ When an adapter encounters an unknown error (described above), it will throw `Mo
 ## Installation
 
 ```bash
-npm i @lucia-sveltekit/adapter-mongoose
-pnpm add @lucia-sveltekit/adapter-mongoose
-yarn add @lucia-sveltekit/adapter-mongoose
+npm i @lucia-auth/adapter-mongoose
+pnpm add @lucia-auth/adapter-mongoose
+yarn add @lucia-auth/adapter-mongoose
 ```
 
 ## Usage
 
 ```ts
-import adapter from "@lucia-sveltekit/adapter-prisma";
+import adapter from "@lucia-auth/adapter-prisma";
 import mongoose from "mongoose";
 
 // set model here
 
 const auth = lucia({
+	// ,,,
 	adapter: adapter(mongoose)
 });
 ```
 
-You'll need to connect to the database inside hooks as well:
+You'll need to handle the database connection as well.
 
 ```ts
-// hooks.server.ts
+// db.ts
 import mongoose from "mongoose";
-import { auth } from "$lib/auth/lucia";
 
 mongoose.connect(mongoUri, options);
-
-export const handle = auth.handleHooks();
 ```
+
 
 ## Models
 
