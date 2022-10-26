@@ -8,6 +8,8 @@ Using [`handleHooks()`](/reference/api/server-api#handlehooks), Lucia exposes a 
 
 ### Sign out the current user
 
+Calling this endpoint will invalidate the session and remove session cookies.
+
 ```bash
 POST
 /api/auth/logout

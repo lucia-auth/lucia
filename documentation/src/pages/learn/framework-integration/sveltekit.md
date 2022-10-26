@@ -2,5 +2,5 @@
 order: 0
 layout: "@layouts/DocumentLayout.astro"
 title: "SvelteKit"
-redirect: "/sveltekit"
+redirect: "/sveltekit/start-here/getting-started"
 ---

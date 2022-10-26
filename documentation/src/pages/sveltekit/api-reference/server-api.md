@@ -4,9 +4,15 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Server API"
 ---
 
-### `handleHooks()`
+These can be imported from `@lucia-auth/sveltekit`.
 
-For the handle function in hooks. Reads the session id from cookies and validates it, attempting to renew it if the session id has expired. This also creates handles requests to Lucia's api endpoints and creates an internal global variable in the client.
+```ts
+import { handleHooks } from "@lucia-auth/sveltekit";
+```
+
+## `handleHooks()`
+
+For the handle function in hooks. Reads the session id from cookies and validates it, attempting to renew it if the session id has expired. This also creates handles requests to Lucia's api endpoints and creates a global variable in the client for internal use.
 
 ```ts
 const handleHooks: () => Handle;
@@ -33,7 +39,7 @@ import { sequence } from "@sveltejs/kit";
 export const handle: Handle = sequence(auth.handleHooks(), customHandle);
 ```
 
-### `handleServerSession()`
+## `handleServerSession()`
 
 For the root layout server load function. Reads the sessions passed on from hooks (`handleHooks()`), gets the user, and passes on to child load functions and the client. If a server load function is provided (which can return some data), Lucia will run it after it finishes handling sessions.
 

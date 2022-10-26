@@ -1,0 +1,9 @@
+{
+    "redirects": [
+       {
+        "source": "/sveltekit",
+        "destination": "/sveltekit/start-here/getting-started",
+        "permanent": true
+       }
+    ]
+}

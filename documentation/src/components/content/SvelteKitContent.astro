@@ -15,4 +15,4 @@ const sveltekitPages = getPages(await Astro.glob("/src/pages/sveltekit/**/*.md")
 const sveltekitContent = getContent(sveltekitSections, sveltekitPages);
 ---
 
-<FrameworkContent content={sveltekitContent} framework="sveltekit" title={Astro.props.title} />
+<FrameworkContent content={sveltekitContent} framework="sveltekit" currentTitle={Astro.props.title} />
