@@ -8,15 +8,15 @@ An adapter for Prisma ORM. Can be used with: SQL, MySQL, PostgreSQL, and SQLite.
 
 ```ts
 const adapter: (
-    client: PrismaClient,
-    handleError?: (
-        error:
-            | Prisma.PrismaClientKnownRequestError
-            | Prisma.PrismaClientValidationError
-            | Prisma.PrismaClientUnknownRequestError
-            | Prisma.PrismaClientInitializationError
-            | Prisma.PrismaClientRustPanicError
-    ) => void
+	client: PrismaClient,
+	handleError?: (
+		error:
+			| Prisma.PrismaClientKnownRequestError
+			| Prisma.PrismaClientValidationError
+			| Prisma.PrismaClientUnknownRequestError
+			| Prisma.PrismaClientInitializationError
+			| Prisma.PrismaClientRustPanicError
+	) => void
 ) => Adapter;
 ```
 
@@ -33,30 +33,30 @@ const adapter: (
 
 When an adapter encounters an unknown error (described above), it will throw one of:
 
--   `Prisma.PrismaClientKnownRequestError`
--   `Prisma.PrismaClientValidationError`
--   `Prisma.PrismaClientUnknownRequestError`
--   `Prisma.PrismaClientInitializationError`
--   `Prisma.PrismaClientRustPanicError`
+- `Prisma.PrismaClientKnownRequestError`
+- `Prisma.PrismaClientValidationError`
+- `Prisma.PrismaClientUnknownRequestError`
+- `Prisma.PrismaClientInitializationError`
+- `Prisma.PrismaClientRustPanicError`
 
 ## Installation
 
 ```bash
-npm i @lucia-sveltekit/adapter-prisma
-pnpm add @lucia-sveltekit/adapter-prisma
-yarn add @lucia-sveltekit/adapter-prisma
+npm i @lucia-auth/adapter-prisma
+pnpm add @lucia-auth/adapter-prisma
+yarn add @lucia-auth/adapter-prisma
 ```
 
 ## Usage
 
 ```ts
-import prisma from "@lucia-sveltekit/adapter-prisma";
+import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
 
 const auth = lucia({
-    adapter: prisma(client),
+	adapter: prisma(client)
 });
 ```
 

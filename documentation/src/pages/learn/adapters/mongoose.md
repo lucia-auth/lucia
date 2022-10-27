@@ -7,10 +7,7 @@ title: "Mongoose (MongoDB)"
 An adapter for Mongoose (MongoDB).
 
 ```ts
-const adapter: (
-    mongoose: Mongoose,
-    handleError?: (error: MongooseError) => void
-) => Adapter;
+const adapter: (mongoose: Mongoose, handleError?: (error: MongooseError) => void) => Adapter;
 ```
 
 **This adapter does NOT support auto user id generation.** Please generate your own user id using Lucia's `generateUserId()` in the configurations or use Mongoose's default field value. In either cases, the returned value **MUST** be a string (not `ObjectId`).
@@ -33,35 +30,34 @@ When an adapter encounters an unknown error (described above), it will throw `Mo
 ## Installation
 
 ```bash
-npm i @lucia-sveltekit/adapter-mongoose
-pnpm add @lucia-sveltekit/adapter-mongoose
-yarn add @lucia-sveltekit/adapter-mongoose
+npm i @lucia-auth/adapter-mongoose
+pnpm add @lucia-auth/adapter-mongoose
+yarn add @lucia-auth/adapter-mongoose
 ```
 
 ## Usage
 
 ```ts
-import adapter from "@lucia-sveltekit/adapter-prisma";
+import adapter from "@lucia-auth/adapter-prisma";
 import mongoose from "mongoose";
 
 // set model here
 
 const auth = lucia({
-    adapter: adapter(mongoose),
+	// ,,,
+	adapter: adapter(mongoose)
 });
 ```
 
-You'll need to connect to the database inside hooks as well:
+You'll need to handle the database connection as well.
 
 ```ts
-// hooks.server.ts
+// db.ts
 import mongoose from "mongoose";
-import { auth } from "$lib/auth/lucia";
 
 mongoose.connect(mongoUri, options);
-
-export const handle = auth.handleHooks();
 ```
+
 
 ## Models
 
@@ -71,21 +67,21 @@ You may add additional fields to store user attributes. Refer to [Store user att
 
 ```ts
 const User = mongoose.model(
-    "user",
-    new mongoose.Schema(
-        {
-            _id: {
-                type: String,
-            },
-            provider_id: {
-                type: String,
-                unique: true,
-                required: true,
-            },
-            hashed_password: String,
-        },
-        { _id: false }
-    )
+	"user",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			provider_id: {
+				type: String,
+				unique: true,
+				required: true
+			},
+			hashed_password: String
+		},
+		{ _id: false }
+	)
 );
 ```
 
@@ -95,26 +91,26 @@ You do not need this if you're using the adapter for [`adapter.user`](/reference
 
 ```ts
 const Session = mongoose.model(
-    "session",
-    new mongoose.Schema(
-        {
-            _id: {
-                type: String,
-            },
-            user_id: {
-                type: String,
-                required: true,
-            },
-            expires: {
-                type: Number,
-                required: true,
-            },
-            idle_expires: {
-                type: Number,
-                required: true,
-            },
-        },
-        { _id: false }
-    )
+	"session",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			user_id: {
+				type: String,
+				required: true
+			},
+			expires: {
+				type: Number,
+				required: true
+			},
+			idle_expires: {
+				type: Number,
+				required: true
+			}
+		},
+		{ _id: false }
+	)
 );
 ```

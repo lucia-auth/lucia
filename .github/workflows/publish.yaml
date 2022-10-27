@@ -1,94 +1,97 @@
 name: "🚀 publish"
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    check_pkgs:
-        runs-on: ubuntu-latest
-        # Map a step output to a job output
-        outputs:
-            packages: ${{ steps.runscript.outputs.matrix }}
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  fetch-depth: 2
-            - id: runscript
-              run: |
-                  #check last commit
-                  output=$(git diff --name-only HEAD^ HEAD)
-                  pkg_array=()
-                  declare -A uniq_pkg_array
+  check_pkgs:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      packages: ${{ steps.runscript.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - id: runscript
+        run: |
+          #check last commit
+          output=$(git diff --name-only HEAD^ HEAD)
+          pkg_array=()
+          declare -A uniq_pkg_array
 
-                  #loop through git diff for changes
-                  for line in ${output[@]}; do
-                      if [[ $line == packages/lucia-sveltekit* ]];
-                      then
-                          pkg_array+=("lucia-sveltekit")
-                      elif [[ $line == packages/adapter-couchdb* ]];
-                      then
-                          pkg_array+=("adapter-couchdb")
-                      elif [[ $line == packages/adapter-mongoose* ]];
-                      then
-                          pkg_array+=("adapter-mongoose")
-                      elif [[ $line == packages/adapter-prisma* ]];
-                      then
-                          pkg_array+=("adapter-prisma")
-                      elif [[ $line == packages/adapter-supabase* ]];
-                      then
-                          pkg_array+=("adapter-supabase")
-                      elif [[ $line == packages/adapter-test* ]];
-                      then
-                          pkg_array+=("adapter-test")
-                      fi
-                  done
+          #loop through git diff for changes
+          for line in ${output[@]}; do
+              if [[ $line == packages/lucia-auth* ]];
+              then
+                  pkg_array+=("lucia-auth")
+              elif [[ $line == packages/sveltekit* ]];
+              then
+                  pkg_array+=("sveltekit")
+              elif [[ $line == packages/adapter-mongoose* ]];
+              then
+                  pkg_array+=("adapter-mongoose")
+              elif [[ $line == packages/adapter-prisma* ]];
+              then
+                  pkg_array+=("adapter-prisma")
+              elif [[ $line == packages/adapter-supabase* ]];
+              then
+                  pkg_array+=("adapter-supabase")
+              elif [[ $line == packages/adapter-test* ]];
+              then
+                  pkg_array+=("adapter-test")
+              elif [[ $line == packages/session-adapter-redis* ]];
+              then
+                  pkg_array+=("session-adapter-redis")
+              fi
+          done
 
-                  for pkg in "${pkg_array[@]}"; do
-                    uniq_pkg_array[$pkg]=0
-                  done
+          for pkg in "${pkg_array[@]}"; do
+            uniq_pkg_array[$pkg]=0
+          done
 
-                  #set output vars
-                  echo "::set-output name=matrix::${!uniq_pkg_array[@]}"
+          #set output vars
+          echo "::set-output name=matrix::${!uniq_pkg_array[@]}"
 
-    publish:
-        runs-on: ubuntu-latest
-        needs: check_pkgs
-        if: ${{ needs.check_pkgs.outputs.packages != '' && needs.check_pkgs.outputs.packages != '[]' }}
-        steps:
-            - name: 📚 checkout
-              uses: actions/checkout@v3
-            - name: 🟢 node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 18
-                  registry-url: https://registry.npmjs.org
-            - name: publish
-              run: |
-                  dir=$(pwd)
-                  npm i -g pnpm
-                  pkg_string="${{ needs.check_pkgs.outputs.packages }}"
-                  build_cmd="pnpm install --no-frozen-lockfile && pnpm build && cd dist && pnpm publish --no-git-checks --access public && cd $dir"
+  publish:
+    runs-on: ubuntu-latest
+    needs: check_pkgs
+    if: ${{ needs.check_pkgs.outputs.packages != '' && needs.check_pkgs.outputs.packages != '[]' }}
+    steps:
+      - name: 📚 checkout
+        uses: actions/checkout@v3
+      - name: 🟢 node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org
+      - name: publish
+        run: |
+          dir=$(pwd)
+          npm i -g pnpm
+          pkg_string="${{ needs.check_pkgs.outputs.packages }}"
+          build_cmd="pnpm install --no-frozen-lockfile && pnpm package"
 
-                  if [[ $pkg_string == *"lucia-sveltekit"* ]]; then
-                    cd packages/lucia-sveltekit && eval "$build_cmd"
-                  fi
-                  if [[ $pkg_string == *"adapter-couchdb"* ]]; then
-                    cd packages/adapter-couchdb && eval "$build_cmd"
-                  fi
-                  if [[ $pkg_string == *"adapter-mongoose"* ]]; then
-                    cd packages/adapter-mongoose && eval "$build_cmd"
-                  fi
-                  if [[ $pkg_string == *"adapter-prisma"* ]]; then
-                    cd packages/adapter-prisma && eval "$build_cmd"
-                  fi
-                  if [[ $pkg_string == *"adapter-supabase"* ]]; then
-                    cd packages/adapter-supabase && eval "$build_cmd"
-                  fi
-                  if [[ $pkg_string == *"adapter-test"* ]]; then
-                    cd packages/adapter-test && eval "$build_cmd"
-                  fi
+          if [[ $pkg_string == *"lucia-auth"* ]]; then
+            cd packages/lucia-auth && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"sveltekit"* ]]; then
+            cd packages/sveltekit && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"adapter-mongoose"* ]]; then
+            cd packages/adapter-mongoose && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"adapter-prisma"* ]]; then
+            cd packages/adapter-prisma && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"adapter-supabase"* ]]; then
+            cd packages/adapter-supabase && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"adapter-test"* ]]; then
+            cd packages/adapter-test && eval "$build_cmd"
+          fi
 
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.PNPM_AUTH_TOKEN}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.PNPM_AUTH_TOKEN}}

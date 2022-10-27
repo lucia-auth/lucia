@@ -14,16 +14,16 @@ One thing important to note that this **isn't** an out-of-the-box authentication
 
 ## Documentation
 
-**[Documentation](https://lucia-sveltekit.vercel.app)**
+**[Documentation](https://lucia-auth.vercel.app)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CHANGELOG.md)**
 
 ## Installation
 
 ```
-npm install lucia-sveltekit
+npm install lucia-auth
 ```
 
 ## Contributing
 
-**[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia-sveltekit/blob/main/CONTRIBUTING.md)**
+**[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CONTRIBUTING.md)**

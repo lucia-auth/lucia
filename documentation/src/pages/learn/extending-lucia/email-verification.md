@@ -49,15 +49,13 @@ Create a new table to store user's verification code.
 ### `app.d.ts`
 
 ```ts
-// app.d.ts
-
-/// <reference types="lucia-sveltekit" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
-    type Auth = import("$lib/server/lucia.js").Auth;
-    type UserAttributes = {
-        email: string;
-        email_verified: boolean;
-    };
+	type Auth = import("$lib/server/lucia.js").Auth;
+	type UserAttributes = {
+		email: string;
+		email_verified: boolean;
+	};
 }
 ```
 
@@ -67,57 +65,59 @@ Set up `transformPageData()` to access `email` and `email_verified`.
 
 ```ts
 lucia({
-    transformPageData: (userData) => {
-        return {
-            userId: userData.id,
-            email: userData.email,
-            isEmailVerified: userData.email_verified,
-        };
-    },
+	transformPageData: (userData) => {
+		return {
+			userId: userData.id,
+			email: userData.email,
+			isEmailVerified: userData.email_verified
+		};
+	}
 });
 ```
 
 ## 3. Sign up
 
-Create a new user and set `email_verified` to `false`. Generate a new code, store it with the expiry time, and send it to the user's email
+Sign up requests will be handled by `handleSignUpRequest()`. Create a new user and set `email_verified` to `false`. Generate a new code, store it with the expiry time, and send it to the user's email. Finally, redirect the user to the code verification form.
 
 ```ts
-import { auth } from "$lib/server/lucia";
-import { redirect, invalid } from "@sveltejs/kit";
-import type { RequestHandler } from "@sveltejs/kit";
+import { auth } from "./lucia.js";
 
-export const handleSignUpRequest: RequestHandler = async () => {
-    const formData = await request.formData();
-    const email = formData.get("email");
-    const password = formData.get("password");
-    if (
-        !email ||
-        !password ||
-        typeof email !== "string" ||
-        typeof password !== "string"
-    )
-        return invalid(400);
-    try {
-        const user = await auth.createUser("email", email, {
-            password,
-            attributes: {
-                email,
-                email_verified: false,
-            },
-        });
-        const session = await auth.createSession(user.userId);
-        const code = generateCode(); // generates number from 00000000 ~ 99999999
-        // store new code
-        await setUserVerificationCode(userId, {
-            code,
-            expires: new Date().getTime() + 1000 * 60 * 24 * 8, // 8 hours expiration
-        });
-        // send email with verification code
-        await sendEmailWithCode(email, code);
-    } catch {
-        return invalid(500);
-    }
-    throw redirect(302, "/verify-code");
+export const handleSignUpRequest = async (request: Request) => {
+	const formData = await request.formData();
+	const email = formData.get("email");
+	const password = formData.get("password");
+	if (!email || !password || typeof email !== "string" || typeof password !== "string")
+		return new Response(null, {
+			status: 400
+		});
+	try {
+		const user = await auth.createUser("email", email, {
+			password,
+			attributes: {
+				email,
+				email_verified: false
+			}
+		});
+		const session = await auth.createSession(user.userId);
+		const code = generateCode(); // generates number from 00000000 ~ 99999999
+		// store new code
+		await setUserVerificationCode(userId, {
+			code,
+			expires: new Date().getTime() + 1000 * 60 * 24 * 8 // 8 hours expiration
+		});
+		// send email with verification code
+		await sendEmailWithCode(email, code);
+	} catch {
+		return new Response(null, {
+			status: 500
+		});
+	}
+	return new Response(null, {
+		status: 302,
+		headers: {
+			location: "/verify-code"
+		}
+	});
 };
 ```
 
@@ -129,8 +129,8 @@ We will use [`nanoid`](https://github.com/ai/nanoid) to generate a random string
 import { random, customRandom } from "nanoid";
 
 export const generateCode = (length: number) => {
-    const characters = "1234567890"; // possible chars
-    return customRandom(characters, 8, random)(); // length: 8
+	const characters = "1234567890"; // possible chars
+	return customRandom(characters, 8, random)(); // length: 8
 };
 ```
 
@@ -139,45 +139,46 @@ export const generateCode = (length: number) => {
 Get the user's verification code and make sure to check the expiry time. Create a new code and resend it if it's expired. Make sure to invalidate the verification code when it's used.
 
 ```ts
-import { auth } from "$lib/server/lucia";
-import { redirect, invalid } from "@sveltejs/kit";
+import { auth } from "./lucia.js";
 
-export const handleCodeVerificationRequest: Action = async ({
-    request,
-    locals,
-}) => {
-    const session = locals.getSession();
-    if (!session) return invalid(401);
-    const formData = await request.formData();
-    const code = await formData.get("code");
-    if (!code || typeof code !== "string") return invalid(400);
-    try {
-        const codeData = await db.getUserVerificationCode(session.userId);
-        const currentTime = new Date().getTime();
-        // check if code is expired
-        if (codeDate.expires > currentTime) {
-            await deleteUserVerificationCode(session.userId);
-            const newCode = generateCode();
-            await setUserVerificationCode(userId, {
-                code: newCode,
-                expires: new Date().getTime() + 1000 * 60 * 24 * 8, // 8 hours expiration
-            });
-            await sendEmailWithCode(email, newCode);
-            // prompt user to check email again
-            return invalid(400, {
-                message: "resent code",
-            });
-        }
-        if (codeData.code !== code) return invalid(400);
-        await deleteUserVerificationCode(session.userId);
-        await auth.updateUserAttributes(session.userId, {
-            email_verified: true,
-        });
-    } catch {
-        return invalid(500);
-    }
-    // success - refresh page
-    throw redirect(302, "/");
+export const handleCodeVerificationRequest = async (request: Request) => {
+	try {
+		const session = await auth.validateRequest(request);
+		const formData = await request.formData();
+		const code = await formData.get("code");
+		if (!code || typeof code !== "string") return invalid(400);
+		try {
+			const codeData = await db.getUserVerificationCode(session.userId);
+			const currentTime = new Date().getTime();
+			// check if code is expired
+			if (codeDate.expires > currentTime) {
+				await deleteUserVerificationCode(session.userId);
+				const newCode = generateCode();
+				await setUserVerificationCode(userId, {
+					code: newCode,
+					expires: new Date().getTime() + 1000 * 60 * 24 * 8 // 8 hours expiration
+				});
+				await sendEmailWithCode(email, newCode);
+				// prompt user to check email again
+				return new Response();
+			}
+			if (codeData.code !== code) return invalid(400);
+			await deleteUserVerificationCode(session.userId);
+			await auth.updateUserAttributes(session.userId, {
+				email_verified: true
+			});
+		} catch {
+			return new Response(null, {
+				status: 500
+			});
+		}
+	} catch {
+		return new Response(null, {
+			status: 401
+		});
+	}
+	// success
+	return new Response();
 };
 ```
 
@@ -186,41 +187,50 @@ export const handleCodeVerificationRequest: Action = async ({
 In the front end, you should have a resend-code button, which will delete the existing code, generate a new one, and send it to the user
 
 ```ts
-import { auth } from "$lib/server/lucia";
-import { redirect, invalid } from "@sveltejs/kit";
-import type { RequestHandler } from "@sveltejs/kit";
+import { auth } from "./lucia.js";
 
-export const handleResendCodeRequest: RequestHandler = async ({
-    request,
-    locals,
-}) => {
-    const session = locals.getSession();
-    if (!session) return invalid(401);
-    try {
-        await deleteUserVerificationCode(session.userId);
-        const code = generateCode();
-        await code(userId, {
-            code: newCode,
-            expires: new Date().getTime() + 1000 * 60 * 24 * 8, // 8 hours expiration
-        });
-        await sendEmailWithCode(email, code);
-    } catch {
-        return invalid(500);
-    }
-    // success
+export const handleResendCodeRequest = async (request: Request) => {
+	try {
+		const session = await auth.validateRequest(request);
+		try {
+			await deleteUserVerificationCode(session.userId);
+			const code = generateCode();
+			await code(userId, {
+				code: newCode,
+				expires: new Date().getTime() + 1000 * 60 * 24 * 8 // 8 hours expiration
+			});
+			await sendEmailWithCode(email, code);
+		} catch {
+			return new Response(null, {
+				status: 500
+			});
+		}
+	} catch {
+		return new Response(null, {
+			status: 401
+		});
+	}
+	// success
+	return new Response();
 };
 ```
 
-## 5. Protected pages
+## 5. Validate requests
 
 Make sure to check if the user has verified their email on requests.
 
 ```ts
-import { getUser } from "lucia-sveltekit/load";
+import { auth } from "./lucia.js";
 
-export const load: PageLoad = async () => {
-    const user = await getUser();
-    if (!user) throw redirect(302, "/login");
-    if (!user.isEmailVerified) throw redirect(302, "/verify-code"); // to code verification page
+export const requestHandler = async (request: Request) => {
+	try {
+		const session = await auth.validateRequest(request);
+		const user = await auth.getUser(request);
+		if (!user.email_verified) {
+			// error!
+		}
+	} catch {
+		// ...
+	}
 };
 ```

@@ -1,15 +1,15 @@
 # Prisma adapter for Lucia
 
-Adapter documentation: https://lucia-sveltekit.vercel.app/learn/adapters/prisma
+Adapter documentation: https://lucia-auth.vercel.app/learn/adapters/prisma
 
-Lucia documentation: https://lucia-sveltekit.vercel.app
+Lucia documentation: https://lucia-auth.vercel.app
 
 ## Installation
 
 ```
-npm install @lucia-sveltekit/adapter-prisma
-pnpm add @lucia-sveltekit/adapter-prisma
-yarn add @lucia-sveltekit/adapter-prisma
+npm install @lucia-auth/adapter-prisma
+pnpm add @lucia-auth/adapter-prisma
+yarn add @lucia-auth/adapter-prisma
 ```
 
 ## Lucia version compatibility

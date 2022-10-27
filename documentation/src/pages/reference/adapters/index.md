@@ -1,4 +1,4 @@
 ---
-order: 1
-title: "Database adapters"
+order: 3
+title: "Adapters"
 ---

@@ -6,7 +6,7 @@ title: "Store user attributes"
 
 Any number of additional columns can be added to the `user` table. This should be generally used for commonly used data (like username and profile pictures) and for user permissions (like if the user is an admin). Larger and specific data should be stored inside a different table.
 
-The column can be unique as well, and Lucia will throw an error when a provided user data violates the unique rule upon user creation or update.
+The column can be unique as well, and the database will throw an error when a provided user data violates the unique rule upon user creation or update.
 
 ## Get user attributes
 
@@ -14,7 +14,7 @@ By default, the `User` object only includes the user id:
 
 ```ts
 type User = {
-    userId: string;
+	userId: string;
 };
 ```
 
@@ -22,11 +22,11 @@ We can customize this object by providing a `transformUserData()` function to th
 
 ```ts
 export const auth = lucia({
-    transformUserData: (userData) => {
-        return {
-            userId: userData.id
-        };
-    },
+	transformUserData: (userData) => {
+		return {
+			userId: userData.id
+		};
+	}
 });
 ```
 
@@ -34,12 +34,14 @@ export const auth = lucia({
 
 ## Types
 
-To type `User`, add the column names and the value type inside `Lucia.UserAttributes` in `src/app.d.ts`:
+To type `User`, add the column names and the value type inside `Lucia.UserAttributes`:
 
 ```ts
-/// <reference types="lucia-sveltekit" />
+// app.d.ts
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
-    interface UserAttributes {}
+	// ...
+	interface UserAttributes {}
 }
 ```
 
@@ -59,11 +61,13 @@ To store user's username, for example, a `username` column should be added to th
 This should be typed in `Lucia.UserAttributes`:
 
 ```ts
-/// <reference types="lucia-sveltekit" />
+// app.d.ts
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
-    interface UserData {
-        username: string;
-    }
+	// ...
+	interface UserAttributes {
+		username: string;
+	}
 }
 ```
 
@@ -71,19 +75,19 @@ This username column can be accessed with `userData.username` inside `transformU
 
 ```ts
 export const auth = lucia({
-    transformUserData: (userData) => {
-        return {
-            userId: userData.id,
-            username: userData.username
-        };
-    },
+	transformUserData: (userData) => {
+		return {
+			userId: userData.id,
+			username: userData.username
+		};
+	}
 });
 ```
 
 This allows us to access `username` inside the `User` object:
 
 ```ts
-import { auth } from "$lib/server/lucia.ts";
+import { auth } from "./lucia.js";
 
 const user = await auth.getUser();
 const username = user.username;

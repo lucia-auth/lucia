@@ -1,43 +1,43 @@
 {
-    "name": "@lucia-sveltekit/adapter-mongoose",
-    "version": "0.10.0",
-    "description": "Mongoose (MongoDB) adapter for Lucia",
-    "main": "index.js",
-    "types": "index.d.ts",
-    "module": "index.js",
-    "type": "module",
-    "files": [
-        "**/*"
-    ],
-    "scripts": {
-        "build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-        "test-main": "npx ts-node --esm -T test/index.ts",
-        "publish-package": "cd dist && pnpm publish && cd -"
-    },
-    "keywords": [
-        "sveltekit",
-        "lucia",
-        "mongodb"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pilcrowOnPaper/lucia-sveltekit",
-        "directory": "packages/adapter-mongodb"
-    },
-    "author": "pilcrowonpaper",
-    "license": "MIT",
-    "exports": {
-        ".": "./index.js"
-    },
-    "peerDependencies": {
-        "lucia-sveltekit": "~0.14.3"
-    },
-    "devDependencies": {
-        "@lucia-sveltekit/adapter-test": "workspace:*",
-        "dotenv": "^16.0.3"
-    },
-    "dependencies": {
-        "lucia-sveltekit": "workspace:*",
-        "mongoose": "^6.6.1"
-    }
+	"name": "@lucia-auth/adapter-mongoose",
+	"version": "0.1.0",
+	"description": "Mongoose (MongoDB) adapter for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"test-main": "npx ts-node --esm -T test/index.ts",
+		"package": "pnpm build && pnpm install --no-frozen-lockfile && cd dist && pnpm publish --no-git-checks --access public && cd ../"
+	},
+	"keywords": [
+		"sveltekit",
+		"lucia",
+		"mongodb"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
+		"directory": "packages/adapter-mongodb"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-auth": "~0.14.3"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"dotenv": "^16.0.3"
+	},
+	"dependencies": {
+		"lucia-auth": "workspace:*",
+		"mongoose": "^6.6.1"
+	}
 }

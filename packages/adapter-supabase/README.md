@@ -1,13 +1,13 @@
 # Supabase adapter for Lucia
 
-Adapter documentation: https://lucia-sveltekit.vercel.app/learn/adapters/supabase
+Adapter documentation: https://lucia-auth.vercel.app/learn/adapters/supabase
 
-Lucia documentation: https://lucia-sveltekit.vercel.app
+Lucia documentation: https://lucia-auth.vercel.app
 
 ## Installation
 
 ```
-npm install @lucia-sveltekit/adapter-supabase
+npm install @lucia-auth/adapter-supabase
 ```
 
 ## Lucia version compatibility

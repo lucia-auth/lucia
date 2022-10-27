@@ -1,83 +1,77 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
+import LandingLayout from "../layouts/LandingLayout.astro";
 
 const GITHUB_API_KEY = import.meta.env.DEV
-    ? import.meta.env.GITHUB_API_KEY
-    : process.env.GITHUB_API_KEY;
+	? import.meta.env.GITHUB_API_KEY
+	: process.env.GITHUB_API_KEY;
 
 const contributorsResponse = await fetch(
-    "https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
-    {
-        headers: {
-            Authorization: `Bearer ${GITHUB_API_KEY}`,
-        },
-    }
+	"https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
+	{
+		headers: {
+			Authorization: `Bearer ${GITHUB_API_KEY}`
+		}
+	}
 );
 const contributors = (await contributorsResponse.json()) as {
-    avatar_url: string;
-    html_url: string;
+	avatar_url: string;
+	html_url: string;
 }[];
 ---
 
-<MainLayout>
-    <div class="mt-12 sm:mt-0 pt-16 sm:pt-24">
-        <h1 class="text-7xl md:text-8xl font-bold title">Lucia</h1>
-        <p class="text-xl my-4 font-medium">
-            A simple authentication library for SvelteKit
-        </p>
-        <p class="mt-8">
-            Lucia is a library that makes user and session management simple and
-            clean. It's barebones by design, making it easy to use and
-            understand, while providing the flexibility that many other
-            authentication libraries lack. It's the authentication solution that
-            works with you and your app. Get started by reading the <a
-                href="/learn/start-here/introduction"
-                class="text-main hover:underline">introduction page.</a
-            >
-        </p>
-        <div class="mt-4">
-            <p>
-                This is a free and open source project made possible by our
-                contributors!
-            </p>
-            <div class="flex w-full gap-2 flex-wrap mt-2">
-                {
-                    contributors.map((val) => (
-                        <a href={val.html_url} target="_blank">
-                            <img
-                                src={val.avatar_url}
-                                class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main"
-                            />
-                        </a>
-                    ))
-                }
-            </div>
-        </div>
-    </div>
-</MainLayout>
+<LandingLayout>
+	<div class="mt-12 sm:mt-0 pt-16 sm:pt-24">
+		<h1 class="text-7xl md:text-8xl font-bold title">Lucia</h1>
+		<p class="text-xl my-4 font-medium">Authentication, simple and clean</p>
+		<p class="mt-8">
+			Lucia is a simple yet flexible user and session management library that provides an
+			abstraction layer between your app and your database. It's bare-bones by design, keeping
+			everything easy to use and understand. Lucia is the authentication solution that works with
+			you and your app. Get started by reading the <a
+				href="/learn/start-here/introduction"
+				class="text-main hover:underline">introduction page.</a
+			>
+		</p>
+		<div class="mt-4">
+			<p>This is a free and open source project made possible by our contributors!</p>
+			<div class="flex w-full gap-2 flex-wrap mt-2">
+				{
+					contributors.map((val) => (
+						<a href={val.html_url} target="_blank">
+							<img
+								src={val.avatar_url}
+								class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main"
+							/>
+						</a>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</LandingLayout>
 <style>
-    .title {
-        background: linear-gradient(60deg, #7057ff, #63a7ff);
-        background-size: 200% 400%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: gradient 8s linear infinite;
-    }
-    @keyframes gradient {
-        0% {
-            background-position: 0% 0%;
-        }
-        25% {
-            background-position: 20% 100%;
-        }
-        50% {
-            background-position: 100% 0%;
-        }
-        75% {
-            background-position: 50% 80%;
-        }
-        100% {
-            background-position: 0% 0%;
-        }
-    }
+	.title {
+		background: linear-gradient(60deg, #7057ff, #63a7ff);
+		background-size: 200% 400%;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		animation: gradient 8s linear infinite;
+	}
+	@keyframes gradient {
+		0% {
+			background-position: 0% 0%;
+		}
+		25% {
+			background-position: 20% 100%;
+		}
+		50% {
+			background-position: 100% 0%;
+		}
+		75% {
+			background-position: 50% 80%;
+		}
+		100% {
+			background-position: 0% 0%;
+		}
+	}
 </style>

@@ -7,9 +7,9 @@ title: "Testing adapters"
 Lucia provides a package for testing adapters.
 
 ```bash
-npm i @lucia-sveltekit/adapter-test
-pnpm add @lucia-sveltekit/adapter-test
-yarn add @lucia-sveltekit/adapter-test
+npm i @lucia-auth/adapter-test
+pnpm add @lucia-auth/adapter-test
+yarn add @lucia-auth/adapter-test
 ```
 
 ## Testing
@@ -24,14 +24,14 @@ You may need to declare the `Lucia` and SvelteKit's `App` namespace in a `.d.ts`
 
 ```ts
 declare namespace Lucia {
-    type Auth = any;
-    type UserAttributes = {
-        username: string;
-    };
+	type Auth = any;
+	type UserAttributes = {
+		username: string;
+	};
 }
 
 declare namespace App {
-    interface Locals {}
+	interface Locals {}
 }
 ```
 
@@ -40,7 +40,7 @@ declare namespace App {
 The can be imported from the package:
 
 ```ts
-import { testAdapter } from "@lucia-sveltekit/adapter-test";
+import { testAdapter } from "@lucia-auth/adapter-test";
 ```
 
 ### `testAdapter()`
@@ -72,10 +72,7 @@ const testAdapter: (adapter: Adapter, db: Database) => Promise<void>;
 `testAdapter()` but for adapters only for `session` table.
 
 ```ts
-const testSessionAdapter: (
-    adapter: SessionAdapter,
-    db: Database
-) => Promise<void>;
+const testSessionAdapter: (adapter: SessionAdapter, db: Database) => Promise<void>;
 ```
 
 ### `testSessionAdapterErrors`
@@ -83,10 +80,7 @@ const testSessionAdapter: (
 `testAdapterErrors()` but for adapters only for `session` table.
 
 ```ts
-const testSessionAdapterErrors: (
-    adapter: SessionAdapter,
-    db: Database
-) => Promise<void>;
+const testSessionAdapterErrors: (adapter: SessionAdapter, db: Database) => Promise<void>;
 ```
 
 ### `testUserAdapter()`
@@ -102,10 +96,7 @@ const testUserAdapter: (adapter: UserAdapter, db: Database) => Promise<void>;
 `testAdapterErrors()` but for adapters only for `user` table.
 
 ```ts
-const testUserAdapterErrors: (
-    adapter: UserAdapter,
-    db: Database
-) => Promise<void>;
+const testUserAdapterErrors: (adapter: UserAdapter, db: Database) => Promise<void>;
 ```
 
 ## Types
@@ -116,11 +107,11 @@ Provides methods to add, get, and delete from each table. `get` methods return a
 
 ```ts
 export interface Database {
-    getSessions: () => Promise<SessionSchema[]>;
-    getUsers: () => Promise<UserSchema[]>;
-    clearUsers: () => Promise<void>;
-    clearSessions: () => Promise<void>;
-    insertUser: (data: UserSchema) => Promise<void>;
-    insertSession: (data: SessionSchema) => Promise<void>;
+	getSessions: () => Promise<SessionSchema[]>;
+	getUsers: () => Promise<UserSchema[]>;
+	clearUsers: () => Promise<void>;
+	clearSessions: () => Promise<void>;
+	insertUser: (data: UserSchema) => Promise<void>;
+	insertSession: (data: SessionSchema) => Promise<void>;
 }
 ```

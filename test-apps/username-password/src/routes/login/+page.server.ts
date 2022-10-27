@@ -1,5 +1,6 @@
-import { invalid, redirect, type Actions } from '@sveltejs/kit';
+import { invalid, type Actions } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
+
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -14,7 +15,7 @@ export const actions: Actions = {
 		try {
 			const user = await auth.authenticateUser('username', username, password);
 			const session = await auth.createSession(user.userId);
-			locals.setSession(session)
+			locals.setSession(session);
 		} catch (e) {
 			const error = e as Error;
 			if (
@@ -31,6 +32,5 @@ export const actions: Actions = {
 				message: 'Unknown error occurred'
 			});
 		}
-		throw redirect(302, '/login');
 	}
 };

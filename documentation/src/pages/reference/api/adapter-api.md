@@ -1,13 +1,13 @@
 ---
-order: 4
+order: 1
 layout: "@layouts/DocumentLayout.astro"
 title: "Adapter API"
 ---
 
-These can be imported from `lucia-sveltekit/adapter`.
+These can be imported from `lucia-auth/adapter`.
 
 ```ts
-import { getUpdateData } from "lucia-sveltekit/adapter";
+import { getUpdateData } from "lucia-auth/adapter";
 ```
 
 ## `getUpdateData()`
@@ -16,9 +16,9 @@ Takes the `data` argument of [`updateUser()`] adapter method and converts it to 
 
 ```ts
 const getUpdateData: (data: {
-    providerId?: string | null;
-    hashedPassword?: string | null;
-    attributes?: Record<string, any>;
+	providerId?: string | null;
+	hashedPassword?: string | null;
+	attributes?: Record<string, any>;
 }) => Partial<UserSchema>;
 ```
 

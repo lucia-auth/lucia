@@ -1,7 +1,7 @@
-import lucia, { generateRandomString } from "lucia-sveltekit"
-import supabase from '@lucia-sveltekit/adapter-supabase';
-import { dev } from "$app/environment";
-import { SUPABASE_URL, SUPABASE_SECRET} from "$env/static/private"
+import lucia, { generateRandomString } from 'lucia-auth';
+import supabase from '@lucia-auth/adapter-supabase';
+import { dev } from '$app/environment';
+import { SUPABASE_URL, SUPABASE_SECRET } from '$env/static/private';
 
 export const auth = lucia({
 	adapter: supabase(SUPABASE_URL, SUPABASE_SECRET),
@@ -12,8 +12,8 @@ export const auth = lucia({
 		return {
 			userId: userData.id,
 			username: userData.username
-		}
+		};
 	}
 });
 
-export type Auth = typeof auth
+export type Auth = typeof auth;

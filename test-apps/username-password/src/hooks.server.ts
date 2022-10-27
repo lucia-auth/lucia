@@ -1,6 +1,5 @@
-import { auth, sessionInstance, userSessionInstance } from '$lib/server/lucia';
+import { auth } from '$lib/server/lucia';
+import { handleHooks } from '@lucia-auth/sveltekit';
+import type { Handle } from '@sveltejs/kit';
 
-sessionInstance.connect()
-userSessionInstance.connect()
-
-export const handle = auth.handleHooks();
+export const handle: Handle = handleHooks(auth);

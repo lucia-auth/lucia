@@ -19,7 +19,7 @@ export const actions: Actions = {
 				}
 			});
 			const session = await auth.createSession(user.userId);
-			locals.setSession(session)
+			locals.setSession(session);
 		} catch (e) {
 			const error = e as Error;
 			if (
@@ -35,6 +35,5 @@ export const actions: Actions = {
 				message: 'Unknown error occurred'
 			});
 		}
-		throw redirect(302, '/profile');
 	}
 };

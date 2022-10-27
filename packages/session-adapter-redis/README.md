@@ -1,13 +1,13 @@
 # Redis session adapter for Lucia
 
-Adapter documentation: https://lucia-sveltekit.vercel.app/learn/adapters/supabase
+Adapter documentation: https://lucia-auth.vercel.app/learn/adapters/supabase
 
-Lucia documentation: https://lucia-sveltekit.vercel.app
+Lucia documentation: https://lucia-auth.vercel.app
 
 ## Installation
 
 ```
-npm install @lucia-sveltekit/session-adapter-redis
+npm install @lucia-auth/session-adapter-redis
 ```
 
 ## Lucia version compatibility

@@ -20,11 +20,11 @@ The `user` table stores the users. The `[any]` column represents the any number 
 ### Schema type
 
 ```ts
-// type imported from "lucia-sveltekit/adapter"
+// type imported from "lucia-auth/adapter"
 export type UserSchema = {
-    id: string;
-    hashed_password: string | null;
-    provider_id: string;
+	id: string;
+	hashed_password: string | null;
+	provider_id: string;
 } & Lucia.UserAttributes;
 ```
 
@@ -42,11 +42,11 @@ The `session` table stores the user's sessions (including the access token). You
 ### Schema type
 
 ```ts
-// type imported from "lucia-sveltekit/adapter"
+// type imported from "lucia-auth/adapter"
 export type SessionSchema = {
-    id: string;
-    expires: number;
-    idle_expires: number;
-    user_id: string;
+	id: string;
+	expires: number;
+	idle_expires: number;
+	user_id: string;
 };
 ```

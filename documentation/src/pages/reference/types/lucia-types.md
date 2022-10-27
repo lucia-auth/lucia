@@ -4,31 +4,15 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Lucia types"
 ---
 
-Types can be imported from `lucia-sveltekit/types`.
+Types can be imported from `lucia-auth/types`.
 
 ```ts
-import type { Adapter } from "lucia-sveltekit/types";
+import type { Adapter } from "lucia-auth/types";
 ```
 
 ## `Adapter`
 
 Refer to [Adapters](/reference/adapters/adapters) reference.
-
-## `ClearSession`
-
-Type for [`clearSessions()`](/reference/api/locals-api#clearsession) locals method.
-
-```ts
-type ClearSession = () => void;
-```
-
-## `GetSession`
-
-Type for [`getSession()`](/reference/api/locals-api#getsession) locals method.
-
-```ts
-type GetSession = () => Session | null;
-```
 
 ## `LuciaError`
 
@@ -54,8 +38,8 @@ A session.
 
 ```ts
 type Session = {
-    userId: string;
-    expires: number;
+	userId: string;
+	expires: number;
 };
 ```
 
@@ -72,14 +56,6 @@ Refer to [Adapters](/reference/adapters/adapters) reference.
 
 Refer to [Database model](/reference/adapters/database-model#schema-type-1) reference.
 
-## `SetSession`
-
-Type for [`setSession()`](/reference/api/locals-api#setsession) locals method.
-
-```ts
-type SetSession = (session: Session) => void;
-```
-
 ## `User`
 
 Return type of [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) config.
@@ -94,7 +70,7 @@ If `transformUserData()` is undefined.
 
 ```ts
 type User = {
-    userId: string;
+	userId: string;
 };
 ```
 
@@ -108,7 +84,7 @@ The columns of `user` table excluding `hashed_password` and `provider_id`.
 
 ```ts
 type UserData = {
-    id: string;
+	id: string;
 } & Required<Lucia.UserAttributes>;
 ```
 
@@ -116,7 +92,6 @@ type UserData = {
 | ---- | ------------------------------------------------------------------------- | ---------------------------------- |
 | id   | `string`                                                                  | User id of the user                |
 |      | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional columns in `user` table |
-
 
 ## `UserSchema`
 
