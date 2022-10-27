@@ -4,10 +4,10 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Validate requests"
 ---
 
-The easiest way to validate requests is to use [`validateRequest()`]() method. This method does a few things:
+The easiest way to validate requests is to use [`validateRequest()`](/reference/api/server-api#validaterequest) method. This method does a few things:
 
 - Parse the request and get the session cookie
-- If [`csrfProtection`]() configuration is enabled, check if the domain of the origin url and url matches
+- If [`csrfProtection`](/reference/configure/lucia-configurations#csrfprotection) configuration is enabled, check if the domain of the origin url and url matches
 - Validates the session cookie
 - If it fails to validate it, attempts to renew the session
 - On session renewal, remove any dead sessions from the database
@@ -42,7 +42,7 @@ try {
 
 ### Validate the session id
 
-The [`validateSession()`]() method can be used to validate the session id. This method will **not** attempt to renew the session if the provided one is invalid.
+The [`validateSession()`](/reference/api/server-api#validatesession) method can be used to validate the session id. This method will **not** attempt to renew the session if the provided one is invalid.
 
 ```ts
 import { auth } from "./lucia.js";

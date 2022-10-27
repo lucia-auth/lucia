@@ -74,7 +74,7 @@ This form will have an input field for username and password.
 
 We'll set the provider id as `username` and the username as the identifier. This tells Lucia that user was created using username/password auth method and the unique identifier is the username. Let's also set the password and store the username. After creating a new user, create a new session and store the session id as a cookie.
 
-For the session to update in the client, we need to call [`invalidateAll()`]() or refresh the page entirely. `use:enhance` will only call `invalidateAll()` when the server returns a success response, and a redirect response is not considered as a success response. Since we're just using the default behavior of `use:enhance`, the action will not return a redirect, and the load function (explained below) will handle redirect after sign up.
+For the session to update in the client, we need to call [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall) or refresh the page entirely. `use:enhance` will only call `invalidateAll()` when the server returns a success response, and a redirect response is not considered as a success response. Since we're just using the default behavior of `use:enhance`, the action will not return a redirect, and the load function (explained below) will handle redirect after sign up.
 
 ```ts
 // +page.server.ts
@@ -108,7 +108,7 @@ export const actions: Actions = {
 
 ### Redirect authenticated users
 
-[`getUser()`]() can be used to get the user inside shared load functions (server load functions should use [`locals.getSession()`](). This will await for the parent load functions in a server but run immediately on the client. If the user exists, redirect authenticated users to the profile page.
+[`getUser()`](/sveltekit/api-reference/load-api#getuser) can be used to get the user inside shared load functions (server load functions should use [`locals.getSession()`](/sveltekit/api-reference/locals-api#getsession). This will await for the parent load functions in a server but run immediately on the client. If the user exists, redirect authenticated users to the profile page.
 
 ```ts
 // +page.ts
@@ -232,7 +232,7 @@ export const load: PageLoad = async (event) => {
 
 ### Sign out
 
-Add a button that calls [`signOut()`](). Call [`invalidateAll()`]() afterward to re-run load functions and update the session in the client so that the user gets redirected to the login page. `invalidateAll()` for updating the session after sign out will only work if it was preceded by `signOut()`.
+Add a button that calls [`signOut()`](/sveltekit/api-reference/client-api#signout). Call [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall) afterward to re-run load functions and update the session in the client so that the user gets redirected to the login page. `invalidateAll()` for updating the session after sign out will only work if it was preceded by `signOut()`.
 
 ```svelte
 <script lang="ts">

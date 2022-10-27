@@ -10,7 +10,7 @@ These can be imported from `@lucia-auth/sveltekit/client`. Can only be used insi
 import { getUser } from "@lucia-auth/sveltekit/client";
 ```
 
-## getUser()
+## `getUser()`
 
 Gets the current user.
 
@@ -33,7 +33,25 @@ const user = getUser();
 const userId = user?.userId;
 ```
 
-## signOut()
+## `handleSession()`
+
+Handles sessions in the client - must be called on the root layout for all client and load methods to work. This will sync the global client state with the server's and listen for session state change across tabs.
+
+```ts
+const handleSession: (
+	pageStore: Readable<{
+		data: Record<string, any>;
+	}>
+) => void;
+```
+
+#### Parameter
+
+| name      | type            | description |
+| --------- | --------------- | ----------- |
+| pageStore | [`PageStore`]() | Page store  |
+
+## `signOut()`
 
 Signs the user out the current session. Refresh the page for the current state to update.
 

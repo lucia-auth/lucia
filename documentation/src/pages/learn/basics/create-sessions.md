@@ -26,7 +26,7 @@ try {
 
 ## Store the tokens as cookies
 
-The session id should be manually stored as a cookie. Stringified cookies can be generated using [`createSessionCookies()`]() method.
+The session id should be manually stored as a cookie. Stringified cookies can be generated using [`createSessionCookies()`](/reference/api/server-api#createsessioncookies) method.
 
 ```ts
 import { auth } from "./lucia.js";

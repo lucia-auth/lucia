@@ -100,7 +100,7 @@ try {
 
 ### `createBlankSessionCookies()`
 
-Creates an array of stringified cookies that will remove existing session cookies when set. Cookie options are based on [`deleteCookieOptions`]().
+Creates an array of stringified cookies that will remove existing session cookies when set. Cookie options are based on [`deleteCookieOptions`](/reference/configure/lucia-configurations#deletecookieoptions).
 
 ```ts
 const createBlankSessionCookies: () => string[];
@@ -164,7 +164,7 @@ try {
 
 ### `createSessionCookies()`
 
-Creates an array of stringified session cookies. Cookie options are based on [`sessionCookieOptions`]().
+Creates an array of stringified session cookies. Cookie options are based on [`sessionCookieOptions`](/reference/configure/lucia-configurations#sessioncookieoptions).
 
 ```ts
 const createSessionCookies: (session: Session) => string[];

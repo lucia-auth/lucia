@@ -28,7 +28,7 @@ import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 ```
 
-Initialize it by calling `lucia()` and export it as `auth`. `adapter` is your database adapters, and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
+Initialize it and export it as `auth`.　As for the config, `adapter` is your database adapter and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
 
 ```ts
 // lucia.js
@@ -43,7 +43,7 @@ export const auth = lucia({
 export type Auth = typeof auth;
 ```
 
-This module and the file that holds it **should NOT be imported from the client**.
+This module **should NOT be imported from the client**.
 
 ## Configure type definition
 

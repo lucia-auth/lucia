@@ -45,10 +45,10 @@ An adapter for your database. If you're using a single database:
 
 or, if you're using a different adapter for `user` and `session` table. A normal `Adapter` can be used for both `adapter.user` and `adapter.session`
 
-| name            | type                 | description                                                              |
-| --------------- | -------------------- | ------------------------------------------------------------------------ |
-| adapter.user    | [`UserAdapter`]()    | An adapter for the database that stores users - usually a normal adapter |
-| adapter.session | [`SessionAdapter`]() | An adapter for the database that stores sessions                         |
+| name            | type                                                            | description                                                              |
+| --------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| adapter.user    | [`UserAdapter`](/reference/types/lucia-types#useradapter)       | An adapter for the database that stores users - usually a normal adapter |
+| adapter.session | [`SessionAdapter`](/reference/types/lucia-types#sessionadapter) | An adapter for the database that stores sessions                         |
 
 ### `env`
 
