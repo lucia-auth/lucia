@@ -14,10 +14,7 @@
 		"publish-package": "cd dist && pnpm publish && cd -"
 	},
 	"keywords": [
-		"sveltekit",
-		"lucia",
-		"supabase",
-		"adapter"
+		"lucia"
 	],
 	"repository": {
 		"type": "git",

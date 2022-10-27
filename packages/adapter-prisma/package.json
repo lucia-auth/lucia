@@ -15,7 +15,6 @@
 		"package": "pnpm build && pnpm install --no-frozen-lockfile && cd dist && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
-		"sveltekit",
 		"lucia",
 		"prisma"
 	],
