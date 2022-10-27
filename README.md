@@ -4,13 +4,22 @@
 
 **Thank you for 300 GitHub stars, and counting!**
 
-Lucia is a library that makes user and session management simple and
-clean. It's bare bones by design, making it easy to use and
-understand, while providing the flexibility that many other
-authentication libraries lack. It's the authentication solution that
-works with you and your app.
+Lucia is a simple yet flexible user and session management library that provides an
+abstraction layer between your app and your database. It's bare-bones by design, keeping
+everything easy to use and understand. Lucia is the authentication solution that works with
+you and your app. Get started by reading the [introduction page](/learn/start-here/introduction).
 
-One thing important to note that this **isn't** an out-of-the-box authentication library. It does not validate the user's input nor does it not provide UI elements or OAuth authentication (though it can be implemented using Lucia). These are out of the scope of this library and is left up to you.
+At its core, it makes managing users and sessions easy, and it doesn’t attempt to do anything more than that. It’s not an out-of-the-box library like NextAuth, nor an auth platform like Firebase, and that is a super important distinction. You will need to use your own database and strategies like OAuth and magic links have to be made by yourself. However, once you understand the basics of Lucia and authentication, it allows you to fully control and customize your authentication.
+
+Working with Lucia looks something like this. In the code below, you're creating a new user with a email/password method, creating a new session, and creating a cookie that you can set it to the user.
+
+```ts
+const user = await auth.createUser("email", email, {
+	password
+});
+const session = await auth.createSession(user.userId);
+const sessionCookie = auth.createSessionCookie(session)
+```
 
 ## Documentation
 
@@ -20,8 +29,10 @@ One thing important to note that this **isn't** an out-of-the-box authentication
 
 ## Installation
 
-```
-npm install lucia-auth
+```bash
+npm i lucia-auth
+pnpm add lucia-auth
+yarn add lucia-auth
 ```
 
 ## Contributing
