@@ -22,9 +22,9 @@ For the session to update in the client, [`handleServerSession()`](/sveltekit/ap
 export const actions: Actions = {
     default: async () => {
         // stuff
-        // do NOT use: redirect()
+        // do NOT use redirect() with the default use:action behavior
     }
 }
 ```
 
-Of course, you can configure the default behavior of SvelteKit so it calls `invalidateAll()` on redirects, though it may not be necessary if you have a load function that redirects users based on their auth state.
+All that being said, you can configure the default behavior of SvelteKit so it calls `invalidateAll()` on redirects, though it may not be necessary if you have a load function that redirects users based on their auth state.
