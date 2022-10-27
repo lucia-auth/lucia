@@ -18,7 +18,6 @@
 		"lucia",
 		"authentication",
 		"lucia-auth",
-		"node",
 		"auth"
 	],
 	"exports": {
