@@ -38,22 +38,18 @@ const userId = user?.userId;
 Handles sessions in the client - must be called on the root layout for all client and load methods to work. This will sync the global client state with the server's and listen for session state change across tabs.
 
 ```ts
-const handleSession: (
-	pageStore: Readable<{
-		data: Record<string, any>;
-	}>
-) => void;
+const handleSession: (pageStore: Page) => void;
 ```
 
 #### Parameter
 
-| name      | type            | description |
-| --------- | --------------- | ----------- |
-| pageStore | [`PageStore`]() | Page store  |
+| name      | type                                                          | description |
+| --------- | ------------------------------------------------------------- | ----------- |
+| pageStore | [`Page`](https://kit.svelte.dev/docs/types#sveltejs-kit-page) | Page store  |
 
 ## `signOut()`
 
-Deletes the local session cache, invalidates the user's session, and removes session cookies. 
+Deletes the local session cache, invalidates the user's session, and removes session cookies.
 
 ```ts
 const signOut: (redirect?: string) => Promise<void>;
