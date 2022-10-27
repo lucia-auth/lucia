@@ -14,11 +14,11 @@ yarn add lucia-auth @lucia-auth/sveltekit
 
 ## Set up the database
 
-Following the guide in one of the adapters provided by Lucia, set up the database and install the adapter (adapters are provided as a different NPM package).
+Using the guide from the adapter docs, set up the database and install the adapter (adapters are provided as a different NPM package).
 
 ## Initialize Lucia
 
-In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia) from `lucia-auth`. Initialize it by calling `lucia()` and export it as `auth` as usual. `adapter` is your database adapters, and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. Checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
+In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/reference/configure/lucia-configurations#env) config, checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
 
 ```ts
 // lib/server/lucia.ts
@@ -74,8 +74,8 @@ In `+layout.page`, import [`handleSession()`](/sveltekit/api-reference/client-ap
 
 ```svelte
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { handleSession } from '@lucia-auth/sveltekit/client';
+	import { page } from "$app/stores";
+	import { handleSession } from "@lucia-auth/sveltekit/client";
 
 	handleSession(page);
 </script>
