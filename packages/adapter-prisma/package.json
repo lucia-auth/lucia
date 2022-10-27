@@ -10,9 +10,9 @@
 		"**/*"
 	],
 	"scripts": {
-		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"build": "npx prisma generate && rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
 		"test-main": "npx ts-node --esm -T test/index.ts",
-		"package": "pnpm build && pnpm install --no-frozen-lockfile && cd dist && pnpm publish --no-git-checks --access public && cd ../"
+		"package": "pnpm build && cd dist && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
@@ -34,11 +34,11 @@
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
+		"prisma": "^4.5.0",
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.3.1",
-		"lucia-auth": "workspace:*",
-		"prisma": "^4.1.1"
+		"lucia-auth": "workspace:*"
 	}
 }
