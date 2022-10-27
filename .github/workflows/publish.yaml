@@ -71,8 +71,8 @@ jobs:
         run: |
           dir=$(pwd)
           npm i -g pnpm
-          pnpm install
-          cd packages/lucia-auth && pnpm prune && pnpm build && cd ../../
+          pnpm install --no-frozen-lockfile
+          cd packages/lucia-auth && pnpm install --no-frozen-lockfile && pnpm build && cd ../../
           cd packages/adapter-test && pnpm install --no-frozen-lockfile && pnpm build && cd ../../
 
           pkg_string="${{ needs.check_pkgs.outputs.packages }}"

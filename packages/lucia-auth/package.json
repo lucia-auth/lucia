@@ -18,7 +18,8 @@
 		"lucia",
 		"authentication",
 		"lucia-auth",
-		"node"
+		"node",
+		"auth"
 	],
 	"exports": {
 		"./package.json": "./package.json",
