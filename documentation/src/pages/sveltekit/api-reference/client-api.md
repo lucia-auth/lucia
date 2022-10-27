@@ -53,7 +53,7 @@ const handleSession: (
 
 ## `signOut()`
 
-Signs the user out the current session. Refresh the page for the current state to update.
+Deletes the local session cache, invalidates the user's session, and removes session cookies. 
 
 ```ts
 const signOut: (redirect?: string) => Promise<void>;
