@@ -24,6 +24,7 @@ interface Props {
 			if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
 				const storedTheme = localStorage.getItem("theme");
 				if (storedTheme === "dark") return "dark";
+				if (storedTheme === "light") return "light";
 			}
 			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 				return "dark";
