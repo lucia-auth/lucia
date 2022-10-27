@@ -16,7 +16,8 @@
 	},
 	"keywords": [
 		"lucia",
-		"redis"
+		"redis",
+		"lucia-auth"
 	],
 	"repository": {
 		"type": "git",

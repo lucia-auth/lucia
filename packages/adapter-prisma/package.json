@@ -16,7 +16,8 @@
 	},
 	"keywords": [
 		"lucia",
-		"prisma"
+		"prisma",
+		"lucia-auth"
 	],
 	"repository": {
 		"type": "git",

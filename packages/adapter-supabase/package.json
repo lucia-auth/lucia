@@ -16,7 +16,8 @@
 	},
 	"keywords": [
 		"lucia",
-		"supabase"
+		"supabase",
+		"lucia-auth"
 	],
 	"repository": {
 		"type": "git",

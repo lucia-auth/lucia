@@ -17,7 +17,8 @@
 	"keywords": [
 		"lucia",
 		"authentication",
-		"lucia-auth"
+		"lucia-auth",
+		"node"
 	],
 	"exports": {
 		"./package.json": "./package.json",

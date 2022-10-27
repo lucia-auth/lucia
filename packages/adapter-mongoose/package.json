@@ -17,7 +17,8 @@
 	"keywords": [
 		"lucia",
 		"mongodb",
-		"mongoose"
+		"mongoose",
+		"lucia-auth"
 	],
 	"repository": {
 		"type": "git",

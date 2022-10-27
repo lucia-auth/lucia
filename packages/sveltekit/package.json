@@ -17,7 +17,8 @@
 	"keywords": [
 		"lucia",
 		"sveltekit",
-		"lucia-auth"
+		"lucia-auth",
+		"authentication"
 	],
 	"repository": {
 		"type": "git",

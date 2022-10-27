@@ -14,7 +14,8 @@
 		"publish-package": "cd dist && pnpm publish && cd -"
 	},
 	"keywords": [
-		"lucia"
+		"lucia",
+		"lucia-auth"
 	],
 	"repository": {
 		"type": "git",

@@ -71,9 +71,10 @@ jobs:
         run: |
           dir=$(pwd)
           npm i -g pnpm
+          pnpm prune
           pnpm i
           pkg_string="${{ needs.check_pkgs.outputs.packages }}"
-          build_cmd="pnpm install --no-frozen-lockfile && pnpm package"
+          build_cmd="pnpm prune && pnpm install --no-frozen-lockfile && pnpm package"
 
           if [[ $pkg_string == *"lucia-auth"* ]]; then
             cd packages/lucia-auth && eval "$build_cmd"
