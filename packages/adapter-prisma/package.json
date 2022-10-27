@@ -12,7 +12,7 @@
 	"scripts": {
 		"build": "npx prisma generate && rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
 		"test-main": "npx ts-node --esm -T test/index.ts",
-		"package": "pnpm build && cd dist && pnpm publish --no-git-checks --access public && cd ../"
+		"package": "pnpm build && cd dist && pnpm prune && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
