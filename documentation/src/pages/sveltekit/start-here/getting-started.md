@@ -46,10 +46,10 @@ Due to an issue with Vite (specifically `vite-plugin-svelte` [#429](https://gith
 
 ```ts
 const config = {
-    // ...
-    ssr: {
-        noExternal: ["@lucia-auth/sveltekit"]
-    }
+	// ...
+	ssr: {
+		noExternal: ["@lucia-auth/sveltekit"]
+	}
 };
 ```
 
