@@ -18,7 +18,8 @@
 		"lucia",
 		"sveltekit",
 		"lucia-auth",
-		"authentication"
+		"authentication",
+		"svelte"
 	],
 	"repository": {
 		"type": "git",
