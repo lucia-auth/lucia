@@ -37,7 +37,7 @@ export const handleHooks = (auth: Auth) => {
 			options?: {
 				transformPageChunk: (data: { html: string }) => string;
 			}
-		) => Promise<Response>;
+		) => Promise<Response> | Response;
 	}) => {
 		let session: Session | null = null;
 		let sessionToSet: Session | null = null;

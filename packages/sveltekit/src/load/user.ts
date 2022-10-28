@@ -1,4 +1,5 @@
 import type { User } from "lucia-auth";
+import { get, readable } from "svelte/store";
 import type { GlobalWindow } from "../types.js";
 
 export const getUser = async (event: {
@@ -13,20 +14,20 @@ export const getUser = async (event: {
 	}
 	// client
 	const globalWindow = window as GlobalWindow;
-	// if lucia() in +layout.svelte hasn't run yet
-	if (globalWindow._lucia === undefined) {
-		const initialUser = getInitialClientUser();
-		globalWindow._lucia = initialUser
+	if (!globalWindow._userStore) {
+		globalWindow._userStore = readable(getInitialClientUser(), (set) => {
+			globalWindow._setUserStore = set
+		})
 	}
+	const storedUser = get(globalWindow._userStore);
 	// if hooks ran after before new session set
-	if (globalWindow._lucia) return Object.freeze(globalWindow._lucia);
+	if (storedUser) return storedUser;
 	const data = (await event.parent()) as {
 		_lucia: User | null;
 	};
 	if (!data._lucia) return null;
-	globalWindow._lucia = {
-		user: data._lucia
-	};
+	if (!globalWindow._setUserStore) throw new Error("_setUserStore() is undefined");
+	globalWindow._setUserStore(data._lucia);
 	return data._lucia;
 };
 
@@ -49,5 +50,5 @@ const getInitialClientUser = (): User | null => {
 	}, {}) as {
 		_lucia?: User | null;
 	};
-	return pageData._lucia || null
+	return pageData._lucia || null;
 };

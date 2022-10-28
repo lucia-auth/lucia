@@ -1,22 +1,42 @@
 import type { User } from "lucia-auth";
 import { get, type Readable, readable } from "svelte/store";
-import { getContext, setContext, onDestroy } from "svelte";
-import type { GlobalWindow, LuciaContext } from "../types.js";
+import { getContext, onDestroy } from "svelte";
+import type { GlobalWindow } from "../types.js";
 
 export const signOut = async (): Promise<void> => {
 	await fetch("/api/auth/logout", {
 		method: "POST"
 	});
 	const globalWindow = window as GlobalWindow;
-	globalWindow._lucia = null;
+	if (globalWindow._setUserStore) globalWindow._setUserStore(null);
 };
 
 type ClientUser = Readonly<User> | null;
 
 export const getUser = (): Readable<ClientUser> => {
-	const luciaContext = getContext("__lucia__") as LuciaContext | undefined;
-	if (!luciaContext) throw new Error("Lucia context undefined");
-	return luciaContext.user;
+	if (typeof window === "undefined") {
+		return getServerUser();
+	}
+	return getClientUser();
+};
+
+const getServerUser = (): Readable<ClientUser> => {
+	const { page } = getContext("__svelte__") as { page: Readable<{ data: {
+		_lucia?: ClientUser
+	} }> };
+	const user = get(page).data._lucia || null;
+	return {
+		subscribe: (subscriber) => {
+			subscriber(user);
+			return () => {};
+		}
+	};
+};
+
+const getClientUser = (): Readable<ClientUser> => {
+	const globalWindow = window as GlobalWindow;
+	if (!globalWindow._userStore) throw new Error("");
+	return globalWindow._userStore;
 };
 
 const generateRandomNumber = (): number => {
@@ -34,29 +54,24 @@ export const handleSession = (
 		data: Record<string, any>;
 	}>
 ) => {
+	if (typeof window === "undefined") return;
 	const tabId = generateId();
 	const initialPageStoreValue = get(pageStore);
 	const initialPageData = initialPageStoreValue.data as { _lucia?: User | null };
 	const initialUser = initialPageData?._lucia || null;
-	const setUserGlobal = (user: ClientUser) => {
-		if (typeof window === "undefined") return;
-		const globalWindow = window as GlobalWindow;
-		globalWindow._lucia = user;
-	};
-	let setUserStore: (user: ClientUser) => void = () => {};
-	setContext("__lucia__", {
-		user: readable<ClientUser>(initialUser, (set) => {
-			setUserStore = set;
-		})
-	});
+	const globalWindow = window as GlobalWindow;
+	if (!globalWindow._userStore) {
+		globalWindow._userStore = readable<ClientUser>(initialUser, (set) => {
+			globalWindow._setUserStore = set;
+		});
+	}
 	const pageStoreUnsubscribe = pageStore.subscribe((pageStoreValue) => {
 		const pageData = pageStoreValue.data as { _lucia?: User | null };
 		const user = pageData?._lucia || null;
-		setUserGlobal(user);
-		setUserStore(user);
+		if (!globalWindow._setUserStore) throw new Error("_setUserStore() is undefined");
+		globalWindow._setUserStore(user);
 	});
 	const userStore = getUser();
-	if (typeof window === "undefined") return;
 	const broadcastChannel = new BroadcastChannel("__lucia__");
 	const userStoreUnsubscribe = userStore.subscribe((userStoreValue) => {
 		broadcastChannel?.postMessage({
@@ -70,8 +85,8 @@ export const handleSession = (
 			id: string;
 		};
 		if (messageData.id === tabId) return;
-		setUserGlobal(messageData.user);
-		setUserStore(messageData.user);
+		if (!globalWindow._setUserStore) throw new Error("_setUserStore() is undefined");
+		globalWindow._setUserStore(messageData.user);
 	});
 	onDestroy(() => {
 		broadcastChannel.close();
