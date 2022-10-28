@@ -38,7 +38,7 @@ yarn add @lucia-auth/adapter-mongoose
 ## Usage
 
 ```ts
-import adapter from "@lucia-auth/adapter-prisma";
+import adapter from "@lucia-auth/adapter-mongoose";
 import mongoose from "mongoose";
 
 // set model here
