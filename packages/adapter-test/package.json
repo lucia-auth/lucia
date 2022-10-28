@@ -11,7 +11,7 @@
 	],
 	"scripts": {
 		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-		"package": "pnpm build && cd dist && pnpm prune && pnpm publish --no-git-checks --access public && cd ../"
+		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
