@@ -1,8 +1,12 @@
-# Mongoose (MongoDB) adapter for Lucia
+# `@lucia-auth/adapter-mongoose`
 
-Adapter documentation: https://lucia-auth.vercel.app/learn/adapters/mongoose
+[Mongoose](https://mongoosejs.com) ([MongoDB](https://www.mongodb.com)) adapter for Lucia
 
-Lucia documentation: https://lucia-auth.vercel.app
+**[Documentation](https://lucia-auth.vercel.app/learn/adapters/mongoose)**
+
+**[Lucia documentation](https://lucia-auth.vercel.app)**
+
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/adapter-mongoose/CHANGELOG.md)**
 
 ## Installation
 
@@ -16,8 +20,7 @@ yarn add @lucia-auth/adapter-mongoose
 
 | Mongoose adapter version | Lucia version |
 | ------------------------ | ------------- |
-| v0.10.x                  | v0.14.3+      |
-| v0.4.x                   | v0.13.0+      |
+| v0.1.0+                  | v0.1.0+       |
 
 ## Testing
 

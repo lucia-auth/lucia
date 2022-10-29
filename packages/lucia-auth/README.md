@@ -1,10 +1,10 @@
-# Lucia
+# `lucia-auth`
 
-A simple authentication library for SvelteKit
+A simple authentication library for managing users and sessions
 
 **[Documentation](https://lucia-auth.vercel.app)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/lucia-auth/CHANGELOG.md)**
 
 ## Installation
 

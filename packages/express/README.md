@@ -1,10 +1,12 @@
-# Lucia
+# `@lucia-auth/express`
 
-A simple authentication library for SvelteKit
+[Express](https://expressjs.com) integration for Lucia 
 
-**[Documentation](https://lucia-auth.vercel.app)**
+**[Documentation](https://lucia-auth.vercel.app/express/start-here/getting-started)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CHANGELOG.md)**
+**[Lucia documentation](https://lucia-auth.vercel.app)**
+
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/express/CHANGELOG.md)**
 
 ## Installation
 
