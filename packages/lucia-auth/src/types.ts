@@ -75,9 +75,8 @@ export type SessionAdapter = {
 
 export type MinimalRequest = {
 	headers: {
-		get: (name: string) => null | string
-	},
-	url: string,
-	method: string,
-
-}
+		get: (name: string) => null | string;
+	};
+	url: string;
+	method: string;
+};
