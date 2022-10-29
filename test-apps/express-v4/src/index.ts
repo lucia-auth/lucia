@@ -3,7 +3,7 @@ import { auth } from './lucia.js';
 import { handleMiddleware } from '@lucia-auth/express';
 
 const app = express();
-const port = 8080; // default port to listen
+const port = 8080;
 
 app.use(handleMiddleware(auth));
 app.get('/', (_, res) => {

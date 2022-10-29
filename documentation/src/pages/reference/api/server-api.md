@@ -36,12 +36,12 @@ const generateRandomString: (length: number) => string;
 const randomString = generateRandomString(8);
 ```
 
-## `lucia()`
+## `lucia()` (default)
 
-Creates a new `Lucia` instance. Methods for `Lucia` can throw adapter-specific database errors.
+Creates a new `Auth` instance. Methods for `Auth` can throw adapter-specific database errors. The methods for the instance are listed below.
 
 ```ts
-const lucia: (configs: Configurations) => Lucia;
+const lucia: (configs: Configurations) => Auth;
 ```
 
 #### Parameter

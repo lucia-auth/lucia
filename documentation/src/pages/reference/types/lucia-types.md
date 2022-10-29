@@ -14,6 +14,10 @@ import type { Adapter } from "lucia-auth/types";
 
 Refer to [Adapters](/reference/adapters/adapters) reference.
 
+## `Auth`
+
+Return type of [`lucia()`](reference/api/server-api#lucia).
+
 ## `LuciaError`
 
 All errors thrown by Lucia will use this error constructor. Refer to [Errors](/reference/types/errors) for a list of valid error names.

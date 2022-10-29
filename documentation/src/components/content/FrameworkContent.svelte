@@ -13,6 +13,8 @@
 		<h3 class="text-lg font-medium">
 			{#if framework === "sveltekit"}
 				SvelteKit
+			{:else if framework === "express"}
+				Express
 			{/if}
 			Integration
 		</h3>
