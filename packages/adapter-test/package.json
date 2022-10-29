@@ -17,7 +17,8 @@
 		"lucia",
 		"lucia-auth",
 		"auth",
-		"authentication"
+		"authentication",
+		"testing"
 	],
 	"repository": {
 		"type": "git",
