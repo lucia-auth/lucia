@@ -36,6 +36,20 @@ const constructor: (errorName: LuciaErrorName) => void;
 | --------- | ------------------------------- | ------------------------ |
 | errorName | `LuciaErrorName extends string` | A valid Lucia error name |
 
+## `MinimalRequest`
+
+A minimal representation of node's `Request` type needed for Lucia.
+
+```ts
+type MinimalRequest = {
+	headers: {
+		get: (name: string) => null | string;
+	};
+	url: string;
+	method: string;
+};
+```
+
 ## `Session`
 
 A session.

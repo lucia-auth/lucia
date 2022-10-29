@@ -490,14 +490,14 @@ try {
 Checks if the request is from a trusted origin if `configuration.csrfProtection` is true, and gets the session id from the cookie. Returns an empty string if none exists. This does **NOT** check the validity of the session id.
 
 ```ts
-const parseRequest: (request: Request) => string;
+const parseRequest: (request: MinimalRequest) => string;
 ```
 
 #### Parameter
 
-| name    | type      | description                            |
-| ------- | --------- | -------------------------------------- |
-| request | `Request` | Request from SvelteKit's `ServerEvent` |
+| name    | type                                                            | description                  |
+| ------- | --------------------------------------------------------------- | ---------------------------- |
+| request | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | Node's `Request` can be used |
 
 #### Returns
 
@@ -514,16 +514,11 @@ const parseRequest: (request: Request) => string;
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
-import type { Action } from "@sveltejs/kit";
-
-const action: Action = async ({ request }) => {
-	try {
-		const sessionId = auth.parseRequest(request);
-	} catch {
-		// request from untrusted domain
-	}
-};
+try {
+	const sessionId = auth.parseRequest(request);
+} catch {
+	// request from untrusted domain
+}
 ```
 
 ### `renewSession()`
@@ -720,7 +715,7 @@ const validateSession: (sessionId: string) => Promise<Session>;
 import { auth } from "lucia-auth";
 
 try {
-	await auth.validateSession(sessionId);
+	const session = await auth.validateSession(sessionId);
 } catch {
 	// invalid
 }
@@ -731,14 +726,14 @@ try {
 Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. If the session is invalid, it attempts to renew the session.
 
 ```ts
-const validateRequest: (request: Request) => Promise<Session>;
+const validateRequest: (request: MinimalRequest) => Promise<Session>;
 ```
 
 #### Parameter
 
-| name    | type      | description                            |
-| ------- | --------- | -------------------------------------- |
-| request | `Request` | Request from SvelteKit's `ServerEvent` |
+| name    | type                                                            | description                  |
+| ------- | --------------------------------------------------------------- | ---------------------------- |
+| request | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | Node's `Request` can be used |
 
 #### Returns
 
@@ -757,27 +752,12 @@ const validateRequest: (request: Request) => Promise<Session>;
 
 ```ts
 import { auth } from "lucia-auth";
-import type { Action } from "@sveltejs/kit";
 
-const action: Action = async ({ request, cookies }) => {
-	try {
-		await auth.validateRequestEvent({ request, cookies });
-	} catch {
-		// unauthenticated
-	}
-};
-```
-
-Alternatively, you can just pass the request event:
-
-```ts
-const action: Action = async (event) => {
-	try {
-		await auth.validateRequestEvent(event);
-	} catch {
-		// unauthenticated
-	}
-};
+try {
+	const session = await auth.validateRequest(request);
+} catch {
+	// invalid
+}
 ```
 
 ## `LuciaError`
