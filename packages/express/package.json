@@ -1,7 +1,7 @@
 {
-	"name": "@lucia-auth/sveltekit",
-	"version": "0.1.1",
-	"description": "Lucia for SvelteKit",
+	"name": "@lucia-auth/express",
+	"version": "0.1.0",
+	"description": "Lucia for Express",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"module": "index.js",
@@ -15,36 +15,24 @@
 	},
 	"keywords": [
 		"lucia",
-		"sveltekit",
-		"lucia-auth",
 		"authentication",
-		"svelte"
+		"lucia-auth",
+		"node",
+		"auth"
 	],
+	"exports": {
+		"./package.json": "./package.json",
+		".": "./index.js"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
-		"directory": "packages/lucia"
+		"directory": "packages/express"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
-	"exports": {
-		"./package.json": "./package.json",
-		".": "./index.js",
-		"./load": "./load/index.js",
-		"./client": "./client/index.js"
-	},
-	"typesVersions": {
-		"*": {
-			"client": [
-				"client/index.d.ts"
-			],
-			"load": [
-				"load/index.d.ts"
-			]
-		}
-	},
 	"devDependencies": {
-		"lucia-auth": "workspace:*",
-		"svelte": "^3.52.0"
+		"@types/express": "^4.17.14",
+		"lucia-auth": "workspace:*"
 	}
 }
