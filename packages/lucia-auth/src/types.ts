@@ -72,3 +72,11 @@ export type SessionAdapter = {
 	deleteSession: (...sessionIds: string[]) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 };
+
+export type MinimalRequest = {
+	headers: {
+		get: (name: string) => null | string;
+	};
+	url: string;
+	method: string;
+};

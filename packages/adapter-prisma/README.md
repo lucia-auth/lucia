@@ -1,8 +1,12 @@
-# Prisma adapter for Lucia
+# `@lucia-auth/adapter-mongoose`
 
-Adapter documentation: https://lucia-auth.vercel.app/learn/adapters/prisma
+[Prisma](https://www.prisma.io) adapter for Lucia
 
-Lucia documentation: https://lucia-auth.vercel.app
+**[Documentation](https://lucia-auth.vercel.app/learn/adapters/prisma)**
+
+**[Lucia documentation](https://lucia-auth.vercel.app)**
+
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/adapter-prisma/CHANGELOG.md)**
 
 ## Installation
 
@@ -16,8 +20,7 @@ yarn add @lucia-auth/adapter-prisma
 
 | Prisma adapter version | Lucia version |
 | ---------------------- | ------------- |
-| v0.10.x                | v0.14.3+      |
-| v0.6.x                 | v0.13.0+      |
+| v0.1.0+                | v0.1.0+       |
 
 ## Testing
 

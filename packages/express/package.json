@@ -1,7 +1,7 @@
 {
-	"name": "@lucia-auth/adapter-supabase",
-	"version": "0.1.1",
-	"description": "Supabase adapter for Lucia",
+	"name": "@lucia-auth/express",
+	"version": "0.1.0",
+	"description": "Lucia for Express",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"module": "index.js",
@@ -11,34 +11,28 @@
 	],
 	"scripts": {
 		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
-		"test-main": "npx ts-node --esm -T test/index.ts",
 		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
-		"supabase",
-		"lucia-auth"
+		"authentication",
+		"lucia-auth",
+		"node",
+		"auth"
 	],
+	"exports": {
+		"./package.json": "./package.json",
+		".": "./index.js"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
-		"directory": "packages/adapter-supabase"
+		"directory": "packages/express"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
-	"exports": {
-		".": "./index.js"
-	},
-	"peerDependencies": {
-		"lucia-auth": "~0.1.0"
-	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "workspace:*",
-		"dotenv": "^16.0.3",
-		"ts-node": "^10.9.1"
-	},
-	"dependencies": {
-		"@supabase/postgrest-js": "^0.37.4",
+		"@types/express": "^4.17.14",
 		"lucia-auth": "workspace:*"
 	}
 }

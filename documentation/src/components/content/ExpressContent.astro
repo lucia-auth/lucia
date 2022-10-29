@@ -1,0 +1,18 @@
+---
+import FrameworkContent from "./FrameworkContent.svelte";
+import { getContent, getPages, getSections } from "src/lib/content.js";
+
+interface Props {
+	title: string;
+}
+
+const expressSections = getSections(
+	await Astro.glob("/src/pages/express/*/index.md"),
+	"express"
+);
+const expressPages = getPages(await Astro.glob("/src/pages/express/**/*.md"), "express");
+
+const expressContent = getContent(expressSections, expressPages);
+---
+
+<FrameworkContent content={expressContent} framework="express" currentTitle={Astro.props.title} />

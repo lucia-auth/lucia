@@ -1,8 +1,12 @@
-# Redis session adapter for Lucia
+# `@lucia-auth/session-adapter-redis`
 
-Adapter documentation: https://lucia-auth.vercel.app/learn/adapters/supabase
+[Redis](https://redis.io) session adapter for Lucia
 
-Lucia documentation: https://lucia-auth.vercel.app
+**[Documentation](https://lucia-auth.vercel.app/learn/adapters/redis)**
+
+**[Lucia documentation](https://lucia-auth.vercel.app)**
+
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/session-adapter-redis/CHANGELOG.md)**
 
 ## Installation
 
@@ -14,7 +18,7 @@ npm install @lucia-auth/session-adapter-redis
 
 | Session adapter version | Lucia version |
 | ----------------------- | ------------- |
-| v0.10.x                 | v0.14.3+      |
+| v0.1.0+                 | v0.1.0+       |
 
 ## Testing
 

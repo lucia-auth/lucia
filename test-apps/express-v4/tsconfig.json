@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"noImplicitAny": true,
+		"module": "ES2022",
+		"moduleResolution": "NodeNext",
+		"target": "ES2022",
+		"allowSyntheticDefaultImports": true,
+		"declaration": true,
+		"strict": true,
+		"isolatedModules": false
+	},
+	"include": ["src"],
+	"exclude": ["node_modules/", "**/__tests__/*"]
+}

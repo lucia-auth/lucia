@@ -1,8 +1,12 @@
-# Supabase adapter for Lucia
+# `@lucia-auth/adapter-supabase`
 
-Adapter documentation: https://lucia-auth.vercel.app/learn/adapters/supabase
+[Supabase](https://supabase.com) adapter for Lucia
 
-Lucia documentation: https://lucia-auth.vercel.app
+**[Documentation](https://lucia-auth.vercel.app/learn/adapters/supabase)**
+
+**[Lucia documentation](https://lucia-auth.vercel.app)**
+
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/adapter-supabase/CHANGELOG.md)**
 
 ## Installation
 
@@ -14,8 +18,7 @@ npm install @lucia-auth/adapter-supabase
 
 | Supabase adapter version | Lucia version |
 | ------------------------ | ------------- |
-| v0.10.1+                 | v0.14.3+      |
-| v0.6.x                   | v0.13.0+      |
+| v0.1.0+                  | v0.1.0+       |
 
 ## Testing
 

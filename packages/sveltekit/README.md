@@ -1,38 +1,17 @@
-# create-svelte
+# @lucia-auth/sveltekit
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+[SvelteKit](https://kit.svelte.dev) integration for Lucia
 
-## Creating a project
+**[Documentation](https://lucia-auth.vercel.app/sveltekit/start-here/getting-started)**
 
-If you're seeing this, you've probably already done this step. Congrats!
+**[Lucia documentation](https://lucia-auth.vercel.app)**
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/sveltekit/CHANGELOG.md)**
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Installation
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+npm i @lucia-auth/sveltekit
+pnpm add @lucia-auth/sveltekit
+yarn add @lucia-auth/sveltekit
 ```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

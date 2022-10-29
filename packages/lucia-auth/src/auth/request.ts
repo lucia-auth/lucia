@@ -1,8 +1,8 @@
 import { LuciaError } from "../error.js";
 import cookie from "cookie";
-import type { Auth, Session } from "../types.js";
+import type { Auth, Session, MinimalRequest } from "../types.js";
 
-type ParseRequest = (request: Request) => string;
+type ParseRequest = (request: MinimalRequest) => string;
 
 export const parseRequestFunction = (auth: Auth) => {
 	const parseRequest: ParseRequest = (request) => {
@@ -20,7 +20,7 @@ export const parseRequestFunction = (auth: Auth) => {
 	return parseRequest;
 };
 
-type ValidateRequest = (request: Request) => Promise<Session>;
+type ValidateRequest = (request: MinimalRequest) => Promise<Session>;
 
 export const validateRequestFunction = (auth: Auth) => {
 	const validateRequest: ValidateRequest = async (request) => {

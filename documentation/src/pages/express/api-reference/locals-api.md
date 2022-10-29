@@ -4,14 +4,17 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Locals API (server)"
 ---
 
-These are available inside `locals` from SvelteKit's `ServerRequest`.
+These are available inside `app.locals`.
 
 ```ts
-import type { Action } from "@sveltejs/kit";
+import express from "express";
+import { auth } from "./lucia.js";
 
-const action: Action = async ({ locals }) => {
-	const session = locals.getSession();
-};
+const app = express();
+
+app.get("/", (_, res) => {
+	const session = app.locals.getSession();
+});
 ```
 
 ## `clearSession()`

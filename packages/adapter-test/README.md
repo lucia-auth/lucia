@@ -1,37 +1,17 @@
-# Tests for adapters for Lucia
+# Tests for Lucia adapters
 
-Provides tests for creating adapters for Lucia.
+Testing package for adapters for Lucia
 
-```ts
-interface Database {
-	getRefreshTokens: () => Promise<RefreshTokensSchema[]>;
-	getUsers: () => Promise<UsersSchema[]>;
-	clearRefreshTokens: () => Promise<void>;
-	clearUsers: () => Promise<void>;
-	insertRefreshToken: (data: RefreshTokensSchema) => Promise<void>;
-	insertUser: (data: UsersSchema) => Promise<void>;
-}
+**[Documentation](https://lucia-auth.vercel.app/reference/adapters/testing-adapters)**
 
-interface UsersSchema {
-	id: string;
-	identifier_token: string;
-	hashed_password: string | null;
-	username: string; // unique, string
-	email: string; // unique, string
-}
+**[Lucia documentation](https://lucia-auth.vercel.app)**
 
-interface RefreshTokensSchema {
-	refresh_token: string;
-	user_id: string;
-}
-```
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/adapter-test/CHANGELOG.md)**
 
-```ts
-import { testAdapter } from "@lucia-auth/adapter-test";
-import type { Adapter } from "lucia-auth/types";
+## Installation
 
-const db: Database;
-const adapter: Adapter;
-
-testAdapter(adapter, db);
+```bash
+npm i -D @lucia-auth/adapter-test
+pnpm add -D @lucia-auth/adapter-test
+yarn add -D @lucia-auth/adapter-test
 ```

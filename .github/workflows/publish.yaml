@@ -84,6 +84,9 @@ jobs:
           if [[ $pkg_string == *"sveltekit"* ]]; then
             cd packages/sveltekit && eval "$build_cmd"
           fi
+          if [[ $pkg_string == *"express"* ]]; then
+            cd packages/express && eval "$build_cmd"
+          fi
           if [[ $pkg_string == *"adapter-mongoose"* ]]; then
             cd packages/adapter-mongoose && eval "$build_cmd"
           fi

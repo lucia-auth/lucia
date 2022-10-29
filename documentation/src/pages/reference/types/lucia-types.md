@@ -14,6 +14,10 @@ import type { Adapter } from "lucia-auth/types";
 
 Refer to [Adapters](/reference/adapters/adapters) reference.
 
+## `Auth`
+
+Return type of [`lucia()`](/reference/api/server-api#lucia-default).
+
 ## `LuciaError`
 
 All errors thrown by Lucia will use this error constructor. Refer to [Errors](/reference/types/errors) for a list of valid error names.
@@ -31,6 +35,20 @@ const constructor: (errorName: LuciaErrorName) => void;
 | name      | type                            | description              |
 | --------- | ------------------------------- | ------------------------ |
 | errorName | `LuciaErrorName extends string` | A valid Lucia error name |
+
+## `MinimalRequest`
+
+A minimal representation of node's `Request` type needed for Lucia.
+
+```ts
+type MinimalRequest = {
+	headers: {
+		get: (name: string) => null | string;
+	};
+	url: string;
+	method: string;
+};
+```
 
 ## `Session`
 
