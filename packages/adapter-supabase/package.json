@@ -19,8 +19,7 @@
 		"supabase",
 		"lucia-auth",
 		"auth",
-		"authentication",
-		"postgresql"
+		"authentication"
 	],
 	"repository": {
 		"type": "git",

@@ -20,7 +20,8 @@
 		"node",
 		"auth",
 		"express",
-		"node"
+		"node",
+		"expressjs"
 	],
 	"exports": {
 		"./package.json": "./package.json",

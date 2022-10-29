@@ -30,6 +30,9 @@ jobs:
               elif [[ $line == packages/sveltekit* ]];
               then
                   pkg_array+=("sveltekit")
+              elif [[ $line == packages/express* ]];
+              then
+                  pkg_array+=("express")
               elif [[ $line == packages/adapter-mongoose* ]];
               then
                   pkg_array+=("adapter-mongoose")
@@ -76,7 +79,7 @@ jobs:
           cd packages/adapter-test && pnpm install --no-frozen-lockfile && pnpm build && cd ../../
 
           pkg_string="${{ needs.check_pkgs.outputs.packages }}"
-          build_cmd="pnpm install --no-frozen-lockfile && pnpm package cd ../../"
+          build_cmd="pnpm install --no-frozen-lockfile && pnpm package && cd ../../"
 
           if [[ $pkg_string == *"lucia-auth"* ]]; then
             cd packages/lucia-auth && eval "$build_cmd"
