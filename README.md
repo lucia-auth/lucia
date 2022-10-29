@@ -7,7 +7,7 @@
 Lucia is a simple yet flexible user and session management library that provides an
 abstraction layer between your app and your database. It's bare-bones by design, keeping
 everything easy to use and understand. Lucia is the authentication solution that works with
-you and your app. Get started by reading the [introduction page](/learn/start-here/introduction).
+you and your app. Get started by reading the [introduction page](https://lucia-auth.vercel.app/learn/start-here/introduction).
 
 At its core, it makes managing users and sessions easy, and it doesn’t attempt to do anything more than that. It’s not an out-of-the-box library like NextAuth, nor an auth platform like Firebase, and that is a super important distinction. You will need to use your own database and strategies like OAuth and magic links have to be made by yourself. However, once you understand the basics of Lucia and authentication, it allows you to fully control and customize your authentication.
 
