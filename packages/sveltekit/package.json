@@ -1,7 +1,7 @@
 {
 	"name": "@lucia-auth/sveltekit",
 	"version": "0.1.2",
-	"description": "Lucia for SvelteKit",
+	"description": "Lucia integration for SvelteKit",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"module": "index.js",
