@@ -16,7 +16,8 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
-		"auth"
+		"auth",
+		"authentication"
 	],
 	"repository": {
 		"type": "git",

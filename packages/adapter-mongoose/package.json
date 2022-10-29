@@ -19,7 +19,8 @@
 		"mongodb",
 		"mongoose",
 		"lucia-auth",
-		"auth"
+		"auth",
+		"mongo"
 	],
 	"repository": {
 		"type": "git",

@@ -18,7 +18,8 @@
 		"lucia",
 		"supabase",
 		"lucia-auth",
-		"auth"
+		"auth",
+		"authentication"
 	],
 	"repository": {
 		"type": "git",

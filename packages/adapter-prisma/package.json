@@ -18,7 +18,8 @@
 		"lucia",
 		"prisma",
 		"lucia-auth",
-		"auth"
+		"auth",
+		"sql"
 	],
 	"repository": {
 		"type": "git",
