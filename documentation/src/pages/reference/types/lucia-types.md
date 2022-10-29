@@ -16,7 +16,7 @@ Refer to [Adapters](/reference/adapters/adapters) reference.
 
 ## `Auth`
 
-Return type of [`lucia()`](reference/api/server-api#lucia).
+Return type of [`lucia()`](/reference/api/server-api#lucia-default).
 
 ## `LuciaError`
 
