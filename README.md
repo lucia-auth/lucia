@@ -25,7 +25,7 @@ const sessionCookie = auth.createSessionCookie(session)
 
 **[Documentation](https://lucia-auth.vercel.app)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/lucia-auth/CHANGELOG.md)**
 
 ## Installation
 
