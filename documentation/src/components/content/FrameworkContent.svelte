@@ -30,7 +30,6 @@
 							class="my-1 pl-4 border-l-2"
 							class:text-main={isSelected}
 							class:border-main={isSelected}
-							class:border-gray-500={!isSelected}
 							class:border-zinc-400={!isSelected}
 							class:hover:border-black={!isSelected}
 							class:dark:hover:border-zinc-200={!isSelected}

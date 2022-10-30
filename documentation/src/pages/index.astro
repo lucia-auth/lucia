@@ -13,10 +13,16 @@ const contributorsResponse = await fetch(
 		}
 	}
 );
-const contributors = (await contributorsResponse.json()) as {
-	avatar_url: string;
-	html_url: string;
-}[];
+
+const contributorsResult = (await contributorsResponse.json()) as
+	| {
+			message: string;
+	  }
+	| {
+			avatar_url: string;
+			html_url: string;
+	  }[];
+const contributors = Array.isArray(contributorsResult) ? contributorsResult : [];
 ---
 
 <LandingLayout>
