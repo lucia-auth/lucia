@@ -21,9 +21,13 @@ export const getUser = (): Readable<ClientUser> => {
 };
 
 const getServerUser = (): Readable<ClientUser> => {
-	const { page } = getContext("__svelte__") as { page: Readable<{ data: {
-		_lucia?: ClientUser
-	} }> };
+	const { page } = getContext("__svelte__") as {
+		page: Readable<{
+			data: {
+				_lucia?: ClientUser;
+			};
+		}>;
+	};
 	const user = get(page).data._lucia || null;
 	return {
 		subscribe: (subscriber) => {
@@ -55,42 +59,46 @@ export const handleSession = (
 	}>
 ) => {
 	if (typeof window === "undefined") return;
+	const broadcastChannel = new BroadcastChannel("__lucia__");
 	const tabId = generateId();
 	const initialPageStoreValue = get(pageStore);
 	const initialPageData = initialPageStoreValue.data as { _lucia?: User | null };
 	const initialUser = initialPageData?._lucia || null;
 	const globalWindow = window as GlobalWindow;
-	if (!globalWindow._userStore) {
-		globalWindow._userStore = readable<ClientUser>(initialUser, (set) => {
-			globalWindow._setUserStore = set;
+	let pageStoreUnsubscribe = () => {},
+		userStoreUnsubscribe = () => {};
+	const handleSubscription = () => {
+		if (!globalWindow._userStore) throw new Error("_userStore is undefined");
+		pageStoreUnsubscribe = pageStore.subscribe((pageStoreValue) => {
+			const pageData = pageStoreValue.data as { _lucia?: User | null };
+			const user = pageData?._lucia || null;
+			if (!globalWindow._setUserStore) throw new Error("_setUserStore() is undefined");
+			globalWindow._setUserStore(user);
 		});
-	}
-	const pageStoreUnsubscribe = pageStore.subscribe((pageStoreValue) => {
-		const pageData = pageStoreValue.data as { _lucia?: User | null };
-		const user = pageData?._lucia || null;
-		if (!globalWindow._setUserStore) throw new Error("_setUserStore() is undefined");
-		globalWindow._setUserStore(user);
-	});
-	const userStore = getUser();
-	const broadcastChannel = new BroadcastChannel("__lucia__");
-	const userStoreUnsubscribe = userStore.subscribe((userStoreValue) => {
-		broadcastChannel?.postMessage({
-			user: userStoreValue,
-			id: tabId
+		userStoreUnsubscribe = globalWindow._userStore.subscribe((userStoreValue) => {
+			broadcastChannel?.postMessage({
+				user: userStoreValue,
+				id: tabId
+			});
 		});
-	});
-	broadcastChannel.addEventListener("message", ({ data }) => {
-		const messageData = data as {
-			user: ClientUser;
-			id: string;
-		};
-		if (messageData.id === tabId) return;
-		if (!globalWindow._setUserStore) throw new Error("_setUserStore() is undefined");
-		globalWindow._setUserStore(messageData.user);
-	});
+		broadcastChannel.addEventListener("message", ({ data }) => {
+			const messageData = data as {
+				user: ClientUser;
+				id: string;
+			};
+			if (messageData.id === tabId) return;
+			if (!globalWindow._setUserStore) throw new Error("_setUserStore() is undefined");
+			globalWindow._setUserStore(messageData.user);
+		});
+	};
 	onDestroy(() => {
 		broadcastChannel.close();
 		pageStoreUnsubscribe();
 		userStoreUnsubscribe();
+	});
+	if (globalWindow._userStore) return handleSubscription();
+	globalWindow._userStore = readable<ClientUser>(initialUser, (set) => {
+		globalWindow._setUserStore = set;
+		handleSubscription();
 	});
 };
