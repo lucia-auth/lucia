@@ -43,8 +43,8 @@ body:
     attributes:
       label: System info
       description: What's your dev environment, and if it's a client-side issue, which browser and version?
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: reproduction
     attributes:
