@@ -15,6 +15,7 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 		scriptTagMatch,
 		`${scriptTagMatch}
     window._luciaPageData = ${pageDataFunctionMatch};
+	window._luciaHooksRanLast = true;
     `
 	);
 	return html;

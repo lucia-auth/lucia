@@ -24,9 +24,32 @@ export type RequestEvent = {
 };
 
 export type GlobalWindow = Window & {
-	_userStore?: Readable<User | null>;
-	_setUserStore?: (user: User | null) => void;
+	_luciaStore?: Readable<LuciaContext>;
+	_setLuciaStore?: (value: LuciaContext) => void;
 	_luciaPageData?: {
 		data: any;
 	}[];
+	_luciaHooksRanLast?: boolean;
 };
+
+export type PageData = {
+	_lucia?: LuciaContext;
+};
+
+/*
+session checksum is a hash of the session id
+this hash can be used to check if the session id has changed
+without exposing the session id
+
+uses md5, which has a collision weakness
+but is good enough for non-password hashing use case
+*/
+export type LuciaContext =
+	| {
+			user: Readonly<User>;
+			sessionChecksum: string;
+	  }
+	| {
+			user: null;
+			sessionChecksum: null;
+	  };

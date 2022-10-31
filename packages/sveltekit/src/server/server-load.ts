@@ -1,5 +1,6 @@
 import type { User, Auth } from "lucia-auth";
-import type { RequestEvent } from "../types.js";
+import type { PageData, RequestEvent } from "../types.js";
+import { generateChecksum } from "./crypto.js";
 
 type HandleServerSession = <
 	A extends Auth,
@@ -7,27 +8,26 @@ type HandleServerSession = <
 >(
 	auth: A,
 	serverLoad?: LoadFn
-) => (
-	event: RequestEvent
-) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & { _lucia: User }>;
+) => (event: RequestEvent) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & PageData>;
 
 export const handleServerSession: HandleServerSession = (auth: Auth, fn?) => {
-	const handleServerSessionCore = async ({
-		locals
-	}: RequestEvent): Promise<{ _lucia: User | null }> => {
+	const handleServerSessionCore = async ({ locals }: RequestEvent): Promise<PageData> => {
 		const session = locals.getSession();
-		if (!session)
-			return {
-				_lucia: null
-			};
 		try {
+			if (!session) throw new Error();
 			const user = await auth.getUser(session.userId);
 			return {
-				_lucia: user
+				_lucia: {
+					user,
+					sessionChecksum: generateChecksum(session.sessionId)
+				}
 			};
 		} catch {
 			return {
-				_lucia: null
+				_lucia: {
+					user: null,
+					sessionChecksum: null
+				}
 			};
 		}
 	};
@@ -38,8 +38,6 @@ export const handleServerSession: HandleServerSession = (auth: Auth, fn?) => {
 		return {
 			_lucia,
 			...result
-		} as Exclude<Awaited<ReturnType<typeof loadFunction>>, void> & {
-			_lucia: User;
-		};
+		} as Exclude<Awaited<ReturnType<typeof loadFunction>>, void> & PageData;
 	};
 };
