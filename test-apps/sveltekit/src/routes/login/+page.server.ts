@@ -1,7 +1,6 @@
 import { invalid, type Actions } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 
-
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const form = await request.formData();

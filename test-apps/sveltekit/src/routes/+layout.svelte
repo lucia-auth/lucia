@@ -3,7 +3,9 @@
 	import { handleSession } from '@lucia-auth/sveltekit/client';
 	import '../app.css';
 
-	handleSession(page);
+	handleSession(page, () => {
+		console.log("session change")
+	});
 </script>
 
 <svelte:head>

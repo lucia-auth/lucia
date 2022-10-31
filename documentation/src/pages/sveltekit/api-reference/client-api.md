@@ -35,17 +35,29 @@ const userId = user?.userId;
 
 ## `handleSession()`
 
-Handles sessions in the client - must be called on the root layout for all client and load methods to work. This will sync the global client state with the server's and listen for session state change across tabs.
+Handles sessions in the client - must be called on the root layout for all client and load methods to work. This will listen for session updates across tabs. The provided callback will be called whenever a session changes in a different tab.
 
 ```ts
-const handleSession: (pageStore: Page) => void;
+const handleSession: (pageStore: Page, onSessionUpdate?: () => void) => void;
 ```
 
 #### Parameter
 
-| name      | type                                                          | description |
-| --------- | ------------------------------------------------------------- | ----------- |
-| pageStore | [`Page`](https://kit.svelte.dev/docs/types#sveltejs-kit-page) | Page store  |
+| name            | type                                                          | description                                               | optional |
+| --------------- | ------------------------------------------------------------- | --------------------------------------------------------- | -------- |
+| pageStore       | [`Page`](https://kit.svelte.dev/docs/types#sveltejs-kit-page) | Page store                                                |          |
+| onSessionUpdate | `Function`                                                    | A callback function that will be called on session update | true     |
+
+#### Example
+
+```ts
+import { page } from "$app/stores";
+import { handleSession } from "@lucia-auth/sveltekit/client";
+
+handleSession(page, () => {
+	alert("Your session has been updated - please refresh the page");
+});
+```
 
 ## `signOut()`
 

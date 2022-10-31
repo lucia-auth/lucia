@@ -24,9 +24,24 @@ export type RequestEvent = {
 };
 
 export type GlobalWindow = Window & {
-	_userStore?: Readable<User | null>;
-	_setUserStore?: (user: User | null) => void;
+	_luciaStore?: Readable<LuciaContext>;
+	_setLuciaStore?: (value: LuciaContext) => void;
 	_luciaPageData?: {
 		data: any;
 	}[];
+	_luciaHooksRanLast?: boolean
 };
+
+export type PageData = {
+	_lucia?: LuciaContext;
+};
+
+export type LuciaContext =
+	| {
+			user: Readonly<User>;
+			sessionChecksum: string;
+	  }
+	| {
+			user: null;
+			sessionChecksum: null;
+	  };
