@@ -14,13 +14,13 @@ body:
       description: What package is affected?
       options:
         - lucia-auth
-        - @lucia-auth/sveltekit
-        - @lucia-auth/express
-        - @lucia-auth/adapter-prisma
-        - @lucia-auth/adapter-supabase
-        - @lucia-auth/adapter-mongoose
-        - @lucia-auth/session-adapter-redis
-        - @lucia-auth/adapter-test
+        - \@lucia-auth/sveltekit
+        - \@lucia-auth/express
+        - \@lucia-auth/adapter-prisma
+        - \@lucia-auth/adapter-supabase
+        - \@lucia-auth/adapter-mongoose
+        - \@lucia-auth/session-adapter-redis
+        - \@lucia-auth/adapter-test
     validations:
       required: true
   - type: input
