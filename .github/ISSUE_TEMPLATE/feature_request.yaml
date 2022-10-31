@@ -1,0 +1,47 @@
+name: Feature request
+description: Propose and discuss future improvements to Lucia
+title: "[Feature Request]: "
+labels: ["feature request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to request this feature!
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: What package is the request for?
+      options:
+        - lucia-auth
+        - \@lucia-auth/sveltekit
+        - \@lucia-auth/express
+        - \@lucia-auth/adapter-prisma
+        - \@lucia-auth/adapter-supabase
+        - \@lucia-auth/adapter-mongoose
+        - \@lucia-auth/session-adapter-redis
+        - \@lucia-auth/adapter-test
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Describe the problem
+      description: What issues are you having right now? Why are current features inadequate to solve it?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the proposed solution
+      description: Please provide us with a clear and concise description, ideally with an example.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional information
