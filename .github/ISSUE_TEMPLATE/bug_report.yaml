@@ -31,32 +31,32 @@ body:
       placeholder: 0.1.0
     validations:
       required: true
-  - type: text-area
+  - type: textarea
     id: description
     attributes:
       label: Describe the bug
       description: Also tell us, what did you expect to happen?
     validations:
       required: true
-  - type: text-area
+  - type: textarea
     id: system-info
     attributes:
       label: System info
       description: What's your dev environment, and if it's a client-side issue, which browser and version?
       validations:
         required: true
-  - type: text-area
+  - type: textarea
     id: reproduction
     attributes:
       label: Reproduction
       description: Tell us how we can recreate the bug or, ideally, provide us with a link to a repo!
-  - type: text-area
+  - type: textarea
     id: logs
     attributes:
       label: Relevant log output
       description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
       render: shell
-  - type: text-area
+  - type: textarea
     id: additional-info
     attributes:
       label: Additional information
