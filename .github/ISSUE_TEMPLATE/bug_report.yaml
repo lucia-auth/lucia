@@ -1,0 +1,62 @@
+name: Bug Report
+description: Something ain't right...
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Before you start, make sure you have the latest versions of the packages you're using, including adapters. For security issues, please contact the maintainers directly.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: What package is affected?
+      options:
+        - lucia-auth
+        - @lucia-auth/sveltekit
+        - @lucia-auth/express
+        - @lucia-auth/adapter-prisma
+        - @lucia-auth/adapter-supabase
+        - @lucia-auth/adapter-mongoose
+        - @lucia-auth/session-adapter-redis
+        - @lucia-auth/adapter-test
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Which version is affected?
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: text-area
+    id: description
+    attributes:
+      label: Describe the bug
+      description: Also tell us, what did you expect to happen?
+    validations:
+      required: true
+  - type: text-area
+    id: system-info
+    attributes:
+      label: System info
+      description: What's your dev environment, and if it's a client-side issue, which browser and version?
+      validations:
+        required: true
+  - type: text-area
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Tell us how we can recreate the bug or, ideally, provide us with a link to a repo!
+  - type: text-area
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: text-area
+    id: additional-info
+    attributes:
+      label: Additional information
