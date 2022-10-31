@@ -59,6 +59,9 @@ export const handleSession = (
 	});
 	if (!globalWindow._luciaStore) throw new Error("_luciaStore is undefined");
 	userStoreUnsubscribe = globalWindow._luciaStore.subscribe((newContext) => {
+		/*
+		prevent postMessage on store initialization
+		*/
 		if (initialLuciaStoreSubscription) return (initialLuciaStoreSubscription = false);
 		broadcastChannel.postMessage({
 			tabId: tabId,
@@ -69,15 +72,21 @@ export const handleSession = (
 	pageStoreUnsubscribe = pageStore.subscribe((pageStoreValue) => {
 		/*
 		this will be called on potential session change 
-		there is no guarantee that the session has changed
+		there is no guarantee that the session has changed whenever this runs
 		*/
 		const newLuciaContext = pageStoreValue.data?._lucia;
 		if (!newLuciaContext) throw new Error("pageData._lucia is undefined");
 		if (!globalWindow._setLuciaStore) throw new Error("_setLuciaStore() is undefined");
 		if (!globalWindow._luciaStore) throw new Error("_luciaStore is undefined");
+		/*
+		check if session has changed from the previous page data
+		*/
 		if (previousPageStoreSessionChecksum === newLuciaContext.sessionChecksum) return;
 		const currentLuciaContext = get(globalWindow._luciaStore);
 		previousPageStoreSessionChecksum = newLuciaContext.sessionChecksum;
+		/*
+		check if session update is necessary
+		*/
 		if (newLuciaContext.sessionChecksum === currentLuciaContext.sessionChecksum) return;
 		globalWindow._setLuciaStore(newLuciaContext);
 	});
@@ -85,7 +94,10 @@ export const handleSession = (
 		const messageData = data as {
 			tabId: string;
 		} & LuciaContext;
-		if (messageData.tabId === tabId) return; // message is coming from the same tab
+		/*
+		check if message is coming from the same tab
+		*/
+		if (messageData.tabId === tabId) return;
 		onSessionUpdate(messageData.user);
 	});
 };

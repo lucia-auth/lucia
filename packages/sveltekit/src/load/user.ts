@@ -24,8 +24,6 @@ export const getUser = async (event: {
 		if (!pageData._lucia) throw new Error("pageData._lucia is undefined");
 		if (!globalWindow._setLuciaStore) throw new Error("_setLuciaStore is undefined");
 		const luciaContext = pageData._lucia;
-		console.log("load")
-		console.log(storedLuciaContext, luciaContext)
 		if (storedLuciaContext.sessionChecksum !== luciaContext.sessionChecksum) {
 			globalWindow._setLuciaStore(luciaContext);
 		}
