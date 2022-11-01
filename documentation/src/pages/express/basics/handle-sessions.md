@@ -29,7 +29,7 @@ app.get("/", (_, res) => {
 
 ## Set session
 
-[`setSession()`](/express/api-reference/locals-api#setsession) will set the provided session to cookies.
+[`setSession()`](/express/api-reference/locals-api#setsession) will set the session id cookie of the provided session.
 
 ```ts
 app.get("/", (_, res) => {
@@ -39,7 +39,7 @@ app.get("/", (_, res) => {
 
 ## Clear session
 
-[`clearSession()`](/express/api-reference/locals-api#clearsession) method will remove all session cookies. This will **NOT** invalidate the provided session - when signing out a user, make sure to invalidate the session using [`invalidateSession()`](/reference/api/server-api#invalidatesession).
+[`clearSession()`](/express/api-reference/locals-api#clearsession) method will remove all session cookies stored to the user. This will **NOT** invalidate the provided session - when signing out a user, make sure to invalidate the session using [`invalidateSession()`](/reference/api/server-api#invalidatesession).
 
 ```ts
 app.get("/", (_, res) => {

@@ -16,7 +16,7 @@ const action: Action = async ({ locals }) => {
 
 ## `clearSession()`
 
-Deletes the session cookie if it exists. This will **NOT** invalidate the provided session - when signing out a user, make sure to invalidate the session using [`invalidateSession()`](/reference/api/server-api#invalidatesession).
+Deletes all session cookies stored to the user. This will **NOT** invalidate the provided session - this can be down with [`invalidateSession()`](/reference/api/server-api#invalidatesession).
 
 ```ts
 const setSession: () => void;
@@ -35,7 +35,7 @@ const action: Action = async ({ locals }) => {
 
 ## `getSession()`
 
-Gets the session from the request. This will be from the session id sent with the request, or renewed session if the one sent was idle. Returns `null` if invalid.
+Gets the validated or renewed session from the request, and returns the current session or `null` if the session id is invalid. Sessions are validated on each request and as such, `getSession()` will return that original session and will not re-validate the session id on each call. This means `setSession()` or `clearSession()` will **NOT** change the return value of this method.
 
 ```ts
 const getSession: () => Session | null;
@@ -62,7 +62,7 @@ const action: Action = async ({ locals }) => {
 
 ## `setSession()`
 
-Sets the session as a cookie.
+Sets the session id cookie of the provided session. When called multiple times this will only set the last provided session.
 
 ```ts
 const setSession: (session: Session) => void;
