@@ -27,9 +27,11 @@ export type RequestEvent = {
 export type GlobalWindow = Window & {
 	_luciaStore?: Readable<LuciaContext>;
 	_setLuciaStore?: (value: LuciaContext) => void;
-	_luciaPageData?: {
-		data: any;
-	}[];
+	_luciaPageData?: ({
+		type: "data";
+		data: Record<any, any>;
+		uses: Record<any, any>;
+	} | null)[];
 	_luciaHooksRanLast?: boolean;
 };
 

@@ -12,7 +12,7 @@ export const getInitialClientLuciaContext = (): LuciaContext => {
     dataArr holds the data returned by server load functions, 
     which is used for reading cookies and exposing the user to page data in lucia
     */
-	const dataArr = globalWindow._luciaPageData || [];
+	const dataArr = globalWindow._luciaPageData;
 	const pageData = dataArr.reduce((prev, curr) => {
 		if (curr) return { ...prev, ...curr.data };
 		return prev;
