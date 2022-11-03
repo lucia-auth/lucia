@@ -1,5 +1,5 @@
 {
-	"name": "username-password",
+	"name": "lucia-sveltekit-demo",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",

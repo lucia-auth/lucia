@@ -1,4 +1,4 @@
-# Lucia username/password example
+# Lucia + Next.js example
 
 ## Setup
 

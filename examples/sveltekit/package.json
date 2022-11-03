@@ -1,5 +1,5 @@
 {
-	"name": "username-password",
+	"name": "lucia-sveltekit-demo",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
@@ -13,7 +13,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "1.0.0-next.526",
+		"@sveltejs/kit": "next",
 		"@types/cookie": "^0.5.1",
 		"@typescript-eslint/eslint-plugin": "^5.35.1",
 		"@typescript-eslint/parser": "^5.35.1",
@@ -34,9 +34,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-supabase": "~0.1.0",
-		"lucia-auth": "~0.1.0",
-		"@lucia-auth/sveltekit": "~0.1.0",
-		"devalue": "^4.0.1"
+		"@lucia-auth/adapter-supabase": "next",
+		"lucia-auth": "next",
+		"@lucia-auth/sveltekit": "next"
 	}
 }

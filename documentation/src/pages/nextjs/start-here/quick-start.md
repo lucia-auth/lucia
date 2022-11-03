@@ -6,7 +6,7 @@ title: "Quick start"
 
 This will guide you how to implement a simple username/password auth and cover the basics of Lucia. The app we're creating will be a simple note taking app with 3 pages: a sign up page, sign in page, and a profile page (this page will need auth).
 
-The [username/password example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/nextjs/username-password-supabase) in the repo expands on this guide.
+The [Next.js example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/nextjs) in the repo expands on this guide.
 
 Start off by following the steps in [the previous page](/nextjs/start-here/getting-started) to set up Lucia and your database.
 

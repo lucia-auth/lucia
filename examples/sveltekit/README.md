@@ -1,10 +1,10 @@
-# Lucia + Next.js demo
+# Lucia + SvelteKit example
 
 ## Setup
 
 ```bash
-pnpm i
-pnpm dev
+npm i
+npm run dev
 ```
 
 ### Environment variables
