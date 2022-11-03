@@ -9,8 +9,9 @@ declare namespace Lucia {
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
 	interface Locals {
-		getSession: import('lucia-auth').GetSession;
-		setSession: import('lucia-auth').SetSession;
-		clearSession: import('lucia-auth').ClearSession;
+		getSession: import('@lucia-auth/sveltekit').GetSession;
+		setSession: import('@lucia-auth/sveltekit').SetSession;
+		clearSession: import('@lucia-auth/sveltekit').ClearSession;
+		getSessionUser: import('@lucia-auth/sveltekit').GetSessionUser;
 	}
 }
