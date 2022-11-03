@@ -17,8 +17,6 @@ POST
 
 #### Success response
 
-status: 200
-
 ```ts
 type Status = 200;
 type ResponseBody = {};
@@ -44,9 +42,8 @@ Gets the current user. This endpoint will attempt to renew invalid sessions.
 
 #### Success response
 
-status: 200
-
 ```ts
+type Status = 200;
 type ResponseBody = {
 	user: User;
 };
