@@ -24,11 +24,11 @@ const constructor: (
 
 #### Parameter
 
-| name     | type                                                            | description                                       |
-| -------- | --------------------------------------------------------------- | ------------------------------------------------- |
-| auth     | [`Auth`](/reference/types/lucia-types#auth)                     | Lucia instance                                    |
-| request  | [`GetServerSidePropsContext["req"]`]() \| [`NextApiRequest`]()  | request from `getServerSideProps()` or API route  |
-| response | [`GetServerSidePropsContext["res"]`]() \| [`NextApiResponse`]() | response from `getServerSideProps()` or API route |
+| name     | type                                                                                                                    | description                                       |
+| -------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| auth     | [`Auth`](/reference/types/lucia-types#auth)                                                                             | Lucia instance                                    |
+| request  | `GetServerSidePropsContext["req"]` \| [`NextApiRequest`](https://nextjs.org/docs/basic-features/typescript#api-routes)  | request from `getServerSideProps()` or API route  |
+| response | `GetServerSidePropsContext["res"]` \| [`NextApiResponse`](https://nextjs.org/docs/basic-features/typescript#api-routes) | response from `getServerSideProps()` or API route |
 
 #### Example
 
@@ -69,7 +69,7 @@ const authRequest = new AuthRequest();
 authRequest.clearSession();
 ```
 
-## `getSession()`
+### `getSession()`
 
 Validates the request and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
 
@@ -93,7 +93,7 @@ if (session) {
 }
 ```
 
-## `getSessionUser()`
+### `getSessionUser()`
 
 Similar to [`getSession()`](/nextjs/api-reference/locals-api#getsession) but returns both the current session and user without an additional database.
 
@@ -125,7 +125,7 @@ const action: Action = async ({ locals }) => {
 };
 ```
 
-## `setSession()`
+### `setSession()`
 
 Sets the session id cookie of the provided session. When called multiple times this will only set the last provided session.
 
@@ -148,3 +148,23 @@ const authRequest = new AuthRequest();
 const session = await auth.createSession();
 authRequest.setSession(session);
 ```
+
+## `handleApiRoutes()`
+
+Handles api requests to `/api/auth/**`.
+
+```ts
+const handleApiRoutes = (auth: Auth) => (req: NextRequest, res: NextResponse) => Promise<void>;
+```
+
+#### Parameter
+
+| name | type                                        | description    |
+| ---- | ------------------------------------------- | -------------- |
+| auth | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance |
+
+#### Returns
+
+| type       | description          |
+| ---------- | -------------------- |
+| `Function` | An api route handler |

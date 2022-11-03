@@ -6,7 +6,7 @@ title: "Get session in the server"
 
 This can be used in any server context, including `getServerSideProps()` and api routes.
 
-`@lucia-auth/nextjs` provides [`AuthRequest`]() instance that takes in your Lucia `auth` instance, Next.js request, and Next.js response.
+`@lucia-auth/nextjs` provides [`AuthRequest`](/nextjs/api-reference/server-api#authrequest) instance that takes in your Lucia `auth` instance, Next.js request, and Next.js response.
 
 ```ts
 import { AuthRequest } from "@lucia-auth/nextjs";

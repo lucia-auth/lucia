@@ -38,7 +38,7 @@ export type Auth = typeof auth;
 
 ### Middleware
 
-Import [`handleMiddleware()`]() and use it as your app's middleware.
+Import [`handleMiddleware()`](/express/api-reference/server-api#handlemiddleware) and use it as your app's middleware.
 
 ```ts
 import express from "express";

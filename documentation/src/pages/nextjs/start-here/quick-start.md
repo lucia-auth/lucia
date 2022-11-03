@@ -141,7 +141,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 ### Redirect authenticated users
 
-[`locals.getSession()`]() can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.getSession()`](/nextjs/api-reference/server-api#getsession) can be used inside a server context to validate the request and get the current session.
 
 ```diff
 import Link from "next/link";
