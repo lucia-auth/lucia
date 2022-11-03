@@ -1,4 +1,4 @@
-# Lucia test app
+# Lucia + Sveltekit demo
 
 ## Setup
 

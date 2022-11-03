@@ -1,6 +1,6 @@
 import { LuciaError } from "../error.js";
 import cookie from "cookie";
-import type { Auth, Session, MinimalRequest } from "../types.js";
+import type { Auth, Session, MinimalRequest, User } from "../types.js";
 
 type ParseRequest = (request: MinimalRequest) => string;
 
@@ -20,22 +20,66 @@ export const parseRequestFunction = (auth: Auth) => {
 	return parseRequest;
 };
 
-type ValidateRequest = (request: MinimalRequest) => Promise<Session>;
+type ValidateRequest = (
+	request: MinimalRequest,
+	setCookie: (cookie: string) => void
+) => Promise<Session>;
 
 export const validateRequestFunction = (auth: Auth) => {
-	const validateRequest: ValidateRequest = async (request) => {
+	const validateRequest: ValidateRequest = async (request, setCookie) => {
 		const sessionId = auth.parseRequest(request);
 		try {
 			const session = await auth.validateSession(sessionId);
 			return session;
-		} catch (e) {
-			if (e instanceof LuciaError) {
+		} catch (validateError) {
+			if (!(validateError instanceof LuciaError)) throw validateError;
+			try {
 				const renewedSession = await auth.renewSession(sessionId);
 				await auth.deleteDeadUserSessions(renewedSession.userId);
+				const sessionCookies = auth.createSessionCookies(renewedSession);
+				setCookie(sessionCookies.toString());
 				return renewedSession;
+			} catch (renewError) {
+				const blankSessionCookies = auth.createBlankSessionCookies();
+				setCookie(blankSessionCookies.toString());
+				throw renewError;
 			}
-			throw e;
 		}
 	};
 	return validateRequest;
+};
+
+type GetSessionUserFromRequest = (
+	request: MinimalRequest,
+	setCookie: (cookie: string) => void
+) => Promise<{
+	user: User;
+	session: Session;
+}>;
+
+export const getSessionUserFromRequestFunction = (auth: Auth) => {
+	const getSessionUserFromRequest: GetSessionUserFromRequest = async (request, setCookie) => {
+		const sessionId = auth.parseRequest(request);
+		try {
+			return await auth.getSessionUser(sessionId);
+		} catch (validateError) {
+			if (!(validateError instanceof LuciaError)) throw validateError;
+			try {
+				const renewedSession = await auth.renewSession(sessionId);
+				const serializedCookies = auth.createSessionCookies(renewedSession);
+				setCookie(serializedCookies.toString());
+				const [user] = await Promise.all([
+					auth.getUser(renewedSession.userId),
+					auth.deleteDeadUserSessions(renewedSession.userId)
+				]);
+				return { user, session: renewedSession };
+			} catch (renewError) {
+				if (validateError instanceof LuciaError) {
+					setCookie(auth.createBlankSessionCookies().toString());
+				}
+				throw renewError;
+			}
+		}
+	};
+	return getSessionUserFromRequest;
 };

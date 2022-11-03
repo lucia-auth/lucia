@@ -28,7 +28,7 @@ import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: "DEV"
+	env: "DEV" // "PROD" if in prod
 });
 
 export type Auth = typeof auth;
@@ -38,7 +38,7 @@ export type Auth = typeof auth;
 
 ### Middleware
 
-Import [`handleMiddleware()`]() and use it as your app's middleware.
+Import [`handleMiddleware()`](/express/api-reference/server-api#handlemiddleware) and use it as your app's middleware.
 
 ```ts
 import express from "express";

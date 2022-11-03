@@ -33,6 +33,9 @@ jobs:
               elif [[ $line == packages/express* ]];
               then
                   pkg_array+=("express")
+              elif [[ $line == packages/nextjs* ]];
+              then
+                  pkg_array+=("nextjs")
               elif [[ $line == packages/adapter-mongoose* ]];
               then
                   pkg_array+=("adapter-mongoose")
@@ -89,6 +92,9 @@ jobs:
           fi
           if [[ $pkg_string == *"express"* ]]; then
             cd packages/express && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"nextjs"* ]]; then
+            cd packages/nextjs && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"adapter-mongoose"* ]]; then
             cd packages/adapter-mongoose && eval "$build_cmd"

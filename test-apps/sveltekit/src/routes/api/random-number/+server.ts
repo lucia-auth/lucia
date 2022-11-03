@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ locals }) => {
-	const session = locals.getSession();
+	const session = await locals.getSession();
 	if (!session)
 		return new Response(
 			JSON.stringify({

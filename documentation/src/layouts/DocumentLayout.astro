@@ -7,11 +7,12 @@ import type { MarkdownLayoutProps } from "astro";
 import MarkdownArticle from "@components/structure/MarkdownArticle.astro";
 import SvelteKitContent from "@components/content/SvelteKitContent.astro";
 import ExpressContent from "@components/content/ExpressContent.astro";
+import NextjsContent from "@components/content/NextjsContent.astro";
 
 type Props = MarkdownLayoutProps<{
 	title: string;
 	order: number;
-	redirect?: string
+	redirect?: string;
 }>;
 const { frontmatter, headings } = Astro.props;
 
@@ -29,11 +30,12 @@ const framework = (
 const title = Astro.props.frontmatter.title;
 ---
 
-<BaseLayout title={frontmatter.title}>
+<BaseLayout title={frontmatter.title} framework={framework}>
 	<Header />
 	<div class="min-h-screen">
 		{framework === "sveltekit" && <SvelteKitContent title={title} />}
 		{framework === "express" && <ExpressContent title={title} />}
+		{framework === "nextjs" && <NextjsContent title={title} />}
 		{framework === null && <MainContent title={title} />}
 		<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:ml-72 px-4 sm:px-8 lg:px-12">
 			<div class="lg:pl-4 overflow-hidden">

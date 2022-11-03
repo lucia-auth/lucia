@@ -1,5 +1,5 @@
 {
-	"name": "username-password",
+	"name": "lucia-sveltekit-demo",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
@@ -13,7 +13,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "1.0.0-next.526",
+		"@sveltejs/kit": "next",
 		"@types/cookie": "^0.5.1",
 		"@typescript-eslint/eslint-plugin": "^5.35.1",
 		"@typescript-eslint/parser": "^5.35.1",

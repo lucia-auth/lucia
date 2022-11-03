@@ -62,6 +62,8 @@ const auth = lucia({
 
 ## Schema
 
+Make sure to generate your types using `npx prisma generate` after you set up the schema!
+
 ### `user`
 
 You may add additional columns to store user attributes. Refer to [[Store user attributes](/learn/basics/store-user-attributes). `id` may be `String` if you generate your own user id.

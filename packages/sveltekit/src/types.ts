@@ -4,7 +4,8 @@ import type { Readable } from "svelte/store";
 export type RequestEvent = {
 	request: Request;
 	locals: {
-		getSession: () => Session | null;
+		getSession: () => Promise<Session | null>;
+		getSessionUser: () => Promise<{ session: Session; user: User } | { session: null; user: null }>;
 		setSession: (session: Session) => void;
 		clearSession: () => void;
 	};
@@ -26,9 +27,11 @@ export type RequestEvent = {
 export type GlobalWindow = Window & {
 	_luciaStore?: Readable<LuciaContext>;
 	_setLuciaStore?: (value: LuciaContext) => void;
-	_luciaPageData?: {
-		data: any;
-	}[];
+	_luciaPageData?: ({
+		type: "data";
+		data: Record<any, any>;
+		uses: Record<any, any>;
+	} | null)[];
 	_luciaHooksRanLast?: boolean;
 };
 

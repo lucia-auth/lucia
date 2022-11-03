@@ -1,11 +1,11 @@
 import { handleLogoutRequest } from "./endpoints/index.js";
-import type { Auth, Session } from "lucia-auth";
+import type { Auth, Session, User } from "lucia-auth";
 import type { RequestEvent } from "../types.js";
 
 const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 	// finds hydrate.data value from parameter of start()
 	const pageDataFunctionRegex = new RegExp(
-		/(<script type="module" data-sveltekit-hydrate=".*?">)[\s\S]*start\(\s*\{[\s\S]*?hydrate:[\s\S]*?data:\s*\(\s*(function\([\s\S]*?\)\s*{[\s\S]*?return[\s\S]*)\),\s*form:[\s\S]*?\}\);\s*<\/script>/gm
+		/(<script type="module" data-sveltekit-hydrate=".*?">)[\s\S]*start\(\s*\{[\s\S]*?hydrate:[\s\S]*?data:\s*(\[[\s\S]*?\]),\s*form:[\s\S]*?\}\);\s*<\/script>/gm
 	);
 	const scriptTagContentMatches = pageDataFunctionRegex.exec(html);
 	if (!scriptTagContentMatches) return html;
@@ -40,36 +40,51 @@ export const handleHooks = (auth: Auth) => {
 			}
 		) => Promise<Response> | Response;
 	}) => {
-		let session: Session | null = null;
-		let sessionToSet: Session | null = null;
-		let clearSession = false;
-		event.locals.getSession = () => Object.freeze(session);
+		let sessionCookie: string | null = null;
 		event.locals.setSession = (session: Session) => {
-			clearSession = false;
-			sessionToSet = session;
+			const serializedCookies = auth.createSessionCookies(session);
+			sessionCookie = serializedCookies.toString();
 		};
 		event.locals.clearSession = () => {
-			clearSession = true;
+			const serializedCookies = auth.createBlankSessionCookies();
+			sessionCookie = serializedCookies.toString();
 		};
-		try {
-			session = await auth.validateRequest(event.request);
-			event.locals.setSession(session);
-		} catch {
-			event.locals.clearSession();
-		}
+		const setCookie = (stringifiedCookie: string) => {
+			sessionCookie = stringifiedCookie;
+		};
+		event.locals.getSession = async () => {
+			try {
+				const session = await auth.validateRequest(event.request, setCookie);
+				event.locals.setSession(session);
+				return session;
+			} catch {
+				event.locals.clearSession();
+				return null;
+			}
+		};
+		event.locals.getSessionUser = async (): Promise<
+			| { user: User; session: Session }
+			| {
+					user: null;
+					session: null;
+			  }
+		> => {
+			try {
+				return await auth.getSessionUserFromRequest(event.request, setCookie);
+			} catch {
+				return {
+					user: null,
+					session: null
+				};
+			}
+		};
 		const requestHandler = getRequestHandler(event);
 		if (requestHandler) return await requestHandler(event, auth);
 		const response = await resolve(event, {
 			transformPageChunk: setPageDataGlobalVariable
 		});
-		if (sessionToSet) {
-			const targetSession: Session = sessionToSet;
-			const serializedCookies = auth.createSessionCookies(targetSession);
-			response.headers.append("set-cookie", serializedCookies.join());
-		}
-		if (clearSession) {
-			const serializedCookies = auth.createBlankSessionCookies();
-			response.headers.append("set-cookie", serializedCookies.join());
+		if (sessionCookie) {
+			response.headers.append("set-cookie", sessionCookie);
 		}
 		return response;
 	};

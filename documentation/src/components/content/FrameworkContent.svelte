@@ -15,6 +15,8 @@
 				SvelteKit
 			{:else if framework === "express"}
 				Express
+			{:else if framework === "nextjs"}
+				Next.js
 			{/if}
 			Integration
 		</h3>

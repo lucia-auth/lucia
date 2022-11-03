@@ -1,10 +1,10 @@
-# Lucia username/password example
+# Lucia + Next.js demo
 
 ## Setup
 
 ```bash
-npm i
-npm run dev
+pnpm i
+pnpm dev
 ```
 
 ### Environment variables

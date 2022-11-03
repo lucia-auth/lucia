@@ -14,7 +14,7 @@ export const getUser = async (event: {
 	}
 	// client
 	const globalWindow = window as GlobalWindow;
-	if (globalWindow._luciaHooksRanLast === undefined)
+	if (typeof globalWindow._luciaHooksRanLast === "undefined")
 		throw new Error("pageData._luciaHooksRanLast is undefined");
 	if (globalWindow._luciaHooksRanLast === false) {
 		if (!globalWindow._luciaStore) throw new Error("_luciaStore is undefined");

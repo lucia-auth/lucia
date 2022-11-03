@@ -1,7 +1,16 @@
 ---
 interface Props {
 	title?: string;
+	framework?: Framework | null;
 }
+
+const getFrameworkName = (framework: Framework) => {
+	return {
+		sveltekit: "SvelteKit",
+		express: "Express",
+		nextjs: "Next.js"
+	}[framework];
+};
 ---
 
 <head>
@@ -9,7 +18,13 @@ interface Props {
 	<meta name="viewport" content="width=device-width" />
 	<meta name="generator" content={Astro.generator} />
 	<title>
-		{Astro.props.title ? `${Astro.props.title} | Lucia` : "Lucia"}
+		{!Astro.props.title && "Lucia"}
+		{Astro.props.title && !Astro.props.framework && `${Astro.props.title} | Lucia`}
+		{
+			Astro.props.title &&
+				Astro.props.framework &&
+				`${Astro.props.title} | Lucia + ${getFrameworkName(Astro.props.framework)}`
+		}
 	</title>
 	<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
