@@ -1,0 +1,20 @@
+---
+import FrameworkContent from "./FrameworkContent.svelte";
+import { getContent, getPages, getSections } from "src/lib/content.js";
+
+interface Props {
+	title: string;
+}
+
+const nextjsSections = getSections(await Astro.glob("/src/pages/nextjs/*/index.md"), "nextjs");
+const nextjsPages = getPages(await Astro.glob("/src/pages/nextjs/**/*.md"), "nextjs");
+
+const nextjsContent = getContent(nextjsSections, nextjsPages);
+---
+
+<FrameworkContent
+	content={nextjsContent}
+	framework="nextjs"
+	currentTitle={Astro.props.title}
+	client:load
+/>

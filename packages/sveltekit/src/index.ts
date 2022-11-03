@@ -1,8 +1,9 @@
-import type { Session } from "lucia-auth";
+import type { RequestEvent } from "./types.js";
 
 export { handleServerSession } from "./server/server-load.js";
 export { handleHooks } from "./server/hooks.js";
 
-export type GetSession = () => Session | null;
-export type SetSession = (session: Session) => void;
-export type ClearSession = () => void;
+export type GetSession = RequestEvent["locals"]["getSession"];
+export type GetSessionUser = RequestEvent["locals"]["getSessionUser"];
+export type SetSession = RequestEvent["locals"]["setSession"];
+export type ClearSession = RequestEvent["locals"]["clearSession"];

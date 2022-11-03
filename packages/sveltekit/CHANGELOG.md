@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.1.5
+
+- [Breaking] `handleHooks()` no longer validates sessions on request
+- [Breaking] `locals.getSession()` validates the session on call (needs to be awaited)
+- [Breaking] `handleServerSession()` no longer requires `auth` parameter
+- Add `locals.getSessionUser()`
+
 ## 0.1.4
 
 - [Breaking] `handleSession()` no longer sync sessions across tabs

@@ -6,7 +6,7 @@ title: "Quick start"
 
 This will guide you how to implement a simple username/password auth and cover the basics of Lucia. The app we're creating will be a simple note taking app with 3 pages: a sign up page, sign in page, and a profile page (this page will need auth).
 
-The [username/password example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/username-password) in the repo expands on this guide.
+The [username/password example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/sveltekit/username-password-supabase) in the repo expands on this guide.
 
 Start off by following the steps in [the previous page](/sveltekit/start-here/getting-started) to set up Lucia and your database.
 
@@ -302,7 +302,7 @@ import { invalid, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
 	default: async ({ cookies, request, locals }) => {
-		const session = locals.getSession();
+		const session = await locals.getSession();
 		if (!session) return invalid(403);
 		const formData = await request.formData();
 		const notes = formData.get("notes")?.toString();
@@ -328,7 +328,7 @@ import { invalid, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
-	const session = locals.getSession();
+	const session = await locals.getSession();
 	if (!session) throw redirect(302, "/login");
 	const notes = cookies.get("notes") || "";
 	return {

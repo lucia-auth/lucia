@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import type { Auth, Session } from "lucia-auth";
+import type { Auth, Session, User } from "lucia-auth";
+import { convertExpressRequestToStandardRequest } from "./request.js";
 
 export const handleMiddleware = (auth: Auth) => {
 	const middleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -11,29 +12,39 @@ export const handleMiddleware = (auth: Auth) => {
 			const serializedCookies = auth.createBlankSessionCookies();
 			res.append("Set-Cookie", serializedCookies.join());
 		};
-		try {
-			const session = await auth.validateRequest({
-				headers: {
-					get: (name: string) => {
-						const value = req.headers[name];
-						if (value === undefined) return null;
-						if (typeof value === "string") return value;
-						return value.join();
-					}
-				},
-				url: req.url,
-				method: req.method
-			});
-			req.app.locals.setSession(session);
-			req.app.locals.getSession = () => {
-				return session;
-			};
-		} catch {
-			req.app.locals.getSession = () => {
+		const setCookie = (stringifiedCookie: string) => {
+			res.append("Set-Cookie", stringifiedCookie);
+		};
+		req.app.locals.getSession = async () => {
+			try {
+				return await auth.validateRequest(
+					convertExpressRequestToStandardRequest(req, auth),
+					setCookie
+				);
+			} catch {
 				return null;
-			};
-			req.app.locals.clearSession();
-		}
+			}
+		};
+		req.app.locals.getSessionUser = async (): Promise<
+			| { user: User; session: Session }
+			| {
+					user: null;
+					session: null;
+			  }
+		> => {
+			try {
+				return await auth.getSessionUserFromRequest(
+					convertExpressRequestToStandardRequest(req, auth),
+					setCookie
+				);
+			} catch {
+				return {
+					session: null,
+					user: null
+				};
+			}
+		};
+
 		next();
 	};
 	return middleware;

@@ -55,7 +55,7 @@ const config = {
 
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks). This will read and validate the session of incoming requests (including page render). This will also automatically renew idle sessions.
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks).
 
 ```ts
 // src/hooks.server.ts
@@ -102,11 +102,10 @@ In `+layout.server.ts`, create and export [`handleServerSession()`](/reference/a
 
 ```ts
 // routes/+layout.server.ts
-import { auth } from "$lib/server/lucia";
 import { handleServerSession } from "@lucia-auth/sveltekit";
 import type { LayoutServerLoad } from "./$types.js";
 
-export const load: LayoutServerLoad = handleServerSession(auth);
+export const load: LayoutServerLoad = handleServerSession();
 ```
 
 ### Types
@@ -125,6 +124,7 @@ declare namespace Lucia {
 declare namespace App {
 	interface Locals {
 		getSession: import("@lucia-auth/sveltekit").GetSession;
+		getSessionUser: import("@lucia-auth/sveltekit").GetSessionUser;
 		setSession: import("@lucia-auth/sveltekit").SetSession;
 		clearSession: import("@lucia-auth/sveltekit").ClearSession;
 	}

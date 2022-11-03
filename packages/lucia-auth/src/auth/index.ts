@@ -10,7 +10,11 @@ import {
 	updateUserProviderIdFunction,
 	getSessionUserFunction
 } from "./user/index.js";
-import { parseRequestFunction, validateRequestFunction } from "./request.js";
+import {
+	parseRequestFunction,
+	validateRequestFunction,
+	getSessionUserFromRequestFunction
+} from "./request.js";
 import {
 	createSessionFunction,
 	deleteDeadUserSessionsFunction,
@@ -91,6 +95,7 @@ export class Auth<C extends Configurations = any> {
 
 		this.parseRequest = parseRequestFunction(this);
 		this.validateRequest = validateRequestFunction(this);
+		this.getSessionUserFromRequest = getSessionUserFromRequestFunction(this);
 
 		this.createSessionCookies = createSessionCookiesFunction(this);
 		this.createBlankSessionCookies = createBlankSessionCookiesFunction(this);
@@ -115,6 +120,7 @@ export class Auth<C extends Configurations = any> {
 
 	public parseRequest: ReturnType<typeof parseRequestFunction>;
 	public validateRequest: ReturnType<typeof validateRequestFunction>;
+	public getSessionUserFromRequest: ReturnType<typeof getSessionUserFromRequestFunction>;
 
 	public createSessionCookies: ReturnType<typeof createSessionCookiesFunction>;
 	public createBlankSessionCookies: ReturnType<typeof createBlankSessionCookiesFunction>;

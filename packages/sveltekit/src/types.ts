@@ -4,7 +4,8 @@ import type { Readable } from "svelte/store";
 export type RequestEvent = {
 	request: Request;
 	locals: {
-		getSession: () => Session | null;
+		getSession: () => Promise<Session | null>;
+		getSessionUser: () => Promise<{ session: Session; user: User } | { session: null; user: null }>;
 		setSession: (session: Session) => void;
 		clearSession: () => void;
 	};

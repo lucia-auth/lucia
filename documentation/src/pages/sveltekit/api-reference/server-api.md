@@ -12,7 +12,7 @@ import { handleHooks } from "@lucia-auth/sveltekit";
 
 ## `handleHooks()`
 
-For the handle function in hooks. Reads the session id from cookies and validates it, attempting to renew it if the session id has expired. This also creates handles requests to Lucia's api endpoints and creates a global variable in the client for internal use.
+For the handle function in hooks. Sets the `locals` methods, handles requests to Lucia's api endpoints, and creates a global variable in the client for internal use.
 
 ```ts
 const handleHooks: (auth: Auth) => Handle;
@@ -49,18 +49,17 @@ export const handle: Handle = sequence(handleHooks(auth), customHandle);
 
 ## `handleServerSession()`
 
-For the root layout server load function. Reads the sessions passed on from hooks (`handleHooks()`), gets the user, and passes on to child load functions and the client. If a server load function is provided (which can return some data), Lucia will run it after it finishes handling sessions.
+For the root layout server load function. Reads the sessions passed on from hooks (`handleHooks()`), gets the user, and passes on to child load functions and the client. If a server load function is provided (which can return data and be properly typed), Lucia will run it after it finishes handling sessions.
 
 ```ts
-const handleServerSession: (auth: Auth, serverLoad?: ServerLoad) => ServerLoad;
+const handleServerSession: (serverLoad?: ServerLoad) => ServerLoad;
 ```
 
 #### Parameter
 
-| name       | type                                        | description            | optional |
-| ---------- | ------------------------------------------- | ---------------------- | -------- |
-| auth       | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance         |
-| serverLoad | `ServerLoad`                                | A server load function | true     |
+| name       | type         | description            | optional |
+| ---------- | ------------ | ---------------------- | -------- |
+| serverLoad | `ServerLoad` | A server load function | true     |
 
 #### Returns
 

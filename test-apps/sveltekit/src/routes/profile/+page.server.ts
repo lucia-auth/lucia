@@ -3,7 +3,7 @@ import { invalid, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
-	const session = locals.getSession();
+	const session = await locals.getSession();
 	if (!session) throw redirect(302, '/login');
 	const notes = cookies.get('notes') || '';
 	return {

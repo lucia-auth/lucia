@@ -1,5 +1,5 @@
 import { auth } from '$lib/server/lucia';
-import { invalid, redirect, type Actions } from '@sveltejs/kit';
+import { invalid, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -22,10 +22,7 @@ export const actions: Actions = {
 			locals.setSession(session);
 		} catch (e) {
 			const error = e as Error;
-			if (
-				error.message === 'AUTH_DUPLICATE_PROVIDER_ID' ||
-				error.message === 'AUTH_DUPLICATE_USER_DATA'
-			) {
+			if (error.message === 'AUTH_DUPLICATE_PROVIDER_ID') {
 				return invalid(400, {
 					message: 'Username already in use'
 				});

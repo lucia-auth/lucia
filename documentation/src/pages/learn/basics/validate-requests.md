@@ -9,18 +9,52 @@ The easiest way to validate requests is to use [`validateRequest()`](/reference/
 - Parse the request and get the session cookie
 - If [`csrfProtection`](/reference/configure/lucia-configurations#csrfprotection) configuration is enabled, check if the domain of the origin url and url matches
 - Validates the session cookie
-- If it fails to validate it, attempts to renew the session
-- On session renewal, remove any dead sessions from the database
+- If it fails to validate it, attempts to renew the session and stores the session cookie
+- On session renewal, removes any dead sessions from the database and removes all session cookies
+
+Keep in mind that if you're using one of the framework integration library, it provides an easier to get the current session and user. The parameter `request` is the standard fetch [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request), which may be different from the request object in some frameworks (namely Next.js and Express) - the integration libraries handles the conversion.
 
 ## Validate requests
+
+`setSession` is a a function that takes in a stringified cookie that will be called to call to store cookies.
 
 ```ts
 import { auth } from "./lucia.js";
 
 try {
-	const session = await auth.validateRequest(request);
+	const session = await auth.validateRequest(request, setSession);
 } catch {
 	// invalid session
+}
+```
+
+#### Example
+
+```ts
+try {
+	let sessionCookie = "";
+	const session = await auth.validateRequest(request, (stringifiedCookie) => {
+		sessionCookie = stringifiedCookie;
+	});
+	const response = new Response();
+	response.headers.append("set-cookie", sessionCookie);
+	return response;
+} catch {
+	// invalid session
+}
+```
+
+### Validate requests and get the user
+
+The [`getSessionUserFromRequest()`](/reference/api/server-api#getsessionuserfromrequest) method is similar to `validateRequest()`, but will return both the session and the user without an additional database call.
+
+```ts
+import { auth } from "./lucia.js";
+
+try {
+	const { session, user } = await auth.getSessionUserFromRequest(request);
+} catch (e) {
+	// invalid request
 }
 ```
 

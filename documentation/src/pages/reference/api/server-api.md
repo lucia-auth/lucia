@@ -356,6 +356,55 @@ try {
 }
 ```
 
+### `getSessionUserFromRequest()`
+
+Similar to [`validateRequest()`](/reference/api/server-api#validaterequest) but returns both the session and user without an additional database call.
+
+```ts
+const validateRequest: (
+	request: MinimalRequest,
+	setCookie: (stringifiedCookie) => void
+) => Promise<{ user: User; session: Session }>;
+```
+
+#### Parameter
+
+| name      | type                                                            | description                                                                                       |
+| --------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| request   | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | the fetch [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) can be used as is |
+| setCookie | `Function`                                                      |                                                                                                   |
+
+#### Returns
+
+| name    | type                                              | description                   |
+| ------- | ------------------------------------------------- | ----------------------------- |
+| session | [`Session`](/reference/types/lucia-types#session) | The session of the session id |
+| user    | [`User`](/reference/types/lucia-types#user)       | The user of the session       |
+
+#### Errors
+
+| name                    | description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| AUTH_INVALID_REQUEST    | The request is not from a trusted origin                           |
+| AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid active session id |
+
+#### Example
+
+```ts
+import { auth } from "lucia-auth";
+
+try {
+	let sessionCookie = "";
+	const { session, user } = await auth.validateRequest(request, (stringifiedCookie) => {
+		sessionCookie = stringifiedCookie;
+	});
+	const response = new Response();
+	response.headers.append("set-cookie", sessionCookie);
+} catch {
+	// invalid
+}
+```
+
 ### `getUser()`
 
 Gets a user.
@@ -683,6 +732,54 @@ try {
 }
 ```
 
+### `validateRequest()`
+
+Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. If the session is invalid, it attempts to renew the session. `setCookie()` will called whenever the method needs to set a cookie. The input is the value of the `set-cookie` headers and the function should append it to the header.
+
+```ts
+const validateRequest: (
+	request: MinimalRequest,
+	setCookie: (stringifiedCookie) => void
+) => Promise<Session>;
+```
+
+#### Parameter
+
+| name      | type                                                            | description                                                                                       |
+| --------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| request   | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | the fetch [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) can be used as is |
+| setCookie | `Function`                                                      |                                                                                                   |
+
+#### Returns
+
+| type                                              | description                   |
+| ------------------------------------------------- | ----------------------------- |
+| [`Session`](/reference/types/lucia-types#session) | The session of the session id |
+
+#### Errors
+
+| name                    | description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| AUTH_INVALID_REQUEST    | The request is not from a trusted origin                           |
+| AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid active session id |
+
+#### Example
+
+```ts
+import { auth } from "lucia-auth";
+
+try {
+	let sessionCookie = "";
+	const session = await auth.validateRequest(request, (stringifiedCookie) => {
+		sessionCookie = stringifiedCookie;
+	});
+	const response = new Response();
+	response.headers.append("set-cookie", sessionCookie);
+} catch {
+	// invalid
+}
+```
+
 ### `validateSession()`
 
 Validates an active session id. Idle sessions are considered invalid.
@@ -716,45 +813,6 @@ import { auth } from "lucia-auth";
 
 try {
 	const session = await auth.validateSession(sessionId);
-} catch {
-	// invalid
-}
-```
-
-### `validateRequest()`
-
-Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. If the session is invalid, it attempts to renew the session.
-
-```ts
-const validateRequest: (request: MinimalRequest) => Promise<Session>;
-```
-
-#### Parameter
-
-| name    | type                                                            | description                  |
-| ------- | --------------------------------------------------------------- | ---------------------------- |
-| request | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | Node's `Request` can be used |
-
-#### Returns
-
-| type                                              | description                   |
-| ------------------------------------------------- | ----------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | The session of the session id |
-
-#### Errors
-
-| name                    | description                                                        |
-| ----------------------- | ------------------------------------------------------------------ |
-| AUTH_INVALID_REQUEST    | The request is not from a trusted origin                           |
-| AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid active session id |
-
-#### Example
-
-```ts
-import { auth } from "lucia-auth";
-
-try {
-	const session = await auth.validateRequest(request);
 } catch {
 	// invalid
 }

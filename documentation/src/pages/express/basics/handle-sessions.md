@@ -8,31 +8,35 @@ Inside `app.locals`, Lucia provides a method to get, set, and clear the current 
 
 ```ts
 import express from "express";
-import { auth } from "./lucia.js";
-
 const app = express();
 
-app.get("/", (_, res) => {
+app.get("/", () => {
 	const session = app.locals.getSession();
 });
 ```
 
 ## Get session
 
-[`getSession()`](/express/api-reference/locals-api) will return the validated session and `null` if the session is invalid.
+[`getSession()`](/express/api-reference/locals-api) will validate the request and return the session if authenticated or `null` if not. It will also attempt to renew the session and return the new session if it succeeds.
 
 ```ts
-app.get("/", (_, res) => {
+import express from "express";
+const app = express();
+
+app.get("/", () => {
 	const session = app.locals.getSession();
 });
 ```
 
 ## Set session
 
-[`setSession()`](/express/api-reference/locals-api#setsession) will set the session id cookie of the provided session.
+[`setSession()`](/express/api-reference/locals-api#setsession) will set the cookie of the provided session.
 
 ```ts
-app.get("/", (_, res) => {
+import express from "express";
+const app = express();
+
+app.get("/", () => {
 	app.locals.setSession(session);
 });
 ```
@@ -42,7 +46,10 @@ app.get("/", (_, res) => {
 [`clearSession()`](/express/api-reference/locals-api#clearsession) method will remove all session cookies stored to the user. This will **NOT** invalidate the provided session - when signing out a user, make sure to invalidate the session using [`invalidateSession()`](/reference/api/server-api#invalidatesession).
 
 ```ts
-app.get("/", (_, res) => {
+import express from "express";
+const app = express();
+
+app.get("/", () => {
 	app.locals.clearSession();
 });
 ```
