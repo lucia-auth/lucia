@@ -13,25 +13,19 @@ export const handleApiRoutes = (auth: Auth) => {
 			});
 		}
 		if ((req.url || "").startsWith("/api/auth/logout") && req.method === "POST") {
+			const session = await authRequest.getSession();
+			if (!session) {
+				return res.status(401).json({
+					error: "Unauthorized"
+				});
+			}
 			try {
-				const session = await authRequest.getSession();
-				if (!session) {
-					return res.status(200).json({
-						error: "Unauthorized"
-					});
-				}
-				try {
-					await auth.invalidateSession(session.sessionId);
-					authRequest.clearSession();
-					return res.status(200).json({});
-				} catch {
-					return res.status(200).json({
-						error: "Unknown"
-					});
-				}
+				await auth.invalidateSession(session.sessionId);
+				authRequest.clearSession();
+				return res.status(200).json({});
 			} catch {
-				return res.status(400).json({
-					error: "Invalid request"
+				return res.status(500).json({
+					error: "Unknown"
 				});
 			}
 		}

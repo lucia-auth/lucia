@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Server API"
 ---
 
-These can be imported from `@lucia-auth/nextjs`.
+These can be imported from `@lucia-auth/nextjs` and should only be used inside a server context.
 
 ```ts
 import { AuthRequest } from "@lucia-auth/nextjs";
@@ -15,7 +15,11 @@ import { AuthRequest } from "@lucia-auth/nextjs";
 The methods for the instance are listed below.
 
 ```ts
-const authRequest = new AuthRequest(auth, request, response);
+const constructor: (
+	auth: Auth,
+	request: GetServerSidePropsContext["req"] | NextApiRequest,
+	response: GetServerSidePropsContext["res"] | NextApiResponse
+) => AuthRequest;
 ```
 
 #### Parameter
