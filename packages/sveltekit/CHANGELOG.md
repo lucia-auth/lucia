@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.6
+
+- Update package.json
+
 ## 0.1.5
 
 - [Breaking] `handleHooks()` no longer validates sessions on request
