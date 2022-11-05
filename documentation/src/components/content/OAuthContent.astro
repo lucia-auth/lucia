@@ -1,0 +1,20 @@
+---
+import ExternalContent from "./ExternalContent.svelte";
+import { getContent, getPages, getSections } from "src/lib/content.js";
+
+interface Props {
+	title: string;
+}
+
+const oauthSections = getSections(await Astro.glob("/src/pages/oauth/*/index.md"), "oauth");
+const oauthPages = getPages(await Astro.glob("/src/pages/oauth/**/*.md"), "oauth");
+
+const oauthContent = getContent(oauthSections, oauthPages);
+---
+
+<ExternalContent
+	content={oauthContent}
+	title="OAuth integration"
+	documentTitle={Astro.props.title}
+	client:load
+/>

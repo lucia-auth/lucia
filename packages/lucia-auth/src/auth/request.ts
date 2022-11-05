@@ -1,12 +1,12 @@
 import { LuciaError } from "../error.js";
-import cookie from "cookie";
+import { parse } from "../utils/cookie.js";
 import type { Auth, Session, MinimalRequest, User } from "../types.js";
 
 type ParseRequest = (request: MinimalRequest) => string;
 
 export const parseRequestFunction = (auth: Auth) => {
 	const parseRequest: ParseRequest = (request) => {
-		const cookies = cookie.parse(request.headers.get("cookie") || "");
+		const cookies = parse(request.headers.get("cookie") || "");
 		const sessionId = cookies.auth_session || "";
 		const checkForCsrf = request.method !== "GET" && request.method !== "HEAD";
 		if (checkForCsrf && auth.configs.csrfProtection) {

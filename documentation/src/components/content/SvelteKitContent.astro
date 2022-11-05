@@ -1,5 +1,5 @@
 ---
-import FrameworkContent from "./FrameworkContent.svelte";
+import ExternalContent from "./ExternalContent.svelte";
 import { getContent, getPages, getSections } from "src/lib/content.js";
 
 interface Props {
@@ -15,9 +15,9 @@ const sveltekitPages = getPages(await Astro.glob("/src/pages/sveltekit/**/*.md")
 const sveltekitContent = getContent(sveltekitSections, sveltekitPages);
 ---
 
-<FrameworkContent
+<ExternalContent
 	content={sveltekitContent}
-	framework="sveltekit"
-	currentTitle={Astro.props.title}
+	title="SvelteKit integration"
+	documentTitle={Astro.props.title}
 	client:load
 />

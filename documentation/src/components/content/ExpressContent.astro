@@ -1,5 +1,5 @@
 ---
-import FrameworkContent from "./FrameworkContent.svelte";
+import ExternalContent from "./ExternalContent.svelte";
 import { getContent, getPages, getSections } from "src/lib/content.js";
 
 interface Props {
@@ -12,9 +12,9 @@ const expressPages = getPages(await Astro.glob("/src/pages/express/**/*.md"), "e
 const expressContent = getContent(expressSections, expressPages);
 ---
 
-<FrameworkContent
+<ExternalContent
 	content={expressContent}
-	framework="express"
-	currentTitle={Astro.props.title}
+	title="Express integration"
+	documentTitle={Astro.props.title}
 	client:load
 />

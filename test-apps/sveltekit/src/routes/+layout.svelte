@@ -15,8 +15,6 @@
 <a href="/about" class="link">about</a>
 
 <style lang="postcss">
-	/* I've used @apply to apply tailwind classes for demo purposes to remove/hide as much non-lucia related things
-	Inline classes should be used for Tailwind */
 	:global(body) {
 		@apply px-4 pt-8 flex flex-col w-full place-items-center;
 	}

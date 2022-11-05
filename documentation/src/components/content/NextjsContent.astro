@@ -1,5 +1,5 @@
 ---
-import FrameworkContent from "./FrameworkContent.svelte";
+import ExternalContent from "./ExternalContent.svelte";
 import { getContent, getPages, getSections } from "src/lib/content.js";
 
 interface Props {
@@ -12,9 +12,9 @@ const nextjsPages = getPages(await Astro.glob("/src/pages/nextjs/**/*.md"), "nex
 const nextjsContent = getContent(nextjsSections, nextjsPages);
 ---
 
-<FrameworkContent
+<ExternalContent
 	content={nextjsContent}
-	framework="nextjs"
-	currentTitle={Astro.props.title}
+	title="Next.js integration"
+	documentTitle={Astro.props.title}
 	client:load
 />

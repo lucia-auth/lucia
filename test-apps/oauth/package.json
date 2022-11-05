@@ -1,0 +1,25 @@
+{
+	"name": "@example/minimal",
+	"type": "module",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro"
+	},
+	"dependencies": {
+		"@astrojs/tailwind": "^2.1.2",
+		"@lucia-auth/adapter-supabase": "workspace:*",
+		"@lucia-auth/oauth": "workspace:*",
+		"astro": "^1.6.0",
+		"cookie": "^0.5.0",
+		"lucia-auth": "workspace:*",
+		"tailwindcss": "^3.0.24"
+	},
+	"devDependencies": {
+		"@types/cookie": "^0.5.1"
+	}
+}
