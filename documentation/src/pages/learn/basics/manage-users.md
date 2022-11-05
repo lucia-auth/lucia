@@ -4,11 +4,9 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Manage users"
 ---
 
-Updating the current user will not be automatically reflected in the client. Make sure to refresh the page after it.
-
 ## Update users
 
-Lucia provides few methods to update the user, one for each user attribute. Lucia currently does not provide a way to update the user id; please open a new issue if you encounter a use case for it. All of the methods return the updated user.
+Lucia provides few methods to update the user, one for each user attribute. Lucia currently does not provide a way to update the user id. You do not need to re-issue the session as the session is tied to the user id.
 
 ### Provider id
 

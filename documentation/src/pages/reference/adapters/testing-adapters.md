@@ -37,7 +37,7 @@ declare namespace App {
 
 ## Reference
 
-The can be imported from the package:
+These can be imported from the package:
 
 ```ts
 import { testAdapter } from "@lucia-auth/adapter-test";
