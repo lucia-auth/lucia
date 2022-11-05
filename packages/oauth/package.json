@@ -1,11 +1,10 @@
 {
-	"name": "lucia-auth",
-	"version": "0.1.3",
-	"description": "A simple authentication library",
+	"name": "@lucia-auth/oauth",
+	"version": "0.1.0",
+	"description": "OAuth integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"module": "index.js",
-	"svelte": "index.js",
 	"type": "module",
 	"files": [
 		"**/*"
@@ -16,37 +15,35 @@
 	},
 	"keywords": [
 		"lucia",
-		"authentication",
 		"lucia-auth",
-		"node",
+		"authentication",
+		"oauth",
 		"auth"
 	],
-	"exports": {
-		"./package.json": "./package.json",
-		".": "./index.js",
-		"./adapter": "./adapter/index.js"
-	},
-	"typesVersions": {
-		"*": {
-			"adapter": [
-				"adapter/index.d.ts"
-			]
-		}
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
-		"directory": "packages/lucia-auth"
+		"directory": "packages/lucia"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
-	"devDependencies": {
-		"@types/node": "^18.6.2",
-		"prettier": "^2.3.0",
-		"svelte": "^3.50.1",
-		"typescript": "^4.7.4"
+	"exports": {
+		"./package.json": "./package.json",
+		".": "./index.js",
+		"./github": "./github.js",
+		"./google": "./google.js"
 	},
-	"dependencies": {
-		"nanoid": "^4.0.0"
+	"typesVersions": {
+		"*": {
+			"github": [
+				"github.d.ts"
+			],
+			"google": [
+				"google.d.ts"
+			]
+		}
+	},
+	"devDependencies": {
+		"lucia-auth": "workspace:*"
 	}
 }

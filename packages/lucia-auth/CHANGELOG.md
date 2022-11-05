@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.1.3
+
+- Export `Lucia.Auth` and `Lucia.UserAttributes`
+- Remove `cookie` and `cli-color` dependency
+
 ## 0.1.2
 
 - [Breaking] `validateRequest()` requires `setCookie()` parameter

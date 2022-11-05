@@ -25,8 +25,8 @@ import {
 	generateSessionIdFunction
 } from "./session.js";
 import { createSessionCookiesFunction, createBlankSessionCookiesFunction } from "./cookie.js";
-import clc from "cli-color";
 import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
+import { logError } from "../utils/log.js";
 
 export const lucia = <C extends Configurations>(configs: C) => {
 	return new Auth(configs) as Omit<Auth<C>, "getAuthSession">;
@@ -35,11 +35,7 @@ export const lucia = <C extends Configurations>(configs: C) => {
 const validateConfigurations = (configs: Configurations) => {
 	const isAdapterIdentified = !configs.adapter;
 	if (isAdapterIdentified) {
-		console.log(
-			`${clc.red.bold("[LUCIA_ERROR]")} ${clc.red(
-				`Adapter is not defined in configuration ("config.adapter").`
-			)}`
-		);
+		logError('Adapter is not defined in configuration ("config.adapter")');
 		process.exit(1);
 	}
 };

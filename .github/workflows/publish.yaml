@@ -36,6 +36,9 @@ jobs:
               elif [[ $line == packages/nextjs* ]];
               then
                   pkg_array+=("nextjs")
+              elif [[ $line == packages/oauth* ]];
+              then
+                  pkg_array+=("oauth")
               elif [[ $line == packages/adapter-mongoose* ]];
               then
                   pkg_array+=("adapter-mongoose")
@@ -95,6 +98,9 @@ jobs:
           fi
           if [[ $pkg_string == *"nextjs"* ]]; then
             cd packages/nextjs && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"oauth"* ]]; then
+            cd packages/oauth && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"adapter-mongoose"* ]]; then
             cd packages/adapter-mongoose && eval "$build_cmd"

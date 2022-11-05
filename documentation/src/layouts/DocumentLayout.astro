@@ -8,6 +8,7 @@ import MarkdownArticle from "@components/structure/MarkdownArticle.astro";
 import SvelteKitContent from "@components/content/SvelteKitContent.astro";
 import ExpressContent from "@components/content/ExpressContent.astro";
 import NextjsContent from "@components/content/NextjsContent.astro";
+import OAuthContent from "@components/content/OAuthContent.astro";
 
 type Props = MarkdownLayoutProps<{
 	title: string;
@@ -22,21 +23,22 @@ const contributePageUrl = Astro.url.pathname.endsWith("/")
 	? Astro.url.pathname.slice(0, -1)
 	: Astro.url.pathname;
 
-const frameworkParam = Astro.url.pathname.split("/")[1];
-const framework = (
-	["sveltekit", "nextjs", "express"].includes(frameworkParam) ? frameworkParam : null
-) as Framework | null;
+const externalParam = Astro.url.pathname.split("/")[1];
+const external = (
+	["sveltekit", "nextjs", "express", "oauth"].includes(externalParam) ? externalParam : null
+) as Framework | "oauth" | null;
 
 const title = Astro.props.frontmatter.title;
 ---
 
-<BaseLayout title={frontmatter.title} framework={framework}>
+<BaseLayout title={frontmatter.title} external={external}>
 	<Header />
 	<div class="min-h-screen">
-		{framework === "sveltekit" && <SvelteKitContent title={title} />}
-		{framework === "express" && <ExpressContent title={title} />}
-		{framework === "nextjs" && <NextjsContent title={title} />}
-		{framework === null && <MainContent title={title} />}
+		{external === "sveltekit" && <SvelteKitContent title={title} />}
+		{external === "express" && <ExpressContent title={title} />}
+		{external === "nextjs" && <NextjsContent title={title} />}
+		{external === "oauth" && <OAuthContent title={title} />}
+		{external === null && <MainContent title={title} />}
 		<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:ml-72 px-4 sm:px-8 lg:px-12">
 			<div class="lg:pl-4 overflow-hidden">
 				<MarkdownArticle
