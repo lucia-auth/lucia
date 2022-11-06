@@ -42,7 +42,7 @@ Next.js specific functions are imported from `@lucia-auth/nextjs`.
 
 ### API endpoints
 
-Inside `pages/api` (or `pages/api/auth`), create `[...lucia].ts`. Import [`handleApiRoutes`](/nextjs/api-reference/server-api#handleapiroutes) and export it as the default. This will handle API requests related to auth.
+Inside `pages/api` (or `pages/api/auth`), create `[...lucia].ts`. Import [`handleApiRoutes()`](/nextjs/api-reference/server-api#handleapiroutes) and export it as the default. This will handle API requests related to auth.
 
 ```ts
 // pages/api/[...lucia].ts

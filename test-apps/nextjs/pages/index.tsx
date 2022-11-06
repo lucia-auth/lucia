@@ -1,39 +1,56 @@
-import Link from "next/link";
-import { auth } from "../lib/lucia";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { AuthRequest } from "@lucia-auth/nextjs";
+import { auth } from "../lib/lucia";
+import { getUser, signOut } from "@lucia-auth/nextjs/client";
 
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import type {
+	GetServerSidePropsContext,
+	GetServerSidePropsResult,
+	InferGetServerSidePropsType
+} from "next";
+import type { User } from "lucia-auth";
 
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
+): Promise<GetServerSidePropsResult<{ user: User }>> => {
 	const authRequest = new AuthRequest(auth, context.req, context.res);
-	const session = await authRequest.getSession();
-	if (session) {
+	const { user } = await authRequest.getSessionUser();
+	if (!user)
 		return {
 			redirect: {
-				destination: "/profile",
+				destination: "/login",
 				permanent: false
 			}
 		};
-	}
 	return {
-		props: {}
+		props: {
+			user
+		}
 	};
 };
 
-export default function Home() {
+const Index = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+	const router = useRouter();
 	return (
 		<>
-			<h1>Lucia+Next.js demo</h1>
-			<div>
-				<Link href="/login" className="button">
-					Sign in
-				</Link>
-				<Link href="/signup" className="button">
-					Create an account
-				</Link>
-			</div>
+			<p>This page is protected and can only be accessed by authenticated users.</p>
+			<pre className="code">{JSON.stringify(props.user, null, 2)}</pre>
+
+			<button
+				onClick={async () => {
+					try {
+						await signOut();
+						router.push("/login");
+					} catch (e) {
+						console.log(e);
+					}
+				}}
+			>
+				Sign out
+			</button>
 		</>
 	);
-}
+};
+
+export default Index;

@@ -1,7 +1,7 @@
-import type { User } from "lucia-auth";
-import { get, readable } from "svelte/store";
+import { get } from "svelte/store";
 import { getInitialClientLuciaContext } from "../client/page-data.js";
-import type { GlobalWindow, LuciaContext, PageData } from "../types.js";
+import type { GlobalWindow, PageData } from "../types.js";
+import type { User } from "lucia-auth";
 
 export const getUser = async (event: {
 	parent: () => Promise<any>;

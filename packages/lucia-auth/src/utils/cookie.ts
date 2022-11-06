@@ -195,3 +195,17 @@ const tryDecode = (str: string, decodeFunction: typeof decode) => {
 		return str;
 	}
 };
+
+export class Cookie {
+	constructor(name: string, value: string, options: CookieSerializeOptions) {
+		this.name = name;
+		this.value = value;
+		this.options = options;
+	}
+	public name: string;
+	public value: string;
+	public options: CookieSerializeOptions;
+	public serialize = () => {
+		return serialize(this.name, this.value, this.options);
+	};
+}

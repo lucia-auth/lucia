@@ -40,25 +40,16 @@ export const handleHooks = (auth: Auth) => {
 			}
 		) => Promise<Response> | Response;
 	}) => {
-		let sessionCookie: string | null = null;
-		event.locals.setSession = (session: Session) => {
-			const serializedCookies = auth.createSessionCookies(session);
-			sessionCookie = serializedCookies.toString();
-		};
-		event.locals.clearSession = () => {
-			const serializedCookies = auth.createBlankSessionCookies();
-			sessionCookie = serializedCookies.toString();
-		};
-		const setCookie = (stringifiedCookie: string) => {
-			sessionCookie = stringifiedCookie;
+		event.locals.setSession = (session: Session | null) => {
+			auth.createSessionCookies(session).forEach((cookie) => {
+				event.cookies.set(cookie.name, cookie.value, cookie.options);
+			});
 		};
 		event.locals.getSession = async () => {
 			try {
-				const session = await auth.validateRequest(event.request, setCookie);
-				event.locals.setSession(session);
+				const session = await auth.validateRequest(event.request, event.locals.setSession);
 				return session;
 			} catch {
-				event.locals.clearSession();
 				return null;
 			}
 		};
@@ -70,7 +61,7 @@ export const handleHooks = (auth: Auth) => {
 			  }
 		> => {
 			try {
-				return await auth.getSessionUserFromRequest(event.request, setCookie);
+				return await auth.getSessionUserFromRequest(event.request, event.locals.setSession);
 			} catch {
 				return {
 					user: null,
@@ -80,12 +71,8 @@ export const handleHooks = (auth: Auth) => {
 		};
 		const requestHandler = getRequestHandler(event);
 		if (requestHandler) return await requestHandler(event, auth);
-		const response = await resolve(event, {
+		return await resolve(event, {
 			transformPageChunk: setPageDataGlobalVariable
 		});
-		if (sessionCookie) {
-			response.headers.append("set-cookie", sessionCookie);
-		}
-		return response;
 	};
 };

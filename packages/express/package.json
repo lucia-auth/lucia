@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/express",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Lucia integration for Express",
 	"main": "index.js",
 	"types": "index.d.ts",

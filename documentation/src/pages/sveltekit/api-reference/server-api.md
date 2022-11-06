@@ -28,7 +28,7 @@ const handleHooks: (auth: Auth) => Handle;
 
 | type     | description       |
 | -------- | ----------------- |
-| `Handle` | A handle function |
+| `Handle` | a handle function |
 
 #### Example
 
@@ -59,13 +59,13 @@ const handleServerSession: (serverLoad?: ServerLoad) => ServerLoad;
 
 | name       | type         | description            | optional |
 | ---------- | ------------ | ---------------------- | -------- |
-| serverLoad | `ServerLoad` | A server load function | true     |
+| serverLoad | `ServerLoad` | a server load function | true     |
 
 #### Returns
 
 | type         | description            |
 | ------------ | ---------------------- |
-| `ServerLoad` | A server load function |
+| `ServerLoad` | a server load function |
 
 #### Example
 

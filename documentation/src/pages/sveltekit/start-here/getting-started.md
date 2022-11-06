@@ -42,13 +42,12 @@ SvelteKit specific functions are imported from `@lucia-auth/sveltekit`.
 
 ### Vite config
 
-Due to an issue with Vite (specifically `vite-plugin-svelte` [#429](https://github.com/sveltejs/vite-plugin-svelte/issues/429)), please add `@lucia-auth/sveltekit` to `noExternal` config.
+Due to an issue with Vite (specifically `vite-plugin-svelte` [#429](https://github.com/sveltejs/vite-plugin-svelte/issues/429)), please add `@lucia-auth/sveltekit` to `noExternal` config inside `vite.config.js`.
 
-```ts
+```diff
 const config = {
-	// ...
 	ssr: {
-		noExternal: ["@lucia-auth/sveltekit"]
++		noExternal: ["@lucia-auth/sveltekit"]
 	}
 };
 ```

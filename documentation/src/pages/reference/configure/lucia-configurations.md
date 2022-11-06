@@ -41,14 +41,14 @@ An adapter for your database. If you're using a single database:
 
 | type      | description        |
 | --------- | ------------------ |
-| `Adapter` | A database adapter |
+| `Adapter` | a database adapter |
 
 or, if you're using a different adapter for `user` and `session` table. A normal `Adapter` can be used for both `adapter.user` and `adapter.session`
 
 | name            | type                                                            | description                                                              |
 | --------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| adapter.user    | [`UserAdapter`](/reference/types/lucia-types#useradapter)       | An adapter for the database that stores users - usually a normal adapter |
-| adapter.session | [`SessionAdapter`](/reference/types/lucia-types#sessionadapter) | An adapter for the database that stores sessions                         |
+| adapter.user    | [`UserAdapter`](/reference/types/lucia-types#useradapter)       | an adapter for the database that stores users - usually a normal adapter |
+| adapter.session | [`SessionAdapter`](/reference/types/lucia-types#sessionadapter) | an adapter for the database that stores sessions                         |
 
 ### `env`
 

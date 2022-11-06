@@ -1,16 +1,16 @@
 ---
 interface Props {
 	title?: string;
-	external?: Framework | "oauth" | null;
+	external?: ExternalIntegration | null;
 }
 
-const getFrameworkName = (framework: Framework | "oauth") => {
+const getExternalName = (external: ExternalIntegration) => {
 	return {
 		sveltekit: "SvelteKit",
-		express: "Express",
 		nextjs: "Next.js",
-		oauth: "OAuth"
-	}[framework];
+		oauth: "OAuth",
+		astro: "Astro"
+	}[external];
 };
 ---
 
@@ -20,11 +20,11 @@ const getFrameworkName = (framework: Framework | "oauth") => {
 	<meta name="generator" content={Astro.generator} />
 	<title>
 		{!Astro.props.title && "Lucia"}
-		{Astro.props.title && !Astro.props.external && `${Astro.props.title} | Lucia`}
+		{Astro.props.title && !Astro.props.integration && `${Astro.props.title} | Lucia`}
 		{
 			Astro.props.title &&
 				Astro.props.external &&
-				`${Astro.props.title} | Lucia + ${getFrameworkName(Astro.props.external)}`
+				`${Astro.props.title} | Lucia + ${getExternalName(Astro.props.external)}`
 		}
 	</title>
 	<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />

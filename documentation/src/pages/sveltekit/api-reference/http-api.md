@@ -15,24 +15,22 @@ POST
 /api/auth/logout
 ```
 
-#### Response
-
-status: 200
+#### Success response
 
 ```ts
-interface ResponseBody {}
+type Status = 200;
+type ResponseBody = {};
 ```
 
 #### Error response
 
-status: 500
-
 ```ts
-interface ResponseBody {
+type Status = 500;
+type ResponseBody = {
 	message?: string;
-}
+};
 ```
 
-| error message           | description               |
-| ----------------------- | ------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid active session id |
+| status | `ResponseBody.message` | description                     |
+| ------ | ---------------------- | ------------------------------- |
+| 500    | unknown                | network/database error, unknown |

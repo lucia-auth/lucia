@@ -12,10 +12,10 @@ The `user` table stores the users. The `[any]` column represents the any number 
 
 | name            | type               | description                                                      | reference |
 | --------------- | ------------------ | ---------------------------------------------------------------- | --------- |
-| id              | string (uuid/cuid) | Should be auto-generated UUID or similar by defaults             |           |
-| provider_id     | string             | Stores the provider id using the form: `providerName:identifier` |           |
+| id              | string (uuid/cuid) | should be auto-generated UUID or similar by defaults             |           |
+| provider_id     | string             | stores the provider id using the form: `providerName:identifier` |           |
 | hashed_password | string \| null     | `null` if the user doesn't have a password                       |           |
-| [any]           | any                | This represents any number of columns of any name                |           |
+| [any]           | any                | this represents any number of columns of any name                |           |
 
 ### Schema type
 
@@ -36,8 +36,8 @@ The `session` table stores the user's sessions (including the access token). You
 | ------------ | ------------- | -------------------------------------------------- | --------- |
 | id           | string        |                                                    |           |
 | user_id      | string        |                                                    | user.id   |
-| expires      | number (int8) | The expiration time (unix) of the session (active) |           |
-| idle_expires | number (int8) | The expiration time (unix) for the idle period     |           |
+| expires      | number (int8) | the expiration time (unix) of the session (active) |           |
+| idle_expires | number (int8) | the expiration time (unix) for the idle period     |           |
 
 ### Schema type
 

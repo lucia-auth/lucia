@@ -2,35 +2,36 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import { githubAuth, googleAuth } from "../lib/lucia";
 import { auth } from "../lib/lucia";
+import { AuthRequest } from "@lucia-auth/astro";
+import SignOut from "../components/SignOut.svelte";
 
-import type { User } from "lucia-auth";
-
-let user: User | null = null;
-try {
-	const result = await auth.getSessionUserFromRequest(Astro.request, (stringifiedCookie) => {
-		Astro.response.headers.set("set-cookie", stringifiedCookie);
-	});
-	user = result.user;
-} catch {
-	// set user as null
-}
+const authRequest = new AuthRequest(auth, Astro);
+const { user } = await authRequest.getSessionUser();
 
 const githubAuthorizationUrl = githubAuth.getAuthorizationUrl();
-const googleAuthorizationUrl = googleAuth.getAuthorizationUrl()
+const googleAuthorizationUrl = googleAuth.getAuthorizationUrl();
 ---
 
 <MainLayout>
 	<div>
 		<h1>Lucia + OAuth demo</h1>
 		{
-			user && (
+			user ? (
 				<>
 					<h2>Your profile</h2>
 					<pre class="code">{JSON.stringify(user!, null, 2)}</pre>
+					<SignOut client:load />
+				</>
+			) : (
+				<>
+					<a href={githubAuthorizationUrl} class="button">
+						Sign in with Github
+					</a>
+					<a href={googleAuthorizationUrl} class="button">
+						Sign in with Google
+					</a>
 				</>
 			)
 		}
-		<a href={githubAuthorizationUrl} class="button">Sign in with Github</a>
-		<a href={googleAuthorizationUrl} class="button">Sign in with Google</a>
 	</div>
 </MainLayout>

@@ -3,12 +3,12 @@ import BaseLayout from "@components/structure/BaseLayout.astro";
 import Headings from "@components/document/Headings.svelte";
 import MainContent from "@components/content/MainContent.astro";
 import Header from "@components/structure/Header.astro";
-import type { MarkdownLayoutProps } from "astro";
 import MarkdownArticle from "@components/structure/MarkdownArticle.astro";
 import SvelteKitContent from "@components/content/SvelteKitContent.astro";
-import ExpressContent from "@components/content/ExpressContent.astro";
 import NextjsContent from "@components/content/NextjsContent.astro";
 import OAuthContent from "@components/content/OAuthContent.astro";
+import AstroContent from "@components/content/AstroContent.astro";
+import type { MarkdownLayoutProps } from "astro";
 
 type Props = MarkdownLayoutProps<{
 	title: string;
@@ -25,8 +25,8 @@ const contributePageUrl = Astro.url.pathname.endsWith("/")
 
 const externalParam = Astro.url.pathname.split("/")[1];
 const external = (
-	["sveltekit", "nextjs", "express", "oauth"].includes(externalParam) ? externalParam : null
-) as Framework | "oauth" | null;
+	["sveltekit", "nextjs", "astro", "oauth"].includes(externalParam) ? externalParam : null
+) as ExternalIntegration | null;
 
 const title = Astro.props.frontmatter.title;
 ---
@@ -35,8 +35,8 @@ const title = Astro.props.frontmatter.title;
 	<Header />
 	<div class="min-h-screen">
 		{external === "sveltekit" && <SvelteKitContent title={title} />}
-		{external === "express" && <ExpressContent title={title} />}
 		{external === "nextjs" && <NextjsContent title={title} />}
+		{external === "astro" && <AstroContent title={title} />}
 		{external === "oauth" && <OAuthContent title={title} />}
 		{external === null && <MainContent title={title} />}
 		<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:ml-72 px-4 sm:px-8 lg:px-12">

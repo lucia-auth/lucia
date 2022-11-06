@@ -13,24 +13,20 @@ export const handleApiRoutes = (auth: Auth) => {
 			});
 		}
 		if ((req.url || "").startsWith("/api/auth/logout") && req.method === "POST") {
-			const session = await authRequest.getSession();
-			if (!session) {
-				return res.status(401).json({
-					error: "Unauthorized"
-				});
-			}
+			const sessionId = auth.parseRequest(convertNextRequestToStandardRequest(req, auth));
+			if (!sessionId) return res.status(200).json({});
 			try {
-				await auth.invalidateSession(session.sessionId);
-				authRequest.clearSession();
+				await auth.invalidateSession(sessionId);
+				authRequest.setSession(null);
 				return res.status(200).json({});
 			} catch {
 				return res.status(500).json({
-					error: "Unknown"
+					message: "unknown"
 				});
 			}
 		}
 		return res.status(404).json({
-			error: "Not found"
+			message: "not found"
 		});
 	};
 };
@@ -48,20 +44,12 @@ export class AuthRequest<A extends Auth> {
 		try {
 			const session = await this.auth.validateRequest(
 				convertNextRequestToStandardRequest(this.req, this.auth),
-				(stringifiedSerializedCookies) => {
-					this.res.setHeader("set-cookie", stringifiedSerializedCookies);
-				}
+				this.setSession
 			);
 			return session;
 		} catch (e) {
 			return null;
 		}
-	};
-	public setSession = (session: Session) => {
-		this.res.setHeader("set-cookie", this.auth.createSessionCookies(session).toString());
-	};
-	public clearSession = () => {
-		this.res.setHeader("set-cookie", this.auth.createBlankSessionCookies().toString());
 	};
 	public getSessionUser = async (): Promise<
 		| { user: User; session: Session }
@@ -73,9 +61,7 @@ export class AuthRequest<A extends Auth> {
 		try {
 			return await this.auth.getSessionUserFromRequest(
 				convertNextRequestToStandardRequest(this.req, this.auth),
-				(stringifiedSerializedCookies) => {
-					this.res.setHeader("set-cookie", stringifiedSerializedCookies);
-				}
+				this.setSession
 			);
 		} catch (e) {
 			return {
@@ -83,5 +69,14 @@ export class AuthRequest<A extends Auth> {
 				user: null
 			};
 		}
+	};
+	public setSession = (session: Session | null) => {
+		this.res.setHeader(
+			"set-cookie",
+			this.auth
+				.createSessionCookies(session)
+				.map((cookie) => cookie.serialize())
+				.toString()
+		);
 	};
 }

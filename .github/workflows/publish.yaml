@@ -36,6 +36,9 @@ jobs:
               elif [[ $line == packages/nextjs* ]];
               then
                   pkg_array+=("nextjs")
+              elif [[ $line == packages/astro* ]];
+              then
+                  pkg_array+=("astro")
               elif [[ $line == packages/oauth* ]];
               then
                   pkg_array+=("oauth")
@@ -98,6 +101,9 @@ jobs:
           fi
           if [[ $pkg_string == *"nextjs"* ]]; then
             cd packages/nextjs && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"astro"* ]]; then
+            cd packages/astro && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"oauth"* ]]; then
             cd packages/oauth && eval "$build_cmd"

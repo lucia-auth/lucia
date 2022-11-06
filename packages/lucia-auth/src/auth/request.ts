@@ -1,7 +1,8 @@
 import { LuciaError } from "../error.js";
-import { parse } from "../utils/cookie.js";
+import { Cookie, parse } from "../utils/cookie.js";
 import type { Auth, Session, MinimalRequest, User } from "../types.js";
 
+type SetSessionCookie = (session: Session | null) => void;
 type ParseRequest = (request: MinimalRequest) => string;
 
 export const parseRequestFunction = (auth: Auth) => {
@@ -22,11 +23,11 @@ export const parseRequestFunction = (auth: Auth) => {
 
 type ValidateRequest = (
 	request: MinimalRequest,
-	setCookie: (cookie: string) => void
+	setSessionCookie: SetSessionCookie
 ) => Promise<Session>;
 
 export const validateRequestFunction = (auth: Auth) => {
-	const validateRequest: ValidateRequest = async (request, setCookie) => {
+	const validateRequest: ValidateRequest = async (request, setSessionCookie) => {
 		const sessionId = auth.parseRequest(request);
 		try {
 			const session = await auth.validateSession(sessionId);
@@ -36,12 +37,12 @@ export const validateRequestFunction = (auth: Auth) => {
 			try {
 				const renewedSession = await auth.renewSession(sessionId);
 				await auth.deleteDeadUserSessions(renewedSession.userId);
-				const sessionCookies = auth.createSessionCookies(renewedSession);
-				setCookie(sessionCookies.toString());
+				setSessionCookie(renewedSession);
 				return renewedSession;
 			} catch (renewError) {
-				const blankSessionCookies = auth.createBlankSessionCookies();
-				setCookie(blankSessionCookies.toString());
+				if (validateError instanceof LuciaError) {
+					setSessionCookie(null);
+				}
 				throw renewError;
 			}
 		}
@@ -51,14 +52,17 @@ export const validateRequestFunction = (auth: Auth) => {
 
 type GetSessionUserFromRequest = (
 	request: MinimalRequest,
-	setCookie: (cookie: string) => void
+	setSessionCookie: SetSessionCookie
 ) => Promise<{
 	user: User;
 	session: Session;
 }>;
 
 export const getSessionUserFromRequestFunction = (auth: Auth) => {
-	const getSessionUserFromRequest: GetSessionUserFromRequest = async (request, setCookie) => {
+	const getSessionUserFromRequest: GetSessionUserFromRequest = async (
+		request,
+		setSessionCookie
+	) => {
 		const sessionId = auth.parseRequest(request);
 		try {
 			return await auth.getSessionUser(sessionId);
@@ -66,8 +70,7 @@ export const getSessionUserFromRequestFunction = (auth: Auth) => {
 			if (!(validateError instanceof LuciaError)) throw validateError;
 			try {
 				const renewedSession = await auth.renewSession(sessionId);
-				const serializedCookies = auth.createSessionCookies(renewedSession);
-				setCookie(serializedCookies.toString());
+				setSessionCookie(renewedSession);
 				const [user] = await Promise.all([
 					auth.getUser(renewedSession.userId),
 					auth.deleteDeadUserSessions(renewedSession.userId)
@@ -75,7 +78,7 @@ export const getSessionUserFromRequestFunction = (auth: Auth) => {
 				return { user, session: renewedSession };
 			} catch (renewError) {
 				if (validateError instanceof LuciaError) {
-					setCookie(auth.createBlankSessionCookies().toString());
+					setSessionCookie(null);
 				}
 				throw renewError;
 			}

@@ -1,5 +1,5 @@
-import type { PageData, RequestEvent } from "../types.js";
 import { generateChecksum } from "./crypto.js";
+import type { PageData, RequestEvent } from "../types.js";
 
 type HandleServerSession = <
 	LoadFn extends (event: RequestEvent) => any = () => Promise<any>
