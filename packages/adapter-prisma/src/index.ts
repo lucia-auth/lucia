@@ -1,8 +1,13 @@
-import { Prisma, type PrismaClient } from "@prisma/client";
-import { type Adapter } from "lucia-auth/types";
+import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Adapter } from "lucia-auth";
 import { getUpdateData } from "lucia-auth/adapter";
 import { LuciaError } from "lucia-auth";
 import { convertSession } from "./utils.js";
+
+interface PossiblePrismaError {
+	code?: string;
+	message?: string;
+}
 
 const adapter = (
 	prisma: PrismaClient,
@@ -114,8 +119,8 @@ const adapter = (
 				});
 				return createdUser;
 			} catch (e) {
-				const isKnownPrismaError = e instanceof Prisma.PrismaClientKnownRequestError;
-				if (isKnownPrismaError && e.code === "P2002" && e.message.includes("provider_id")) {
+				const error = e as PossiblePrismaError;
+				if (error.code === "P2002" && error.message?.includes("provider_id")) {
 					throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 				}
 				errorHandler(e as any);
@@ -146,14 +151,10 @@ const adapter = (
 					}
 				});
 			} catch (e) {
-				const isKnownPrismaError = e instanceof Prisma.PrismaClientKnownRequestError;
-				if (
-					isKnownPrismaError &&
-					e.code === "P2003" &&
-					e.message.includes("session_user_id_fkey (index)")
-				)
+				const error = e as PossiblePrismaError;
+				if (error.code === "P2003" && error.message?.includes("session_user_id_fkey (index)"))
 					throw new LuciaError("AUTH_INVALID_USER_ID");
-				if (isKnownPrismaError && e.code === "P2002" && e.message.includes("id"))
+				if (error.code === "P2002" && error.message?.includes("id"))
 					throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 				errorHandler(e as any);
 				throw e;
@@ -194,9 +195,9 @@ const adapter = (
 				});
 				return data;
 			} catch (e) {
-				const isKnownPrismaError = e instanceof Prisma.PrismaClientKnownRequestError;
-				if (isKnownPrismaError && e.code === "P2025") throw new LuciaError("AUTH_INVALID_USER_ID");
-				if (isKnownPrismaError && e.code === "P2002" && e.message.includes("provider_id")) {
+				const error = e as PossiblePrismaError;
+				if (error.code === "P2025") throw new LuciaError("AUTH_INVALID_USER_ID");
+				if (error.code === "P2002" && error.message?.includes("provider_id")) {
 					throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 				}
 				errorHandler(e as any);

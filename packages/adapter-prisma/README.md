@@ -20,7 +20,7 @@ yarn add @lucia-auth/adapter-prisma
 
 | Prisma adapter version | Lucia version |
 | ---------------------- | ------------- |
-| v0.1.0+                | v0.1.0+       |
+| v0.1.x                 | v0.1.x        |
 
 ## Testing
 

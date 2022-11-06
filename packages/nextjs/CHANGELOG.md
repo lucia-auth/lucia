@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.2
+
+- Update peer dependency
+
 ## 0.1.1
 
 - [Breaking] Removed `AuthRequest().clearSession()`

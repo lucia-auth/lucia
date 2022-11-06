@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/oauth",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "OAuth integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -45,5 +45,8 @@
 	},
 	"devDependencies": {
 		"lucia-auth": "workspace:*"
+	},
+	"peerDependencies": {
+		"lucia-auth": "0.1.x"
 	}
 }

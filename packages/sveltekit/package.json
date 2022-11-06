@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/sveltekit",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "SvelteKit integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -48,5 +48,8 @@
 		"@types/node": "^18.6.2",
 		"lucia-auth": "workspace:*",
 		"svelte": "^3.52.0"
+	},
+	"peerDependencies": {
+		"lucia-auth": ">=0.1.4"
 	}
 }

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.8
+
+- Update peer dependency
+
 ## 0.1.7
 
 - [Breaking] Removed `locals.clearSession()`
