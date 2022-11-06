@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Client API"
 ---
 
-These can be imported from `@lucia-auth/nextjs/client`.
+These can be imported from `@lucia-auth/nextjs/client`. Errors are thrown using the standard Error().
 
 ```ts
 import { getUser } from "@lucia-auth/nextjs/client";
@@ -38,6 +38,12 @@ Invalidates the current session and removes all session cookies.
 ```ts
 const signOut: () => Promise<void>;
 ```
+
+#### Error
+
+| message | description                                                                  |
+| ------- | ---------------------------------------------------------------------------- |
+| unknown failed to invalidate the current session due to network, db, or other errors |
 
 #### Example
 

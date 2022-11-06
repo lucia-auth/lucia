@@ -14,25 +14,6 @@ const action: Action = async ({ locals }) => {
 };
 ```
 
-## `clearSession()`
-
-Deletes all session cookies stored to the user. This will **NOT** invalidate the provided session - this can be down with [`invalidateSession()`](/reference/api/server-api#invalidatesession).
-
-```ts
-const clearSession: () => void;
-```
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-import type { Action } from "@sveltejs/kit";
-
-const action: Action = async ({ locals }) => {
-	locals.clearSession();
-};
-```
-
 ## `getSession()`
 
 Validates the request and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
@@ -99,17 +80,17 @@ const action: Action = async ({ locals }) => {
 
 ## `setSession()`
 
-Sets the session id cookie of the provided session. When called multiple times this will only set the last provided session.
+Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/server-api#invalidatesession).
 
 ```ts
-const setSession: (session: Session) => void;
+const setSession: (session: Session | null) => void;
 ```
 
 #### Parameter
 
-| name    | type                                              | description                   |
-| ------- | ------------------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/types/lucia-types#session) | The session to set to cookies |
+| name    | type                                                        | description        |
+| ------- | ----------------------------------------------------------- | ------------------ |
+| session | [`Session`](/reference/types/lucia-types#session)` \| null` | the session to set |
 
 #### Example
 

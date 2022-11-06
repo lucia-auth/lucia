@@ -25,16 +25,15 @@ type ResponseBody = {};
 #### Error response
 
 ```ts
-type Status = 401 | 500;
+type Status = 500;
 type ResponseBody = {
-	error?: string;
+	message?: string;
 };
 ```
 
-| status | `ResponseBody.error` | description               |
-| ------ | -------------------- | ------------------------- |
-| 401    | Unauthorized         | Invalid active session id |
-| 500    | Unknown              |                           |
+| status | description                     |
+| ------ | ------------------------------- |
+| 500    | network/database error, unknown |
 
 ## /api/auth/user
 

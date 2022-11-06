@@ -13,7 +13,7 @@ export const signOut = async () => {
 	const response = await fetch("/api/auth/logout", {
 		method: "POST"
 	});
-	if (!response.ok) throw new Error("Unknown");
+	if (!response.ok) throw new Error("unknown error");
 	const { error } = (await response.json()) as {
 		error?: string;
 	};

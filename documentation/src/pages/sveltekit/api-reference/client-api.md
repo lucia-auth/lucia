@@ -22,7 +22,7 @@ const getUser: () => Readonly<User> | null;
 
 | type                                                              | description                                   |
 | ----------------------------------------------------------------- | --------------------------------------------- |
-| `Readonly<`[`User`](/reference/types/lucia-types#user)`> \| null` | Returns null if a current user does not exist |
+| `Readonly<`[`User`](/reference/types/lucia-types#user)`> \| null` | returns null if a current user does not exist |
 
 #### Example
 
@@ -45,8 +45,8 @@ const handleSession: (pageStore: Page, onSessionUpdate?: () => void) => void;
 
 | name            | type                                                          | description                                               | optional |
 | --------------- | ------------------------------------------------------------- | --------------------------------------------------------- | -------- |
-| pageStore       | [`Page`](https://kit.svelte.dev/docs/types#sveltejs-kit-page) | Page store                                                |          |
-| onSessionUpdate | `Function`                                                    | A callback function that will be called on session update | true     |
+| pageStore       | [`Page`](https://kit.svelte.dev/docs/types#sveltejs-kit-page) | page store                                                |          |
+| onSessionUpdate | `Function`                                                    | a callback function that will be called on session update | true     |
 
 #### Example
 
@@ -64,26 +64,19 @@ handleSession(page, () => {
 Deletes the local session cache, invalidates the user's session, and removes session cookies.
 
 ```ts
-const signOut: (redirect?: string) => Promise<void>;
+const signOut: () => Promise<void>;
 ```
-
-#### Parameter
-
-| name     | type     | description                                      | optional |
-| -------- | -------- | ------------------------------------------------ | -------- |
-| redirect | `string` | The url to redirect to after a successful logout | true     |
 
 #### Errors
 
-| name                    | description          |
-| ----------------------- | -------------------- |
-| AUTH_INVALID_SESSION_ID | Unauthorized request |
-| UNKNOWN_ERROR           |                      |
+| message | description                                                                  |
+| ------- | ---------------------------------------------------------------------------- |
+| unknown | failed to invalidate the current session due to network, db, or other errors |
 
 #### Example
 
 ```ts
 import { signOut } from "@lucia-auth/sveltekit/client";
 
-await signOut("/login");
+await signOut();
 ```

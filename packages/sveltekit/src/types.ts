@@ -6,8 +6,7 @@ export type RequestEvent = {
 	locals: {
 		getSession: () => Promise<Session | null>;
 		getSessionUser: () => Promise<{ session: Session; user: User } | { session: null; user: null }>;
-		setSession: (session: Session) => void;
-		clearSession: () => void;
+		setSession: (session: Session | null) => void;
 	};
 	url: URL;
 	cookies: {
@@ -16,12 +15,6 @@ export type RequestEvent = {
 		delete: any;
 		serialize: any;
 	};
-	fetch: any;
-	getClientAddress: any;
-	params: any;
-	platform: any;
-	routeId: any;
-	setHeaders: any;
 };
 
 export type GlobalWindow = Window & {

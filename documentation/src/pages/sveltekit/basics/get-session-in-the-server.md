@@ -20,13 +20,33 @@ const { session, user } = await locals.getSessionUser();
 
 ## Example
 
-The following example uses server load functions. However, the same code can be used for actions and standalone endpoints (+server.ts).
-
 ```ts
 // +page.server.ts
-import type { ServerLoad } from "@sveltejs/kit";
+import type { Actions } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
-export const load: ServerLoad = async ({ locals }) => {
+export const actions: Actions = {
+	default: async ({ locals }) => {
+		const session = await locals.getSession();
+		if (!session) {
+			// unauthenticated
+		}
+	}
+};
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.getSession();
+	if (!session) {
+		// unauthenticated
+	}
+};
+```
+
+```ts
+// +server.ts
+import type { RequestHandler } from "./$types";
+
+export const POST: RequestHandler = async ({ locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
 		// unauthenticated

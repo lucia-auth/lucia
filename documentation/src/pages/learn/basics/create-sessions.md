@@ -26,11 +26,12 @@ try {
 
 ## Store the tokens as cookies
 
-The session id should be manually stored as a cookie. An array of serialized cookies can be generated using [`createSessionCookies()`](/reference/api/server-api#createsessioncookies) method.
+The session id should be manually stored as a cookie. An array of cookies can be generated using [`createSessionCookies()`](/reference/api/server-api#createsessioncookies) method. These can be serialized by calling `serialize()`.
 
 ```ts
 import { auth } from "./lucia.js";
 
 const session = await auth.createSession("123456");
-const sessionCookies = await auth.createSessionCookies(session); // string[]
+const sessionCookies = await auth.createSessionCookies(session); // Cookie[]
+const serializedCookies = sessionCookies.map((cookie) => cookie.serialize());
 ```

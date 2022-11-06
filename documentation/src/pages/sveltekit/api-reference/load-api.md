@@ -28,7 +28,7 @@ const getUser: (event: LoadEvent) => Promise<Readonly<User> | null>;
 
 | type                                                         | description                                     |
 | ------------------------------------------------------------ | ----------------------------------------------- |
-| `Readonly<`[`User`](/reference/types/lucia-types)`> \| null` | Returns `null` if a current user does not exist |
+| `Readonly<`[`User`](/reference/types/lucia-types)`> \| null` | returns `null` if a current user does not exist |
 
 #### Example
 

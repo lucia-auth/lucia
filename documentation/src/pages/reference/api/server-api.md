@@ -22,13 +22,13 @@ const generateRandomString: (length: number) => string;
 
 | name   | type     | description                     |
 | ------ | -------- | ------------------------------- |
-| length | `number` | The length of the output string |
+| length | `number` | the length of the output string |
 
 #### Returns
 
 | type     | description                 |
 | -------- | --------------------------- |
-| `string` | A randomly generated string |
+| `string` | a randomly generated string |
 
 #### Example
 
@@ -48,7 +48,7 @@ const lucia: (configs: Configurations) => Auth;
 
 | name    | type             | description                                                                                         |
 | ------- | ---------------- | --------------------------------------------------------------------------------------------------- |
-| configs | `Configurations` | Options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
+| configs | `Configurations` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
 
 #### Example
 
@@ -68,23 +68,23 @@ const authenticateUser: (provider: string, identifier: string, password: string)
 
 | name       | type     | description   |
 | ---------- | -------- | ------------- |
-| provider   | `string` | Provider name |
-| identifier | `string` | Identifier    |
-| password   | `string` | Password      |
+| provider   | `string` | provider name |
+| identifier | `string` | identifier    |
+| password   | `string` | password      |
 
 #### Returns
 
 | type                                        | description            |
 | ------------------------------------------- | ---------------------- |
-| [`User`](/reference/types/lucia-types#user) | The authenticated user |
+| [`User`](/reference/types/lucia-types#user) | the authenticated user |
 
 #### Errors
 
 | name                     | description                                         |
 | ------------------------ | --------------------------------------------------- |
-| AUTH_INVALID_PROVIDER_ID | The user with the provider does not exist           |
-| AUTH_INVALID_PASSWORD    | Incorrect password                                  |
-| AUTH_OUTDATED_PASSWORD   | The user's password is hashed with an old algorithm |
+| AUTH_INVALID_PROVIDER_ID | the user with the provider does not exist           |
+| AUTH_INVALID_PASSWORD    | incorrect password                                  |
+| AUTH_OUTDATED_PASSWORD   | the user's password is hashed with an old algorithm |
 
 #### Example
 
@@ -96,33 +96,6 @@ try {
 } catch {
 	// invalid credentials
 }
-```
-
-### `createBlankSessionCookies()`
-
-Creates an array of stringified cookies that will remove existing session cookies when set. Cookie options are based on [`deleteCookieOptions`](/reference/configure/lucia-configurations#deletecookieoptions).
-
-```ts
-const createBlankSessionCookies: () => string[];
-```
-
-#### Returns
-
-| type       | description                     |
-| ---------- | ------------------------------- |
-| `string[]` | An array of stringified cookies |
-
-#### Example
-
-```ts
-import { auth } from "./lucia.js";
-
-const cookies = auth.createBlankSessionCookies(session);
-const response = new Response(null, {
-	headers: {
-		"Set-Cookie": cookies.join()
-	}
-});
 ```
 
 ### `createSession()`
@@ -137,19 +110,19 @@ const createSession: (userId: string) => Promise<Session>;
 
 | name   | type     | description                          |
 | ------ | -------- | ------------------------------------ |
-| userId | `string` | The user id of the session to create |
+| userId | `string` | the user id of the session to create |
 
 #### Returns
 
 | type                                              | description               |
 | ------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | The newly created session |
+| [`Session`](/reference/types/lucia-types#session) | the newly created session |
 
 #### Errors
 
 | name                 | description     |
 | -------------------- | --------------- |
-| AUTH_INVALID_USER_ID | Invalid user id |
+| AUTH_INVALID_USER_ID | invalid user id |
 
 #### Example
 
@@ -164,10 +137,10 @@ try {
 
 ### `createSessionCookies()`
 
-Creates an array of stringified session cookies. Cookie options are based on [`sessionCookieOptions`](/reference/configure/lucia-configurations#sessioncookieoptions).
+Creates an array of session cookies in the form of [`Cookie`](/reference/types/lucia-types#cookie). Cookie options are based on [`sessionCookieOptions`](/reference/configure/lucia-configurations#sessioncookieoptions). This method will return a blank session cookies that will override the existing cookie and clears them when provided a `null` session.
 
 ```ts
-const createSessionCookies: (session: Session) => string[];
+const createSessionCookies: (session: Session | null) => Cookie[];
 ```
 
 #### Parameter
@@ -178,9 +151,9 @@ const createSessionCookies: (session: Session) => string[];
 
 #### Returns
 
-| type       | description                             |
-| ---------- | --------------------------------------- |
-| `string[]` | An array of stringified session cookies |
+| type                                                | description                 |
+| --------------------------------------------------- | --------------------------- |
+| [`Cookie`](/reference/types/lucia-types#cookie)`[]` | an array of session cookies |
 
 #### Example
 
@@ -190,7 +163,7 @@ import { auth } from "./lucia.js";
 const cookies = auth.createSessionCookies(session);
 const response = new Response(null, {
 	headers: {
-		"Set-Cookie": cookies.join()
+		"Set-Cookie": cookies.map((val) => val.serialize()).toString()
 	}
 });
 ```
@@ -214,22 +187,22 @@ const createUser: (
 
 | name               | type                                                                      | description                                             | optional |
 | ------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------- | -------- |
-| provider           | `string`                                                                  | The provider of the user to create                      |          |
-| identifier         | `string`                                                                  | The identifier of the user˝ to create                   |          |
-| options.password   | `string`                                                                  | The password of the user - can be undefined to omit it. | true     |
+| provider           | `string`                                                                  | the provider of the user to create                      |          |
+| identifier         | `string`                                                                  | the identifier of the user˝ to create                   |          |
+| options.password   | `string`                                                                  | the password of the user - can be undefined to omit it. | true     |
 | options.attributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional user data to store in `user` table           | true     |
 
 #### Returns
 
 | type                                        | description            |
 | ------------------------------------------- | ---------------------- |
-| [`User`](/reference/types/lucia-types#user) | The newly created user |
+| [`User`](/reference/types/lucia-types#user) | the newly created user |
 
 #### Errors
 
 | name                       | description                                      |
 | -------------------------- | ------------------------------------------------ |
-| AUTH_DUPLICATE_PROVIDER_ID | The user with the provider and identifier exists |
+| AUTH_DUPLICATE_PROVIDER_ID | the user with the provider and identifier exists |
 
 #### Example
 
@@ -261,7 +234,7 @@ const deleteDeadUserSessions: (userId: string) => Promise<void>;
 
 | name   | type     | description         |
 | ------ | -------- | ------------------- |
-| userId | `string` | User id of the user |
+| userId | `string` | user id of the user |
 
 #### Example
 
@@ -287,7 +260,7 @@ const deleteUser: (userId: string) => Promise<void>;
 
 | name   | type     | description                   |
 | ------ | -------- | ----------------------------- |
-| userId | `string` | User id of the user to delete |
+| userId | `string` | user id of the user to delete |
 
 #### Example
 
@@ -313,9 +286,9 @@ const generateSessionId: () => [string, number, number];
 
 | name | type     | description                                             |
 | ---- | -------- | ------------------------------------------------------- |
-| [0]  | `string` | The session id                                          |
-| [1]  | `number` | The session's expiration time                           |
-| [2]  | `number` | The expiration time (unix) of the session's idle period |
+| [0]  | `string` | the session id                                          |
+| [1]  | `number` | the session's expiration time                           |
+| [2]  | `number` | the expiration time (unix) of the session's idle period |
 
 ### `getSessionUser()`
 
@@ -329,20 +302,20 @@ const getSessionUser: (sessionId: string) => Promise<{ user: User; session: Sess
 
 | name      | type     | description               |
 | --------- | -------- | ------------------------- |
-| sessionId | `string` | A valid active session id |
+| sessionId | `string` | a valid active session id |
 
 #### Returns
 
 | name    | type                                              | description                   |
 | ------- | ------------------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/types/lucia-types#session) | The session of the session id |
-| user    | [`User`](/reference/types/lucia-types#user)       | The user of the session       |
+| session | [`Session`](/reference/types/lucia-types#session) | the session of the session id |
+| user    | [`User`](/reference/types/lucia-types#user)       | the user of the session       |
 
 #### Errors
 
 | name                    | description               |
 | ----------------------- | ------------------------- |
-| AUTH_INVALID_SESSION_ID | A valid active session id |
+| AUTH_INVALID_SESSION_ID | a valid active session id |
 
 #### Example
 
@@ -358,35 +331,35 @@ try {
 
 ### `getSessionUserFromRequest()`
 
-Similar to [`validateRequest()`](/reference/api/server-api#validaterequest) but returns both the session and user without an additional database call.
+Similar to [`validateRequest()`](/reference/api/server-api#validaterequest) but returns both the session and user without an additional database call. `setCookie()` will called whenever the method needs to set a session.
 
 ```ts
 const validateRequest: (
 	request: MinimalRequest,
-	setCookie: (stringifiedCookie) => void
+	setSessionCookie: (session: Session | null) => void
 ) => Promise<{ user: User; session: Session }>;
 ```
 
 #### Parameter
 
-| name      | type                                                            | description                                                                                       |
-| --------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| request   | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | the fetch [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) can be used as is |
-| setCookie | `Function`                                                      |                                                                                                   |
+| name             | type                                                            | description                                                                                       |
+| ---------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| request          | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | the fetch [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) can be used as is |
+| setSessionCookie | `Function`                                                      | stores the provided session as cookies - clear cookies on `null`                                  |
 
 #### Returns
 
 | name    | type                                              | description                   |
 | ------- | ------------------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/types/lucia-types#session) | The session of the session id |
-| user    | [`User`](/reference/types/lucia-types#user)       | The user of the session       |
+| session | [`Session`](/reference/types/lucia-types#session) | the session of the session id |
+| user    | [`User`](/reference/types/lucia-types#user)       | the user of the session       |
 
 #### Errors
 
 | name                    | description                                                        |
 | ----------------------- | ------------------------------------------------------------------ |
-| AUTH_INVALID_REQUEST    | The request is not from a trusted origin                           |
-| AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid active session id |
+| AUTH_INVALID_REQUEST    | the request is not from a trusted origin                           |
+| AUTH_INVALID_SESSION_ID | the value of `auth_session` cookie is an invalid active session id |
 
 #### Example
 
@@ -394,12 +367,15 @@ const validateRequest: (
 import { auth } from "lucia-auth";
 
 try {
-	let sessionCookie = "";
-	const { session, user } = await auth.validateRequest(request, (stringifiedCookie) => {
-		sessionCookie = stringifiedCookie;
+	let stringifiedCookie = "";
+	const { session, user } = await auth.getSessionUserFromRequest(request, (session) => {
+		stringifiedCookie = auth
+			.createSessionCookies(session)
+			.map((val) => val.serialize())
+			.toString();
 	});
 	const response = new Response();
-	response.headers.append("set-cookie", sessionCookie);
+	response.headers.append("set-cookie", stringifiedCookie);
 } catch {
 	// invalid
 }
@@ -417,19 +393,19 @@ const getUser: (userId: string) => Promise<User>;
 
 | name   | type     | description         |
 | ------ | -------- | ------------------- |
-| userId | `string` | User id of the user |
+| userId | `string` | user id of the user |
 
 #### Returns
 
 | type                                        | description               |
 | ------------------------------------------- | ------------------------- |
-| [`User`](/reference/types/lucia-types#user) | The user with the user id |
+| [`User`](/reference/types/lucia-types#user) | the user with the user id |
 
 #### Errors
 
 | name                 | description                              |
 | -------------------- | ---------------------------------------- |
-| AUTH_INVALID_USER_ID | The user with the user id does not exist |
+| AUTH_INVALID_USER_ID | the user with the user id does not exist |
 
 #### Example
 
@@ -455,20 +431,20 @@ const getUserByProviderId: (provider: string, identifier: string) => Promise<Use
 
 | name       | type     | description                   |
 | ---------- | -------- | ----------------------------- |
-| provider   | `string` | The provider name of the user |
-| identifier | `string` | The identifier of the user    |
+| provider   | `string` | the provider name of the user |
+| identifier | `string` | the identifier of the user    |
 
 #### Returns
 
 | type                                        | description                   |
 | ------------------------------------------- | ----------------------------- |
-| [`User`](/reference/types/lucia-types#user) | The user with the provider id |
+| [`User`](/reference/types/lucia-types#user) | the user with the provider id |
 
 #### Errors
 
 | name                     | description                                  |
 | ------------------------ | -------------------------------------------- |
-| AUTH_INVALID_PROVIDER_ID | The user with the provider id does not exist |
+| AUTH_INVALID_PROVIDER_ID | the user with the provider id does not exist |
 
 #### Example
 
@@ -494,7 +470,7 @@ const invalidateAllUserSessions: (userId: string) => Promise<void>;
 
 | name   | type     | description         |
 | ------ | -------- | ------------------- |
-| userId | `string` | User id of the user |
+| userId | `string` | user id of the user |
 
 #### Example
 
@@ -520,7 +496,7 @@ const invalidateSession: (sessionId: string) => Promise<void>;
 
 | name      | type     | description  |
 | --------- | -------- | ------------ |
-| sessionId | `string` | A session id |
+| sessionId | `string` | a session id |
 
 #### Example
 
@@ -552,13 +528,13 @@ const parseRequest: (request: MinimalRequest) => string;
 
 | type     | description                         |
 | -------- | ----------------------------------- |
-| `string` | The session id read from the cookie |
+| `string` | the session id read from the cookie |
 
 #### Errors
 
 | name                 | description                              |
 | -------------------- | ---------------------------------------- |
-| AUTH_INVALID_REQUEST | The request is not from a trusted origin |
+| AUTH_INVALID_REQUEST | the request is not from a trusted origin |
 
 #### Example
 
@@ -582,19 +558,19 @@ const renewSession: (sessionId: string) => Promise<Session>;
 
 | name      | type     | description                       |
 | --------- | -------- | --------------------------------- |
-| sessionId | `string` | A valid active or idle session id |
+| sessionId | `string` | a valid active or idle session id |
 
 #### Returns
 
 | type                                              | description               |
 | ------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | The newly created session |
+| [`Session`](/reference/types/lucia-types#session) | the newly created session |
 
 #### Errors
 
 | name                    | description        |
 | ----------------------- | ------------------ |
-| AUTH_INVALID_SESSION_ID | Invalid session id |
+| AUTH_INVALID_SESSION_ID | invalid session id |
 
 #### Example
 
@@ -630,13 +606,13 @@ const updateUserAttributes: (
 
 | type                                        | description      |
 | ------------------------------------------- | ---------------- |
-| [`User`](/reference/types/lucia-types#user) | The updated user |
+| [`User`](/reference/types/lucia-types#user) | the updated user |
 
 #### Errors
 
 | name                 | description           |
 | -------------------- | --------------------- |
-| AUTH_INVALID_USER_ID | Invalid refresh token |
+| AUTH_INVALID_USER_ID | invalid refresh token |
 
 #### Example
 
@@ -664,20 +640,20 @@ const updateUserPassword: (userId: string, password: string | null) => Promise<U
 
 | name     | type             | description     |
 | -------- | ---------------- | --------------- |
-| userId   | `string`         | A refresh token |
-| password | `string \| null` | A new password  |
+| userId   | `string`         | a refresh token |
+| password | `string \| null` | a new password  |
 
 #### Returns
 
 | type                                        | description      |
 | ------------------------------------------- | ---------------- |
-| [`User`](/reference/types/lucia-types#user) | The updated user |
+| [`User`](/reference/types/lucia-types#user) | the updated user |
 
 #### Errors
 
 | name                 | description           |
 | -------------------- | --------------------- |
-| AUTH_INVALID_USER_ID | Invalid refresh token |
+| AUTH_INVALID_USER_ID | invalid refresh token |
 
 #### Example
 
@@ -704,21 +680,21 @@ const updateUserProviderId: (userId: string, provider: string, identifier: strin
 
 | name       | type     | description                          |
 | ---------- | -------- | ------------------------------------ |
-| userId     | `string` | A refresh token                      |
-| provider   | `string` | The provider name of the provider id |
-| identifier | `string` | The identifier of the provider id    |
+| userId     | `string` | a refresh token                      |
+| provider   | `string` | the provider name of the provider id |
+| identifier | `string` | the identifier of the provider id    |
 
 #### Returns
 
 | type                                        | description      |
 | ------------------------------------------- | ---------------- |
-| [`User`](/reference/types/lucia-types#user) | The updated user |
+| [`User`](/reference/types/lucia-types#user) | the updated user |
 
 #### Errors
 
 | name                 | description           |
 | -------------------- | --------------------- |
-| AUTH_INVALID_USER_ID | Invalid refresh token |
+| AUTH_INVALID_USER_ID | invalid refresh token |
 
 #### Example
 
@@ -734,12 +710,12 @@ try {
 
 ### `validateRequest()`
 
-Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. If the session is invalid, it attempts to renew the session. `setCookie()` will called whenever the method needs to set a cookie. The input is the value of the `set-cookie` headers and the function should append it to the header.
+Checks if the request is from a trusted domain, and if so, validates the session id stored inside `auth_session` cookie. If the session is invalid, it attempts to renew the session. `setCookie()` will called whenever the method needs to set a session.
 
 ```ts
 const validateRequest: (
 	request: MinimalRequest,
-	setCookie: (stringifiedCookie) => void
+	setSessionCookie: (session: Session | null) => void
 ) => Promise<Session>;
 ```
 
@@ -748,20 +724,20 @@ const validateRequest: (
 | name      | type                                                            | description                                                                                       |
 | --------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | request   | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | the fetch [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) can be used as is |
-| setCookie | `Function`                                                      |                                                                                                   |
+| setCookie | `Function`                                                      | stores the provided session as cookies - clear cookies on `null`                                  |
 
 #### Returns
 
 | type                                              | description                   |
 | ------------------------------------------------- | ----------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | The session of the session id |
+| [`Session`](/reference/types/lucia-types#session) | the session of the session id |
 
 #### Errors
 
 | name                    | description                                                        |
 | ----------------------- | ------------------------------------------------------------------ |
-| AUTH_INVALID_REQUEST    | The request is not from a trusted origin                           |
-| AUTH_INVALID_SESSION_ID | The value of `auth_session` cookie is an invalid active session id |
+| AUTH_INVALID_REQUEST    | the request is not from a trusted origin                           |
+| AUTH_INVALID_SESSION_ID | the value of `auth_session` cookie is an invalid active session id |
 
 #### Example
 
@@ -769,12 +745,15 @@ const validateRequest: (
 import { auth } from "lucia-auth";
 
 try {
-	let sessionCookie = "";
-	const session = await auth.validateRequest(request, (stringifiedCookie) => {
-		sessionCookie = stringifiedCookie;
+	let stringifiedCookie = "";
+	const session = await auth.validateRequest(request, (session) => {
+		stringifiedCookie = auth
+			.createSessionCookies(session)
+			.map((val) => val.serialize())
+			.toString();
 	});
 	const response = new Response();
-	response.headers.append("set-cookie", sessionCookie);
+	response.headers.append("set-cookie", stringifiedCookie);
 } catch {
 	// invalid
 }
@@ -792,19 +771,19 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 | name      | type     | description               |
 | --------- | -------- | ------------------------- |
-| sessionId | `string` | A valid active session id |
+| sessionId | `string` | a valid active session id |
 
 #### Returns
 
 | type                                              | description                   |
 | ------------------------------------------------- | ----------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | The session of the session id |
+| [`Session`](/reference/types/lucia-types#session) | the session of the session id |
 
 #### Errors
 
 | name                    | description               |
 | ----------------------- | ------------------------- |
-| AUTH_INVALID_SESSION_ID | Invalid active session id |
+| AUTH_INVALID_SESSION_ID | invalid active session id |
 
 #### Example
 
@@ -823,5 +802,5 @@ try {
 Refer to [Error reference](/reference/types/errors).
 
 ```ts
-class LuciaError extends Error
+class LuciaError extends Error {}
 ```

@@ -24,7 +24,7 @@ import {
 	invalidateSessionFunction,
 	generateSessionIdFunction
 } from "./session.js";
-import { createSessionCookiesFunction, createBlankSessionCookiesFunction } from "./cookie.js";
+import { createSessionCookiesFunction } from "./cookie.js";
 import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
 import { logError } from "../utils/log.js";
 
@@ -94,7 +94,6 @@ export class Auth<C extends Configurations = any> {
 		this.getSessionUserFromRequest = getSessionUserFromRequestFunction(this);
 
 		this.createSessionCookies = createSessionCookiesFunction(this);
-		this.createBlankSessionCookies = createBlankSessionCookiesFunction(this);
 	}
 	public getUser: ReturnType<typeof getUserFunction>;
 	public getUserByProviderId: ReturnType<typeof getUserByProviderIdFunction>;
@@ -119,7 +118,6 @@ export class Auth<C extends Configurations = any> {
 	public getSessionUserFromRequest: ReturnType<typeof getSessionUserFromRequestFunction>;
 
 	public createSessionCookies: ReturnType<typeof createSessionCookiesFunction>;
-	public createBlankSessionCookies: ReturnType<typeof createBlankSessionCookiesFunction>;
 }
 
 interface Configurations {

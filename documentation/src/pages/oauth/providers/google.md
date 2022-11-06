@@ -116,7 +116,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | [createUser](/oauth/providers/google#createuser) | `Function`                                            |                                                   |
 | providerUser                                     | [`GoogleUser`](/oauth/providers/google#googleuser)    | Google user                                       |
 | accessToken                                      | `string`                                              | Google access token                               |
-| refreshToken                                     | `string \| undefined`                                 | Only defined on the first sign in                 |
+| refreshToken                                     | `string \| undefined`                                 | only defined on the first sign in                 |
 | expires in                                       | `number`                                              | expiration time (seconds) of the access token     |
 
 ### `createUser()`

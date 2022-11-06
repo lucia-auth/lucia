@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Quick start"
 ---
 
-This will guide you how to implement a simple username/password auth and cover the basics of Lucia. The app we're creating will be a simple note taking app with 3 pages: a sign up page, sign in page, and a profile page (this page will need auth).
+This page will guide you how to implement a simple username/password auth using SvelteKit and cover the basics of Lucia.
 
 The [SvelteKit example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/sveltekit) in the repo expands on this guide.
 
@@ -258,85 +258,38 @@ Add a button that calls [`signOut()`](/sveltekit/api-reference/client-api#signou
 
 ## 6. Request validation
 
-Let's also add a note-taking functionality to the app. This "feature" should only be available to authenticated users. We're going to make this super simple and save the input as a cookie on the server.
-
-### Input form
-
-The input will have a default value of `$page.data.notes`. We'll cover this in a later step, but this will be the note saved to the cookie.
-
-```svelte
-<script lang="ts">
-	import { enhance } from "$app/forms";
-	import { signOut, getUser } from "@lucia-auth/sveltekit/client";
-	import { page } from "$app/stores";
-
-	const user = getUser();
-</script>
-
-<h1>Profile</h1>
-<div>
-	<p>User id: {user?.userId}</p>
-	<p>Username: {user?.username}</p>
-</div>
-
-<div>
-	<h2>Notes</h2>
-	<form method="post" use:enhance>
-		<input value={$page.data.notes} name="notes" />
-		<input type="submit" value="Save" class="button" />
-	</form>
-</div>
-
-<button on:click={() => signOut("/")}>Sign out</button>
-```
-
-### Validate requests and save notes
-
-We can get the user's session using the `getSession()` method, which is provided by `locals`. The user is unauthenticated if `session` is `null`.
+The methods inside `locals` can be used inside actions (`+page.server.ts`), server load functions, and `+server.ts` files as well.
 
 ```ts
 // +page.server.ts
-import { dev } from "$app/environment";
-import { auth } from "$lib/server/lucia";
-import { invalid, redirect, type Actions } from "@sveltejs/kit";
+import type { Actions } from "@sveltejs/kit";
+import type { PageServerLoad } from './$types';
 
 export const actions: Actions = {
-	default: async ({ cookies, request, locals }) => {
+	default: async ({ locals }) => {
 		const session = await locals.getSession();
-		if (!session) return invalid(403);
-		const formData = await request.formData();
-		const notes = formData.get("notes")?.toString();
-		if (notes === undefined) return invalid(400);
-		cookies.set("notes", notes, {
-			httpOnly: true,
-			secure: !dev,
-			path: "/"
-		});
+		if (!session) {
+			// unauthenticated
+		}
+	}
+};
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.getSession();
+	if (!session) {
+		// unauthenticated
 	}
 };
 ```
 
-### Read saved notes
-
-This will read the "notes" cookies and send the value to the client.
-
 ```ts
-// +page.server.ts
-import { dev } from "$app/environment";
-import { auth } from "$lib/server/lucia";
-import { invalid, redirect, type Actions } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+// +server.ts
+import type { RequestHandler } from "./$types";
 
-export const load: PageServerLoad = async ({ cookies, locals }) => {
+export const POST: RequestHandler = async ({ locals }) => {
 	const session = await locals.getSession();
-	if (!session) throw redirect(302, "/login");
-	const notes = cookies.get("notes") || "";
-	return {
-		notes
-	};
-};
-
-export const actions: Actions = {
-	// ...
+	if (!session) {
+		// unauthenticated
+	}
 };
 ```

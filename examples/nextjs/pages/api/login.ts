@@ -20,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		const user = await auth.authenticateUser("username", username, password);
 		const session = await auth.createSession(user.userId);
 		authRequest.setSession(session);
-		return res.redirect(302, "/profile");
+		return res.redirect(302, "/");
 	} catch (e) {
 		const error = e as Error;
 		if (error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD") {

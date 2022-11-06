@@ -20,8 +20,8 @@ const adapter: (
 
 | name                     | type            | description                                                   | optional |
 | ------------------------ | --------------- | ------------------------------------------------------------- | -------- |
-| redisClient.session      | RedisClientType | Client for Redis database for storing sessions                |          |
-| redisClient.userSessions | RedisClientType | Client for Redis database for storing user-sessions relations |          |
+| redisClient.session      | RedisClientType | client for Redis database for storing sessions                |          |
+| redisClient.userSessions | RedisClientType | client for Redis database for storing user-sessions relations |          |
 | handleError              | `Function`      |                                                               | true     |
 
 ## Installation

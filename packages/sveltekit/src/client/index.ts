@@ -2,12 +2,12 @@ import { get, type Readable, readable } from "svelte/store";
 import { onDestroy } from "svelte";
 import type { GlobalWindow, LuciaContext, PageData } from "../types.js";
 import { ClientUser, getClientUser, getServerUser } from "./user.js";
-import { getInitialClientLuciaContext } from "./page-data.js";
 
 export const signOut = async (): Promise<void> => {
-	await fetch("/api/auth/logout", {
+	const response = await fetch("/api/auth/logout", {
 		method: "POST"
 	});
+	if (!response.ok) throw new Error("unknown error");
 	const globalWindow = window as GlobalWindow;
 	if (!globalWindow._setLuciaStore) return;
 	globalWindow._setLuciaStore({

@@ -25,7 +25,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		const session = await auth.createSession(user.userId);
 		const authRequest = new AuthRequest(auth, req, res);
 		authRequest.setSession(session);
-		return res.redirect(302, "/profile");
+		return res.redirect(302, "/");
 	} catch (e) {
 		const error = e as Error;
 		if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {

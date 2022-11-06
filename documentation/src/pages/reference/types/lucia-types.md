@@ -18,6 +18,25 @@ Refer to [Adapters](/reference/adapters/adapters) reference.
 
 Return type of [`lucia()`](/reference/api/server-api#lucia-default).
 
+## `Cookie`
+
+```ts
+interface Cookie {
+	name: string;
+	value: string;
+	options: CookieSerializeOptions; // cookie npm package serialize() options
+	serialize: () => string;
+}
+```
+
+### `serialize()`
+
+Serializes the cookie using the name, value, and options using [`cookies`](https://www.npmjs.com/package/cookie) npm package.
+
+```ts
+const serialize: () => string;
+```
+
 ## `LuciaError`
 
 All errors thrown by Lucia will use this error constructor. Refer to [Errors](/reference/types/errors) for a list of valid error names.
@@ -34,7 +53,7 @@ const constructor: (errorName: LuciaErrorName) => void;
 
 | name      | type                            | description              |
 | --------- | ------------------------------- | ------------------------ |
-| errorName | `LuciaErrorName extends string` | A valid Lucia error name |
+| errorName | `LuciaErrorName extends string` | a valid Lucia error name |
 
 ## `MinimalRequest`
 
@@ -63,8 +82,8 @@ type Session = {
 
 | name    | type     | description                         |
 | ------- | -------- | ----------------------------------- |
-| userId  | `string` | User id of the user of the session  |
-| expires | `number` | Unix time of the session expiration |
+| userId  | `string` | user id of the user of the session  |
+| expires | `number` | unix time of the session expiration |
 
 ## `SessionAdapter`
 
@@ -108,8 +127,8 @@ type UserData = {
 
 | name | type                                                                      | description                        |
 | ---- | ------------------------------------------------------------------------- | ---------------------------------- |
-| id   | `string`                                                                  | User id of the user                |
-|      | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional columns in `user` table |
+| id   | `string`                                                                  | user id of the user                |
+|      | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional columns in `user` table |
 
 ## `UserSchema`
 

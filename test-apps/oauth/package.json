@@ -1,5 +1,5 @@
 {
-	"name": "@example/minimal",
+	"name": "lucia-oauth-demo",
 	"type": "module",
 	"version": "0.0.1",
 	"private": true,
@@ -11,12 +11,15 @@
 		"astro": "astro"
 	},
 	"dependencies": {
+		"@astrojs/svelte": "^1.0.2",
 		"@astrojs/tailwind": "^2.1.2",
 		"@lucia-auth/adapter-supabase": "workspace:*",
+		"@lucia-auth/astro": "workspace:^0.1.0",
 		"@lucia-auth/oauth": "workspace:*",
 		"astro": "^1.6.0",
 		"cookie": "^0.5.0",
 		"lucia-auth": "workspace:*",
+		"svelte": "^3.46.4",
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {

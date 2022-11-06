@@ -7,4 +7,4 @@ type Content = {
 	}[];
 }[];
 
-type Framework = "sveltekit" | "express" | "nextjs"
+type ExternalIntegration = "sveltekit" | "astro" | "nextjs" | "oauth"

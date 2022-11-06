@@ -11,7 +11,6 @@ declare namespace App {
 	interface Locals {
 		getSession: import('@lucia-auth/sveltekit').GetSession;
 		setSession: import('@lucia-auth/sveltekit').SetSession;
-		clearSession: import('@lucia-auth/sveltekit').ClearSession;
 		getSessionUser: import('@lucia-auth/sveltekit').GetSessionUser;
 	}
 }

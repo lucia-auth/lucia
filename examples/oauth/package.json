@@ -1,0 +1,28 @@
+{
+	"name": "lucia-oauth-demo",
+	"type": "module",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro"
+	},
+	"dependencies": {
+		"@astrojs/svelte": "^1.0.2",
+		"@astrojs/tailwind": "^2.1.2",
+		"@lucia-auth/adapter-supabase": "latest",
+		"@lucia-auth/astro": "workspace:^0.1.0",
+		"@lucia-auth/oauth": "latest",
+		"astro": "^1.6.0",
+		"cookie": "^0.5.0",
+		"lucia-auth": "latest",
+		"svelte": "^3.46.4",
+		"tailwindcss": "^3.0.24"
+	},
+	"devDependencies": {
+		"@types/cookie": "^0.5.1"
+	}
+}

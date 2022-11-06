@@ -14,7 +14,7 @@ export const getServerSideProps = async (
 	if (session) {
 		return {
 			redirect: {
-				destination: "/profile",
+				destination: "/",
 				permanent: false
 			}
 		};
@@ -52,8 +52,8 @@ const Index = () => {
 		setMessage(result.error);
 	};
 	return (
-		<div>
-			<h1>Sign in</h1>
+		<>
+			<h2>Sign in</h2>
 			<form method="post" onSubmit={handleSubmit} action="/api/login">
 				<label htmlFor="username">username</label>
 				<br />
@@ -69,7 +69,7 @@ const Index = () => {
 			<Link href="/signup" className="link">
 				Create a new account
 			</Link>
-		</div>
+		</>
 	);
 };
 

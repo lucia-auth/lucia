@@ -1,7 +1,7 @@
-import type { User } from "lucia-auth";
 import { getContext } from "svelte";
 import { derived, get, type Readable } from "svelte/store";
 import type { GlobalWindow, PageData } from "../types.js";
+import type { User } from "lucia-auth";
 
 export type ClientUser = Readonly<User> | null;
 

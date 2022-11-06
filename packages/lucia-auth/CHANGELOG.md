@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.1.4
+
+- [Breaking] Params for `setCookie()` params for `validateRequest()` and `getSessionUserFromRequest()` is now `Session | null` instead of a `string`
+- [Breaking] `createSessionCookies()`^ returns an array of `Cookie`
+- [Breaking] Remove `createBlankSessionCookies()`
+
 ## 0.1.3
 
 - Export `Lucia.Auth` and `Lucia.UserAttributes`

@@ -89,8 +89,8 @@ If the session exists
 
 | name    | type                                                                | description                                       |
 | ------- | ------------------------------------------------------------------- | ------------------------------------------------- |
-| user    | [`UserSchema`](/reference/adapters/database-model#schema-type)      | User data of target: `user(id:session(user_id)`)` |
-| session | [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | Session data of target                            |
+| user    | [`UserSchema`](/reference/adapters/database-model#schema-type)      | user data of target: `user(id:session(user_id)`)` |
+| session | [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data of target                            |
 
 If the session doesn't exist
 
@@ -192,13 +192,13 @@ const setUser: (
 | userId              | `string`              | unique target: `user(id)`                       |
 | data.providerId     | `string`              | target: `user(provider_id)`                     |
 | data.hashedPassword | `string \| null`      | target: `user(hashed_password)`                 |
-| data.attributes     | `Record<string, any>` | Each key names as [key] - target: `user([key])` |
+| data.attributes     | `Record<string, any>` | each key names as [key] - target: `user([key])` |
 
 #### Returns
 
 | type                                                           | description              |
 | -------------------------------------------------------------- | ------------------------ |
-| [`UserSchema`](/reference/adapters/database-model#schema-type) | Data of the created user |
+| [`UserSchema`](/reference/adapters/database-model#schema-type) | data of the created user |
 
 #### Errors
 
@@ -228,13 +228,13 @@ const updateUser: (
 | userId              | `string`              | unique target: `user(id)`                       |          |
 | data.providerId     | `string`              | target: `user(provider_id)`                     | true     |
 | data.hashedPassword | `string \| null`      | target: `user(hashed_password)`                 | true     |
-| data.attributes     | `Record<string, any>` | Each key names as [key] - target: `user([key])` | true     |
+| data.attributes     | `Record<string, any>` | each key names as [key] - target: `user([key])` | true     |
 
 #### Returns
 
 | type                                                           | description              |
 | -------------------------------------------------------------- | ------------------------ |
-| [`UserSchema`](/reference/adapters/database-model#schema-type) | Data of the updated user |
+| [`UserSchema`](/reference/adapters/database-model#schema-type) | data of the updated user |
 
 #### Errors
 
@@ -293,7 +293,7 @@ If the session exists
 
 | type                                                                | description            |
 | ------------------------------------------------------------------- | ---------------------- |
-| [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | Session data of target |
+| [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data of target |
 
 If the session doesn't exist
 
@@ -321,7 +321,7 @@ If the session exists
 
 | type                                                                | description            |
 | ------------------------------------------------------------------- | ---------------------- |
-| [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | Session data of target |
+| [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data of target |
 
 If the session doesn't exist
 

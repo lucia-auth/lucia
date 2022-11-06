@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Quick start"
 ---
 
-This will guide you how to implement a simple username/password auth and cover the basics of Lucia. The app we're creating will be a simple note taking app with 3 pages: a sign up page, sign in page, and a profile page (this page will need auth).
+This page will guide you how to implement a simple username/password auth and cover the basics of Lucia.
 
 The [Next.js example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/nextjs) in the repo expands on this guide.
 
@@ -29,7 +29,7 @@ declare namespace Lucia {
 }
 ```
 
-Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
+Add [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
 // lib/lucia.ts
@@ -307,7 +307,7 @@ export const getServerSideProps = async (
 
 ## 5. Profile page (protected)
 
-This page will be the root page. This route will show the user's data and have the note-taking portion of the app.
+This page will be the root page (`/`). This route will show the user's data and have the note-taking portion of the app.
 
 ### Get current user
 
@@ -412,132 +412,16 @@ export default Index;
 
 ## 6. Request validation
 
-Let's also add a note-taking functionality to the app. This "feature" should only be available to authenticated users. We're going to make this super simple and save the input as a cookie on the server.
-
-### Read saved notes
-
-The note will be saved inside a `notes` cookie.
+`AuthRequest` can also be used inside API routes:
 
 ```ts
-// pages/index.tsx
-
-// ...
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ user: User; notes: string }>> => {
-	const authRequest = new AuthRequest(auth, context.req, context.res);
-	const { user } = await authRequest.getSessionUser();
-	if (!user)
-		return {
-			redirect: {
-				destination: "/login",
-				permanent: false
-			}
-		};
-	const notes = context.req.cookies.notes || "";
-	return {
-		props: {
-			user,
-			notes
-		}
-	};
-};
-```
-
-### Input form
-
-The input will have a default value of `props.notes`. On submit, this will send a POST request to `/api/notes`.
-
-```tsx
-// pages/index.tsx
-
-// ...
-
-const Index = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-	const router = useRouter();
-	const [randomNumber, setRandomNumber] = useState<null | number>(null);
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		const formValues = e.target as any as Record<
-			"notes",
-			{
-				value: string;
-			}
-		>;
-		await fetch("/api/notes", {
-			method: "POST",
-			body: JSON.stringify({
-				notes: formValues.notes.value
-			})
-		});
-	};
-	return (
-		<>
-			<h1>Profile</h1>
-			<p>This page is protected and can only be accessed by authenticated users.</p>
-			<div>
-				<p>User id: {props.user?.userId}</p>
-				<p>Username: {props.user?.username}</p>
-			</div>
-
-			<div>
-				<h2>Notes</h2>
-				<form method="post" onSubmit={handleSubmit}>
-					<input defaultValue={props.notes} name="notes" />
-					<input type="submit" value="Save" className="button" />
-				</form>
-			</div>
-
-			<button
-				onClick={async () => {
-					await signOut();
-					router.push("/login");
-				}}
-			>
-				Sign out
-			</button>
-		</>
-	);
-};
-```
-
-### Validate requests and save notes
-
-We'll handle the note-saving in `/api/notes`, so create `pages/api/notes.ts`. This example uses the `cookie` library, installed with:
-
-```bash
-npm i cookie
-npm i -D @types/cookie
-```
-
-We can get the user's session using the `getSession()` method inside `AuthRequest`. The user is unauthenticated if `session` is `null`.
-
-```ts
-// pages/api/notes.ts
 import { AuthRequest } from "@lucia-auth/nextjs";
 import { auth } from "../../lib/lucia";
-import cookie from "cookie";
-
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST") return res.status(404).json({});
 	const authRequest = new AuthRequest(auth, req, res);
 	const session = await authRequest.getSession();
-	if (!session) return res.status(401).json({});
-	const { notes } = JSON.parse(req.body);
-	if (!notes) return res.status(400).json({});
-	return res
-		.setHeader(
-			"set-cookie",
-			cookie.serialize("notes", notes, {
-				httpOnly: true,
-				secure: false,
-				path: "/"
-			})
-		)
-		.status(200)
-		.json({});
+	// ...
 };
 ```

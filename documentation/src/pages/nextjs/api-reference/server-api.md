@@ -24,11 +24,11 @@ const constructor: (
 
 #### Parameter
 
-| name     | type                                                                                                                    | description                                       |
-| -------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| auth     | [`Auth`](/reference/types/lucia-types#auth)                                                                             | Lucia instance                                    |
-| request  | `GetServerSidePropsContext["req"]` \| [`NextApiRequest`](https://nextjs.org/docs/basic-features/typescript#api-routes)  | request from `getServerSideProps()` or API route  |
-| response | `GetServerSidePropsContext["res"]` \| [`NextApiResponse`](https://nextjs.org/docs/basic-features/typescript#api-routes) | response from `getServerSideProps()` or API route |
+| name     | type                                                                                                                                                                                                                   | description                                       |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| auth     | [`Auth`](/reference/types/lucia-types#auth)                                                                                                                                                                            | Lucia instance                                    |
+| request  | [`GetServerSidePropsContext["req"]`](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)`\|`[`NextApiRequest`](https://nextjs.org/docs/basic-features/typescript#api-routes)  | request from `getServerSideProps()` or API route  |
+| response | [`GetServerSidePropsContext["res"]`](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)`\|`[`NextApiResponse`](https://nextjs.org/docs/basic-features/typescript#api-routes) | response from `getServerSideProps()` or API route |
 
 #### Example
 
@@ -52,21 +52,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const authRequest = new AuthRequest(auth, req, res);
 };
-```
-
-### `clearSession()`
-
-Deletes all session cookies of the user sent with the request. This will NOT invalidate the provided session - this can be down with [`invalidateSession()`](/reference/api/server-api#invalidatesession).
-
-```ts
-const clearSession: () => void;
-```
-
-#### Example
-
-```ts
-const authRequest = new AuthRequest();
-authRequest.clearSession();
 ```
 
 ### `getSession()`
@@ -127,17 +112,17 @@ const action: Action = async ({ locals }) => {
 
 ### `setSession()`
 
-Sets the session id cookie of the provided session. When called multiple times this will only set the last provided session.
+Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/server-api#invalidatesession).
 
 ```ts
-const setSession: (session: Session) => void;
+const setSession: (session: Session | null) => void;
 ```
 
 #### Parameter
 
-| name    | type                                              | description                   |
-| ------- | ------------------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/types/lucia-types#session) | The session to set to cookies |
+| name    | type                                                        | description        |
+| ------- | ----------------------------------------------------------- | ------------------ |
+| session | [`Session`](/reference/types/lucia-types#session)` \| null` | the session to set |
 
 #### Example
 
@@ -146,7 +131,15 @@ import { auth } from "../lucia";
 
 const authRequest = new AuthRequest();
 const session = await auth.createSession();
-authRequest.setSession(session);
+authRequest.setSession(session); // set session cookie
+```
+
+```ts
+import { auth } from "../lucia";
+
+const authRequest = new AuthRequest();
+await auth.invalidateSession(sessionId); // invalidate session
+authRequest.setSession(null); // remove session cookies
 ```
 
 ## `handleApiRoutes()`
@@ -167,4 +160,4 @@ const handleApiRoutes = (auth: Auth) => (req: NextRequest, res: NextResponse) =>
 
 | type       | description          |
 | ---------- | -------------------- |
-| `Function` | An api route handler |
+| `Function` | an api route handler |

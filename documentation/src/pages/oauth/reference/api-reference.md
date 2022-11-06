@@ -27,7 +27,7 @@ const getAuthorizationUrl: () => string;
 
 | type     | description           |
 | -------- | --------------------- |
-| `string` | The authorization url |
+| `string` | the authorization url |
 
 ### `validateCallback()`
 
@@ -47,7 +47,7 @@ const validateCallback: (code: string) => Promise<ProviderSession>;
 
 | type                                                                | description       |
 | ------------------------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/oauth/reference/api-reference#providersession) | The oauth session |
+| [`ProviderSession`](/oauth/reference/api-reference#providersession) | the oauth session |
 
 #### Errors
 
@@ -85,7 +85,7 @@ const createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
 
 | name           | type                                                                      | description                                 | optional |
 | -------------- | ------------------------------------------------------------------------- | ------------------------------------------- | -------- |
-| userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional user data to store in user table | true     |
+| userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional user data to store in user table | true     |
 
 #### Returns
 

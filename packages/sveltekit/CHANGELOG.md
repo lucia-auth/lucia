@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.1.7
+
+- [Breaking] Removed `locals.clearSession()`
+- [Breaking] `signOut()` will throw an error on failed session invalidation
+- `locals.setSession()` can be called using `null` to delete all session cookies
+- Update `lucia-auth` to v0.1.4
+
 ## 0.1.6
 
 - Update package.json
