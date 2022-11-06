@@ -66,14 +66,13 @@ Make sure to generate your types using `npx prisma generate` after you set up th
 
 ### `user`
 
-You may add additional columns to store user attributes. Refer to [[Store user attributes](/learn/basics/store-user-attributes). `id` may be `String` if you generate your own user id.
+You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` may be `String` if you generate your own user id.
 
 ```prisma
 model User {
   id              String    @id @unique @default(cuid())
   provider_id     String    @unique
   hashed_password String?
-  username        String    @unique
   session         Session[]
 
   @@map("user")
