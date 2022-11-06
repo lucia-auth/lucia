@@ -1,4 +1,4 @@
-import { LuciaOAuthError } from ".";
+import { LuciaOAuthError } from "./index.js";
 
 interface FetchOptions {
 	body?: Record<any, any>;
