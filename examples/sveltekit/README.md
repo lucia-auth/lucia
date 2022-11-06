@@ -1,10 +1,10 @@
-# Lucia + SvelteKit example
+# Lucia + Sveltekit demo
 
 ## Setup
 
 ```bash
-npm i
-npm run dev
+pnpm i
+pnpm dev
 ```
 
 ### Environment variables

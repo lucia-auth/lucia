@@ -8,4 +8,3 @@ node_modules
 !.env.example
 .vercel
 .output
-package-lock.json

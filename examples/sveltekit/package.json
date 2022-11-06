@@ -12,8 +12,8 @@
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "latest",
-		"@sveltejs/kit": "latest",
+		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/kit": "next",
 		"@types/cookie": "^0.5.1",
 		"@typescript-eslint/eslint-plugin": "^5.35.1",
 		"@typescript-eslint/parser": "^5.35.1",
@@ -36,6 +36,7 @@
 	"dependencies": {
 		"@lucia-auth/adapter-supabase": "latest",
 		"lucia-auth": "latest",
-		"@lucia-auth/sveltekit": "latest"
+		"@lucia-auth/sveltekit": "latest",
+		"devalue": "^4.0.1"
 	}
 }
