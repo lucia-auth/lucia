@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Concepts"
 ---
 
-The main focus of Lucia is session and user management, not user authentication (=is the user who they claim to be?). Since it’s a very common and basic strategy, it does provide a way to use passwords, but it’s 100% optional. If you know for sure who the user is (via user id from OAuth, email from magic links, email/phone number from OTP, username from username/password, etc), you can create a new user and session based on that info. This means Lucia can be used with most, if not all, authentication method. This is a very deliberate design choice and the core idea behind Lucia.
+The main focus of Lucia is session and user management, not user authentication (=is the user who they claim to be?). Since it’s a very common and basic strategy, it does provide a way to use passwords, but it’s 100% optional. If you know for sure who the user is (via user id from OAuth, email from magic links, email/phone number from OTP, username from username/password, etc), you can create a new user and session based on that info. This means Lucia can be used with most, if not all, authentication methods. This is a very deliberate design choice and the core idea behind Lucia.
 
 ## How Lucia works
 
