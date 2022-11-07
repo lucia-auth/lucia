@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.9
+
+- Fix types for `handleHooks()`
+
 ## 0.1.8
 
 - Update peer dependency

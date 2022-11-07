@@ -4,13 +4,13 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Store user attributes"
 ---
 
-Any number of additional columns can be added to the `user` table. This should be generally used for commonly used data (like username and profile pictures) and for user permissions (like if the user is an admin). Larger and specific data should be stored inside a different table.
+In addition to the required columns, any number of columns can be added to the `user` table. This should be generally used for storing commonly used data (like username and profile pictures) or user-permissions (like if the user is an admin). Larger and specific data should be stored inside a different table to save on bandwidth.
 
-The column can be unique as well, and the database will throw an error when a provided user data violates the unique rule upon user creation or update.
+Lucia will re-throw the error from the database on user creation/update if the provided data violates constraints/rules.
 
-## Get user attributes
+## Populate `User` object
 
-By default, the `User` object only includes the user id:
+By default, the `User` object (returned by methods like [`getUser()`](/reference/api/server-api#getuser)) only includes the user id:
 
 ```ts
 type User = {
@@ -18,7 +18,7 @@ type User = {
 };
 ```
 
-We can customize this object by providing a `transformUserData()` function to the configs.
+You can customize this object by providing a [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) function in the configs. Lucia will automatically use the return type as the type of the `User` object.
 
 ```ts
 export const auth = lucia({
@@ -32,9 +32,9 @@ export const auth = lucia({
 
 `userData` holds `id` (the user id) and the key/value pair of any columns you have added to the `user` table.
 
-## Types
+### Types
 
-To type `User`, add the column names and the value type inside `Lucia.UserAttributes`:
+To type `userData` for `transformUserData()`, add the column names and the value type inside `Lucia.UserAttributes`:
 
 ```ts
 // app.d.ts

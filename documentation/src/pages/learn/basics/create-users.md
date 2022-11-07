@@ -6,7 +6,7 @@ title: "Create users"
 
 The [`createUser()`](/reference/api/server-api#createuser) method can be used to create users, which requires a provider name and identifier. Lucia (or the database) will automatically generate a user id for your users on creation. However, you can generate your own user id using [`configurations.generateCustomUserId()`](/reference/configure/lucia-configurations#generatecustomuserid).
 
-This method will not create a new session (tokens). To create a new session after creating a user, refer to [Create sessions](/learn/basics/authenticate-users).
+This method will not create a new session. To create a new session after creating a user, refer to [Create sessions](/learn/basics/authenticate-users).
 
 ```ts
 import { auth } from "./lucia.js";
@@ -18,7 +18,7 @@ await auth.createUser(providerName, identifier, options);
 
 ### Without a password
 
-This is useful when you can trust the input for the provider name and identifier. When implementing OAuth for example, you can trust that the provider has validated the user and has given you the correct identifier (you will never get the information about user B when user A signs in with the OAuth provider).
+This is useful when you can trust the input for the provider name and identifier. When implementing OAuth for example, you can trust that the provider has validated the user and has given you the correct identifier (you will never get the information about of B when user A signs in with the OAuth provider).
 
 ```ts
 import { auth } from "./lucia.js";
@@ -48,7 +48,7 @@ try {
 
 ## Store user attributes
 
-By default, Lucia will store the user id, provider id, and the hashed password (if a password is provided). The components of the provider id - the provider name and identifier - are not stored in its own column, and is combined so as to be stored in a single column. You can add additional columns to the `user` table to store the user's attributes. Lucia will throw an error if the provided user data violates a unique constraint of a column as well when creating and updating `users`. Refer to [Store additional user data](/learn/basics/store-additional-user-data) for more information.
+By default, Lucia will store the user id, provider id, and the hashed password (if a password is provided). The components of the provider id - the provider name and identifier - are not stored inside its own column, but is combined so as to be stored in a single column. Lucia allows you to add additional columns to the `user` table to store user attributes. Refer to [Store additional user data](/learn/basics/store-additional-user-data) for implementations.
 
 ```ts
 import { auth } from "./lucia.js";
