@@ -4,6 +4,28 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Manage users"
 ---
 
+## Get users
+
+### From user id
+
+The [`getUser()`](/reference/api/server-api#getuser) method can be used to get a user from a user id. This will throw an error if the user isn't found.
+
+```ts
+import { auth } from "./lucia.js";
+
+const user = await auth.getUser(userId);
+```
+
+### From provider id
+
+Alternatively, the [`getUserByProviderId()`](/reference/api/server-api#getuserbyproviderid) can be used to get the user from the provider name and identifier.
+
+```ts
+import { auth } from "./lucia.js";
+
+const user = await auth.getUserByProviderId(provider, identifier);
+```
+
 ## Update users
 
 Lucia provides few methods to update the user, one for each user attribute. Lucia currently does not provide a way to update the user id. You do not need to re-issue the session as the session is tied to the user id.
