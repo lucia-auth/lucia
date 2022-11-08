@@ -4,6 +4,7 @@ interface FetchOptions {
 	body?: Record<any, any>;
 	bearerToken?: string;
 	acceptJSON?: true;
+	clientId?: string;
 }
 
 export const post = async (url: string, options?: FetchOptions) => {
@@ -21,6 +22,9 @@ export const sendRequest = async (url: string, method: "GET" | "POST", options?:
 			Accept: "application/json",
 			...(options?.body && {
 				"Content-Type": "application/json"
+			}),
+			...(options?.clientId && {
+				"Client-ID": options.clientId
 			}),
 			...(options?.bearerToken && {
 				Authorization: `Bearer ${options.bearerToken}`
