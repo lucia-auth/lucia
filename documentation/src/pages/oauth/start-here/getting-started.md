@@ -40,7 +40,7 @@ new Response(null, {
 });
 ```
 
-Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag. Though, keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, the provider oauth instance should only be inside a server context.
+Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag. However, keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**.
 
 ```svelte
 <a href={providerAuthorizationUrl}>Sign in with provider</a>
