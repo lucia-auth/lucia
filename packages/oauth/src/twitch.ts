@@ -1,6 +1,6 @@
-import { post, get } from "./request";
+import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import type { OAuthProvider } from "./index";
+import type { OAuthProvider } from "./index.js";
 
 interface Configs {
 	clientId: string;
