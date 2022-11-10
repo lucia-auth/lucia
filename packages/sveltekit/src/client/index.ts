@@ -8,12 +8,6 @@ export const signOut = async (): Promise<void> => {
 		method: "POST"
 	});
 	if (!response.ok) throw new Error("unknown error");
-	const globalWindow = window as GlobalWindow;
-	if (!globalWindow._setLuciaStore) return;
-	globalWindow._setLuciaStore({
-		user: null,
-		sessionChecksum: null
-	});
 };
 
 export const getUser = (): Readable<ClientUser> => {
@@ -36,7 +30,7 @@ export const handleSession = (
 	pageStore: Readable<{
 		data: PageData;
 	}>,
-	onSessionUpdate: (user: ClientUser) => void = () => {}
+	onSessionUpdate: (hasSession: boolean) => void = () => {}
 ) => {
 	if (typeof window === "undefined") return;
 	const broadcastChannel = new BroadcastChannel("__lucia__");
@@ -45,7 +39,6 @@ export const handleSession = (
 	const initialLuciaContext = initialPageStoreValue.data._lucia;
 	if (!initialLuciaContext) throw new Error("pageData._lucia is undefined");
 	const globalWindow = window as GlobalWindow;
-	globalWindow._luciaHooksRanLast = false;
 	let pageStoreUnsubscribe = () => {},
 		userStoreUnsubscribe = () => {};
 	let initialLuciaStoreSubscription = true;
@@ -65,39 +58,30 @@ export const handleSession = (
 		if (initialLuciaStoreSubscription) return (initialLuciaStoreSubscription = false);
 		broadcastChannel.postMessage({
 			tabId: tabId,
-			...newContext
+			sessionChecksum: newContext.sessionChecksum
 		});
 	});
-	let previousPageStoreSessionChecksum: string | null = initialLuciaContext.sessionChecksum;
 	pageStoreUnsubscribe = pageStore.subscribe((pageStoreValue) => {
-		/*
-		this will be called on potential session change 
-		there is no guarantee that the session has changed whenever this runs
-		*/
 		const newLuciaContext = pageStoreValue.data?._lucia;
 		if (!newLuciaContext) throw new Error("pageData._lucia is undefined");
 		if (!globalWindow._setLuciaStore) throw new Error("_setLuciaStore() is undefined");
-		if (!globalWindow._luciaStore) throw new Error("_luciaStore is undefined");
-		/*
-		check if session has changed from the previous page data
-		*/
-		if (previousPageStoreSessionChecksum === newLuciaContext.sessionChecksum) return;
-		const currentLuciaContext = get(globalWindow._luciaStore);
-		previousPageStoreSessionChecksum = newLuciaContext.sessionChecksum;
-		/*
-		check if session update is necessary
-		*/
-		if (newLuciaContext.sessionChecksum === currentLuciaContext.sessionChecksum) return;
 		globalWindow._setLuciaStore(newLuciaContext);
 	});
 	broadcastChannel.addEventListener("message", ({ data }) => {
 		const messageData = data as {
 			tabId: string;
-		} & LuciaContext;
+			sessionChecksum: string;
+		};
 		/*
 		check if message is coming from the same tab
 		*/
 		if (messageData.tabId === tabId) return;
-		onSessionUpdate(messageData.user);
+		if (!globalWindow._luciaStore) throw new Error("_luciaStore is undefined");
+		const currentLuciaContext = get(globalWindow._luciaStore);
+		/*
+		check if session has changed from the previous page data
+		*/
+		if (messageData.sessionChecksum === currentLuciaContext.sessionChecksum) return;
+		onSessionUpdate(!!messageData.sessionChecksum);
 	});
 };
