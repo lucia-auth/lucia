@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.2.0
+
+- [Breaking] Remove `getUser()` for load functions
+- [Breaking] `onSessionUpdate()` for `handleSession()` takes a boolean instead of `User`
+- [Breaking] `signOut()` no longer clears the local user store
+- [Fix] `handleSession()` updates user on load functions page data update and session change across tabs
+- `locals.getSession()` and `locals.getUserSession()` will cache the result on initial call and be stored for the duration of the request/page load.
+
 ## 0.1.9
 
 - Fix types for `handleHooks()`

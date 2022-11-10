@@ -35,10 +35,10 @@ const userId = user?.userId;
 
 ## `handleSession()`
 
-Handles sessions in the client - must be called on the root layout for all client and load methods to work. This will listen for session updates across tabs. The provided callback will be called whenever a session changes in a different tab.
+Handles sessions in the client - must be called on the root layout for all client and load methods to work. This will listen for session updates across tabs. The provided callback will be called whenever a session changes in a different tab, and `hasSession` is `false` is the user has signed out.
 
 ```ts
-const handleSession: (pageStore: Page, onSessionUpdate?: () => void) => void;
+const handleSession: (pageStore: Page, onSessionUpdate?: (hasSession?: boolean) => void) => void;
 ```
 
 #### Parameter
@@ -61,7 +61,7 @@ handleSession(page, () => {
 
 ## `signOut()`
 
-Deletes the local session cache, invalidates the user's session, and removes session cookies.
+Invalidates the current session and removes session cookies. [`invalidateAll()`]() should be called afterward to update the current session in the client.
 
 ```ts
 const signOut: () => Promise<void>;

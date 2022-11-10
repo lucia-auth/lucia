@@ -31,7 +31,6 @@ export type GlobalWindow = Window & {
 		data: Record<any, any>;
 		uses: Record<any, any>;
 	} | null)[];
-	_luciaHooksRanLast?: boolean;
 };
 
 export type PageData = {

@@ -14,6 +14,10 @@ const action: Action = async ({ locals }) => {
 };
 ```
 
+### Caching
+
+Methods that returns some data, specifically [`getSession()`]() and [`getSessionUser()`](), will cache its result on initial call. This means that within a single request (page load), the session will only be validated once, and thus only a single database call made, regardless of how many times the function is called. If `getSessionUser()` was used first, `getSession()` will use the cache from it. When used within load functions, it allows you to get the current session without awaiting for the parent load function and sending another database call, improving page loads.
+
 ## `getSession()`
 
 Validates the request and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
