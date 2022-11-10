@@ -6,7 +6,7 @@ interface Configs {
 	clientId: string;
 	clientSecret: string;
 	redirectUri: string;
-	forceVerify: boolean;
+	forceVerify?: boolean;
 	scope?: string[];
 }
 
