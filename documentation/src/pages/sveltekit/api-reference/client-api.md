@@ -61,7 +61,7 @@ handleSession(page, () => {
 
 ## `signOut()`
 
-Invalidates the current session and removes session cookies. [`invalidateAll()`]() should be called afterward to update the current session in the client.
+Invalidates the current session and removes session cookies. [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall) should be called afterward to update the current session in the client.
 
 ```ts
 const signOut: () => Promise<void>;

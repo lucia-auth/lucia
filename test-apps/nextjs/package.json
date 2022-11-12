@@ -9,15 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@lucia-auth/adapter-supabase": "workspace:^0.1.1",
-    "@lucia-auth/nextjs": "workspace:^0.1.0",
+    "@lucia-auth/adapter-supabase": "workspace:*",
+    "@lucia-auth/nextjs": "workspace:*",
     "@types/node": "18.11.9",
     "@types/react": "18.0.24",
     "@types/react-dom": "18.0.8",
     "encoding": "^0.1.13",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.1",
-    "lucia-auth": "workspace:^0.1.1",
+    "lucia-auth": "workspace:*",
     "next": "13.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

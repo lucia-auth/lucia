@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] Requires `lucia-auth` v0.2.0
+- [Breaking] Using `locals.setSession()` will override the session returned by `locals.setSession()`
+- [Fix] Sets session cookie on normal form submission [#202](https://github.com/pilcrowOnPaper/lucia-auth/issues/202)
+
 ## 0.2.0
 
 - [Breaking] Remove `getUser()` for load functions

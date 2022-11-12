@@ -7,26 +7,26 @@ import {
 	getUserByProviderIdFunction,
 	updateUserAttributesFunction,
 	updateUserPasswordFunction,
-	updateUserProviderIdFunction,
-	getSessionUserFunction
+	updateUserProviderIdFunction
 } from "./user/index.js";
-import {
-	parseRequestFunction,
-	validateRequestFunction,
-	getSessionUserFromRequestFunction
-} from "./request.js";
+import { validateRequestHeadersFunction } from "./request.js";
 import {
 	createSessionFunction,
 	deleteDeadUserSessionsFunction,
 	renewSessionFunction,
 	invalidateAllUserSessionsFunction,
 	validateSessionFunction,
+	validateSessionUserFunction,
 	invalidateSessionFunction,
-	generateSessionIdFunction
+	getSessionFunction,
+	generateSessionIdFunction,
+	getSessionUserFunction
 } from "./session.js";
 import { createSessionCookiesFunction } from "./cookie.js";
 import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
 import { logError } from "../utils/log.js";
+
+export { SESSION_COOKIE_NAME } from "./cookie.js"
 
 export const lucia = <C extends Configurations>(configs: C) => {
 	return new Auth(configs) as Omit<Auth<C>, "getAuthSession">;
@@ -81,7 +81,9 @@ export class Auth<C extends Configurations = any> {
 		this.deleteUser = deleteUserFunction(this);
 		this.authenticateUser = authenticateUserFunction(this);
 
+		this.getSession = getSessionFunction(this);
 		this.validateSession = validateSessionFunction(this);
+		this.validateSessionUser = validateSessionUserFunction(this);
 		this.generateSessionId = generateSessionIdFunction(this);
 		this.createSession = createSessionFunction(this);
 		this.renewSession = renewSessionFunction(this);
@@ -89,9 +91,7 @@ export class Auth<C extends Configurations = any> {
 		this.invalidateAllUserSessions = invalidateAllUserSessionsFunction(this);
 		this.deleteDeadUserSessions = deleteDeadUserSessionsFunction(this);
 
-		this.parseRequest = parseRequestFunction(this);
-		this.validateRequest = validateRequestFunction(this);
-		this.getSessionUserFromRequest = getSessionUserFromRequestFunction(this);
+		this.validateRequestHeaders = validateRequestHeadersFunction(this);
 
 		this.createSessionCookies = createSessionCookiesFunction(this);
 	}
@@ -105,7 +105,9 @@ export class Auth<C extends Configurations = any> {
 	public deleteUser: ReturnType<typeof deleteUserFunction>;
 	public authenticateUser: ReturnType<typeof authenticateUserFunction>;
 
+	public getSession: ReturnType<typeof getSessionFunction>;
 	public validateSession: ReturnType<typeof validateSessionFunction>;
+	public validateSessionUser: ReturnType<typeof validateSessionUserFunction>;
 	public generateSessionId: ReturnType<typeof generateSessionIdFunction>;
 	public createSession: ReturnType<typeof createSessionFunction>;
 	public renewSession: ReturnType<typeof renewSessionFunction>;
@@ -113,9 +115,7 @@ export class Auth<C extends Configurations = any> {
 	public invalidateAllUserSessions: ReturnType<typeof invalidateAllUserSessionsFunction>;
 	public deleteDeadUserSessions: ReturnType<typeof deleteDeadUserSessionsFunction>;
 
-	public parseRequest: ReturnType<typeof parseRequestFunction>;
-	public validateRequest: ReturnType<typeof validateRequestFunction>;
-	public getSessionUserFromRequest: ReturnType<typeof getSessionUserFromRequestFunction>;
+	public validateRequestHeaders: ReturnType<typeof validateRequestHeadersFunction>;
 
 	public createSessionCookies: ReturnType<typeof createSessionCookiesFunction>;
 }
