@@ -1,5 +1,5 @@
 import { handleLogoutRequest } from "./endpoints/index.js";
-import type { Auth, Session, User } from "lucia-auth";
+import { Auth, Session, SESSION_COOKIE_NAME, User } from "lucia-auth";
 import type { RequestEvent } from "../types.js";
 
 const setPageDataGlobalVariable = ({ html }: { html: string }) => {
@@ -40,10 +40,15 @@ export const handleHooks = (auth: Auth) => {
 			}
 		) => Promise<Response> | Response;
 	}) => {
+		let sessionCache: Session | null | undefined = undefined;
+		let userCache: User | null | undefined = undefined;
+
 		event.locals.setSession = (session: Session | null) => {
 			auth.createSessionCookies(session).forEach((cookie) => {
 				event.cookies.set(cookie.name, cookie.value, cookie.options);
 			});
+			sessionCache = session;
+			userCache = undefined;
 		};
 
 		/*
@@ -58,27 +63,30 @@ export const handleHooks = (auth: Auth) => {
 		*/
 		let getSessionResolvers: ((val: any) => void)[] = [];
 		let isInitialGetSessionCall = true;
-		let session: Session | null | undefined = undefined;
 		event.locals.getSession = async () =>
 			new Promise((resolve) => {
 				// return cached value
-				if (typeof session !== "undefined") return resolve(session);
+				if (typeof sessionCache !== "undefined") return resolve(sessionCache);
 				if (isInitialGetSessionCall) {
 					// not pending promise
 					isInitialGetSessionCall = false;
-					auth
-						.validateRequest(event.request, event.locals.setSession)
+					const validateRequest = async () => {
+						auth.validateRequestHeaders(event.request);
+						const sessionId = event.cookies.get(SESSION_COOKIE_NAME) || "";
+						return auth.validateSession(sessionId, event.locals.setSession);
+					};
+					validateRequest()
 						.then((sessionResult) => {
-							session = sessionResult;
+							sessionCache = sessionResult;
 							resolve(sessionResult);
 						})
 						.catch(() => {
-							session = null;
+							sessionCache = null;
 							resolve(null);
 						})
 						.finally(() => {
-							// resolve every getSession() called during promise pending 
-							getSessionResolvers.forEach((res) => res(session));
+							// resolve every getSession() called during promise pending
+							getSessionResolvers.forEach((res) => res(sessionCache));
 							getSessionResolvers = [];
 						});
 				}
@@ -98,7 +106,6 @@ export const handleHooks = (auth: Auth) => {
 				  }
 		) => void)[] = [];
 		let isInitialGetSessionUserCall = true;
-		let user: User | null | undefined = undefined;
 		event.locals.getSessionUser = async (): Promise<
 			| { user: User; session: Session }
 			| {
@@ -107,28 +114,33 @@ export const handleHooks = (auth: Auth) => {
 			  }
 		> =>
 			new Promise((resolve) => {
-				if (typeof user !== "undefined") {
-					if (typeof session === "undefined") throw new Error("UNEXPECTED: user is undefined");
-					if (user === null && session === null) return resolve({ session, user });
-					if (user === null || session === null)
+				if (typeof userCache !== "undefined") {
+					if (typeof sessionCache === "undefined") throw new Error("UNEXPECTED: user is undefined");
+					if (userCache === null && sessionCache === null)
+						return resolve({ session: sessionCache, user: userCache });
+					if (userCache === null || sessionCache === null)
 						throw new Error("UNEXPECTED: user or session is undefined");
-					return resolve({ session, user });
+					return resolve({ session: sessionCache, user: userCache });
 				}
 				if (isInitialGetSessionUserCall) {
 					isInitialGetSessionCall = false;
 					isInitialGetSessionUserCall = false;
-					auth
-						.getSessionUserFromRequest(event.request, event.locals.setSession)
+					const validateRequest = async () => {
+						auth.validateRequestHeaders(event.request);
+						const sessionId = event.cookies.get(SESSION_COOKIE_NAME) || "";
+						return auth.validateSessionUser(sessionId, event.locals.setSession);
+					};
+					validateRequest()
 						.then((result) => {
-							session = result.session;
-							user = result.user;
+							sessionCache = result.session;
+							userCache = result.user;
 							resolve(result);
 							getSessionUserResolvers.forEach((res) => res(result));
 							getSessionResolvers.forEach((res) => res(result.session));
 						})
 						.catch(() => {
-							session = null;
-							user = null;
+							sessionCache = null;
+							userCache = null;
 							const result = { session: null, user: null };
 							resolve(result);
 							getSessionUserResolvers.forEach((res) => res(result));

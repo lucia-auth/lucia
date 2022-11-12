@@ -1,11 +1,10 @@
-import type { Session, Auth } from "../types.js";
+import type { Session, Auth, User, UserSchema, SessionSchema } from "../types.js";
 import { generateRandomString, LuciaError } from "../index.js";
 
-type ValidateSession = (sessionId: string) => Promise<Session>;
+type GetSession = (sessionId: string) => Promise<Session>;
 
-export const validateSessionFunction = (auth: Auth) => {
-	const validateSession: ValidateSession = async (sessionId) => {
-		if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+export const getSessionFunction = (auth: Auth) => {
+	const getSession: GetSession = async (sessionId) => {
 		const databaseSession = await auth.configs.adapter.getSession(sessionId);
 		if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const currentTime = new Date().getTime();
@@ -18,7 +17,93 @@ export const validateSessionFunction = (auth: Auth) => {
 			idlePeriodExpires
 		};
 	};
+	return getSession;
+};
+
+type GetSessionUser = (sessionId: string) => Promise<{
+	user: User;
+	session: Session;
+}>;
+
+export const getSessionUserFunction = (auth: Auth) => {
+	const getSessionUser: GetSessionUser = async (sessionId) => {
+		let userSessionData: {
+			user: UserSchema;
+			session: SessionSchema;
+		} | null;
+		if (auth.configs.adapter.getSessionAndUserBySessionId !== undefined) {
+			userSessionData = await auth.configs.adapter.getSessionAndUserBySessionId(sessionId);
+		} else {
+			const sessionData = await auth.configs.adapter.getSession(sessionId);
+			if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			const userData = await auth.configs.adapter.getUser(sessionData.user_id);
+			if (!userData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			userSessionData = {
+				user: userData,
+				session: sessionData
+			};
+		}
+		if (!userSessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		const { user: databaseUser, session: databaseSession } = userSessionData;
+		if (new Date().getTime() > databaseSession.expires)
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		const user = auth.configs.transformUserData(databaseUser);
+		return {
+			user,
+			session: {
+				sessionId: databaseSession.id,
+				expires: databaseSession.expires,
+				userId: databaseSession.user_id,
+				idlePeriodExpires: databaseSession.idle_expires
+			}
+		};
+	};
+	return getSessionUser;
+};
+
+type ValidateSession = (sessionId: string, setSessionCookie: SetSessionCookie) => Promise<Session>;
+type SetSessionCookie = (session: Session | null) => void;
+
+export const validateSessionFunction = (auth: Auth) => {
+	const validateSession: ValidateSession = async (sessionId, setSessionCookie) => {
+		if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		try {
+			const session = await auth.getSession(sessionId);
+			setSessionCookie(session);
+			return session;
+		} catch (e) {
+			if (!(e instanceof LuciaError)) throw e;
+			if (e.message !== "AUTH_INVALID_SESSION_ID") throw e;
+			return auth.renewSession(sessionId, setSessionCookie);
+		}
+	};
 	return validateSession;
+};
+
+type ValidateSessionUser = (
+	sessionId: string,
+	setSessionCookie: SetSessionCookie
+) => Promise<{ user: User; session: Session }>;
+
+export const validateSessionUserFunction = (auth: Auth) => {
+	const validateSessionUser: ValidateSessionUser = async (sessionId, setSessionCookie) => {
+		if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		try {
+			const { session, user } = await auth.getSessionUser(sessionId);
+			setSessionCookie(session);
+			return { session, user };
+		} catch (e) {
+			if (!(e instanceof LuciaError)) throw e;
+			if (e.message !== "AUTH_INVALID_SESSION_ID") throw e;
+			const session = await auth.renewSession(sessionId, setSessionCookie);
+			const user = await auth.getUser(session.userId);
+			return {
+				session,
+				user
+			};
+		}
+	};
+	return validateSessionUser;
 };
 
 type GenerateSessionId = () => [string, number, number];
@@ -86,19 +171,29 @@ export const deleteDeadUserSessionsFunction = (auth: Auth) => {
 	return deleteDeadUserSessions;
 };
 
-type RenewSession = (sessionId: string) => Promise<Session>;
+type RenewSession = (sessionId: string, setSessionCookie: SetSessionCookie) => Promise<Session>;
 
 export const renewSessionFunction = (auth: Auth) => {
-	const renewSession: RenewSession = async (sessionId) => {
-		if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const databaseSession = await auth.configs.adapter.getSession(sessionId);
-		if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		if (new Date().getTime() > databaseSession.idle_expires) {
+	const renewSession: RenewSession = async (sessionId, setSessionCookie) => {
+		try {
+			if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			const databaseSession = await auth.configs.adapter.getSession(sessionId);
+			if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			if (new Date().getTime() > databaseSession.idle_expires) {
+				await auth.configs.adapter.deleteSession(sessionId);
+				throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			}
 			await auth.configs.adapter.deleteSession(sessionId);
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			const session = await auth.createSession(databaseSession.user_id);
+			await auth.deleteDeadUserSessions(session.userId);
+			setSessionCookie(session);
+			return session;
+		} catch (e) {
+			if (e instanceof LuciaError && e.message === "AUTH_INVALID_SESSION_ID") {
+				setSessionCookie(null);
+			}
+			throw e;
 		}
-		await auth.configs.adapter.deleteSession(sessionId);
-		return await auth.createSession(databaseSession.user_id);
 	};
 	return renewSession;
 };

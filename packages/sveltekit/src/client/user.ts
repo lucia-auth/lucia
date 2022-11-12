@@ -11,8 +11,8 @@ export const getServerUser = (): Readable<ClientUser> => {
 			data: PageData;
 		}>;
 	};
-	const luciaContext = get(page).data._lucia
-    if (!luciaContext) throw new Error()
+	const luciaContext = get(page).data._lucia;
+	if (!luciaContext) throw new Error("_lucia does not exist in page data");
 	return {
 		subscribe: (subscriber) => {
 			subscriber(luciaContext.user);
@@ -23,6 +23,6 @@ export const getServerUser = (): Readable<ClientUser> => {
 
 export const getClientUser = (): Readable<ClientUser> => {
 	const globalWindow = window as GlobalWindow;
-	if (!globalWindow._luciaStore) throw new Error("");
+	if (!globalWindow._luciaStore) throw new Error("_luciaStore is undefined");
 	return derived(globalWindow._luciaStore, (val) => val.user);
 };

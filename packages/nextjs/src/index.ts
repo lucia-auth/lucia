@@ -13,7 +13,7 @@ export const handleApiRoutes = (auth: Auth) => {
 			});
 		}
 		if ((req.url || "").startsWith("/api/auth/logout") && req.method === "POST") {
-			const sessionId = auth.parseRequest(convertNextRequestToStandardRequest(req, auth));
+			const sessionId = auth.validateRequestHeaders(convertNextRequestToStandardRequest(req, auth));
 			if (!sessionId) return res.status(200).json({});
 			try {
 				await auth.invalidateSession(sessionId);
@@ -42,11 +42,10 @@ export class AuthRequest<A extends Auth> {
 	}
 	public getSession = async () => {
 		try {
-			const session = await this.auth.validateRequest(
-				convertNextRequestToStandardRequest(this.req, this.auth),
-				this.setSession
+			const sessionId = this.auth.validateRequestHeaders(
+				convertNextRequestToStandardRequest(this.req, this.auth)
 			);
-			return session;
+			return await this.auth.validateSession(sessionId, this.setSession);
 		} catch (e) {
 			return null;
 		}
@@ -59,10 +58,10 @@ export class AuthRequest<A extends Auth> {
 		  }
 	> => {
 		try {
-			return await this.auth.getSessionUserFromRequest(
-				convertNextRequestToStandardRequest(this.req, this.auth),
-				this.setSession
+			const sessionId = this.auth.validateRequestHeaders(
+				convertNextRequestToStandardRequest(this.req, this.auth)
 			);
+			return await this.auth.validateSessionUser(sessionId, this.setSession);
 		} catch (e) {
 			return {
 				session: null,

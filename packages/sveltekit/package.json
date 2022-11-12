@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/sveltekit",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "SvelteKit integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -18,8 +18,8 @@
 		"sveltekit",
 		"lucia-auth",
 		"authentication",
-		"svelte",
-		"auth"
+		"auth",
+		"svelte"
 	],
 	"repository": {
 		"type": "git",
@@ -50,6 +50,6 @@
 		"svelte": "^3.52.0"
 	},
 	"peerDependencies": {
-		"lucia-auth": ">=0.1.4"
+		"lucia-auth": "0.2.x"
 	}
 }

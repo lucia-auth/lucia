@@ -17,8 +17,8 @@
 		"lucia",
 		"lucia-auth",
 		"authentication",
-		"oauth",
-		"auth"
+		"auth",
+		"oauth"
 	],
 	"repository": {
 		"type": "git",
@@ -47,6 +47,6 @@
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.1.x"
+		"lucia-auth": "0.1.x || 0.2.x"
 	}
 }

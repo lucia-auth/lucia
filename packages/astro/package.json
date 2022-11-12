@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/astro",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Lucia integration for Astro",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -17,8 +17,8 @@
 		"lucia",
 		"astro",
 		"lucia-auth",
-		"authentication",
-		"auth"
+		"auth",
+		"authentication"
 	],
 	"repository": {
 		"type": "git",
@@ -45,6 +45,6 @@
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
-		"lucia-auth": ">=0.1.4"
+		"lucia-auth": "0.2.x"
 	}
 }
