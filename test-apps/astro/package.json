@@ -14,7 +14,7 @@
 		"@astrojs/svelte": "^1.0.2",
 		"@astrojs/tailwind": "^2.1.2",
 		"@lucia-auth/adapter-supabase": "workspace:*",
-		"@lucia-auth/astro": "workspace:^0.1.0",
+		"@lucia-auth/astro": "workspace:*",
 		"@lucia-auth/oauth": "workspace:*",
 		"astro": "^1.6.0",
 		"lucia-auth": "workspace:*",

@@ -17,8 +17,8 @@
 		"lucia",
 		"astro",
 		"lucia-auth",
-		"authentication",
-		"auth"
+		"auth",
+		"authentication"
 	],
 	"repository": {
 		"type": "git",

@@ -17,9 +17,9 @@
 		"lucia",
 		"nextjs",
 		"lucia-auth",
-		"authentication",
 		"react",
-		"auth"
+		"auth",
+		"authentication"
 	],
 	"repository": {
 		"type": "git",
