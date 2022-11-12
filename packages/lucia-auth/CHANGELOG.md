@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.2.0
+
+- [Breaking] Remove `validateRequest()` and `getSessionUserFromRequest()`
+- [Breaking] Replace `parseRequest()` with `validateRequestHeaders()`
+- [Breaking] `renewSession()` requires `setSessionCookie()` param and sets cookies
+- [Breaking] `validateSession()` renews idle sessions
+- [Breaking] `getSessionUser()` no longers renews idle sessions
+- Add `validateSessionUser()`, `getSession()`, `getSessionUser()`, `SESSION_COOKIE_NAME`
+
 ## 0.1.4
 
 - [Breaking] Params for `setCookie()` params for `validateRequest()` and `getSessionUserFromRequest()` is now `Session | null` instead of a `string`
