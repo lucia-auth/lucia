@@ -3,7 +3,7 @@ import type { RequestEvent } from "../../types.js";
 
 export const handleLogoutRequest = async (event: RequestEvent, auth: Auth) => {
 	try {
-		const sessionid = auth.parseRequest(event.request);
+		const sessionid = auth.validateRequestHeaders(event.request);
 		if (!sessionid) return new Response(null);
 		await auth.invalidateSession(sessionid);
 		event.locals.setSession(null);

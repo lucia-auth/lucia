@@ -7,7 +7,7 @@ export const createSessionCookiesFunction = (auth: Auth) => {
 	const createSessionCookies: CreateSessionCookies = (session) => {
 		if (session) {
 			return auth.configs.sessionCookieOptions.map((option) => {
-				return new Cookie("auth_session", session.sessionId, {
+				return new Cookie(SESSION_COOKIE_NAME, session.sessionId, {
 					...option,
 					httpOnly: true,
 					expires: new Date(session.idlePeriodExpires),
@@ -17,7 +17,7 @@ export const createSessionCookiesFunction = (auth: Auth) => {
 		}
 		return [...auth.configs.sessionCookieOptions, ...auth.configs.deleteCookieOptions].map(
 			(option) => {
-				return new Cookie("auth_session", "", {
+				return new Cookie(SESSION_COOKIE_NAME, "", {
 					...option,
 					httpOnly: true,
 					maxAge: 0,
@@ -28,3 +28,5 @@ export const createSessionCookiesFunction = (auth: Auth) => {
 	};
 	return createSessionCookies;
 };
+
+export const SESSION_COOKIE_NAME = "auth_session";

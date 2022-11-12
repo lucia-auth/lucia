@@ -1,4 +1,4 @@
-export { lucia as default } from "./auth/index.js";
+export { lucia as default, SESSION_COOKIE_NAME } from "./auth/index.js";
 export { LuciaError } from "./error.js";
 export { generateRandomString } from "./utils/crypto.js";
 export { serialize as serializeCookie } from "./utils/cookie.js";

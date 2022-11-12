@@ -18,7 +18,8 @@ export class AuthRequest<A extends Auth> {
 	}
 	public getSession = async (): Promise<Session | null> => {
 		try {
-			return await this.auth.validateRequest(this.request, this.setSession);
+			const sessionId = this.auth.validateRequestHeaders(this.request);
+			return await this.auth.validateSession(sessionId, this.setSession);
 		} catch {
 			return null;
 		}
@@ -27,7 +28,8 @@ export class AuthRequest<A extends Auth> {
 		{ session: Session; user: User } | { session: null; user: null }
 	> => {
 		try {
-			return await this.auth.getSessionUserFromRequest(this.request, this.setSession);
+			const sessionId = this.auth.validateRequestHeaders(this.request);
+			return await this.auth.validateSessionUser(sessionId, this.setSession);
 		} catch {
 			return {
 				user: null,
@@ -46,7 +48,7 @@ export class AuthRequest<A extends Auth> {
 export const handleLogoutRequests = (auth: Auth) => {
 	const post = async (context: { request: Request; cookies: AstroGlobal["cookies"] }) => {
 		const authRequest = new AuthRequest(auth, context);
-		const sessionid = auth.parseRequest(context.request);
+		const sessionid = auth.validateRequestHeaders(context.request);
 		if (!sessionid) return new Response(null);
 		try {
 			await auth.invalidateSession(sessionid);
