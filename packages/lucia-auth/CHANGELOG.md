@@ -7,8 +7,7 @@
 - [Breaking] `renewSession()` requires `setSessionCookie()` param and sets cookies
 - [Breaking] `validateSession()` renews idle sessions
 - [Breaking] `getSessionUser()` no longers renews idle sessions
-- Add `validateSessionUser()`, `getSession()`, and `getSessionUser()`
-- Export `SESSION_COOKIE_NAME`
+- Add `validateSessionUser()`, `getSession()`, `getSessionUser()`, `SESSION_COOKIE_NAME`
 
 ## 0.1.4
 
