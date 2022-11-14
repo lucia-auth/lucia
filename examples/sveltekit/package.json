@@ -12,8 +12,8 @@
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "next",
+		"@sveltejs/adapter-auto": "latest",
+		"@sveltejs/kit": "latest",
 		"@types/cookie": "^0.5.1",
 		"@typescript-eslint/eslint-plugin": "^5.35.1",
 		"@typescript-eslint/parser": "^5.35.1",

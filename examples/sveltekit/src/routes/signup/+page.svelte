@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 
 	export let form: { message?: string };
 </script>
@@ -15,13 +15,6 @@
 			form.message = 'Invalid input';
 			cancel();
 		}
-		return async ({ result }) => {
-			if (result.type === 'redirect') {
-				window.location.href = result.location; // invalidateAll() + goto() will not work
-				return;
-			}
-			applyAction(result);
-		};
 	}}
 >
 	<label for="username">username</label><br />
