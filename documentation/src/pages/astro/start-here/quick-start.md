@@ -12,7 +12,11 @@ Start off by following the steps in [the previous page](/astro/start-here/gettin
 
 ## 1. Configure your database
 
-Since we're implementing a username based auth, add a `username` column in the `user` table. This should be a text column with a unique constraint.
+Add a `username` column in the `user` table.
+
+| name     | type   | unique | description          |
+| -------- | ------ | ------ | -------------------- |
+| username | string | true   | Username of the user |
 
 ## 2. Configure Lucia
 
