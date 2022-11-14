@@ -82,7 +82,7 @@ In your route root, create `+layout.server.ts` and `+layout.svelte`.
 
 #### Client
 
-In `+layout.page`, import [`handleSession()`](/sveltekit/api-reference/client-api#handlesession) from `@lucia-auth/sveltekit`. This will listen for change in sessions, sync sessions across tabs, and set a local client cache of the user. Since this also sets a context, it is required for other client side functions to work. Make sure not to subscribe to the `page` store passed on as the parameter.
+In `+layout.svelte`, import [`handleSession()`](/sveltekit/api-reference/client-api#handlesession) from `@lucia-auth/sveltekit`. This will listen for change in sessions, sync sessions across tabs, and set a local client cache of the user. Since this also sets a context, it is required for other client side functions to work. Make sure not to subscribe to the `page` store passed on as the parameter.
 
 ```svelte
 <script lang="ts">
