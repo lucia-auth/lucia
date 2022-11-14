@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/oauth",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "OAuth integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -31,7 +31,8 @@
 		"./package.json": "./package.json",
 		".": "./index.js",
 		"./github": "./github.js",
-		"./google": "./google.js"
+		"./google": "./google.js",
+		"./twitch": "./twitch.js"
 	},
 	"typesVersions": {
 		"*": {
@@ -40,6 +41,9 @@
 			],
 			"google": [
 				"google.d.ts"
+			],
+			"twitch": [
+				"twitch.d.ts"
 			]
 		}
 	},
