@@ -85,6 +85,7 @@ In your route root, create `+layout.server.ts` and `+layout.svelte`.
 In `+layout.svelte`, import [`handleSession()`](/sveltekit/api-reference/client-api#handlesession) from `@lucia-auth/sveltekit`. This will listen for change in sessions, sync sessions across tabs, and set a local client cache of the user. Since this also sets a context, it is required for other client side functions to work. Make sure not to subscribe to the `page` store passed on as the parameter.
 
 ```svelte
+<!-- src/routes/+layout.svelte -->
 <script lang="ts">
 	import { page } from "$app/stores";
 	import { handleSession } from "@lucia-auth/sveltekit/client";
@@ -100,9 +101,9 @@ In `+layout.svelte`, import [`handleSession()`](/sveltekit/api-reference/client-
 In `+layout.server.ts`, create and export [`handleServerSession()`](/reference/api/server-api#handleserversession). This will pass on the session data from hooks to load functions.
 
 ```ts
-// routes/+layout.server.ts
+// src/routes/+layout.server.ts
 import { handleServerSession } from "@lucia-auth/sveltekit";
-import type { LayoutServerLoad } from "./$types.js";
+import type { LayoutServerLoad } from "./$types";
 
 export const load: LayoutServerLoad = handleServerSession();
 ```
@@ -115,7 +116,7 @@ In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.
 // src/app.d.ts
 /// <reference types="lucia-auth" />
 declare namespace Lucia {
-	type Auth = import("$lib/server/lucia.js").Auth;
+	type Auth = import("$lib/server/lucia").Auth;
 	type UserAttributes = {};
 }
 
