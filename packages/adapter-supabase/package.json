@@ -32,7 +32,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.1.x"
+		"lucia-auth": "0.1.x || 0.2.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
