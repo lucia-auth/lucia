@@ -1,4 +1,4 @@
-# `@lucia-auth/adapter-mongoose`
+# `@lucia-auth/adapter-prisma`
 
 [Prisma](https://www.prisma.io) adapter for Lucia
 
@@ -18,9 +18,9 @@ yarn add @lucia-auth/adapter-prisma
 
 ## Lucia version compatibility
 
-| Prisma adapter version | Lucia version |
-| ---------------------- | ------------- |
-| v0.1.x                 | v0.1.x        |
+| prisma adapter version | Lucia version  |
+| ---------------------- | -------------- |
+| v0.1.x                 | v0.1.x, v0.2.x |
 
 ## Testing
 

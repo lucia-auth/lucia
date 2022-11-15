@@ -16,9 +16,9 @@ npm install @lucia-auth/session-adapter-redis
 
 ## Lucia version compatibility
 
-| Session adapter version | Lucia version |
-| ----------------------- | ------------- |
-| v0.1.x                  | v0.1.x        |
+| Session adapter version | Lucia version  |
+| ----------------------- | -------------- |
+| v0.1.x                  | v0.1.x, v0.2.x |
 
 ## Testing
 
