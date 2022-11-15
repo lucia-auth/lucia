@@ -1,4 +1,4 @@
-import lucia, { generateRandomString } from "lucia-auth";
+import lucia from "lucia-auth";
 import supabase from "@lucia-auth/adapter-supabase";
 import github from "@lucia-auth/oauth/github";
 import google from "@lucia-auth/oauth/google";
@@ -6,20 +6,20 @@ import google from "@lucia-auth/oauth/google";
 export const auth = lucia({
 	adapter: supabase(import.meta.env.SUPABASE_URL || "", import.meta.env.SUPABASE_SECRET || ""),
 	env: "DEV",
+	sessionTimeout: 1000 * 5,
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username
 		};
-	},
-	generateCustomUserId: async () => generateRandomString(8)
+	}
 });
 
 export type Auth = typeof auth;
 
 export const githubAuth = github(auth, {
 	clientId: import.meta.env.GITHUB_CLIENT_ID || "",
-	clientSecret: import.meta.env.GITHUB_CLIENT_SECRET || "",
+	clientSecret: import.meta.env.GITHUB_CLIENT_SECRET || ""
 });
 
 export const googleAuth = google(auth, {
