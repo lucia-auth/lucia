@@ -16,9 +16,9 @@ npm install @lucia-auth/adapter-supabase
 
 ## Lucia version compatibility
 
-| Supabase adapter version | Lucia version |
-| ------------------------ | ------------- |
-| v0.1.x                   | v0.1.x        |
+| Supabase adapter version | Lucia version  |
+| ------------------------ | -------------- |
+| v0.1.x                   | v0.1.x, v0.2.x |
 
 ## Testing
 
