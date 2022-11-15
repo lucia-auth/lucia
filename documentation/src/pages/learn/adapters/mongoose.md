@@ -87,7 +87,7 @@ const User = mongoose.model(
 
 ### `session`
 
-You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+This is not required if you're only using the Mongoose adapter for the `user` table via [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
 
 ```ts
 const Session = mongoose.model(
