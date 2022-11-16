@@ -13,8 +13,8 @@ export const testAdapter = async (adapter: Adapter, db: Database, endProcess = t
 		await db.clearUsers();
 	};
 	await clearAll();
-	await testUserAdapter(adapter, db);
-	await testSessionAdapter(adapter, db);
+	await testUserAdapter(adapter, db, false);
+	await testSessionAdapter(adapter, db, false);
 	await test("getSessionAndUserBySessionId()", "Return the correct user and session", async () => {
 		if (!adapter.getSessionAndUserBySessionId) return;
 		const user = new User();
