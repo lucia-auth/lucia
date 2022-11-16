@@ -89,8 +89,8 @@ import type { PageServerLoad, Actions } from './$types';
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = await locals.getSessionUser();
-	if (user) throw redirect(302, '/');
+	const session = await locals.getSession();
+	if (session) throw redirect(302, '/');
 	return {};
 };
 
@@ -160,8 +160,8 @@ import type { PageServerLoad, Actions } from './$types';
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = await locals.getSessionUser();
-	if (user) throw redirect(302, '/');
+	const session = await locals.getSession();	
+	if (session) throw redirect(302, '/');
 };
 
 export const actions: Actions = {
@@ -215,15 +215,15 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = await locals.getSessionUser();
-	if (!user) throw redirect(302, '/login');
+	const session = await locals.getSession();
+	if (!session) throw redirect(302, '/login');
 };
 
 ```
 
 ### Sign out
 
-Add a button that calls [`signOut()`](/sveltekit/api-reference/client-api#signout) and [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall). `invalidateAll()` will cause all of the load functions to re-run, which will update the session in the client so that the user gets redirected to the login page. `invalidateAll()` must only be called _after_ `signOut()` so that the session may be updated properly.
+Add a button that calls [`signOut()`](/sveltekit/api-reference/client-api#signout) and [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall). `invalidateAll()` will cause all of the load functions to re-run, which will update the session in the client so that the user gets redirected to the login page.
 
 ```svelte
 <script lang="ts">
