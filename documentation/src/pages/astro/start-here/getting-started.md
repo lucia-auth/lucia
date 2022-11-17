@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Getting started"
 ---
 
-Install Lucia and the Next.js integration using your package manager of your choice. `lucia-auth` can be used as is in a server environment (and only inside it), and `@lucia-auth/astro` provides Next.js specific code for both the backend and frontend.
+Install Lucia and the Astro integration using your package manager of your choice. `lucia-auth` can be used as is in a server environment (and only inside it), and `@lucia-auth/astro` provides Astro specific code to be used in the server.
 
 ```bash
 npm i lucia-auth @lucia-auth/astro
