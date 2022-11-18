@@ -1,0 +1,51 @@
+{
+	"name": "@lucia-auth/adapter-kysely",
+	"version": "0.1.0",
+	"description": "Kysely adapter for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"test-main": "npx ts-node --esm -T test/index.ts",
+		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+	},
+	"keywords": [
+		"lucia",
+		"kysely",
+		"lucia-auth",
+		"auth",
+		"authentication"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
+		"directory": "packages/adapter-kysely"
+	},
+	"contributors": [
+		"Blastose",
+		"pilcrowonpaper"
+	],
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-auth": "0.1.x || 0.2.x"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"@types/pg": "^8.6.5",
+		"dotenv": "^16.0.3",
+		"ts-node": "^10.9.1"
+	},
+	"dependencies": {
+		"kysely": "^0.22.0",
+		"lucia-auth": "workspace:*",
+		"pg": "^8.8.0"
+	}
+}
