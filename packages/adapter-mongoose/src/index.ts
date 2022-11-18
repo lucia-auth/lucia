@@ -81,12 +81,8 @@ const adapter = (
 				const user = convertUserDoc(userDoc.toObject());
 				return user;
 			} catch (e) {
-				const isKnownMongooseError = e instanceof Mongoose.MongooseError;
-				if (
-					isKnownMongooseError &&
-					e.message.includes("E11000") &&
-					e.message.includes("provider_id")
-				)
+				const error = e as Mongoose.MongooseError;
+				if (error.message.includes("E11000") && error.message.includes("provider_id"))
 					throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 				errorHandler(e as any);
 				throw e;
@@ -120,8 +116,8 @@ const adapter = (
 				});
 				await Session.create(sessionDoc);
 			} catch (e) {
-				const isKnownMongooseError = e instanceof Mongoose.MongooseError;
-				if (isKnownMongooseError && e.message.includes("E11000") && e.message.includes("id"))
+				const error = e as Mongoose.MongooseError;
+				if (error.message.includes("E11000") && error.message.includes("id"))
 					throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 				errorHandler(e as any);
 				throw e;
@@ -153,12 +149,8 @@ const adapter = (
 				return convertUserDoc(userDoc);
 			} catch (e) {
 				if (e instanceof LuciaError) throw e;
-				const isKnownMongooseError = e instanceof Mongoose.MongooseError;
-				if (
-					isKnownMongooseError &&
-					e.message.includes("E11000") &&
-					e.message.includes("provider_id")
-				)
+				const error = e as Mongoose.MongooseError;
+				if (error.message.includes("E11000") && error.message.includes("provider_id"))
 					throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 				errorHandler(e as any);
 				throw e;
