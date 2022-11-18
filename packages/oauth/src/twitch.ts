@@ -86,7 +86,6 @@ interface TwitchUser {
 	id: string;
 	login: string;
 	display_name: string;
-	avatar_url: string;
 	type: "" | "admin" | "staff" | "global_mod";
 	broadcaster_type: "" | "affiliate" | "partner";
 	description: string;
