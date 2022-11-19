@@ -15,7 +15,7 @@ declare namespace Lucia {
 
 ### `Auth`
 
-**Required** - Return type of [`lucia()`](/reference/api/server-api#lucia).
+**Required** - Return type of [`lucia()`](/reference/api/server-api#lucia-default).
 
 ```ts
 declare namespace Lucia {

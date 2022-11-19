@@ -6,7 +6,7 @@ title: "Create users"
 
 The [`createUser()`](/reference/api/server-api#createuser) method can be used to create users, which requires a provider name and identifier. Lucia (or the database) will automatically generate a user id for your users on creation. However, you can generate your own user id using [`configurations.generateCustomUserId()`](/reference/configure/lucia-configurations#generatecustomuserid).
 
-This method will not create a new session. To create a new session after creating a user, refer to [Create sessions](/learn/basics/authenticate-users).
+This method will not create a new session. To create a new session after creating a user, refer to [Create sessions](/learn/basics/create-sessions).
 
 ```ts
 import { auth } from "./lucia.js";
@@ -48,7 +48,7 @@ try {
 
 ## Store user attributes
 
-By default, Lucia will store the user id, provider id, and the hashed password (if a password is provided). The components of the provider id - the provider name and identifier - are not stored inside its own column, but is combined so as to be stored in a single column. Lucia allows you to add additional columns to the `user` table to store user attributes. Refer to [Store additional user data](/learn/basics/store-additional-user-data) for implementations.
+By default, Lucia will store the user id, provider id, and the hashed password (if a password is provided). The components of the provider id - the provider name and identifier - are not stored inside its own column, but is combined so as to be stored in a single column. Lucia allows you to add additional columns to the `user` table to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes) for implementations.
 
 ```ts
 import { auth } from "./lucia.js";

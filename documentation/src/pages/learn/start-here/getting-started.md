@@ -14,13 +14,13 @@ yarn add lucia-auth
 
 ## Set up the database
 
-Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Supabase](/learn/adapters/supabase), and [Mongoose](/learn/adapters/mongoose) (MongoDB). Please follow each adapter's instruction for this step.
+Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Kysely](/learn/adapters/kysely) (PostgreSQL), [Supabase](/learn/adapters/supabase), and [Mongoose](/learn/adapters/mongoose) (MongoDB). Please follow each adapter's instruction for this step.
 
-You can also use a different database for storing sessions, such as [Redis](/learn/session-adapters/redis). Refer to [`configs.adapter`](/reference/configure/lucia-configurations#adapter).
+You can also use a different database for storing sessions, such as [Redis](/learn/adapters/redis). Refer to [`configs.adapter`](/reference/configure/lucia-configurations#adapter).
 
 ## Initialize Lucia
 
-In a TypeScript file, import [`lucia`](/reference/api/server-api#lucia) and an adapter (the adapters are provided as a different NPM package).
+In a TypeScript file, import [`lucia`](/reference/api/server-api#lucia-default) and an adapter (the adapters are provided as a different NPM package).
 
 ```ts
 // lucia.js
@@ -28,7 +28,7 @@ import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 ```
 
-Initialize it and export it as `auth`.　As for the config, `adapter` is your database adapter and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
+Initialize it and export it as `auth`. As for the config, `adapter` is your database adapter and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
 
 ```ts
 // lucia.js

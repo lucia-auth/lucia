@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "HTTP API"
 ---
 
-Using [`handleHooks()`](/reference/api/server-api#handlehooks), Lucia exposes a few endpoints that can be called from the client.
+Using [`handleHooks()`](/sveltekit/api-reference/server-api#handlehooks), Lucia exposes a few endpoints that can be called from the client.
 
 ### Sign out the current user
 

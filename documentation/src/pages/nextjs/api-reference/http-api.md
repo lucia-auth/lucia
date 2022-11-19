@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "HTTP API"
 ---
 
-Using [`handleApiRoutes()`](/reference/api/server-api#handleapiroutes), Lucia exposes a few endpoints that can be called from the client.
+Using [`handleApiRoutes()`](/nextjs/api-reference/server-api#handleapiroutes), Lucia exposes a few endpoints that can be called from the client.
 
 ## /api/auth/logout
 

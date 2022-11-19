@@ -12,7 +12,7 @@ import type { Adapter } from "lucia-auth/types";
 
 ## `Adapter`
 
-Refer to [Adapters](/reference/adapters/adapters) reference.
+Refer to [Adapters](/reference/adapters/api) reference.
 
 ## `Auth`
 
@@ -87,7 +87,7 @@ type Session = {
 
 ## `SessionAdapter`
 
-Refer to [Adapters](/reference/adapters/adapters) reference.
+Refer to [Adapters](/reference/adapters/api) reference.
 
 ## `SessionSchema`
 
@@ -113,7 +113,7 @@ type User = {
 
 ## `UserAdapter`
 
-Refer to [Adapters](/reference/adapters/adapters) reference.
+Refer to [Adapters](/reference/adapters/api) reference.
 
 ## `UserData`
 
