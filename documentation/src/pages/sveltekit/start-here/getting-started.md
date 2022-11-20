@@ -18,7 +18,7 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/reference/configure/lucia-configurations#env) config, checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
+In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia-default) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/reference/configure/lucia-configurations#env) config, checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
 
 ```ts
 // lib/server/lucia.ts
@@ -54,7 +54,7 @@ const config = {
 
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/api/server-api#handlehooks).
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/sveltekit/api-reference/server-api#handlehooks).
 
 ```ts
 // src/hooks.server.ts
@@ -98,7 +98,7 @@ In `+layout.svelte`, import [`handleSession()`](/sveltekit/api-reference/client-
 
 #### Server load functions
 
-In `+layout.server.ts`, create and export [`handleServerSession()`](/reference/api/server-api#handleserversession). This will pass on the session data from hooks to load functions.
+In `+layout.server.ts`, create and export [`handleServerSession()`](/sveltekit/api-reference/server-api#handleserversession). This will pass on the session data from hooks to load functions.
 
 ```ts
 // src/routes/+layout.server.ts

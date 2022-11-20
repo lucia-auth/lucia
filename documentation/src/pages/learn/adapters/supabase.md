@@ -16,7 +16,7 @@ const adapter: (
 
 ### Parameter
 
-`handleError()` may be provided which will be called on [unknown errors](/learn/basics/handle-errors#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia) methods.
+`handleError()` may be provided which will be called on [unknown errors](/learn/basics/error-handling#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia-default) methods.
 
 | name        | type       | description                         | optional |
 | ----------- | ---------- | ----------------------------------- | -------- |
@@ -52,7 +52,7 @@ const auth = lucia({
 
 ### `user`
 
-You may add additional columns to store user attributes. Refer to [[Store user attributes](/learn/basics/store-user-attributes). `id` may be `varchar` if you generate your own user id.
+You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` may be `varchar` if you generate your own user id.
 
 | name            | type   | foreign constraint | default              | nullable | unique | identity |
 | --------------- | ------ | ------------------ | -------------------- | -------- | ------ | -------- |
@@ -74,7 +74,7 @@ This is not required if you're only using the Supabase adapter for the `user` ta
 ## Supabase SQL Editor
 
 `UUID` in `user` table should be changed to `TEXT` if you use custom user ids.
-You may add additional columns to store custom user data in `user` table. Refer to [Store additional user data](/learn/basics/store-additional-user-data).
+You may add additional columns to store custom user data in `user` table. Refer to [Store user attributes](/learn/basics/store-user-attributes).
 
 ```sql
 CREATE TABLE public.user (

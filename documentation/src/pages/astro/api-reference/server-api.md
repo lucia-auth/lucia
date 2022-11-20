@@ -80,7 +80,7 @@ if (session) {
 
 ### `getSessionUser()`
 
-Similar to [`getSession()`](/astro/api-reference/locals-api#getsession) but returns both the current session and user without an additional database.
+Similar to [`getSession()`](#getsession) but returns both the current session and user without an additional database.
 
 ```ts
 const authRequest = new AuthRequest();

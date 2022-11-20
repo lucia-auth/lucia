@@ -70,7 +70,7 @@ const env = dev ? "DEV" : "PROD";
 
 ### `csrfProtection`
 
-Checks if the request is from a trusted origin (where the app is hosted) in [`parseRequest`](/reference/api/server-api#parserequest) and [`validateRequest`](/reference/api/server-api#validaterequest). If you set this to `false`, make sure to add your own CSRF protection.
+Checks if the request is from a trusted origin (where the app is hosted) in [`validateRequestHeaders()`](/reference/api/server-api#validaterequestheaders). If you set this to `false`, make sure to add your own CSRF protection.
 
 | type      | default |
 | --------- | ------- |
