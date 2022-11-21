@@ -1,6 +1,0 @@
-packages:
-  - "packages/*/dist"
-  - "packages/*"
-  - "apps/**"
-  - "documentation/**"
-  - "test-apps/**"
