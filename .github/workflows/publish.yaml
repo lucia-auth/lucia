@@ -51,6 +51,9 @@ jobs:
               elif [[ $line == packages/adapter-supabase* ]];
               then
                   pkg_array+=("adapter-supabase")
+              elif [[ $line == packages/adapter-kysely* ]];
+              then
+                  pkg_array+=("adapter-kysely")
               elif [[ $line == packages/adapter-test* ]];
               then
                   pkg_array+=("adapter-test")
@@ -116,6 +119,9 @@ jobs:
           fi
           if [[ $pkg_string == *"adapter-supabase"* ]]; then
             cd packages/adapter-supabase && eval "$build_cmd"
+          fi
+          if [[ $pkg_string == *"adapter-kysely"* ]]; then
+            cd packages/adapter-kysely && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"adapter-test"* ]]; then
             cd packages/adapter-test && eval "$build_cmd"

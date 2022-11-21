@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.1
+
+- Clean up caching mechanism
+
 ## 0.3.0
 
 - [Breaking] Requires `lucia-auth` v0.2.0
