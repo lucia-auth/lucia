@@ -40,7 +40,7 @@
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
-		"@supabase/postgrest-js": "^1.1.0",
+		"@supabase/postgrest-js": "^0.37.1",
 		"lucia-auth": "workspace:*"
 	}
 }
