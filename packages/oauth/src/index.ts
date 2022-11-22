@@ -7,7 +7,14 @@ export interface OAuthProvider {
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;
-	getAuthorizationUrl: () => string;
+	getAuthorizationUrl: (state?: string) => [url: string, state: string | undefined];
+}
+
+export interface OAuthConfig {
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
+	state?: boolean;
 }
 
 export class LuciaOAuthError extends Error {
@@ -15,3 +22,14 @@ export class LuciaOAuthError extends Error {
 		super(message);
 	}
 }
+
+export const generateState = () => {
+	const validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	let array = new Uint8Array(43);
+
+	array = crypto.getRandomValues(array);
+	array = array.map((x) => validChars.charCodeAt(x % validChars.length));
+
+	const state = String.fromCharCode.apply(null, [...array]);
+	return state;
+};

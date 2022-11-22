@@ -1,13 +1,10 @@
 import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import type { OAuthProvider } from "./index.js";
+import { generateState, OAuthConfig, OAuthProvider } from "./index.js";
 
-interface Configs {
-	clientId: string;
-	clientSecret: string;
+interface Configs extends OAuthConfig {
 	redirectUri: string;
 	forceVerify?: boolean;
-	scope?: string[];
 }
 
 class Twitch<A extends Auth> implements OAuthProvider {
@@ -18,6 +15,7 @@ class Twitch<A extends Auth> implements OAuthProvider {
 		this.scope = configs.scope || ["user:read:email"];
 		this.redirectUri = configs.redirectUri;
 		this.forceVerify = configs.forceVerify || false;
+		this.state = configs.state ?? true;
 	}
 	private auth: A;
 	private clientId: string;
@@ -25,15 +23,20 @@ class Twitch<A extends Auth> implements OAuthProvider {
 	private scope: string[];
 	private redirectUri: string;
 	private forceVerify: boolean;
+	private state: boolean;
 
-	public getAuthorizationUrl = () => {
-		return `https://id.twitch.tv/oauth2/authorize?${new URLSearchParams({
+	public getAuthorizationUrl = (state?: string): [url: string, state: string | undefined] => {
+		const s = state ?? (this.state ? generateState() : undefined);
+		const url = `https://id.twitch.tv/oauth2/authorize?${new URLSearchParams({
 			client_id: this.clientId,
 			redirect_uri: this.redirectUri,
 			scope: this.scope.join(" "),
 			response_type: "code",
-			force_verify: this.forceVerify.toString()
+			force_verify: this.forceVerify.toString(),
+			...(s && { state: s })
 		}).toString()}`;
+
+		return [url, s];
 	};
 
 	public validateCallback = async (code: string) => {

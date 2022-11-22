@@ -1,12 +1,8 @@
 import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import type { OAuthProvider } from "./index.js";
+import { generateState, OAuthConfig, OAuthProvider } from "./index.js";
 
-interface Configs {
-	clientId: string;
-	clientSecret: string;
-	scope?: string[];
-}
+interface Configs extends OAuthConfig {}
 
 class Github<A extends Auth> implements OAuthProvider {
 	constructor(auth: A, configs: Configs) {
@@ -14,16 +10,25 @@ class Github<A extends Auth> implements OAuthProvider {
 		this.clientId = configs.clientId;
 		this.clientSecret = configs.clientSecret;
 		this.scope = configs.scope || [];
+		this.state = configs.state ?? true;
 	}
 	private auth: A;
 	private clientId: string;
 	private clientSecret: string;
 	private scope: string[];
-	public getAuthorizationUrl = () => {
-		return `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${
-			this.scope?.join(" ") || ""
-		}`;
+	private state: boolean;
+
+	public getAuthorizationUrl = (state?: string): [url: string, state: string | undefined] => {
+		const s = state ?? (this.state ? generateState() : undefined);
+		const url = `https://github.com/login/oauth/authorize?${new URLSearchParams({
+			client_id: this.clientId,
+			scope: this.scope.join(" "),
+			...(s && { state: s })
+		}).toString()}`;
+
+		return [url, s];
 	};
+
 	public validateCallback = async (code: string) => {
 		const { access_token: accessToken } = (await post(
 			`https://github.com/login/oauth/access_token?${new URLSearchParams({

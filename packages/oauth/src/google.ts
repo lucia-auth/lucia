@@ -1,12 +1,9 @@
 import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import type { OAuthProvider } from "./index.js";
+import { generateState, OAuthConfig, OAuthProvider } from "./index.js";
 
-interface Configs {
-	clientId: string;
-	clientSecret: string;
+interface Configs extends OAuthConfig {
 	redirectUri: string;
-	scope?: string[];
 }
 
 class Google<A extends Auth> implements OAuthProvider {
@@ -16,20 +13,28 @@ class Google<A extends Auth> implements OAuthProvider {
 		this.clientSecret = configs.clientSecret;
 		this.redirectUri = configs.redirectUri;
 		this.scope = ["https://www.googleapis.com/auth/userinfo.profile", ...(configs.scope || [])];
+		this.state = configs.state ?? true;
 	}
 	private auth: A;
 	private clientId: string;
 	private clientSecret: string;
 	private scope: string[];
 	private redirectUri: string;
-	public getAuthorizationUrl = () => {
-		return `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
-			scope: this.scope.join(" "),
+	private state: boolean;
+
+	public getAuthorizationUrl = (state?: string): [url: string, state: string | undefined] => {
+		const s = state ?? (this.state ? generateState() : undefined);
+		const url = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
 			client_id: this.clientId,
 			redirect_uri: this.redirectUri,
-			response_type: "code"
-		})}`;
+			scope: this.scope.join(" "),
+			response_type: "code",
+			...(s && { state: s })
+		}).toString()}`;
+
+		return [url, s];
 	};
+
 	public validateCallback = async (code: string) => {
 		const {
 			access_token: accessToken,
