@@ -3,10 +3,22 @@ import MenuButton from "@components/utils/MenuButton.svelte";
 import ThemeButton from "@components/utils/ThemeButton.svelte";
 ---
 
-<div class="fixed z-50 w-full bg-white dark:bg-black-zinc lg:bg-transparent">
+<div
+	class="fixed z-50 w-full dark:bg-black-zinc backdrop-blur-md bg-white xl:bg-transparent bg-opacity-60 xl:backdrop-blur-none"
+>
 	<div class="py-3 flex w-full place-content-between px-4 sm:px-8 lg:px-12 place-items-center">
 		<div>
-			<a class="text-2xl font-semibold" href="/">Lucia</a>
+			{
+				Astro.url.pathname === "/" ? (
+					<a class="text-2xl font-semibold hidden lg:block" href="/">
+						Lucia
+					</a>
+				) : (
+					<a class="text-2xl font-semibold" href="/">
+						Lucia
+					</a>
+				)
+			}
 		</div>
 		<div class="flex gap-x-4 place-items-center">
 			<a
@@ -48,7 +60,7 @@ import ThemeButton from "@components/utils/ThemeButton.svelte";
 			</a>
 			<ThemeButton client:load />
 			<div class="pl-2 lg:pl-0">
-				<MenuButton client:load />
+				<MenuButton client:load pathname={Astro.url.pathname} />
 			</div>
 		</div>
 	</div>

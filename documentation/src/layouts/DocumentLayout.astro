@@ -39,8 +39,8 @@ const title = Astro.props.frontmatter.title;
 		{external === "astro" && <AstroContent title={title} />}
 		{external === "oauth" && <OAuthContent title={title} />}
 		{external === null && <MainContent title={title} />}
-		<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:ml-72 px-4 sm:px-8 lg:px-12">
-			<div class="lg:pl-4 overflow-hidden">
+		<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:mr-64 xl:ml-72 px-4 sm:px-8 lg:px-12">
+			<div class="xl:pl-4 overflow-hidden">
 				<MarkdownArticle
 					title={Astro.props.frontmatter.title}
 					contributePageUrl={contributePageUrl}

@@ -10,6 +10,7 @@
 	export let learnContent: Content = [];
 	export let referenceContent: Content = [];
 	export let currentTitle: string | null = null;
+	export let showOnLg: boolean = false;
 
 	const tabs = [
 		{
@@ -24,8 +25,12 @@
 </script>
 
 <div
-	class=" border-r lg:border-r-0 dark:border-zinc-900 lg:block shrink-0 pt-20 fixed w-72 h-screen ml-4 sm:ml-8 lg:ml-12 bg-white dark:bg-black-zinc"
+	class="border-r dark:border-zinc-900 shrink-0 pt-20 fixed w-72 h-screen ml-4 sm:ml-8 lg:ml-12 bg-white dark:bg-black-zinc"
 	class:hidden={!$isMenuOpen}
+	class:xl:block={!showOnLg}
+	class:lg:block={showOnLg}
+	class:xl:border-r-0={!showOnLg}
+	class:lg:border-r-0={showOnLg}
 >
 	<div class="overflow-auto h-full relative overscroll-contain pr-4">
 		<div class="grid grid-cols-2 gap-x-1 sticky top-0 w-full bg-white dark:bg-black-zinc">

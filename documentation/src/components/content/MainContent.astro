@@ -20,4 +20,11 @@ const referenceContent = getContent(referenceSections, referencePages);
 const tab: "learn" | "reference" = (Astro.url.pathname.match(/^\/(\w+)\//)?.[1] as any) || "learn";
 ---
 
-<Content client:load tab={tab} {learnContent} {referenceContent} currentTitle={Astro.props.title} />
+<Content
+	client:load
+	tab={tab}
+	{learnContent}
+	{referenceContent}
+	currentTitle={Astro.props.title}
+	showOnLg={Astro.url.pathname === "/"}
+/>
