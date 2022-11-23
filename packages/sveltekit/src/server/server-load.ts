@@ -13,7 +13,7 @@ export const handleServerSession: HandleServerSession = (fn) => {
 		if (session) {
 			return {
 				_lucia: {
-					user,
+					user: await user,
 					sessionChecksum: generateChecksum(session.sessionId)
 				}
 			};
