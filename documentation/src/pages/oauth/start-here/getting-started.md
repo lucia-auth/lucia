@@ -23,7 +23,7 @@ const providerAuth = provider(auth, configs);
 
 ## Sign in with the provider
 
-When a user clicks "Sign in with [provider]", redirect the user to the provider's authorization url. This will send the user to the provider's sign in page. This authorization url can be retrieved with `getAuthorizationUrl()`.
+When a user clicks "Sign in with [provider]", store the [state](https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1) in either a cookie or localstorage and redirect the user to the provider's authorization url. This will send the user to the provider's sign in page. Both, the authorization url and state can be retrieved with `getAuthorizationUrl()`.
 
 ```ts
 import provider from "@lucia-auth/oauth/provider";
@@ -31,11 +31,15 @@ import { auth } from "./lucia.js";
 
 const providerAuth = provider(auth, configs);
 
+const [authUrl, state] = providerAuth.getAuthorizationUrl();
+// the state can be stored in cookies or localstorage for request validation on callback
+
 // redirect to authorization url
 new Response(null, {
 	status: 302,
 	headers: {
-		location: providerAuth.getAuthorizationUrl()
+		location: authUrl,
+		"set-cookie": `state=${state}; Path=/; HttpOnly;`
 	}
 });
 ```
@@ -48,7 +52,7 @@ Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anch
 
 ## Handle callback
 
-On sign in, the provider will redirect the user to your callback url. On callback (GET), get the OAuth code from the request and use that to validate the request using `validateCallback()`. This method will return some data about the authenticated user. This differs from the used provider, but some are always provided: `existingUser` is the existing user in your database (`null` for first time users), `providerUser` is the user info from the provider, and `createUser()` can be used to create a new user if an existing user does not exist.
+On sign in, the provider will redirect the user to your callback url. On callback (GET), get the OAuth `code` and `state` from the request url. Validate that the `state` is the same as the one stored in the cookie and pass the `code` to `validateCallback()`. This method will return some data about the authenticated user. `existingUser` is the existing user in your database (`null` for first time users), `providerUser` is the user info from the provider, and `createUser()` can be used to create a new user if an existing user does not exist.
 
 The following is semi-pseudo-code (namely the provider part):
 
@@ -60,6 +64,13 @@ const providerAuth = provider(auth, configs);
 
 // handle GET requests
 export const get = async (request: Request) => {
+	// get the code and state from the request url...
+
+	if (state !== request.headers.cookie.get("state"))
+		return new Response("invalid state", {
+			status: 400
+		}); // return some error response if the state is invalid
+
 	const { existingUser, providerUser, createUser } = await providerAuth.validateCallback(code);
 	const user =
 		existingUser ||

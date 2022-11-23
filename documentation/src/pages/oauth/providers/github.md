@@ -22,18 +22,20 @@ const github: (
 		clientId: string;
 		clientSecret: string;
 		scope?: string[];
+		state?: boolean;
 	}
 ) => GithubProvider;
 ```
 
 #### Parameter
 
-| name                 | type                                        | description                    |
-| -------------------- | ------------------------------------------- | ------------------------------ |
-| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                 |
-| configs.clientId     | `string`                                    | Github OAuth app client id     |
-| configs.clientSecret | `string`                                    | Github OAuth app client secret |
-| configs.scope        | `string[]`                                  | an array of scopes             |
+| name                 | type                                        | description                                                      | optional |
+| -------------------- | ------------------------------------------- | ---------------------------------------------------------------- | -------- |
+| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                                   |          |
+| configs.clientId     | `string`                                    | Github OAuth app client id                                       |          |
+| configs.clientSecret | `string`                                    | Github OAuth app client secret                                   |          |
+| configs.scope        | `string[]`                                  | an array of scopes                                               | true     |
+| configs.state        | `boolean`                                   | `true` by default, generates a state for `getAuthorizationUrl()` | true     |
 
 ### Redirect user to authorization url
 
@@ -45,18 +47,22 @@ import { auth } from "./lucia.js";
 
 const githubAuth = github(auth, configs);
 
-const authorizationUrl = githubAuth.getAuthorizationUrl();
+const [authorizationUrl, state] = githubAuth.getAuthorizationUrl();
 ```
 
 ### Validate callback
 
-The authorization code can be retrieved from the `code` search params inside the callback url.
+The authorization code and state can be retrieved from the `code` and `state` search params, respectively, inside the callback url. Validate that the state is the same as the one stored in either cookies or localstorage before passing the `code` to `validateCallback()`.
 
 ```ts
 import github from "@lucia-auth/oauth/github";
 const githubAuth = github();
 
-const code = new URL(callbackUrl).searchParams.get("code") || ""; // http://localhost:3000/api/github?code=abc => abc
+const code = new URL(callbackUrl).searchParams.get("code") || ""; // http://localhost:3000/api/github?code=abc&state=efg => abc
+const state = new URL(callbackUrl).searchParams.get("state") || ""; // http://localhost:3000/api/github?code=abc&state=efg => efg
+
+if (state !== headers.cookie.get("state")) return; // invalid state
+
 const githubSession = await githubAuth.validateCallback(code);
 ```
 
@@ -68,7 +74,7 @@ Refer to [`Initialization`](/oauth/providers/github#initialization).
 
 ```ts
 interface GithubProvider {
-	getAuthorizationUrl: () => string;
+	getAuthorizationUrl: () => [url: string, state: string | undefined];
 	validateCallback: (code: string) => Promise<GithubProviderSession>;
 }
 ```
