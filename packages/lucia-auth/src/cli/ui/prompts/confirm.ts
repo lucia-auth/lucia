@@ -1,4 +1,5 @@
 import inquirer from "inquirer";
+import { lineBreak } from "../log.js";
 
 export const confirmPrompt = async (message: string) => {
 	return new Promise<boolean>((resolve) => {
@@ -8,6 +9,9 @@ export const confirmPrompt = async (message: string) => {
 				name: "confirmation",
 				message
 			})
-			.then((answer: { confirmation: boolean }) => resolve(answer.confirmation));
+			.then((answer: { confirmation: boolean }) => {
+				lineBreak();
+				resolve(answer.confirmation);
+			});
 	});
 };

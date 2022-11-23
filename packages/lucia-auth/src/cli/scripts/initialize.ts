@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import child_process from "child_process";
-import { confirmPrompt, listPrompt } from "../ui/prompts/index.js";
-import { message } from "../ui/message.js";
+import { checkboxPrompt, confirmPrompt, listPrompt } from "../ui/prompts/index.js";
+import { lineBreak, log } from "../ui/log.js";
 
 enum FRAMEWORK {
 	SVELTEKIT = "SVELTEKIT",
@@ -22,16 +22,19 @@ enum PACKAGE_MANAGER {
 	YARN = "YARN"
 }
 
-interface Integration {
+enum OPTIONAL_PACKAGE {
+	OAUTH = "OAUTH"
+}
+
+interface Integration<T = string> {
 	name: string;
 	dependencies: string[];
 	devDependencies?: string[];
+	id: T;
 }
 
 const framework: {
-	[Framework in FRAMEWORK]: {
-		id: Framework;
-	} & Integration;
+	[Framework in FRAMEWORK]: Integration<Framework>;
 } = {
 	SVELTEKIT: {
 		name: "SvelteKit",
@@ -107,6 +110,16 @@ const packageManager: {
 	}
 };
 
+const optionalPackage: {
+	[Package in OPTIONAL_PACKAGE]: Integration<Package>;
+} = {
+	OAUTH: {
+		id: OPTIONAL_PACKAGE.OAUTH,
+		name: "OAuth",
+		dependencies: ["@lucia-auth/oauth"]
+	}
+};
+
 const fileExists = (name: string) => {
 	return fs.existsSync(path.resolve(process.cwd(), `./${name}`));
 };
@@ -134,42 +147,77 @@ const runCommand = (command: string) => {
 	});
 };
 
-const initializeCommand = async () => {
-	message("Welcome to Lucia!");
+const selectFramework = async () => {
 	const detectedFrameworkId = detectFramework();
 	const detectedFramework = detectedFrameworkId ? framework[detectedFrameworkId] : null;
-	let selectedFramework: null | Integration = null;
 	if (detectedFramework !== null) {
 		const useDetectedProject = await confirmPrompt(
 			`Detected a ${detectedFramework.name} project - continue with this framework?`
 		);
 		if (useDetectedProject) {
-			message(`Continuing with ${detectedFramework.name}`);
+			log(`Continuing with ${detectedFramework.name}`);
 		} else {
-			message("Just using the core library");
+			log("Just using the core library");
 		}
-		selectedFramework = detectedFramework;
-	} else {
-		message("Couldn't detect a supported framework - just using the core library");
+		return detectedFramework;
 	}
+	log("Couldn't detect a supported framework - just using the core library");
+	return null;
+};
+
+const selectDatabase = async () => {
 	const dbChoices: [DATABASE | null, string][] = [
 		[DATABASE.KYSELY, "Kysely (PostgreSQL)"],
 		[DATABASE.MONGOOSE, "Mongoose (MongoDB)"],
 		[DATABASE.PRISMA, "Prisma (SQL, MySQL, SQLite, PostgreSQL)"],
 		[DATABASE.SUPABASE, "Supabase DB"],
-		[null, "other/custom"]
+		[null, "Other/custom"]
 	];
-	const selectedDatabaseId = await listPrompt("Which database/ORM are you using?", dbChoices);
+	const selectedDatabaseId = await listPrompt(
+		"Which database/ORM would you like to use?",
+		dbChoices
+	);
 	const selectedDatabase = selectedDatabaseId ? database[selectedDatabaseId] : null;
 	if (selectedDatabase === null) {
-		message("Not installing any database adapters");
+		log("Not installing any database adapters");
 	} else {
-		message(`Selected ${selectedDatabase.name}`);
+		log(`Selected ${selectedDatabase.name}`);
 	}
+	return selectedDatabase;
+};
+
+const selectOptionalPackages = async () => {
+	const packageChoices: [OPTIONAL_PACKAGE, string][] = [[OPTIONAL_PACKAGE.OAUTH, "OAuth"]];
+	const checkedPackagesId = await checkboxPrompt(
+		"Which packages would you like to enable?",
+		packageChoices
+	);
+	const selectedOptionalPackages = checkedPackagesId.map((id) => optionalPackage[id]);
+	if (selectedOptionalPackages.length > 0) {
+		log(`Selected: ${selectedOptionalPackages.map(val => val.name).join(", ")}`)
+	} else {
+		log(`Selected none`)
+	}
+	return selectedOptionalPackages
+};
+
+export const initializeCommand = async () => {
+	lineBreak();
+	log("Welcome to Lucia!");
+	const selectedFramework = await selectFramework();
+	const selectedDatabase = await selectDatabase();
+	const selectedOptionalPackages = await selectOptionalPackages();
 	const databaseDependencies = selectedDatabase?.dependencies || [];
 	const databaseDevDependencies = selectedDatabase?.devDependencies || [];
 	const frameworkDependencies = selectedFramework?.dependencies || [];
-	const dependencies = [...databaseDependencies, ...frameworkDependencies];
+	const optionalPackagesDependencies = selectedOptionalPackages
+		.map((val) => val.dependencies)
+		.reduce((a, b) => [...a, ...b], []);
+	const dependencies = [
+		...databaseDependencies,
+		...frameworkDependencies,
+		...optionalPackagesDependencies
+	];
 	const devDependencies = [...databaseDevDependencies];
 	const { name: packageManagerPrefix, command } = packageManager[detectPackageManager()];
 	const runInstallation =
@@ -182,5 +230,3 @@ ${[...dependencies, devDependencies.map((val) => `${val} (dev)`)].join(", ")}`);
 		)} && ${packageManagerPrefix} ${command.devInstall} ${devDependencies.join(" ")}`
 	);
 };
-
-initializeCommand();

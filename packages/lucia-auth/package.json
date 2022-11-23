@@ -15,7 +15,7 @@
 		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"bin": {
-		"lucia": "cli/scripts/initialize.js"
+		"lucia": "cli/scripts/index.js"
 	},
 	"keywords": [
 		"lucia",
