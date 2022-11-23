@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/oauth",
-	"version": "0.1.6",
+	"version": "0.2.0",
 	"description": "OAuth integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
