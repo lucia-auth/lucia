@@ -1,6 +1,6 @@
 {
 	"name": "lucia-auth",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "A simple yet flexible authentication library",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -13,6 +13,9 @@
 	"scripts": {
 		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
 		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+	},
+	"bin": {
+		"lucia": "cli/scripts/initialize.js"
 	},
 	"keywords": [
 		"lucia",

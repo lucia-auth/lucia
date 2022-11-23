@@ -1,3 +1,3 @@
 export const message = (msg: string) => {
-    console.log(msg)
+    console.log(`${msg}\n`)
 }
