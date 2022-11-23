@@ -1,4 +1,4 @@
-import { initializeCommand } from "./initialize.js";
+import { initializeCommand } from "./initialize/index.js";
 
 const handleCommand = async () => {
 	const args = process.argv;
