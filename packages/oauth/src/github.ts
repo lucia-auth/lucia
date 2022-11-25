@@ -10,16 +10,16 @@ class Github<A extends Auth> implements OAuthProvider {
 		this.clientId = configs.clientId;
 		this.clientSecret = configs.clientSecret;
 		this.scope = configs.scope || [];
-		this.state = configs.state ?? true;
 	}
 	private auth: A;
 	private clientId: string;
 	private clientSecret: string;
 	private scope: string[];
-	private state: boolean;
 
-	public getAuthorizationUrl = (state?: string): [url: string, state: string | undefined] => {
-		const s = state ?? (this.state ? generateState() : undefined);
+	public getAuthorizationUrl = (
+		state?: string | null
+	): [url: string, state: string | undefined] => {
+		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
 		const url = `https://github.com/login/oauth/authorize?${new URLSearchParams({
 			client_id: this.clientId,
 			scope: this.scope.join(" "),

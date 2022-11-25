@@ -7,14 +7,13 @@ export interface OAuthProvider {
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;
-	getAuthorizationUrl: (state?: string) => [url: string, state: string | undefined];
+	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
 }
 
 export interface OAuthConfig {
 	clientId: string;
 	clientSecret: string;
 	scope?: string[];
-	state?: boolean;
 }
 
 export class LuciaOAuthError extends Error {

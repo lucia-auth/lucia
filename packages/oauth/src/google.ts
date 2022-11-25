@@ -13,17 +13,17 @@ class Google<A extends Auth> implements OAuthProvider {
 		this.clientSecret = configs.clientSecret;
 		this.redirectUri = configs.redirectUri;
 		this.scope = ["https://www.googleapis.com/auth/userinfo.profile", ...(configs.scope || [])];
-		this.state = configs.state ?? true;
 	}
 	private auth: A;
 	private clientId: string;
 	private clientSecret: string;
 	private scope: string[];
 	private redirectUri: string;
-	private state: boolean;
 
-	public getAuthorizationUrl = (state?: string): [url: string, state: string | undefined] => {
-		const s = state ?? (this.state ? generateState() : undefined);
+	public getAuthorizationUrl = (
+		state?: string | null
+	): [url: string, state: string | undefined] => {
+		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
 		const url = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
 			client_id: this.clientId,
 			redirect_uri: this.redirectUri,

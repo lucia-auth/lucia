@@ -15,7 +15,6 @@ class Twitch<A extends Auth> implements OAuthProvider {
 		this.scope = configs.scope || ["user:read:email"];
 		this.redirectUri = configs.redirectUri;
 		this.forceVerify = configs.forceVerify || false;
-		this.state = configs.state ?? true;
 	}
 	private auth: A;
 	private clientId: string;
@@ -23,10 +22,11 @@ class Twitch<A extends Auth> implements OAuthProvider {
 	private scope: string[];
 	private redirectUri: string;
 	private forceVerify: boolean;
-	private state: boolean;
 
-	public getAuthorizationUrl = (state?: string): [url: string, state: string | undefined] => {
-		const s = state ?? (this.state ? generateState() : undefined);
+	public getAuthorizationUrl = (
+		state?: string | null
+	): [url: string, state: string | undefined] => {
+		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
 		const url = `https://id.twitch.tv/oauth2/authorize?${new URLSearchParams({
 			client_id: this.clientId,
 			redirect_uri: this.redirectUri,
