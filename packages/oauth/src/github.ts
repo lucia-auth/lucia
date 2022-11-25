@@ -31,7 +31,7 @@ class Github<A extends Auth> implements OAuthProvider {
 			...(s && { state: s })
 		}).toString()}`;
 		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
-		return [url, state] as const as GetAuthorizationUrlReturnType<State>;
+		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
 	public validateCallback = async (code: string) => {
