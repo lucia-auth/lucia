@@ -23,21 +23,19 @@ const google: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
-		state?: boolean;
 	}
 ) => GoogleProvider;
 ```
 
 #### Parameter
 
-| name                 | type                                        | description                                                      | optional |
-| -------------------- | ------------------------------------------- | ---------------------------------------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                                   |          |
-| configs.clientId     | `string`                                    | Google OAuth app client id                                       |          |
-| configs.clientSecret | `string`                                    | Google OAuth app client secret                                   |          |
-| configs.redirectUri  | `string`                                    | one of the authorized redirect URIs                              |          |
-| configs.scope        | `string[]`                                  | an array of scopes                                               | true     |
-| configs.state        | `boolean`                                   | `true` by default, generates a state for `getAuthorizationUrl()` | true     |
+| name                 | type                                        | description                         | optional |
+| -------------------- | ------------------------------------------- | ----------------------------------- | -------- |
+| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                      |          |
+| configs.clientId     | `string`                                    | Google OAuth app client id          |          |
+| configs.clientSecret | `string`                                    | Google OAuth app client secret      |          |
+| configs.redirectUri  | `string`                                    | one of the authorized redirect URIs |          |
+| configs.scope        | `string[]`                                  | an array of scopes                  | true     |
 
 ### Redirect user to authorization url
 
@@ -49,7 +47,7 @@ import { auth } from "./lucia.js";
 
 const googleAuth = google(auth, configs);
 
-const authorizationUrl = googleAuth.getAuthorizationUrl();
+const [authorizationUrl, state] = googleAuth.getAuthorizationUrl();
 ```
 
 ### Validate callback
@@ -76,7 +74,7 @@ Refer to [`Initialization`](/oauth/providers/google#initialization).
 
 ```ts
 interface GoogleProvider {
-	getAuthorizationUrl: () => [url: string, state: string | undefined];
+	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
 	validateCallback: (code: string) => Promise<GoogleProviderSession>;
 }
 ```

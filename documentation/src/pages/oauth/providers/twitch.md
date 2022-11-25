@@ -24,7 +24,6 @@ const twitch: (
 		redirectUri: string;
 		forceVerify?: boolean;
 		scope?: string[];
-		state?: boolean;
 	}
 ) => TwitchProvider;
 ```
@@ -39,7 +38,6 @@ const twitch: (
 | configs.redirectUri  | `string`                                    | one of the authorized redirect URIs                                  |          |
 | configs.forceVerify  | `boolean`                                   | forces the user to re-authorize your app’s access to their resources | true     |
 | configs.scope        | `string[]`                                  | an array of scopes                                                   | true     |
-| configs.state        | `boolean`                                   | `true` by default, generates a state for `getAuthorizationUrl()`     | true     |
 
 ### Redirect user to authorization url
 
@@ -51,7 +49,7 @@ import { auth } from "./lucia.js";
 
 const twitchAuth = twitch(auth, configs);
 
-const authorizationUrl = twitchAuth.getAuthorizationUrl();
+const [authorizationUrl, state] = twitchAuth.getAuthorizationUrl();
 ```
 
 ### Validate callback
@@ -78,7 +76,7 @@ Refer to [`Initialization`](/oauth/providers/twitch#initialization).
 
 ```ts
 interface TwitchProvider {
-	getAuthorizationUrl: () => [url: string, state: string | undefined];
+	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
 	validateCallback: (code: string) => Promise<TwitchProviderSession>;
 }
 ```

@@ -22,20 +22,18 @@ const github: (
 		clientId: string;
 		clientSecret: string;
 		scope?: string[];
-		state?: boolean;
 	}
 ) => GithubProvider;
 ```
 
 #### Parameter
 
-| name                 | type                                        | description                                                      | optional |
-| -------------------- | ------------------------------------------- | ---------------------------------------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                                   |          |
-| configs.clientId     | `string`                                    | Github OAuth app client id                                       |          |
-| configs.clientSecret | `string`                                    | Github OAuth app client secret                                   |          |
-| configs.scope        | `string[]`                                  | an array of scopes                                               | true     |
-| configs.state        | `boolean`                                   | `true` by default, generates a state for `getAuthorizationUrl()` | true     |
+| name                 | type                                        | description                    | optional |
+| -------------------- | ------------------------------------------- | ------------------------------ | -------- |
+| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                 |          |
+| configs.clientId     | `string`                                    | Github OAuth app client id     |          |
+| configs.clientSecret | `string`                                    | Github OAuth app client secret |          |
+| configs.scope        | `string[]`                                  | an array of scopes             | true     |
 
 ### Redirect user to authorization url
 
@@ -74,7 +72,7 @@ Refer to [`Initialization`](/oauth/providers/github#initialization).
 
 ```ts
 interface GithubProvider {
-	getAuthorizationUrl: () => [url: string, state: string | undefined];
+	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
 	validateCallback: (code: string) => Promise<GithubProviderSession>;
 }
 ```
