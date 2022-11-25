@@ -47,18 +47,36 @@ import { auth } from "./lucia.js";
 
 const googleAuth = google(auth, configs);
 
-const authorizationUrl = googleAuth.getAuthorizationUrl();
+const [authorizationUrl, state] = googleAuth.getAuthorizationUrl();
+
+// the state can be stored in cookies or localstorage for request validation on callback
+setCookie("state", state, {
+	path: "/",
+	httpOnly: true, // only readable in the server
+	maxAge: 60 * 60 // a reasonable expiration date
+}); // example with cookie
 ```
 
 ### Validate callback
 
-The authorization code can be retrieved from the `code` search params inside the callback url.
+The authorization code and state can be retrieved from the `code` and `state` search params, respectively, inside the callback url. Validate that the state is the same as the one stored in either cookies or localstorage before passing the `code` to `validateCallback()`.
 
 ```ts
 import google from "@lucia-auth/oauth/google";
-const googleAuth = google();
 
-const code = new URL(callbackUrl).searchParams.get("code") || ""; // http://localhost:3000/api/google?code=abc => abc
+const googleAuth = google(auth, configs);
+
+// get code and state from search params
+const url = new URL(callbackUrl);
+const code = url.searchParams.get("code") || ""; // http://localhost:3000/api/google?code=abc&state=efg => abc
+const state = url.searchParams.get("state") || ""; // http://localhost:3000/api/google?code=abc&state=efg => efg
+
+// get state stored in cookie (refer to previous step)
+const storedState = headers.cookie.get("state");
+
+// validate state
+if (state !== storedState) throw new Error(); // invalid state
+
 const googleSession = await googleAuth.validateCallback(code);
 ```
 
@@ -70,7 +88,7 @@ Refer to [`Initialization`](/oauth/providers/google#initialization).
 
 ```ts
 interface GoogleProvider {
-	getAuthorizationUrl: () => string;
+	getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string]
 	validateCallback: (code: string) => Promise<GoogleProviderSession>;
 }
 ```

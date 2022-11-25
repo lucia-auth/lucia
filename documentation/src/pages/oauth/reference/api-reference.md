@@ -10,24 +10,31 @@ Please refer to the provider's page for provider-specific documentation.
 
 ```ts
 interface OAuthProvider {
-	getAuthorizationUrl: () => string;
+	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
 	validateCallback: (code: string) => Promise<ProviderSession>;
 }
 ```
 
 ### `getAuthorizationUrl()`
 
-Returns the authorization url to redirect the user to.
+Returns the authorization url for user redirection and a state for storage. If a state was passed in, it will be added as a query parameter in the authorization url. If left empty, a state will be generated. If set to `null`, the `state` will be left out of the authorization url. If a state was added to the authorization url, it will be included as the second element of the returned tuple.
 
 ```ts
-const getAuthorizationUrl: () => string;
+const getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string]
 ```
+
+#### Parameter
+
+| name  | type     | description                                                                           | optional |
+| ----- | -------- | ------------------------------------------------------------------------------------- | -------- |
+| state | `string` | an opaque value used by the client to maintain state between the request and callback | true     |
 
 #### Returns
 
-| type     | description           |
-| -------- | --------------------- |
-| `string` | the authorization url |
+| type                          | description                            |
+| ----------------------------- | -------------------------------------- |
+| `[url: string]`               | if arg `state` is left out or `string` |
+| `[url: string, state: string] | if arg `state` is `null`               |
 
 ### `validateCallback()`
 

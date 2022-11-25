@@ -1,12 +1,13 @@
 import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import type { OAuthProvider } from "./index.js";
+import {
+	generateState,
+	GetAuthorizationUrlReturnType,
+	OAuthConfig,
+	OAuthProvider
+} from "./index.js";
 
-interface Configs {
-	clientId: string;
-	clientSecret: string;
-	scope?: string[];
-}
+interface Configs extends OAuthConfig {}
 
 class Github<A extends Auth> implements OAuthProvider {
 	constructor(auth: A, configs: Configs) {
@@ -19,11 +20,20 @@ class Github<A extends Auth> implements OAuthProvider {
 	private clientId: string;
 	private clientSecret: string;
 	private scope: string[];
-	public getAuthorizationUrl = () => {
-		return `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${
-			this.scope?.join(" ") || ""
-		}`;
+
+	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+		state?: State
+	): GetAuthorizationUrlReturnType<State> => {
+		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
+		const url = `https://github.com/login/oauth/authorize?${new URLSearchParams({
+			client_id: this.clientId,
+			scope: this.scope.join(" "),
+			...(s && { state: s })
+		}).toString()}`;
+		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		return [url, state] as const as GetAuthorizationUrlReturnType<State>;
 	};
+
 	public validateCallback = async (code: string) => {
 		const { access_token: accessToken } = (await post(
 			`https://github.com/login/oauth/access_token?${new URLSearchParams({

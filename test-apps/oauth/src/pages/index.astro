@@ -8,8 +8,11 @@ import SignOut from "../components/SignOut.svelte";
 const authRequest = new AuthRequest(auth, Astro);
 const { user } = await authRequest.getSessionUser();
 
-const githubAuthorizationUrl = githubAuth.getAuthorizationUrl();
-const googleAuthorizationUrl = googleAuth.getAuthorizationUrl();
+const [githubAuthorizationUrl, githubState] = githubAuth.getAuthorizationUrl();
+const [googleAuthorizationUrl, googleState] = googleAuth.getAuthorizationUrl();
+
+if (githubState) Astro.cookies.set("githubState", githubState);
+if (googleState) Astro.cookies.set("googleState", googleState);
 ---
 
 <MainLayout>

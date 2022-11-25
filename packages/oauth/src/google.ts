@@ -1,12 +1,14 @@
 import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import type { OAuthProvider } from "./index.js";
+import {
+	generateState,
+	GetAuthorizationUrlReturnType,
+	OAuthConfig,
+	OAuthProvider
+} from "./index.js";
 
-interface Configs {
-	clientId: string;
-	clientSecret: string;
+interface Configs extends OAuthConfig {
 	redirectUri: string;
-	scope?: string[];
 }
 
 class Google<A extends Auth> implements OAuthProvider {
@@ -22,14 +24,22 @@ class Google<A extends Auth> implements OAuthProvider {
 	private clientSecret: string;
 	private scope: string[];
 	private redirectUri: string;
-	public getAuthorizationUrl = () => {
-		return `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
-			scope: this.scope.join(" "),
+
+	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+		state?: State
+	): GetAuthorizationUrlReturnType<State> => {
+		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
+		const url = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
 			client_id: this.clientId,
 			redirect_uri: this.redirectUri,
-			response_type: "code"
-		})}`;
+			scope: this.scope.join(" "),
+			response_type: "code",
+			...(s && { state: s })
+		}).toString()}`;
+		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		return [url, state] as const as GetAuthorizationUrlReturnType<State>;
 	};
+
 	public validateCallback = async (code: string) => {
 		const {
 			access_token: accessToken,
