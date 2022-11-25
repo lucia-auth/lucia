@@ -17,10 +17,10 @@ interface OAuthProvider {
 
 ### `getAuthorizationUrl()`
 
-Returns the authorization url for user redirection and a state for storage. If a state was passed in, it will be added as a query parameter in the authorization url. If left empty, a state will be generated. If set to `null`, the `state` will return `undefined` and will be left out of the authorization url.
+Returns the authorization url for user redirection and a state for storage. If a state was passed in, it will be added as a query parameter in the authorization url. If left empty, a state will be generated. If set to `null`, the `state will be left out of the authorization url. If a state was added to the authorization url, it will be included as the second element of the return tuple.
 
 ```ts
-const getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
+const getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string]
 ```
 
 #### Parameter
@@ -31,9 +31,10 @@ const getAuthorizationUrl: (state?: string | null) => [url: string, state: strin
 
 #### Returns
 
-| type                                        | description                     |
-| ------------------------------------------- | ------------------------------- |
-| `[url: string, state: string \| undefined]` | the authorization url and state |
+| type                          | description                            |
+| ----------------------------- | -------------------------------------- |
+| `[url: string]`               | if arg `state` is left out or `string` |
+| `[url: string, state: string] | if arg `state` is `null`               |
 
 ### `validateCallback()`
 

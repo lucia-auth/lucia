@@ -7,7 +7,7 @@ export interface OAuthProvider {
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;
-	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
+	getAuthorizationUrl: (state?: string | null) => [url: string, state: string] | [url: string];
 }
 
 export interface OAuthConfig {
@@ -32,3 +32,5 @@ export const generateState = () => {
 	const state = String.fromCharCode.apply(null, [...array]);
 	return state;
 };
+
+export type GetAuthorizationUrlReturnType<T> = T extends null ? [string] : [string, string];

@@ -46,6 +46,13 @@ import { auth } from "./lucia.js";
 const githubAuth = github(auth, configs);
 
 const [authorizationUrl, state] = githubAuth.getAuthorizationUrl();
+
+// the state can be stored in cookies or localstorage for request validation on callback
+setCookie("state", state, {
+	path: "/",
+	httpOnly: true, // only readable in the server
+	maxAge: 60 * 60 // a reasonable expiration date
+}); // example with cookie
 ```
 
 ### Validate callback
@@ -56,12 +63,18 @@ The authorization code and state can be retrieved from the `code` and `state` se
 import github from "@lucia-auth/oauth/github";
 const githubAuth = github();
 
-const code = new URL(callbackUrl).searchParams.get("code") || ""; // http://localhost:3000/api/github?code=abc&state=efg => abc
-const state = new URL(callbackUrl).searchParams.get("state") || ""; // http://localhost:3000/api/github?code=abc&state=efg => efg
+// get code and state from search params
+const url = new URL(callbackUrl);
+const code = url.searchParams.get("code") || ""; // http://localhost:3000/api/google?code=abc&state=efg => abc
+const state = url.searchParams.get("state") || ""; // http://localhost:3000/api/google?code=abc&state=efg => efg
 
-if (state !== headers.cookie.get("state")) return; // invalid state
+// get state stored in cookie (refer to previous step)
+const storedState = headers.cookie.get("state");
 
-const githubSession = await githubAuth.validateCallback(code);
+// validate state
+if (state !== storedState) throw new Error(); // invalid state
+
+const googleSession = await googleAuth.validateCallback(code);
 ```
 
 ## `github()` (default)
@@ -72,7 +85,7 @@ Refer to [`Initialization`](/oauth/providers/github#initialization).
 
 ```ts
 interface GithubProvider {
-	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
+	getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string];
 	validateCallback: (code: string) => Promise<GithubProviderSession>;
 }
 ```

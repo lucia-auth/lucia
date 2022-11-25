@@ -50,6 +50,13 @@ import { auth } from "./lucia.js";
 const twitchAuth = twitch(auth, configs);
 
 const [authorizationUrl, state] = twitchAuth.getAuthorizationUrl();
+
+// the state can be stored in cookies or localstorage for request validation on callback
+setCookie("state", state, {
+	path: "/",
+	httpOnly: true, // only readable in the server
+	maxAge: 60 * 60 // a reasonable expiration date
+}); // example with cookie
 ```
 
 ### Validate callback
@@ -60,12 +67,18 @@ The authorization code and state can be retrieved from the `code` and `state` se
 import twitch from "@lucia-auth/oauth/twitch";
 const twitchAuth = twitch();
 
-const code = new URL(callbackUrl).searchParams.get("code") || ""; // http://localhost:3000/api/twitch?code=abc&state=efg => abc
-const state = new URL(callbackUrl).searchParams.get("state") || ""; // http://localhost:3000/api/twitch?code=abc&state=efg => efg
+// get code and state from search params
+const url = new URL(callbackUrl);
+const code = url.searchParams.get("code") || ""; // http://localhost:3000/api/google?code=abc&state=efg => abc
+const state = url.searchParams.get("state") || ""; // http://localhost:3000/api/google?code=abc&state=efg => efg
 
-if (state !== headers.cookie.get("state")) return; // invalid state
+// get state stored in cookie (refer to previous step)
+const storedState = headers.cookie.get("state");
 
-const twitchSession = await twitchAuth.validateCallback(code);
+// validate state
+if (state !== storedState) throw new Error(); // invalid state
+
+const googleSession = await googleAuth.validateCallback(code);
 ```
 
 ## `twitch()` (default)
@@ -76,7 +89,7 @@ Refer to [`Initialization`](/oauth/providers/twitch#initialization).
 
 ```ts
 interface TwitchProvider {
-	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
+	getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string]
 	validateCallback: (code: string) => Promise<TwitchProviderSession>;
 }
 ```

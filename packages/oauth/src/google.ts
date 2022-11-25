@@ -1,6 +1,11 @@
 import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import { generateState, OAuthConfig, OAuthProvider } from "./index.js";
+import {
+	generateState,
+	GetAuthorizationUrlReturnType,
+	OAuthConfig,
+	OAuthProvider
+} from "./index.js";
 
 interface Configs extends OAuthConfig {
 	redirectUri: string;
@@ -20,9 +25,9 @@ class Google<A extends Auth> implements OAuthProvider {
 	private scope: string[];
 	private redirectUri: string;
 
-	public getAuthorizationUrl = (
-		state?: string | null
-	): [url: string, state: string | undefined] => {
+	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+		state?: State
+	): GetAuthorizationUrlReturnType<State> => {
 		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
 		const url = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
 			client_id: this.clientId,
@@ -31,8 +36,8 @@ class Google<A extends Auth> implements OAuthProvider {
 			response_type: "code",
 			...(s && { state: s })
 		}).toString()}`;
-
-		return [url, s];
+		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		return [url, state] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
 	public validateCallback = async (code: string) => {

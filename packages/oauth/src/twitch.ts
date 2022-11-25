@@ -1,6 +1,11 @@
 import { post, get } from "./request.js";
 import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
-import { generateState, OAuthConfig, OAuthProvider } from "./index.js";
+import {
+	generateState,
+	GetAuthorizationUrlReturnType,
+	OAuthConfig,
+	OAuthProvider
+} from "./index.js";
 
 interface Configs extends OAuthConfig {
 	redirectUri: string;
@@ -23,9 +28,9 @@ class Twitch<A extends Auth> implements OAuthProvider {
 	private redirectUri: string;
 	private forceVerify: boolean;
 
-	public getAuthorizationUrl = (
-		state?: string | null
-	): [url: string, state: string | undefined] => {
+	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+		state?: State
+	): GetAuthorizationUrlReturnType<State> => {
 		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
 		const url = `https://id.twitch.tv/oauth2/authorize?${new URLSearchParams({
 			client_id: this.clientId,
@@ -35,8 +40,8 @@ class Twitch<A extends Auth> implements OAuthProvider {
 			force_verify: this.forceVerify.toString(),
 			...(s && { state: s })
 		}).toString()}`;
-
-		return [url, s];
+		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		return [url, state] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
 	public validateCallback = async (code: string) => {

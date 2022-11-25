@@ -48,6 +48,13 @@ import { auth } from "./lucia.js";
 const googleAuth = google(auth, configs);
 
 const [authorizationUrl, state] = googleAuth.getAuthorizationUrl();
+
+// the state can be stored in cookies or localstorage for request validation on callback
+setCookie("state", state, {
+	path: "/",
+	httpOnly: true, // only readable in the server
+	maxAge: 60 * 60 // a reasonable expiration date
+}); // example with cookie
 ```
 
 ### Validate callback
@@ -56,12 +63,19 @@ The authorization code and state can be retrieved from the `code` and `state` se
 
 ```ts
 import google from "@lucia-auth/oauth/google";
-const googleAuth = google();
 
-const code = new URL(callbackUrl).searchParams.get("code") || ""; // http://localhost:3000/api/google?code=abc&state=efg => abc
-const state = new URL(callbackUrl).searchParams.get("state") || ""; // http://localhost:3000/api/google?code=abc&state=efg => efg
+const googleAuth = google(auth, configs);
 
-if (state !== headers.cookie.get("state")) return; // invalid state
+// get code and state from search params
+const url = new URL(callbackUrl);
+const code = url.searchParams.get("code") || ""; // http://localhost:3000/api/google?code=abc&state=efg => abc
+const state = url.searchParams.get("state") || ""; // http://localhost:3000/api/google?code=abc&state=efg => efg
+
+// get state stored in cookie (refer to previous step)
+const storedState = headers.cookie.get("state");
+
+// validate state
+if (state !== storedState) throw new Error(); // invalid state
 
 const googleSession = await googleAuth.validateCallback(code);
 ```
@@ -74,7 +88,7 @@ Refer to [`Initialization`](/oauth/providers/google#initialization).
 
 ```ts
 interface GoogleProvider {
-	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
+	getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string]
 	validateCallback: (code: string) => Promise<GoogleProviderSession>;
 }
 ```
