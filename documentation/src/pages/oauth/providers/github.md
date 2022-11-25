@@ -65,8 +65,8 @@ const githubAuth = github();
 
 // get code and state from search params
 const url = new URL(callbackUrl);
-const code = url.searchParams.get("code") || ""; // http://localhost:3000/api/google?code=abc&state=efg => abc
-const state = url.searchParams.get("state") || ""; // http://localhost:3000/api/google?code=abc&state=efg => efg
+const code = url.searchParams.get("code") || ""; // http://localhost:3000/api/github?code=abc&state=efg => abc
+const state = url.searchParams.get("state") || ""; // http://localhost:3000/api/github?code=abc&state=efg => efg
 
 // get state stored in cookie (refer to previous step)
 const storedState = headers.cookie.get("state");
@@ -74,7 +74,7 @@ const storedState = headers.cookie.get("state");
 // validate state
 if (state !== storedState) throw new Error(); // invalid state
 
-const googleSession = await googleAuth.validateCallback(code);
+const githubSession = await githubAuth.validateCallback(code);
 ```
 
 ## `github()` (default)
