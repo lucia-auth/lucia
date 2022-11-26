@@ -23,7 +23,7 @@ const providerAuth = provider(auth, configs);
 
 ## Sign in with the provider
 
-When a user clicks "Sign in with [provider]", store the [state](https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1) in either a cookie or localstorage and redirect the user to the provider's authorization url. This will send the user to the provider's sign in page. Both, the authorization url and state can be retrieved with `getAuthorizationUrl()`.
+When a user clicks "Sign in with <provider>", redirect the user to a GET endpoint. This endpoint will redirect the user to the provider's sign in page. On request, store the [state](https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1) inside a http0nly cookie and redirect the user to the provider's authorization url. Both, the authorization url and state can be retrieved with `getAuthorizationUrl()`.
 
 ```ts
 // SERVER
@@ -48,13 +48,11 @@ const handleGetRequests = async () => {
 };
 ```
 
-Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag. However, keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**.
+Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag. However, keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**. You can also store the `state` in localstorage if you want to handle OAuth in the client (though handling in the server is recommended).
 
 ```svelte
 <a href={providerAuthorizationUrl}>Sign in with provider</a>
 ```
-
-Make sure to store the `state` to the user/browser so it can be used to validate callbacks from the OAuth provider (preferably as httpOnly cookie).
 
 ## Handle callback
 
