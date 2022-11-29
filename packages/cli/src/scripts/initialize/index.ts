@@ -15,18 +15,23 @@ const installDependencies = async (
 	database: Integration | null,
 	optionalPackages: Integration[]
 ) => {
-	const frameworkDependencies = framework?.dependencies || [];
-	const databaseDependencies = database?.dependencies || [];
-	const databaseDevDependencies = database?.devDependencies || [];
+	const frameworkDependencies = framework ? [framework.package, ...framework.dependencies] : [];
+	const frameworkDevDependencies = framework?.devDependencies ?? [];
+	const databaseDependencies = database ? [database.package, ...database.dependencies] : [];
+	const databaseDevDependencies = database?.devDependencies ?? [];
 	const optionalPackagesDependencies = optionalPackages
-		.map((val) => val.dependencies)
+		.map((val) => [val.package, ...val.dependencies])
+		.reduce((a, b) => [...a, ...b], []);
+	const optionalPackagesDevDependencies = optionalPackages
+		.map((val) => val.devDependencies ?? [])
 		.reduce((a, b) => [...a, ...b], []);
 	const dependencies = [
 		...databaseDependencies,
+		...frameworkDevDependencies,
 		...frameworkDependencies,
 		...optionalPackagesDependencies
 	];
-	const devDependencies = [...databaseDevDependencies];
+	const devDependencies = [...databaseDevDependencies, ...optionalPackagesDevDependencies];
 	const { name: packageManagerPrefix, command } = packageManager[detectPackageManager()];
 	const runInstallation =
 		await confirmPrompt(`Install the following dependencies using ${packageManagerPrefix}?

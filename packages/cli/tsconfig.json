@@ -3,15 +3,15 @@
 		"allowJs": true,
 		"checkJs": true,
 		"noImplicitAny": true,
-		"module": "ES2022",
-		"moduleResolution": "NodeNext",
-		"target": "ES2022",
+		"module": "es2022",
+		"moduleResolution": "node",
+		"target": "es2022",
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,
 		"outDir": "./dist",
 		"strict": true,
-		"isolatedModules": false
+		"importsNotUsedAsValues": "error"
 	},
 	"include": ["src"],
-	"exclude": ["node_modules/", "**/__tests__/*", ]
+	"exclude": ["node_modules/", "**/__tests__/*", "**/*.test.ts"]
 }

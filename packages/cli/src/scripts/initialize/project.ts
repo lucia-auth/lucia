@@ -1,7 +1,16 @@
 import { log } from "../../ui/log.js";
 import { checkboxPrompt, confirmPrompt, listPrompt } from "../../ui/prompts/index.js";
 import { fileExists } from "../utils.js";
-import { database, DATABASE, framework, FRAMEWORK, optionalPackage, OPTIONAL_PACKAGE, PACKAGE_MANAGER } from "./constant.js";
+import {
+	database,
+	DATABASE,
+	DatabaseIntegration,
+	framework,
+	FRAMEWORK,
+	optionalPackage,
+	OPTIONAL_PACKAGE,
+	PACKAGE_MANAGER
+} from "./constant.js";
 
 const detectFramework = (): FRAMEWORK | null => {
 	if (fileExists("./svelte.config.js")) return FRAMEWORK.SVELTEKIT;
