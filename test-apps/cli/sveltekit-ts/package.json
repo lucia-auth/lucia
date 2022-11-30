@@ -1,0 +1,34 @@
+{
+	"name": "sveltekit-ts",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/kit": "next",
+		"prisma": "^4.6.1",
+		"svelte": "^3.53.1",
+		"svelte-check": "^2.9.2",
+		"svelte-preprocess": "^4.10.7",
+		"tslib": "^2.4.1",
+		"typescript": "^4.9.3",
+		"vite": "^3.2.4"
+	},
+	"type": "module",
+	"dependencies": {
+		"@lucia-auth/adapter-mongoose": "workspace:0.1.4",
+		"@lucia-auth/adapter-prisma": "workspace:*",
+		"@lucia-auth/adapter-supabase": "workspace:^0.1.4",
+		"@lucia-auth/cli": "workspace:*",
+		"@lucia-auth/sveltekit": "workspace:0.3.1",
+		"@prisma/client": "^4.6.1",
+		"lucia-auth": "workspace:^0.3.0",
+		"mongoose": "^6.7.2"
+	}
+}

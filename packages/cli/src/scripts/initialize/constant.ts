@@ -13,8 +13,11 @@ export enum DATABASE {
 
 export enum PACKAGE_MANAGER {
 	NPM = "NPM",
+	PNPM = "PNPM",
 	YARN = "YARN"
 }
+
+export type Env = [key: string, value: string, comment: string | null];
 
 export enum OPTIONAL_PACKAGE {
 	OAUTH = "OAUTH"
@@ -44,12 +47,12 @@ export type Import =
 			from: string;
 	  };
 
-type EnvImport = "process.env" | "import.meta.env";
+type EnvImport = "process.env." | "import.meta.env." | "";
 
 export interface FrameworkIntegration<T extends FRAMEWORK> extends Integration<T> {
 	env: EnvImport;
 	lucia: {
-		envVars: string[];
+		envVars: Env[];
 		imports: Import[];
 		dev: string;
 	};
@@ -57,9 +60,15 @@ export interface FrameworkIntegration<T extends FRAMEWORK> extends Integration<T
 
 export interface DatabaseIntegration<T extends DATABASE> extends Integration<T> {
 	adapter: {
-		envVars: string[];
+		envVars: Env[];
 		getArgs: (env: EnvImport) => string[];
-		getImports: (context: { dbFileLocation?: string | null }) => Import[];
+		getImports: (context: {
+			dbFileLocation: string | null;
+			framework: FrameworkIntegration<FRAMEWORK> | null;
+		}) => Import[];
+	};
+	db?: {
+		envVars: Env[];
 	};
 }
 
@@ -82,7 +91,7 @@ export const framework: {
 			],
 			dev: `dev ? "DEV" : "PROD"`
 		},
-		env: "import.meta.env"
+		env: ""
 	},
 	NEXTJS: {
 		name: "Next.js",
@@ -90,11 +99,11 @@ export const framework: {
 		package: "@lucia-auth/nextjs",
 		dependencies: [],
 		lucia: {
-			envVars: ["PROD"],
+			envVars: [["PROD", "FALSE", `set to "TRUE" for production`]],
 			imports: [],
 			dev: `process.env.PROD === "TRUE" ? "PROD" : "DEV"`
 		},
-		env: "process.env"
+		env: "process.env."
 	},
 	ASTRO: {
 		name: "Astro",
@@ -106,7 +115,7 @@ export const framework: {
 			imports: [],
 			dev: `import.meta.env.DEV ? "DEV" : "PROD"`
 		},
-		env: "import.meta.env"
+		env: "import.meta.env."
 	}
 };
 
@@ -131,6 +140,9 @@ export const database: {
 					}
 				];
 			}
+		},
+		db: {
+			envVars: [["DATABASE_URL", "", "PostgreSQL database url"]]
 		}
 	},
 	MONGOOSE: {
@@ -142,26 +154,24 @@ export const database: {
 			envVars: [],
 			getArgs: () => ["m"],
 			getImports: ({ dbFileLocation }) => {
-				if (!dbFileLocation)
-					return [
-						{
-							type: "default",
-							name: "m",
-							from: "mongoose"
-						}
-					];
-				return [
+				const imports: Import[] = [
 					{
 						type: "default",
 						name: "m",
 						from: "mongoose"
-					},
-					{
-						type: "side-effect",
-						from: dbFileLocation
 					}
 				];
+				if (dbFileLocation) {
+					imports.push({
+						type: "side-effect",
+						from: dbFileLocation
+					});
+				}
+				return imports;
 			}
+		},
+		db: {
+			envVars: [["MONGO_URI", "", null]]
 		}
 	},
 	PRISMA: {
@@ -188,22 +198,36 @@ export const database: {
 		package: "@lucia-auth/adapter-supabase",
 		dependencies: [],
 		adapter: {
-			envVars: ["SUPABASE_URL", "SUPABASE_SECRET"],
-			getArgs: (env) => [`${env}.SUPABASE_URL`, `${env}.SUPABASE_SECRET`],
-			getImports: () => []
+			envVars: [
+				["SUPABASE_URL", "", "Supabase project url"],
+				["SUPABASE_SECRET", "", `Supabase project "service_role" (NOT "anon")`]
+			],
+			getArgs: (env) => [`${env}SUPABASE_URL ?? ""`, `${env}SUPABASE_SECRET ?? ""`],
+			getImports: ({ framework }) => {
+				if (framework?.id !== FRAMEWORK.SVELTEKIT) return [];
+				return [
+					{
+						type: "module",
+						vars: ["SUPABASE_URL", "SUPABASE_SECRET"],
+						from: "$env/static/private"
+					}
+				];
+			}
 		}
 	}
 };
 
-export const packageManager: {
-	[PackageManager in PACKAGE_MANAGER]: {
-		id: PackageManager;
-		name: Lowercase<PACKAGE_MANAGER>;
-		command: {
-			install: string;
-			devInstall: string;
-		};
+export interface PackageManager<T extends PACKAGE_MANAGER> {
+	id: T;
+	name: Lowercase<T>;
+	command: {
+		install: string;
+		devInstall: string;
 	};
+}
+
+export const packageManager: {
+	[PackageManagerId in PACKAGE_MANAGER]: PackageManager<PackageManagerId>;
 } = {
 	NPM: {
 		id: PACKAGE_MANAGER.NPM,
@@ -211,6 +235,14 @@ export const packageManager: {
 		command: {
 			install: "install",
 			devInstall: "install -D"
+		}
+	},
+	PNPM: {
+		id: PACKAGE_MANAGER.PNPM,
+		name: "pnpm",
+		command: {
+			install: "add",
+			devInstall: "add -D"
 		}
 	},
 	YARN: {
@@ -232,4 +264,11 @@ export const optionalPackage: {
 		package: "@lucia-auth/oauth",
 		dependencies: []
 	}
+};
+
+export const defaultDir: Record<FRAMEWORK | "DEFAULT", string> = {
+	SVELTEKIT: "src/lib/server",
+	NEXTJS: "lib",
+	ASTRO: "src/lib",
+	DEFAULT: ""
 };

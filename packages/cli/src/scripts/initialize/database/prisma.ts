@@ -1,5 +1,6 @@
 import { confirmPrompt, listPrompt } from "../../../ui/prompts/index.js";
-import { appendData, fileExists, runCommand, writeData } from "../../utils.js";
+import { appendData, fileExists, writeData } from "../../utils/fs.js";
+import { runCommand } from "../../utils/node.js";
 
 enum DATABASE_PROVIDER {
 	MYSQL = "MYSQL",
@@ -73,13 +74,15 @@ datasource db {
 }`;
 };
 
-export const initializePrisma = async (): Promise<boolean> => {
+export const initializePrisma = async (): Promise<
+	[isDbInitialized: boolean, dbFileDir: string | null]
+> => {
 	const isPrismaInitialized = fileExists("./prisma/schema.prisma");
 	if (!isPrismaInitialized) {
 		const setPrismaSchema = await confirmPrompt(
 			"No Prisma schema was detected - initialize Prisma and set up the schema?"
 		);
-		if (!setPrismaSchema) return false;
+		if (!setPrismaSchema) return [false, null];
 
 		const selectDatabaseProvider = async () => {
 			const databaseProviderChoices: [DATABASE_PROVIDER, string][] = [
@@ -103,14 +106,14 @@ export const initializePrisma = async (): Promise<boolean> => {
 
 ${getPrismaSchemaModelTemplate()}`;
 		writeData("./prisma/schema.prisma", prismaSchemaFile);
-		return true;
+		return [true, null];
 	}
 	const setPrismaSchema = await confirmPrompt("Detected a Prisma schema - add schema for Lucia?");
-	if (!setPrismaSchema) return false;
+	if (!setPrismaSchema) return [false, null];
 	appendData(
 		"./prisma/schema.prisma",
 		`
 ${getPrismaSchemaModelTemplate()}`
 	);
-	return true;
+	return [true, null];
 };

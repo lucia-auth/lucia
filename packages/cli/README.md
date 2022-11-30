@@ -1,17 +1,15 @@
-# @lucia-auth/sveltekit
+# @lucia-auth/cli
 
-[SvelteKit](https://kit.svelte.dev) integration for Lucia
-
-**[Documentation](https://lucia-auth.vercel.app/sveltekit/start-here/getting-started)**
+CLI for lucia auth
 
 **[Lucia documentation](https://lucia-auth.vercel.app)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/sveltekit/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/cli/CHANGELOG.md)**
 
 ## Installation
 
 ```bash
-npm i @lucia-auth/sveltekit
-pnpm add @lucia-auth/sveltekit
-yarn add @lucia-auth/sveltekit
+npm i -D @lucia-auth/cli
+pnpm add -D @lucia-auth/cli
+yarn add -dev @lucia-auth/cli
 ```

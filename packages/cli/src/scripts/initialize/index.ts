@@ -1,57 +1,61 @@
 import { confirmPrompt } from "../../ui/prompts/index.js";
 import { lineBreak, log } from "../../ui/log.js";
-import { fileExists, runCommand } from "../utils.js";
-import { selectDatabase, selectFramework, selectOptionalPackages } from "./project.js";
-import { Integration, packageManager, PACKAGE_MANAGER } from "./constant.js";
+import { fileExists } from "../utils/fs.js";
 import { initializeDatabase } from "./database/index.js";
-
-const detectPackageManager = (): PACKAGE_MANAGER => {
-	if (fileExists("./yarn.lock")) return PACKAGE_MANAGER.YARN;
-	return PACKAGE_MANAGER.NPM;
-};
-
-const installDependencies = async (
-	framework: Integration | null,
-	database: Integration | null,
-	optionalPackages: Integration[]
-) => {
-	const frameworkDependencies = framework ? [framework.package, ...framework.dependencies] : [];
-	const frameworkDevDependencies = framework?.devDependencies ?? [];
-	const databaseDependencies = database ? [database.package, ...database.dependencies] : [];
-	const databaseDevDependencies = database?.devDependencies ?? [];
-	const optionalPackagesDependencies = optionalPackages
-		.map((val) => [val.package, ...val.dependencies])
-		.reduce((a, b) => [...a, ...b], []);
-	const optionalPackagesDevDependencies = optionalPackages
-		.map((val) => val.devDependencies ?? [])
-		.reduce((a, b) => [...a, ...b], []);
-	const dependencies = [
-		...databaseDependencies,
-		...frameworkDevDependencies,
-		...frameworkDependencies,
-		...optionalPackagesDependencies
-	];
-	const devDependencies = [...databaseDevDependencies, ...optionalPackagesDevDependencies];
-	const { name: packageManagerPrefix, command } = packageManager[detectPackageManager()];
-	const runInstallation =
-		await confirmPrompt(`Install the following dependencies using ${packageManagerPrefix}?
-${[...dependencies, devDependencies.map((val) => `${val} (dev)`)].join(", ")}`);
-	if (!runInstallation) return process.exit(0);
-	await runCommand(
-		`${packageManagerPrefix} ${command.install} ${dependencies.join(
-			" "
-		)} && ${packageManagerPrefix} ${command.devInstall} ${devDependencies.join(" ")}`
-	);
-};
+import { initializeLucia } from "./lucia.js";
+import { getProjectConfig } from "./project.js";
+import { installPackages, selectPackageManager } from "./package.js";
+import type { Env } from "./constant.js";
+import { generateEnvFile } from "./env.js";
 
 export const initializeCommand = async () => {
 	lineBreak();
 	log("Welcome to Lucia!");
-	const selectedFramework = await selectFramework();
-	const selectedDatabase = await selectDatabase();
-	const selectedOptionalPackages = await selectOptionalPackages();
-	await installDependencies(selectedFramework, selectedDatabase, selectedOptionalPackages);
-	const isDatabaseInitialized = selectedDatabase
-		? await initializeDatabase(selectedDatabase.id)
-		: false;
+	const { framework, database } = await getProjectConfig();
+	const packageManager = await selectPackageManager();
+
+	const installDependencies = async () => {
+		const frameworkDependencies = framework ? [framework.package, ...framework.dependencies] : [];
+		const frameworkDevDependencies = framework?.devDependencies ?? [];
+		const databaseDependencies = database ? [database.package, ...database.dependencies] : [];
+		const databaseDevDependencies = database?.devDependencies ?? [];
+		const dependencies = [
+			"lucia-auth",
+			...databaseDependencies,
+			...frameworkDependencies
+		];
+		const devDependencies = [...frameworkDevDependencies, ...databaseDevDependencies];
+		await installPackages(dependencies, devDependencies, packageManager);
+	};
+
+	await installDependencies();
+	const selectTypescript = async (): Promise<boolean> => {
+		const tsconfigExists = fileExists("./tsconfig.json");
+		if (!tsconfigExists) return false;
+		const typescript = await confirmPrompt("Detected a TypeScript project - use TypeScript?");
+		return typescript;
+	};
+
+	const isTypescriptProject = await selectTypescript();
+
+	const [isDbInitialized, absoluteDbFilePath] = database
+		? await initializeDatabase(database, framework, isTypescriptProject)
+		: [false, null];
+	await initializeLucia({
+		framework,
+		database,
+		isTypescriptProject: isTypescriptProject,
+		absoluteDbFileDir: absoluteDbFilePath
+	});
+	const envVars: Env[] = [];
+	if (database && isDbInitialized) {
+		envVars.push(...(database.db?.envVars ?? []), ...database.adapter.envVars);
+	}
+	if (framework?.lucia.envVars) {
+		envVars.push(...framework.lucia.envVars);
+	} else {
+		// no framework
+		envVars.push(["PROD", "FALSE", `set to "TRUE" for production`]);
+	}
+	generateEnvFile(envVars);
 };
