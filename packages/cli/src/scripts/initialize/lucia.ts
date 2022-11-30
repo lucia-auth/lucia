@@ -43,15 +43,13 @@ export const initializeLucia = async ({
 				];
 				if (database) {
 					const absoluteDbFilePath = `${absoluteDbFileDir}/db.js`;
-					const databaseFileLocation = absoluteDbFileDir
+					const dbFileLocation = absoluteDbFileDir
 						? getRelativeFilePath(absoluteLuciaFilePath, absoluteDbFilePath)
 						: null;
 					imports.push(
 						{ type: "default", name: database.id.toLowerCase(), from: database.package },
 						...database.adapter.getImports({
-							dbFileLocation: databaseFileLocation?.startsWith(".")
-								? databaseFileLocation
-								: `./${databaseFileLocation}`,
+							dbFileLocation,
 							framework
 						})
 					);
@@ -83,6 +81,7 @@ export const auth = lucia({
 });${
 				isTypescriptProject
 					? `	
+
 export type Auth = typeof auth`
 					: ""
 			}`;
