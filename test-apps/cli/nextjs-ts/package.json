@@ -1,0 +1,26 @@
+{
+  "name": "nextjs-ts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@lucia-auth/adapter-supabase": "workspace:^0.1.4",
+    "@lucia-auth/cli": "workspace:^0.1.0",
+    "@lucia-auth/nextjs": "workspace:^0.2.0",
+    "@types/node": "18.11.9",
+    "@types/react": "18.0.25",
+    "@types/react-dom": "18.0.9",
+    "eslint": "8.28.0",
+    "eslint-config-next": "13.0.5",
+    "lucia-auth": "workspace:^0.3.0",
+    "next": "13.0.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "4.9.3"
+  }
+}
