@@ -11,24 +11,6 @@ import { generateEnvFile } from "./env.js";
 export const initializeCommand = async () => {
 	lineBreak();
 	log("Welcome to Lucia!");
-	const { framework, database } = await getProjectConfig();
-	const packageManager = await selectPackageManager();
-
-	const installDependencies = async () => {
-		const frameworkDependencies = framework ? [framework.package, ...framework.dependencies] : [];
-		const frameworkDevDependencies = framework?.devDependencies ?? [];
-		const databaseDependencies = database ? [database.package, ...database.dependencies] : [];
-		const databaseDevDependencies = database?.devDependencies ?? [];
-		const dependencies = [
-			"lucia-auth",
-			...databaseDependencies,
-			...frameworkDependencies
-		];
-		const devDependencies = [...frameworkDevDependencies, ...databaseDevDependencies];
-		await installPackages(dependencies, devDependencies, packageManager);
-	};
-
-	await installDependencies();
 	const selectTypescript = async (): Promise<boolean> => {
 		const tsconfigExists = fileExists("./tsconfig.json");
 		if (!tsconfigExists) return false;
@@ -37,6 +19,25 @@ export const initializeCommand = async () => {
 	};
 
 	const isTypescriptProject = await selectTypescript();
+	const { framework, database } = await getProjectConfig();
+	const packageManager = await selectPackageManager();
+
+	const installDependencies = async () => {
+		const frameworkDependencies = framework ? [framework.package, ...framework.dependencies] : [];
+		const frameworkDevDependencies = framework?.devDependencies ?? [];
+		const databaseDependencies = database ? [database.package, ...database.dependencies] : [];
+		const databaseDevDependencies = database?.devDependencies ?? [];
+		const databaseTypesDependencies = database?.types ?? [];
+		const dependencies = ["lucia-auth", ...databaseDependencies, ...frameworkDependencies];
+		const devDependencies = [
+			...frameworkDevDependencies,
+			...databaseDevDependencies,
+			...databaseTypesDependencies
+		];
+		await installPackages(dependencies, devDependencies, packageManager);
+	};
+
+	await installDependencies();
 
 	const [isDbInitialized, absoluteDbFilePath] = database
 		? await initializeDatabase(database, framework, isTypescriptProject)

@@ -12,6 +12,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
+		"@types/pg": "^8.6.5",
 		"prisma": "^4.6.1",
 		"svelte": "^3.53.1",
 		"svelte-check": "^2.9.2",
@@ -22,13 +23,16 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@lucia-auth/adapter-kysely": "workspace:^0.1.0",
 		"@lucia-auth/adapter-mongoose": "workspace:0.1.4",
 		"@lucia-auth/adapter-prisma": "workspace:*",
 		"@lucia-auth/adapter-supabase": "workspace:^0.1.4",
 		"@lucia-auth/cli": "workspace:*",
 		"@lucia-auth/sveltekit": "workspace:0.3.1",
 		"@prisma/client": "^4.6.1",
+		"kysely": "^0.22.0",
 		"lucia-auth": "workspace:^0.3.0",
-		"mongoose": "^6.7.2"
+		"mongoose": "^6.7.2",
+		"pg": "^8.8.0"
 	}
 }

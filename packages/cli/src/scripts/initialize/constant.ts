@@ -28,6 +28,7 @@ export interface Integration<T = string> {
 	package: string;
 	dependencies: string[];
 	devDependencies?: string[];
+	types?: string[],
 	id: T;
 }
 
@@ -127,6 +128,7 @@ export const database: {
 		id: DATABASE.KYSELY,
 		package: "@lucia-auth/adapter-kysely",
 		dependencies: ["kysely", "pg"],
+		types: ["@types/pg"],
 		adapter: {
 			envVars: [],
 			getArgs: () => ["db"],
