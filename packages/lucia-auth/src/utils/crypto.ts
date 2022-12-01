@@ -11,13 +11,13 @@ export const generateRandomString = (length: number) => {
 /* converts callback to async/await */
 const scrypt = promisify(crypto.scrypt);
 
-const hash = async (s: string) => {
+const hashScrypt = async (s: string) => {
 	const salt = generateRandomString(16);
 	const hash = (await scrypt(s, salt, 64)) as Buffer;
 	return salt + ":" + hash.toString("hex");
 };
 
-const verify = async (s: string, hash: string) => {
+const verifyScrypt = async (s: string, hash: string) => {
 	const [salt, key] = hash.split(":");
 	const keyBuffer = Buffer.from(key, "hex");
 	const derivedKey = (await scrypt(s, salt, 64)) as Buffer;
@@ -28,4 +28,4 @@ const verify = async (s: string, hash: string) => {
 	return crypto.timingSafeEqual(keyBuffer, derivedKey);
 };
 
-export const scryptProvider:HashFunctionProvider = { hash, verify }
+export const scryptProvider:HashFunctionProvider = { hash: hashScrypt, verify: verifyScrypt }
