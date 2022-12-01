@@ -80,3 +80,8 @@ export type MinimalRequest = {
 	url: string;
 	method: string;
 };
+
+export type HashFunctionProvider = {
+	hash: (s: string) => Promise<string>;
+	verify: (s: string, hash: string) => Promise<boolean>;
+}

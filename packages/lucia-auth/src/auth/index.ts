@@ -1,4 +1,4 @@
-import type { Env, User } from "../types.js";
+import type { HashFunctionProvider, Env, User } from "../types.js";
 import {
 	authenticateUserFunction,
 	createUserFunction,
@@ -25,6 +25,7 @@ import {
 import { createSessionCookiesFunction } from "./cookie.js";
 import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
 import { logError } from "../utils/log.js";
+import { scryptProvider } from "../utils/crypto.js";
 
 export { SESSION_COOKIE_NAME } from "./cookie.js"
 
@@ -69,7 +70,8 @@ export class Auth<C extends Configurations = any> {
 				return transform({ id, ...attributes }) as User;
 			},
 			sessionCookieOptions: configs.sessionCookieOptions || [defaultCookieOption],
-			deleteCookieOptions: configs.deleteCookieOptions || []
+			deleteCookieOptions: configs.deleteCookieOptions || [],
+			hashFunctionProvider: configs.hashFunctionProvider || scryptProvider
 		};
 		this.getUser = getUserFunction(this);
 		this.getUserByProviderId = getUserByProviderIdFunction(this);
@@ -94,6 +96,7 @@ export class Auth<C extends Configurations = any> {
 		this.validateRequestHeaders = validateRequestHeadersFunction(this);
 
 		this.createSessionCookies = createSessionCookiesFunction(this);
+
 	}
 	public getUser: ReturnType<typeof getUserFunction>;
 	public getUserByProviderId: ReturnType<typeof getUserByProviderIdFunction>;
@@ -135,6 +138,7 @@ interface Configurations {
 	transformUserData?: (userData: UserData) => Record<string, any>;
 	sessionCookieOptions?: CookieOption[];
 	deleteCookieOptions?: CookieOption[];
+	hashFunctionProvider?: HashFunctionProvider;
 }
 
 type CookieOption = {
@@ -155,4 +159,5 @@ type UserConfig<C extends Configurations = any> = {
 	transformUserData: (
 		userData: UserSchema
 	) => C["transformUserData"] extends {} ? ReturnType<C["transformUserData"]> : { userId: string };
+	hashFunctionProvider: HashFunctionProvider;
 };
