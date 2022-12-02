@@ -9,8 +9,8 @@ type Data = {
 
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	if (req.method !== "POST") return res.status(404).json({ error: "Not found" });
-	const { username, password } = JSON.parse(req.body);
-	if (!username || !password || typeof username !== "string" || typeof password !== "string") {
+	const { username, password } = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+	if (!username || !password) {
 		return res.status(200).json({
 			error: "Invalid input"
 		});

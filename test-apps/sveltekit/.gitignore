@@ -8,3 +8,5 @@ node_modules
 !.env.example
 .vercel
 .output
+prisma/migrations
+prisma/dev.db
