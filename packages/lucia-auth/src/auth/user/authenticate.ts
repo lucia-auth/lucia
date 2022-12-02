@@ -1,4 +1,3 @@
-import { verifyScrypt } from "../../utils/crypto.js";
 import { LuciaError } from "../../error.js";
 import type { User, Auth } from "../../types.js";
 
@@ -12,7 +11,7 @@ export const authenticateUserFunction = (auth: Auth) => {
 		if (!databaseData.hashed_password) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		if (databaseData.hashed_password.startsWith("$2a"))
 			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-		const isValid = await verifyScrypt(password || "", databaseData.hashed_password);
+		const isValid = await auth.configs.hash.validate(password || "", databaseData.hashed_password);
 		if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		const user = auth.configs.transformUserData(databaseData);
 		return user;
