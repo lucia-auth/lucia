@@ -1,10 +1,10 @@
 import lucia from 'lucia-auth';
-import supabase from '@lucia-auth/adapter-supabase';
+import prisma from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
-import { SUPABASE_URL, SUPABASE_SECRET } from '$env/static/private';
+import { PrismaClient } from "@prisma/client";
 
 export const auth = lucia({
-	adapter: supabase(SUPABASE_URL, SUPABASE_SECRET),
+	adapter: prisma(new PrismaClient()),
 	env: dev ? 'DEV' : 'PROD',
 	sessionTimeout: 1000 * 5,
 	transformUserData: (userData) => {
