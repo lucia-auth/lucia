@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import Github from '$lib/components/Github.svelte';
 
 	export let form: { message?: string };
 </script>
@@ -23,5 +24,7 @@
 	<input type="password" id="password" name="password" /><br />
 	<input type="submit" value="Continue" class="button" />
 </form>
-<p class="error">{form?.message || ''}</p>
+{#if form?.message}
+	<p class="error">{form.message || ''}</p>
+{/if}
 <a href="/signup" class="link">Create a new account</a>
