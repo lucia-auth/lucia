@@ -13,15 +13,17 @@
 	"dependencies": {
 		"@astrojs/svelte": "^1.0.2",
 		"@astrojs/tailwind": "^2.1.2",
-		"@lucia-auth/adapter-supabase": "workspace:*",
+		"@lucia-auth/adapter-prisma": "workspace:^*",
 		"@lucia-auth/astro": "workspace:*",
 		"@lucia-auth/oauth": "workspace:*",
+		"@prisma/client": "^4.7.0",
 		"astro": "^1.6.0",
 		"lucia-auth": "workspace:*",
 		"svelte": "^3.46.4",
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {
-		"@types/cookie": "^0.5.1"
+		"@types/cookie": "^0.5.1",
+		"prisma": "^4.7.0"
 	}
 }
