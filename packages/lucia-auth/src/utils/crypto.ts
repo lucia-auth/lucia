@@ -8,18 +8,22 @@ export const generateRandomString = (length: number) => {
 
 export const generateHashWithScrypt = async (s: string) => {
 	const salt = generateRandomString(16);
-	const key = scrypt(s.normalize("NKFC"), salt);
+	const key = await scrypt(s.normalize("NFKC"), salt);
 	return `s2:${salt}:${key}`;
 };
 
 const scrypt = async (s: string, salt: string, blockSize = 16) => {
-	const keyBuffer = await scryptAsync(new TextEncoder().encode(s), new TextEncoder().encode(salt), {
-		N: 16384,
-		r: blockSize,
-		p: 1,
-		dkLen: 64
-	});
-	return bufferToHex(keyBuffer);
+	const keyUint8Array = await scryptAsync(
+		new TextEncoder().encode(s),
+		new TextEncoder().encode(salt),
+		{
+			N: 16384,
+			r: blockSize,
+			p: 1,
+			dkLen: 64
+		}
+	);
+	return convertUint8ArrayToHex(keyUint8Array);
 };
 
 export const validateHash = async (s: string, hash: string) => {
@@ -52,6 +56,6 @@ const constantTimeEqual = (a: string, b: string) => {
 	return c === 0;
 };
 
-const bufferToHex = (arr: Uint8Array) => {
+const convertUint8ArrayToHex = (arr: Uint8Array) => {
 	return [...arr].map((x) => x.toString(16).padStart(2, "0")).join("");
 };

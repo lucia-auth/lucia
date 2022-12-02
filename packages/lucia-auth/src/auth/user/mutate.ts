@@ -1,4 +1,3 @@
-import { hashScrypt } from "../../utils/crypto.js";
 import type { Auth, User } from "../../types.js";
 
 type CreateUser = (
@@ -15,7 +14,9 @@ export const createUserFunction = (auth: Auth) => {
 		const providerId = `${provider}:${identifier}`;
 		const attributes = options?.attributes || {};
 		const userId = await auth.configs.generateCustomUserId();
-		const hashedPassword = options?.password ? await hashScrypt(options.password) : null;
+		const hashedPassword = options?.password
+			? await auth.configs.hash.generate(options.password)
+			: null;
 		const userData = await auth.configs.adapter.setUser(userId, {
 			providerId,
 			hashedPassword: hashedPassword,
@@ -65,7 +66,7 @@ type UpdateUserPassword = (userId: string, password: string | null) => Promise<U
 
 export const updateUserPasswordFunction = (auth: Auth) => {
 	const updateUserPassword: UpdateUserPassword = async (userId, password) => {
-		const hashedPassword = password ? await hashScrypt(password) : null;
+		const hashedPassword = password ? await auth.configs.hash.generate(password) : null;
 		const [userData] = await Promise.all([
 			auth.configs.adapter.updateUser(userId, {
 				hashedPassword
