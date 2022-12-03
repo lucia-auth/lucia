@@ -16,13 +16,17 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	const { oauth_state: storedState } = cookie.parse(req.headers.cookie || "");
 	if (typeof code !== "string" || typeof code !== "string" || storedState !== state)
 		return res.status(400).end();
-	const { existingUser, providerUser, createUser } = await githubAuth.validateCallback(code);
-	const user =
-		existingUser ??
-		(await createUser({
-			username: providerUser.login
-		}));
-	const session = await auth.createSession(user.userId);
-	authRequest.setSession(session);
-	return res.status(302).redirect("/");
+	try {
+		const { existingUser, providerUser, createUser } = await githubAuth.validateCallback(code);
+		const user =
+			existingUser ??
+			(await createUser({
+				username: providerUser.login
+			}));
+		const session = await auth.createSession(user.userId);
+		authRequest.setSession(session);
+		return res.status(302).redirect("/");
+	} catch {
+		return res.status(500).end();
+	}
 };

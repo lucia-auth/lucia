@@ -1,1 +1,0 @@
-<a class="button" href="/">Sign in with Github</a>

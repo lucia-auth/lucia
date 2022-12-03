@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Github from '$lib/components/Github.svelte';
 
 	export let form: { message?: string };
 </script>
 
-<h2>Create an account</h2>
+<h2>Create an account with username and password</h2>
 <form
 	method="post"
 	use:enhance={({ data, cancel }) => {

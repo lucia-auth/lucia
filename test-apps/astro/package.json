@@ -15,7 +15,7 @@
 		"@astrojs/tailwind": "^2.1.2",
 		"@lucia-auth/adapter-prisma": "workspace:^*",
 		"@lucia-auth/astro": "workspace:*",
-		"@lucia-auth/oauth": "workspace:*",
+		"@lucia-auth/oauth": "workspace:0.2.2",
 		"@prisma/client": "^4.7.0",
 		"astro": "^1.6.0",
 		"lucia-auth": "workspace:*",

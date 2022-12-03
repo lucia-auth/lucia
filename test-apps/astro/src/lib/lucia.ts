@@ -1,11 +1,13 @@
-import lucia from "lucia-auth";
-import prisma from "@lucia-auth/adapter-prisma";
-import github from "@lucia-auth/oauth/github";
-import { PrismaClient } from "@prisma/client";
+import lucia from 'lucia-auth';
+import prisma from '@lucia-auth/adapter-prisma';
+import { PrismaClient } from '@prisma/client';
+
+import github from '@lucia-auth/oauth/github';
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env: "DEV",
+	env: import.meta.env.DEV ? "DEV" : "PROD",
+	sessionTimeout: 1000 * 5,
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,
@@ -14,9 +16,9 @@ export const auth = lucia({
 	}
 });
 
-export type Auth = typeof auth;
-
 export const githubAuth = github(auth, {
-	clientId: import.meta.env.GITHUB_CLIENT_ID || "",
-	clientSecret: import.meta.env.GITHUB_CLIENT_SECRET || ""
+	clientId: import.meta.env.GITHUB_CLIENT_ID,
+	clientSecret: import.meta.env.GITHUB_CLIENT_SECRET
 });
+
+export type Auth = typeof auth;

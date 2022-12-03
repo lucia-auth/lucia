@@ -1,10 +1,14 @@
 # Lucia + Sveltekit demo
 
-Install dependencies:
+## Setup
+
+### Install dependencies
 
 ```bash
 pnpm i
 ```
+
+### Prisma
 
 Migrate Prisma schema:
 
@@ -12,7 +16,11 @@ Migrate Prisma schema:
 npx prisma migrate dev --name init
 ```
 
-Run:
+### Github OAuth
+
+Create a Github OAuth app and copy-paste client id and secret into `.env`.
+
+## Run
 
 ```bash
 pnpm dev

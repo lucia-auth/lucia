@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Github from '$lib/components/Github.svelte';
 
 	export let form: { message?: string };
 </script>

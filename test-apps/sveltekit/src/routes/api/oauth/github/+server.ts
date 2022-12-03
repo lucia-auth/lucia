@@ -7,13 +7,19 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 	const state = url.searchParams.get('state');
 	const storedState = cookies.get('oauth_state');
 	if (storedState !== state || !code || !state) throw new Response(null, { status: 401 });
-	const { existingUser, providerUser, createUser } = await githubAuth.validateCallback(code);
-	const user =
-		existingUser ??
-		(await createUser({
-			username: providerUser.login
-		}));
-	const session = await auth.createSession(user.userId);
-	locals.setSession(session);
-	throw redirect(302, '/');
+	try {
+		const { existingUser, providerUser, createUser } = await githubAuth.validateCallback(code);
+		const user =
+			existingUser ??
+			(await createUser({
+				username: providerUser.login
+			}));
+		const session = await auth.createSession(user.userId);
+		locals.setSession(session);
+		throw redirect(302, '/');
+	} catch {
+		return new Response(null, {
+			status: 500
+		});
+	}
 };
