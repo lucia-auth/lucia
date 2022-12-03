@@ -11,7 +11,7 @@ export const signOut = async (): Promise<void> => {
 };
 
 export const getUser = (): Readable<ClientUser> => {
-	if (typeof window === "undefined") {
+	if (typeof document === "undefined") {
 		return getServerUser();
 	}
 	return getClientUser();
