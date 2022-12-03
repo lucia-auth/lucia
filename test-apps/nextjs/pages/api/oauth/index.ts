@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			path: "/",
 			maxAge: 60 * 60,
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production"
+			secure: process.env.NODE_ENV !== "development"
 		});
 		return res.status(302).setHeader("set-cookie", oauthStateCookie).redirect(url);
 	}
