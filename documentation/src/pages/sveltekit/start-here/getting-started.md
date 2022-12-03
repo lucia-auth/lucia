@@ -40,18 +40,6 @@ This module and the file that holds it **should NOT be imported from the client*
 
 SvelteKit specific functions are imported from `@lucia-auth/sveltekit`.
 
-### Vite config
-
-Due to an issue with Vite (specifically `vite-plugin-svelte` [#429](https://github.com/sveltejs/vite-plugin-svelte/issues/429)), please add `@lucia-auth/sveltekit` to `noExternal` config inside `vite.config.js`.
-
-```diff
-const config = {
-	ssr: {
-+		noExternal: ["@lucia-auth/sveltekit"]
-	}
-};
-```
-
 ### Hooks
 
 Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/sveltekit/api-reference/server-api#handlehooks).
