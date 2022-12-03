@@ -7,6 +7,8 @@ node_modules
 .vercel
 .output
 
+package-lock.json
+
 prisma/migrations
 prisma/dev.db
 prisma/dev.db-journal
