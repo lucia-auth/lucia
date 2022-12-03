@@ -75,15 +75,19 @@ A session.
 
 ```ts
 type Session = {
-	userId: string;
 	expires: number;
+	idlePeriodExpires: number;
+	sessionId: string;
+	userId: string;
 };
 ```
 
-| name    | type     | description                         |
-| ------- | -------- | ----------------------------------- |
-| userId  | `string` | user id of the user of the session  |
-| expires | `number` | unix time of the session expiration |
+| name              | type     | description                                                                          |
+| ----------------- | -------- | ------------------------------------------------------------------------------------ |
+| expires           | `number` | unix time of the session expiration                                                  |
+| idlePeriodExpires | `number` | unix time of the [idle period](/learn/start-here/concepts#session-states) expiration |
+| sessionId         | `string` | session if                                                                           |
+| userId            | `string` | user id of the user of the session                                                   |
 
 ## `SessionAdapter`
 
