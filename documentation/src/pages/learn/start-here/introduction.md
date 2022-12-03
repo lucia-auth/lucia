@@ -15,3 +15,5 @@ const user = await auth.createUser("email", email, {
 const session = await auth.createSession(user.userId);
 const sessionCookie = auth.createSessionCookie(session)
 ```
+
+Lucia aims to work well with any modern web frameworks and supports run-times such as Cloudflare edge workers.
