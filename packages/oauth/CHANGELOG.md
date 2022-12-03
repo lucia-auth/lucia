@@ -2,7 +2,7 @@
 
 ## 0.2.1
 
-- Remove crypto dependency
+- Remove crypto dependency [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)
 
 ## 0.2.0
 
