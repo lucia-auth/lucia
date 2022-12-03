@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { auth } from "../lib/lucia";
+import { auth } from "../../lib/lucia";
 import { AuthRequest } from "@lucia-auth/nextjs";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
@@ -37,7 +37,7 @@ const Index = () => {
 		>;
 		const username = formValues.username.value;
 		const password = formValues.password.value;
-		const response = await fetch("/api/signup", {
+		const response = await fetch("/api/login", {
 			method: "POST",
 			body: JSON.stringify({
 				username,
@@ -53,8 +53,8 @@ const Index = () => {
 	};
 	return (
 		<>
-			<h2>Create an account with username and password</h2>
-			<form method="post" onSubmit={handleSubmit} action="/api/signup">
+			<h2>Sign in with username and password</h2>
+			<form method="post" onSubmit={handleSubmit} action="/api/login">
 				<label htmlFor="username">username</label>
 				<br />
 				<input id="username" name="username" />
@@ -65,9 +65,9 @@ const Index = () => {
 				<br />
 				<input type="submit" value="Continue" className="button" />
 			</form>
-			{message && <p className="error">{message}</p>}
-			<Link href="/login" className="link">
-				Sign in
+			{message && <p className="error">{message || ""}</p>}
+			<Link href="/signup" className="link">
+				Create a new account
 			</Link>
 		</>
 	);

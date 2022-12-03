@@ -1,19 +1,19 @@
 # Lucia + Next.js demo
 
-## Setup
+Install dependencies:
 
 ```bash
 pnpm i
-pnpm dev
 ```
 
-### Environment variables
+Migrate Prisma schema:
 
 ```bash
-SUPABASE_URL=""
-SUPABASE_SECRET="" # service_role
+npx prisma migrate dev --name init
 ```
 
-### Database
+Run:
 
-Add a `username` column to `user` table (string, unique).
+```bash
+pnpm dev
+```

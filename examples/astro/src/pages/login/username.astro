@@ -1,8 +1,8 @@
 ---
 // pages/signup.astro
-import { auth } from "../lib/lucia";
+import { auth } from "../../lib/lucia";
 import { AuthRequest } from "@lucia-auth/astro";
-import MainLayout from "../layouts/MainLayout.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
 
 const authRequest = new AuthRequest(auth, Astro);
 const session = await authRequest.getSession();
@@ -15,14 +15,9 @@ if (Astro.request.method === "POST") {
 	// check for empty values
 	if (username && password && typeof username === "string" && typeof password === "string") {
 		try {
-			const user = await auth.createUser("username", username, {
-				password,
-				attributes: {
-					username
-				}
-			});
+			const user = await auth.authenticateUser("username", username, password);
 			const session = await auth.createSession(user.userId);
-			authRequest.setSession(session); // set session cookie
+			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch {
 			// username already in use
@@ -35,7 +30,7 @@ if (Astro.request.method === "POST") {
 ---
 
 <MainLayout>
-	<h2>Create an account with username and password</h2>
+	<h2>Sign in with username and password</h2>
 	<form method="post">
 		<label for="username">username</label><br />
 		<input id="username" name="username" /><br />
@@ -43,5 +38,5 @@ if (Astro.request.method === "POST") {
 		<input type="password" id="password" name="password" /><br />
 		<input type="submit" value="Continue" class="button" />
 	</form>
-	<a href="/login" class="link">Sign in</a>
+	<a href="/signup" class="link">Create a new account</a>
 </MainLayout>

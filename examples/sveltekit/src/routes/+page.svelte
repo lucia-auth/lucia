@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { signOut, getUser } from '@lucia-auth/sveltekit/client';
-	import { invalidateAll } from "$app/navigation";
+	import { invalidateAll } from '$app/navigation';
 	const user = getUser();
 </script>
 

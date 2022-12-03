@@ -12,8 +12,8 @@
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "latest",
-		"@sveltejs/kit": "latest",
+		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/kit": "next",
 		"@types/cookie": "^0.5.1",
 		"@typescript-eslint/eslint-plugin": "^5.35.1",
 		"@typescript-eslint/parser": "^5.35.1",
@@ -24,19 +24,22 @@
 		"postcss": "^8.4.16",
 		"prettier": "^2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
+		"prisma": "4.x",
 		"svelte": "^3.50.1",
 		"svelte-check": "^2.8.1",
 		"svelte-preprocess": "^4.10.7",
 		"tailwindcss": "^3.1.8",
 		"tslib": "^2.4.0",
-		"typescript": "^4.7.4",
+		"typescript": "^4.8.4",
 		"vite": "^3.1.0"
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-supabase": "latest",
-		"lucia-auth": "latest",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/oauth": "latest",
 		"@lucia-auth/sveltekit": "latest",
-		"devalue": "^4.0.1"
+		"@prisma/client": "~4.7.0",
+		"devalue": "^4.0.1",
+		"lucia-auth": "latest"
 	}
 }

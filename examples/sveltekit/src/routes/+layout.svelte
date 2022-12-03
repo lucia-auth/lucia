@@ -12,7 +12,7 @@
 	<title>Lucia demo</title>
 </svelte:head>
 <div>
-	<h1>Lucia + SvelteKit demo</h1>
+	<h1><a href="/">Lucia + SvelteKit demo</a></h1>
 	<slot />
 </div>
 
@@ -29,13 +29,12 @@
 	:global(input:not(.checkbox)) {
 		@apply border appearance-none outline-none my-1 rounded p-1 w-full;
 	}
-	:global(.github),
 	:global(.button),
 	:global(button) {
 		@apply bg-black text-white my-2 rounded py-1 cursor-pointer w-full text-center hover:opacity-80;
 	}
 	:global(.link) {
-		@apply text-blue-500 text-sm hover:underline my-2;
+		@apply text-blue-500 hover:underline mb-1;
 	}
 	:global(label) {
 		@apply text-sm;

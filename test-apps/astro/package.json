@@ -13,7 +13,7 @@
 	"dependencies": {
 		"@astrojs/svelte": "^1.0.2",
 		"@astrojs/tailwind": "^2.1.2",
-		"@lucia-auth/adapter-prisma": "workspace:^*",
+		"@lucia-auth/adapter-prisma": "workspace:*",
 		"@lucia-auth/astro": "workspace:*",
 		"@lucia-auth/oauth": "workspace:0.2.2",
 		"@prisma/client": "^4.7.0",

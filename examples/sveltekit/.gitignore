@@ -3,8 +3,10 @@ node_modules
 /build
 /.svelte-kit
 /package
-.env
-.env.*
 !.env.example
 .vercel
 .output
+
+prisma/migrations
+prisma/dev.db
+prisma/dev.db-journal

@@ -36,7 +36,7 @@
 	"type": "module",
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/oauth": "workspace:^0.2.1",
+		"@lucia-auth/oauth": "workspace:*",
 		"@lucia-auth/sveltekit": "workspace:*",
 		"@prisma/client": "~4.7.0",
 		"devalue": "^4.0.1",
