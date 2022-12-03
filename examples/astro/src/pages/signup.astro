@@ -35,7 +35,7 @@ if (Astro.request.method === "POST") {
 ---
 
 <MainLayout>
-	<h2>Create an account</h2>
+	<h2>Create an account with username and password</h2>
 	<form method="post">
 		<label for="username">username</label><br />
 		<input id="username" name="username" /><br />
@@ -43,5 +43,5 @@ if (Astro.request.method === "POST") {
 		<input type="password" id="password" name="password" /><br />
 		<input type="submit" value="Continue" class="button" />
 	</form>
-    <a href="/login" class="link">Sign in</a>
+	<a href="/login" class="link">Sign in</a>
 </MainLayout>

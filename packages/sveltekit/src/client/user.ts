@@ -2,6 +2,7 @@ import { getContext } from "svelte";
 import { derived, get, type Readable } from "svelte/store";
 import type { GlobalWindow, PageData } from "../types.js";
 import type { User } from "lucia-auth";
+import { UndefinedError } from "./index.js";
 
 export type ClientUser = Readonly<User> | null;
 
@@ -12,7 +13,7 @@ export const getServerUser = (): Readable<ClientUser> => {
 		}>;
 	};
 	const luciaContext = get(page).data._lucia;
-	if (!luciaContext) throw new Error("_lucia does not exist in page data");
+	if (!luciaContext) throw new UndefinedError("_lucia");
 	return {
 		subscribe: (subscriber) => {
 			subscriber(luciaContext.user);
@@ -23,6 +24,6 @@ export const getServerUser = (): Readable<ClientUser> => {
 
 export const getClientUser = (): Readable<ClientUser> => {
 	const globalWindow = window as GlobalWindow;
-	if (!globalWindow._luciaStore) throw new Error("_luciaStore is undefined");
+	if (!globalWindow._luciaStore) throw new UndefinedError("_luciaStore");
 	return derived(globalWindow._luciaStore, (val) => val.user);
 };

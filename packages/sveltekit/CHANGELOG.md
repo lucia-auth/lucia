@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.3.2
+
+- Remove node dependencies (`crypto`) [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)
+- Add`@noble/hashes` as dependency
+- Use `blake3` for checksum
+- Better error messages for `getUser()` [#239](https://github.com/pilcrowOnPaper/lucia-auth/issues/239)
+
 ## 0.3.1
 
 - Clean up caching mechanism

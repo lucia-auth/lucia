@@ -25,8 +25,9 @@ import {
 import { createSessionCookiesFunction } from "./cookie.js";
 import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
 import { logError } from "../utils/log.js";
+import { generateHashWithScrypt, validateHash } from "../utils/crypto.js";
 
-export { SESSION_COOKIE_NAME } from "./cookie.js"
+export { SESSION_COOKIE_NAME } from "./cookie.js";
 
 export const lucia = <C extends Configurations>(configs: C) => {
 	return new Auth(configs) as Omit<Auth<C>, "getAuthSession">;
@@ -69,7 +70,11 @@ export class Auth<C extends Configurations = any> {
 				return transform({ id, ...attributes }) as User;
 			},
 			sessionCookieOptions: configs.sessionCookieOptions || [defaultCookieOption],
-			deleteCookieOptions: configs.deleteCookieOptions || []
+			deleteCookieOptions: configs.deleteCookieOptions || [],
+			hash: {
+				generate: configs.hash?.generate ?? generateHashWithScrypt,
+				validate: configs.hash?.validate ?? validateHash
+			}
 		};
 		this.getUser = getUserFunction(this);
 		this.getUserByProviderId = getUserByProviderIdFunction(this);
@@ -120,6 +125,8 @@ export class Auth<C extends Configurations = any> {
 	public createSessionCookies: ReturnType<typeof createSessionCookiesFunction>;
 }
 
+type MaybePromise<T> = T | Promise<T>;
+
 interface Configurations {
 	adapter:
 		| Adapter
@@ -135,6 +142,10 @@ interface Configurations {
 	transformUserData?: (userData: UserData) => Record<string, any>;
 	sessionCookieOptions?: CookieOption[];
 	deleteCookieOptions?: CookieOption[];
+	hash?: {
+		generate: (s: string) => MaybePromise<string>;
+		validate: (s: string, hash: string) => MaybePromise<boolean>;
+	};
 }
 
 type CookieOption = {
@@ -155,4 +166,8 @@ type UserConfig<C extends Configurations = any> = {
 	transformUserData: (
 		userData: UserSchema
 	) => C["transformUserData"] extends {} ? ReturnType<C["transformUserData"]> : { userId: string };
+	hash: {
+		generate: (s: string) => MaybePromise<string>;
+		validate: (s: string, hash: string) => MaybePromise<boolean>;
+	};
 };

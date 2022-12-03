@@ -24,6 +24,7 @@
 		"postcss": "^8.4.16",
 		"prettier": "^2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
+		"prisma": "4.x",
 		"svelte": "^3.50.1",
 		"svelte-check": "^2.8.1",
 		"svelte-preprocess": "^4.10.7",
@@ -34,9 +35,11 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-supabase": "workspace:*",
-		"lucia-auth": "workspace:*",
+		"@lucia-auth/adapter-prisma": "workspace:*",
+		"@lucia-auth/oauth": "workspace:*",
 		"@lucia-auth/sveltekit": "workspace:*",
-		"devalue": "^4.0.1"
+		"@prisma/client": "~4.7.0",
+		"devalue": "^4.0.1",
+		"lucia-auth": "workspace:*"
 	}
 }

@@ -28,7 +28,7 @@ import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: "DEV" // "PROD" if in prod
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD"
 });
 
 export type Auth = typeof auth;

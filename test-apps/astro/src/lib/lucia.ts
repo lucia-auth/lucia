@@ -1,11 +1,13 @@
-import lucia from "lucia-auth";
-import supabase from "@lucia-auth/adapter-supabase";
-import github from "@lucia-auth/oauth/github";
-import google from "@lucia-auth/oauth/google";
+import lucia from 'lucia-auth';
+import prisma from '@lucia-auth/adapter-prisma';
+import { PrismaClient } from '@prisma/client';
+
+import github from '@lucia-auth/oauth/github';
 
 export const auth = lucia({
-	adapter: supabase(import.meta.env.SUPABASE_URL || "", import.meta.env.SUPABASE_SECRET || ""),
-	env: "DEV",
+	adapter: prisma(new PrismaClient()),
+	env: import.meta.env.DEV ? "DEV" : "PROD",
+	sessionTimeout: 1000 * 5,
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,
@@ -14,15 +16,9 @@ export const auth = lucia({
 	}
 });
 
-export type Auth = typeof auth;
-
 export const githubAuth = github(auth, {
-	clientId: import.meta.env.GITHUB_CLIENT_ID || "",
-	clientSecret: import.meta.env.GITHUB_CLIENT_SECRET || ""
+	clientId: import.meta.env.GITHUB_CLIENT_ID,
+	clientSecret: import.meta.env.GITHUB_CLIENT_SECRET
 });
 
-export const googleAuth = google(auth, {
-	clientId: import.meta.env.GOOGLE_CLIENT_ID || "",
-	clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET || "",
-	redirectUri: "http://localhost:3000/api/google"
-});
+export type Auth = typeof auth;

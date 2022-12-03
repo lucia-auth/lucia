@@ -1,10 +1,13 @@
 import lucia from 'lucia-auth';
-import supabase from '@lucia-auth/adapter-supabase';
+import prisma from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
-import { SUPABASE_URL, SUPABASE_SECRET } from '$env/static/private';
+import { PrismaClient } from '@prisma/client';
+
+import github from '@lucia-auth/oauth/github';
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '$env/static/private';
 
 export const auth = lucia({
-	adapter: supabase(SUPABASE_URL, SUPABASE_SECRET),
+	adapter: prisma(new PrismaClient()),
 	env: dev ? 'DEV' : 'PROD',
 	sessionTimeout: 1000 * 5,
 	transformUserData: (userData) => {
@@ -13,6 +16,11 @@ export const auth = lucia({
 			username: userData.username
 		};
 	}
+});
+
+export const githubAuth = github(auth, {
+	clientId: GITHUB_CLIENT_ID,
+	clientSecret: GITHUB_CLIENT_SECRET
 });
 
 export type Auth = typeof auth;

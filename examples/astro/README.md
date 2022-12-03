@@ -2,18 +2,26 @@
 
 ## Setup
 
+### Install dependencies
+
 ```bash
 pnpm i
-pnpm dev
 ```
 
-### Environment variables
+### Prisma
+
+Migrate Prisma schema:
 
 ```bash
-SUPABASE_URL=""
-SUPABASE_SECRET="" # service_role
+npx prisma migrate dev --name init
 ```
 
-### Database
+### Github OAuth
 
-Add a `username` column to `user` table (string, unique).
+Create a Github OAuth app and copy-paste client id and secret into `.env`.
+
+## Run
+
+```bash
+pnpm dev
+```

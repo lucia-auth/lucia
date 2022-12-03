@@ -4,7 +4,7 @@
 	export let form: { message?: string };
 </script>
 
-<h2>Create an account</h2>
+<h2>Create an account with username and password</h2>
 <form
 	method="post"
 	use:enhance={({ data, cancel }) => {
@@ -23,5 +23,7 @@
 	<input type="password" id="password" name="password" /><br />
 	<input type="submit" value="Continue" class="button" />
 </form>
-<p class="error">{form?.message || ''}</p>
+{#if form?.message}
+	<p class="error">{form.message || ''}</p>
+{/if}
 <a href="/login" class="link">Sign in</a>

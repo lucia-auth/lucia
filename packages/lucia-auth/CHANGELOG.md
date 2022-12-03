@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.2.1
+
+- Remove node dependencies (`crypto`, `util`) [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)
+- Adds `@noble/hashes` as dependency
+- Use block size (`r`) of `16` for hashing passwords
+- Add `configs.hash.generate()` and `configs.hash.validate()` for custom hashing implementation
+- Normalize password string on hashing
+
 ## 0.2.0
 
 - [Breaking] Remove `validateRequest()` and `getSessionUserFromRequest()`

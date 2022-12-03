@@ -53,7 +53,7 @@ const Index = () => {
 	};
 	return (
 		<>
-			<h2>Create an account</h2>
+			<h2>Create an account with username and password</h2>
 			<form method="post" onSubmit={handleSubmit} action="/api/signup">
 				<label htmlFor="username">username</label>
 				<br />
