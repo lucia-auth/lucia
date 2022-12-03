@@ -1,4 +1,5 @@
 import type { User, GlobalUserAttributes } from "lucia-auth";
+import { generateRandomString } from "lucia-auth";
 
 export interface OAuthProvider {
 	validateCallback: (code: string) => Promise<{
@@ -23,14 +24,7 @@ export class LuciaOAuthError extends Error {
 }
 
 export const generateState = () => {
-	const validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	let array = new Uint8Array(43);
-
-	array = crypto.getRandomValues(array);
-	array = array.map((x) => validChars.charCodeAt(x % validChars.length));
-
-	const state = String.fromCharCode.apply(null, [...array]);
-	return state;
+	return generateRandomString(43)
 };
 
 export type GetAuthorizationUrlReturnType<T> = T extends null ? [string] : [string, string];

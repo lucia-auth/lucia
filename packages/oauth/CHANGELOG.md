@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.1
+
+- Remove crypto dependency
+
 ## 0.2.0
 
 - [Breaking] `getAuthorizationUrl()` generates and adds `state` params to the authorization url

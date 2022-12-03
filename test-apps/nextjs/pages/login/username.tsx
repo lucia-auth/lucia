@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { auth } from "../lib/lucia";
+import { auth } from "../../lib/lucia";
 import { AuthRequest } from "@lucia-auth/nextjs";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
@@ -53,7 +53,7 @@ const Index = () => {
 	};
 	return (
 		<>
-			<h2>Sign in</h2>
+			<h2>Sign in with username and password</h2>
 			<form method="post" onSubmit={handleSubmit} action="/api/login">
 				<label htmlFor="username">username</label>
 				<br />

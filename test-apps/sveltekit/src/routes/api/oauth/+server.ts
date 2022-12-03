@@ -1,6 +1,5 @@
 import type { RequestHandler } from './$types';
 import { githubAuth } from '$lib/server/lucia';
-import { redirect } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const provider = url.searchParams.get('provider');
@@ -10,9 +9,14 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			path: '/',
 			maxAge: 60 * 60
 		});
-		throw redirect(302, url);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				location: url
+			}
+		});
 	}
 	return new Response(null, {
-		status: 404
+		status: 400
 	});
 };
