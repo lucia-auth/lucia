@@ -19,14 +19,12 @@ class Patreon<A extends Auth> implements OAuthProvider {
 		this.clientSecret = configs.clientSecret;
 		this.redirectUri = configs.redirectUri;
 		this.scope = ["identity", "identity[email]", ...(configs.scope || []),...(configs.allMemberships ? ["identity.memberships"]:[])];
-        this.allMemberships = configs.allMemberships ?? false
 	}
 	private auth: A;
 	private clientId: string;
 	private clientSecret: string;
 	private scope: string[];
 	private redirectUri: string;
-    private allMemberships: boolean;
 
 	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
 		state?: State

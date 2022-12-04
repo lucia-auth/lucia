@@ -37,7 +37,7 @@ const patreon: (
 | configs.clientSecret | `string`                                    | Pateron OAuth app client secret      |          |
 | configs.redirectUri  | `string`                                    | one of the authorized redirect URIs |          |
 | configs.scope        | `string[]`                                  | an array of scopes                  | true     |
-| configs.allMemberships        | `boolean`                                  | get memberships of the user in all campaigns                 | true     |
+| configs.allMemberships        | `boolean`                                  | shorthand for scope "identity.memberships" which will reveal memberships for all campaigns                 | true     |
 
 ### Redirect user to authorization url
 
@@ -157,55 +157,42 @@ Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser)
 
 ```ts
 interface PatreonUser {
-    data: {
-        type: "user";
-        attributes: {
-            about: string | null;
-            created: string;
-            email: string;
-            first_name: string | null;
-            full_name: string;
-            hide_pledges: boolean | null;
-            image_url: string;
-            is_email_verified: boolean;
-            last_name: string | null;
-            url: string;
-        };
-        id: string;
-    }
-    included: [PatreonCampaign | PatreonMembership | PatreonTier]
+    type: "user";
+    attributes: {
+        about: string | null;
+        created: string;
+        email: string;
+        first_name: string | null;
+        full_name: string;
+        hide_pledges: boolean | null;
+        image_url: string;
+        is_email_verified: boolean;
+        last_name: string | null;
+        url: string;
+    };
+    id: string;
+	relationships: {
+		memberships: PatreonMembership[]
+	}
 }
 ```
-## `PateronMembership`
 
+## `PatreonMembership`
 
 ```ts
-export interface PatreonMembership {
+interface PatreonMembership {
     type: "member";
     id: string;
     relationships: {
-        campaign?: {
-            data: {
-                id: string;
-                type: "campaign";
-            }
-        }
-        currently_entitled_tiers: {
-            data: [
-                {
-                    id: string;
-                    type: "tier";
-                }
-            ]
-        }
+        campaign: PatreonCampaign
+        currently_entitled_tiers: PatreonTier[]
     }   
 }
 ```
-
-## `PateronCampaign`
+## `PatreonCampaign`
 
 ```ts
-export interface PatreonCampaign {
+interface PatreonCampaign {
     attributes: {
         vanity: string | null;
     }
@@ -214,10 +201,10 @@ export interface PatreonCampaign {
 }
 ```
 
-## `PateronTier`
+## `PatreonTier`
 
 ```ts
-export interface PatreonTier {
+interface PatreonTier {
     attributes: {
         amount_cents: number;
         title: string;
