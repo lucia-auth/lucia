@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/oauth",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "OAuth integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -10,7 +10,7 @@
 		"**/*"
 	],
 	"scripts": {
-		"build": "rm -rf ./dist/* && tsc && cp ./package.json ./dist && cp ./README.md ./dist && cp .npmignore dist",
+		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
 		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -32,7 +32,8 @@
 		".": "./index.js",
 		"./github": "./github.js",
 		"./google": "./google.js",
-		"./twitch": "./twitch.js"
+		"./twitch": "./twitch.js",
+		"./patreon": "./patreon.js"
 	},
 	"typesVersions": {
 		"*": {
@@ -44,6 +45,9 @@
 			],
 			"twitch": [
 				"twitch.d.ts"
+			],
+			"patreon": [
+				"patreon.d.ts"
 			]
 		}
 	},
