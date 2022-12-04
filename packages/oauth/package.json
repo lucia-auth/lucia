@@ -32,7 +32,8 @@
 		".": "./index.js",
 		"./github": "./github.js",
 		"./google": "./google.js",
-		"./twitch": "./twitch.js"
+		"./twitch": "./twitch.js",
+		"./patreon": "./patreon.js"
 	},
 	"typesVersions": {
 		"*": {
@@ -44,6 +45,9 @@
 			],
 			"twitch": [
 				"twitch.d.ts"
+			],
+			"patreon": [
+				"patreon.d.ts"
 			]
 		}
 	},
