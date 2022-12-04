@@ -25,12 +25,10 @@
 </script>
 
 <div
-	class="border-r dark:border-zinc-900 shrink-0 pt-20 fixed w-72 h-screen ml-4 sm:ml-8 lg:ml-12 bg-white dark:bg-black-zinc"
+	class="border-r dark:border-zinc-900 shrink-0 pt-20 fixed z-40 w-full sm:w-80 h-screen pl-4 sm:pl-8 lg:pl-12 bg-white dark:bg-black-zinc"
 	class:hidden={!$isMenuOpen}
 	class:xl:block={!showOnLg}
 	class:lg:block={showOnLg}
-	class:xl:border-r-0={!showOnLg}
-	class:lg:border-r-0={showOnLg}
 >
 	<div class="overflow-auto h-full relative overscroll-contain pr-4">
 		<div class="grid grid-cols-2 gap-x-1 sticky top-0 w-full bg-white dark:bg-black-zinc">

@@ -3,24 +3,10 @@ import MenuButton from "@components/utils/MenuButton.svelte";
 import ThemeButton from "@components/utils/ThemeButton.svelte";
 ---
 
-<div
-	class="fixed z-50 w-full dark:bg-black-zinc backdrop-blur-md bg-white xl:bg-transparent bg-opacity-60 xl:backdrop-blur-none"
->
+<div class="z-50 pointer-events-none bg-transparent fixed w-full">
 	<div class="py-3 flex w-full place-content-between px-4 sm:px-8 lg:px-12 place-items-center">
-		<div>
-			{
-				Astro.url.pathname === "/" ? (
-					<a class="text-2xl font-semibold hidden lg:block" href="/">
-						Lucia
-					</a>
-				) : (
-					<a class="text-2xl font-semibold" href="/">
-						Lucia
-					</a>
-				)
-			}
-		</div>
-		<div class="flex gap-x-4 place-items-center">
+		<a class="text-2xl font-semibold pointer-events-auto" href="/"> Lucia</a>
+		<div class="flex gap-x-4 place-items-center pointer-events-auto">
 			<a
 				href="https://github.com/pilcrowOnPaper/lucia-auth"
 				target="_blank"

@@ -26,32 +26,48 @@ const contributors = Array.isArray(contributorsResult) ? contributorsResult : []
 ---
 
 <LandingLayout>
-	<div class="mt-12 sm:mt-0 pt-16 sm:pt-24">
-		<h1 class="text-7xl md:text-8xl font-bold text-main">Lucia</h1>
-		<p class="text-xl mb-4 mt-2 font-medium">Authentication, simple and clean</p>
-		<p class="mt-8">
+	<div class="sm:pt-12 lg:pt-20">
+		<h1 class="text-5xl sm:text-7xl font-semibold">Authentication, <br />simple and clean</h1>
+		<p class="mb-4 mt-6">
 			Lucia is a simple yet flexible user and session management library that provides an
 			abstraction layer between your app and your database. It's bare-bones by design, keeping
-			everything easy to use and understand, and ensures type-safetly so you can use it confidently.
-			Lucia is the authentication solution that works with you and your app. Get started by reading
-			the <a href="/learn/start-here/introduction" class="text-main hover:underline"
-				>introduction page.</a
-			>
+			everything easy to use and understand.
 		</p>
-		<div class="mt-4">
-			<p>This is a free and open source project made possible by our contributors!</p>
-			<div class="flex w-full gap-2 flex-wrap mt-2">
+		<p class="mb-4 mt-2">
+			No more hacky workarounds. Make the authentication work for you and your app.
+		</p>
+		<a
+			href="/"
+			class="px-10 py-2 rounded-md my-2 block w-fit bg-black text-white dark:bg-white dark:text-black hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black dark:border-white"
+			>Get started</a
+		>
+		<section class="my-12">
+			<p class="my-4">
+				This is a free and open source project made possible by our contributors! Thank you to
+				everyone who has helped with the development!
+			</p>
+			<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
 				{
 					contributors.map((val) => (
 						<a href={val.html_url} target="_blank">
 							<img
 								src={val.avatar_url}
-								class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main"
+								class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100"
 							/>
 						</a>
 					))
 				}
 			</div>
-		</div>
+		</section>
 	</div>
 </LandingLayout>
+
+<style>
+	:global(.astro-code) {
+		@apply overflow-scroll rounded-md px-4 py-2 my-2 text-sm;
+		scrollbar-width: none;
+	}
+	:global(.dark .astro-code) {
+		@apply !bg-zinc-900;
+	}
+</style>
