@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.2.3
+
+- Add Patreon provider
+
+## 0.2.2
+
 ## 0.2.1
 
 - Remove crypto dependency [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)
@@ -11,7 +17,7 @@
 
 ## 0.1.4
 
-- Adds Twitch provider
+- Add Twitch provider
 
 ## 0.1.3
 
