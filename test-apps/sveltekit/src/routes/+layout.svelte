@@ -3,9 +3,7 @@
 	import { handleSession } from '@lucia-auth/sveltekit/client';
 	import '../app.css';
 
-	handleSession(page, (hasSession) => {
-		console.log(hasSession);
-	});
+	handleSession(page);
 </script>
 
 <svelte:head>

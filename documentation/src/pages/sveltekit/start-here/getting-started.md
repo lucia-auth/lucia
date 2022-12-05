@@ -91,9 +91,8 @@ In `+layout.server.ts`, create and export [`handleServerSession()`](/sveltekit/a
 ```ts
 // src/routes/+layout.server.ts
 import { handleServerSession } from "@lucia-auth/sveltekit";
-import type { LayoutServerLoad } from "./$types";
 
-export const load: LayoutServerLoad = handleServerSession();
+export const load = handleServerSession();
 ```
 
 You can use your own load function by passing it on as an argument.
@@ -101,9 +100,9 @@ You can use your own load function by passing it on as an argument.
 ```ts
 // src/routes/+layout.server.ts
 import { handleServerSession } from "@lucia-auth/sveltekit";
-import type { LayoutServerLoad, LayoutServerLoadEvent } from "./$types";
+import type { LayoutServerLoadEvent } from "./$types";
 
-export const load: LayoutServerLoad = handleServerSession((e: LayoutServerLoadEvent) => {
+export const load = handleServerSession((e: LayoutServerLoadEvent) => {
 	// ...
 });
 ```

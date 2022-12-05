@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.3
+
+- Fix types for `handleServerSession()` argument
+
 ## 0.3.2
 
 - Remove node dependencies (`crypto`) [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)
