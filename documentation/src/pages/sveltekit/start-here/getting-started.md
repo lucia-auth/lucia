@@ -96,6 +96,18 @@ import type { LayoutServerLoad } from "./$types";
 export const load: LayoutServerLoad = handleServerSession();
 ```
 
+You can use your own load function by passing it on as an argument.
+
+```ts
+// src/routes/+layout.server.ts
+import { handleServerSession } from "@lucia-auth/sveltekit";
+import type { LayoutServerLoad, LayoutServerLoadEvent } from "./$types";
+
+export const load: LayoutServerLoad = handleServerSession((e: LayoutServerLoadEvent) => {
+	// ...
+});
+```
+
 ### Types
 
 In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.js').Auth;` is where you exported `auth` (`lucia()`).

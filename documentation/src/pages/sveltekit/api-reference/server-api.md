@@ -72,9 +72,9 @@ const handleServerSession: (serverLoad?: ServerLoad) => ServerLoad;
 ```ts
 import { auth } from "$lib/server/lucia";
 import { handleServerSession } from "@lucia-auth/sveltekit";
-import type { ServerLoad } from "@sveltejs/kit";
+import type { LayoutServerLoad, LayoutServerLoadEvent } from "$./types";
 
-export const Load: ServerLoad = handleServerSession(auth, async (event) => {
+export const Load: LayoutServerLoad = handleServerSession(async (event: LayoutServerLoadEvent) => {
 	return {
 		message: "hi"
 	};
