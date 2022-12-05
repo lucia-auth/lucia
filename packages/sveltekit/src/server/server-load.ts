@@ -1,11 +1,13 @@
 import { generateChecksum } from "./crypto.js";
 import type { PageData, RequestEvent } from "../types.js";
 
-type HandleServerSession = <
-	LoadFn extends (event: RequestEvent) => any = () => Promise<any>
->(
+type LoadEvent = RequestEvent & {
+	parent: any;
+	depends: any;
+};
+type HandleServerSession = <LoadFn extends (event: LoadEvent) => any = () => Promise<{}>>(
 	serverLoad?: LoadFn
-) => (event: RequestEvent) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & PageData>;
+) => (event: LoadEvent) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & PageData>;
 
 export const handleServerSession: HandleServerSession = (fn) => {
 	const handleServerSessionCore = async ({ locals }: RequestEvent): Promise<PageData> => {
@@ -25,7 +27,7 @@ export const handleServerSession: HandleServerSession = (fn) => {
 			}
 		};
 	};
-	return async (event: RequestEvent) => {
+	return async (event: LoadEvent) => {
 		const { _lucia } = await handleServerSessionCore(event);
 		const loadFunction = fn || (async () => {});
 		const result = (await loadFunction(event)) || {};
