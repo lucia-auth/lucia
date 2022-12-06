@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.2
+
+- [Fix] Ignore `getSessionAndUserBySessionId()` if a normal adapter is provided as a user or session adapter
+
 ## 0.2.1
 
 - Remove node dependencies (`crypto`, `util`) [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)

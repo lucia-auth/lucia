@@ -49,11 +49,20 @@ export class Auth<C extends Configurations = any> {
 			sameSite: "lax",
 			path: "/"
 		};
+		if ("user" in configs.adapter) {
+			if ("getSessionAndUserBySessionId" in configs.adapter.user) {
+				delete configs.adapter.user.getSessionAndUserBySessionId;
+			}
+			if ("getSessionAndUserBySessionId" in configs.adapter.session) {
+				delete configs.adapter.session.getSessionAndUserBySessionId;
+			}
+		}
+		const adapter =
+			"user" in configs.adapter
+				? { ...configs.adapter.user, ...configs.adapter.session }
+				: configs.adapter;
 		this.configs = {
-			adapter:
-				"user" in configs.adapter
-					? { ...configs.adapter.user, ...configs.adapter.session }
-					: configs.adapter,
+			adapter,
 			generateCustomUserId: configs.generateCustomUserId || (async () => null),
 			env: configs.env,
 			csrfProtection: configs.csrfProtection || true,
@@ -131,8 +140,8 @@ interface Configurations {
 	adapter:
 		| Adapter
 		| {
-				user: UserAdapter;
-				session: SessionAdapter;
+				user: UserAdapter | Adapter;
+				session: SessionAdapter | Adapter;
 		  };
 	env: Env;
 	generateCustomUserId?: () => Promise<string | null>;
