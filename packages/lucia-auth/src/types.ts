@@ -1,4 +1,3 @@
-import type { LuciaError } from "./error.js";
 export type { Auth } from "./auth/index.js";
 
 export type User = ReturnType<Lucia.Auth["transformUserData"]>;
@@ -13,7 +12,6 @@ export type Session = {
 };
 
 export type Env = "DEV" | "PROD";
-export type Error = typeof LuciaError;
 
 export type UserSchema = {
 	id: string;

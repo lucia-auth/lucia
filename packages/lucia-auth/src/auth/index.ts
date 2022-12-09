@@ -7,7 +7,7 @@ import {
 	generateRandomString,
 	validateScryptHash
 } from "../utils/crypto.js";
-import { LuciaError } from "../error.js";
+import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { getSessionFromDatabaseData } from "./session.js";
 
