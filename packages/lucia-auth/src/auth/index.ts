@@ -291,7 +291,6 @@ export class Auth<C extends Configurations = any> {
 		}
 		const [renewedSession] = await Promise.all([
 			await this.createSession(session.userId),
-			this.invalidateSession(sessionId),
 			this.autoDatabaseCleanup ? await this.deleteDeadUserSessions(session.userId) : null
 		]);
 		return renewedSession;

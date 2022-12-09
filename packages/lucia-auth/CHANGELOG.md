@@ -7,8 +7,8 @@
 - [Breaking] Rename `Cookie.options` to `Cookie.attributes`
 - [Breaking] Rename `Session.expires` to `Session.activePeriodExpires`
 - [Breaking] Rename `Config.sessionTimeout` to `Config.sessionTimeout.activePeriod`, `Config.idlePeriodTimeout` to `Config.sessionTimeout.idlePeriod`
-- `getSession()`, `getSessionUser()`, `renewSession()`, `validateSessionUser()`, `validateSession()` deletes th target session from the database if dead by default
-- `updateUserProviderId()`, `updateUserAttributes()`, `renewSession()`, `createSession()`, `validateSessionUser()`, `validateSession()` deletes the target user's dead sessions from the database by default
+- `getSession()`, `getSessionUser()`, `renewSession()`, `validateSessionUser()`, `validateSession()` deletes the target session from the database if dead by default
+- `updateUserProviderId()`, `updateUserAttributes()`, `createSession()` deletes the target user's dead sessions from the database by default
 - Add `state`, `isFresh` property to `Session`
 - Add `autoDatabaseCleanup` config
 
