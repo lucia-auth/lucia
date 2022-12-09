@@ -16,8 +16,8 @@
 	},
 	"keywords": [
 		"lucia",
-		"supabase",
 		"lucia-auth",
+		"supabase",
 		"auth",
 		"authentication"
 	],

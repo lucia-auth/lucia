@@ -4,8 +4,6 @@ declare namespace Lucia {
 		username: string
 	}
 	export type Auth = {
-		configs: {
-			transformUserData: () => {}
-		}
+		transformUserData: () => {}
 	};
 }
