@@ -3,7 +3,7 @@
 ## 0.3.0
 
 - [Breaking] `Session.expires`, `Session.idlePeriodExpires` are `Date` objects
-- [Breaking] `renewSession()` no longer sets session cookie using the provided function parameter
+- [Breaking] `renewSession()`, `validateSession()`, `validateSessionUser()` no longer sets session cookie using the provided function parameter
 - [Breaking] Rename `Cookie.options` to `Cookie.attributes`
 - [Breaking] Rename `Session.expires` to `Session.activePeriodExpires`
 - [Breaking] Rename `Config.sessionTimeout` to `Config.sessionTimeout.activePeriod`, `Config.idlePeriodTimeout` to `Config.sessionTimeout.idlePeriod`
