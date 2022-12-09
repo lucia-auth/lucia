@@ -46,7 +46,7 @@ try {
 
 ### Password
 
-The password can be updated using the [`updateUserPassword()`](/reference/api/server-api#updateuserpassword) method. Lucia will handle the hashing.
+The password can be updated using the [`updateUserPassword()`](/reference/api/server-api#updateuserpassword) method. This method will also invalidate all sessions of the target user for security, and a new session must be created afterwards.
 
 ```ts
 import { auth } from "./lucia.js";

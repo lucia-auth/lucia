@@ -590,7 +590,7 @@ try {
 
 ### `updateUserPassword()`
 
-Updates a user's password.
+Updates a user's password. This will also invalidate all sessions of the target user for security, and a new session must be created afterwards.
 
 ```ts
 const updateUserPassword: (userId: string, password: string | null) => Promise<User>;
@@ -622,10 +622,14 @@ import { auth } from "lucia-auth";
 
 try {
 	await auth.updateUserPassword(userId, "123456");
-	await auth.updateUserPassword(userId, null);
+	const session = await auth.createSession(userId); // create a new session for the user
 } catch {
 	// error
 }
+```
+
+```ts
+await auth.updateUserPassword(userId, "123456");
 ```
 
 ### `updateUserProviderId()`
