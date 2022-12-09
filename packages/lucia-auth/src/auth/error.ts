@@ -2,7 +2,7 @@ export class LuciaError extends Error {
 	constructor(errorMsg: ErrorMessage, detail?: string) {
 		super(errorMsg);
 		this.message = errorMsg;
-		this.detail = detail || "";
+		this.detail = detail ?? "";
 	}
 	public detail: string;
 	public message: ErrorMessage;

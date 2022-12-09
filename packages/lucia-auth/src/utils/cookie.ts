@@ -20,8 +20,8 @@ export const parseCookie = (str: string, options?: CookieParseOptions) => {
 		throw new TypeError("argument str must be a string");
 	}
 	const obj: Record<any, string | undefined> = {};
-	const opt = options || {};
-	const dec = opt.decode || decode;
+	const opt = options ?? {};
+	const dec = opt.decode ?? decode;
 	let index = 0;
 	while (index < str.length) {
 		const eqIdx = str.indexOf("=", index);
@@ -65,8 +65,8 @@ export interface CookieAttributes {
 type CookieSerializeOptions = CookieAttributes;
 
 export const serializeCookie = (name: string, val: string, options?: CookieSerializeOptions) => {
-	const opt = options || {};
-	const enc = opt.encode || encode;
+	const opt = options ?? {};
+	const enc = opt.encode ?? encode;
 	if (!fieldContentRegExp.test(name)) throw new TypeError("argument name is invalid");
 
 	const value = enc(val);

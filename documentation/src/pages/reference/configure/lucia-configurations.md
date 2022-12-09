@@ -20,13 +20,12 @@ interface Configurations {
 	// optional
 	autoDatabaseCleanup?: boolean;
 	csrfProtection?: boolean;
-	deleteCookieOptions?: CookieOption[];
 	generateCustomUserId?: () => Promise<string | null>;
 	hash?: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
-	sessionCookieOptions?: CookieOption[];
+	sessionCookie?: CookieOption[];
 	sessionTimeout?: {
 		activePeriod: number;
 		idlePeriod: number;
@@ -99,14 +98,6 @@ Checks if the request is from a trusted origin (where the app is hosted) in [`va
 | --------- | ------- |
 | `boolean` | `true`  |
 
-### `deleteCookieOptions`
-
-A list of additional cookie options to [`sessionCookieOptions`](/reference/configure/lucia-configurations#sessioncookieoptions) for deleting session cookie(s).
-
-| type             | default |
-| ---------------- | ------- |
-| `CookieOption[]` | `[]`    |
-
 ### `generateCustomUserId()`
 
 A function that generates a random user id. The database will create its own user id if the returned value is `null`
@@ -164,9 +155,9 @@ const generate: (s: string, hash: string) => MaybePromise<string>;
 | --------- | --------------------------------------------------------------- |
 | `boolean` | `true` if valid, `false` otherwise - can be a promise if needed |
 
-### `sessionCookieOptions`
+### `sessionCookie`
 
-A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to **_all_** subdomains, which is a major security issue. Some options cannot be configured for security reasons.
+A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to **_all_** subdomains, which is a major security issue. Some options (`httpOnly`, `secure`, `expires`) cannot be configured due to security concerns.
 
 | type             | default                            |
 | ---------------- | ---------------------------------- |

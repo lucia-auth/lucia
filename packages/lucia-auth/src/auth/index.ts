@@ -28,10 +28,7 @@ const validateConfigurations = (configs: Configurations) => {
 export class Auth<C extends Configurations = any> {
 	private adapter: Adapter;
 	private generateUserId: () => MaybePromise<string | null>;
-	private cookieOptions: {
-		session: CookieOption[];
-		delete: CookieOption[];
-	};
+	private sessionCookie: CookieOption[];
 	private sessionTimeout: {
 		activePeriod: number;
 		idlePeriod: number;
@@ -49,7 +46,7 @@ export class Auth<C extends Configurations = any> {
 
 	constructor(configs: C) {
 		validateConfigurations(configs);
-		const defaultCookieOption: CookieOption = {
+		const defaultSessionCookieOption: CookieOption = {
 			sameSite: "lax",
 			path: "/"
 		};
@@ -65,7 +62,7 @@ export class Auth<C extends Configurations = any> {
 			"user" in configs.adapter
 				? { ...configs.adapter.user, ...configs.adapter.session }
 				: configs.adapter;
-		this.generateUserId = configs.generateCustomUserId || (async () => null);
+		this.generateUserId = configs.generateCustomUserId ?? (async () => null);
 		this.env = configs.env;
 		this.csrfProtection = configs.csrfProtection ?? true;
 		this.sessionTimeout = {
@@ -75,7 +72,7 @@ export class Auth<C extends Configurations = any> {
 		this.autoDatabaseCleanup = configs.autoDatabaseCleanup ?? true;
 		this.transformUserData = ({ id, hashed_password, provider_id, ...attributes }) => {
 			const transform =
-				configs.transformUserData ||
+				configs.transformUserData ??
 				(({ id }) => {
 					return {
 						userId: id
@@ -83,10 +80,7 @@ export class Auth<C extends Configurations = any> {
 				});
 			return transform({ id, ...attributes }) as User;
 		};
-		this.cookieOptions = {
-			session: configs.sessionCookieOptions || [defaultCookieOption],
-			delete: configs.deleteCookieOptions || []
-		};
+		this.sessionCookie = configs.sessionCookie ?? [defaultSessionCookieOption];
 		this.hash = {
 			generate: configs.hash?.generate ?? generateHashWithScrypt,
 			validate: configs.hash?.validate ?? validateScryptHash
@@ -147,7 +141,7 @@ export class Auth<C extends Configurations = any> {
 		}
 	): Promise<User> => {
 		const providerId = `${provider}:${identifier}`;
-		const attributes = options?.attributes || {};
+		const attributes = options?.attributes ?? {};
 		const userId = await this.generateUserId();
 		const hashedPassword = options?.password ? await this.hash.generate(options.password) : null;
 		const userData = await this.adapter.setUser(userId, {
@@ -212,7 +206,7 @@ export class Auth<C extends Configurations = any> {
 		if (!databaseData.hashed_password) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		if (databaseData.hashed_password.startsWith("$2a"))
 			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-		const isValid = await this.hash.validate(password || "", databaseData.hashed_password);
+		const isValid = await this.hash.validate(password, databaseData.hashed_password);
 		if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		const user = this.transformUserData(databaseData);
 		return user;
@@ -311,8 +305,8 @@ export class Auth<C extends Configurations = any> {
 		await this.adapter.deleteSession(...deadSessionIds);
 	};
 	public validateRequestHeaders = (request: MinimalRequest): string => {
-		const cookies = parseCookie(request.headers.get("cookie") || "");
-		const sessionId = cookies.auth_session || "";
+		const cookies = parseCookie(request.headers.get("cookie") ?? "");
+		const sessionId = cookies.auth_session ?? "";
 		const checkForCsrf = request.method !== "GET" && request.method !== "HEAD";
 		if (checkForCsrf && this.csrfProtection) {
 			const origin = request.headers.get("Origin");
@@ -323,14 +317,7 @@ export class Auth<C extends Configurations = any> {
 		return sessionId;
 	};
 	public createSessionCookies = (session: Session | null): Cookie[] => {
-		if (session) {
-			return this.cookieOptions.session.map((options) =>
-				createSessionCookie(session, this.env, options)
-			);
-		}
-		return [...this.cookieOptions.session, ...this.cookieOptions.delete].map((options) =>
-			createSessionCookie(null, this.env, options)
-		);
+		return this.sessionCookie.map((options) => createSessionCookie(session, this.env, options));
 	};
 }
 
@@ -351,8 +338,7 @@ interface Configurations {
 		idlePeriod: number;
 	};
 	transformUserData?: (userData: UserData) => Record<string, any>;
-	sessionCookieOptions?: CookieOption[];
-	deleteCookieOptions?: CookieOption[];
+	sessionCookie?: CookieOption[];
 	hash?: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
