@@ -88,7 +88,16 @@ Will remove [dead sessions](/learn/start-here/concepts#session-states) from the 
 | --------- | ------- |
 | `boolean` | `true`  |
 
-Removes the target session if its dead on: `getSession()`, `getSessionUser()`, `validateSessionUser()`, `validateSession()`; and deletes the target user's dead sessions on: `updateUserProviderId()`, `updateUserAttributes()`, `createSession()`.
+Specifically, it removes the target session from the database if its dead on: 
+- `getSession()`
+- `getSessionUser()`
+- `validateSessionUser()`
+- `validateSession()`
+
+and deletes the target user's dead sessions from the database on: 
+- `updateUserProviderId()`
+- `updateUserAttributes()`
+- `createSession()`.
 
 ### `csrfProtection`
 
