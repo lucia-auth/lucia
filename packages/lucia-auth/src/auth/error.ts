@@ -2,13 +2,13 @@ export class LuciaError extends Error {
 	constructor(errorMsg: ErrorMessage, detail?: string) {
 		super(errorMsg);
 		this.message = errorMsg;
-		this.detail = detail || "";
+		this.detail = detail ?? "";
 	}
 	public detail: string;
 	public message: ErrorMessage;
 }
 
-type ErrorMessage =
+export type ErrorMessage =
 	| "AUTH_INVALID_SESSION_ID"
 	| "AUTH_INVALID_PASSWORD"
 	| "AUTH_INVALID_PROVIDER_ID"

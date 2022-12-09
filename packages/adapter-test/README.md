@@ -18,6 +18,6 @@ yarn add -D @lucia-auth/adapter-test
 
 ## Lucia version compatibility
 
-| test adapter version | Lucia version  |
-| -------------------- | -------------- |
-| v0.1.x               | v0.1.x, v0.2.x |
+| test adapter version | Lucia version |
+| -------------------- | ------------- |
+| 0.1.x                | 0.1.x ~ 0.3.x |

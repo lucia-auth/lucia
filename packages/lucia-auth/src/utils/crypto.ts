@@ -26,7 +26,7 @@ const scrypt = async (s: string, salt: string, blockSize = 16) => {
 	return convertUint8ArrayToHex(keyUint8Array);
 };
 
-export const validateHash = async (s: string, hash: string) => {
+export const validateScryptHash = async (s: string, hash: string) => {
 	const arr = hash.split(":");
 	if (arr.length === 2) {
 		const [salt, key] = arr;

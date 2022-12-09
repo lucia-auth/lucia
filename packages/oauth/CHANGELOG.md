@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.4
+
+- Update peer dependency
+
 ## 0.2.3
 
 - Add Patreon provider
@@ -21,7 +25,7 @@
 
 ## 0.1.3
 
-- Add support for `lucia-auth` v0.2.x
+- Add support for `lucia-auth` 0.2.x
 
 ## 0.1.2
 

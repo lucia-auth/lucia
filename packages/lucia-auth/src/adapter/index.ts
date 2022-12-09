@@ -8,7 +8,7 @@ export const getUpdateData = (data: {
 	const rawData: Record<string, any> = {
 		provider_id: data.providerId,
 		hashed_password: data.hashedPassword,
-		...(data.attributes || {})
+		...(data.attributes ?? {})
 	};
 	const result: Record<string, any> = {};
 	for (const key in rawData) {

@@ -12,7 +12,7 @@ Sessions can be renewed using the [`renewSession()`](/reference/api/server-api#r
 import { auth } from "./lucia.js";
 
 try {
-	const session = await auth.renewSession(sessionId);
+	const renewedSession = await auth.renewSession(sessionId);
 } catch {
 	// invalid refresh token
 }

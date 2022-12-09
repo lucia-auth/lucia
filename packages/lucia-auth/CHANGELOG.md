@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] `Session.expires`, `Session.idlePeriodExpires` are `Date` objects
+- [Breaking] `renewSession()` no longer sets session cookie using the provided function parameter
+- [Breaking] Rename `Cookie.options` to `Cookie.attributes`
+- [Breaking] Rename `Session.expires` to `Session.activePeriodExpires`
+- [Breaking] Rename `Config.sessionTimeout` to `Config.sessionTimeout.activePeriod`, `Config.idlePeriodTimeout` to `Config.sessionTimeout.idlePeriod`
+- [Breaking] Remove `Config.deleteCookieOption`
+- [Breaking] Rename `Config.sessionCookieOption` to `Config.sessionCookie`
+- `getSession()`, `getSessionUser()`, `renewSession()`, `validateSessionUser()`, `validateSession()` deletes the target session from the database if dead by default
+- `updateUserProviderId()`, `updateUserAttributes()`, `createSession()` deletes the target user's dead sessions from the database by default
+- Add `state`, `isFresh` property to `Session`
+- Add `autoDatabaseCleanup` config
+
 ## 0.2.2
 
 - [Fix] Ignore `getSessionAndUserBySessionId()` if a normal adapter is provided as a user or session adapter
@@ -8,7 +22,7 @@
 
 - Remove node dependencies (`crypto`, `util`) [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)
 - Adds `@noble/hashes` as dependency
-- Use block size (`r`) of `16` for hashing passwords
+- Use block size (`r`) of `16` for hashing passwords with scrypt
 - Add `configs.hash.generate()` and `configs.hash.validate()` for custom hashing implementation
 - Normalize password string on hashing
 

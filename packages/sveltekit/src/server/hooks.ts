@@ -53,7 +53,7 @@ export const handleHooks = (auth: Auth) => {
 
 		event.locals.setSession = (session: Session | null) => {
 			auth.createSessionCookies(session).forEach((cookie) => {
-				event.cookies.set(cookie.name, cookie.value, cookie.options);
+				event.cookies.set(cookie.name, cookie.value, cookie.attributes);
 			});
 			getSessionPromise = undefined;
 			getSessionUserPromise = undefined;
@@ -63,11 +63,16 @@ export const handleHooks = (auth: Auth) => {
 			if (getSessionPromise) return getSessionPromise;
 			if (getSessionUserPromise) return (await getSessionUserPromise).session;
 			getSessionPromise = new Promise(async (resolve) => {
-				auth.validateRequestHeaders(event.request);
-				const sessionId = event.cookies.get(SESSION_COOKIE_NAME) || "";
 				try {
-					resolve(await auth.validateSession(sessionId, event.locals.setSession));
+					auth.validateRequestHeaders(event.request);
+					const sessionId = event.cookies.get(SESSION_COOKIE_NAME) || "";
+					const session = await auth.validateSession(sessionId);
+					if (session.isFresh) {
+						event.locals.setSession(session);
+					}
+					resolve(session);
 				} catch {
+					event.locals.setSession(null);
 					resolve(null);
 				}
 			});
@@ -76,10 +81,14 @@ export const handleHooks = (auth: Auth) => {
 		event.locals.getSessionUser = async () => {
 			if (getSessionUserPromise) return getSessionUserPromise;
 			getSessionUserPromise = new Promise(async (resolve) => {
-				auth.validateRequestHeaders(event.request);
-				const sessionId = event.cookies.get(SESSION_COOKIE_NAME) || "";
 				try {
-					resolve(await auth.validateSessionUser(sessionId, event.locals.setSession));
+					auth.validateRequestHeaders(event.request);
+					const sessionId = event.cookies.get(SESSION_COOKIE_NAME) || "";
+					const { session, user } = await auth.validateSessionUser(sessionId);
+					if (session.isFresh) {
+						event.locals.setSession(session);
+					}
+					resolve({ session, user });
 				} catch {
 					resolve({
 						session: null,

@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-prisma",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "Prisma adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -33,7 +33,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.1.x || 0.2.x"
+		"lucia-auth": "0.1.x - 0.3.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

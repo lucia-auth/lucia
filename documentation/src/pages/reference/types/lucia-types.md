@@ -24,7 +24,7 @@ Return type of [`lucia()`](/reference/api/server-api#lucia-default).
 interface Cookie {
 	name: string;
 	value: string;
-	options: CookieSerializeOptions; // cookie npm package serialize() options
+	attributes: CookieAttributes; // cookie npm package serialize() options
 	serialize: () => string;
 }
 ```
@@ -75,19 +75,23 @@ A session.
 
 ```ts
 type Session = {
-	expires: number;
-	idlePeriodExpires: number;
+	activePeriodExpires: Date;
+	idlePeriodExpires: Date;
+	isFresh: boolean;
 	sessionId: string;
+	state: "active" | "idle";
 	userId: string;
 };
 ```
 
-| name              | type     | description                                                                          |
-| ----------------- | -------- | ------------------------------------------------------------------------------------ |
-| expires           | `number` | unix time of the session expiration                                                  |
-| idlePeriodExpires | `number` | unix time of the [idle period](/learn/start-here/concepts#session-states) expiration |
-| sessionId         | `string` | session if                                                                           |
-| userId            | `string` | user id of the user of the session                                                   |
+| name                | type      | description                                                                       |
+| ------------------- | --------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| activePeriodExpires | `Date`    | time of the [active period](/learn/start-here/concepts#session-states) expiration |
+| idlePeriodExpires   | `Date`    | time of the [idle period](/learn/start-here/concepts#session-states) expiration   |
+| isFresh             | `boolean` | `true` if the session was newly created (including on renewal)                    |
+| sessionId           | `string`  | session id                                                                        |
+| state               | `"active" | "idle"`                                                                           | [session state](/learn/start-here/concepts#session-states) |
+| userId              | `string`  | user id of the user of the session                                                |
 
 ## `SessionAdapter`
 

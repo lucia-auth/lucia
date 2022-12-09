@@ -16,9 +16,9 @@ npm install @lucia-auth/adapter-kysely
 
 ## Lucia version compatibility
 
-| Kysely adapter version | Lucia version  |
-| ---------------------- | -------------- |
-| v0.1.x                 | v0.1.x, v0.2.x |
+| Kysely adapter version | Lucia version |
+| ---------------------- | ------------- |
+| 0.1.x                  | 0.1.x ~ 0.2.x |
 
 ## Testing
 

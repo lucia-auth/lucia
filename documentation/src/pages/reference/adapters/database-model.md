@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Database model"
 ---
 
-Lucia uses adapters to connect to your database. The following chart shows the basic structure of the database, though they may vary from database to database. The names of the tables and columns cannot be altered.
+Lucia uses adapters to connect to your database. The following chart shows the basic structure of the database, though they may vary from database to database.
 
 ## `user`
 

@@ -40,13 +40,16 @@ try {
 
 ### Get the session
 
-[`validateSession()`](/reference/api/server-api#validatesession) will validate the session id and return the session, renewing the session if needed.
+[`validateSession()`](/reference/api/server-api#validatesession) will validate the session id and return the session, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored as a cookie again if needed.
 
 ```ts
 import { auth } from "./lucia.js";
 
 try {
 	const session = await auth.validateSession(sessionId);
+	if (session.isFresh) {
+		// session was renewed
+	}
 } catch (e) {
 	// invalid session id
 }
@@ -61,6 +64,9 @@ import { auth } from "./lucia.js";
 
 try {
 	const session = await auth.validateSessionUser(sessionId);
+	if (session.isFresh) {
+		// session was renewed
+	}
 } catch (e) {
 	// invalid session id
 }
