@@ -17,10 +17,10 @@
 	"keywords": [
 		"lucia",
 		"prisma",
+		"sql",
 		"lucia-auth",
 		"auth",
-		"authentication",
-		"sql"
+		"authentication"
 	],
 	"repository": {
 		"type": "git",

@@ -16,8 +16,8 @@
 	},
 	"keywords": [
 		"lucia",
-		"redis",
 		"lucia-auth",
+		"redis",
 		"auth",
 		"authentication"
 	],

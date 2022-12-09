@@ -17,8 +17,8 @@
 	"keywords": [
 		"lucia",
 		"kysely",
-		"auth",
 		"lucia-auth",
+		"auth",
 		"authentication"
 	],
 	"repository": {

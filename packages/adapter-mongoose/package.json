@@ -17,10 +17,10 @@
 	"keywords": [
 		"lucia",
 		"mongodb",
+		"mongo",
 		"mongoose",
 		"lucia-auth",
 		"auth",
-		"mongo",
 		"authentication"
 	],
 	"repository": {
