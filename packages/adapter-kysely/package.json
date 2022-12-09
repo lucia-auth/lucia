@@ -19,7 +19,8 @@
 		"kysely",
 		"lucia-auth",
 		"auth",
-		"authentication"
+		"authentication",
+		"adapter"
 	],
 	"repository": {
 		"type": "git",

@@ -5,7 +5,7 @@ export const convertNextRequestToStandardRequest = (
 	req: NextRequest,
 	auth: Auth
 ): MinimalRequest => {
-	const url = `${auth.configs.env === "DEV" ? "http" : "https"}://${req.headers.host}${req.url}`;
+	const url = `${process.env.NODE_ENV === "production" ? "https" : "http"}://${req.headers.host}${req.url}`;
 	return {
 		headers: {
 			get: (name: string) => {

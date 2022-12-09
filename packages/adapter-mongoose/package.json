@@ -21,12 +21,13 @@
 		"mongoose",
 		"lucia-auth",
 		"auth",
-		"authentication"
+		"authentication",
+		"adapter"
 	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
-		"directory": "packages/adapter-mongodb"
+		"directory": "packages/adapter-mongoose"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",

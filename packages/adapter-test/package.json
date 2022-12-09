@@ -16,9 +16,10 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
+		"test",
 		"auth",
 		"authentication",
-		"test"
+		"adapter"
 	],
 	"repository": {
 		"type": "git",

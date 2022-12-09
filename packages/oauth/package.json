@@ -16,8 +16,8 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
-		"authentication",
 		"oauth",
+		"authentication",
 		"auth"
 	],
 	"repository": {

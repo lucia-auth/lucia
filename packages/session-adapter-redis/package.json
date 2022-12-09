@@ -19,12 +19,13 @@
 		"lucia-auth",
 		"redis",
 		"auth",
-		"authentication"
+		"authentication",
+		"adapter"
 	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
-		"directory": "packages/adapter-supabase"
+		"directory": "packages/session-adapter-redis"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
