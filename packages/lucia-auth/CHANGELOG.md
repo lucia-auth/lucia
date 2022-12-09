@@ -4,9 +4,9 @@
 
 - [Breaking] `Session.expires`, `Session.idlePeriodExpires` are `Date` objects
 - [Breaking] `renewSession()` no longer sets session cookie using the provided function parameter
-- [Breaking] Renamed `Cookie.options` to `Cookie.attributes`
-- [Breaking] Renamed `Session.expires` to `Session.activePeriodExpires`
-- [Breaking] Renamed `Config.sessionTimeout` to `Config.sessionTimeout.activePeriod`, `Config.idlePeriodTimeout` to `Config.sessionTimeout.idlePeriod`
+- [Breaking] Rename `Cookie.options` to `Cookie.attributes`
+- [Breaking] Rename `Session.expires` to `Session.activePeriodExpires`
+- [Breaking] Rename `Config.sessionTimeout` to `Config.sessionTimeout.activePeriod`, `Config.idlePeriodTimeout` to `Config.sessionTimeout.idlePeriod`
 - `getSession()`, `getSessionUser()`, `renewSession()`, `validateSessionUser()`, `validateSession()` deletes th target session from the database if dead by default
 - `updateUserProviderId()`, `updateUserAttributes()`, `renewSession()`, `createSession()`, `validateSessionUser()`, `validateSession()` deletes the target user's dead sessions from the database by default
 - Add `state`, `isFresh` property to `Session`
