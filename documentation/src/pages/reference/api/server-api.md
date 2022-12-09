@@ -292,7 +292,7 @@ const generateSessionId: () => [string, number, number];
 
 ### `getSession()`
 
-Validates an active session id, and gets the session. Idle sessions are not renewed and are not deemed invalid.
+Gets the target session. Returns both active and idle sessions.
 
 ```ts
 const getSessionUser: (sessionId: string) => Promise<Session>;
@@ -323,6 +323,12 @@ import { auth } from "$lib/server/lucia";
 
 try {
 	const session = await auth.getSession(sessionId);
+	if (session.state === "active") {
+		// valid session
+	}
+	if (session.state === "idle") {
+		// should be renewed
+	}
 } catch {
 	// invalid session id
 }
