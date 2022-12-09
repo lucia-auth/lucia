@@ -498,21 +498,17 @@ try {
 
 ### `renewSession()`
 
-Takes and validates an active or idle session id, and renews the session. The used session id (and its session) is invalidated. `setSessionCookie()` will called whenever the method needs to set a session.
+Takes and validates an active or idle session id, and renews the session. The used session id (and its session) is invalidated.
 
 ```ts
-const renewSession: (
-	sessionId: string,
-	setSessionCookie: (session: Session | null) => void
-) => Promise<Session>;
+const renewSession: (sessionId: string) => Promise<Session>;
 ```
 
 #### Parameter
 
-| name             | type       | description                                                      |
-| ---------------- | ---------- | ---------------------------------------------------------------- |
-| sessionId        | `string`   | a valid active or idle session id                                |
-| setSessionCookie | `Function` | stores the provided session as cookies - clear cookies on `null` |
+| name      | type     | description                       |
+| --------- | -------- | --------------------------------- |
+| sessionId | `string` | a valid active or idle session id |
 
 #### Returns
 
@@ -532,13 +528,7 @@ const renewSession: (
 import { auth } from "lucia-auth";
 
 try {
-	const session = await auth.renewSession(refreshToken, (session) => {
-		const stringifiedCookie = auth
-			.createSessionCookies(session)
-			.map((val) => val.serialize())
-			.toString();
-		setHeaders("set-cookie", stringifiedCookie);
-	});
+	const renewedSession = await auth.renewSession(session.sessionId);
 } catch {
 	// error
 }
@@ -710,21 +700,17 @@ try {
 
 ### `validateSession()`
 
-Validates an active session id, renewing idle sessions if needed. `setSessionCookie()` will called whenever the method needs to set a session.
+Validates an active session id, renewing idle sessions if needed. As such, the returned session may not match the input session id and should be stored as a cookie again.
 
 ```ts
-const validateSession: (
-	sessionId: string,
-	setSessionCookie: (session: Session | null) => void
-) => Promise<Session>;
+const validateSession: (sessionId: string) => Promise<Session>;
 ```
 
 #### Parameter
 
-| name             | type       | description                                                      |
-| ---------------- | ---------- | ---------------------------------------------------------------- |
-| sessionId        | `string`   | a valid active session id                                        |
-| setSessionCookie | `Function` | stores the provided session as cookies - clear cookies on `null` |
+| name      | type     | description               |
+| --------- | -------- | ------------------------- |
+| sessionId | `string` | a valid active session id |
 
 #### Returns
 
@@ -744,13 +730,15 @@ const validateSession: (
 import { auth } from "lucia-auth";
 
 try {
-	const session = await auth.validateSession(sessionId, (session) => {
+	const session = await auth.validateSession(sessionId);
+	if (session.isFresh) {
+		// session was renewed
 		const stringifiedCookie = auth
 			.createSessionCookies(session)
 			.map((val) => val.serialize())
 			.toString();
 		setHeaders("set-cookie", stringifiedCookie);
-	});
+	}
 } catch {
 	// invalid
 }
@@ -758,21 +746,17 @@ try {
 
 ### `validateSessionUser()`
 
-Similar to [`validateSession()`](/reference/api/server-api#validatesession) but returns both the session and user without an additional database call. `setSessionCookie()` will called whenever the method needs to set a session.
+Similar to [`validateSession()`](/reference/api/server-api#validatesession) but returns both the session and user without an additional database call.
 
 ```ts
-const validateSessionUser: (
-	sessionId: string,
-	setSessionCookie: (session: Session | null) => void
-) => Promise<{ user: User; session: Session }>;
+const validateSessionUser: (sessionId: string) => Promise<{ user: User; session: Session }>;
 ```
 
 #### Parameter
 
-| name             | type       | description                                                      |
-| ---------------- | ---------- | ---------------------------------------------------------------- |
-| sessionId        | `string`   | session id                                                       |
-| setSessionCookie | `Function` | stores the provided session as cookies - clear cookies on `null` |
+| name      | type     | description |
+| --------- | -------- | ----------- |
+| sessionId | `string` | session id  |
 
 #### Returns
 
@@ -793,13 +777,15 @@ const validateSessionUser: (
 import { auth } from "lucia-auth";
 
 try {
-	const { session, user } = await auth.validateSessionUser(sessionId, (session) => {
+	const { session, user } = await auth.validateSessionUser(sessionId);
+	if (session.isFresh) {
+		// session was renewed
 		const stringifiedCookie = auth
 			.createSessionCookies(session)
 			.map((val) => val.serialize())
 			.toString();
-		setCookie(stringifiedCookie);
-	});
+		setHeaders("set-cookie", stringifiedCookie);
+	}
 } catch {
 	// invalid
 }

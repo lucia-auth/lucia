@@ -8,6 +8,7 @@ Configurations for `lucia()`.
 
 ```ts
 interface Configurations {
+	// required
 	adapter:
 		| Adapter
 		| {
@@ -15,16 +16,21 @@ interface Configurations {
 				session: SessionAdapter;
 		  };
 	env: Env;
+
+	// optional
+	autoDatabaseCleanup?: boolean;
 	csrfProtection?: boolean;
 	deleteCookieOptions?: CookieOption[];
 	generateCustomUserId?: () => Promise<string | null>;
-	idlePeriodTimeout?: number;
 	hash?: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
 	sessionCookieOptions?: CookieOption[];
-	sessionTimeout?: number;
+	sessionTimeout?: {
+		activePeriod: number;
+		idlePeriod: number;
+	};
 	transformUserData?: (userData: UserData) => Record<any, any>;
 }
 ```
@@ -74,6 +80,16 @@ Tells Lucia if the app is running on HTTP or HTTPS.
 | `"DEV" \| "PROD"` | `"DEV"` if the app is hosted on HTTP, `"PROD"` if on HTTPS |
 
 ## Optional
+
+### `autoDatabaseCleanup`
+
+Will remove [dead sessions](/learn/start-here/concepts#session-states) from the database when certain methods are called.
+
+| type      | default |
+| --------- | ------- |
+| `boolean` | `true`  |
+
+Removes the target session if its dead on: `getSession()`, `getSessionUser()`, `validateSessionUser()`, `validateSession()`; and deletes the target user's dead sessions on: `updateUserProviderId()`, `updateUserAttributes()`, `createSession()`.
 
 ### `csrfProtection`
 
@@ -148,14 +164,6 @@ const generate: (s: string, hash: string) => MaybePromise<string>;
 | --------- | --------------------------------------------------------------- |
 | `boolean` | `true` if valid, `false` otherwise - can be a promise if needed |
 
-### `idlePeriodTimeout`
-
-The time in milliseconds the idle period lasts for - or the time since session expiration the user can continue without signing in again. The session can be renewed if it's under `sessionTimeout + idlePeriodTimeout` since when issued.
-
-| type     | default                              |
-| -------- | ------------------------------------ |
-| `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |
-
 ### `sessionCookieOptions`
 
 A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to **_all_** subdomains, which is a major security issue. Some options cannot be configured for security reasons.
@@ -166,11 +174,21 @@ A list of cookie options for setting session cookie(s). Beware that setting the 
 
 ### `sessionTimeout`
 
-The time in milliseconds the active period lasts for.
+#### `activePeriod`
+
+The time in milliseconds the [active period](/learn/start-here/concepts#session-states) lasts for - or the time since session creation that it can be used.
 
 | type     | default                          |
 | -------- | -------------------------------- |
 | `number` | `1000 * 60 * 60 * 24` (24 hours) |
+
+#### `idlePeriod`
+
+The time in milliseconds the [idle period](/learn/start-here/concepts#session-states) lasts for - or the time since active period expiration that it can be renewed.
+
+| type     | default                              |
+| -------- | ------------------------------------ |
+| `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |
 
 ### `transformUserData()`
 
