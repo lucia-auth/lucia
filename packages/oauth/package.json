@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/oauth",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"description": "OAuth integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -55,6 +55,6 @@
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.1.x || 0.2.x"
+		"lucia-auth": "0.1.x - 0.3.x"
 	}
 }

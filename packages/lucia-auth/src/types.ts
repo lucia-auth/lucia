@@ -1,13 +1,15 @@
 import type { LuciaError } from "./error.js";
 export type { Auth } from "./auth/index.js";
 
-export type User = ReturnType<Lucia.Auth["configs"]["transformUserData"]>;
+export type User = ReturnType<Lucia.Auth["transformUserData"]>;
 
 export type Session = {
 	sessionId: string;
 	userId: string;
-	expires: number;
-	idlePeriodExpires: number;
+	activePeriodExpires: Date;
+	idlePeriodExpires: Date;
+	state: "idle" | "active";
+	isFresh: boolean
 };
 
 export type Env = "DEV" | "PROD";

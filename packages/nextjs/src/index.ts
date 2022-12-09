@@ -45,8 +45,13 @@ export class AuthRequest<A extends Auth> {
 			const sessionId = this.auth.validateRequestHeaders(
 				convertNextRequestToStandardRequest(this.req, this.auth)
 			);
-			return await this.auth.validateSession(sessionId, this.setSession);
+			const session = await this.auth.validateSession(sessionId);
+			if (session.isFresh) {
+				this.setSession(session);
+			}
+			return session;
 		} catch (e) {
+			this.setSession(null);
 			return null;
 		}
 	};
@@ -61,8 +66,13 @@ export class AuthRequest<A extends Auth> {
 			const sessionId = this.auth.validateRequestHeaders(
 				convertNextRequestToStandardRequest(this.req, this.auth)
 			);
-			return await this.auth.validateSessionUser(sessionId, this.setSession);
+			const { session, user } = await this.auth.validateSessionUser(sessionId);
+			if (session.isFresh) {
+				this.setSession(session);
+			}
+			return { session, user };
 		} catch (e) {
+			this.setSession(null);
 			return {
 				session: null,
 				user: null

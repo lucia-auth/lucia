@@ -18,9 +18,9 @@ yarn add @lucia-auth/adapter-mongoose
 
 ## Lucia version compatibility
 
-| Mongoose adapter version | Lucia version  |
-| ------------------------ | -------------- |
-| v0.1.x                   | v0.1.x, v0.2.x |
+| Mongoose adapter version | Lucia version |
+| ------------------------ | ------------- |
+| 0.1.x                    | 0.1.x ~ 0.3.x |
 
 ## Testing
 

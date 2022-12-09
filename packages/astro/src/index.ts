@@ -19,8 +19,13 @@ export class AuthRequest<A extends Auth> {
 	public getSession = async (): Promise<Session | null> => {
 		try {
 			const sessionId = this.auth.validateRequestHeaders(this.request);
-			return await this.auth.validateSession(sessionId, this.setSession);
+			const session = await this.auth.validateSession(sessionId);
+			if (session.isFresh) {
+				this.setSession(session);
+			}
+			return session;
 		} catch {
+			this.setSession(null);
 			return null;
 		}
 	};
@@ -29,7 +34,11 @@ export class AuthRequest<A extends Auth> {
 	> => {
 		try {
 			const sessionId = this.auth.validateRequestHeaders(this.request);
-			return await this.auth.validateSessionUser(sessionId, this.setSession);
+			const { session, user } = await this.auth.validateSessionUser(sessionId);
+			if (session.isFresh) {
+				this.setSession(session);
+			}
+			return { session, user };
 		} catch {
 			return {
 				user: null,
@@ -40,7 +49,7 @@ export class AuthRequest<A extends Auth> {
 	public setSession = (session: Session | null) => {
 		const cookies = this.auth.createSessionCookies(session);
 		cookies.forEach((cookie) => {
-			this.cookies.set(cookie.name, cookie.value, cookie.options);
+			this.cookies.set(cookie.name, cookie.value, cookie.attributes);
 		});
 	};
 }

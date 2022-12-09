@@ -9,7 +9,7 @@ import {
 
 interface Configs extends OAuthConfig {
 	redirectUri: string;
-    allMemberships?: boolean;
+	allMemberships?: boolean;
 }
 
 class Patreon<A extends Auth> implements OAuthProvider {
@@ -18,7 +18,12 @@ class Patreon<A extends Auth> implements OAuthProvider {
 		this.clientId = configs.clientId;
 		this.clientSecret = configs.clientSecret;
 		this.redirectUri = configs.redirectUri;
-		this.scope = ["identity", "identity[email]", ...(configs.scope || []),...(configs.allMemberships ? ["identity.memberships"]:[])];
+		this.scope = [
+			"identity",
+			"identity[email]",
+			...(configs.scope || []),
+			...(configs.allMemberships ? ["identity.memberships"] : [])
+		];
 	}
 	private auth: A;
 	private clientId: string;
@@ -37,7 +42,7 @@ class Patreon<A extends Auth> implements OAuthProvider {
 			response_type: "code",
 			...(s && { state: s })
 		}).toString()}`;
-		console.log(this.scope)
+		console.log(this.scope);
 		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
 		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
 	};
@@ -60,18 +65,25 @@ class Patreon<A extends Auth> implements OAuthProvider {
 			refresh_token?: string;
 			expires_in: number;
 		};
-		const patreonUserRaw = (await get(`https://www.patreon.com/api/oauth2/v2/identity?${new URLSearchParams({
-            "fields[user]": "about,email,first_name,full_name,hide_pledges,image_url,is_email_verified,last_name,url",
-            "fields[tier]": "amount_cents,title",
-            "fields[campaign]": "vanity",
-            "include": "memberships.currently_entitled_tiers,memberships.campaign"
-        }).toString()}`, {
-			bearerToken: accessToken
-		})) as PatreonUserRaw;
+		const patreonUserRaw = (await get(
+			`https://www.patreon.com/api/oauth2/v2/identity?${new URLSearchParams({
+				"fields[user]":
+					"about,email,first_name,full_name,hide_pledges,image_url,is_email_verified,last_name,url",
+				"fields[tier]": "amount_cents,title",
+				"fields[campaign]": "vanity",
+				include: "memberships.currently_entitled_tiers,memberships.campaign"
+			}).toString()}`,
+			{
+				bearerToken: accessToken
+			}
+		)) as PatreonUserRaw;
 
-		let remappedRelationships = remapRelationships(patreonUserRaw);
+		const remappedRelationships = remapRelationships(patreonUserRaw);
 
-		const patreonUser: PatreonUser = {...patreonUserRaw.data, relationships: {memberships: remappedRelationships}}
+		const patreonUser: PatreonUser = {
+			...patreonUserRaw.data,
+			relationships: { memberships: remappedRelationships }
+		};
 
 		const patreonUserId = String(patreonUser.id);
 
@@ -102,120 +114,129 @@ const patreon = <A extends Auth>(auth: A, configs: Configs) => {
 
 export default patreon;
 
-function remapRelationships(patreonUserRaw: PatreonUserRaw){
-	return patreonUserRaw.data.relationships.memberships.data.map((element) => {
-		return patreonUserRaw.included.find((include) => include.type === element.type && include.id === element.id) as PatreonMembershipRaw
-	}).map((element) => {
-		let campaign = patreonUserRaw.included.find((include) => include.type === "campaign" && include.id === element.relationships.campaign?.data.id) as PatreonCampaign
-		let currently_entitled_tiers = element.relationships.currently_entitled_tiers.data.map((tier) => {
-			return patreonUserRaw.included.find((include) => include.type == tier.type && include.id == tier.id) as PatreonTier
+function remapRelationships(patreonUserRaw: PatreonUserRaw) {
+	return patreonUserRaw.data.relationships.memberships.data
+		.map((element) => {
+			return patreonUserRaw.included.find(
+				(include) => include.type === element.type && include.id === element.id
+			) as PatreonMembershipRaw;
 		})
+		.map((element) => {
+			const campaign = patreonUserRaw.included.find(
+				(include) =>
+					include.type === "campaign" && include.id === element.relationships.campaign?.data.id
+			) as PatreonCampaign;
+			const currently_entitled_tiers = element.relationships.currently_entitled_tiers.data.map(
+				(tier) => {
+					return patreonUserRaw.included.find(
+						(include) => include.type == tier.type && include.id == tier.id
+					) as PatreonTier;
+				}
+			);
 
-		
-		return {
-			id: element.id,
-			type: element.type,
-			relationships: {
-				campaign: campaign,
-				currently_entitled_tiers: currently_entitled_tiers
-			}
-		} as PatreonMembership
-	});
+			return {
+				id: element.id,
+				type: element.type,
+				relationships: {
+					campaign: campaign,
+					currently_entitled_tiers: currently_entitled_tiers
+				}
+			} as PatreonMembership;
+		});
 }
 
 interface PatreonUserRaw {
-    data: {
-        type: "user";
-        attributes: {
-            about: string | null;
-            created: string;
-            email: string;
-            first_name: string | null;
-            full_name: string;
-            hide_pledges: boolean | null;
-            image_url: string;
-            is_email_verified: boolean;
-            last_name: string | null;
-            url: string;
-        };
+	data: {
+		type: "user";
+		attributes: {
+			about: string | null;
+			created: string;
+			email: string;
+			first_name: string | null;
+			full_name: string;
+			hide_pledges: boolean | null;
+			image_url: string;
+			is_email_verified: boolean;
+			last_name: string | null;
+			url: string;
+		};
 		relationships: {
 			memberships: {
 				data: [
 					{
-						id: "string"
+						id: "string";
 						type: "member";
 					}
-				]
-			}
-		}
-        id: string;
-    }
-    included: [PatreonCampaign | PatreonMembershipRaw | PatreonTier]
+				];
+			};
+		};
+		id: string;
+	};
+	included: [PatreonCampaign | PatreonMembershipRaw | PatreonTier];
 }
 
 interface PatreonMembershipRaw {
-    type: "member";
-    id: string;
-    relationships: {
-        campaign?: {
-            data: {
-                id: string;
-                type: "campaign";
-            }
-        }
-        currently_entitled_tiers: {
-            data: [
-                {
-                    id: string;
-                    type: "tier";
-                }
-            ]
-        }
-    }   
+	type: "member";
+	id: string;
+	relationships: {
+		campaign?: {
+			data: {
+				id: string;
+				type: "campaign";
+			};
+		};
+		currently_entitled_tiers: {
+			data: [
+				{
+					id: string;
+					type: "tier";
+				}
+			];
+		};
+	};
 }
 interface PatreonUser {
-    type: "user";
-    attributes: {
-        about: string | null;
-        created: string;
-        email: string;
-        first_name: string | null;
-        full_name: string;
-        hide_pledges: boolean | null;
-        image_url: string;
-        is_email_verified: boolean;
-        last_name: string | null;
-        url: string;
-    };
-    id: string;
+	type: "user";
+	attributes: {
+		about: string | null;
+		created: string;
+		email: string;
+		first_name: string | null;
+		full_name: string;
+		hide_pledges: boolean | null;
+		image_url: string;
+		is_email_verified: boolean;
+		last_name: string | null;
+		url: string;
+	};
+	id: string;
 	relationships: {
-		memberships: PatreonMembership[]
-	}
+		memberships: PatreonMembership[];
+	};
 }
 
 interface PatreonMembership {
-    type: "member";
-    id: string;
-    relationships: {
-        campaign: PatreonCampaign
-        currently_entitled_tiers: PatreonTier[]
-    }   
+	type: "member";
+	id: string;
+	relationships: {
+		campaign: PatreonCampaign;
+		currently_entitled_tiers: PatreonTier[];
+	};
 }
 
-
 interface PatreonCampaign {
-    attributes: {
-        vanity: string | null;
-    }
-    id: string;
-    type: "campaign";
+	attributes: {
+		vanity: string | null;
+	};
+	id: string;
+	type: "campaign";
 }
 
 interface PatreonTier {
-    attributes: {
-        amount_cents: number;
-        title: string;
-    }
-    id: string;
-    type: "tier";
+	attributes: {
+		amount_cents: number;
+		title: string;
+	};
+	id: string;
+	type: "tier";
 }

@@ -8,7 +8,7 @@ export class LuciaError extends Error {
 	public message: ErrorMessage;
 }
 
-type ErrorMessage =
+export type ErrorMessage =
 	| "AUTH_INVALID_SESSION_ID"
 	| "AUTH_INVALID_PASSWORD"
 	| "AUTH_INVALID_PROVIDER_ID"
