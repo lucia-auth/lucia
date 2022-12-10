@@ -279,16 +279,20 @@ try {
 Generates a new session id (40 chars long), as well as the expiration time (unix).
 
 ```ts
-const generateSessionId: () => [string, number, number];
+const generateSessionId: () => [
+	sessionId: string,
+	activePeriodExpires: Date,
+	idlePeriodExpires: Date
+];
 ```
 
 #### Returns
 
-| name | type     | description                                             |
-| ---- | -------- | ------------------------------------------------------- |
-| [0]  | `string` | the session id                                          |
-| [1]  | `number` | the session's expiration time                           |
-| [2]  | `number` | the expiration time (unix) of the session's idle period |
+| name                | type     | description                                        |
+| ------------------- | -------- | -------------------------------------------------- |
+| sessionId           | `string` | the session id                                     |
+| activePeriodExpires | `Date`   | the expiration time of the session's active period |
+| idlePeriodExpires   | `Date`   | the expiration time of the session's idle period   |
 
 ### `getSession()`
 
