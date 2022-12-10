@@ -21,7 +21,7 @@ The `user` table stores the users. The `[any]` column represents the any number 
 
 ```ts
 // type imported from "lucia-auth/adapter"
-export type UserSchema = {
+type UserSchema = {
 	id: string;
 	hashed_password: string | null;
 	provider_id: string;
@@ -43,7 +43,7 @@ The `session` table stores the user's sessions. You do not need this if you're u
 
 ```ts
 // type imported from "lucia-auth/adapter"
-export type SessionSchema = {
+type SessionSchema = {
 	id: string;
 	expires: number;
 	idle_expires: number;
