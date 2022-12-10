@@ -30,7 +30,7 @@ export type UserSchema = {
 
 ## `session`
 
-The `session` table stores the user's sessions (including the access token). You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
 
 | name         | type          | unique | reference | description                                        |
 | ------------ | ------------- | ------ | --------- | -------------------------------------------------- |
