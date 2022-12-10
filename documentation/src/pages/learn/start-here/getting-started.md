@@ -23,7 +23,7 @@ You can also use a different database for storing sessions, such as [Redis](/lea
 In a TypeScript file, import [`lucia`](/reference/api/server-api#lucia-default) and an adapter (the adapters are provided as a different NPM package).
 
 ```ts
-// lucia.js
+// lucia.ts
 import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 ```
@@ -31,7 +31,7 @@ import prisma from "@lucia-auth/adapter-prisma";
 Initialize it and export it as `auth`. As for the config, `adapter` is your database adapter and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
 
 ```ts
-// lucia.js
+// lucia.ts
 import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 

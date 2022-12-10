@@ -84,14 +84,14 @@ type Session = {
 };
 ```
 
-| name                | type      | description                                                                       |
-| ------------------- | --------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| activePeriodExpires | `Date`    | time of the [active period](/learn/start-here/concepts#session-states) expiration |
-| idlePeriodExpires   | `Date`    | time of the [idle period](/learn/start-here/concepts#session-states) expiration   |
-| isFresh             | `boolean` | `true` if the session was newly created (including on renewal)                    |
-| sessionId           | `string`  | session id                                                                        |
-| state               | `"active" | "idle"`                                                                           | [session state](/learn/start-here/concepts#session-states) |
-| userId              | `string`  | user id of the user of the session                                                |
+| name                | type                 | description                                                                       |
+| ------------------- | -------------------- | --------------------------------------------------------------------------------- |
+| activePeriodExpires | `Date`               | time of the [active period](/learn/start-here/concepts#session-states) expiration |
+| idlePeriodExpires   | `Date`               | time of the [idle period](/learn/start-here/concepts#session-states) expiration   |
+| isFresh             | `boolean`            | `true` if the session was newly created (including on renewal)                    |
+| sessionId           | `string`             | session id                                                                        |
+| state               | `"active" \| "idle"` | [session state](/learn/start-here/concepts#session-states)                        |
+| userId              | `string`             | user id of the user of the session                                                |
 
 ## `SessionAdapter`
 
