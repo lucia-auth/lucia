@@ -4,7 +4,7 @@ layout: "@layouts/DocumentLayout.astro"
 title: "Server API"
 ---
 
-These can be imported from `lucia-auth`. Can only be used inside a server context (.server.ts). The errors list is for Lucia client using official adapters.
+These can be imported from `lucia-auth`. Can only be used inside a server context. The errors list is for Lucia instances using official adapters.
 
 ```ts
 import { generateRandomString } from "lucia-auth";
