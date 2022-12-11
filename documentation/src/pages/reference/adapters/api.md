@@ -329,7 +329,7 @@ If the session doesn't exist
 | ------ |
 | `null` |
 
-#### `setSession()`
+### `setSession()`
 
 Creates a new session in `session` table.
 
