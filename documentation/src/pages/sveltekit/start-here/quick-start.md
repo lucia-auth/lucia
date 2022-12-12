@@ -83,7 +83,7 @@ For the session to update in the client, we need to call [`invalidateAll()`](htt
 
 ```ts
 // routes/signup/+page.server.ts
-import { invalid, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 import type { PageServerLoad, Actions } from './$types';
 
@@ -102,7 +102,7 @@ export const actions: Actions = {
 
 		// check for empty values
 		if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
-			return invalid(400);
+			return fail(400);
 		}
 
 		try {
@@ -116,7 +116,7 @@ export const actions: Actions = {
 			locals.setSession(session);
 		} catch {
 			// username already in use
-			return invalid(400);
+			return fail(400);
 		}
 	}
 };
@@ -154,7 +154,7 @@ We'll use `username` as the provider id and the username as the identifier. This
 
 ```ts
 // routes/login/+page.server.ts
-import { invalid, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 import type { PageServerLoad, Actions } from './$types';
 
@@ -171,14 +171,14 @@ export const actions: Actions = {
 		const password = form.get('password');
 		// check for empty values
 		if (!username || !password || typeof username !== 'string' || typeof password !== 'string')
-			return invalid(400);
+			return fail(400);
 		try {
 			const user = await auth.authenticateUser('username', username, password);
 			const session = await auth.createSession(user.userId);
 			locals.setSession(session);
 		} catch {
 			// invalid credentials
-			return invalid(400);
+			return fail(400);
 		}
 	}
 };
