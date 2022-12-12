@@ -1,4 +1,4 @@
-import { invalid, type Actions } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 
 export const actions: Actions = {
@@ -7,7 +7,7 @@ export const actions: Actions = {
 		const username = form.get('username');
 		const password = form.get('password');
 		if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
-			return invalid(400, {
+			return fail(400, {
 				message: 'Invalid input'
 			});
 		}
@@ -21,13 +21,13 @@ export const actions: Actions = {
 				error.message === 'AUTH_INVALID_PROVIDER_ID' ||
 				error.message === 'AUTH_INVALID_PASSWORD'
 			) {
-				return invalid(400, {
+				return fail(400, {
 					message: 'Incorrect username or password.'
 				});
 			}
 			// database connection error
 			console.error(error);
-			return invalid(500, {
+			return fail(500, {
 				message: 'Unknown error occurred'
 			});
 		}

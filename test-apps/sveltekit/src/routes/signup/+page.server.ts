@@ -1,5 +1,5 @@
 import { auth } from '$lib/server/lucia';
-import { invalid, type Actions } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -7,7 +7,7 @@ export const actions: Actions = {
 		const username = form.get('username');
 		const password = form.get('password');
 		if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
-			return invalid(400, {
+			return fail(400, {
 				message: 'Invalid input'
 			});
 		}
@@ -23,12 +23,12 @@ export const actions: Actions = {
 		} catch (e) {
 			const error = e as Error;
 			if (error.message === 'AUTH_DUPLICATE_PROVIDER_ID') {
-				return invalid(400, {
+				return fail(400, {
 					message: 'Username already in use'
 				});
 			}
 			console.error(error);
-			return invalid(500, {
+			return fail(500, {
 				message: 'Unknown error occurred'
 			});
 		}
