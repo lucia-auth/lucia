@@ -323,7 +323,7 @@ export class Auth<C extends Configurations = any> {
 
 type MaybePromise<T> = T | Promise<T>;
 
-interface Configurations {
+export interface Configurations {
 	adapter:
 		| Adapter
 		| {
