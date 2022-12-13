@@ -145,7 +145,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 ### Redirect authenticated users
 
-[`AuthRequest.getSession()`](/nextjs/api-reference/server-api#getsession) can be used inside a server context to validate the request and get the current session.
+[`authRequest.validate()`](/nextjs/api-reference/server-api#getsession) can be used inside a server context to validate the request and get the current session.
 
 ```diff
 import Link from "next/link";
@@ -164,7 +164,7 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
 	const authRequest = new AuthRequest(auth, context.req, context.res);
-	const session = await authRequest.getSession();
+	const session = await authRequest.validate();
 	if (session) {
 		// redirect the user if authenticated
 		return {
@@ -291,7 +291,7 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
 	const authRequest = new AuthRequest(auth, context.req, context.res);
-	const session = await authRequest.getSession();
+	const session = await authRequest.validate();
 	if (session) {
 		// redirect the user if authenticated
 		return {
@@ -333,7 +333,7 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ user: User }>> => {
 	const authRequest = new AuthRequest(auth, context.req, context.res);
-	const { user } = await authRequest.getSessionUser();
+	const { user } = await authRequest.validateUser();
 	if (!user)
 		return {
 			redirect: {
@@ -425,7 +425,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const authRequest = new AuthRequest(auth, req, res);
-	const session = await authRequest.getSession();
+	const session = await authRequest.validate();
 	// ...
 };
 ```

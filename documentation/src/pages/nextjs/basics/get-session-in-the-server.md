@@ -18,13 +18,13 @@ const authRequest = new AuthRequest(auth, request, response);
 This instance provides methods to interact with the current request, such as [`getSession()`](/nextjs/api-reference/server-api#getsession). This will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
 
 ```ts
-const session = await locals.getSession();
+const session = await locals.validate();
 ```
 
 Alternatively, you can use [`getSessionUser()`](/nextjs/api-reference/server-api#getsessionuser) which works similarly to `getSession()` but returns both the user and session without an additional database call.
 
 ```ts
-const { session, user } = await locals.getSessionUser();
+const { session, user } = await locals.validateUser();
 ```
 
 ## Example
@@ -39,7 +39,7 @@ import type { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const authRequest = new AuthRequest(auth, context.req, context.res);
-	const session = await authRequest.getSession();
+	const session = await authRequest.validate();
 	if (session) {
 		// authenticated
 	}
@@ -56,7 +56,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const authRequest = new AuthRequest(auth, req, res);
-	const session = await authRequest.getSession();
+	const session = await authRequest.validate();
 	if (session) {
 		// authenticated
 	}

@@ -24,7 +24,7 @@ This provides methods to interact with the current request, such as [`getSession
 import { AuthRequest } from "@lucia-auth/astro";
 
 const authRequest = new AuthRequest();
-const session = await authRequest.getSession();
+const session = await authRequest.validate();
 ```
 
 Alternatively, you can use [`getSessionUser()`](/astro/api-reference/server-api#getsessionuser) which works similarly to `getSession()` but returns both the user and session without an additional database call.
@@ -33,7 +33,7 @@ Alternatively, you can use [`getSessionUser()`](/astro/api-reference/server-api#
 import { AuthRequest } from "@lucia-auth/astro";
 
 const authRequest = new AuthRequest();
-const { session, user } = await authRequest.getSessionUser();
+const { session, user } = await authRequest.validateUser();
 ```
 
 ## Example
@@ -46,7 +46,7 @@ import { AuthRequest } from "@lucia-auth/astro";
 import { auth } from "../lib/lucia";
 
 const authRequest = new AuthRequest(auth, Astro);
-const session = await authRequest.getSession();
+const session = await authRequest.validate();
 ---
 ```
 
@@ -59,7 +59,7 @@ import type { APIRoute } from "astro";
 
 export const get: APIRoute = async (context) => {
 	const authRequest = new AuthRequest(auth, context);
-	const session = await authRequest.getSession();
+	const session = await authRequest.validate();
 	// ...
 };
 ```

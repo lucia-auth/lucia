@@ -16,7 +16,7 @@ export class AuthRequest<A extends Auth> {
 		this.request = context.request;
 		this.cookies = context.cookies;
 	}
-	public getSession = async (): Promise<Session | null> => {
+	public validate = async (): Promise<Session | null> => {
 		try {
 			const sessionId = this.auth.validateRequestHeaders(this.request);
 			const session = await this.auth.validateSession(sessionId);
@@ -29,7 +29,7 @@ export class AuthRequest<A extends Auth> {
 			return null;
 		}
 	};
-	public getSessionUser = async (): Promise<
+	public validateUser = async (): Promise<
 		{ session: Session; user: User } | { session: null; user: null }
 	> => {
 		try {

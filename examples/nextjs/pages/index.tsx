@@ -15,7 +15,7 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ user: User }>> => {
 	const authRequest = new AuthRequest(auth, context.req, context.res);
-	const { user } = await authRequest.getSessionUser();
+	const { user } = await authRequest.validateUser();
 	if (!user)
 		return {
 			redirect: {

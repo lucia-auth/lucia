@@ -48,9 +48,8 @@ Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module.
 // src/hooks.server.ts
 import { auth } from "$lib/server/lucia";
 import { handleHooks } from "@lucia-auth/sveltekit";
-import type { Handle } from "@sveltejs/kit";
 
-export const handle: Handle = handleHooks(auth);
+export const handle = handleHooks(auth);
 ```
 
 If you have your own handle function, SvelteKit's [`sequence`](https://kit.svelte.dev/docs/modules#sveltejs-kit-hooks-sequence) can be used to chain multiple handle functions. Make sure Lucia's handle function is the first one.
@@ -59,9 +58,8 @@ If you have your own handle function, SvelteKit's [`sequence`](https://kit.svelt
 // src/hooks.server.ts
 import { auth } from "$lib/server/lucia";
 import { handleHooks } from "@lucia-auth/sveltekit";
-import type { Handle } from "@sveltejs/kit";
 
-export const handle: Handle = sequence(handleHooks(auth), customHandle);
+export const handle = sequence(handleHooks(auth), customHandle);
 ```
 
 ### Root layout

@@ -5,7 +5,7 @@ import { AuthRequest } from "@lucia-auth/astro";
 import MainLayout from "../../layouts/MainLayout.astro";
 
 const authRequest = new AuthRequest(auth, Astro);
-const session = await authRequest.getSession();
+const session = await authRequest.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
 
 if (Astro.request.method === "POST") {

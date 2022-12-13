@@ -13,7 +13,7 @@ Refer to [Get session in the server](/sveltekit/basics/get-session-in-the-server
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.validate();
 	if (!session) {
 		// unauthenticated
 	}

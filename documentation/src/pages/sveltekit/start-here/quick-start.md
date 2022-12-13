@@ -89,7 +89,7 @@ import type { PageServerLoad, Actions } from './$types';
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.validate();
 	if (session) throw redirect(302, '/');
 	return {};
 };
@@ -160,7 +160,7 @@ import type { PageServerLoad, Actions } from './$types';
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();	
+	const session = await locals.validate();	
 	if (session) throw redirect(302, '/');
 };
 
@@ -215,7 +215,7 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.validate();
 	if (!session) throw redirect(302, '/login');
 };
 
@@ -257,7 +257,7 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const actions: Actions = {
 	default: async ({ locals }) => {
-		const session = await locals.getSession();
+		const session = await locals.validate();
 		if (!session) {
 			// unauthenticated
 		}
@@ -265,7 +265,7 @@ export const actions: Actions = {
 };
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.validate();
 	if (!session) {
 		// unauthenticated
 	}
@@ -277,7 +277,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.validate();
 	if (!session) {
 		// unauthenticated
 	}

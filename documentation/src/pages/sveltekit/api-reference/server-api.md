@@ -36,7 +36,7 @@ const handleHooks: (auth: Auth) => Handle;
 import { auth } from "$lib/server/lucia";
 import { handleHooks } from "@lucia-auth/sveltekit";
 
-export const handle: Handle = handleHooks(auth);
+export const handle = handleHooks(auth);
 ```
 
 ```ts
@@ -44,7 +44,7 @@ import { auth } from "$lib/server/lucia";
 import { handleHooks } from "@lucia-auth/sveltekit";
 import { sequence } from "@sveltejs/kit";
 
-export const handle: Handle = sequence(handleHooks(auth), customHandle);
+export const handle = sequence(handleHooks(auth), customHandle);
 ```
 
 ## `handleServerSession()`

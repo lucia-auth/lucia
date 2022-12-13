@@ -4,8 +4,8 @@ import type { Readable } from "svelte/store";
 export type RequestEvent = {
 	request: Request;
 	locals: {
-		getSession: () => Promise<Session | null>;
-		getSessionUser: () => Promise<{ session: Session; user: User } | { session: null; user: null }>;
+		validate: () => Promise<Session | null>;
+		validateUser: () => Promise<{ session: Session; user: User } | { session: null; user: null }>;
 		setSession: (session: Session | null) => void;
 	};
 	url: URL;
@@ -15,12 +15,6 @@ export type RequestEvent = {
 		delete: any;
 		serialize: any;
 	};
-	fetch: any;
-	getClientAddress: any;
-	params: any;
-	platform: any;
-	route: any;
-	setHeaders: any;
 };
 
 export type GlobalWindow = Window & {

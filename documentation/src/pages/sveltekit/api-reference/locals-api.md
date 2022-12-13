@@ -10,7 +10,7 @@ These are available inside `locals` from SvelteKit's `ServerRequest`.
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-	const session = locals.getSession();
+	const session = locals.validate();
 };
 ```
 
@@ -38,7 +38,7 @@ const getSession: () => Promise<Session | null>;
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-	const session = locals.getSession();
+	const session = locals.validate();
 	if (!session) {
 		// invalid
 	}
@@ -75,7 +75,7 @@ const getSessionUser: () => Promise<
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-	const session = locals.getSession();
+	const session = locals.validate();
 	if (!session) {
 		// invalid
 	}
