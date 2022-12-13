@@ -112,7 +112,7 @@ if (Astro.request.method === "POST") {
 
 ### Redirect authenticated users
 
-[`AuthRequest.getSession()`](/astro/api-reference/server-api#getsession) can be used inside a server context to validate the request and get the current session.
+[`authRequest.validate()`](/astro/api-reference/server-api#getsession) can be used inside a server context to validate the request and get the current session.
 
 ```astro
 ---
@@ -121,7 +121,7 @@ import { auth } from "../lib/lucia";
 import { AuthRequest } from "@lucia-auth/astro";
 
 const authRequest = new AuthRequest(auth, Astro);
-const session = await authRequest.getSession();
+const session = await authRequest.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
 
 if (Astro.request.method === "POST") {
@@ -194,7 +194,7 @@ import { auth } from "../lib/lucia";
 import { AuthRequest } from "@lucia-auth/astro";
 
 const authRequest = new AuthRequest(auth, Astro);
-const session = await authRequest.getSession();
+const session = await authRequest.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
 
 if (Astro.request.method === "POST") {
@@ -209,7 +209,7 @@ This page will be the root page (`pages/index.astro`). This route will show the 
 
 ### Get current user
 
-The current user and session can be retrieved using [`AuthRequest.getSessionUser()`](/astro/api-reference/server-api#getsessionuser). Redirect the user to the login page if unauthenticated.
+The current user and session can be retrieved using [`authRequest.validateUser()`](/astro/api-reference/server-api#getsessionuser). Redirect the user to the login page if unauthenticated.
 
 ```astro
 ---
@@ -218,7 +218,7 @@ import { auth } from "../lib/lucia";
 import { AuthRequest } from "@lucia-auth/astro";
 
 const authRequest = new AuthRequest(auth, Astro);
-const { user } = await authRequest.getSessionUser();
+const { user } = await authRequest.validateUser();
 
 if (!user) return Astro.redirect("/login", 302);
 ---
@@ -259,7 +259,7 @@ import type { APIRoute } from "astro";
 
 export const get: APIRoute = async (context) => {
 	const authRequest = new AuthRequest(auth, context);
-	const session = await authRequest.getSession();
+	const session = await authRequest.validate();
 	// ...
 };
 export const post: APIRoute = async (context) => {

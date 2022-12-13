@@ -14,7 +14,7 @@ import { getSessionFromDatabaseData } from "./session.js";
 export { SESSION_COOKIE_NAME } from "./cookie.js";
 
 export const lucia = <C extends Configurations>(configs: C) => {
-	return new Auth(configs) as Omit<Auth<C>, "getAuthSession">;
+	return new Auth(configs);
 };
 
 const validateConfigurations = (configs: Configurations) => {

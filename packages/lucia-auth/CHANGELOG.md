@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.1
+
+- Fix return type for `lucia()`
+
 ## 0.3.0
 
 - [Breaking] `getSession()` returns both active and idle sessions

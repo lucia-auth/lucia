@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.0
+
+- [Breaking] Renamed `locals.getSession()` to `locals.validate()`, `locals.getSessionUser()` to `locals.validateUser()`
+
 ## 0.4.0
 
 - [Breaking] Requires `lucia-auth` 0.3.0

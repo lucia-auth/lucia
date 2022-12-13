@@ -72,7 +72,7 @@ const getSession: () => Promise<Session | null>;
 
 ```ts
 const authRequest = new AuthRequest();
-const session = await authRequest.getSession();
+const session = await authRequest.validate();
 if (session) {
 	// authenticated
 }
@@ -84,7 +84,7 @@ Similar to [`getSession()`](#getsession) but returns both the current session an
 
 ```ts
 const authRequest = new AuthRequest();
-const { session, user } = await authRequest.getSessionUser();
+const { session, user } = await authRequest.validateUser();
 if (session) {
 	// authenticated
 }
@@ -103,7 +103,7 @@ if (session) {
 import type { Action } from "@sveltejs/kit";
 
 const action: Action = async ({ locals }) => {
-	const session = locals.getSession();
+	const session = locals.validate();
 	if (!session) {
 		// invalid
 	}

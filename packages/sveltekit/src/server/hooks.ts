@@ -59,7 +59,7 @@ export const handleHooks = (auth: Auth) => {
 			getSessionUserPromise = undefined;
 		};
 
-		event.locals.getSession = async () => {
+		event.locals.validate = async () => {
 			if (getSessionPromise) return getSessionPromise;
 			if (getSessionUserPromise) return (await getSessionUserPromise).session;
 			getSessionPromise = new Promise(async (resolve) => {
@@ -78,7 +78,7 @@ export const handleHooks = (auth: Auth) => {
 			});
 			return getSessionPromise;
 		};
-		event.locals.getSessionUser = async () => {
+		event.locals.validateUser = async () => {
 			if (getSessionUserPromise) return getSessionUserPromise;
 			getSessionUserPromise = new Promise(async (resolve) => {
 				try {
@@ -106,5 +106,3 @@ export const handleHooks = (auth: Auth) => {
 		});
 	};
 };
-
-const cache = <Fn extends () => Promise<any>>(fn: Fn) => {};

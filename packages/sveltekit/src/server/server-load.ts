@@ -5,13 +5,13 @@ type LoadEvent = RequestEvent & {
 	parent: any;
 	depends: any;
 };
-type HandleServerSession = <LoadFn extends (event: LoadEvent) => any = () => Promise<{}>>(
+type HandleServerSession = <LoadFn extends (event: any) => any = () => Promise<{}>>(
 	serverLoad?: LoadFn
 ) => (event: LoadEvent) => Promise<Exclude<Awaited<ReturnType<LoadFn>>, void> & PageData>;
 
 export const handleServerSession: HandleServerSession = (fn) => {
 	const handleServerSessionCore = async ({ locals }: RequestEvent): Promise<PageData> => {
-		const { session, user } = await locals.getSessionUser();
+		const { session, user } = await locals.validateUser();
 		if (session) {
 			return {
 				_lucia: {

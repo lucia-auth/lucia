@@ -7,13 +7,13 @@ export const handleApiRoutes = (auth: Auth) => {
 		if (!res.status) throw new Error("Invalid response type");
 		const authRequest = new AuthRequest(auth, req, res);
 		if ((req.url || "").startsWith("/api/auth/user") && req.method === "GET") {
-			const { user } = await authRequest.getSessionUser();
+			const { user } = await authRequest.validateUser();
 			return res.status(200).json({
 				user
 			});
 		}
 		if ((req.url || "").startsWith("/api/auth/logout") && req.method === "POST") {
-			const sessionId = auth.validateRequestHeaders(convertNextRequestToStandardRequest(req, auth));
+			const sessionId = auth.validateRequestHeaders(convertNextRequestToStandardRequest(req));
 			if (!sessionId) return res.status(200).json({});
 			try {
 				await auth.invalidateSession(sessionId);
@@ -40,10 +40,10 @@ export class AuthRequest<A extends Auth> {
 		this.req = req;
 		this.res = res;
 	}
-	public getSession = async () => {
+	public validate = async () => {
 		try {
 			const sessionId = this.auth.validateRequestHeaders(
-				convertNextRequestToStandardRequest(this.req, this.auth)
+				convertNextRequestToStandardRequest(this.req)
 			);
 			const session = await this.auth.validateSession(sessionId);
 			if (session.isFresh) {
@@ -55,7 +55,7 @@ export class AuthRequest<A extends Auth> {
 			return null;
 		}
 	};
-	public getSessionUser = async (): Promise<
+	public validateUser = async (): Promise<
 		| { user: User; session: Session }
 		| {
 				user: null;
@@ -64,7 +64,7 @@ export class AuthRequest<A extends Auth> {
 	> => {
 		try {
 			const sessionId = this.auth.validateRequestHeaders(
-				convertNextRequestToStandardRequest(this.req, this.auth)
+				convertNextRequestToStandardRequest(this.req)
 			);
 			const { session, user } = await this.auth.validateSessionUser(sessionId);
 			if (session.isFresh) {
