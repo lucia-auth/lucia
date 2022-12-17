@@ -1,13 +1,12 @@
 ---
 import DocumentLayout from "@layouts/DocumentLayout.astro";
 import AstroContentTable from "@components/content-table/AstroContentTable.astro";
-import { type Page, handleGetStaticPaths } from "src/lib/content";
+import { type Page, getStaticPathsFromPageGlob } from "src/lib/content";
 import type { GetStaticPaths } from "astro";
 
-export const getStaticPaths: GetStaticPaths = handleGetStaticPaths(
-	await Astro.glob("/content/astro/*/*.md")
-);
-
+export const getStaticPaths: GetStaticPaths = async () => {
+	return getStaticPathsFromPageGlob(await Astro.glob("/content/astro/*/*.md"));
+};
 type Props = {
 	page: Page;
 };

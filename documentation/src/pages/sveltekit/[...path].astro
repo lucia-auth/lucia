@@ -1,12 +1,12 @@
 ---
 import DocumentLayout from "@layouts/DocumentLayout.astro";
 import SvelteKitContentTable from "@components/content-table/SvelteKitContentTable.astro";
-import { type Page, handleGetStaticPaths } from "src/lib/content";
+import { type Page, getStaticPathsFromPageGlob } from "src/lib/content";
 import type { GetStaticPaths } from "astro";
 
-export const getStaticPaths: GetStaticPaths = handleGetStaticPaths(
-	await Astro.glob("/content/sveltekit/*/*.md")
-);
+export const getStaticPaths: GetStaticPaths = async () => {
+	return getStaticPathsFromPageGlob(await Astro.glob("/content/sveltekit/*/*.md"));
+};
 
 type Props = {
 	page: Page;
@@ -15,6 +15,11 @@ type Props = {
 const { page } = Astro.props;
 ---
 
-<DocumentLayout title={page.title} headings={page.getHeadings()} ContentTable={SvelteKitContentTable} external="sveltekit">
+<DocumentLayout
+	title={page.title}
+	headings={page.getHeadings()}
+	ContentTable={SvelteKitContentTable}
+	external="sveltekit"
+>
 	<page.Content />
 </DocumentLayout>

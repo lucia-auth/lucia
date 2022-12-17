@@ -62,31 +62,29 @@ export const getPages = async (
 		});
 };
 
-export const handleGetStaticPaths = (
+export const getStaticPathsFromPageGlob = async (
 	pageGlob: MarkdownInstance<{
 		title: string;
 		order: number;
 		redirect?: string;
 	}>[]
 ) => {
-	return (async () => {
-		const pages = await getPages(pageGlob);
-		return pages.map((page) => {
-			return {
-				params: {
-					/*
+	const pages = await getPages(pageGlob);
+	return pages.map((page) => {
+		return {
+			params: {
+				/*
 					/learn/start-here/introduction
 					=> split: [ <empty>, "learn", "start-here", "introduction" ]
 					=> slice+join: start-here/introduction
 					*/
-					path: page.path.split("/").slice(2).join("/")
-				},
-				props: {
-					page
-				}
-			};
-		});
-	}) satisfies GetStaticPaths;
+				path: page.path.split("/").slice(2).join("/")
+			},
+			props: {
+				page
+			}
+		};
+	});
 };
 
 export type ConfigGlob = Record<
@@ -98,10 +96,10 @@ export type ConfigGlob = Record<
 >;
 
 export type Content = {
-	title: string,
-	id: string,
-	sections: Section[]
-}
+	title: string;
+	id: string;
+	sections: Section[];
+};
 
 export type Section = {
 	title: string;
