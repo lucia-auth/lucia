@@ -45,7 +45,7 @@
 						<p class="font-medium">{section.title}</p>
 						<ul class="list-none mt-2 text-gray-500 dark:text-zinc-400">
 							{#each section.pages as page}
-								{@const isSelected = currentPath === page.path}
+								{@const isSelected = currentPath?.startsWith(page.path)}
 								<li
 									class="my-1 pl-4 border-l-2"
 									class:text-main={isSelected}
