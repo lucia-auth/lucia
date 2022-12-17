@@ -71,7 +71,6 @@ export const handleGetStaticPaths = (
 ) => {
 	return (async () => {
 		const pages = await getPages(pageGlob);
-		console.log(pages)
 		return pages.map((page) => {
 			return {
 				params: {
