@@ -19,7 +19,7 @@ const user = await auth.createUser("email", email, {
 	password
 });
 const session = await auth.createSession(user.userId);
-const sessionCookie = auth.createSessionCookie(session)
+const sessionCookie = auth.createSessionCookie(session);
 ```
 
 ## Resources
