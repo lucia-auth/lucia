@@ -1,6 +1,8 @@
 ---
-import MenuButton from "@components/icon-links/MenuButton.svelte";
-import ThemeButton from "@components/icon-links/ThemeButton.svelte";
+import MenuButton from "@components/icon-buttons/MenuButton.svelte";
+import ThemeButton from "@components/icon-buttons/ThemeButton.svelte";
+import Discord from "./icon-buttons/Discord.astro";
+import Github from "./icon-buttons/Github.astro";
 ---
 
 <div
@@ -9,29 +11,13 @@ import ThemeButton from "@components/icon-links/ThemeButton.svelte";
 	<div class="py-3 flex w-full place-content-between px-4 sm:px-8 lg:px-12 place-items-center">
 		<a class="flex place-items-center pointer-events-auto" href="/">
 			<div class="h-8 w-8">
-				<img src="/logo.svg"/>
+				<img src="/logo.svg" />
 			</div>
 			<p class="text-2xl font-semibold -ml-1">Lucia</p>
 		</a>
-		<div class="flex gap-x-2 place-items-center pointer-events-auto">
-			<a
-				href="https://github.com/pilcrowOnPaper/lucia-auth"
-				target="_blank"
-				class="cursor-pointer dark:text-zinc-200 fill-current"
-			>
-				<div class="h-6 w-6 hover:opacity-70">
-					<img src="/github.svg"/>
-				</div>
-			</a>
-			<a
-				href="https://discord.gg/PwrK3kpVR3"
-				target="_blank"
-				class="cursor-pointer dark:text-zinc-200 fill-current"
-			>
-				<div class="w-6 h-6 flex place-content-center">
-					<img src="/discord.svg"/>
-				</div>
-			</a>
+		<div class="flex gap-x-4 place-items-center pointer-events-auto">
+			<Discord />
+			<Github />
 			<ThemeButton client:load />
 			<MenuButton client:load />
 		</div>
