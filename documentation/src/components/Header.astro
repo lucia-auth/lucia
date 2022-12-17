@@ -13,7 +13,7 @@ import ThemeButton from "@components/icon-links/ThemeButton.svelte";
 			</div>
 			<p class="text-2xl font-semibold -ml-1">Lucia</p>
 		</a>
-		<div class="flex gap-x-4 place-items-center pointer-events-auto">
+		<div class="flex gap-x-2 place-items-center pointer-events-auto">
 			<a
 				href="https://github.com/pilcrowOnPaper/lucia-auth"
 				target="_blank"
@@ -33,9 +33,7 @@ import ThemeButton from "@components/icon-links/ThemeButton.svelte";
 				</div>
 			</a>
 			<ThemeButton client:load />
-			<div class="pl-2 lg:pl-0">
-				<MenuButton client:load pathname={Astro.url.pathname} />
-			</div>
+			<MenuButton client:load />
 		</div>
 	</div>
 </div>
