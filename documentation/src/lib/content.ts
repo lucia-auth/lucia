@@ -1,70 +1,112 @@
-import type { MarkdownInstance } from "astro";
+import type { GetStaticPaths, MarkdownInstance } from "astro";
 
-type Section = {
-	id: string;
-	title: string;
-	order: number;
-};
-
-type Page = {
-	title: string;
-	sectionId: string;
-	order: number;
-	url: string;
-};
-
-export const getContent = (sections: Section[], pages: Page[]): Content => {
-	return sections.map((section) => {
-		return {
-			title: section.title,
-			id: section.id,
-			pages: pages
-				.filter((page) => section.id === page.sectionId)
-				.sort((a, b) => {
-					const orderSort = a.order - b.order;
-					if (orderSort !== 0) return a.order - b.order;
-					return a.title.localeCompare(b.title);
-				})
-				.map((page) => {
-					return {
-						title: page.title,
-						url: page.url,
-					};
-				})
-		};
-	});
-};
-
-type MarkdownProps = {
-	title: string;
-	order: number;
-	redirect?: string;
-};
-
-export const getSections = (
-	markdownDocs: MarkdownInstance<MarkdownProps>[],
-	name: string
-): Section[] => {
-	return markdownDocs
-		.map((doc) => {
-			const matches = doc.url?.match(new RegExp(`^\\/${name}\\/(.*)`)) || [];
+export const getSections = async (
+	configGlob: ConfigGlob,
+	pageGlob: MarkdownInstance<{
+		title: string;
+		order: number;
+		redirect?: string;
+	}>[]
+): Promise<Section[]> => {
+	const renderedConfigs = await Promise.all(
+		Object.entries(configGlob).map(async ([configUrl, render]) => {
+			const json = await render();
 			return {
-				id: matches[1],
-				title: doc.frontmatter.title,
-				order: doc.frontmatter.order
+				order: json.order,
+				title: json.title,
+				configUrl
 			};
 		})
-		.sort((a, b) => a.order - b.order);
+	);
+	return Promise.all(
+		renderedConfigs
+			.sort((a, b) => a.order - b.order) // sort by order attribute
+			.map(async (section) => {
+				const relevantPageGlob = pageGlob
+					.filter((doc) => doc.file.includes(section.configUrl.replace("config.json", "")))
+					.sort((a, b) => a.frontmatter.order - b.frontmatter.order); // sort by order attribute
+				const pages = await getPages(relevantPageGlob);
+				return {
+					title: section.title,
+					pages
+				} satisfies Section;
+			})
+	);
 };
 
-export const getPages = (markdownDocs: MarkdownInstance<MarkdownProps>[], name: string): Page[] => {
-	return markdownDocs.filter(doc => doc.url && doc.url.split("/").length > 3).map((doc) => {
-		const sectionIdMatches = doc.url?.match(new RegExp(`^\\/${name}\\/(?!index\\.md)(.*)\\/`)) || [];
-		return {
-			sectionId: sectionIdMatches[1],
-			title: doc.frontmatter.title,
-			url: doc.frontmatter.redirect || doc.url || "",
-			order: doc.frontmatter.order,
-		};
-	});
+export const getPages = async (
+	documentGlob: MarkdownInstance<{
+		title: string;
+		order: number;
+		redirect?: string;
+	}>[]
+): Promise<Page[]> => {
+	return documentGlob
+		.sort((a, b) => a.frontmatter.order - b.frontmatter.order) // sort by order attribute
+		.map((doc) => {
+			const docAttributes = doc.frontmatter;
+			/* 
+			gets relative path from absolute markdown file path
+			/lucia-auth/documentation/content/learn/start-here/introduction.md
+			=> learn/start-here/introduction
+		 	*/
+			const urlMatcher = /.+\/lucia-auth\/documentation\/content\/(.*)\.md/;
+			const path = docAttributes.redirect ?? `/${doc.file.match(urlMatcher)?.[1] ?? ""}`;
+			return {
+				title: docAttributes.title,
+				redirect: docAttributes.redirect ?? null,
+				Content: doc.Content,
+				path,
+				getHeadings: doc.getHeadings
+			};
+		});
+};
+
+export const handleGetStaticPaths = (
+	pageGlob: MarkdownInstance<{
+		title: string;
+		order: number;
+		redirect?: string;
+	}>[]
+) => {
+	return (async () => {
+		const pages = await getPages(pageGlob);
+		console.log(pages)
+		return pages.map((page) => {
+			return {
+				params: {
+					/*
+					/learn/start-here/introduction
+					=> split: [ <empty>, "learn", "start-here", "introduction" ]
+					=> slice+join: start-here/introduction
+					*/
+					path: page.path.split("/").slice(2).join("/")
+				},
+				props: {
+					page
+				}
+			};
+		});
+	}) satisfies GetStaticPaths;
+};
+
+export type ConfigGlob = Record<
+	any,
+	() => Promise<{
+		order: number;
+		title: string;
+	}>
+>;
+
+export type Section = {
+	title: string;
+	pages: Page[];
+};
+
+export type Page = {
+	title: string;
+	redirect: string | null;
+	Content: MarkdownInstance<any>["Content"];
+	path: string;
+	getHeadings: MarkdownInstance<any>["getHeadings"];
 };

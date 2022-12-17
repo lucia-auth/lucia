@@ -1,0 +1,28 @@
+---
+interface Props {
+	title?: string;
+}
+import ContentTable from "@components/content-table/ContentTable.svelte";
+import { ConfigGlob, getSections } from "src/lib/content";
+
+const tab: "learn" | "reference" = (Astro.url.pathname.match(/^\/(\w+)\//)?.[1] as any) || "learn";
+
+const learnSections = await getSections(
+	import.meta.glob("/content/learn/*/config.json") as ConfigGlob,
+	await Astro.glob("/content/learn/*/*.md")
+);
+
+const referenceSections = await getSections(
+	import.meta.glob("/content/reference/*/config.json") as ConfigGlob,
+	await Astro.glob("/content/reference/*/*.md")
+);
+---
+
+<ContentTable
+	client:load
+	learnSections={learnSections}
+	referenceSections={referenceSections}
+	selectedTab={tab}
+	currentTitle={Astro.props.title}
+	showOnLg={Astro.url.pathname === "/"}
+/>

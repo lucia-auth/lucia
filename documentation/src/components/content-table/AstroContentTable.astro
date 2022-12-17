@@ -1,0 +1,20 @@
+---
+import ExternalContentTable from "./ExternalContentTable.svelte";
+import { ConfigGlob, getSections } from "src/lib/content.js";
+
+interface Props {
+	title: string;
+}
+
+const sections = await getSections(
+	import.meta.glob("/content/astro/*/config.json") as ConfigGlob,
+	await Astro.glob("/content/astro/*/*.md")
+);
+---
+
+<ExternalContentTable
+	sections={sections}
+	title="Astro integration"
+	currentPageTitle={Astro.props.title}
+	client:load
+/>

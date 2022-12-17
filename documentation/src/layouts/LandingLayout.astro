@@ -1,17 +1,15 @@
 ---
-import BaseLayout from "@components/structure/BaseLayout.astro";
-import MainContent from "@components/content/MainContent.astro";
+import BaseLayout from "./BaseLayout.astro";
+import MainContentTable from "@components/content-table/MainContentTable.astro";
 import Header from "@components/structure/Header.astro";
 ---
 
 <BaseLayout>
 	<Header />
-	<div class="min-h-screen">
-		<MainContent />
-		<main class="pt-36 lg:pt-20 min-w-0 pb-24 px-4 sm:px-8 lg:px-12 lg:ml-80">
-			<div class="lg:pl-4 overflow-hidden">
-				<slot />
-			</div>
-		</main>
-	</div>
+	<MainContentTable />
+	<main class="pt-36 lg:pt-20 min-w-0 pb-24 px-4 sm:px-8 lg:px-12 lg:ml-80">
+		<div class="lg:pl-4 overflow-hidden">
+			<slot />
+		</div>
+	</main>
 </BaseLayout>
