@@ -11,7 +11,6 @@ export const getSections = async (
 	const renderedConfigs = await Promise.all(
 		Object.entries(configGlob).map(async ([configUrl, render]) => {
 			const json = await render();
-			console.log("configUrl", configUrl)
 			return {
 				order: json.order,
 				title: json.title,
@@ -51,8 +50,7 @@ export const getPages = async (
 			/lucia-auth/documentation/content/learn/start-here/introduction.md
 			=> learn/start-here/introduction
 		 	*/
-			const urlMatcher = /.+\/lucia-auth\/documentation\/content\/(.*)\.md/;
-			console.log("doc.file", doc.file)
+			const urlMatcher = /.+\/documentation\/content\/(.*)\.md/;
 			const path = docAttributes.redirect ?? `/${doc.file.match(urlMatcher)?.[1] ?? ""}`;
 			return {
 				title: docAttributes.title,
