@@ -1,0 +1,77 @@
+---
+interface Props {
+	title: string;
+	contributePageUrl: string;
+}
+---
+
+<article class="w-full">
+	<section id="md" class="overflow-hidden">
+		<h1 class="mb-10 font-semibold text-5xl">{Astro.props.title}</h1>
+		<slot />
+	</section>
+	<div class="mt-8">
+		<a
+			href={`https://github.com/pilcrowOnPaper/lucia-auth/blob/main/documentation/src/pages${Astro.props.contributePageUrl}.md`}
+			class="text-main hover:underline cursor-pointer;">Contribute to this page</a
+		>
+	</div>
+</article>
+
+<style lang="postcss">
+	:global(#md h2) {
+		@apply font-semibold text-3xl mb-4 mt-16;
+	}
+	:global(#md h3) {
+		@apply font-semibold text-2xl mb-4 mt-12;
+	}
+	:global(#md h4) {
+		@apply font-medium text-xl mt-3;
+	}
+	:global(#md h5) {
+		@apply font-medium text-lg mt-2;
+	}
+	:global(#md p) {
+		@apply my-3;
+	}
+	:global(#md .astro-code) {
+		@apply overflow-scroll rounded-md px-4 py-2 my-2 text-sm;
+		scrollbar-width: none;
+	}
+	:global(.dark #md .astro-code) {
+		@apply !bg-zinc-900;
+	}
+	:global(#md pre::-webkit-scrollbar) {
+		display: none;
+	}
+	:global(#md a) {
+		@apply text-main hover:underline cursor-pointer;
+	}
+	:global(#md ol) {
+		@apply list-decimal list-inside mb-6;
+	}
+	:global(#md ul) {
+		@apply list-disc list-inside mb-6;
+	}
+	:global(#md li) {
+		@apply my-0.5;
+	}
+	:global(#md table) {
+		@apply w-full text-left table-auto border-collapse my-2;
+	}
+	:global(#md .table-wrapper) {
+		@apply overflow-auto whitespace-nowrap w-full;
+	}
+	:global(#md table thead tr) {
+		@apply border-b w-full;
+	}
+	:global(#md table :is(td, th)) {
+		@apply py-1.5 px-1 border-b;
+	}
+	:global(.dark #md table :is(td, tr, th)) {
+		@apply border-zinc-800;
+	}
+	:global(#md table th) {
+		@apply font-medium text-sm;
+	}
+</style>

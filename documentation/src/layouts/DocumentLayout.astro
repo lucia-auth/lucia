@@ -1,21 +1,16 @@
 ---
-import BaseLayout from "@components/structure/BaseLayout.astro";
-import Headings from "@components/document/Headings.svelte";
-import MainContent from "@components/content/MainContent.astro";
-import Header from "@components/structure/Header.astro";
-import MarkdownArticle from "@components/structure/MarkdownArticle.astro";
-import SvelteKitContent from "@components/content/SvelteKitContent.astro";
-import NextjsContent from "@components/content/NextjsContent.astro";
-import OAuthContent from "@components/content/OAuthContent.astro";
-import AstroContent from "@components/content/AstroContent.astro";
-import type { MarkdownLayoutProps } from "astro";
+import BaseLayout from "./BaseLayout.astro";
+import Headings from "@components/doc/Headings.svelte";
+import Header from "@components/Header.astro";
+import MarkdownArticle from "@components/MarkdownArticle.astro";
+import type { MarkdownInstance } from "astro";
 
-type Props = MarkdownLayoutProps<{
+type Props = {
 	title: string;
-	order: number;
-	redirect?: string;
-}>;
-const { frontmatter, headings } = Astro.props;
+	headings: ReturnType<MarkdownInstance<any>["getHeadings"]>;
+	ContentTable: any;
+	external?: ExternalIntegration;
+};
 
 //FIXME: problem: on ASTRO DEV url.pathname not having trailing slash, on ASTRO PREVIEW it has and breaking link.
 //INFO: temporary hotfix
@@ -23,32 +18,16 @@ const contributePageUrl = Astro.url.pathname.endsWith("/")
 	? Astro.url.pathname.slice(0, -1)
 	: Astro.url.pathname;
 
-const externalParam = Astro.url.pathname.split("/")[1];
-const external = (
-	["sveltekit", "nextjs", "astro", "oauth"].includes(externalParam) ? externalParam : null
-) as ExternalIntegration | null;
-
-const title = Astro.props.frontmatter.title;
+const { title, headings, ContentTable, external } = Astro.props;
 ---
 
-<BaseLayout title={frontmatter.title} external={external}>
+<BaseLayout title={title} external={external}>
 	<Header />
-	<div class="min-h-screen">
-		{external === "sveltekit" && <SvelteKitContent title={title} />}
-		{external === "nextjs" && <NextjsContent title={title} />}
-		{external === "astro" && <AstroContent title={title} />}
-		{external === "oauth" && <OAuthContent title={title} />}
-		{external === null && <MainContent title={title} />}
-		<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:mr-64 xl:ml-72 px-4 sm:px-8 lg:px-12">
-			<div class="xl:pl-4 overflow-hidden">
-				<MarkdownArticle
-					title={Astro.props.frontmatter.title}
-					contributePageUrl={contributePageUrl}
-				>
-					<slot />
-				</MarkdownArticle>
-			</div>
-		</main>
-	</div>
+	<ContentTable title={title} />
+	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:pl-12 lg:mr-64 lg:pr-4  xl:ml-72 overflow-hidden">
+		<MarkdownArticle title={title} contributePageUrl={contributePageUrl}>
+			<slot />
+		</MarkdownArticle>
+	</main>
 	<Headings headings={headings} />
 </BaseLayout>

@@ -1,5 +1,7 @@
 ---
-import LandingLayout from "../layouts/LandingLayout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Header from "@components/Header.astro";
+import MainContentTable from "@components/content-table/MainContentTable.astro";
 
 const GITHUB_API_KEY = import.meta.env.DEV
 	? import.meta.env.GITHUB_API_KEY
@@ -25,42 +27,46 @@ const contributorsResult = (await contributorsResponse.json()) as
 const contributors = Array.isArray(contributorsResult) ? contributorsResult : [];
 ---
 
-<LandingLayout>
-	<div class="sm:pt-12 lg:pt-20">
-		<h1 class="text-5xl sm:text-7xl font-semibold">Authentication, <br />simple and clean</h1>
-		<p class="mb-4 mt-6">
-			Lucia is a simple yet flexible user and session management library that provides an
-			abstraction layer between your app and your database. It's bare-bones by design, keeping
-			everything easy to use and understand.
-		</p>
-		<p class="mb-4 mt-2">
-			No more hacky workarounds. Make the authentication work for you and your app.
-		</p>
-		<a
-			href="/learn/start-here/introduction"
-			class="px-10 py-2 rounded-md my-2 block w-fit bg-black text-white dark:bg-white dark:text-black hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black dark:border-white"
-			>Get started</a
-		>
-		<section class="my-12">
-			<p class="my-4">
-				This is a free and open source project made possible by our contributors! Thank you to
-				everyone who has helped with the development!
+<BaseLayout>
+	<Header />
+	<MainContentTable />
+	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:ml-72 xl:pl-12 overflow-hidden">
+		<div class="sm:pt-12 lg:pt-20">
+			<h1 class="text-5xl sm:text-7xl font-semibold">Authentication, <br />simple and clean</h1>
+			<p class="mb-4 mt-6">
+				Lucia is a simple yet flexible user and session management library that provides an
+				abstraction layer between your app and your database. It's bare-bones by design, keeping
+				everything easy to use and understand.
 			</p>
-			<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
-				{
-					contributors.map((val) => (
-						<a href={val.html_url} target="_blank">
-							<img
-								src={val.avatar_url}
-								class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100"
-							/>
-						</a>
-					))
-				}
-			</div>
-		</section>
-	</div>
-</LandingLayout>
+			<p class="mb-4 mt-2">
+				No more hacky workarounds. Make the authentication work for you and your app.
+			</p>
+			<a
+				href="/learn/start-here/introduction"
+				class="px-10 py-2 rounded-md my-2 block w-fit bg-black text-white dark:bg-white dark:text-black hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black dark:border-white transition"
+				>Get started</a
+			>
+			<section class="my-12">
+				<p class="my-4">
+					This is a free and open source project made possible by our contributors! Thank you to
+					everyone who has helped with the development!
+				</p>
+				<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
+					{
+						contributors.map((val) => (
+							<a href={val.html_url} target="_blank">
+								<img
+									src={val.avatar_url}
+									class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100"
+								/>
+							</a>
+						))
+					}
+				</div>
+			</section>
+		</div>
+	</main>
+</BaseLayout>
 
 <style>
 	:global(.astro-code) {
