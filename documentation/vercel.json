@@ -1,5 +1,34 @@
 {
     "redirects": [
-      
+       {
+        "source": "/sveltekit",
+        "destination": "/sveltekit/start-here/getting-started",
+        "permanent": true
+       },
+       {
+        "source": "/astro",
+        "destination": "/astro/start-here/getting-started",
+        "permanent": true
+       },
+       {
+        "source": "/nextjs",
+        "destination": "/nextjs/start-here/getting-started",
+        "permanent": true
+       },
+       {
+        "source": "/oauth",
+        "destination": "/oauth/start-here/getting-started",
+        "permanent": true
+       },
+       {
+        "source": "/learn/start-here/introduction",
+        "destination": "/oauth/start-here/getting-started",
+        "permanent": true
+       },
+       {
+        "source": "/reference/api/server-api",
+        "destination": "/oauth/start-here/getting-started",
+        "permanent": true
+       }
     ]
 }
