@@ -12,6 +12,16 @@ const getExternalName = (external: ExternalIntegration) => {
 		astro: "Astro"
 	}[external];
 };
+
+let titleTag = "Lucia";
+
+if (Astro.props.title) {
+	if (Astro.props.external) {
+		titleTag = `${Astro.props.title} | Lucia + ${getExternalName(Astro.props.external)}`;
+	} else {
+		titleTag = `${Astro.props.title} | Lucia`;
+	}
+}
 ---
 
 <head>
@@ -19,13 +29,7 @@ const getExternalName = (external: ExternalIntegration) => {
 	<meta name="viewport" content="width=device-width" />
 	<meta name="generator" content={Astro.generator} />
 	<title>
-		{!Astro.props.title && "Lucia"}
-		{Astro.props.title && !Astro.props.integration && `${Astro.props.title} | Lucia`}
-		{
-			Astro.props.title &&
-				Astro.props.external &&
-				`${Astro.props.title} | Lucia + ${getExternalName(Astro.props.external)}`
-		}
+		{titleTag}
 	</title>
 	<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />

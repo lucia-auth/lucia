@@ -2,11 +2,9 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Header from "@components/Header.astro";
 import MainContentTable from "@components/content-table/MainContentTable.astro";
-
 const GITHUB_API_KEY = import.meta.env.DEV
 	? import.meta.env.GITHUB_API_KEY
 	: process.env.GITHUB_API_KEY;
-
 const contributorsResponse = await fetch(
 	"https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
 	{
@@ -15,7 +13,6 @@ const contributorsResponse = await fetch(
 		}
 	}
 );
-
 const contributorsResult = (await contributorsResponse.json()) as
 	| {
 			message: string;
