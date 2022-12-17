@@ -1,11 +1,17 @@
 ---
+import Logo from "@components/utils/Logo.astro";
 import MenuButton from "@components/utils/MenuButton.svelte";
 import ThemeButton from "@components/utils/ThemeButton.svelte";
 ---
 
-<div class="z-50 pointer-events-none bg-transparent fixed w-full">
+<div class="z-50 pointer-events-none fixed w-full bg-transparent">
 	<div class="py-3 flex w-full place-content-between px-4 sm:px-8 lg:px-12 place-items-center">
-		<a class="text-2xl font-semibold pointer-events-auto" href="/"> Lucia</a>
+		<a class="flex place-items-center pointer-events-auto" href="/">
+			<div class="h-8 w-8">
+				<Logo />
+			</div>
+			<p class="text-2xl font-semibold -ml-1">Lucia</p>
+		</a>
 		<div class="flex gap-x-4 place-items-center pointer-events-auto">
 			<a
 				href="https://github.com/pilcrowOnPaper/lucia-auth"
