@@ -18,7 +18,11 @@
 				{#each headings as heading}
 					{#if heading.depth < 4}
 						{@const hash = heading.slug.split("/").reverse()[0]}
-						<li class:ml-4={heading.depth === 3} class="my-1">
+						<li
+							class:ml-4={heading.depth === 3}
+							class:my-1.5={heading.depth === 2}
+							class:my-1={heading.depth > 2}
+						>
 							<a href="#{hash}" class="hover:text-black dark:hover:text-zinc-200">
 								{heading.text}</a
 							>
