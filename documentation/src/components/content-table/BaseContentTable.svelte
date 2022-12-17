@@ -17,7 +17,7 @@
 </script>
 
 <div
-	class="border-r dark:border-zinc-900 shrink-0 pt-20 fixed z-40 w-full sm:w-80 h-screen pl-4 sm:pl-8 lg:pl-12 bg-white dark:bg-black-zinc xl:block pr-4"
+	class="border-r dark:border-zinc-900 shrink-0 pt-20 fixed z-40 w-full sm:w-72 pr-4 h-screen bg-white dark:bg-black-zinc xl:block"
 	class:hidden={!$isMenuOpen}
 >
 	{#if title}
@@ -26,7 +26,7 @@
 		</h3>
 	{/if}
 	{#if contents.length > 1}
-		<div class="grid grid-cols-2 gap-x-1 sticky top-0 w-full bg-white dark:bg-black-zinc">
+		<div class="grid grid-cols-2 gap-x-2 sticky top-0 w-full bg-white dark:bg-black-zinc">
 			{#each contents as content}
 				<div class="w-full pb-1 border-b-2" class:border-main={content.id === selectedContent}>
 					<button

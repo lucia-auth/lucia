@@ -24,12 +24,10 @@ const { title, headings, ContentTable, external } = Astro.props;
 <BaseLayout title={title} external={external}>
 	<Header />
 	<ContentTable title={title} />
-	<main class="pt-36 lg:pt-20 min-w-0 pb-24 lg:mr-64 xl:ml-72 px-4 sm:px-8 lg:px-12">
-		<div class="xl:pl-4 overflow-hidden">
-			<MarkdownArticle title={title} contributePageUrl={contributePageUrl}>
-				<slot />
-			</MarkdownArticle>
-		</div>
+	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:pl-12 lg:mr-64 lg:pr-4  xl:ml-72 overflow-hidden">
+		<MarkdownArticle title={title} contributePageUrl={contributePageUrl}>
+			<slot />
+		</MarkdownArticle>
 	</main>
 	<Headings headings={headings} />
 </BaseLayout>
