@@ -1,5 +1,5 @@
 ---
-import ExternalContentTable from "./ExternalContentTable.svelte";
+import BaseContentTable from "@components/content-table/BaseContentTable.svelte";
 import { ConfigGlob, getSections } from "src/lib/content.js";
 
 interface Props {
@@ -12,9 +12,14 @@ const sections = await getSections(
 );
 ---
 
-<ExternalContentTable
-	sections={sections}
+<BaseContentTable
+	contents={[
+		{
+			title: "",
+			id: "",
+			sections
+		}
+	]}
 	title="SvelteKit integration"
-	currentPageTitle={Astro.props.title}
-	client:load
+	currentPath={Astro.url.pathname}
 />

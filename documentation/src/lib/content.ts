@@ -98,6 +98,12 @@ export type ConfigGlob = Record<
 	}>
 >;
 
+export type Content = {
+	title: string,
+	id: string,
+	sections: Section[]
+}
+
 export type Section = {
 	title: string;
 	pages: Page[];
