@@ -2,7 +2,7 @@
 interface Props {
 	title?: string;
 }
-import ContentTable from "@components/content-table/BaseContentTable.svelte";
+import BaseContentTable from "@components/content-table/BaseContentTable.svelte";
 import { ConfigGlob, getSections } from "src/lib/content";
 import type { Content } from "src/lib/content";
 
@@ -30,7 +30,7 @@ const contents: Content[] = [
 ]
 ---
 
-<ContentTable
+<BaseContentTable
 	client:load
 	contents={contents}
 	currentPath={Astro.url.pathname}
