@@ -70,6 +70,7 @@ export const getStaticPathsFromPageGlob = async (
 	}>[]
 ) => {
 	const pages = await getPages(pageGlob);
+	console.log(pages.map((val) => val.path.split("/").slice(2).join("/")));
 	return pages.map((page) => {
 		return {
 			params: {
