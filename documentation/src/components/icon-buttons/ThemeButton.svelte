@@ -19,7 +19,7 @@
 </script>
 
 <button
-    class="h-7 w-7 fill-current dark:text-zinc-200 text-black"
+    class="h-6 w-6 fill-current dark:text-zinc-200 text-black"
     on:click={toggleTheme}
 >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
