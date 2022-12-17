@@ -17,7 +17,7 @@
 </script>
 
 <div
-	class="border-r dark:border-zinc-900 shrink-0 pt-20 fixed z-40 w-full sm:w-72 pr-4 h-screen bg-white dark:bg-black-zinc xl:block"
+	class="border-r dark:border-zinc-800 shrink-0 pt-20 fixed z-40 w-full sm:w-72 pr-4 h-screen bg-white dark:bg-black-zinc xl:block"
 	class:hidden={!$isMenuOpen}
 >
 	{#if title}
