@@ -1,12 +1,16 @@
 # CHANGELOG
 
+## 0.3.3
+
+- [Fix] Get proper types for `User`
+
 ## 0.3.2
 
 - Export `Configurations` type
 
 ## 0.3.1
 
-- Fix return type for `lucia()`
+- [Fix] Return type for `lucia()`
 
 ## 0.3.0
 
