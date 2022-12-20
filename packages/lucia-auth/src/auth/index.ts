@@ -39,7 +39,7 @@ export class Auth<C extends Configurations = any> {
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
 	private autoDatabaseCleanup: boolean;
-	private transformUserData: (
+	protected transformUserData: (
 		userData: UserSchema
 	) => C["transformUserData"] extends {} ? ReturnType<C["transformUserData"]> : { userId: string };
 	private csrfProtection: boolean;
