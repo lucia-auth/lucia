@@ -7,7 +7,6 @@ import github from '@lucia-auth/oauth/github';
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
 	env: import.meta.env.DEV ? "DEV" : "PROD",
-	sessionTimeout: 1000 * 5,
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,
