@@ -26,7 +26,7 @@ const t = initTRPC.context<Context>().create();
 
 const router = t.router({
 	user: t.procedure.query(async ({ ctx }) => {
-		const { user } = await ctx.auth.getSessionUser();
+		const { user } = await ctx.auth.validateUser();
 		return user;
 	})
 });

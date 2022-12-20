@@ -111,7 +111,7 @@ if (Astro.request.method === "POST") {
 
 ### Redirect authenticated users
 
-[`authRequest.validate()`](/astro/api-reference/server-api#getsession) can be used inside a server context to validate the request and get the current session.
+[`authRequest.validate()`](/astro/api-reference/server-api#validate) can be used inside a server context to validate the request and get the current session.
 
 ```astro
 ---
@@ -208,7 +208,7 @@ This page will be the root page (`pages/index.astro`). This route will show the 
 
 ### Get current user
 
-The current user and session can be retrieved using [`authRequest.validateUser()`](/astro/api-reference/server-api#getsessionuser). Redirect the user to the login page if unauthenticated.
+The current user and session can be retrieved using [`authRequest.validateUser()`](/astro/api-reference/server-api#validateuser). Redirect the user to the login page if unauthenticated.
 
 ```astro
 ---

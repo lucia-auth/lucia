@@ -14,13 +14,13 @@ import { auth } from "../lib/lucia";
 const authRequest = new AuthRequest(auth, request, response);
 ```
 
-This instance provides methods to interact with the current request, such as [`getSession()`](/nextjs/api-reference/server-api#getsession). This will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
+This instance provides methods to interact with the current request, such as [`validate()`](/nextjs/api-reference/server-api#validate). This will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
 
 ```ts
 const session = await locals.validate();
 ```
 
-Alternatively, you can use [`getSessionUser()`](/nextjs/api-reference/server-api#getsessionuser) which works similarly to `getSession()` but returns both the user and session without an additional database call.
+Alternatively, you can use [`validateUser()`](/nextjs/api-reference/server-api#validateuser) which works similarly to `validate()` but returns both the user and session without an additional database call.
 
 ```ts
 const { session, user } = await locals.validateUser();

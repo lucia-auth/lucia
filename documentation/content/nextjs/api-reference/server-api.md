@@ -53,12 +53,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 };
 ```
 
-### `getSession()`
+### `validate()`
 
 Validates the request and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
 
 ```ts
-const getSession: () => Promise<Session | null>;
+const validate: () => Promise<Session | null>;
 ```
 
 #### Returns
@@ -77,9 +77,9 @@ if (session) {
 }
 ```
 
-### `getSessionUser()`
+### `validateUser()`
 
-Similar to [`getSession()`](#getsession) but returns both the current session and user without an additional database.
+Similar to [`validate()`](#validate) but returns both the current session and user without an additional database.
 
 ```ts
 const authRequest = new AuthRequest();

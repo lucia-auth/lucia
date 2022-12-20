@@ -17,7 +17,7 @@ const authRequest = new AuthRequest(auth, {
 });
 ```
 
-This provides methods to interact with the current request, such as [`getSession()`](/astro/api-reference/server-api#getsession). This will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
+This provides methods to interact with the current request, such as [`validate()`](/astro/api-reference/server-api#validate). This will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
 
 ```ts
 import { AuthRequest } from "@lucia-auth/astro";
@@ -26,7 +26,7 @@ const authRequest = new AuthRequest();
 const session = await authRequest.validate();
 ```
 
-Alternatively, you can use [`getSessionUser()`](/astro/api-reference/server-api#getsessionuser) which works similarly to `getSession()` but returns both the user and session without an additional database call.
+Alternatively, you can use [`validateUser()`](/astro/api-reference/server-api#validateuser) which works similarly to `validate()` but returns both the user and session without an additional database call.
 
 ```ts
 import { AuthRequest } from "@lucia-auth/astro";
