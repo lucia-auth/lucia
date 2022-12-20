@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.2
+
+- Export `Configurations` type
+
 ## 0.3.1
 
 - Fix return type for `lucia()`
