@@ -15,6 +15,13 @@ export type RequestEvent = {
 		delete: any;
 		serialize: any;
 	};
+	fetch: any;
+	getClientAddress: any;
+	platform: any;
+	params: any;
+	route: any;
+	setHeaders: any;
+	isDataRequest: any;
 };
 
 export type GlobalWindow = Window & {

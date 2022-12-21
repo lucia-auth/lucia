@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.1
+
+- [Fix] Fix `handleHooks()` types [#260](https://github.com/pilcrowOnPaper/lucia-auth/issues/260)
+
 ## 0.5.0
 
 - [Breaking] Renamed `locals.getSession()` to `locals.validate()`, `locals.getSessionUser()` to `locals.validateUser()`
