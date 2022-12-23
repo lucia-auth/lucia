@@ -2,13 +2,15 @@ import { LuciaError, generateRandomString } from "lucia-auth";
 import type { Adapter } from "lucia-auth";
 import faunadb from "faunadb";
 import {convertUserResponse} from "./utils.js";
-const {query, Client} = faunadb;
+const {query, Client, errors} = faunadb;
+const {FaunaError} = errors;
 const q = query;
 
 const adapter = (
-// @ts-ignore
+	// @ts-ignore
 	faunaClient: Client,
-	errorHandler: (error: any) => void = () => {}
+	// @ts-ignore
+	errorHandler: (error: FaunaError) => void = () => {}
 ): Adapter => {
 	return {
 		getUser: async (userId) => {
