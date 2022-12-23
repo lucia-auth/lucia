@@ -1,0 +1,49 @@
+{
+	"name": "@lucia-auth/adapter-fauna",
+	"version": "0.1.0",
+	"description": "Fauna adapter for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"test-main": "npx ts-node --esm -T test/index.ts",
+		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+	},
+	"keywords": [
+		"lucia",
+		"lucia-auth",
+		"fauna",
+		"faunadb",
+		"auth",
+		"authentication",
+		"adapter"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
+		"directory": "packages/adapter-fauna"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-auth": "0.1.x - 0.3.x"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"dotenv": "^16.0.3",
+		"ts-node": "^10.9.1"
+	},
+	"dependencies": {
+		"@supabase/postgrest-js": "^0.37.1",
+		"faunadb": "^4.7.1",
+		"lucia-auth": "workspace:*"
+	}
+}
