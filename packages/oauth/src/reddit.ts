@@ -55,12 +55,9 @@ class Reddit<A extends Auth> implements OAuthProvider {
 			access_token: string;
 		};
 
-		console.log(accessToken);
-
 		const redditUser = (await get("https://oauth.reddit.com/api/v1/me", {
 			bearerToken: accessToken
 		})) as RedditUser;
-		console.log(redditUser);
 		const redditUserId = String(redditUser.id);
 		let existingUser: User | null = null;
 		try {
