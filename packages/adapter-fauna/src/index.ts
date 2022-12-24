@@ -1,4 +1,4 @@
-import { LuciaError, generateRandomString } from "lucia-auth";
+import { LuciaError } from "lucia-auth";
 import type { Adapter } from "lucia-auth";
 import faunadb, { errors, Client } from "faunadb";
 import { convertUserResponse } from "./utils.js";
@@ -73,10 +73,11 @@ const adapter = (
 				throw e;
 			}
 		}, setUser: async (userId, userData) => {
+			if (userId === null) throw new Error("auto user id generation is not supported");
 			try {
 				const response: FaunaResponse = await faunaClient.query(q.Create(q.Collection("users"), {
 					data: {
-						id: userId || generateRandomString(20),
+						id: userId,
 						hashed_password: userData.hashedPassword,
 						provider_id: userData.providerId, ...userData.attributes
 					}
