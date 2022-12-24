@@ -42,7 +42,6 @@
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
-		"@supabase/postgrest-js": "^0.37.1",
 		"faunadb": "^4.7.1",
 		"lucia-auth": "workspace:*"
 	}

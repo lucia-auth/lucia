@@ -29,56 +29,41 @@ export const adapter = fauna(client);
 
 export const db: Database = {
 	getUsers: async () => {
-		console.log('get users')
 		return await client.query(
 			q.Map(q.Paginate(q.Documents(q.Collection("users"))), q.Lambda('x', q.Get(q.Var('x'))))
 		).then((res: { data: any }) => convertUserResponse(res.data));
 	},
 	getSessions: async () => {
-		console.log('get sessions')
 		return await client.query(
 			q.Map(q.Paginate(q.Documents(q.Collection("sessions"))), q.Lambda('x', q.Get(q.Var('x'))))
 		).then((res: { data: any }) => convertSessionResponse(res.data));
 	},
 	insertUser: async (user) => {
-		console.log('insert user')
 		return await client.query(
 			q.Create(q.Collection("users"), { data: user })
-		).then((res: { data: any }) => {
-			// console.log(res)
-			res.data
-		});
+		)
 	},
 	insertSession: async (session) => {
-		console.log('insert session')
 		return await client.query(
 			q.Create(q.Collection("sessions"), { data: session })
-		).then((res: { data: any }) => res.data);
+		)
 	},
 	clearUsers: async () => {
-		console.log('clear users')
 		return await client.query(
 			q.Map(
-				q.Paginate(q.Documents(q.Collection("users")), {size: 100000}),
+				q.Paginate(q.Documents(q.Collection("users")), {size: 100_000}),
 				q.Lambda('x', q.Delete(q.Var('x')))
 			)
-		).then((res: { data: any }) => {
-			// console.log(res)
-			res.data
-		});
+		)
 		//TODO: Check if Collection is empty if there are more then 100_000 documents (what the first page of the pagination request returns)
 	},
 	clearSessions: async () => {
-		// console.log('clear sessions')
 		return await client.query(
 			q.Map(
-				q.Paginate(q.Documents(q.Collection("sessions")), {size: 100000}),
+				q.Paginate(q.Documents(q.Collection("sessions")), {size: 100_000}),
 				q.Lambda('x', q.Delete(q.Var('x')))
 			)
-		).then((res: { data: any }) => {
-			// console.log(res)
-			res.data
-		});
+		)
 		//TODO: Check if Collection is empty if there are more then 100_000 documents (what the first page of the pagination request returns)
 	}
 };

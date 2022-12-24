@@ -106,10 +106,7 @@ const adapter = (
 						q.Paginate(q.Match(q.Index("session_by_userid"), userId)),
 						q.Lambda('x', q.Get(q.Var("x")))
 					)
-				).then((res: any) => {
-					console.log(res.data);
-					return convertUserResponse(res.data);
-				})
+				).then((res: any) => convertUserResponse(res.data))
 			} catch (e) {
 				errorHandler(e as any);
 				throw e;
@@ -181,10 +178,8 @@ const adapter = (
 							idle_expires: session.idlePeriodExpires
 						}
 					})
-				).then((res: any) => {
-					console.log(res)
-					return res.data
-				}).catch((err: any) => {
+				).then((res: any) => res.data)
+				 .catch((err: any) => {
 					if (err.message === "instance not unique") {
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID")
 					}
