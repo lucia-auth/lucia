@@ -96,6 +96,7 @@ Implements [`OAuthProvider`](/oauth/reference/api-reference#oauthprovider).
 ### `getAuthorizationUrl()`
 
 Refer to [`OAuthProvider.getAuthorizationUrl()`](/oauth/reference/api-reference#getauthorizationurl).
+This integration generates a `permanent` token. For more information refer to [Reddit OAuth documentation archive](https://github.com/reddit-archive/reddit/wiki/OAuth2#authorization).
 
 ### `validateCallback()`
 
