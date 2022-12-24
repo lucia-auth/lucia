@@ -23,7 +23,7 @@ const adapter: (
 
 ### Errors
 
-When an adapter encounters an unknown error (described above), it will throw `PostgrestError`.
+When an adapter encounters an unknown error (described above), it will throw `FaunatError`.
 
 ## Installation
 
