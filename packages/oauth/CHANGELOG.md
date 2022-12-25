@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.5
+
+- Add Reddit provider
+
 ## 0.2.4
 
 - Update peer dependency
@@ -9,6 +13,8 @@
 - Add Patreon provider
 
 ## 0.2.2
+
+- Update dependency
 
 ## 0.2.1
 
