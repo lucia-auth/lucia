@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/oauth",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"description": "OAuth integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -32,8 +32,9 @@
 		".": "./index.js",
 		"./github": "./github.js",
 		"./google": "./google.js",
-		"./twitch": "./twitch.js",
-		"./patreon": "./patreon.js"
+		"./patreon": "./patreon.js",
+		"./reddit": "./reddit.js",
+		"./twitch": "./twitch.js"
 	},
 	"typesVersions": {
 		"*": {
@@ -43,15 +44,19 @@
 			"google": [
 				"google.d.ts"
 			],
-			"twitch": [
-				"twitch.d.ts"
-			],
 			"patreon": [
 				"patreon.d.ts"
+			],
+			"reddit": [
+				"reddit.d.ts"
+			],
+			"twitch": [
+				"twitch.d.ts"
 			]
 		}
 	},
 	"devDependencies": {
+		"@types/node": "^18.11.17",
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {

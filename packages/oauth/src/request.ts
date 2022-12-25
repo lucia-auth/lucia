@@ -3,6 +3,7 @@ import { LuciaOAuthError } from "./index.js";
 interface FetchOptions {
 	body?: Record<any, any>;
 	bearerToken?: string;
+	basicToken?: string;
 	acceptJSON?: true;
 	clientId?: string;
 }
@@ -28,6 +29,9 @@ export const sendRequest = async (url: string, method: "GET" | "POST", options?:
 			}),
 			...(options?.bearerToken && {
 				Authorization: `Bearer ${options.bearerToken}`
+			}),
+			...(options?.basicToken && {
+				Authorization: `Basic ${options.basicToken}`
 			})
 		},
 		method
