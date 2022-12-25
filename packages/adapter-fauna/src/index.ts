@@ -76,7 +76,7 @@ const adapter = (
 			try {
 				const response: FaunaResponse = await faunaClient.query(q.Create(q.Collection("users"), {
 					data: {
-						id: userId || q.NewId(),
+						id: userId ?? q.NewId(),
 						hashed_password: userData.hashedPassword,
 						provider_id: userData.providerId, ...userData.attributes
 					}
