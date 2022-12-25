@@ -9,7 +9,7 @@ An adapter for Mongoose (MongoDB).
 const adapter: (mongoose: Mongoose, handleError?: (error: MongooseError) => void) => Adapter;
 ```
 
-**This adapter does NOT support auto user id generation.** Please generate your own user id using Lucia's [`generateUserId()`](/reference/configure/lucia-configurations#generatecustomuserid) in the configurations or use Mongoose's default field value. In either cases, the returned value **MUST** be a string (not `ObjectId`).
+**This adapter does NOT support auto user id generation.** Generate your own user id using Lucia's [`generateUserId()`](/reference/configure/lucia-configurations#generatecustomuserid) in the configurations or use Mongoose's default field value. In either cases, the returned value **MUST** be a string (not `ObjectId`).
 
 This adapter will not handle database connection and you will need to connect to the database manually.
 
