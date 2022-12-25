@@ -73,11 +73,10 @@ const adapter = (
 				throw e;
 			}
 		}, setUser: async (userId, userData) => {
-			if (userId === null) throw new LuciaError("AUTO_USER_ID_GENERATION_NOT_SUPPORTED");
 			try {
 				const response: FaunaResponse = await faunaClient.query(q.Create(q.Collection("users"), {
 					data: {
-						id: userId,
+						id: userId ?? q.NewId(),
 						hashed_password: userData.hashedPassword,
 						provider_id: userData.providerId, ...userData.attributes
 					}
