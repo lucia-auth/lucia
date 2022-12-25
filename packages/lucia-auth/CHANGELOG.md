@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.4
+
+- Add `AUTO_USER_ID_GENERATION_NOT_SUPPORTED` error
+
 ## 0.3.3
 
 - [Fix] Get proper types for `User`
