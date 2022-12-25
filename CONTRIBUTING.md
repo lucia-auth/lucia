@@ -1,8 +1,13 @@
 # Lucia contributing guide
 
-## Building an running
+This is a monorepo and requires the use of [pnpm](https://pnpm.io). After forking the repo, run the following command:
 
-This is a monorepo and requires the use of [pnpm](https://pnpm.io).
+```
+pnpm ready
+```
+
+This will install and build all the required dependencies. It might take a few minutes (but will likely save you from debugging pnpm).
+
 
 ## General conventions
 

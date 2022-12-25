@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"description": "monorepo for lucia-auth",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../astro && pnpm build && cd ../nextjs && pnpm build && cd ../sveltekit && pnpm build && cd ../oauth && pnpm build && cd ../adapter-prisma && pnpm build && pnpm i"
 	},
 	"repository": {
 		"type": "git",
