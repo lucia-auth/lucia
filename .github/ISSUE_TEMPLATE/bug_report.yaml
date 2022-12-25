@@ -14,11 +14,15 @@ body:
       description: What package is affected?
       options:
         - lucia-auth
+        - @lucia-auth/astro
+        - \@lucia-auth/nextjs
         - \@lucia-auth/sveltekit
-        - \@lucia-auth/express
+        - \@lucia-auth/oauth
+        - \@lucia-auth/adapter-fauna
+        - \@lucia-auth/adapter-kysely
+        - \@lucia-auth/adapter-mongoose
         - \@lucia-auth/adapter-prisma
         - \@lucia-auth/adapter-supabase
-        - \@lucia-auth/adapter-mongoose
         - \@lucia-auth/session-adapter-redis
         - \@lucia-auth/adapter-test
     validations:
