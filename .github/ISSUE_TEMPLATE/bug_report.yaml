@@ -14,7 +14,7 @@ body:
       description: What package is affected?
       options:
         - lucia-auth
-        - @lucia-auth/astro
+        - ​lucia-auth/astro
         - \@lucia-auth/nextjs
         - \@lucia-auth/sveltekit
         - \@lucia-auth/oauth
