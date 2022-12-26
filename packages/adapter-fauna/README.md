@@ -22,7 +22,7 @@ npm install @lucia-auth/adapter-fauna
 
 ## Testing
 
-Add a `FAUNA_SECRET` and `FAUNA_ENDPOINT` ([endpoint docs](https://docs.fauna.com/fauna/current/learn/understanding/region_groups#region-group-endpoints)) to `.env`.
+Add `FAUNA_SECRET` and `FAUNA_ENDPOINT` ([endpoint docs](https://docs.fauna.com/fauna/current/learn/understanding/region_groups#region-group-endpoints)) to `.env`.
 
 ```
 npm run test

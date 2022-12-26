@@ -5,8 +5,6 @@ title: "Fauna"
 
 An adapter for Fauna database.
 
-**This adapter does NOT support auto user id generation.** Generate your own user id using Lucia's [`generateUserId()`](/reference/configure/lucia-configurations#generatecustomuserid) in the configurations.
-
 ```ts
 const adapter: (
 	faunaClient: FaunaClient,
