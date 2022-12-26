@@ -1,10 +1,10 @@
-import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { auth } from "../../lib/lucia";
+import { auth } from "../lib/lucia";
 import { AuthRequest } from "@lucia-auth/nextjs";
+import { useRouter } from "next/router";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { useState } from "react";
 
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
@@ -53,7 +53,11 @@ const Index = () => {
 	};
 	return (
 		<>
-			<h2>Sign in with username and password</h2>
+			<h2>Sign in</h2>
+			<Link href="/api/oauth?provider=github" className="button">
+				Github
+			</Link>
+			<p className="center">or</p>
 			<form method="post" onSubmit={handleSubmit} action="/api/login">
 				<label htmlFor="username">username</label>
 				<br />

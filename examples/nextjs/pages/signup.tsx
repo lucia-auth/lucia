@@ -53,7 +53,11 @@ const Index = () => {
 	};
 	return (
 		<>
-			<h2>Create an account with username and password</h2>
+			<h2>Create an account</h2>
+			<Link href="/api/oauth?provider=github" className="button">
+				Github
+			</Link>
+			<p className="center">or</p>
 			<form method="post" onSubmit={handleSubmit} action="/api/signup">
 				<label htmlFor="username">username</label>
 				<br />

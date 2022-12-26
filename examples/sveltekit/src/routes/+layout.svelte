@@ -19,7 +19,7 @@
 		@apply px-4 pt-8 flex flex-col w-full place-items-center;
 	}
 	:global(h1) {
-		@apply text-3xl font-semibold w-full mb-4;
+		@apply text-3xl font-semibold w-full mb-8;
 	}
 	:global(h2) {
 		@apply text-2xl font-semibold w-full mb-2;
@@ -48,6 +48,9 @@
 	}
 	:global(.error) {
 		@apply text-red-400 text-sm w-full;
+	}
+	:global(p.error) {
+		@apply w-full text-center;
 	}
 	:global(p) {
 		@apply w-full my-1;

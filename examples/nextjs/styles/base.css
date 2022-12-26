@@ -2,7 +2,7 @@ body {
 	@apply px-4 pt-8 flex flex-col w-full place-items-center;
 }
 h1 {
-	@apply text-3xl font-semibold w-full mb-4;
+	@apply text-3xl font-semibold w-full mb-8;
 }
 h2 {
 	@apply text-2xl font-semibold w-full mb-2;
@@ -35,6 +35,9 @@ form {
 }
 p {
 	@apply w-full my-1;
+}
+p.center {
+	@apply w-full text-center;
 }
 pre,
 .code {

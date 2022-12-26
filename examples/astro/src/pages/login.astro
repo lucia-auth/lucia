@@ -1,9 +1,7 @@
 ---
-// pages/signup.astro
+import MainLayout from "../layouts/MainLayout.astro";
 import { auth } from "../lib/lucia";
 import { AuthRequest } from "@lucia-auth/astro";
-import MainLayout from "../layouts/MainLayout.astro";
-import { Prisma } from "@prisma/client";
 import { LuciaError } from "lucia-auth";
 
 const authRequest = new AuthRequest(auth, Astro);
@@ -13,7 +11,6 @@ if (session) return Astro.redirect("/", 302); // redirect to profile page if aut
 let errorMessage = "";
 let username: FormDataEntryValue | null = null;
 let password: FormDataEntryValue | null = null;
-
 if (Astro.request.method === "POST") {
 	const form = await Astro.request.formData();
 	username = form.get("username");
@@ -21,39 +18,29 @@ if (Astro.request.method === "POST") {
 	// check for empty values
 	if (username && password && typeof username === "string" && typeof password === "string") {
 		try {
-			const user = await auth.createUser("username", username, {
-				password,
-				attributes: {
-					username
-				}
-			});
+			const user = await auth.authenticateUser("username", username, password);
 			const session = await auth.createSession(user.userId);
-			authRequest.setSession(session); // set session cookie
+			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch (error) {
 			// username already in use
 			if (
-				error instanceof Prisma.PrismaClientKnownRequestError &&
-				error.code === "P2002" &&
-				error.message?.includes("username")
+				error instanceof LuciaError &&
+				(error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD")
 			) {
-				errorMessage = "Username already in use";
-			} else if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
-				errorMessage = "Username already in use";
+				errorMessage = "Incorrect username or password.";
 			} else {
-				errorMessage = "Unknown error occured";
+				errorMessage = "Unknown error occurred";
 			}
-			Astro.response.status = 400;
 		}
 	} else {
-		errorMessage = "Invalid input";
 		Astro.response.status = 400;
 	}
 }
 ---
 
 <MainLayout>
-	<h2>Create an account</h2>
+	<h2>Sign in</h2>
 	<a href="/api/oauth?provider=github" class="button">Continue with Github</a>
 	<p class="center">or</p>
 	<form method="post">
@@ -64,5 +51,5 @@ if (Astro.request.method === "POST") {
 		<input type="submit" value="Continue" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}
-	<a href="/login" class="link">Sign in</a>
+	<a href="/signup" class="link">Create an account</a>
 </MainLayout>

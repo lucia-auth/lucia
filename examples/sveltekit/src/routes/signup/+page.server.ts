@@ -1,5 +1,9 @@
 import { auth } from '$lib/server/lucia';
 import { fail, type Actions } from '@sveltejs/kit';
+import { Prisma } from '@prisma/client';
+import { redirect } from '@sveltejs/kit';
+import { LuciaError } from 'lucia-auth';
+import type { PageServerLoad } from './$types';
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -20,9 +24,17 @@ export const actions: Actions = {
 			});
 			const session = await auth.createSession(user.userId);
 			locals.setSession(session);
-		} catch (e) {
-			const error = e as Error;
-			if (error.message === 'AUTH_DUPLICATE_PROVIDER_ID') {
+		} catch (error) {
+			if (
+				error instanceof Prisma.PrismaClientKnownRequestError &&
+				error.code === 'P2002' &&
+				error.message?.includes('username')
+			) {
+				return fail(400, {
+					message: 'Username already in use'
+				});
+			}
+			if (error instanceof LuciaError && error.message === 'AUTH_DUPLICATE_PROVIDER_ID') {
 				return fail(400, {
 					message: 'Username already in use'
 				});
@@ -34,9 +46,6 @@ export const actions: Actions = {
 		}
 	}
 };
-
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.validate();

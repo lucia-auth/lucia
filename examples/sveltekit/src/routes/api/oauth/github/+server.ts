@@ -16,10 +16,10 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 			}));
 		const session = await auth.createSession(user.userId);
 		locals.setSession(session);
-		throw redirect(302, '/');
 	} catch {
 		return new Response(null, {
 			status: 500
 		});
 	}
+	throw redirect(302, '/');
 };

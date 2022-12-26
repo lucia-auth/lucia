@@ -4,7 +4,9 @@
 	export let form: { message?: string };
 </script>
 
-<h2>Create an account with username and password</h2>
+<h2>Create an account</h2>
+<a href="/api/oauth?provider=github" class="button">Continue with Github</a>
+<p class="center">or</p>
 <form
 	method="post"
 	use:enhance={({ data, cancel }) => {

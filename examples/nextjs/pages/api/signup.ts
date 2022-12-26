@@ -1,5 +1,7 @@
 import { auth } from "../../lib/lucia";
 import { AuthRequest } from "@lucia-auth/nextjs";
+import { LuciaError } from "lucia-auth";
+import { Prisma } from "@prisma/client";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -26,9 +28,17 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		const authRequest = new AuthRequest(auth, req, res);
 		authRequest.setSession(session);
 		return res.redirect(302, "/");
-	} catch (e) {
-		const error = e as Error;
-		if (error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
+	} catch (error) {
+		if (
+			error instanceof Prisma.PrismaClientKnownRequestError &&
+			error.code === "P2002" &&
+			error.message?.includes("username")
+		) {
+			return res.status(200).json({
+				error: "Username already in use"
+			});
+		}
+		if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
 			return res.status(200).json({
 				error: "Username already in use"
 			});
