@@ -19,9 +19,9 @@ const getUser: () => Readonly<User> | null;
 
 #### Returns
 
-| type                                                              | description                                   |
-| ----------------------------------------------------------------- | --------------------------------------------- |
-| `Readonly<`[`User`](/reference/types/lucia-types#user)`> \| null` | returns null if a current user does not exist |
+| type                                                              | description                                                            |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `Readable<`[`User`](/reference/types/lucia-types#user)` \| null>` | Readable Svelte store - value of null if a current user does not exist |
 
 #### Example
 
@@ -29,7 +29,7 @@ const getUser: () => Readonly<User> | null;
 import { getUser } from "@lucia-auth/sveltekit/client";
 
 const user = getUser();
-const userId = user?.userId;
+const userId = $user?.userId;
 ```
 
 ## `handleSession()`
