@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Header from "@components/Header.astro";
-import MainContentTable from "@components/content-table/MainContentTable.astro";
+import ContentTable from "@components/doc/ContentTable.svelte";
+import { db } from "src/lib/db";
+
 const GITHUB_API_KEY = import.meta.env.DEV
 	? import.meta.env.GITHUB_API_KEY
 	: process.env.GITHUB_API_KEY;
@@ -22,11 +24,13 @@ const contributorsResult = (await contributorsResponse.json()) as
 			html_url: string;
 	  }[];
 const contributors = Array.isArray(contributorsResult) ? contributorsResult : [];
+
+const mainCollection = await db.collection("main").get();
 ---
 
 <BaseLayout>
 	<Header />
-	<MainContentTable />
+	<ContentTable collections={mainCollection._collections} client:load />
 	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:ml-72 xl:pl-12 overflow-hidden">
 		<div class="sm:pt-12 lg:pt-20">
 			<h1 class="text-5xl sm:text-7xl font-semibold">Authentication, <br />simple and clean</h1>

@@ -8,7 +8,6 @@ import type { MarkdownInstance } from "astro";
 type Props = {
 	title: string;
 	headings: ReturnType<MarkdownInstance<any>["getHeadings"]>;
-	ContentTable: any;
 	external?: ExternalIntegration;
 };
 
@@ -18,15 +17,15 @@ const contributePageUrl = Astro.url.pathname.endsWith("/")
 	? Astro.url.pathname.slice(0, -1)
 	: Astro.url.pathname;
 
-const { title, headings, ContentTable, external } = Astro.props;
+const { title, headings, external } = Astro.props;
 ---
 
 <BaseLayout title={title} external={external}>
 	<Header />
-	<ContentTable title={title} />
+	<slot name="table"/>
 	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:pl-12 lg:mr-64 lg:pr-4  xl:ml-72 overflow-hidden">
 		<MarkdownArticle title={title} contributePageUrl={contributePageUrl}>
-			<slot />
+			<slot name="content"/>
 		</MarkdownArticle>
 	</main>
 	<Headings headings={headings} />
