@@ -1,0 +1,51 @@
+---
+import ContentTable from "@components/doc/ContentTable.svelte";
+import DocumentLayout from "@layouts/DocumentLayout.astro";
+
+import type { CollectionQuery, DocumentQuery } from "@db/types";
+import type { GetStaticPaths } from "astro";
+import { type Q, db } from "src/lib/db";
+
+type Document = DocumentQuery<Q["main"]["*"]["*"]>;
+
+type Props = {
+	doc: Document;
+	collections: CollectionQuery<Q["main"]>["_collections"];
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const mainCollection = await db.collection("main").get();
+	const documents = mainCollection._collections.reduce((prev, curr) => {
+		return [
+			...prev,
+			...curr._collections.reduce((prev, curr) => [...prev, ...curr._documents], [] as Document[])
+		];
+	}, [] as Document[]);
+	return documents.map((doc) => {
+		const pathSegements = doc._path.split("/"); // ["integration", "astro", "start-here", "getting-started"]
+		return {
+			params: {
+				main: pathSegements[1],
+				path: pathSegements.slice(2).join("/")
+			},
+			props: {
+				doc,
+				collections: mainCollection._collections
+			} satisfies Props
+		};
+	});
+};
+
+const { doc, collections } = Astro.props;
+---
+
+<DocumentLayout title={doc.title} headings={doc._getHeadings()}>
+	<ContentTable
+		client:load
+		collections={collections}
+		currentPath={Astro.url.pathname}
+		selectedCollection={Astro.params.main}
+		slot="table"
+	/>
+	<doc._Content slot="content" />
+</DocumentLayout>
