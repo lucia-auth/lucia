@@ -14,7 +14,7 @@ import { getUser } from "@lucia-auth/sveltekit/client";
 Gets the current user.
 
 ```ts
-const getUser: () => Readonly<User> | null;
+const getUser: () => Readable<User | null>;
 ```
 
 #### Returns
