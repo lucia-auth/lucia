@@ -4,7 +4,7 @@ import DocumentLayout from "@layouts/DocumentLayout.astro";
 
 import type { CollectionQuery, DocumentQuery } from "@db/types";
 import type { GetStaticPaths } from "astro";
-import { type Q, db } from "src/lib/db";
+import { type Q, db } from "@lib/db";
 
 type Document = DocumentQuery<Q["main"]["*"]["*"]>;
 

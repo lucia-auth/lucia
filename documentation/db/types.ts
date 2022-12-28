@@ -2,7 +2,7 @@ import type { MarkdownInstance } from "astro";
 import type { Schema } from "./schema";
 
 export type CollectionConfig = {
-	readonly id: Readonly<string[]>;
+	readonly id: Exclude<Readonly<string[]>, Readonly<["*"]>> | "*";
 	readonly schema?: Record<any, Schema<any>>;
 	readonly docSchema?: Record<any, Schema<any>>;
 	readonly _?: CollectionConfig;
@@ -28,7 +28,7 @@ export type TransformDocumentToDocumentResult<
 
 export type TransformConfigToResult<C extends CollectionConfig> = {
 	[x: string]: any;
-	_id: C["id"][number] extends "*" ? string : C["id"][number];
+	_id: C["id"] extends "*" ? string : C["id"][number];
 	_type: "collection";
 	_path: string;
 	_order: number;

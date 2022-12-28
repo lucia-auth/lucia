@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { isMenuOpen } from "src/lib/stores.js";
+	import { isMenuOpen } from "@lib/stores.js";
 
 	import type { CollectionQuery } from "@db/types";
-	import type { Q } from "src/lib/db";
+	import type { Q } from "@lib/db";
 
 	const selectTab = (id: string) => {
 		selectedCollection = id;

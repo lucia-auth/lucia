@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isMenuOpen } from "src/lib/stores";
+	import { isMenuOpen } from "@lib/stores";
 </script>
 
 <button

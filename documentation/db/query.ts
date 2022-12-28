@@ -115,7 +115,7 @@ class Collection<Config extends CollectionConfig> {
 	private pathIds: string[];
 	public collection = <
 		Id extends Config["_"] extends {}
-			? Config["_"]["id"][number] extends "*"
+			? Config["_"]["id"] extends "*"
 				? string
 				: Config["_"]["id"][number]
 			: never
