@@ -49,11 +49,11 @@
 	:global(.error) {
 		@apply text-red-400 text-sm w-full;
 	}
-	:global(p.error) {
-		@apply w-full text-center;
-	}
 	:global(p) {
 		@apply w-full my-1;
+	}
+	:global(p.center) {
+		@apply w-full text-center;
 	}
 	:global(pre, .code) {
 		@apply w-full bg-zinc-900 text-gray-200 rounded-md py-2 px-4 my-2 overflow-auto;
