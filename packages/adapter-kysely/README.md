@@ -23,8 +23,36 @@ npm install @lucia-auth/adapter-kysely
 
 ## Testing
 
-Add a postgresql database url to `.env`.
-
 ```
 npm run test
+```
+
+### PostgreSQL
+
+Add a postgresql database url to `.env`.
+
+### MySQL
+
+```env
+MYSQL_DATABASE="" // database name
+MYSQL_PASSWORD="" // user password
+```
+
+```sql
+CREATE TABLE user (
+    id VARCHAR(36) DEFAULT (UUID()),
+    provider_id VARCHAR(255) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255),
+    username VARCHAR(31) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE session (
+    id VARCHAR(127) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
+    expires BIGINT UNSIGNED NOT NULL,
+    idle_expires BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
 ```

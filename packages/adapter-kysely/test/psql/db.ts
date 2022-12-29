@@ -1,10 +1,10 @@
 import { Database } from "@lucia-auth/adapter-test";
-import adapterKysely from "../src/index.js";
+import adapterKysely from "../../src/index.js";
 import pg from "pg";
 const { Pool } = pg;
 import { Kysely, PostgresDialect } from "kysely";
-import { DB, User } from "../src/dbTypes.js";
-import { convertSession } from "../src/utils.js";
+import { DB, User } from "../../src/dbTypes.js";
+import { convertSession } from "../../src/utils.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
@@ -30,17 +30,17 @@ const dbKysely = new Kysely<DBExt>({
 	})
 });
 
-export const adapter = adapterKysely(dbKysely)(LuciaError);
+export const adapter = adapterKysely(dbKysely, "pg")(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {
 		const data = await dbKysely.selectFrom("user").selectAll().execute();
-		if (!data) throw new Error("Failed to fetch from databaes");
+		if (!data) throw new Error("Failed to fetch from database");
 		return data;
 	},
 	getSessions: async () => {
 		const data = await dbKysely.selectFrom("session").selectAll().execute();
-		if (!data) throw new Error("Failed to fetch from databaes");
+		if (!data) throw new Error("Failed to fetch from database");
 		return data.map((session) => convertSession(session));
 	},
 	insertUser: async (user) => {

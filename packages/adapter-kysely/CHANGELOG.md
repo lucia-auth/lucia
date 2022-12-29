@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] Require `dialect` parameter
+- Support MySQL
+
 ## 0.2.0
 
 - [Breaking] Require `lucia-auth` 0.4.0

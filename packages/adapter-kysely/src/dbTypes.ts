@@ -4,12 +4,12 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 	? ColumnType<S, I | undefined, U>
 	: ColumnType<T, T | undefined, T>;
 
-export type Int8 = ColumnType<string, string | number | bigint, string | number | bigint>;
+export type UnixTimeColumnType = ColumnType<bigint | number>;
 
 export interface Session {
-	expires: Int8;
+	expires: UnixTimeColumnType;
 	id: string;
-	idle_expires: Int8;
+	idle_expires: UnixTimeColumnType;
 	user_id: string;
 }
 

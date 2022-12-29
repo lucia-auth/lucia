@@ -11,7 +11,8 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"test-main": "npx ts-node --esm -T test/index.ts",
+		"test-psql-main": "npx ts-node --esm -T test/psql/index.ts",
+		"test-mysql-main": "npx ts-node --esm -T test/mysql/index.ts",
 		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -41,7 +42,9 @@
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@types/pg": "^8.6.5",
+		"better-sqlite3": "^8.0.1",
 		"dotenv": "^16.0.3",
+		"mysql2": "^2.3.3",
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
