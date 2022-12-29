@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import type { SessionSchema, UserSchema } from "lucia-auth/types";
+import type { SessionSchema, UserSchema } from "lucia-auth";
 
 const generateRandomString = (bytes: number) => {
 	return crypto.randomBytes(bytes).toString("hex");

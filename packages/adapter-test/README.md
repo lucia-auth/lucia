@@ -20,4 +20,4 @@ yarn add -D @lucia-auth/adapter-test
 
 | test adapter version | Lucia version |
 | -------------------- | ------------- |
-| 0.1.x                | 0.1.x ~ 0.3.x |
+| 0.1.x                | 0.1.x ~ 0.4.x |

@@ -6,22 +6,22 @@ title: "Redis (session)"
 A session adapter for Redis.
 
 ```ts
-const adapter: (
-	redisClient: {
-		session: RedisClientType;
-		userSessions: RedisClientType;
-	},
-	handleError?: (error: any) => void
-) => SessionAdapter;
+const adapter: (redisClient: {
+	session: RedisClientType;
+	userSessions: RedisClientType;
+}) => AdapterFunction<SessionAdapter>;
 ```
 
-#### Parameter
+### Parameter
 
 | name                     | type            | description                                                   | optional |
 | ------------------------ | --------------- | ------------------------------------------------------------- | -------- |
 | redisClient.session      | RedisClientType | client for Redis database for storing sessions                |          |
 | redisClient.userSessions | RedisClientType | client for Redis database for storing user-sessions relations |          |
-| handleError              | `Function`      |                                                               | true     |
+
+### Errors
+
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of Redis errors.
 
 ## Installation
 

@@ -1,4 +1,4 @@
-import { SessionSchema, UserSchema } from "lucia-auth/types";
+import { SessionSchema, UserSchema } from "lucia-auth";
 export { testAdapter } from "./tests/index.js";
 export { testAdapterUserIdGeneration } from "./tests/user-id.js";
 export { testSessionAdapter } from "./tests/session.js";

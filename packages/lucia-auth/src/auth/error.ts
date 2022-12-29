@@ -8,6 +8,12 @@ export class LuciaError extends Error {
 	public message: ErrorMessage;
 }
 
+type Constructor<C extends new (...args: any[]) => any> = new (
+	...args: ConstructorParameters<C>
+) => InstanceType<C>;
+
+export type LuciaErrorConstructor = Constructor<typeof LuciaError>;
+
 export type ErrorMessage =
 	| "AUTH_INVALID_SESSION_ID"
 	| "AUTH_INVALID_PASSWORD"

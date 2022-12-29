@@ -21,7 +21,7 @@ class Patreon<A extends Auth> implements OAuthProvider {
 		this.scope = [
 			"identity",
 			"identity[email]",
-			...(configs.scope || []),
+			...(configs.scope ?? []),
 			...(configs.allMemberships ? ["identity.memberships"] : [])
 		];
 	}

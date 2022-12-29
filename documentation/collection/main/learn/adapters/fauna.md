@@ -6,24 +6,18 @@ title: "Fauna"
 An adapter for Fauna database.
 
 ```ts
-const adapter: (
-	faunaClient: FaunaClient,
-	errorHandler?: (error: FaunaError) => void
-) => Adapter;
+const adapter: (faunaClient: FaunaClient) => AdapterFunction<Adapter>;
 ```
 
 ### Parameter
 
-`handleError()` may be provided which will be called on [unknown errors](/learn/basics/error-handling#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia-default) methods.
-
-| name        | type       | description           | optional |
-|-------------|------------|-----------------------| -------- |
-| faunaClient | `Client`   | Fauna client instance |          |
-| handleError | `Function` |                       | true     |
+| name        | type     | description           | optional |
+| ----------- | -------- | --------------------- | -------- |
+| faunaClient | `Client` | Fauna client instance |          |
 
 ### Errors
 
-When an adapter encounters an unknown error (described above), it will throw `FaunaError`.
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `FaunaError`.
 
 ## Installation
 
@@ -42,7 +36,7 @@ import faunadb from "faunadb";
 const { Client } = faunadb;
 
 const auth = lucia({
-	adapter: fauna(new Client({...options}))
+	adapter: fauna(new Client(options))
 });
 ```
 
@@ -81,35 +75,37 @@ This is not required if you're only using the Fauna adapter for the `user` table
 Run the following commands inside of the Shell tab in the Fauna dashboard to setup the appropriate collections and indexes.
 
 Create collections:
+
 ```js
-CreateCollection({ name: "user" })
-CreateCollection({ name: "session" })
+CreateCollection({ name: "user" });
+CreateCollection({ name: "session" });
 ```
 
 Create Indexes:
+
 ```js
 CreateIndex({
-  name: "user_by_id",
-  source: Collection("user"),
-  unique: true,
-  terms: [{ field: ["data", "id"] }]
-})
+	name: "user_by_id",
+	source: Collection("user"),
+	unique: true,
+	terms: [{ field: ["data", "id"] }]
+});
 CreateIndex({
-  name: "session_by_id",
-  source: Collection("sessions"),
-  unique: true,
-  terms: [{ field: ["data", "id"] }]
-})
+	name: "session_by_id",
+	source: Collection("sessions"),
+	unique: true,
+	terms: [{ field: ["data", "id"] }]
+});
 CreateIndex({
-  name: "session_by_userid",
-  source: Collection("sessions"),
-  unique: true,
-  terms: [{ field: ["data", "user_id"] }]
-})
+	name: "session_by_userid",
+	source: Collection("sessions"),
+	unique: true,
+	terms: [{ field: ["data", "user_id"] }]
+});
 CreateIndex({
-    name: "user_by_providerid",
-    source: Collection("users"),
-    unique: true,
-    terms: [{ field: ["data", "provider_id"] }]
-})
+	name: "user_by_providerid",
+	source: Collection("users"),
+	unique: true,
+	terms: [{ field: ["data", "provider_id"] }]
+});
 ```

@@ -29,7 +29,7 @@ export const handleServerSession: HandleServerSession = (fn) => {
 	};
 	return async (event: LoadEvent) => {
 		const { _lucia } = await handleServerSessionCore(event);
-		const loadFunction = fn || (async () => {});
+		const loadFunction = fn ?? (async () => {});
 		const result = (await loadFunction(event)) || {};
 		return {
 			_lucia,

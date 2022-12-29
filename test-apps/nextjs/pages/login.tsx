@@ -45,10 +45,9 @@ const Index = () => {
 			})
 		});
 		if (response.redirected) return router.push(response.url);
-		const result =
-			((await response.json()) as {
-				error: string;
-			}) || {};
+		const result = (await response.json()) as {
+			error: string;
+		};
 		setMessage(result.error);
 	};
 	return (
@@ -69,7 +68,7 @@ const Index = () => {
 				<br />
 				<input type="submit" value="Continue" className="button" />
 			</form>
-			{message && <p className="error">{message || ""}</p>}
+			{message && <p className="error">{message ?? ""}</p>}
 			<Link href="/signup" className="link">
 				Create a new account
 			</Link>

@@ -25,7 +25,7 @@ const isTrueValidation = (result: boolean, error: string, ...log: any[]) => {
 };
 
 export const validate = {
-	includesSomeItem: <T extends any>(
+	includesSomeItem: <T extends string | number | {}>(
 		arr: T[],
 		validate: (t: T) => boolean,
 		error: string,
@@ -33,7 +33,7 @@ export const validate = {
 	) => {
 		isTrueValidation(arr.some(validate), error, arr, ...log);
 	},
-	notIncludesSomeItem: <T extends any>(
+	notIncludesSomeItem: <T extends string | number | {}>(
 		arr: T[],
 		validate: (t: T) => boolean,
 		error: string,

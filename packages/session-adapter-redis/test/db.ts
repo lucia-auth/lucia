@@ -1,8 +1,9 @@
 import type { Database } from "@lucia-auth/adapter-test";
-import type { SessionSchema } from "lucia-auth/adapter";
+import type { SessionSchema } from "lucia-auth/types.js";
 
 import { createClient } from "redis";
 import redis from "../src/index.js";
+import { LuciaError } from "lucia-auth";
 
 const sessionInstance = createClient({
 	socket: {
@@ -22,7 +23,7 @@ await userSessionInstance.connect();
 export const adapter = redis({
 	session: sessionInstance,
 	userSessions: userSessionInstance
-});
+})(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {

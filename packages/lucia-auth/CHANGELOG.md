@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.0
+
+- [Breaking] Adapters are now functions that return the `Adapter` object
+- Export type `LuciaErrorConstructor`, `AdapterFunction`
+
 ## 0.3.4
 
 - Add `AUTO_USER_ID_GENERATION_NOT_SUPPORTED` error

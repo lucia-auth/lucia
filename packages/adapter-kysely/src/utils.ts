@@ -1,4 +1,4 @@
-import type { SessionSchema } from "lucia-auth/types";
+import type { SessionSchema } from "lucia-auth";
 import type { Selectable } from "kysely";
 import type { Session } from "./dbTypes";
 

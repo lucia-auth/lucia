@@ -17,7 +17,7 @@ class Google<A extends Auth> implements OAuthProvider {
 		this.clientId = configs.clientId;
 		this.clientSecret = configs.clientSecret;
 		this.redirectUri = configs.redirectUri;
-		this.scope = ["https://www.googleapis.com/auth/userinfo.profile", ...(configs.scope || [])];
+		this.scope = ["https://www.googleapis.com/auth/userinfo.profile", ...(configs.scope ?? [])];
 	}
 	private auth: A;
 	private clientId: string;

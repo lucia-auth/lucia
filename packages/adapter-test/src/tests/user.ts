@@ -1,4 +1,4 @@
-import type { UserAdapter, UserSchema } from "lucia-auth/types";
+import type { UserAdapter, UserSchema } from "lucia-auth";
 import { test, end, validate } from "../test.js";
 import { User } from "../db.js";
 import { Database } from "../index.js";

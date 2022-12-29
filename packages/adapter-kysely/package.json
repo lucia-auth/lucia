@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-kysely",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Kysely adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -36,7 +36,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.1.x - 0.3.x"
+		"lucia-auth": "0.4.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

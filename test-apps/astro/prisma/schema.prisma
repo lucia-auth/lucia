@@ -14,7 +14,7 @@ model User {
   id              String    @id @unique @default(cuid())
   provider_id     String    @unique
   hashed_password String?
-  username        String?   @unique
+  username        String    @unique
   session         Session[]
 
   @@map("user")

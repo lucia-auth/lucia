@@ -1,172 +1,185 @@
-import { LuciaError } from "lucia-auth";
-import type { Adapter } from "lucia-auth";
-import faunadb, { errors, Client } from "faunadb";
-import { convertUserResponse } from "./utils.js";
-import FaunaError = errors.FaunaError;
+import fauna, { type errors, type Client } from "faunadb";
+import {
+	convertUserResponse,
+	type SingleResponse,
+	type FaunaUserSchema,
+	type FaunaSessionSchema,
+	type MultiResponse
+} from "./utils.js";
+import type { Adapter, AdapterFunction } from "lucia-auth";
 
-const { query } = faunadb;
-const q = query;
+type FaunaError = errors.FaunaError;
 
-interface FaunaResponse { data?: any }
+const adapter = (faunaClient: Client): AdapterFunction<Adapter> => {
+	const { query } = fauna;
+	const q = query;
 
-const adapter = (
-	faunaClient: Client,
-	errorHandler: (error: FaunaError) => void = () => {
-	}): Adapter => {
-	return {
-		getUser: async (userId) => {
-			try {
-				const response: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("user_by_id"), userId)), q.Lambda("x", q.Get(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-				const users = response.data;
-				return users.length !== 0 ? users[0].data : null;
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, getUserByProviderId: async (providerId) => {
-			try {
-				const response: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("user_by_providerid"), providerId)), q.Lambda("x", q.Get(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-				const users = response.data;
-				return users.length !== 0 ? users[0].data : null;
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, getSessionAndUserBySessionId: async (sessionId) => {
-			try {
-				const sessionsResponse: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("session_by_id"), sessionId)), q.Lambda("x", q.Get(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-				const sessions = sessionsResponse.data;
-				const session = sessions.length !== 0 ? sessions[0].data : null;
+	return (LuciaError) => {
+		return {
+			getUser: async (userId) => {
+				const { data: userResponses } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+					q.Map(
+						q.Paginate(q.Match(q.Index("user_by_id"), userId)),
+						q.Lambda("x", q.Get(q.Var("x")))
+					)
+				);
+				return userResponses.length > 0 ? convertUserResponse(userResponses[0]) : null;
+			},
+			getUserByProviderId: async (providerId) => {
+				const { data: userResponses } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+					q.Map(
+						q.Paginate(q.Match(q.Index("user_by_providerid"), providerId)),
+						q.Lambda("x", q.Get(q.Var("x")))
+					)
+				);
+				return userResponses.length > 0 ? convertUserResponse(userResponses[0]) : null;
+			},
+			getSessionAndUserBySessionId: async (sessionId) => {
+				const { data: sessionResponses } = await faunaClient.query<
+					MultiResponse<FaunaSessionSchema>
+				>(
+					q.Map(
+						q.Paginate(q.Match(q.Index("session_by_id"), sessionId)),
+						q.Lambda("x", q.Get(q.Var("x")))
+					)
+				);
+				const session = sessionResponses.length > 0 ? sessionResponses[0].data : null;
 				if (!session) return null;
 
-				const userResponse: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("user_by_id"), session["user_id"])), q.Lambda("x", q.Get(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-				const users = userResponse.data;
-				const user = users.length !== 0 ? users[0].data : null;
+				const { data: users } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+					q.Map(
+						q.Paginate(q.Match(q.Index("user_by_id"), session["user_id"])),
+						q.Lambda("x", q.Get(q.Var("x")))
+					)
+				);
+				const user = users.length > 0 ? convertUserResponse(users[0]) : null;
 				if (!user) return null;
-
 				return {
-					user: user, session: session
+					user: user,
+					session: session
 				};
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, getSession: async (sessionId) => {
-			try {
-				const response: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("session_by_id"), sessionId)), q.Lambda("x", q.Get(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-				const sessions = response.data;
-				return sessions.length !== 0 ? sessions[0].data : null;
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, getSessionsByUserId: async (userId) => {
-			try {
-				const response: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("session_by_userid"), userId)), q.Lambda("x", q.Get(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-				return convertUserResponse(response.data);
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, setUser: async (userId, userData) => {
-			try {
-				const response: FaunaResponse = await faunaClient.query(q.Create(q.Collection("users"), {
-					data: {
-						id: userId ?? q.NewId(),
-						hashed_password: userData.hashedPassword,
-						provider_id: userData.providerId, ...userData.attributes
-					}
-				})).catch((err: FaunaError) => {
-					if (err.message === "instance not unique") {
-						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
-					}
-					throw err;
-				});
-				return response.data;
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, deleteUser: async (userId) => {
-			try {
-				await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("user_by_id"), userId)), q.Lambda("x", q.Delete(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, setSession: async (sessionId, session) => {
-			let user;
-			try {
-				const response: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("user_by_id"), session.userId)), q.Lambda("x", q.Get(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-				const users = response.data;
-				user = users.length !== 0 ? users[0].data : null;
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-
-			if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
-
-			try {
-				const response: FaunaResponse = await faunaClient.query(q.Create(q.Collection("sessions"), {
-					data: {
-						id: sessionId, user_id: session.userId, expires: session.expires, idle_expires: session.idlePeriodExpires
-					}
-				})).catch((err: FaunaError) => {
-					if (err.message === "instance not unique") {
+			},
+			getSession: async (sessionId) => {
+				const { data: sessionResponses } = await faunaClient.query<
+					MultiResponse<FaunaSessionSchema>
+				>(
+					q.Map(
+						q.Paginate(q.Match(q.Index("session_by_id"), sessionId)),
+						q.Lambda("x", q.Get(q.Var("x")))
+					)
+				);
+				return sessionResponses.length > 0 ? sessionResponses[0].data : null;
+			},
+			getSessionsByUserId: async (userId) => {
+				const { data: sessionResponses } = await faunaClient.query<
+					MultiResponse<FaunaSessionSchema>
+				>(
+					q.Map(
+						q.Paginate(q.Match(q.Index("session_by_userid"), userId)),
+						q.Lambda("x", q.Get(q.Var("x")))
+					)
+				);
+				return sessionResponses.map((response) => response.data);
+			},
+			setUser: async (userId, userData) => {
+				const response = await faunaClient.query<SingleResponse<FaunaUserSchema>>(
+					q.Create(q.Collection("users"), {
+						data: {
+							id: userId ?? q.NewId(),
+							hashed_password: userData.hashedPassword,
+							provider_id: userData.providerId,
+							...userData.attributes
+						}
+					})
+				);
+				return convertUserResponse(response);
+			},
+			deleteUser: async (userId) => {
+				await faunaClient.query(
+					q.Map(
+						q.Paginate(q.Match(q.Index("user_by_id"), userId)),
+						q.Lambda("x", q.Delete(q.Var("x")))
+					)
+				);
+			},
+			setSession: async (sessionId, data) => {
+				const { data: users } = await faunaClient.query<SingleResponse<FaunaUserSchema>>(
+					q.Map(
+						q.Paginate(q.Match(q.Index("user_by_id"), data.userId)),
+						q.Lambda("x", q.Get(q.Var("x")))
+					)
+				);
+				const user = users.length > 0 ? users[0].data : null;
+				if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+				try {
+					await faunaClient.query<SingleResponse<FaunaSessionSchema>>(
+						q.Create(q.Collection("sessions"), {
+							data: {
+								id: sessionId,
+								user_id: data.userId,
+								expires: data.expires,
+								idle_expires: data.idlePeriodExpires
+							}
+						})
+					);
+				} catch (e) {
+					const error = e as Partial<FaunaError>;
+					if (error.message === "instance not unique") {
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 					}
-					throw err;
-				});
-				return response.data;
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, deleteSession: async (...sessionIds) => {
-			try {
-				await faunaClient.query(q.Map(q.Paginate(q.Union(q.Map([...sessionIds], q.Lambda("x", q.Match(q.Index("session_by_id"), q.Var("x")))))), q.Lambda("x", q.Delete(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, deleteSessionsByUserId: async (userId) => {
-			try {
-				await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("session_by_userid"), userId)), q.Lambda("x", q.Delete(q.Var("x"))))).catch((err: FaunaError) => { throw err });
-
-			} catch (e) {
-				errorHandler(e as any);
-				throw e;
-			}
-		}, updateUser: async (userId, newData) => {
-			const response: FaunaResponse = await faunaClient.query(q.Map(q.Paginate(q.Match(q.Index("user_by_id"), userId)), q.Lambda("x", q.Update(q.Var("x"), {
-				data: {
-					hashed_password: newData.hashedPassword, provider_id: newData.providerId, ...newData.attributes
+					throw error;
 				}
-			}))))
-				.catch((err: FaunaError) => {
-					if (err.message === "instance not unique") {
+			},
+			deleteSession: async (...sessionIds) => {
+				await faunaClient.query(
+					q.Map(
+						q.Paginate(
+							q.Union(
+								q.Map([...sessionIds], q.Lambda("x", q.Match(q.Index("session_by_id"), q.Var("x"))))
+							)
+						),
+						q.Lambda("x", q.Delete(q.Var("x")))
+					)
+				);
+			},
+			deleteSessionsByUserId: async (userId) => {
+				await faunaClient.query(
+					q.Map(
+						q.Paginate(q.Match(q.Index("session_by_userid"), userId)),
+						q.Lambda("x", q.Delete(q.Var("x")))
+					)
+				);
+			},
+			updateUser: async (userId, newData) => {
+				try {
+					const { data: userResponses } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+						q.Map(
+							q.Paginate(q.Match(q.Index("user_by_id"), userId)),
+							q.Lambda(
+								"x",
+								q.Update(q.Var("x"), {
+									data: {
+										hashed_password: newData.hashedPassword,
+										provider_id: newData.providerId,
+										...newData.attributes
+									}
+								})
+							)
+						)
+					);
+					if (userResponses.length === 0) {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					return convertUserResponse(userResponses[0]);
+				} catch (e) {
+					const error = e as Partial<FaunaError>;
+					if (error.message === "instance not unique") {
 						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 					}
-					throw err;
-				});
-
-			const users = response.data;
-
-			if (users.length === 0) {
-				throw new LuciaError("AUTH_INVALID_USER_ID");
+					throw error;
+				}
 			}
-			return users[0].data;
-		}
+		};
 	};
 };
 

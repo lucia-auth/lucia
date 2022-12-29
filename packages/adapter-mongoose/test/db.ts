@@ -5,6 +5,7 @@ import mongodb from "../src/index.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { convertSessionDoc } from "../src/utils.js";
+import { LuciaError } from "lucia-auth";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -62,7 +63,7 @@ const Session = mongoose.model(
 );
 const clientPromise = mongoose.connect(url);
 
-export const adapter = mongodb(mongoose);
+export const adapter = mongodb(mongoose)(LuciaError);
 
 const inputToMongooseDoc = (obj: Record<string, any>) => {
 	if (obj.id === undefined) return obj;

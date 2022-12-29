@@ -6,31 +6,18 @@ title: "Prisma"
 An adapter for Prisma ORM. Can be used with: SQL, MySQL, PostgreSQL, and SQLite.
 
 ```ts
-const adapter: (
-	client: PrismaClient,
-	handleError?: (
-		error:
-			| Prisma.PrismaClientKnownRequestError
-			| Prisma.PrismaClientValidationError
-			| Prisma.PrismaClientUnknownRequestError
-			| Prisma.PrismaClientInitializationError
-			| Prisma.PrismaClientRustPanicError
-	) => void
-) => Adapter;
+const adapter: (client: PrismaClient) => AdapterFunction<Adapter>;
 ```
 
 ### Parameter
 
-`handleError()` may be provided which will be called on [unknown errors](/learn/basics/error-handling#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia-default) methods.
-
-| name        | type           | description   | optional |
-| ----------- | -------------- | ------------- | -------- |
-| client      | `PrismaClient` | Prisma client |          |
-| handleError | `Function`     |               | true     |
+| name   | type           | description   | optional |
+| ------ | -------------- | ------------- | -------- |
+| client | `PrismaClient` | Prisma client |          |
 
 ### Errors
 
-When an adapter encounters an unknown error (described above), it will throw one of:
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of:
 
 - `Prisma.PrismaClientKnownRequestError`
 - `Prisma.PrismaClientValidationError`
