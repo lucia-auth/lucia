@@ -4,7 +4,7 @@
 
 - [Breaking] Require `lucia-auth` 0.4.0
 - [Breaking] Remove global error handler
-- Generates a new `ObjectId` and uses a 24-character hexadecimal representation of it as the user id if none is provided
+- Generates a new `ObjectId` and uses its 24-character hexadecimal representation as the user id if none is provided
 
 ## 0.1.5
 
