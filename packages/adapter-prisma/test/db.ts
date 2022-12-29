@@ -2,9 +2,10 @@ import { Database } from "@lucia-auth/adapter-test";
 import { PrismaClient } from "@prisma/client";
 import prisma from "../src/index.js";
 import { convertSession } from "../src/utils.js";
+import { LuciaError } from "lucia-auth";
 
 const client = new PrismaClient();
-export const adapter = prisma(client);
+export const adapter = prisma(client)(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {

@@ -17,9 +17,9 @@ class Twitch<A extends Auth> implements OAuthProvider {
 		this.auth = auth;
 		this.clientId = configs.clientId;
 		this.clientSecret = configs.clientSecret;
-		this.scope = configs.scope || ["user:read:email"];
+		this.scope = configs.scope ?? ["user:read:email"];
 		this.redirectUri = configs.redirectUri;
-		this.forceVerify = configs.forceVerify || false;
+		this.forceVerify = configs.forceVerify ?? false;
 	}
 	private auth: A;
 	private clientId: string;

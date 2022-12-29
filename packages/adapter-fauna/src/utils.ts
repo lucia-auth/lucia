@@ -1,21 +1,35 @@
-export function convertUserResponse(res: any) {
-	const array: any[] = [];
-	res.forEach((row: { data: { [x: string]: any; id: any; hashed_password: any; provider_id: any } }) => {
-		const { id, hashed_password, provider_id, ...attributes } = row.data;
-		array.push({
-			id, provider_id, hashed_password: hashed_password === undefined ? null : hashed_password, ...attributes
-		});
-	});
-	return array;
-}
+import { UserSchema } from "lucia-auth";
 
-export function convertSessionResponse(res: any) {
-	const array: any[] = [];
-	res.forEach((row: { data: { id: any; user_id: any; expires: any; idle_expires: any; }; }) => {
-		const { id, user_id, expires, idle_expires } = row.data;
-		array.push({
-			id, user_id, expires, idle_expires
-		});
-	});
-	return array;
-}
+export type MultiResponse<T> = {
+	data: {
+		data: T;
+	}[];
+};
+
+export type SingleResponse<T> = {
+	data: T;
+};
+
+export type FaunaUserSchema = {
+	id: string;
+	hashed_password?: string;
+	provider_id: string;
+	[k: string]: any;
+};
+
+export type FaunaSessionSchema = {
+	id: string;
+	user_id: string;
+	expires: number;
+	idle_expires: number;
+};
+
+export const convertUserResponse = (res: SingleResponse<FaunaUserSchema>): UserSchema => {
+	const { id, hashed_password, provider_id, ...attributes } = res.data;
+	return {
+		id,
+		provider_id,
+		hashed_password: hashed_password ?? null,
+		...attributes
+	}
+};

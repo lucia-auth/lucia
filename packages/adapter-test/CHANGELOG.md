@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.1.6
+
+- Update peer dependency
+- Clean up code
+
 ## 0.1.5
 
 - Update peer dependency

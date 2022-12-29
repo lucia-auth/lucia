@@ -8,24 +8,20 @@ An adapter for [Kysely SQL query builder](https://github.com/koskimas/kysely). T
 ```ts
 const adapter: (
 	db: Kysely<DB>
-	errorHandler?: (error: DatabaseError) => void
-) => Adapter;
+) => AdapterFunction<Adapter>;
 ```
 
 ### Parameter
 
 See [Database interfaces](#database-interfaces) for more information regarding the DB type used for the Kysely instance.
 
-`handleError()` may be provided which will be called on [unknown errors](/learn/basics/error-handling#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia-default) methods.
-
 | name        | type         | description     | optional |
 | ----------- | ------------ | --------------- | -------- |
 | db          | `Kysely<DB>` | Kysely instance |          |
-| handleError | `Function`   |                 | true     |
 
 ### Errors
 
-When an adapter encounters an unknown error (described above), it will throw `DatabaseError`.
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `DatabaseError` from `pg`.
 
 ## Installation
 

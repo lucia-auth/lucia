@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.2
+
+- Update peer dependency
+
 ## 0.5.1
 
 - [Fix] Fix `handleHooks()` types [#260](https://github.com/pilcrowOnPaper/lucia-auth/issues/260)

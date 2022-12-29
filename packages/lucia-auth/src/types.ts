@@ -1,3 +1,5 @@
+import type { LuciaErrorConstructor } from "./index.js";
+
 export type { Auth } from "./auth/index.js";
 
 export type User = ReturnType<Lucia.Auth["transformUserData"]>;
@@ -8,7 +10,7 @@ export type Session = {
 	activePeriodExpires: Date;
 	idlePeriodExpires: Date;
 	state: "idle" | "active";
-	isFresh: boolean
+	isFresh: boolean;
 };
 
 export type Env = "DEV" | "PROD";
@@ -27,6 +29,10 @@ export type SessionSchema = {
 	idle_expires: number;
 	user_id: string;
 };
+
+export type AdapterFunction<T extends Adapter | UserAdapter | SessionAdapter> = (
+	E: LuciaErrorConstructor
+) => T;
 
 export type Adapter = {
 	getSessionAndUserBySessionId?: (sessionId: string) => Promise<{

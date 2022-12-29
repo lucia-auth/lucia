@@ -9,10 +9,10 @@ Configurations for `lucia()`.
 interface Configurations {
 	// required
 	adapter:
-		| Adapter
+		| AdapterFunction<Adapter>
 		| {
-				user: UserAdapter;
-				session: SessionAdapter;
+				user: AdapterFunction<UserAdapter>;
+				session: AdapterFunction<SessionAdapter>;
 		  };
 	env: Env;
 
@@ -47,27 +47,27 @@ type CookieOption = {
 
 An adapter for your database. If you're using a single database:
 
-| type      |
-| --------- |
-| `Adapter` |
+| type                                                                                                            |
+| --------------------------------------------------------------------------------------------------------------- |
+| [`AdapterFunction`](/reference/adapters/api#adapterfunction)`<`[`Adapter`](/reference/adapters/api#adapter) `>` |
 
-or, if you're using a different adapter for `user` and `session` table. A normal `Adapter` can be used for both `adapter.user` and `adapter.session`
+or, it can take a different adapter for each table. A normal `Adapter` can be used for both `adapter.user` and `adapter.session`
 
 #### `user` (required)
 
-An adapter for the database that stores users - can be a normal [`Adapter`](/reference/adapters/api#adapter) adapter.
+An adapter for the database that stores users. Can be a normal `AdapterFunction<Adapter>` adapter.
 
-| type                                                      |
-| --------------------------------------------------------- |
-| [`UserAdapter`](/reference/types/lucia-types#useradapter) |
+| type                                                                           |
+| ------------------------------------------------------------------------------ |
+| `AdapterFunction<`[`UserAdapter`](/reference/types/lucia-types#useradapter)`>` |
 
 #### `session` (required)
 
 An adapter for the database that stores sessions.
 
-| type                                                         |
-| ------------------------------------------------------------ |
-| [`SessionAdapter`](/reference/types/lucia-types#useradapter) |
+| type                                                                              |
+| --------------------------------------------------------------------------------- |
+| `AdapterFunction<`[`SessionAdapter`](/reference/types/lucia-types#useradapter)`>` |
 
 ### `env`
 
@@ -87,13 +87,15 @@ Will remove [dead sessions](/learn/start-here/concepts#session-states) from the 
 | --------- | ------- |
 | `boolean` | `true`  |
 
-Specifically, it removes the target session from the database if its dead on: 
+Specifically, it removes the target session from the database if its dead on:
+
 - `getSession()`
 - `getSessionUser()`
 - `validateSessionUser()`
 - `validateSession()`
 
-and deletes the target user's dead sessions from the database on: 
+and deletes the target user's dead sessions from the database on:
+
 - `updateUserProviderId()`
 - `updateUserAttributes()`
 - `createSession()`.

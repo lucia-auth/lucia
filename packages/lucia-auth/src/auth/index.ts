@@ -7,7 +7,7 @@ import {
 	generateRandomString,
 	validateScryptHash
 } from "../utils/crypto.js";
-import { LuciaError } from "./error.js";
+import { LuciaError, LuciaErrorConstructor } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { getSessionFromDatabaseData } from "./session.js";
 
@@ -60,8 +60,8 @@ export class Auth<C extends Configurations = any> {
 		}
 		this.adapter =
 			"user" in configs.adapter
-				? { ...configs.adapter.user, ...configs.adapter.session }
-				: configs.adapter;
+				? { ...configs.adapter.user(LuciaError), ...configs.adapter.session(LuciaError) }
+				: configs.adapter(LuciaError);
 		this.generateUserId = configs.generateCustomUserId ?? (async () => null);
 		this.env = configs.env;
 		this.csrfProtection = configs.csrfProtection ?? true;
@@ -325,10 +325,10 @@ type MaybePromise<T> = T | Promise<T>;
 
 export interface Configurations {
 	adapter:
-		| Adapter
+		| ((E: LuciaErrorConstructor) => Adapter)
 		| {
-				user: UserAdapter | Adapter;
-				session: SessionAdapter | Adapter;
+				user: (E: LuciaErrorConstructor) => UserAdapter | Adapter;
+				session: (E: LuciaErrorConstructor) => SessionAdapter | Adapter;
 		  };
 	env: Env;
 	generateCustomUserId?: () => Promise<string | null>;

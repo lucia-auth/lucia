@@ -45,10 +45,9 @@ const Index = () => {
 			})
 		});
 		if (response.redirected) return router.push(response.url);
-		const result =
-			((await response.json()) as {
-				error: string;
-			}) || {};
+		const result = (await response.json()) as {
+			error: string;
+		};
 		setMessage(result.error);
 	};
 	return (

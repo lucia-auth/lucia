@@ -6,13 +6,13 @@ export const handleApiRoutes = (auth: Auth) => {
 	return async (req: NextRequest, res: NextResponse) => {
 		if (!res.status) throw new Error("Invalid response type");
 		const authRequest = new AuthRequest(auth, req, res);
-		if ((req.url || "").startsWith("/api/auth/user") && req.method === "GET") {
+		if ((req.url ?? "").startsWith("/api/auth/user") && req.method === "GET") {
 			const { user } = await authRequest.validateUser();
 			return res.status(200).json({
 				user
 			});
 		}
-		if ((req.url || "").startsWith("/api/auth/logout") && req.method === "POST") {
+		if ((req.url ?? "").startsWith("/api/auth/logout") && req.method === "POST") {
 			const sessionId = auth.validateRequestHeaders(convertNextRequestToStandardRequest(req));
 			if (!sessionId) return res.status(200).json({});
 			try {

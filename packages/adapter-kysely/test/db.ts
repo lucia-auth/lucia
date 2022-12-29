@@ -8,6 +8,7 @@ import { convertSession } from "../src/utils.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
+import { LuciaError } from "lucia-auth";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -29,7 +30,7 @@ const dbKysely = new Kysely<DBExt>({
 	})
 });
 
-export const adapter = adapterKysely(dbKysely);
+export const adapter = adapterKysely(dbKysely)(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {

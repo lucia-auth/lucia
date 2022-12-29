@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/nextjs",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"description": "Lucia integration for Next.js",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -45,6 +45,6 @@
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.3.x"
+		"lucia-auth": "0.3.x - 0.4.x"
 	}
 }

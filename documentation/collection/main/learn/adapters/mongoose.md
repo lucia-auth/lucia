@@ -6,25 +6,22 @@ title: "Mongoose (MongoDB)"
 An adapter for Mongoose (MongoDB).
 
 ```ts
-const adapter: (mongoose: Mongoose, handleError?: (error: MongooseError) => void) => Adapter;
+const adapter: (mongoose: Mongoose) => AdapterFunction<Adapter>;
 ```
 
-**This adapter does NOT support auto user id generation.** Generate your own user id using Lucia's [`generateUserId()`](/reference/configure/lucia-configurations#generatecustomuserid) in the configurations or use Mongoose's default field value. In either cases, the returned value **MUST** be a string (not `ObjectId`).
+If [`generateUserId()`](/reference/configure/lucia-configurations#generatecustomuserid) is not configured, the adapter will generate a new `ObjectId` and use the stringified version (24-character hexadecimal string) as the user id.
 
 This adapter will not handle database connection and you will need to connect to the database manually.
 
 ### Parameter
 
-`handleError()` may be provided which will be called on [unknown errors](/learn/basics/error-handling#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia-default) methods.
-
-| name        | type       | description     | optional |
-| ----------- | ---------- | --------------- | -------- |
-| mongoose    | `Mongoose` | Mongoose client |          |
-| handleError | `Function` |                 | true     |
+| name     | type       | description     | optional |
+| -------- | ---------- | --------------- | -------- |
+| mongoose | `Mongoose` | Mongoose client |          |
 
 ### Errors
 
-When an adapter encounters an unknown error (described above), it will throw `MongooseError`.
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `MongooseError`.
 
 ## Installation
 

@@ -6,26 +6,19 @@ title: "Supabase"
 An adapter for Supabase PostgreSQL database - can be used regardless of the Supabase version. **Make sure to enable row level security for all tables!**.
 
 ```ts
-const adapter: (
-	url: string,
-	secret: string,
-	errorHandler?: (error: PostgrestError) => void
-) => Adapter;
+const adapter: (url: string, secret: string) => AdapterFunction<Adapter>;
 ```
 
 ### Parameter
 
-`handleError()` may be provided which will be called on [unknown errors](/learn/basics/error-handling#known-errors) - database errors Lucia doesn't expect the adapter to catch. You can also throw custom errors inside it, which will be thrown when an unknown database error occurs inside [`Lucia`](/reference/api/server-api#lucia-default) methods.
-
-| name        | type       | description                         | optional |
-| ----------- | ---------- | ----------------------------------- | -------- |
-| url         | `string`   | Supabase project url                |          |
-| secret      | `string`   | `service_role` secret; NOT anon key |          |
-| handleError | `Function` |                                     | true     |
+| name   | type     | description                         | optional |
+| ------ | -------- | ----------------------------------- | -------- |
+| url    | `string` | Supabase project url                |          |
+| secret | `string` | `service_role` secret; NOT anon key |          |
 
 ### Errors
 
-When an adapter encounters an unknown error (described above), it will throw `PostgrestError`.
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When an adapter encounters such errors, it will throw a `PostgrestError`.
 
 ## Installation
 

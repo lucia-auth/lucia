@@ -4,7 +4,7 @@ import supabase from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
-import type { SessionSchema, UserSchema } from "lucia-auth";
+import { LuciaError, SessionSchema, UserSchema } from "lucia-auth";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -22,7 +22,7 @@ const client = new PostgrestClient(`${url}/rest/v1`, {
 	}
 });
 
-export const adapter = supabase(url, secret);
+export const adapter = supabase(url, secret)(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {

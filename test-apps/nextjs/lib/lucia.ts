@@ -16,8 +16,8 @@ export const auth = lucia({
 });
 
 export const githubAuth = github(auth, {
-	clientId: process.env.GITHUB_CLIENT_ID || "",
-	clientSecret: process.env.GITHUB_CLIENT_SECRET || ""
+	clientId: process.env.GITHUB_CLIENT_ID ?? "",
+	clientSecret: process.env.GITHUB_CLIENT_SECRET ?? ""
 });
 
 export type Auth = typeof auth;

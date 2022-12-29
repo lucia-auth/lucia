@@ -3,15 +3,25 @@ _order: 0
 title: "Lucia types"
 ---
 
-Types can be imported from `lucia-auth/types`.
+Types can be imported from `lucia-auth`.
 
 ```ts
-import type { Adapter } from "lucia-auth/types";
+import type { Adapter } from "lucia-auth";
 ```
 
 ## `Adapter`
 
 Refer to [Adapters](/reference/adapters/api) reference.
+
+## `AdapterFunction`
+
+Refer to [Adapters](/reference/adapters/api) reference. `LuciaErrorConstructor` is the constructor function (class reference) of [`LuciaError`](/reference/types/lucia-types#luciaerror).
+
+```ts
+export type AdapterFunction<A extends Adapter | UserAdapter | SessionAdapter> = (
+	LuciaError: LuciaErrorConstructor
+) => A;
+```
 
 ## `Auth`
 

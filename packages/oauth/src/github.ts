@@ -14,7 +14,7 @@ class Github<A extends Auth> implements OAuthProvider {
 		this.auth = auth;
 		this.clientId = configs.clientId;
 		this.clientSecret = configs.clientSecret;
-		this.scope = configs.scope || [];
+		this.scope = configs.scope ?? [];
 	}
 	private auth: A;
 	private clientId: string;

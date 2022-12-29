@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.6
+
+- Update peer dependency
+
 ## 0.2.5
 
 - Add Reddit provider
