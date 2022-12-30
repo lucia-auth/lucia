@@ -23,19 +23,25 @@ npm install @lucia-auth/adapter-kysely
 
 ## Testing
 
-```
-npm run test
-```
-
 ### PostgreSQL
 
-Add a postgresql database url to `.env`.
+```
+pnpm test-psql-main
+```
+
+```shell
+PSQL_DATABASE_URL="" # database url
+```
 
 ### MySQL
 
-```env
-MYSQL_DATABASE="" // database name
-MYSQL_PASSWORD="" // user password
+```
+pnpm test-mysql-main
+```
+
+```shell
+MYSQL_DATABASE="" # database name
+MYSQL_PASSWORD="" # user password
 ```
 
 ```sql
@@ -59,6 +65,10 @@ CREATE TABLE session (
 
 ### SQLITE
 
+```
+pnpm test-sqlite-main
+```
+
 ```sql
 CREATE TABLE main.user (
     id VARCHAR(31) NOT NULL,
@@ -66,5 +76,14 @@ CREATE TABLE main.user (
     hashed_password VARCHAR(255),
     username VARCHAR(31) NOT NULL UNIQUE,
     PRIMARY KEY (id)
+);
+
+CREATE TABLE main.session (
+    id VARCHAR(127) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
+    expires BIGINT UNSIGNED NOT NULL,
+    idle_expires BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
 ```

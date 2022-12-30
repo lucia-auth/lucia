@@ -25,7 +25,7 @@ interface DBExt extends Omit<DB, "user"> {
 const dbKysely = new Kysely<DBExt>({
 	dialect: new PostgresDialect({
 		pool: new Pool({
-			connectionString: process.env.DATABASE_URL
+			connectionString: process.env.PSQL_DATABASE_URL
 		})
 	})
 });
