@@ -1,11 +1,12 @@
 import { Database } from "@lucia-auth/adapter-test";
-import adapterKysely from "../src/index.js";
-import pg from "pg";
-const { Pool } = pg;
-import { Kysely, PostgresDialect } from "kysely";
-import { DB, User } from "../src/dbTypes.js";
-import { convertSession } from "../src/utils.js";
-
+import {
+	default as adapterKysely,
+	type KyselyLuciaDatabase,
+	type KyselyUser
+} from "../../src/index.js";
+import * as mysql from "mysql2";
+import { Kysely, MysqlDialect } from "kysely";
+import { convertSession } from "../../src/utils.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { LuciaError } from "lucia-auth";
@@ -14,33 +15,36 @@ dotenv.config({
 	path: `${resolve()}/.env`
 });
 
-interface UserExt extends User {
+interface User extends KyselyUser {
 	username: string;
 }
 
-interface DBExt extends Omit<DB, "user"> {
-	user: UserExt;
+interface KyselyDatabase extends Omit<KyselyLuciaDatabase, "user"> {
+	user: User;
 }
 
-const dbKysely = new Kysely<DBExt>({
-	dialect: new PostgresDialect({
-		pool: new Pool({
-			connectionString: process.env.DATABASE_URL
+const dbKysely = new Kysely<KyselyDatabase>({
+	dialect: new MysqlDialect({
+		pool: mysql.createPool({
+			host: "localhost",
+			user: "root",
+			database: process.env.MYSQL_DATABASE,
+			password: process.env.MYSQL_PASSWORD
 		})
 	})
 });
 
-export const adapter = adapterKysely(dbKysely)(LuciaError);
+export const adapter = adapterKysely(dbKysely, "mysql2")(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {
 		const data = await dbKysely.selectFrom("user").selectAll().execute();
-		if (!data) throw new Error("Failed to fetch from databaes");
+		if (!data) throw new Error("Failed to fetch from database");
 		return data;
 	},
 	getSessions: async () => {
 		const data = await dbKysely.selectFrom("session").selectAll().execute();
-		if (!data) throw new Error("Failed to fetch from databaes");
+		if (!data) throw new Error("Failed to fetch from database");
 		return data.map((session) => convertSession(session));
 	},
 	insertUser: async (user) => {

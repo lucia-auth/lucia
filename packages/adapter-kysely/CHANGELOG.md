@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] Require `dialect` parameter
+- Support MySQL
+- Support SQLite
+- Export type `KyselyLuciaDatabase`, `KyselyUser`, `KyselySession`
+
 ## 0.2.0
 
 - [Breaking] Require `lucia-auth` 0.4.0

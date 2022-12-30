@@ -3,25 +3,35 @@ _order: 0
 title: "Kysely"
 ---
 
-An adapter for [Kysely SQL query builder](https://github.com/koskimas/kysely). This adapter currently only supports PostgreSQL.
+An adapter for [Kysely SQL query builder](https://github.com/koskimas/kysely). This adapter currently supports [all 3 dialects officially supported by Kysely](https://github.com/koskimas/kysely#installation):
+
+- PostgreSQL via [`pg`](https://github.com/brianc/node-postgres)
+- MySQL via [`mysql2`](https://github.com/sidorares/node-mysql2)
+- SQLite via [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
 
 ```ts
 const adapter: (
-	db: Kysely<DB>
+	db: Kysely<Database>,
+	dialect: "pg" | "mysql" | "better-sqlite3"
 ) => AdapterFunction<Adapter>;
 ```
 
 ### Parameter
 
-See [Database interfaces](#database-interfaces) for more information regarding the DB type used for the Kysely instance.
+See [Database interfaces](#database-interfaces) for more information regarding the `Database` type used for the Kysely instance.
 
-| name        | type         | description     | optional |
-| ----------- | ------------ | --------------- | -------- |
-| db          | `Kysely<DB>` | Kysely instance |          |
+| name    | type                                  | description     |
+| ------- | ------------------------------------- | --------------- |
+| db      | `Kysely<Database>`                    | Kysely instance |
+| dialect | `"pg" \| "mysql" \| "better-sqlite3"` | dialect used    |
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `DatabaseError` from `pg`.
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of
+
+- `DatabaseError` for `pg`.
+- `QueryError` for `mysql2`
+- `SqliteError` for `better-sql3`
 
 ## Installation
 
@@ -34,21 +44,13 @@ yarn add @lucia-auth/adapter-kysely
 ## Usage
 
 ```ts
-import kysely from "@lucia-auth/adapter-kysely";
-import { Kysely, PostgresDialect } from "kysely";
-import { Pool } from "pg";
-import type { DB } from "dbTypes"; // Your types for your database
+import { default as kysely, type KyselyLuciaDatabase } from "@lucia-auth/adapter-kysely";
+import { Kysely } from "kysely";
 
-const db = new Kysely<DB>({
-	dialect: new PostgresDialect({
-		pool: new Pool({
-			connectionString: DATABASE_URL
-		})
-	})
-});
+const db = new Kysely<KyselyLuciaDatabase>(options);
 
 const auth = lucia({
-	adapter: kysely(db)
+	adapter: kysely(db, "pg") // change "pg" to "mysql2", "better-sqlite3"
 });
 ```
 
@@ -56,28 +58,28 @@ const auth = lucia({
 
 Define interfaces for each table in your database or generate them automatically using [kysely-codegen](https://github.com/RobinBlomberg/kysely-codegen). Then, pass those interfaces to the `Kysely` constructor. See the [Kysely github repo](https://github.com/koskimas/kysely#minimal-example) for an example on creating the `Kysely` instance.
 
-The `DB` interface must be of the following structure.
+The `Database` interface must be of the following structure.
 
 ```ts
 import { ColumnType, Generated } from "kysely";
 
-type Int8 = ColumnType<string, string | number | bigint, string | number | bigint>;
+type BigIntColumnType = ColumnType<number | bigint>;
 
 interface Session {
-	expires: Int8;
+	expires: BigIntColumnType;
 	id: string;
-	idle_expires: Int8;
+	idle_expires: BigIntColumnType;
 	user_id: string;
 }
 
 interface User {
-	hashed_password: string | null;
 	id: Generated<string>;
+	hashed_password: string | null;
 	provider_id: string;
 	// Plus other columns that you defined
 }
 
-interface DB {
+interface Database {
 	session: Session;
 	user: User;
 	// Plus other table interfaces
@@ -87,63 +89,40 @@ interface DB {
 You can also import the interfaces from `adapter-kysely` and extend them.
 
 ```ts
-import type { DB, User } from "@lucia-auth/adapter-kysely/dbTypes";
+import type { KyselyLuciaDatabase, KyselyUser } from "@lucia-auth/adapter-kysely";
 
 // Add a column for username in your user table
-interface UserExt extends User {
+interface User extends KyselyUser {
 	username: string;
 }
 
-// Create interfaces for your other tables
-interface Home {
-	id: number;
-	user_id: string;
+interface Database extends Omit<KyselyLuciaDatabase, "user"> {
+	user: User;
+	other_table: {
+		//...
+	};
 }
 
-interface DBExt extends Omit<DB, "user"> {
-	user: UserExt;
-	home: Home;
-}
-
-const db = new Kysely<DBExt>({
-	dialect: new PostgresDialect({
-		pool: new Pool({
-			connectionString: process.env.DATABASE_URL
-		})
-	})
-});
+const db = new Kysely<Database>(options);
 
 const auth = lucia({
-	adapter: kysely(db)
+	adapter: kysely(db, dialect)
 });
 ```
 
 ## Database structure
 
-`uuid` should be changed to `text` if you use custom user ids.
+### PostgreSQL
 
-### `user`
+#### `user`
 
-You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` may be `text` if you generate your own user id.
+`id` may be `text` if you generate your own user id. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
 
-| name            | type   | foreign constraint | default             | nullable | unique | identity |
-| --------------- | ------ | ------------------ | ------------------- | -------- | ------ | -------- |
-| id              | `uuid` |                    | `gen_random_uuid()` |          | true   | true     |
-| provider_id     | `text` |                    |                     |          | true   |          |
-| hashed_password | `text` |                    |                     | true     |        |          |
-
-### `session`
-
-| name         | type   | foreign constraint | nullable | unique | identity |
-| ------------ | ------ | ------------------ | -------- | ------ | -------- |
-| id           | `text` |                    |          | true   | true     |
-| user_id      | `uuid` | `public.user(id)`  |          |        |          |
-| expires      | `int8` |                    |          |        |          |
-| idle_expires | `int8` |                    |          |        |          |
-
-## Create table statements
-
-You may add additional columns to store custom user data in `user` table. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+| name            | type   | foreign constraint | default             | nullable | unique | primary |
+| --------------- | ------ | ------------------ | ------------------- | -------- | ------ | ------- |
+| id              | `UUID` |                    | `gen_random_uuid()` |          | true   | true    |
+| provider_id     | `TEXT` |                    |                     |          | true   |         |
+| hashed_password | `TEXT` |                    |                     | true     |        |         |
 
 ```sql
 CREATE TABLE public.user (
@@ -151,11 +130,106 @@ CREATE TABLE public.user (
 	provider_id TEXT NOT NULL UNIQUE,
 	hashed_password TEXT
 );
+```
 
+#### `session`
+
+| name         | type     | foreign constraint | nullable | unique | primary |
+| ------------ | -------- | ------------------ | -------- | ------ | ------- |
+| id           | `TEXT`   |                    |          | true   | true    |
+| user_id      | `UUID`   | `public.user(id)`  |          |        |         |
+| expires      | `BIGINT` |                    |          |        |         |
+| idle_expires | `BIGINT` |                    |          |        |         |
+
+```sql
 CREATE TABLE public.session (
   	id TEXT PRIMARY KEY,
 	user_id UUID REFERENCES public.user(id) NOT NULL,
-	expires INT8 NOT NULL,
-	idle_expires INT8 NOT NULL
+	expires BIGINT NOT NULL,
+	idle_expires BIGINT NOT NULL
+);
+```
+
+### MySQL
+
+#### `user`
+
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+
+| name            | type           | nullable | unique | primary |
+| --------------- | -------------- | -------- | ------ | ------- |
+| id              | `VARCHAR(36)`  |          | true   | true    |
+| provider_id     | `VARCHAR(255)` |          | true   |         |
+| hashed_password | `VARCHAR(255)` | true     |        |         |
+
+```sql
+CREATE TABLE user (
+    id VARCHAR(36) NOT NULL,
+    provider_id VARCHAR(255) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255),
+    PRIMARY KEY (id)
+);
+```
+
+#### `session`
+
+| name         | type                | foreign constraint | nullable | unique | identity |
+| ------------ | ------------------- | ------------------ | -------- | ------ | -------- |
+| id           | `VARCHAR(127)`      |                    |          | true   | true     |
+| user_id      | `VARCHAR(36)`       | `user(id)`         |          |        |          |
+| expires      | `BIGINT` (UNSIGNED) |                    |          |        |          |
+| idle_expires | `BIGINT` (UNSIGNED) |                    |          |        |          |
+
+```sql
+CREATE TABLE session (
+    id VARCHAR(127) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
+    expires BIGINT UNSIGNED NOT NULL,
+    idle_expires BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+```
+
+### SQLite
+
+#### `user`
+
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+
+| name            | type           | nullable | unique | identity |
+| --------------- | -------------- | -------- | ------ | -------- |
+| id              | `VARCHAR(36)`  |          | true   | true     |
+| provider_id     | `VARCHAR(255)` |          | true   |          |
+| hashed_password | `VARCHAR(255)` | true     |        |          |
+
+```sql
+CREATE TABLE user (
+    id VARCHAR(31) NOT NULL,
+    provider_id VARCHAR(255) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255),
+    PRIMARY KEY (id)
+);
+```
+
+#### `session`
+
+Type for `user_id` should match the type of `user(id)`.
+
+| name         | type           | foreign constraint | nullable | unique | identity |
+| ------------ | -------------- | ------------------ | -------- | ------ | -------- |
+| id           | `VARCHAR(127)` |                    |          | true   | true     |
+| user_id      | `VARCHAR(36)`  | `user(id)`         |          |        |          |
+| expires      | `BIGINT`       |                    |          |        |          |
+| idle_expires | `BIGINT`       |                    |          |        |          |
+
+```sql
+CREATE TABLE session (
+    id VARCHAR(127) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
+    expires BIGINT NOT NULL,
+    idle_expires BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
 ```

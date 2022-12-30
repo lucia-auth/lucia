@@ -1,12 +1,22 @@
 import { getUpdateData } from "lucia-auth/adapter";
 import { Kysely } from "kysely";
 import { convertSession } from "./utils.js";
-import type { Adapter, AdapterFunction } from "lucia-auth";
-import type { DB } from "./dbTypes.js";
-import { type DatabaseError } from "pg";
+import type { Adapter, AdapterFunction, UserSchema } from "lucia-auth";
+import type { KyselyLuciaDatabase } from "./types.js";
+import type { DatabaseError as PgDatabaseError } from "pg";
+import type { QueryError as MySQLError } from "mysql2";
+export * from "./types.js";
+
+type SQLiteError = {
+	message: string;
+	code: string;
+};
 
 const adapter =
-	(db: Kysely<DB>): AdapterFunction<Adapter> =>
+	(
+		db: Kysely<KyselyLuciaDatabase>,
+		dialect: "pg" | "mysql2" | "better-sqlite3"
+	): AdapterFunction<Adapter> =>
 	(LuciaError) => {
 		return {
 			getUser: async (userId) => {
@@ -60,23 +70,58 @@ const adapter =
 			},
 			setUser: async (userId, data) => {
 				try {
-					const user = await db
+					if (dialect === "pg") {
+						const user = await db
+							.insertInto("user")
+							.values({
+								id: userId ?? undefined,
+								provider_id: data.providerId,
+								hashed_password: data.hashedPassword,
+								...data.attributes
+							})
+							.returningAll()
+							.executeTakeFirstOrThrow();
+						return user;
+					}
+					const id = userId ?? crypto.randomUUID();
+					await db
 						.insertInto("user")
 						.values({
-							id: userId ?? undefined,
+							id,
 							provider_id: data.providerId,
 							hashed_password: data.hashedPassword,
 							...data.attributes
 						})
-						.returningAll()
 						.executeTakeFirstOrThrow();
-					return user;
+					return {
+						id,
+						provider_id: data.providerId,
+						hashed_password: data.hashedPassword,
+						...data.attributes
+					} as UserSchema;
 				} catch (e) {
-					const error = e as Partial<DatabaseError>;
-					if (error.code === "23505" && error.detail?.includes("Key (provider_id)")) {
-						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+					if (dialect === "pg") {
+						const error = e as Partial<PgDatabaseError>;
+						if (error.code === "23505" && error.detail?.includes("Key (provider_id)")) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
 					}
-					throw error;
+					if (dialect === "mysql2") {
+						const error = e as Partial<MySQLError>;
+						if (error.code === "ER_DUP_ENTRY" && error.message?.includes(".provider_id")) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
+					}
+					if (dialect === "better-sqlite3") {
+						const error = e as Partial<SQLiteError>;
+						if (
+							error.code === "SQLITE_CONSTRAINT_UNIQUE" &&
+							error.message?.includes(".provider_id")
+						) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
+					}
+					throw e;
 				}
 			},
 			deleteUser: async (userId) => {
@@ -92,16 +137,41 @@ const adapter =
 							expires: data.expires,
 							idle_expires: data.idlePeriodExpires
 						})
-						.returningAll()
 						.execute();
 				} catch (e) {
-					const error = e as Partial<DatabaseError>;
-					if (error.code === "23503" && error.detail?.includes("Key (user_id)")) {
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					} else if (error.code === "23505" && error.detail?.includes("Key (id)")) {
-						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+					if (dialect === "pg") {
+						const error = e as Partial<PgDatabaseError>;
+						if (error.code === "23503" && error.detail?.includes("Key (user_id)")) {
+							throw new LuciaError("AUTH_INVALID_USER_ID");
+						}
+						if (error.code === "23505" && error.detail?.includes("Key (id)")) {
+							throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+						}
 					}
-					throw error;
+					if (dialect === "mysql2") {
+						const error = e as Partial<MySQLError>;
+						if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
+							throw new LuciaError("AUTH_INVALID_USER_ID");
+						}
+						if (error.code === "ER_DUP_ENTRY" && error.message?.includes("PRIMARY")) {
+							throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+						}
+					}
+					if (dialect === "better-sqlite3") {
+						const error = e as Partial<SQLiteError>;
+						if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
+							const result = await db
+								.selectFrom("user")
+								.select("id")
+								.where("id", "is", data.userId)
+								.executeTakeFirst();
+							if (!result) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
+						}
+						if (error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" && error.message?.includes(".id")) {
+							throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+						}
+					}
+					throw e;
 				}
 			},
 			deleteSession: async (...sessionIds) => {
@@ -122,6 +192,20 @@ const adapter =
 						if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
 						return user;
 					}
+					if (dialect === "mysql2") {
+						await db
+							.updateTable("user")
+							.set(partialData)
+							.where("id", "=", userId)
+							.executeTakeFirst();
+						const user = await db
+							.selectFrom("user")
+							.selectAll()
+							.where("id", "=", userId)
+							.executeTakeFirst();
+						if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+						return user;
+					}
 					const user = await db
 						.updateTable("user")
 						.set(partialData)
@@ -131,11 +215,28 @@ const adapter =
 					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
 					return user;
 				} catch (e) {
-					const error = e as Partial<DatabaseError>;
-					if (error.code === "23505" && error.detail?.includes("Key (provider_id)")) {
-						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+					if (dialect === "pg") {
+						const error = e as Partial<PgDatabaseError>;
+						if (error.code === "23505" && error.detail?.includes("Key (provider_id)")) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
 					}
-					throw error;
+					if (dialect === "mysql2") {
+						const error = e as Partial<MySQLError>;
+						if (error.code === "ER_DUP_ENTRY" && error.message?.includes(".provider_id")) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
+					}
+					if (dialect === "better-sqlite3") {
+						const error = e as Partial<SQLiteError>;
+						if (
+							error.code === "SQLITE_CONSTRAINT_UNIQUE" &&
+							error.message?.includes(".provider_id")
+						) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
+					}
+					throw e;
 				}
 			}
 		};
