@@ -39,7 +39,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 const { doc, collections } = Astro.props;
 ---
 
-<DocumentLayout title={doc.title} headings={doc._getHeadings()}>
+<DocumentLayout doc={doc}>
 	<ContentTable
 		client:load
 		collections={collections}

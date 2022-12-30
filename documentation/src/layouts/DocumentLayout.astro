@@ -3,30 +3,26 @@ import BaseLayout from "./BaseLayout.astro";
 import Headings from "@components/doc/Headings.svelte";
 import Header from "@components/Header.astro";
 import MarkdownArticle from "@components/MarkdownArticle.astro";
-import type { MarkdownInstance } from "astro";
+import type { DocumentQuery } from "@db/types";
+import type { Q } from "@lib/db";
 
 type Props = {
-	title: string;
-	headings: ReturnType<MarkdownInstance<any>["getHeadings"]>;
+	doc: DocumentQuery<Q["integration" | "main"]["*"]["*"]>;
 	external?: ExternalIntegration;
 };
 
-//FIXME: problem: on ASTRO DEV url.pathname not having trailing slash, on ASTRO PREVIEW it has and breaking link.
-//INFO: temporary hotfix
-const contributePageUrl = Astro.url.pathname.endsWith("/")
-	? Astro.url.pathname.slice(0, -1)
-	: Astro.url.pathname;
+const { doc, external } = Astro.props;
 
-const { title, headings, external } = Astro.props;
+const contributePageUrl = `https://github.com/pilcrowOnPaper/lucia-auth/blob/main/documentation/collection/${doc._path}.md`
 ---
 
-<BaseLayout title={title} external={external}>
+<BaseLayout title={doc.title} external={external}>
 	<Header />
-	<slot name="table"/>
-	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:pl-12 lg:mr-64 lg:pr-4  xl:ml-72 overflow-hidden">
-		<MarkdownArticle title={title} contributePageUrl={contributePageUrl}>
-			<slot name="content"/>
+	<slot name="table" />
+	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:pl-12 lg:mr-64 lg:pr-4 xl:ml-72 overflow-hidden">
+		<MarkdownArticle title={doc.title} contributePageUrl={contributePageUrl}>
+			<slot name="content" />
 		</MarkdownArticle>
 	</main>
-	<Headings headings={headings} />
+	<Headings headings={doc._getHeadings()} />
 </BaseLayout>
