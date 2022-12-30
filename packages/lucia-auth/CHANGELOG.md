@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.1
+
+- `options` parameter for `createUser()` is only necessary if `Lucia.UserAttributes` has keys
+- `options.attributes` parameter for `createUser()` is only required if `Lucia.UserAttributes` has keys
+
 ## 0.4.0
 
 - [Breaking] Adapters are now functions that return the `Adapter` object

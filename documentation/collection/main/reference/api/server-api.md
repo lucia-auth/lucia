@@ -175,21 +175,24 @@ Creates a new user.
 const createUser: (
 	provider: string,
 	identifier: string,
-	options?: {
-		password?: string;
-		attributes?: Lucia.UserAttributes;
-	}
+	options:
+		| {
+				password?: string;
+				attributes?: Lucia.UserAttributes;
+		  }
+		| undefined
 ) => Promise<User>;
 ```
 
 #### Parameter
 
-| name               | type                                                                      | description                                             | optional |
-| ------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------- | -------- |
-| provider           | `string`                                                                  | the provider of the user to create                      |          |
-| identifier         | `string`                                                                  | the identifier of the user˝ to create                   |          |
-| options.password   | `string`                                                                  | the password of the user - can be undefined to omit it. | true     |
-| options.attributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | Additional user data to store in `user` table           | true     |
+| name               | type                                                                                     | description                                                                                            | optional |
+| ------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------- |
+| provider           | `string`                                                                                 | the provider of the user to create                                                                     |          |
+| identifier         | `string`                                                                                 | the identifier of the user˝ to create                                                                  |          |
+| options            | `     Record<any, any<> \| undefined`                                                    | can be undefined if [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) is empty |          |
+| options.password   | `string`                                                                                 | the password of the user - can be undefined to omit it.                                                | true     |
+| options.attributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in `user` table - can be undefined if `Lucia.UserAttributes` is empty    | true     |
 
 #### Returns
 
@@ -214,11 +217,23 @@ try {
 		attributes: {
 			username: "user123",
 			isAdmin: true
-		}
+		} // required if Lucia.UserAttributes is NOT empty
 	});
 } catch {
 	// error
 }
+```
+
+These are only valid if `Lucia.attributes` ***IS*** empty:
+
+```ts
+auth.createUser("email", "user@example.com", {
+	password: "123456"
+});
+```
+
+```ts
+auth.createUser("email", "user@example.com");
 ```
 
 ### `deleteDeadUserSessions()`
