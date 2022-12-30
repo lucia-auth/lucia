@@ -135,15 +135,25 @@ export class Auth<C extends Configurations = any> {
 	public createUser = async (
 		provider: string,
 		identifier: string,
-		options?: {
-			password?: string;
-			attributes: keyof Lucia.UserAttributes extends never ? undefined : Lucia.UserAttributes;
-		}
+		options: keyof Lucia.UserAttributes extends never
+			? undefined
+			: {
+					password?: string;
+					attributes: keyof Lucia.UserAttributes extends never ? undefined : Lucia.UserAttributes;
+			  }
 	): Promise<User> => {
 		const providerId = `${provider}:${identifier}`;
-		const attributes = options?.attributes ?? {};
+		const optionsArg = options as
+			| undefined
+			| {
+					password?: string;
+					attributes?: Lucia.UserAttributes;
+			  };
+		const attributes = optionsArg?.attributes ?? {};
 		const userId = await this.generateUserId();
-		const hashedPassword = options?.password ? await this.hash.generate(options.password) : null;
+		const hashedPassword = optionsArg?.password
+			? await this.hash.generate(optionsArg.password)
+			: null;
 		const userData = await this.adapter.setUser(userId, {
 			providerId,
 			hashedPassword: hashedPassword,
