@@ -2,7 +2,7 @@
 
 ## 0.2.7
 
-- Fix types issue with `existingUser` and `createUser()` for `validateCallback()`
+- Fix type issues with `existingUser` and `createUser()` for `validateCallback()`
 
 ## 0.2.6
 
