@@ -23,7 +23,14 @@ npm install @lucia-auth/adapter-kysely
 
 ## Testing
 
+Follow the documentation on database set up.
+
 ### PostgreSQL
+
+```sql
+ALTER TABLE public.user
+    ADD COLUMN username TEXT NOT NULL UNIQUE;
+```
 
 ```
 pnpm test-psql-main
@@ -35,8 +42,11 @@ PSQL_DATABASE_URL="" # database url
 
 ### MySQL
 
-```
-pnpm test-mysql-main
+Add `username` column:
+
+```sql
+ALTER TABLE user
+ADD COLUMN username VARCHAR(31) NOT NULL UNIQUE AFTER hashed_password;
 ```
 
 ```shell
@@ -44,46 +54,19 @@ MYSQL_DATABASE="" # database name
 MYSQL_PASSWORD="" # user password
 ```
 
-```sql
-CREATE TABLE user (
-    id VARCHAR(36) NOT NULL,
-    provider_id VARCHAR(255) NOT NULL UNIQUE,
-    hashed_password VARCHAR(255),
-    username VARCHAR(31) NOT NULL UNIQUE,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE session (
-    id VARCHAR(127) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
-    expires BIGINT UNSIGNED NOT NULL,
-    idle_expires BIGINT UNSIGNED NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES user(id)
-);
+```
+pnpm test-mysql-main
 ```
 
 ### SQLITE
 
-```
-pnpm test-sqlite-main
-```
+Add `username` column:
 
 ```sql
-CREATE TABLE main.user (
-    id VARCHAR(31) NOT NULL,
-    provider_id VARCHAR(255) NOT NULL UNIQUE,
-    hashed_password VARCHAR(255),
-    username VARCHAR(31) NOT NULL UNIQUE,
-    PRIMARY KEY (id)
-);
+ALTER TABLE user
+ADD COLUMN username VARCHAR(31) NOT NULL UNIQUE;
+```
 
-CREATE TABLE main.session (
-    id VARCHAR(127) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
-    expires BIGINT UNSIGNED NOT NULL,
-    idle_expires BIGINT UNSIGNED NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES user(id)
-);
+```
+pnpm test-sqlite-main
 ```
