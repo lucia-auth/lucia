@@ -137,7 +137,7 @@ export class Auth<C extends Configurations = any> {
 		identifier: string,
 		options?: {
 			password?: string;
-			attributes?: Lucia.UserAttributes;
+			attributes: keyof Lucia.UserAttributes extends never ? undefined : Lucia.UserAttributes;
 		}
 	): Promise<User> => {
 		const providerId = `${provider}:${identifier}`;
