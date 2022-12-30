@@ -26,6 +26,33 @@ const reddit: (
 ) => RedditProvider;
 ```
 
+The Reddit integration uses the `Buffer` module. Make sure your deployment environment supports it (e.g. Cloudflare Pages doesn't!).
+In case `Buffer` is not supported make sure to install a polyfill.
+
+If you are using SvelteKit this can be a solution:
+
+`npm i -D @rollup/plugin-inject`
+
+```ts
+// vite.config.ts
+
+import { sveltekit } from "@sveltejs/kit/vite";
+import inject from "@rollup/plugin-inject";
+import type { UserConfig } from "vite";
+
+const config: UserConfig = {
+	plugins: [sveltekit()],
+	build: {
+		rollupOptions: {
+			plugins: [inject({ Buffer: ["Buffer", "Buffer"] })]
+		}
+	}
+};
+
+export default config;
+
+```
+
 #### Parameter
 
 | name                 | type                                        | description                                     | optional |
