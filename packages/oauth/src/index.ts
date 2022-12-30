@@ -1,10 +1,14 @@
-import type { User, GlobalUserAttributes } from "lucia-auth";
+import type { Auth } from "lucia-auth";
 import { generateRandomString } from "lucia-auth";
 
-export interface OAuthProvider {
+export interface OAuthProvider<A extends Auth> {
 	validateCallback: (code: string) => Promise<{
-		existingUser: User | null;
-		createUser: (userAttributes?: GlobalUserAttributes) => Promise<User>;
+		existingUser: GetUserType<A> | null;
+		createUser: (
+			userAttributes?: Parameters<A["createUser"]>[2] extends {}
+				? Parameters<A["createUser"]>[2]["attributes"]
+				: undefined
+		) => Promise<GetUserType<A>>;
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;
@@ -24,7 +28,12 @@ export class LuciaOAuthError extends Error {
 }
 
 export const generateState = () => {
-	return generateRandomString(43)
+	return generateRandomString(43);
 };
 
 export type GetAuthorizationUrlReturnType<T> = T extends null ? [string] : [string, string];
+export type GetUserType<A extends Auth> = Awaited<ReturnType<A["getUser"]>>;
+export type GetCreateUserAttributesType<A extends Auth> = Exclude<
+	Parameters<A["createUser"]>[2],
+	undefined
+>["attributes"];
