@@ -1,9 +1,12 @@
 import { Database } from "@lucia-auth/adapter-test";
-import adapterKysely from "../../src/index.js";
+import {
+	default as adapterKysely,
+	type KyselyLuciaDatabase,
+	type KyselyUser
+} from "../../src/index.js";
 import pg from "pg";
 const { Pool } = pg;
 import { Kysely, PostgresDialect } from "kysely";
-import { DB, User } from "../../src/dbTypes.js";
 import { convertSession } from "../../src/utils.js";
 
 import dotenv from "dotenv";
@@ -14,15 +17,15 @@ dotenv.config({
 	path: `${resolve()}/.env`
 });
 
-interface UserExt extends User {
+interface User extends KyselyUser {
 	username: string;
 }
 
-interface DBExt extends Omit<DB, "user"> {
-	user: UserExt;
+interface KyselyDatabase extends Omit<KyselyLuciaDatabase, "user"> {
+	user: User;
 }
 
-const dbKysely = new Kysely<DBExt>({
+const dbKysely = new Kysely<KyselyDatabase>({
 	dialect: new PostgresDialect({
 		pool: new Pool({
 			connectionString: process.env.PSQL_DATABASE_URL

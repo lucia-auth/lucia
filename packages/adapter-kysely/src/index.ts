@@ -2,9 +2,10 @@ import { getUpdateData } from "lucia-auth/adapter";
 import { Kysely } from "kysely";
 import { convertSession } from "./utils.js";
 import type { Adapter, AdapterFunction, UserSchema } from "lucia-auth";
-import type { DB } from "./dbTypes.js";
+import type { KyselyLuciaDatabase } from "./types.js";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import type { QueryError as MySQLError } from "mysql2";
+export * from "./types.js";
 
 type SQLiteError = {
 	message: string;
@@ -12,7 +13,10 @@ type SQLiteError = {
 };
 
 const adapter =
-	(db: Kysely<DB>, dialect: "pg" | "mysql2" | "better-sqlite3"): AdapterFunction<Adapter> =>
+	(
+		db: Kysely<KyselyLuciaDatabase>,
+		dialect: "pg" | "mysql2" | "better-sqlite3"
+	): AdapterFunction<Adapter> =>
 	(LuciaError) => {
 		return {
 			getUser: async (userId) => {

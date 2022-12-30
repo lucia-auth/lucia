@@ -5,6 +5,7 @@
 - [Breaking] Require `dialect` parameter
 - Support MySQL
 - Support SQLite
+- Export type `KyselyLuciaDatabase`, `KyselyUser`, `KyselySession`
 
 ## 0.2.0
 

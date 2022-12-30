@@ -1,10 +1,12 @@
 import { Database } from "@lucia-auth/adapter-test";
-import adapterKysely from "../../src/index.js";
-import SQLite from "better-sqlite3"
+import {
+	default as adapterKysely,
+	type KyselyLuciaDatabase,
+	type KyselyUser
+} from "../../src/index.js";
+import SQLite from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
-import { DB, User } from "../../src/dbTypes.js";
 import { convertSession } from "../../src/utils.js";
-
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { LuciaError } from "lucia-auth";
@@ -13,15 +15,15 @@ dotenv.config({
 	path: `${resolve()}/.env`
 });
 
-interface UserExt extends User {
+interface User extends KyselyUser {
 	username: string;
 }
 
-interface DBExt extends Omit<DB, "user"> {
-	user: UserExt;
+interface KyselyDatabase extends Omit<KyselyLuciaDatabase, "user"> {
+	user: User;
 }
 
-const dbKysely = new Kysely<DBExt>({
+const dbKysely = new Kysely<KyselyDatabase>({
 	dialect: new SqliteDialect({
 		database: new SQLite("sqlite/main.db")
 	})
