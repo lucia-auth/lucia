@@ -1,15 +1,17 @@
 import { post, get } from "./request.js";
-import type { Auth, GlobalUserAttributes, User } from "lucia-auth";
+import type { Auth } from "lucia-auth";
 import {
 	generateState,
 	GetAuthorizationUrlReturnType,
+	GetCreateUserAttributesType,
+	GetUserType,
 	OAuthConfig,
 	OAuthProvider
 } from "./index.js";
 
 interface Configs extends OAuthConfig {}
 
-class Github<A extends Auth> implements OAuthProvider {
+class Github<A extends Auth> implements OAuthProvider<A> {
 	constructor(auth: A, configs: Configs) {
 		this.auth = auth;
 		this.clientId = configs.clientId;
@@ -48,17 +50,22 @@ class Github<A extends Auth> implements OAuthProvider {
 			bearerToken: accessToken
 		})) as GithubUser;
 		const githubUserId = String(githubUser.id);
-		let existingUser: User | null = null;
+		let existingUser: GetUserType<A> | null = null;
 		try {
-			existingUser = await this.auth.getUserByProviderId("github", githubUserId);
+			existingUser = (await this.auth.getUserByProviderId(
+				"github",
+				githubUserId
+			)) as GetUserType<A>;
 		} catch {
 			// existingUser is null
 		}
 		return {
-			createUser: async (userAttributes: GlobalUserAttributes = {}) => {
-				return await this.auth.createUser("github", githubUserId, {
+			createUser: async (
+				userAttributes?: GetCreateUserAttributesType<A>
+			): Promise<GetUserType<A>> => {
+				return (await this.auth.createUser("github", githubUserId, {
 					attributes: userAttributes
-				});
+				})) as any;
 			},
 			existingUser,
 			providerUser: githubUser,

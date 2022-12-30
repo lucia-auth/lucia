@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.7
+
+- Fix types issue with `existingUser` and `createUser()` for `validateCallback()`
+
 ## 0.2.6
 
 - Update peer dependency
