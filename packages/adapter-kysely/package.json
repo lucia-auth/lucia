@@ -13,6 +13,7 @@
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
 		"test-psql-main": "npx ts-node --esm -T test/psql/index.ts",
 		"test-mysql-main": "npx ts-node --esm -T test/mysql/index.ts",
+		"test-sqlite-main": "npx ts-node --esm -T test/sqlite/index.ts",
 		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -41,6 +42,7 @@
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
+		"@types/better-sqlite3": "^7.6.3",
 		"@types/pg": "^8.6.5",
 		"better-sqlite3": "^8.0.1",
 		"dotenv": "^16.0.3",

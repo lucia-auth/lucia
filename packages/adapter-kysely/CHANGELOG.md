@@ -4,6 +4,7 @@
 
 - [Breaking] Require `dialect` parameter
 - Support MySQL
+- Support SQLite
 
 ## 0.2.0
 

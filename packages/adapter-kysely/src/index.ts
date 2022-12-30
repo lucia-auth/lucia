@@ -6,6 +6,11 @@ import type { DB } from "./dbTypes.js";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import type { QueryError as MySQLError } from "mysql2";
 
+type SQLiteError = {
+	message: string;
+	code: string;
+};
+
 const adapter =
 	(db: Kysely<DB>, dialect: "pg" | "mysql2" | "better-sqlite3"): AdapterFunction<Adapter> =>
 	(LuciaError) => {
@@ -60,7 +65,6 @@ const adapter =
 				return data.map((session) => convertSession(session));
 			},
 			setUser: async (userId, data) => {
-				console.log("setuser");
 				try {
 					if (dialect === "pg") {
 						const user = await db
@@ -100,9 +104,15 @@ const adapter =
 					}
 					if (dialect === "mysql2") {
 						const error = e as Partial<MySQLError>;
+						if (error.code === "ER_DUP_ENTRY" && error.message?.includes(".provider_id")) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
+					}
+					if (dialect === "better-sqlite3") {
+						const error = e as Partial<SQLiteError>;
 						if (
-							error.code === "ER_DUP_ENTRY" &&
-							error.message?.includes("key 'user.provider_id'")
+							error.code === "SQLITE_CONSTRAINT_UNIQUE" &&
+							error.message?.includes(".provider_id")
 						) {
 							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 						}
@@ -136,11 +146,24 @@ const adapter =
 					}
 					if (dialect === "mysql2") {
 						const error = e as Partial<MySQLError>;
-						console.log(error);
 						if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
 							throw new LuciaError("AUTH_INVALID_USER_ID");
 						}
 						if (error.code === "ER_DUP_ENTRY" && error.message?.includes("PRIMARY")) {
+							throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+						}
+					}
+					if (dialect === "better-sqlite3") {
+						const error = e as Partial<SQLiteError>;
+						if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
+							const result = await db
+								.selectFrom("user")
+								.select("id")
+								.where("id", "is", data.userId)
+								.executeTakeFirst();
+							if (!result) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
+						}
+						if (error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" && error.message?.includes(".id")) {
 							throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 						}
 					}
@@ -196,9 +219,15 @@ const adapter =
 					}
 					if (dialect === "mysql2") {
 						const error = e as Partial<MySQLError>;
+						if (error.code === "ER_DUP_ENTRY" && error.message?.includes(".provider_id")) {
+							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						}
+					}
+					if (dialect === "better-sqlite3") {
+						const error = e as Partial<SQLiteError>;
 						if (
-							error.code === "ER_DUP_ENTRY" &&
-							error.message?.includes("key 'user.provider_id'")
+							error.code === "SQLITE_CONSTRAINT_UNIQUE" &&
+							error.message?.includes(".provider_id")
 						) {
 							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 						}
