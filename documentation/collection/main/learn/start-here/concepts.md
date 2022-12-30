@@ -7,13 +7,13 @@ The main focus of Lucia is session and user management, not user authentication 
 
 ## How Lucia works
 
-Sessions can be created for existing users. This session is stored in the database, and the session id is stored as a cookie. When a user makes a request to the server, Lucia can check the validity of the session id by cross-checking it with the database. Sessions expire after some time, and need to be renewed, and so inactive users will be logged out.
+Sessions can be created for existing users. This session is stored in the database, and the session id is stored as a cookie. When a user makes a request to the server, Lucia can check the validity of the session id by cross-checking it with the database. Sessions expire after some time, and need to be renewed within a certain time-frame, thus logging out inactive users.
 
 ## Provider ids
 
-Users can be identified using either of 2 attributes: user id and provider id. You can think of user id as for referencing users internally, and provider id for referencing users using external data. This means you can use the user's input or data from OAuth provider to get the user.
+Users can be identified using either of 2 attributes: user id and provider id. You can think of user id as for referencing users internally, and provider id for referencing users using external data. This means you can use the user's input or data from an external provider to get users.
 
-Provider id is the combination of the provider name (the authentication method used), and an identifier (something unique to that user within the authentication method). It takes the form of `${providerName}:${identifier}`. For example, for email/password, `email` can be the provider name and the user's email can be the identifier; and for Github OAuth, `github` can be the provider name and the user's GitHub user id can be the identifier.
+The provider id is the combination of the provider name (the authentication method used), and the identifier (something unique to that user within the authentication method). It takes the form of `${providerName}:${identifier}`. For example, for email/password, `"email"` can be the provider name and the user's email can be the identifier; for Github OAuth, `"github"` can be the provider name and the user's GitHub user id can be the identifier.
 
 ## Session states
 
