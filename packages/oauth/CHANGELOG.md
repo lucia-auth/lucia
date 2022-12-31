@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.2
+
+- [Fix] Fix runtime errors
+
 ## 0.3.1
 
 - Add `User-Agent` header to all requests

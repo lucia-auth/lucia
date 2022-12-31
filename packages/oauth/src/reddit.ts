@@ -16,7 +16,7 @@ interface Configs extends OAuthConfig {
 const encodeBase64 = (s: string) => {
 	// ORDER IS IMPORTANT!!
 	// Buffer API EXISTS IN DENO!!
-	if ("Deno" in window) {
+	if (typeof window !== "undefined" && "Deno" in window) {
 		// deno
 		return btoa(s);
 	}
