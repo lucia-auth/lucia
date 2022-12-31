@@ -20,6 +20,7 @@ export const sendRequest = async (url: string, method: "GET" | "POST", options?:
 	const response = await fetch(url, {
 		...(options?.body && { body: JSON.stringify(options.body) }),
 		headers: {
+			"User-Agent": "lucia",
 			Accept: "application/json",
 			...(options?.body && {
 				"Content-Type": "application/json"
