@@ -38,11 +38,11 @@
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
-		"prisma": "^4.5.0",
-		"ts-node": "^10.9.1",
-		"@prisma/client": "^4.3.1"
+		"prisma": "^4.8.0",
+		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
+		"@prisma/client": "^4.8.0",
 		"lucia-auth": "workspace:*"
 	}
 }
