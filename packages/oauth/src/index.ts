@@ -3,12 +3,8 @@ import { generateRandomString } from "lucia-auth";
 
 export interface OAuthProvider<A extends Auth> {
 	validateCallback: (code: string) => Promise<{
-		existingUser: GetUserType<A> | null;
-		createUser: (
-			userAttributes?: Parameters<A["createUser"]>[2] extends {}
-				? Parameters<A["createUser"]>[2]["attributes"]
-				: undefined
-		) => Promise<GetUserType<A>>;
+		existingUser: LuciaUser<A> | null;
+		createUser: CreateUser<A>
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;
@@ -32,8 +28,10 @@ export const generateState = () => {
 };
 
 export type GetAuthorizationUrlReturnType<T> = T extends null ? [string] : [string, string];
-export type GetUserType<A extends Auth> = Awaited<ReturnType<A["getUser"]>>;
-export type GetCreateUserAttributesType<A extends Auth> = Exclude<
-	Parameters<A["createUser"]>[2],
-	undefined
->["attributes"];
+export type LuciaUser<A extends Auth> = Awaited<ReturnType<A["getUser"]>>;
+export type CreateUser<A extends Auth> = Parameters<A["createUser"]>[2] extends {}
+	? (userAttributes: CreateUserAttributes<A>) => Promise<LuciaUser<A>>
+	: () => Promise<LuciaUser<A>>;
+type CreateUserAttributes<A extends Auth> = Parameters<A["createUser"]>[2] extends {}
+	? Parameters<A["createUser"]>[2]["attributes"]
+	: undefined;
