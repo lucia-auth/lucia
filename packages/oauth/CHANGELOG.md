@@ -3,6 +3,7 @@
 ## 0.3.0
 
 - [Breaking] Rename type `GetUserType` to `LuciaUser`; remove `GetCreateUserAttributesType`
+- `userAttributes` params for `createUser()` is optional if `Lucia.UserAttributes` is empty
 - Make `Buffer` dependency optional
 
 ## 0.2.7
