@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.1
+
+- Add `User-Agent` header to all requests
+
 ## 0.3.0
 
 - [Breaking] Rename type `GetUserType` to `LuciaUser`; remove `GetCreateUserAttributesType`
