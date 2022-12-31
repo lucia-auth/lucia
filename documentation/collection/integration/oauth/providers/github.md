@@ -132,7 +132,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 ### `createUser()`
 
 ```ts
-const createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<User>;
 ```
 
 Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
@@ -141,7 +141,9 @@ Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser)
 | ------------------ | ---------------------------------------------------------------------- |
 | provider           | `"github"`                                                             |
 | identifier         | Github user id ([`GithubUser.id`](/oauth/providers/github#githubuser)) |
-| options.attributes | `userAttributes`                                                       |
+| options.attributes | `userAttributes ?? {}`                                                 |
+
+`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
 
 ## `GithubUser`
 

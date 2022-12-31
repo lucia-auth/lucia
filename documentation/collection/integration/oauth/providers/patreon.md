@@ -22,21 +22,21 @@ const patreon: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
-        allMemberships?: boolean;
+		allMemberships?: boolean;
 	}
 ) => PatreonProvider;
 ```
 
 #### Parameter
 
-| name                 | type                                        | description                         | optional |
-| -------------------- | ------------------------------------------- | ----------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                      |          |
-| configs.clientId     | `string`                                    | Pateron OAuth app client id          |          |
-| configs.clientSecret | `string`                                    | Pateron OAuth app client secret      |          |
-| configs.redirectUri  | `string`                                    | one of the authorized redirect URIs |          |
-| configs.scope        | `string[]`                                  | an array of scopes                  | true     |
-| configs.allMemberships        | `boolean`                                  | shorthand for scope "identity.memberships" which will reveal memberships for all campaigns                 | true     |
+| name                   | type                                        | description                                                                                | optional |
+| ---------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ | -------- |
+| auth                   | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                                                             |          |
+| configs.clientId       | `string`                                    | Pateron OAuth app client id                                                                |          |
+| configs.clientSecret   | `string`                                    | Pateron OAuth app client secret                                                            |          |
+| configs.redirectUri    | `string`                                    | one of the authorized redirect URIs                                                        |          |
+| configs.scope          | `string[]`                                  | an array of scopes                                                                         | true     |
+| configs.allMemberships | `boolean`                                   | shorthand for scope "identity.memberships" which will reveal memberships for all campaigns | true     |
 
 ### Redirect user to authorization url
 
@@ -110,8 +110,8 @@ const validateCallback: (code: string) => Promise<PateronProviderSession>;
 
 #### Returns
 
-| type                                                                     |
-| ------------------------------------------------------------------------ |
+| type                                                                        |
+| --------------------------------------------------------------------------- |
 | [`PateronProviderSession`](/oauth/providers/pateron#pateronprovidersession) |
 
 ## `PateronProviderSession`
@@ -129,50 +129,52 @@ interface PateronProviderSession {
 
 Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 
-| name                                             | type                                                  | description                                       |
-| ------------------------------------------------ | ----------------------------------------------------- | ------------------------------------------------- |
-| existingUser                                     | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
+| name                                              | type                                                  | description                                       |
+| ------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- |
+| existingUser                                      | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
 | [createUser](/oauth/providers/pateron#createuser) | `Function`                                            |                                                   |
-| providerUser                                     | [`PateronUser`](/oauth/providers/pateron#pateronuser)    | Pateron user                                       |
-| accessToken                                      | `string`                                              | Pateron access token                               |
-| refreshToken                                     | `string \| undefined`                                 | only defined on the first sign in                 |
-| expires in                                       | `number`                                              | expiration time (seconds) of the access token     |
+| providerUser                                      | [`PateronUser`](/oauth/providers/pateron#pateronuser) | Pateron user                                      |
+| accessToken                                       | `string`                                              | Pateron access token                              |
+| refreshToken                                      | `string \| undefined`                                 | only defined on the first sign in                 |
+| expires in                                        | `number`                                              | expiration time (seconds) of the access token     |
 
 ### `createUser()`
 
 ```ts
-const createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<User>;
 ```
 
 Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
 
-| name               | value                                                                    |
-| ------------------ | ------------------------------------------------------------------------ |
-| provider           | `"pateron"`                                                               |
+| name               | value                                                                           |
+| ------------------ | ------------------------------------------------------------------------------- |
+| provider           | `"pateron"`                                                                     |
 | identifier         | Pateron user id ([`PateronUser.data.id`](/oauth/providers/pateron#pateronuser)) |
-| options.attributes | `userAttributes`                                                         |
+| options.attributes | `userAttributes ?? {}`                                                          |
+
+`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
 
 ## `PateronUser`
 
 ```ts
 interface PatreonUser {
-    type: "user";
-    attributes: {
-        about: string | null;
-        created: string;
-        email: string;
-        first_name: string | null;
-        full_name: string;
-        hide_pledges: boolean | null;
-        image_url: string;
-        is_email_verified: boolean;
-        last_name: string | null;
-        url: string;
-    };
-    id: string;
+	type: "user";
+	attributes: {
+		about: string | null;
+		created: string;
+		email: string;
+		first_name: string | null;
+		full_name: string;
+		hide_pledges: boolean | null;
+		image_url: string;
+		is_email_verified: boolean;
+		last_name: string | null;
+		url: string;
+	};
+	id: string;
 	relationships: {
-		memberships: PatreonMembership[]
-	}
+		memberships: PatreonMembership[];
+	};
 }
 ```
 
@@ -180,23 +182,24 @@ interface PatreonUser {
 
 ```ts
 interface PatreonMembership {
-    type: "member";
-    id: string;
-    relationships: {
-        campaign: PatreonCampaign
-        currently_entitled_tiers: PatreonTier[]
-    }   
+	type: "member";
+	id: string;
+	relationships: {
+		campaign: PatreonCampaign;
+		currently_entitled_tiers: PatreonTier[];
+	};
 }
 ```
+
 ## `PatreonCampaign`
 
 ```ts
 interface PatreonCampaign {
-    attributes: {
-        vanity: string | null;
-    }
-    id: string;
-    type: "campaign";
+	attributes: {
+		vanity: string | null;
+	};
+	id: string;
+	type: "campaign";
 }
 ```
 
@@ -204,11 +207,11 @@ interface PatreonCampaign {
 
 ```ts
 interface PatreonTier {
-    attributes: {
-        amount_cents: number;
-        title: string;
-    }
-    id: string;
-    type: "tier";
+	attributes: {
+		amount_cents: number;
+		title: string;
+	};
+	id: string;
+	type: "tier";
 }
 ```
