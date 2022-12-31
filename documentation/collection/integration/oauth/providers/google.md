@@ -139,7 +139,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 ### `createUser()`
 
 ```ts
-const createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<User>;
 ```
 
 Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
@@ -148,7 +148,9 @@ Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser)
 | ------------------ | ------------------------------------------------------------------------ |
 | provider           | `"google"`                                                               |
 | identifier         | Google "sub" id ([`GoogleUser.sub`](/oauth/providers/google#googleuser)) |
-| options.attributes | `userAttributes`                                                         |
+| options.attributes | `userAttributes ?? {}`                                                   |
+
+`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
 
 ## `GoogleUser`
 
