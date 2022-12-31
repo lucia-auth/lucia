@@ -1,10 +1,10 @@
 import { post, get } from "./request.js";
 import type { Auth } from "lucia-auth";
 import {
+	CreateUser,
 	generateState,
 	GetAuthorizationUrlReturnType,
-	GetCreateUserAttributesType,
-	GetUserType,
+	LuciaUser,
 	OAuthConfig,
 	OAuthProvider
 } from "./index.js";
@@ -89,23 +89,22 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 
 		const patreonUserId = String(patreonUser.id);
 
-		let existingUser: GetUserType<A> | null = null;
+		let existingUser: LuciaUser<A> | null = null;
 		try {
 			existingUser = (await this.auth.getUserByProviderId(
 				"patreon",
 				patreonUserId
-			)) as GetUserType<A>;
+			)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}
+		const createUser = (async (userAttributes) => {
+			return await this.auth.createUser("patreon", patreonUserId, {
+				attributes: userAttributes as any
+			});
+		}) as CreateUser<A>;
 		return {
-			createUser: async (
-				userAttributes?: GetCreateUserAttributesType<A>
-			): Promise<GetUserType<A>> => {
-				return (await this.auth.createUser("patreon", patreonUserId, {
-					attributes: userAttributes
-				})) as any;
-			},
+			createUser,
 			existingUser,
 			providerUser: patreonUser,
 			accessToken,

@@ -1,10 +1,10 @@
 import { post, get } from "./request.js";
 import type { Auth } from "lucia-auth";
 import {
+	CreateUser,
 	generateState,
 	GetAuthorizationUrlReturnType,
-	GetCreateUserAttributesType,
-	GetUserType,
+	LuciaUser,
 	OAuthConfig,
 	OAuthProvider
 } from "./index.js";
@@ -67,21 +67,19 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 		).data[0] as TwitchUser;
 
 		const twitchUserId = String(twitchUser.id);
-		let existingUser: GetUserType<A> | null = null;
+		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId(
-				"twitch",
-				twitchUserId
-			)) as GetUserType<A>;
+			existingUser = (await this.auth.getUserByProviderId("twitch", twitchUserId)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}
+		const createUser = (async (userAttributes) => {
+			return await this.auth.createUser("twitch", twitchUserId, {
+				attributes: userAttributes as any
+			});
+		}) as CreateUser<A>;
 		return {
-			createUser: async (userAttributes?: GetCreateUserAttributesType<A>): Promise<GetUserType<A>> => {
-				return (await this.auth.createUser("twitch", twitchUserId, {
-					attributes: userAttributes
-				})) as any;
-			},
+			createUser,
 			existingUser,
 			providerUser: twitchUser,
 			accessToken
