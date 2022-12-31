@@ -3,8 +3,8 @@ import type { Auth } from "lucia-auth";
 import {
 	generateState,
 	GetAuthorizationUrlReturnType,
-	GetCreateUserAttributesType,
-	GetUserType,
+	CreateUser,
+	LuciaUser,
 	OAuthConfig,
 	OAuthProvider
 } from "./index.js";
@@ -12,6 +12,22 @@ import {
 interface Configs extends OAuthConfig {
 	redirectUri: string;
 }
+
+const encodeBase64 = (s: string) => {
+	// ORDER IS IMPORTANT!!
+	// Buffer API EXISTS IN DENO!!
+	if ("Deno" in window) {
+		// deno
+		return btoa(s);
+	}
+	if (typeof Buffer === "function") {
+		// node
+		return Buffer.from(s).toString("base64");
+	}
+	// standard API
+	// IGNORE WARNING
+	return btoa(s);
+};
 
 class Reddit<A extends Auth> implements OAuthProvider<A> {
 	constructor(auth: A, configs: Configs) {
@@ -56,7 +72,7 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 				code
 			}).toString()}`,
 			{
-				basicToken: Buffer.from(this.clientId + ":" + this.clientSecret).toString("base64")
+				basicToken: encodeBase64(this.clientId + ":" + this.clientSecret)
 			}
 		)) as {
 			access_token: string;
@@ -66,23 +82,19 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 			bearerToken: accessToken
 		})) as RedditUser;
 		const redditUserId = String(redditUser.id);
-		let existingUser: GetUserType<A> | null = null;
+		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId(
-				"reddit",
-				redditUserId
-			)) as GetUserType<A>;
+			existingUser = (await this.auth.getUserByProviderId("reddit", redditUserId)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}
+		const createUser = (async (userAttributes) => {
+			return await this.auth.createUser("reddit", redditUserId, {
+				attributes: userAttributes as any
+			});
+		}) as CreateUser<A>;
 		return {
-			createUser: async (
-				userAttributes?: GetCreateUserAttributesType<A>
-			): Promise<GetUserType<A>> => {
-				return (await this.auth.createUser("reddit", redditUserId, {
-					attributes: userAttributes
-				})) as any;
-			},
+			createUser,
 			existingUser,
 			providerUser: redditUser,
 			accessToken

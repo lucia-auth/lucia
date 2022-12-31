@@ -1,10 +1,10 @@
 import { post, get } from "./request.js";
 import type { Auth } from "lucia-auth";
 import {
+	CreateUser,
 	generateState,
 	GetAuthorizationUrlReturnType,
-	GetCreateUserAttributesType,
-	GetUserType,
+	LuciaUser,
 	OAuthConfig,
 	OAuthProvider
 } from "./index.js";
@@ -64,23 +64,19 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 			bearerToken: accessToken
 		})) as GoogleUser;
 		const googleUserId = String(googleUser.sub);
-		let existingUser: GetUserType<A> | null = null;
+		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId(
-				"google",
-				googleUserId
-			)) as GetUserType<A>;
+			existingUser = (await this.auth.getUserByProviderId("google", googleUserId)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}
+		const createUser = (async (userAttributes) => {
+			return await this.auth.createUser("google", googleUserId, {
+				attributes: userAttributes as any
+			});
+		}) as CreateUser<A>;
 		return {
-			createUser: async (
-				userAttributes?: GetCreateUserAttributesType<A>
-			): Promise<GetUserType<A>> => {
-				return (await this.auth.createUser("google", googleUserId, {
-					attributes: userAttributes
-				})) as any;
-			},
+			createUser,
 			existingUser,
 			providerUser: googleUser,
 			accessToken,

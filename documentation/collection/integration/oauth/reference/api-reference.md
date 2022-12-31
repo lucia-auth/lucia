@@ -84,14 +84,14 @@ interface ProviderSession {
 Creates a new user for the authorized session by calling [Lucia.createUser()](/reference/api/server-api#createuser) using the provided user attributes. Refer to the provider's doc for the provider and identifier used.
 
 ```ts
-const createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<User>;
 ```
 
 #### Parameter
 
-| name           | type                                                                      | description                                 | optional |
-| -------------- | ------------------------------------------------------------------------- | ------------------------------------------- | -------- |
-| userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional user data to store in user table | true     |
+| name           | type                                                                                     | description                                                                                                       | optional |
+| -------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------- |
+| userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in user table - **can only be `undefined` (optional) if `Lucia.UserAttributes` is an empty object type** | true     |
 
 #### Returns
 
