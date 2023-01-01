@@ -74,12 +74,12 @@ export class DB<Config extends DBConfig> {
 			[K in Config[number] as K["id"][number]]: K;
 		}[Id];
 		const collection = this.config.find((val) => {
-			return val.id.includes(collectionId);
+			return val.id.includes(collectionId as any);
 		});
 		if (!collection) throw new Error(`Collection not found: ${collectionId}`);
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		return new Collection<Target>(collection, [collectionId]);
+		return new Collection<Target, [Id]>(collection, [collectionId]);
 	};
 	constructor(config: Config) {
 		this.config = config;
@@ -88,7 +88,7 @@ export class DB<Config extends DBConfig> {
 
 const transformDocumentToNode = async (
 	config: CollectionConfig,
-	path: string[],
+	path: Readonly<string[]>,
 	resolve: () => Promise<MDFile>
 ): Promise<DocumentNode> => {
 	const resolvedFile = await resolve();
@@ -106,30 +106,25 @@ const transformDocumentToNode = async (
 		_path: path.join("/"),
 		_Content: resolvedFile.Content,
 		_getHeadings: resolvedFile.getHeadings,
+		_baseCollectionId: path[0],
 		...Object.fromEntries(Object.entries(metaData).filter(([key]) => !key.startsWith("_")))
 	};
 };
 
-class Collection<Config extends CollectionConfig> {
+class Collection<Config extends CollectionConfig, PathIds extends Readonly<string[]>> {
 	private config: Config;
-	private pathIds: string[];
-	public collection = <
-		Id extends Config["_"] extends {}
-			? Config["_"]["id"] extends "*"
-				? string
-				: Config["_"]["id"][number]
-			: never
-	>(
+	private pathIds: PathIds;
+	public collection = <Id extends Config["_"] extends {} ? Config["_"]["id"][number] : never>(
 		collectionId: Id
 	) => {
 		if (!this.config._) throw new Error(`Collection not found: ${collectionId}`);
 		return new Collection(
 			this.config._ as Exclude<Config["_"], undefined>,
-			[...this.pathIds, collectionId] as [...typeof this.pathIds, Id]
+			[...this.pathIds, collectionId] as [...PathIds, Id]
 		);
 	};
 	public document = <Id extends string>(documentId: Id) => {
-		return new Document(this.config, [...this.pathIds, documentId], documentId);
+		return new Document(this.config, [...this.pathIds, documentId] as const, documentId);
 	};
 	public get = async () => {
 		const targetDirectory = this.pathIds.reduce((prev, curr) => {
@@ -138,7 +133,7 @@ class Collection<Config extends CollectionConfig> {
 			return dir;
 		}, fileSystemMap);
 		const transformDirectoryToNode = async (
-			path: string[],
+			path: Readonly<string[]>,
 			dir: Directory
 		): Promise<CollectionNode> => {
 			const metaDataSchema =
@@ -171,6 +166,7 @@ class Collection<Config extends CollectionConfig> {
 				_path: path.join("/"),
 				_order: metaData._order ?? -1,
 				_collections: collections,
+				_baseCollectionId: path[0],
 				_documents: documents,
 				...Object.fromEntries(Object.entries(metaData).filter(([key]) => !key.startsWith("_")))
 			};
@@ -178,15 +174,19 @@ class Collection<Config extends CollectionConfig> {
 		return (await transformDirectoryToNode(
 			this.pathIds,
 			targetDirectory
-		)) as TransformConfigToResult<Config>;
+		)) as TransformConfigToResult<Config, PathIds[0]>;
 	};
-	constructor(config: Config, pathIds: string[]) {
+	constructor(config: Config, pathIds: PathIds) {
 		this.config = config;
 		this.pathIds = pathIds;
 	}
 }
 
-class Document<Config extends CollectionConfig, PathIds extends string[], Id extends string> {
+class Document<
+	Config extends CollectionConfig,
+	PathIds extends Readonly<string[]>,
+	Id extends string
+> {
 	private collectionConfig: Config;
 	private pathIds: PathIds;
 	private id: Id;
@@ -207,7 +207,7 @@ class Document<Config extends CollectionConfig, PathIds extends string[], Id ext
 			this.collectionConfig,
 			this.pathIds,
 			targetDirectory.document[documentId]
-		)) as TransformDocumentToDocumentResult<typeof this.collectionConfig, Id>;
+		)) as TransformDocumentToDocumentResult<CollectionConfig, Id, PathIds[0]>;
 	};
 }
 
@@ -216,6 +216,7 @@ type CollectionNode = {
 	_id: string;
 	_path: string;
 	_order: number;
+	_baseCollectionId: string;
 	_collections: CollectionNode[];
 	_documents: DocumentNode[];
 };
@@ -225,6 +226,7 @@ type DocumentNode = {
 	_id: string;
 	_path: string;
 	_order: number;
+	_baseCollectionId: string;
 	_Content: MarkdownInstance<any>["Content"];
 	_getHeadings: MarkdownInstance<any>["getHeadings"];
 };

@@ -11,7 +11,7 @@ const config = [
 				title: String$()
 			},
 			_: {
-				id: "*" as const,
+				id: ["*"] as const,
 				schema: {
 					title: String$()
 				},
@@ -29,7 +29,7 @@ const config = [
 				title: String$()
 			},
 			_: {
-				id: "*" as const,
+				id: ["*"] as const,
 				schema: {
 					title: String$()
 				},
