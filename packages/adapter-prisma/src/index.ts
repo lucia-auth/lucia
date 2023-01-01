@@ -1,16 +1,21 @@
-import type { PrismaClient } from "@prisma/client";
-import type { Adapter, AdapterFunction } from "lucia-auth";
+import type { Adapter, AdapterFunction, SessionSchema, UserSchema } from "lucia-auth";
 import { getUpdateData } from "lucia-auth/adapter";
-import { convertSession } from "./utils.js";
+import { PrismaClient, SmartPrismaClient } from "./prisma.js";
 
 interface PossiblePrismaError {
 	code: string;
 	message: string;
 }
 
+type Schemas = {
+	user: UserSchema;
+	session: SessionSchema;
+};
+
 const adapter =
-	(prisma: PrismaClient): AdapterFunction<Adapter> =>
+	(prismaClient: PrismaClient<Schemas>): AdapterFunction<Adapter> =>
 	(LuciaError) => {
+		const prisma = prismaClient as any as SmartPrismaClient<Schemas>;
 		return {
 			getUser: async (userId) => {
 				const data = await prisma.user.findUnique({
@@ -34,7 +39,7 @@ const adapter =
 				const { user, ...session } = data;
 				return {
 					user: user,
-					session: convertSession(session)
+					session: session
 				};
 			},
 			getUserByProviderId: async (providerId) => {
@@ -53,7 +58,7 @@ const adapter =
 					}
 				});
 				if (!session) return null;
-				return convertSession(session);
+				return session
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessions = await prisma.session.findMany({
@@ -61,7 +66,7 @@ const adapter =
 						user_id: userId
 					}
 				});
-				return sessions.map((session) => convertSession(session));
+				return sessions
 			},
 			setUser: async (userId, data) => {
 				try {
@@ -119,7 +124,7 @@ const adapter =
 				}
 			},
 			deleteSession: async (sessionId) => {
-				await prisma.session.delete({
+				const t = await prisma.session.delete({
 					where: {
 						id: sessionId
 					}
