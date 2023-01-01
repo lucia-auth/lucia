@@ -30,6 +30,8 @@ const sessionCookie = auth.createSessionCookie(session);
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/lucia-auth/CHANGELOG.md)**
 
+**[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CONTRIBUTING.md)**
+
 ## Installation
 
 ```bash
@@ -44,7 +46,4 @@ This project would not have been possible without our contributors, thank you!
 
 Logo by [@dawidmachon](https://github.com/dawidmachon), licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-### Contributing
-
-**[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/CONTRIBUTING.md)**
 
