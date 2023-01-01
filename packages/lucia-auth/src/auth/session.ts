@@ -7,8 +7,8 @@ export const getSessionFromDatabaseData = (databaseSession: SessionSchema): Sess
 	return {
 		sessionId: databaseSession.id,
 		userId: databaseSession.user_id,
-		activePeriodExpires: new Date(databaseSession.expires),
-		idlePeriodExpires: new Date(databaseSession.idle_expires),
+		activePeriodExpires: new Date(Number(databaseSession.expires)),
+		idlePeriodExpires: new Date(Number(databaseSession.idle_expires)),
 		state: currentTime > databaseSession.expires ? "idle" : "active",
 		isFresh: false
 	};
