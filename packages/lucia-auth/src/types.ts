@@ -19,14 +19,15 @@ export type UserSchema = {
 	id: string;
 	hashed_password: string | null;
 	provider_id: string;
-} & Lucia.UserAttributes;
+	[k: string]: any;
+};
 
 export type UserData = { id: string } & Required<Lucia.UserAttributes>;
 
 export type SessionSchema = {
 	id: string;
-	expires: number;
-	idle_expires: number;
+	expires: number | bigint;
+	idle_expires: number | bigint;
 	user_id: string;
 };
 

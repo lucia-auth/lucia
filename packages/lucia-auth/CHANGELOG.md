@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.4.2
+
+- Type `UserSchema` includes any key/values
+- Allow type `bigint` for `idle_expires`, `expires` in type `SessionSchema`
+
 ## 0.4.1
 
 - `options` parameter for `createUser()` is only necessary if `Lucia.UserAttributes` has keys
