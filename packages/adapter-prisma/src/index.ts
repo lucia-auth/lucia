@@ -1,6 +1,5 @@
 import type { Adapter, AdapterFunction, SessionSchema, UserSchema } from "lucia-auth";
 import { getUpdateData } from "lucia-auth/adapter";
-import { convertSession } from "./utils.js";
 import { PrismaClient, SmartPrismaClient } from "./prisma.js";
 
 interface PossiblePrismaError {
@@ -40,7 +39,7 @@ const adapter =
 				const { user, ...session } = data;
 				return {
 					user: user,
-					session: convertSession(session)
+					session: session
 				};
 			},
 			getUserByProviderId: async (providerId) => {
@@ -59,7 +58,7 @@ const adapter =
 					}
 				});
 				if (!session) return null;
-				return convertSession(session);
+				return session
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessions = await prisma.session.findMany({
@@ -67,7 +66,7 @@ const adapter =
 						user_id: userId
 					}
 				});
-				return sessions.map((session) => convertSession(session));
+				return sessions
 			},
 			setUser: async (userId, data) => {
 				try {
