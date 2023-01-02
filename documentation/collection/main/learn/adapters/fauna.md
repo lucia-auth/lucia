@@ -77,8 +77,8 @@ Run the following commands inside of the Shell tab in the Fauna dashboard to set
 Create collections:
 
 ```js
-CreateCollection({ name: "user" });
-CreateCollection({ name: "session" });
+CreateCollection({ name: "users" });
+CreateCollection({ name: "sessions" });
 ```
 
 Create Indexes:
@@ -86,7 +86,7 @@ Create Indexes:
 ```js
 CreateIndex({
 	name: "user_by_id",
-	source: Collection("user"),
+	source: Collection("users"),
 	unique: true,
 	terms: [{ field: ["data", "id"] }]
 });
@@ -99,7 +99,7 @@ CreateIndex({
 CreateIndex({
 	name: "session_by_userid",
 	source: Collection("sessions"),
-	unique: true,
+	unique: false,
 	terms: [{ field: ["data", "user_id"] }]
 });
 CreateIndex({
