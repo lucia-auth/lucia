@@ -45,6 +45,7 @@ const { doc, collection } = Astro.props;
 
 <DocumentLayout doc={doc}>
 	<ContentTable
+		client:load
 		collections={[collection]}
 		title={`${collection.title} integration`}
 		currentPath={Astro.url.pathname}
