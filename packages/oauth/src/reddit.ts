@@ -72,6 +72,7 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 				code
 			}).toString()}`,
 			{
+				env: this.auth.ENV,
 				basicToken: encodeBase64(this.clientId + ":" + this.clientSecret)
 			}
 		)) as {
@@ -79,6 +80,7 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 		};
 
 		const redditUser = (await get("https://oauth.reddit.com/api/v1/me", {
+			env: this.auth.ENV,
 			bearerToken: accessToken
 		})) as RedditUser;
 		const redditUserId = String(redditUser.id);

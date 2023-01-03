@@ -1,6 +1,7 @@
 import { LuciaOAuthError } from "./index.js";
 
 interface FetchOptions {
+	env: "DEV" | "PROD";
 	body?: Record<any, any>;
 	bearerToken?: string;
 	basicToken?: string;
@@ -8,15 +9,15 @@ interface FetchOptions {
 	clientId?: string;
 }
 
-export const post = async (url: string, options?: FetchOptions) => {
+export const post = async (url: string, options: FetchOptions) => {
 	return sendRequest(url, "POST", options);
 };
 
-export const get = async (url: string, options?: FetchOptions) => {
+export const get = async (url: string, options: FetchOptions) => {
 	return sendRequest(url, "GET", options);
 };
 
-export const sendRequest = async (url: string, method: "GET" | "POST", options?: FetchOptions) => {
+export const sendRequest = async (url: string, method: "GET" | "POST", options: FetchOptions) => {
 	const response = await fetch(url, {
 		...(options?.body && { body: JSON.stringify(options.body) }),
 		headers: {
@@ -37,6 +38,15 @@ export const sendRequest = async (url: string, method: "GET" | "POST", options?:
 		},
 		method
 	});
-	if (!response.ok) throw new LuciaOAuthError("REQUEST_FAILED");
+	if (!response.ok) {
+		if (options.env === "DEV") {
+			try {
+				console.log(response.status, await response.json());
+			} catch {
+				console.log(response.status);
+			}
+		}
+		throw new LuciaOAuthError("REQUEST_FAILED");
+	}
 	return await response.json();
 };

@@ -33,7 +33,7 @@ export class Auth<C extends Configurations = any> {
 		activePeriod: number;
 		idlePeriod: number;
 	};
-	private env: Env;
+	public ENV: Env;
 	private hash: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
@@ -63,7 +63,7 @@ export class Auth<C extends Configurations = any> {
 				? { ...configs.adapter.user(LuciaError), ...configs.adapter.session(LuciaError) }
 				: configs.adapter(LuciaError);
 		this.generateUserId = configs.generateCustomUserId ?? (async () => null);
-		this.env = configs.env;
+		this.ENV = configs.env;
 		this.csrfProtection = configs.csrfProtection ?? true;
 		this.sessionTimeout = {
 			activePeriod: configs.sessionTimeout?.activePeriod ?? 1000 * 60 * 60 * 24,
@@ -327,7 +327,7 @@ export class Auth<C extends Configurations = any> {
 		return sessionId;
 	};
 	public createSessionCookies = (session: Session | null): Cookie[] => {
-		return this.sessionCookie.map((options) => createSessionCookie(session, this.env, options));
+		return this.sessionCookie.map((options) => createSessionCookie(session, this.ENV, options));
 	};
 }
 

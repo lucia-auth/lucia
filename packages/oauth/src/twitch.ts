@@ -54,13 +54,17 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 				code,
 				grant_type: "authorization_code",
 				redirect_uri: this.redirectUri
-			}).toString()}`
+			}).toString()}`,
+			{
+				env: this.auth.ENV
+			}
 		)) as {
 			access_token: string;
 		};
 
 		const twitchUser = (
 			await get("https://api.twitch.tv/helix/users", {
+				env: this.auth.ENV,
 				bearerToken: accessToken,
 				clientId: this.clientId
 			})

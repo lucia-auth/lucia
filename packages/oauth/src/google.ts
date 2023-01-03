@@ -54,13 +54,17 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 				code,
 				grant_type: "authorization_code",
 				redirect_uri: this.redirectUri
-			}).toString()}`
+			}).toString()}`,
+			{
+				env: this.auth.ENV
+			}
 		)) as {
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
 		};
 		const googleUser = (await get("https://www.googleapis.com/oauth2/v3/userinfo", {
+			env: this.auth.ENV,
 			bearerToken: accessToken
 		})) as GoogleUser;
 		const googleUserId = String(googleUser.sub);
