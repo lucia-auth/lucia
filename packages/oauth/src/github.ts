@@ -42,11 +42,15 @@ class Github<A extends Auth> implements OAuthProvider<A> {
 				client_id: this.clientId,
 				client_secret: this.clientSecret,
 				code
-			}).toString()}`
+			}).toString()}`,
+			{
+				env: this.auth.ENV
+			}
 		)) as {
 			access_token: string;
 		};
 		const githubUser = (await get("https://api.github.com/user", {
+			env: this.auth.ENV,
 			bearerToken: accessToken
 		})) as GithubUser;
 		const githubUserId = String(githubUser.id);

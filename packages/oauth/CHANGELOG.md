@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.3
+
+- Log request errors on dev mode
+
 ## 0.3.2
 
 - [Fix] Fix runtime errors

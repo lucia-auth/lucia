@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.3
+
+- Expose `ENV` 
+
 ## 0.4.2
 
 - Type `UserSchema` includes any key/values
