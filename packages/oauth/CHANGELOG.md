@@ -1,7 +1,8 @@
 # CHANGELOG
 
-## 0.3.3
+## 0.4.0
 
+- [Breaking] Require `lucia-auth` 0.4.3
 - Log request errors on dev mode
 
 ## 0.3.2

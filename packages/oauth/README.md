@@ -18,7 +18,7 @@ yarn add @lucia-auth/oauth
 
 ## Lucia version compatibility
 
-| Supabase adapter version | Lucia version |
-| ------------------------ | ------------- |
-| 0.1.x                    | 0.1.x ~ 0.3.x |
-| 0.2.x                    | 0.1.x ~ 0.3.x |
+| Oauth package version | Lucia version |
+| --------------------- | ------------- |
+| 0.3.x                 | 0.1.x ~ 0.4.2 |
+| 0.4.x                 | 0.4.3 ~       |
