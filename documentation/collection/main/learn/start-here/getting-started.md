@@ -13,7 +13,7 @@ yarn add lucia-auth
 
 ## Set up the database
 
-Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Kysely](/learn/adapters/kysely) (PostgreSQL), [Supabase](/learn/adapters/supabase), and [Mongoose](/learn/adapters/mongoose) (MongoDB). Please follow each adapter's instruction for this step.
+Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Kysely](/learn/adapters/kysely) (PostgreSQL), [Supabase](/learn/adapters/supabase), [Mongoose](/learn/adapters/mongoose) (MongoDB), and [Fauna](/learn/adapters/fauna). Please follow each adapter's instruction for this step.
 
 You can also use a different database for storing sessions, such as [Redis](/learn/adapters/redis). Refer to [`configs.adapter`](/reference/configure/lucia-configurations#adapter).
 
