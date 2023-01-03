@@ -4,8 +4,8 @@ import fauna from "../src/index.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import faunadb from "faunadb";
-import { convertUserResponse } from "../src/utils.js";
-import { LuciaError, type SessionSchema } from "lucia-auth";
+import {convertMultipleSessionResponse, convertMultipleUsersResponse} from "../src/utils.js";
+import {LuciaError, type SessionSchema, UserSchema} from "lucia-auth";
 
 const { query, Client } = faunadb;
 const FaunaClient = Client;
@@ -25,31 +25,34 @@ const client = new FaunaClient({
 	endpoint: FAUNA_ENDPOINT
 });
 
-export const adapter = fauna(client)(LuciaError);
+const FAUNA_USER_TABLE = process.env.FAUNA_USER_TABLE;
+const FAUNA_SESSION_TABLE = process.env.FAUNA_SESSION_TABLE;
+
+export const adapter = fauna(client, {userTable: FAUNA_USER_TABLE, sessionTable: FAUNA_SESSION_TABLE})(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {
 		const res: { data: any } = await client.query(
-			q.Map(q.Paginate(q.Documents(q.Collection("users"))), q.Lambda("x", q.Get(q.Var("x"))))
+			q.Map(q.Paginate(q.Documents(q.Collection(FAUNA_USER_TABLE))), q.Lambda("x", q.Get(q.Var("x"))))
 		);
-		return convertUserResponse(res.data);
+		return convertMultipleUsersResponse(res) satisfies UserSchema[];
 	},
 	getSessions: async () => {
 		const res: { data: any } = await client.query(
-			q.Map(q.Paginate(q.Documents(q.Collection("sessions"))), q.Lambda("x", q.Get(q.Var("x"))))
+			q.Map(q.Paginate(q.Documents(q.Collection(FAUNA_SESSION_TABLE))), q.Lambda("x", q.Get(q.Var("x"))))
 		);
-		return res.data satisfies SessionSchema;
+		return convertMultipleSessionResponse(res) satisfies SessionSchema[];
 	},
 	insertUser: async (user) => {
-		return await client.query(q.Create(q.Collection("users"), { data: user }));
+		return await client.query(q.Create(q.Collection(FAUNA_USER_TABLE), { data: user }));
 	},
 	insertSession: async (session) => {
-		return await client.query(q.Create(q.Collection("sessions"), { data: session }));
+		return await client.query(q.Create(q.Collection(FAUNA_SESSION_TABLE), { data: session }));
 	},
 	clearUsers: async () => {
 		return await client.query(
 			q.Map(
-				q.Paginate(q.Documents(q.Collection("users")), { size: 100_000 }),
+				q.Paginate(q.Documents(q.Collection(FAUNA_USER_TABLE)), { size: 100_000 }),
 				q.Lambda("x", q.Delete(q.Var("x")))
 			)
 		);
@@ -58,7 +61,7 @@ export const db: Database = {
 	clearSessions: async () => {
 		return await client.query(
 			q.Map(
-				q.Paginate(q.Documents(q.Collection("sessions")), { size: 100_000 }),
+				q.Paginate(q.Documents(q.Collection(FAUNA_SESSION_TABLE)), { size: 100_000 }),
 				q.Lambda("x", q.Delete(q.Var("x")))
 			)
 		);
