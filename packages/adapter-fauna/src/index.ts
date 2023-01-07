@@ -6,7 +6,12 @@ import {
 	type FaunaSessionSchema,
 	type MultiResponse
 } from "./utils.js";
-import type { Adapter, AdapterConfig, AdapterFunction } from "lucia-auth";
+import type { Adapter, AdapterFunction } from "lucia-auth";
+
+type AdapterConfig = {
+	userTable?: string;
+	sessionTable?: string;
+};
 
 type FaunaError = errors.FaunaError;
 

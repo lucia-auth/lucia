@@ -80,11 +80,6 @@ export type SessionAdapter = {
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 };
 
-export type AdapterConfig = {
-	userTable?: string;
-	sessionTable?: string;
-};
-
 export type MinimalRequest = {
 	headers: {
 		get: (name: string) => null | string;
