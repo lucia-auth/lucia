@@ -3,14 +3,14 @@ _order: 0
 title: "Introduction"
 ---
 
-Lucia is a library that, at its core, makes managing users and sessions easy, and it doesn't attempt to do anything more than that. Here's a quick overview of what it does provides:
+Lucia is a library that, at its core, makes managing users and sessions easy. It doesn't try to be something more than that and it allows you to quickly build on top of it. Here's a quick overview of what it does provide:
 
 - A core library to manage users and validate sessions
 - Database adapters that connects Lucia to your database or ORM of choice, like Prisma and Mongoose
 - Integration for popular frameworks like SvelteKit and Next.js
-- Packages that handles API calls with external providers for auth strategies like OAuth
+- Packages to handle API calls with external providers for auth strategies like OAuth
 
-It's not an plug n' play library like NextAuth, nor an auth platform like Firebase, and that is a key distinction. Lucia provides the APIs for handling authentication, but how you use them is up to you. You'll have to design the basic auth flow, and implement UI components and request handler for that.
+It's not an plug n' play library like NextAuth, nor an auth platform like Firebase, and that is a key distinction. Lucia provides the APIs for handling authentication, but how you use them is up to you. You'll have to design the basic auth flow, and implement UI components and request handler based on it.
 
 Working with it looks something like this. In the code below, you're creating a new user with a email/password method, creating a new session, and creating a cookie that you set to the user.
 

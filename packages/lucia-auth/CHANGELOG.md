@@ -2,7 +2,7 @@
 
 ## 0.4.3
 
-- Add `AdapterConifg` type
+- Expose `ENV` 
 
 ## 0.4.2
 

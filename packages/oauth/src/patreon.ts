@@ -61,7 +61,10 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 				code,
 				grant_type: "authorization_code",
 				redirect_uri: this.redirectUri
-			}).toString()}`
+			}).toString()}`,
+			{
+				env: this.auth.ENV
+			}
 		)) as {
 			access_token: string;
 			refresh_token?: string;
@@ -76,6 +79,7 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 				include: "memberships.currently_entitled_tiers,memberships.campaign"
 			}).toString()}`,
 			{
+				env: this.auth.ENV,
 				bearerToken: accessToken
 			}
 		)) as PatreonUserRaw;
