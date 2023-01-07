@@ -3,7 +3,7 @@ _order: 1
 title: "API"
 ---
 
-Adapters are just objects with a handful of methods that interact with the database. This makes it easy to create your own and support any databases. 
+Adapters are just objects with a handful of methods that interact with the database. This makes it easy to create your own and support any databases.
 
 The `adapter` configuration expects a [`AdapterFunction`](), which are functions that takes a [`LuciaError`]() constructor as its parameter and returns an adapter object. **`LuciaError` thrown by adapters should use the constructor and not the one imported from `lucia-auth` package**.
 

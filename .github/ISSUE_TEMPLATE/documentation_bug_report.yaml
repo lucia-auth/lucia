@@ -1,7 +1,7 @@
 name: Documentation Bug Report
 description: Report a bug regarding the docs website
 title: "[Docs-Bug]: "
-labels: ["bug","documentation"]
+labels: ["bug", "documentation"]
 body:
   - type: markdown
     attributes:

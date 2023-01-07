@@ -17,7 +17,7 @@ npm install @lucia-auth/adapter-fauna
 ## Lucia version compatibility
 
 | Fauna adapter version | Lucia version |
-|-----------------------|---------------|
+| --------------------- | ------------- |
 | 0.1.x                 | 0.1.x ~ 0.3.x |
 | 0.2.0                 | 0.4.0 ~ 0.4.2 |
 

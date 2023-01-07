@@ -89,8 +89,8 @@ const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<
 
 #### Parameter
 
-| name           | type                                                                                     | description                                                                                                       | optional |
-| -------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------- |
+| name           | type                                                                                     | description                                                                                                                            | optional |
+| -------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in user table - **can only be `undefined` (optional) if `Lucia.UserAttributes` is an empty object type** | true     |
 
 #### Returns

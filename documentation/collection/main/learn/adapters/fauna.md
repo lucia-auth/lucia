@@ -11,10 +11,10 @@ const adapter: (faunaClient: FaunaClient) => AdapterFunction<Adapter>;
 
 ### Parameter
 
-| name        | type             | description                                                  | optional |
-|-------------|------------------|--------------------------------------------------------------|----------|
-| faunaClient | `Client`         | Fauna client instance                                        |          |
-| config      | `AdapterConfig`  | Config Object containing `userTable` and `sessionTable` name | true     |
+| name        | type            | description                                                  | optional |
+| ----------- | --------------- | ------------------------------------------------------------ | -------- |
+| faunaClient | `Client`        | Fauna client instance                                        |          |
+| config      | `AdapterConfig` | Config Object containing `userTable` and `sessionTable` name | true     |
 
 ### Errors
 
@@ -43,7 +43,7 @@ const auth = lucia({
 
 ## Database models
 
-Fauna is document-based and follows a collection/document structure. You can change the used Fauna collection names by providing a config object. 
+Fauna is document-based and follows a collection/document structure. You can change the used Fauna collection names by providing a config object.
 
 ### `user`
 

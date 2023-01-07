@@ -6,7 +6,7 @@ import {
 	type FaunaSessionSchema,
 	type MultiResponse
 } from "./utils.js";
-import type {Adapter, AdapterConfig, AdapterFunction} from "lucia-auth";
+import type { Adapter, AdapterConfig, AdapterFunction } from "lucia-auth";
 
 type FaunaError = errors.FaunaError;
 
@@ -14,8 +14,8 @@ const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<A
 	const { query } = fauna;
 	const q = query;
 
-	const userTable = config?.userTable || "user";
-	const sessionTable = config?.sessionTable || "session";
+	const userTable = config?.userTable ?? "user";
+	const sessionTable = config?.sessionTable ?? "session";
 
 	return (LuciaError) => {
 		return {

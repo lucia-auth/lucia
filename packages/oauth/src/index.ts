@@ -4,7 +4,7 @@ import { generateRandomString } from "lucia-auth";
 export interface OAuthProvider<A extends Auth> {
 	validateCallback: (code: string) => Promise<{
 		existingUser: LuciaUser<A> | null;
-		createUser: CreateUser<A>
+		createUser: CreateUser<A>;
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;

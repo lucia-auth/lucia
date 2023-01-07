@@ -40,8 +40,8 @@ const signOut: () => Promise<void>;
 
 #### Error
 
-| message | description                                                                  |
-| ------- | ---------------------------------------------------------------------------- |
+| message                                                                              | description |
+| ------------------------------------------------------------------------------------ | ----------- |
 | unknown failed to invalidate the current session due to network, db, or other errors |
 
 #### Example

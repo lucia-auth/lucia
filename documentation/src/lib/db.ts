@@ -43,4 +43,4 @@ const config = [
 ] as const;
 
 export const db = new DB(config);
-export type Q = Query<typeof config>
+export type Q = Query<typeof config>;

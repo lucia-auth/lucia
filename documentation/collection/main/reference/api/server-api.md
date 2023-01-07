@@ -224,7 +224,7 @@ try {
 }
 ```
 
-These are only valid if `Lucia.attributes` ***IS*** empty:
+These are only valid if `Lucia.attributes` **_IS_** empty:
 
 ```ts
 auth.createUser("email", "user@example.com", {

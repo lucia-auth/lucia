@@ -4,8 +4,8 @@ import fauna from "../src/index.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import faunadb from "faunadb";
-import {convertMultipleSessionResponse, convertMultipleUsersResponse} from "../src/utils.js";
-import {LuciaError, type SessionSchema, UserSchema} from "lucia-auth";
+import { convertMultipleSessionResponse, convertMultipleUsersResponse } from "../src/utils.js";
+import { LuciaError, type SessionSchema, UserSchema } from "lucia-auth";
 
 const { query, Client } = faunadb;
 const FaunaClient = Client;
@@ -28,18 +28,27 @@ const client = new FaunaClient({
 const FAUNA_USER_TABLE = process.env.FAUNA_USER_TABLE;
 const FAUNA_SESSION_TABLE = process.env.FAUNA_SESSION_TABLE;
 
-export const adapter = fauna(client, {userTable: FAUNA_USER_TABLE, sessionTable: FAUNA_SESSION_TABLE})(LuciaError);
+export const adapter = fauna(client, {
+	userTable: FAUNA_USER_TABLE,
+	sessionTable: FAUNA_SESSION_TABLE
+})(LuciaError);
 
 export const db: Database = {
 	getUsers: async () => {
 		const res: { data: any } = await client.query(
-			q.Map(q.Paginate(q.Documents(q.Collection(FAUNA_USER_TABLE))), q.Lambda("x", q.Get(q.Var("x"))))
+			q.Map(
+				q.Paginate(q.Documents(q.Collection(FAUNA_USER_TABLE))),
+				q.Lambda("x", q.Get(q.Var("x")))
+			)
 		);
 		return convertMultipleUsersResponse(res) satisfies UserSchema[];
 	},
 	getSessions: async () => {
 		const res: { data: any } = await client.query(
-			q.Map(q.Paginate(q.Documents(q.Collection(FAUNA_SESSION_TABLE))), q.Lambda("x", q.Get(q.Var("x"))))
+			q.Map(
+				q.Paginate(q.Documents(q.Collection(FAUNA_SESSION_TABLE))),
+				q.Lambda("x", q.Get(q.Var("x")))
+			)
 		);
 		return convertMultipleSessionResponse(res) satisfies SessionSchema[];
 	},

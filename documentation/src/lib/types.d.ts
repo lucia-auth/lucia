@@ -1,1 +1,1 @@
-type ExternalIntegration = "sveltekit" | "astro" | "nextjs" | "oauth"
+type ExternalIntegration = "sveltekit" | "astro" | "nextjs" | "oauth";

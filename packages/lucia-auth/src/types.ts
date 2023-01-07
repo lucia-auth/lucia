@@ -81,9 +81,9 @@ export type SessionAdapter = {
 };
 
 export type AdapterConfig = {
-	userTable?: string,
-	sessionTable?: string
-}
+	userTable?: string;
+	sessionTable?: string;
+};
 
 export type MinimalRequest = {
 	headers: {
