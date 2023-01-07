@@ -20,8 +20,8 @@
 		"fauna",
 		"faunadb",
 		"auth",
-		"authentication",
-		"adapter"
+		"adapter",
+		"authentication"
 	],
 	"repository": {
 		"type": "git",
