@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.1
+
+- Add `AdapterConfig` support
+
 ## 0.2.0
 
 - [Breaking] Require `lucia-auth` 0.4.0

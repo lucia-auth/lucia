@@ -17,7 +17,7 @@ Alternatively, you can use [`locals.validateUser()`](/sveltekit/api-reference/lo
 const { session, user } = await locals.validateUser();
 ```
 
-Both of these methods cache the result on the initial call. `validate()` will use the cache from `validateUser()` if it was called first. For load functions, this means you can call these methods across multiple load functions in a single request (page load) however many times you want, and it will only call the database once. Another benefit is that you don't have to wait for the parent load functions to get the current session/user, removing unnecessary waterfalls. 
+Both of these methods cache the result on the initial call. `validate()` will use the cache from `validateUser()` if it was called first. For load functions, this means you can call these methods across multiple load functions in a single request (page load) however many times you want, and it will only call the database once. Another benefit is that you don't have to wait for the parent load functions to get the current session/user, removing unnecessary waterfalls.
 
 ## Example
 

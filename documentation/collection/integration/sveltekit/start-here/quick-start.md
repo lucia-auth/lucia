@@ -59,7 +59,7 @@ This form will have an input field for username and password.
 ```svelte
 <!-- routes/signup/+page.svelte -->
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { enhance } from "$app/forms";
 </script>
 
 <div>
@@ -82,30 +82,30 @@ For the session to update in the client, we need to call [`invalidateAll()`](htt
 
 ```ts
 // routes/signup/+page.server.ts
-import { fail, redirect } from '@sveltejs/kit';
-import { auth } from '$lib/server/lucia';
-import type { PageServerLoad, Actions } from './$types';
+import { fail, redirect } from "@sveltejs/kit";
+import { auth } from "$lib/server/lucia";
+import type { PageServerLoad, Actions } from "./$types";
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.validate();
-	if (session) throw redirect(302, '/');
+	if (session) throw redirect(302, "/");
 	return {};
 };
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const form = await request.formData();
-		const username = form.get('username');
-		const password = form.get('password');
+		const username = form.get("username");
+		const password = form.get("password");
 
 		// check for empty values
-		if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
+		if (!username || !password || typeof username !== "string" || typeof password !== "string") {
 			return fail(400);
 		}
 
 		try {
-			const user = await auth.createUser('username', username, {
+			const user = await auth.createUser("username", username, {
 				password,
 				attributes: {
 					username
@@ -132,7 +132,7 @@ This form will also have an input field for username and password.
 ```svelte
 <!-- routes/login/+page.svelte -->
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { enhance } from "$app/forms";
 </script>
 
 <div>
@@ -153,26 +153,26 @@ We'll use `username` as the provider id and the username as the identifier. This
 
 ```ts
 // routes/login/+page.server.ts
-import { fail, redirect } from '@sveltejs/kit';
-import { auth } from '$lib/server/lucia';
-import type { PageServerLoad, Actions } from './$types';
+import { fail, redirect } from "@sveltejs/kit";
+import { auth } from "$lib/server/lucia";
+import type { PageServerLoad, Actions } from "./$types";
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate();	
-	if (session) throw redirect(302, '/');
+	const session = await locals.validate();
+	if (session) throw redirect(302, "/");
 };
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const form = await request.formData();
-		const username = form.get('username');
-		const password = form.get('password');
+		const username = form.get("username");
+		const password = form.get("password");
 		// check for empty values
-		if (!username || !password || typeof username !== 'string' || typeof password !== 'string')
+		if (!username || !password || typeof username !== "string" || typeof password !== "string")
 			return fail(400);
 		try {
-			const user = await auth.authenticateUser('username', username, password);
+			const user = await auth.authenticateUser("username", username, password);
 			const session = await auth.createSession(user.userId);
 			locals.setSession(session);
 		} catch {
@@ -181,7 +181,6 @@ export const actions: Actions = {
 		}
 	}
 };
-
 ```
 
 ## 5. Profile page (protected)
@@ -210,14 +209,13 @@ You can get the current user using `getUser()`. Notice that the `username` prope
 
 ```ts
 // routes/+page.server.ts
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.validate();
-	if (!session) throw redirect(302, '/login');
+	if (!session) throw redirect(302, "/login");
 };
-
 ```
 
 ### Sign out

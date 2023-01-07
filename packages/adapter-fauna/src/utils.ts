@@ -1,4 +1,4 @@
-import { UserSchema } from "lucia-auth";
+import { SessionSchema, UserSchema } from "lucia-auth";
 
 export type MultiResponse<T> = {
 	data: {
@@ -31,5 +31,36 @@ export const convertUserResponse = (res: SingleResponse<FaunaUserSchema>): UserS
 		provider_id,
 		hashed_password: hashed_password ?? null,
 		...attributes
-	}
+	};
+};
+
+export const convertMultipleUsersResponse = (res: MultiResponse<FaunaUserSchema>): UserSchema[] => {
+	const data: UserSchema[] = [];
+	res.data.forEach((row) => {
+		const { id, hashed_password, provider_id, ...attributes } = row.data;
+		data.push({
+			id,
+			provider_id,
+			hashed_password: hashed_password ?? null,
+			...attributes
+		});
+	});
+	return data;
+};
+
+export const convertMultipleSessionResponse = (
+	res: MultiResponse<FaunaSessionSchema>
+): SessionSchema[] => {
+	const data: SessionSchema[] = [];
+	res.data.forEach((row) => {
+		const { id, user_id, idle_expires, expires, ...attributes } = row.data;
+		data.push({
+			id,
+			user_id,
+			idle_expires,
+			expires,
+			...attributes
+		});
+	});
+	return data;
 };

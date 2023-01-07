@@ -19,11 +19,12 @@ npm install @lucia-auth/adapter-fauna
 | Fauna adapter version | Lucia version |
 | --------------------- | ------------- |
 | 0.1.x                 | 0.1.x ~ 0.3.x |
-| 0.2.x                 | 0.4.x ~       |
+| 0.2.x                 | 0.4.0 ~       |
 
 ## Testing
 
 Add `FAUNA_SECRET` and `FAUNA_ENDPOINT` ([endpoint docs](https://docs.fauna.com/fauna/current/learn/understanding/region_groups#region-group-endpoints)) to `.env`.
+Optionally add `FAUNA_USER_TABLE` and `FAUNA_SESSION_TABLE` to satisfy to `AdapterConfig`.
 
 ```
 npm run test

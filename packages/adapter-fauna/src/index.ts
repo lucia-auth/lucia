@@ -8,11 +8,19 @@ import {
 } from "./utils.js";
 import type { Adapter, AdapterFunction } from "lucia-auth";
 
+type AdapterConfig = {
+	userTable?: string;
+	sessionTable?: string;
+};
+
 type FaunaError = errors.FaunaError;
 
-const adapter = (faunaClient: Client): AdapterFunction<Adapter> => {
+const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<Adapter> => {
 	const { query } = fauna;
 	const q = query;
+
+	const userTable = config?.userTable ?? "user";
+	const sessionTable = config?.sessionTable ?? "session";
 
 	return (LuciaError) => {
 		return {
@@ -82,17 +90,25 @@ const adapter = (faunaClient: Client): AdapterFunction<Adapter> => {
 				return sessionResponses.map((response) => response.data);
 			},
 			setUser: async (userId, userData) => {
-				const response = await faunaClient.query<SingleResponse<FaunaUserSchema>>(
-					q.Create(q.Collection("users"), {
-						data: {
-							id: userId ?? q.NewId(),
-							hashed_password: userData.hashedPassword,
-							provider_id: userData.providerId,
-							...userData.attributes
-						}
-					})
-				);
-				return convertUserResponse(response);
+				try {
+					const response = await faunaClient.query<SingleResponse<FaunaUserSchema>>(
+						q.Create(q.Collection(userTable), {
+							data: {
+								id: userId ?? q.NewId(),
+								hashed_password: userData.hashedPassword,
+								provider_id: userData.providerId,
+								...userData.attributes
+							}
+						})
+					);
+					return convertUserResponse(response);
+				} catch (e) {
+					const error = e as Partial<FaunaError>;
+					if (error.message === "instance not unique") {
+						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+					}
+					throw error;
+				}
 			},
 			deleteUser: async (userId) => {
 				await faunaClient.query(
@@ -113,7 +129,7 @@ const adapter = (faunaClient: Client): AdapterFunction<Adapter> => {
 				if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
 				try {
 					await faunaClient.query<SingleResponse<FaunaSessionSchema>>(
-						q.Create(q.Collection("sessions"), {
+						q.Create(q.Collection(sessionTable), {
 							data: {
 								id: sessionId,
 								user_id: data.userId,

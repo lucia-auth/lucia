@@ -8,7 +8,6 @@ pnpm ready
 
 This will install and build all the required dependencies. It might take a few minutes (but will likely save you from debugging pnpm).
 
-
 ## General conventions
 
 - **TypeScript**

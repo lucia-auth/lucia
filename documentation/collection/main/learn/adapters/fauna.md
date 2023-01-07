@@ -11,13 +11,14 @@ const adapter: (faunaClient: FaunaClient) => AdapterFunction<Adapter>;
 
 ### Parameter
 
-| name        | type     | description           | optional |
-| ----------- | -------- | --------------------- | -------- |
-| faunaClient | `Client` | Fauna client instance |          |
+| name        | type            | description                                                  | optional |
+| ----------- | --------------- | ------------------------------------------------------------ | -------- |
+| faunaClient | `Client`        | Fauna client instance                                        |          |
+| config      | `AdapterConfig` | Config Object containing `userTable` and `sessionTable` name | true     |
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `FaunaError`.
+The adapter and Lucia will not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `FaunaError`.
 
 ## Installation
 
@@ -36,17 +37,17 @@ import faunadb from "faunadb";
 const { Client } = faunadb;
 
 const auth = lucia({
-	adapter: fauna(new Client(options))
+	adapter: fauna(new Client(options), config)
 });
 ```
 
 ## Database models
 
-Fauna follows loose models.
+Fauna is document-based and follows a collection/document structure. You can change the used Fauna collection names by providing a config object.
 
-### `users`
+### `user`
 
-You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+You may add additional fields to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
 
 ```ts
 {
@@ -57,7 +58,7 @@ You may add additional columns to store user attributes. Refer to [Store user at
 }
 ```
 
-### `sessions`
+### `session`
 
 This is not required if you're only using the Fauna adapter for the `user` table via [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
 
@@ -92,19 +93,19 @@ CreateIndex({
 });
 CreateIndex({
 	name: "session_by_id",
-	source: Collection("sessions"),
+	source: Collection("session"),
 	unique: true,
 	terms: [{ field: ["data", "id"] }]
 });
 CreateIndex({
 	name: "session_by_userid",
-	source: Collection("sessions"),
-	unique: true,
+	source: Collection("session"),
+	unique: false,
 	terms: [{ field: ["data", "user_id"] }]
 });
 CreateIndex({
 	name: "user_by_providerid",
-	source: Collection("users"),
+	source: Collection("user"),
 	unique: true,
 	terms: [{ field: ["data", "provider_id"] }]
 });

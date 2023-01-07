@@ -42,8 +42,6 @@ yarn add lucia-auth
 
 ## Attributions
 
-This project would not have been possible without our contributors, thank you! 
+This project would not have been possible without our contributors, thank you!
 
 Logo by [@dawidmachon](https://github.com/dawidmachon), licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-
-
