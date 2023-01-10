@@ -54,7 +54,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 					return user;
 				} catch (error) {
 					if (
-						error instanceof Mongoose.MongooseError &&
+						error instanceof Error &&
 						error.message.includes("E11000") &&
 						error.message.includes("provider_id")
 					)
@@ -80,7 +80,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 					await Session.create(sessionDoc);
 				} catch (error) {
 					if (
-						error instanceof Mongoose.MongooseError &&
+						error instanceof Error &&
 						error.message.includes("E11000") &&
 						error.message.includes("id")
 					)
@@ -104,7 +104,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 					return convertUserDoc(userDoc);
 				} catch (error) {
 					if (
-						error instanceof Mongoose.MongooseError &&
+						error instanceof Error &&
 						error.message.includes("E11000") &&
 						error.message.includes("provider_id")
 					)
