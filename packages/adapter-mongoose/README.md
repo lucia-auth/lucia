@@ -25,7 +25,7 @@ yarn add @lucia-auth/adapter-mongoose
 
 ## Testing
 
-Add MongoDB url to `url`.
+Add MongoDB url to `MONGODB_URL`.
 
 ```
 npm run test
