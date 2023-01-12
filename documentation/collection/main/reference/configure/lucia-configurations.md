@@ -149,7 +149,7 @@ const generate: (s: string) => MaybePromise<string>;
 Validates a string against a hash generated using [`hash.generate()`](/reference/configure/lucia-configurations#generate-required).
 
 ```ts
-const generate: (s: string, hash: string) => MaybePromise<string>;
+const generate: (s: string, hash: string) => MaybePromise<boolean>;
 ```
 
 ##### Parameter
@@ -157,7 +157,7 @@ const generate: (s: string, hash: string) => MaybePromise<string>;
 | name | type     | description                         |
 | ---- | -------- | ----------------------------------- |
 | s    | `string` | the string to validate              |
-| hash | `string  | hash to validate the string against |
+| hash | `string` | hash to validate the string against |
 
 ##### Returns
 
