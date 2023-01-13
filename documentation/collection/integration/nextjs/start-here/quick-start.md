@@ -113,7 +113,7 @@ export default Index;
 
 Create `pages/api/signup.ts`. This API route will handle account creation.
 
-We'll set the provider id as `username` and the inputed username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session id as a cookie.
+We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session id as a cookie.
 
 ```ts
 // pages/api/signup.ts

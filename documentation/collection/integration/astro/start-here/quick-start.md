@@ -75,7 +75,7 @@ In the same page, we'll also handle the POST request from the form.
 
 `@lucia-auth/astro` provides [`AuthRequest`](/astro/api-reference/server-api#authrequest), which makes it easier to handle sessions and cookies within Astro. Initialize it with `auth` and the `Astro` context (an API route context can be used as well).
 
-We'll set the provider id as `username` and the inputed username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session cookie using [`AuthRequest.setSession()`](/astro/api-reference/server-api#setsession).
+We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session cookie using [`AuthRequest.setSession()`](/astro/api-reference/server-api#setsession).
 
 ```astro
 ---
