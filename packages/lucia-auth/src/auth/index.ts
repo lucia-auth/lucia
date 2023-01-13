@@ -2,11 +2,7 @@ import type { Env, MinimalRequest, Session, SessionSchema, User } from "../types
 import { Cookie, CookieOption, createSessionCookie } from "./cookie.js";
 import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
 import { logError } from "../utils/log.js";
-import {
-	generateHashWithScrypt,
-	generateRandomString,
-	validateScryptHash
-} from "../utils/crypto.js";
+import { generateRandomString, scryptHasher } from "../utils/crypto.js";
 import { LuciaError, LuciaErrorConstructor } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { getSessionFromDatabaseData } from "./session.js";
@@ -34,10 +30,7 @@ export class Auth<C extends Configurations = any> {
 		idlePeriod: number;
 	};
 	public ENV: Env;
-	private hash: {
-		generate: (s: string) => MaybePromise<string>;
-		validate: (s: string, hash: string) => MaybePromise<boolean>;
-	};
+	private hash: Hasher;
 	private autoDatabaseCleanup: boolean;
 	protected transformUserData: (
 		userData: UserSchema
@@ -81,10 +74,7 @@ export class Auth<C extends Configurations = any> {
 			return transform({ id, ...attributes }) as User;
 		};
 		this.sessionCookie = configs.sessionCookie ?? [defaultSessionCookieOption];
-		this.hash = {
-			generate: configs.hash?.generate ?? generateHashWithScrypt,
-			validate: configs.hash?.validate ?? validateScryptHash
-		};
+		this.hash = configs.hash ?? scryptHasher;
 	}
 
 	public getUser = async (userId: string): Promise<User> => {
@@ -333,6 +323,11 @@ export class Auth<C extends Configurations = any> {
 
 type MaybePromise<T> = T | Promise<T>;
 
+export interface Hasher {
+	generate: (s: string) => MaybePromise<string>;
+	validate: (s: string, hash: string) => MaybePromise<boolean>;
+}
+
 export interface Configurations {
 	adapter:
 		| ((E: LuciaErrorConstructor) => Adapter)
@@ -349,9 +344,6 @@ export interface Configurations {
 	};
 	transformUserData?: (userData: UserData) => Record<string, any>;
 	sessionCookie?: CookieOption[];
-	hash?: {
-		generate: (s: string) => MaybePromise<string>;
-		validate: (s: string, hash: string) => MaybePromise<boolean>;
-	};
+	hash?: Hasher;
 	autoDatabaseCleanup?: boolean;
 }

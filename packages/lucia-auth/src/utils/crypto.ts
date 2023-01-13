@@ -1,3 +1,4 @@
+import type { Hasher } from "../auth/index.js";
 import { random, customRandom } from "nanoid";
 import { scryptAsync } from "@noble/hashes/scrypt";
 
@@ -40,6 +41,11 @@ export const validateScryptHash = async (s: string, hash: string) => {
 		return constantTimeEqual(targetKey, key);
 	}
 	return false;
+};
+
+export const scryptHasher: Hasher = {
+	generate: generateHashWithScrypt,
+	validate: validateScryptHash
 };
 
 const constantTimeEqual = (a: string, b: string) => {
