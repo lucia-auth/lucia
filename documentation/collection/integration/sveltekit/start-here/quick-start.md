@@ -11,7 +11,8 @@ Start off by following the steps in [Getting Started](/sveltekit/start-here/gett
 
 ## 1. Configure your database
 
-Add a `username` column in the `user` table.
+As an example, we'll add a `username` column to the `user` table. The `username` column will be later used as an identifier for creating new users, but
+you could replace it with `email`, for example.
 
 | name     | type   | unique | description          |
 | -------- | ------ | ------ | -------------------- |
@@ -76,7 +77,7 @@ This form will have an input field for username and password.
 
 ### Create users
 
-We'll set the provider id as `username` and the username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. We'll also set the password and store the username. After creating a new user, create a new session and store the session id as a cookie.
+We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session using the `createSession` method and store the session id as a cookie using `locals.setSession`.
 
 For the session to update in the client, we need to call [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall) or refresh the page entirely so we can re-run our [load function](https://kit.svelte.dev/docs/load). Load functions will only re-run when `invalidateAll()` is called or during navigation. `use:enhance` will only call `invalidateAll()` when the server returns a success response (a redirect response is not considered as a success response). Since we're just using the default behavior of `use:enhance`, the action will not return a redirect, and the load function will handle redirect after sign up.
 

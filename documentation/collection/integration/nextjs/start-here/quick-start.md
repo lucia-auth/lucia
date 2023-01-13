@@ -11,7 +11,8 @@ Start off by following the steps in [the previous page](/nextjs/start-here/getti
 
 ## 1. Configure your database
 
-Add a `username` column in the `user` table.
+As an example, we'll add a `username` column to the `user` table. The `username` column will be later used as an identifier for creating new users, but
+you could replace it with `email`, for example.
 
 | name     | type   | unique | description          |
 | -------- | ------ | ------ | -------------------- |
@@ -112,7 +113,7 @@ export default Index;
 
 Create `pages/api/signup.ts`. This API route will handle account creation.
 
-We'll set the provider id as `username` and the username as the identifier. This tells Lucia that user was created using username/password auth method and the unique identifier is the username. Let's also set the password and store the username. After creating a new user, create a new session and store the session id as a cookie.
+We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session id as a cookie.
 
 ```ts
 // pages/api/signup.ts
