@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.3.1
+
+- [Fix] Proper type checking #297
+- Support `kysely@0.23.0`
+- Move `kysely` to dev dependencies
+
 ## 0.3.0
 
 - [Breaking] Require `dialect` parameter

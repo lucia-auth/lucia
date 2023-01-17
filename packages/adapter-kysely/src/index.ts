@@ -1,8 +1,8 @@
 import { getUpdateData } from "lucia-auth/adapter";
-import { Kysely } from "kysely";
+import type { Kysely } from "kysely";
 import { convertSession } from "./utils.js";
 import type { Adapter, AdapterFunction, UserSchema } from "lucia-auth";
-import type { KyselyLuciaDatabase } from "./types.js";
+import type { KyselyLuciaDatabase, KyselySession, KyselyUser } from "./types.js";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import type { QueryError as MySQLError } from "mysql2";
 export * from "./types.js";
@@ -12,15 +12,35 @@ type SQLiteError = {
 	code: string;
 };
 
+type IsValidKyselySchema<KyselyDatabase> = KyselyDatabase extends {
+	user: any;
+	session: any;
+}
+	? KyselyDatabase["user"] extends KyselyUser
+		? KyselyDatabase["session"] extends KyselySession
+			? true
+			: false
+		: false
+	: false;
+
+// Kysely<{user: any, session: any, some_table: any}> doesn't extend Kysely<KyselyLuciaDatabase>
+// nor does Kysely<{user: UserWithCustomAttributes, session: any}>
+
+// this infers the Database schema from the Kysely type and uses conditional types to check the
 const adapter =
-	(
-		db: Kysely<KyselyLuciaDatabase>,
+	<DB extends Kysely<any>>(
+		db: DB extends Kysely<infer KyselyDatabase>
+			? IsValidKyselySchema<KyselyDatabase> extends true
+				? DB
+				: never
+			: never,
 		dialect: "pg" | "mysql2" | "better-sqlite3"
 	): AdapterFunction<Adapter> =>
 	(LuciaError) => {
+		const kysely = db as Kysely<KyselyLuciaDatabase>;
 		return {
 			getUser: async (userId) => {
-				const data = await db
+				const data = await kysely
 					.selectFrom("user")
 					.selectAll()
 					.where("id", "=", userId)
@@ -29,7 +49,7 @@ const adapter =
 				return data;
 			},
 			getUserByProviderId: async (providerId) => {
-				const data = await db
+				const data = await kysely
 					.selectFrom("user")
 					.selectAll()
 					.where("provider_id", "=", providerId)
@@ -38,7 +58,7 @@ const adapter =
 				return data;
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
-				const data = await db
+				const data = await kysely
 					.selectFrom("user")
 					.innerJoin("session", "user.id", "session.user_id")
 					.selectAll()
@@ -52,7 +72,7 @@ const adapter =
 				};
 			},
 			getSession: async (sessionId) => {
-				const data = await db
+				const data = await kysely
 					.selectFrom("session")
 					.selectAll()
 					.where("id", "=", sessionId)
@@ -61,7 +81,7 @@ const adapter =
 				return convertSession(data);
 			},
 			getSessionsByUserId: async (userId) => {
-				const data = await db
+				const data = await kysely
 					.selectFrom("session")
 					.selectAll()
 					.where("user_id", "=", userId)
@@ -71,7 +91,7 @@ const adapter =
 			setUser: async (userId, data) => {
 				try {
 					if (dialect === "pg") {
-						const user = await db
+						const user = await kysely
 							.insertInto("user")
 							.values({
 								id: userId ?? undefined,
@@ -84,7 +104,7 @@ const adapter =
 						return user;
 					}
 					const id = userId ?? crypto.randomUUID();
-					await db
+					await kysely
 						.insertInto("user")
 						.values({
 							id,
@@ -125,11 +145,11 @@ const adapter =
 				}
 			},
 			deleteUser: async (userId) => {
-				await db.deleteFrom("user").where("id", "=", userId).execute();
+				await kysely.deleteFrom("user").where("id", "=", userId).execute();
 			},
 			setSession: async (sessionId, data) => {
 				try {
-					await db
+					await kysely
 						.insertInto("session")
 						.values({
 							id: sessionId,
@@ -160,7 +180,7 @@ const adapter =
 					if (dialect === "better-sqlite3") {
 						const error = e as Partial<SQLiteError>;
 						if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-							const result = await db
+							const result = await kysely
 								.selectFrom("user")
 								.select("id")
 								.where("id", "is", data.userId)
@@ -175,16 +195,16 @@ const adapter =
 				}
 			},
 			deleteSession: async (...sessionIds) => {
-				await db.deleteFrom("session").where("id", "in", sessionIds).execute();
+				await kysely.deleteFrom("session").where("id", "in", sessionIds).execute();
 			},
 			deleteSessionsByUserId: async (userId) => {
-				await db.deleteFrom("session").where("user_id", "=", userId).execute();
+				await kysely.deleteFrom("session").where("user_id", "=", userId).execute();
 			},
 			updateUser: async (userId, newData) => {
 				const partialData = getUpdateData(newData);
 				try {
 					if (Object.keys(partialData).length === 0) {
-						const user = await db
+						const user = await kysely
 							.selectFrom("user")
 							.where("id", "=", userId)
 							.selectAll()
@@ -193,12 +213,12 @@ const adapter =
 						return user;
 					}
 					if (dialect === "mysql2") {
-						await db
+						await kysely
 							.updateTable("user")
 							.set(partialData)
 							.where("id", "=", userId)
 							.executeTakeFirst();
-						const user = await db
+						const user = await kysely
 							.selectFrom("user")
 							.selectAll()
 							.where("id", "=", userId)
@@ -206,7 +226,7 @@ const adapter =
 						if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
 						return user;
 					}
-					const user = await db
+					const user = await kysely
 						.updateTable("user")
 						.set(partialData)
 						.where("id", "=", userId)

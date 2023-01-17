@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-kysely",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Kysely adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -47,10 +47,10 @@
 		"better-sqlite3": "^8.0.1",
 		"dotenv": "^16.0.3",
 		"mysql2": "^2.3.3",
-		"ts-node": "^10.9.1"
+		"ts-node": "^10.9.1",
+		"kysely": "^0.23.0"
 	},
 	"dependencies": {
-		"kysely": "^0.22.0",
 		"lucia-auth": "workspace:*",
 		"pg": "^8.8.0"
 	}
