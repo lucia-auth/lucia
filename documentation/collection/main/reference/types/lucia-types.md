@@ -18,9 +18,8 @@ Refer to [Adapters](/reference/adapters/api) reference.
 Refer to [Adapters](/reference/adapters/api) reference. `LuciaErrorConstructor` is the constructor function (class reference) of [`LuciaError`](/reference/types/lucia-types#luciaerror).
 
 ```ts
-export type AdapterFunction<A extends Adapter | UserAdapter | SessionAdapter> = (
-	LuciaError: LuciaErrorConstructor
-) => A;
+export type AdapterFunction<A extends Adapter | UserAdapter | SessionAdapter> =
+	(LuciaError: LuciaErrorConstructor) => A;
 ```
 
 ## `Auth`

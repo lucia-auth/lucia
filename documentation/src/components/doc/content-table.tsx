@@ -22,7 +22,9 @@ export default (props: {
 	const [selectedCollectionId, setSelectedCollectionId] = createSignal(
 		mergedProps.initialCollectionId as string
 	);
-	const CollectionLink = (props: { collection: typeof collections[number] }) => (
+	const CollectionLink = (props: {
+		collection: (typeof collections)[number];
+	}) => (
 		<Show when={props.collection._id === selectedCollectionId()}>
 			<For each={props.collection._collections}>
 				{(section) => (
@@ -31,10 +33,15 @@ export default (props: {
 						<ul class="list-none mt-2 text-gray-500 dark:text-zinc-400">
 							<For each={section._documents}>
 								{(page) => {
-									const urlPathname = `/${page._path.split("/").slice(1).join("/")}`;
+									const urlPathname = `/${page._path
+										.split("/")
+										.slice(1)
+										.join("/")}`;
 									const isSelected = currentPath.startsWith(urlPathname);
 									const href =
-										page._baseCollectionId === "main" ? page.redirect ?? urlPathname : urlPathname;
+										page._baseCollectionId === "main"
+											? page.redirect ?? urlPathname
+											: urlPathname;
 									return (
 										<li
 											class={dynamicClassName("my-1 pl-4 border-l-2", {
@@ -89,7 +96,9 @@ export default (props: {
 				</div>
 			</Show>
 			<div class="overflow-auto h-full relative overscroll-contain pb-8 pt-4">
-				<For each={collections}>{(collection) => <CollectionLink collection={collection} />}</For>
+				<For each={collections}>
+					{(collection) => <CollectionLink collection={collection} />}
+				</For>
 			</div>
 		</div>
 	);

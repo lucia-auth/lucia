@@ -28,7 +28,12 @@ const generateId = (): string => {
 
 export class UndefinedError extends Error {
 	constructor(
-		type: "pageData._lucia" | "_luciaStore" | "_setLuciaStore" | "_luciaPageData" | "_lucia"
+		type:
+			| "pageData._lucia"
+			| "_luciaStore"
+			| "_setLuciaStore"
+			| "_luciaPageData"
+			| "_lucia"
 	) {
 		const errorMsg = {
 			"pageData._lucia":
@@ -67,15 +72,19 @@ export const handleSession = (
 		pageStoreUnsubscribe();
 		userStoreUnsubscribe();
 	});
-	globalWindow._luciaStore = readable<LuciaContext>(initialLuciaContext, (set) => {
-		globalWindow._setLuciaStore = set;
-	});
+	globalWindow._luciaStore = readable<LuciaContext>(
+		initialLuciaContext,
+		(set) => {
+			globalWindow._setLuciaStore = set;
+		}
+	);
 	if (!globalWindow._luciaStore) throw new UndefinedError("_luciaStore");
 	userStoreUnsubscribe = globalWindow._luciaStore.subscribe((newContext) => {
 		/*
 		prevent postMessage on store initialization
 		*/
-		if (initialLuciaStoreSubscription) return (initialLuciaStoreSubscription = false);
+		if (initialLuciaStoreSubscription)
+			return (initialLuciaStoreSubscription = false);
 		broadcastChannel.postMessage({
 			tabId: tabId,
 			sessionChecksum: newContext.sessionChecksum
@@ -84,7 +93,8 @@ export const handleSession = (
 	pageStoreUnsubscribe = pageStore.subscribe((pageStoreValue) => {
 		const newLuciaContext = pageStoreValue.data?._lucia;
 		if (!newLuciaContext) throw new UndefinedError("pageData._lucia");
-		if (!globalWindow._setLuciaStore) throw new UndefinedError("_setLuciaStore");
+		if (!globalWindow._setLuciaStore)
+			throw new UndefinedError("_setLuciaStore");
 		globalWindow._setLuciaStore(newLuciaContext);
 	});
 	broadcastChannel.addEventListener("message", ({ data }) => {
@@ -101,7 +111,8 @@ export const handleSession = (
 		/*
 		check if session has changed from the previous page data
 		*/
-		if (messageData.sessionChecksum === currentLuciaContext.sessionChecksum) return;
+		if (messageData.sessionChecksum === currentLuciaContext.sessionChecksum)
+			return;
 		onSessionUpdate(!!messageData.sessionChecksum);
 	});
 };

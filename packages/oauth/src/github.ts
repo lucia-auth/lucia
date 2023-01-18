@@ -23,16 +23,22 @@ class Github<A extends Auth> implements OAuthProvider<A> {
 	private clientSecret: string;
 	private scope: string[];
 
-	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+	public getAuthorizationUrl = <
+		State extends string | null | undefined = undefined
+	>(
 		state?: State
 	): GetAuthorizationUrlReturnType<State> => {
-		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
-		const url = `https://github.com/login/oauth/authorize?${new URLSearchParams({
-			client_id: this.clientId,
-			scope: this.scope.join(" "),
-			...(s && { state: s })
-		}).toString()}`;
-		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		const s =
+			state ?? (typeof state === "undefined" ? generateState() : undefined);
+		const url = `https://github.com/login/oauth/authorize?${new URLSearchParams(
+			{
+				client_id: this.clientId,
+				scope: this.scope.join(" "),
+				...(s && { state: s })
+			}
+		).toString()}`;
+		if (state === null)
+			return [url] as const as GetAuthorizationUrlReturnType<State>;
 		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
@@ -56,7 +62,10 @@ class Github<A extends Auth> implements OAuthProvider<A> {
 		const githubUserId = String(githubUser.id);
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId("github", githubUserId)) as LuciaUser<A>;
+			existingUser = (await this.auth.getUserByProviderId(
+				"github",
+				githubUserId
+			)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}

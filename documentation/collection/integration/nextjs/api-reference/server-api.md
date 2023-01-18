@@ -146,7 +146,8 @@ authRequest.setSession(null); // remove session cookies
 Handles api requests to `/api/auth/**`.
 
 ```ts
-const handleApiRoutes = (auth: Auth) => (req: NextRequest, res: NextResponse) => Promise<void>;
+const handleApiRoutes = (auth: Auth) => (req: NextRequest, res: NextResponse) =>
+	Promise<void>;
 ```
 
 #### Parameter

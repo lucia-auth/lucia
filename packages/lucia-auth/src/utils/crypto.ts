@@ -2,7 +2,8 @@ import { random, customRandom } from "nanoid";
 import { scryptAsync } from "@noble/hashes/scrypt";
 
 export const generateRandomString = (length: number) => {
-	const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+	const characters =
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	return customRandom(characters, length, random)();
 };
 

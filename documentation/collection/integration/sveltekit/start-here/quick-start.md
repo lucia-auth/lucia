@@ -101,7 +101,12 @@ export const actions: Actions = {
 		const password = form.get("password");
 
 		// check for empty values
-		if (!username || !password || typeof username !== "string" || typeof password !== "string") {
+		if (
+			!username ||
+			!password ||
+			typeof username !== "string" ||
+			typeof password !== "string"
+		) {
 			return fail(400);
 		}
 
@@ -170,7 +175,12 @@ export const actions: Actions = {
 		const username = form.get("username");
 		const password = form.get("password");
 		// check for empty values
-		if (!username || !password || typeof username !== "string" || typeof password !== "string")
+		if (
+			!username ||
+			!password ||
+			typeof username !== "string" ||
+			typeof password !== "string"
+		)
 			return fail(400);
 		try {
 			const user = await auth.authenticateUser("username", username, password);

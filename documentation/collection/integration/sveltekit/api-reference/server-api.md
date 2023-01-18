@@ -73,9 +73,11 @@ import { auth } from "$lib/server/lucia";
 import { handleServerSession } from "@lucia-auth/sveltekit";
 import type { LayoutServerLoadEvent } from "./$types";
 
-export const Load = handleServerSession(async (event: LayoutServerLoadEvent) => {
-	return {
-		message: "hi"
-	};
-});
+export const Load = handleServerSession(
+	async (event: LayoutServerLoadEvent) => {
+		return {
+			message: "hi"
+		};
+	}
+);
 ```

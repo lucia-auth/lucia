@@ -1,4 +1,8 @@
-import type { SessionSchema, SessionAdapter, AdapterFunction } from "lucia-auth";
+import type {
+	SessionSchema,
+	SessionAdapter,
+	AdapterFunction
+} from "lucia-auth";
 import type { RedisClientType } from "redis";
 
 const adapter =
@@ -7,7 +11,8 @@ const adapter =
 		userSessions: RedisClientType<any, any, any>;
 	}): AdapterFunction<SessionAdapter> =>
 	() => {
-		const { session: sessionRedis, userSessions: userSessionsRedis } = redisClient;
+		const { session: sessionRedis, userSessions: userSessionsRedis } =
+			redisClient;
 		return {
 			getSession: async (sessionId) => {
 				const sessionData = await sessionRedis.get(sessionId);
@@ -17,7 +22,9 @@ const adapter =
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessionIds = await userSessionsRedis.lRange(userId, 0, -1);
-				const sessionData = await Promise.all(sessionIds.map((id) => sessionRedis.get(id)));
+				const sessionData = await Promise.all(
+					sessionIds.map((id) => sessionRedis.get(id))
+				);
 				const sessions = sessionData
 					.filter((val): val is string => val !== null)
 					.map((val) => JSON.parse(val) as SessionSchema);
@@ -41,13 +48,17 @@ const adapter =
 				]);
 			},
 			deleteSession: async (...sessionIds) => {
-				const targetSessionData = await Promise.all(sessionIds.map((id) => sessionRedis.get(id)));
+				const targetSessionData = await Promise.all(
+					sessionIds.map((id) => sessionRedis.get(id))
+				);
 				const sessions = targetSessionData
 					.filter((val): val is string => val !== null)
 					.map((val) => JSON.parse(val) as SessionSchema);
 				await Promise.all([
 					...sessionIds.map((id) => sessionRedis.del(id)),
-					...sessions.map((session) => userSessionsRedis.lRem(session.user_id, 1, session.id))
+					...sessions.map((session) =>
+						userSessionsRedis.lRem(session.user_id, 1, session.id)
+					)
 				]);
 			},
 			deleteSessionsByUserId: async (userId) => {

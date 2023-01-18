@@ -1,7 +1,13 @@
 import clc from "cli-color";
 
-export const test = async (name: string, description: string, func: () => Promise<void>) => {
-	console.log(`\n${clc.bold.blue("[Test]")} ${clc.bold(name)} : ${description}`);
+export const test = async (
+	name: string,
+	description: string,
+	func: () => Promise<void>
+) => {
+	console.log(
+		`\n${clc.bold.blue("[Test]")} ${clc.bold(name)} : ${description}`
+	);
 	try {
 		await func();
 		console.log(`${clc.green.bold("[Success]")} ${name}`);
@@ -62,6 +68,10 @@ export const validate = {
 		return isTrueValidation(!Object.is(p1, p2), error, p1, p2);
 	},
 	isNonEmptyString: (target: string, error: string) => {
-		return isTrueValidation(!!target && typeof target === "string", error, target);
+		return isTrueValidation(
+			!!target && typeof target === "string",
+			error,
+			target
+		);
 	}
 };

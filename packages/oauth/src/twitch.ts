@@ -30,10 +30,13 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 	private redirectUri: string;
 	private forceVerify: boolean;
 
-	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+	public getAuthorizationUrl = <
+		State extends string | null | undefined = undefined
+	>(
 		state?: State
 	): GetAuthorizationUrlReturnType<State> => {
-		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
+		const s =
+			state ?? (typeof state === "undefined" ? generateState() : undefined);
 		const url = `https://id.twitch.tv/oauth2/authorize?${new URLSearchParams({
 			client_id: this.clientId,
 			redirect_uri: this.redirectUri,
@@ -42,7 +45,8 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 			force_verify: this.forceVerify.toString(),
 			...(s && { state: s })
 		}).toString()}`;
-		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		if (state === null)
+			return [url] as const as GetAuthorizationUrlReturnType<State>;
 		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
@@ -73,7 +77,10 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 		const twitchUserId = String(twitchUser.id);
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId("twitch", twitchUserId)) as LuciaUser<A>;
+			existingUser = (await this.auth.getUserByProviderId(
+				"twitch",
+				twitchUserId
+			)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}

@@ -1,6 +1,18 @@
-import type { Env, MinimalRequest, Session, SessionSchema, User } from "../types.js";
+import type {
+	Env,
+	MinimalRequest,
+	Session,
+	SessionSchema,
+	User
+} from "../types.js";
 import { Cookie, CookieOption, createSessionCookie } from "./cookie.js";
-import { Adapter, SessionAdapter, UserAdapter, UserData, UserSchema } from "../types.js";
+import {
+	Adapter,
+	SessionAdapter,
+	UserAdapter,
+	UserData,
+	UserSchema
+} from "../types.js";
 import { logError } from "../utils/log.js";
 import {
 	generateHashWithScrypt,
@@ -41,7 +53,9 @@ export class Auth<C extends Configurations = any> {
 	private autoDatabaseCleanup: boolean;
 	protected transformUserData: (
 		userData: UserSchema
-	) => C["transformUserData"] extends {} ? ReturnType<C["transformUserData"]> : { userId: string };
+	) => C["transformUserData"] extends {}
+		? ReturnType<C["transformUserData"]>
+		: { userId: string };
 	private csrfProtection: boolean;
 
 	constructor(configs: C) {
@@ -60,7 +74,10 @@ export class Auth<C extends Configurations = any> {
 		}
 		this.adapter =
 			"user" in configs.adapter
-				? { ...configs.adapter.user(LuciaError), ...configs.adapter.session(LuciaError) }
+				? {
+						...configs.adapter.user(LuciaError),
+						...configs.adapter.session(LuciaError)
+				  }
 				: configs.adapter(LuciaError);
 		this.generateUserId = configs.generateCustomUserId ?? (async () => null);
 		this.ENV = configs.env;
@@ -70,7 +87,12 @@ export class Auth<C extends Configurations = any> {
 			idlePeriod: configs.sessionTimeout?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
 		this.autoDatabaseCleanup = configs.autoDatabaseCleanup ?? true;
-		this.transformUserData = ({ id, hashed_password, provider_id, ...attributes }) => {
+		this.transformUserData = ({
+			id,
+			hashed_password,
+			provider_id,
+			...attributes
+		}) => {
 			const transform =
 				configs.transformUserData ??
 				(({ id }) => {
@@ -93,7 +115,10 @@ export class Auth<C extends Configurations = any> {
 		const user = this.transformUserData(databaseUser);
 		return user;
 	};
-	public getUserByProviderId = async (provider: string, identifier: string): Promise<User> => {
+	public getUserByProviderId = async (
+		provider: string,
+		identifier: string
+	): Promise<User> => {
 		const providerId = `${provider}:${identifier}`;
 		const databaseUser = await this.adapter.getUserByProviderId(providerId);
 		if (!databaseUser) throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
@@ -106,17 +131,21 @@ export class Auth<C extends Configurations = any> {
 		user: User;
 		session: Session;
 	}> => {
-		if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		if (sessionId.length !== 40)
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		let userData: UserSchema | null;
 		let sessionData: SessionSchema | null;
 		if (this.adapter.getSessionAndUserBySessionId !== undefined) {
-			const databaseUserSession = await this.adapter.getSessionAndUserBySessionId(sessionId);
+			const databaseUserSession =
+				await this.adapter.getSessionAndUserBySessionId(sessionId);
 			if (!databaseUserSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
 			userData = databaseUserSession.user;
 			sessionData = databaseUserSession.session;
 		} else {
 			sessionData = await this.adapter.getSession(sessionId);
-			userData = sessionData ? await this.adapter.getUser(sessionData.user_id) : null;
+			userData = sessionData
+				? await this.adapter.getUser(sessionData.user_id)
+				: null;
 		}
 		if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const session = getSessionFromDatabaseData(sessionData);
@@ -139,7 +168,9 @@ export class Auth<C extends Configurations = any> {
 			? undefined
 			: {
 					password?: string;
-					attributes: keyof Lucia.UserAttributes extends never ? undefined : Lucia.UserAttributes;
+					attributes: keyof Lucia.UserAttributes extends never
+						? undefined
+						: Lucia.UserAttributes;
 			  }
 	): Promise<User> => {
 		const providerId = `${provider}:${identifier}`;
@@ -170,7 +201,9 @@ export class Auth<C extends Configurations = any> {
 			this.adapter.updateUser(userId, {
 				attributes
 			}),
-			this.autoDatabaseCleanup ? await this.deleteDeadUserSessions(userId) : null
+			this.autoDatabaseCleanup
+				? await this.deleteDeadUserSessions(userId)
+				: null
 		]);
 		const user = this.transformUserData(userData);
 		return user;
@@ -185,12 +218,17 @@ export class Auth<C extends Configurations = any> {
 			this.adapter.updateUser(userId, {
 				providerId
 			}),
-			this.autoDatabaseCleanup ? await this.deleteDeadUserSessions(userId) : null
+			this.autoDatabaseCleanup
+				? await this.deleteDeadUserSessions(userId)
+				: null
 		]);
 		const user = this.transformUserData(userData);
 		return user;
 	};
-	public updateUserPassword = async (userId: string, password: string): Promise<User> => {
+	public updateUserPassword = async (
+		userId: string,
+		password: string
+	): Promise<User> => {
 		const hashedPassword = password ? await this.hash.generate(password) : null;
 		const [userData] = await Promise.all([
 			this.adapter.updateUser(userId, {
@@ -213,16 +251,21 @@ export class Auth<C extends Configurations = any> {
 		const providerId = `${provider}:${identifier}`;
 		const databaseData = await this.adapter.getUserByProviderId(providerId);
 		if (!databaseData) throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
-		if (!databaseData.hashed_password) throw new LuciaError("AUTH_INVALID_PASSWORD");
+		if (!databaseData.hashed_password)
+			throw new LuciaError("AUTH_INVALID_PASSWORD");
 		if (databaseData.hashed_password.startsWith("$2a"))
 			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-		const isValid = await this.hash.validate(password, databaseData.hashed_password);
+		const isValid = await this.hash.validate(
+			password,
+			databaseData.hashed_password
+		);
 		if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		const user = this.transformUserData(databaseData);
 		return user;
 	};
 	public getSession = async (sessionId: string): Promise<Session> => {
-		if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		if (sessionId.length !== 40)
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const databaseSession = await this.adapter.getSession(sessionId);
 		if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const session = getSessionFromDatabaseData(databaseSession);
@@ -257,21 +300,26 @@ export class Auth<C extends Configurations = any> {
 		idlePeriodExpires: Date
 	] => {
 		const sessionId = generateRandomString(40);
-		const activePeriodExpires = new Date(new Date().getTime() + this.sessionTimeout.activePeriod);
+		const activePeriodExpires = new Date(
+			new Date().getTime() + this.sessionTimeout.activePeriod
+		);
 		const idlePeriodExpires = new Date(
 			activePeriodExpires.getTime() + this.sessionTimeout.idlePeriod
 		);
 		return [sessionId, activePeriodExpires, idlePeriodExpires];
 	};
 	public createSession = async (userId: string): Promise<Session> => {
-		const [sessionId, activePeriodExpires, idlePeriodExpires] = this.generateSessionId();
+		const [sessionId, activePeriodExpires, idlePeriodExpires] =
+			this.generateSessionId();
 		await Promise.all([
 			this.adapter.setSession(sessionId, {
 				userId,
 				expires: activePeriodExpires.getTime(),
 				idlePeriodExpires: idlePeriodExpires.getTime()
 			}),
-			this.autoDatabaseCleanup ? await this.deleteDeadUserSessions(userId) : null
+			this.autoDatabaseCleanup
+				? await this.deleteDeadUserSessions(userId)
+				: null
 		]);
 		return {
 			userId,
@@ -283,7 +331,8 @@ export class Auth<C extends Configurations = any> {
 		};
 	};
 	public renewSession = async (sessionId: string): Promise<Session> => {
-		if (sessionId.length !== 40) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		if (sessionId.length !== 40)
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const sessionData = await this.adapter.getSession(sessionId);
 		if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const session = getSessionFromDatabaseData(sessionData);
@@ -295,7 +344,9 @@ export class Auth<C extends Configurations = any> {
 		}
 		const [renewedSession] = await Promise.all([
 			await this.createSession(session.userId),
-			this.autoDatabaseCleanup ? await this.deleteDeadUserSessions(session.userId) : null
+			this.autoDatabaseCleanup
+				? await this.deleteDeadUserSessions(session.userId)
+				: null
 		]);
 		return renewedSession;
 	};
@@ -327,7 +378,9 @@ export class Auth<C extends Configurations = any> {
 		return sessionId;
 	};
 	public createSessionCookies = (session: Session | null): Cookie[] => {
-		return this.sessionCookie.map((options) => createSessionCookie(session, this.ENV, options));
+		return this.sessionCookie.map((options) =>
+			createSessionCookie(session, this.ENV, options)
+		);
 	};
 }
 

@@ -4,7 +4,10 @@ import fauna from "../src/index.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import faunadb from "faunadb";
-import { convertMultipleSessionResponse, convertMultipleUsersResponse } from "../src/utils.js";
+import {
+	convertMultipleSessionResponse,
+	convertMultipleUsersResponse
+} from "../src/utils.js";
 import { LuciaError, type SessionSchema, UserSchema } from "lucia-auth";
 
 const { query, Client } = faunadb;
@@ -53,15 +56,21 @@ export const db: Database = {
 		return convertMultipleSessionResponse(res) satisfies SessionSchema[];
 	},
 	insertUser: async (user) => {
-		return await client.query(q.Create(q.Collection(FAUNA_USER_TABLE), { data: user }));
+		return await client.query(
+			q.Create(q.Collection(FAUNA_USER_TABLE), { data: user })
+		);
 	},
 	insertSession: async (session) => {
-		return await client.query(q.Create(q.Collection(FAUNA_SESSION_TABLE), { data: session }));
+		return await client.query(
+			q.Create(q.Collection(FAUNA_SESSION_TABLE), { data: session })
+		);
 	},
 	clearUsers: async () => {
 		return await client.query(
 			q.Map(
-				q.Paginate(q.Documents(q.Collection(FAUNA_USER_TABLE)), { size: 100_000 }),
+				q.Paginate(q.Documents(q.Collection(FAUNA_USER_TABLE)), {
+					size: 100_000
+				}),
 				q.Lambda("x", q.Delete(q.Var("x")))
 			)
 		);
@@ -70,7 +79,9 @@ export const db: Database = {
 	clearSessions: async () => {
 		return await client.query(
 			q.Map(
-				q.Paginate(q.Documents(q.Collection(FAUNA_SESSION_TABLE)), { size: 100_000 }),
+				q.Paginate(q.Documents(q.Collection(FAUNA_SESSION_TABLE)), {
+					size: 100_000
+				}),
 				q.Lambda("x", q.Delete(q.Var("x")))
 			)
 		);

@@ -15,7 +15,10 @@ type AdapterConfig = {
 
 type FaunaError = errors.FaunaError;
 
-const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<Adapter> => {
+const adapter = (
+	faunaClient: Client,
+	config?: AdapterConfig
+): AdapterFunction<Adapter> => {
 	const { query } = fauna;
 	const q = query;
 
@@ -25,22 +28,30 @@ const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<A
 	return (LuciaError) => {
 		return {
 			getUser: async (userId) => {
-				const { data: userResponses } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+				const { data: userResponses } = await faunaClient.query<
+					MultiResponse<FaunaUserSchema>
+				>(
 					q.Map(
 						q.Paginate(q.Match(q.Index("user_by_id"), userId)),
 						q.Lambda("x", q.Get(q.Var("x")))
 					)
 				);
-				return userResponses.length > 0 ? convertUserResponse(userResponses[0]) : null;
+				return userResponses.length > 0
+					? convertUserResponse(userResponses[0])
+					: null;
 			},
 			getUserByProviderId: async (providerId) => {
-				const { data: userResponses } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+				const { data: userResponses } = await faunaClient.query<
+					MultiResponse<FaunaUserSchema>
+				>(
 					q.Map(
 						q.Paginate(q.Match(q.Index("user_by_providerid"), providerId)),
 						q.Lambda("x", q.Get(q.Var("x")))
 					)
 				);
-				return userResponses.length > 0 ? convertUserResponse(userResponses[0]) : null;
+				return userResponses.length > 0
+					? convertUserResponse(userResponses[0])
+					: null;
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				const { data: sessionResponses } = await faunaClient.query<
@@ -51,10 +62,13 @@ const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<A
 						q.Lambda("x", q.Get(q.Var("x")))
 					)
 				);
-				const session = sessionResponses.length > 0 ? sessionResponses[0].data : null;
+				const session =
+					sessionResponses.length > 0 ? sessionResponses[0].data : null;
 				if (!session) return null;
 
-				const { data: users } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+				const { data: users } = await faunaClient.query<
+					MultiResponse<FaunaUserSchema>
+				>(
 					q.Map(
 						q.Paginate(q.Match(q.Index("user_by_id"), session["user_id"])),
 						q.Lambda("x", q.Get(q.Var("x")))
@@ -91,7 +105,9 @@ const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<A
 			},
 			setUser: async (userId, userData) => {
 				try {
-					const response = await faunaClient.query<SingleResponse<FaunaUserSchema>>(
+					const response = await faunaClient.query<
+						SingleResponse<FaunaUserSchema>
+					>(
 						q.Create(q.Collection(userTable), {
 							data: {
 								id: userId ?? q.NewId(),
@@ -119,7 +135,9 @@ const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<A
 				);
 			},
 			setSession: async (sessionId, data) => {
-				const { data: users } = await faunaClient.query<SingleResponse<FaunaUserSchema>>(
+				const { data: users } = await faunaClient.query<
+					SingleResponse<FaunaUserSchema>
+				>(
 					q.Map(
 						q.Paginate(q.Match(q.Index("user_by_id"), data.userId)),
 						q.Lambda("x", q.Get(q.Var("x")))
@@ -151,7 +169,10 @@ const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<A
 					q.Map(
 						q.Paginate(
 							q.Union(
-								q.Map([...sessionIds], q.Lambda("x", q.Match(q.Index("session_by_id"), q.Var("x"))))
+								q.Map(
+									[...sessionIds],
+									q.Lambda("x", q.Match(q.Index("session_by_id"), q.Var("x")))
+								)
 							)
 						),
 						q.Lambda("x", q.Delete(q.Var("x")))
@@ -168,7 +189,9 @@ const adapter = (faunaClient: Client, config?: AdapterConfig): AdapterFunction<A
 			},
 			updateUser: async (userId, newData) => {
 				try {
-					const { data: userResponses } = await faunaClient.query<MultiResponse<FaunaUserSchema>>(
+					const { data: userResponses } = await faunaClient.query<
+						MultiResponse<FaunaUserSchema>
+					>(
 						q.Map(
 							q.Paginate(q.Match(q.Index("user_by_id"), userId)),
 							q.Lambda(

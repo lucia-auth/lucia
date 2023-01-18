@@ -99,7 +99,10 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 			updateUser: async (userId, newData) => {
 				const partialData = getUpdateData(newData);
 				try {
-					const userDoc = await User.findByIdAndUpdate(userId, partialData).lean();
+					const userDoc = await User.findByIdAndUpdate(
+						userId,
+						partialData
+					).lean();
 					if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 					return convertUserDoc(userDoc);
 				} catch (error) {

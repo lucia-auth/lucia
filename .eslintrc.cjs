@@ -9,7 +9,11 @@ module.exports = {
 		"no-async-promise-executor": "off"
 	},
 	parser: "@typescript-eslint/parser",
-	extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+	extends: [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"prettier"
+	],
 	plugins: ["svelte3", "@typescript-eslint"],
 	ignorePatterns: ["*.cjs"],
 	overrides: [{ files: ["*.svelte"], processor: "svelte3/svelte3" }],

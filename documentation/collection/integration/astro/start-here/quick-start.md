@@ -90,7 +90,12 @@ if (Astro.request.method === "POST") {
 	const username = form.get("username");
 	const password = form.get("password");
 	// check for empty values
-	if (username && password && typeof username === "string" && typeof password === "string") {
+	if (
+		username &&
+		password &&
+		typeof username === "string" &&
+		typeof password === "string"
+	) {
 		try {
 			const user = await auth.createUser("username", username, {
 				password,
@@ -168,7 +173,12 @@ if (Astro.request.method === "POST") {
 	const username = form.get("username");
 	const password = form.get("password");
 	// check for empty values
-	if (username && password && typeof username === "string" && typeof password === "string") {
+	if (
+		username &&
+		password &&
+		typeof username === "string" &&
+		typeof password === "string"
+	) {
 		try {
 			const user = await auth.authenticateUser("username", username, password);
 			const session = await auth.createSession(user.userId);

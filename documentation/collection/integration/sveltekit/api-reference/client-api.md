@@ -37,7 +37,10 @@ const userId = $user?.userId;
 Handles sessions in the client - must be called on the root layout for all client and load methods to work. This will listen for session updates across tabs. The provided callback will be called whenever a session changes in a different tab, and `hasSession` is `false` is the user has signed out.
 
 ```ts
-const handleSession: (pageStore: Page, onSessionUpdate?: (hasSession?: boolean) => void) => void;
+const handleSession: (
+	pageStore: Page,
+	onSessionUpdate?: (hasSession?: boolean) => void
+) => void;
 ```
 
 #### Parameter

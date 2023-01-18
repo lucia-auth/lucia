@@ -4,11 +4,18 @@ type PayloadResult = {
 
 export type PrismaClient<Schemas extends Record<string, {}>> = {
 	[K in keyof Schemas]: {
-		findUnique: (options: { where: Partial<Schemas[K]>; include?: any }) => Promise<any>;
-		findMany: (options: { where: Partial<Schemas[K]> }) => Promise<Schemas[K][]>;
+		findUnique: (options: {
+			where: Partial<Schemas[K]>;
+			include?: any;
+		}) => Promise<any>;
+		findMany: (options: {
+			where: Partial<Schemas[K]>;
+		}) => Promise<Schemas[K][]>;
 		create: (options: { data: any }) => Promise<Schemas[K]>;
 		delete: (options: { where: Partial<Schemas[K]> }) => Promise<Schemas[K]>;
-		deleteMany: (options: { where: Partial<Schemas[K]> }) => Promise<PayloadResult>;
+		deleteMany: (options: {
+			where: Partial<Schemas[K]>;
+		}) => Promise<PayloadResult>;
 		update: (options: {
 			data: Partial<Schemas[K]>;
 			where: Partial<Schemas[K]>;
@@ -30,13 +37,19 @@ export type SmartPrismaClient<Schemas extends Record<string, {}>> = {
 			: Promise<
 					| null
 					| (Schemas[K] & {
-							[L in keyof Options["include"]]: L extends keyof Schemas ? Schemas[L] : never;
+							[L in keyof Options["include"]]: L extends keyof Schemas
+								? Schemas[L]
+								: never;
 					  })
 			  >;
-		findMany: (options: { where: Partial<Schemas[K]> }) => Promise<Schemas[K][]>;
+		findMany: (options: {
+			where: Partial<Schemas[K]>;
+		}) => Promise<Schemas[K][]>;
 		create: (options: { data: any }) => Promise<Schemas[K]>;
 		delete: (options: { where: Partial<Schemas[K]> }) => Promise<PayloadResult>;
-		deleteMany: (options: { where: Partial<Schemas[K]> }) => Promise<PayloadResult>;
+		deleteMany: (options: {
+			where: Partial<Schemas[K]>;
+		}) => Promise<PayloadResult>;
 		update: (options: {
 			data: Partial<Schemas[K]>;
 			where: Partial<Schemas[K]>;

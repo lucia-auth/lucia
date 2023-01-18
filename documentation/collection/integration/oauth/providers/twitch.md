@@ -136,7 +136,9 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 ### `createUser()`
 
 ```ts
-const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<User>;
+const createUser: (
+	userAttributes: Lucia.UserAttributes | undefined
+) => Promise<User>;
 ```
 
 Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:

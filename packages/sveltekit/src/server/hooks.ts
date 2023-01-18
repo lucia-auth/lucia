@@ -23,7 +23,8 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 
 export const getRequestHandler = (event: RequestEvent) => {
 	const isLogoutPOSTRequest =
-		event.url.pathname === "/api/auth/logout" && event.request.method === "POST";
+		event.url.pathname === "/api/auth/logout" &&
+		event.request.method === "POST";
 	if (isLogoutPOSTRequest) return handleLogoutRequest;
 	return null;
 };

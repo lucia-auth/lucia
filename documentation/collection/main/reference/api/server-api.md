@@ -60,7 +60,11 @@ const auth = lucia(configs);
 Validates the user's password using the provider id. Will not work with users without a password.
 
 ```ts
-const authenticateUser: (provider: string, identifier: string, password: string) => Promise<User>;
+const authenticateUser: (
+	provider: string,
+	identifier: string,
+	password: string
+) => Promise<User>;
 ```
 
 #### Parameter
@@ -357,7 +361,9 @@ try {
 Validates an active session id, and gets the session and the user in one database call. Idle sessions are not renewed and are not deemed invalid.
 
 ```ts
-const getSessionUser: (sessionId: string) => Promise<{ user: User; session: Session }>;
+const getSessionUser: (
+	sessionId: string
+) => Promise<{ user: User; session: Session }>;
 ```
 
 #### Parameter
@@ -434,7 +440,10 @@ try {
 Get a user by the provider id (provider name, identifier).
 
 ```ts
-const getUserByProviderId: (provider: string, identifier: string) => Promise<User>;
+const getUserByProviderId: (
+	provider: string,
+	identifier: string
+) => Promise<User>;
 ```
 
 #### Parameter
@@ -607,7 +616,10 @@ try {
 Updates a user's password. This will also invalidate all sessions of the target user for security, and a new session must be created afterwards.
 
 ```ts
-const updateUserPassword: (userId: string, password: string | null) => Promise<User>;
+const updateUserPassword: (
+	userId: string,
+	password: string | null
+) => Promise<User>;
 ```
 
 #### Parameter
@@ -651,7 +663,11 @@ await auth.updateUserPassword(userId, "123456");
 Updates a user's provider id.
 
 ```ts
-const updateUserProviderId: (userId: string, provider: string, identifier: string) => Promise<User>;
+const updateUserProviderId: (
+	userId: string,
+	provider: string,
+	identifier: string
+) => Promise<User>;
 ```
 
 #### Parameter
@@ -773,7 +789,9 @@ try {
 Similar to [`validateSession()`](/reference/api/server-api#validatesession) but returns both the session and user without an additional database call.
 
 ```ts
-const validateSessionUser: (sessionId: string) => Promise<{ user: User; session: Session }>;
+const validateSessionUser: (
+	sessionId: string
+) => Promise<{ user: User; session: Session }>;
 ```
 
 #### Parameter

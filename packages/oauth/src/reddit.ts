@@ -48,10 +48,13 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 	private scope: string[];
 	private redirectUri: string;
 
-	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+	public getAuthorizationUrl = <
+		State extends string | null | undefined = undefined
+	>(
 		state?: State
 	): GetAuthorizationUrlReturnType<State> => {
-		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
+		const s =
+			state ?? (typeof state === "undefined" ? generateState() : undefined);
 		const url = `https://www.reddit.com/api/v1/authorize?${new URLSearchParams({
 			client_id: this.clientId,
 			response_type: "code",
@@ -60,7 +63,8 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 			scope: this.scope.join(" "),
 			...(s && { state: s })
 		}).toString()}`;
-		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		if (state === null)
+			return [url] as const as GetAuthorizationUrlReturnType<State>;
 		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
@@ -86,7 +90,10 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 		const redditUserId = String(redditUser.id);
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId("reddit", redditUserId)) as LuciaUser<A>;
+			existingUser = (await this.auth.getUserByProviderId(
+				"reddit",
+				redditUserId
+			)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}
@@ -178,7 +185,11 @@ interface RedditUser {
 		is_email_permission_required: true;
 		mod_awards: boolean;
 		expensive_coins_package: boolean;
-		mweb_xpromo_revamp_v2: { owner: string; variant: string; experiment_id: number };
+		mweb_xpromo_revamp_v2: {
+			owner: string;
+			variant: string;
+			experiment_id: number;
+		};
 		awards_on_streams: boolean;
 		mweb_xpromo_modal_listing_click_daily_dismissible_ios: true;
 		chat_subreddit: boolean;
@@ -199,7 +210,11 @@ interface RedditUser {
 		chat_group_rollout: boolean;
 		resized_styles_images: boolean;
 		spez_modal: boolean;
-		mweb_sharing_clipboard: { owner: string; variant: string; experiment_id: number };
+		mweb_sharing_clipboard: {
+			owner: string;
+			variant: string;
+			experiment_id: number;
+		};
 	};
 	can_edit_name: boolean;
 	verified: boolean;

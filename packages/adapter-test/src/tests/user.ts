@@ -5,7 +5,11 @@ import { Database } from "../index.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
 
-export const testUserAdapter = async (adapter: UserAdapter, db: Database, endProcess = true) => {
+export const testUserAdapter = async (
+	adapter: UserAdapter,
+	db: Database,
+	endProcess = true
+) => {
 	const clearAll = async () => {
 		await db.clearSessions();
 		await db.clearUsers();
@@ -15,7 +19,10 @@ export const testUserAdapter = async (adapter: UserAdapter, db: Database, endPro
 		const user = new User();
 		await db.insertUser(user.getSchema());
 		const returnedUser = await adapter.getUser(user.id);
-		const nonNullReturnedUser = validate.isNotNull(returnedUser, "Target was not returned");
+		const nonNullReturnedUser = validate.isNotNull(
+			returnedUser,
+			"Target was not returned"
+		);
 		validate.isTrue(
 			user.validateSchema(nonNullReturnedUser),
 			"Target was not the expected value",
@@ -42,11 +49,15 @@ export const testUserAdapter = async (adapter: UserAdapter, db: Database, endPro
 		);
 		await clearAll();
 	});
-	await test("getUserByProviderId()", "Return null if user id is invalid", async () => {
-		const user = await adapter.getUserByProviderId(INVALID_INPUT);
-		validate.isNull(user, "Null was not returned");
-		await clearAll();
-	});
+	await test(
+		"getUserByProviderId()",
+		"Return null if user id is invalid",
+		async () => {
+			const user = await adapter.getUserByProviderId(INVALID_INPUT);
+			validate.isNull(user, "Null was not returned");
+			await clearAll();
+		}
+	);
 	await test("setUser()", "Insert a user into user table", async () => {
 		const user = new User();
 		await adapter.setUser(user.id, {
@@ -65,24 +76,28 @@ export const testUserAdapter = async (adapter: UserAdapter, db: Database, endPro
 		);
 		await clearAll();
 	});
-	await test("setUser()", "Insert a user into table user with a null password", async () => {
-		const user = new User(true);
-		await adapter.setUser(user.id, {
-			providerId: user.providerId,
-			hashedPassword: user.hashedPassword,
-			attributes: {
-				username: user.username
-			}
-		});
-		const users = await db.getUsers();
-		validate.includesSomeItem(
-			users,
-			user.validateSchema,
-			"Target does not exist in user table",
-			user.getSchema()
-		);
-		await clearAll();
-	});
+	await test(
+		"setUser()",
+		"Insert a user into table user with a null password",
+		async () => {
+			const user = new User(true);
+			await adapter.setUser(user.id, {
+				providerId: user.providerId,
+				hashedPassword: user.hashedPassword,
+				attributes: {
+					username: user.username
+				}
+			});
+			const users = await db.getUsers();
+			validate.includesSomeItem(
+				users,
+				user.validateSchema,
+				"Target does not exist in user table",
+				user.getSchema()
+			);
+			await clearAll();
+		}
+	);
 	await test("setUser()", "Returns the created user", async () => {
 		const user = new User();
 		const createdUser = await adapter.setUser(user.id, {
@@ -157,24 +172,28 @@ export const testUserAdapter = async (adapter: UserAdapter, db: Database, endPro
 		);
 		await clearAll();
 	});
-	await test("updateUser()", "Update user's hashed password to null", async () => {
-		const user = new User();
-		await db.insertUser(user.getSchema());
-		await adapter.updateUser(user.id, {
-			hashedPassword: null
-		});
-		user.update({
-			hashed_password: null
-		});
-		const users = await db.getUsers();
-		validate.includesSomeItem(
-			users,
-			user.validateSchema,
-			"Target was not updated",
-			user.getSchema()
-		);
-		await clearAll();
-	});
+	await test(
+		"updateUser()",
+		"Update user's hashed password to null",
+		async () => {
+			const user = new User();
+			await db.insertUser(user.getSchema());
+			await adapter.updateUser(user.id, {
+				hashedPassword: null
+			});
+			user.update({
+				hashed_password: null
+			});
+			const users = await db.getUsers();
+			validate.includesSomeItem(
+				users,
+				user.validateSchema,
+				"Target was not updated",
+				user.getSchema()
+			);
+			await clearAll();
+		}
+	);
 	await test("updateUser()", "Update user's user data", async () => {
 		const user = new User();
 		await db.insertUser(user.getSchema());
@@ -224,16 +243,24 @@ export const testUserAdapter = async (adapter: UserAdapter, db: Database, endPro
 			throw new Error("No error was thrown");
 		}
 	);
-	await test("updateUser()", "Throw AUTH_INVALID_USER_ID if user id is invalid", async () => {
-		try {
-			await adapter.updateUser(INVALID_INPUT, {});
-			throw new Error("No error was thrown");
-		} catch (e) {
-			const error = e as Error;
-			validate.isEqual(error.message, "AUTH_INVALID_USER_ID", "Error message did not match");
+	await test(
+		"updateUser()",
+		"Throw AUTH_INVALID_USER_ID if user id is invalid",
+		async () => {
+			try {
+				await adapter.updateUser(INVALID_INPUT, {});
+				throw new Error("No error was thrown");
+			} catch (e) {
+				const error = e as Error;
+				validate.isEqual(
+					error.message,
+					"AUTH_INVALID_USER_ID",
+					"Error message did not match"
+				);
+			}
+			await clearAll();
 		}
-		await clearAll();
-	});
+	);
 	await test(
 		"updateUser()",
 		"Throw AUTH_DUPLICATE_PROVIDER_ID if user data violates unique key",

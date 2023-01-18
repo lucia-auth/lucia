@@ -20,11 +20,11 @@ const metaDataFileImports = Object.entries(
 ).map(([fileName, importer]) => {
 	return [fileName.replace("../collection/", ""), importer] as const;
 });
-const markdownFileImports = Object.entries(import.meta.glob<MDFile>("../collection/**/*.md")).map(
-	([fileName, importer]) => {
-		return [fileName.replace("../collection/", ""), importer] as const;
-	}
-);
+const markdownFileImports = Object.entries(
+	import.meta.glob<MDFile>("../collection/**/*.md")
+).map(([fileName, importer]) => {
+	return [fileName.replace("../collection/", ""), importer] as const;
+});
 
 type Directory = {
 	metaData: () => Promise<MetaData>;
@@ -46,7 +46,10 @@ const fileSystemMap = markdownFileImports.reduce(
 						document: {},
 						metaData:
 							metaDataFileImports.find(([filePath]) => {
-								return filePath === `${pathSections.slice(0, i + 1).join("/")}/_.json`;
+								return (
+									filePath ===
+									`${pathSections.slice(0, i + 1).join("/")}/_.json`
+								);
 							})?.[1] ??
 							(async () => {
 								return {};
@@ -69,7 +72,9 @@ const fileSystemMap = markdownFileImports.reduce(
 
 export class DB<Config extends DBConfig> {
 	private config: Config;
-	public collection = <Id extends Config[number]["id"][number]>(collectionId: Id) => {
+	public collection = <Id extends Config[number]["id"][number]>(
+		collectionId: Id
+	) => {
 		type Target = {
 			[K in Config[number] as K["id"][number]]: K;
 		}[Id];
@@ -98,7 +103,10 @@ const transformDocumentToNode = async (
 		}, config as CollectionConfig | null)?.docSchema ?? {};
 	const id = path.at(-1);
 	if (id === undefined) throw new Error();
-	const metaData = validateObjectSchema(metaDataSchema, resolvedFile.frontmatter);
+	const metaData = validateObjectSchema(
+		metaDataSchema,
+		resolvedFile.frontmatter
+	);
 	return {
 		_type: "document",
 		_id: id,
@@ -107,24 +115,36 @@ const transformDocumentToNode = async (
 		_Content: resolvedFile.Content,
 		_getHeadings: resolvedFile.getHeadings,
 		_baseCollectionId: path[0],
-		...Object.fromEntries(Object.entries(metaData).filter(([key]) => !key.startsWith("_")))
+		...Object.fromEntries(
+			Object.entries(metaData).filter(([key]) => !key.startsWith("_"))
+		)
 	};
 };
 
-class Collection<Config extends CollectionConfig, PathIds extends Readonly<string[]>> {
+class Collection<
+	Config extends CollectionConfig,
+	PathIds extends Readonly<string[]>
+> {
 	private config: Config;
 	private pathIds: PathIds;
-	public collection = <Id extends Config["_"] extends {} ? Config["_"]["id"][number] : never>(
+	public collection = <
+		Id extends Config["_"] extends {} ? Config["_"]["id"][number] : never
+	>(
 		collectionId: Id
 	) => {
-		if (!this.config._) throw new Error(`Collection not found: ${collectionId}`);
+		if (!this.config._)
+			throw new Error(`Collection not found: ${collectionId}`);
 		return new Collection(
 			this.config._ as Exclude<Config["_"], undefined>,
 			[...this.pathIds, collectionId] as [...PathIds, Id]
 		);
 	};
 	public document = <Id extends string>(documentId: Id) => {
-		return new Document(this.config, [...this.pathIds, documentId] as const, documentId);
+		return new Document(
+			this.config,
+			[...this.pathIds, documentId] as const,
+			documentId
+		);
 	};
 	public get = async () => {
 		const targetDirectory = this.pathIds.reduce((prev, curr) => {
@@ -153,13 +173,20 @@ class Collection<Config extends CollectionConfig, PathIds extends Readonly<strin
 					transformDocumentToNode(this.config, [...path, key], value)
 				)
 			);
-			const sortFunction = (a: CollectionNode | DocumentNode, b: CollectionNode | DocumentNode) => {
-				if (a._order > -1 && b._order > -1 && a._order !== b._order) return a._order - b._order;
+			const sortFunction = (
+				a: CollectionNode | DocumentNode,
+				b: CollectionNode | DocumentNode
+			) => {
+				if (a._order > -1 && b._order > -1 && a._order !== b._order)
+					return a._order - b._order;
 				return a._id.localeCompare(b._id);
 			};
 			collections.sort(sortFunction);
 			documents.sort(sortFunction);
-			const metaData = validateObjectSchema(metaDataSchema, resolvedMetaData?.default ?? {});
+			const metaData = validateObjectSchema(
+				metaDataSchema,
+				resolvedMetaData?.default ?? {}
+			);
 			return {
 				_type: "collection",
 				_id: id,
@@ -168,7 +195,9 @@ class Collection<Config extends CollectionConfig, PathIds extends Readonly<strin
 				_collections: collections,
 				_baseCollectionId: path[0],
 				_documents: documents,
-				...Object.fromEntries(Object.entries(metaData).filter(([key]) => !key.startsWith("_")))
+				...Object.fromEntries(
+					Object.entries(metaData).filter(([key]) => !key.startsWith("_"))
+				)
 			};
 		};
 		return (await transformDirectoryToNode(

@@ -12,8 +12,13 @@ export const handleApiRoutes = (auth: Auth) => {
 				user
 			});
 		}
-		if ((req.url ?? "").startsWith("/api/auth/logout") && req.method === "POST") {
-			const sessionId = auth.validateRequestHeaders(convertNextRequestToStandardRequest(req));
+		if (
+			(req.url ?? "").startsWith("/api/auth/logout") &&
+			req.method === "POST"
+		) {
+			const sessionId = auth.validateRequestHeaders(
+				convertNextRequestToStandardRequest(req)
+			);
 			if (!sessionId) return res.status(200).json({});
 			try {
 				await auth.invalidateSession(sessionId);

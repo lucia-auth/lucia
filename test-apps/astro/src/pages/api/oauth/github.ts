@@ -7,9 +7,11 @@ export const get: APIRoute = async ({ cookies, url, request }) => {
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
 	const storedState = cookies.get("oauth_state").value;
-	if (storedState !== state || !code || !state) throw new Response(null, { status: 401 });
+	if (storedState !== state || !code || !state)
+		throw new Response(null, { status: 401 });
 	try {
-		const { existingUser, providerUser, createUser } = await githubAuth.validateCallback(code);
+		const { existingUser, providerUser, createUser } =
+			await githubAuth.validateCallback(code);
 		const user =
 			existingUser ??
 			(await createUser({

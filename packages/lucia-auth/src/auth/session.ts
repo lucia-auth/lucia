@@ -1,6 +1,8 @@
 import { Session, SessionSchema } from "../types.js";
 
-export const getSessionFromDatabaseData = (databaseSession: SessionSchema): Session | null => {
+export const getSessionFromDatabaseData = (
+	databaseSession: SessionSchema
+): Session | null => {
 	const currentTime = new Date().getTime();
 	// invalid session
 	if (currentTime > databaseSession.idle_expires) return null;

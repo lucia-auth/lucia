@@ -14,10 +14,15 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	const code = req.query.code;
 	const state = req.query.state;
 	const { oauth_state: storedState } = cookie.parse(req.headers.cookie || "");
-	if (typeof code !== "string" || typeof code !== "string" || storedState !== state)
+	if (
+		typeof code !== "string" ||
+		typeof code !== "string" ||
+		storedState !== state
+	)
 		return res.status(400).end();
 	try {
-		const { existingUser, providerUser, createUser } = await githubAuth.validateCallback(code);
+		const { existingUser, providerUser, createUser } =
+			await githubAuth.validateCallback(code);
 		const user =
 			existingUser ??
 			(await createUser({

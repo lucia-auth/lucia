@@ -28,13 +28,18 @@ export type TransformDocumentToDocumentResult<
 	  }
 	: {});
 
-export type TransformConfigToResult<C extends CollectionConfig, BaseCollectionId extends string> = {
+export type TransformConfigToResult<
+	C extends CollectionConfig,
+	BaseCollectionId extends string
+> = {
 	_id: keyof C["id"] extends "*" ? string : C["id"][number];
 	_type: "collection";
 	_path: string;
 	_order: number;
 	_baseCollectionId: BaseCollectionId;
-	_collections: C["_"] extends {} ? TransformConfigToResult<C["_"], BaseCollectionId>[] : [];
+	_collections: C["_"] extends {}
+		? TransformConfigToResult<C["_"], BaseCollectionId>[]
+		: [];
 	_documents: TransformDocumentToDocumentResult<C, string, BaseCollectionId>[];
 } & (C["schema"] extends {}
 	? {
@@ -42,7 +47,10 @@ export type TransformConfigToResult<C extends CollectionConfig, BaseCollectionId
 	  }
 	: {});
 
-type QueryCollection<C extends CollectionConfig, BaseCollectionId extends string> = {
+type QueryCollection<
+	C extends CollectionConfig,
+	BaseCollectionId extends string
+> = {
 	"*": {
 		__type: TransformConfigToResult<C, BaseCollectionId>;
 	} & (C["_"] extends {} ? QueryCollection<C["_"], BaseCollectionId> : {});
@@ -55,7 +63,9 @@ export type Query<C extends DBConfig> = {
 } & {
 	"*": {
 		__type: TransformConfigToResult<C[number], C[number]["id"][number]>;
-	} & (C[number]["_"] extends {} ? QueryCollection<C[number]["_"], C[number]["id"][number]> : {});
+	} & (C[number]["_"] extends {}
+		? QueryCollection<C[number]["_"], C[number]["id"][number]>
+		: {});
 };
 
 export type CollectionQuery<

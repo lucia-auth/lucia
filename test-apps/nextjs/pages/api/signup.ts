@@ -10,8 +10,10 @@ type Data = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-	if (req.method !== "POST") return res.status(404).json({ error: "Not found" });
-	const { username, password } = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+	if (req.method !== "POST")
+		return res.status(404).json({ error: "Not found" });
+	const { username, password } =
+		typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 	if (!username || !password) {
 		return res.status(200).json({
 			error: "Invalid input"
@@ -38,7 +40,10 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 				error: "Username already in use"
 			});
 		}
-		if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
+		if (
+			error instanceof LuciaError &&
+			error.message === "AUTH_DUPLICATE_PROVIDER_ID"
+		) {
 			return res.status(200).json({
 				error: "Username already in use"
 			});

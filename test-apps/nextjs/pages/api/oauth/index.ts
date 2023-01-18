@@ -19,7 +19,10 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			httpOnly: true,
 			secure: process.env.NODE_ENV !== "development"
 		});
-		return res.status(302).setHeader("set-cookie", oauthStateCookie).redirect(url);
+		return res
+			.status(302)
+			.setHeader("set-cookie", oauthStateCookie)
+			.redirect(url);
 	}
 	return res.status(400).end();
 };

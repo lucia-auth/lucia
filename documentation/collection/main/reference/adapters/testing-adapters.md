@@ -71,7 +71,10 @@ const testAdapter: (adapter: Adapter, db: Database) => Promise<void>;
 `testAdapter()` but for adapters only for `session` table.
 
 ```ts
-const testSessionAdapter: (adapter: SessionAdapter, db: Database) => Promise<void>;
+const testSessionAdapter: (
+	adapter: SessionAdapter,
+	db: Database
+) => Promise<void>;
 ```
 
 ### `testSessionAdapterErrors`
@@ -79,7 +82,10 @@ const testSessionAdapter: (adapter: SessionAdapter, db: Database) => Promise<voi
 `testAdapterErrors()` but for adapters only for `session` table.
 
 ```ts
-const testSessionAdapterErrors: (adapter: SessionAdapter, db: Database) => Promise<void>;
+const testSessionAdapterErrors: (
+	adapter: SessionAdapter,
+	db: Database
+) => Promise<void>;
 ```
 
 ### `testUserAdapter()`
@@ -95,7 +101,10 @@ const testUserAdapter: (adapter: UserAdapter, db: Database) => Promise<void>;
 `testAdapterErrors()` but for adapters only for `user` table.
 
 ```ts
-const testUserAdapterErrors: (adapter: UserAdapter, db: Database) => Promise<void>;
+const testUserAdapterErrors: (
+	adapter: UserAdapter,
+	db: Database
+) => Promise<void>;
 ```
 
 ## Types

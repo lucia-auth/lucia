@@ -53,7 +53,10 @@ export const db: Database = {
 		await dbKysely.insertInto("session").values(session).execute();
 	},
 	clearUsers: async () => {
-		await dbKysely.deleteFrom("user").where("username", "like", "user%").execute();
+		await dbKysely
+			.deleteFrom("user")
+			.where("username", "like", "user%")
+			.execute();
 	},
 	clearSessions: async () => {
 		await dbKysely.deleteFrom("session").where("id", ">=", "0").execute();

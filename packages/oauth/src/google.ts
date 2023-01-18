@@ -19,7 +19,10 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 		this.clientId = configs.clientId;
 		this.clientSecret = configs.clientSecret;
 		this.redirectUri = configs.redirectUri;
-		this.scope = ["https://www.googleapis.com/auth/userinfo.profile", ...(configs.scope ?? [])];
+		this.scope = [
+			"https://www.googleapis.com/auth/userinfo.profile",
+			...(configs.scope ?? [])
+		];
 	}
 	private auth: A;
 	private clientId: string;
@@ -27,18 +30,24 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 	private scope: string[];
 	private redirectUri: string;
 
-	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+	public getAuthorizationUrl = <
+		State extends string | null | undefined = undefined
+	>(
 		state?: State
 	): GetAuthorizationUrlReturnType<State> => {
-		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
-		const url = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
-			client_id: this.clientId,
-			redirect_uri: this.redirectUri,
-			scope: this.scope.join(" "),
-			response_type: "code",
-			...(s && { state: s })
-		}).toString()}`;
-		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		const s =
+			state ?? (typeof state === "undefined" ? generateState() : undefined);
+		const url = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams(
+			{
+				client_id: this.clientId,
+				redirect_uri: this.redirectUri,
+				scope: this.scope.join(" "),
+				response_type: "code",
+				...(s && { state: s })
+			}
+		).toString()}`;
+		if (state === null)
+			return [url] as const as GetAuthorizationUrlReturnType<State>;
 		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
@@ -63,14 +72,20 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 			refresh_token?: string;
 			expires_in: number;
 		};
-		const googleUser = (await get("https://www.googleapis.com/oauth2/v3/userinfo", {
-			env: this.auth.ENV,
-			bearerToken: accessToken
-		})) as GoogleUser;
+		const googleUser = (await get(
+			"https://www.googleapis.com/oauth2/v3/userinfo",
+			{
+				env: this.auth.ENV,
+				bearerToken: accessToken
+			}
+		)) as GoogleUser;
 		const googleUserId = String(googleUser.sub);
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId("google", googleUserId)) as LuciaUser<A>;
+			existingUser = (await this.auth.getUserByProviderId(
+				"google",
+				googleUserId
+			)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}

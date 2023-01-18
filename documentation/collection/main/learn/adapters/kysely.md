@@ -44,7 +44,10 @@ yarn add @lucia-auth/adapter-kysely
 ## Usage
 
 ```ts
-import { default as kysely, type KyselyLuciaDatabase } from "@lucia-auth/adapter-kysely";
+import {
+	default as kysely,
+	type KyselyLuciaDatabase
+} from "@lucia-auth/adapter-kysely";
 import { Kysely } from "kysely";
 
 const db = new Kysely<KyselyLuciaDatabase>(options);
@@ -89,7 +92,10 @@ interface Database {
 You can also import the interfaces from `adapter-kysely` and extend them.
 
 ```ts
-import type { KyselyLuciaDatabase, KyselyUser } from "@lucia-auth/adapter-kysely";
+import type {
+	KyselyLuciaDatabase,
+	KyselyUser
+} from "@lucia-auth/adapter-kysely";
 
 // Add a column for username in your user table
 interface User extends KyselyUser {

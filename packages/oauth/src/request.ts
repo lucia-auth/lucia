@@ -17,7 +17,11 @@ export const get = async (url: string, options: FetchOptions) => {
 	return sendRequest(url, "GET", options);
 };
 
-export const sendRequest = async (url: string, method: "GET" | "POST", options: FetchOptions) => {
+export const sendRequest = async (
+	url: string,
+	method: "GET" | "POST",
+	options: FetchOptions
+) => {
 	const response = await fetch(url, {
 		...(options?.body && { body: JSON.stringify(options.body) }),
 		headers: {

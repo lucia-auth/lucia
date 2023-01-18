@@ -24,11 +24,14 @@ export default (props: { headings: MarkdownHeading[] }) => {
 										<li>
 											<a
 												href={`#${hash}`}
-												class={dynamicClassName("hover:text-black dark:hover:text-zinc-200", {
-													"my-1.5": heading.depth === 2,
-													"ml-4": heading.depth === 3,
-													"my-1": heading.depth > 2
-												})}
+												class={dynamicClassName(
+													"hover:text-black dark:hover:text-zinc-200",
+													{
+														"my-1.5": heading.depth === 2,
+														"ml-4": heading.depth === 3,
+														"my-1": heading.depth > 2
+													}
+												)}
 											>
 												{heading.text}
 											</a>

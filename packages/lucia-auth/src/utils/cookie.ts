@@ -64,27 +64,36 @@ export interface CookieAttributes {
 
 type CookieSerializeOptions = CookieAttributes;
 
-export const serializeCookie = (name: string, val: string, options?: CookieSerializeOptions) => {
+export const serializeCookie = (
+	name: string,
+	val: string,
+	options?: CookieSerializeOptions
+) => {
 	const opt = options ?? {};
 	const enc = opt.encode ?? encode;
-	if (!fieldContentRegExp.test(name)) throw new TypeError("argument name is invalid");
+	if (!fieldContentRegExp.test(name))
+		throw new TypeError("argument name is invalid");
 
 	const value = enc(val);
-	if (value && !fieldContentRegExp.test(value)) throw new TypeError("argument val is invalid");
+	if (value && !fieldContentRegExp.test(value))
+		throw new TypeError("argument val is invalid");
 
 	let str = name + "=" + value;
 
 	if (null != opt.maxAge) {
 		const maxAge = opt.maxAge - 0;
-		if (isNaN(maxAge) || !isFinite(maxAge)) throw new TypeError("option maxAge is invalid");
+		if (isNaN(maxAge) || !isFinite(maxAge))
+			throw new TypeError("option maxAge is invalid");
 		str += "; Max-Age=" + Math.floor(maxAge);
 	}
 	if (opt.domain) {
-		if (!fieldContentRegExp.test(opt.domain)) throw new TypeError("option domain is invalid");
+		if (!fieldContentRegExp.test(opt.domain))
+			throw new TypeError("option domain is invalid");
 		str += "; Domain=" + opt.domain;
 	}
 	if (opt.path) {
-		if (!fieldContentRegExp.test(opt.path)) throw new TypeError("option path is invalid");
+		if (!fieldContentRegExp.test(opt.path))
+			throw new TypeError("option path is invalid");
 		str += "; Path=" + opt.path;
 	}
 	if (opt.expires) {
@@ -100,7 +109,10 @@ export const serializeCookie = (name: string, val: string, options?: CookieSeria
 		str += "; Secure";
 	}
 	if (opt.priority) {
-		const priority = typeof opt.priority === "string" ? opt.priority.toLowerCase() : opt.priority;
+		const priority =
+			typeof opt.priority === "string"
+				? opt.priority.toLowerCase()
+				: opt.priority;
 		switch (priority) {
 			case "low":
 				str += "; Priority=Low";
@@ -116,7 +128,10 @@ export const serializeCookie = (name: string, val: string, options?: CookieSeria
 		}
 	}
 	if (opt.sameSite) {
-		const sameSite = typeof opt.sameSite === "string" ? opt.sameSite.toLowerCase() : opt.sameSite;
+		const sameSite =
+			typeof opt.sameSite === "string"
+				? opt.sameSite.toLowerCase()
+				: opt.sameSite;
 		switch (sameSite) {
 			case true:
 				str += "; SameSite=Strict";

@@ -24,7 +24,9 @@ export type FaunaSessionSchema = {
 	idle_expires: number;
 };
 
-export const convertUserResponse = (res: SingleResponse<FaunaUserSchema>): UserSchema => {
+export const convertUserResponse = (
+	res: SingleResponse<FaunaUserSchema>
+): UserSchema => {
 	const { id, hashed_password, provider_id, ...attributes } = res.data;
 	return {
 		id,
@@ -34,7 +36,9 @@ export const convertUserResponse = (res: SingleResponse<FaunaUserSchema>): UserS
 	};
 };
 
-export const convertMultipleUsersResponse = (res: MultiResponse<FaunaUserSchema>): UserSchema[] => {
+export const convertMultipleUsersResponse = (
+	res: MultiResponse<FaunaUserSchema>
+): UserSchema[] => {
 	const data: UserSchema[] = [];
 	res.data.forEach((row) => {
 		const { id, hashed_password, provider_id, ...attributes } = row.data;

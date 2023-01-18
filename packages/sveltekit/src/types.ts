@@ -5,7 +5,9 @@ export type RequestEvent = {
 	request: Request;
 	locals: {
 		validate: () => Promise<Session | null>;
-		validateUser: () => Promise<{ session: Session; user: User } | { session: null; user: null }>;
+		validateUser: () => Promise<
+			{ session: Session; user: User } | { session: null; user: null }
+		>;
 		setSession: (session: Session | null) => void;
 	};
 	url: URL;

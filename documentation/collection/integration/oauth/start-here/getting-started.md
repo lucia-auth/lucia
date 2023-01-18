@@ -79,7 +79,8 @@ export const handleGetRequests = async (request: Request) => {
 	// validate state
 	if (state !== storedState) throw new Error(); // invalid state
 
-	const { existingUser, providerUser, createUser } = await providerAuth.validateCallback(code);
+	const { existingUser, providerUser, createUser } =
+		await providerAuth.validateCallback(code);
 	const user =
 		existingUser ||
 		(await createUser({

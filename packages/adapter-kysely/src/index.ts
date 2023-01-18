@@ -2,7 +2,11 @@ import { getUpdateData } from "lucia-auth/adapter";
 import type { Kysely } from "kysely";
 import { convertSession } from "./utils.js";
 import type { Adapter, AdapterFunction, UserSchema } from "lucia-auth";
-import type { KyselyLuciaDatabase, KyselySession, KyselyUser } from "./types.js";
+import type {
+	KyselyLuciaDatabase,
+	KyselySession,
+	KyselyUser
+} from "./types.js";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import type { QueryError as MySQLError } from "mysql2";
 export * from "./types.js";
@@ -122,13 +126,19 @@ const adapter =
 				} catch (e) {
 					if (dialect === "pg") {
 						const error = e as Partial<PgDatabaseError>;
-						if (error.code === "23505" && error.detail?.includes("Key (provider_id)")) {
+						if (
+							error.code === "23505" &&
+							error.detail?.includes("Key (provider_id)")
+						) {
 							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 						}
 					}
 					if (dialect === "mysql2") {
 						const error = e as Partial<MySQLError>;
-						if (error.code === "ER_DUP_ENTRY" && error.message?.includes(".provider_id")) {
+						if (
+							error.code === "ER_DUP_ENTRY" &&
+							error.message?.includes(".provider_id")
+						) {
 							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 						}
 					}
@@ -161,7 +171,10 @@ const adapter =
 				} catch (e) {
 					if (dialect === "pg") {
 						const error = e as Partial<PgDatabaseError>;
-						if (error.code === "23503" && error.detail?.includes("Key (user_id)")) {
+						if (
+							error.code === "23503" &&
+							error.detail?.includes("Key (user_id)")
+						) {
 							throw new LuciaError("AUTH_INVALID_USER_ID");
 						}
 						if (error.code === "23505" && error.detail?.includes("Key (id)")) {
@@ -170,10 +183,16 @@ const adapter =
 					}
 					if (dialect === "mysql2") {
 						const error = e as Partial<MySQLError>;
-						if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
+						if (
+							error.errno === 1452 &&
+							error.message?.includes("(`user_id`)")
+						) {
 							throw new LuciaError("AUTH_INVALID_USER_ID");
 						}
-						if (error.code === "ER_DUP_ENTRY" && error.message?.includes("PRIMARY")) {
+						if (
+							error.code === "ER_DUP_ENTRY" &&
+							error.message?.includes("PRIMARY")
+						) {
 							throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 						}
 					}
@@ -187,7 +206,10 @@ const adapter =
 								.executeTakeFirst();
 							if (!result) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
 						}
-						if (error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" && error.message?.includes(".id")) {
+						if (
+							error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
+							error.message?.includes(".id")
+						) {
 							throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 						}
 					}
@@ -195,10 +217,16 @@ const adapter =
 				}
 			},
 			deleteSession: async (...sessionIds) => {
-				await kysely.deleteFrom("session").where("id", "in", sessionIds).execute();
+				await kysely
+					.deleteFrom("session")
+					.where("id", "in", sessionIds)
+					.execute();
 			},
 			deleteSessionsByUserId: async (userId) => {
-				await kysely.deleteFrom("session").where("user_id", "=", userId).execute();
+				await kysely
+					.deleteFrom("session")
+					.where("user_id", "=", userId)
+					.execute();
 			},
 			updateUser: async (userId, newData) => {
 				const partialData = getUpdateData(newData);
@@ -237,13 +265,19 @@ const adapter =
 				} catch (e) {
 					if (dialect === "pg") {
 						const error = e as Partial<PgDatabaseError>;
-						if (error.code === "23505" && error.detail?.includes("Key (provider_id)")) {
+						if (
+							error.code === "23505" &&
+							error.detail?.includes("Key (provider_id)")
+						) {
 							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 						}
 					}
 					if (dialect === "mysql2") {
 						const error = e as Partial<MySQLError>;
-						if (error.code === "ER_DUP_ENTRY" && error.message?.includes(".provider_id")) {
+						if (
+							error.code === "ER_DUP_ENTRY" &&
+							error.message?.includes(".provider_id")
+						) {
 							throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 						}
 					}

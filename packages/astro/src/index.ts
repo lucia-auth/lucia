@@ -55,7 +55,10 @@ export class AuthRequest<A extends Auth> {
 }
 
 export const handleLogoutRequests = (auth: Auth) => {
-	const post = async (context: { request: Request; cookies: AstroGlobal["cookies"] }) => {
+	const post = async (context: {
+		request: Request;
+		cookies: AstroGlobal["cookies"];
+	}) => {
 		const authRequest = new AuthRequest(auth, context);
 		const sessionid = auth.validateRequestHeaders(context.request);
 		if (!sessionid) return new Response(null);

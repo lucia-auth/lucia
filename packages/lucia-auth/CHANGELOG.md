@@ -2,7 +2,7 @@
 
 ## 0.4.3
 
-- Expose `ENV` 
+- Expose `ENV`
 
 ## 0.4.2
 

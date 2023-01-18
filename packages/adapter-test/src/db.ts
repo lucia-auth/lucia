@@ -35,7 +35,8 @@ export class User {
 		return false;
 	};
 	public update = (fields: Partial<UserSchema>) => {
-		if (fields.hashed_password !== undefined) this.hashedPassword = fields.hashed_password;
+		if (fields.hashed_password !== undefined)
+			this.hashedPassword = fields.hashed_password;
 		if (fields.id !== undefined) this.id = fields.id;
 		if (fields.provider_id !== undefined) this.providerId = fields.provider_id;
 		if (fields.username !== undefined) this.username = fields.username;

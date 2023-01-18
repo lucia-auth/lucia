@@ -9,7 +9,11 @@ export type CookieOption = {
 	domain?: string;
 };
 
-export const createSessionCookie = (session: Session | null, env: Env, options: CookieOption) => {
+export const createSessionCookie = (
+	session: Session | null,
+	env: Env,
+	options: CookieOption
+) => {
 	return new Cookie(SESSION_COOKIE_NAME, session?.sessionId ?? "", {
 		...options,
 		httpOnly: true,

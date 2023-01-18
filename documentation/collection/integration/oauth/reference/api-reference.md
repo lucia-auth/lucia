@@ -9,7 +9,9 @@ Please refer to the provider's page for provider-specific documentation.
 
 ```ts
 interface OAuthProvider {
-	getAuthorizationUrl: (state?: string | null) => [url: string, state: string | undefined];
+	getAuthorizationUrl: (
+		state?: string | null
+	) => [url: string, state: string | undefined];
 	validateCallback: (code: string) => Promise<ProviderSession>;
 }
 ```
@@ -84,7 +86,9 @@ interface ProviderSession {
 Creates a new user for the authorized session by calling [Lucia.createUser()](/reference/api/server-api#createuser) using the provided user attributes. Refer to the provider's doc for the provider and identifier used.
 
 ```ts
-const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<User>;
+const createUser: (
+	userAttributes: Lucia.UserAttributes | undefined
+) => Promise<User>;
 ```
 
 #### Parameter

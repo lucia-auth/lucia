@@ -1,6 +1,11 @@
 import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
 import { getUpdateData } from "lucia-auth/adapter";
-import type { Adapter, UserSchema, SessionSchema, AdapterFunction } from "lucia-auth";
+import type {
+	Adapter,
+	UserSchema,
+	SessionSchema,
+	AdapterFunction
+} from "lucia-auth";
 
 type PostgrestError = {
 	details: string | null;
@@ -150,7 +155,10 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					) {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
-					if (error.details?.includes("(id)") && error.details.includes("already exists.")) {
+					if (
+						error.details?.includes("(id)") &&
+						error.details.includes("already exists.")
+					) {
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 					}
 					throw error;

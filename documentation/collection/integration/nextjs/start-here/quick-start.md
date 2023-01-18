@@ -122,9 +122,15 @@ import { auth } from "../../lib/lucia";
 import { AuthRequest } from "@lucia-auth/nextjs";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST") return res.status(404).json({ error: "Not found" });
+	if (req.method !== "POST")
+		return res.status(404).json({ error: "Not found" });
 	const { username, password } = JSON.parse(req.body);
-	if (!username || !password || typeof username !== "string" || typeof password !== "string")
+	if (
+		!username ||
+		!password ||
+		typeof username !== "string" ||
+		typeof password !== "string"
+	)
 		return res.status(400).json({});
 	try {
 		const user = await auth.createUser("username", username, {
@@ -252,9 +258,15 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { auth } from "../../lib/lucia";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST") return res.status(404).json({ error: "Not found" });
+	if (req.method !== "POST")
+		return res.status(404).json({ error: "Not found" });
 	const { username, password } = JSON.parse(req.body);
-	if (!username || !password || typeof username !== "string" || typeof password !== "string")
+	if (
+		!username ||
+		!password ||
+		typeof username !== "string" ||
+		typeof password !== "string"
+	)
 		return res.status(400).json({});
 	try {
 		const authRequest = new AuthRequest(auth, req, res);
@@ -348,11 +360,15 @@ export const getServerSideProps = async (
 	};
 };
 
-const Index = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Index = (
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
 	return (
 		<>
 			<h1>Profile</h1>
-			<p>This page is protected and can only be accessed by authenticated users.</p>
+			<p>
+				This page is protected and can only be accessed by authenticated users.
+			</p>
 			<div>
 				<p>User id: {props.user?.userId}</p>
 				<p>Username: {props.user?.username}</p>
@@ -388,12 +404,16 @@ import type { User } from "lucia-auth";
 
 // ...
 
-const Index = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Index = (
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
 	const router = useRouter();
 	return (
 		<>
 			<h1>Profile</h1>
-			<p>This page is protected and can only be accessed by authenticated users.</p>
+			<p>
+				This page is protected and can only be accessed by authenticated users.
+			</p>
 			<div>
 				<p>User id: {props.user?.userId}</p>
 				<p>Username: {props.user?.username}</p>

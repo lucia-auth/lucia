@@ -3,7 +3,8 @@
 	"version": "0.0.1",
 	"description": "monorepo for lucia-auth",
 	"scripts": {
-		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../astro && pnpm build && cd ../nextjs && pnpm build && cd ../sveltekit && pnpm build && cd ../oauth && pnpm build && cd ../adapter-prisma && pnpm build && pnpm i"
+		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../astro && pnpm build && cd ../nextjs && pnpm build && cd ../sveltekit && pnpm build && cd ../oauth && pnpm build && cd ../adapter-prisma && pnpm build && pnpm i",
+		"format": "pnpx prettier --write ."
 	},
 	"repository": {
 		"type": "git",

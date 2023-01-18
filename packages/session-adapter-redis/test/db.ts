@@ -31,7 +31,9 @@ export const db: Database = {
 	},
 	getSessions: async () => {
 		const sessionIds = await sessionInstance.keys("*");
-		const sessionData = await Promise.all(sessionIds.map((id) => sessionInstance.get(id)));
+		const sessionData = await Promise.all(
+			sessionIds.map((id) => sessionInstance.get(id))
+		);
 		const sessions = sessionData
 			.filter((val): val is string => val !== null)
 			.map((data) => JSON.parse(data) as SessionSchema);
@@ -46,6 +48,9 @@ export const db: Database = {
 	},
 	clearUsers: async () => {},
 	clearSessions: async () => {
-		await Promise.all([sessionInstance.flushAll(), userSessionInstance.flushAll()]);
+		await Promise.all([
+			sessionInstance.flushAll(),
+			userSessionInstance.flushAll()
+		]);
 	}
 };

@@ -30,11 +30,15 @@ export const getServerSideProps = async (
 	};
 };
 
-const Index = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Index = (
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
 	const router = useRouter();
 	return (
 		<>
-			<p>This page is protected and can only be accessed by authenticated users.</p>
+			<p>
+				This page is protected and can only be accessed by authenticated users.
+			</p>
 			<pre className="code">{JSON.stringify(props.user, null, 2)}</pre>
 
 			<button

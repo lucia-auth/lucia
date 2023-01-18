@@ -8,7 +8,9 @@ export interface OAuthProvider<A extends Auth> {
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;
-	getAuthorizationUrl: (state?: string | null) => [url: string, state: string] | [url: string];
+	getAuthorizationUrl: (
+		state?: string | null
+	) => [url: string, state: string] | [url: string];
 }
 
 export interface OAuthConfig {
@@ -27,11 +29,17 @@ export const generateState = () => {
 	return generateRandomString(43);
 };
 
-export type GetAuthorizationUrlReturnType<T> = T extends null ? [string] : [string, string];
+export type GetAuthorizationUrlReturnType<T> = T extends null
+	? [string]
+	: [string, string];
 export type LuciaUser<A extends Auth> = Awaited<ReturnType<A["getUser"]>>;
-export type CreateUser<A extends Auth> = Parameters<A["createUser"]>[2] extends {}
+export type CreateUser<A extends Auth> = Parameters<
+	A["createUser"]
+>[2] extends {}
 	? (userAttributes: CreateUserAttributes<A>) => Promise<LuciaUser<A>>
 	: () => Promise<LuciaUser<A>>;
-type CreateUserAttributes<A extends Auth> = Parameters<A["createUser"]>[2] extends {}
+type CreateUserAttributes<A extends Auth> = Parameters<
+	A["createUser"]
+>[2] extends {}
 	? Parameters<A["createUser"]>[2]["attributes"]
 	: undefined;

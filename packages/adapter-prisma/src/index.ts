@@ -1,4 +1,9 @@
-import type { Adapter, AdapterFunction, SessionSchema, UserSchema } from "lucia-auth";
+import type {
+	Adapter,
+	AdapterFunction,
+	SessionSchema,
+	UserSchema
+} from "lucia-auth";
 import { getUpdateData } from "lucia-auth/adapter";
 import { convertSession } from "./utils.js";
 import { PrismaClient, SmartPrismaClient } from "./prisma.js";
@@ -92,7 +97,10 @@ const adapter =
 					return createdUser;
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2002" && error.message?.includes("provider_id")) {
+					if (
+						error.code === "P2002" &&
+						error.message?.includes("provider_id")
+					) {
 						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 					}
 					throw error;
@@ -117,7 +125,10 @@ const adapter =
 					});
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2003" && error.message?.includes("session_user_id_fkey (index)"))
+					if (
+						error.code === "P2003" &&
+						error.message?.includes("session_user_id_fkey (index)")
+					)
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					if (error.code === "P2002" && error.message?.includes("id"))
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
@@ -150,8 +161,12 @@ const adapter =
 					return data;
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2025") throw new LuciaError("AUTH_INVALID_USER_ID");
-					if (error.code === "P2002" && error.message?.includes("provider_id")) {
+					if (error.code === "P2025")
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					if (
+						error.code === "P2002" &&
+						error.message?.includes("provider_id")
+					) {
 						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
 					}
 					throw error;

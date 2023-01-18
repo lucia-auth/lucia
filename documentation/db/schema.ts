@@ -26,7 +26,7 @@ export const Number$ = () => {
 };
 
 export const Optional$ = <S extends Schema<any[]>>(schema: S) => {
-	return new Schema<(typeof schema["typeValue"][0] | undefined)[]>(
+	return new Schema<((typeof schema)["typeValue"][0] | undefined)[]>(
 		[schema.typeValue[0], undefined],
 		(input: any) => {
 			if (typeof input === "undefined") return;
@@ -35,7 +35,9 @@ export const Optional$ = <S extends Schema<any[]>>(schema: S) => {
 	);
 };
 
-export const validateObjectSchema = <SchemaObject extends Record<string, Schema<any>>>(
+export const validateObjectSchema = <
+	SchemaObject extends Record<string, Schema<any>>
+>(
 	schemaObj: SchemaObject,
 	target: Record<string, any>
 ) => {

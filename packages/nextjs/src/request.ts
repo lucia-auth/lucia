@@ -1,10 +1,12 @@
 import type { MinimalRequest } from "lucia-auth";
 import type { NextRequest } from "./types.js";
 
-export const convertNextRequestToStandardRequest = (req: NextRequest): MinimalRequest => {
-	const url = `${process.env.NODE_ENV === "production" ? "https" : "http"}://${req.headers.host}${
-		req.url
-	}`;
+export const convertNextRequestToStandardRequest = (
+	req: NextRequest
+): MinimalRequest => {
+	const url = `${process.env.NODE_ENV === "production" ? "https" : "http"}://${
+		req.headers.host
+	}${req.url}`;
 	return {
 		headers: {
 			get: (name: string) => {

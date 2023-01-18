@@ -33,19 +33,25 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 	private scope: string[];
 	private redirectUri: string;
 
-	public getAuthorizationUrl = <State extends string | null | undefined = undefined>(
+	public getAuthorizationUrl = <
+		State extends string | null | undefined = undefined
+	>(
 		state?: State
 	): GetAuthorizationUrlReturnType<State> => {
-		const s = state ?? (typeof state === "undefined" ? generateState() : undefined);
-		const url = `https://www.patreon.com/oauth2/authorize?${new URLSearchParams({
-			client_id: this.clientId,
-			redirect_uri: this.redirectUri,
-			scope: this.scope.join(" "),
-			response_type: "code",
-			...(s && { state: s })
-		}).toString()}`;
+		const s =
+			state ?? (typeof state === "undefined" ? generateState() : undefined);
+		const url = `https://www.patreon.com/oauth2/authorize?${new URLSearchParams(
+			{
+				client_id: this.clientId,
+				redirect_uri: this.redirectUri,
+				scope: this.scope.join(" "),
+				response_type: "code",
+				...(s && { state: s })
+			}
+		).toString()}`;
 		console.log(this.scope);
-		if (state === null) return [url] as const as GetAuthorizationUrlReturnType<State>;
+		if (state === null)
+			return [url] as const as GetAuthorizationUrlReturnType<State>;
 		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
 	};
 
@@ -134,15 +140,15 @@ function remapRelationships(patreonUserRaw: PatreonUserRaw) {
 		.map((element) => {
 			const campaign = patreonUserRaw.included.find(
 				(include) =>
-					include.type === "campaign" && include.id === element.relationships.campaign?.data.id
+					include.type === "campaign" &&
+					include.id === element.relationships.campaign?.data.id
 			) as PatreonCampaign;
-			const currently_entitled_tiers = element.relationships.currently_entitled_tiers.data.map(
-				(tier) => {
+			const currently_entitled_tiers =
+				element.relationships.currently_entitled_tiers.data.map((tier) => {
 					return patreonUserRaw.included.find(
 						(include) => include.type == tier.type && include.id == tier.id
 					) as PatreonTier;
-				}
-			);
+				});
 
 			return {
 				id: element.id,

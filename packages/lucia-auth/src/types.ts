@@ -31,9 +31,8 @@ export type SessionSchema = {
 	user_id: string;
 };
 
-export type AdapterFunction<T extends Adapter | UserAdapter | SessionAdapter> = (
-	E: LuciaErrorConstructor
-) => T;
+export type AdapterFunction<T extends Adapter | UserAdapter | SessionAdapter> =
+	(E: LuciaErrorConstructor) => T;
 
 export type Adapter = {
 	getSessionAndUserBySessionId?: (sessionId: string) => Promise<{

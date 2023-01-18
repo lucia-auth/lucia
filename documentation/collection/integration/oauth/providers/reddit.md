@@ -135,7 +135,9 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 ### `createUser()`
 
 ```ts
-const createUser: (userAttributes: Lucia.UserAttributes | undefined) => Promise<User>;
+const createUser: (
+	userAttributes: Lucia.UserAttributes | undefined
+) => Promise<User>;
 ```
 
 Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
@@ -219,7 +221,11 @@ interface RedditUser {
 		is_email_permission_required: true;
 		mod_awards: boolean;
 		expensive_coins_package: boolean;
-		mweb_xpromo_revamp_v2: { owner: string; variant: string; experiment_id: number };
+		mweb_xpromo_revamp_v2: {
+			owner: string;
+			variant: string;
+			experiment_id: number;
+		};
 		awards_on_streams: boolean;
 		mweb_xpromo_modal_listing_click_daily_dismissible_ios: true;
 		chat_subreddit: boolean;
@@ -240,7 +246,11 @@ interface RedditUser {
 		chat_group_rollout: boolean;
 		resized_styles_images: boolean;
 		spez_modal: boolean;
-		mweb_sharing_clipboard: { owner: string; variant: string; experiment_id: number };
+		mweb_sharing_clipboard: {
+			owner: string;
+			variant: string;
+			experiment_id: number;
+		};
 	};
 	can_edit_name: boolean;
 	verified: boolean;
