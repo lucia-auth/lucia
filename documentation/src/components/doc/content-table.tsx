@@ -23,7 +23,7 @@ export default (props: {
 		mergedProps.initialCollectionId as string
 	);
 	const CollectionLink = (props: {
-		collection: (typeof collections)[number];
+		collection: typeof collections[number];
 	}) => (
 		<Show when={props.collection._id === selectedCollectionId()}>
 			<For each={props.collection._collections}>
@@ -42,6 +42,7 @@ export default (props: {
 										page._baseCollectionId === "main"
 											? page.redirect ?? urlPathname
 											: urlPathname;
+									const target = "redirect" in page ? "_blank" : "";
 									return (
 										<li
 											class={dynamicClassName("my-1 pl-4 border-l-2", {
@@ -50,7 +51,9 @@ export default (props: {
 													!isSelected
 											})}
 										>
-											<a href={href}>{page.title}</a>
+											<a href={href} target={target}>
+												{page.title}
+											</a>
 										</li>
 									);
 								}}
