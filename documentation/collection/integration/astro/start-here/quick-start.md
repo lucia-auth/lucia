@@ -75,6 +75,8 @@ In the same page, we'll also handle the POST request from the form.
 
 `@lucia-auth/astro` provides [`AuthRequest`](/astro/api-reference/server-api#authrequest), which makes it easier to handle sessions and cookies within Astro. Initialize it with `auth` and the `Astro` context (an API route context can be used as well).
 
+Make sure to add [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) protection. You can check if the request is coming from the same domain as where the app is hosted by using the `origin` header. 
+
 We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session cookie using [`AuthRequest.setSession()`](/astro/api-reference/server-api#setsession).
 
 ```astro
@@ -86,6 +88,14 @@ import { AuthRequest } from "@lucia-auth/astro";
 const authRequest = new AuthRequest(auth, Astro);
 
 if (Astro.request.method === "POST") {
+	// csrf check
+	const requestOrigin = Astro.request.headers.get("origin");
+	const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+	if (!isValidRequest) {
+		return new Response(null, {
+			status: 403
+		});
+	}
 	const form = await Astro.request.formData();
 	const username = form.get("username");
 	const password = form.get("password");
@@ -158,6 +168,8 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 
 The same page will also handle form submissions.
 
+Make sure to add CSRF protection here as well.
+
 We'll use `username` as the provider id and the username as the identifier. This tells Lucia to find a user that was created using username/password auth method where the unique identifier is the username. Create a new session if the password is valid, and store the session id.
 
 ```astro
@@ -169,6 +181,14 @@ import { AuthRequest } from "@lucia-auth/astro";
 const authRequest = new AuthRequest(auth, Astro);
 
 if (Astro.request.method === "POST") {
+	// csrf check
+	const requestOrigin = Astro.request.headers.get("origin");
+	const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+	if (!isValidRequest) {
+		return new Response(null, {
+			status: 403
+		});
+	}
 	const form = await Astro.request.formData();
 	const username = form.get("username");
 	const password = form.get("password");
