@@ -74,13 +74,13 @@ export type UserAdapter = {
 			hashedPassword: string | null;
 			isPrimary: boolean;
 		}
-	) => Promise<KeySchema>;
+	) => Promise<void>;
 	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 	updateKeyPassword: (
 		key: string,
 		hashedPassword: string | null
-	) => Promise<KeySchema>;
+	) => Promise<void>;
 	getKey: (keyId: string) => Promise<KeySchema | null>;
 	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 };

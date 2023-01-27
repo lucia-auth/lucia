@@ -1,5 +1,6 @@
 import type {
 	Env,
+	Key,
 	MinimalRequest,
 	Session,
 	SessionSchema,
@@ -347,22 +348,28 @@ export class Auth<C extends Configurations = any> {
 	};
 	public addKey = async (
 		userId: string,
-		provider: {
+		keyData: {
 			providerId: string;
 			providerUserId: string;
 			password?: string | null;
 		}
-	) => {
-		const key = `${provider.providerId}:${provider.providerUserId}`;
-		const hashedPassword = provider.password
-			? await this.hash.generate(provider.password)
+	): Promise<Key> => {
+		const key = `${keyData.providerId}:${keyData.providerUserId}`;
+		const hashedPassword = keyData.password
+			? await this.hash.generate(keyData.password)
 			: null;
-		const databaseKey = await this.adapter.setKey(key, {
+		await this.adapter.setKey(key, {
 			userId,
 			hashedPassword,
 			isPrimary: false
 		});
-		return transformDatabaseKeyData(databaseKey);
+		return {
+			providerId: keyData.providerId,
+			providerUserId: keyData.providerUserId,
+			isPrimary: false,
+			isPasswordDefined: !!keyData.password,
+			userId
+		};
 	};
 	public removeKey = async (providerId: string, providerUserId: string) => {
 		const key = `${providerId}:${providerUserId}`;

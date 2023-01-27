@@ -1,6 +1,6 @@
 import type { SessionSchema, UserSchema, Adapter } from "lucia-auth";
 import { test, end, validate } from "./../test.js";
-import { User } from "./../db.js";
+import { User } from "../model.js";
 import { Database } from "../index.js";
 import { testUserAdapter } from "./user.js";
 import { testSessionAdapter } from "./session.js";

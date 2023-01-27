@@ -1,10 +1,10 @@
 import { PostgrestClient } from "@supabase/postgrest-js"; // Supabase's realtime breaks adapter
-import { getUpdateData } from "lucia-auth/adapter";
 import type {
 	Adapter,
 	UserSchema,
 	SessionSchema,
-	AdapterFunction
+	AdapterFunction,
+	KeySchema
 } from "lucia-auth";
 
 type PostgrestError = {
@@ -24,28 +24,9 @@ type PostgrestSingleReadResult<T> =
 			error: PostgrestError;
 	  };
 
-type PostgrestSingleWriteResult<T> =
-	| {
-			data: T;
-			error: null;
-	  }
-	| {
-			data: null;
-			error: PostgrestError;
-	  };
-
-type PostgrestMultipleResult<T> =
-	| {
-			data: T[];
-			error: null;
-	  }
-	| {
-			data: null;
-			error: PostgrestError;
-	  };
-
-type PostgrestPossibleErrorResult = {
-	error: PostgrestError | null;
+type PostgrestCountResult = {
+	count: number;
+	error: PostgrestError;
 };
 
 const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
@@ -66,23 +47,26 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 				if (error) throw error;
 				return data;
 			},
-			getUserByProviderId: async (providerId) => {
+			getUserByKey: async (key) => {
+				type Schema = KeySchema & {
+					user: UserSchema;
+				};
 				const { data, error } = (await supabase
-					.from<UserSchema>("user")
-					.select()
-					.eq("provider_id", providerId)
-					.maybeSingle()) as PostgrestSingleReadResult<UserSchema>;
+					.from<Schema>("user")
+					.select("user(*), *")
+					.eq("id", key)
+					.maybeSingle()) as PostgrestSingleReadResult<Schema>;
 				if (error) throw error;
 				if (!data) return null;
-				return data;
+				return data.user;
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				type Schema = SessionSchema & { user: UserSchema };
-				const { data, error } = (await supabase
+				const { data, error } = await supabase
 					.from<Schema>("session")
 					.select("user(*), *")
 					.eq("id", sessionId)
-					.maybeSingle()) as PostgrestSingleReadResult<Schema>;
+					.maybeSingle();
 				if (error) throw error;
 				if (!data) return null;
 				const { user, ...session } = data;
@@ -101,10 +85,10 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 				return data;
 			},
 			getSessionsByUserId: async (userId) => {
-				const { data, error } = (await supabase
+				const { data, error } = await supabase
 					.from<SessionSchema>("session")
 					.select("*, user(*)")
-					.eq("user_id", userId)) as PostgrestMultipleResult<SessionSchema>;
+					.eq("user_id", userId);
 				if (error) throw error;
 				return (
 					data?.map((val) => {
@@ -112,53 +96,43 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					}) || []
 				);
 			},
-			setUser: async (userId, userData) => {
-				const { data, error } = (await supabase
+			setUser: async (userId, attributes) => {
+				const { data, error } = await supabase
 					.from<UserSchema>("user")
 					.insert(
 						{
-							id: userId || undefined,
-							provider_id: userData.providerId,
-							hashed_password: userData.hashedPassword,
-							...userData.attributes
+							id: userId ?? undefined,
+							...attributes
 						},
 						{
 							returning: "representation"
 						}
 					)
-					.single()) as PostgrestSingleWriteResult<UserSchema>;
-				if (error) {
-					if (
-						error.details?.includes("(provider_id)") &&
-						error.details.includes("already exists.")
-					) {
-						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
-					}
-					throw error;
-				}
+					.single();
+				if (error) throw error;
 				return data;
 			},
 			deleteUser: async (userId) => {
-				const { error } = (await supabase
+				const { error } = await supabase
 					.from<UserSchema>("user")
 					.delete({
 						returning: "minimal"
 					})
-					.eq("id", userId)) as PostgrestSingleReadResult<UserSchema>;
+					.eq("id", userId);
 				if (error) throw error;
 			},
 			setSession: async (sessionId, data) => {
-				const { error } = (await supabase.from<SessionSchema>("session").insert(
+				const { error } = await supabase.from<SessionSchema>("session").insert(
 					{
 						id: sessionId,
-						expires: data.expires,
+						active_expires: data.activePeriodExpires,
 						idle_expires: data.idlePeriodExpires,
 						user_id: data.userId
 					},
 					{
 						returning: "minimal"
 					}
-				)) as PostgrestSingleWriteResult<SessionSchema>;
+				);
 				if (error) {
 					if (
 						error.details?.includes("is not present in table") &&
@@ -176,41 +150,112 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 				}
 			},
 			deleteSession: async (...sessionIds) => {
-				const { error } = (await supabase
+				const { error } = await supabase
 					.from<SessionSchema>("session")
 					.delete({
 						returning: "minimal"
 					})
-					.in("id", sessionIds)) as PostgrestPossibleErrorResult;
+					.in("id", sessionIds);
 				if (error) throw error;
 			},
 			deleteSessionsByUserId: async (userId) => {
-				const { error } = (await supabase
+				const { error } = await supabase
 					.from<SessionSchema>("session")
 					.delete({
 						returning: "minimal"
 					})
-					.eq("user_id", userId)) as PostgrestPossibleErrorResult;
+					.eq("user_id", userId);
 				if (error) throw error;
 			},
-			updateUser: async (userId, newData) => {
-				const dbData = getUpdateData(newData);
+			updateUserAttributes: async (userId, userAttributes) => {
 				const { data, error } = (await supabase
 					.from<UserSchema>("user")
-					.update(dbData)
+					.update(userAttributes)
 					.eq("id", userId)
 					.maybeSingle()) as PostgrestSingleReadResult<UserSchema>;
+				if (!data) throw new LuciaError("AUTH_INVALID_USER_ID");
+				if (error) throw error;
+				return data;
+			},
+			setKey: async (key, data) => {
+				const { error } = await supabase.from<KeySchema>("key").insert(
+					{
+						id: key,
+						user_id: data.userId,
+						primary: data.isPrimary,
+						hashed_password: data.hashedPassword
+					},
+					{
+						returning: "minimal"
+					}
+				);
 				if (error) {
 					if (
-						error.details?.includes("(provider_id)") &&
+						error.details?.includes("is not present in table") &&
+						error.details.includes("user_id")
+					) {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					if (
+						error.details?.includes("(id)") &&
 						error.details.includes("already exists.")
 					) {
-						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
+						throw new LuciaError("AUTH_DUPLICATE_KEY");
 					}
-					throw error;
 				}
-				if (!data) throw new LuciaError("AUTH_INVALID_USER_ID");
+			},
+			getKey: async (key) => {
+				const { data, error } = (await supabase
+					.from<KeySchema>("key")
+					.select()
+					.eq("id", key)
+					.single()) as PostgrestSingleReadResult<KeySchema>;
+				if (error) throw error;
 				return data;
+			},
+			getKeysByUserId: async (userId) => {
+				const { data, error } = await supabase
+					.from<KeySchema>("key")
+					.select()
+					.eq("user_id", userId);
+				if (error) throw error;
+				return data;
+			},
+			updateKeyPassword: async (key, hashedPassword) => {
+				const { error, count } = (await supabase
+					.from<KeySchema>("key")
+					.update(
+						{
+							hashed_password: hashedPassword
+						},
+						{
+							returning: "minimal",
+							count: "exact"
+						}
+					)
+					.eq("id", key)
+					.single()) as unknown as PostgrestCountResult;
+				if (count < 1) throw new LuciaError("AUTH_INVALID_KEY");
+				if (error) throw error;
+			},
+			deleteKeysByUserId: async (userId) => {
+				const { error } = await supabase
+					.from<KeySchema>("key")
+					.delete({
+						returning: "minimal"
+					})
+					.eq("user_id", userId);
+				if (error) throw error;
+			},
+			deleteNonPrimaryKey: async (...keys) => {
+				const { error } = await supabase
+					.from<KeySchema>("key")
+					.delete({
+						returning: "minimal"
+					})
+					.in("id", keys)
+					.eq("primary", false);
+				if (error) throw error;
 			}
 		};
 	};

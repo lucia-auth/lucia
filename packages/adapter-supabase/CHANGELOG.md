@@ -1,12 +1,12 @@
 # CHANGELOG
 
-## 0.2.1
+## 0.3.x
 
-- [Fix] Prevent destructuring `null`
+- [Breaking] Require `lucia-auth` 0.5.x
 
 ## 0.2.0
 
-- [Breaking] Require `lucia-auth` 0.4.0
+- [Breaking] Require `lucia-auth` 0.4.x
 - [Breaking] Remove global error handler
 
 ## 0.1.5

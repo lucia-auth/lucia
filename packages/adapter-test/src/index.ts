@@ -1,4 +1,4 @@
-import { SessionSchema, UserSchema } from "lucia-auth";
+import { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
 export { testAdapter } from "./tests/index.js";
 export { testAdapterUserIdGeneration } from "./tests/user-id.js";
 export { testSessionAdapter } from "./tests/session.js";
@@ -11,4 +11,7 @@ export interface Database {
 	clearSessions: () => Promise<void>;
 	insertUser: (data: UserSchema) => Promise<void>;
 	insertSession: (data: SessionSchema) => Promise<void>;
+	getKeys: () => Promise<KeySchema[]>
+	insertKey: (data: KeySchema) => Promise<void>
+	clearKeys:() => Promise<void>
 }
