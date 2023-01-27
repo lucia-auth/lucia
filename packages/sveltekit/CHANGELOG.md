@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.3
+
+- Extend type `locals` with `App.Locals` [#307](https://github.com/pilcrowOnPaper/lucia-auth/issues/307)
+
 ## 0.5.2
 
 - Update peer dependency

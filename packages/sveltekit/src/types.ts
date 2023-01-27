@@ -9,13 +9,14 @@ export type RequestEvent = {
 			{ session: Session; user: User } | { session: null; user: null }
 		>;
 		setSession: (session: Session | null) => void;
-	};
+	} & App.Locals;
 	url: URL;
 	cookies: {
 		get: (name: string) => string | undefined;
 		set: (name: string, value: string, options: any) => void;
 		delete: any;
 		serialize: any;
+		[k: string | number | symbol]: any;
 	};
 	fetch: any;
 	getClientAddress: any;
