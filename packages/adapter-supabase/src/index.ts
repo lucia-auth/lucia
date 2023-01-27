@@ -14,7 +14,17 @@ type PostgrestError = {
 	message: string;
 };
 
-type PostgrestSingleResult<T> =
+type PostgrestSingleReadResult<T> =
+	| {
+			data: T | null;
+			error: null;
+	  }
+	| {
+			data: null;
+			error: PostgrestError;
+	  };
+
+type PostgrestSingleWriteResult<T> =
 	| {
 			data: T;
 			error: null;
@@ -52,7 +62,7 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					.from<UserSchema>("user")
 					.select()
 					.eq("id", userId)
-					.maybeSingle()) as PostgrestSingleResult<UserSchema>;
+					.maybeSingle()) as PostgrestSingleReadResult<UserSchema>;
 				if (error) throw error;
 				return data;
 			},
@@ -61,7 +71,7 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					.from<UserSchema>("user")
 					.select()
 					.eq("provider_id", providerId)
-					.maybeSingle()) as PostgrestSingleResult<UserSchema>;
+					.maybeSingle()) as PostgrestSingleReadResult<UserSchema>;
 				if (error) throw error;
 				if (!data) return null;
 				return data;
@@ -72,8 +82,9 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					.from<Schema>("session")
 					.select("user(*), *")
 					.eq("id", sessionId)
-					.maybeSingle()) as PostgrestSingleResult<Schema>;
+					.maybeSingle()) as PostgrestSingleReadResult<Schema>;
 				if (error) throw error;
+				if (!data) return null;
 				const { user, ...session } = data;
 				return {
 					user,
@@ -85,7 +96,7 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					.from<SessionSchema>("session")
 					.select("*, user(*)")
 					.eq("id", sessionId)
-					.maybeSingle()) as PostgrestSingleResult<SessionSchema>;
+					.maybeSingle()) as PostgrestSingleReadResult<SessionSchema>;
 				if (error) throw error;
 				return data;
 			},
@@ -115,7 +126,7 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 							returning: "representation"
 						}
 					)
-					.single()) as PostgrestSingleResult<UserSchema>;
+					.single()) as PostgrestSingleWriteResult<UserSchema>;
 				if (error) {
 					if (
 						error.details?.includes("(provider_id)") &&
@@ -133,7 +144,7 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					.delete({
 						returning: "minimal"
 					})
-					.eq("id", userId)) as PostgrestSingleResult<UserSchema>;
+					.eq("id", userId)) as PostgrestSingleReadResult<UserSchema>;
 				if (error) throw error;
 			},
 			setSession: async (sessionId, data) => {
@@ -147,7 +158,7 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					{
 						returning: "minimal"
 					}
-				)) as PostgrestSingleResult<UserSchema>;
+				)) as PostgrestSingleWriteResult<SessionSchema>;
 				if (error) {
 					if (
 						error.details?.includes("is not present in table") &&
@@ -188,7 +199,7 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 					.from<UserSchema>("user")
 					.update(dbData)
 					.eq("id", userId)
-					.maybeSingle()) as PostgrestSingleResult<UserSchema>;
+					.maybeSingle()) as PostgrestSingleReadResult<UserSchema>;
 				if (error) {
 					if (
 						error.details?.includes("(provider_id)") &&
