@@ -13,12 +13,25 @@ export type Session = {
 	isFresh: boolean;
 };
 
+export type Key = {
+	isPasswordDefined: boolean;
+	isPrimary: boolean;
+	providerId: string;
+	providerUserId: string;
+	userId: string;
+};
+
+export type KeySchema = {
+	id: string;
+	hashed_password: string | null;
+	primary: boolean;
+	user_id: string;
+};
+
 export type Env = "DEV" | "PROD";
 
 export type UserSchema = {
 	id: string;
-	hashed_password: string | null;
-	provider_id: string;
 	[k: string]: any;
 };
 
@@ -26,7 +39,7 @@ export type UserData = { id: string } & Required<Lucia.UserAttributes>;
 
 export type SessionSchema = {
 	id: string;
-	expires: number | bigint;
+	active_expires: number | bigint;
 	idle_expires: number | bigint;
 	user_id: string;
 };
@@ -44,24 +57,32 @@ export type Adapter = {
 
 export type UserAdapter = {
 	getUser: (userId: string) => Promise<UserSchema | null>;
-	getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
+	getUserByKey: (key: string) => Promise<UserSchema | null>;
 	setUser: (
 		userId: string | null,
-		data: {
-			providerId: string;
-			hashedPassword: string | null;
-			attributes: Record<string, any>;
-		}
+		attributes: Record<string, any>
 	) => Promise<UserSchema>;
 	deleteUser: (userId: string) => Promise<void>;
-	updateUser: (
+	updateUserAttributes: (
 		userId: string,
-		data: {
-			providerId?: string | null;
-			hashedPassword?: string | null;
-			attributes?: Record<string, any>;
-		}
+		attributes: Record<string, any>
 	) => Promise<UserSchema>;
+	setKey: (
+		key: string,
+		data: {
+			userId: string;
+			hashedPassword: string | null;
+			isPrimary: boolean;
+		}
+	) => Promise<KeySchema>;
+	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
+	deleteKeysByUserId: (userId: string) => Promise<void>;
+	updateKeyPassword: (
+		key: string,
+		hashedPassword: string | null
+	) => Promise<KeySchema>;
+	getKey: (keyId: string) => Promise<KeySchema | null>;
+	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 };
 
 export type SessionAdapter = {
@@ -71,7 +92,7 @@ export type SessionAdapter = {
 		sessionId: string,
 		data: {
 			userId: string;
-			expires: number;
+			activePeriodExpires: number;
 			idlePeriodExpires: number;
 		}
 	) => Promise<void>;
