@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
+import { UserSchemaWithAttributes } from "./types";
 
 const generateRandomString = (bytes: number) => {
 	return crypto.randomBytes(bytes).toString("hex");
@@ -12,7 +13,7 @@ export class User {
 		this.id = generateRandomString(4);
 		this.username = `user${this.id}`;
 	}
-	public getSchema = (): UserSchema => {
+	public getSchema = (): UserSchemaWithAttributes => {
 		return {
 			id: this.id,
 			username: this.username

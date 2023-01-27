@@ -51,6 +51,7 @@ export const testSessionAdapter = async (
 			const session1 = user1.createSession();
 			const session2 = user2.createSession();
 			await db.insertUser(user1.getSchema());
+			await db.insertUser(user2.getSchema());
 			await db.insertSession(session1.getSchema());
 			await db.insertSession(session2.getSchema());
 			const sessions = await adapter.getSessionsByUserId(session1.userId);

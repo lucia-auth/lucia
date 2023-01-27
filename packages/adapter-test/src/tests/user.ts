@@ -258,6 +258,7 @@ export const testUserAdapter = async (
 		const key1 = user1.createKey(false, false);
 		const key2 = user2.createKey(false, false);
 		await db.insertUser(user1.getSchema());
+		await db.insertUser(user2.getSchema());
 		await db.insertKey(key1.getSchema());
 		await db.insertKey(key2.getSchema());
 		const sessions = await adapter.getKeysByUserId(key1.userId);
