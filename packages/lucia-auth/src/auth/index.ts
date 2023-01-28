@@ -224,7 +224,7 @@ export class Auth<C extends Configurations = any> {
 			databaseKeyData.hashed_password
 		);
 		if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
-		return await this.getUser(databaseKeyData.user_id)
+		return await this.getUser(databaseKeyData.user_id);
 	};
 	public getSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)
@@ -399,7 +399,7 @@ export interface Configurations {
 				session: (E: LuciaErrorConstructor) => SessionAdapter | Adapter;
 		  };
 	env: Env;
-	generateCustomUserId?: () => Promise<string | null>;
+	generateCustomUserId?: () => MaybePromise<string | null>;
 	csrfProtection?: boolean;
 	sessionTimeout?: {
 		activePeriod: number;

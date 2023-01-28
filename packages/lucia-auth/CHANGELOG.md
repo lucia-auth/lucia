@@ -8,6 +8,7 @@
 - [Breaking] Removed error message: `AUTH_INVALID_PROVIDER_ID`, `AUTH_DUPLICATE_PROVIDER_ID`
 - [Breaking] Removed `/adapter`
 - [Breaking] Renamed `session` table column `expires` to `active_expires`
+- Allow `config.generateCustomUserId` to be synchronous
 
 ## 0.4.3
 
