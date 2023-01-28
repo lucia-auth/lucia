@@ -67,13 +67,7 @@ const User = mongoose.model(
 		{
 			_id: {
 				type: String
-			},
-			provider_id: {
-				type: String,
-				unique: true,
-				required: true
-			},
-			hashed_password: String
+			}
 		},
 		{ _id: false }
 	)
@@ -96,12 +90,37 @@ const Session = mongoose.model(
 				type: String,
 				required: true
 			},
-			expires: {
+			active_expires: {
 				type: Number,
 				required: true
 			},
 			idle_expires: {
 				type: Number,
+				required: true
+			}
+		},
+		{ _id: false }
+	)
+);
+```
+
+### `key`
+
+```ts
+const Key = mongoose.model(
+	"key",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			user_id: {
+				type: String,
+				required: true
+			},
+			hashed_password: String,
+			primary: {
+				type: Boolean,
 				required: true
 			}
 		},

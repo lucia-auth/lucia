@@ -56,10 +56,9 @@ You may add additional columns to store user attributes. Refer to [Store user at
 
 ```prisma
 model User {
-  id              String    @id @unique @default(cuid())
-  provider_id     String    @unique
-  hashed_password String?
-  session         Session[]
+  id       String    @id @unique
+  session  Session[]
+  Key      Key[]
 
   @@map("user")
 }
@@ -71,13 +70,28 @@ This is not required if you're only using the Prisma adapter for the `user` tabl
 
 ```prisma
 model Session {
-  id           String @id @unique
-  user_id      String
-  expires      BigInt
-  idle_expires BigInt
-  user         User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id             String @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("session")
+}
+```
+
+### `key`
+
+```prisma
+model Key {
+  id              String  @id @unique
+  hashed_password String?
+  user_id         String
+  primary         Boolean
+  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("key")
 }
 ```

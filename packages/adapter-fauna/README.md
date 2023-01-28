@@ -1,5 +1,7 @@
 # `@lucia-auth/adapter-fauna`
 
+**Disclaimer: This adapter is outdated and does NOT work with 0.5.x!!**
+
 [Fauna](https://fauna.com) adapter for Lucia
 
 **[Documentation](https://lucia-auth.vercel.app/learn/adapters/fauna)**
@@ -19,7 +21,7 @@ npm install @lucia-auth/adapter-fauna
 | Fauna adapter version | Lucia version |
 | --------------------- | ------------- |
 | 0.1.x                 | 0.1.x ~ 0.3.x |
-| 0.2.x                 | 0.4.0 ~       |
+| 0.2.x                 | 0.4.x         |
 
 ## Testing
 
