@@ -3,6 +3,7 @@
 ## 0.6.0
 
 - [Breaking] Require `lucia-auth` 0.5.0
+- [Breaking] Remove `signOut`
 
 ## 0.5.3
 
