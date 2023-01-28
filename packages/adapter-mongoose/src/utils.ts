@@ -1,35 +1,27 @@
-import type { SessionSchema, UserSchema } from "lucia-auth";
+import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
 
 export const convertUserDoc = (row: UserDoc): UserSchema => {
-	const {
-		_id: id,
-		__v: _,
-		$__,
-		_doc,
-		hashed_password,
-		provider_id,
-		...attributes
-	} = row;
+	const { _id: id, __v, $__, _doc, ...attributes } = row;
 	return {
 		id,
-		hashed_password,
-		provider_id,
 		...attributes
 	};
 };
 
 export const convertSessionDoc = (row: SessionDoc): SessionSchema => {
-	const {
-		_id: id,
-		__v: _,
-		user_id: userId,
-		expires,
-		idle_expires: idleExpires
-	} = row;
 	return {
-		id,
-		user_id: userId,
-		expires,
-		idle_expires: idleExpires
+		id: row._id,
+		user_id: row.user_id,
+		active_expires: row.active_expires,
+		idle_expires: row.idle_expires
+	};
+};
+
+export const convertKeyDoc = (row: KeyDoc): KeySchema => {
+	return {
+		id: row._id,
+		user_id: row.user_id,
+		hashed_password: row.hashed_password,
+		primary: row.primary
 	};
 };

@@ -8,21 +8,26 @@ declare namespace App {
 	interface Locals {}
 }
 
-interface UserDoc {
+type UserDoc = {
 	_id: string;
 	__v?: any;
 	_doc?: any;
 	$__?: any;
-	hashed_password: string | null;
-	provider_id: string;
 	username: string;
-	user_email: string;
-}
+};
 
-interface SessionDoc {
+type SessionDoc = {
 	_id: string;
 	__v?: any;
-	expires: number;
+	active_expires: number;
 	user_id: string;
 	idle_expires: number;
-}
+};
+
+type KeyDoc = {
+	_id: string;
+	__v?: any;
+	user_id: string;
+	hashed_password: string | null;
+	primary: boolean;
+};

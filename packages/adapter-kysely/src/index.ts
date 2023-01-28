@@ -330,13 +330,14 @@ const adapter =
 						.where("id", "=", key)
 						.executeTakeFirst();
 					if (!data) throw new LuciaError("AUTH_INVALID_KEY");
-					return await kysely
+					await kysely
 						.updateTable("key")
 						.set({
 							hashed_password: hashedPassword
 						})
 						.where("id", "=", key)
 						.executeTakeFirst();
+					return;
 				}
 				const data = await kysely
 					.updateTable("key")
