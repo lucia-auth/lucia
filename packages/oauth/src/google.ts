@@ -1,7 +1,7 @@
 import { post, get } from "./request.js";
 import type { Auth } from "lucia-auth";
 import {
-	CreateUser,
+	CreateUserAttributesParameter,
 	generateState,
 	GetAuthorizationUrlReturnType,
 	LuciaUser,
@@ -79,25 +79,39 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 				bearerToken: accessToken
 			}
 		)) as GoogleUser;
-		const googleUserId = String(googleUser.sub);
+		const PROVIDER_ID = "google";
+		const PROVIDER_USER_ID = googleUser.sub;
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId(
-				"google",
-				googleUserId
+			existingUser = (await this.auth.getUserByKey(
+				PROVIDER_ID,
+				PROVIDER_USER_ID
 			)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}
-		const createUser = (async (userAttributes) => {
-			return await this.auth.createUser("google", googleUserId, {
+		const createUser = async (
+			userAttributes: CreateUserAttributesParameter<A>
+		) => {
+			return (await this.auth.createUser({
+				key: {
+					providerId: PROVIDER_ID,
+					providerUserId: PROVIDER_USER_ID
+				},
 				attributes: userAttributes as any
+			})) as any;
+		};
+		const addKey = async (userId: string) => {
+			return await this.auth.addKey(userId, {
+				providerId: PROVIDER_ID,
+				providerUserId: PROVIDER_USER_ID
 			});
-		}) as CreateUser<A>;
+		};
 		return {
 			createUser,
 			existingUser,
 			providerUser: googleUser,
+			addKey,
 			accessToken,
 			refreshToken,
 			expiresIn

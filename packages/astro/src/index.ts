@@ -9,12 +9,12 @@ export class AuthRequest<A extends Auth> {
 		auth: A,
 		context: {
 			request: Request;
-			cookies: AstroGlobal["cookies"];
+			cookies: {};
 		}
 	) {
 		this.auth = auth;
 		this.request = context.request;
-		this.cookies = context.cookies;
+		this.cookies = context.cookies as any;
 	}
 	public validate = async (): Promise<Session | null> => {
 		try {

@@ -30,7 +30,7 @@ if (Astro.request.method === "POST") {
 		typeof password === "string"
 	) {
 		try {
-			const user = await auth.authenticateUser("username", username, password);
+			const user = await auth.validateUserKey("username", username, password);
 			const session = await auth.createSession(user.userId);
 			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
@@ -38,7 +38,7 @@ if (Astro.request.method === "POST") {
 			// username already in use
 			if (
 				error instanceof LuciaError &&
-				(error.message === "AUTH_INVALID_PROVIDER_ID" ||
+				(error.message === "AUTH_INVALID_KEY" ||
 					error.message === "AUTH_INVALID_PASSWORD")
 			) {
 				errorMessage = "Incorrect username or password.";

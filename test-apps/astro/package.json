@@ -11,13 +11,12 @@
 		"astro": "astro"
 	},
 	"dependencies": {
-		"@astrojs/svelte": "^1.0.2",
-		"@astrojs/tailwind": "^2.1.2",
+		"@astrojs/tailwind": "3.x",
 		"@lucia-auth/adapter-prisma": "workspace:*",
 		"@lucia-auth/astro": "workspace:*",
 		"@lucia-auth/oauth": "workspace:*",
 		"@prisma/client": "^4.7.0",
-		"astro": "1.7.x",
+		"astro": "^2.0.0",
 		"lucia-auth": "workspace:*",
 		"svelte": "^3.46.4",
 		"tailwindcss": "^3.0.24"

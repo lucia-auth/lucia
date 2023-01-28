@@ -213,19 +213,18 @@ export class Auth<C extends Configurations = any> {
 		password: string
 	): Promise<User> => {
 		const key = `${providerId}:${providerUserId}`;
-		const databaseData = await this.adapter.getKey(key);
-		if (!databaseData) throw new LuciaError("AUTH_INVALID_KEY");
-		if (!databaseData.hashed_password)
+		const databaseKeyData = await this.adapter.getKey(key);
+		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY");
+		if (!databaseKeyData.hashed_password)
 			throw new LuciaError("AUTH_INVALID_PASSWORD");
-		if (databaseData.hashed_password.startsWith("$2a"))
+		if (databaseKeyData.hashed_password.startsWith("$2a"))
 			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
 		const isValid = await this.hash.validate(
 			password,
-			databaseData.hashed_password
+			databaseKeyData.hashed_password
 		);
 		if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
-		const user = this.transformUserData(databaseData);
-		return user;
+		return await this.getUser(databaseKeyData.user_id)
 	};
 	public getSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)

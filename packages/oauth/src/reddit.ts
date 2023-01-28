@@ -3,10 +3,10 @@ import type { Auth } from "lucia-auth";
 import {
 	generateState,
 	GetAuthorizationUrlReturnType,
-	CreateUser,
 	LuciaUser,
 	OAuthConfig,
-	OAuthProvider
+	OAuthProvider,
+	CreateUserAttributesParameter
 } from "./index.js";
 
 interface Configs extends OAuthConfig {
@@ -87,22 +87,36 @@ class Reddit<A extends Auth> implements OAuthProvider<A> {
 			env: this.auth.ENV,
 			bearerToken: accessToken
 		})) as RedditUser;
-		const redditUserId = String(redditUser.id);
+		const PROVIDER_ID = "reddit";
+		const PROVIDER_USER_ID = redditUser.id;
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId(
-				"reddit",
-				redditUserId
+			existingUser = (await this.auth.getUserByKey(
+				PROVIDER_ID,
+				PROVIDER_USER_ID
 			)) as LuciaUser<A>;
 		} catch {
 			// existingUser is null
 		}
-		const createUser = (async (userAttributes) => {
-			return await this.auth.createUser("reddit", redditUserId, {
+		const createUser = async (
+			userAttributes: CreateUserAttributesParameter<A>
+		) => {
+			return (await this.auth.createUser({
+				key: {
+					providerId: PROVIDER_ID,
+					providerUserId: PROVIDER_USER_ID
+				},
 				attributes: userAttributes as any
+			})) as any;
+		};
+		const addKey = async (userId: string) => {
+			return await this.auth.addKey(userId, {
+				providerId: PROVIDER_ID,
+				providerUserId: PROVIDER_USER_ID
 			});
-		}) as CreateUser<A>;
+		};
 		return {
+			addKey,
 			createUser,
 			existingUser,
 			providerUser: redditUser,
