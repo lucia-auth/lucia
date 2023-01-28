@@ -164,11 +164,11 @@ export class Auth<C extends Configurations = any> {
 		};
 	};
 	public createUser = async (data: {
-		key?: {
+		key: {
 			providerId: string;
 			providerUserId: string;
 			password?: string;
-		};
+		} | null;
 		attributes: Lucia.UserAttributes;
 	}): Promise<User> => {
 		const attributes = data.attributes ?? {};
