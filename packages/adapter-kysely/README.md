@@ -27,9 +27,37 @@ Follow the documentation on database set up.
 
 ### PostgreSQL
 
+Since it's easier to just recreate the table than changing column type for `public.user(id)`, drop all tables:
+
 ```sql
-ALTER TABLE public.user
-    ADD COLUMN username TEXT NOT NULL UNIQUE;
+DROP TABLE public.key;
+DROP TABLE public.session;
+DROP TABLE public.user;
+```
+
+And set it up again:
+
+```sql
+BEGIN;
+CREATE TABLE public.user (
+	id TEXT PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE public.session (
+  	id TEXT PRIMARY KEY,
+	user_id TEXT REFERENCES public.user(id) NOT NULL,
+	active_expires BIGINT NOT NULL,
+	idle_expires BIGINT NOT NULL
+);
+
+CREATE TABLE public.key (
+  	id TEXT PRIMARY KEY,
+	user_id TEXT REFERENCES public.user(id) NOT NULL,
+	"primary" BOOLEAN NOT NULL,
+    hashed_password TEXT
+);
+COMMIT;
 ```
 
 ```
@@ -46,12 +74,12 @@ Add `username` column:
 
 ```sql
 ALTER TABLE user
-ADD COLUMN username VARCHAR(31) NOT NULL UNIQUE AFTER hashed_password;
+ADD COLUMN username VARCHAR(31) NOT NULL UNIQUE AFTER id;
 ```
 
 ```shell
 MYSQL_DATABASE="" # database name
-MYSQL_PASSWORD="" # user password
+MYSQ_PASSWORD="" # password
 ```
 
 ```
@@ -63,8 +91,8 @@ pnpm test-mysql-main
 Add `username` column:
 
 ```sql
-ALTER TABLE user
-ADD COLUMN username VARCHAR(31) NOT NULL UNIQUE;
+ALTER TABLE user ADD COLUMN username VARCHAR(31) NOT NULL;
+CREATE UNIQUE INDEX username ON user(username);
 ```
 
 ```

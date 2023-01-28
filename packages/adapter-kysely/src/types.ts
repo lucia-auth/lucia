@@ -2,20 +2,26 @@ import type { ColumnType, Generated } from "kysely";
 
 type BigIntColumnType = ColumnType<bigint | number>;
 
-export interface KyselySession {
-	expires: BigIntColumnType;
+export type KyselySession = {
+	active_expires: BigIntColumnType;
 	id: string;
 	idle_expires: BigIntColumnType;
 	user_id: string;
-}
+};
 
-export interface KyselyUser {
-	hashed_password: string | null;
+export type KyselyUser = {
 	id: Generated<string>;
-	provider_id: string;
-}
+};
+
+export type KyselyKey = {
+	id: string;
+	hashed_password: string | null;
+	user_id: string;
+	primary: boolean | number;
+};
 
 export interface KyselyLuciaDatabase {
 	session: KyselySession;
 	user: KyselyUser;
+	key: KyselyKey;
 }

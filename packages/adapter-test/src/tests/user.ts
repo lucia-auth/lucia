@@ -11,9 +11,9 @@ export const testUserAdapter = async (
 	endProcess = true
 ) => {
 	const clearAll = async () => {
+		await db.clearKeys();
 		await db.clearSessions();
 		await db.clearUsers();
-		await db.clearKeys();
 	};
 	await clearAll();
 	await test("getUser()", "Return the correct user", async () => {
@@ -109,7 +109,9 @@ export const testUserAdapter = async (
 		"Throw AUTH_INVALID_USER_ID if user id is invalid",
 		async () => {
 			try {
-				await adapter.updateUserAttributes(INVALID_INPUT, {});
+				await adapter.updateUserAttributes(INVALID_INPUT, {
+					username: ""
+				});
 				throw new Error("No error was thrown");
 			} catch (e) {
 				const error = e as LuciaError;
@@ -281,7 +283,7 @@ export const testUserAdapter = async (
 	await test("updateKeyPassword()", "Updates key password", async () => {
 		const user = new User();
 		const key = user.createKey(false, false);
-		await db.insertUser(user.getSchema())
+		await db.insertUser(user.getSchema());
 		await db.insertKey(key.getSchema());
 		const UPDATED_PASSWORD = "UPDATED_PASSWORD";
 		await adapter.updateKeyPassword(key.id, UPDATED_PASSWORD);
@@ -336,21 +338,25 @@ export const testUserAdapter = async (
 		);
 		await clearAll();
 	});
-	await test("deleteNonPrimaryKey()", "Avoid deleting primary key", async () => {
-		const user = new User();
-		const key = user.createKey(false, true);
-		await db.insertUser(user.getSchema());
-		await db.insertKey(key.getSchema());
-		await adapter.deleteNonPrimaryKey(key.id);
-		const keys = await db.getKeys();
-		validate.includesSomeItem(
-			keys,
-			key.validateSchema,
-			"Non-target was deleted",
-			key.getSchema()
-		);
-		await clearAll();
-	});
+	await test(
+		"deleteNonPrimaryKey()",
+		"Avoid deleting primary key",
+		async () => {
+			const user = new User();
+			const key = user.createKey(false, true);
+			await db.insertUser(user.getSchema());
+			await db.insertKey(key.getSchema());
+			await adapter.deleteNonPrimaryKey(key.id);
+			const keys = await db.getKeys();
+			validate.includesSomeItem(
+				keys,
+				key.validateSchema,
+				"Non-target was deleted",
+				key.getSchema()
+			);
+			await clearAll();
+		}
+	);
 	await test("deleteKeysByUserId()", "Delete keys of target user", async () => {
 		const user1 = new User();
 		const user2 = new User();
