@@ -50,16 +50,6 @@ const adapter =
 					.executeTakeFirst();
 				return data ?? null;
 			},
-			getUserByKey: async (key) => {
-				const data = await kysely
-					.selectFrom("key")
-					.innerJoin("user", "user.id", "key.user_id")
-					.selectAll("user")
-					.where("key.id", "=", key)
-					.executeTakeFirst();
-				if (!data) return null;
-				return data;
-			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				const data = await kysely
 					.selectFrom("session")

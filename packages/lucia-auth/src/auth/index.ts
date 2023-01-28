@@ -110,20 +110,9 @@ export class Auth<C extends Configurations = any> {
 			validate: configs.hash?.validate ?? validateScryptHash
 		};
 	}
-
 	public getUser = async (userId: string): Promise<User> => {
 		const databaseUser = await this.adapter.getUser(userId);
 		if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
-		const user = this.transformUserData(databaseUser);
-		return user;
-	};
-	public getUserByKey = async (
-		providerId: string,
-		providerUserId: string
-	): Promise<User> => {
-		const key = `${providerId}:${providerUserId}`;
-		const databaseUser = await this.adapter.getUserByKey(key);
-		if (!databaseUser) throw new LuciaError("AUTH_INVALID_KEY");
 		const user = this.transformUserData(databaseUser);
 		return user;
 	};
@@ -240,6 +229,11 @@ export class Auth<C extends Configurations = any> {
 		}
 		return session;
 	};
+	public getAllUserSessions = async (userId: string) => {
+		await this.getUser(userId);
+		const databaseData = await this.adapter.getSessionsByUserId(userId);
+		return databaseData.map((val) => transformDatabaseSessionData(val));
+	};
 	public validateSession = async (sessionId: string): Promise<Session> => {
 		const session = await this.getSession(sessionId);
 		if (session.state === "active") return session;
@@ -345,12 +339,12 @@ export class Auth<C extends Configurations = any> {
 			createSessionCookie(session, this.ENV, options)
 		);
 	};
-	public addKey = async (
+	public createKey = async (
 		userId: string,
 		keyData: {
 			providerId: string;
 			providerUserId: string;
-			password?: string | null;
+			password: string | null;
 		}
 	): Promise<Key> => {
 		const key = `${keyData.providerId}:${keyData.providerUserId}`;
@@ -370,11 +364,27 @@ export class Auth<C extends Configurations = any> {
 			userId
 		};
 	};
-	public removeKey = async (providerId: string, providerUserId: string) => {
+	public deleteKey = async (providerId: string, providerUserId: string) => {
 		const key = `${providerId}:${providerUserId}`;
 		await this.adapter.deleteNonPrimaryKey(key);
 	};
+	public getKey = async (
+		providerId: string,
+		providerUserId: string
+	): Promise<Key> => {
+		const key = `${providerId}:${providerUserId}`;
+		const keyData = await this.adapter.getKey(key);
+		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY");
+		return {
+			providerId,
+			providerUserId,
+			isPrimary: keyData.primary,
+			isPasswordDefined: !!keyData.hashed_password,
+			userId: keyData.user_id
+		};
+	};
 	public getAllUserKeys = async (userId: string) => {
+		await this.getUser(userId);
 		const databaseData = await this.adapter.getKeysByUserId(userId);
 		return databaseData.map((val) => transformDatabaseKeyData(val));
 	};
@@ -382,7 +392,7 @@ export class Auth<C extends Configurations = any> {
 		providerId: string,
 		providerUserId: string,
 		password: string | null
-	): Promise<User> => {
+	): Promise<void> => {
 		const key = `${providerId}:${providerUserId}`;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
 		await this.adapter.updateKeyPassword(key, hashedPassword);

@@ -7,7 +7,7 @@ export interface OAuthProvider<A extends Auth> {
 		createUser: (
 			attributes: CreateUserAttributesParameter<A>
 		) => Promise<LuciaUser<A>>;
-		addKey: (userId: string) => Promise<Key>;
+		createKey: (userId: string) => Promise<Key>;
 		providerUser: Record<string, any>;
 		[data: string]: any;
 	}>;

@@ -115,11 +115,14 @@ Provides methods to add, get, and delete from each table. `get` methods return a
 
 ```ts
 export interface Database {
-	getSessions: () => Promise<SessionSchema[]>;
 	getUsers: () => Promise<UserSchema[]>;
+	getSessions: () => Promise<SessionSchema[]>;
+	getKeys: () => Promise<KeySchema[]>;
 	clearUsers: () => Promise<void>;
 	clearSessions: () => Promise<void>;
+	clearKeys: () => Promise<void>;
 	insertUser: (data: UserSchema) => Promise<void>;
 	insertSession: (data: SessionSchema) => Promise<void>;
+	insertKey: (data: KeySchema) => Promise<void>;
 }
 ```

@@ -57,7 +57,6 @@ export type Adapter = {
 
 export type UserAdapter = {
 	getUser: (userId: string) => Promise<UserSchema | null>;
-	getUserByKey: (key: string) => Promise<UserSchema | null>;
 	setUser: (
 		userId: string | null,
 		attributes: Record<string, any>

@@ -47,19 +47,6 @@ const adapter = (url: string, secret: string): AdapterFunction<Adapter> => {
 				if (error) throw error;
 				return data;
 			},
-			getUserByKey: async (key) => {
-				type Schema = KeySchema & {
-					user: UserSchema;
-				};
-				const { data, error } = (await supabase
-					.from<Schema>("user")
-					.select("user(*), *")
-					.eq("id", key)
-					.maybeSingle()) as PostgrestSingleReadResult<Schema>;
-				if (error) throw error;
-				if (!data) return null;
-				return data.user;
-			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				type Schema = SessionSchema & { user: UserSchema };
 				const { data, error } = await supabase

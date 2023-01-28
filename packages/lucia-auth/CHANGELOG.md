@@ -3,7 +3,7 @@
 ## 0.5.0
 
 - [Feat] Add keys
-- [Breaking] Removed: `getUserByProviderId`, `updateUserProviderId`, `authenticateUser`
+- [Breaking] Removed: `getUserByProviderId`, `updateUserProviderId`, `authenticateUser`, `updateUserPassword`
 - [Breaking] Changed parameters for `createUser`
 - [Breaking] Removed error message: `AUTH_INVALID_PROVIDER_ID`, `AUTH_DUPLICATE_PROVIDER_ID`
 - [Breaking] Removed `/adapter`

@@ -13,17 +13,6 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				if (!userDoc) return null;
 				return convertUserDoc(userDoc);
 			},
-			getUserByKey: async (key) => {
-				const keyDoc = await Key.findOne({
-					id: key
-				}).lean();
-				if (!keyDoc) return null;
-				const userDoc = await User.findOne({
-					id: keyDoc._id
-				});
-				if (!userDoc) return null;
-				return convertUserDoc(userDoc);
-			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				const session = await Session.findById(sessionId).lean();
 				if (!session) return null;

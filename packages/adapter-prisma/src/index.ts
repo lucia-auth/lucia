@@ -33,14 +33,6 @@ const adapter =
 				if (!data) return null;
 				return data;
 			},
-			getUserByKey: async (key) => {
-				const data = await prisma.key.findUnique({
-					where: {
-						id: key
-					}
-				});
-				return data;
-			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				const data = await prisma.session.findUnique({
 					where: {

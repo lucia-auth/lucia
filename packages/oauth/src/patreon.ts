@@ -119,14 +119,15 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 				attributes: userAttributes as any
 			})) as any;
 		};
-		const addKey = async (userId: string) => {
-			return await this.auth.addKey(userId, {
+		const createKey = async (userId: string) => {
+			return await this.auth.createKey(userId, {
 				providerId: PROVIDER_ID,
-				providerUserId: PROVIDER_USER_ID
+				providerUserId: PROVIDER_USER_ID,
+				password: null
 			});
 		};
 		return {
-			addKey,
+			createKey,
 			createUser,
 			existingUser,
 			providerUser: patreonUser,

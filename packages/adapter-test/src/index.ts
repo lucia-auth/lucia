@@ -1,4 +1,4 @@
-import { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
+import { KeySchema, SessionSchema } from "lucia-auth";
 import { UserSchemaWithAttributes } from "./types.js";
 export { testAdapter } from "./tests/index.js";
 export { testAdapterUserIdGeneration } from "./tests/user-id.js";

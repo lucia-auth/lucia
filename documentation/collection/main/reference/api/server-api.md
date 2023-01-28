@@ -55,55 +55,61 @@ const lucia: (configs: Configurations) => Auth;
 const auth = lucia(configs);
 ```
 
-### `authenticateUser()`
+### `createKey()`
 
-Validates the user's password using the provider id. Will not work with users without a password.
+Creates a new non-primary key for a user.
 
 ```ts
-const authenticateUser: (
-	provider: string,
-	identifier: string,
-	password: string
-) => Promise<User>;
+const createKey: (
+	userId: string,
+	data: {
+		providerId: string;
+		providerUserId: string;
+		password: string | null;
+	}
+) => Promise<Key>;
 ```
 
 #### Parameter
 
-| name       | type     | description   |
-| ---------- | -------- | ------------- |
-| provider   | `string` | provider name |
-| identifier | `string` | identifier    |
-| password   | `string` | password      |
+| name                | type     | description                                                                                                              |
+| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| userId              | `string` | the user id of the key to create                                                                                         |
+| data.providerId     | `string` | the provider id of the key                                                                                               |
+| data.providerUserId | `string` | the provider user id of the key                                                                                          |
+| data.password       | `string` | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |
 
 #### Returns
 
-| type                                        | description            |
-| ------------------------------------------- | ---------------------- |
-| [`User`](/reference/types/lucia-types#user) | the authenticated user |
+| type                                      | description           |
+| ----------------------------------------- | --------------------- |
+| [`Key`](/reference/types/lucia-types#key) | the newly created key |
 
 #### Errors
 
-| name                     | description                                         |
-| ------------------------ | --------------------------------------------------- |
-| AUTH_INVALID_PROVIDER_ID | the user with the provider does not exist           |
-| AUTH_INVALID_PASSWORD    | incorrect password                                  |
-| AUTH_OUTDATED_PASSWORD   | the user's password is hashed with an old algorithm |
+| name                 | description        |
+| -------------------- | ------------------ |
+| AUTH_INVALID_USER_ID | invalid user id    |
+| AUTH_DUPLICATE_KEY   | key already exists |
 
 #### Example
 
 ```ts
 import { auth } from "$lib/server/lucia";
-
 try {
-	await auth.authenticateUser("email", "user@example.com", "123456");
+	await auth.createKey(userId, {
+		providerId: "email",
+		providerUserId: "user@example.com",
+		password: "123456"
+	});
 } catch {
-	// invalid credentials
+	// invalid user id
 }
 ```
 
 ### `createSession()`
 
-Creates a new session of a user.
+Creates a new session for a user.
 
 ```ts
 const createSession: (userId: string) => Promise<Session>;
@@ -173,30 +179,28 @@ const response = new Response(null, {
 
 ### `createUser()`
 
-Creates a new user.
+Creates a new user and a new primary key.
 
 ```ts
-const createUser: (
-	provider: string,
-	identifier: string,
-	options:
-		| {
-				password?: string;
-				attributes?: Lucia.UserAttributes;
-		  }
-		| undefined
-) => Promise<User>;
+const createUser: (data: {
+	key: {
+		providerId: string;
+		providerUserId: string;
+		password: string | null;
+	} | null;
+	attributes: Lucia.UserAttributes;
+}) => Promise<User>;
 ```
 
 #### Parameter
 
-| name               | type                                                                                     | description                                                                                            | optional |
-| ------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------- |
-| provider           | `string`                                                                                 | the provider of the user to create                                                                     |          |
-| identifier         | `string`                                                                                 | the identifier of the user˝ to create                                                                  |          |
-| options            | `     Record<any, any<> \| undefined`                                                    | can be undefined if [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) is empty |          |
-| options.password   | `string`                                                                                 | the password of the user - can be undefined to omit it.                                                | true     |
-| options.attributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in `user` table - can be undefined if `Lucia.UserAttributes` is empty    | true     |
+| name                    | type                                                                                     | description                                   | optional |
+| ----------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------- | -------- |
+| data.key                | `null` \| `typeof data.key`                                                              |
+| data.key.providerId     | provider id of the key                                                                   |
+| data.key.providerUserId | `string`                                                                                 | the user id within the provider               |
+| data.key.password       | `string`                                                                                 | the password for the key                      | true     |
+| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in `user` table | true     |
 
 #### Returns
 
@@ -206,9 +210,9 @@ const createUser: (
 
 #### Errors
 
-| name                       | description                                      |
-| -------------------------- | ------------------------------------------------ |
-| AUTH_DUPLICATE_PROVIDER_ID | the user with the provider and identifier exists |
+| name               | description                           |
+| ------------------ | ------------------------------------- |
+| AUTH_DUPLICATE_KEY | the user with the provided key exists |
 
 #### Example
 
@@ -216,28 +220,20 @@ const createUser: (
 import { auth } from "$lib/server/lucia";
 
 try {
-	await auth.createUser("email", "user@example.com", {
-		password: "123456",
+	await auth.createUser({
+		key: {
+			providerId: "email",
+			providerUserId: "user@example.com",
+			password: "123456"
+		},
 		attributes: {
 			username: "user123",
 			isAdmin: true
-		} // required if Lucia.UserAttributes is NOT empty
+		}
 	});
 } catch {
 	// error
 }
-```
-
-These are only valid if `Lucia.attributes` **_IS_** empty:
-
-```ts
-auth.createUser("email", "user@example.com", {
-	password: "123456"
-});
-```
-
-```ts
-auth.createUser("email", "user@example.com");
 ```
 
 ### `deleteDeadUserSessions()`
@@ -261,6 +257,33 @@ import { auth } from "lucia-auth";
 
 try {
 	await auth.deleteExpiredUserSession(userId);
+} catch {
+	// error
+}
+```
+
+### `deleteKey()`
+
+Deletes a non-primary key. Primary keys can't be deleted.
+
+```ts
+const deleteKey: (providerId: string, providerUserId: string) => Promise<void>;
+```
+
+#### Parameter
+
+| name           | type     | description                     |
+| -------------- | -------- | ------------------------------- |
+| providerId     | `string` | the provider id of the key      |
+| providerUserId | `string` | the provider user id of the key |
+
+#### Example
+
+```ts
+import { auth } from "lucia-auth";
+
+try {
+	await auth.deleteKey("username", "user@example.com");
 } catch {
 	// error
 }
@@ -311,6 +334,121 @@ const generateSessionId: () => [
 | sessionId           | `string` | the session id                                     |
 | activePeriodExpires | `Date`   | the expiration time of the session's active period |
 | idlePeriodExpires   | `Date`   | the expiration time of the session's idle period   |
+
+### `getAllUserKeys()`
+
+Validate the user id and get all keys of a user.
+
+```ts
+const getAllUserKeys: (userId: string) => Promise<Key[]>;
+```
+
+#### Parameter
+
+| name   | type     | description             |
+| ------ | -------- | ----------------------- |
+| userId | `string` | the user id of the user |
+
+#### Returns
+
+| type                                          | description |
+| --------------------------------------------- | ----------- |
+| [`Key`](/reference/types/lucia-types#key)`[]` |             |
+
+#### Errors
+
+| name                 | description                              |
+| -------------------- | ---------------------------------------- |
+| AUTH_INVALID_USER_ID | the user with the user id does not exist |
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+try {
+	const keys = await auth.getAllUserKeys(userId);
+} catch {
+	// invalid user id
+}
+```
+
+### `getAllUserSessions()`
+
+Validate the user id and get all sessions of a user.
+
+```ts
+const getAllUserKeys: (userId: string) => Promise<Session[]>;
+```
+
+#### Parameter
+
+| name   | type     | description             |
+| ------ | -------- | ----------------------- |
+| userId | `string` | the user id of the user |
+
+#### Returns
+
+| type                                              | description |
+| ------------------------------------------------- | ----------- |
+| [`Session`](/reference/types/lucia-types#key)`[]` |             |
+
+#### Errors
+
+| name                 | description                              |
+| -------------------- | ---------------------------------------- |
+| AUTH_INVALID_USER_ID | the user with the user id does not exist |
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+try {
+	const sessions = await auth.getAllUserSessions(userId);
+} catch {
+	// invalid user id
+}
+```
+
+### `getKey()`
+
+Gets the target key.
+
+```ts
+const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
+```
+
+#### Parameter
+
+| name           | type     | description                     |
+| -------------- | -------- | ------------------------------- |
+| providerId     | `string` | the provider id of the key      |
+| providerUserId | `string` | the provider user id of the key |
+
+#### Returns
+
+| type                                      | description           |
+| ----------------------------------------- | --------------------- |
+| [`Key`](/reference/types/lucia-types#key) | the newly created key |
+
+#### Errors
+
+| name             | description                                  |
+| ---------------- | -------------------------------------------- |
+| AUTH_INVALID_KEY | the user with the provider id does not exist |
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+try {
+	const key = await auth.getKey("email", "user@example.com");
+} catch {
+	// invalid key
+}
+```
 
 ### `getSession()`
 
@@ -435,48 +573,6 @@ try {
 }
 ```
 
-### `getUserByProviderId()`
-
-Get a user by the provider id (provider name, identifier).
-
-```ts
-const getUserByProviderId: (
-	provider: string,
-	identifier: string
-) => Promise<User>;
-```
-
-#### Parameter
-
-| name       | type     | description                   |
-| ---------- | -------- | ----------------------------- |
-| provider   | `string` | the provider name of the user |
-| identifier | `string` | the identifier of the user    |
-
-#### Returns
-
-| type                                        | description                   |
-| ------------------------------------------- | ----------------------------- |
-| [`User`](/reference/types/lucia-types#user) | the user with the provider id |
-
-#### Errors
-
-| name                     | description                                  |
-| ------------------------ | -------------------------------------------- |
-| AUTH_INVALID_PROVIDER_ID | the user with the provider id does not exist |
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-
-try {
-	await auth.getUserByProviderId("email", "user@example.com");
-} catch {
-	// invalid provider id
-}
-```
-
 ### `invalidateAllUserSessions()`
 
 Invalidates all sessions of a user. Will succeed regardless of the validity of the user id.
@@ -567,6 +663,46 @@ try {
 }
 ```
 
+### `updateKeyPassword()`
+
+Update key password.
+
+```ts
+const updateKeyPassword: (
+	providerId: string,
+	providerUserId: string,
+	password: string | null
+) => Promise<void>;
+```
+
+#### Parameter
+
+| name           | type     | description                        |
+| -------------- | -------- | ---------------------------------- |
+| providerId     | `string` | provider id of the target key      |
+| providerUserId | `string` | provider user id of the target key |
+| password       | `string` | new password                       |
+
+#### Errors
+
+| name                   | description                                         |
+| ---------------------- | --------------------------------------------------- |
+| AUTH_INVALID_KEY       | the user with the key does not exist                |
+| AUTH_INVALID_PASSWORD  | incorrect password                                  |
+| AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+try {
+	await auth.validateKeyPassword("email", "user@example.com", "123456");
+} catch {
+	// invalid credentials
+}
+```
+
 ### `updateUserAttributes()`
 
 Updates one of the custom fields in the `user` table. The keys of `attributes` should include one or more of the additional columns inside `user` table, and the values can be `null` but not `undefined`.
@@ -611,94 +747,49 @@ try {
 }
 ```
 
-### `updateUserPassword()`
+### `validateKeyPassword()`
 
-Updates a user's password. This will also invalidate all sessions of the target user for security, and a new session must be created afterwards.
+Validates the password of a key. Can only be used if the password is defined.
 
 ```ts
-const updateUserPassword: (
-	userId: string,
-	password: string | null
+const validateKeyPassword: (
+	providerId: string,
+	providerUserId: string,
+	password: string
 ) => Promise<User>;
 ```
 
 #### Parameter
 
-| name     | type             | description     |
-| -------- | ---------------- | --------------- |
-| userId   | `string`         | a refresh token |
-| password | `string \| null` | a new password  |
+| name           | type     | description                 |
+| -------------- | -------- | --------------------------- |
+| providerId     | `string` | provider id of the key      |
+| providerUserId | `string` | provider user id of the key |
+| password       | `string` | password of the key         |
 
 #### Returns
 
-| type                                        | description      |
-| ------------------------------------------- | ---------------- |
-| [`User`](/reference/types/lucia-types#user) | the updated user |
+| type                                        | description        |
+| ------------------------------------------- | ------------------ |
+| [`User`](/reference/types/lucia-types#user) | the validated user |
 
 #### Errors
 
-| name                 | description           |
-| -------------------- | --------------------- |
-| AUTH_INVALID_USER_ID | invalid refresh token |
+| name                   | description                                         |
+| ---------------------- | --------------------------------------------------- |
+| AUTH_INVALID_KEY       | the user with the key does not exist                |
+| AUTH_INVALID_PASSWORD  | incorrect password                                  |
+| AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
 
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "$lib/server/lucia";
 
 try {
-	await auth.updateUserPassword(userId, "123456");
-	const session = await auth.createSession(userId); // create a new session for the user
+	await auth.validateKeyPassword("email", "user@example.com", "123456");
 } catch {
-	// error
-}
-```
-
-```ts
-await auth.updateUserPassword(userId, "123456");
-```
-
-### `updateUserProviderId()`
-
-Updates a user's provider id.
-
-```ts
-const updateUserProviderId: (
-	userId: string,
-	provider: string,
-	identifier: string
-) => Promise<User>;
-```
-
-#### Parameter
-
-| name       | type     | description                          |
-| ---------- | -------- | ------------------------------------ |
-| userId     | `string` | a refresh token                      |
-| provider   | `string` | the provider name of the provider id |
-| identifier | `string` | the identifier of the provider id    |
-
-#### Returns
-
-| type                                        | description      |
-| ------------------------------------------- | ---------------- |
-| [`User`](/reference/types/lucia-types#user) | the updated user |
-
-#### Errors
-
-| name                 | description           |
-| -------------------- | --------------------- |
-| AUTH_INVALID_USER_ID | invalid refresh token |
-
-#### Example
-
-```ts
-import { auth } from "lucia-auth";
-
-try {
-	await auth.updateUserProviderId(userId, "email", "user@example.com");
-} catch {
-	// error
+	// invalid credentials
 }
 ```
 
