@@ -7,7 +7,7 @@ Keys allow you to reference users using external data from a provider. It's defi
 
 ## Get user from keys
 
-The [`getKeyUser()`]() can be used to get the user of the key by the provider id and provider user id. This will throw an error if the key doesn't exist.
+[`getKeyUser()`]() can be used to get the user of the key by the provider id and provider user id. This will throw an error if the key doesn't exist.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -21,7 +21,7 @@ try {
 
 ## Validate key password
 
-You can validate a key password and get the user with the [`validateKeyPassword()`]() method. While the error will indicate if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password"). This method will only work with keys with a password.
+You can validate a key password and get the user with [`validateKeyPassword()`](). While the error will indicate if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password"). This method will only work with keys with a password.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -35,7 +35,7 @@ try {
 
 ## Get key
 
-You can get the key data using the [`getKey()`]() method.
+You can get the key data using [`getKey()`]().
 
 ```ts
 import { auth } from "./lucia.js";
@@ -49,7 +49,7 @@ try {
 
 ### Get all keys of a user
 
-You can get all keys belonging to a user using the [`getAllUserKeys()`]() method.
+You can get all keys belonging to a user using [`getAllUserKeys()`]().
 
 ```ts
 try {
@@ -62,7 +62,7 @@ try {
 
 ## Create new key
 
-You can create a new key for a user using the [`createKey()`]() method. You can only create non-primary keys with this method.
+You can create a new key for a user using [`createKey()`](). You can only create non-primary keys with this method.
 
 ```ts
 try {
@@ -78,7 +78,7 @@ try {
 
 ## Update key password
 
-You can update the password of a key with the [`updateKeyPassword()`]() method. You can pass on `null` to remove the password.
+You can update the password of a key with [`updateKeyPassword()`](). You can pass on `null` to remove the password.
 
 ```ts
 try {
@@ -90,7 +90,7 @@ try {
 
 ## Delete key
 
-You can delete a non-primary key with the [`deleteKey()`]() method. You cannot delete primary keys. This method will succeed regardless of the validity of key.
+You can delete a non-primary key with [`deleteKey()`](). You cannot delete primary keys. This method will succeed regardless of the validity of key.
 
 ```ts
 try {

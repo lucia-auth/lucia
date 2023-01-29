@@ -17,7 +17,7 @@ This allows active users to stay logged in, while invalidating inactive users.
 
 ## Create new session
 
-The [`createSession()`]() method can be used to create new sessions for the user using the user's id.
+[`createSession()`]() method can be used to create new sessions for the user using the user's id.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -31,7 +31,7 @@ try {
 
 ### Create session cookie
 
-The recommended way to store sessions is by using cookies. You can generate cookies represented with [`Cookie`]() using the [`createSessionCookies()`]() method and serialize them with the `serialize()` method.
+The recommended way to store sessions is by using cookies. You can generate cookies represented with [`Cookie`]() using [`createSessionCookies()`]() and serialize them with the `serialize()` method.
 
 ```ts
 const session = await auth.createSession(userId);
@@ -42,7 +42,7 @@ setResponseHeaders("set-cookie", serializedCookies.toString());
 
 ## Validate session ids
 
-The [`validateSession()`]() method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored. You can check if the returned session is a new session with the `isFresh` property.
+[`validateSession()`]() method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored. You can check if the returned session is a new session with the `isFresh` property.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -153,7 +153,7 @@ try {
 
 ## Delete dead sessions
 
-Your database may be polluted with expired, dead sessions. Lucia will attempt to clean up your database on some method call with the default configuration, but you can manually delete all dead sessions of a user with [`deleteDeadUserSessions()`](). You can disable the auto-database cleanup with the [`autoDatabaseCleanup`](/reference/configure/lucia-configurations#autodatabasecleanup) configuration.
+Your database may be polluted with expired, dead sessions. Lucia will attempt to clean up your database on some method call with the default configuration, but you can manually delete all dead sessions of a user with [`deleteDeadUserSessions()`](). You can disable the auto-database cleanup with [`autoDatabaseCleanup`](/reference/configure/lucia-configurations#autodatabasecleanup) configuration.
 
 ## Configure sessions
 

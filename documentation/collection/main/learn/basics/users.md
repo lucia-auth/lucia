@@ -27,9 +27,11 @@ _Keys_ is a key concept of Lucia.
 
 When authenticating users (log in), you get the user with data from an external provider, such as the email from the user's input or Github user id for social login. Keys allow you to link such external data from a _provider_ with Lucia users stored in your database, and you can have multiple keys linked to a user.
 
-Keys are defined with a _provider id_, which is just a unique id for the provider (authentication method), and a _provider user id_, which is the unique identifier of the user within the provider. While you can (and should) have multiple keys with the same provider id, the combination of the provider id and provider user id should be unique. Keys can hold passwords as well, which will be hashed and can be validated with Lucia's API.
+Keys are defined with a _provider id_, which is just a unique id for the provider, and a _provider user id_, which is the unique identifier of the user within the provided data. While you can (and should) have multiple keys with the same provider id, the combination of the provider id and provider user id should be unique. Keys can hold passwords as well, which will be hashed and can be validated with Lucia's API.
 
 For example, for email/password, "email" can be the provider id, the user’s email can be the provider user id, and store the user's password as the key's password. For Github OAuth, "github" can be the provider name and the user’s GitHub user id can be the provider user id.
+
+> The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used
 
 #### Primary keys
 
@@ -37,7 +39,7 @@ The primary key is the key created alongside the user. The primary key is always
 
 ## Create users
 
-The [`createUser()`](/reference/api/server-api#createuser) method can be used to create users. This takes an option for the primary key, which will be linked the user, and user attributes.
+[`createUser()`](/reference/api/server-api#createuser) can be used to create users. This takes an option for the primary key, which will be linked the user, and user attributes.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -126,7 +128,7 @@ If you _just_ need to store users and authenticate users by yourself, you can se
 
 ## Get users
 
-The [`getUser()`]() method can be used to get a user from a user id. This will throw an error if the user isn’t found.
+[`getUser()`]() can be used to get a user from a user id. This will throw an error if the user isn’t found.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -136,7 +138,7 @@ const user = await auth.getUser(userId);
 
 ## Update user attributes
 
-A user's attributes can be updated using the [`updateUserAttributes()`]() method. Only the user data attribute (column) that needs to updated needs to be passed.
+A user's attributes can be updated using [`updateUserAttributes()`](). Only the user data attribute (column) that needs to updated needs to be passed.
 
 **Make sure to invalidate all sessions of the user on password or privilege level change.** You can create a new session to prevent the current user from being logged out.
 
@@ -163,7 +165,7 @@ try {
 
 ## Delete users
 
-Users can be deleted using the [`deleteUser()`]() method. All sessions and keys of the target user will be deleted. This method will succeed regardless of the validity of the user id.
+Users can be deleted using [`deleteUser()`](). All sessions and keys of the target user will be deleted. This method will succeed regardless of the validity of the user id.
 
 ```ts
 import { auth } from "./lucia.js";

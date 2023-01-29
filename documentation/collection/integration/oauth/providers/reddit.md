@@ -117,7 +117,8 @@ const validateCallback: (code: string) => Promise<RedditProviderSession>;
 ```ts
 interface RedditProviderSession {
 	existingUser: User | null;
-	createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+	createKey: (userId: string) => Promise<Key>;
+	createUser: (userAttributes) => Promise<User>;
 	providerUser: RedditUser;
 	accessToken: string;
 }
@@ -132,23 +133,33 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | providerUser                                     | [`RedditUser`](/oauth/providers/reddit#reddituser)    | Reddit user                                       |
 | accessToken                                      | `string`                                              | Reddit access token                               |
 
+### `createKey()`
+
+```ts
+const createKey: (userId: string) => Promise<Key>;
+```
+
+Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createkey) using the following parameter:
+
+| name           | value                                                                  |
+| -------------- | ---------------------------------------------------------------------- |
+| userId         | `userId`                                                               |
+| providerId     | `"reddit"`                                                             |
+| providerUserId | Reddit user id ([`RedditUser.id`](/oauth/providers/reddit#reddituser)) |
+
 ### `createUser()`
 
 ```ts
-const createUser: (
-	userAttributes: Lucia.UserAttributes | undefined
-) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
 ```
 
-Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
+Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
 
-| name               | value                                                                  |
-| ------------------ | ---------------------------------------------------------------------- |
-| provider           | `"reddit"`                                                             |
-| identifier         | Reddit user id ([`RedditUser.id`](/oauth/providers/reddit#reddituser)) |
-| options.attributes | `userAttributes ?? {}`                                                 |
-
-`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
+| name                    | value                                                                  |
+| ----------------------- | ---------------------------------------------------------------------- |
+| data.key.providerId     | `"reddit"`                                                             |
+| data.key.providerUserId | Reddit user id ([`RedditUser.id`](/oauth/providers/reddit#reddituser)) |
+| data.attributes         | `userAttributes`                                                       |
 
 ## `RedditUser`
 

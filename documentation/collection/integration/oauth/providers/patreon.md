@@ -119,7 +119,8 @@ const validateCallback: (code: string) => Promise<PateronProviderSession>;
 ```ts
 interface PateronProviderSession {
 	existingUser: User | null;
-	createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+	createKey: (userId: string) => Promise<Key>;
+	createUser: (userAttributes) => Promise<User>;
 	providerUser: PateronUser;
 	accessToken: string;
 	refreshToken?: string;
@@ -138,23 +139,33 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | refreshToken                                      | `string \| undefined`                                 | only defined on the first sign in                 |
 | expires in                                        | `number`                                              | expiration time (seconds) of the access token     |
 
+### `createKey()`
+
+```ts
+const createKey: (userId: string) => Promise<Key>;
+```
+
+Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createkey) using the following parameter:
+
+| name           | value                                                                           |
+| -------------- | ------------------------------------------------------------------------------- |
+| userId         | `userId`                                                                        |
+| providerId     | `"patreon"`                                                                     |
+| providerUserId | Patreon user id ([`PateronUser.data.id`](/oauth/providers/pateron#pateronuser)) |
+
 ### `createUser()`
 
 ```ts
-const createUser: (
-	userAttributes: Lucia.UserAttributes | undefined
-) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
 ```
 
-Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
+Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
 
-| name               | value                                                                           |
-| ------------------ | ------------------------------------------------------------------------------- |
-| provider           | `"pateron"`                                                                     |
-| identifier         | Pateron user id ([`PateronUser.data.id`](/oauth/providers/pateron#pateronuser)) |
-| options.attributes | `userAttributes ?? {}`                                                          |
-
-`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
+| name                    | value                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| data.key.providerId     | `"patreon"`                                                                     |
+| data.key.providerUserId | Patreon user id ([`PateronUser.data.id`](/oauth/providers/pateron#pateronuser)) |
+| data.attributes         | `userAttributes`                                                                |
 
 ## `PateronUser`
 

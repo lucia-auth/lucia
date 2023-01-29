@@ -4,7 +4,7 @@
 
 - [Breaking] Require `lucia-auth` 0.5.0
 - [Breaking] Update `createUser` parameter
-- `linkUser` in `validateCallback` result
+- `createKey` method in `validateCallback` result
 
 ## 0.4.0
 
