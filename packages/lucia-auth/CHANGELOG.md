@@ -9,11 +9,12 @@
 - [Breaking] Remove `/adapter`
 - [Breaking] Rename `session` table column `expires` to `active_expires`
 - [Breaking] Lucia will generate its own user id by default (15 chars long)
+- [Breaking] Update type `UserAdapter` and `Adapter`
 - Allow `config.generateCustomUserId` to be synchronous
 
 ## 0.4.3
 
-- Expose `ENV`
+- Expose type `ENV`
 
 ## 0.4.2
 
