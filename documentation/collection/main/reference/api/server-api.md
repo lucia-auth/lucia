@@ -17,6 +17,12 @@ Generates a random string of a defined length using [`nanoid`](https://github.co
 const generateRandomString: (length: number) => string;
 ```
 
+Uses the following characters (uppercase, lowercase, numbers):
+
+```
+0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+```
+
 #### Parameter
 
 | name   | type     | description                     |
