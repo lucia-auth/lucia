@@ -40,26 +40,24 @@ const auth = lucia({
 
 ## Database structure
 
-`uuid` should be changed to `varchar` if you use custom user ids.
-
 ### `user`
 
 `id` may be `TEXT` if you generate your own user id. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` may be `varchar` if you generate your own user id.
 
-| name | type   | foreign constraint | default              | nullable | unique | identity |
-| ---- | ------ | ------------------ | -------------------- | -------- | ------ | -------- |
-| id   | `uuid` |                    | `uuid_generate_v4()` |          | true   | true     |
+| name | type      | foreign constraint | nullable | unique | identity |
+| ---- | --------- | ------------------ | -------- | ------ | -------- |
+| id   | `varchar` |                    |          | true   | true     |
 
 ### `session`
 
-Column type of `user_id` should match the type of `public.user(id)`. This is not required if you're only using the Supabase adapter for the `user` table via [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+This is not required if you're only using the Supabase adapter for the `user` table via [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
 
-| name         | type   | foreign constraint | nullable | unique | identity |
-| ------------ | ------ | ------------------ | -------- | ------ | -------- |
-| id           | `text` |                    |          | true   | true     |
-| user_id      | `uuid` | `public.user(id)`  |          |        |          |
-| expires      | `int8` |                    |          |        |          |
-| idle_expires | `int8` |                    |          |        |          |
+| name         | type      | foreign constraint | nullable | unique | identity |
+| ------------ | --------- | ------------------ | -------- | ------ | -------- |
+| id           | `text`    |                    |          | true   | true     |
+| user_id      | `varchar` | `public.user(id)`  |          |        |          |
+| expires      | `int8`    |                    |          |        |          |
+| idle_expires | `int8`    |                    |          |        |          |
 
 ### `key`
 
@@ -68,28 +66,27 @@ Column type of `user_id` should match the type of `public.user(id)`.
 | name            | type      | foreign constraint | nullable | unique | identity |
 | --------------- | --------- | ------------------ | -------- | ------ | -------- |
 | id              | `text`    |                    |          | true   | true     |
-| user_id         | `uuid`    | `public.user(id)`  |          |        |          |
+| user_id         | `varchar` | `public.user(id)`  |          |        |          |
 | hashed_password | `text`    |                    | true     |        |          |
 | primary         | `boolean` |                    |          |        |          |
 
 ## Supabase SQL Editor
 
-`UUID` in for user id may be `TEXT` if you use custom user ids.
 You may add additional columns to store custom user data in `user` table. Refer to [Store user attributes](/learn/basics/store-user-attributes).
 
 ```sql
 CREATE TABLE public.user (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY
+    id TEXT PRIMARY KEY
 );
 CREATE TABLE public.session (
     id TEXT PRIMARY KEY,
-    user_id UUID REFERENCES public.user(id) NOT NULL,
+    user_id TEXT REFERENCES public.user(id) NOT NULL,
     active_expires BIGINT NOT NULL,
     idle_expires BIGINT NOT NULL
 );
 CREATE TABLE public.key (
     id TEXT PRIMARY KEY,
-    user_id UUID REFERENCES public.user(id) NOT NULL,
+    user_id TEXT REFERENCES public.user(id) NOT NULL,
     "primary" BOOLEAN NOT NULL,
     hashed_password TEXT
 );

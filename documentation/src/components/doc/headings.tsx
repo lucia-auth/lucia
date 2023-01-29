@@ -21,17 +21,14 @@ export default (props: { headings: MarkdownHeading[] }) => {
 								const hash = heading.slug.split("/").reverse()[0];
 								return (
 									<Show when={heading.depth < 4}>
-										<li>
-											<a
-												href={`#${hash}`}
-												class={dynamicClassName(
-													"hover:text-black dark:hover:text-zinc-200",
-													{
+										<li class={dynamicClassName("", {
 														"my-1.5": heading.depth === 2,
 														"ml-4": heading.depth === 3,
 														"my-1": heading.depth > 2
-													}
-												)}
+													})}>
+											<a
+												href={`#${hash}`}
+												class="hover:text-black dark:hover:text-zinc-200"
 											>
 												{heading.text}
 											</a>

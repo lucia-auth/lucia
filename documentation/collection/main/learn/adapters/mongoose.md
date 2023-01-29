@@ -9,7 +9,7 @@ An adapter for Mongoose (MongoDB).
 const adapter: (mongoose: Mongoose) => AdapterFunction<Adapter>;
 ```
 
-If [`generateUserId()`](/reference/configure/lucia-configurations#generatecustomuserid) is not configured, the adapter will generate a new `ObjectId` and use the stringified version (24-character hexadecimal string) as the user id.
+If you pass `null` as the user id, the adapter will generate a new `ObjectId` and use the stringified version (24-character hexadecimal string) as the user id.
 
 This adapter will not handle database connection and you will need to connect to the database manually.
 

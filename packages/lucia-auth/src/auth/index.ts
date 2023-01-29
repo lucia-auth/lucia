@@ -81,7 +81,8 @@ export class Auth<C extends Configurations = any> {
 						...configs.adapter.session(LuciaError)
 				  }
 				: configs.adapter(LuciaError);
-		this.generateUserId = configs.generateCustomUserId ?? (async () => null);
+		this.generateUserId =
+			configs.generateCustomUserId ?? (() => generateRandomString(15));
 		this.ENV = configs.env;
 		this.csrfProtection = configs.csrfProtection ?? true;
 		this.sessionTimeout = {
@@ -165,12 +166,12 @@ export class Auth<C extends Configurations = any> {
 		const userData = await this.adapter.setUser(userId, attributes);
 		const user = this.transformUserData(userData);
 		if (data.key) {
-			const key = `${data.key.providerId}:${data.key.providerUserId}`;
+			const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
 			const password = data.key.password;
 			const hashedPassword = password
 				? await this.hash.generate(password)
 				: null;
-			await this.adapter.setKey(key, {
+			await this.adapter.setKey(keyId, {
 				userId: user.userId,
 				isPrimary: true,
 				hashedPassword
@@ -196,24 +197,21 @@ export class Auth<C extends Configurations = any> {
 		await this.adapter.deleteKeysByUserId(userId);
 		await this.adapter.deleteUser(userId);
 	};
-	public validateUserKey = async (
+	public validateKeyPassword = async (
 		providerId: string,
 		providerUserId: string,
 		password: string
 	): Promise<User> => {
-		const key = `${providerId}:${providerUserId}`;
-		const databaseKeyData = await this.adapter.getKey(key);
+		const keyId = `${providerId}:${providerUserId}`;
+		const databaseKeyData = await this.adapter.getKey(keyId);
 		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY");
-		if (!databaseKeyData.hashed_password)
-			throw new LuciaError("AUTH_INVALID_PASSWORD");
-		if (databaseKeyData.hashed_password.startsWith("$2a"))
+		const hashedPassword = databaseKeyData.hashed_password;
+		if (!hashedPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
+		if (hashedPassword.startsWith("$2a"))
 			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-		const isValid = await this.hash.validate(
-			password,
-			databaseKeyData.hashed_password
-		);
-		if (!isValid) throw new LuciaError("AUTH_INVALID_PASSWORD");
-		return await this.getUser(databaseKeyData.user_id);
+		const isValidPassword = await this.hash.validate(password, hashedPassword);
+		if (!isValidPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
+		return transformDatabaseKeyData(databaseKeyData);
 	};
 	public getSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)
@@ -347,11 +345,11 @@ export class Auth<C extends Configurations = any> {
 			password: string | null;
 		}
 	): Promise<Key> => {
-		const key = `${keyData.providerId}:${keyData.providerUserId}`;
+		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
 		const hashedPassword = keyData.password
 			? await this.hash.generate(keyData.password)
 			: null;
-		await this.adapter.setKey(key, {
+		await this.adapter.setKey(keyId, {
 			userId,
 			hashedPassword,
 			isPrimary: false
@@ -365,15 +363,15 @@ export class Auth<C extends Configurations = any> {
 		};
 	};
 	public deleteKey = async (providerId: string, providerUserId: string) => {
-		const key = `${providerId}:${providerUserId}`;
-		await this.adapter.deleteNonPrimaryKey(key);
+		const keyId = `${providerId}:${providerUserId}`;
+		await this.adapter.deleteNonPrimaryKey(keyId);
 	};
 	public getKey = async (
 		providerId: string,
 		providerUserId: string
 	): Promise<Key> => {
-		const key = `${providerId}:${providerUserId}`;
-		const keyData = await this.adapter.getKey(key);
+		const keyId = `${providerId}:${providerUserId}`;
+		const keyData = await this.adapter.getKey(keyId);
 		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY");
 		return {
 			providerId,
@@ -381,6 +379,20 @@ export class Auth<C extends Configurations = any> {
 			isPrimary: keyData.primary,
 			isPasswordDefined: !!keyData.hashed_password,
 			userId: keyData.user_id
+		};
+	};
+	public getKeyUser = async (
+		providerId: string,
+		providerUserId: string
+	): Promise<{
+		key: Key;
+		user: User;
+	}> => {
+		const key = await this.getKey(providerId, providerUserId);
+		const user = await this.getUser(key.userId);
+		return {
+			key,
+			user
 		};
 	};
 	public getAllUserKeys = async (userId: string) => {
@@ -393,9 +405,9 @@ export class Auth<C extends Configurations = any> {
 		providerUserId: string,
 		password: string | null
 	): Promise<void> => {
-		const key = `${providerId}:${providerUserId}`;
+		const keyId = `${providerId}:${providerUserId}`;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
-		await this.adapter.updateKeyPassword(key, hashedPassword);
+		await this.adapter.updateKeyPassword(keyId, hashedPassword);
 	};
 }
 

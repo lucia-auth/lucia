@@ -15,7 +15,7 @@ yarn add @lucia-auth/adapter-test
 
 ### Database
 
-Set `user(id)` to `string` (not auto-generated ids) and add `username` to `user` table (`string`, unique).
+Add `username` to `user` table (`string`, unique).
 
 ### Type declaration
 

@@ -13,9 +13,24 @@ yarn add lucia-auth
 
 ## Set up the database
 
-Lucia currently supports multiple databases: [Prisma](/learn/adapters/prisma) (SQL, MySQL, SQLite, PostgreSQL), [Kysely](/learn/adapters/kysely) (PostgreSQL), [Supabase](/learn/adapters/supabase), [Mongoose](/learn/adapters/mongoose) (MongoDB), and [Fauna](/learn/adapters/fauna). Please follow each adapter's instruction for this step.
+To support multiple databases, Lucia uses database adapters. These adapters provide a set of standardized methods to read from and update the database. Custom adapters can be created as well if Lucia does not provide one.
 
-You can also use a different database for storing sessions, such as [Redis](/learn/adapters/redis). Refer to [`configs.adapter`](/reference/configure/lucia-configurations#adapter).
+Follow the guides below to set up your database:
+
+- [Prisma](/learn/adapters/prisma) (MySQL, SQLite, PostgreSQL)
+- [Kysely](/learn/adapters/kysely) (PostgreSQL, MySQL, SQLite)
+- [Supabase](/learn/adapters/supabase)
+- [Mongoose](/learn/adapters/mongoose) (MongoDB).
+
+## Framework integration
+
+You can use Lucia as is, or with one of the provided framework integration. These are wrapper libraries that provide APIs that make working with Lucia a bit more easier, so you still need to learn the APIs of the core Lucia library.
+
+If you're using one the supported frameworks, follow the "Getting started" guides below in favor of this page:
+
+- [SvelteKit](/sveltekit/start-here/getting-started)
+- [Astro](/astro/start-here/getting-started)
+- [Next.js](/nextjs/start-here/getting-started)
 
 ## Initialize Lucia
 
@@ -56,3 +71,7 @@ declare namespace Lucia {
 	type UserAttributes = {};
 }
 ```
+
+## Next steps
+
+We recommend reading the "Basics" section from top to bottom to get the gist of the library. Cheers and happy coding!

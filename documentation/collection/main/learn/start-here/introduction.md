@@ -23,3 +23,5 @@ const sessionCookie = auth.createSessionCookie(session);
 ```
 
 Lucia aims to work well with any modern web frameworks and supports run-times other than Node such as Cloudflare edge workers.
+
+One important to remember is **Lucia is a server side library**. Every API provided by the core Lucia library should only be used on the server.

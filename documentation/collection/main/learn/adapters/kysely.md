@@ -128,33 +128,31 @@ const auth = lucia({
 
 #### `user`
 
-`id` may be `TEXT` if you generate your own user id. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
 
-| name | type   | foreign constraint | default             | nullable | unique | primary |
-| ---- | ------ | ------------------ | ------------------- | -------- | ------ | ------- |
-| id   | `UUID` |                    | `gen_random_uuid()` |          | true   | true    |
+| name | type   | foreign constraint | nullable | unique | primary |
+| ---- | ------ | ------------------ | -------- | ------ | ------- |
+| id   | `TEXT` |                    |          | true   | true    |
 
 ```sql
 CREATE TABLE public.user (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY
+    id TEXT PRIMARY KEY
 );
 ```
 
 #### `session`
 
-Column type of `user_id` should match the type of `public.user(id)`.
-
 | name           | type     | foreign constraint | nullable | unique | primary |
 | -------------- | -------- | ------------------ | -------- | ------ | ------- |
 | id             | `TEXT`   |                    |          | true   | true    |
-| user_id        | `UUID`   | `public.user(id)`  |          |        |         |
+| user_id        | `TEXT`   | `public.user(id)`  |          |        |         |
 | active_expires | `BIGINT` |                    |          |        |         |
 | idle_expires   | `BIGINT` |                    |          |        |         |
 
 ```sql
 CREATE TABLE public.session (
     id TEXT PRIMARY KEY,
-    user_id UUID REFERENCES public.user(id) NOT NULL,
+    user_id TEXT REFERENCES public.user(id) NOT NULL,
     active_expires BIGINT NOT NULL,
     idle_expires BIGINT NOT NULL
 );
@@ -162,19 +160,17 @@ CREATE TABLE public.session (
 
 #### `key`
 
-Column type of `user_id` should match the type of `public.user(id)`.
-
 | name            | type      | foreign constraint | nullable | unique | primary |
 | --------------- | --------- | ------------------ | -------- | ------ | ------- |
 | id              | `TEXT`    |                    |          | true   | true    |
-| user_id         | `UUID`    | `public.user(id)`  |          |        |         |
+| user_id         | `TEXT`    | `public.user(id)`  |          |        |         |
 | primary         | `BOOLEAN` |                    |          |        |         |
 | hashed_password | `TEXT`    |                    | true     |        |         |
 
 ```sql
 CREATE TABLE public.key (
     id TEXT PRIMARY KEY,
-    user_id UUID REFERENCES public.user(id) NOT NULL,
+    user_id TEXT REFERENCES public.user(id) NOT NULL,
     "primary" BOOLEAN NOT NULL,
     hashed_password TEXT
 );
@@ -188,30 +184,28 @@ The length of the `VARCHAR` type of `id` should be of appropriate length if you 
 
 | name | type          | nullable | unique | primary |
 | ---- | ------------- | -------- | ------ | ------- |
-| id   | `VARCHAR(36)` |          | true   | true    |
+| id   | `VARCHAR(15)` |          | true   | true    |
 
 ```sql
 CREATE TABLE user (
-    id VARCHAR(36) NOT NULL,
+    id VARCHAR(15) NOT NULL,
     PRIMARY KEY (id)
 );
 ```
 
 #### `session`
 
-Column type of `user_id` should match the type of `user(id)`.
-
 | name           | type                | foreign constraint | nullable | unique | identity |
 | -------------- | ------------------- | ------------------ | -------- | ------ | -------- |
 | id             | `VARCHAR(127)`      |                    |          | true   | true     |
-| user_id        | `VARCHAR(36)`       | `user(id)`         |          |        |          |
+| user_id        | `VARCHAR(15)`       | `user(id)`         |          |        |          |
 | active_expires | `BIGINT` (UNSIGNED) |                    |          |        |          |
 | idle_expires   | `BIGINT` (UNSIGNED) |                    |          |        |          |
 
 ```sql
 CREATE TABLE session (
     id VARCHAR(127) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
     active_expires BIGINT UNSIGNED NOT NULL,
     idle_expires BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY (id),
@@ -221,19 +215,17 @@ CREATE TABLE session (
 
 #### `key`
 
-Column type of `user_id` should match the type of `user(id)`.
-
 | name            | type                 | foreign constraint | nullable | unique | identity |
 | --------------- | -------------------- | ------------------ | -------- | ------ | -------- |
 | id              | `VARCHAR(255)`       |                    |          | true   | true     |
-| user_id         | `VARCHAR(36)`        | `user(id)`         |          |        |          |
+| user_id         | `VARCHAR(15)`        | `user(id)`         |          |        |          |
 | primary         | `TINYINT` (UNSIGNED) |                    |          |        |          |
 | hashed_password | `VARCHAR(255)`       |                    | true     |        |          |
 
 ```sql
 CREATE TABLE `key` (
     id VARCHAR(255) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
     `primary` TINYINT UNSIGNED NOT NULL,
     hashed_password VARCHAR(255),
     PRIMARY KEY (id),
@@ -249,7 +241,7 @@ The length of the `VARCHAR` type of `id` should be of appropriate length if you 
 
 | name | type          | nullable | unique | identity |
 | ---- | ------------- | -------- | ------ | -------- |
-| id   | `VARCHAR(36)` |          | true   | true     |
+| id   | `VARCHAR(15)` |          | true   | true     |
 
 ```sql
 CREATE TABLE user (
@@ -265,14 +257,14 @@ Column type of `user_id` should match the type of `user(id)`.
 | name           | type           | foreign constraint | nullable | unique | identity |
 | -------------- | -------------- | ------------------ | -------- | ------ | -------- |
 | id             | `VARCHAR(127)` |                    |          | true   | true     |
-| user_id        | `VARCHAR(36)`  | `user(id)`         |          |        |          |
+| user_id        | `VARCHAR(15)`  | `user(id)`         |          |        |          |
 | active_expires | `BIGINT`       |                    |          |        |          |
 | idle_expires   | `BIGINT`       |                    |          |        |          |
 
 ```sql
 CREATE TABLE session (
     id VARCHAR(127) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
     active_expires BIGINT NOT NULL,
     idle_expires BIGINT NOT NULL,
     PRIMARY KEY (id),
@@ -287,14 +279,14 @@ Column type of `user_id` should match the type of `user(id)`.
 | name            | type           | foreign constraint | nullable | unique | identity |
 | --------------- | -------------- | ------------------ | -------- | ------ | -------- |
 | id              | `VARCHAR(255)` |                    |          | true   | true     |
-| user_id         | `VARCHAR(36)`  | `user(id)`         |          |        |          |
+| user_id         | `VARCHAR(15)`  | `user(id)`         |          |        |          |
 | primary         | `INT2`         |                    |          |        |          |
 | hashed_password | `VARCHAR(255)` | true               | true     |        |          |
 
 ```sql
 CREATE TABLE key (
     id VARCHAR(255) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
     hashed_password VARCHAR(255),
     "primary" INT2 NOT NULL,
     PRIMARY KEY (id),

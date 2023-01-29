@@ -1,5 +1,5 @@
 import { post, get } from "./request.js";
-import type { Auth } from "lucia-auth";
+import type { Auth, LuciaError } from "lucia-auth";
 import {
 	CreateUserAttributesParameter,
 	generateState,
@@ -83,11 +83,14 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 		const PROVIDER_USER_ID = googleUser.sub;
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByKey(
+			const { user } = await this.auth.getKeyUser(
 				PROVIDER_ID,
 				PROVIDER_USER_ID
-			)) as LuciaUser<A>;
-		} catch {
+			);
+			existingUser = user as LuciaUser<A>;
+		} catch (e) {
+			const error = e as Partial<LuciaError>;
+			if (error?.message !== "AUTH_INVALID_KEY") throw e;
 			// existingUser is null
 		}
 		const createUser = async (

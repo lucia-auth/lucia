@@ -3,11 +3,12 @@
 ## 0.5.0
 
 - [Feat] Add keys
-- [Breaking] Removed: `getUserByProviderId`, `updateUserProviderId`, `authenticateUser`, `updateUserPassword`
-- [Breaking] Changed parameters for `createUser`
-- [Breaking] Removed error message: `AUTH_INVALID_PROVIDER_ID`, `AUTH_DUPLICATE_PROVIDER_ID`
-- [Breaking] Removed `/adapter`
-- [Breaking] Renamed `session` table column `expires` to `active_expires`
+- [Breaking] Remove: `getUserByProviderId`, `updateUserProviderId`, `authenticateUser`, `updateUserPassword`
+- [Breaking] Change parameters for `createUser`
+- [Breaking] Remove error message: `AUTH_INVALID_PROVIDER_ID`, `AUTH_DUPLICATE_PROVIDER_ID`
+- [Breaking] Remove `/adapter`
+- [Breaking] Rename `session` table column `expires` to `active_expires`
+- [Breaking] Lucia will generate its own user id by default (15 chars long)
 - Allow `config.generateCustomUserId` to be synchronous
 
 ## 0.4.3

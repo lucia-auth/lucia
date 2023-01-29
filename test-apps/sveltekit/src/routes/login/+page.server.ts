@@ -21,8 +21,8 @@ export const actions: Actions = {
 			});
 		}
 		try {
-			const user = await auth.validateUserKey('username', username, password);
-			const session = await auth.createSession(user.userId);
+			const key = await auth.validateKeyPassword('username', username, password);
+			const session = await auth.createSession(key.userId);
 			locals.setSession(session);
 		} catch (error) {
 			if (

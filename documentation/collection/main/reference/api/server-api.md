@@ -428,9 +428,9 @@ const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
 
 #### Returns
 
-| type                                      | description           |
-| ----------------------------------------- | --------------------- |
-| [`Key`](/reference/types/lucia-types#key) | the newly created key |
+| type                                      | description |
+| ----------------------------------------- | ----------- |
+| [`Key`](/reference/types/lucia-types#key) | target key  |
 
 #### Errors
 
@@ -445,6 +445,53 @@ import { auth } from "$lib/server/lucia";
 
 try {
 	const key = await auth.getKey("email", "user@example.com");
+} catch {
+	// invalid key
+}
+```
+
+### `getKeyUser()`
+
+Gets the target key and the user of the key.
+
+```ts
+const getKey: (
+	providerId: string,
+	providerUserId: string
+) => Promise<{
+	key: Key;
+	user: User;
+}>;
+```
+
+#### Parameter
+
+| name           | type     | description                     |
+| -------------- | -------- | ------------------------------- |
+| providerId     | `string` | the provider id of the key      |
+| providerUserId | `string` | the provider user id of the key |
+
+#### Returns
+
+| name | type                                        | description         |
+| ---- | ------------------------------------------- | ------------------- |
+| key  | [`Key`](/reference/types/lucia-types#key)   | the target key      |
+| user | [`User`](/reference/types/lucia-types#user) | the user of the key |
+
+#### Errors
+
+| name              | description                                  |
+| ----------------- | -------------------------------------------- |
+| AUTH_INVALID_KEY  | the user with the provider id does not exist |
+| AUTH_INVALID_USER |                                              |
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+try {
+	const { key, user } = await auth.getKeyUser("email", "user@example.com");
 } catch {
 	// invalid key
 }

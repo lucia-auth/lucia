@@ -7,12 +7,12 @@ Lucia uses adapters to connect to your database. The following chart shows the b
 
 ## `user`
 
-The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` can be auto-generated uuid/cuid, or `string` if you generate your own user id.
+The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` should hold minimum of 15 chars for the default configuration.
 
-| name  | type               | unique | description                                          |
-| ----- | ------------------ | ------ | ---------------------------------------------------- |
-| id    | string (uuid/cuid) | true   | should be auto-generated UUID or similar by defaults |
-| [any] | any                | any    | this represents any number of columns of any name    |
+| name  | type                   | unique | description                                       |
+| ----- | ---------------------- | ------ | ------------------------------------------------- |
+| id    | string (min. 15 chars) | true   |                                                   |
+| [any] | any                    | any    | this represents any number of columns of any name |
 
 ### Schema type
 
