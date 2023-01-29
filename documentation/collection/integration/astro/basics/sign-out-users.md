@@ -7,7 +7,7 @@ An endpoint that handles log out should be created and a sign out request should
 
 ## Handle Request
 
-Sign out requests should be handled by POST.
+Sign out requests should be handled by POST. **Make sure to invalidate the current session** and delete the cookie by setting the current session to `null`.
 
 ```ts
 import { AuthRequest } from "@lucia-auth/astro";

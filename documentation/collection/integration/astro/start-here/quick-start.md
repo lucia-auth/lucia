@@ -75,7 +75,7 @@ In the same page, we'll also handle the POST request from the form.
 
 `@lucia-auth/astro` provides [`AuthRequest`](/astro/api-reference/server-api#authrequest), which makes it easier to handle sessions and cookies within Astro. Initialize it with `auth` and the `Astro` context (an API route context can be used as well).
 
-We'll set the provider id as `username` and the inputted username as the identifier for the key. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. After creating a new user, create a new session and store the session cookie using [`AuthRequest.setSession()`](/astro/api-reference/server-api#setsession).
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
 
 ```astro
 ---
@@ -282,7 +282,7 @@ export const post: APIRoute = async (context) => {
 
 ## 7. Sign out users
 
-Create a POST endpoint in `api/logout` that handled logout.
+Create a POST endpoint in `api/logout` that handles logout. It will invalidate the current session and remove the session cookie.
 
 ```ts
 import { AuthRequest } from "@lucia-auth/astro";

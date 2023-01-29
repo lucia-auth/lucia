@@ -77,7 +77,7 @@ This form will have an input field for username and password.
 
 ### Create users
 
-We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session using the `createSession` method and store the session id as a cookie using `locals.setSession`.
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
 
 For the session to update in the client, we need to call [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall) or refresh the page entirely so we can re-run our [load function](https://kit.svelte.dev/docs/load). Load functions will only re-run when `invalidateAll()` is called or during navigation. `use:enhance` will only call `invalidateAll()` when the server returns a success response (a redirect response is not considered as a success response). Since we're just using the default behavior of `use:enhance`, the action will not return a redirect, and the load function will handle redirect after sign up.
 
@@ -101,18 +101,17 @@ export const actions: Actions = {
 		const password = form.get("password");
 
 		// check for empty values
-		if (
-			!username ||
-			!password ||
-			typeof username !== "string" ||
-			typeof password !== "string"
-		) {
+		if (typeof username !== "string" || typeof password !== "string") {
 			return fail(400);
 		}
 
 		try {
-			const user = await auth.createUser("username", username, {
-				password,
+			const user = await auth.createUser({
+				key: {
+					providerId: "username",
+					providerUserId: username,
+					password
+				},
 				attributes: {
 					username
 				}
@@ -155,7 +154,7 @@ This form will also have an input field for username and password.
 
 ### Authenticate users
 
-We'll use `username` as the provider id and the username as the identifier. This tells Lucia to find a user that was created using the username/password auth method where the unique identifier is the username. Create a new session if the password is valid, and store the session id.
+We'll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, `"username"` will be the provider id and the username will be the provider user id. We can validate the password using `validateRequestKey()`.
 
 ```ts
 // routes/login/+page.server.ts
@@ -175,16 +174,11 @@ export const actions: Actions = {
 		const username = form.get("username");
 		const password = form.get("password");
 		// check for empty values
-		if (
-			!username ||
-			!password ||
-			typeof username !== "string" ||
-			typeof password !== "string"
-		)
+		if (typeof username !== "string" || typeof password !== "string")
 			return fail(400);
 		try {
-			const user = await auth.authenticateUser("username", username, password);
-			const session = await auth.createSession(user.userId);
+			const key = await auth.validateRequestKey("username", username, password);
+			const session = await auth.createSession(key.userId);
 			locals.setSession(session);
 		} catch {
 			// invalid credentials
@@ -229,33 +223,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 ```
 
-### Sign out
-
-Add a button that calls [`signOut()`](/sveltekit/api-reference/client-api#signout) and [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall). `invalidateAll()` will cause all of the load functions to re-run, which will update the session in the client so that the user gets redirected to the login page.
-
-```svelte
-<script lang="ts">
-	import { signOut, getUser } from "@lucia-auth/sveltekit/client";
-	import { invalidateAll } from "$app/navigation";
-
-	const user = getUser();
-</script>
-
-<h1>Profile</h1>
-<div>
-	<p>User id: {user?.userId}</p>
-	<p>Username: {user?.username}</p>
-</div>
-
-<button
-	on:click={async () => {
-		await signOut();
-		invalidateAll();
-	}}>Sign out</button
->
-```
-
-## 6. Request validation
+## 6. Validate requests
 
 The methods inside `locals` can be used inside actions (`+page.server.ts`), server load functions, and `+server.ts` files as well.
 
@@ -290,4 +258,35 @@ export const POST: RequestHandler = async ({ locals }) => {
 		// unauthenticated
 	}
 };
+```
+
+## 7. Sign out users
+
+To sign out an user, create a new action. This may be an API endpoint as well. Invalidate the current session and delete the cookie by passing `null` to `setSession()`.
+
+```ts
+import { type Actions, fail } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+import { auth } from "$lib/server/lucia";
+
+export const actions: Actions = {
+	default: async ({ locals }) => {
+		const session = await locals.validate();
+		if (!session) throw fail(401);
+		await auth.invalidateSession(session.sessionId); // invalidate session
+		locals.setSession(null); // remove cookie
+	}
+};
+```
+
+Instead of a sign out button, add a form.
+
+```svelte
+<script lang="ts">
+	import { enhance } from "$app/forms";
+</script>
+
+<form use:enhance method="post">
+	<input type="submit" class="button" value="Sign out" />
+</form>
 ```

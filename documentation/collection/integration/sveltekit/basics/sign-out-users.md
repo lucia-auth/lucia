@@ -3,23 +3,37 @@ _order: 4
 title: "Sign out users"
 ---
 
-You can invalidate the current session and remove the session cookies from the client using [`signOut()`](/sveltekit/api-reference/client-api#signout), exported by `@lucia-auth/sveltekit/client`. This can only be called in the client (`+page.svelte`) as it relies on the native `fetch` API.
+An action that handles log out should be created and a sign out request should be sent using forms. It can alternatively be an API endpoint.
+
+## Handle Request
+
+Sign out requests should be handled by POST. **Make sure to invalidate the current session** and delete the cookie by setting the current session to `null`.
 
 ```ts
-import { signOut } from "@lucia-auth/sveltekit/client";
+import { type Actions, fail } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+import { auth } from "$lib/server/lucia";
 
-await signOut();
+export const actions: Actions = {
+	default: async ({ locals }) => {
+		const session = await locals.validate();
+		if (!session) throw fail(401);
+		await auth.invalidateSession(session.sessionId); // invalidate session
+		locals.setSession(null); // remove cookie
+	}
+};
 ```
 
-You can use [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall) to re-run all load functions and let the load functions handle the redirect.
+## Submit request
 
-## Example
+Instead of a sign out button, add a form. Authenticated users will be signed out on a successful submission.
 
-This will redirect the user to /login on successful sign out.
+```svelte
+<script lang="ts">
+	import { enhance } from "$app/forms";
+</script>
 
-```ts
-import { signOut } from "@lucia-auth/sveltekit/client";
-
-await signOut();
-invalidateAll();
+<form use:enhance method="post">
+	<input type="submit" class="button" value="Sign out" />
+</form>
 ```
