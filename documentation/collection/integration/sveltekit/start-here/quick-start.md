@@ -79,8 +79,6 @@ This form will have an input field for username and password.
 
 Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
 
-For the session to update in the client, we need to call [`invalidateAll()`](https://kit.svelte.dev/docs/modules#$app-navigation-invalidateall) or refresh the page entirely so we can re-run our [load function](https://kit.svelte.dev/docs/load). Load functions will only re-run when `invalidateAll()` is called or during navigation. `use:enhance` will only call `invalidateAll()` when the server returns a success response (a redirect response is not considered as a success response). Since we're just using the default behavior of `use:enhance`, the action will not return a redirect, and the load function will handle redirect after sign up.
-
 ```ts
 // routes/signup/+page.server.ts
 import { fail, redirect } from "@sveltejs/kit";
@@ -125,6 +123,10 @@ export const actions: Actions = {
 	}
 };
 ```
+
+> For the session state to update in the client, we have to invalidate the root load function. `use:enhance` will only invalidate all load functions on a successful response and not on a redirect response.  So, we're not redirecting the user inside the action and let the load functions, triggered by the invalidation, handle redirecting unauthenticated users.
+>
+> Learn more in [Using forms](/sveltekit/basics/using-forms).
 
 ## 4. Sign in page
 
