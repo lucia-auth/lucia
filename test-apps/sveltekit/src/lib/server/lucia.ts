@@ -1,4 +1,4 @@
-import lucia, { generateRandomString } from 'lucia-auth';
+import lucia from 'lucia-auth';
 import prisma from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
 import { PrismaClient } from '@prisma/client';
@@ -14,8 +14,7 @@ export const auth = lucia({
 			userId: userData.id,
 			username: userData.username
 		};
-	},
-	generateCustomUserId: async () => generateRandomString(8)
+	}
 });
 
 export const githubAuth = github(auth, {

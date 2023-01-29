@@ -16,8 +16,12 @@ export const actions: Actions = {
 			});
 		}
 		try {
-			const user = await auth.createUser('username', username, {
-				password,
+			const user = await auth.createUser({
+				key: {
+					providerId: 'username',
+					providerUserId: username,
+					password
+				},
 				attributes: {
 					username
 				}
@@ -34,7 +38,7 @@ export const actions: Actions = {
 					message: 'Username already in use'
 				});
 			}
-			if (error instanceof LuciaError && error.message === 'AUTH_DUPLICATE_PROVIDER_ID') {
+			if (error instanceof LuciaError && error.message === 'AUTH_DUPLICATE_KEY') {
 				return fail(400, {
 					message: 'Username already in use'
 				});
