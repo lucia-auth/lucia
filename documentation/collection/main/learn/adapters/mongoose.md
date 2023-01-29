@@ -58,7 +58,7 @@ mongoose.connect(mongoUri, options);
 
 ### `user`
 
-You may add additional fields to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+You may add additional fields to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
 ```ts
 const User = mongoose.model(

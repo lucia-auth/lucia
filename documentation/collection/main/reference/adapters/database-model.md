@@ -7,7 +7,7 @@ Lucia uses adapters to connect to your database. The following chart shows the b
 
 ## `user`
 
-The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` should hold minimum of 15 chars for the default configuration.
+The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/learn/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
 
 | name  | type                   | unique | description                                       |
 | ----- | ---------------------- | ------ | ------------------------------------------------- |

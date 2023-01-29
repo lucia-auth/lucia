@@ -87,7 +87,7 @@ const constructor: (errorName: LuciaErrorName) => void;
 
 ## `MinimalRequest`
 
-A minimal representation of node's `Request` type needed for Lucia.
+A minimal representation of the standard [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) type needed for Lucia.
 
 ```ts
 type MinimalRequest = {

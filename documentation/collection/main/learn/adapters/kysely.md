@@ -128,7 +128,7 @@ const auth = lucia({
 
 #### `user`
 
-You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
 | name | type   | foreign constraint | nullable | unique | primary |
 | ---- | ------ | ------------------ | -------- | ------ | ------- |
@@ -180,7 +180,7 @@ CREATE TABLE public.key (
 
 #### `user`
 
-The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
 | name | type          | nullable | unique | primary |
 | ---- | ------------- | -------- | ------ | ------- |
@@ -237,7 +237,7 @@ CREATE TABLE `key` (
 
 #### `user`
 
-The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
 | name | type          | nullable | unique | identity |
 | ---- | ------------- | -------- | ------ | -------- |

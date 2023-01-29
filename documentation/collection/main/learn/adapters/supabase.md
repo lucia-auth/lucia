@@ -42,7 +42,7 @@ const auth = lucia({
 
 ### `user`
 
-`id` may be `TEXT` if you generate your own user id. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). `id` may be `varchar` if you generate your own user id.
+`id` may be `TEXT` if you generate your own user id. You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes). `id` may be `varchar` if you generate your own user id.
 
 | name | type      | foreign constraint | nullable | unique | identity |
 | ---- | --------- | ------------------ | -------- | ------ | -------- |
@@ -72,7 +72,7 @@ Column type of `user_id` should match the type of `public.user(id)`.
 
 ## Supabase SQL Editor
 
-You may add additional columns to store custom user data in `user` table. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+You may add additional columns to store custom user data in `user` table. Refer to [User attributes](/learn/basics/user-attributes).
 
 ```sql
 CREATE TABLE public.user (

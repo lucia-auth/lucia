@@ -50,7 +50,7 @@ Refer to [Type declaration](/reference/types/lucia-namespace) for more.
 
 ## Set user attributes
 
-You can define the user's attributes on creation by passing on the column/value object as `attributes` to [`createUser()`]().
+You can define the user's attributes on creation by passing on the column/value object as `attributes` to [`createUser()`](/reference/api/server-api#createuser).
 
 ```ts
 import { auth } from "./lucia.js";
