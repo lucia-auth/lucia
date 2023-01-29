@@ -74,7 +74,7 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 			})
 		).data[0] as TwitchUser;
 
-		const PROVIDER_ID = "github";
+		const PROVIDER_ID = "twitch";
 		const PROVIDER_USER_ID = twitchUser.id;
 		let existingUser: LuciaUser<A> | null = null;
 		try {
