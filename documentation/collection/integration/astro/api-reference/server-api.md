@@ -140,23 +140,3 @@ const authRequest = new AuthRequest();
 await auth.invalidateSession(sessionId); // invalidate session
 authRequest.setSession(null); // remove session cookies
 ```
-
-## `handleLogoutRequests()`
-
-Returns an Astro api route handler that handles sign outs. Must be used as a POST request handler.
-
-```ts
-const handleApiRoutes: (auth: Auth) => APIRoute;
-```
-
-#### Parameter
-
-| name | type                                        | description    |
-| ---- | ------------------------------------------- | -------------- |
-| auth | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance |
-
-#### Returns
-
-| type                                                                                           | description             |
-| ---------------------------------------------------------------------------------------------- | ----------------------- |
-| [`APIRoute`](https://docs.astro.build/en/core-concepts/endpoints/#server-endpoints-api-routes) | Astro API route handler |
