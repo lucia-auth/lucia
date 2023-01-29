@@ -18,7 +18,6 @@ export type Dialect = "pg" | "mysql2" | "better-sqlite3";
 export const convertKey = (
 	key: Selectable<KyselyKey>
 ): KeySchema => {
-	console.log(key)
 	return {
 		id: key.id,
 		user_id: key.user_id,

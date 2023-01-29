@@ -49,7 +49,6 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 				...(s && { state: s })
 			}
 		).toString()}`;
-		console.log(this.scope);
 		if (state === null)
 			return [url] as const as GetAuthorizationUrlReturnType<State>;
 		return [url, s] as const as GetAuthorizationUrlReturnType<State>;

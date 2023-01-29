@@ -221,19 +221,14 @@ const adapter =
 					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
 					return user;
 				}
-				try {
-					const user = await kysely
-						.updateTable("user")
-						.set(attributes)
-						.where("id", "=", userId)
-						.returningAll()
-						.executeTakeFirst();
-					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
-					return user;
-				} catch (e) {
-					console.log(e);
-					throw e;
-				}
+				const user = await kysely
+					.updateTable("user")
+					.set(attributes)
+					.where("id", "=", userId)
+					.returningAll()
+					.executeTakeFirst();
+				if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+				return user;
 			},
 			setKey: async (key, data) => {
 				try {
