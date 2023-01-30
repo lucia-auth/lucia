@@ -19,7 +19,8 @@ npm install @lucia-auth/adapter-kysely
 | Kysely adapter version | Lucia version |
 | ---------------------- | ------------- |
 | 0.1.x                  | 0.1.x ~ 0.2.x |
-| 0.2.x, 0.3.x           | 0.4.x ~       |
+| 0.2.x, 0.3.x           | 0.4.x         |
+| 0.4.x                  | 0.5.x         |
 
 ## Testing
 
