@@ -3,7 +3,9 @@ _order: 0
 title: "Supabase"
 ---
 
-An adapter for Supabase PostgreSQL database - can be used regardless of the Supabase version. **Make sure to enable row level security for all tables!**.
+An adapter for Supabase PostgreSQL database - can be used regardless of the Supabase version.
+
+> (red) Row level security is not enabled by default on new tables. **Make sure to enable RLS for all tables!**.
 
 ```ts
 const adapter: (url: string, secret: string) => AdapterFunction<Adapter>;

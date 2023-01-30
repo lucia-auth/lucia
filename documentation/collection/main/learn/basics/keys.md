@@ -21,7 +21,7 @@ try {
 
 ## Validate key password
 
-You can validate a key password and get the user with [`validateKeyPassword()`](/reference/api/server-api#validatekeypassword). While the error will indicate if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password"). This method will only work with keys with a password.
+You can validate a key password and get the user with [`validateKeyPassword()`](/reference/api/server-api#validatekeypassword). This method will only work with keys with a password.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -32,6 +32,8 @@ try {
 	// invalid key or password
 }
 ```
+
+> (warn) While the error will indicate if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password"). 
 
 ## Get key
 

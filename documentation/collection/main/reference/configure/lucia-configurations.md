@@ -132,13 +132,13 @@ const generateCustomUserId: () => MaybePromise<string | null>;
 
 #### `generate()` (required)
 
-Generates a password-safe hash. Make sure the algorithm used is safe for hashing passwords, such as `bcrypt`, `scrypt`, `argon2`, `PBKDF2` - algorithms such as `md5` and `SHA-1` are **NOT** suitable for hashing passwords.
-
-Uses `scrypt` from [noble-hashes](https://github.com/paulmillr/noble-hashes) by default.
+Generates a password-safe hash. Uses `scrypt` from [noble-hashes](https://github.com/paulmillr/noble-hashes) by default.
 
 ```ts
 const generate: (s: string) => MaybePromise<string>;
 ```
+
+> (warn) Make sure the algorithm used is safe for hashing passwords, such as `bcrypt`, `scrypt`, `argon2`, `PBKDF2` - algorithms such as `md5` and `SHA-1` are **NOT** suitable for hashing passwords.
 
 ##### Parameter
 
