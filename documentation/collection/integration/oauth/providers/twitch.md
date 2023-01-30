@@ -121,6 +121,8 @@ interface TwitchProviderSession {
 	createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
 	providerUser: TwitchUser;
 	accessToken: string;
+	refreshToken: string;
+	expiresIn: number;
 }
 ```
 
