@@ -33,7 +33,13 @@ Instead of a sign out button, add a form. Authenticated users will be signed out
 	import { enhance } from "$app/forms";
 </script>
 
+<!-- action in the same route -->
 <form use:enhance method="post">
+	<input type="submit" class="button" value="Sign out" />
+</form>
+
+<!-- action in a different route -->
+<form use:enhance method="post" action="/logout">
 	<input type="submit" class="button" value="Sign out" />
 </form>
 ```
