@@ -47,11 +47,13 @@ const handleGetRequests = async () => {
 };
 ```
 
-Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag. However, keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**. You can also store the `state` in localstorage if you want to handle OAuth in the client (though handling in the server is recommended).
+Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag.
 
 ```svelte
 <a href={providerAuthorizationUrl}>Sign in with provider</a>
 ```
+
+> (red) Keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**. You will leak your API keys if you import it in the client.
 
 ## Handle callback
 

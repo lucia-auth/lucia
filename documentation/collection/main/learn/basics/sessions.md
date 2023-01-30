@@ -119,7 +119,7 @@ try {
 
 Sessions can be invalidated using [`invalidateSession()`](/reference/api/server-api#invalidatesession).
 
-**The session must be invalidated on sign out.** Depending on the application, you may want to invalidate all sessions belonging to the user on sign out. Make sure to invalidate all sessions of the user on password or privilege level change.
+> (red) **The session must be invalidated on sign out.** Depending on the application, you may want to invalidate all sessions belonging to the user on sign out. Make sure to invalidate all sessions of the user on password or privilege level change.
 
 ```ts
 import { auth } from "./lucia.js";

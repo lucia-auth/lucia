@@ -140,12 +140,16 @@ const user = await auth.getUser(userId);
 
 A user's attributes can be updated using [`updateUserAttributes()`](/reference/api/server-api#updateuserattributes). Only the user data attribute (column) that needs to updated needs to be passed.
 
-**Make sure to invalidate all sessions of the user on password or privilege level change.** You can create a new session to prevent the current user from being logged out.
+> (red) **Make sure to invalidate all sessions of the user on password or privilege level change.** You can create a new session to prevent the current user from being logged out.
 
 ```ts
 import { auth } from "./lucia.js";
 
 const user = await auth.updateUserAttributes(userId, partialUserAttributes);
+
+await auth.invalidateAllUserSessions(user.userId);
+const session = await auth.createSession(user.userId);
+// store new session
 ```
 
 ### Example
@@ -186,7 +190,7 @@ import { generateCustomUserId } from "lucia-auth";
 
 lucia({
 	generateCustomUserId: () => {
-        return `user_${generateCustomUserId(8)}` // example result: "user_yhwKf2yn"
-    }
+		return `user_${generateCustomUserId(8)}`; // example result: "user_yhwKf2yn"
+	}
 });
 ```

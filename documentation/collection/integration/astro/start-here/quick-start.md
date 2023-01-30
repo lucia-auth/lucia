@@ -124,7 +124,7 @@ if (Astro.request.method === "POST") {
 ---
 ```
 
-> Astro does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` will do a CSRF check and only return a user if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+> (warn) Astro does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` will do a CSRF check and only return a user if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 ### Redirect authenticated users
 
