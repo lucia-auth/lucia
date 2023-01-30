@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-supabase",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "Supabase adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -33,7 +33,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.4.x"
+		"lucia-auth": "0.5.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

@@ -50,18 +50,6 @@ export default defineConfig({
 });
 ```
 
-### API endpoints
-
-Create an API route. Import [`handleLogoutRequests()`](/astro/api-reference/server-api#handlelogoutrequests) and export is as `post`. This will handle sign outs.
-
-```ts
-// eg. pages/api/logout.ts
-import { handleLogoutRequests } from "@lucia-auth/astro";
-import { auth } from "../../lib/lucia";
-
-export const post = handleLogoutRequests(auth);
-```
-
 ### Types
 
 Create `src/lucia.d.ts`, and inside it configure your types. The path in `import('./lib/lucia.js').Auth;` is where you exported `auth` (`lucia()`).
@@ -74,3 +62,4 @@ declare namespace Lucia {
 	type UserAttributes = {};
 }
 ```
+

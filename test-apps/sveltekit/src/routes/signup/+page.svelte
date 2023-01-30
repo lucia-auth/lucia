@@ -9,15 +9,7 @@
 <p class="center">or</p>
 <form
 	method="post"
-	use:enhance={({ data, cancel }) => {
-		form = {};
-		const username = data.get('username')?.toString() || '';
-		const password = data.get('password')?.toString() || '';
-		if (!username || !password) {
-			form.message = 'Invalid input';
-			cancel();
-		}
-	}}
+	use:enhance
 >
 	<label for="username">username</label><br />
 	<input id="username" name="username" /><br />

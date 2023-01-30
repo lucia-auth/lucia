@@ -6,7 +6,7 @@ import github from "@lucia-auth/oauth/github";
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env: "DEV",
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,
@@ -16,8 +16,8 @@ export const auth = lucia({
 });
 
 export const githubAuth = github(auth, {
-	clientId: process.env.GITHUB_CLIENT_ID || "",
-	clientSecret: process.env.GITHUB_CLIENT_SECRET || ""
+	clientId: process.env.GITHUB_CLIENT_ID ?? "",
+	clientSecret: process.env.GITHUB_CLIENT_SECRET ?? ""
 });
 
 export type Auth = typeof auth;

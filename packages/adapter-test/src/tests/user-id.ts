@@ -1,6 +1,6 @@
 import type { Adapter } from "lucia-auth";
 import { test, end, validate } from "./../test.js";
-import { User } from "./../db.js";
+import { User } from "../model.js";
 import { Database } from "./../index.js";
 
 export const testAdapterUserIdGeneration = async (
@@ -19,11 +19,7 @@ export const testAdapterUserIdGeneration = async (
 		async () => {
 			const user = new User();
 			const createdUser = await adapter.setUser(null, {
-				providerId: user.providerId,
-				hashedPassword: user.hashedPassword,
-				attributes: {
-					username: user.username
-				}
+				username: user.username
 			});
 			user.update({
 				id: createdUser.id

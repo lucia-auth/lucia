@@ -113,7 +113,7 @@ export default Index;
 
 Create `pages/api/signup.ts`. This API route will handle account creation.
 
-We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session id as a cookie.
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
 
 ```ts
 // pages/api/signup.ts
@@ -125,16 +125,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST")
 		return res.status(404).json({ error: "Not found" });
 	const { username, password } = JSON.parse(req.body);
-	if (
-		!username ||
-		!password ||
-		typeof username !== "string" ||
-		typeof password !== "string"
-	)
+	if (typeof username !== "string" || typeof password !== "string")
 		return res.status(400).json({});
 	try {
-		const user = await auth.createUser("username", username, {
-			password,
+		const user = await auth.createUser({
+			key: {
+				providerId: "username",
+				providerUserId: username,
+				password
+			},
 			attributes: {
 				username
 			}
@@ -249,7 +248,7 @@ export default Index;
 
 Create pages/api/login.ts. This API route will handle sign-ins.
 
-We'll use `username` as the provider id and the username as the identifier. This tells Lucia to find a user that was created using username/password auth method where the unique identifier is the username. Create a new session if the password is valid, and store the session id.
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id. We can validate the password using validateRequestKey().
 
 ```ts
 // pages/api/login.ts
@@ -261,17 +260,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST")
 		return res.status(404).json({ error: "Not found" });
 	const { username, password } = JSON.parse(req.body);
-	if (
-		!username ||
-		!password ||
-		typeof username !== "string" ||
-		typeof password !== "string"
-	)
+	if (typeof username !== "string" || typeof password !== "string")
 		return res.status(400).json({});
 	try {
 		const authRequest = new AuthRequest(auth, req, res);
-		const user = await auth.authenticateUser("username", username, password);
-		const session = await auth.createSession(user.userId);
+		const key = await auth.validateRequestKey("username", username, password);
+		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session); // set cookie
 		return res.redirect(302, "/"); // redirect to profile page
 	} catch {

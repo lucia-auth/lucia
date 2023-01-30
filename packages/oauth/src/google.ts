@@ -1,7 +1,7 @@
 import { post, get } from "./request.js";
-import type { Auth } from "lucia-auth";
+import type { Auth, LuciaError } from "lucia-auth";
 import {
-	CreateUser,
+	CreateUserAttributesParameter,
 	generateState,
 	GetAuthorizationUrlReturnType,
 	LuciaUser,
@@ -79,25 +79,43 @@ class Google<A extends Auth> implements OAuthProvider<A> {
 				bearerToken: accessToken
 			}
 		)) as GoogleUser;
-		const googleUserId = String(googleUser.sub);
+		const PROVIDER_ID = "google";
+		const PROVIDER_USER_ID = googleUser.sub;
 		let existingUser: LuciaUser<A> | null = null;
 		try {
-			existingUser = (await this.auth.getUserByProviderId(
-				"google",
-				googleUserId
-			)) as LuciaUser<A>;
-		} catch {
+			const { user } = await this.auth.getKeyUser(
+				PROVIDER_ID,
+				PROVIDER_USER_ID
+			);
+			existingUser = user as LuciaUser<A>;
+		} catch (e) {
+			const error = e as Partial<LuciaError>;
+			if (error?.message !== "AUTH_INVALID_KEY") throw e;
 			// existingUser is null
 		}
-		const createUser = (async (userAttributes) => {
-			return await this.auth.createUser("google", googleUserId, {
+		const createUser = async (
+			userAttributes: CreateUserAttributesParameter<A>
+		) => {
+			return (await this.auth.createUser({
+				key: {
+					providerId: PROVIDER_ID,
+					providerUserId: PROVIDER_USER_ID
+				},
 				attributes: userAttributes as any
+			})) as any;
+		};
+		const createKey = async (userId: string) => {
+			return await this.auth.createKey(userId, {
+				providerId: PROVIDER_ID,
+				providerUserId: PROVIDER_USER_ID,
+				password: null
 			});
-		}) as CreateUser<A>;
+		};
 		return {
 			createUser,
 			existingUser,
 			providerUser: googleUser,
+			createKey,
 			accessToken,
 			refreshToken,
 			expiresIn

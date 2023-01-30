@@ -6,7 +6,7 @@ import {
 } from "../../src/index.js";
 import SQLite from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
-import { convertSession } from "../../src/utils.js";
+import { convertKey, convertSession } from "../../src/utils.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { LuciaError } from "lucia-auth";
@@ -42,19 +42,35 @@ export const db: Database = {
 		if (!data) throw new Error("Failed to fetch from database");
 		return data.map((session) => convertSession(session));
 	},
+	getKeys: async () => {
+		const data = await dbKysely.selectFrom("key").selectAll().execute();
+		if (!data) throw new Error("Failed to fetch from database");
+		return data.map((val) => convertKey(val));
+	},
 	insertUser: async (user) => {
 		await dbKysely.insertInto("user").values(user).execute();
 	},
 	insertSession: async (session) => {
 		await dbKysely.insertInto("session").values(session).execute();
 	},
-	clearUsers: async () => {
+	insertKey: async (key) => {
 		await dbKysely
-			.deleteFrom("user")
-			.where("username", "like", "user%")
+			.insertInto("key")
+			.values({
+				id: key.id,
+				user_id: key.user_id,
+				primary: Number(key.primary),
+				hashed_password: key.hashed_password
+			})
 			.execute();
 	},
+	clearUsers: async () => {
+		await dbKysely.deleteFrom("user").execute();
+	},
 	clearSessions: async () => {
-		await dbKysely.deleteFrom("session").where("id", ">=", "0").execute();
+		await dbKysely.deleteFrom("session").execute();
+	},
+	clearKeys: async () => {
+		await dbKysely.deleteFrom("key").execute();
 	}
 };

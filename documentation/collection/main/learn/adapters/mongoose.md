@@ -9,7 +9,7 @@ An adapter for Mongoose (MongoDB).
 const adapter: (mongoose: Mongoose) => AdapterFunction<Adapter>;
 ```
 
-If [`generateUserId()`](/reference/configure/lucia-configurations#generatecustomuserid) is not configured, the adapter will generate a new `ObjectId` and use the stringified version (24-character hexadecimal string) as the user id.
+If you pass `null` as the user id, the adapter will generate a new `ObjectId` and use the stringified version (24-character hexadecimal string) as the user id.
 
 This adapter will not handle database connection and you will need to connect to the database manually.
 
@@ -58,7 +58,7 @@ mongoose.connect(mongoUri, options);
 
 ### `user`
 
-You may add additional fields to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+You may add additional fields to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
 ```ts
 const User = mongoose.model(
@@ -67,13 +67,7 @@ const User = mongoose.model(
 		{
 			_id: {
 				type: String
-			},
-			provider_id: {
-				type: String,
-				unique: true,
-				required: true
-			},
-			hashed_password: String
+			}
 		},
 		{ _id: false }
 	)
@@ -96,12 +90,37 @@ const Session = mongoose.model(
 				type: String,
 				required: true
 			},
-			expires: {
+			active_expires: {
 				type: Number,
 				required: true
 			},
 			idle_expires: {
 				type: Number,
+				required: true
+			}
+		},
+		{ _id: false }
+	)
+);
+```
+
+### `key`
+
+```ts
+const Key = mongoose.model(
+	"key",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			user_id: {
+				type: String,
+				required: true
+			},
+			hashed_password: String,
+			primary: {
+				type: Boolean,
 				required: true
 			}
 		},

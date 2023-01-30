@@ -2,6 +2,7 @@ import { AuthRequest } from "@lucia-auth/nextjs";
 import { auth } from "../../lib/lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { LuciaError } from "lucia-auth";
 
 type Data = {
 	error?: string;
@@ -19,14 +20,14 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	}
 	try {
 		const authRequest = new AuthRequest(auth, req, res);
-		const user = await auth.authenticateUser("username", username, password);
-		const session = await auth.createSession(user.userId);
+		const key = await auth.validateKeyPassword('username', username, password);
+		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session);
 		return res.redirect(302, "/");
 	} catch (e) {
-		const error = e as Error;
+		const error = e as LuciaError;
 		if (
-			error.message === "AUTH_INVALID_PROVIDER_ID" ||
+			error.message === "AUTH_INVALID_KEY" ||
 			error.message === "AUTH_INVALID_PASSWORD"
 		) {
 			return res.status(200).json({

@@ -117,7 +117,8 @@ const validateCallback: (code: string) => Promise<GoogleProviderSession>;
 ```ts
 interface GoogleProviderSession {
 	existingUser: User | null;
-	createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+	createKey: (userId: string) => Promise<Key>;
+	createUser: (userAttributes) => Promise<User>;
 	providerUser: GoogleUser;
 	accessToken: string;
 	refreshToken?: string;
@@ -136,23 +137,33 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | refreshToken                                     | `string \| undefined`                                 | only defined on the first sign in                 |
 | expires in                                       | `number`                                              | expiration time (seconds) of the access token     |
 
+### `createKey()`
+
+```ts
+const createKey: (userId: string) => Promise<Key>;
+```
+
+Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createkey) using the following parameter:
+
+| name           | value                                                                   |
+| -------------- | ----------------------------------------------------------------------- |
+| userId         | `userId`                                                                |
+| providerId     | `"google"`                                                              |
+| providerUserId | Google user id ([`GoogleUser.sub`](/oauth/providers/github#googleuser)) |
+
 ### `createUser()`
 
 ```ts
-const createUser: (
-	userAttributes: Lucia.UserAttributes | undefined
-) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
 ```
 
-Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
+Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
 
-| name               | value                                                                    |
-| ------------------ | ------------------------------------------------------------------------ |
-| provider           | `"google"`                                                               |
-| identifier         | Google "sub" id ([`GoogleUser.sub`](/oauth/providers/google#googleuser)) |
-| options.attributes | `userAttributes ?? {}`                                                   |
-
-`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
+| name                    | value                                                                   |
+| ----------------------- | ----------------------------------------------------------------------- |
+| data.key.providerId     | `"google"`                                                              |
+| data.key.providerUserId | Google user id ([`GoogleUser.sub`](/oauth/providers/github#googleuser)) |
+| data.attributes         | `userAttributes`                                                        |
 
 ## `GoogleUser`
 

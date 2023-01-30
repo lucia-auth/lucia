@@ -4,7 +4,7 @@ import mongodb from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { convertSessionDoc } from "../src/utils.js";
+import { convertKeyDoc, convertSessionDoc } from "../src/utils.js";
 import { LuciaError } from "lucia-auth";
 
 dotenv.config({
@@ -22,12 +22,6 @@ const User = mongoose.model(
 			_id: {
 				type: String
 			},
-			provider_id: {
-				type: String,
-				unique: true,
-				required: true
-			},
-			hashed_password: String,
 			username: {
 				unique: true,
 				type: String,
@@ -49,12 +43,33 @@ const Session = mongoose.model(
 				type: String,
 				required: true
 			},
-			expires: {
+			active_expires: {
 				type: Number,
 				required: true
 			},
 			idle_expires: {
 				type: Number,
+				required: true
+			}
+		},
+		{ _id: false }
+	)
+);
+
+const Key = mongoose.model(
+	"key",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			user_id: {
+				type: String,
+				required: true
+			},
+			hashed_password: String,
+			primary: {
+				type: Boolean,
 				required: true
 			}
 		},
@@ -91,6 +106,11 @@ export const db: Database = {
 		const sessionDocs = await Session.find().lean();
 		return sessionDocs.map((doc) => convertSessionDoc(doc));
 	},
+	getKeys: async () => {
+		await clientPromise;
+		const keyDocs = await Key.find().lean();
+		return keyDocs.map((doc) => convertKeyDoc(doc));
+	},
 	insertUser: async (user) => {
 		const userDoc = new User(inputToMongooseDoc(user));
 		await userDoc.save();
@@ -99,10 +119,17 @@ export const db: Database = {
 		const sessionDoc = new Session(inputToMongooseDoc(session));
 		await sessionDoc.save();
 	},
+	insertKey: async (key) => {
+		const keyDoc = new Key(inputToMongooseDoc(key));
+		await keyDoc.save();
+	},
 	clearUsers: async () => {
 		await User.deleteMany().lean();
 	},
 	clearSessions: async () => {
 		await Session.deleteMany().lean();
+	},
+	clearKeys: async () => {
+		await Key.deleteMany().lean();
 	}
 };

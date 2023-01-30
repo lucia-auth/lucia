@@ -23,7 +23,9 @@ const contributorsResult = (await contributorsResponse.json()) as
 			avatar_url: string;
 			html_url: string;
 	  }[];
-const contributors = Array.isArray(contributorsResult) ? contributorsResult : [];
+const contributors = Array.isArray(contributorsResult)
+	? contributorsResult
+	: [];
 
 const mainCollection = await db.collection("main").get();
 ---
@@ -33,24 +35,43 @@ const mainCollection = await db.collection("main").get();
 	<ContentTable collections={mainCollection._collections} client:load />
 	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:ml-72 xl:pl-12 overflow-hidden">
 		<div class="sm:pt-12 lg:pt-20">
-			<h1 class="text-5xl sm:text-7xl font-semibold">Authentication, <br />simple and clean</h1>
+			<h1 class="text-5xl sm:text-7xl font-semibold">
+				Authentication, <br />simple and clean
+			</h1>
 			<p class="mb-4 mt-6">
-				Lucia is a simple yet flexible user and session management library that provides an
-				abstraction layer between your app and your database. It's bare-bones by design, keeping
-				everything easy to use and understand.
+				Lucia is a simple yet flexible user and session management library that
+				provides an abstraction layer between your app and your database. It's
+				bare-bones by design, keeping everything easy to use and understand.
 			</p>
 			<p class="mb-4 mt-2">
-				No more hacky workarounds. Make the authentication work for you and your app.
+				No more hacky workarounds. Make the authentication work for you and your
+				app.
 			</p>
 			<a
 				href="/learn/start-here/introduction"
 				class="px-10 py-2 rounded-md my-2 block w-fit bg-black text-white dark:bg-white dark:text-black hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black dark:border-white transition"
 				>Get started</a
 			>
+			<section class="mt-4">
+				<div
+					class="bg-main bg-opacity-20 px-4 py-1 my-3 border-l-4 border-l-main"
+				>
+					<h2 class="font-semibold">Lucia v0.5.0 is here!</h2>
+					<p class="">
+						See what's new and check the migration checklist <a
+							class="text-main hover:underline"
+							target="_blank"
+							href="https://github.com/pilcrowOnPaper/lucia-auth/discussions/314"
+							>here</a
+						>.
+					</p>
+				</div>
+			</section>
 			<section class="my-12">
 				<p class="my-4">
-					This is a free and open source project made possible by our contributors! Thank you to
-					everyone who has helped with the development!
+					This is a free and open source project made possible by our
+					contributors! Thank you to everyone who has helped with the
+					development!
 				</p>
 				<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
 					{

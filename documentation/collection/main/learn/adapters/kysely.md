@@ -68,25 +68,31 @@ import { ColumnType, Generated } from "kysely";
 
 type BigIntColumnType = ColumnType<number | bigint>;
 
-interface Session {
+type Session = {
 	expires: BigIntColumnType;
 	id: string;
 	idle_expires: BigIntColumnType;
 	user_id: string;
-}
+};
 
-interface User {
+type User = {
 	id: Generated<string>;
-	hashed_password: string | null;
-	provider_id: string;
 	// Plus other columns that you defined
-}
+};
 
-interface Database {
+export type Key = {
+	id: string;
+	hashed_password: string | null;
+	user_id: string;
+	primary: number; // boolean for Postgres
+};
+
+type Database = {
 	session: Session;
 	user: User;
-	// Plus other table interfaces
-}
+	key: Key;
+	// Plus other tables
+};
 ```
 
 You can also import the interfaces from `adapter-kysely` and extend them.
@@ -98,9 +104,9 @@ import type {
 } from "@lucia-auth/adapter-kysely";
 
 // Add a column for username in your user table
-interface User extends KyselyUser {
+type User = {
 	username: string;
-}
+} & KyselyUser;
 
 interface Database extends Omit<KyselyLuciaDatabase, "user"> {
 	user: User;
@@ -122,37 +128,51 @@ const auth = lucia({
 
 #### `user`
 
-`id` may be `text` if you generate your own user id. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
-| name            | type   | foreign constraint | default             | nullable | unique | primary |
-| --------------- | ------ | ------------------ | ------------------- | -------- | ------ | ------- |
-| id              | `UUID` |                    | `gen_random_uuid()` |          | true   | true    |
-| provider_id     | `TEXT` |                    |                     |          | true   |         |
-| hashed_password | `TEXT` |                    |                     | true     |        |         |
+| name | type   | foreign constraint | nullable | unique | primary |
+| ---- | ------ | ------------------ | -------- | ------ | ------- |
+| id   | `TEXT` |                    |          | true   | true    |
 
 ```sql
 CREATE TABLE public.user (
-	id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-	provider_id TEXT NOT NULL UNIQUE,
-	hashed_password TEXT
+    id TEXT PRIMARY KEY
 );
 ```
 
 #### `session`
 
-| name         | type     | foreign constraint | nullable | unique | primary |
-| ------------ | -------- | ------------------ | -------- | ------ | ------- |
-| id           | `TEXT`   |                    |          | true   | true    |
-| user_id      | `UUID`   | `public.user(id)`  |          |        |         |
-| expires      | `BIGINT` |                    |          |        |         |
-| idle_expires | `BIGINT` |                    |          |        |         |
+| name           | type     | foreign constraint | nullable | unique | primary |
+| -------------- | -------- | ------------------ | -------- | ------ | ------- |
+| id             | `TEXT`   |                    |          | true   | true    |
+| user_id        | `TEXT`   | `public.user(id)`  |          |        |         |
+| active_expires | `BIGINT` |                    |          |        |         |
+| idle_expires   | `BIGINT` |                    |          |        |         |
 
 ```sql
 CREATE TABLE public.session (
-  	id TEXT PRIMARY KEY,
-	user_id UUID REFERENCES public.user(id) NOT NULL,
-	expires BIGINT NOT NULL,
-	idle_expires BIGINT NOT NULL
+    id TEXT PRIMARY KEY,
+    user_id TEXT REFERENCES public.user(id) NOT NULL,
+    active_expires BIGINT NOT NULL,
+    idle_expires BIGINT NOT NULL
+);
+```
+
+#### `key`
+
+| name            | type      | foreign constraint | nullable | unique | primary |
+| --------------- | --------- | ------------------ | -------- | ------ | ------- |
+| id              | `TEXT`    |                    |          | true   | true    |
+| user_id         | `TEXT`    | `public.user(id)`  |          |        |         |
+| primary         | `BOOLEAN` |                    |          |        |         |
+| hashed_password | `TEXT`    |                    | true     |        |         |
+
+```sql
+CREATE TABLE public.key (
+    id TEXT PRIMARY KEY,
+    user_id TEXT REFERENCES public.user(id) NOT NULL,
+    "primary" BOOLEAN NOT NULL,
+    hashed_password TEXT
 );
 ```
 
@@ -160,38 +180,54 @@ CREATE TABLE public.session (
 
 #### `user`
 
-The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
-| name            | type           | nullable | unique | primary |
-| --------------- | -------------- | -------- | ------ | ------- |
-| id              | `VARCHAR(36)`  |          | true   | true    |
-| provider_id     | `VARCHAR(255)` |          | true   |         |
-| hashed_password | `VARCHAR(255)` | true     |        |         |
+| name | type          | nullable | unique | primary |
+| ---- | ------------- | -------- | ------ | ------- |
+| id   | `VARCHAR(15)` |          | true   | true    |
 
 ```sql
 CREATE TABLE user (
-    id VARCHAR(36) NOT NULL,
-    provider_id VARCHAR(255) NOT NULL UNIQUE,
-    hashed_password VARCHAR(255),
+    id VARCHAR(15) NOT NULL,
     PRIMARY KEY (id)
 );
 ```
 
 #### `session`
 
-| name         | type                | foreign constraint | nullable | unique | identity |
-| ------------ | ------------------- | ------------------ | -------- | ------ | -------- |
-| id           | `VARCHAR(127)`      |                    |          | true   | true     |
-| user_id      | `VARCHAR(36)`       | `user(id)`         |          |        |          |
-| expires      | `BIGINT` (UNSIGNED) |                    |          |        |          |
-| idle_expires | `BIGINT` (UNSIGNED) |                    |          |        |          |
+| name           | type                | foreign constraint | nullable | unique | identity |
+| -------------- | ------------------- | ------------------ | -------- | ------ | -------- |
+| id             | `VARCHAR(127)`      |                    |          | true   | true     |
+| user_id        | `VARCHAR(15)`       | `user(id)`         |          |        |          |
+| active_expires | `BIGINT` (UNSIGNED) |                    |          |        |          |
+| idle_expires   | `BIGINT` (UNSIGNED) |                    |          |        |          |
 
 ```sql
 CREATE TABLE session (
     id VARCHAR(127) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
-    expires BIGINT UNSIGNED NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
+    active_expires BIGINT UNSIGNED NOT NULL,
     idle_expires BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+```
+
+#### `key`
+
+| name            | type                 | foreign constraint | nullable | unique | identity |
+| --------------- | -------------------- | ------------------ | -------- | ------ | -------- |
+| id              | `VARCHAR(255)`       |                    |          | true   | true     |
+| user_id         | `VARCHAR(15)`        | `user(id)`         |          |        |          |
+| primary         | `TINYINT` (UNSIGNED) |                    |          |        |          |
+| hashed_password | `VARCHAR(255)`       |                    | true     |        |          |
+
+```sql
+CREATE TABLE `key` (
+    id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
+    `primary` TINYINT UNSIGNED NOT NULL,
+    hashed_password VARCHAR(255),
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -201,40 +237,58 @@ CREATE TABLE session (
 
 #### `user`
 
-The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes).
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
 
-| name            | type           | nullable | unique | identity |
-| --------------- | -------------- | -------- | ------ | -------- |
-| id              | `VARCHAR(36)`  |          | true   | true     |
-| provider_id     | `VARCHAR(255)` |          | true   |          |
-| hashed_password | `VARCHAR(255)` | true     |        |          |
+| name | type          | nullable | unique | identity |
+| ---- | ------------- | -------- | ------ | -------- |
+| id   | `VARCHAR(15)` |          | true   | true     |
 
 ```sql
 CREATE TABLE user (
     id VARCHAR(31) NOT NULL,
-    provider_id VARCHAR(255) NOT NULL UNIQUE,
-    hashed_password VARCHAR(255),
     PRIMARY KEY (id)
 );
 ```
 
 #### `session`
 
-Type for `user_id` should match the type of `user(id)`.
+Column type of `user_id` should match the type of `user(id)`.
 
-| name         | type           | foreign constraint | nullable | unique | identity |
-| ------------ | -------------- | ------------------ | -------- | ------ | -------- |
-| id           | `VARCHAR(127)` |                    |          | true   | true     |
-| user_id      | `VARCHAR(36)`  | `user(id)`         |          |        |          |
-| expires      | `BIGINT`       |                    |          |        |          |
-| idle_expires | `BIGINT`       |                    |          |        |          |
+| name           | type           | foreign constraint | nullable | unique | identity |
+| -------------- | -------------- | ------------------ | -------- | ------ | -------- |
+| id             | `VARCHAR(127)` |                    |          | true   | true     |
+| user_id        | `VARCHAR(15)`  | `user(id)`         |          |        |          |
+| active_expires | `BIGINT`       |                    |          |        |          |
+| idle_expires   | `BIGINT`       |                    |          |        |          |
 
 ```sql
 CREATE TABLE session (
     id VARCHAR(127) NOT NULL,
-    user_id VARCHAR(36) NOT NULL,
-    expires BIGINT NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
+    active_expires BIGINT NOT NULL,
     idle_expires BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+```
+
+#### `key`
+
+Column type of `user_id` should match the type of `user(id)`.
+
+| name            | type           | foreign constraint | nullable | unique | identity |
+| --------------- | -------------- | ------------------ | -------- | ------ | -------- |
+| id              | `VARCHAR(255)` |                    |          | true   | true     |
+| user_id         | `VARCHAR(15)`  | `user(id)`         |          |        |          |
+| primary         | `INT2`         |                    |          |        |          |
+| hashed_password | `VARCHAR(255)` | true               | true     |        |          |
+
+```sql
+CREATE TABLE key (
+    id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(15) NOT NULL,
+    hashed_password VARCHAR(255),
+    "primary" INT2 NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );

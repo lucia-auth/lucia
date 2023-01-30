@@ -11,7 +11,8 @@ if (session) return Astro.redirect("/", 302); // redirect to profile page if aut
 let errorMessage = "";
 let username: FormDataEntryValue | null = null;
 let password: FormDataEntryValue | null = null;
-if (Astro.request.method === "POST") {const requestOrigin = Astro.request.headers.get("origin");
+if (Astro.request.method === "POST") {
+	const requestOrigin = Astro.request.headers.get("origin");
 	const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
 	if (!isValidRequest) {
 		return new Response(null, {
@@ -22,17 +23,23 @@ if (Astro.request.method === "POST") {const requestOrigin = Astro.request.header
 	username = form.get("username");
 	password = form.get("password");
 	// check for empty values
-	if (username && password && typeof username === "string" && typeof password === "string") {
+	if (
+		username &&
+		password &&
+		typeof username === "string" &&
+		typeof password === "string"
+	) {
 		try {
-			const user = await auth.authenticateUser("username", username, password);
-			const session = await auth.createSession(user.userId);
+			const key = await auth.validateKeyPassword("username", username, password);
+			const session = await auth.createSession(key.userId);
 			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch (error) {
 			// username already in use
 			if (
 				error instanceof LuciaError &&
-				(error.message === "AUTH_INVALID_PROVIDER_ID" || error.message === "AUTH_INVALID_PASSWORD")
+				(error.message === "AUTH_INVALID_KEY" ||
+					error.message === "AUTH_INVALID_PASSWORD")
 			) {
 				errorMessage = "Incorrect username or password.";
 			} else {
@@ -51,9 +58,18 @@ if (Astro.request.method === "POST") {const requestOrigin = Astro.request.header
 	<p class="center">or</p>
 	<form method="post">
 		<label for="username">username</label><br />
-		<input id="username" name="username" value={username?.toString() ?? ""} /><br />
+		<input
+			id="username"
+			name="username"
+			value={username?.toString() ?? ""}
+		/><br />
 		<label for="password">password</label><br />
-		<input type="password" id="password" name="password" value={password?.toString() ?? ""} /><br />
+		<input
+			type="password"
+			id="password"
+			name="password"
+			value={password?.toString() ?? ""}
+		/><br />
 		<input type="submit" value="Continue" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}

@@ -29,12 +29,12 @@ Return type of [`lucia()`](/reference/api/server-api#lucia-default).
 ## `Cookie`
 
 ```ts
-interface Cookie {
+type Cookie = {
 	name: string;
 	value: string;
 	attributes: CookieAttributes; // cookie npm package serialize() options
 	serialize: () => string;
-}
+};
 ```
 
 ### `serialize()`
@@ -44,6 +44,28 @@ Serializes the cookie using the name, value, and options using [`cookies`](https
 ```ts
 const serialize: () => string;
 ```
+
+## `Key`
+
+Represents a key.
+
+```ts
+export type Key = {
+	isPasswordDefined: boolean;
+	isPrimary: boolean;
+	providerId: string;
+	providerUserId: string;
+	userId: string;
+};
+```
+
+| name              | type      | description                                                                       |
+| ----------------- | --------- | --------------------------------------------------------------------------------- |
+| isPasswordDefined | `boolean` | time of the [active period](/learn/start-here/concepts#session-states) expiration |
+| isPrimary         | `boolean` | `true` if primary key of user (key created with the user )                        |
+| providerId        | `string`  | provider id                                                                       |
+| providerUserId    | `string`  | provider user id                                                                  |
+| userId            | `string`  | user id of linked user                                                            |
 
 ## `LuciaError`
 
@@ -65,7 +87,7 @@ const constructor: (errorName: LuciaErrorName) => void;
 
 ## `MinimalRequest`
 
-A minimal representation of node's `Request` type needed for Lucia.
+A minimal representation of the standard [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) type needed for Lucia.
 
 ```ts
 type MinimalRequest = {
@@ -133,7 +155,7 @@ Refer to [Adapters](/reference/adapters/api) reference.
 
 ## `UserData`
 
-The columns of `user` table excluding `hashed_password` and `provider_id`.
+Data from `user` table.
 
 ```ts
 type UserData = {

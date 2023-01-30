@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { AuthRequest } from "@lucia-auth/nextjs";
 import { auth } from "../lib/lucia";
-import { getUser, signOut } from "@lucia-auth/nextjs/client";
+import { signOut } from "@lucia-auth/nextjs/client";
 
 import type {
 	GetServerSidePropsContext,

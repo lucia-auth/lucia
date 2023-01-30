@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.6.0
+
+- [Breaking] Require `lucia-auth` 0.5.0
+- [Breaking] Remove `signOut`
+
 ## 0.5.3
 
 - Extend type `locals` with `App.Locals` [#307](https://github.com/pilcrowOnPaper/lucia-auth/issues/307)

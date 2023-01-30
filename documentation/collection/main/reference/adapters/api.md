@@ -21,32 +21,37 @@ type Adapter = {
 ```
 
 ```ts
-// type imported from "lucia-auth/adapter"
 type UserAdapter = {
+	deleteKeysByUserId: (userId: string) => Promise<void>;
+	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
 	deleteUser: (userId: string) => Promise<void>;
+	getKey: (keyId: string) => Promise<KeySchema | null>;
+	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 	getUser: (userId: string) => Promise<UserSchema | null>;
-	getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
+	setKey: (
+		key: string,
+		data: {
+			userId: string;
+			hashedPassword: string | null;
+			isPrimary: boolean;
+		}
+	) => Promise<void>;
 	setUser: (
 		userId: string | null,
-		data: {
-			providerId: string;
-			hashedPassword: string | null;
-			attributes: Record<string, any>;
-		}
+		attributes: Record<string, any>
 	) => Promise<UserSchema>;
-	updateUser: (
+	updateKeyPassword: (
+		key: string,
+		hashedPassword: string | null
+	) => Promise<void>;
+	updateUserAttributes: (
 		userId: string,
-		data: {
-			providerId?: string | null;
-			hashedPassword?: string | null;
-			attributes?: Record<string, any>;
-		}
+		attributes: Record<string, any>
 	) => Promise<UserSchema>;
 };
 ```
 
 ```ts
-// type imported from "lucia-auth/adapter"
 type SessionAdapter = {
 	deleteSession: (...sessionIds: string[]) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
@@ -101,9 +106,37 @@ If the session doesn't exist
 
 ## `UserAdapter`
 
+### `deleteKeysByUserId()`
+
+Deletes all keys with the target user id (`key(user_id)`). Succeeds regardless of the validity of the user id.
+
+```ts
+const deleteKeysByUserId: (userId: string) => Promise<void>;
+```
+
+#### Parameter
+
+| name   | type     | description            |
+| ------ | -------- | ---------------------- |
+| userId | `string` | target: `key(user_id)` |
+
+### `deleteNonPrimaryKey()`
+
+Deletes a non-primary (`key(primary) == true`) key with the id. Succeeds regardless of the validity of the id.
+
+```ts
+const deleteNonPrimaryKey: (key: string) => Promise<void>;
+```
+
+#### Parameter
+
+| name | type  | description              |
+| ---- | ----- | ------------------------ |
+| key  | `key` | unique target: `key(id)` |
+
 ### `deleteUser()`
 
-Deletes a user (`user` table) with the user id. Succeeds regardless of the validity of the user id.
+Deletes a user with the user id (`user(id)`). Succeeds regardless of the validity of the user id.
 
 ```ts
 const deleteUser: (userId: string) => Promise<void>;
@@ -114,6 +147,62 @@ const deleteUser: (userId: string) => Promise<void>;
 | name   | type     | description               |
 | ------ | -------- | ------------------------- |
 | userId | `string` | unique target: `user(id)` |
+
+### `getKey()`
+
+Gets a key with the the target id (`key(id)`). Returns `null` is the user doesn't exist.
+
+```ts
+const getKey: (keyId: string) => Promise<KeySchema | null>;
+```
+
+#### Parameter
+
+| name  | type     | description              |
+| ----- | -------- | ------------------------ |
+| keyId | `string` | unique target: `key(id)` |
+
+#### Returns
+
+If user exists:
+
+| type                                                            | description        |
+| --------------------------------------------------------------- | ------------------ |
+| [`KeySchema`](/reference/adapters/database-model#schema-type-2) | key data of target |
+
+If not:
+
+| type   |
+| ------ |
+| `null` |
+
+### `getKeysByUserId()`
+
+Gets keys with the user id (`key(user_id)`).
+
+```ts
+const getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
+```
+
+#### Parameter
+
+| name   | type     | description                |
+| ------ | -------- | -------------------------- |
+| userId | `string` | target: `session(user_id)` |
+
+#### Returns
+
+If session exists:
+
+| type                                                            | description        |
+| --------------------------------------------------------------- | ------------------ |
+| [`KeySchema`](/reference/adapters/database-model#schema-type-2) | key data of target |
+
+If not:
+
+| type   |
+| ------ |
+| `null` |
 
 ### `getUser()`
 
@@ -131,41 +220,13 @@ const getUser: (userId: string) => Promise<UserSchema | null>;
 
 #### Returns
 
-If the user exists
+If user exists:
 
 | type                                                           | description         |
 | -------------------------------------------------------------- | ------------------- |
 | [`UserSchema`](/reference/adapters/database-model#schema-type) | User data of target |
 
-If the user doesn't exist
-
-| type   |
-| ------ |
-| `null` |
-
-### `getUserByProviderId()`
-
-Gets a user (`user` table) with the provider id. Returns `null` if the user doesn't exist.
-
-```ts
-const getUserByProviderId: (providerId: string) => Promise<UserSchema | null>;
-```
-
-#### Parameter
-
-| name       | type     | description                        |
-| ---------- | -------- | ---------------------------------- |
-| providerId | `string` | unique target: `user(provider_id)` |
-
-#### Returns
-
-If the user exists
-
-| type                                                           | description         |
-| -------------------------------------------------------------- | ------------------- |
-| [`UserSchema`](/reference/adapters/database-model#schema-type) | User data of target |
-
-If the user doesn't exist
+If not:
 
 | type   |
 | ------ |
@@ -207,29 +268,48 @@ const setUser: (
 | -------------------------- |
 | AUTH_DUPLICATE_PROVIDER_ID |
 
-### `updateUser()`
+### `updateKeyPassword()`
 
-Updates a user (`user` table) with the user id. Only the target to update will be provided in `data` and some key/values inside `data` and `data.attributes` may be undefined. Keys in `data` with a value of `undefined` should be ignored, while `null` should not.
+Updates a key password `key(hashed_password)` with the key id (`key(id)`).
+
+```ts
+const updateKeyPassword: (
+	keyId: string,
+	hashedPassword: string
+) => Promise<void>;
+```
+
+#### Parameter
+
+| name           | type     | description                    |
+| -------------- | -------- | ------------------------------ |
+| keyId          | `string` | unique target: `key(id)`       |
+| hashedPassword | `string` | target: `key(hashed_password)` |
+
+#### Errors
+
+| type                       |
+| -------------------------- |
+| AUTH_DUPLICATE_PROVIDER_ID |
+| AUTH_INVALID_USER_ID       |
+
+### `updateUserAttributes()`
+
+Updates a user with the user id (`user(id)`).
 
 ```ts
 const updateUser: (
 	userId: string,
-	data: {
-		providerId?: string | null;
-		hashedPassword?: string | null;
-		attributes?: Record<string, any>;
-	}
+	attributes: Partial<Lucia.UserAttributes>
 ) => Promise<UserSchema>;
 ```
 
 #### Parameter
 
-| name                | type                  | description                                     | optional |
-| ------------------- | --------------------- | ----------------------------------------------- | -------- |
-| userId              | `string`              | unique target: `user(id)`                       |          |
-| data.providerId     | `string`              | target: `user(provider_id)`                     | true     |
-| data.hashedPassword | `string \| null`      | target: `user(hashed_password)`                 | true     |
-| data.attributes     | `Record<string, any>` | each key names as [key] - target: `user([key])` | true     |
+| name            | type                   | description               |
+| --------------- | ---------------------- | ------------------------- |
+| userId          | `string`               | unique target: `user(id)` |
+| data.attributes | `Lucia.UserAttributes` | each key/value as column  |
 
 #### Returns
 
@@ -318,13 +398,13 @@ const getSessionsByUserId: (userId: string) => Promise<SessionSchema | null>;
 
 #### Returns
 
-If the session exists
+If session exists:
 
 | type                                                                | description            |
 | ------------------------------------------------------------------- | ---------------------- |
 | [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data of target |
 
-If the session doesn't exist
+If not:
 
 | type   |
 | ------ |

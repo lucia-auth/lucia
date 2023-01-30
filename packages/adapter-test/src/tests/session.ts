@@ -1,6 +1,6 @@
 import type { SessionAdapter } from "lucia-auth";
 import { test, end, validate } from "../test.js";
-import { User } from "../db.js";
+import { User } from "../model.js";
 import { Database } from "../index.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
@@ -20,13 +20,13 @@ export const testSessionAdapter = async (
 		const session = user.createSession();
 		await db.insertUser(user.getSchema());
 		await db.insertSession(session.getSchema());
-		let returnedSession = await adapter.getSession(session.id);
-		returnedSession = validate.isNotNull(
+		const returnedSession = await adapter.getSession(session.id);
+		const nonNullReturnedSession = validate.isNotNull(
 			returnedSession,
 			"Target was not returned"
 		);
 		validate.isTrue(
-			session.validateSchema(returnedSession),
+			session.validateSchema(nonNullReturnedSession),
 			"Target is not the expected value",
 			session.getSchema(),
 			returnedSession
@@ -46,16 +46,20 @@ export const testSessionAdapter = async (
 		"getSessionsByUserId()",
 		"Return the correct session",
 		async () => {
-			const user = new User();
-			const session = user.createSession();
-			await db.insertUser(user.getSchema());
-			await db.insertSession(session.getSchema());
-			const sessions = await adapter.getSessionsByUserId(session.userId);
+			const user1 = new User();
+			const user2 = new User();
+			const session1 = user1.createSession();
+			const session2 = user2.createSession();
+			await db.insertUser(user1.getSchema());
+			await db.insertUser(user2.getSchema());
+			await db.insertSession(session1.getSchema());
+			await db.insertSession(session2.getSchema());
+			const sessions = await adapter.getSessionsByUserId(session1.userId);
 			validate.includesSomeItem(
 				sessions,
-				session.validateSchema,
+				session1.validateSchema,
 				"Target is not included in the returned value",
-				session.getSchema()
+				session1.getSchema()
 			);
 			await clearAll();
 		}
@@ -77,7 +81,7 @@ export const testSessionAdapter = async (
 			await db.insertUser(user.getSchema());
 			await adapter.setSession(session.id, {
 				userId: session.userId,
-				expires: session.expires,
+				activePeriodExpires: session.activePeriodExpires,
 				idlePeriodExpires: session.idlePeriodExpires
 			});
 			const sessions = await db.getSessions();
@@ -135,7 +139,7 @@ export const testSessionAdapter = async (
 			const session = new User().createSession();
 			try {
 				await adapter.setSession(session.id, {
-					expires: session.expires,
+					activePeriodExpires: session.activePeriodExpires,
 					userId: INVALID_INPUT,
 					idlePeriodExpires: session.idlePeriodExpires
 				});
@@ -165,7 +169,7 @@ export const testSessionAdapter = async (
 			try {
 				await adapter.setSession(user1Session.id, {
 					userId: user2Session.userId,
-					expires: user2Session.expires,
+					activePeriodExpires: user2Session.activePeriodExpires,
 					idlePeriodExpires: user2Session.idlePeriodExpires
 				});
 				throw new Error("No error was thrown");

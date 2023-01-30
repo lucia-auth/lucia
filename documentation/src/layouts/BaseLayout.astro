@@ -17,7 +17,9 @@ let titleTag = "Lucia";
 
 if (Astro.props.title) {
 	if (Astro.props.external) {
-		titleTag = `${Astro.props.title} | Lucia + ${getExternalName(Astro.props.external)}`;
+		titleTag = `${Astro.props.title} | Lucia + ${getExternalName(
+			Astro.props.external
+		)}`;
 	} else {
 		titleTag = `${Astro.props.title} | Lucia`;
 	}
@@ -33,7 +35,11 @@ if (Astro.props.title) {
 	</title>
 	<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link
+		rel="preconnect"
+		href="https://fonts.gstatic.com"
+		crossorigin="anonymous"
+	/>
 	<link
 		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
 		rel="stylesheet"
@@ -41,7 +47,10 @@ if (Astro.props.title) {
 
 	<script is:inline>
 		const getTheme = () => {
-			if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+			if (
+				typeof localStorage !== "undefined" &&
+				localStorage.getItem("theme")
+			) {
 				const storedTheme = localStorage.getItem("theme");
 				if (storedTheme === "dark") return "dark";
 				if (storedTheme === "light") return "light";
@@ -64,6 +73,7 @@ if (Astro.props.title) {
 
 <body class="dark:bg-black-zinc dark:text-zinc-200 px-4 sm:px-8 lg:px-12">
 	<slot />
+
 	<style>
 		body {
 			font-family: IBM Plex Sans, sans-serif;

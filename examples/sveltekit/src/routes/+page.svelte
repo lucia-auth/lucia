@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { signOut, getUser } from '@lucia-auth/sveltekit/client';
-	import { invalidateAll } from '$app/navigation';
+	import { getUser } from '@lucia-auth/sveltekit/client';
+	import { enhance } from '$app/forms';
 	const user = getUser();
 </script>
 
@@ -9,9 +9,6 @@
 {JSON.stringify($user, null, 2)}
 </pre>
 
-<button
-	on:click={async () => {
-		await signOut();
-		invalidateAll();
-	}}>Sign out</button
->
+<form use:enhance method="post">
+	<input type="submit" class="button" value="Sign out" />
+</form>
