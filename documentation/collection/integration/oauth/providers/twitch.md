@@ -132,6 +132,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | name                                             | type                                                  | description                                       |
 | ------------------------------------------------ | ----------------------------------------------------- | ------------------------------------------------- |
 | existingUser                                     | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
+| [createKey](/oauth/providers/twitch#createkey)   | `Function`                                            |                                                   |
 | [createUser](/oauth/providers/twitch#createuser) | `Function`                                            |                                                   |
 | providerUser                                     | [`TwitchUser`](/oauth/providers/twitch#twitchuser)    | Twitch user                                       |
 | accessToken                                      | `string`                                              | Twitch access token                               |

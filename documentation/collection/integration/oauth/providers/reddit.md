@@ -129,6 +129,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | name                                             | type                                                  | description                                       |
 | ------------------------------------------------ | ----------------------------------------------------- | ------------------------------------------------- |
 | existingUser                                     | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
+| [createKey](/oauth/providers/twitch#createkey)   | `Function`                                            |                                                   |
 | [createUser](/oauth/providers/github#createuser) | `Function`                                            |                                                   |
 | providerUser                                     | [`RedditUser`](/oauth/providers/reddit#reddituser)    | Reddit user                                       |
 | accessToken                                      | `string`                                              | Reddit access token                               |
