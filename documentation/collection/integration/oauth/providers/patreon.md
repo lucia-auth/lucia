@@ -133,6 +133,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | name                                              | type                                                  | description                                       |
 | ------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- |
 | existingUser                                      | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
+| [createKey](/oauth/providers/twitch#createkey)    | `Function`                                            |                                                   |
 | [createUser](/oauth/providers/pateron#createuser) | `Function`                                            |                                                   |
 | providerUser                                      | [`PateronUser`](/oauth/providers/pateron#pateronuser) | Pateron user                                      |
 | accessToken                                       | `string`                                              | Pateron access token                              |
