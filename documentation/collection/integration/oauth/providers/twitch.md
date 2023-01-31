@@ -135,6 +135,8 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | [createUser](/oauth/providers/twitch#createuser) | `Function`                                            |                                                   |
 | providerUser                                     | [`TwitchUser`](/oauth/providers/twitch#twitchuser)    | Twitch user                                       |
 | accessToken                                      | `string`                                              | Twitch access token                               |
+| refreshToken                                     | `string`                                              | Twitch refresh token                              |
+| expiresIn                                        | `number`                                              | access token expiration time                      |
 
 ### `createKey()`
 
