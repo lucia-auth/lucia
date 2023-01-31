@@ -51,7 +51,11 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 	};
 
 	public validateCallback = async (code: string) => {
-		const { access_token: accessToken } = (await post(
+		const { 
+			access_token: accessToken,
+			refresh_token: refreshToken,
+			expires_in: expiresIn 
+		} = (await post(
 			`https://id.twitch.tv/oauth2/token?${new URLSearchParams({
 				client_id: this.clientId,
 				client_secret: this.clientSecret,
@@ -64,6 +68,10 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 			}
 		)) as {
 			access_token: string;
+			refresh_token: string;
+			expires_in: number;
+			token_type: string;
+			scope: string[];
 		};
 
 		const twitchUser = (
@@ -111,7 +119,9 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 			createUser,
 			existingUser,
 			providerUser: twitchUser,
-			accessToken
+			accessToken,
+			refreshToken,
+			expiresIn
 		};
 	};
 }

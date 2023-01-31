@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.1
+
+- Add `expiresIn`, `refreshToken` to `validateCallback` (Twitch)
+
 ## 0.5.0
 
 - [Breaking] Require `lucia-auth` 0.5.0
