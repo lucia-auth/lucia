@@ -114,7 +114,8 @@ const validateCallback: (code: string) => Promise<GithubProviderSession>;
 ```ts
 interface GithubProviderSession {
 	existingUser: User | null;
-	createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+	createKey: (userId: string) => Promise<Key>;
+	createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
 	providerUser: GithubUser;
 	accessToken: string;
 }
@@ -129,23 +130,33 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | providerUser                                     | [`GithubUser`](/oauth/providers/github#githubuser)    | Github user                                       |
 | accessToken                                      | `string`                                              | Github access token                               |
 
+### `createKey()`
+
+```ts
+const createKey: (userId: string) => Promise<Key>;
+```
+
+Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createkey) using the following parameter:
+
+| name           | value                                                                  |
+| -------------- | ---------------------------------------------------------------------- |
+| userId         | `userId`                                                               |
+| providerId     | `"github"`                                                             |
+| providerUserId | Github user id ([`GithubUser.id`](/oauth/providers/github#githubuser)) |
+
 ### `createUser()`
 
 ```ts
-const createUser: (
-	userAttributes: Lucia.UserAttributes | undefined
-) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
 ```
 
-Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
+Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
 
-| name               | value                                                                  |
-| ------------------ | ---------------------------------------------------------------------- |
-| provider           | `"github"`                                                             |
-| identifier         | Github user id ([`GithubUser.id`](/oauth/providers/github#githubuser)) |
-| options.attributes | `userAttributes ?? {}`                                                 |
-
-`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
+| name                    | value                                                                  |
+| ----------------------- | ---------------------------------------------------------------------- |
+| data.key.providerId     | `"github"`                                                             |
+| data.key.providerUserId | Github user id ([`GithubUser.id`](/oauth/providers/github#githubuser)) |
+| data.attributes         | `userAttributes`                                                       |
 
 ## `GithubUser`
 

@@ -4,7 +4,7 @@ import supabase from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { LuciaError, SessionSchema, UserSchema } from "lucia-auth";
+import { KeySchema, LuciaError, SessionSchema, UserSchema } from "lucia-auth";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -35,16 +35,27 @@ export const db: Database = {
 		if (!data) throw new Error("Failed to fetch from database");
 		return data;
 	},
+	getKeys: async () => {
+		const { data } = await client.from<KeySchema>("key").select();
+		if (!data) throw new Error("Failed to fetch from database");
+		return data;
+	},
 	insertUser: async (user) => {
 		await client.from("user").insert(user);
 	},
 	insertSession: async (session) => {
 		await client.from("session").insert(session);
 	},
+	insertKey: async (key) => {
+		await client.from("key").insert(key);
+	},
 	clearUsers: async () => {
 		await client.from("user").delete().like("username", "user%");
 	},
 	clearSessions: async () => {
 		await client.from("session").delete().gte("id", 0);
+	},
+	clearKeys: async () => {
+		await client.from("key").delete().like("id", "test:%");
 	}
 };

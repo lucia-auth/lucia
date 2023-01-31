@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.0
+
+- [Breaking] Tests for `lucia-auth` 0.5.x
+
 ## 0.1.6
 
 - Update peer dependency

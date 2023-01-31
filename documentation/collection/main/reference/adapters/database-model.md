@@ -7,14 +7,12 @@ Lucia uses adapters to connect to your database. The following chart shows the b
 
 ## `user`
 
-The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [Store user attributes](/learn/basics/store-user-attributes). For `id`, use a auto-generated uuid/cuid, or `string` if you generate your own user id.
+The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/learn/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
 
-| name            | type               | unique | description                                                      |
-| --------------- | ------------------ | ------ | ---------------------------------------------------------------- |
-| id              | string (uuid/cuid) | true   | should be auto-generated UUID or similar by defaults             |
-| provider_id     | string             | true   | stores the provider id using the form: `providerName:identifier` |
-| hashed_password | string \| null     |        | `null` if the user doesn't have a password                       |
-| [any]           | any                | any    | this represents any number of columns of any name                |
+| name  | type                   | unique | description                                       |
+| ----- | ---------------------- | ------ | ------------------------------------------------- |
+| id    | string (min. 15 chars) | true   |                                                   |
+| [any] | any                    | any    | this represents any number of columns of any name |
 
 ### Schema type
 
@@ -22,8 +20,6 @@ The `user` table stores the users. The `[any]` column represents the any number 
 // type imported from "lucia-auth/adapter"
 type UserSchema = {
 	id: string;
-	hashed_password: string | null;
-	provider_id: string;
 } & Lucia.UserAttributes;
 ```
 
@@ -31,12 +27,12 @@ type UserSchema = {
 
 The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
 
-| name         | type          | unique | reference | description                                        |
-| ------------ | ------------- | ------ | --------- | -------------------------------------------------- |
-| id           | string        | true   |           |                                                    |
-| user_id      | string        |        | user(id)  |                                                    |
-| expires      | number (int8) |        |           | the expiration time (unix) of the session (active) |
-| idle_expires | number (int8) |        |           | the expiration time (unix) for the idle period     |
+| name           | type          | unique | reference | description                                        |
+| -------------- | ------------- | ------ | --------- | -------------------------------------------------- |
+| id             | string        | true   |           |                                                    |
+| user_id        | string        |        | user(id)  |                                                    |
+| active_expires | number (int8) |        |           | the expiration time (unix) of the session (active) |
+| idle_expires   | number (int8) |        |           | the expiration time (unix) for the idle period     |
 
 ### Schema type
 
@@ -44,8 +40,31 @@ The `session` table stores the user's sessions. You do not need this if you're u
 // type imported from "lucia-auth/adapter"
 type SessionSchema = {
 	id: string;
-	expires: number;
+	active_expires: number;
 	idle_expires: number;
 	user_id: string;
+};
+```
+
+## `key`
+
+The `key` table stores the user's keys.
+
+| name            | type           | unique | reference | description                                              |
+| --------------- | -------------- | ------ | --------- | -------------------------------------------------------- |
+| id              | string         | true   |           | key id in the form of: `${providerId}:${providerUserId}` |
+| user_id         | string         |        | user(id)  |                                                          |
+| primary         | boolean        |        |           | `true` for primary keys                                  |
+| hashed_password | string \| null |        |           | hashed password of the key                               |
+
+### Schema type
+
+```ts
+// type imported from "lucia-auth/adapter"
+type SessionSchema = {
+	id: string;
+	user_id: string;
+	primary: boolean;
+	hashed_password: string | null;
 };
 ```

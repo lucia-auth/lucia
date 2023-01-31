@@ -2,7 +2,6 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import { auth } from "../lib/lucia";
 import { AuthRequest } from "@lucia-auth/astro";
-import SignOut from "../components/SignOut.svelte";
 
 const authRequest = new AuthRequest(auth, Astro);
 const { user } = await authRequest.validateUser();
@@ -12,5 +11,7 @@ if (!user) return Astro.redirect("/login", 302);
 <MainLayout>
 	<h2>Your profile</h2>
 	<pre class="code">{JSON.stringify(user!, null, 2)}</pre>
-	<SignOut client:load />
+	<form action="/api/logout" method="post">
+		<input type="submit" class="button" value="Sign out">
+	</form>
 </MainLayout>

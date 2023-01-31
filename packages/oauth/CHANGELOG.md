@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.5.0
+
+- [Breaking] Require `lucia-auth` 0.5.0
+- [Breaking] Update `createUser` parameter
+- `createKey` method in `validateCallback` result
+
 ## 0.4.0
 
 - [Breaking] Require `lucia-auth` 0.4.3
@@ -16,12 +22,12 @@
 ## 0.3.0
 
 - [Breaking] Rename type `GetUserType` to `LuciaUser`; remove `GetCreateUserAttributesType`
-- `userAttributes` params for `createUser()` is optional if `Lucia.UserAttributes` is empty
+- `userAttributes` params for `createUser` is optional if `Lucia.UserAttributes` is empty
 - Make `Buffer` dependency optional
 
 ## 0.2.7
 
-- Fix type issues with `existingUser` and `createUser()` for `validateCallback()`
+- Fix type issues with `existingUser` and `createUser` for `validateCallback`
 
 ## 0.2.6
 
@@ -49,8 +55,8 @@
 
 ## 0.2.0
 
-- [Breaking] `getAuthorizationUrl()` generates and adds `state` params to the authorization url
-- [Breaking] `getAuthorizationUrl()` returns a tuple
+- [Breaking] `getAuthorizationUrl` generates and adds `state` params to the authorization url
+- [Breaking] `getAuthorizationUrl` returns a tuple
 
 ## 0.1.4
 

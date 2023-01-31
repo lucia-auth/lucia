@@ -118,7 +118,8 @@ const validateCallback: (code: string) => Promise<TwitchProviderSession>;
 ```ts
 interface TwitchProviderSession {
 	existingUser: User | null;
-	createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+	createKey: (userId: string) => Promise<Key>;
+	createUser: (userAttributes) => Promise<User>;
 	providerUser: TwitchUser;
 	accessToken: string;
 	refreshToken: string;
@@ -135,23 +136,33 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | providerUser                                     | [`TwitchUser`](/oauth/providers/twitch#twitchuser)    | Twitch user                                       |
 | accessToken                                      | `string`                                              | Twitch access token                               |
 
+### `createKey()`
+
+```ts
+const createKey: (userId: string) => Promise<Key>;
+```
+
+Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createkey) using the following parameter:
+
+| name           | value                                                                  |
+| -------------- | ---------------------------------------------------------------------- |
+| userId         | `userId`                                                               |
+| providerId     | `"twitch"`                                                             |
+| providerUserId | Twitch user id ([`TwitchUser.id`](/oauth/providers/twitch#twitchuser)) |
+
 ### `createUser()`
 
 ```ts
-const createUser: (
-	userAttributes: Lucia.UserAttributes | undefined
-) => Promise<User>;
+const createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
 ```
 
-Creates a new using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
+Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
 
-| name               | value                                                                  |
-| ------------------ | ---------------------------------------------------------------------- |
-| provider           | `"twitch"`                                                             |
-| identifier         | Twitch user id ([`TwitchUser.id`](/oauth/providers/twitch#twitchuser)) |
-| options.attributes | `userAttributes ?? {}`                                                 |
-
-`options.attributes` can be `undefined` (optional) if `Lucia.UserAttributes` is empty.
+| name                    | value                                                                  |
+| ----------------------- | ---------------------------------------------------------------------- |
+| data.key.providerId     | `"twitch"`                                                             |
+| data.key.providerUserId | Twitch user id ([`TwitchUser.id`](/oauth/providers/twitch#twitchuser)) |
+| data.attributes         | `userAttributes`                                                       |
 
 ## `TwitchUser`
 

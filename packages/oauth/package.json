@@ -60,6 +60,6 @@
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.1.x - 0.4.x"
+		"lucia-auth": "0.5.x"
 	}
 }

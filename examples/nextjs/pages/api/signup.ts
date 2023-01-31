@@ -20,8 +20,12 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		});
 	}
 	try {
-		const user = await auth.createUser("username", username, {
-			password,
+		const user = await auth.createUser({
+			key: {
+				providerId: "username",
+				providerUserId: username,
+				password
+			},
 			attributes: {
 				username
 			}
@@ -40,10 +44,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 				error: "Username already in use"
 			});
 		}
-		if (
-			error instanceof LuciaError &&
-			error.message === "AUTH_DUPLICATE_PROVIDER_ID"
-		) {
+		if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_KEY") {
 			return res.status(200).json({
 				error: "Username already in use"
 			});

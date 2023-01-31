@@ -13,7 +13,8 @@ interface Props {
 	<div class="mt-8">
 		<a
 			href={Astro.props.contributePageUrl}
-			class="text-main hover:underline cursor-pointer;">Contribute to this page</a
+			class="text-main hover:underline cursor-pointer;"
+			>Contribute to this page</a
 		>
 	</div>
 </article>
@@ -73,5 +74,17 @@ interface Props {
 	}
 	:global(#md table th) {
 		@apply font-medium text-sm;
+	}
+	:global(#md blockquote) {
+		@apply px-4 py-1 my-3 border-l-4;
+	}
+	:global(#md blockquote.bq-default) {
+		@apply bg-main border-l-main bg-opacity-20;
+	}
+	:global(#md blockquote.bq-warn) {
+		@apply bg-yellow-500 border-l-yellow-500 bg-opacity-20;
+	}
+	:global(#md blockquote.bq-red) {
+		@apply bg-red-500 border-l-red-500 bg-opacity-20;
 	}
 </style>

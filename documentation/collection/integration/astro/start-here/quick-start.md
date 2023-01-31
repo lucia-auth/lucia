@@ -75,9 +75,7 @@ In the same page, we'll also handle the POST request from the form.
 
 `@lucia-auth/astro` provides [`AuthRequest`](/astro/api-reference/server-api#authrequest), which makes it easier to handle sessions and cookies within Astro. Initialize it with `auth` and the `Astro` context (an API route context can be used as well).
 
-Make sure to add [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) protection. You can check if the request is coming from the same domain as where the app is hosted by using the `origin` header. 
-
-We'll set the provider id as `username` and the inputted username as the identifier. This tells Lucia that the user was created using the username/password auth method and that the unique identifier is the username. The `createUser` method also handles password hashing before storing the user. After creating a new user, create a new session and store the session cookie using [`AuthRequest.setSession()`](/astro/api-reference/server-api#setsession).
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
 
 ```astro
 ---
@@ -100,15 +98,14 @@ if (Astro.request.method === "POST") {
 	const username = form.get("username");
 	const password = form.get("password");
 	// check for empty values
-	if (
-		username &&
-		password &&
-		typeof username === "string" &&
-		typeof password === "string"
-	) {
+	if (typeof username === "string" && typeof password === "string") {
 		try {
-			const user = await auth.createUser("username", username, {
-				password,
+			const user = await auth.createUser({
+				key: {
+					providerId: "username",
+					providerUserId: username,
+					password
+				},
 				attributes: {
 					username
 				}
@@ -126,6 +123,8 @@ if (Astro.request.method === "POST") {
 }
 ---
 ```
+
+> (warn) Astro does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` will do a CSRF check and only return a user if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 ### Redirect authenticated users
 
@@ -168,13 +167,11 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 
 The same page will also handle form submissions.
 
-Make sure to add CSRF protection here as well.
-
-We'll use `username` as the provider id and the username as the identifier. This tells Lucia to find a user that was created using username/password auth method where the unique identifier is the username. Create a new session if the password is valid, and store the session id.
+We'll use `username` as the provider id and the username as the provider user id. This tells Lucia to find a user that was created using username/password auth method where the unique identifier is the username. Create a new session if the password is valid, and store the session id.
 
 ```astro
 ---
-// pages/signup.astro
+// pages/login.astro
 import { auth } from "../lib/lucia";
 import { AuthRequest } from "@lucia-auth/astro";
 
@@ -193,19 +190,18 @@ if (Astro.request.method === "POST") {
 	const username = form.get("username");
 	const password = form.get("password");
 	// check for empty values
-	if (
-		username &&
-		password &&
-		typeof username === "string" &&
-		typeof password === "string"
-	) {
+	if (typeof username === "string" && typeof password === "string") {
 		try {
-			const user = await auth.authenticateUser("username", username, password);
-			const session = await auth.createSession(user.userId);
+			const key = await auth.validateKeyPassword(
+				"username",
+				username,
+				password
+			);
+			const session = await auth.createSession(key.userId);
 			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch {
-			// username already in use
+			// invalid password
 			Astro.response.status = 400;
 		}
 	} else {
@@ -262,23 +258,6 @@ if (!user) return Astro.redirect("/login", 302);
 </div>
 ```
 
-### Sign out
-
-Add a button that calls [`signOut()`](/astro/api-reference/client-api#signout) (imported from `@lucia-auth/astro/client`) and redirect the user to `/login` afterward. The url for `signOut()` is the api route where you added `handleSignOut()`. (Make sure hydrate the component!)
-
-```svelte
-<script lang="ts">
-	import { signOut } from "@lucia-auth/astro/client";
-
-	const handleSignOut = async () => {
-		await signOut("/api/logout");
-		window.location.href = "/login";
-	};
-</script>
-
-<button on:click={handleSignOut}>Sign out</button>
-```
-
 ## 6. Request validation
 
 `AuthRequest` can be used inside API routes as well:
@@ -294,8 +273,46 @@ export const get: APIRoute = async (context) => {
 	const session = await authRequest.validate();
 	// ...
 };
+
 export const post: APIRoute = async (context) => {
 	const authRequest = new AuthRequest(auth, context);
 	// ...
 };
+```
+
+## 7. Sign out users
+
+Create a POST endpoint in `api/logout` that handles logout. It will invalidate the current session and remove the session cookie.
+
+```ts
+import { AuthRequest } from "@lucia-auth/astro";
+import { auth } from "../../lib/lucia";
+import type { APIRoute } from "astro";
+
+export const post: APIRoute = async (Astro) => {
+	const authRequest = new AuthRequest(auth, Astro);
+	const session = await authRequest.validate();
+	if (!session)
+		return new Response(null, {
+			status: 400
+		});
+	await auth.invalidateSession(session.sessionId); // invalidate current session
+	authRequest.setSession(null); // delete cookie
+
+	// redirect to login page
+	return new Response(null, {
+		status: 302,
+		headers: {
+			location: "/login"
+		}
+	});
+};
+```
+
+In the frontend, create a new form that sends a POST request to the endpoint. Authenticated users will be signed out on submission.
+
+```html
+<form action="/api/logout" method="post">
+	<input type="submit" value="Sign out" />
+</form>
 ```

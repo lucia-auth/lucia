@@ -1,6 +1,6 @@
 import { Session, SessionSchema } from "../types.js";
 
-export const getSessionFromDatabaseData = (
+export const transformDatabaseSessionData = (
 	databaseSession: SessionSchema
 ): Session | null => {
 	const currentTime = new Date().getTime();
@@ -9,9 +9,9 @@ export const getSessionFromDatabaseData = (
 	return {
 		sessionId: databaseSession.id,
 		userId: databaseSession.user_id,
-		activePeriodExpires: new Date(Number(databaseSession.expires)),
+		activePeriodExpires: new Date(Number(databaseSession.active_expires)),
 		idlePeriodExpires: new Date(Number(databaseSession.idle_expires)),
-		state: currentTime > databaseSession.expires ? "idle" : "active",
+		state: currentTime > databaseSession.active_expires ? "idle" : "active",
 		isFresh: false
 	};
 };

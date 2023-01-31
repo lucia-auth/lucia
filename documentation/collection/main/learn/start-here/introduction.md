@@ -10,6 +10,8 @@ Lucia is a library that, at its core, makes managing users and sessions easy. It
 - Integration for popular frameworks like SvelteKit and Next.js
 - Packages to handle API calls with external providers for auth strategies like OAuth
 
+> (warn) One important to remember is **Lucia is a server side library**. Every API provided by the core Lucia library should only be used on the server.
+
 It's not an plug n' play library like NextAuth, nor an auth platform like Firebase, and that is a key distinction. Lucia provides the APIs for handling authentication, but how you use them is up to you. You'll have to design the basic auth flow, and implement UI components and request handler based on it.
 
 Working with it looks something like this. In the code below, you're creating a new user with a email/password method, creating a new session, and creating a cookie that you set to the user.
@@ -23,3 +25,5 @@ const sessionCookie = auth.createSessionCookie(session);
 ```
 
 Lucia aims to work well with any modern web frameworks and supports run-times other than Node such as Cloudflare edge workers.
+
+> The name *Lucia* is based on the country of Saint Lucia. Based on a quick community poll, most people pronounce it *lu-sia* but *loo-shya* or *lu-chia* works as well.

@@ -28,8 +28,12 @@ if (Astro.request.method === "POST") {
 	// check for empty values
 	if (username && password && typeof username === "string" && typeof password === "string") {
 		try {
-			const user = await auth.createUser("username", username, {
-				password,
+			const user = await auth.createUser({
+				key: {
+					providerId:"username",
+					providerUserId: username,
+					password
+				},
 				attributes: {
 					username
 				}
@@ -45,7 +49,7 @@ if (Astro.request.method === "POST") {
 				error.message?.includes("username")
 			) {
 				errorMessage = "Username already in use";
-			} else if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_PROVIDER_ID") {
+			} else if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_KEY") {
 				errorMessage = "Username already in use";
 			} else {
 				errorMessage = "Unknown error occured";

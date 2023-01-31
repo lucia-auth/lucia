@@ -3,13 +3,6 @@ import { onDestroy } from "svelte";
 import type { GlobalWindow, LuciaContext, PageData } from "../types.js";
 import { ClientUser, getClientUser, getServerUser } from "./user.js";
 
-export const signOut = async (): Promise<void> => {
-	const response = await fetch("/api/auth/logout", {
-		method: "POST"
-	});
-	if (!response.ok) throw new Error("unknown error");
-};
-
 export const getUser = (): Readable<ClientUser> => {
 	if (typeof document === "undefined") {
 		return getServerUser();

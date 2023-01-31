@@ -15,8 +15,8 @@ const errorMessage = error.message;
 | `AUTH_INVALID_SESSION_ID`               |
 | `AUTH_INVALID_PASSWORD`                 |
 | `AUTH_OUTDATED_PASSWORD`                |
-| `AUTH_INVALID_PROVIDER_ID`              |
-| `AUTH_DUPLICATE_PROVIDER_ID`            |
+| `AUTH_INVALID_KEY`                      |
+| `AUTH_DUPLICATE_KEY`                    |
 | `AUTH_INVALID_REQUEST`                  |
 | `AUTH_INVALID_USER_ID`                  |
 | `AUTH_NOT_AUTHENTICATED`                |

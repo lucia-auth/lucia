@@ -21,11 +21,12 @@ yarn add @lucia-auth/adapter-mongoose
 | Mongoose adapter version | Lucia version |
 | ------------------------ | ------------- |
 | 0.1.x                    | 0.1.x ~ 0.3.x |
-| 0.2.x                    | 0.4.x ~       |
+| 0.2.x                    | 0.4.x         |
+| 0.3.x                    | 0.5.x         |
 
 ## Testing
 
-Add MongoDB url to `MONGODB_URL`.
+Add MongoDB url to `MONGODB_URL` env var.
 
 ```
 npm run test

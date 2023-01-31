@@ -21,13 +21,13 @@ export const actions: Actions = {
 			});
 		}
 		try {
-			const user = await auth.authenticateUser('username', username, password);
-			const session = await auth.createSession(user.userId);
+			const key = await auth.validateKeyPassword('username', username, password);
+			const session = await auth.createSession(key.userId);
 			locals.setSession(session);
 		} catch (error) {
 			if (
 				error instanceof LuciaError &&
-				(error.message === 'AUTH_INVALID_PROVIDER_ID' || error.message === 'AUTH_INVALID_PASSWORD')
+				(error.message === 'AUTH_INVALID_KEY' || error.message === 'AUTH_INVALID_PASSWORD')
 			) {
 				return fail(400, {
 					message: 'Incorrect username or password.'

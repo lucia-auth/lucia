@@ -1,10 +1,10 @@
 import type {
 	Adapter,
 	AdapterFunction,
+	KeySchema,
 	SessionSchema,
 	UserSchema
 } from "lucia-auth";
-import { getUpdateData } from "lucia-auth/adapter";
 import { convertSession } from "./utils.js";
 import { PrismaClient, SmartPrismaClient } from "./prisma.js";
 
@@ -16,6 +16,7 @@ interface PossiblePrismaError {
 type Schemas = {
 	user: UserSchema;
 	session: SessionSchema;
+	key: KeySchema;
 };
 
 const adapter =
@@ -48,15 +49,6 @@ const adapter =
 					session: convertSession(session)
 				};
 			},
-			getUserByProviderId: async (providerId) => {
-				const data = await prisma.user.findUnique({
-					where: {
-						provider_id: providerId
-					}
-				});
-				if (!data) return null;
-				return data;
-			},
 			getSession: async (sessionId) => {
 				const session = await prisma.session.findUnique({
 					where: {
@@ -74,37 +66,20 @@ const adapter =
 				});
 				return sessions.map((session) => convertSession(session));
 			},
-			setUser: async (userId, data) => {
-				try {
-					if (userId === null) {
-						const createdUser = await prisma.user.create({
-							data: {
-								provider_id: data.providerId,
-								hashed_password: data.hashedPassword,
-								...data.attributes
-							} as any
-						});
-						return createdUser;
-					}
+			setUser: async (userId, attributes) => {
+				if (userId === null) {
 					const createdUser = await prisma.user.create({
-						data: {
-							id: userId,
-							provider_id: data.providerId,
-							hashed_password: data.hashedPassword,
-							...data.attributes
-						} as any
+						data: attributes as any
 					});
 					return createdUser;
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (
-						error.code === "P2002" &&
-						error.message?.includes("provider_id")
-					) {
-						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
-					}
-					throw error;
 				}
+				const createdUser = await prisma.user.create({
+					data: {
+						id: userId,
+						...attributes
+					} as any
+				});
+				return createdUser;
 			},
 			deleteUser: async (userId) => {
 				await prisma.user.deleteMany({
@@ -119,16 +94,13 @@ const adapter =
 						data: {
 							id: sessionId,
 							user_id: data.userId,
-							expires: data.expires,
+							active_expires: data.activePeriodExpires,
 							idle_expires: data.idlePeriodExpires
 						}
 					});
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
-					if (
-						error.code === "P2003" &&
-						error.message?.includes("session_user_id_fkey (index)")
-					)
+					if (error.code === "P2003")
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					if (error.code === "P2002" && error.message?.includes("id"))
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
@@ -136,7 +108,7 @@ const adapter =
 				}
 			},
 			deleteSession: async (sessionId) => {
-				const t = await prisma.session.delete({
+				await prisma.session.delete({
 					where: {
 						id: sessionId
 					}
@@ -149,11 +121,10 @@ const adapter =
 					}
 				});
 			},
-			updateUser: async (userId, newData) => {
-				const partialData = getUpdateData(newData);
+			updateUserAttributes: async (userId, attributes) => {
 				try {
 					const data = await prisma.user.update({
-						data: partialData,
+						data: attributes,
 						where: {
 							id: userId
 						}
@@ -163,14 +134,72 @@ const adapter =
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2025")
 						throw new LuciaError("AUTH_INVALID_USER_ID");
-					if (
-						error.code === "P2002" &&
-						error.message?.includes("provider_id")
-					) {
-						throw new LuciaError("AUTH_DUPLICATE_PROVIDER_ID");
-					}
 					throw error;
 				}
+			},
+			setKey: async (key, data) => {
+				try {
+					await prisma.key.create({
+						data: {
+							id: key,
+							primary: data.isPrimary,
+							user_id: data.userId,
+							hashed_password: data.hashedPassword
+						}
+					});
+				} catch (e) {
+					const error = e as Partial<PossiblePrismaError>;
+					if (error.code === "P2003")
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					if (error.code === "P2002" && error.message?.includes("id"))
+						throw new LuciaError("AUTH_DUPLICATE_KEY");
+					throw error;
+				}
+			},
+			getKey: async (key) => {
+				return await prisma.key.findUnique({
+					where: {
+						id: key
+					}
+				});
+			},
+			getKeysByUserId: async (userId) => {
+				return await prisma.key.findMany({
+					where: {
+						user_id: userId
+					}
+				});
+			},
+			updateKeyPassword: async (key, hashedPassword) => {
+				try {
+					await prisma.key.update({
+						data: {
+							hashed_password: hashedPassword
+						},
+						where: {
+							id: key
+						}
+					});
+				} catch (e) {
+					const error = e as Partial<PossiblePrismaError>;
+					if (error.code === "P2025") throw new LuciaError("AUTH_INVALID_KEY");
+					throw error;
+				}
+			},
+			deleteKeysByUserId: async (userId) => {
+				await prisma.key.deleteMany({
+					where: {
+						user_id: userId
+					}
+				});
+			},
+			deleteNonPrimaryKey: async (key) => {
+				await prisma.key.deleteMany({
+					where: {
+						id: key,
+						primary: false
+					}
+				});
 			}
 		};
 	};

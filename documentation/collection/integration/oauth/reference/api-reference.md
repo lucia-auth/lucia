@@ -68,7 +68,8 @@ const validateCallback: (code: string) => Promise<ProviderSession>;
 ```ts
 interface ProviderSession {
 	existingUser: User | null;
-	createUser: (userAttributes?: Lucia.UserAttributes) => Promise<User>;
+	createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
+	createKey: (userId: string) => Promise<Key>;
 	providerUser: Record<string, any>;
 	[data: string]: any;
 }
@@ -81,21 +82,43 @@ interface ProviderSession {
 | providerUser                                            | `Record<string, any>`                                 | user info from the used provider - refer to the provider's doc |
 | [data: string]                                          | `any`                                                 | refer to the provider's doc                                    |
 
-### `createUser()`
+### `createKey()`
 
-Creates a new user for the authorized session by calling [Lucia.createUser()](/reference/api/server-api#createuser) using the provided user attributes. Refer to the provider's doc for the provider and identifier used.
+Creates a new key using the authorized session by calling [`Lucia.createKey()`](/reference/api/server-api#createkey) for the target user.
 
 ```ts
-const createUser: (
-	userAttributes: Lucia.UserAttributes | undefined
-) => Promise<User>;
+const createKey: (userId: string) => Promise<Key>;
 ```
 
 #### Parameter
 
-| name           | type                                                                                     | description                                                                                                                            | optional |
-| -------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in user table - **can only be `undefined` (optional) if `Lucia.UserAttributes` is an empty object type** | true     |
+| name   | type     | description    |
+| ------ | -------- | -------------- |
+| userId | `string` | target user id |
+
+#### Returns
+
+| type                                      | description           |
+| ----------------------------------------- | --------------------- |
+| [`Key`](/reference/types/lucia-types#key) | the newly created key |
+
+#### Errors
+
+Refer to [Lucia.createUser()](/reference/api/server-api#createkey)
+
+### `createUser()`
+
+Creates a new user for the authorized session by calling [`Lucia.createUser()`](/reference/api/server-api#createuser) using the provided user attributes. Refer to the provider's doc for the provider and identifier used.
+
+```ts
+const createUser: (userAttributes: Lucia.UserAttribute) => Promise<User>;
+```
+
+#### Parameter
+
+| name           | type                                                                      | description                                 |
+| -------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
+| userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional user data to store in user table |
 
 #### Returns
 

@@ -47,15 +47,21 @@ const handleGetRequests = async () => {
 };
 ```
 
-Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag. However, keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**. You can also store the `state` in localstorage if you want to handle OAuth in the client (though handling in the server is recommended).
+Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag.
 
 ```svelte
 <a href={providerAuthorizationUrl}>Sign in with provider</a>
 ```
 
+> (red) Keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**. You will leak your API keys if you import it in the client.
+
 ## Handle callback
 
-On sign in, the provider will redirect the user to your callback url. On callback (GET), get the OAuth `code` and `state` from the request url. Validate that the `state` is the same as the one stored and pass the `code` to `validateCallback()`. This method will return some data about the authenticated user. `existingUser` is the existing user in your database (`null` for first time users), `providerUser` is the user info from the provider, and `createUser()` can be used to create a new user if an existing user does not exist.
+On sign in, the provider will redirect the user to your callback url. On callback (GET), get the OAuth `code` and `state` from the request url. Validate that the `state` is the same as the one stored and pass the `code` to `validateCallback()`. This method will return some data about the authenticated user. `existingUser` is the existing user in your database (`null` for first time users) and `providerUser` is the user info from the provider.
+
+### Authenticate user
+
+`createUser()` method can be used to create a new user if an existing user does not exist.
 
 The following is semi-pseudo-code (namely the provider part):
 
@@ -82,11 +88,22 @@ export const handleGetRequests = async (request: Request) => {
 	const { existingUser, providerUser, createUser } =
 		await providerAuth.validateCallback(code);
 	const user =
-		existingUser ||
+		existingUser ??
 		(await createUser({
 			username: providerUser.username // attributes
 		})); // create a new user if the user does not exist
 	const session = await auth.createSession(user.userId);
 	setSessionCookie(session); // store session cookie
 };
+```
+
+### Add provider to existing user
+
+Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user.
+
+```ts
+const { existingUser, createKey } = await providerAuth.validateCallback(code);
+if (!existingUser) {
+	await createKey(currentUser.userId);
+}
 ```

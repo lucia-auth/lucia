@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] Require `lucia-auth` 0.5.x
+
 ## 0.2.2
 
 - [Fix] Remove minor breaking change introduced in `0.2.1`

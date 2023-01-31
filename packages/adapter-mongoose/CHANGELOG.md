@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] Require `lucia-auth` 0.5.x
+
 ## 0.2.1
 
 - [Fix] Fix error handling error

@@ -1,5 +1,5 @@
 ---
-_order: 7
+_order: 4
 title: "Error handling"
 ---
 
@@ -12,7 +12,9 @@ import { LuciaError } from "lucia-auth";
 import { auth } from "./lucia.js";
 
 try {
-	await auth.createUser();
+	await auth.createUser({
+		// ...
+	});
 } catch (e) {
 	if (e instanceof LuciaError) {
 		const message = e.message;
@@ -28,7 +30,9 @@ For example, you may have a `username` unique column inside the `user` table. If
 import { auth } from "./lucia.js";
 
 try {
-	await auth.createUser();
+	await auth.createUser({
+		// ...
+	});
 } catch (e) {
 	if (e instanceof Prisma.PrismaKnownClientError) {
 		// check error code
@@ -40,6 +44,7 @@ try {
 
 Known errors for databases related actions are:
 
-- Duplicate provider id on user creation and update (`AUTH_DUPLICATE_PROVIDER_ID`)
-- Invalid user id on session creation and update (`AUTH_INVALID_USER_ID`)
+- Duplicate key on user and key creation (`AUTH_DUPLICATE_KEY`)
+- Invalid user id (`AUTH_INVALID_USER_ID`)
+- Invalid keys (`AUTH_INVALID_KEY`)
 - Duplicate session id on session creation and renewal (`AUTH_DUPLICATE_SESSION_ID`)

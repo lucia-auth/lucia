@@ -19,7 +19,7 @@ interface Configurations {
 	// optional
 	autoDatabaseCleanup?: boolean;
 	csrfProtection?: boolean;
-	generateCustomUserId?: () => Promise<string | null>;
+	generateCustomUserId?: () => MaybePromise<string | null>;
 	hash?: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
@@ -39,6 +39,12 @@ type CookieOption = {
 	path?: string;
 	domain?: string;
 };
+```
+
+`MaybePromise` indicates it can be either a normal value or a promise:
+
+```ts
+type MaybePromise<T> = T | Promise<T>;
 ```
 
 ## Required
@@ -113,7 +119,7 @@ Checks if the request is from a trusted origin (where the app is hosted) in [`va
 A function that generates a random user id. The database will create its own user id if the returned value is `null`
 
 ```ts
-const generateCustomUserId: () => Promise<string | null>;
+const generateCustomUserId: () => MaybePromise<string | null>;
 ```
 
 ##### Returns
@@ -126,13 +132,13 @@ const generateCustomUserId: () => Promise<string | null>;
 
 #### `generate()` (required)
 
-Generates a password-safe hash. Make sure the algorithm used is safe for hashing passwords, such as `bcrypt`, `scrypt`, `argon2`, `PBKDF2` - algorithms such as `md5` and `SHA-1` are **NOT** suitable for hashing passwords.
-
-Uses `scrypt` from [noble-hashes](https://github.com/paulmillr/noble-hashes) by default.
+Generates a password-safe hash. Uses `scrypt` from [noble-hashes](https://github.com/paulmillr/noble-hashes) by default.
 
 ```ts
 const generate: (s: string) => MaybePromise<string>;
 ```
+
+> (warn) Make sure the algorithm used is safe for hashing passwords, such as `bcrypt`, `scrypt`, `argon2`, `PBKDF2` - algorithms such as `md5` and `SHA-1` are **NOT** suitable for hashing passwords.
 
 ##### Parameter
 
