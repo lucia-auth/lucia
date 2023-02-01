@@ -1,36 +1,22 @@
 import type { SessionAdapter } from "lucia-auth";
-import { test, end, validate } from "../test.js";
-import { User } from "../model.js";
-import { Database } from "../index.js";
+import { test, end } from "../test.js";
+import { Database, type LuciaQueryHandler } from "../database.js";
+import { compareErrorMessage, isEmptyArray, isNull } from "../validate.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
 
 export const testSessionAdapter = async (
 	adapter: SessionAdapter,
-	db: Database,
+	queryHandler: LuciaQueryHandler,
 	endProcess = true
 ) => {
-	const clearAll = async () => {
-		await db.clearSessions();
-		await db.clearUsers();
-	};
-	await clearAll();
+	const database = new Database(queryHandler);
+	const clearAll = database.clear;
 	await test("getSession()", "Return the correct session", async () => {
-		const user = new User();
-		const session = user.createSession();
-		await db.insertUser(user.getSchema());
-		await db.insertSession(session.getSchema());
-		const returnedSession = await adapter.getSession(session.id);
-		const nonNullReturnedSession = validate.isNotNull(
-			returnedSession,
-			"Target was not returned"
-		);
-		validate.isTrue(
-			session.validateSchema(nonNullReturnedSession),
-			"Target is not the expected value",
-			session.getSchema(),
-			returnedSession
-		);
+		const session = database.user().session();
+		await session.set();
+		const result = await adapter.getSession(session.value.id);
+		session.compare(result);
 		await clearAll();
 	});
 	await test(
@@ -38,7 +24,7 @@ export const testSessionAdapter = async (
 		"Return null if session id is invalid",
 		async () => {
 			const session = await adapter.getSession(INVALID_INPUT);
-			validate.isNull(session, "Target was not returned");
+			isNull(session);
 			await clearAll();
 		}
 	);
@@ -46,21 +32,12 @@ export const testSessionAdapter = async (
 		"getSessionsByUserId()",
 		"Return the correct session",
 		async () => {
-			const user1 = new User();
-			const user2 = new User();
-			const session1 = user1.createSession();
-			const session2 = user2.createSession();
-			await db.insertUser(user1.getSchema());
-			await db.insertUser(user2.getSchema());
-			await db.insertSession(session1.getSchema());
-			await db.insertSession(session2.getSchema());
-			const sessions = await adapter.getSessionsByUserId(session1.userId);
-			validate.includesSomeItem(
-				sessions,
-				session1.validateSchema,
-				"Target is not included in the returned value",
-				session1.getSchema()
-			);
+			const session1 = database.user().session();
+			await session1.set();
+			const session2 = database.user().session();
+			await session2.set();
+			const result = await adapter.getSessionsByUserId(session1.value.user_id);
+			session1.find(result);
 			await clearAll();
 		}
 	);
@@ -68,29 +45,20 @@ export const testSessionAdapter = async (
 		"getSessionsByUserId()",
 		"Returns an empty array if no sessions exist",
 		async () => {
-			const sessions = await adapter.getSessionsByUserId(INVALID_INPUT);
-			validate.isEqual(sessions.length, 0, "Target was not returned");
+			const result = await adapter.getSessionsByUserId(INVALID_INPUT);
+			isEmptyArray(result);
+			await clearAll();
 		}
 	);
 	await test(
 		"setSession()",
 		"Insert a user's session into session table",
 		async () => {
-			const user = new User();
-			const session = user.createSession();
-			await db.insertUser(user.getSchema());
-			await adapter.setSession(session.id, {
-				userId: session.userId,
-				activePeriodExpires: session.activePeriodExpires,
-				idlePeriodExpires: session.idlePeriodExpires
-			});
-			const sessions = await db.getSessions();
-			validate.includesSomeItem(
-				sessions,
-				session.validateSchema,
-				"Target not found",
-				session.getSchema()
-			);
+			const user = database.user();
+			await user.set();
+			const session = user.session();
+			await adapter.setSession(session.value);
+			session.exists();
 			await clearAll();
 		}
 	);
@@ -98,18 +66,13 @@ export const testSessionAdapter = async (
 		"deleteSessionsByUserId()",
 		"Delete a user's session from session table",
 		async () => {
-			const user = new User();
-			const session = user.createSession();
-			await db.insertUser(user.getSchema());
-			await db.insertSession(session.getSchema());
-			await adapter.deleteSessionsByUserId(session.userId);
-			const sessions = await db.getSessions();
-			validate.notIncludesSomeItem(
-				sessions,
-				session.validateSchema,
-				"Target was not deleted from user table",
-				session.getSchema()
-			);
+			const session1 = database.user().session();
+			await session1.set();
+			const session2 = database.user().session();
+			await session2.set();
+			await adapter.deleteSessionsByUserId(session1.value.user_id);
+			await session1.notExits();
+			await session2.exists();
 			await clearAll();
 		}
 	);
@@ -117,18 +80,13 @@ export const testSessionAdapter = async (
 		"deleteSession()",
 		"Delete a user's session from session table",
 		async () => {
-			const user = new User();
-			const session = user.createSession();
-			await db.insertUser(user.getSchema());
-			await db.insertSession(session.getSchema());
-			await adapter.deleteSession(session.id);
-			const sessions = await db.getSessions();
-			validate.notIncludesSomeItem(
-				sessions,
-				session.validateSchema,
-				"Target does not exist in user table",
-				session.getSchema()
-			);
+			const session1 = database.user().session();
+			await session1.set();
+			const session2 = database.user().session();
+			await session2.set();
+			await adapter.deleteSession(session1.value.id);
+			await session1.notExits();
+			await session2.exists();
 			await clearAll();
 		}
 	);
@@ -136,22 +94,10 @@ export const testSessionAdapter = async (
 		"setSession()",
 		"Throw AUTH_INVALID_USER_ID if user id doesn't exist",
 		async () => {
-			const session = new User().createSession();
-			try {
-				await adapter.setSession(session.id, {
-					activePeriodExpires: session.activePeriodExpires,
-					userId: INVALID_INPUT,
-					idlePeriodExpires: session.idlePeriodExpires
-				});
-				throw new Error("No error was thrown");
-			} catch (e) {
-				const error = e as Error;
-				validate.isEqual(
-					error.message,
-					"AUTH_INVALID_USER_ID",
-					"Unexpected error message"
-				);
-			}
+			const session = database.user().session();
+			await compareErrorMessage(async () => {
+				await adapter.setSession(session.value);
+			}, "AUTH_INVALID_USER_ID");
 			await clearAll();
 		}
 	);
@@ -159,32 +105,22 @@ export const testSessionAdapter = async (
 		"setSession()",
 		"Throw AUTH_DUPLICATE_SESSION_ID if session id is already in use",
 		async () => {
-			const user1 = new User();
-			const user2 = new User();
-			const user1Session = user1.createSession();
-			const user2Session = user1.createSession();
-			await db.insertUser(user1.getSchema());
-			await db.insertUser(user2.getSchema());
-			await db.insertSession(user1Session.getSchema());
-			try {
-				await adapter.setSession(user1Session.id, {
-					userId: user2Session.userId,
-					activePeriodExpires: user2Session.activePeriodExpires,
-					idlePeriodExpires: user2Session.idlePeriodExpires
-				});
-				throw new Error("No error was thrown");
-			} catch (e) {
-				const error = e as Error;
-				validate.isEqual(
-					error.message,
-					"AUTH_DUPLICATE_SESSION_ID",
-					"Unexpected error message"
-				);
-			}
+			const session1 = database.user().session();
+			await session1.set();
+			const user = database.user();
+			await user.set();
+			const session2 = user.session();
+			session2.update({
+				id: session1.value.id
+			});
+			await compareErrorMessage(async () => {
+				await adapter.setSession(session2.value);
+			}, "AUTH_DUPLICATE_SESSION_ID");
 			await clearAll();
 		}
 	);
 	await clearAll();
-	if (!endProcess) return;
-	end();
+	if (endProcess) {
+		end();
+	}
 };

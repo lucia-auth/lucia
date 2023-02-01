@@ -33,7 +33,7 @@ export type SmartPrismaClient<Schemas extends Record<string, {}>> = {
 		findMany: (options: {
 			where: Partial<Schemas[K]>;
 		}) => Promise<Schemas[K][]>;
-		create: (options: { data: any }) => Promise<Schemas[K]>;
+		create: (options: { data: Schemas[K] }) => Promise<Schemas[K]>;
 		delete: (options: { where: Partial<Schemas[K]> }) => Promise<PayloadResult>;
 		deleteMany: (options: {
 			where: Partial<Schemas[K]>;
@@ -43,4 +43,12 @@ export type SmartPrismaClient<Schemas extends Record<string, {}>> = {
 			where: Partial<Schemas[K]>;
 		}) => Promise<Schemas[K]>;
 	};
+} & {
+	$transaction: <Promises extends Readonly<Promise<any>[]>>(
+		promises: Promises
+	) => Promise<{
+		[K in keyof Promises]: K extends number
+			? Awaited<Promises[K]>
+			: Promises[K];
+	}>;
 };

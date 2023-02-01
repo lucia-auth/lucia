@@ -1,4 +1,4 @@
-import type { Database } from "@lucia-auth/adapter-test";
+import type { LuciaQueryHandler } from "@lucia-auth/adapter-test";
 import type { SessionSchema } from "lucia-auth/types.js";
 
 import { createClient } from "redis";
@@ -25,32 +25,31 @@ export const adapter = redis({
 	userSessions: userSessionInstance
 })(LuciaError);
 
-export const db: Database = {
-	getUsers: async () => {
-		return {} as any;
-	},
-	getSessions: async () => {
-		const sessionIds = await sessionInstance.keys("*");
-		const sessionData = await Promise.all(
-			sessionIds.map((id) => sessionInstance.get(id))
-		);
-		const sessions = sessionData
-			.filter((val): val is string => val !== null)
-			.map((data) => JSON.parse(data) as SessionSchema);
-		return sessions;
-	},
-	insertUser: async () => {},
-	insertSession: async (session) => {
-		await Promise.all([
-			sessionInstance.set(session.id, JSON.stringify(session)),
-			userSessionInstance.lPush(session.user_id, session.id)
-		]);
-	},
-	clearUsers: async () => {},
-	clearSessions: async () => {
-		await Promise.all([
-			sessionInstance.flushAll(),
-			userSessionInstance.flushAll()
-		]);
+export const queryHandler: LuciaQueryHandler = {
+	user: {} as any,
+	key: {} as any,
+	session: {
+		get: async () => {
+			const sessionIds = await sessionInstance.keys("*");
+			const sessionData = await Promise.all(
+				sessionIds.map((id) => sessionInstance.get(id))
+			);
+			const sessions = sessionData
+				.filter((val): val is string => val !== null)
+				.map((data) => JSON.parse(data) as SessionSchema);
+			return sessions;
+		},
+		insert: async (session) => {
+			await Promise.all([
+				sessionInstance.set(session.id, JSON.stringify(session)),
+				userSessionInstance.lPush(session.user_id, session.id)
+			]);
+		},
+		clear: async () => {
+			await Promise.all([
+				sessionInstance.flushAll(),
+				userSessionInstance.flushAll()
+			]);
+		}
 	}
 };

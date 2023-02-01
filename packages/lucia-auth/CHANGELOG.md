@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.6.0
+
+- [Breaking] Update `UserAdapter`
+- [Breaking] Rename `AUTH_INVALID_KEY` to `AUTH_INVALID_KEY_ID`, `AUTH_DUPLICATE_KEY` to `AUTH_DUPLICATE_KEY_ID`
+- [Breaking] `configuration.generateCustomUserId` must return a `string`
+- [Fix] `createUser` checks for key id validity before user creation
+
 ## 0.5.0
 
 - [Feat] Add keys

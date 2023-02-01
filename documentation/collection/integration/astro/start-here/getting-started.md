@@ -62,4 +62,3 @@ declare namespace Lucia {
 	type UserAttributes = {};
 }
 ```
-

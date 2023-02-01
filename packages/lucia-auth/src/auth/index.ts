@@ -41,7 +41,7 @@ const validateConfigurations = (configs: Configurations) => {
 
 export class Auth<C extends Configurations = any> {
 	private adapter: Adapter;
-	private generateUserId: () => MaybePromise<string | null>;
+	private generateUserId: () => MaybePromise<string>;
 	private sessionCookie: CookieOption[];
 	private sessionTimeout: {
 		activePeriod: number;
@@ -161,22 +161,25 @@ export class Auth<C extends Configurations = any> {
 		} | null;
 		attributes: Lucia.UserAttributes;
 	}): Promise<User> => {
-		const attributes = data.attributes ?? {};
 		const userId = await this.generateUserId();
-		const userData = await this.adapter.setUser(userId, attributes);
-		const user = this.transformUserData(userData);
+		const userAttributes = data.attributes ?? {};
 		if (data.key) {
 			const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
 			const password = data.key.password;
 			const hashedPassword = password
 				? await this.hash.generate(password)
 				: null;
-			await this.adapter.setKey(keyId, {
-				userId: user.userId,
-				isPrimary: true,
-				hashedPassword
+			const userData = await this.adapter.setUser(userId, userAttributes, {
+				id: keyId,
+				user_id: userId,
+				hashed_password: hashedPassword,
+				primary: true
 			});
+			const user = this.transformUserData(userData);
+			return user;
 		}
+		const userData = await this.adapter.setUser(userId, userAttributes, null);
+		const user = this.transformUserData(userData);
 		return user;
 	};
 	public updateUserAttributes = async (
@@ -204,7 +207,7 @@ export class Auth<C extends Configurations = any> {
 	): Promise<User> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		const databaseKeyData = await this.adapter.getKey(keyId);
-		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY");
+		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
 		const hashedPassword = databaseKeyData.hashed_password;
 		if (!hashedPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		if (hashedPassword.startsWith("$2a"))
@@ -267,10 +270,11 @@ export class Auth<C extends Configurations = any> {
 		const [sessionId, activePeriodExpires, idlePeriodExpires] =
 			this.generateSessionId();
 		await Promise.all([
-			this.adapter.setSession(sessionId, {
-				userId,
-				activePeriodExpires: activePeriodExpires.getTime(),
-				idlePeriodExpires: idlePeriodExpires.getTime()
+			this.adapter.setSession({
+				id: sessionId,
+				user_id: userId,
+				active_expires: activePeriodExpires.getTime(),
+				idle_expires: idlePeriodExpires.getTime()
 			}),
 			this.autoDatabaseCleanup
 				? await this.deleteDeadUserSessions(userId)
@@ -349,10 +353,11 @@ export class Auth<C extends Configurations = any> {
 		const hashedPassword = keyData.password
 			? await this.hash.generate(keyData.password)
 			: null;
-		await this.adapter.setKey(keyId, {
-			userId,
-			hashedPassword,
-			isPrimary: false
+		await this.adapter.setKey({
+			id: keyId,
+			user_id: userId,
+			hashed_password: hashedPassword,
+			primary: false
 		});
 		return {
 			providerId: keyData.providerId,
@@ -372,7 +377,7 @@ export class Auth<C extends Configurations = any> {
 	): Promise<Key> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		const keyData = await this.adapter.getKey(keyId);
-		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY");
+		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
 		return {
 			providerId,
 			providerUserId,
@@ -421,7 +426,7 @@ export interface Configurations {
 				session: (E: LuciaErrorConstructor) => SessionAdapter | Adapter;
 		  };
 	env: Env;
-	generateCustomUserId?: () => MaybePromise<string | null>;
+	generateCustomUserId?: () => MaybePromise<string>;
 	csrfProtection?: boolean;
 	sessionTimeout?: {
 		activePeriod: number;

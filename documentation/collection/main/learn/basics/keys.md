@@ -33,7 +33,7 @@ try {
 }
 ```
 
-> (warn) While the error will indicate if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password"). 
+> (warn) While the error will indicate if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password").
 
 ## Get key
 
@@ -69,10 +69,10 @@ You can create a new key for a user using [`createKey()`](/reference/api/server-
 ```ts
 try {
 	const key = await auth.createKey(userId, {
-        providerId: "github",
-        providerUserId: githubUsername,
-        password: null
-    });
+		providerId: "github",
+		providerUserId: githubUsername,
+		password: null
+	});
 } catch {
 	// invalid input
 }

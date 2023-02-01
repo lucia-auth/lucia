@@ -19,7 +19,7 @@ interface Configurations {
 	// optional
 	autoDatabaseCleanup?: boolean;
 	csrfProtection?: boolean;
-	generateCustomUserId?: () => MaybePromise<string | null>;
+	generateCustomUserId?: () => MaybePromise<string>;
 	hash?: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
@@ -116,17 +116,17 @@ Checks if the request is from a trusted origin (where the app is hosted) in [`va
 
 ### `generateCustomUserId()`
 
-A function that generates a random user id. The database will create its own user id if the returned value is `null`
+A function that generates a random user id.
 
 ```ts
-const generateCustomUserId: () => MaybePromise<string | null>;
+const generateCustomUserId: () => MaybePromise<string>;
 ```
 
 ##### Returns
 
-| type               | description                                                |
-| ------------------ | ---------------------------------------------------------- |
-| `string` \| `null` | a user id - null to let the database handle the generation |
+| type     | description |
+| -------- | ----------- |
+| `string` | a user id   |
 
 ### `hash`
 

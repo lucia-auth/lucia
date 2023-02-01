@@ -44,11 +44,17 @@ export default defineConfig({
 						];
 						if (firstTextContent.value.startsWith("(warn)")) {
 							classNames.push("bq-warn");
-							firstTextContent.value = firstTextContent.value.replace("(warn)", "")
+							firstTextContent.value = firstTextContent.value.replace(
+								"(warn)",
+								""
+							);
 						}
 						if (firstTextContent.value.startsWith("(red)")) {
 							classNames.push("bq-red");
-							firstTextContent.value = firstTextContent.value.replace("(red)", "")
+							firstTextContent.value = firstTextContent.value.replace(
+								"(red)",
+								""
+							);
 						}
 						node.properties.class = classNames.join(" ");
 					}

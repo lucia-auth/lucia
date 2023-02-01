@@ -11,5 +11,5 @@ declare namespace Lucia {
 }
 
 declare namespace App {
-	export type Locals = {}
+	export type Locals = {};
 }

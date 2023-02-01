@@ -40,10 +40,18 @@ Add the column names and the value type inside `Lucia.UserAttributes`:
 /// <reference types="lucia-auth" />
 declare namespace Lucia {
 	// ...
-	interface UserAttributes {
-		// here
-	}
+	type UserAttributes = {
+		some_column: SomeType;
+	};
 }
+```
+
+If you have a column that has a default value, you can make the column optional by adding `?`. This will be a required field when passed onto `transformUserData()`.
+
+```ts
+type UserAttributes = {
+	some_column?: SomeType;
+};
 ```
 
 Refer to [Type declaration](/reference/types/lucia-namespace) for more.

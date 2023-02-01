@@ -1,6 +1,11 @@
-import type { Kysely } from "kysely";
-import { Dialect, convertKey, convertSession } from "./utils.js";
-import type { Adapter, AdapterFunction, UserSchema } from "lucia-auth";
+import type { Kysely, Selectable } from "kysely";
+import {
+	Dialect,
+	convertKey,
+	convertKeySchemaToKyselyValues,
+	convertSession
+} from "./utils.js";
+import type { Adapter, AdapterFunction } from "lucia-auth";
 import type {
 	KyselyLuciaDatabase,
 	KyselySession,
@@ -91,52 +96,84 @@ const adapter =
 				return convertSession(data);
 			},
 			getSessionsByUserId: async (userId) => {
-				const data = await kysely
+				const result = await kysely
 					.selectFrom("session")
 					.selectAll()
 					.where("user_id", "=", userId)
 					.execute();
-				return data.map((session) => convertSession(session));
+				return result.map((val) => convertSession(val));
 			},
-			setUser: async (userId, attributes) => {
-				if (dialect === "pg") {
-					const user = await kysely
-						.insertInto("user")
-						.values({
-							id: userId ?? undefined,
-							...attributes
-						})
-						.returningAll()
-						.executeTakeFirstOrThrow();
-					return user;
+			setUser: async (userId, attributes, key) => {
+				try {
+					let userResult: Selectable<KyselyUser> | null = null;
+					await kysely.transaction().execute(async (trx) => {
+						if (dialect === "pg") {
+							userResult = await trx
+								.insertInto("user")
+								.values({
+									id: userId,
+									...attributes
+								})
+								.returningAll()
+								.executeTakeFirstOrThrow();
+						} else {
+							await trx
+								.insertInto("user")
+								.values({
+									id: userId,
+									...attributes
+								})
+								.executeTakeFirstOrThrow();
+						}
+						if (key) {
+							await trx
+								.insertInto("key")
+								.values(convertKeySchemaToKyselyValues(key, dialect))
+								.execute();
+						}
+					});
+					if (userResult) return userResult;
+					const result = await kysely
+						.selectFrom("user")
+						.selectAll()
+						.where("id", "=", userId)
+						.executeTakeFirst();
+					if (!result) throw new LuciaError("AUTH_INVALID_USER_ID");
+					return result;
+				} catch (e) {
+					if (dialect === "pg") {
+						const error = e as Partial<PgDatabaseError>;
+						if (error.code === "23505" && error.detail?.includes("Key (id)")) {
+							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+						}
+					}
+					if (dialect === "mysql2") {
+						const error = e as Partial<MySQLError>;
+						if (
+							error.code === "ER_DUP_ENTRY" &&
+							error.message?.includes("PRIMARY")
+						) {
+							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+						}
+					}
+					if (dialect === "better-sqlite3") {
+						const error = e as Partial<SQLiteError>;
+						if (
+							error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
+							error.message?.includes(".id")
+						) {
+							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+						}
+					}
+					throw e;
 				}
-				const id = userId ?? crypto.randomUUID();
-				await kysely
-					.insertInto("user")
-					.values({
-						id,
-						...attributes
-					})
-					.executeTakeFirstOrThrow();
-				return {
-					id,
-					...attributes
-				} as UserSchema;
 			},
 			deleteUser: async (userId) => {
 				await kysely.deleteFrom("user").where("id", "=", userId).execute();
 			},
-			setSession: async (sessionId, data) => {
+			setSession: async (session) => {
 				try {
-					await kysely
-						.insertInto("session")
-						.values({
-							id: sessionId,
-							user_id: data.userId,
-							active_expires: data.activePeriodExpires,
-							idle_expires: data.idlePeriodExpires
-						})
-						.execute();
+					await kysely.insertInto("session").values(session).execute();
 				} catch (e) {
 					if (dialect === "pg") {
 						const error = e as Partial<PgDatabaseError>;
@@ -171,7 +208,7 @@ const adapter =
 							const result = await kysely
 								.selectFrom("user")
 								.select("id")
-								.where("id", "is", data.userId)
+								.where("id", "is", session.user_id)
 								.executeTakeFirst();
 							if (!result) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
 						}
@@ -230,19 +267,11 @@ const adapter =
 				if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
 				return user;
 			},
-			setKey: async (key, data) => {
+			setKey: async (key) => {
 				try {
 					await kysely
 						.insertInto("key")
-						.values({
-							id: key,
-							user_id: data.userId,
-							hashed_password: data.hashedPassword,
-							primary:
-								dialect === "better-sqlite3"
-									? Number(data.isPrimary)
-									: data.isPrimary
-						})
+						.values(convertKeySchemaToKyselyValues(key, dialect))
 						.execute();
 				} catch (e) {
 					if (dialect === "pg") {
@@ -254,7 +283,7 @@ const adapter =
 							throw new LuciaError("AUTH_INVALID_USER_ID");
 						}
 						if (error.code === "23505" && error.detail?.includes("Key (id)")) {
-							throw new LuciaError("AUTH_DUPLICATE_KEY");
+							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 						}
 					}
 					if (dialect === "mysql2") {
@@ -269,7 +298,7 @@ const adapter =
 							error.code === "ER_DUP_ENTRY" &&
 							error.message?.includes("PRIMARY")
 						) {
-							throw new LuciaError("AUTH_DUPLICATE_KEY");
+							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 						}
 					}
 					if (dialect === "better-sqlite3") {
@@ -278,7 +307,7 @@ const adapter =
 							const result = await kysely
 								.selectFrom("user")
 								.select("id")
-								.where("id", "is", data.userId)
+								.where("id", "is", key.user_id)
 								.executeTakeFirst();
 							if (!result) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
 						}
@@ -286,9 +315,10 @@ const adapter =
 							error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
 							error.message?.includes(".id")
 						) {
-							throw new LuciaError("AUTH_DUPLICATE_KEY");
+							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 						}
 					}
+					throw e;
 				}
 			},
 			getKey: async (key) => {
@@ -314,7 +344,7 @@ const adapter =
 						.selectAll()
 						.where("id", "=", key)
 						.executeTakeFirst();
-					if (!data) throw new LuciaError("AUTH_INVALID_KEY");
+					if (!data) throw new LuciaError("AUTH_INVALID_KEY_ID");
 					await kysely
 						.updateTable("key")
 						.set({
@@ -332,7 +362,7 @@ const adapter =
 					.where("id", "=", key)
 					.returning("id")
 					.executeTakeFirst();
-				if (!data) throw new LuciaError("AUTH_INVALID_KEY");
+				if (!data) throw new LuciaError("AUTH_INVALID_KEY_ID");
 			},
 			deleteKeysByUserId: async (userId) => {
 				await kysely.deleteFrom("key").where("user_id", "=", userId).execute();

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] Update `testAdapter`, `testUserAdapter`, `testUserAdapter`
+- [Breaking] Tests for `lucia-auth` 0.6.x
+
 ## 0.2.0
 
 - [Breaking] Tests for `lucia-auth` 0.5.x

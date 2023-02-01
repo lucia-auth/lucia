@@ -49,7 +49,7 @@ if (Astro.request.method === "POST") {
 				error.message?.includes("username")
 			) {
 				errorMessage = "Username already in use";
-			} else if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_KEY") {
+			} else if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_KEY_ID") {
 				errorMessage = "Username already in use";
 			} else {
 				errorMessage = "Unknown error occured";

@@ -93,10 +93,10 @@ const createKey: (
 
 #### Errors
 
-| name                 | description        |
-| -------------------- | ------------------ |
-| AUTH_INVALID_USER_ID | invalid user id    |
-| AUTH_DUPLICATE_KEY   | key already exists |
+| name                  | description        |
+| --------------------- | ------------------ |
+| AUTH_INVALID_USER_ID  | invalid user id    |
+| AUTH_DUPLICATE_KEY_ID | key already exists |
 
 #### Example
 
@@ -216,9 +216,9 @@ const createUser: (data: {
 
 #### Errors
 
-| name               | description                           |
-| ------------------ | ------------------------------------- |
-| AUTH_DUPLICATE_KEY | the user with the provided key exists |
+| name                  | description                           |
+| --------------------- | ------------------------------------- |
+| AUTH_DUPLICATE_KEY_ID | the user with the provided key exists |
 
 #### Example
 
@@ -440,9 +440,9 @@ const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
 
 #### Errors
 
-| name             | description                                  |
-| ---------------- | -------------------------------------------- |
-| AUTH_INVALID_KEY | the user with the provider id does not exist |
+| name                | description                                  |
+| ------------------- | -------------------------------------------- |
+| AUTH_INVALID_KEY_ID | the user with the provider id does not exist |
 
 #### Example
 
@@ -486,10 +486,10 @@ const getKey: (
 
 #### Errors
 
-| name              | description                                  |
-| ----------------- | -------------------------------------------- |
-| AUTH_INVALID_KEY  | the user with the provider id does not exist |
-| AUTH_INVALID_USER |                                              |
+| name                | description                                  |
+| ------------------- | -------------------------------------------- |
+| AUTH_INVALID_KEY_ID | the user with the provider id does not exist |
+| AUTH_INVALID_USER   |                                              |
 
 #### Example
 
@@ -740,7 +740,7 @@ const updateKeyPassword: (
 
 | name                   | description                                         |
 | ---------------------- | --------------------------------------------------- |
-| AUTH_INVALID_KEY       | the user with the key does not exist                |
+| AUTH_INVALID_KEY_ID    | the user with the key does not exist                |
 | AUTH_INVALID_PASSWORD  | incorrect password                                  |
 | AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
 
@@ -830,7 +830,7 @@ const validateKeyPassword: (
 
 | name                   | description                                         |
 | ---------------------- | --------------------------------------------------- |
-| AUTH_INVALID_KEY       | the user with the key does not exist                |
+| AUTH_INVALID_KEY_ID    | the user with the key does not exist                |
 | AUTH_INVALID_PASSWORD  | incorrect password                                  |
 | AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
 

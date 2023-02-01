@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-test",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "Tests for database adapters for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -33,15 +33,13 @@
 	},
 	"devDependencies": {
 		"@types/cli-color": "^2.0.2",
-		"@types/lodash": "^4.14.186",
 		"@types/node": "^18.6.2",
-		"lodash": "^4.17.21",
 		"lucia-auth": "workspace:*"
 	},
 	"dependencies": {
 		"cli-color": "^2.0.3"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.5.x"
+		"lucia-auth": "0.6.x"
 	}
 }

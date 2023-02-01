@@ -38,7 +38,7 @@ if (Astro.request.method === "POST") {
 			// username already in use
 			if (
 				error instanceof LuciaError &&
-				(error.message === "AUTH_INVALID_KEY" ||
+				(error.message === "AUTH_INVALID_KEY_ID" ||
 					error.message === "AUTH_INVALID_PASSWORD")
 			) {
 				errorMessage = "Incorrect username or password.";

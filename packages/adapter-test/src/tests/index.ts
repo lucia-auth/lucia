@@ -1,49 +1,33 @@
-import type { SessionSchema, UserSchema, Adapter } from "lucia-auth";
-import { test, end, validate } from "./../test.js";
-import { User } from "../model.js";
-import { Database } from "../index.js";
+import type { Adapter } from "lucia-auth";
+import { test, end, INVALID_INPUT } from "./../test.js";
 import { testUserAdapter } from "./user.js";
 import { testSessionAdapter } from "./session.js";
-
-const INVALID_INPUT = "INVALID_INPUT";
+import { Database, type LuciaQueryHandler } from "../database.js";
+import { isNull } from "../validate.js";
 
 export const testAdapter = async (
 	adapter: Adapter,
-	db: Database,
+	queryHandler: LuciaQueryHandler,
 	endProcess = true
 ) => {
-	const clearAll = async () => {
-		await db.clearSessions();
-		await db.clearUsers();
-	};
+	const database = new Database(queryHandler);
+	const clearAll = database.clear;
 	await clearAll();
-	await testUserAdapter(adapter, db, false);
-	await testSessionAdapter(adapter, db, false);
+	await testUserAdapter(adapter, queryHandler, false);
+	await testSessionAdapter(adapter, queryHandler, false);
 	await test(
 		"getSessionAndUserBySessionId()",
 		"Return the correct user and session",
 		async () => {
 			if (!adapter.getSessionAndUserBySessionId) return;
-			const user = new User();
-			const session = user.createSession();
-			await db.insertUser(user.getSchema());
-			await db.insertSession(session.getSchema());
-			const returnedData = await adapter.getSessionAndUserBySessionId(
-				session.id
+			const user = database.user();
+			const session = user.session();
+			await session.set(); // this will set user as well
+			const result = await adapter.getSessionAndUserBySessionId(
+				session.value.id
 			);
-			validate.isNotNull(returnedData, "Target was not returned");
-			validate.isTrue(
-				user.validateSchema(returnedData?.user as UserSchema),
-				"Target (user) was not the expected value",
-				user.getSchema(),
-				returnedData?.user
-			);
-			validate.isTrue(
-				session.validateSchema(returnedData?.session as SessionSchema),
-				"Target (session) was not the expected value",
-				session.getSchema(),
-				returnedData?.session
-			);
+			user.compare(result?.user);
+			session.compare(result?.session);
 			await clearAll();
 		}
 	);
@@ -52,12 +36,13 @@ export const testAdapter = async (
 		"Return null if session id is invalid",
 		async () => {
 			if (!adapter.getSessionAndUserBySessionId) return;
-			const user = await adapter.getSessionAndUserBySessionId(INVALID_INPUT);
-			validate.isNull(user, "Null was not returned");
+			const result = await adapter.getSessionAndUserBySessionId(INVALID_INPUT);
+			isNull(result);
 			await clearAll();
 		}
 	);
 	await clearAll();
-	if (!endProcess) return;
-	end();
+	if (endProcess) {
+		end();
+	}
 };

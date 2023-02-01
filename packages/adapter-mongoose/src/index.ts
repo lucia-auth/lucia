@@ -2,6 +2,15 @@ import Mongoose from "mongoose";
 import { convertKeyDoc, convertSessionDoc, convertUserDoc } from "./utils.js";
 import type { Adapter, AdapterFunction } from "lucia-auth";
 
+const createMongoValues = (object: Record<any, any>) => {
+	return Object.fromEntries(
+		Object.entries(object).map(([key, value]) => {
+			if (key === "id") return ["_id", value];
+			return [key, value];
+		})
+	);
+};
+
 const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 	const User = mongoose.model<UserDoc>("user");
 	const Session = mongoose.model<SessionDoc>("session");
@@ -34,30 +43,45 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				}).lean();
 				return sessions.map((val) => convertSessionDoc(val));
 			},
-			setUser: async (userId, attributes) => {
-				const newUserDoc = new User({
-					_id: userId ?? new Mongoose.Types.ObjectId().toString(),
-					...attributes
-				});
-				const userDoc = await newUserDoc.save();
-				const user = convertUserDoc(userDoc.toObject());
-				return user;
+			setUser: async (userId, userAttributes, key) => {
+				try {
+					if (key) {
+						const refKeyDoc = await Key.findById(key.id);
+						if (refKeyDoc) throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					}
+					const userDoc = new User(
+						createMongoValues({
+							id: userId,
+							...userAttributes
+						})
+					);
+					await userDoc.save();
+					if (key) {
+						const keyDoc = new Key(createMongoValues(key));
+						await keyDoc.save();
+					}
+					return convertUserDoc(userDoc.toObject());
+				} catch (error) {
+					if (
+						error instanceof Error &&
+						error.message.includes("E11000") &&
+						error.message.includes("id")
+					) {
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					}
+					throw error;
+				}
 			},
 			deleteUser: async (userId: string) => {
 				await User.findOneAndDelete({
 					_id: userId
 				});
 			},
-			setSession: async (sessionId, data) => {
-				const userDoc = await User.findById(data.userId);
+			setSession: async (session) => {
+				const userDoc = await User.findById(session.user_id).lean();
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 				try {
-					const sessionDoc = new Session({
-						_id: sessionId,
-						user_id: data.userId,
-						active_expires: data.activePeriodExpires,
-						idle_expires: data.idlePeriodExpires
-					});
+					const sessionDoc = new Session(createMongoValues(session));
 					await Session.create(sessionDoc);
 				} catch (error) {
 					if (
@@ -87,16 +111,11 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				if (!keyDoc) return null;
 				return convertKeyDoc(keyDoc);
 			},
-			setKey: async (key, data) => {
-				const userDoc = await User.findById(data.userId);
+			setKey: async (key) => {
+				const userDoc = await User.findById(key.user_id);
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 				try {
-					const keyDoc = new Key({
-						_id: key,
-						user_id: data.userId,
-						primary: data.isPrimary,
-						hashed_password: data.hashedPassword
-					});
+					const keyDoc = new Key(createMongoValues(key));
 					await Key.create(keyDoc);
 				} catch (error) {
 					if (
@@ -104,7 +123,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 						error.message.includes("E11000") &&
 						error.message.includes("id")
 					)
-						throw new LuciaError("AUTH_DUPLICATE_KEY");
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					throw error;
 				}
 			},
@@ -118,7 +137,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				const keyDoc = await Key.findByIdAndUpdate(key, {
 					hashed_password: hashedPassword
 				}).lean();
-				if (!keyDoc) throw new LuciaError("AUTH_INVALID_KEY");
+				if (!keyDoc) throw new LuciaError("AUTH_INVALID_KEY_ID");
 			},
 			deleteKeysByUserId: async (userId) => {
 				await Key.deleteMany({
