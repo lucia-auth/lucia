@@ -32,8 +32,8 @@ const patreon: (
 | name                   | type                                        | description                                                                                | optional |
 | ---------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ | -------- |
 | auth                   | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                                                             |          |
-| configs.clientId       | `string`                                    | Pateron OAuth app client id                                                                |          |
-| configs.clientSecret   | `string`                                    | Pateron OAuth app client secret                                                            |          |
+| configs.clientId       | `string`                                    | Patreon OAuth app client id                                                                |          |
+| configs.clientSecret   | `string`                                    | Patreon OAuth app client secret                                                            |          |
 | configs.redirectUri    | `string`                                    | one of the authorized redirect URIs                                                        |          |
 | configs.scope          | `string[]`                                  | an array of scopes                                                                         | true     |
 | configs.allMemberships | `boolean`                                   | shorthand for scope "identity.memberships" which will reveal memberships for all campaigns | true     |
@@ -78,19 +78,19 @@ const storedState = headers.cookie.get("state");
 // validate state
 if (state !== storedState) throw new Error(); // invalid state
 
-const pateronSession = await pateronAuth.validateCallback(code);
+const patreonSession = await patreonAuth.validateCallback(code);
 ```
 
-## `pateron()` (default)
+## `patreon()` (default)
 
-Refer to [`Initialization`](/oauth/providers/pateron#initialization).
+Refer to [`Initialization`](/oauth/providers/patreon#initialization).
 
-## `PateronProvider`
+## `PatreonProvider`
 
 ```ts
-interface PateronProvider {
+interface PatreonProvider {
 	getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string]
-	validateCallback: (code: string) => Promise<PateronProviderSession>;
+	validateCallback: (code: string) => Promise<PatreonProviderSession>;
 }
 ```
 
@@ -105,23 +105,23 @@ Refer to [`OAuthProvider.getAuthorizationUrl()`](/oauth/reference/api-reference#
 Implements [`OAuthProvider.validateCallback()`](/oauth/reference/api-reference#getauthorizationurl). `code` can be acquired from the `code` search params inside the callback url.
 
 ```ts
-const validateCallback: (code: string) => Promise<PateronProviderSession>;
+const validateCallback: (code: string) => Promise<PatreonProviderSession>;
 ```
 
 #### Returns
 
 | type                                                                        |
 | --------------------------------------------------------------------------- |
-| [`PateronProviderSession`](/oauth/providers/pateron#pateronprovidersession) |
+| [`PatreonProviderSession`](/oauth/providers/patreon#patreonprovidersession) |
 
-## `PateronProviderSession`
+## `PatreonProviderSession`
 
 ```ts
-interface PateronProviderSession {
+interface PatreonProviderSession {
 	existingUser: User | null;
 	createKey: (userId: string) => Promise<Key>;
 	createUser: (userAttributes) => Promise<User>;
-	providerUser: PateronUser;
+	providerUser: PatreonUser;
 	accessToken: string;
 	refreshToken?: string;
 	expiresIn: number;
@@ -133,10 +133,10 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | name                                              | type                                                  | description                                       |
 | ------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- |
 | existingUser                                      | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
-| [createKey](/oauth/providers/twitch#createkey)    | `Function`                                            |                                                   |
-| [createUser](/oauth/providers/pateron#createuser) | `Function`                                            |                                                   |
-| providerUser                                      | [`PateronUser`](/oauth/providers/pateron#pateronuser) | Pateron user                                      |
-| accessToken                                       | `string`                                              | Pateron access token                              |
+| [createKey](/oauth/providers/patreon#createkey)   | `Function`                                            |                                                   |
+| [createUser](/oauth/providers/patreon#createuser) | `Function`                                            |                                                   |
+| providerUser                                      | [`PatreonUser`](/oauth/providers/patreon#patreonuser) | Patreon user                                      |
+| accessToken                                       | `string`                                              | Patreon access token                              |
 | refreshToken                                      | `string \| undefined`                                 | only defined on the first sign in                 |
 | expires in                                        | `number`                                              | expiration time (seconds) of the access token     |
 
@@ -152,7 +152,7 @@ Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createke
 | -------------- | ------------------------------------------------------------------------------- |
 | userId         | `userId`                                                                        |
 | providerId     | `"patreon"`                                                                     |
-| providerUserId | Patreon user id ([`PateronUser.data.id`](/oauth/providers/pateron#pateronuser)) |
+| providerUserId | Patreon user id ([`PatreonUser.data.id`](/oauth/providers/patreon#patreonuser)) |
 
 ### `createUser()`
 
@@ -165,10 +165,10 @@ Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#create
 | name                    | value                                                                           |
 | ----------------------- | ------------------------------------------------------------------------------- |
 | data.key.providerId     | `"patreon"`                                                                     |
-| data.key.providerUserId | Patreon user id ([`PateronUser.data.id`](/oauth/providers/pateron#pateronuser)) |
+| data.key.providerUserId | Patreon user id ([`PatreonUser.data.id`](/oauth/providers/patreon#patreonuser)) |
 | data.attributes         | `userAttributes`                                                                |
 
-## `PateronUser`
+## `PatreonUser`
 
 ```ts
 interface PatreonUser {
