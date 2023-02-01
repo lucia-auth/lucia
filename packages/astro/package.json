@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/astro",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "Lucia integration for Astro",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -45,6 +45,6 @@
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.5.x"
+		"lucia-auth": "0.5.x - 0.6.x"
 	}
 }

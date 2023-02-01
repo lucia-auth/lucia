@@ -15,13 +15,23 @@ export const convertSession = (
 
 export type Dialect = "pg" | "mysql2" | "better-sqlite3";
 
-export const convertKey = (
-	key: Selectable<KyselyKey>
-): KeySchema => {
+export const convertKey = (key: Selectable<KyselyKey>): KeySchema => {
 	return {
 		id: key.id,
 		user_id: key.user_id,
 		primary: Boolean(key.primary),
+		hashed_password: key.hashed_password
+	};
+};
+
+export const convertKeySchemaToKyselyValues = (
+	key: KeySchema,
+	dialect: Dialect
+) => {
+	return {
+		id: key.id,
+		user_id: key.user_id,
+		primary: dialect === "pg" ? key.primary : Number(key.primary),
 		hashed_password: key.hashed_password
 	};
 };

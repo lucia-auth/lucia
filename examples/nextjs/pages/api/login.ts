@@ -20,14 +20,14 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	}
 	try {
 		const authRequest = new AuthRequest(auth, req, res);
-		const key = await auth.validateKeyPassword('username', username, password);
+		const key = await auth.validateKeyPassword("username", username, password);
 		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session);
 		return res.redirect(302, "/");
 	} catch (e) {
 		const error = e as LuciaError;
 		if (
-			error.message === "AUTH_INVALID_KEY" ||
+			error.message === "AUTH_INVALID_KEY_ID" ||
 			error.message === "AUTH_INVALID_PASSWORD"
 		) {
 			return res.status(200).json({

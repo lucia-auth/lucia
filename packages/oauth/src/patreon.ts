@@ -107,7 +107,7 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 			existingUser = user as LuciaUser<A>;
 		} catch (e) {
 			const error = e as Partial<LuciaError>;
-			if (error?.message !== "AUTH_INVALID_KEY") throw e;
+			if (error?.message !== "AUTH_INVALID_KEY_ID") throw e;
 			// existingUser is null
 		}
 		const createUser = async (

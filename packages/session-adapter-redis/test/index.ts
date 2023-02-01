@@ -1,4 +1,4 @@
 import { testSessionAdapter } from "@lucia-auth/adapter-test";
-import { db, adapter } from "./db.js";
+import { queryHandler, adapter } from "./db.js";
 
-testSessionAdapter(adapter, db);
+testSessionAdapter(adapter, queryHandler);

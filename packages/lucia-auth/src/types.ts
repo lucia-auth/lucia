@@ -58,22 +58,16 @@ export type Adapter = {
 export type UserAdapter = {
 	getUser: (userId: string) => Promise<UserSchema | null>;
 	setUser: (
-		userId: string | null,
-		attributes: Record<string, any>
+		userId: string,
+		userAttributes: Record<any, any>,
+		key: KeySchema | null
 	) => Promise<UserSchema>;
 	deleteUser: (userId: string) => Promise<void>;
 	updateUserAttributes: (
 		userId: string,
 		attributes: Record<string, any>
 	) => Promise<UserSchema>;
-	setKey: (
-		key: string,
-		data: {
-			userId: string;
-			hashedPassword: string | null;
-			isPrimary: boolean;
-		}
-	) => Promise<void>;
+	setKey: (key: KeySchema) => Promise<void>;
 	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 	updateKeyPassword: (
@@ -87,14 +81,7 @@ export type UserAdapter = {
 export type SessionAdapter = {
 	getSession: (sessionId: string) => Promise<SessionSchema | null>;
 	getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
-	setSession: (
-		sessionId: string,
-		data: {
-			userId: string;
-			activePeriodExpires: number;
-			idlePeriodExpires: number;
-		}
-	) => Promise<void>;
+	setSession: (session: SessionSchema) => Promise<void>;
 	deleteSession: (...sessionIds: string[]) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 };

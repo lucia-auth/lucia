@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.5.2
+
+- Update peer dependency
+
 ## 0.5.1
 
 - Add `expiresIn`, `refreshToken` to `validateCallback` (Twitch)

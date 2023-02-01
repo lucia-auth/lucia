@@ -124,7 +124,7 @@ export const actions: Actions = {
 };
 ```
 
-> For the session state to update in the client, we have to invalidate the root load function. `use:enhance` will only invalidate all load functions on a successful response and not on a redirect response.  So, we're not redirecting the user inside the action and let the load functions, triggered by the invalidation, handle redirecting unauthenticated users.
+> For the session state to update in the client, we have to invalidate the root load function. `use:enhance` will only invalidate all load functions on a successful response and not on a redirect response. So, we're not redirecting the user inside the action and let the load functions, triggered by the invalidation, handle redirecting unauthenticated users.
 >
 > Learn more in [Using forms](/sveltekit/basics/using-forms).
 

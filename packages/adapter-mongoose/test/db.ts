@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
-import type { Database } from "@lucia-auth/adapter-test";
+import type {
+	LuciaQueryHandler,
+	TestUserSchema
+} from "@lucia-auth/adapter-test";
 import mongodb from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { convertKeyDoc, convertSessionDoc } from "../src/utils.js";
-import { LuciaError } from "lucia-auth";
+import { LuciaError, UserSchema } from "lucia-auth";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -89,47 +92,53 @@ const inputToMongooseDoc = (obj: Record<string, any>) => {
 	};
 };
 
-export const db: Database = {
-	getUsers: async () => {
-		await clientPromise;
-		const userDocs = await User.find().lean();
-		return userDocs.map((doc) => {
-			const { _id: id, ...expectedValue } = doc;
-			return {
-				id,
-				...expectedValue
-			} as Required<{ id: string } & typeof expectedValue>;
-		});
+export const queryHandler: LuciaQueryHandler = {
+	user: {
+		get: async () => {
+			await clientPromise;
+			const userDocs = await User.find().lean();
+			return userDocs.map((doc) => {
+				const { _id: id, ...attributes } = doc;
+				return {
+					id,
+					...attributes
+				} as TestUserSchema;
+			});
+		},
+		insert: async (user) => {
+			const userDoc = new User(inputToMongooseDoc(user));
+			await userDoc.save();
+		},
+		clear: async () => {
+			await User.deleteMany().lean();
+		}
 	},
-	getSessions: async () => {
-		await clientPromise;
-		const sessionDocs = await Session.find().lean();
-		return sessionDocs.map((doc) => convertSessionDoc(doc));
+	session: {
+		get: async () => {
+			await clientPromise;
+			const sessionDocs = await Session.find().lean();
+			return sessionDocs.map((doc) => convertSessionDoc(doc));
+		},
+		insert: async (session) => {
+			const sessionDoc = new Session(inputToMongooseDoc(session));
+			await sessionDoc.save();
+		},
+		clear: async () => {
+			await Session.deleteMany().lean();
+		}
 	},
-	getKeys: async () => {
-		await clientPromise;
-		const keyDocs = await Key.find().lean();
-		return keyDocs.map((doc) => convertKeyDoc(doc));
-	},
-	insertUser: async (user) => {
-		const userDoc = new User(inputToMongooseDoc(user));
-		await userDoc.save();
-	},
-	insertSession: async (session) => {
-		const sessionDoc = new Session(inputToMongooseDoc(session));
-		await sessionDoc.save();
-	},
-	insertKey: async (key) => {
-		const keyDoc = new Key(inputToMongooseDoc(key));
-		await keyDoc.save();
-	},
-	clearUsers: async () => {
-		await User.deleteMany().lean();
-	},
-	clearSessions: async () => {
-		await Session.deleteMany().lean();
-	},
-	clearKeys: async () => {
-		await Key.deleteMany().lean();
+	key: {
+		get: async () => {
+			await clientPromise;
+			const keyDocs = await Key.find().lean();
+			return keyDocs.map((doc) => convertKeyDoc(doc));
+		},
+		insert: async (key) => {
+			const keyDoc = new Key(inputToMongooseDoc(key));
+			await keyDoc.save();
+		},
+		clear: async () => {
+			await Key.deleteMany().lean();
+		}
 	}
 };

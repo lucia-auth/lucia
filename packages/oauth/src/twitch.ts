@@ -51,10 +51,10 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 	};
 
 	public validateCallback = async (code: string) => {
-		const { 
+		const {
 			access_token: accessToken,
 			refresh_token: refreshToken,
-			expires_in: expiresIn 
+			expires_in: expiresIn
 		} = (await post(
 			`https://id.twitch.tv/oauth2/token?${new URLSearchParams({
 				client_id: this.clientId,
@@ -93,7 +93,7 @@ class Twitch<A extends Auth> implements OAuthProvider<A> {
 			existingUser = user as LuciaUser<A>;
 		} catch (e) {
 			const error = e as Partial<LuciaError>;
-			if (error?.message !== "AUTH_INVALID_KEY") throw e;
+			if (error?.message !== "AUTH_INVALID_KEY_ID") throw e;
 			// existingUser is null
 		}
 		const createUser = async (

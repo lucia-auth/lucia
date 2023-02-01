@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-prisma",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "Prisma adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -11,7 +11,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"test-main": "npx ts-node --esm -T test/index.ts",
+		"test": "npx ts-node --esm -T test/index.ts",
 		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -34,7 +34,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.4.x"
+		"lucia-auth": "0.6.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

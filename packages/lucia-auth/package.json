@@ -1,6 +1,6 @@
 {
 	"name": "lucia-auth",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"description": "A simple yet flexible authentication library",
 	"main": "index.js",
 	"types": "index.d.ts",

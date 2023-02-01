@@ -13,8 +13,8 @@ export const post: APIRoute = async (Astro) => {
 	authRequest.setSession(null);
 	return new Response(null, {
 		status: 302,
-        headers: {
-            "location": "/"
-        }
+		headers: {
+			location: "/"
+		}
 	});
 };

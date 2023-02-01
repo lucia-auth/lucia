@@ -44,7 +44,10 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 				error: "Username already in use"
 			});
 		}
-		if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_KEY") {
+		if (
+			error instanceof LuciaError &&
+			error.message === "AUTH_DUPLICATE_KEY_ID"
+		) {
 			return res.status(200).json({
 				error: "Username already in use"
 			});

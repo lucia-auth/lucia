@@ -30,21 +30,12 @@ const adapter =
 					.map((val) => JSON.parse(val) as SessionSchema);
 				return sessions;
 			},
-			setSession: async (sessionId, data) => {
+			setSession: async (session) => {
 				Promise.all([
-					userSessionsRedis.lPush(data.userId, sessionId),
-					sessionRedis.set(
-						sessionId,
-						JSON.stringify({
-							id: sessionId,
-							expires: data.expires,
-							idle_expires: data.idlePeriodExpires,
-							user_id: data.userId
-						}),
-						{
-							EX: Math.floor(data.idlePeriodExpires / 1000)
-						}
-					)
+					userSessionsRedis.lPush(session.user_id, session.id),
+					sessionRedis.set(session.id, JSON.stringify(session), {
+						EX: Math.floor(Number(session.idle_expires) / 1000)
+					})
 				]);
 			},
 			deleteSession: async (...sessionIds) => {

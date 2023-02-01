@@ -23,7 +23,7 @@ export default (props: {
 		mergedProps.initialCollectionId as string
 	);
 	const CollectionLink = (props: {
-		collection: typeof collections[number];
+		collection: (typeof collections)[number];
 	}) => (
 		<Show when={props.collection._id === selectedCollectionId()}>
 			<For each={props.collection._collections}>

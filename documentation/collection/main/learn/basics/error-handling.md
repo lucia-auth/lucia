@@ -44,7 +44,7 @@ try {
 
 Known errors for databases related actions are:
 
-- Duplicate key on user and key creation (`AUTH_DUPLICATE_KEY`)
+- Duplicate key on user and key creation (`AUTH_DUPLICATE_KEY_ID`)
 - Invalid user id (`AUTH_INVALID_USER_ID`)
-- Invalid keys (`AUTH_INVALID_KEY`)
+- Invalid keys (`AUTH_INVALID_KEY_ID`)
 - Duplicate session id on session creation and renewal (`AUTH_DUPLICATE_SESSION_ID`)

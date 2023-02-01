@@ -26,4 +26,4 @@ const sessionCookie = auth.createSessionCookie(session);
 
 Lucia aims to work well with any modern web frameworks and supports run-times other than Node such as Cloudflare edge workers.
 
-> The name *Lucia* is based on the country of Saint Lucia, so technically it's pronounced *loo-shya*. But based on a community poll, most people pronounce it *lu-sia*. *loo-shya*, *lu-sia*, *lu-chia* your choice!
+> The name _Lucia_ is based on the country of Saint Lucia, so technically it's pronounced _loo-shya_. But based on a community poll, most people pronounce it _lu-sia_. _loo-shya_, _lu-sia_, _lu-chia_ your choice!

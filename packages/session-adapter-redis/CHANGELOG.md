@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.0
+
+- [Breaking] Require `lucia-auth` 0.6.0
+
 ## 0.2.1
 
 - Update peer dependency

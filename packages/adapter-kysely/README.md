@@ -21,48 +21,23 @@ npm install @lucia-auth/adapter-kysely
 | 0.1.x                  | 0.1.x ~ 0.2.x |
 | 0.2.x, 0.3.x           | 0.4.x         |
 | 0.4.x                  | 0.5.x         |
+| 0.5.x                  | 0.6.x         |
 
 ## Testing
 
-Follow the documentation on database set up.
+First follow the documentation on database set up.
 
 ### PostgreSQL
 
-Since it's easier to just recreate the table than changing column type for `public.user(id)`, drop all tables:
+Add `username` column:
 
 ```sql
-DROP TABLE public.key;
-DROP TABLE public.session;
-DROP TABLE public.user;
-```
-
-And set it up again:
-
-```sql
-BEGIN;
-CREATE TABLE public.user (
-	id TEXT PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL
-);
-
-CREATE TABLE public.session (
-  	id TEXT PRIMARY KEY,
-	user_id TEXT REFERENCES public.user(id) NOT NULL,
-	active_expires BIGINT NOT NULL,
-	idle_expires BIGINT NOT NULL
-);
-
-CREATE TABLE public.key (
-  	id TEXT PRIMARY KEY,
-	user_id TEXT REFERENCES public.user(id) NOT NULL,
-	"primary" BOOLEAN NOT NULL,
-    hashed_password TEXT
-);
-COMMIT;
+ALTER TABLE public.user
+ADD COLUMN username TEXT NOT NULL UNIQUE;
 ```
 
 ```
-pnpm test-psql-main
+pnpm test-psql
 ```
 
 ```shell

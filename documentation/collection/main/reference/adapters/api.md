@@ -28,17 +28,11 @@ type UserAdapter = {
 	getKey: (keyId: string) => Promise<KeySchema | null>;
 	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 	getUser: (userId: string) => Promise<UserSchema | null>;
-	setKey: (
-		key: string,
-		data: {
-			userId: string;
-			hashedPassword: string | null;
-			isPrimary: boolean;
-		}
-	) => Promise<void>;
+	setKey: (key: KeySchema) => Promise<void>;
 	setUser: (
-		userId: string | null,
-		attributes: Record<string, any>
+		userId: string,
+		attributes: Record<string, any>,
+		key: KeySchema | null
 	) => Promise<UserSchema>;
 	updateKeyPassword: (
 		key: string,
@@ -57,14 +51,7 @@ type SessionAdapter = {
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 	getSession: (sessionId: string) => Promise<SessionSchema | null>;
 	getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
-	setSession: (
-		sessionId: string,
-		data: {
-			userId: string;
-			expires: number;
-			idlePeriodExpires: number;
-		}
-	) => Promise<void>;
+	setSession: (session: SessionSchema) => Promise<void>;
 };
 ```
 
@@ -232,19 +219,12 @@ If not:
 | ------ |
 | `null` |
 
-### `setUser()`
+### `setKey()`
 
-Creates a new user in `user` table. Each values of `data.attributes` should be stored in the column of the key name.
+Creates a new key in `key` table.
 
 ```ts
-const setUser: (
-	userId: string,
-	data: {
-		providerId: string;
-		hashedPassword: string | null;
-		attributes: Record<string, any>;
-	}
-) => Promise<UserSchema>;
+const setKey: (key: KeySchema) => Promise<void>;
 ```
 
 #### Parameter
@@ -256,6 +236,34 @@ const setUser: (
 | data.hashedPassword | `string \| null`      | target: `user(hashed_password)`                 |
 | data.attributes     | `Record<string, any>` | each key names as [key] - target: `user([key])` |
 
+#### Errors
+
+| type                |
+| ------------------- |
+| AUTH_INVALID_KEY_ID |
+
+### `setUser()`
+
+Creates a new user in `user` table. Each values of `userAttributes` should be stored in the column of the key name.
+
+This should store the provided `key` if not `null`. It is recommended to use transactions to insert both the user and key, as the user id of the user and key id of the key should be unique for the process to be successful.
+
+```ts
+const setUser: (
+	userId: string,
+	userAttributes: Record<string, any>,
+	key: KeySchema | null
+) => Promise<UserSchema>;
+```
+
+#### Parameter
+
+| name           | type                                                                      | description                                     |
+| -------------- | ------------------------------------------------------------------------- | ----------------------------------------------- |
+| userId         | `string`                                                                  | unique target: `user(id)`                       |
+| userAttributes | `Record<string, any>`                                                     | each key names as [key] - target: `user([key])` |
+| key            | [`KeySchema`](/reference/adapters/database-model#schema-type-2) \| `null` | key to store                                    |
+
 #### Returns
 
 | type                                                           | description              |
@@ -264,9 +272,9 @@ const setUser: (
 
 #### Errors
 
-| type                       |
-| -------------------------- |
-| AUTH_DUPLICATE_PROVIDER_ID |
+| type                  |
+| --------------------- |
+| AUTH_DUPLICATE_KEY_ID |
 
 ### `updateKeyPassword()`
 
@@ -290,7 +298,7 @@ const updateKeyPassword: (
 
 | type                       |
 | -------------------------- |
-| AUTH_DUPLICATE_PROVIDER_ID |
+| AUTH_DUPLICATE_KEY_ID |
 | AUTH_INVALID_USER_ID       |
 
 ### `updateUserAttributes()`
@@ -321,7 +329,7 @@ const updateUser: (
 
 | type                       |
 | -------------------------- |
-| AUTH_DUPLICATE_PROVIDER_ID |
+| AUTH_DUPLICATE_KEY_ID |
 | AUTH_INVALID_USER_ID       |
 
 ## `SessionAdapter`
@@ -415,24 +423,14 @@ If not:
 Creates a new session in `session` table.
 
 ```ts
-const setSession: (
-	sessionId: string,
-	data: {
-		userId: string;
-		expires: number;
-		idlePeriodExpires: number;
-	}
-) => Promise<void>;
+const setSession: (session: SessionSchema) => Promise<void>;
 ```
 
 #### Parameter
 
-| name                   | type                  | description                     |
-| ---------------------- | --------------------- | ------------------------------- |
-| sessionId              | `string`              | unique target: `session(id)`    |
-| data.userId            | `string`              | target: `session(user_id)`      |
-| data.expires           | `string \| null`      | target: `session(expires)`      |
-| data.idlePeriodExpires | `Record<string, any>` | target: `session(idle_expires)` |
+| name      | type                                                                | description           |
+| --------- | ------------------------------------------------------------------- | --------------------- |
+| sessionId | [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data to store |
 
 #### Errors
 
