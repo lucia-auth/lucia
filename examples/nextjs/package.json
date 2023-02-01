@@ -10,7 +10,6 @@
 	},
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "latest",
-		"@lucia-auth/adapter-supabase": "latest",
 		"@lucia-auth/nextjs": "latest",
 		"@lucia-auth/oauth": "latest",
 		"@prisma/client": "^4.7.0",

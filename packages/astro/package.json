@@ -15,8 +15,8 @@
 	},
 	"keywords": [
 		"lucia",
-		"astro",
 		"lucia-auth",
+		"astro",
 		"auth",
 		"authentication"
 	],

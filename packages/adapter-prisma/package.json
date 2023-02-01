@@ -17,9 +17,11 @@
 	"keywords": [
 		"lucia",
 		"prisma",
-		"sql",
 		"lucia-auth",
 		"auth",
+		"postgres",
+		"mysql",
+		"sqlite",
 		"authentication",
 		"adapter"
 	],

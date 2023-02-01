@@ -16,8 +16,8 @@
 	},
 	"keywords": [
 		"lucia",
-		"authentication",
 		"lucia-auth",
+		"authentication",
 		"auth"
 	],
 	"exports": {

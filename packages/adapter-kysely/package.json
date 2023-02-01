@@ -20,6 +20,9 @@
 		"lucia",
 		"kysely",
 		"lucia-auth",
+		"mysql",
+		"sqlite",
+		"postgres",
 		"auth",
 		"authentication",
 		"adapter"

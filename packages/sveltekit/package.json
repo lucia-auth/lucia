@@ -15,10 +15,10 @@
 	},
 	"keywords": [
 		"lucia",
-		"sveltekit",
 		"lucia-auth",
 		"authentication",
 		"auth",
+		"sveltekit",
 		"svelte"
 	],
 	"repository": {

@@ -22,7 +22,6 @@ body:
         - ​@lucia-auth/adapter-kysely
         - ​@lucia-auth/adapter-mongoose
         - ​@lucia-auth/adapter-prisma
-        - ​@lucia-auth/adapter-supabase
         - ​@lucia-auth/session-adapter-redis
         - ​@lucia-auth/adapter-test
     validations:

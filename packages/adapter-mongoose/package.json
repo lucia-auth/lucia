@@ -16,10 +16,10 @@
 	},
 	"keywords": [
 		"lucia",
+		"lucia-auth",
 		"mongodb",
 		"mongo",
 		"mongoose",
-		"lucia-auth",
 		"auth",
 		"authentication",
 		"adapter"

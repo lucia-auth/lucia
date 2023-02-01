@@ -17,9 +17,9 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
-		"redis",
 		"auth",
 		"authentication",
+		"redis",
 		"adapter"
 	],
 	"repository": {
