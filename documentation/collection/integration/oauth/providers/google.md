@@ -131,7 +131,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | name                                             | type                                                  | description                                       |
 | ------------------------------------------------ | ----------------------------------------------------- | ------------------------------------------------- |
 | existingUser                                     | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
-| [createKey](/oauth/providers/twitch#createkey)   | `Function`                                            |                                                   |
+| [createKey](/oauth/providers/google#createkey)   | `Function`                                            |                                                   |
 | [createUser](/oauth/providers/google#createuser) | `Function`                                            |                                                   |
 | providerUser                                     | [`GoogleUser`](/oauth/providers/google#googleuser)    | Google user                                       |
 | accessToken                                      | `string`                                              | Google access token                               |
@@ -150,7 +150,7 @@ Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createke
 | -------------- | ----------------------------------------------------------------------- |
 | userId         | `userId`                                                                |
 | providerId     | `"google"`                                                              |
-| providerUserId | Google user id ([`GoogleUser.sub`](/oauth/providers/github#googleuser)) |
+| providerUserId | Google user id ([`GoogleUser.sub`](/oauth/providers/google#googleuser)) |
 
 ### `createUser()`
 
@@ -163,7 +163,7 @@ Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#create
 | name                    | value                                                                   |
 | ----------------------- | ----------------------------------------------------------------------- |
 | data.key.providerId     | `"google"`                                                              |
-| data.key.providerUserId | Google user id ([`GoogleUser.sub`](/oauth/providers/github#googleuser)) |
+| data.key.providerUserId | Google user id ([`GoogleUser.sub`](/oauth/providers/google#googleuser)) |
 | data.attributes         | `userAttributes`                                                        |
 
 ## `GoogleUser`

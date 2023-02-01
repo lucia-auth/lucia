@@ -126,7 +126,7 @@ Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
 | name                                             | type                                                  | description                                       |
 | ------------------------------------------------ | ----------------------------------------------------- | ------------------------------------------------- |
 | existingUser                                     | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
-| [createKey](/oauth/providers/twitch#createkey)   | `Function`                                            |                                                   |
+| [createKey](/oauth/providers/github#createkey)   | `Function`                                            |                                                   |
 | [createUser](/oauth/providers/github#createuser) | `Function`                                            |                                                   |
 | providerUser                                     | [`GithubUser`](/oauth/providers/github#githubuser)    | Github user                                       |
 | accessToken                                      | `string`                                              | Github access token                               |
