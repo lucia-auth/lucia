@@ -156,7 +156,7 @@ This form will also have an input field for username and password.
 
 ### Authenticate users
 
-We'll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, `"username"` will be the provider id and the username will be the provider user id. We can validate the password using `validateRequestKey()`.
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `validateKeyPassword()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
 
 ```ts
 // routes/login/+page.server.ts
@@ -179,7 +179,7 @@ export const actions: Actions = {
 		if (typeof username !== "string" || typeof password !== "string")
 			return fail(400);
 		try {
-			const key = await auth.validateRequestKey("username", username, password);
+			const key = await auth.validateKeyPassword("username", username, password);
 			const session = await auth.createSession(key.userId);
 			locals.setSession(session);
 		} catch {

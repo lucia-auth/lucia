@@ -248,7 +248,7 @@ export default Index;
 
 Create pages/api/login.ts. This API route will handle sign-ins.
 
-We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id. We can validate the password using validateRequestKey().
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `validateKeyPassword()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
 
 ```ts
 // pages/api/login.ts
@@ -264,7 +264,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		return res.status(400).json({});
 	try {
 		const authRequest = new AuthRequest(auth, req, res);
-		const key = await auth.validateRequestKey("username", username, password);
+		const key = await auth.validateKeyPassword("username", username, password);
 		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session); // set cookie
 		return res.redirect(302, "/"); // redirect to profile page
