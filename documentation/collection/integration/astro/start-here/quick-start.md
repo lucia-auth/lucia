@@ -167,7 +167,7 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 
 The same page will also handle form submissions.
 
-We'll use `username` as the provider id and the username as the provider user id. This tells Lucia to find a user that was created using username/password auth method where the unique identifier is the username. Create a new session if the password is valid, and store the session id.
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `validateKeyPassword()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
 
 ```astro
 ---
