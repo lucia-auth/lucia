@@ -15,6 +15,8 @@ yarn add lucia-auth @lucia-auth/sveltekit
 
 Using the guide from the adapter docs, set up the database and install the adapter (adapters are provided as a different NPM package).
 
+> (warn) Anything inside the `user` database will be sent to the client. While this is fine for most situations, make sure you aren't storing any sensitive data (like hashed passwords and secrets).
+
 ## Initialize Lucia
 
 In `$lib/server/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia-default) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/reference/configure/lucia-configurations#env) config, checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
