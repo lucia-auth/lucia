@@ -1,4 +1,3 @@
-import { handleLogoutRequest } from "./endpoints/index.js";
 import { Auth, Session, SESSION_COOKIE_NAME, User } from "lucia-auth";
 import type { RequestEvent } from "../types.js";
 
@@ -21,13 +20,6 @@ const setPageDataGlobalVariable = ({ html }: { html: string }) => {
 	return html;
 };
 
-export const getRequestHandler = (event: RequestEvent) => {
-	const isLogoutPOSTRequest =
-		event.url.pathname === "/api/auth/logout" &&
-		event.request.method === "POST";
-	if (isLogoutPOSTRequest) return handleLogoutRequest;
-	return null;
-};
 export const handleHooks = (auth: Auth) => {
 	return async ({
 		event,
@@ -99,9 +91,6 @@ export const handleHooks = (auth: Auth) => {
 			});
 			return getSessionUserPromise;
 		};
-
-		const requestHandler = getRequestHandler(event);
-		if (requestHandler) return await requestHandler(event, auth);
 		return await resolve(event, {
 			transformPageChunk: setPageDataGlobalVariable
 		});

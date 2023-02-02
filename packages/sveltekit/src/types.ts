@@ -1,14 +1,18 @@
 import type { Session, User } from "lucia-auth";
 import type { Readable } from "svelte/store";
 
+export type Validate = () => Promise<Session | null>;
+export type ValidateUser = () => Promise<
+	{ session: Session; user: User } | { session: null; user: null }
+>;
+export type SetSession = (session: Session | null) => void;
+
 export type RequestEvent = {
 	request: Request;
 	locals: {
-		validate: () => Promise<Session | null>;
-		validateUser: () => Promise<
-			{ session: Session; user: User } | { session: null; user: null }
-		>;
-		setSession: (session: Session | null) => void;
+		validate: Validate;
+		validateUser: ValidateUser;
+		setSession: SetSession;
 	} & App.Locals;
 	url: URL;
 	cookies: {
