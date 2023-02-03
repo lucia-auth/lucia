@@ -181,7 +181,7 @@ const user = auth.deleteUser(userId);
 
 ### Custom user id generation
 
-You can generate your own user ids by setting [`generateCustomUserId()`](/reference/configure/lucia-configurations#generatecustomuserid), which can either be synchrnous or asynchronous. You can return on `null` to let your database handle the user id generation.
+You can generate your own user ids by setting [`generateCustomUserId()`](/reference/configure/lucia-configurations#generatecustomuserid), which can either be synchrnous or asynchronous.
 
 If you need to generate a cryptographically random string consisting of alphabets and numbers, Lucia provides [`generateRandomString()`](/reference/api/server-api#generaterandomstring). This function uses the [`nanoid`](https://github.com/ai/nanoid) package.
 
@@ -194,3 +194,8 @@ lucia({
 	}
 });
 ```
+
+Other options include:
+
+- [Universally unique identifier (UUID)](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID)
+- [CUID](https://www.npmjs.com/package/@paralleldrive/cuid2)
