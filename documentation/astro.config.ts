@@ -32,7 +32,7 @@ export default defineConfig({
 							if (child.tagName !== "p") return false;
 							return true;
 						});
-						if (pElement.type !== "element") return;
+						if (pElement?.type !== "element") return;
 						const firstTextContent = pElement.children.filter(
 							(child): child is Text => child.type === "text"
 						)[0];
