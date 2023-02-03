@@ -1,15 +1,14 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-import svelte from "@astrojs/svelte";
 
 // https://astro.build/config
 import solidJs from "@astrojs/solid-js";
 
-import type { Root, Element, ElementContent, RootContent, Text } from "hast";
+import type { Root, RootContent, Text } from "hast";
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [tailwind(), svelte(), solidJs()],
+	integrations: [tailwind(), solidJs()],
 	markdown: {
 		shikiConfig: {
 			theme: "github-dark"
