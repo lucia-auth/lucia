@@ -24,7 +24,15 @@ const contributorsResult = (await contributorsResponse.json()) as
 			html_url: string;
 	  }[];
 const contributors = Array.isArray(contributorsResult)
-	? contributorsResult
+	? contributorsResult.map((val) => {
+			const url = new URL(val.avatar_url);
+			url.searchParams.set("s", "128"); // set image size to 128 x 128
+			url.searchParams.delete("v");
+			return {
+				avatar: url.href,
+				profile: val.html_url
+			};
+	  })
 	: [];
 
 const mainCollection = await db.collection("main").get();
@@ -76,9 +84,9 @@ const mainCollection = await db.collection("main").get();
 				<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
 					{
 						contributors.map((val) => (
-							<a href={val.html_url} target="_blank">
+							<a href={val.profile} target="_blank">
 								<img
-									src={val.avatar_url}
+									src={val.avatar}
 									class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100"
 								/>
 							</a>
