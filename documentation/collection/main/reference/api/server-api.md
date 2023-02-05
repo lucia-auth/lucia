@@ -822,9 +822,9 @@ const validateKeyPassword: (
 
 #### Returns
 
-| type                                        | description        |
-| ------------------------------------------- | ------------------ |
-| [`User`](/reference/types/lucia-types#user) | the validated user |
+| type                                      | description       |
+| ----------------------------------------- | ----------------- |
+| [`Key`](/reference/types/lucia-types#key) | the validated key |
 
 #### Errors
 
@@ -840,7 +840,11 @@ const validateKeyPassword: (
 import { auth } from "$lib/server/lucia";
 
 try {
-	await auth.validateKeyPassword("email", "user@example.com", "123456");
+	const key = await auth.validateKeyPassword(
+		"email",
+		"user@example.com",
+		"123456"
+	);
 } catch {
 	// invalid credentials
 }
