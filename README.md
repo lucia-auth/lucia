@@ -1,10 +1,6 @@
 # Lucia
 
-**Thank you for 500 GitHub stars, and counting!**
-
 **This library is still in beta! While APIs have been relatively stable recently in preparation for v1.0, expect breaking changes**
-
-No more hacky workarounds. Make the authentication work for you and your app.
 
 Lucia is a simple yet flexible user and session management library that provides an
 abstraction layer between your app and your database. It's bare-bones by design, keeping
