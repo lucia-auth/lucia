@@ -1,5 +1,6 @@
 import { generateChecksum } from "./crypto.js";
-import type { PageData, RequestEvent } from "../types.js";
+import type { RequestEvent } from "./types.js";
+import type { PageData } from "../types.js";
 
 type LoadEvent = RequestEvent & {
 	parent: any;

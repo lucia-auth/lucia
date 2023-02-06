@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.6.3
+
+- Clean up video
+
 ## 0.6.2
 
 - Fix types issue with `locals` [#326](https://github.com/pilcrowOnPaper/lucia-auth/issues/326)
