@@ -19,7 +19,6 @@ Follow the guides below to set up your database:
 
 - [Prisma](/learn/adapters/prisma) (MySQL, SQLite, PostgreSQL)
 - [Kysely](/learn/adapters/kysely) (PostgreSQL, MySQL, SQLite)
-- [Supabase](/learn/adapters/supabase)
 - [Mongoose](/learn/adapters/mongoose) (MongoDB).
 
 ## Framework integration
