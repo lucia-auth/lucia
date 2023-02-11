@@ -17,6 +17,8 @@ Alternatively, you can use [`locals.validateUser()`](/sveltekit/api-reference/lo
 const { session, user } = await locals.validateUser();
 ```
 
+> Refer to [Load functions](/sveltekit/basics/load-functions) to learn more about using load functions with Lucia.
+
 ## Example
 
 ```ts
