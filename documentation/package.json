@@ -13,10 +13,11 @@
 	"dependencies": {
 		"@astrojs/solid-js": "^2.0.2",
 		"@astrojs/tailwind": "^3.0.1",
-		"astro": "~2.0.6",
+		"astro": "~2.0.10",
+		"image-size": "^1.0.2",
 		"rehype-wrap-all": "^1.1.0",
-		"solid-js": "^1.4.3",
-		"tailwindcss": "^3.2.4"
+		"solid-js": "^1.6.10",
+		"tailwindcss": "^3.2.6"
 	},
 	"devDependencies": {
 		"rehype-rewrite": "^3.0.6"

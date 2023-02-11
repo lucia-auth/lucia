@@ -179,7 +179,11 @@ export const actions: Actions = {
 		if (typeof username !== "string" || typeof password !== "string")
 			return fail(400);
 		try {
-			const key = await auth.validateKeyPassword("username", username, password);
+			const key = await auth.validateKeyPassword(
+				"username",
+				username,
+				password
+			);
 			const session = await auth.createSession(key.userId);
 			locals.setSession(session);
 		} catch {
