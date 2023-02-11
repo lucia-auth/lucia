@@ -26,60 +26,62 @@ if (Astro.props.title) {
 }
 ---
 
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width" />
-	<meta name="generator" content={Astro.generator} />
-	<title>
-		{titleTag}
-	</title>
-	<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link
-		rel="preconnect"
-		href="https://fonts.gstatic.com"
-		crossorigin="anonymous"
-	/>
-	<link
-		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-		rel="stylesheet"
-	/>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>
+			{titleTag}
+		</title>
+		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link
+			rel="preconnect"
+			href="https://fonts.gstatic.com"
+			crossorigin="anonymous"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
 
-	<script is:inline>
-		const getTheme = () => {
-			if (
-				typeof localStorage !== "undefined" &&
-				localStorage.getItem("theme")
-			) {
-				const storedTheme = localStorage.getItem("theme");
-				if (storedTheme === "dark") return "dark";
-				if (storedTheme === "light") return "light";
+		<script is:inline>
+			const getTheme = () => {
+				if (
+					typeof localStorage !== "undefined" &&
+					localStorage.getItem("theme")
+				) {
+					const storedTheme = localStorage.getItem("theme");
+					if (storedTheme === "dark") return "dark";
+					if (storedTheme === "light") return "light";
+				}
+				if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+					return "dark";
+				}
+				return "light";
+			};
+			window.theme = getTheme();
+
+			if (theme === "light") {
+				document.documentElement.classList.remove("dark");
+			} else {
+				document.documentElement.classList.add("dark");
 			}
-			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-				return "dark";
+			window.localStorage.setItem("theme", theme);
+		</script>
+	</head>
+
+	<body class="dark:bg-black-zinc dark:text-zinc-200 px-4 sm:px-8 lg:px-12">
+		<slot />
+
+		<style>
+			body {
+				font-family: IBM Plex Sans, sans-serif;
 			}
-			return "light";
-		};
-		window.theme = getTheme();
-
-		if (theme === "light") {
-			document.documentElement.classList.remove("dark");
-		} else {
-			document.documentElement.classList.add("dark");
-		}
-		window.localStorage.setItem("theme", theme);
-	</script>
-</head>
-
-<body class="dark:bg-black-zinc dark:text-zinc-200 px-4 sm:px-8 lg:px-12">
-	<slot />
-
-	<style>
-		body {
-			font-family: IBM Plex Sans, sans-serif;
-		}
-		:global(::selection) {
-			background-color: #c0bdff;
-		}
-	</style>
-</body>
+			:global(::selection) {
+				background-color: #c0bdff;
+			}
+		</style>
+	</body>
+</html>

@@ -1,5 +1,5 @@
 ---
-import { MenuButton, ThemeButton } from "@components/icons/buttons";
+import { MenuButton, ThemeButton } from "@components/buttons";
 import Discord from "./icons/Discord.astro";
 import Github from "./icons/Github.astro";
 ---
@@ -9,9 +9,13 @@ import Github from "./icons/Github.astro";
 >
 	<div class="py-3 flex place-content-between place-items-center">
 		<a class="flex place-items-center pointer-events-auto" href="/">
-			<div class="h-6 w-6">
-				<img src="/logo.svg" />
-			</div>
+			<img
+				src="/logo.svg"
+				alt="Lucia logo"
+				width="100"
+				height="100"
+				class="w-6 h-6"
+			/>
 			<p class="text-2xl font-semibold">Lucia</p>
 		</a>
 		<div class="flex gap-x-4 place-items-center pointer-events-auto">
