@@ -296,10 +296,10 @@ const updateKeyPassword: (
 
 #### Errors
 
-| type                       |
-| -------------------------- |
+| type                  |
+| --------------------- |
 | AUTH_DUPLICATE_KEY_ID |
-| AUTH_INVALID_USER_ID       |
+| AUTH_INVALID_USER_ID  |
 
 ### `updateUserAttributes()`
 
@@ -327,10 +327,10 @@ const updateUser: (
 
 #### Errors
 
-| type                       |
-| -------------------------- |
+| type                  |
+| --------------------- |
 | AUTH_DUPLICATE_KEY_ID |
-| AUTH_INVALID_USER_ID       |
+| AUTH_INVALID_USER_ID  |
 
 ## `SessionAdapter`
 
