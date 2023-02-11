@@ -10,9 +10,9 @@ const GITHUB_API_KEY = import.meta.env.DEV
 const contributorsResponse = await fetch(
 	"https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
 	{
-		headers: {
-			Authorization: `Bearer ${GITHUB_API_KEY}`
-		}
+		// headers: {
+		// 	Authorization: `Bearer ${GITHUB_API_KEY}`
+		// }
 	}
 );
 const contributorsResult = (await contributorsResponse.json()) as
@@ -22,6 +22,7 @@ const contributorsResult = (await contributorsResponse.json()) as
 	| {
 			avatar_url: string;
 			html_url: string;
+			login: string;
 	  }[];
 const contributors = Array.isArray(contributorsResult)
 	? contributorsResult.map((val) => {
@@ -30,7 +31,8 @@ const contributors = Array.isArray(contributorsResult)
 			url.searchParams.delete("v");
 			return {
 				avatar: url.href,
-				profile: val.html_url
+				profile: val.html_url,
+				username: val.login
 			};
 	  })
 	: [];
@@ -62,11 +64,11 @@ const mainCollection = await db.collection("main").get();
 				>
 					<h2 class="font-semibold">Lucia v0.5.0 is here!</h2>
 					<p class="">
-						See what's new and check the migration checklist <a
+						See what's new and check the migration checklist on <a
 							class="text-main hover:underline"
 							target="_blank"
 							href="https://github.com/pilcrowOnPaper/lucia-auth/discussions/314"
-							>here</a
+							>Github</a
 						>.
 					</p>
 				</div>
@@ -80,10 +82,15 @@ const mainCollection = await db.collection("main").get();
 				<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
 					{
 						contributors.map((val) => (
-							<a href={val.profile} target="_blank">
+							<a
+								href={val.profile}
+								target="_blank"
+								aria-label={`${val.username} Github profile`}
+							>
 								<img
 									src={val.avatar}
 									class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100"
+									alt={val.username}
 								/>
 							</a>
 						))
