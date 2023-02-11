@@ -3,7 +3,11 @@ import { Show, createSignal } from "solid-js";
 
 export const MenuButton = () => {
 	return (
-		<button onClick={toggleMenuOpen} class="xl:hidden">
+		<button
+			onClick={toggleMenuOpen}
+			class="xl:hidden"
+			aria-label="Toggle menubar"
+		>
 			<div class="h-8 w-8 dark:text-zinc-200 fill-current">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -42,6 +46,7 @@ export const ThemeButton = () => {
 		<button
 			class="h-6 w-6 fill-current dark:text-zinc-200 text-black"
 			onClick={toggleTheme}
+			aria-label="Toggle theme"
 		>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
 				<Show when={theme() === "light"}>
