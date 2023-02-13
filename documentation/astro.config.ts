@@ -62,6 +62,9 @@ export default defineConfig({
 						};
 						const setImageProperties = () => {
 							if (node.type !== "element" || node.tagName !== "img") return;
+							if (!node.properties) {
+								node.properties = {};
+							}
 							const imageSrc = node.properties.src;
 							if (typeof imageSrc !== "string") return;
 							// reduce layout shift by setting image dimensions
