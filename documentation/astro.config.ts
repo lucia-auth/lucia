@@ -5,8 +5,6 @@ import tailwind from "@astrojs/tailwind";
 import solidJs from "@astrojs/solid-js";
 
 import type { Root, RootContent, Text } from "hast";
-import parseImage from "image-size";
-import * as path from "path";
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,6 +14,7 @@ export default defineConfig({
 			theme: "github-dark"
 		},
 		rehypePlugins: [
+			["./siena/index.js", {}],
 			[
 				"rehype-wrap-all",
 				{
@@ -60,22 +59,7 @@ export default defineConfig({
 							}
 							node.properties.class = classNames.join(" ");
 						};
-						const setImageProperties = () => {
-							if (node.type !== "element" || node.tagName !== "img") return;
-							if (!node.properties) {
-								node.properties = {};
-							}
-							const imageSrc = node.properties.src;
-							if (typeof imageSrc !== "string") return;
-							// reduce layout shift by setting image dimensions
-							const imageLocation = path.join("public", imageSrc);
-							const imageDimensions = parseImage(imageLocation);
-							node.properties.width = imageDimensions.width;
-							node.properties.height = imageDimensions.height;
-							node.properties.loading = "lazy";
-						};
 						setBlockquoteProperties();
-						setImageProperties();
 					}
 				}
 			]

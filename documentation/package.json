@@ -8,7 +8,8 @@
 		"start": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"astro": "astro"
+		"astro": "astro",
+		"siena": "tsc --project ./siena/tsconfig.json"
 	},
 	"dependencies": {
 		"@astrojs/solid-js": "^2.0.2",
@@ -18,8 +19,11 @@
 		"tailwindcss": "^3.2.6"
 	},
 	"devDependencies": {
+		"@types/sharp": "^0.31.1",
+		"image-size": "^1.0.2",
+		"rehype": "^12.0.1",
 		"rehype-rewrite": "^3.0.6",
 		"rehype-wrap-all": "^1.1.0",
-		"image-size": "^1.0.2"
+		"sharp": "^0.31.3"
 	}
 }
