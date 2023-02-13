@@ -14,7 +14,7 @@ export default defineConfig({
 			theme: "github-dark"
 		},
 		rehypePlugins: [
-			["./siena/index.js", {}],
+			["siena", {}],
 			[
 				"rehype-wrap-all",
 				{
