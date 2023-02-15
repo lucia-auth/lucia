@@ -5,6 +5,7 @@ import tailwind from "@astrojs/tailwind";
 import solidJs from "@astrojs/solid-js";
 
 import type { Root, RootContent, Text } from "hast";
+import siena from "siena";
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
 			theme: "github-dark"
 		},
 		rehypePlugins: [
-			["siena", {}],
+			siena,
 			[
 				"rehype-wrap-all",
 				{
