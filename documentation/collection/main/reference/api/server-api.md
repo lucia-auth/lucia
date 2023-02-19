@@ -750,7 +750,7 @@ const updateKeyPassword: (
 import { auth } from "$lib/server/lucia";
 
 try {
-	await auth.validateKeyPassword("email", "user@example.com", "123456");
+	await auth.updateKeyPassword("email", "user@example.com", "123456");
 } catch {
 	// invalid credentials
 }
