@@ -37,7 +37,7 @@ yarn add @lucia-auth/adapter-mongoose
 import adapter from "@lucia-auth/adapter-mongoose";
 import mongoose from "mongoose";
 
-// set model here
+// set models here like the User, Session, and Key models
 
 const auth = lucia({
 	// ,,,
@@ -49,6 +49,7 @@ You'll need to handle the database connection as well.
 
 ```ts
 // db.ts
+// e.g. "src/hooks.server.ts" if you're using SvelteKit
 import mongoose from "mongoose";
 
 mongoose.connect(mongoUri, options);
@@ -68,6 +69,8 @@ const User = mongoose.model(
 			_id: {
 				type: String
 			}
+			// here you can add custom fields for your user
+			// e.g. name, email, username, roles, etc.
 		},
 		{ _id: false }
 	)
@@ -128,3 +131,5 @@ const Key = mongoose.model(
 	)
 );
 ```
+
+> You can only add custom fields to the user model. The session and key models are managed by Lucia, so you can't add custom fields to them.
