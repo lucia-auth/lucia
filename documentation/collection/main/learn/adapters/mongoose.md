@@ -132,6 +132,4 @@ const Key = mongoose.model(
 );
 ```
 
-> #### `Note`
->
 > You can only add custom fields to the user model. The session and key models are managed by Lucia, so you can't add custom fields to them.
