@@ -68,10 +68,9 @@ const User = mongoose.model(
 		{
 			_id: {
 				type: String
-			},
-            // here you can add custom fields for your user
-            // e.g. name, email, username, roles, etc.
-           
+			}
+			// here you can add custom fields for your user
+			// e.g. name, email, username, roles, etc.
 		},
 		{ _id: false }
 	)
@@ -134,8 +133,5 @@ const Key = mongoose.model(
 ```
 
 > #### `Note`
+>
 > You can only add custom fields to the user model. The session and key models are managed by Lucia, so you can't add custom fields to them.
-
-### `Examples`
-
-* [SvelteKit + Mongoose Adapter](https://github.com/SkepticMystic/SKnext-Auth-Tailwind)
