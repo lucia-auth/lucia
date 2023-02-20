@@ -57,9 +57,9 @@ jobs:
               elif [[ $line == packages/adapter-test* ]];
               then
                   pkg_array+=("adapter-test")
-              elif [[ $line == packages/session-adapter-redis* ]];
+              elif [[ $line == packages/adapter-session-redis* ]];
               then
-                  pkg_array+=("session-adapter-redis")
+                  pkg_array+=("adapter-session-redis")
               fi
           done
 
@@ -126,8 +126,8 @@ jobs:
           if [[ $pkg_string == *"adapter-test"* ]]; then
             cd packages/adapter-test && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"session-adapter-redis"* ]]; then
-            cd packages/session-adapter-redis && eval "$build_cmd"
+          if [[ $pkg_string == *"adapter-session-redis"* ]]; then
+            cd packages/adapter-session-redis && eval "$build_cmd"
           fi
 
         env:

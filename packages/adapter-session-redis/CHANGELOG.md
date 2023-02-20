@@ -1,8 +1,14 @@
 # CHANGELOG
 
+## 0.1.0
+
+- [Breaking] Rename `redisClient.userSessions` to `redisClient.userSession`
+
+## Renamed to `@lucia-auth/adapter-session-redis`
+
 ## 0.3.1
 
-- Fix issues 
+- Fix issues
 
 ## 0.3.0
 

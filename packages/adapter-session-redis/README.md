@@ -1,4 +1,4 @@
-# `@lucia-auth/session-adapter-redis`
+# `@lucia-auth/adapter-session-redis`
 
 [Redis](https://redis.io) session adapter for Lucia
 
@@ -11,16 +11,14 @@
 ## Installation
 
 ```
-npm install @lucia-auth/session-adapter-redis
+npm install @lucia-auth/adapter-session-redis
 ```
 
 ## Lucia version compatibility
 
 | Redis adapter version | Lucia version |
 | --------------------- | ------------- |
-| 0.1.x                 | 0.1.x ~ 0.3.x |
-| 0.2.x                 | 0.4.x ~ 0.5.x |
-| 0.3.x                 | 0.6.x         |
+| 0.1.x                 | 0.6.x         |
 
 ## Testing
 
