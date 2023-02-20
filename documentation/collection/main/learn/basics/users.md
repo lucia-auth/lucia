@@ -3,7 +3,7 @@ _order: 0
 title: "Users"
 ---
 
-Users are stored in your database and are represented by an `User` object within Lucia:
+Users are stored in your database and are represented by a `User` object within Lucia:
 
 ```ts
 const user = {
