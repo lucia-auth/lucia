@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.3.1
+
+- Fix types
+- Fix tests
+
 ## 0.3.0
 
 - [Breaking] Update `testAdapter`, `testUserAdapter`, `testUserAdapter`
