@@ -126,6 +126,9 @@ jobs:
           if [[ $pkg_string == *"adapter-test"* ]]; then
             cd packages/adapter-test && eval "$build_cmd"
           fi
+          if [[ $pkg_string == *"session-adapter-redis"* ]]; then
+            cd packages/session-adapter-redis && eval "$build_cmd"
+          fi
 
         env:
           NODE_AUTH_TOKEN: ${{secrets.PNPM_AUTH_TOKEN}}

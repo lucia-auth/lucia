@@ -19,8 +19,8 @@
 		"lucia-auth",
 		"auth",
 		"authentication",
-		"redis",
-		"adapter"
+		"adapter",
+		"redis"
 	],
 	"repository": {
 		"type": "git",
