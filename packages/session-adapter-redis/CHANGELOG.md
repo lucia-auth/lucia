@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.3.1
+
+- Fix issues 
+
 ## 0.3.0
 
 - [Breaking] Require `lucia-auth` 0.6.0
