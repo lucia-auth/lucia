@@ -9,9 +9,9 @@ type QueryHandler<Schema> = {
 };
 
 export type LuciaQueryHandler = {
-	user: QueryHandler<TestUserSchema>;
-	session: QueryHandler<SessionSchema>;
-	key: QueryHandler<KeySchema>;
+	user?: QueryHandler<TestUserSchema>;
+	session?: QueryHandler<SessionSchema>;
+	key?: QueryHandler<KeySchema>;
 };
 
 export class Database {
@@ -20,9 +20,9 @@ export class Database {
 		return new User(this.queryHandler);
 	};
 	public clear = async () => {
-		await this.queryHandler.key.clear();
-		await this.queryHandler.session.clear();
-		await this.queryHandler.user.clear();
+		await this.queryHandler.key?.clear();
+		await this.queryHandler.session?.clear();
+		await this.queryHandler.user?.clear();
 	};
 	constructor(queryHandler: LuciaQueryHandler) {
 		this.queryHandler = queryHandler;
@@ -55,7 +55,7 @@ class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
 		for (const parentModel of this.parent) {
 			await parentModel.set();
 		}
-		await this.storeQueryHandler.insert(this.value as any);
+		await this.storeQueryHandler?.insert(this.value as any);
 	};
 	private safeCompare = (target: unknown) => {
 		if (typeof target !== "object" || target === null)
@@ -87,7 +87,7 @@ class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
 		);
 	};
 	public exists = async () => {
-		const databaseData = await this.storeQueryHandler.get();
+		const databaseData = (await this.storeQueryHandler?.get()) ?? [];
 		const existsInDatabase = databaseData.some(this.safeCompare);
 		if (existsInDatabase) return;
 		console.log("target:");
@@ -101,7 +101,7 @@ class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
 		throw new Error(`Target not found in store ${this.name}`);
 	};
 	public notExits = async () => {
-		const databaseData = await this.storeQueryHandler.get();
+		const databaseData = (await this.storeQueryHandler?.get()) ?? [];
 		const existsInDatabase = databaseData.some(this.safeCompare);
 		if (!existsInDatabase) return;
 		console.log("target:");
