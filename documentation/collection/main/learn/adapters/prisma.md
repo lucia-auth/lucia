@@ -17,7 +17,7 @@ const adapter: (client: PrismaClient) => AdapterFunction<Adapter>;
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of:
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of these:
 
 - `Prisma.PrismaClientKnownRequestError`
 - `Prisma.PrismaClientValidationError`
@@ -68,7 +68,7 @@ model User {
 
 ### `session`
 
-This is not required if you're only using the Prisma adapter for the `user` table via [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+This is not required if you're only using the Prisma adapter for the `user` table via the [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
 
 ```prisma
 model Session {
