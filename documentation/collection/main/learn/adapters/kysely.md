@@ -27,7 +27,7 @@ See [Database interfaces](#database-interfaces) for more information regarding t
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of
+The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of these:
 
 - `DatabaseError` for `pg`.
 - `QueryError` for `mysql2`
