@@ -17,7 +17,7 @@ This allows active users to stay logged in, while invalidating inactive users.
 
 ## Create new session
 
-[`createSession()`](/reference/api/server-api#createsession) method can be used to create new sessions for the user using the user's id.
+The [`createSession()`](/reference/api/server-api#createsession) method can be used to create new sessions for the user using the user's id.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -42,7 +42,7 @@ setResponseHeaders("set-cookie", serializedCookies.toString());
 
 ## Validate session ids
 
-[`validateSession()`](/reference/api/server-api#validatesession) method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored. You can check if the returned session is a new session with the `isFresh` property.
+The [`validateSession()`](/reference/api/server-api#validatesession) method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored. You can check if the returned session is a new session with the `isFresh` property.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -76,7 +76,7 @@ try {
 
 ### Getting the session from requests
 
-The recommended way to read the session id is by using [`validateRequestHeaders()`](/reference/api/server-api#validaterequestheaders). It takes the standard `Request` object, check for CSRF using the `Origin` header, and return the session id stored in the cookie. This does not validate the session it self.
+The recommended way to read the session id is by using [`validateRequestHeaders()`](/reference/api/server-api#validaterequestheaders). It takes the standard `Request` object, checks for CSRF using the `Origin` header, and returns the session id stored in the cookie. This does not validate the session itself.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -89,7 +89,7 @@ try {
 }
 ```
 
-Alternatively, you can read the cookie directly. The cookie name is provided as `SESSION_COOKIE_NAME` constant. Make sure to implement your own CSRF protection in this case.
+Alternatively, you can read the cookie directly. The cookie name is provided as a `SESSION_COOKIE_NAME` constant. Make sure to implement your own CSRF protection in this case.
 
 ```ts
 import { SESSION_COOKIE_NAME } from "lucia-auth";
@@ -100,7 +100,7 @@ const sessionId = getCookie(SESSION_COOKIE_NAME);
 
 ### Get session
 
-You can get non-dead sessions using [`getSession()`](/reference/api/server-api#getsession). This does not renew idle sessions and return both active and idle sessions.
+You can get non-dead sessions using [`getSession()`](/reference/api/server-api#getsession). This does not renew idle sessions and returns both active and idle sessions.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -139,7 +139,7 @@ await auth.invalidateAllUserSessions(userId);
 
 ## Manually renew sessions
 
-You can renew idle sessions with [`renewSession()`](/reference/api/server-api#renewsession). Renewing sessions is not required if validate sessions using [`validateSession()`](/reference/api/server-api#validatesession).
+You can renew idle sessions with [`renewSession()`](/reference/api/server-api#renewsession). Renewing sessions is not required if they're validated by using [`validateSession()`](/reference/api/server-api#validatesession).
 
 ```ts
 import { auth } from "./lucia.js";
@@ -153,7 +153,7 @@ try {
 
 ## Delete dead sessions
 
-Your database may be polluted with expired, dead sessions. Lucia will attempt to clean up your database on some method call with the default configuration, but you can manually delete all dead sessions of a user with [`deleteDeadUserSessions()`](/reference/api/server-api#deletedeadusersessions). You can disable the auto-database cleanup with [`autoDatabaseCleanup`](/reference/configure/lucia-configurations#autodatabasecleanup) configuration.
+Your database may be polluted with expired, dead sessions. Lucia will attempt to clean up your database on some method call with the default configuration, but you can manually delete all dead sessions of a user with [`deleteDeadUserSessions()`](/reference/api/server-api#deletedeadusersessions). You can disable the auto-database cleanup with the [`autoDatabaseCleanup`](/reference/configure/lucia-configurations#autodatabasecleanup) configuration.
 
 ## Configure sessions
 

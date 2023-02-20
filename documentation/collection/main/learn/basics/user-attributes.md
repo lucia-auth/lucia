@@ -5,13 +5,13 @@ title: "User attributes"
 
 In addition to the required user id, you can add any columns/fields to the user table to store user attributes.
 
-> It’s recommended to only store data for identification (eg. username) and access controls (eg. roles) inside the user table. Other data linked to the user should be stored in its own table.
+> It’s recommended to only store data for identification (e.g. username) and access controls (e.g. roles) inside the user table. Other data linked to the user should be stored in its own table.
 
 Lucia will re-throw the error from the database on user creation/update if the provided data violates constraints/rules.
 
 ## Populate `User` object
 
-By default, the `User` object (returned by methods like [`getUser()`](/reference/api/server-api#getuser)) only includes the user id:
+By default, the `User` object (returned by methods like [`getUser()`](/reference/api/server-api#getuser) only includes the user id:
 
 ```ts
 type User = {
@@ -77,7 +77,7 @@ await auth.createUser({
 
 ## Example
 
-To store user's username, for example, a `username` column should be added to the `user` table:
+To store a user's username, for example, a `username` column should be added to the `user` table:
 
 | column          | type   |
 | --------------- | ------ |

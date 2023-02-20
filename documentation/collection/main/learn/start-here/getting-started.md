@@ -23,9 +23,9 @@ Follow the guides below to set up your database:
 
 ## Framework integration
 
-You can use Lucia as is, or with one of the provided framework integration. These are wrapper libraries that provide APIs that make working with Lucia a bit more easier, so you still need to learn the APIs of the core Lucia library.
+You can use Lucia as is, or with one of the provided framework integrations. These are wrapper libraries that provide APIs that make working with Lucia a bit easier, though you'd still need to learn the APIs of the core Lucia library.
 
-If you're using one the supported frameworks, follow the "Getting started" guides below in favor of this page:
+If you're using one of the supported frameworks, follow the "Getting started" guides below instead of this page:
 
 - [SvelteKit](/sveltekit/start-here/getting-started)
 - [Astro](/astro/start-here/getting-started)
@@ -60,7 +60,7 @@ This module **should NOT be imported from the client**.
 
 ## Configure type definition
 
-In TypeScript declaration file (`.d.ts`), declare a `Lucia` namespace. The path in `import('./lucia').Auth;` is where you exported `auth` (`lucia()`).
+In a TypeScript declaration file (`.d.ts`), declare a `Lucia` namespace. The path in `import('./lucia').Auth;` is where you exported `auth` (`lucia()`).
 
 ```ts
 // app.d.ts

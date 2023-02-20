@@ -3,9 +3,9 @@ _order: 4
 title: "Error handling"
 ---
 
-Errors are handled by throwing [`LuciaError`](/reference/types/lucia-types#luciaerror) inside Lucia. A list of error messages are provided in [Errors](/reference/types/errors) reference and the API reference lists errors thrown by each method.
+Errors are handled by throwing [`LuciaError`](/reference/types/lucia-types#luciaerror) inside Lucia. A list of error messages is provided in the [Errors](/reference/types/errors) reference and the [API](/reference/api/server-api) reference lists errors thrown by each method.
 
-Using a try-catch block, the error message can be read with like so:
+Using a try-catch block, the error message can be read like this:
 
 ```ts
 import { LuciaError } from "lucia-auth";
@@ -22,9 +22,9 @@ try {
 }
 ```
 
-However, as Lucia uses external database adapters, it cannot catch every single database errors and it does not expect the adapters to do so. This means, errors that are expected (known errors - listed below) are caught and thrown using `LuciaError`, while unexpected errors, including ones related to user attributes, are handled by re-throwing the database error. This means errors like user attributes violating foreign or unique constraints and connection errors, must be handled by the user.
+However, as Lucia uses external database adapters, it cannot catch every single database error and it does not expect the adapters to do so. This means that errors that are expected (known errors - listed below) are caught and thrown using `LuciaError`, while unexpected errors, including ones related to user attributes, are handled by re-throwing the database error. This means that errors like user attributes violating foreign or unique constraints and connection errors must be handled by the user.
 
-For example, you may have a `username` unique column inside the `user` table. If you are using Prisma and try to create a user with an existing username using `createUser()`, it will throw a Prisma error and not `LuciaError`. This can be handled outside of Lucia or by providing an error handler to your database adapter.
+For example, you may have a `username` unique column inside the `user` table. If you're using Prisma and try to create a user with an existing username using `createUser()`, it will throw a Prisma error and not a `LuciaError`. This can be handled outside of Lucia or by providing an error handler to your database adapter.
 
 ```ts
 import { auth } from "./lucia.js";
