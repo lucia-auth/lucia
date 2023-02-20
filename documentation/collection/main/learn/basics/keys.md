@@ -3,11 +3,11 @@ _order: 1
 title: "Keys"
 ---
 
-Keys allow you to reference users using external data from a provider. It's defined using a provider id and a provider user id.
+Keys allow you to reference users using external data from a provider. They're defined using a provider id and a provider user id.
 
 ## Get user from keys
 
-[`getKeyUser()`](/reference/api/server-api#getkeyuser) can be used to get the user of the key by the provider id and provider user id. This will throw an error if the key doesn't exist.
+[`getKeyUser()`](/reference/api/server-api#getkeyuser) can be used to get the user of the key based on the provider id and provider user id. This will throw an error if the key doesn't exist.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -33,7 +33,7 @@ try {
 }
 ```
 
-> (warn) While the error will indicate if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password").
+> (warn) While the error will indicate it if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password").
 
 ## Get key
 
@@ -80,7 +80,7 @@ try {
 
 ## Update key password
 
-You can update the password of a key with [`updateKeyPassword()`](/reference/api/server-api#createkey). You can pass on `null` to remove the password.
+You can update the password of a key with [`updateKeyPassword()`](/reference/api/server-api#createkey). You can pass in `null` to remove the password.
 
 ```ts
 try {
