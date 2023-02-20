@@ -58,7 +58,7 @@ export const testSessionAdapter = async (
 			await user.set();
 			const session = user.session();
 			await adapter.setSession(session.value);
-			session.exists();
+			await session.exists();
 			await clearAll();
 		}
 	);

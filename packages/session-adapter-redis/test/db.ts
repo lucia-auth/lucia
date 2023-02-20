@@ -22,12 +22,10 @@ await userSessionInstance.connect();
 
 export const adapter = redis({
 	session: sessionInstance,
-	userSessions: userSessionInstance
+	userSession: userSessionInstance
 })(LuciaError);
 
 export const queryHandler: LuciaQueryHandler = {
-	user: {} as any,
-	key: {} as any,
 	session: {
 		get: async () => {
 			const sessionIds = await sessionInstance.keys("*");
@@ -37,6 +35,7 @@ export const queryHandler: LuciaQueryHandler = {
 			const sessions = sessionData
 				.filter((val): val is string => val !== null)
 				.map((data) => JSON.parse(data) as SessionSchema);
+
 			return sessions;
 		},
 		insert: async (session) => {
