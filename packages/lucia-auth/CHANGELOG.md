@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.6.1
+
+- Fix `validateKeyPassword` types
+
 ## 0.6.0
 
 - [Breaking] Update `UserAdapter`
