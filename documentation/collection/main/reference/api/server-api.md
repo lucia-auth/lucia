@@ -809,7 +809,7 @@ const validateKeyPassword: (
 	providerId: string,
 	providerUserId: string,
 	password: string
-) => Promise<User>;
+) => Promise<Key>;
 ```
 
 #### Parameter

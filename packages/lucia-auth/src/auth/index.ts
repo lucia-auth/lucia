@@ -204,7 +204,7 @@ export class Auth<C extends Configurations = any> {
 		providerId: string,
 		providerUserId: string,
 		password: string
-	): Promise<User> => {
+	): Promise<Key> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		const databaseKeyData = await this.adapter.getKey(keyId);
 		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
