@@ -20,7 +20,7 @@ export const transformDatabaseKeyData = (
 	};
 };
 
-export const getKeyOneTimeExpires = (
+export const getOneTimeKeyExpiration = (
 	duration: number | null | undefined
 ): null | Date => {
 	if (typeof duration !== "number") return null;

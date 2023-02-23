@@ -23,7 +23,7 @@ import {
 import { LuciaError, LuciaErrorConstructor } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { transformDatabaseSessionData } from "./session.js";
-import { transformDatabaseKeyData, getKeyOneTimeExpires } from "./key.js";
+import { transformDatabaseKeyData, getOneTimeKeyExpiration } from "./key.js";
 
 export { SESSION_COOKIE_NAME } from "./cookie.js";
 
@@ -177,7 +177,7 @@ export class Auth<C extends Configurations = any> {
 		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
 		const password = data.key.password;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
-		const oneTimeExpires = getKeyOneTimeExpires(data.key.oneTimeDuration);
+		const oneTimeExpires = getOneTimeKeyExpiration(data.key.oneTimeDuration);
 		const userData = await this.adapter.setUser(userId, userAttributes, {
 			id: keyId,
 			user_id: userId,
@@ -405,7 +405,7 @@ export class Auth<C extends Configurations = any> {
 		const hashedPassword = keyData.password
 			? await this.hash.generate(keyData.password)
 			: null;
-		const oneTimeExpires = getKeyOneTimeExpires(keyData.oneTimeDuration);
+		const oneTimeExpires = getOneTimeKeyExpiration(keyData.oneTimeDuration);
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
