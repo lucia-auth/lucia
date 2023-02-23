@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.7.0
+
+- [Feat] One time keys
+- [Breaking] `Adapter.getKey` deletes target key on read if `KeySchema.expires` is not `null`
+- [Breaking] Update `createUser` and `createKey` parameter types
+- [Breaking] Update `createUser` return type
+- [Fix] `getAllUserSessions` only returns active or idle sessions
+- Update type `Key`
+
 ## 0.6.2
 
 - [Fix] Allow character `:` in provider user id
