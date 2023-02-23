@@ -2,7 +2,7 @@
 
 ## 0.6.2
 
-- [Fix] Allow character `:` for provider user id
+- [Fix] Allow character `:` in provider user id
 
 ## 0.6.1
 
