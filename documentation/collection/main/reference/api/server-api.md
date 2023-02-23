@@ -79,13 +79,13 @@ const createKey: (
 
 #### Parameter
 
-| name                | type                          | description                                                                                                              |
-| ------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| userId              | `string`                      | the user id of the key to create                                                                                         |
-| data.providerId     | `string`                      | the provider id of the key                                                                                               |
-| data.providerUserId | `string`                      | the provider user id of the key                                                                                          |
-| data.password       | `string \| null`              | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |
-| data.timeout        | `number \| null \| undefined` | how long the key is valid for in seconds - only sets key to one time use if a value is provided                          |
+| name                | type             | description                                                                                                              | optional |
+| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- |
+| userId              | `string`         | the user id of the key to create                                                                                         |          |
+| data.providerId     | `string`         | the provider id of the key                                                                                               |          |
+| data.providerUserId | `string`         | the provider user id of the key                                                                                          |          |
+| data.password       | `string \| null` | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |          |
+| data.timeout        | `number \| null` | how long the key is valid for in seconds - only sets key to single use if a value is provided                          | true     |
 
 #### Returns
 
@@ -196,7 +196,7 @@ const response = new Response(null, {
 
 ### `createUser()`
 
-Creates a new user and a new primary key.
+Creates a new user and a new primary, persistent key.
 
 ```ts
 const createUser: (data: {
@@ -204,7 +204,6 @@ const createUser: (data: {
 		providerId: string;
 		providerUserId: string;
 		password: string | null;
-		timeout?: number | null;
 	} | null;
 	attributes: Lucia.UserAttributes;
 }) => Promise<User>;
@@ -212,14 +211,13 @@ const createUser: (data: {
 
 #### Parameter
 
-| name                    | type                                                                                     | description                                                                                     | optional |
-| ----------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------- |
-| data.key                | `null` \| `typeof data.key`                                                              |
-| data.key.providerId     | provider id of the key                                                                   |
-| data.key.providerUserId | `string`                                                                                 | the user id within the provider                                                                 |
-| data.key.password       | `string`                                                                                 | the password for the key                                                                        | true     |
-| data.key.timeout        | `number \| null \| undefined`                                                            | how long the key is valid for in seconds - only sets key to one time use if a value is provided |
-| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in `user` table                                                   | true     |
+| name                    | type                                                                      | description                                   |
+| ----------------------- | ------------------------------------------------------------------------- | --------------------------------------------- |
+| data.key                | `null` \| `typeof data.key`                                               |                                               |
+| data.key.providerId     | provider id of the key                                                    |                                               |
+| data.key.providerUserId | `string`                                                                  | the user id within the provider               |
+| data.key.password       | `string`                                                                  | the password for the key                      |
+| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional user data to store in `user` table |
 
 #### Returns
 
@@ -243,8 +241,7 @@ try {
 		key: {
 			providerId: "email",
 			providerUserId: "user@example.com",
-			password: "123456",
-			timeout: null
+			password: "123456"
 		},
 		attributes: {
 			username: "user123",
@@ -254,18 +251,6 @@ try {
 } catch {
 	// error
 }
-```
-
-```ts
-import { auth } from "$lib/server/lucia";
-
-await auth.createUser({
-	key: {
-		// ...
-		timeout: 60 * 60 // 1 hour
-	}
-	//...
-});
 ```
 
 ### `deleteDeadUserSessions()`
@@ -407,7 +392,7 @@ try {
 
 ### `getAllUserSessions()`
 
-Validate the user id and get all sessions of a user.
+Validate the user id and get all valid sessions of a user. Includes active and idle sessions, but not dead sessions.
 
 ```ts
 const getAllUserKeys: (userId: string) => Promise<Session[]>;

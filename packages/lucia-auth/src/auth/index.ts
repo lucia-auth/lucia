@@ -152,29 +152,21 @@ export class Auth<C extends Configurations = any> {
 			session
 		};
 	};
-	public createUser = async <
-		KeyOptions extends {
+	public createUser = async (data: {
+		key: {
 			providerId: string;
 			providerUserId: string;
 			password: string | null;
 			timeout?: number | null;
-		} | null
-	>(data: {
-		key: KeyOptions;
+		} | null;
 		attributes: Lucia.UserAttributes;
-	}): Promise<{
-		user: User;
-		key: KeyOptions extends null ? null : Key;
-	}> => {
+	}): Promise<User> => {
 		const userId = await this.generateUserId();
 		const userAttributes = data.attributes ?? {};
 		if (data.key === null) {
 			const userData = await this.adapter.setUser(userId, userAttributes, null);
 			const user = this.transformUserData(userData);
-			return {
-				user,
-				key: null as any
-			};
+			return user;
 		}
 		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
 		const password = data.key.password;
@@ -196,10 +188,7 @@ export class Auth<C extends Configurations = any> {
 			expires: oneTimeExpires?.getTime() ?? null
 		});
 		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		return {
-			user,
-			key: key satisfies Key as any
-		};
+		return user;
 	};
 	public updateUserAttributes = async (
 		userId: string,
@@ -400,20 +389,18 @@ export class Auth<C extends Configurations = any> {
 			providerId: string;
 			providerUserId: string;
 			password: string | null;
-			timeout?: number | null;
 		}
 	): Promise<Key> => {
 		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
 		const hashedPassword = keyData.password
 			? await this.hash.generate(keyData.password)
 			: null;
-		const oneTimeExpires = getOneTimeKeyExpiration(keyData.timeout);
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
 			primary: false,
-			expires: oneTimeExpires?.getTime() ?? null
+			expires: null
 		});
 		return {
 			providerId: keyData.providerId,
@@ -421,7 +408,7 @@ export class Auth<C extends Configurations = any> {
 			isPrimary: false,
 			isPasswordDefined: !!keyData.password,
 			userId,
-			oneTimeExpires
+			oneTimeExpires: null
 		};
 	};
 	public deleteKey = async (providerId: string, providerUserId: string) => {

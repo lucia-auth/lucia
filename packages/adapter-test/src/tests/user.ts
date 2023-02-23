@@ -53,7 +53,7 @@ export const testUserAdapter = async (
 	);
 	await test(
 		"setUser()",
-		"Set to add user and regular key, and insert a user into user table",
+		"Set to add user and persistent key, and insert a user into user table",
 		async () => {
 			const user = database.user();
 			const key = user.key({
@@ -72,7 +72,7 @@ export const testUserAdapter = async (
 	);
 	await test(
 		"setUser()",
-		"Set to add user and regular key, and return the created user",
+		"Set to add user and persistent key, and return the created user",
 		async () => {
 			const user = database.user();
 			const key = user.key({
@@ -153,7 +153,7 @@ export const testUserAdapter = async (
 			await clearAll();
 		}
 	);
-	await test("getKey()", "Returns the correct regular key", async () => {
+	await test("getKey()", "Returns the correct persistent key", async () => {
 		const key = database.user().key({
 			isPrimary: false,
 			hasPassword: true,
@@ -164,7 +164,7 @@ export const testUserAdapter = async (
 		key.compare(result);
 		await clearAll();
 	});
-	await test("getKey()", "Returns the correct one time key", async () => {
+	await test("getKey()", "Returns the correct single key", async () => {
 		const key = database.user().key({
 			isPrimary: false,
 			hasPassword: true,
@@ -177,7 +177,7 @@ export const testUserAdapter = async (
 	});
 	await test(
 		"getKey()",
-		"Getting valid one time key deletes from database",
+		"Getting valid single use key deletes from database",
 		async () => {
 			const key = database.user().key({
 				isPrimary: false,
@@ -190,7 +190,7 @@ export const testUserAdapter = async (
 			await clearAll();
 		}
 	);
-	await test("setKey()", "Insert a new regular key with password", async () => {
+	await test("setKey()", "Insert a new persistent key with password", async () => {
 		const user = database.user();
 		await user.set();
 		const key = user.key({
@@ -204,7 +204,7 @@ export const testUserAdapter = async (
 	});
 	await test(
 		"setKey()",
-		"Insert a new regular key with null password",
+		"Insert a new persistent key with null password",
 		async () => {
 			const user = database.user();
 			await user.set();
@@ -220,7 +220,7 @@ export const testUserAdapter = async (
 	);
 	await test(
 		"setKey()",
-		"Insert a new one time key with null password",
+		"Insert a new single use key with null password",
 		async () => {
 			const user = database.user();
 			await user.set();
@@ -234,7 +234,7 @@ export const testUserAdapter = async (
 			await clearAll();
 		}
 	);
-	await test("setKey()", "Insert a new primary regular key", async () => {
+	await test("setKey()", "Insert a new primary persistent key", async () => {
 		const user = database.user();
 		await user.set();
 		const key = user.key({
