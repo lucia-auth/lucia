@@ -30,4 +30,5 @@ type KeyDoc = {
 	user_id: string;
 	hashed_password: string | null;
 	primary: boolean;
+	expires: number | null
 };

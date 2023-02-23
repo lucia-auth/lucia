@@ -109,6 +109,11 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 			getKey: async (key) => {
 				const keyDoc = await Key.findById(key).lean();
 				if (!keyDoc) return null;
+				if (keyDoc.expires !== null) {
+					await Key.deleteOne({
+						_id: keyDoc._id
+					});
+				}
 				return convertKeyDoc(keyDoc);
 			},
 			setKey: async (key) => {
