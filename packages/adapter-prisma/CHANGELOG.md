@@ -1,12 +1,16 @@
 # CHANGELOG
 
+## 0.5.0
+
+- [Breaking] Require `lucia-auth` 0.7.x
+
 ## 0.4.0
 
-- [Breaking] Require `lucia-auth` 0.6.0
+- [Breaking] Require `lucia-auth` 0.6.x
 
 ## 0.3.0
 
-- [Breaking] Require `lucia-auth` 0.5.0
+- [Breaking] Require `lucia-auth` 0.5.x
 
 ## 0.2.2
 
@@ -18,7 +22,7 @@
 
 ## 0.2.0
 
-- [Breaking] Require `lucia-auth` 0.4.0
+- [Breaking] Require `lucia-auth` 0.4.x
 - [Breaking] Remove global error handler
 
 ## 0.1.4
