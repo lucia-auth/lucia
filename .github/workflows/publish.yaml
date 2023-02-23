@@ -27,19 +27,16 @@ jobs:
               if [[ $line == packages/lucia-auth* ]];
               then
                   pkg_array+=("lucia-auth")
-              elif [[ $line == packages/sveltekit* ]];
+              elif [[ $line == packages/integration-sveltekit* ]];
               then
                   pkg_array+=("sveltekit")
-              elif [[ $line == packages/express* ]];
-              then
-                  pkg_array+=("express")
-              elif [[ $line == packages/nextjs* ]];
+              elif [[ $line == packages/integration-nextjs* ]];
               then
                   pkg_array+=("nextjs")
-              elif [[ $line == packages/astro* ]];
+              elif [[ $line == packages/integration-astro* ]];
               then
                   pkg_array+=("astro")
-              elif [[ $line == packages/oauth* ]];
+              elif [[ $line == packages/integration-oauth* ]];
               then
                   pkg_array+=("oauth")
               elif [[ $line == packages/adapter-mongoose* ]];
@@ -98,9 +95,6 @@ jobs:
           fi
           if [[ $pkg_string == *"sveltekit"* ]]; then
             cd packages/sveltekit && eval "$build_cmd"
-          fi
-          if [[ $pkg_string == *"express"* ]]; then
-            cd packages/express && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"nextjs"* ]]; then
             cd packages/nextjs && eval "$build_cmd"
