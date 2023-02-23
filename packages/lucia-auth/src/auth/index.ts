@@ -152,17 +152,19 @@ export class Auth<C extends Configurations = any> {
 			session
 		};
 	};
-	public createUser = async (data: {
-		key: {
+	public createUser = async <
+		KeyOptions extends {
 			providerId: string;
 			providerUserId: string;
 			password: string | null;
 			oneTimeDuration?: number | null;
-		} | null;
+		} | null
+	>(data: {
+		key: KeyOptions;
 		attributes: Lucia.UserAttributes;
 	}): Promise<{
 		user: User;
-		key: Key | null;
+		key: KeyOptions extends null ? null : Key;
 	}> => {
 		const userId = await this.generateUserId();
 		const userAttributes = data.attributes ?? {};
@@ -171,7 +173,7 @@ export class Auth<C extends Configurations = any> {
 			const user = this.transformUserData(userData);
 			return {
 				user,
-				key: null
+				key: null as any
 			};
 		}
 		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
@@ -196,7 +198,7 @@ export class Auth<C extends Configurations = any> {
 		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
 		return {
 			user,
-			key
+			key: key satisfies Key as any
 		};
 	};
 	public updateUserAttributes = async (
