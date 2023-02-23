@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## 0.6.2
+
+- [Fix] Allow `:` character for provider id and provider user id
+
 ## 0.6.1
 
-- Fix `validateKeyPassword` types
+- [Fix] `validateKeyPassword` types
 
 ## 0.6.0
 

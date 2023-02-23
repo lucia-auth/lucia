@@ -63,7 +63,7 @@ const auth = lucia(configs);
 
 ### `createKey()`
 
-Creates a new non-primary key for a user.
+Creates a new non-primary key for a user. **`providerId` cannot include character `:`**. 
 
 ```ts
 const createKey: (
