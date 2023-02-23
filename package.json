@@ -1,5 +1,5 @@
 {
-	"name": "lucia-auth",
+	"name": "lucia",
 	"version": "0.0.1",
 	"description": "monorepo for lucia-auth",
 	"scripts": {
