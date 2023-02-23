@@ -137,7 +137,7 @@ const deleteUser: (userId: string) => Promise<void>;
 
 ### `getKey()`
 
-Gets a key with the the target id (`key(id)`). Returns `null` is the user doesn't exist.
+Gets a key with the the target id (`key(id)`). Returns `null` is the user doesn't exist. Inside a transaction, it should delete the key if type of `KeySchema["expires"]` is `number`.
 
 ```ts
 const getKey: (keyId: string) => Promise<KeySchema | null>;

@@ -63,7 +63,7 @@ const auth = lucia(configs);
 
 ### `createKey()`
 
-Creates a new non-primary key for a user. **`providerId` cannot include character `:`**. 
+Creates a new non-primary key for a user. **`providerId` cannot include character `:`**.
 
 ```ts
 const createKey: (
@@ -72,18 +72,20 @@ const createKey: (
 		providerId: string;
 		providerUserId: string;
 		password: string | null;
+		timeout?: number | null;
 	}
 ) => Promise<Key>;
 ```
 
 #### Parameter
 
-| name                | type     | description                                                                                                              |
-| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| userId              | `string` | the user id of the key to create                                                                                         |
-| data.providerId     | `string` | the provider id of the key                                                                                               |
-| data.providerUserId | `string` | the provider user id of the key                                                                                          |
-| data.password       | `string` | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |
+| name                | type                          | description                                                                                                              |
+| ------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| userId              | `string`                      | the user id of the key to create                                                                                         |
+| data.providerId     | `string`                      | the provider id of the key                                                                                               |
+| data.providerUserId | `string`                      | the provider user id of the key                                                                                          |
+| data.password       | `string \| null`              | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |
+| data.timeout        | `number \| null \| undefined` | how long the key is valid for in seconds - only sets key to one time use if a value is provided                          |
 
 #### Returns
 
@@ -111,6 +113,15 @@ try {
 } catch {
 	// invalid user id
 }
+```
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+await auth.createKey(userId, {
+	// ...
+	timeout: 60 * 60 // 1 hour
+});
 ```
 
 ### `createSession()`
@@ -193,6 +204,7 @@ const createUser: (data: {
 		providerId: string;
 		providerUserId: string;
 		password: string | null;
+		timeout?: number | null;
 	} | null;
 	attributes: Lucia.UserAttributes;
 }) => Promise<User>;
@@ -200,13 +212,14 @@ const createUser: (data: {
 
 #### Parameter
 
-| name                    | type                                                                                     | description                                   | optional |
-| ----------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------- | -------- |
+| name                    | type                                                                                     | description                                                                                     | optional |
+| ----------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------- |
 | data.key                | `null` \| `typeof data.key`                                                              |
 | data.key.providerId     | provider id of the key                                                                   |
-| data.key.providerUserId | `string`                                                                                 | the user id within the provider               |
-| data.key.password       | `string`                                                                                 | the password for the key                      | true     |
-| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in `user` table | true     |
+| data.key.providerUserId | `string`                                                                                 | the user id within the provider                                                                 |
+| data.key.password       | `string`                                                                                 | the password for the key                                                                        | true     |
+| data.key.timeout        | `number \| null \| undefined`                                                            | how long the key is valid for in seconds - only sets key to one time use if a value is provided |
+| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in `user` table                                                   | true     |
 
 #### Returns
 
@@ -230,7 +243,8 @@ try {
 		key: {
 			providerId: "email",
 			providerUserId: "user@example.com",
-			password: "123456"
+			password: "123456",
+			timeout: null
 		},
 		attributes: {
 			username: "user123",
@@ -240,6 +254,18 @@ try {
 } catch {
 	// error
 }
+```
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+await auth.createUser({
+	key: {
+		// ...
+		timeout: 60 * 60 // 1 hour
+	}
+	//...
+});
 ```
 
 ### `deleteDeadUserSessions()`

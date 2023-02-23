@@ -157,7 +157,7 @@ export class Auth<C extends Configurations = any> {
 			providerId: string;
 			providerUserId: string;
 			password: string | null;
-			oneTimeDuration?: number | null;
+			timeout?: number | null;
 		} | null
 	>(data: {
 		key: KeyOptions;
@@ -179,7 +179,7 @@ export class Auth<C extends Configurations = any> {
 		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
 		const password = data.key.password;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
-		const oneTimeExpires = getOneTimeKeyExpiration(data.key.oneTimeDuration);
+		const oneTimeExpires = getOneTimeKeyExpiration(data.key.timeout);
 		const userData = await this.adapter.setUser(userId, userAttributes, {
 			id: keyId,
 			user_id: userId,
@@ -400,14 +400,14 @@ export class Auth<C extends Configurations = any> {
 			providerId: string;
 			providerUserId: string;
 			password: string | null;
-			oneTimeDuration?: number | null;
+			timeout?: number | null;
 		}
 	): Promise<Key> => {
 		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
 		const hashedPassword = keyData.password
 			? await this.hash.generate(keyData.password)
 			: null;
-		const oneTimeExpires = getOneTimeKeyExpiration(keyData.oneTimeDuration);
+		const oneTimeExpires = getOneTimeKeyExpiration(keyData.timeout);
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
