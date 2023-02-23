@@ -5,7 +5,6 @@ title: "Keys"
 
 Keys allow you to reference users using external data from a provider. They're defined using a provider id and a provider user id. They can be persistent or single use, which is useful when implementing tokens for verification.
 
-
 ## Get key
 
 You can get the key data using [`getKey()`](/reference/api/server-api#getkey).
@@ -85,7 +84,7 @@ try {
 
 ### Single use keys
 
-You can create single use keys by providing `timeout` property, which is the number of seconds the key is valid for. 
+You can create single use keys by providing `timeout` property, which is the number of seconds the key is valid for.
 
 ```ts
 try {
@@ -123,3 +122,17 @@ try {
 	// invalid key
 }
 ```
+
+## Using single use keys
+
+Single use keys allow you to implement tokens for email verification and password resets. For example, to implement a password reset mechanism,
+
+1. Find the user with the target email
+2. Generate a long, random string if it exists
+3. Create a new single use key with `"password-reset"` as the provider id and the random string as the provider user id
+4. Send a link with the token inside search query params
+
+To implement one-time passwords for email verification,
+
+1. Generate a random string (8 chars)
+2. Create a new single use key with `"email-verification"` as the provider id, the user id as as the provider user id, and the random string as the password
