@@ -9,6 +9,7 @@ import { type Q, db } from "@lib/db";
 type Document = DocumentQuery<Q["main"]["*"]["*"]>;
 
 type Props = {
+	page: string,
 	doc: Document;
 	collections: CollectionQuery<Q["main"]>["_collections"];
 };
@@ -25,10 +26,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		const pathSegements = doc._path.split("/"); // ["integration", "astro", "start-here", "getting-started"]
 		return {
 			params: {
-				main: pathSegements[1],
-				path: pathSegements.slice(2).join("/")
+				main: pathSegements.slice(1).join("/")
 			},
 			props: {
+				page: pathSegements[1],
 				doc,
 				collections: mainCollection._collections
 			} satisfies Props
@@ -36,7 +37,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	});
 };
 
-const { doc, collections } = Astro.props;
+const { doc, collections, page } = Astro.props;
 ---
 
 <DocumentLayout doc={doc}>
@@ -44,7 +45,7 @@ const { doc, collections } = Astro.props;
 		client:load
 		collections={collections}
 		currentPath={Astro.url.pathname}
-		initialCollectionId={Astro.params.main}
+		initialCollectionId={page}
 		slot="table"
 	/>
 	<doc._Content slot="content" />

@@ -29,8 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		if (!collection) throw new Error();
 		return {
 			params: {
-				integration: pathSegements[1],
-				path: pathSegements.slice(2).join("/")
+				integration: pathSegements.slice(1).join("/")
 			},
 			props: {
 				doc,
