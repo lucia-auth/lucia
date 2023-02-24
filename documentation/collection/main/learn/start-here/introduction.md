@@ -17,8 +17,16 @@ It's not a plug 'n play library like NextAuth, nor an auth platform like Firebas
 Working with it looks something like this. In the code below, you're creating a new user with an email/password method, creating a new session, and creating a cookie that you set to the user.
 
 ```ts
-const user = await auth.createUser("email", email, {
-	password
+const user = await auth.createUser({
+	key: {
+		providerId: "email",
+		providerUserId: email,
+		password
+	},
+	attributes: {
+		email,
+		username
+	}
 });
 const session = await auth.createSession(user.userId);
 const sessionCookie = auth.createSessionCookie(session);
