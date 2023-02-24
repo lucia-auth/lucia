@@ -28,6 +28,14 @@ export type TransformDocumentToDocumentResult<
 	  }
 	: {});
 
+type AllNestedDocuments<
+	C extends CollectionConfig,
+	BaseCollectionId extends string
+> = (
+	| C["docSchema"] extends {} ? TransformDocumentToDocumentResult<C, string, BaseCollectionId> : [][number]
+	| (C["_"] extends {} ? AllNestedDocuments<C["_"], BaseCollectionId>[number] : [][number])
+)[];
+
 export type TransformConfigToResult<
 	C extends CollectionConfig,
 	BaseCollectionId extends string
@@ -41,6 +49,7 @@ export type TransformConfigToResult<
 		? TransformConfigToResult<C["_"], BaseCollectionId>[]
 		: [];
 	_documents: TransformDocumentToDocumentResult<C, string, BaseCollectionId>[];
+	_getAllDocuments: () => AllNestedDocuments<C, BaseCollectionId>;
 } & (C["schema"] extends {}
 	? {
 			[K in keyof C["schema"]]: C["schema"][K]["typeValue"][0];

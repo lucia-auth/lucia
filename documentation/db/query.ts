@@ -195,6 +195,16 @@ class Collection<
 				_collections: collections,
 				_baseCollectionId: path[0],
 				_documents: documents,
+				_getAllDocuments: () => {
+					const getCollectionDocuments = (
+						collections: CollectionNode[]
+					): DocumentNode[] => {
+						return collections.flatMap(nestedCollection => {
+							return [...nestedCollection._documents, ...getCollectionDocuments(nestedCollection._collections)]
+						})
+					};
+					return getCollectionDocuments(collections)
+				},
 				...Object.fromEntries(
 					Object.entries(metaData).filter(([key]) => !key.startsWith("_"))
 				)
@@ -248,6 +258,7 @@ type CollectionNode = {
 	_baseCollectionId: string;
 	_collections: CollectionNode[];
 	_documents: DocumentNode[];
+	_getAllDocuments: () => DocumentNode[];
 };
 
 type DocumentNode = {

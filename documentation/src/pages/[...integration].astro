@@ -2,25 +2,13 @@
 import ContentTable from "@components/doc/content-table";
 import DocumentLayout from "@layouts/DocumentLayout.astro";
 
-import type { CollectionQuery, DocumentQuery } from "@db/types";
 import type { GetStaticPaths } from "astro";
-import { type Q, db } from "@lib/db";
+import { db } from "@lib/db";
+import type { GetPropsFromGetStaticPaths } from "@lib/astro";
 
-type Document = DocumentQuery<Q["integration"]["*"]["*"]>;
-
-type Props = {
-	doc: Document;
-	collection: CollectionQuery<Q["integration"]["*"]>;
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = (async () => {
 	const integrationCollection = await db.collection("integration").get();
-	const documents = integrationCollection._collections.reduce((prev, curr) => {
-		return [
-			...prev,
-			...curr._collections.reduce((prev, curr) => [...prev, ...curr._documents], [] as Document[])
-		];
-	}, [] as Document[]);
+	const documents = integrationCollection._getAllDocuments();
 	return documents.map((doc) => {
 		const pathSegements = doc._path.split("/"); // ["integration", "astro", "start-here", "getting-started"]
 		const collection = integrationCollection._collections.find(
@@ -34,10 +22,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 			props: {
 				doc,
 				collection
-			} satisfies Props
+			}
 		};
 	});
-};
+}) satisfies GetStaticPaths;
+
+type Props = GetPropsFromGetStaticPaths<typeof getStaticPaths>;
 
 const { doc, collection } = Astro.props;
 ---
