@@ -9,12 +9,12 @@ import {
 	OAuthProvider
 } from "./index.js";
 
-interface Configs extends OAuthConfig {
+export interface Configs extends OAuthConfig {
 	redirectUri: string;
 	forceVerify?: boolean;
 }
 
-class Twitch<A extends Auth> implements OAuthProvider<A> {
+export class Twitch<A extends Auth> implements OAuthProvider<A> {
 	constructor(auth: A, configs: Configs) {
 		this.auth = auth;
 		this.clientId = configs.clientId;
@@ -132,7 +132,7 @@ const twitch = <A extends Auth>(auth: A, configs: Configs) => {
 
 export default twitch;
 
-interface TwitchUser {
+export interface TwitchUser {
 	id: string;
 	login: string;
 	display_name: string;

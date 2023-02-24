@@ -9,11 +9,11 @@ import {
 	OAuthProvider
 } from "./index.js";
 
-interface Configs extends OAuthConfig {
+export interface Configs extends OAuthConfig {
 	redirectUri: string;
 }
 
-class Google<A extends Auth> implements OAuthProvider<A> {
+export class Google<A extends Auth> implements OAuthProvider<A> {
 	constructor(auth: A, configs: Configs) {
 		this.auth = auth;
 		this.clientId = configs.clientId;
@@ -129,7 +129,7 @@ const google = <A extends Auth>(auth: A, configs: Configs) => {
 
 export default google;
 
-interface GoogleUser {
+export interface GoogleUser {
 	sub: string;
 	name: string;
 	given_name: string;

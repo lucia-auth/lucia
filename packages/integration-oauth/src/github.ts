@@ -9,9 +9,9 @@ import {
 	OAuthProvider
 } from "./index.js";
 
-interface Configs extends OAuthConfig {}
+export interface Configs extends OAuthConfig {}
 
-class Github<A extends Auth> implements OAuthProvider<A> {
+export class Github<A extends Auth> implements OAuthProvider<A> {
 	constructor(auth: A, configs: Configs) {
 		this.auth = auth;
 		this.clientId = configs.clientId;
@@ -107,7 +107,7 @@ const github = <A extends Auth>(auth: A, configs: Configs) => {
 
 export default github;
 
-interface GithubUser {
+export interface GithubUser {
 	login: string;
 	id: number;
 	node_id: string;
