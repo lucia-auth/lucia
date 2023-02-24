@@ -35,7 +35,7 @@ For example, for email/password, "email" can be the provider id, the user’s em
 
 #### Persistent vs. Single use
 
-Keys can either be persistent or single use and can have an expiration. Persistent keys are useful for handling normal sign ins, while single use keys can be used as tokens for OTPs and email verification.
+Keys can either be persistent or single use and can have an expiration. Persistent keys are useful for handling normal sign ins, while single use keys can be used as tokens for email verification and password reset.
 
 #### Primary keys
 
