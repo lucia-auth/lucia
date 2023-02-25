@@ -3,7 +3,7 @@
 		"allowJs": true,
 		"checkJs": true,
 		"noImplicitAny": true,
-		"module": "ES2022",
+		"module": "UMD",
 		"moduleResolution": "NodeNext",
 		"target": "ES2022",
 		"allowSyntheticDefaultImports": true,
