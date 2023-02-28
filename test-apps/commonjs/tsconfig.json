@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"lib": ["esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"esModuleInterop": true,
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"outDir": "./dist",
+		"baseUrl": ".",
+		"declaration": true,
+		"declarationDir": "dist",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"incremental": true,
+		"allowUmdGlobalAccess": true
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
+}

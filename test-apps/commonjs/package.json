@@ -1,0 +1,27 @@
+{
+	"name": "commonjs",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "pnpm prisma generate && tsc"
+	},
+	"dependencies": {
+		"@lucia-auth/adapter-prisma": "workspace:*",
+		"@lucia-auth/oauth": "workspace:*",
+		"@prisma/client": "^4.7.0",
+		"encoding": "^0.1.13",
+		"eslint": "8.26.0",
+		"eslint-config-next": "13.0.1",
+		"lucia-auth": "workspace:*",
+		"typescript": "4.x",
+		"zod": "^3.20.6"
+	},
+	"devDependencies": {
+		"@types/express": "^4.17.17",
+		"@types/node": "18.11.9",
+		"express": "^4.18.2",
+		"prisma": "^4.7.0"
+	}
+}
