@@ -9,12 +9,12 @@ import {
 	OAuthProvider
 } from "./index.js";
 
-interface Configs extends OAuthConfig {
+export interface Configs extends OAuthConfig {
 	redirectUri: string;
 	allMemberships?: boolean;
 }
 
-class Patreon<A extends Auth> implements OAuthProvider<A> {
+export class Patreon<A extends Auth> implements OAuthProvider<A> {
 	constructor(auth: A, configs: Configs) {
 		this.auth = auth;
 		this.clientId = configs.clientId;
@@ -227,7 +227,7 @@ interface PatreonMembershipRaw {
 		};
 	};
 }
-interface PatreonUser {
+export interface PatreonUser {
 	type: "user";
 	attributes: {
 		about: string | null;

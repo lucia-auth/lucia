@@ -9,7 +9,7 @@ import {
 	CreateUserAttributesParameter
 } from "./index.js";
 
-interface Configs extends OAuthConfig {
+export interface Configs extends OAuthConfig {
 	redirectUri: string;
 }
 
@@ -29,7 +29,7 @@ const encodeBase64 = (s: string) => {
 	return btoa(s);
 };
 
-class Reddit<A extends Auth> implements OAuthProvider<A> {
+export class Reddit<A extends Auth> implements OAuthProvider<A> {
 	constructor(auth: A, configs: Configs) {
 		this.auth = auth;
 		this.clientId = configs.clientId;
@@ -135,7 +135,7 @@ const reddit = <A extends Auth>(auth: A, configs: Configs) => {
 
 export default reddit;
 
-interface RedditUser {
+export interface RedditUser {
 	is_employee: boolean;
 	seen_layout_switch: boolean;
 	has_visited_new_profile: boolean;
