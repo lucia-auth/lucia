@@ -16,9 +16,9 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
+		"astro",
 		"auth",
-		"authentication",
-		"astro"
+		"authentication"
 	],
 	"repository": {
 		"type": "git",

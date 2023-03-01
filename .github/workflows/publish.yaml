@@ -48,9 +48,6 @@ jobs:
               elif [[ $line == packages/adapter-kysely* ]];
               then
                   pkg_array+=("adapter-kysely")
-              elif [[ $line == packages/adapter-fauna* ]];
-              then
-                  pkg_array+=("adapter-fauna")
               elif [[ $line == packages/adapter-test* ]];
               then
                   pkg_array+=("adapter-test")
@@ -93,17 +90,17 @@ jobs:
           if [[ $pkg_string == *"lucia-auth"* ]]; then
             cd packages/lucia-auth && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"sveltekit"* ]]; then
-            cd packages/sveltekit && eval "$build_cmd"
+          if [[ $pkg_string == *"integration-sveltekit"* ]]; then
+            cd packages/integration-sveltekit && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"nextjs"* ]]; then
-            cd packages/nextjs && eval "$build_cmd"
+          if [[ $pkg_string == *"integration-nextjs"* ]]; then
+            cd packages/integration-nextjs && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"astro"* ]]; then
-            cd packages/astro && eval "$build_cmd"
+          if [[ $pkg_string == *"integration-astro"* ]]; then
+            cd packages/integration-astro && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"oauth"* ]]; then
-            cd packages/oauth && eval "$build_cmd"
+          if [[ $pkg_string == *"integration-oauth"* ]]; then
+            cd packages/integration-oauth && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"adapter-mongoose"* ]]; then
             cd packages/adapter-mongoose && eval "$build_cmd"
@@ -113,9 +110,6 @@ jobs:
           fi
           if [[ $pkg_string == *"adapter-kysely"* ]]; then
             cd packages/adapter-kysely && eval "$build_cmd"
-          fi
-          if [[ $pkg_string == *"adapter-fauna"* ]]; then
-            cd packages/adapter-fauna && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"adapter-test"* ]]; then
             cd packages/adapter-test && eval "$build_cmd"

@@ -16,11 +16,11 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
-		"authentication",
-		"auth",
 		"sveltekit",
 		"svelte-kit",
-		"svelte"
+		"svelte",
+		"authentication",
+		"auth"
 	],
 	"repository": {
 		"type": "git",
