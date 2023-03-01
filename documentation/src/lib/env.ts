@@ -2,12 +2,12 @@ const loadEnv = async () => {
 	if (import.meta.env.PROD) {
 		return new Map<string, string | undefined>(Object.entries(process.env));
 	}
-	const unresolvedEnvFile = Object.values(
+	const resolveEnvFile = Object.values(
 		import.meta.glob("/.env", {
 			as: "raw"
 		})
 	)[0];
-	const rawEnvFile = await unresolvedEnvFile();
+	const rawEnvFile = await resolveEnvFile();
 	const envVars = rawEnvFile.split("\n");
 	const envMap = new Map<string, undefined | string>();
 	for (const envVar of envVars) {
