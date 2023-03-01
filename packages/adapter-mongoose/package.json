@@ -17,12 +17,12 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
-		"mongodb",
-		"mongo",
-		"mongoose",
 		"auth",
 		"authentication",
-		"adapter"
+		"adapter",
+		"mongodb",
+		"mongo",
+		"mongoose"
 	],
 	"repository": {
 		"type": "git",

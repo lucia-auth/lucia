@@ -20,7 +20,8 @@
 		"auth",
 		"authentication",
 		"adapter",
-		"redis"
+		"redis",
+		"session"
 	],
 	"repository": {
 		"type": "git",

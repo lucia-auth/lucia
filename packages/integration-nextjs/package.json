@@ -16,10 +16,10 @@
 	"keywords": [
 		"lucia",
 		"lucia-auth",
-		"nextjs",
-		"react",
 		"auth",
-		"authentication"
+		"authentication",
+		"nextjs",
+		"react"
 	],
 	"repository": {
 		"type": "git",

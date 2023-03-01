@@ -19,6 +19,7 @@
 		"authentication",
 		"auth",
 		"sveltekit",
+		"svelte-kit",
 		"svelte"
 	],
 	"repository": {
