@@ -22,12 +22,12 @@
 		},
 		{
 			"source": "/learn",
-			"destination": "/oauth/start-here/getting-started",
+			"destination": "/learn/start-here/introduction",
 			"permanent": true
 		},
 		{
 			"source": "/reference",
-			"destination": "/oauth/start-here/getting-started",
+			"destination": "/reference/api/server-api",
 			"permanent": true
 		}
 	]
