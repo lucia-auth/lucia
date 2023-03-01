@@ -7,6 +7,8 @@ import { envVar } from "@lib/env";
 
 const GITHUB_API_KEY = await envVar("GITHUB_API_KEY");
 
+console.log(GITHUB_API_KEY, typeof GITHUB_API_KEY)
+
 const contributorsResponse = await fetch(
 	"https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
 	// {
