@@ -1,11 +1,13 @@
 {
 	"name": "commonjs",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "CommonJs Express Lucia Test App",
+	"main": "dist/index.js",
+	"type": "commonjs",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "pnpm prisma generate && tsc"
+		"build": "pnpm prisma generate && tsc",
+		"start": "node dist/index.js"
 	},
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "workspace:*",

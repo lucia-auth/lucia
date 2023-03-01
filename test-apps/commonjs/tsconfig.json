@@ -7,16 +7,14 @@
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"esModuleInterop": true,
-		"module": "CommonJS",
+		"module": "UMD",
 		"moduleResolution": "node",
 		"outDir": "./dist",
 		"baseUrl": ".",
 		"declaration": true,
 		"declarationDir": "dist",
-		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"incremental": true,
-		"allowUmdGlobalAccess": true
+		"incremental": true
 	},
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules", "dist"]
