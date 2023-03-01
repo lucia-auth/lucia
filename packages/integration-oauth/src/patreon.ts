@@ -116,7 +116,8 @@ class Patreon<A extends Auth> implements OAuthProvider<A> {
 			return (await this.auth.createUser({
 				key: {
 					providerId: PROVIDER_ID,
-					providerUserId: PROVIDER_USER_ID
+					providerUserId: PROVIDER_USER_ID,
+					password: null
 				},
 				attributes: userAttributes as any
 			})) as any;
