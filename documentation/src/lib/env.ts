@@ -11,13 +11,15 @@ const parseEnvFile = async (resolveEnvFile: () => Promise<string>) => {
 	return envMap;
 };
 
-const envPromise = parseEnvFile(
-	Object.values(
-		import.meta.glob("/.env", {
-			as: "raw"
-		})
-	)[0]
-);
+const unresolvedEnvFile = Object.values(
+	import.meta.glob("/.env", {
+		as: "raw"
+	})
+)[0];
+
+console.log(unresolvedEnvFile);
+
+const envPromise = parseEnvFile(unresolvedEnvFile);
 
 export const envVar = async (key: string): Promise<string> => {
 	const env = await envPromise;
