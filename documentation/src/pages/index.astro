@@ -5,13 +5,17 @@ import ContentTable from "@components/doc/content-table";
 import { db } from "@lib/db";
 import { envVar } from "@lib/env";
 
-const GITHUB_API_KEY = await envVar("GITHUB_API_KEY");
+const GITHUB_API_KEY = import.meta.env.DEV
+	? import.meta.env.GITHUB_API_KEY
+	: process.env.GITHUB_API_KEY;
+
+console.log(import.meta.env.DEV);
 
 const contributorsResponse = await fetch(
 	"https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
 	{
 		headers: {
-			Authorization: `Bearer ${process.env.GITHUB_API_KEY}`
+			Authorization: `Bearer ${GITHUB_API_KEY}`
 		}
 	}
 );
