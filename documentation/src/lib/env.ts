@@ -13,7 +13,7 @@ const parseEnvFile = async (resolveEnvFile: () => Promise<string>) => {
 
 const envPromise = parseEnvFile(
 	Object.values(
-		import.meta.glob(".env", {
+		import.meta.glob("/.env", {
 			as: "raw"
 		})
 	)[0]
