@@ -23,6 +23,7 @@
 		"mysql",
 		"sqlite",
 		"postgres",
+		"postgresql",
 		"auth",
 		"authentication",
 		"adapter"

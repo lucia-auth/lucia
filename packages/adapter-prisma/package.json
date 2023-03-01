@@ -23,7 +23,9 @@
 		"mysql",
 		"sqlite",
 		"authentication",
-		"adapter"
+		"adapter",
+		"sql",
+		"postgresql"
 	],
 	"repository": {
 		"type": "git",
