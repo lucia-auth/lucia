@@ -19,6 +19,7 @@ export type Key = {
 	providerId: string;
 	providerUserId: string;
 	userId: string;
+	oneTimeExpires: Date | null;
 };
 
 export type KeySchema = {
@@ -26,6 +27,7 @@ export type KeySchema = {
 	hashed_password: string | null;
 	primary: boolean;
 	user_id: string;
+	expires: number | null;
 };
 
 export type Env = "DEV" | "PROD";

@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-session-redis",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Redis session adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -33,7 +33,8 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.6.x"
+		"lucia-auth": "0.6.x - 0.7.x",
+		"redis": "4.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

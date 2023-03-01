@@ -2,7 +2,7 @@ import type { KeySchema, SessionSchema } from "lucia-auth";
 import type { Selectable } from "kysely";
 import type { KyselyKey, KyselySession } from "./types.js";
 
-export const convertSession = (
+export const convertSessionData = (
 	session: Selectable<KyselySession>
 ): SessionSchema => {
 	return {
@@ -15,23 +15,25 @@ export const convertSession = (
 
 export type Dialect = "pg" | "mysql2" | "better-sqlite3";
 
-export const convertKey = (key: Selectable<KyselyKey>): KeySchema => {
+export const convertKeyData = (key: Selectable<KyselyKey>): KeySchema => {
 	return {
 		id: key.id,
 		user_id: key.user_id,
 		primary: Boolean(key.primary),
-		hashed_password: key.hashed_password
+		hashed_password: key.hashed_password,
+		expires: key.expires === null ? null : Number(key.expires)
 	};
 };
 
 export const convertKeySchemaToKyselyValues = (
 	key: KeySchema,
 	dialect: Dialect
-) => {
+): Selectable<KyselyKey> => {
 	return {
 		id: key.id,
 		user_id: key.user_id,
 		primary: dialect === "pg" ? key.primary : Number(key.primary),
-		hashed_password: key.hashed_password
+		hashed_password: key.hashed_password,
+		expires: key.expires
 	};
 };

@@ -63,7 +63,7 @@ const auth = lucia(configs);
 
 ### `createKey()`
 
-Creates a new non-primary key for a user. **`providerId` cannot include character `:`**. 
+Creates a new non-primary key for a user. **`providerId` cannot include character `:`**.
 
 ```ts
 const createKey: (
@@ -72,18 +72,20 @@ const createKey: (
 		providerId: string;
 		providerUserId: string;
 		password: string | null;
+		timeout?: number | null;
 	}
 ) => Promise<Key>;
 ```
 
 #### Parameter
 
-| name                | type     | description                                                                                                              |
-| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| userId              | `string` | the user id of the key to create                                                                                         |
-| data.providerId     | `string` | the provider id of the key                                                                                               |
-| data.providerUserId | `string` | the provider user id of the key                                                                                          |
-| data.password       | `string` | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |
+| name                | type             | description                                                                                                              | optional |
+| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- |
+| userId              | `string`         | the user id of the key to create                                                                                         |          |
+| data.providerId     | `string`         | the provider id of the key                                                                                               |          |
+| data.providerUserId | `string`         | the provider user id of the key                                                                                          |          |
+| data.password       | `string \| null` | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |          |
+| data.timeout        | `number \| null` | how long the key is valid for in seconds - only sets key to single use if a value is provided                            | true     |
 
 #### Returns
 
@@ -111,6 +113,15 @@ try {
 } catch {
 	// invalid user id
 }
+```
+
+```ts
+import { auth } from "$lib/server/lucia";
+
+await auth.createKey(userId, {
+	// ...
+	timeout: 60 * 60 // 1 hour
+});
 ```
 
 ### `createSession()`
@@ -185,7 +196,7 @@ const response = new Response(null, {
 
 ### `createUser()`
 
-Creates a new user and a new primary key.
+Creates a new user and a new primary, persistent key.
 
 ```ts
 const createUser: (data: {
@@ -200,13 +211,13 @@ const createUser: (data: {
 
 #### Parameter
 
-| name                    | type                                                                                     | description                                   | optional |
-| ----------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------- | -------- |
-| data.key                | `null` \| `typeof data.key`                                                              |
-| data.key.providerId     | provider id of the key                                                                   |
-| data.key.providerUserId | `string`                                                                                 | the user id within the provider               |
-| data.key.password       | `string`                                                                                 | the password for the key                      | true     |
-| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)` \| undefined` | additional user data to store in `user` table | true     |
+| name                    | type                                                                      | description                                   |
+| ----------------------- | ------------------------------------------------------------------------- | --------------------------------------------- |
+| data.key                | `null` \| `typeof data.key`                                               |                                               |
+| data.key.providerId     | provider id of the key                                                    |                                               |
+| data.key.providerUserId | `string`                                                                  | the user id within the provider               |
+| data.key.password       | `string`                                                                  | the password for the key                      |
+| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional user data to store in `user` table |
 
 #### Returns
 
@@ -381,7 +392,7 @@ try {
 
 ### `getAllUserSessions()`
 
-Validate the user id and get all sessions of a user.
+Validate the user id and get all valid sessions of a user. Includes active and idle sessions, but not dead sessions.
 
 ```ts
 const getAllUserKeys: (userId: string) => Promise<Session[]>;

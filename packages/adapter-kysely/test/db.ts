@@ -3,9 +3,9 @@ import { Kysely } from "kysely";
 import { KyselyLuciaDatabase, KyselyUser } from "../src/index.js";
 import {
 	type Dialect,
-	convertKey,
+	convertKeyData,
 	convertKeySchemaToKyselyValues,
-	convertSession
+	convertSessionData
 } from "../src/utils.js";
 
 type User = KyselyUser & {
@@ -38,7 +38,7 @@ export const createQueryHandler = (
 			get: async () => {
 				const result = await kysely.selectFrom("session").selectAll().execute();
 				if (!result) throw new Error("Failed to fetch from database");
-				return result.map((val) => convertSession(val));
+				return result.map((val) => convertSessionData(val));
 			},
 			insert: async (session) => {
 				await kysely.insertInto("session").values(session).execute();
@@ -51,7 +51,7 @@ export const createQueryHandler = (
 			get: async () => {
 				const result = await kysely.selectFrom("key").selectAll().execute();
 				if (!result) throw new Error("Failed to fetch from database");
-				return result.map((val) => convertKey(val));
+				return result.map((val) => convertKeyData(val));
 			},
 			insert: async (key) => {
 				await kysely

@@ -56,15 +56,17 @@ The `key` table stores the user's keys.
 | user_id         | string         |        | user(id)  |                                                          |
 | primary         | boolean        |        |           | `true` for primary keys                                  |
 | hashed_password | string \| null |        |           | hashed password of the key                               |
+| expires         | number \| null |        |           | expiration for key if defined (`number`)                 |
 
 ### Schema type
 
 ```ts
 // type imported from "lucia-auth/adapter"
-type SessionSchema = {
+type KeySchema = {
 	id: string;
 	user_id: string;
 	primary: boolean;
 	hashed_password: string | null;
+	expires: number | null;
 };
 ```

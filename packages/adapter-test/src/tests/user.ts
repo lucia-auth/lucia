@@ -53,12 +53,13 @@ export const testUserAdapter = async (
 	);
 	await test(
 		"setUser()",
-		"Set to add user and key, and insert a user into user table",
+		"Set to add user and persistent key, and insert a user into user table",
 		async () => {
 			const user = database.user();
 			const key = user.key({
 				isPrimary: true,
-				hasPassword: true
+				hasPassword: true,
+				isOneTime: false
 			});
 			await adapter.setUser(
 				user.value.id,
@@ -71,12 +72,13 @@ export const testUserAdapter = async (
 	);
 	await test(
 		"setUser()",
-		"Set to add user and key, and return the created user",
+		"Set to add user and persistent key, and return the created user",
 		async () => {
 			const user = database.user();
 			const key = user.key({
 				isPrimary: true,
-				hasPassword: true
+				hasPassword: true,
+				isOneTime: false
 			});
 			const result = await adapter.setUser(
 				user.value.id,
@@ -93,13 +95,15 @@ export const testUserAdapter = async (
 		async () => {
 			const refKey = database.user().key({
 				isPrimary: false,
-				hasPassword: true
+				hasPassword: true,
+				isOneTime: false
 			});
 			await refKey.set();
 			const user = database.user();
 			const key = user.key({
 				isPrimary: true,
-				hasPassword: true
+				hasPassword: true,
+				isOneTime: false
 			});
 			key.update({
 				id: refKey.value.id
@@ -149,44 +153,94 @@ export const testUserAdapter = async (
 			await clearAll();
 		}
 	);
-	await test("getKey()", "Returns the correct key", async () => {
+	await test("getKey()", "Returns the correct persistent key", async () => {
 		const key = database.user().key({
 			isPrimary: false,
-			hasPassword: true
+			hasPassword: true,
+			isOneTime: false
 		});
 		await key.set();
 		const result = await adapter.getKey(key.value.id);
 		key.compare(result);
 		await clearAll();
 	});
-	await test("setKey()", "Insert a new key with password", async () => {
+	await test("getKey()", "Returns the correct single key", async () => {
+		const key = database.user().key({
+			isPrimary: false,
+			hasPassword: true,
+			isOneTime: true
+		});
+		await key.set();
+		const result = await adapter.getKey(key.value.id);
+		key.compare(result);
+		await clearAll();
+	});
+	await test(
+		"getKey()",
+		"Getting valid single use key deletes from database",
+		async () => {
+			const key = database.user().key({
+				isPrimary: false,
+				hasPassword: true,
+				isOneTime: true
+			});
+			await key.set();
+			await adapter.getKey(key.value.id);
+			await key.notExits();
+			await clearAll();
+		}
+	);
+	await test("setKey()", "Insert a new persistent key with password", async () => {
 		const user = database.user();
 		await user.set();
 		const key = user.key({
 			isPrimary: false,
-			hasPassword: true
+			hasPassword: true,
+			isOneTime: false
 		});
 		await adapter.setKey(key.value);
 		await key.exists();
 		await clearAll();
 	});
-	await test("setKey()", "Insert a new key with null password", async () => {
-		const user = database.user();
-		await user.set();
-		const key = user.key({
-			isPrimary: false,
-			hasPassword: false
-		});
-		await adapter.setKey(key.value);
-		await key.exists();
-		await clearAll();
-	});
-	await test("setKey()", "Insert a new primary key", async () => {
+	await test(
+		"setKey()",
+		"Insert a new persistent key with null password",
+		async () => {
+			const user = database.user();
+			await user.set();
+			const key = user.key({
+				isPrimary: false,
+				hasPassword: false,
+				isOneTime: false
+			});
+			await adapter.setKey(key.value);
+			await key.exists();
+			await clearAll();
+		}
+	);
+	await test(
+		"setKey()",
+		"Insert a new single use key with null password",
+		async () => {
+			const user = database.user();
+			await user.set();
+			const key = user.key({
+				isPrimary: false,
+				hasPassword: false,
+				isOneTime: true
+			});
+			await adapter.setKey(key.value);
+			await key.exists();
+			await clearAll();
+		}
+	);
+	await test("setKey()", "Insert a new primary persistent key", async () => {
 		const user = database.user();
 		await user.set();
 		const key = user.key({
 			isPrimary: true,
-			hasPassword: false
+			hasPassword: false,
+			isOneTime: false
 		});
 		await adapter.setKey(key.value);
 		await key.exists();
@@ -198,7 +252,8 @@ export const testUserAdapter = async (
 		async () => {
 			const key = database.user().key({
 				isPrimary: false,
-				hasPassword: true
+				hasPassword: true,
+				isOneTime: false
 			});
 			await compareErrorMessage(async () => {
 				await adapter.setKey(key.value);
@@ -212,7 +267,8 @@ export const testUserAdapter = async (
 		async () => {
 			const key = database.user().key({
 				isPrimary: false,
-				hasPassword: true
+				hasPassword: true,
+				isOneTime: false
 			});
 			await key.set();
 			await compareErrorMessage(async () => {
@@ -224,11 +280,13 @@ export const testUserAdapter = async (
 	await test("getKeysByUserId()", "Returns the correct key", async () => {
 		const key1 = database.user().key({
 			isPrimary: false,
-			hasPassword: true
+			hasPassword: true,
+			isOneTime: false
 		});
 		const key2 = database.user().key({
 			isPrimary: false,
-			hasPassword: true
+			hasPassword: true,
+			isOneTime: false
 		});
 		await key1.set();
 		await key2.set();
@@ -248,7 +306,8 @@ export const testUserAdapter = async (
 	await test("updateKeyPassword()", "Updates key password", async () => {
 		const key = database.user().key({
 			isPrimary: false,
-			hasPassword: true
+			hasPassword: true,
+			isOneTime: false
 		});
 		await key.set();
 		key.update({
@@ -271,12 +330,14 @@ export const testUserAdapter = async (
 	await test("deleteNonPrimaryKey()", "Delete target key", async () => {
 		const key1 = database.user().key({
 			isPrimary: false,
-			hasPassword: true
+			hasPassword: true,
+			isOneTime: false
 		});
 		await key1.set();
 		const key2 = database.user().key({
 			isPrimary: false,
-			hasPassword: true
+			hasPassword: true,
+			isOneTime: false
 		});
 		await key2.set();
 		await adapter.deleteNonPrimaryKey(key1.value.id);
@@ -290,7 +351,8 @@ export const testUserAdapter = async (
 		async () => {
 			const key = database.user().key({
 				isPrimary: true,
-				hasPassword: true
+				hasPassword: true,
+				isOneTime: false
 			});
 			await key.set();
 			await adapter.deleteNonPrimaryKey(key.value.id);
@@ -301,11 +363,13 @@ export const testUserAdapter = async (
 	await test("deleteKeysByUserId()", "Delete keys of target user", async () => {
 		const key1 = database.user().key({
 			isPrimary: false,
-			hasPassword: false
+			hasPassword: false,
+			isOneTime: false
 		});
 		const key2 = database.user().key({
 			isPrimary: false,
-			hasPassword: false
+			hasPassword: false,
+			isOneTime: false
 		});
 		await key1.set();
 		await key2.set();
@@ -317,7 +381,8 @@ export const testUserAdapter = async (
 	await test("deleteKeysByUserId()", "Delete primary keys", async () => {
 		const key = database.user().key({
 			isPrimary: false,
-			hasPassword: false
+			hasPassword: false,
+			isOneTime: false
 		});
 		await key.set();
 		await adapter.deleteKeysByUserId(key.value.user_id);

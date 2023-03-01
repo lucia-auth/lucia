@@ -91,6 +91,7 @@ model Key {
   hashed_password String?
   user_id         String
   primary         Boolean
+  expires         BigInt?
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])

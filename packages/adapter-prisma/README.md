@@ -24,10 +24,9 @@ yarn add @lucia-auth/adapter-prisma
 | 0.2.x                  | 0.4.x         |
 | 0.3.x                  | 0.5.x         |
 | 0.4.x                  | 0.6.x         |
+| 0.5.x                  | 0.7.x         |
 
 ## Testing
-
-Add a postgresql database url to `.env`.
 
 ```
 pnpm exec prisma migrate dev --name init

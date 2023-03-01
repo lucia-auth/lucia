@@ -5,7 +5,7 @@ import type {
 	SessionSchema,
 	UserSchema
 } from "lucia-auth";
-import { convertSession } from "./utils.js";
+import { convertKeyData, convertSessionData } from "./utils.js";
 import { PrismaClient, SmartPrismaClient } from "./prisma.js";
 
 interface PossiblePrismaError {
@@ -44,7 +44,7 @@ const adapter =
 				const { user, ...session } = data;
 				return {
 					user: user,
-					session: convertSession(session)
+					session: convertSessionData(session)
 				};
 			},
 			getSession: async (sessionId) => {
@@ -54,7 +54,7 @@ const adapter =
 					}
 				});
 				if (!session) return null;
-				return convertSession(session);
+				return convertSessionData(session);
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessions = await prisma.session.findMany({
@@ -62,24 +62,32 @@ const adapter =
 						user_id: userId
 					}
 				});
-				return sessions.map((session) => convertSession(session));
+				return sessions.map((session) => convertSessionData(session));
 			},
 			setUser: async (userId, attributes, key) => {
-				const createUserPromise = prisma.user.create({
-					data: {
-						id: userId,
-						...attributes
-					}
-				});
-				if (!key) return await createUserPromise;
+				if (!key) {
+					return await prisma.user.create({
+						data: {
+							id: userId,
+							...attributes
+						}
+					});
+				}
 				try {
-					const [createdUser] = await prisma.$transaction([
-						createUserPromise,
-						prisma.key.create({
-							data: key
-						})
-					]);
-					return createdUser;
+					return await prisma.$transaction(async (tx) => {
+						const [createdUser] = await Promise.all([
+							tx.user.create({
+								data: {
+									id: userId,
+									...attributes
+								}
+							}),
+							tx.key.create({
+								data: key
+							})
+						]);
+						return createdUser;
+					});
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2002" && error.message?.includes("id"))
@@ -153,18 +161,30 @@ const adapter =
 				}
 			},
 			getKey: async (key) => {
-				return await prisma.key.findUnique({
-					where: {
-						id: key
+				return await prisma.$transaction(async (tx) => {
+					const keyData = await tx.key.findUnique({
+						where: {
+							id: key
+						}
+					});
+					if (!keyData) return null;
+					if (keyData?.expires !== null) {
+						await tx.key.delete({
+							where: {
+								id: keyData.id
+							}
+						});
 					}
+					return convertKeyData(keyData);
 				});
 			},
 			getKeysByUserId: async (userId) => {
-				return await prisma.key.findMany({
+				const keys = await prisma.key.findMany({
 					where: {
 						user_id: userId
 					}
 				});
+				return keys.map((val) => convertKeyData(val));
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
 				try {

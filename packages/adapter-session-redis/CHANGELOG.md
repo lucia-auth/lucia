@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.1
+
+- Update peer dependency
+
 ## 0.1.0
 
 - [Breaking] Rename `redisClient.userSessions` to `redisClient.userSession`

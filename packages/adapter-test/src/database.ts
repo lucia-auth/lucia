@@ -127,7 +127,11 @@ class User extends Model<"user"> {
 			userId: this.value.id
 		});
 	};
-	public key = (option: { isPrimary: boolean; hasPassword: boolean }) => {
+	public key = (option: {
+		isPrimary: boolean;
+		hasPassword: boolean;
+		isOneTime: boolean;
+	}) => {
 		return new Key(this.queryHandler, [this], {
 			userId: this.value.id,
 			...option
@@ -172,6 +176,8 @@ class Session extends Model<"session"> {
 	}
 }
 
+type KeyExpiresOption = "ONE_TIME" | "REGULAR";
+
 class Key extends Model<"key"> {
 	constructor(
 		queryHandler: LuciaQueryHandler,
@@ -180,8 +186,13 @@ class Key extends Model<"key"> {
 			userId: string;
 			isPrimary: boolean;
 			hasPassword: boolean;
+			isOneTime: boolean;
 		}
 	) {
+		const DURATION_SEC = 60 * 60;
+		const oneTimeExpires = options.isOneTime
+			? new Date().getTime() + DURATION_SEC * 1000
+			: null;
 		super(
 			"key",
 			queryHandler,
@@ -189,7 +200,8 @@ class Key extends Model<"key"> {
 				id: `test:${options.userId}@example.com`,
 				user_id: options.userId,
 				primary: options.isPrimary,
-				hashed_password: options.hasPassword ? "HASHED" : null
+				hashed_password: options.hasPassword ? "HASHED" : null,
+				expires: oneTimeExpires
 			},
 			parent
 		);

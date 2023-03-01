@@ -85,6 +85,7 @@ export type Key = {
 	hashed_password: string | null;
 	user_id: string;
 	primary: number; // boolean for Postgres
+	expires: BigIntColumnType | null;
 };
 
 type Database = {
@@ -166,13 +167,15 @@ CREATE TABLE public.session (
 | user_id         | `TEXT`    | `public.user(id)`  |          |        |         |
 | primary         | `BOOLEAN` |                    |          |        |         |
 | hashed_password | `TEXT`    |                    | true     |        |         |
+| expires         | `BIGINT`  |                    | true     |        |         |
 
 ```sql
 CREATE TABLE public.key (
     id TEXT PRIMARY KEY,
     user_id TEXT REFERENCES public.user(id) NOT NULL,
     "primary" BOOLEAN NOT NULL,
-    hashed_password TEXT
+    hashed_password TEXT,
+    expires BIGINT
 );
 ```
 
@@ -221,6 +224,7 @@ CREATE TABLE session (
 | user_id         | `VARCHAR(15)`        | `user(id)`         |          |        |          |
 | primary         | `TINYINT` (UNSIGNED) |                    |          |        |          |
 | hashed_password | `VARCHAR(255)`       |                    | true     |        |          |
+| expires         | `BIGINT` (UNSIGNED)  |                    | true     |        |          |
 
 ```sql
 CREATE TABLE `key` (
@@ -228,6 +232,7 @@ CREATE TABLE `key` (
     user_id VARCHAR(15) NOT NULL,
     `primary` TINYINT UNSIGNED NOT NULL,
     hashed_password VARCHAR(255),
+    expires BIGINT UNSIGNED,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -282,6 +287,7 @@ Column type of `user_id` should match the type of `user(id)`.
 | user_id         | `VARCHAR(15)`  | `user(id)`         |          |        |          |
 | primary         | `INT2`         |                    |          |        |          |
 | hashed_password | `VARCHAR(255)` | true               | true     |        |          |
+| expires         | `BIGINT`       |                    | true     |        |          |
 
 ```sql
 CREATE TABLE key (
@@ -289,6 +295,7 @@ CREATE TABLE key (
     user_id VARCHAR(15) NOT NULL,
     hashed_password VARCHAR(255),
     "primary" INT2 NOT NULL,
+    expires BIGINT,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );

@@ -11,8 +11,16 @@ everything easy to use and understand. Get started by reading the [introduction 
 Working with Lucia looks something like this. In the code below, you're creating a new user with a email/password method, creating a new session, and creating a cookie that you can set it to the user.
 
 ```ts
-const user = await auth.createUser("email", email, {
-	password
+const user = await auth.createUser({
+	key: {
+		providerId: "email",
+		providerUserId: email,
+		password
+	},
+	attributes: {
+		email,
+		username
+	}
 });
 const session = await auth.createSession(user.userId);
 const sessionCookie = auth.createSessionCookie(session);

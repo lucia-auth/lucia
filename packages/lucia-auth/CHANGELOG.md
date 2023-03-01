@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.7.0
+
+- [Feat] One time keys
+- [Breaking] Update `KeySchema`, `UserAdapter`
+- [Fix] `getAllUserSessions` only returns active or idle sessions
+- Update type `Key`
+
 ## 0.6.2
 
 - [Fix] Allow character `:` in provider user id

@@ -24,6 +24,7 @@ yarn add @lucia-auth/adapter-mongoose
 | 0.2.x                    | 0.4.x         |
 | 0.3.x                    | 0.5.x         |
 | 0.4.x                    | 0.6.x         |
+| 0.5.x                    | 0.7.x         |
 
 ## Testing
 

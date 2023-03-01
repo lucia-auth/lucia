@@ -22,6 +22,7 @@ export const convertKeyDoc = (row: KeyDoc): KeySchema => {
 		id: row._id,
 		user_id: row.user_id,
 		hashed_password: row.hashed_password,
-		primary: row.primary
+		primary: row.primary,
+		expires: row.expires
 	};
 };

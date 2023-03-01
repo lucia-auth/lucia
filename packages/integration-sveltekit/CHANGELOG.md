@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## 0.6.4
+
+- Update peer dependency
+
 ## 0.6.3
 
-- Clean up video
+- Clean up code
 
 ## 0.6.2
 

@@ -23,7 +23,7 @@ import {
 import { LuciaError, LuciaErrorConstructor } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { transformDatabaseSessionData } from "./session.js";
-import { transformDatabaseKeyData } from "./key.js";
+import { transformDatabaseKeyData, getOneTimeKeyExpiration } from "./key.js";
 
 export { SESSION_COOKIE_NAME } from "./cookie.js";
 
@@ -96,13 +96,12 @@ export class Auth<C extends Configurations = any> {
 			provider_id,
 			...attributes
 		}) => {
-			const transform =
-				configs.transformUserData ??
-				(({ id }) => {
-					return {
-						userId: id
-					};
-				});
+			const defaultTransform = ({ id }: UserSchema) => {
+				return {
+					userId: id
+				} as const;
+			};
+			const transform = configs.transformUserData ?? defaultTransform;
 			return transform({ id, ...attributes }) as User;
 		};
 		this.sessionCookie = configs.sessionCookie ?? [defaultSessionCookieOption];
@@ -157,29 +156,38 @@ export class Auth<C extends Configurations = any> {
 		key: {
 			providerId: string;
 			providerUserId: string;
-			password?: string;
+			password: string | null;
+			timeout?: number | null;
 		} | null;
 		attributes: Lucia.UserAttributes;
 	}): Promise<User> => {
 		const userId = await this.generateUserId();
 		const userAttributes = data.attributes ?? {};
-		if (data.key) {
-			const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
-			const password = data.key.password;
-			const hashedPassword = password
-				? await this.hash.generate(password)
-				: null;
-			const userData = await this.adapter.setUser(userId, userAttributes, {
-				id: keyId,
-				user_id: userId,
-				hashed_password: hashedPassword,
-				primary: true
-			});
+		if (data.key === null) {
+			const userData = await this.adapter.setUser(userId, userAttributes, null);
 			const user = this.transformUserData(userData);
 			return user;
 		}
-		const userData = await this.adapter.setUser(userId, userAttributes, null);
+		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
+		const password = data.key.password;
+		const hashedPassword = password ? await this.hash.generate(password) : null;
+		const oneTimeExpires = getOneTimeKeyExpiration(data.key.timeout);
+		const userData = await this.adapter.setUser(userId, userAttributes, {
+			id: keyId,
+			user_id: userId,
+			hashed_password: hashedPassword,
+			primary: true,
+			expires: oneTimeExpires?.getTime() ?? null
+		});
 		const user = this.transformUserData(userData);
+		const key = transformDatabaseKeyData({
+			id: keyId,
+			user_id: userId,
+			hashed_password: hashedPassword,
+			primary: true,
+			expires: oneTimeExpires?.getTime() ?? null
+		});
+		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
 		return user;
 	};
 	public updateUserAttributes = async (
@@ -214,7 +222,9 @@ export class Auth<C extends Configurations = any> {
 			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
 		const isValidPassword = await this.hash.validate(password, hashedPassword);
 		if (!isValidPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
-		return transformDatabaseKeyData(databaseKeyData);
+		const key = transformDatabaseKeyData(databaseKeyData);
+		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
+		return key;
 	};
 	public getSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)
@@ -230,10 +240,42 @@ export class Auth<C extends Configurations = any> {
 		}
 		return session;
 	};
-	public getAllUserSessions = async (userId: string) => {
+	public getAllUserSessions = async (userId: string): Promise<Session[]> => {
 		await this.getUser(userId);
 		const databaseData = await this.adapter.getSessionsByUserId(userId);
-		return databaseData.map((val) => transformDatabaseSessionData(val));
+		const storedUserSessions = databaseData.map((val) => {
+			const session = transformDatabaseSessionData(val);
+			if (session) {
+				return {
+					isValid: true,
+					session
+				} as const;
+			}
+			return {
+				isValid: false,
+				sessionId: val.id
+			} as const;
+		});
+		if (storedUserSessions.some((val) => val.isValid === false)) {
+			await Promise.all(
+				storedUserSessions
+					.filter(
+						(
+							val
+						): val is {
+							isValid: false;
+							sessionId: string;
+						} => val.isValid === false
+					)
+					.map((val) => val)
+			);
+		}
+		const validUserSessions = storedUserSessions
+			.map((val) => {
+				return val.isValid ? val.session : null;
+			})
+			.filter((val): val is Session => val !== null);
+		return validUserSessions;
 	};
 	public validateSession = async (sessionId: string): Promise<Session> => {
 		const session = await this.getSession(sessionId);
@@ -357,14 +399,16 @@ export class Auth<C extends Configurations = any> {
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
-			primary: false
+			primary: false,
+			expires: null
 		});
 		return {
 			providerId: keyData.providerId,
 			providerUserId: keyData.providerUserId,
 			isPrimary: false,
 			isPasswordDefined: !!keyData.password,
-			userId
+			userId,
+			oneTimeExpires: null
 		};
 	};
 	public deleteKey = async (providerId: string, providerUserId: string) => {
@@ -378,14 +422,11 @@ export class Auth<C extends Configurations = any> {
 		const keyId = `${providerId}:${providerUserId}`;
 		const keyData = await this.adapter.getKey(keyId);
 		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		return {
-			providerId,
-			providerUserId,
-			isPrimary: keyData.primary,
-			isPasswordDefined: !!keyData.hashed_password,
-			userId: keyData.user_id
-		};
+		const key = transformDatabaseKeyData(keyData);
+		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
+		return key;
 	};
+
 	public getKeyUser = async (
 		providerId: string,
 		providerUserId: string

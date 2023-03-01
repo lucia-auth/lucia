@@ -44,11 +44,11 @@ export type SmartPrismaClient<Schemas extends Record<string, {}>> = {
 		}) => Promise<Schemas[K]>;
 	};
 } & {
-	$transaction: <Promises extends Readonly<Promise<any>[]>>(
-		promises: Promises
-	) => Promise<{
-		[K in keyof Promises]: K extends number
-			? Awaited<Promises[K]>
-			: Promises[K];
-	}>;
+	$transaction: <
+		Transaction extends (
+			tx: Omit<SmartPrismaClient<Schemas>, "$transaction">
+		) => Promise<any>
+	>(
+		transaction: Transaction
+	) => ReturnType<Transaction>;
 };

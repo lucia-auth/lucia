@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.0
+
+- [Breaking] Tests for `lucia-auth` 0.7.x
+
 ## 0.3.1
 
 - Fix types

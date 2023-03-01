@@ -33,13 +33,17 @@ For example, for email/password, "email" can be the provider id, the user’s em
 
 > The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used.
 
+#### Persistent vs. Single use
+
+Keys can either be persistent or single use and can have an expiration. Persistent keys are useful for handling normal sign ins, while single use keys can be used as tokens for email verification and password reset.
+
 #### Primary keys
 
-The primary key is the key created alongside the user. The primary key is always linked to the user and cannot be deleted.
+The primary key is the persistent key created alongside the user. The primary key is always linked to the user and cannot be deleted.
 
 ## Create users
 
-[`createUser()`](/reference/api/server-api#createuser) can be used to create users. This takes an option for the primary key, which will be linked to the user and user attributes.
+[`createUser()`](/reference/api/server-api#createuser) can be used to create users. This takes an option for the primary key to be created with the user.
 
 ```ts
 import { auth } from "./lucia.js";

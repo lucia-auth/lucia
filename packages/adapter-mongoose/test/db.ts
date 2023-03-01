@@ -74,7 +74,8 @@ const Key = mongoose.model(
 			primary: {
 				type: Boolean,
 				required: true
-			}
+			},
+			expires: Number
 		},
 		{ _id: false }
 	)

@@ -3,18 +3,28 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import Header from "@components/Header.astro";
 import ContentTable from "@components/doc/content-table";
 import { db } from "@lib/db";
+import { envVar } from "@lib/env";
 
-const GITHUB_API_KEY = import.meta.env.DEV
-	? import.meta.env.GITHUB_API_KEY
-	: process.env.GITHUB_API_KEY;
+const GITHUB_API_KEY = await envVar("GITHUB_API_KEY")
+
 const contributorsResponse = await fetch(
-	"https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
+	"https://api.github.com/repos/pilcrowonpaper/lucia/contributors",
 	{
 		headers: {
 			Authorization: `Bearer ${GITHUB_API_KEY}`
 		}
 	}
 );
+if (!contributorsResponse.ok) {
+	try {
+		console.dir(await contributorsResponse.json(), {
+			depth: null
+		});
+	} catch {
+		console.log("No error body was returned");
+	}
+	throw new Error("Something went wrong fetching to Github");
+}
 const contributorsResult = (await contributorsResponse.json()) as
 	| {
 			message: string;
@@ -37,12 +47,12 @@ const contributors = Array.isArray(contributorsResult)
 	  })
 	: [];
 
-const mainCollection = await db.collection("main").get();
+const mainCollection = await db.query("main");
 ---
 
 <BaseLayout>
 	<Header />
-	<ContentTable collections={mainCollection._collections} client:load />
+	<ContentTable collections={mainCollection.children} client:load />
 	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:ml-72 xl:pl-12 overflow-hidden">
 		<div class="sm:pt-12 lg:pt-20">
 			<h1 class="text-5xl sm:text-7xl font-semibold">

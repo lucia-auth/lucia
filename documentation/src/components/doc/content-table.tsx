@@ -1,18 +1,18 @@
-import type { CollectionQuery } from "@db/types";
-import type { Q } from "@lib/db";
+import type { CollectionQuery } from "@db/query";
+import type { db } from "@lib/db";
 import { isMenuOpen } from "@lib/state";
 import { dynamicClassName } from "@lib/styles";
-import { Show, createSignal, mergeProps } from "solid-js";
+import { Show, createEffect, createSignal, mergeProps } from "solid-js";
 
 export default (props: {
-	collections: CollectionQuery<Q["main" | "integration"]["*"]>[];
+	collections: CollectionQuery<typeof db, "integration" | "main">[];
 	initialCollectionId?: string;
 	currentPath?: string;
 	title?: string;
 }) => {
 	const mergedProps = mergeProps(
 		{
-			initialCollectionId: props.collections[0]._id,
+			initialCollectionId: props.collections[0].id,
 			currentPath: "/",
 			title: null
 		},
@@ -20,29 +20,26 @@ export default (props: {
 	);
 	const { collections, title, currentPath } = mergedProps;
 	const [selectedCollectionId, setSelectedCollectionId] = createSignal(
-		mergedProps.initialCollectionId as string
+		mergedProps.initialCollectionId
 	);
 	const CollectionLink = (props: {
 		collection: (typeof collections)[number];
 	}) => (
-		<Show when={props.collection._id === selectedCollectionId()}>
-			<For each={props.collection._collections}>
+		<Show when={props.collection.id === selectedCollectionId()}>
+			<For each={props.collection.children}>
 				{(section) => (
 					<div class="mb-10">
-						<p class="font-medium">{section.title}</p>
+						<p class="font-medium">{section.metaData.title}</p>
 						<ul class="list-none mt-2 text-gray-500 dark:text-zinc-400">
-							<For each={section._documents}>
+							<For each={section.documents}>
 								{(page) => {
-									const urlPathname = `/${page._path
+									const urlPathname = `/${page.path
 										.split("/")
 										.slice(1)
 										.join("/")}`;
 									const isSelected = currentPath.startsWith(urlPathname);
-									const href =
-										page._baseCollectionId === "main"
-											? page.redirect ?? urlPathname
-											: urlPathname;
-									const target = "redirect" in page ? "_blank" : "";
+									const href = page.metaData.redirect ?? urlPathname;
+									const target = "redirect" in page.metaData ? "_blank" : "";
 									return (
 										<li
 											class={dynamicClassName("my-1 pl-4 border-l-2", {
@@ -52,7 +49,7 @@ export default (props: {
 											})}
 										>
 											<a href={href} target={target}>
-												{page.title}
+												{page.metaData.title}
 											</a>
 										</li>
 									);
@@ -83,14 +80,14 @@ export default (props: {
 							return (
 								<div
 									class={dynamicClassName("w-full pb-1 border-b-2", {
-										"border-main": content._id === selectedCollectionId()
+										"border-main": content.id === selectedCollectionId()
 									})}
 								>
 									<button
 										class="w-full mx-auto block text-center hover:bg-gray-100 dark:hover:bg-zinc-900 rounded py-1"
-										onClick={() => setSelectedCollectionId(content._id)}
+										onClick={() => setSelectedCollectionId(content.id)}
 									>
-										{content.title}
+										{content.metaData.title}
 									</button>
 								</div>
 							);
