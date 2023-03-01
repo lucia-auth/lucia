@@ -17,8 +17,8 @@
 		"lucia",
 		"lucia-auth",
 		"sveltekit",
-		"svelte-kit",
 		"svelte",
+		"svelte-kit",
 		"authentication",
 		"auth"
 	],

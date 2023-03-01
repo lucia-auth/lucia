@@ -90,16 +90,16 @@ jobs:
           if [[ $pkg_string == *"lucia-auth"* ]]; then
             cd packages/lucia-auth && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"integration-sveltekit"* ]]; then
+          if [[ $pkg_string == *"sveltekit"* ]]; then
             cd packages/integration-sveltekit && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"integration-nextjs"* ]]; then
+          if [[ $pkg_string == *"nextjs"* ]]; then
             cd packages/integration-nextjs && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"integration-astro"* ]]; then
+          if [[ $pkg_string == *"astro"* ]]; then
             cd packages/integration-astro && eval "$build_cmd"
           fi
-          if [[ $pkg_string == *"integration-oauth"* ]]; then
+          if [[ $pkg_string == *"oauth"* ]]; then
             cd packages/integration-oauth && eval "$build_cmd"
           fi
           if [[ $pkg_string == *"adapter-mongoose"* ]]; then
