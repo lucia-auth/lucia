@@ -8,10 +8,10 @@ import { envVar } from "@lib/env";
 const GITHUB_API_KEY = await envVar("GITHUB_API_KEY")
 
 const contributorsResponse = await fetch(
-	"https://api.github.com/repos/pilcrowonpaper/lucia-sveltekit/contributors",
+	"https://api.github.com/repos/pilcrowonpaper/lucia/contributors",
 	{
 		headers: {
-			Authorization: `Bearer ${String(GITHUB_API_KEY)}`
+			Authorization: `Bearer ${GITHUB_API_KEY}`
 		}
 	}
 );
