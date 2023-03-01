@@ -1,7 +1,15 @@
-const parseEnvFile = async (resolveEnvFile: () => Promise<string>) => {
-	const rawEnvFile = await resolveEnvFile();
+const loadEnv = async () => {
+	if (import.meta.env.PROD) {
+		return new Map<string, string | undefined>(Object.entries(process.env));
+	}
+	const unresolvedEnvFile = Object.values(
+		import.meta.glob("/.env", {
+			as: "raw"
+		})
+	)[0];
+	const rawEnvFile = await unresolvedEnvFile();
 	const envVars = rawEnvFile.split("\n");
-	const envMap = new Map<string, string>();
+	const envMap = new Map<string, undefined | string>();
 	for (const envVar of envVars) {
 		if (!envVar) continue;
 		const [varName, value] = envVar.split("=");
@@ -11,19 +19,11 @@ const parseEnvFile = async (resolveEnvFile: () => Promise<string>) => {
 	return envMap;
 };
 
-const unresolvedEnvFile = Object.values(
-	import.meta.glob("/.env", {
-		as: "raw"
-	})
-)[0];
-
-console.log(unresolvedEnvFile);
-
-const envPromise = parseEnvFile(unresolvedEnvFile);
+const envPromise = loadEnv();
 
 export const envVar = async (key: string): Promise<string> => {
 	const env = await envPromise;
-	const envValue = env.get(key);
+	const envValue = env.get(key) ?? null;
 	if (!envValue) throw new Error(`Environment variable ${key} is undefined`);
 	return envValue;
 };
