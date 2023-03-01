@@ -85,7 +85,7 @@ const createKey: (
 | data.providerId     | `string`         | the provider id of the key                                                                                               |          |
 | data.providerUserId | `string`         | the provider user id of the key                                                                                          |          |
 | data.password       | `string \| null` | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |          |
-| data.timeout        | `number \| null` | how long the key is valid for in seconds - only sets key to single use if a value is provided                          | true     |
+| data.timeout        | `number \| null` | how long the key is valid for in seconds - only sets key to single use if a value is provided                            | true     |
 
 #### Returns
 

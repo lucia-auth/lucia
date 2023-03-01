@@ -1,41 +1,43 @@
 ---
 import ContentTable from "@components/doc/content-table";
+import { db } from "@lib/db";
+import type { GetPropsFromGetStaticPaths, StaticPath } from "@lib/astro";
 import DocumentLayout from "@layouts/DocumentLayout.astro";
 
-import type { GetStaticPaths } from "astro";
-import { db } from "@lib/db";
-import type { GetPropsFromGetStaticPaths } from "@lib/astro";
-
-export const getStaticPaths = (async () => {
-	const mainCollection = await db.collection("main").get();
-	const documents = mainCollection._getAllDocuments();
-	return documents.map((doc) => {
-		const pathSegements = doc._path.split("/"); // ["integration", "astro", "start-here", "getting-started"]
-		return {
-			params: {
-				main: pathSegements.slice(1).join("/")
-			},
-			props: {
-				page: pathSegements[1],
-				doc,
-				collections: mainCollection._collections
-			}
-		};
-	});
-}) satisfies GetStaticPaths;
+export const getStaticPaths = async () => {
+	const mainCollection = await db.query("main");
+	return mainCollection.children
+		.map((content) => {
+			const nestedDocuments = content.$getAllNestedDocuments();
+			return nestedDocuments.map((doc) => {
+				return {
+					params: {
+						main: doc.path.split("/").slice(1).join("/")
+					},
+					props: {
+						doc,
+						content
+					}
+				} satisfies StaticPath;
+			});
+		})
+		.flat();
+};
 
 type Props = GetPropsFromGetStaticPaths<typeof getStaticPaths>;
 
-const { doc, collections, page } = Astro.props;
+const { doc, content } = Astro.props;
+
+const mainCollection = await db.query("main");
 ---
 
 <DocumentLayout doc={doc}>
 	<ContentTable
 		client:load
-		collections={collections}
+		collections={mainCollection.children}
 		currentPath={Astro.url.pathname}
-		initialCollectionId={page}
+		initialCollectionId={content.id}
 		slot="table"
 	/>
-	<doc._Content slot="content" />
+	<doc.$Content slot="content" />
 </DocumentLayout>

@@ -1,10 +1,10 @@
 ---
 interface Props {
 	title?: string;
-	external?: ExternalIntegration | null;
+	external?: string | null;
 }
 
-const getExternalName = (external: ExternalIntegration) => {
+const getExternalName = (external: string) => {
 	return {
 		sveltekit: "SvelteKit",
 		nextjs: "Next.js",
