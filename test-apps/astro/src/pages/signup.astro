@@ -26,11 +26,16 @@ if (Astro.request.method === "POST") {
 	username = form.get("username");
 	password = form.get("password");
 	// check for empty values
-	if (username && password && typeof username === "string" && typeof password === "string") {
+	if (
+		username &&
+		password &&
+		typeof username === "string" &&
+		typeof password === "string"
+	) {
 		try {
 			const user = await auth.createUser({
 				key: {
-					providerId:"username",
+					providerId: "username",
 					providerUserId: username,
 					password
 				},
@@ -49,7 +54,10 @@ if (Astro.request.method === "POST") {
 				error.message?.includes("username")
 			) {
 				errorMessage = "Username already in use";
-			} else if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_KEY_ID") {
+			} else if (
+				error instanceof LuciaError &&
+				error.message === "AUTH_DUPLICATE_KEY_ID"
+			) {
 				errorMessage = "Username already in use";
 			} else {
 				errorMessage = "Unknown error occured";
@@ -69,9 +77,18 @@ if (Astro.request.method === "POST") {
 	<p class="center">or</p>
 	<form method="post">
 		<label for="username">username</label><br />
-		<input id="username" name="username" value={username?.toString() ?? ""} /><br />
+		<input
+			id="username"
+			name="username"
+			value={username?.toString() ?? ""}
+		/><br />
 		<label for="password">password</label><br />
-		<input type="password" id="password" name="password" value={password?.toString() ?? ""} /><br />
+		<input
+			type="password"
+			id="password"
+			name="password"
+			value={password?.toString() ?? ""}
+		/><br />
 		<input type="submit" value="Continue" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}

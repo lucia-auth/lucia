@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.7.1
+
+- [Fix] update parameters for `createKey`, `createUser`
+
 ## 0.7.0
 
 - [Feat] One time keys
