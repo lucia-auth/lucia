@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-test",
-	"version": "0.3.0",
+	"version": "0.4.1",
 	"description": "Tests for database adapters for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -11,19 +11,19 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
 		"lucia-auth",
-		"test",
 		"auth",
 		"authentication",
-		"adapter"
+		"adapter",
+		"test"
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
 		"directory": "packages/adapter-test"
 	},
 	"author": "pilcrowonpaper",
@@ -40,6 +40,6 @@
 		"cli-color": "^2.0.3"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.6.x"
+		"lucia-auth": "0.7.x"
 	}
 }

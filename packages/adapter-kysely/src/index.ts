@@ -1,9 +1,9 @@
 import type { Kysely, Selectable } from "kysely";
 import {
 	Dialect,
-	convertKey,
+	convertKeyData,
 	convertKeySchemaToKyselyValues,
-	convertSession
+	convertSessionData
 } from "./utils.js";
 import type { Adapter, AdapterFunction } from "lucia-auth";
 import type {
@@ -78,7 +78,7 @@ const adapter =
 				} = data;
 				return {
 					user,
-					session: convertSession({
+					session: convertSessionData({
 						id: _session_id,
 						user_id: _session_user_id,
 						active_expires: _session_active_expires,
@@ -93,7 +93,7 @@ const adapter =
 					.where("id", "=", sessionId)
 					.executeTakeFirst();
 				if (!data) return null;
-				return convertSession(data);
+				return convertSessionData(data);
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await kysely
@@ -101,14 +101,14 @@ const adapter =
 					.selectAll()
 					.where("user_id", "=", userId)
 					.execute();
-				return result.map((val) => convertSession(val));
+				return result.map((val) => convertSessionData(val));
 			},
 			setUser: async (userId, attributes, key) => {
 				try {
-					let userResult: Selectable<KyselyUser> | null = null;
-					await kysely.transaction().execute(async (trx) => {
+					const userResult = await kysely.transaction().execute(async (trx) => {
+						let result: Selectable<KyselyUser> | null = null;
 						if (dialect === "pg") {
-							userResult = await trx
+							result = await trx
 								.insertInto("user")
 								.values({
 									id: userId,
@@ -131,6 +131,7 @@ const adapter =
 								.values(convertKeySchemaToKyselyValues(key, dialect))
 								.execute();
 						}
+						return result;
 					});
 					if (userResult) return userResult;
 					const result = await kysely
@@ -322,12 +323,21 @@ const adapter =
 				}
 			},
 			getKey: async (key) => {
-				const data = await kysely
-					.selectFrom("key")
-					.selectAll()
-					.where("id", "=", key)
-					.executeTakeFirst();
-				return data ? convertKey(data) : null;
+				return await kysely.transaction().execute(async (trx) => {
+					const data = await trx
+						.selectFrom("key")
+						.selectAll()
+						.where("id", "=", key)
+						.executeTakeFirst();
+					if (!data) return null;
+					if (data.expires !== null) {
+						await trx
+							.deleteFrom("key")
+							.where("id", "=", data.id)
+							.executeTakeFirst();
+					}
+					return convertKeyData(data);
+				});
 			},
 			getKeysByUserId: async (userId) => {
 				const data = await kysely
@@ -335,7 +345,7 @@ const adapter =
 					.selectAll()
 					.where("user_id", "=", userId)
 					.execute();
-				return data.map((val) => convertKey(val));
+				return data.map((val) => convertKeyData(val));
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
 				if (dialect === "mysql2") {

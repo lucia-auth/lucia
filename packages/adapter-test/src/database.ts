@@ -9,9 +9,9 @@ type QueryHandler<Schema> = {
 };
 
 export type LuciaQueryHandler = {
-	user: QueryHandler<TestUserSchema>;
-	session: QueryHandler<SessionSchema>;
-	key: QueryHandler<KeySchema>;
+	user?: QueryHandler<TestUserSchema>;
+	session?: QueryHandler<SessionSchema>;
+	key?: QueryHandler<KeySchema>;
 };
 
 export class Database {
@@ -20,9 +20,9 @@ export class Database {
 		return new User(this.queryHandler);
 	};
 	public clear = async () => {
-		await this.queryHandler.key.clear();
-		await this.queryHandler.session.clear();
-		await this.queryHandler.user.clear();
+		await this.queryHandler.key?.clear();
+		await this.queryHandler.session?.clear();
+		await this.queryHandler.user?.clear();
 	};
 	constructor(queryHandler: LuciaQueryHandler) {
 		this.queryHandler = queryHandler;
@@ -55,7 +55,7 @@ class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
 		for (const parentModel of this.parent) {
 			await parentModel.set();
 		}
-		await this.storeQueryHandler.insert(this.value as any);
+		await this.storeQueryHandler?.insert(this.value as any);
 	};
 	private safeCompare = (target: unknown) => {
 		if (typeof target !== "object" || target === null)
@@ -87,7 +87,7 @@ class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
 		);
 	};
 	public exists = async () => {
-		const databaseData = await this.storeQueryHandler.get();
+		const databaseData = (await this.storeQueryHandler?.get()) ?? [];
 		const existsInDatabase = databaseData.some(this.safeCompare);
 		if (existsInDatabase) return;
 		console.log("target:");
@@ -101,7 +101,7 @@ class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
 		throw new Error(`Target not found in store ${this.name}`);
 	};
 	public notExits = async () => {
-		const databaseData = await this.storeQueryHandler.get();
+		const databaseData = (await this.storeQueryHandler?.get()) ?? [];
 		const existsInDatabase = databaseData.some(this.safeCompare);
 		if (!existsInDatabase) return;
 		console.log("target:");
@@ -127,7 +127,11 @@ class User extends Model<"user"> {
 			userId: this.value.id
 		});
 	};
-	public key = (option: { isPrimary: boolean; hasPassword: boolean }) => {
+	public key = (option: {
+		isPrimary: boolean;
+		hasPassword: boolean;
+		isOneTime: boolean;
+	}) => {
 		return new Key(this.queryHandler, [this], {
 			userId: this.value.id,
 			...option
@@ -172,6 +176,8 @@ class Session extends Model<"session"> {
 	}
 }
 
+type KeyExpiresOption = "ONE_TIME" | "REGULAR";
+
 class Key extends Model<"key"> {
 	constructor(
 		queryHandler: LuciaQueryHandler,
@@ -180,8 +186,13 @@ class Key extends Model<"key"> {
 			userId: string;
 			isPrimary: boolean;
 			hasPassword: boolean;
+			isOneTime: boolean;
 		}
 	) {
+		const DURATION_SEC = 60 * 60;
+		const oneTimeExpires = options.isOneTime
+			? new Date().getTime() + DURATION_SEC * 1000
+			: null;
 		super(
 			"key",
 			queryHandler,
@@ -189,7 +200,8 @@ class Key extends Model<"key"> {
 				id: `test:${options.userId}@example.com`,
 				user_id: options.userId,
 				primary: options.isPrimary,
-				hashed_password: options.hasPassword ? "HASHED" : null
+				hashed_password: options.hasPassword ? "HASHED" : null,
+				expires: oneTimeExpires
 			},
 			parent
 		);

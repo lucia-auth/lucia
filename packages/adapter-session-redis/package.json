@@ -1,0 +1,47 @@
+{
+	"name": "@lucia-auth/adapter-session-redis",
+	"version": "0.1.2",
+	"description": "Redis session adapter for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"test": "npx ts-node --esm -T test/index.ts",
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+	},
+	"keywords": [
+		"lucia",
+		"lucia-auth",
+		"auth",
+		"authentication",
+		"adapter",
+		"redis",
+		"session"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/session-adapter-redis"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-auth": "0.6.x - 0.7.x",
+		"redis": "4.x"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"dotenv": "^16.0.3",
+		"redis": "^4.3.1",
+		"ts-node": "^10.9.1",
+		"lucia-auth": "workspace:*"
+	}
+}

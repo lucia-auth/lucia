@@ -33,8 +33,12 @@ Known errors (errors related to user id, provider id, session id) should be caug
 
 ### Tests
 
-The testing package are documented at the end of [custom adapters](https://lucia-auth.vercel.app/learn/adapters/custom) . They check if they return the appropriate data and throw the appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must be passed.
+The testing package are documented at the end of [custom adapters](https://lucia-auth.com/learn/adapters/custom) . They check if they return the appropriate data and throw the appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must be passed.
 
 ### Documentation
 
-Documentation for it should go inside `lucia-auth/documentation/docs/<database_name>.md`. Names within file names that should be capitalized should be defined in [`formate.ts`](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/apps/documentation/src/lib/format.ts)
+Documentation for it should go inside `lucia-auth/documentation/docs/<database_name>.md`. Names within file names that should be capitalized should be defined in [`formate.ts`](https://github.com/pilcrowOnPaper/lucia/blob/main/apps/documentation/src/lib/format.ts)
+
+### Changesets
+
+If you're contributing to one of the packages, run `pnpm exec auri add`. This will create a new changeset file in `.auri`. `package` should be the package name (e.g. `lucia-auth`), `type` should be `minor` if it introduces breaking change or `patch` if not, and the content should be a short summary of the update. Make sure to prefix it with `[Breaking]` if it's a breaking change.

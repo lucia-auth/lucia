@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-kysely",
-	"version": "0.5.0",
+	"version": "0.6.1",
 	"description": "Kysely adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -14,7 +14,7 @@
 		"test-psql": "npx ts-node --esm -T test/psql/index.ts",
 		"test-mysql": "npx ts-node --esm -T test/mysql/index.ts",
 		"test-sqlite": "npx ts-node --esm -T test/sqlite/index.ts",
-		"package": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
@@ -23,13 +23,14 @@
 		"mysql",
 		"sqlite",
 		"postgres",
+		"postgresql",
 		"auth",
 		"authentication",
 		"adapter"
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia-auth",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
 		"directory": "packages/adapter-kysely"
 	},
 	"contributors": [
@@ -41,7 +42,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.6.x"
+		"lucia-auth": "0.7.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

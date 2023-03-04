@@ -2,9 +2,9 @@
 
 A simple authentication library for managing users and sessions
 
-**[Documentation](https://lucia-auth.vercel.app)**
+**[Documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/lucia-auth/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia-auth/CHANGELOG.md)**
 
 ## Installation
 

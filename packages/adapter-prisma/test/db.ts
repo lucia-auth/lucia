@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import prisma from "../src/index.js";
-import { convertSession } from "../src/utils.js";
+import { convertKeyData, convertSessionData } from "../src/utils.js";
 import { KeySchema, LuciaError } from "lucia-auth";
 import type { LuciaQueryHandler } from "@lucia-auth/adapter-test";
 
@@ -24,7 +24,7 @@ export const db: LuciaQueryHandler = {
 	session: {
 		get: async () => {
 			const sessions = await client.session.findMany();
-			return sessions.map((session) => convertSession(session));
+			return sessions.map((session) => convertSessionData(session));
 		},
 		insert: async (session) => {
 			await client.session.create({
@@ -37,7 +37,8 @@ export const db: LuciaQueryHandler = {
 	},
 	key: {
 		get: async () => {
-			return (await client.key.findMany()) as unknown as KeySchema[];
+			const keys = (await client.key.findMany()) as unknown as KeySchema[];
+			return keys.map((key) => convertKeyData(key));
 		},
 		insert: async (key) => {
 			await client.key.create({

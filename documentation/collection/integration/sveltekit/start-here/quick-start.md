@@ -5,7 +5,7 @@ title: "Quick start"
 
 This page will guide you on how to implement a simple username/password auth using SvelteKit and cover the basics of Lucia.
 
-The [SvelteKit example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/sveltekit) in the repo expands on this guide.
+The [SvelteKit example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit) in the repo expands on this guide.
 
 Start off by following the steps in [Getting Started](/sveltekit/start-here/getting-started) to set up Lucia and your database.
 

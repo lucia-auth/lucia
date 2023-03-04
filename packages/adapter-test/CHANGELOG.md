@@ -1,8 +1,25 @@
-# CHANGELOG
+# @lucia-auth/adapter-test
+
+## 0.4.1
+
+### Patch changes
+
+- [#381](https://github.com/pilcrowOnPaper/lucia/pull/381) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update links in README and package.json
+
+## 0.4.0
+
+- [Breaking] Tests for `lucia-auth` 0.7.x
+
+## 0.3.1
+
+- Fix types
+
+- Fix tests
 
 ## 0.3.0
 
 - [Breaking] Update `testAdapter`, `testUserAdapter`, `testUserAdapter`
+
 - [Breaking] Tests for `lucia-auth` 0.6.x
 
 ## 0.2.0
@@ -12,6 +29,7 @@
 ## 0.1.6
 
 - Update peer dependency
+
 - Clean up code
 
 ## 0.1.5
