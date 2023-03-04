@@ -4,6 +4,6 @@
 		"format": "pnpm format",
 		"publish_setup": "pnpm publish-setup"
 	},
-	"ignore": ["package.json", "packages/*/dist"],
+	"ignore": ["package.json", "packages/*/dist", "examples", "test-apps"],
 	"debug": true
 }
