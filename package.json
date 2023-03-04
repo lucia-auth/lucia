@@ -3,8 +3,9 @@
 	"version": "0.0.1",
 	"description": "monorepo for lucia-auth",
 	"scripts": {
-		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../astro && pnpm build && cd ../nextjs && pnpm build && cd ../sveltekit && pnpm build && cd ../oauth && pnpm build && cd ../adapter-prisma && pnpm build && pnpm i",
-		"format": "pnpx prettier --write ."
+		"setup": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../astro && pnpm build && cd ../nextjs && pnpm build && cd ../sveltekit && pnpm build && cd ../oauth && pnpm build && cd ../adapter-prisma && pnpm build && pnpm i",
+		"publish-setup": "pnpm install --no-frozen-lockfile && cd packages/lucia-auth && pnpm install --no-frozen-lockfile && pnpm build && cd ../../cd packages/adapter-test && pnpm install --no-frozen-lockfile && pnpm build && cd ../../",
+		"format": "pnpm exec prettier --write ."
 	},
 	"repository": {
 		"type": "git",
