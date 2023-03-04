@@ -59,6 +59,7 @@ If you have your own handle function, SvelteKit's [`sequence`](https://kit.svelt
 // src/hooks.server.ts
 import { auth } from "$lib/server/lucia";
 import { handleHooks } from "@lucia-auth/sveltekit";
+import { sequence } from "@sveltejs/kit/hooks";
 
 export const handle = sequence(handleHooks(auth), customHandle);
 ```
