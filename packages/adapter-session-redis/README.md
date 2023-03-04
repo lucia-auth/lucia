@@ -2,11 +2,11 @@
 
 [Redis](https://redis.io) session adapter for Lucia
 
-**[Documentation](https://lucia-auth.vercel.app/learn/adapters/redis)**
+**[Documentation](https://lucia-auth.com/learn/adapters/redis)**
 
-**[Lucia documentation](https://lucia-auth.vercel.app)**
+**[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/session-adapter-redis/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/session-adapter-redis/CHANGELOG.md)**
 
 ## Installation
 

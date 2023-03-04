@@ -2,11 +2,11 @@
 
 [SvelteKit](https://kit.svelte.dev) integration for Lucia
 
-**[Documentation](https://lucia-auth.vercel.app/sveltekit/start-here/getting-started)**
+**[Documentation](https://lucia-auth.com/sveltekit/start-here/getting-started)**
 
-**[Lucia documentation](https://lucia-auth.vercel.app)**
+**[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/sveltekit/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/sveltekit/CHANGELOG.md)**
 
 ## Installation
 

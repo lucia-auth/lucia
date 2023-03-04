@@ -2,11 +2,11 @@
 
 [Kysely](https://github.com/koskimas/kysely) adapter for Lucia
 
-**[Documentation](https://lucia-auth.vercel.app/learn/adapters/kysely)**
+**[Documentation](https://lucia-auth.com/learn/adapters/kysely)**
 
-**[Lucia documentation](https://lucia-auth.vercel.app)**
+**[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/adapter-kysely/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-kysely/CHANGELOG.md)**
 
 ## Installation
 

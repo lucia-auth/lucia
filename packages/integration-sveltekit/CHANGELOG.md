@@ -10,7 +10,7 @@
 
 ## 0.6.2
 
-- Fix types issue with `locals` [#326](https://github.com/pilcrowOnPaper/lucia-auth/issues/326)
+- Fix types issue with `locals` [#326](https://github.com/pilcrowOnPaper/lucia/issues/326)
 
 ## 0.6.1
 
@@ -23,7 +23,7 @@
 
 ## 0.5.3
 
-- Extend type `locals` with `App.Locals` [#307](https://github.com/pilcrowOnPaper/lucia-auth/issues/307)
+- Extend type `locals` with `App.Locals` [#307](https://github.com/pilcrowOnPaper/lucia/issues/307)
 
 ## 0.5.2
 
@@ -31,7 +31,7 @@
 
 ## 0.5.1
 
-- [Fix] Fix `handleHooks()` types [#260](https://github.com/pilcrowOnPaper/lucia-auth/issues/260)
+- [Fix] Fix `handleHooks()` types [#260](https://github.com/pilcrowOnPaper/lucia/issues/260)
 
 ## 0.5.0
 
@@ -47,10 +47,10 @@
 
 ## 0.3.2
 
-- Remove node dependencies (`crypto`) [#236](https://github.com/pilcrowOnPaper/lucia-auth/issues/236)
+- Remove node dependencies (`crypto`) [#236](https://github.com/pilcrowOnPaper/lucia/issues/236)
 - Add`@noble/hashes` as dependency
 - Use `blake3` for checksum
-- Better error messages for `getUser()` [#239](https://github.com/pilcrowOnPaper/lucia-auth/issues/239)
+- Better error messages for `getUser()` [#239](https://github.com/pilcrowOnPaper/lucia/issues/239)
 
 ## 0.3.1
 
@@ -60,7 +60,7 @@
 
 - [Breaking] Requires `lucia-auth` 0.2.0
 - [Breaking] Using `locals.setSession()` will override the session returned by `locals.setSession()`
-- [Fix] Sets session cookie on normal form submission [#202](https://github.com/pilcrowOnPaper/lucia-auth/issues/202)
+- [Fix] Sets session cookie on normal form submission [#202](https://github.com/pilcrowOnPaper/lucia/issues/202)
 
 ## 0.2.0
 
@@ -94,7 +94,7 @@
 - [Breaking] `handleHooks()` no longer validates sessions on request
 - [Breaking] `locals.getSession()` validates the session on call (needs to be awaited)
 - [Breaking] `handleServerSession()` no longer requires `auth` parameter
-- [Fix] Support latest SvelteKit version [#189](https://github.com/pilcrowOnPaper/lucia-auth/issues/189)
+- [Fix] Support latest SvelteKit version [#189](https://github.com/pilcrowOnPaper/lucia/issues/189)
 - Add `locals.getSessionUser()`
 
 ## 0.1.4
@@ -104,7 +104,7 @@
 
 ## 0.1.3
 
-- Resolve issue where `handleSession()` was throwing error on pages without `getUser()` in the load function [#182](https://github.com/pilcrowOnPaper/lucia-auth/issues/182#issuecomment-1296033717)
+- Resolve issue where `handleSession()` was throwing error on pages without `getUser()` in the load function [#182](https://github.com/pilcrowOnPaper/lucia/issues/182#issuecomment-1296033717)
 
 ## 0.1.2
 

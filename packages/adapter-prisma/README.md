@@ -2,11 +2,11 @@
 
 [Prisma](https://www.prisma.io) adapter for Lucia
 
-**[Documentation](https://lucia-auth.vercel.app/learn/adapters/prisma)**
+**[Documentation](https://lucia-auth.com/learn/adapters/prisma)**
 
-**[Lucia documentation](https://lucia-auth.vercel.app)**
+**[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/adapter-prisma/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-prisma/CHANGELOG.md)**
 
 ## Installation
 

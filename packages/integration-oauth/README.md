@@ -2,11 +2,11 @@
 
 OAuth integration for Lucia.
 
-**[Documentation](https://lucia-auth.vercel.app/oauth/start-here/getting-started)**
+**[Documentation](https://lucia-auth.com/oauth/start-here/getting-started)**
 
-**[Lucia documentation](https://lucia-auth.vercel.app)**
+**[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/oauth/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/oauth/CHANGELOG.md)**
 
 ## Installation
 
