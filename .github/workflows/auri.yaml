@@ -22,7 +22,7 @@ jobs:
       - name: install dependencies
         run: |
           npm i -g pnpm
-          pnpm install --no-frozen-lockfile
+          pnpm publish-setup
       - name: prepare
         run: pnpm auri prepare
       - name: publish
