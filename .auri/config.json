@@ -2,8 +2,8 @@
 	"repository": "https://github.com/pilcrowOnPaper/lucia",
 	"scripts": {
 		"format": "pnpm format",
-        "publish_setup": "pnpm publish-setup"
+		"publish_setup": "pnpm publish-setup"
 	},
-    "ignore": ["package.json", "packages/*/dist"],
-    "debug": true
+	"ignore": ["package.json", "packages/*/dist"],
+	"debug": true
 }

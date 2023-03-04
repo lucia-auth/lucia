@@ -1,4 +1,10 @@
-# CHANGELOG
+# @lucia-auth/nextjs
+
+## 0.5.3
+
+### Patch changes
+
+- [#381](https://github.com/pilcrowOnPaper/lucia/pull/381) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update links in README and package.json
 
 ## 0.5.2
 
@@ -35,6 +41,9 @@
 ## 0.1.1
 
 - [Breaking] Removed `AuthRequest.clearSession()`
+
 - [Breaking] `signOut()` will throw an error on failed session invalidation
+
 - `AuthRequest().setSession()` can be called using `null` to delete all session cookies
+
 - Update `lucia-auth` to 0.1.4

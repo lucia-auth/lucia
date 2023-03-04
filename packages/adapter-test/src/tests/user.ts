@@ -190,18 +190,22 @@ export const testUserAdapter = async (
 			await clearAll();
 		}
 	);
-	await test("setKey()", "Insert a new persistent key with password", async () => {
-		const user = database.user();
-		await user.set();
-		const key = user.key({
-			isPrimary: false,
-			hasPassword: true,
-			isOneTime: false
-		});
-		await adapter.setKey(key.value);
-		await key.exists();
-		await clearAll();
-	});
+	await test(
+		"setKey()",
+		"Insert a new persistent key with password",
+		async () => {
+			const user = database.user();
+			await user.set();
+			const key = user.key({
+				isPrimary: false,
+				hasPassword: true,
+				isOneTime: false
+			});
+			await adapter.setKey(key.value);
+			await key.exists();
+			await clearAll();
+		}
+	);
 	await test(
 		"setKey()",
 		"Insert a new persistent key with null password",

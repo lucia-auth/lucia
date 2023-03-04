@@ -1,4 +1,10 @@
-# CHANGELOG
+# @lucia-auth/astro
+
+## 0.5.3
+
+### Patch changes
+
+- [#381](https://github.com/pilcrowOnPaper/lucia/pull/381) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update links in README and package.json
 
 ## 0.5.2
 
@@ -11,6 +17,7 @@
 ## 0.5.0
 
 - [Breaking] Require `lucia-auth` 0.5.0
+
 - [Breaking] Remove `signOut`
 
 ## 0.4.1
