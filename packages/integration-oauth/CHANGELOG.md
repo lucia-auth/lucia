@@ -1,4 +1,10 @@
-# CHANGELOG
+# @lucia-auth/oauth
+
+## 0.5.4
+
+### Patch changes
+
+- [#381](https://github.com/pilcrowOnPaper/lucia/pull/381) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update links in README and package.json
 
 ## 0.5.3
 
@@ -15,12 +21,15 @@
 ## 0.5.0
 
 - [Breaking] Require `lucia-auth` 0.5.0
+
 - [Breaking] Update `createUser` parameter
+
 - `createKey` method in `validateCallback` result
 
 ## 0.4.0
 
 - [Breaking] Require `lucia-auth` 0.4.3
+
 - Log request errors on dev mode
 
 ## 0.3.2
@@ -34,7 +43,9 @@
 ## 0.3.0
 
 - [Breaking] Rename type `GetUserType` to `LuciaUser`; remove `GetCreateUserAttributesType`
+
 - `userAttributes` params for `createUser` is optional if `Lucia.UserAttributes` is empty
+
 - Make `Buffer` dependency optional
 
 ## 0.2.7
@@ -68,6 +79,7 @@
 ## 0.2.0
 
 - [Breaking] `getAuthorizationUrl` generates and adds `state` params to the authorization url
+
 - [Breaking] `getAuthorizationUrl` returns a tuple
 
 ## 0.1.4

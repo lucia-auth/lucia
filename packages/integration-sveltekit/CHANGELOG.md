@@ -1,4 +1,10 @@
-# CHANGELOG
+# @lucia-auth/sveltekit
+
+## 0.6.6
+
+### Patch changes
+
+- [#381](https://github.com/pilcrowOnPaper/lucia/pull/381) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update links in README and package.json
 
 ## 0.6.4
 
@@ -19,6 +25,7 @@
 ## 0.6.0
 
 - [Breaking] Require `lucia-auth` 0.5.0
+
 - [Breaking] Remove `signOut`
 
 ## 0.5.3
@@ -48,8 +55,11 @@
 ## 0.3.2
 
 - Remove node dependencies (`crypto`) [#236](https://github.com/pilcrowOnPaper/lucia/issues/236)
+
 - Add`@noble/hashes` as dependency
+
 - Use `blake3` for checksum
+
 - Better error messages for `getUser()` [#239](https://github.com/pilcrowOnPaper/lucia/issues/239)
 
 ## 0.3.1
@@ -59,15 +69,21 @@
 ## 0.3.0
 
 - [Breaking] Requires `lucia-auth` 0.2.0
+
 - [Breaking] Using `locals.setSession()` will override the session returned by `locals.setSession()`
+
 - [Fix] Sets session cookie on normal form submission [#202](https://github.com/pilcrowOnPaper/lucia/issues/202)
 
 ## 0.2.0
 
 - [Breaking] Remove `getUser()` for load functions
+
 - [Breaking] `onSessionUpdate()` for `handleSession()` takes a boolean instead of `User`
+
 - [Breaking] `signOut()` no longer clears the local user store
+
 - [Fix] `handleSession()` updates user on load functions page data update and session change across tabs
+
 - `locals.getSession()` and `locals.getUserSession()` will cache the result on initial call and be stored for the duration of the request/page load.
 
 ## 0.1.9
@@ -81,8 +97,11 @@
 ## 0.1.7
 
 - [Breaking] Removed `locals.clearSession()`
+
 - [Breaking] `signOut()` will throw an error on failed session invalidation
+
 - `locals.setSession()` can be called using `null` to delete all session cookies
+
 - Update `lucia-auth` to 0.1.4
 
 ## 0.1.6
@@ -92,14 +111,19 @@
 ## 0.1.5
 
 - [Breaking] `handleHooks()` no longer validates sessions on request
+
 - [Breaking] `locals.getSession()` validates the session on call (needs to be awaited)
+
 - [Breaking] `handleServerSession()` no longer requires `auth` parameter
+
 - [Fix] Support latest SvelteKit version [#189](https://github.com/pilcrowOnPaper/lucia/issues/189)
+
 - Add `locals.getSessionUser()`
 
 ## 0.1.4
 
 - [Breaking] `handleSession()` no longer sync sessions across tabs
+
 - `handleSession()` can take an optional callback that will be called on session change
 
 ## 0.1.3
@@ -113,4 +137,5 @@
 ## 0.1.1
 
 - Remove `setContext()` dependency
+
 - Fix `handleHooks()` types

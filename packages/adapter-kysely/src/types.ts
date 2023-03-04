@@ -18,7 +18,7 @@ export type KyselyKey = {
 	hashed_password: string | null;
 	user_id: string;
 	primary: boolean | number;
-	expires: BigIntColumnType | null
+	expires: BigIntColumnType | null;
 };
 
 export interface KyselyLuciaDatabase {
