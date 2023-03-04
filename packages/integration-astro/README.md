@@ -2,11 +2,11 @@
 
 [Astro](https://astro.build) integration for Lucia
 
-**[Documentation](https://lucia-auth.vercel.app/astro/start-here/getting-started)**
+**[Documentation](https://lucia-auth.com/astro/start-here/getting-started)**
 
-**[Lucia documentation](https://lucia-auth.vercel.app)**
+**[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/astro/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/astro/CHANGELOG.md)**
 
 ## Installation
 

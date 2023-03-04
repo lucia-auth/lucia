@@ -5,7 +5,7 @@ title: "Quick start"
 
 This page will guide you how to implement a simple username/password auth and cover the basics of Lucia.
 
-The [Next.js example project](https://github.com/pilcrowOnPaper/lucia-auth/tree/main/examples/nextjs) in the repo expands on this guide.
+The [Next.js example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs) in the repo expands on this guide.
 
 Start off by following the steps in [the previous page](/nextjs/start-here/getting-started) to set up Lucia and your database.
 

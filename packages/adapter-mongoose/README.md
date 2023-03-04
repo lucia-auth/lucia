@@ -2,11 +2,11 @@
 
 [Mongoose](https://mongoosejs.com) ([MongoDB](https://www.mongodb.com)) adapter for Lucia
 
-**[Documentation](https://lucia-auth.vercel.app/learn/adapters/mongoose)**
+**[Documentation](https://lucia-auth.com/learn/adapters/mongoose)**
 
-**[Lucia documentation](https://lucia-auth.vercel.app)**
+**[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia-auth/blob/main/packages/adapter-mongoose/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-mongoose/CHANGELOG.md)**
 
 ## Installation
 
