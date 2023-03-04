@@ -24,6 +24,6 @@ jobs:
           npm i -g pnpm
           pnpm publish-setup
       - name: prepare
-        run: pnpm exec auri prepare
+        run: pnpm auri prepare
       - name: publish
-        run: pnpm exec auri publish
+        run: pnpm auri publish
