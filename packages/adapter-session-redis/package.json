@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-session-redis",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Redis session adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",

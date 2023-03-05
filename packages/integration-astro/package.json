@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/astro",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"description": "Lucia integration for Astro",
 	"main": "index.js",
 	"types": "index.d.ts",
