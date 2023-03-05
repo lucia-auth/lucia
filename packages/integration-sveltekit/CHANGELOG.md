@@ -1,5 +1,11 @@
 # @lucia-auth/sveltekit
 
+## 0.6.7
+
+### Patch changes
+
+- [#388](https://github.com/pilcrowOnPaper/lucia/pull/388) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : remove unnecessary code
+
 ## 0.6.6
 
 ### Patch changes

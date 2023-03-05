@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-prisma
 
+## 0.5.2
+
+### Patch changes
+
+- [#388](https://github.com/pilcrowOnPaper/lucia/pull/388) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : remove unnecessary code
+
 ## 0.5.1
 
 ### Patch changes
