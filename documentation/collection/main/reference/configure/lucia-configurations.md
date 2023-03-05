@@ -6,7 +6,7 @@ title: "Lucia configurations"
 Configurations for `lucia()`.
 
 ```ts
-interface Configurations {
+type Configurations = {
 	// required
 	adapter:
 		| AdapterFunction<Adapter>
@@ -30,7 +30,7 @@ interface Configurations {
 		idlePeriod: number;
 	};
 	transformUserData?: (userData: UserData) => Record<any, any>;
-}
+};
 ```
 
 ```ts

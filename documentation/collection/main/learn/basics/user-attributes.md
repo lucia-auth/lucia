@@ -99,7 +99,7 @@ declare namespace Lucia {
 }
 ```
 
-This username column can be accessed with `userData.username` inside `transformUserData()` in configs:
+This username column can be accessed with `userData.username` inside `transformUserData()` in config:
 
 ```ts
 export const auth = lucia({

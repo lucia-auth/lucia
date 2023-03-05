@@ -2,7 +2,7 @@ import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
-import github from "@lucia-auth/oauth/github";
+import { github } from "@lucia-auth/oauth/providers";
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),

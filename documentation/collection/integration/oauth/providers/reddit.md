@@ -3,12 +3,16 @@ _order: 0
 title: "Reddit"
 ---
 
-OAuth integration for Reddit. Refer to [Reddit OAuth documentation archive](https://github.com/reddit-archive/reddit/wiki/OAuth2) for getting the required credentials.
+OAuth integration for Reddit. Refer to [Reddit OAuth documentation archive](https://github.com/reddit-archive/reddit/wiki/OAuth2) for getting the required credentials. Provider id is `reddit`.
+
+```ts
+import { reddit } from "@lucia-auth/oauth/providers";
+```
 
 ### Initialization
 
 ```ts
-import reddit from "@lucia-auth/oauth/reddit";
+import { reddit } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
 const redditAuth = reddit(auth, configs);
@@ -36,136 +40,24 @@ const reddit: (
 | configs.redirectUri  | `string`                                    | Reddit OAuth app redirect Uri                     |          |
 | configs.scope        | `string[]`                                  | an array of scopes (`identiy` is always selected) | true     |
 
-### Redirect user to authorization url
-
-Redirect the user to Reddit's authorization url, which can be retrieved using `getAuthorizationUrl()`.
-
-```ts
-import reddit from "@lucia-auth/oauth/reddit";
-import { auth } from "./lucia.js";
-
-const redditAuth = reddit(auth, configs);
-
-const [authorizationUrl, state] = redditAuth.getAuthorizationUrl();
-
-// the state can be stored in cookies or localstorage for request validation on callback
-setCookie("state", state, {
-	path: "/",
-	httpOnly: true, // only readable in the server
-	maxAge: 60 * 60 // a reasonable expiration date
-}); // example with cookie
-```
-
-### Validate callback
-
-The authorization code and state can be retrieved from the `code` and `state` search params, respectively, inside the callback url. Validate that the state is the same as the one stored in either cookies or localstorage before passing the `code` to `validateCallback()`.
-
-```ts
-import reddit from "@lucia-auth/oauth/reddit";
-const redditAuth = reddit();
-
-// get code and state from search params
-const url = new URL(callbackUrl);
-const code = url.searchParams.get("code") || ""; // http://localhost:3000/api/reddit?code=abc&state=efg => abc
-const state = url.searchParams.get("state") || ""; // http://localhost:3000/api/reddit?code=abc&state=efg => efg
-
-// get state stored in cookie (refer to previous step)
-const storedState = headers.cookie.get("state");
-
-// validate state
-if (state !== storedState) throw new Error(); // invalid state
-
-const redditSession = await redditAuth.validateCallback(code);
-```
-
-## `reddit()` (default)
-
-Refer to [`Initialization`](/oauth/providers/reddit#initialization).
-
-## `RedditProvider`
-
-```ts
-interface RedditProvider {
-	getAuthorizationUrl: <State = string | null | undefined = undefined>(state?: State) => State extends null ? [url: string] : [url: string, state: string];
-	validateCallback: (code: string) => Promise<RedditProviderSession>;
-}
-```
-
-Implements [`OAuthProvider`](/oauth/reference/api-reference#oauthprovider).
-
-### `getAuthorizationUrl()`
-
-Refer to [`OAuthProvider.getAuthorizationUrl()`](/oauth/reference/api-reference#getauthorizationurl).
-This integration generates a `permanent` token. For more information refer to [Reddit OAuth documentation archive](https://github.com/reddit-archive/reddit/wiki/OAuth2#authorization).
-
-### `validateCallback()`
-
-Implements [`OAuthProvider.validateCallback()`](/oauth/reference/api-reference#getauthorizationurl). `code` can be acquired from the `code` search params inside the callback url.
-
-```ts
-const validateCallback: (code: string) => Promise<RedditProviderSession>;
-```
-
 #### Returns
 
-| type                                                                     |
-| ------------------------------------------------------------------------ |
-| [`RedditProviderSession`](/oauth/providers/reddit#redditprovidersession) |
+| type                                                           | description     |
+| -------------------------------------------------------------- | --------------- |
+| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Reddit provider |
 
-## `RedditProviderSession`
+## `RedditTokens`
 
 ```ts
-interface RedditProviderSession {
-	existingUser: User | null;
-	createKey: (userId: string) => Promise<Key>;
-	createUser: (userAttributes) => Promise<User>;
-	providerUser: RedditUser;
+type RedditTokens = {
 	accessToken: string;
-}
+};
 ```
-
-Implements [`ProviderSession`](/oauth/reference/api-reference#providersession).
-
-| name                                             | type                                                  | description                                       |
-| ------------------------------------------------ | ----------------------------------------------------- | ------------------------------------------------- |
-| existingUser                                     | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user) |
-| [createKey](/oauth/providers/reddit#createkey)   | `Function`                                            |                                                   |
-| [createUser](/oauth/providers/reddit#createuser) | `Function`                                            |                                                   |
-| providerUser                                     | [`RedditUser`](/oauth/providers/reddit#reddituser)    | Reddit user                                       |
-| accessToken                                      | `string`                                              | Reddit access token                               |
-
-### `createKey()`
-
-```ts
-const createKey: (userId: string) => Promise<Key>;
-```
-
-Creates a new key using [`Lucia.createKey()`](/reference/api/server-api#createkey) using the following parameter:
-
-| name           | value                                                                  |
-| -------------- | ---------------------------------------------------------------------- |
-| userId         | `userId`                                                               |
-| providerId     | `"reddit"`                                                             |
-| providerUserId | Reddit user id ([`RedditUser.id`](/oauth/providers/reddit#reddituser)) |
-
-### `createUser()`
-
-```ts
-const createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
-```
-
-Creates a new user using [`Lucia.createUser()`](/reference/api/server-api#createuser) using the following parameter:
-
-| name                    | value                                                                  |
-| ----------------------- | ---------------------------------------------------------------------- |
-| data.key.providerId     | `"reddit"`                                                             |
-| data.key.providerUserId | Reddit user id ([`RedditUser.id`](/oauth/providers/reddit#reddituser)) |
-| data.attributes         | `userAttributes`                                                       |
 
 ## `RedditUser`
 
 ```ts
-interface RedditUser {
+type RedditUser = {
 	is_employee: boolean;
 	seen_layout_switch: boolean;
 	has_visited_new_profile: boolean;
@@ -310,5 +202,5 @@ interface RedditUser {
 	has_subscribed: boolean;
 	linked_identities: any[];
 	seen_subreddit_chat_ftux: boolean;
-}
+};
 ```

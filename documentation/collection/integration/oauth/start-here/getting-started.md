@@ -5,19 +5,27 @@ title: "Getting started"
 
 While Lucia doesn't directly support OAuth, we do provide an external library that handles OAuth using Lucia. This is a server-only module.
 
+This package currently supports the following providers: Discord, Facebook, Github, Google, Patreon, Reddit, Twitch. You can also add your own providers with [`provider`](/oauth/reference/api#provider) as well.
+
+## Installation
+
 ```bash
 npm i lucia-auth @lucia-auth/oauth
 pnpm add lucia-auth @lucia-auth/oauth
 yarn add lucia-auth @lucia-auth/oauth
 ```
 
-This can be initialized using Lucia's instance and provider-specific configs. Refer to each provider's documentation for the specifics.
+This page will use Github OAuth but the API and auth flow is nearly identical between providers.
+
+## Initialize OAuth handler
+
+Initialize the handler using the Lucia `Auth` instance and provider-specific config. Refer to each provider's documentation for the specifics.
 
 ```ts
-import provider from "@lucia-auth/oauth/provider";
+import { github } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
-const providerAuth = provider(auth, configs);
+const githubAuth = github(auth, config);
 ```
 
 ## Sign in with the provider
@@ -26,14 +34,14 @@ When a user clicks "Sign in with <provider>", redirect the user to a GET endpoin
 
 ```ts
 // SERVER
-import provider from "@lucia-auth/oauth/provider";
+import { github } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
 const handleGetRequests = async () => {
-	const providerAuth = provider(auth, configs);
+	const providerAuth = provider(auth, config);
 
 	// get url to redirect the user to, with the state
-	const [authUrl, state] = providerAuth.getAuthorizationUrl();
+	const [url, state] = await githubAuth.getAuthorizationUrl();
 
 	// the state can be stored in cookies or localstorage for request validation on callback
 	setCookie("state", state, {
@@ -43,7 +51,7 @@ const handleGetRequests = async () => {
 	}); // example with cookie
 
 	// redirect to authorization url
-	redirect(authUrl);
+	redirect(url.toString());
 };
 ```
 
@@ -67,10 +75,10 @@ The following is semi-pseudo-code (namely the provider part):
 
 ```ts
 // SERVER
-import provider from "@lucia-auth/oauth/provider";
+import { github } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
-const providerAuth = provider(auth, configs);
+const githubAuth = provider(auth, config);
 
 // handle GET requests
 export const handleGetRequests = async (request: Request) => {
@@ -86,12 +94,17 @@ export const handleGetRequests = async (request: Request) => {
 	if (state !== storedState) throw new Error(); // invalid state
 
 	const { existingUser, providerUser, createUser } =
-		await providerAuth.validateCallback(code);
-	const user =
-		existingUser ??
-		(await createUser({
+		await githubAuth.validateCallback(code);
+
+	const getUser = async () => {
+		if (existingUser) return existingUser;
+		// create a new user if the user does not exist
+		return await createUser({
 			username: providerUser.username // attributes
-		})); // create a new user if the user does not exist
+		});
+	};
+	const user = await getUser();
+
 	const session = await auth.createSession(user.userId);
 	setSessionCookie(session); // store session cookie
 };
@@ -99,10 +112,10 @@ export const handleGetRequests = async (request: Request) => {
 
 ### Add provider to existing user
 
-Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user.
+Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user. Calling `createKey` will create a new persistent key linked to the provided user id.
 
 ```ts
-const { existingUser, createKey } = await providerAuth.validateCallback(code);
+const { existingUser, createKey } = await githubAuth.validateCallback(code);
 if (!existingUser) {
 	await createKey(currentUser.userId);
 }
