@@ -14,7 +14,7 @@
 		"test-psql": "npx ts-node --esm -T test/psql/index.ts",
 		"test-mysql": "npx ts-node --esm -T test/mysql/index.ts",
 		"test-sqlite": "npx ts-node --esm -T test/sqlite/index.ts",
-		"auri.publish": "pnpm build && cd dist && pnpm publish --no-git-checks --access public && cd ../"
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm pack && cd ../"
 	},
 	"keywords": [
 		"lucia",
@@ -52,10 +52,10 @@
 		"dotenv": "^16.0.3",
 		"mysql2": "^2.3.3",
 		"ts-node": "^10.9.1",
-		"kysely": "^0.23.4"
+		"kysely": "^0.23.4",
+		"pg": "^8.8.0"
 	},
 	"dependencies": {
-		"lucia-auth": "workspace:*",
-		"pg": "^8.8.0"
+		"lucia-auth": "workspace:*"
 	}
 }

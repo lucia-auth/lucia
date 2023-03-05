@@ -11,7 +11,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"auri.publish": "pnpm build && cd dist && pnpm publish --no-git-checks --access public && cd ../"
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
@@ -41,7 +41,6 @@
 	},
 	"devDependencies": {
 		"@types/html-escaper": "^3.0.0",
-		"@types/node": "^18.6.2",
 		"astro": "2.0.0",
 		"lucia-auth": "workspace:*"
 	},
