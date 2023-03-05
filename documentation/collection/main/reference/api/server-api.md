@@ -51,8 +51,8 @@ const lucia: (config: Configurations) => Auth;
 
 #### Parameter
 
-| name    | type             | description                                                                                         |
-| ------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| name   | type             | description                                                                                         |
+| ------ | ---------------- | --------------------------------------------------------------------------------------------------- |
 | config | `Configurations` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
 
 #### Example

@@ -40,8 +40,8 @@ const github: (
 
 #### Returns
 
-| type                | description     |
-| ------------------- | --------------- |
+| type                                                           | description     |
+| -------------------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Github provider |
 
 ## `GithubTokens`

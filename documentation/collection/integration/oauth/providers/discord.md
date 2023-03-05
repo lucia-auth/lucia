@@ -44,8 +44,8 @@ const discord: (
 
 #### Returns
 
-| type                | description      |
-| ------------------- | ---------------- |
+| type                                                           | description      |
+| -------------------------------------------------------------- | ---------------- |
 | [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Discord provider |
 
 ## `DiscordTokens`

@@ -44,8 +44,8 @@ const facebook: (
 
 #### Returns
 
-| type                | description       |
-| ------------------- | ----------------- |
+| type                                                           | description       |
+| -------------------------------------------------------------- | ----------------- |
 | [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Facebook provider |
 
 ## `FacebookTokens`
