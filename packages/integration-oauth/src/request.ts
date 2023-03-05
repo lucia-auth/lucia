@@ -1,56 +1,48 @@
-import { LuciaOAuthError } from "./index.js";
+import { LuciaOAuthRequestError } from "./index.js";
 
-interface FetchOptions {
-	env: "DEV" | "PROD";
-	body?: Record<any, any>;
-	bearerToken?: string;
-	basicToken?: string;
-	acceptJSON?: true;
-	clientId?: string;
-}
-
-export const post = async (url: string, options: FetchOptions) => {
-	return sendRequest(url, "POST", options);
-};
-
-export const get = async (url: string, options: FetchOptions) => {
-	return sendRequest(url, "GET", options);
-};
-
-export const sendRequest = async (
-	url: string,
-	method: "GET" | "POST",
-	options: FetchOptions
-) => {
-	const response = await fetch(url, {
-		...(options?.body && { body: JSON.stringify(options.body) }),
-		headers: {
-			"User-Agent": "lucia",
-			Accept: "application/json",
-			...(options?.body && {
-				"Content-Type": "application/json"
-			}),
-			...(options?.clientId && {
-				"Client-ID": options.clientId
-			}),
-			...(options?.bearerToken && {
-				Authorization: `Bearer ${options.bearerToken}`
-			}),
-			...(options?.basicToken && {
-				Authorization: `Basic ${options.basicToken}`
-			})
-		},
-		method
-	});
+export const handleRequest = async <T extends {}>(request: Request) => {
+	request.headers.set("User-Agent", "lucia");
+	request.headers.set("Accept", "application/json");
+	const response = await fetch(request);
 	if (!response.ok) {
-		if (options.env === "DEV") {
+		const getErrorBody = async () => {
 			try {
-				console.log(response.status, await response.json());
+				return await response.json();
 			} catch {
-				console.log(response.status);
+				return null;
 			}
-		}
-		throw new LuciaOAuthError("REQUEST_FAILED");
+		};
+		const errorBody = getErrorBody();
+		throw new LuciaOAuthRequestError(response.status, errorBody);
 	}
-	return await response.json();
+	return (await response.json()) as T;
+};
+
+export const createUrl = (
+	base: string,
+	urlSearchParams: Record<string, string> = {}
+) => {
+	const url = new URL(base);
+	for (const [key, value] of Object.entries(urlSearchParams)) {
+		url.searchParams.set(key, value);
+	}
+	return url;
+};
+
+export const authorizationHeaders = (
+	type: "bearer" | "basic",
+	token: string
+) => {
+	const getHeadersValue = () => {
+		if (type === "basic") {
+			return ["Basic", token].join(" ");
+		}
+		if (type === "bearer") {
+			return ["Bearer", token].join(" ");
+		}
+		throw new TypeError("Invalid token type");
+	}
+	return {
+		Authorization: getHeadersValue()
+	}
 };

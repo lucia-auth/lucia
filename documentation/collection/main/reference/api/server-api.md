@@ -46,14 +46,14 @@ const randomString = generateRandomString(8);
 Creates a new `Auth` instance. Methods for `Auth` can throw adapter-specific database errors. The methods for the instance are listed below.
 
 ```ts
-const lucia: (configs: Configurations) => Auth;
+const lucia: (config: Configurations) => Auth;
 ```
 
 #### Parameter
 
 | name    | type             | description                                                                                         |
 | ------- | ---------------- | --------------------------------------------------------------------------------------------------- |
-| configs | `Configurations` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
+| config | `Configurations` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
 
 #### Example
 

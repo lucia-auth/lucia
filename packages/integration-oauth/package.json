@@ -30,28 +30,12 @@
 	"exports": {
 		"./package.json": "./package.json",
 		".": "./index.js",
-		"./github": "./github.js",
-		"./google": "./google.js",
-		"./patreon": "./patreon.js",
-		"./reddit": "./reddit.js",
-		"./twitch": "./twitch.js"
+		"./providers": "./providers/index.js"
 	},
 	"typesVersions": {
 		"*": {
-			"github": [
-				"github.d.ts"
-			],
-			"google": [
-				"google.d.ts"
-			],
-			"patreon": [
-				"patreon.d.ts"
-			],
-			"reddit": [
-				"reddit.d.ts"
-			],
-			"twitch": [
-				"twitch.d.ts"
+			"providers": [
+				"providers/index.d.ts"
 			]
 		}
 	},

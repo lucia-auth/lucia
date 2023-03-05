@@ -3,7 +3,7 @@ import prisma from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
 import { PrismaClient } from '@prisma/client';
 
-import github from '@lucia-auth/oauth/github';
+import { github } from '@lucia-auth/oauth/providers';
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '$env/static/private';
 
 export const auth = lucia({

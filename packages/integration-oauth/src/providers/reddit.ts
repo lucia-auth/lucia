@@ -1,17 +1,68 @@
-import { get, post } from "./request.js";
-import type { Auth, LuciaError } from "lucia-auth";
-import {
-	generateState,
-	GetAuthorizationUrlReturnType,
-	LuciaUser,
-	OAuthConfig,
-	OAuthProvider,
-	CreateUserAttributesParameter
-} from "./index.js";
+import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { scope, provider } from "../core.js";
 
-interface Configs extends OAuthConfig {
+import type { Auth } from "lucia-auth";
+import type { OAuthConfig } from "../core.js";
+
+type Config = OAuthConfig & {
 	redirectUri: string;
-}
+};
+
+const PROVIDER_ID = "reddit";
+
+export const reddit = <A extends Auth>(auth: A, config: Config) => {
+	const getAuthorizationUrl = async (state: string) => {
+		const url = createUrl("https://www.reddit.com/api/v1/authorize", {
+			client_id: config.clientId,
+			response_type: "code",
+			redirect_uri: config.redirectUri,
+			duration: "permanent",
+			scope: scope([], config.scope),
+			state
+		});
+
+		return url;
+	};
+
+	const getTokens = async (code: string) => {
+		const requestUrl = createUrl("https://www.reddit.com/api/v1/access_token", {
+			grant_type: "authorization_code",
+			redirect_uri: config.redirectUri,
+			code
+		});
+		const request = new Request(requestUrl, {
+			method: "POST",
+			headers: authorizationHeaders(
+				"basic",
+				encodeBase64(config.clientId + ":" + config.clientSecret)
+			)
+		});
+		const tokens = await handleRequest<{
+			access_token: string;
+		}>(request);
+
+		return {
+			accessToken: tokens.access_token
+		};
+	};
+
+	const getProviderUser = async (accessToken: string) => {
+		const request = new Request("https://oauth.reddit.com/api/v1/me", {
+			headers: authorizationHeaders("bearer", accessToken)
+		});
+		const redditUser = await handleRequest<RedditUser>(request);
+		const providerUserId = redditUser.id;
+
+		return [providerUserId, redditUser] as const;
+	};
+
+	return provider(auth, {
+		providerId: PROVIDER_ID,
+		getAuthorizationUrl,
+		getTokens,
+		getProviderUser
+	});
+};
 
 const encodeBase64 = (s: string) => {
 	// ORDER IS IMPORTANT!!
@@ -24,119 +75,13 @@ const encodeBase64 = (s: string) => {
 		// node
 		return Buffer.from(s).toString("base64");
 	}
+
 	// standard API
 	// IGNORE WARNING
 	return btoa(s);
 };
 
-class Reddit<A extends Auth> implements OAuthProvider<A> {
-	constructor(auth: A, configs: Configs) {
-		this.auth = auth;
-		this.clientId = configs.clientId;
-		this.clientSecret = configs.clientSecret;
-		if (configs.scope) {
-			this.scope = ["identity", ...configs.scope];
-		} else {
-			this.scope = ["identity"];
-		}
-		this.redirectUri = configs.redirectUri;
-	}
-
-	private auth: A;
-	private clientId: string;
-	private clientSecret: string;
-	private scope: string[];
-	private redirectUri: string;
-
-	public getAuthorizationUrl = <
-		State extends string | null | undefined = undefined
-	>(
-		state?: State
-	): GetAuthorizationUrlReturnType<State> => {
-		const s =
-			state ?? (typeof state === "undefined" ? generateState() : undefined);
-		const url = `https://www.reddit.com/api/v1/authorize?${new URLSearchParams({
-			client_id: this.clientId,
-			response_type: "code",
-			redirect_uri: this.redirectUri,
-			duration: "permanent",
-			scope: this.scope.join(" "),
-			...(s && { state: s })
-		}).toString()}`;
-		if (state === null)
-			return [url] as const as GetAuthorizationUrlReturnType<State>;
-		return [url, s] as const as GetAuthorizationUrlReturnType<State>;
-	};
-
-	public validateCallback = async (code: string) => {
-		const { access_token: accessToken } = (await post(
-			`https://www.reddit.com/api/v1/access_token?${new URLSearchParams({
-				grant_type: "authorization_code",
-				redirect_uri: this.redirectUri,
-				code
-			}).toString()}`,
-			{
-				env: this.auth.ENV,
-				basicToken: encodeBase64(this.clientId + ":" + this.clientSecret)
-			}
-		)) as {
-			access_token: string;
-		};
-
-		const redditUser = (await get("https://oauth.reddit.com/api/v1/me", {
-			env: this.auth.ENV,
-			bearerToken: accessToken
-		})) as RedditUser;
-		const PROVIDER_ID = "reddit";
-		const PROVIDER_USER_ID = redditUser.id;
-		let existingUser: LuciaUser<A> | null = null;
-		try {
-			const { user } = await this.auth.getKeyUser(
-				PROVIDER_ID,
-				PROVIDER_USER_ID
-			);
-			existingUser = user as LuciaUser<A>;
-		} catch (e) {
-			const error = e as Partial<LuciaError>;
-			if (error?.message !== "AUTH_INVALID_KEY_ID") throw e;
-			// existingUser is null
-		}
-		const createUser = async (
-			userAttributes: CreateUserAttributesParameter<A>
-		) => {
-			return (await this.auth.createUser({
-				key: {
-					providerId: PROVIDER_ID,
-					providerUserId: PROVIDER_USER_ID,
-					password: null
-				},
-				attributes: userAttributes as any
-			})) as any;
-		};
-		const createKey = async (userId: string) => {
-			return await this.auth.createKey(userId, {
-				providerId: PROVIDER_ID,
-				providerUserId: PROVIDER_USER_ID,
-				password: null
-			});
-		};
-		return {
-			createKey,
-			createUser,
-			existingUser,
-			providerUser: redditUser,
-			accessToken
-		};
-	};
-}
-
-const reddit = <A extends Auth>(auth: A, configs: Configs) => {
-	return new Reddit(auth, configs);
-};
-
-export default reddit;
-
-interface RedditUser {
+export type RedditUser = {
 	is_employee: boolean;
 	seen_layout_switch: boolean;
 	has_visited_new_profile: boolean;
@@ -281,4 +226,4 @@ interface RedditUser {
 	has_subscribed: boolean;
 	linked_identities: any[];
 	seen_subreddit_chat_ftux: boolean;
-}
+};

@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 export const get: APIRoute = async ({ url, cookies }) => {
 	const provider = url.searchParams.get("provider");
 	if (provider === "github") {
-		const [url, state] = githubAuth.getAuthorizationUrl();
+		const [url, state] = await githubAuth.getAuthorizationUrl();
 		cookies.set("oauth_state", state, {
 			path: "/",
 			maxAge: 60 * 60
@@ -12,7 +12,7 @@ export const get: APIRoute = async ({ url, cookies }) => {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				location: url
+				location: url.toString()
 			}
 		});
 	}
