@@ -12,16 +12,19 @@ This will install and build all the required dependencies. It might take a few m
 
 - **TypeScript**
 - Variables and functions should use `camelCase`
-- Use arrow functions whenever possible
-- Use async/await instead of callbacks
+- Arrow functions over named functions
+- `async`/`await` over callbacks
+- `type` over `interface`
 - Installed Prettier should be used for formatting
 - Use ESM over CommonJS
+
+## Repository
+
+This repository uses [`Auri`](https://github.com/pilcrowOnPaper/auri) to handle package changes and releases.
 
 ## Adapters
 
 Adapters provide a set of methods that Lucia can call to read and update data from the database.
-
-Adapters should not return any unnecessary data. For `updateUser()`, Lucia provides `adapterGetUpdateData()`, which will remove everything that is undefined from the input (`null` is a value and should not be ignored)
 
 ### Naming
 
@@ -29,16 +32,23 @@ Name the adapter as `adapter-<database_name>` (no `-` or `_` in `<database_name>
 
 ### Errors
 
-Known errors (errors related to user id, provider id, session id) should be caught and thrown using `LuciaError`. while database errors should be thrown as is.
+[Known errors](https://lucia-auth.com/learn/basics/error-handling#known-errors) should be caught and thrown using `LuciaError`, while database errors should be thrown as is.
 
 ### Tests
 
-The testing package are documented at the end of [custom adapters](https://lucia-auth.com/learn/adapters/custom) . They check if they return the appropriate data and throw the appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must be passed.
+The testing package are documented at [Testing adapters](https://lucia-auth.com/reference/adapters/testing-adapters). They check if they return appropriate data and throw appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must pass.
 
-### Documentation
+## Documentation
 
-Documentation for it should go inside `lucia-auth/documentation/docs/<database_name>.md`. Names within file names that should be capitalized should be defined in [`formate.ts`](https://github.com/pilcrowOnPaper/lucia/blob/main/apps/documentation/src/lib/format.ts)
+The markdown files for documentation are stored in `/documentation/collection`. The documentation site is built with Astro, SolidJS, and Tailwind, though knowledge of these shouldn't be needed for updating the content. 
 
-### Changesets
+The documentation uses 2 specialized library:
 
-If you're contributing to one of the packages, run `pnpm exec auri add`. This will create a new changeset file in `.auri`. `package` should be the package name (e.g. `lucia-auth`), `type` should be `minor` if it introduces breaking change or `patch` if not, and the content should be a short summary of the update. Make sure to prefix it with `[Breaking]` if it's a breaking change.
+- [Custom content collection](https://github.com/pilcrowOnPaper/lucia/tree/main/documentation/db): For managing and querying markdown content
+- [Siena](https://github.com/pilcrowOnPaper/siena): For optimizing images
+
+## Changesets
+
+If a PR introduces a change to one of the packages, run `pnpm exec auri add`. This will create a new changeset file in `.auri`. `package` should be the package name (e.g. `lucia-auth`), `type` should be `minor` if it introduces breaking change or `patch` if not, and the content should be a short summary of the update. Make sure to prefix it with `[Breaking]` if it's a breaking change.
+
+**You do not have to manually update `CHANGELOG.md` or `package.json`.**
