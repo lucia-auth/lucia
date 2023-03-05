@@ -46,7 +46,7 @@ export const twitch = <A extends Auth>(auth: A, config: Config) => {
 		return {
 			accessToken: tokens.access_token,
 			refreshToken: tokens.refresh_token,
-			accessTokenExpiresIn: tokens.expires_in,
+			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
 

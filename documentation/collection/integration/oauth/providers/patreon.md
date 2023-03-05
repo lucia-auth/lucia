@@ -45,8 +45,8 @@ const patreon: (
 
 #### Returns
 
-| type                | description      |
-| ------------------- | ---------------- |
+| type                                                           | description      |
+| -------------------------------------------------------------- | ---------------- |
 | [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Patreon provider |
 
 ## `PatreonTokens`

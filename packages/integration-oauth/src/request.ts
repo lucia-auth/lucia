@@ -41,8 +41,8 @@ export const authorizationHeaders = (
 			return ["Bearer", token].join(" ");
 		}
 		throw new TypeError("Invalid token type");
-	}
+	};
 	return {
 		Authorization: getHeadersValue()
-	}
+	};
 };

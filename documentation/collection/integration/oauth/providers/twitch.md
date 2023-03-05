@@ -44,8 +44,8 @@ const twitch: (
 
 #### Returns
 
-| type                | description     |
-| ------------------- | --------------- |
+| type                                                           | description     |
+| -------------------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Twitch provider |
 
 ## `TwitchTokens`
