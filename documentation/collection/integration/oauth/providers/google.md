@@ -42,8 +42,8 @@ const google: (
 
 #### Returns
 
-| type                | description     |
-| ------------------- | --------------- |
+| type                                                           | description     |
+| -------------------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Google provider |
 
 ## `GoogleTokens`
@@ -59,7 +59,7 @@ type GoogleTokens = {
 ## `GoogleUser`
 
 ```ts
-interface GoogleUser {
+type GoogleUser = {
 	sub: string;
 	name: string;
 	given_name: string;
@@ -69,5 +69,5 @@ interface GoogleUser {
 	email_verified: boolean;
 	locale: string;
 	hd: string;
-}
+};
 ```

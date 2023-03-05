@@ -42,8 +42,8 @@ const reddit: (
 
 #### Returns
 
-| type                | description     |
-| ------------------- | --------------- |
+| type                                                           | description     |
+| -------------------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Reddit provider |
 
 ## `RedditTokens`
@@ -57,7 +57,7 @@ type RedditTokens = {
 ## `RedditUser`
 
 ```ts
-interface RedditUser {
+type RedditUser = {
 	is_employee: boolean;
 	seen_layout_switch: boolean;
 	has_visited_new_profile: boolean;
@@ -202,5 +202,5 @@ interface RedditUser {
 	has_subscribed: boolean;
 	linked_identities: any[];
 	seen_subreddit_chat_ftux: boolean;
-}
+};
 ```
