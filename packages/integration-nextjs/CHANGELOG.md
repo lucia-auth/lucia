@@ -1,5 +1,11 @@
 # @lucia-auth/nextjs
 
+## 0.5.5
+
+### Patch changes
+
+- [#392](https://github.com/pilcrowOnPaper/lucia/pull/392) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 0.5.4
 
 ### Patch changes
