@@ -1,6 +1,6 @@
 ---
-_order: 0
-title: "Lucia types"
+_order: 3
+title: "Types"
 ---
 
 Types can be imported from `lucia-auth`.
@@ -15,16 +15,12 @@ Refer to [Adapters](/reference/adapters/api) reference.
 
 ## `AdapterFunction`
 
-Refer to [Adapters](/reference/adapters/api) reference. `LuciaErrorConstructor` is the constructor function (class reference) of [`LuciaError`](/reference/types/lucia-types#luciaerror).
+Refer to [Adapters](/reference/adapters/api) reference. `LuciaErrorConstructor` is the constructor function (class reference) of [`LuciaError`](/reference/api/luciaerror).
 
 ```ts
 export type AdapterFunction<A extends Adapter | UserAdapter | SessionAdapter> =
 	(LuciaError: LuciaErrorConstructor) => A;
 ```
-
-## `Auth`
-
-Return type of [`lucia()`](/reference/api/server-api#lucia-default).
 
 ## `Cookie`
 
@@ -67,23 +63,58 @@ export type Key = {
 | providerUserId    | `string`  | provider user id                                                                  |
 | userId            | `string`  | user id of linked user                                                            |
 
+## `Lucia`
+
+A namespace.
+
+```ts
+// src/app.d.ts
+/// <reference types="lucia-auth" />
+declare namespace Lucia {
+	type Auth = import("lucia-auth").Auth;
+	type UserAttributes = {};
+}
+```
+
+### `Auth`
+
+Should be set to [`Auth`](/reference/api/auth).
+
+#### Example
+
+```ts
+// lucia.ts
+import lucia from "lucia-auth";
+
+const auth = lucia();
+export type Auth = typeof auth;
+```
+
+```ts
+declare namespace Lucia {
+	type Auth = import("lucia.js").Auth;
+}
+```
+
+### `UserAttributes`
+
+Extends `{}`. The additional user data stored in the `user` table. The keys should be the name of the columns.
+
+#### Example
+
+If you have a `username` column in `user` table:
+
+```ts
+declare namespace Lucia {
+	interface UserAttributes {
+		username: string;
+	}
+}
+```
+
 ## `LuciaError`
 
-All errors thrown by Lucia will use this error constructor. Refer to [Errors](/reference/types/errors) for a list of valid error names.
-
-```ts
-class LuciaError extends Error {}
-```
-
-```ts
-const constructor: (errorName: LuciaErrorName) => void;
-```
-
-#### Parameter
-
-| name      | type                            | description              |
-| --------- | ------------------------------- | ------------------------ |
-| errorName | `LuciaErrorName extends string` | a valid Lucia error name |
+Errors thrown by Lucia. Refer to [Errors](/reference/api/errors) for a list of error messages.
 
 ## `MinimalRequest`
 
@@ -133,7 +164,7 @@ Refer to [Database model](/reference/adapters/database-model#schema-type-1) refe
 
 ## `User`
 
-Return type of [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) config.
+Return type of [`transformUserData()`](/reference/api/configuration#transformuserdata) config.
 
 ```ts
 type User = ReturnType<typeof transformUserData>;
@@ -163,10 +194,10 @@ type UserData = {
 } & Required<Lucia.UserAttributes>;
 ```
 
-| name | type                                                                      | description                        |
-| ---- | ------------------------------------------------------------------------- | ---------------------------------- |
-| id   | `string`                                                                  | user id of the user                |
-|      | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional columns in `user` table |
+| name | type                                                                | description                        |
+| ---- | ------------------------------------------------------------------- | ---------------------------------- |
+| id   | `string`                                                            | user id of the user                |
+|      | [`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes) | additional columns in `user` table |
 
 ## `UserSchema`
 

@@ -7,7 +7,7 @@ Keys allow you to reference users using external data from a provider. They're d
 
 ## Get key
 
-You can get the key data using [`getKey()`](/reference/api/server-api#getkey).
+You can get the key data using [`getKey()`](/reference/api/auth#getkey).
 
 ```ts
 import { auth } from "./lucia.js";
@@ -21,7 +21,7 @@ try {
 
 ### Get all keys of a user
 
-You can get all keys belonging to a user using [`getAllUserKeys()`](/reference/api/server-api#getalluserkeys).
+You can get all keys belonging to a user using [`getAllUserKeys()`](/reference/api/auth#getalluserkeys).
 
 ```ts
 try {
@@ -34,7 +34,7 @@ try {
 
 ## Get user from keys
 
-[`getKeyUser()`](/reference/api/server-api#getkeyuser) can be used to get the user of the key based on the provider id and provider user id. This will throw an error if the key doesn't exist.
+[`getKeyUser()`](/reference/api/auth#getkeyuser) can be used to get the user of the key based on the provider id and provider user id. This will throw an error if the key doesn't exist.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -50,7 +50,7 @@ If the key was single use, this method will delete the key from the database.
 
 ## Validate key password
 
-You can validate a key password and get the user with [`validateKeyPassword()`](/reference/api/server-api#validatekeypassword). This method will only work with keys with a password.
+You can validate a key password and get the user with [`validateKeyPassword()`](/reference/api/auth#validatekeypassword). This method will only work with keys with a password.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -68,7 +68,7 @@ If the key was single use, this method will delete the key from the database.
 
 ## Create new key
 
-You can create a new key for a user using [`createKey()`](/reference/api/server-api#createkey). You can only create non-primary keys with this method.
+You can create a new key for a user using [`createKey()`](/reference/api/auth#createkey). You can only create non-primary keys with this method.
 
 ```ts
 try {
@@ -101,7 +101,7 @@ try {
 
 ## Update key password
 
-You can update the password of a key with [`updateKeyPassword()`](/reference/api/server-api#createkey). You can pass in `null` to remove the password.
+You can update the password of a key with [`updateKeyPassword()`](/reference/api/auth#createkey). You can pass in `null` to remove the password.
 
 ```ts
 try {
@@ -113,7 +113,7 @@ try {
 
 ## Delete key
 
-You can delete a non-primary key with [`deleteKey()`](/reference/api/server-api#deletekey). You cannot delete primary keys. This method will succeed regardless of the validity of key.
+You can delete a non-primary key with [`deleteKey()`](/reference/api/auth#deletekey). You cannot delete primary keys. This method will succeed regardless of the validity of key.
 
 ```ts
 try {

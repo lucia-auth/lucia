@@ -33,7 +33,7 @@ declare namespace Lucia {
 }
 ```
 
-Add [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
+Add [`transformUserData()`](/reference/api/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
 // lib/lucia.ts

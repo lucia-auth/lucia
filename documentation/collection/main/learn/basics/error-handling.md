@@ -3,9 +3,9 @@ _order: 4
 title: "Error handling"
 ---
 
-Errors are handled by throwing [`LuciaError`](/reference/types/lucia-types#luciaerror) inside Lucia. A list of error messages is provided in the [Errors](/reference/types/errors) reference and the [API](/reference/api/server-api) reference lists errors thrown by each method.
+Errors are handled by throwing [`LuciaError`](/reference/api/luciaerror) inside Lucia. All error messages are listed in the reference.
 
-Using a try-catch block, the error message can be read like this:
+Using a try-catch block, the error message can be read like so:
 
 ```ts
 import { LuciaError } from "lucia-auth";

@@ -5,7 +5,7 @@ title: "API"
 
 Adapters are just objects with a handful of methods that interact with the database. This makes it easy to create your own and support any databases.
 
-The `adapter` configuration expects a [`AdapterFunction`](/reference/types/lucia-types#adapterfunction), which are functions that takes a [`LuciaError`](/reference/types/lucia-types#luciaerror) constructor as its parameter and returns an adapter object. **`LuciaError` thrown by adapters should use the object passed on and not the one imported from `lucia-auth` package**.
+The `adapter` configuration expects a [`AdapterFunction`](/reference/api/types#adapterfunction), which are functions that takes a [`LuciaError`](/reference/api/luciaerror) constructor as its parameter and returns an adapter object. **`LuciaError` thrown by adapters should use the object passed on and not the one imported from `lucia-auth` package**.
 
 Refer to [Database model](/reference/adapters/database-model) for database model and types.
 

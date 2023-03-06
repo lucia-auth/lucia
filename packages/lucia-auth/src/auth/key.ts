@@ -1,12 +1,12 @@
 import { Key, KeySchema } from "../types.js";
+import { LuciaError } from "./error.js";
 
-export const transformDatabaseKeyData = (
-	databaseKey: KeySchema
-): Key | null => {
+export const validateDatabaseKey = (databaseKey: KeySchema): Key => {
 	const currentTime = new Date().getTime();
 	// invalid session
-	if (databaseKey.expires !== null && currentTime > databaseKey.expires)
-		return null;
+	if (databaseKey.expires !== null && currentTime > databaseKey.expires) {
+		throw new LuciaError("AUTH_EXPIRED_KEY");
+	}
 	const [providerId, ...providerUserIdSegments] = databaseKey.id.split(":");
 	const oneTimeExpires =
 		databaseKey.expires === null ? null : new Date(databaseKey.expires);

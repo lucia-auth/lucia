@@ -35,13 +35,13 @@ const patreon: (
 
 #### Parameter
 
-| name                 | type                                        | description                                        | optional |
-| -------------------- | ------------------------------------------- | -------------------------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                     |          |
-| configs.clientId     | `string`                                    | Patreon OAuth app client id                        |          |
-| configs.clientSecret | `string`                                    | Patreon OAuth app client secret                    |          |
-| configs.redirectUri  | `string`                                    | one of the authorized redirect URIs                |          |
-| configs.scope        | `string[]`                                  | an array of scopes - `identity` is always included | true     |
+| name                 | type                          | description                                        | optional |
+| -------------------- | ----------------------------- | -------------------------------------------------- | -------- |
+| auth                 | [`Auth`](/reference/api/auth) | Lucia instance                                     |          |
+| configs.clientId     | `string`                      | Patreon OAuth app client id                        |          |
+| configs.clientSecret | `string`                      | Patreon OAuth app client secret                    |          |
+| configs.redirectUri  | `string`                      | one of the authorized redirect URIs                |          |
+| configs.scope        | `string[]`                    | an array of scopes - `identity` is always included | true     |
 
 #### Returns
 

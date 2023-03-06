@@ -39,6 +39,6 @@
 		"cli-color": "^2.0.3"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.7.x"
+		"lucia-auth": "0.7.x - 0.8.x"
 	}
 }

@@ -43,7 +43,7 @@ The primary key is the persistent key created alongside the user. The primary ke
 
 ## Create users
 
-[`createUser()`](/reference/api/server-api#createuser) can be used to create users. This takes an option for the primary key to be created with the user.
+[`createUser()`](/reference/api/auth#createuser) can be used to create users. This takes an option for the primary key to be created with the user.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -132,7 +132,7 @@ If you _just_ need to store users and authenticate users by yourself, you can se
 
 ## Get users
 
-[`getUser()`](/reference/api/server-api#getuser) can be used to get a user from a user id. This will throw an error if the user isn’t found.
+[`getUser()`](/reference/api/auth#getuser) can be used to get a user from a user id. This will throw an error if the user isn’t found.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -142,7 +142,7 @@ const user = await auth.getUser(userId);
 
 ## Update user attributes
 
-A user's attributes can be updated using [`updateUserAttributes()`](/reference/api/server-api#updateuserattributes). Only the user data attribute (column) that needs to updated needs to be passed.
+A user's attributes can be updated using [`updateUserAttributes()`](/reference/api/auth#updateuserattributes). Only the user data attribute (column) that needs to updated needs to be passed.
 
 > (red) **Make sure to invalidate all sessions of the user on password or privilege level change.** You can create a new session to prevent the current user from being logged out.
 
@@ -173,7 +173,7 @@ try {
 
 ## Delete users
 
-Users can be deleted using [`deleteUser()`](/reference/api/server-api#deleteuser). All sessions and keys of the target user will be deleted. This method will succeed regardless of the validity of the user id.
+Users can be deleted using [`deleteUser()`](/reference/api/auth#deleteuser). All sessions and keys of the target user will be deleted. This method will succeed regardless of the validity of the user id.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -185,9 +185,9 @@ const user = auth.deleteUser(userId);
 
 ### Custom user id generation
 
-You can generate your own user ids by setting [`generateCustomUserId()`](/reference/configure/lucia-configurations#generatecustomuserid), which can either be synchronous or asynchronous.
+You can generate your own user ids by setting [`generateCustomUserId()`](/reference/api/configuration#generatecustomuserid), which can either be synchronous or asynchronous.
 
-If you need to generate a cryptographically random alphanumeric string, Lucia provides [`generateRandomString()`](/reference/api/server-api#generaterandomstring). This function uses the [`nanoid`](https://github.com/ai/nanoid) package.
+If you need to generate a cryptographically random alphanumeric string, Lucia provides [`generateRandomString()`](/reference/modules/lucia-auth#generaterandomstring). This function uses the [`nanoid`](https://github.com/ai/nanoid) package.
 
 ```ts
 import { generateCustomUserId } from "lucia-auth";

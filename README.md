@@ -2,7 +2,7 @@
 
 **This library is still in beta! While APIs have been relatively stable recently in preparation for v1.0, expect breaking changes.**
 
-Lucia is a simple yet flexible user and session management library that provides an
+Lucia is a simple and flexible user and session management library that provides an
 abstraction layer between your app and your database. It's bare-bones by design, keeping
 everything easy to use and understand. Get started by reading the [introduction page](https://lucia-auth.com/learn/start-here/introduction).
 
