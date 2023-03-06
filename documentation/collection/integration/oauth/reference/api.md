@@ -65,13 +65,13 @@ const provider = (
 
 #### `Parameter`
 
-| name                       | type                                              | description                        |
-| -------------------------- | ------------------------------------------------- | ---------------------------------- |
-| auth                       | [`Auth`](/reference/api/server-api#lucia-default) |                                    |
-| config.providerId          | `string`                                          | Unique identifier for the provider |
-| config.getAuthorizationUrl | `Function`                                        |                                    |
-| config.getTokens           | `Function`                                        |                                    |
-| config.getProviderUser     | `Function`                                        |                                    |
+| name                       | type                                          | description                        |
+| -------------------------- | --------------------------------------------- | ---------------------------------- |
+| auth                       | [`Auth`](/reference/modules/lucia-auth#lucia) |                                    |
+| config.providerId          | `string`                                      | Unique identifier for the provider |
+| config.getAuthorizationUrl | `Function`                                    |                                    |
+| config.getTokens           | `Function`                                    |                                    |
+| config.getProviderUser     | `Function`                                    |                                    |
 
 #### `Returns`
 

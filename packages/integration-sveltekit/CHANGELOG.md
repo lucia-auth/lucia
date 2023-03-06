@@ -1,5 +1,17 @@
 # @lucia-auth/sveltekit
 
+## 0.6.9
+
+### Patch changes
+
+- [#395](https://github.com/pilcrowOnPaper/lucia/pull/395) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix types for `handleHooks()`
+
+## 0.6.8
+
+### Patch changes
+
+- [#392](https://github.com/pilcrowOnPaper/lucia/pull/392) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 0.6.7
 
 ### Patch changes

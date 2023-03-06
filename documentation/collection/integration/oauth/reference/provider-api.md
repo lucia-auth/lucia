@@ -80,13 +80,13 @@ type ProviderSession = {
 };
 ```
 
-| name                                                    | type                                                  | description                                                    |
-| ------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------- |
-| existingUser                                            | [`User`](/reference/types/lucia-types#user)` \| null` | existing user - null if non-existent (= new user)              |
-| [createUser](/oauth/reference/api-reference#createuser) | `Function`                                            |                                                                |
-| [createKey](/oauth/reference/api-reference#createkey)   | `Function`                                            |                                                                |
-| providerUser                                            | `ProviderUser>`                                       | user info from the used provider - refer below                 |
-| tokens                                                  | `any`                                                 | access tokens (`accessToken`) among other tokens - refer below |
+| name                                                    | type                                          | description                                                    |
+| ------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------- |
+| existingUser                                            | [`User`](/reference/api/types#user)` \| null` | existing user - null if non-existent (= new user)              |
+| [createUser](/oauth/reference/api-reference#createuser) | `Function`                                    |                                                                |
+| [createKey](/oauth/reference/api-reference#createkey)   | `Function`                                    |                                                                |
+| providerUser                                            | `ProviderUser>`                               | user info from the used provider - refer below                 |
+| tokens                                                  | `any`                                         | access tokens (`accessToken`) among other tokens - refer below |
 
 #### `existingUser`
 
@@ -114,7 +114,7 @@ type ProviderSession = {
 
 ### `createKey()`
 
-Creates a new persistent key using the authorized session by calling [`Lucia.createKey()`](/reference/api/server-api#createkey) for the target user.
+Creates a new persistent key using the authorized session by calling [`Lucia.createKey()`](/reference/api/auth#createkey) for the target user.
 
 ```ts
 const createKey: (userId: string) => Promise<Key>;
@@ -128,17 +128,17 @@ const createKey: (userId: string) => Promise<Key>;
 
 #### Returns
 
-| type                                      | description           |
-| ----------------------------------------- | --------------------- |
-| [`Key`](/reference/types/lucia-types#key) | the newly created key |
+| type                              | description           |
+| --------------------------------- | --------------------- |
+| [`Key`](/reference/api/types#key) | the newly created key |
 
 #### Errors
 
-Refer to [Lucia.createUser()](/reference/api/server-api#createkey)
+Refer to [Lucia.createUser()](/reference/api/auth#createkey)
 
 ### `createUser()`
 
-Creates a new user for the authorized session by calling [`Lucia.createUser()`](/reference/api/server-api#createuser) using the provided user attributes. Refer to the provider's doc for the provider and identifier used.
+Creates a new user for the authorized session by calling [`Lucia.createUser()`](/reference/api/auth#createuser) using the provided user attributes. Refer to the provider's doc for the provider and identifier used.
 
 ```ts
 const createUser: (userAttributes: Lucia.UserAttribute) => Promise<User>;
@@ -146,16 +146,16 @@ const createUser: (userAttributes: Lucia.UserAttribute) => Promise<User>;
 
 #### Parameter
 
-| name           | type                                                                      | description                                 |
-| -------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
-| userAttributes | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional user data to store in user table |
+| name           | type                                                                | description                                 |
+| -------------- | ------------------------------------------------------------------- | ------------------------------------------- |
+| userAttributes | [`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes) | additional user data to store in user table |
 
 #### Returns
 
-| type                                        | description            |
-| ------------------------------------------- | ---------------------- |
-| [`User`](/reference/types/lucia-types#user) | the newly created user |
+| type                                | description            |
+| ----------------------------------- | ---------------------- |
+| [`User`](/reference/api/types#user) | the newly created user |
 
 #### Errors
 
-Refer to [Lucia.createUser()](/reference/api/server-api#createuser)
+Refer to [Lucia.createUser()](/reference/api/auth#createuser)

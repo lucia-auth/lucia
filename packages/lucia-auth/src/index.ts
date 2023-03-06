@@ -1,6 +1,6 @@
 export {
 	lucia as default,
-	type Configurations,
+	type Configuration,
 	SESSION_COOKIE_NAME
 } from "./auth/index.js";
 export { LuciaError, LuciaErrorConstructor } from "./auth/error.js";

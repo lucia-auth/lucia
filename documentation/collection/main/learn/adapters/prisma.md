@@ -68,7 +68,7 @@ model User {
 
 ### `session`
 
-This is not required if you're only using the Prisma adapter for the `user` table via the [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+This is not required if you're only using the Prisma adapter for the `user` table via the [`adapter.user`](/reference/api/configuration#adapter) config.
 
 ```prisma
 model Session {

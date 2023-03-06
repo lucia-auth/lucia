@@ -1,67 +1,17 @@
 ---
 _order: 0
-title: "Server API"
+title: "Auth"
 ---
 
-These can be imported from `lucia-auth`. Can only be used inside a server context. The errors list is for Lucia instances using official adapters.
+Instance returned by [`lucia()`](/reference/api/api#lucia). Errors can be [`LuciaError`](/reference/api/luciaerror) or ones thrown from the database query library.
 
 ```ts
-import { generateRandomString } from "lucia-auth";
+class Auth {
+	// ...
+}
 ```
 
-## `generateRandomString()`
-
-Generates a random string of a defined length using [`nanoid`](https://github.com/ai/nanoid). The output is cryptographically random.
-
-```ts
-const generateRandomString: (length: number) => string;
-```
-
-Uses the following characters (uppercase, lowercase, numbers):
-
-```
-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
-```
-
-#### Parameter
-
-| name   | type     | description                     |
-| ------ | -------- | ------------------------------- |
-| length | `number` | the length of the output string |
-
-#### Returns
-
-| type     | description                 |
-| -------- | --------------------------- |
-| `string` | a randomly generated string |
-
-#### Example
-
-```ts
-const randomString = generateRandomString(8);
-```
-
-## `lucia()` (default)
-
-Creates a new `Auth` instance. Methods for `Auth` can throw adapter-specific database errors. The methods for the instance are listed below.
-
-```ts
-const lucia: (config: Configurations) => Auth;
-```
-
-#### Parameter
-
-| name   | type             | description                                                                                         |
-| ------ | ---------------- | --------------------------------------------------------------------------------------------------- |
-| config | `Configurations` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
-
-#### Example
-
-```ts
-const auth = lucia(configs);
-```
-
-### `createKey()`
+## `createKey()`
 
 Creates a new non-primary key for a user. **`providerId` cannot include character `:`**.
 
@@ -79,19 +29,19 @@ const createKey: (
 
 #### Parameter
 
-| name                | type             | description                                                                                                              | optional |
-| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------ | -------- |
-| userId              | `string`         | the user id of the key to create                                                                                         |          |
-| data.providerId     | `string`         | the provider id of the key                                                                                               |          |
-| data.providerUserId | `string`         | the provider user id of the key                                                                                          |          |
-| data.password       | `string \| null` | the password for the key - can be validated using [`validateKeyPassword`](/reference/api/server-api#validatekeypassword) |          |
-| data.timeout        | `number \| null` | how long the key is valid for in seconds - only sets key to single use if a value is provided                            | true     |
+| name                | type             | description                                                                                                          | optional |
+| ------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------- | -------- |
+| userId              | `string`         | the user id of the key to create                                                                                     |          |
+| data.providerId     | `string`         | the provider id of the key                                                                                           |          |
+| data.providerUserId | `string`         | the provider user id of the key                                                                                      |          |
+| data.password       | `string \| null` | the password for the key - can be validated using [`validateKeyPassword()`](/reference/api/auth#validatekeypassword) |          |
+| data.timeout        | `number \| null` | how long the key is valid for in seconds - only sets key to single use if a value is provided                        | true     |
 
 #### Returns
 
-| type                                      | description           |
-| ----------------------------------------- | --------------------- |
-| [`Key`](/reference/types/lucia-types#key) | the newly created key |
+| type                              | description           |
+| --------------------------------- | --------------------- |
+| [`Key`](/reference/api/types#key) | the newly created key |
 
 #### Errors
 
@@ -124,7 +74,7 @@ await auth.createKey(userId, {
 });
 ```
 
-### `createSession()`
+## `createSession()`
 
 Creates a new session for a user.
 
@@ -140,9 +90,9 @@ const createSession: (userId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                              | description               |
-| ------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | the newly created session |
+| type                                      | description               |
+| ----------------------------------------- | ------------------------- |
+| [`Session`](/reference/api/types#session) | the newly created session |
 
 #### Errors
 
@@ -161,9 +111,9 @@ try {
 }
 ```
 
-### `createSessionCookies()`
+## `createSessionCookies()`
 
-Creates an array of session cookies in the form of [`Cookie`](/reference/types/lucia-types#cookie). Cookie options are based on [`sessionCookieOptions`](/reference/configure/lucia-configurations#sessioncookieoptions). This method will return a blank session cookies that will override the existing cookie and clears them when provided a `null` session.
+Creates an array of session cookies in the form of [`Cookie`](/reference/api/types#cookie). Cookie options are based on [`sessionCookieOptions`](/reference/api/configuration#sessioncookieoptions). This method will return a blank session cookies that will override the existing cookie and clears them when provided a `null` session.
 
 ```ts
 const createSessionCookies: (session: Session | null) => Cookie[];
@@ -171,15 +121,15 @@ const createSessionCookies: (session: Session | null) => Cookie[];
 
 #### Parameter
 
-| name    | type                                              | description |
-| ------- | ------------------------------------------------- | ----------- |
-| session | [`Session`](/reference/types/lucia-types#session) |             |
+| name    | type                                      | description |
+| ------- | ----------------------------------------- | ----------- |
+| session | [`Session`](/reference/api/types#session) |             |
 
 #### Returns
 
-| type                                                | description                 |
-| --------------------------------------------------- | --------------------------- |
-| [`Cookie`](/reference/types/lucia-types#cookie)`[]` | an array of session cookies |
+| type                                        | description                 |
+| ------------------------------------------- | --------------------------- |
+| [`Cookie`](/reference/api/types#cookie)`[]` | an array of session cookies |
 
 #### Example
 
@@ -194,7 +144,7 @@ const response = new Response(null, {
 });
 ```
 
-### `createUser()`
+## `createUser()`
 
 Creates a new user and a new primary, persistent key.
 
@@ -211,19 +161,19 @@ const createUser: (data: {
 
 #### Parameter
 
-| name                    | type                                                                      | description                                   |
-| ----------------------- | ------------------------------------------------------------------------- | --------------------------------------------- |
-| data.key                | `null` \| `typeof data.key`                                               |                                               |
-| data.key.providerId     | provider id of the key                                                    |                                               |
-| data.key.providerUserId | `string`                                                                  | the user id within the provider               |
-| data.key.password       | `string`                                                                  | the password for the key                      |
-| data.attributes         | [`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes) | additional user data to store in `user` table |
+| name                    | type                                                                | description                                   |
+| ----------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
+| data.key                | `null` \| `typeof data.key`                                         |                                               |
+| data.key.providerId     | provider id of the key                                              |                                               |
+| data.key.providerUserId | `string`                                                            | the user id within the provider               |
+| data.key.password       | `string`                                                            | the password for the key                      |
+| data.attributes         | [`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes) | additional user data to store in `user` table |
 
 #### Returns
 
-| type                                        | description            |
-| ------------------------------------------- | ---------------------- |
-| [`User`](/reference/types/lucia-types#user) | the newly created user |
+| type                                | description            |
+| ----------------------------------- | ---------------------- |
+| [`User`](/reference/api/types#user) | the newly created user |
 
 #### Errors
 
@@ -253,7 +203,7 @@ try {
 }
 ```
 
-### `deleteDeadUserSessions()`
+## `deleteDeadUserSessions()`
 
 Deletes all sessions that are expired and their idle period has passed (dead sessions). Will succeed regardless of the validity of the user id.
 
@@ -279,7 +229,7 @@ try {
 }
 ```
 
-### `deleteKey()`
+## `deleteKey()`
 
 Deletes a non-primary key. Primary keys can't be deleted.
 
@@ -306,7 +256,7 @@ try {
 }
 ```
 
-### `deleteUser()`
+## `deleteUser()`
 
 Deletes a user. Will succeed regardless of the validity of the user id.
 
@@ -332,7 +282,7 @@ try {
 }
 ```
 
-### `generateSessionId()`
+## `generateSessionId()`
 
 Generates a new session id (40 chars long), as well as the expiration time (unix).
 
@@ -352,7 +302,7 @@ const generateSessionId: () => [
 | activePeriodExpires | `Date`   | the expiration time of the session's active period |
 | idlePeriodExpires   | `Date`   | the expiration time of the session's idle period   |
 
-### `getAllUserKeys()`
+## `getAllUserKeys()`
 
 Validate the user id and get all keys of a user.
 
@@ -368,9 +318,9 @@ const getAllUserKeys: (userId: string) => Promise<Key[]>;
 
 #### Returns
 
-| type                                          | description |
-| --------------------------------------------- | ----------- |
-| [`Key`](/reference/types/lucia-types#key)`[]` |             |
+| type                                  | description |
+| ------------------------------------- | ----------- |
+| [`Key`](/reference/api/types#key)`[]` |             |
 
 #### Errors
 
@@ -390,7 +340,7 @@ try {
 }
 ```
 
-### `getAllUserSessions()`
+## `getAllUserSessions()`
 
 Validate the user id and get all valid sessions of a user. Includes active and idle sessions, but not dead sessions.
 
@@ -406,9 +356,9 @@ const getAllUserKeys: (userId: string) => Promise<Session[]>;
 
 #### Returns
 
-| type                                              | description |
-| ------------------------------------------------- | ----------- |
-| [`Session`](/reference/types/lucia-types#key)`[]` |             |
+| type                                      | description |
+| ----------------------------------------- | ----------- |
+| [`Session`](/reference/api/types#key)`[]` |             |
 
 #### Errors
 
@@ -428,7 +378,7 @@ try {
 }
 ```
 
-### `getKey()`
+## `getKey()`
 
 Gets the target key.
 
@@ -445,9 +395,9 @@ const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
 
 #### Returns
 
-| type                                      | description |
-| ----------------------------------------- | ----------- |
-| [`Key`](/reference/types/lucia-types#key) | target key  |
+| type                              | description |
+| --------------------------------- | ----------- |
+| [`Key`](/reference/api/types#key) | target key  |
 
 #### Errors
 
@@ -467,7 +417,7 @@ try {
 }
 ```
 
-### `getKeyUser()`
+## `getKeyUser()`
 
 Gets the target key and the user of the key.
 
@@ -490,10 +440,10 @@ const getKey: (
 
 #### Returns
 
-| name | type                                        | description         |
-| ---- | ------------------------------------------- | ------------------- |
-| key  | [`Key`](/reference/types/lucia-types#key)   | the target key      |
-| user | [`User`](/reference/types/lucia-types#user) | the user of the key |
+| name | type                                | description         |
+| ---- | ----------------------------------- | ------------------- |
+| key  | [`Key`](/reference/api/types#key)   | the target key      |
+| user | [`User`](/reference/api/types#user) | the user of the key |
 
 #### Errors
 
@@ -514,7 +464,7 @@ try {
 }
 ```
 
-### `getSession()`
+## `getSession()`
 
 Gets the target session. Returns both active and idle sessions.
 
@@ -530,9 +480,9 @@ const getSessionUser: (sessionId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                              | description                   |
-| ------------------------------------------------- | ----------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | the session of the session id |
+| type                                      | description                   |
+| ----------------------------------------- | ----------------------------- |
+| [`Session`](/reference/api/types#session) | the session of the session id |
 
 #### Errors
 
@@ -558,7 +508,7 @@ try {
 }
 ```
 
-### `getSessionUser()`
+## `getSessionUser()`
 
 Validates an active session id, and gets the session and the user in one database call. Idle sessions are not renewed and are not deemed invalid.
 
@@ -576,10 +526,10 @@ const getSessionUser: (
 
 #### Returns
 
-| name    | type                                              | description                   |
-| ------- | ------------------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/types/lucia-types#session) | the session of the session id |
-| user    | [`User`](/reference/types/lucia-types#user)       | the user of the session       |
+| name    | type                                      | description                   |
+| ------- | ----------------------------------------- | ----------------------------- |
+| session | [`Session`](/reference/api/types#session) | the session of the session id |
+| user    | [`User`](/reference/api/types#user)       | the user of the session       |
 
 #### Errors
 
@@ -599,7 +549,7 @@ try {
 }
 ```
 
-### `getUser()`
+## `getUser()`
 
 Gets a user.
 
@@ -615,9 +565,9 @@ const getUser: (userId: string) => Promise<User>;
 
 #### Returns
 
-| type                                        | description               |
-| ------------------------------------------- | ------------------------- |
-| [`User`](/reference/types/lucia-types#user) | the user with the user id |
+| type                                | description               |
+| ----------------------------------- | ------------------------- |
+| [`User`](/reference/api/types#user) | the user with the user id |
 
 #### Errors
 
@@ -637,7 +587,7 @@ try {
 }
 ```
 
-### `invalidateAllUserSessions()`
+## `invalidateAllUserSessions()`
 
 Invalidates all sessions of a user. Will succeed regardless of the validity of the user id.
 
@@ -663,7 +613,7 @@ try {
 }
 ```
 
-### `invalidateSession()`
+## `invalidateSession()`
 
 Invalidates a session. Will succeed regardless of the validity of the session id.
 
@@ -689,7 +639,7 @@ try {
 }
 ```
 
-### `renewSession()`
+## `renewSession()`
 
 Takes and validates an active or idle session id, and renews the session. The used session id (and its session) is invalidated.
 
@@ -705,9 +655,9 @@ const renewSession: (sessionId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                              | description               |
-| ------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | the newly created session |
+| type                                      | description               |
+| ----------------------------------------- | ------------------------- |
+| [`Session`](/reference/api/types#session) | the newly created session |
 
 #### Errors
 
@@ -727,7 +677,7 @@ try {
 }
 ```
 
-### `updateKeyPassword()`
+## `updateKeyPassword()`
 
 Update key password.
 
@@ -767,7 +717,7 @@ try {
 }
 ```
 
-### `updateUserAttributes()`
+## `updateUserAttributes()`
 
 Updates one of the custom fields in the `user` table. The keys of `attributes` should include one or more of the additional columns inside `user` table, and the values can be `null` but not `undefined`.
 
@@ -780,16 +730,16 @@ const updateUserAttributes: (
 
 #### Parameter
 
-| name       | type                                                                                   | description                                                             |
-| ---------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| userId     | `string`                                                                               | A refresh token                                                         |
-| attributes | `Partial<`[`Lucia.UserAttributes`](/reference/types/lucia-namespace#userattributes)`>` | Key-value pairs of some or all of the column in `user` table to update. |
+| name       | type                                                                             | description                                                             |
+| ---------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| userId     | `string`                                                                         | A refresh token                                                         |
+| attributes | `Partial<`[`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes)`>` | Key-value pairs of some or all of the column in `user` table to update. |
 
 #### Returns
 
-| type                                        | description      |
-| ------------------------------------------- | ---------------- |
-| [`User`](/reference/types/lucia-types#user) | the updated user |
+| type                                | description      |
+| ----------------------------------- | ---------------- |
+| [`User`](/reference/api/types#user) | the updated user |
 
 #### Errors
 
@@ -811,7 +761,7 @@ try {
 }
 ```
 
-### `validateKeyPassword()`
+## `validateKeyPassword()`
 
 Validates the password of a key. Can only be used if the password is defined.
 
@@ -833,9 +783,9 @@ const validateKeyPassword: (
 
 #### Returns
 
-| type                                      | description       |
-| ----------------------------------------- | ----------------- |
-| [`Key`](/reference/types/lucia-types#key) | the validated key |
+| type                              | description       |
+| --------------------------------- | ----------------- |
+| [`Key`](/reference/api/types#key) | the validated key |
 
 #### Errors
 
@@ -861,7 +811,7 @@ try {
 }
 ```
 
-### `validateRequestHeaders()`
+## `validateRequestHeaders()`
 
 Checks if the request is from a trusted origin if `configuration.csrfProtection` is true, and gets the session id from the cookie. Returns an empty string if none exists.
 
@@ -871,9 +821,9 @@ const validateRequestHeaders: (request: MinimalRequest) => string;
 
 #### Parameter
 
-| name    | type                                                            | description                  |
-| ------- | --------------------------------------------------------------- | ---------------------------- |
-| request | [`MinimalRequest`](/reference/types/lucia-types#minimalrequest) | Node's `Request` can be used |
+| name    | type                                                    | description                  |
+| ------- | ------------------------------------------------------- | ---------------------------- |
+| request | [`MinimalRequest`](/reference/api/types#minimalrequest) | Node's `Request` can be used |
 
 #### Returns
 
@@ -897,7 +847,7 @@ try {
 }
 ```
 
-### `validateSession()`
+## `validateSession()`
 
 Validates an active session id, renewing idle sessions if needed. As such, the returned session may not match the input session id and should be stored as a cookie again.
 
@@ -913,9 +863,9 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                              | description                   |
-| ------------------------------------------------- | ----------------------------- |
-| [`Session`](/reference/types/lucia-types#session) | the session of the session id |
+| type                                      | description                   |
+| ----------------------------------------- | ----------------------------- |
+| [`Session`](/reference/api/types#session) | the session of the session id |
 
 #### Errors
 
@@ -943,9 +893,9 @@ try {
 }
 ```
 
-### `validateSessionUser()`
+## `validateSessionUser()`
 
-Similar to [`validateSession()`](/reference/api/server-api#validatesession) but returns both the session and user without an additional database call.
+Similar to [`validateSession()`](/reference/api/auth#validatesession) but returns both the session and user without an additional database call.
 
 ```ts
 const validateSessionUser: (
@@ -961,10 +911,10 @@ const validateSessionUser: (
 
 #### Returns
 
-| name    | type                                              | description                   |
-| ------- | ------------------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/types/lucia-types#session) | the session of the session id |
-| user    | [`User`](/reference/types/lucia-types#user)       | the user of the session       |
+| name    | type                                      | description                   |
+| ------- | ----------------------------------------- | ----------------------------- |
+| session | [`Session`](/reference/api/types#session) | the session of the session id |
+| user    | [`User`](/reference/api/types#user)       | the user of the session       |
 
 #### Errors
 
@@ -990,20 +940,4 @@ try {
 } catch {
 	// invalid
 }
-```
-
-## `LuciaError`
-
-Refer to [Error reference](/reference/types/errors).
-
-```ts
-class LuciaError extends Error {}
-```
-
-## `SESSION_COOKIE_NAME` (constant)
-
-The name of the session cookie.
-
-```ts
-const SESSION_COOKIE_NAME: string;
 ```

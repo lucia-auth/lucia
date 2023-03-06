@@ -1,16 +1,24 @@
 ---
 _order: 2
-title: "Errors"
+title: "LuciaError"
 ---
 
-A list of error messages, which can be accessed with `.message`.
+All [known errors](/learn/basics/error-handling#known-errors) are thrown as `LuciaError`, which is a standard `Error` :
+
+```ts
+class LuciaError extends Error {}
+```
+
+## `message`
+
+The error message.
 
 ```ts
 const error: LuciaError;
 const errorMessage = error.message;
 ```
 
-| name                                    |
+| messages                                |
 | --------------------------------------- |
 | `AUTH_INVALID_SESSION_ID`               |
 | `AUTH_INVALID_PASSWORD`                 |
@@ -22,5 +30,6 @@ const errorMessage = error.message;
 | `AUTH_NOT_AUTHENTICATED`                |
 | `AUTH_DUPLICATE_SESSION_ID`             |
 | `AUTO_USER_ID_GENERATION_NOT_SUPPORTED` |
+| `AUTH_EXPIRED_KEY`                      |
 | `REQUEST_UNAUTHORIZED`                  |
 | `UNKNOWN_ERROR`                         |
