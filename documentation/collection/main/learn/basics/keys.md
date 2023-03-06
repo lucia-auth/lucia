@@ -5,6 +5,22 @@ title: "Keys"
 
 Keys allow you to reference users using external data from a provider. They're defined using a provider id and a provider user id. They can be persistent or single use, which is useful when implementing tokens for verification.
 
+When authenticating users (log in), you get the user data from an external provider, such as the email from the user's input or the Github user id for social login. Keys allow you to link such external data from a _provider_ with Lucia users stored in your database, and you can have multiple keys linked to a user.
+
+Keys are defined with a _provider id_, which is just a unique id for the provider, and a _provider user id_, which is the unique identifier of the user within the provided data. While you can (and should) have multiple keys with the same provider id, the combination of the provider id and provider user id should be unique. Keys can hold passwords as well, which will be hashed and can be validated with Lucia's API.
+
+For example, for email/password, "email" can be the provider id, the user’s email can be the provider user id, and the user's password can be stored as the key's password. For Github OAuth, "github" can be the provider id and the user’s GitHub user id can be the provider user id.
+
+> The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used.
+
+### Persistent vs. Single use
+
+Keys can either be persistent or single use and can have an expiration. Persistent keys are useful for handling normal sign ins, while single use keys can be used as tokens for email verification and password reset.
+
+### Primary keys
+
+The primary key is the persistent key created alongside the user. The primary key is always linked to the user and can only be deleted with the user.
+
 ## Get key
 
 You can get the key data using [`getKey()`](/reference/api/auth#getkey).
