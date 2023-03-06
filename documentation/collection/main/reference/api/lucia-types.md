@@ -78,7 +78,7 @@ declare namespace Lucia {
 
 ### `Auth`
 
-Should be set to [`Auth`]().
+Should be set to [`Auth`](/reference/api/auth).
 
 #### Example
 
