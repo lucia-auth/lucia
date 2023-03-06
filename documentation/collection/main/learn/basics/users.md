@@ -21,26 +21,6 @@ The primary way to identify users is by their user id. It's randomly generated b
 
 By default, only the user id is stored in the user object. Other fields are called _user attributes_ and you can configure your database and Lucia to store additional custom data (email, username, etc). But keep in mind that you should only store as much as you need, and fields unrelated to the authorization process (like the user's submission) should be stored in a separate table.
 
-### Keys
-
-_Keys_ are a key concept of Lucia.
-
-When authenticating users (log in), you get the user data from an external provider, such as the email from the user's input or the Github user id for social login. Keys allow you to link such external data from a _provider_ with Lucia users stored in your database, and you can have multiple keys linked to a user.
-
-Keys are defined with a _provider id_, which is just a unique id for the provider, and a _provider user id_, which is the unique identifier of the user within the provided data. While you can (and should) have multiple keys with the same provider id, the combination of the provider id and provider user id should be unique. Keys can hold passwords as well, which will be hashed and can be validated with Lucia's API.
-
-For example, for email/password, "email" can be the provider id, the user’s email can be the provider user id, and the user's password can be stored as the key's password. For Github OAuth, "github" can be the provider id and the user’s GitHub user id can be the provider user id.
-
-> The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used.
-
-#### Persistent vs. Single use
-
-Keys can either be persistent or single use and can have an expiration. Persistent keys are useful for handling normal sign ins, while single use keys can be used as tokens for email verification and password reset.
-
-#### Primary keys
-
-The primary key is the persistent key created alongside the user. The primary key is always linked to the user and cannot be deleted.
-
 ## Create users
 
 [`createUser()`](/reference/api/auth#createuser) can be used to create users. This takes an option for the primary key to be created with the user.
@@ -60,7 +40,7 @@ await auth.createUser({
 
 `attributes` should be an empty object with default configuration. Refer to [User attributes](/learn/basics/user-attributes) to learn more about storing custom data.
 
-Refer to [Keys](/learn/basics/keys) to learn how to authenticate users using keys.
+Refer to [Keys](/learn/basics/keys) to learn more about keys.
 
 ### With a password key
 
