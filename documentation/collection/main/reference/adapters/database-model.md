@@ -25,7 +25,7 @@ type UserSchema = {
 
 ## `session`
 
-The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/reference/configure/lucia-configurations#adapter) config.
+The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/reference/api/configuration#adapter) config.
 
 | name           | type          | unique | reference | description                                        |
 | -------------- | ------------- | ------ | --------- | -------------------------------------------------- |

@@ -34,13 +34,13 @@ const discord: (
 
 #### Parameter
 
-| name                | type                                        | description                                        | optional |
-| ------------------- | ------------------------------------------- | -------------------------------------------------- | -------- |
-| auth                | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                     |          |
-| config.clientId     | `string`                                    | Github OAuth app client id                         |          |
-| config.clientSecret | `string`                                    | Github OAuth app client secret                     |          |
-| configs.redirectUri | `string`                                    | an authorized redirect URI                         |          |
-| config.scope        | `string[]`                                  | an array of scopes - `identity` is always included | true     |
+| name                | type                          | description                                        | optional |
+| ------------------- | ----------------------------- | -------------------------------------------------- | -------- |
+| auth                | [`Auth`](/reference/api/auth) | Lucia instance                                     |          |
+| config.clientId     | `string`                      | Github OAuth app client id                         |          |
+| config.clientSecret | `string`                      | Github OAuth app client secret                     |          |
+| configs.redirectUri | `string`                      | an authorized redirect URI                         |          |
+| config.scope        | `string[]`                    | an array of scopes - `identity` is always included | true     |
 
 #### Returns
 

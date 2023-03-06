@@ -23,23 +23,23 @@ import {
 import { LuciaError, LuciaErrorConstructor } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { transformDatabaseSessionData } from "./session.js";
-import { transformDatabaseKeyData, getOneTimeKeyExpiration } from "./key.js";
+import { validateDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
 
 export { SESSION_COOKIE_NAME } from "./cookie.js";
 
-export const lucia = <C extends Configurations>(configs: C) => {
-	return new Auth(configs);
+export const lucia = <C extends Configuration>(config: C) => {
+	return new Auth(config);
 };
 
-const validateConfigurations = (configs: Configurations) => {
-	const isAdapterProvided = configs.adapter;
+const validateConfiguration = (config: Configuration) => {
+	const isAdapterProvided = config.adapter;
 	if (!isAdapterProvided) {
 		logError('Adapter is not defined in configuration ("config.adapter")');
 		process.exit(1);
 	}
 };
 
-export class Auth<C extends Configurations = any> {
+export class Auth<C extends Configuration = any> {
 	private adapter: Adapter;
 	private generateUserId: () => MaybePromise<string>;
 	private sessionCookie: CookieOption[];
@@ -60,36 +60,36 @@ export class Auth<C extends Configurations = any> {
 		: { userId: string };
 	private csrfProtection: boolean;
 
-	constructor(configs: C) {
-		validateConfigurations(configs);
+	constructor(config: C) {
+		validateConfiguration(config);
 		const defaultSessionCookieOption: CookieOption = {
 			sameSite: "lax",
 			path: "/"
 		};
-		if ("user" in configs.adapter) {
-			if ("getSessionAndUserBySessionId" in configs.adapter.user) {
-				delete configs.adapter.user.getSessionAndUserBySessionId;
+		if ("user" in config.adapter) {
+			if ("getSessionAndUserBySessionId" in config.adapter.user) {
+				delete config.adapter.user.getSessionAndUserBySessionId;
 			}
-			if ("getSessionAndUserBySessionId" in configs.adapter.session) {
-				delete configs.adapter.session.getSessionAndUserBySessionId;
+			if ("getSessionAndUserBySessionId" in config.adapter.session) {
+				delete config.adapter.session.getSessionAndUserBySessionId;
 			}
 		}
 		this.adapter =
-			"user" in configs.adapter
+			"user" in config.adapter
 				? {
-						...configs.adapter.user(LuciaError),
-						...configs.adapter.session(LuciaError)
+						...config.adapter.user(LuciaError),
+						...config.adapter.session(LuciaError)
 				  }
-				: configs.adapter(LuciaError);
+				: config.adapter(LuciaError);
 		this.generateUserId =
-			configs.generateCustomUserId ?? (() => generateRandomString(15));
-		this.ENV = configs.env;
-		this.csrfProtection = configs.csrfProtection ?? true;
+			config.generateCustomUserId ?? (() => generateRandomString(15));
+		this.ENV = config.env;
+		this.csrfProtection = config.csrfProtection ?? true;
 		this.sessionTimeout = {
-			activePeriod: configs.sessionTimeout?.activePeriod ?? 1000 * 60 * 60 * 24,
-			idlePeriod: configs.sessionTimeout?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
+			activePeriod: config.sessionTimeout?.activePeriod ?? 1000 * 60 * 60 * 24,
+			idlePeriod: config.sessionTimeout?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
-		this.autoDatabaseCleanup = configs.autoDatabaseCleanup ?? true;
+		this.autoDatabaseCleanup = config.autoDatabaseCleanup ?? true;
 		this.transformUserData = ({
 			id,
 			hashed_password,
@@ -101,13 +101,13 @@ export class Auth<C extends Configurations = any> {
 					userId: id
 				} as const;
 			};
-			const transform = configs.transformUserData ?? defaultTransform;
+			const transform = config.transformUserData ?? defaultTransform;
 			return transform({ id, ...attributes }) as User;
 		};
-		this.sessionCookie = configs.sessionCookie ?? [defaultSessionCookieOption];
+		this.sessionCookie = config.sessionCookie ?? [defaultSessionCookieOption];
 		this.hash = {
-			generate: configs.hash?.generate ?? generateHashWithScrypt,
-			validate: configs.hash?.validate ?? validateScryptHash
+			generate: config.hash?.generate ?? generateHashWithScrypt,
+			validate: config.hash?.validate ?? validateScryptHash
 		};
 	}
 	public getUser = async (userId: string): Promise<User> => {
@@ -178,14 +178,6 @@ export class Auth<C extends Configurations = any> {
 			expires: null
 		});
 		const user = this.transformUserData(userData);
-		const key = transformDatabaseKeyData({
-			id: keyId,
-			user_id: userId,
-			hashed_password: hashedPassword,
-			primary: true,
-			expires: null
-		});
-		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
 		return user;
 	};
 	public updateUserAttributes = async (
@@ -220,8 +212,7 @@ export class Auth<C extends Configurations = any> {
 			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
 		const isValidPassword = await this.hash.validate(password, hashedPassword);
 		if (!isValidPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
-		const key = transformDatabaseKeyData(databaseKeyData);
-		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
+		const key = validateDatabaseKey(databaseKeyData);
 		return key;
 	};
 	public getSession = async (sessionId: string): Promise<Session> => {
@@ -422,8 +413,7 @@ export class Auth<C extends Configurations = any> {
 		const keyId = `${providerId}:${providerUserId}`;
 		const keyData = await this.adapter.getKey(keyId);
 		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		const key = transformDatabaseKeyData(keyData);
-		if (!key) throw new LuciaError("AUTH_INVALID_KEY_ID");
+		const key = validateDatabaseKey(keyData);
 		return key;
 	};
 
@@ -441,10 +431,18 @@ export class Auth<C extends Configurations = any> {
 			user
 		};
 	};
-	public getAllUserKeys = async (userId: string) => {
+	public getAllUserKeys = async (userId: string): Promise<Key[]> => {
 		await this.getUser(userId);
 		const databaseData = await this.adapter.getKeysByUserId(userId);
-		return databaseData.map((val) => transformDatabaseKeyData(val));
+		return databaseData
+			.map((val) => {
+				try {
+					return validateDatabaseKey(val);
+				} catch {
+					return null;
+				}
+			})
+			.filter((maybeKey): maybeKey is Key => maybeKey !== null);
 	};
 	public updateKeyPassword = async (
 		providerId: string,
@@ -459,7 +457,7 @@ export class Auth<C extends Configurations = any> {
 
 type MaybePromise<T> = T | Promise<T>;
 
-export interface Configurations {
+export type Configuration = {
 	adapter:
 		| ((E: LuciaErrorConstructor) => Adapter)
 		| {
@@ -480,4 +478,4 @@ export interface Configurations {
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
 	autoDatabaseCleanup?: boolean;
-}
+};

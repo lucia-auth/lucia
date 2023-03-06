@@ -17,7 +17,7 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `lib/lucia.ts`, import [`lucia`](/reference/api/server-api#lucia-default) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/reference/configure/lucia-configurations#env) config, it should `DEV` if in development and `PROD` if in production.
+In `lib/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/reference/api/configuration#env) config, it should `DEV` if in development and `PROD` if in production.
 
 ```ts
 // lib/lucia.ts

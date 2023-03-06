@@ -33,7 +33,7 @@ If you're using one of the supported frameworks, follow the "Getting started" gu
 
 ## Initialize Lucia
 
-In a TypeScript file, import [`lucia`](/reference/api/server-api#lucia-default) and an adapter (the adapters are provided as a different NPM package).
+In a TypeScript file, import [`lucia`](/reference/modules/lucia-auth#lucia) and an adapter (the adapters are provided as a different NPM package).
 
 ```ts
 // lucia.ts
@@ -41,7 +41,7 @@ import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 ```
 
-Initialize it and export it as `auth`. As for the config, `adapter` is your database adapter and [`env`](/reference/configure/lucia-configurations#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
+Initialize it and export it as `auth`. As for the config, `adapter` is your database adapter and [`env`](/reference/api/configuration#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
 
 ```ts
 // lucia.ts
