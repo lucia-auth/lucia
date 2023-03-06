@@ -24,7 +24,8 @@ export const transformDatabaseKey = (databaseKey: KeySchema): Key => {
 		providerUserId,
 		userId,
 		expires: new Date(databaseKey.expires),
-		isExpired: () => !isWithinExpiration(databaseKey.expires)
+		isExpired: () => !isWithinExpiration(databaseKey.expires),
+		isPasswordDefined
 	};
 };
 

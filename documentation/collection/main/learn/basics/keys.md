@@ -13,7 +13,7 @@ While you can (and should) have multiple keys with the same provider id, the com
 
 The first type of keys are persistent keys. These can be used an infinite number of time. These are useful for the traditional sign ins and OAuth.
 
-When authenticating users (log in), you get the user data from an external provider, such as the email from the user's input or the Github user id for social login. Persistent keys allow you to link such external data from a _provider_ with Lucia users stored in your database. This type of key can hold passwords as well, which will be hashed and can be validated with Lucia's API. This is mainly for implementing password logins.
+When authenticating users (log in), you get the user data from an external provider, such as the email from the user's input or the Github user id for social login. Persistent keys allow you to link such external data from a _provider_ with Lucia users stored in your database. This type of key can hold a password, which will be hashed and can be validated with Lucia's API. This is mainly for implementing password logins.
 
 For example, for email/password, "email" can be the provider id, the user’s email can be the provider user id, and the user's password can be stored as the key's password. For Github OAuth, "github" can be the provider id and the user’s GitHub user id can be the provider user id.
 
@@ -23,7 +23,7 @@ The primary keys are a special type of persistent keys. It is created alongside 
 
 ### Persistent vs. Single use
 
-Single use keys are single use only and is deleted on read. You can configure it to expire after a set duration of time as well. This is useful for implementing single use verification tokens for one-time passwords and magic links.
+Single use keys are single use only and is deleted on read. You can configure it to expire after a set duration of time as well. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
 
 ## Use keys
 
@@ -53,7 +53,7 @@ try {
 
 ## Get key
 
-There's also [`getKey()`]() to retrieve keys. However, you cannot validate passwords, and more importantly, this will **NOT** check the key's expiration for single use keys.
+There's also [`getKey()`](/reference/api/auth#getkey) to retrieve keys. However, you cannot validate passwords, and more importantly, this will **NOT** check the key's expiration for single use keys.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -101,7 +101,7 @@ try {
 
 ### Single use keys
 
-You can define the duration (in seconds) of a single use key by providing a `timeout`. It can be `null` if you don't want it to expire.
+You can provide a `password` to set a password. You can define the duration (in seconds) of a single use key by providing a `timeout`. Set it to `null` if you don't want it to expire.
 
 ```ts
 try {
@@ -109,6 +109,7 @@ try {
 		type: "single_use",
 		providerId: "email-verification",
 		providerUserId: "user@example.com:12345678",
+		password: null,
 		timeout: 60 * 60 // 1 hour
 	});
 } catch {
@@ -116,17 +117,13 @@ try {
 }
 ```
 
-## Update password of persistent keys
+## Update key passwords
 
-You can update the password of a persistent key with [`updatePersistentKeyPassword()`](/reference/api/auth#createkey). You can pass in `null` to remove the password. This can only be used for persistent keys.
+You can update the password of a key with [`updateKeyPassword()`](/reference/api/auth#updatekeypassword). You can pass in `null` to remove the password.
 
 ```ts
 try {
-	const key = await auth.updatePersistentKeyPassword(
-		"username",
-		username,
-		newPassword
-	);
+	const key = await auth.updateKeyPassword("username", username, newPassword);
 } catch {
 	// invalid key
 }

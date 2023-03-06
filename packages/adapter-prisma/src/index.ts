@@ -169,7 +169,10 @@ const adapter =
 					});
 					if (!keyData) return null;
 					const transformedKeyData = transformKeyData(keyData);
-					if (shouldDataBeDeleted(transformedKeyData)) {
+					const dataShouldBeDeleted = await shouldDataBeDeleted(
+						transformedKeyData
+					);
+					if (dataShouldBeDeleted) {
 						await tx.key.delete({
 							where: {
 								id: keyData.id

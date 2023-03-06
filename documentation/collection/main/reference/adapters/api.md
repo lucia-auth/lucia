@@ -27,7 +27,7 @@ type UserAdapter = {
 	deleteUser: (userId: string) => Promise<void>;
 	getKey: (
 		keyId: string,
-		shouldDataBeDeleted: (key: KeySchema) => boolean
+		shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
 	) => Promise<KeySchema | null>;
 	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 	getUser: (userId: string) => Promise<UserSchema | null>;
@@ -149,7 +149,7 @@ Gets a key with the the target id (`key(id)`) inside a transaction:
 ```ts
 const getKey: (
 	keyId: string,
-	shouldDataBeDeleted: (key: KeySchema) => boolean
+	shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
 ) => Promise<KeySchema | null>;
 ```
 

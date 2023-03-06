@@ -28,10 +28,10 @@ export class Cookie {
 		this.value = value;
 		this.attributes = options;
 	}
-	public name: string;
-	public value: string;
-	public attributes: CookieAttributes;
-	public serialize = () => {
+	public readonly name: string;
+	public readonly value: string;
+	public readonly attributes: CookieAttributes;
+	public readonly serialize = () => {
 		return serializeCookie(this.name, this.value, this.attributes);
 	};
 }

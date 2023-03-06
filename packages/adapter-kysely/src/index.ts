@@ -331,7 +331,10 @@ const adapter =
 						.executeTakeFirst();
 					if (!data) return null;
 					const transformedKeyData = transformKeyData(data);
-					if (shouldDataBeDeleted(transformedKeyData)) {
+					const dataShouldBeDeleted = await shouldDataBeDeleted(
+						transformedKeyData
+					);
+					if (dataShouldBeDeleted) {
 						await trx
 							.deleteFrom("key")
 							.where("id", "=", data.id)

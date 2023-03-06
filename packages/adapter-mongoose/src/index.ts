@@ -114,7 +114,10 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				const keyDoc = await Key.findById(key).lean();
 				if (!keyDoc) return null;
 				const transformedKeyData = transformKeyDoc(keyDoc);
-				if (shouldDataBeDeleted(transformedKeyData)) {
+				const dataShouldBeDeleted = await shouldDataBeDeleted(
+					transformedKeyData
+				);
+				if (dataShouldBeDeleted) {
 					await Key.deleteOne({
 						_id: keyDoc._id
 					});

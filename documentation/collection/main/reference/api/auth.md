@@ -26,9 +26,10 @@ const createKey: (
 				password: string | null;
 		  }
 		| {
-				type: "persistent";
+				type: "single_use";
 				providerId: string;
 				providerUserId: string;
+				password: string | null;
 				timeout: number | null;
 		  }
 ) => Promise<Key>;
@@ -42,7 +43,7 @@ const createKey: (
 | keyData.type           | `"persistent" \| "single_use"` | key type                                                        |
 | keyData.providerId     | `string`                       | the provider id of the key                                      |
 | keyData.providerUserId | `string`                       | the provider user id of the key                                 |
-| keyData.password       | `string \| null`               | persistent keys only - the password for the key                 |
+| keyData.password       | `string \| null`               | the password for the key                                        |
 | keyData.timeout        | `number \| null`               | single use keys only - how long the key is valid for in seconds |
 
 #### Returns
@@ -81,6 +82,7 @@ try {
 		type: "single_use",
 		providerId: "email",
 		providerUserId: "user@example.com",
+		password: null,
 		timeout: 60 * 60 // 1 hour
 	});
 } catch {
@@ -644,12 +646,12 @@ try {
 }
 ```
 
-## `updatePersistentKeyPassword()`
+## `updateKeyPassword()`
 
-Updates the password of a persistent key. Will throw an error if a single use key is provided.
+Updates the password of a key.
 
 ```ts
-const updatePersistentKeyPassword: (
+const updateKeyPassword: (
 	providerId: string,
 	providerUserId: string,
 	password: string | null
@@ -669,7 +671,6 @@ const updatePersistentKeyPassword: (
 | name                   | description                                         |
 | ---------------------- | --------------------------------------------------- |
 | AUTH_INVALID_KEY_ID    | the user with the key does not exist                |
-| AUTH_INVALID_KEY_TYPE  | invalid key type - must be persistent               |
 | AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
 
 #### Example
@@ -678,7 +679,7 @@ const updatePersistentKeyPassword: (
 import { auth } from "$lib/server/lucia";
 
 try {
-	await auth.updatePersistentKeyPassword("email", "user@example.com", "123456");
+	await auth.updateKeyPassword("email", "user@example.com", "123456");
 } catch {
 	// invalid credentials
 }
@@ -730,7 +731,7 @@ try {
 
 ## `useKey()`
 
-Validates the key, using the provided key and current time. Will delete single use keys on read, including expired ones.
+Validates the key, using the provided password and current time, and throws an error if the key password is incorrect or the key is expired. Will delete single use keys on read, including expired ones.
 
 ```ts
 const useKey: (
