@@ -1,6 +1,6 @@
 import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
 
-export const convertUserDoc = (row: UserDoc): UserSchema => {
+export const transformUserDoc = (row: UserDoc): UserSchema => {
 	const { _id: id, __v, $__, _doc, ...attributes } = row;
 	return {
 		id,
@@ -8,7 +8,7 @@ export const convertUserDoc = (row: UserDoc): UserSchema => {
 	};
 };
 
-export const convertSessionDoc = (row: SessionDoc): SessionSchema => {
+export const transformSessionDoc = (row: SessionDoc): SessionSchema => {
 	return {
 		id: row._id,
 		user_id: row.user_id,
@@ -17,7 +17,7 @@ export const convertSessionDoc = (row: SessionDoc): SessionSchema => {
 	};
 };
 
-export const convertKeyDoc = (row: KeyDoc): KeySchema => {
+export const transformKeyDoc = (row: KeyDoc): KeySchema => {
 	return {
 		id: row._id,
 		user_id: row.user_id,

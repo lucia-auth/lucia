@@ -1,31 +1,60 @@
-import type {
-	Env,
-	Key,
-	MinimalRequest,
-	Session,
-	SessionSchema,
-	User
-} from "../types.js";
 import { Cookie, CookieOption, createSessionCookie } from "./cookie.js";
-import {
-	Adapter,
-	SessionAdapter,
-	UserAdapter,
-	UserData,
-	UserSchema
-} from "../types.js";
 import { logError } from "../utils/log.js";
 import {
 	generateHashWithScrypt,
 	generateRandomString,
 	validateScryptHash
 } from "../utils/crypto.js";
-import { LuciaError, LuciaErrorConstructor } from "./error.js";
+import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { transformDatabaseSessionData } from "./session.js";
-import { validateDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
-
+import { transformDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
 export { SESSION_COOKIE_NAME } from "./cookie.js";
+
+import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
+import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.type.js";
+import type { LuciaErrorConstructor } from "./error.js";
+import { isWithinExpiration } from "../utils/date.js";
+
+export type Session = {
+	sessionId: string;
+	userId: string;
+	activePeriodExpires: Date;
+	idlePeriodExpires: Date;
+	state: "idle" | "active";
+	isFresh: boolean;
+};
+
+export type Key = SingleUseKey | PersistentKey;
+
+export type SingleUseKey = {
+	type: "single_use";
+	providerId: string;
+	providerUserId: string;
+	userId: string;
+	expires: Date | null;
+	isExpired: () => boolean;
+};
+
+export type PersistentKey = {
+	type: "persistent";
+	isPrimary: boolean;
+	isPasswordDefined: boolean;
+	providerId: string;
+	providerUserId: string;
+	userId: string;
+};
+
+export type Env = "DEV" | "PROD";
+export type User = ReturnType<Lucia.Auth["transformUserData"]>;
+export type UserData = { id: string } & Required<Lucia.UserAttributes>;
+export type MinimalRequest = {
+	headers: {
+		get: (name: string) => null | string;
+	};
+	url: string;
+	method: string;
+};
 
 export const lucia = <C extends Configuration>(config: C) => {
 	return new Auth(config);
@@ -116,6 +145,7 @@ export class Auth<C extends Configuration = any> {
 		const user = this.transformUserData(databaseUser);
 		return user;
 	};
+
 	public getSessionUser = async (
 		sessionId: string
 	): Promise<{
@@ -152,8 +182,9 @@ export class Auth<C extends Configuration = any> {
 			session
 		};
 	};
+
 	public createUser = async (data: {
-		key: {
+		primaryKey: {
 			providerId: string;
 			providerUserId: string;
 			password: string | null;
@@ -162,13 +193,13 @@ export class Auth<C extends Configuration = any> {
 	}): Promise<User> => {
 		const userId = await this.generateUserId();
 		const userAttributes = data.attributes ?? {};
-		if (data.key === null) {
+		if (data.primaryKey === null) {
 			const userData = await this.adapter.setUser(userId, userAttributes, null);
 			const user = this.transformUserData(userData);
 			return user;
 		}
-		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
-		const password = data.key.password;
+		const keyId = `${data.primaryKey.providerId}:${data.primaryKey.providerUserId}`;
+		const password = data.primaryKey.password;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
 		const userData = await this.adapter.setUser(userId, userAttributes, {
 			id: keyId,
@@ -180,6 +211,7 @@ export class Auth<C extends Configuration = any> {
 		const user = this.transformUserData(userData);
 		return user;
 	};
+
 	public updateUserAttributes = async (
 		userId: string,
 		attributes: Partial<Lucia.UserAttributes>
@@ -193,28 +225,53 @@ export class Auth<C extends Configuration = any> {
 		const user = this.transformUserData(userData);
 		return user;
 	};
+
 	public deleteUser = async (userId: string): Promise<void> => {
 		await this.adapter.deleteSessionsByUserId(userId);
 		await this.adapter.deleteKeysByUserId(userId);
 		await this.adapter.deleteUser(userId);
 	};
-	public validateKeyPassword = async (
+
+	public useKey = async (
 		providerId: string,
 		providerUserId: string,
-		password: string
+		password: string | null
 	): Promise<Key> => {
 		const keyId = `${providerId}:${providerUserId}`;
-		const databaseKeyData = await this.adapter.getKey(keyId);
+
+		const shouldDataBeDeleted = (data: KeySchema) => {
+			const isPersistent = data.expires === null;
+			if (isPersistent) return false;
+			return true;
+		};
+
+		const databaseKeyData = await this.adapter.getKey(
+			keyId,
+			shouldDataBeDeleted
+		);
 		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
+		const isSingleUse = databaseKeyData.expires;
+		if (isSingleUse) {
+			const isValid = isWithinExpiration(databaseKeyData.expires);
+			if (!isValid) throw new LuciaError("AUTH_EXPIRED_KEY");
+		}
 		const hashedPassword = databaseKeyData.hashed_password;
-		if (!hashedPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
-		if (hashedPassword.startsWith("$2a"))
-			throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-		const isValidPassword = await this.hash.validate(password, hashedPassword);
-		if (!isValidPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
-		const key = validateDatabaseKey(databaseKeyData);
+		if (hashedPassword) {
+			if (!password) throw new LuciaError("AUTH_INVALID_PASSWORD");
+			if (!hashedPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
+			if (hashedPassword.startsWith("$2a"))
+				throw new LuciaError("AUTH_OUTDATED_PASSWORD");
+			const isValidPassword = await this.hash.validate(
+				password,
+				hashedPassword
+			);
+			if (!isValidPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
+		}
+
+		const key = transformDatabaseKey(databaseKeyData);
 		return key;
 	};
+
 	public getSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
@@ -229,6 +286,7 @@ export class Auth<C extends Configuration = any> {
 		}
 		return session;
 	};
+
 	public getAllUserSessions = async (userId: string): Promise<Session[]> => {
 		await this.getUser(userId);
 		const databaseData = await this.adapter.getSessionsByUserId(userId);
@@ -266,12 +324,14 @@ export class Auth<C extends Configuration = any> {
 			.filter((val): val is Session => val !== null);
 		return validUserSessions;
 	};
+
 	public validateSession = async (sessionId: string): Promise<Session> => {
 		const session = await this.getSession(sessionId);
 		if (session.state === "active") return session;
 		const renewedSession = await this.renewSession(sessionId);
 		return renewedSession;
 	};
+
 	public validateSessionUser = async (
 		sessionId: string
 	): Promise<{ session: Session; user: User }> => {
@@ -283,6 +343,7 @@ export class Auth<C extends Configuration = any> {
 			user
 		};
 	};
+
 	public generateSessionId = (): [
 		sessionId: string,
 		activePeriodExpires: Date,
@@ -297,6 +358,7 @@ export class Auth<C extends Configuration = any> {
 		);
 		return [sessionId, activePeriodExpires, idlePeriodExpires];
 	};
+
 	public createSession = async (userId: string): Promise<Session> => {
 		const [sessionId, activePeriodExpires, idlePeriodExpires] =
 			this.generateSessionId();
@@ -320,6 +382,7 @@ export class Auth<C extends Configuration = any> {
 			isFresh: true
 		};
 	};
+
 	public renewSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
@@ -340,12 +403,15 @@ export class Auth<C extends Configuration = any> {
 		]);
 		return renewedSession;
 	};
+
 	public invalidateSession = async (sessionId: string): Promise<void> => {
 		await this.adapter.deleteSession(sessionId);
 	};
+
 	public invalidateAllUserSessions = async (userId: string): Promise<void> => {
 		await this.adapter.deleteSessionsByUserId(userId);
 	};
+
 	public deleteDeadUserSessions = async (userId: string): Promise<void> => {
 		const sessions = await this.adapter.getSessionsByUserId(userId);
 		const currentTime = new Date().getTime();
@@ -355,6 +421,7 @@ export class Auth<C extends Configuration = any> {
 		if (deadSessionIds.length === 0) return;
 		await this.adapter.deleteSession(...deadSessionIds);
 	};
+
 	public validateRequestHeaders = (request: MinimalRequest): string => {
 		const cookies = parseCookie(request.headers.get("cookie") ?? "");
 		const sessionId = cookies.auth_session ?? "";
@@ -367,90 +434,108 @@ export class Auth<C extends Configuration = any> {
 		}
 		return sessionId;
 	};
+
 	public createSessionCookies = (session: Session | null): Cookie[] => {
 		return this.sessionCookie.map((options) =>
 			createSessionCookie(session, this.ENV, options)
 		);
 	};
-	public createKey = async (
+
+	public createKey = async <
+		KeyData extends
+			| {
+					readonly type: PersistentKey["type"];
+					providerId: string;
+					providerUserId: string;
+					password: string | null;
+			  }
+			| {
+					readonly type: SingleUseKey["type"];
+					providerId: string;
+					providerUserId: string;
+					timeout: number | null;
+			  }
+	>(
 		userId: string,
-		keyData: {
-			providerId: string;
-			providerUserId: string;
-			password: string | null;
-			timeout?: number | null;
-		}
-	): Promise<Key> => {
+		keyData: KeyData
+	): Promise<
+		KeyData["type"] extends PersistentKey["type"] ? PersistentKey : SingleUseKey
+	> => {
 		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
-		const hashedPassword = keyData.password
-			? await this.hash.generate(keyData.password)
-			: null;
+		if (keyData.type === "persistent") {
+			const hashedPassword = keyData.password
+				? await this.hash.generate(keyData.password)
+				: null;
+			await this.adapter.setKey({
+				id: keyId,
+				user_id: userId,
+				hashed_password: hashedPassword,
+				primary: false,
+				expires: null
+			});
+			return {
+				type: "persistent",
+				providerId: keyData.providerId,
+				providerUserId: keyData.providerUserId,
+				isPrimary: false,
+				isPasswordDefined: !!keyData.password,
+				userId
+			} satisfies PersistentKey as any;
+		}
 		const oneTimeExpires = getOneTimeKeyExpiration(keyData.timeout);
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
-			hashed_password: hashedPassword,
+			hashed_password: null,
 			primary: false,
 			expires: oneTimeExpires?.getTime() ?? null
 		});
 		return {
+			type: "single_use",
 			providerId: keyData.providerId,
 			providerUserId: keyData.providerUserId,
-			isPrimary: false,
-			isPasswordDefined: !!keyData.password,
 			userId,
-			oneTimeExpires: oneTimeExpires ?? null
-		};
+			expires: oneTimeExpires ?? null,
+			isExpired: () => isWithinExpiration(keyData.timeout)
+		} satisfies SingleUseKey as any;
 	};
+
 	public deleteKey = async (providerId: string, providerUserId: string) => {
 		const keyId = `${providerId}:${providerUserId}`;
 		await this.adapter.deleteNonPrimaryKey(keyId);
 	};
+
 	public getKey = async (
 		providerId: string,
 		providerUserId: string
 	): Promise<Key> => {
 		const keyId = `${providerId}:${providerUserId}`;
-		const keyData = await this.adapter.getKey(keyId);
+		const shouldDataBeDeleted = () => {
+			return false;
+		};
+		const keyData = await this.adapter.getKey(keyId, shouldDataBeDeleted);
 		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		const key = validateDatabaseKey(keyData);
+		const key = transformDatabaseKey(keyData);
 		return key;
 	};
 
-	public getKeyUser = async (
-		providerId: string,
-		providerUserId: string
-	): Promise<{
-		key: Key;
-		user: User;
-	}> => {
-		const key = await this.getKey(providerId, providerUserId);
-		const user = await this.getUser(key.userId);
-		return {
-			key,
-			user
-		};
-	};
 	public getAllUserKeys = async (userId: string): Promise<Key[]> => {
 		await this.getUser(userId);
 		const databaseData = await this.adapter.getKeysByUserId(userId);
-		return databaseData
-			.map((val) => {
-				try {
-					return validateDatabaseKey(val);
-				} catch {
-					return null;
-				}
-			})
-			.filter((maybeKey): maybeKey is Key => maybeKey !== null);
+		return databaseData.map((val) => transformDatabaseKey(val));
 	};
-	public updateKeyPassword = async (
+
+	public updatePersistentKeyPassword = async (
 		providerId: string,
 		providerUserId: string,
 		password: string | null
 	): Promise<void> => {
 		const keyId = `${providerId}:${providerUserId}`;
-		const hashedPassword = password ? await this.hash.generate(password) : null;
+		const hashedPassword =
+			password !== null ? await this.hash.generate(password) : null;
+		const key = await this.getKey(providerId, providerUserId);
+		if (key.type === "single_use")
+			throw new LuciaError("AUTH_INVALID_KEY_TYPE");
 		await this.adapter.updateKeyPassword(keyId, hashedPassword);
 	};
 }

@@ -1,4 +1,4 @@
-import type { Auth } from "lucia-auth/types";
+import type { Auth } from "lucia-auth";
 import type { AwaitedReturnType } from "./utils.js";
 
 export type LuciaUser<A extends Auth> = AwaitedReturnType<A["getUser"]>;

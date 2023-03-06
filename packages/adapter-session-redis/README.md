@@ -18,7 +18,7 @@ npm install @lucia-auth/adapter-session-redis
 
 | Redis adapter version | Lucia version |
 | --------------------- | ------------- |
-| 0.1.x                 | 0.6.x - 0.7.x |
+| 0.1.x                 | 0.6.x - 0.9.x |
 
 ## Testing
 

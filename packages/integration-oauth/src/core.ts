@@ -2,7 +2,7 @@ import { generateRandomString } from "lucia-auth";
 
 import type { Auth, Key, LuciaError } from "lucia-auth";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
-import { AwaitedReturnType } from "./utils.js";
+import type { AwaitedReturnType } from "./utils.js";
 
 export const provider = <
 	A extends Auth,
@@ -33,10 +33,12 @@ export const provider = <
 			);
 			const getExistingUser = async () => {
 				try {
-					const { user } = await auth.getKeyUser(
+					const key = await auth.useKey(
 						config.providerId,
-						providerUserId
+						providerUserId,
+						null
 					);
+					const user = await auth.getUser(key.userId);
 					return user as LuciaUser<A>;
 				} catch (e) {
 					const error = e as Partial<LuciaError>;
@@ -48,8 +50,9 @@ export const provider = <
 			return {
 				providerUser: providerUser as AwaitedReturnType<GetProviderUser>[1],
 				providerUserId,
-				createKey: async (userId: string) => {
+				createPersistentKey: async (userId: string) => {
 					return await auth.createKey(userId, {
+						type: "persistent",
 						providerId: config.providerId,
 						providerUserId,
 						password: null
@@ -59,7 +62,7 @@ export const provider = <
 					attributes: CreateUserAttributesParameter<A>
 				): Promise<LuciaUser<A>> => {
 					const user = await auth.createUser({
-						key: {
+						primaryKey: {
 							providerId: config.providerId,
 							providerUserId,
 							password: null
@@ -87,7 +90,7 @@ export type OAuthProvider<A extends Auth> = {
 		createUser: (
 			attributes: CreateUserAttributesParameter<A>
 		) => Promise<LuciaUser<A>>;
-		createKey: (userId: string) => Promise<Key>;
+		createPersistentKey: (userId: string) => Promise<Key>;
 		providerUser: Record<string, any>;
 		tokens: Record<any, any>;
 	}>;

@@ -1,50 +1,5 @@
-import type { LuciaErrorConstructor } from "./index.js";
-
-export type { Auth } from "./auth/index.js";
-
-export type User = ReturnType<Lucia.Auth["transformUserData"]>;
-
-export type Session = {
-	sessionId: string;
-	userId: string;
-	activePeriodExpires: Date;
-	idlePeriodExpires: Date;
-	state: "idle" | "active";
-	isFresh: boolean;
-};
-
-export type Key = {
-	isPasswordDefined: boolean;
-	isPrimary: boolean;
-	providerId: string;
-	providerUserId: string;
-	userId: string;
-	oneTimeExpires: Date | null;
-};
-
-export type KeySchema = {
-	id: string;
-	hashed_password: string | null;
-	primary: boolean;
-	user_id: string;
-	expires: number | null;
-};
-
-export type Env = "DEV" | "PROD";
-
-export type UserSchema = {
-	id: string;
-	[k: string]: any;
-};
-
-export type UserData = { id: string } & Required<Lucia.UserAttributes>;
-
-export type SessionSchema = {
-	id: string;
-	active_expires: number | bigint;
-	idle_expires: number | bigint;
-	user_id: string;
-};
+import type { LuciaErrorConstructor } from "../index.js";
+import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
 
 export type AdapterFunction<T extends Adapter | UserAdapter | SessionAdapter> =
 	(E: LuciaErrorConstructor) => T;
@@ -76,7 +31,10 @@ export type UserAdapter = {
 		key: string,
 		hashedPassword: string | null
 	) => Promise<void>;
-	getKey: (keyId: string) => Promise<KeySchema | null>;
+	getKey: (
+		keyId: string,
+		shouldDataBeDeleted: (key: KeySchema) => boolean
+	) => Promise<KeySchema | null>;
 	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 };
 
@@ -86,12 +44,4 @@ export type SessionAdapter = {
 	setSession: (session: SessionSchema) => Promise<void>;
 	deleteSession: (...sessionIds: string[]) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
-};
-
-export type MinimalRequest = {
-	headers: {
-		get: (name: string) => null | string;
-	};
-	url: string;
-	method: string;
 };

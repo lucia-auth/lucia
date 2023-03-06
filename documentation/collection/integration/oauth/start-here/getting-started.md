@@ -110,6 +110,8 @@ export const handleGetRequests = async (request: Request) => {
 };
 ```
 
+> (red) **There's no guarantee that the user's email provided by the provider is verified!** Make sure to check with each provider's documentation if you're working with email. This is super important if you're planning to link accounts.
+
 ### Add provider to existing user
 
 Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user. Calling `createKey` will create a new persistent key linked to the provided user id.

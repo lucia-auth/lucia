@@ -28,10 +28,18 @@ export type AdapterFunction<A extends Adapter | UserAdapter | SessionAdapter> =
 type Cookie = {
 	name: string;
 	value: string;
-	attributes: CookieAttributes; // cookie npm package serialize() options
+	attributes: Record<string, any>;
 	serialize: () => string;
 };
 ```
+
+#### Properties
+
+| name       | type                  | description                                                                              |
+| ---------- | --------------------- | ---------------------------------------------------------------------------------------- |
+| name       | `string`              |                                                                                          |
+| value      | `string`              |                                                                                          |
+| attributes | `Record<string, any>` | `cookie` NPM package [`serialize()` options](https://github.com/jshttp/cookie#options-1) |
 
 ### `serialize()`
 
@@ -46,22 +54,13 @@ const serialize: () => string;
 Represents a key.
 
 ```ts
-export type Key = {
-	isPasswordDefined: boolean;
-	isPrimary: boolean;
-	providerId: string;
-	providerUserId: string;
-	userId: string;
-};
+type Key = SingleUseKey | PersistentKey;
 ```
 
-| name              | type      | description                                                                       |
-| ----------------- | --------- | --------------------------------------------------------------------------------- |
-| isPasswordDefined | `boolean` | time of the [active period](/learn/start-here/concepts#session-states) expiration |
-| isPrimary         | `boolean` | `true` if primary key of user (key created with the user )                        |
-| providerId        | `string`  | provider id                                                                       |
-| providerUserId    | `string`  | provider user id                                                                  |
-| userId            | `string`  | user id of linked user                                                            |
+| type                                                        |
+| ----------------------------------------------------------- |
+| [`SingleUseKey`](/reference/api/lucia-types#singleusekey)   |
+| [`PersistentKey`](/reference/api/lucia-types#persistentkey) |
 
 ## `Lucia`
 
@@ -130,6 +129,32 @@ type MinimalRequest = {
 };
 ```
 
+## `PersistentKey`
+
+A persistent key.
+
+```ts
+type PersistentKey = {
+	type: "persistent";
+	isPrimary: boolean;
+	isPasswordDefined: boolean;
+	providerId: string;
+	providerUserId: string;
+	userId: string;
+};
+```
+
+#### Properties
+
+| name              | type           | description                |
+| ----------------- | -------------- | -------------------------- |
+| type              | `"persistent"` |                            |
+| providerId        | `string`       | provider id                |
+| providerUserId    | `string`       | provider user id           |
+| userId            | `string`       | user id of linked user     |
+| isPrimary         | `boolean`      | `true` if key is primary   |
+| isPasswordDefined | `boolean`      | `true` if holds a password |
+
 ## `Session`
 
 A session.
@@ -144,6 +169,8 @@ type Session = {
 	userId: string;
 };
 ```
+
+#### Properties
 
 | name                | type                 | description                                                                       |
 | ------------------- | -------------------- | --------------------------------------------------------------------------------- |
@@ -161,6 +188,45 @@ Refer to [Adapters](/reference/adapters/api) reference.
 ## `SessionSchema`
 
 Refer to [Database model](/reference/adapters/database-model#schema-type-1) reference.
+
+## `SingleUseKey`
+
+A single use key.
+
+```ts
+type SingleUseKey = {
+	type: "single_use";
+	providerId: string;
+	providerUserId: string;
+	userId: string;
+	expires: Date | null;
+	isExpired: () => boolean;
+};
+```
+
+#### Properties
+
+| name           | type           | description                                  |
+| -------------- | -------------- | -------------------------------------------- |
+| type           | `"single_use"` |                                              |
+| providerId     | `string`       | provider id                                  |
+| providerUserId | `string`       | provider user id                             |
+| userId         | `string`       | user id of linked user                       |
+| expires        | `Date \| null` | expiration time, `null` if it doesn't expire |
+
+### `isExpired`
+
+Returns `true` if expired.
+
+```ts
+const isExpired: () => boolean;
+```
+
+#### Returns
+
+| type      | description       |
+| --------- | ----------------- |
+| `boolean` | `true` if expired |
 
 ## `User`
 

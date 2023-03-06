@@ -160,18 +160,18 @@ export const testUserAdapter = async (
 			isOneTime: false
 		});
 		await key.set();
-		const result = await adapter.getKey(key.value.id);
+		const result = await adapter.getKey(key.value.id, () => false);
 		key.compare(result);
 		await clearAll();
 	});
-	await test("getKey()", "Returns the correct single key", async () => {
+	await test("getKey()", "Returns the correct single use key", async () => {
 		const key = database.user().key({
 			isPrimary: false,
 			hasPassword: true,
 			isOneTime: true
 		});
 		await key.set();
-		const result = await adapter.getKey(key.value.id);
+		const result = await adapter.getKey(key.value.id, () => true);
 		key.compare(result);
 		await clearAll();
 	});
@@ -185,7 +185,7 @@ export const testUserAdapter = async (
 				isOneTime: true
 			});
 			await key.set();
-			await adapter.getKey(key.value.id);
+			await adapter.getKey(key.value.id, () => true);
 			await key.notExits();
 			await clearAll();
 		}
