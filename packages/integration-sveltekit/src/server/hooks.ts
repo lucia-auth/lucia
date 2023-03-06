@@ -2,18 +2,14 @@ import { Auth, Session, SESSION_COOKIE_NAME, User } from "lucia-auth";
 import type { RequestEvent } from "./types.js";
 
 export const handleHooks = (auth: Auth) => {
-	return async ({
-		event,
-		resolve
-	}: {
-		event: RequestEvent;
-		resolve: (
+	return async (data: any) => {
+		const event = data.event as RequestEvent;
+		const resolve = data.resolve as (
 			event: RequestEvent,
 			options?: {
 				transformPageChunk: (data: { html: string }) => string;
 			}
 		) => Promise<Response> | Response;
-	}) => {
 		let getSessionPromise: Promise<Session | null> | null = null;
 		let getSessionUserPromise: Promise<
 			| { user: User; session: Session }
