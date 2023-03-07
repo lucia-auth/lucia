@@ -1,5 +1,12 @@
 # lucia-auth
 
+## 0.8.0
+
+### Minor changes
+
+- [#392](https://github.com/pilcrowOnPaper/lucia/pull/392) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Rename type `Configurations` to `Configuration`
+  [Breaking] Attempting to use an expired key throws `AUTH_EXPIRED_KEY`
+
 ## 0.7.3
 
 ### Patch changes

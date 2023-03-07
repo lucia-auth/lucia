@@ -1,12 +1,12 @@
 ---
-_order: 0
-title: "Lucia configurations"
+_order: 1
+title: "Configuration"
 ---
 
-Configurations for `lucia()`.
+Configuration for `lucia()`.
 
 ```ts
-type Configurations = {
+type Configuration = {
 	// required
 	adapter:
 		| AdapterFunction<Adapter>
@@ -63,17 +63,17 @@ or, it can take a different adapter for each table. A normal `Adapter` can be us
 
 An adapter for the database that stores users. Can be a normal `AdapterFunction<Adapter>` adapter.
 
-| type                                                                           |
-| ------------------------------------------------------------------------------ |
-| `AdapterFunction<`[`UserAdapter`](/reference/types/lucia-types#useradapter)`>` |
+| type                                                                   |
+| ---------------------------------------------------------------------- |
+| `AdapterFunction<`[`UserAdapter`](/reference/api/types#useradapter)`>` |
 
 #### `session` (required)
 
 An adapter for the database that stores sessions.
 
-| type                                                                              |
-| --------------------------------------------------------------------------------- |
-| `AdapterFunction<`[`SessionAdapter`](/reference/types/lucia-types#useradapter)`>` |
+| type                                                                      |
+| ------------------------------------------------------------------------- |
+| `AdapterFunction<`[`SessionAdapter`](/reference/api/types#useradapter)`>` |
 
 ### `env`
 
@@ -108,7 +108,7 @@ and deletes the target user's dead sessions from the database on:
 
 ### `csrfProtection`
 
-Checks if the request is from a trusted origin (where the app is hosted) in [`validateRequestHeaders()`](/reference/api/server-api#validaterequestheaders). If you set this to `false`, make sure to add your own CSRF protection.
+Checks if the request is from a trusted origin (where the app is hosted) in [`validateRequestHeaders()`](/reference/api/auth#validaterequestheaders). If you set this to `false`, make sure to add your own CSRF protection.
 
 | type      | default |
 | --------- | ------- |
@@ -154,7 +154,7 @@ const generate: (s: string) => MaybePromise<string>;
 
 #### `validate()` (required)
 
-Validates a string against a hash generated using [`hash.generate()`](/reference/configure/lucia-configurations#generate-required).
+Validates a string against a hash generated using [`hash.generate()`](/reference/api/configuration#generate-required).
 
 ```ts
 const validate: (s: string, hash: string) => MaybePromise<boolean>;
@@ -201,7 +201,7 @@ The time in milliseconds the [idle period](/learn/start-here/concepts#session-st
 
 ### `transformUserData()`
 
-This will be called to transform the raw data from `user` table to an object that will be mapped to [`User`](/reference/types/lucia-types#user).
+This will be called to transform the raw data from `user` table to an object that will be mapped to [`User`](/reference/api/types#user).
 
 ```ts
 const transformUserData: (userData: UserData) => Record<any, any>;
@@ -209,9 +209,9 @@ const transformUserData: (userData: UserData) => Record<any, any>;
 
 #### Parameter
 
-| name     | type                                                | description                 |
-| -------- | --------------------------------------------------- | --------------------------- |
-| userData | [`UserData`](/reference/types/lucia-types#userdata) | the user data from database |
+| name     | type                                        | description                 |
+| -------- | ------------------------------------------- | --------------------------- |
+| userData | [`UserData`](/reference/api/types#userdata) | the user data from database |
 
 #### Returns
 

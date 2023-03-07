@@ -31,12 +31,12 @@ const github: (
 
 #### Parameter
 
-| name                | type                                        | description                    | optional |
-| ------------------- | ------------------------------------------- | ------------------------------ | -------- |
-| auth                | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                 |          |
-| config.clientId     | `string`                                    | Github OAuth app client id     |          |
-| config.clientSecret | `string`                                    | Github OAuth app client secret |          |
-| config.scope        | `string[]`                                  | an array of scopes             | true     |
+| name                | type                          | description                    | optional |
+| ------------------- | ----------------------------- | ------------------------------ | -------- |
+| auth                | [`Auth`](/reference/api/auth) | Lucia instance                 |          |
+| config.clientId     | `string`                      | Github OAuth app client id     |          |
+| config.clientSecret | `string`                      | Github OAuth app client secret |          |
+| config.scope        | `string[]`                    | an array of scopes             | true     |
 
 #### Returns
 

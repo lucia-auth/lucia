@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-test
 
+## 0.4.3
+
+### Patch changes
+
+- [#392](https://github.com/pilcrowOnPaper/lucia/pull/392) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 0.4.2
 
 ### Patch changes

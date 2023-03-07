@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-kysely",
-	"version": "0.6.2",
+	"version": "0.6.3",
 	"description": "Kysely adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -14,7 +14,7 @@
 		"test-psql": "npx ts-node --esm -T test/psql/index.ts",
 		"test-mysql": "npx ts-node --esm -T test/mysql/index.ts",
 		"test-sqlite": "npx ts-node --esm -T test/sqlite/index.ts",
-		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm pack && cd ../"
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks && cd ../"
 	},
 	"keywords": [
 		"lucia",
@@ -42,7 +42,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.7.x"
+		"lucia-auth": "0.7.x - 0.8.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

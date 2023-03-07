@@ -33,14 +33,14 @@ const twitch: (
 
 #### Parameter
 
-| name                 | type                                        | description                                                          | optional |
-| -------------------- | ------------------------------------------- | -------------------------------------------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance                                                       |          |
-| configs.clientId     | `string`                                    | Twitch OAuth app client id                                           |          |
-| configs.clientSecret | `string`                                    | Twitch OAuth app client secret                                       |          |
-| configs.redirectUri  | `string`                                    | one of the authorized redirect URIs                                  |          |
-| configs.forceVerify  | `boolean`                                   | forces the user to re-authorize your app’s access to their resources | true     |
-| configs.scope        | `string[]`                                  | an array of scopes                                                   | true     |
+| name                 | type                          | description                                                          | optional |
+| -------------------- | ----------------------------- | -------------------------------------------------------------------- | -------- |
+| auth                 | [`Auth`](/reference/api/auth) | Lucia instance                                                       |          |
+| configs.clientId     | `string`                      | Twitch OAuth app client id                                           |          |
+| configs.clientSecret | `string`                      | Twitch OAuth app client secret                                       |          |
+| configs.redirectUri  | `string`                      | one of the authorized redirect URIs                                  |          |
+| configs.forceVerify  | `boolean`                     | forces the user to re-authorize your app’s access to their resources | true     |
+| configs.scope        | `string[]`                    | an array of scopes                                                   | true     |
 
 #### Returns
 
