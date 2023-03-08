@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 0.6.3
+
+### Patch changes
+
+- [#391](https://github.com/pilcrowOnPaper/lucia/pull/391) by [@BenocxX](https://github.com/BenocxX) : Fix the default scope for the Discord provider
+
 ## 0.6.2
 
 ### Patch changes
