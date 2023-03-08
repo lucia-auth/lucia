@@ -15,7 +15,7 @@ export const discord = (auth: Auth, config: Config) => {
 		const url = createUrl("https://discord.com/oauth2/authorize", {
 			response_type: "code",
 			client_id: config.clientId,
-			scope: scope(["identity"], config.scope),
+			scope: scope(["identify"], config.scope),
 			redirect_uri: config.redirectUri,
 			state
 		});

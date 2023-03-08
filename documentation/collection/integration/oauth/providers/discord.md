@@ -9,7 +9,7 @@ OAuth integration for Discord. Refer to [Discord API documentation](https://disc
 import { discord } from "@lucia-auth/oauth/providers";
 ```
 
-The `identity` scope is always included regardless of provided `scope` config.
+The `identify` scope is always included regardless of provided `scope` config.
 
 ### Initialization
 
@@ -40,7 +40,7 @@ const discord: (
 | config.clientId     | `string`                      | Github OAuth app client id                         |          |
 | config.clientSecret | `string`                      | Github OAuth app client secret                     |          |
 | configs.redirectUri | `string`                      | an authorized redirect URI                         |          |
-| config.scope        | `string[]`                    | an array of scopes - `identity` is always included | true     |
+| config.scope        | `string[]`                    | an array of scopes - `identify` is always included | true     |
 
 #### Returns
 
