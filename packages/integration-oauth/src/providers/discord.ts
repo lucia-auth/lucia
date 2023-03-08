@@ -23,18 +23,18 @@ export const discord = (auth: Auth, config: Config) => {
 	};
 
 	const getTokens = async (code: string) => {
-		const requestUrl = createUrl("https://discord.com/api/oauth2/token", {
-			client_id: config.clientId,
-			client_secret: config.clientSecret,
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri,
-			code
-		});
-		const request = new Request(requestUrl, {
+		const request = new Request("https://discord.com/api/oauth2/token", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded"
-			}
+			},
+			body: new URLSearchParams({
+				client_id: config.clientId,
+				client_secret: config.clientSecret,
+				grant_type: "authorization_code",
+				redirect_uri: config.redirectUri,
+				code
+			}).toString()
 		});
 		const tokens = await handleRequest<{
 			access_token: string;
