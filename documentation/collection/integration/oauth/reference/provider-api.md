@@ -99,7 +99,7 @@ type ProviderSession = {
 | Patreon  | [`PatreonUser`](/oauth/providers/patreon#patreonuser)    |
 | Reddit   | [`RedditUser`](/oauth/providers/reddit#reddituser)       |
 | Twitch   | [`TwitchUser`](/oauth/providers/twitch#twitchuser)       |
-| LinkedIn   | [`LinkedInUser`](/oauth/providers/linkedin#linkedinuser) |
+| LinkedIn | [`LinkedInUser`](/oauth/providers/linkedin#linkedinuser) |
 
 #### `ProviderTokens`
 
@@ -112,7 +112,7 @@ type ProviderSession = {
 | Patreon  | [`PatreonTokens`](/oauth/providers/patreon#patreontokens)    |
 | Reddit   | [`RedditTokens`](/oauth/providers/reddit#reddittokens)       |
 | Twitch   | [`TwitchTokens`](/oauth/providers/twitch#twitchtokens)       |
-| LinkedIn   | [`LinkedInTokens`](/oauth/providers/linkedin#linkedintokens) |
+| LinkedIn | [`LinkedInTokens`](/oauth/providers/linkedin#linkedintokens) |
 
 ### `createKey()`
 

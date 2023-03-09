@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 0.6.4
+
+### Patch changes
+
+- [#401](https://github.com/pilcrowOnPaper/lucia/pull/401) by [@Jings](https://github.com/Jings) : Added linkedin as an oauth provider
+
 ## 0.6.3
 
 ### Patch changes
