@@ -86,7 +86,7 @@ type ProviderSession = {
 | [createUser](/oauth/reference/api-reference#createuser) | `Function`                                    |                                                                |
 | [createKey](/oauth/reference/api-reference#createkey)   | `Function`                                    |                                                                |
 | providerUser                                            | `ProviderUser`                                | user info from the used provider - refer below                 |
-| tokens                                                  | `ProviderTokens`                                         | access tokens (`accessToken`) among other tokens - refer below |
+| tokens                                                  | `ProviderTokens`                              | access tokens (`accessToken`) among other tokens - refer below |
 
 #### `ProviderUser`
 
@@ -99,6 +99,7 @@ type ProviderSession = {
 | Patreon  | [`PatreonUser`](/oauth/providers/patreon#patreonuser)    |
 | Reddit   | [`RedditUser`](/oauth/providers/reddit#reddituser)       |
 | Twitch   | [`TwitchUser`](/oauth/providers/twitch#twitchuser)       |
+| Twitch   | [`LinkedInUser`](/oauth/providers/linkedin#linkedinuser) |
 
 #### `ProviderTokens`
 
@@ -111,6 +112,7 @@ type ProviderSession = {
 | Patreon  | [`PatreonTokens`](/oauth/providers/patreon#patreontokens)    |
 | Reddit   | [`RedditTokens`](/oauth/providers/reddit#reddittokens)       |
 | Twitch   | [`TwitchTokens`](/oauth/providers/twitch#twitchtokens)       |
+| Twitch   | [`LinkedInTokens`](/oauth/providers/linkedin#linkedintokens) |
 
 ### `createKey()`
 
