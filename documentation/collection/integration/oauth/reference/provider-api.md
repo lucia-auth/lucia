@@ -112,7 +112,7 @@ type ProviderSession = {
 | Patreon  | [`PatreonTokens`](/oauth/providers/patreon#patreontokens)    |
 | Reddit   | [`RedditTokens`](/oauth/providers/reddit#reddittokens)       |
 | Twitch   | [`TwitchTokens`](/oauth/providers/twitch#twitchtokens)       |
-| Twitch   | [`LinkedInTokens`](/oauth/providers/linkedin#linkedintokens) |
+| LinkedIn   | [`LinkedInTokens`](/oauth/providers/linkedin#linkedintokens) |
 
 ### `createKey()`
 
