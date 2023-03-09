@@ -99,7 +99,7 @@ type ProviderSession = {
 | Patreon  | [`PatreonUser`](/oauth/providers/patreon#patreonuser)    |
 | Reddit   | [`RedditUser`](/oauth/providers/reddit#reddituser)       |
 | Twitch   | [`TwitchUser`](/oauth/providers/twitch#twitchuser)       |
-| Twitch   | [`LinkedInUser`](/oauth/providers/linkedin#linkedinuser) |
+| LinkedIn   | [`LinkedInUser`](/oauth/providers/linkedin#linkedinuser) |
 
 #### `ProviderTokens`
 
