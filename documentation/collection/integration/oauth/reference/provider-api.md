@@ -86,9 +86,9 @@ type ProviderSession = {
 | [createUser](/oauth/reference/api-reference#createuser) | `Function`                                    |                                                                |
 | [createKey](/oauth/reference/api-reference#createkey)   | `Function`                                    |                                                                |
 | providerUser                                            | `ProviderUser`                                | user info from the used provider - refer below                 |
-| tokens                                                  | `any`                                         | access tokens (`accessToken`) among other tokens - refer below |
+| tokens                                                  | `ProviderTokens`                                         | access tokens (`accessToken`) among other tokens - refer below |
 
-#### `providerUser`
+#### `ProviderUser`
 
 | provider | type                                                     |
 | -------- | -------------------------------------------------------- |
@@ -100,7 +100,7 @@ type ProviderSession = {
 | Reddit   | [`RedditUser`](/oauth/providers/reddit#reddituser)       |
 | Twitch   | [`TwitchUser`](/oauth/providers/twitch#twitchuser)       |
 
-#### `tokens`
+#### `ProviderTokens`
 
 | provider | type                                                         |
 | -------- | ------------------------------------------------------------ |
