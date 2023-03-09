@@ -85,10 +85,10 @@ type ProviderSession = {
 | existingUser                                            | [`User`](/reference/api/types#user)` \| null` | existing user - null if non-existent (= new user)              |
 | [createUser](/oauth/reference/api-reference#createuser) | `Function`                                    |                                                                |
 | [createKey](/oauth/reference/api-reference#createkey)   | `Function`                                    |                                                                |
-| providerUser                                            | `ProviderUser>`                               | user info from the used provider - refer below                 |
+| providerUser                                            | `ProviderUser`                                | user info from the used provider - refer below                 |
 | tokens                                                  | `any`                                         | access tokens (`accessToken`) among other tokens - refer below |
 
-#### `existingUser`
+#### `providerUser`
 
 | provider | type                                                     |
 | -------- | -------------------------------------------------------- |
@@ -104,13 +104,13 @@ type ProviderSession = {
 
 | provider | type                                                         |
 | -------- | ------------------------------------------------------------ |
-| Discord  | [`Discordtokens`](/oauth/providers/discord#discordtokens)    |
-| Facebook | [`Facebooktokens`](/oauth/providers/facebook#facebooktokens) |
-| Github   | [`Githubtokens`](/oauth/providers/github#githubtokens)       |
-| Google   | [`Googletokens`](/oauth/providers/google#googletokens)       |
-| Patreon  | [`Patreontokens`](/oauth/providers/patreon#patreontokens)    |
-| Reddit   | [`Reddittokens`](/oauth/providers/reddit#reddittokens)       |
-| Twitch   | [`Twitchtokens`](/oauth/providers/twitch#twitchtokens)       |
+| Discord  | [`DiscordTokens`](/oauth/providers/discord#discordtokens)    |
+| Facebook | [`FacebookTokens`](/oauth/providers/facebook#facebooktokens) |
+| Github   | [`GithubTokens`](/oauth/providers/github#githubtokens)       |
+| Google   | [`GoogleTokens`](/oauth/providers/google#googletokens)       |
+| Patreon  | [`PatreonTokens`](/oauth/providers/patreon#patreontokens)    |
+| Reddit   | [`RedditTokens`](/oauth/providers/reddit#reddittokens)       |
+| Twitch   | [`TwitchTokens`](/oauth/providers/twitch#twitchtokens)       |
 
 ### `createKey()`
 
