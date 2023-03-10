@@ -9,7 +9,7 @@ import siena from "siena";
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [tailwind() as any, solidJs()],
+	integrations: [tailwind(), solidJs()],
 	markdown: {
 		shikiConfig: {
 			theme: "github-dark"

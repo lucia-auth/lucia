@@ -1,4 +1,4 @@
 ---
 title: "Tokens"
-redirect: "/tokens/start-here/getting-started"
+redirect: "/tokens/start-here/introduction"
 ---
