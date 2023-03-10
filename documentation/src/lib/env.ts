@@ -9,7 +9,9 @@ const loadEnv = async () => {
 		const rawEnvFile = await resolveEnvFile();
 		envVars.push(...rawEnvFile.split("\n"));
 	}
-	const envMap = new Map<string, undefined | string>();
+	const envMap = new Map<string, undefined | string>(
+		Object.entries(process.env)
+	);
 	for (const envVar of envVars) {
 		if (!envVar) continue;
 		const [varName, value] = envVar.split("=");
