@@ -1,10 +1,23 @@
 # lucia-auth
 
+## 0.9.0
+
+### Minor changes
+
+- [#398](https://github.com/pilcrowOnPaper/lucia/pull/398) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : **Breaking changes** Better integrate single use keys and clean up APIÏ
+  - Update `Key` type
+  - Remove `getKeyUser()`
+  - Replace `validateKeyPassword()` with `useKey()`
+  - Replace `data.key` with `data.primaryKey` for `createUser()`
+  - Update `createKey()`
+  - `getAllUserKeys()` returns all keys, including those expired
+
 ## 0.8.0
 
 ### Minor changes
 
 - [#392](https://github.com/pilcrowOnPaper/lucia/pull/392) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Rename type `Configurations` to `Configuration`
+
   [Breaking] Attempting to use an expired key throws `AUTH_EXPIRED_KEY`
 
 ## 0.7.3

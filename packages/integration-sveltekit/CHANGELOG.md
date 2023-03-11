@@ -1,5 +1,11 @@
 # @lucia-auth/sveltekit
 
+## 0.6.10
+
+### Patch changes
+
+- [#398](https://github.com/pilcrowOnPaper/lucia/pull/398) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 0.6.9
 
 ### Patch changes

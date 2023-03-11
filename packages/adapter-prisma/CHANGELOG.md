@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-prisma
 
+## 0.6.0
+
+### Minor changes
+
+- [#398](https://github.com/pilcrowOnPaper/lucia/pull/398) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia-auth@0.9.0`
+
 ## 0.5.3
 
 ### Patch changes
