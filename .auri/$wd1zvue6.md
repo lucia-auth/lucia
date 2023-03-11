@@ -9,4 +9,4 @@ type: "minor" # "major", "minor", "patch"
     - Replace `validateKeyPassword()` with `useKey()`
     - Replace `data.key` with `data.primaryKey` for `createUser()`
     - Update `createKey()`
-    - `getAllUserKeys()` returns all keys, including thoseÏ expired
+    - `getAllUserKeys()` returns all keys, including those expired
