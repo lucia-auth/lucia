@@ -1,4 +1,4 @@
-import { Env, Session } from "../types.js";
+import { Env, Session } from "./index.js";
 import { type CookieAttributes, serializeCookie } from "../utils/cookie.js";
 
 export const SESSION_COOKIE_NAME = "auth_session";
@@ -28,10 +28,10 @@ export class Cookie {
 		this.value = value;
 		this.attributes = options;
 	}
-	public name: string;
-	public value: string;
-	public attributes: CookieAttributes;
-	public serialize = () => {
+	public readonly name: string;
+	public readonly value: string;
+	public readonly attributes: CookieAttributes;
+	public readonly serialize = () => {
 		return serializeCookie(this.name, this.value, this.attributes);
 	};
 }

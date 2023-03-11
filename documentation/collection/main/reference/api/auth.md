@@ -18,24 +18,33 @@ Creates a new non-primary key for a user. **`providerId` cannot include characte
 ```ts
 const createKey: (
 	userId: string,
-	data: {
-		providerId: string;
-		providerUserId: string;
-		password: string | null;
-		timeout?: number | null;
-	}
+	keyData:
+		| {
+				type: "persistent";
+				providerId: string;
+				providerUserId: string;
+				password: string | null;
+		  }
+		| {
+				type: "single_use";
+				providerId: string;
+				providerUserId: string;
+				password: string | null;
+				timeout: number | null;
+		  }
 ) => Promise<Key>;
 ```
 
 #### Parameter
 
-| name                | type             | description                                                                                                          | optional |
-| ------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------- | -------- |
-| userId              | `string`         | the user id of the key to create                                                                                     |          |
-| data.providerId     | `string`         | the provider id of the key                                                                                           |          |
-| data.providerUserId | `string`         | the provider user id of the key                                                                                      |          |
-| data.password       | `string \| null` | the password for the key - can be validated using [`validateKeyPassword()`](/reference/api/auth#validatekeypassword) |          |
-| data.timeout        | `number \| null` | how long the key is valid for in seconds - only sets key to single use if a value is provided                        | true     |
+| name                   | type                           | description                                                     |
+| ---------------------- | ------------------------------ | --------------------------------------------------------------- |
+| userId                 | `string`                       | the user id of the key to create                                |
+| keyData.type           | `"persistent" \| "single_use"` | key type                                                        |
+| keyData.providerId     | `string`                       | the provider id of the key                                      |
+| keyData.providerUserId | `string`                       | the provider user id of the key                                 |
+| keyData.password       | `string \| null`               | the password for the key                                        |
+| keyData.timeout        | `number \| null`               | single use keys only - how long the key is valid for in seconds |
 
 #### Returns
 
@@ -56,6 +65,7 @@ const createKey: (
 import { auth } from "$lib/server/lucia";
 try {
 	await auth.createKey(userId, {
+		type: "persistent",
 		providerId: "email",
 		providerUserId: "user@example.com",
 		password: "123456"
@@ -67,11 +77,17 @@ try {
 
 ```ts
 import { auth } from "$lib/server/lucia";
-
-await auth.createKey(userId, {
-	// ...
-	timeout: 60 * 60 // 1 hour
-});
+try {
+	await auth.createKey(userId, {
+		type: "single_use",
+		providerId: "email",
+		providerUserId: "user@example.com",
+		password: null,
+		timeout: 60 * 60 // 1 hour
+	});
+} catch {
+	// invalid user id
+}
 ```
 
 ## `createSession()`
@@ -146,11 +162,11 @@ const response = new Response(null, {
 
 ## `createUser()`
 
-Creates a new user and a new primary, persistent key.
+Creates a new user, with an option to create a primary key alongside the user.
 
 ```ts
 const createUser: (data: {
-	key: {
+	primaryKey: {
 		providerId: string;
 		providerUserId: string;
 		password: string | null;
@@ -161,13 +177,13 @@ const createUser: (data: {
 
 #### Parameter
 
-| name                    | type                                                                | description                                   |
-| ----------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
-| data.key                | `null` \| `typeof data.key`                                         |                                               |
-| data.key.providerId     | provider id of the key                                              |                                               |
-| data.key.providerUserId | `string`                                                            | the user id within the provider               |
-| data.key.password       | `string`                                                            | the password for the key                      |
-| data.attributes         | [`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes) | additional user data to store in `user` table |
+| name                           | type                                                                | description                                   |
+| ------------------------------ | ------------------------------------------------------------------- | --------------------------------------------- |
+| data.primaryKey                | `null` \| `Record<string, any>`                                     |                                               |
+| data.primaryKey.providerId     | provider id of the key                                              |                                               |
+| data.primaryKey.providerUserId | `string`                                                            | the user id within the provider               |
+| data.primaryKey.password       | `string`                                                            | the password for the key                      |
+| data.attributes                | [`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes) | additional user data to store in `user` table |
 
 #### Returns
 
@@ -188,7 +204,7 @@ import { auth } from "$lib/server/lucia";
 
 try {
 	await auth.createUser({
-		key: {
+		primaryKey: {
 			providerId: "email",
 			providerUserId: "user@example.com",
 			password: "123456"
@@ -304,7 +320,7 @@ const generateSessionId: () => [
 
 ## `getAllUserKeys()`
 
-Validate the user id and get all keys of a user.
+Validate the user id and get all keys of a user. Keys returned may be expired.
 
 ```ts
 const getAllUserKeys: (userId: string) => Promise<Key[]>;
@@ -380,7 +396,7 @@ try {
 
 ## `getKey()`
 
-Gets the target key.
+Gets the target key. Returns the key even if it's expired, and will not delete the key on read. To validate the key, use [`useKey()](/reference/api/auth#usekey) method instead.
 
 ```ts
 const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
@@ -412,53 +428,6 @@ import { auth } from "$lib/server/lucia";
 
 try {
 	const key = await auth.getKey("email", "user@example.com");
-} catch {
-	// invalid key
-}
-```
-
-## `getKeyUser()`
-
-Gets the target key and the user of the key.
-
-```ts
-const getKey: (
-	providerId: string,
-	providerUserId: string
-) => Promise<{
-	key: Key;
-	user: User;
-}>;
-```
-
-#### Parameter
-
-| name           | type     | description                     |
-| -------------- | -------- | ------------------------------- |
-| providerId     | `string` | the provider id of the key      |
-| providerUserId | `string` | the provider user id of the key |
-
-#### Returns
-
-| name | type                                | description         |
-| ---- | ----------------------------------- | ------------------- |
-| key  | [`Key`](/reference/api/types#key)   | the target key      |
-| user | [`User`](/reference/api/types#user) | the user of the key |
-
-#### Errors
-
-| name                | description                                  |
-| ------------------- | -------------------------------------------- |
-| AUTH_INVALID_KEY_ID | the user with the provider id does not exist |
-| AUTH_INVALID_USER   |                                              |
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-
-try {
-	const { key, user } = await auth.getKeyUser("email", "user@example.com");
 } catch {
 	// invalid key
 }
@@ -679,7 +648,7 @@ try {
 
 ## `updateKeyPassword()`
 
-Update key password.
+Updates the password of a key.
 
 ```ts
 const updateKeyPassword: (
@@ -702,7 +671,6 @@ const updateKeyPassword: (
 | name                   | description                                         |
 | ---------------------- | --------------------------------------------------- |
 | AUTH_INVALID_KEY_ID    | the user with the key does not exist                |
-| AUTH_INVALID_PASSWORD  | incorrect password                                  |
 | AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
 
 #### Example
@@ -761,25 +729,25 @@ try {
 }
 ```
 
-## `validateKeyPassword()`
+## `useKey()`
 
-Validates the password of a key. Can only be used if the password is defined.
+Validates the key, using the provided password and current time, and throws an error if the key password is incorrect or the key is expired. Will delete single use keys on read, including expired ones.
 
 ```ts
-const validateKeyPassword: (
+const useKey: (
 	providerId: string,
 	providerUserId: string,
-	password: string
+	password: string | null
 ) => Promise<Key>;
 ```
 
 #### Parameter
 
-| name           | type     | description                 |
-| -------------- | -------- | --------------------------- |
-| providerId     | `string` | provider id of the key      |
-| providerUserId | `string` | provider user id of the key |
-| password       | `string` | password of the key         |
+| name           | type             | description                 |
+| -------------- | ---------------- | --------------------------- |
+| providerId     | `string`         | provider id of the key      |
+| providerUserId | `string`         | provider user id of the key |
+| password       | `string \| null` | password of the key         |
 
 #### Returns
 
@@ -792,7 +760,8 @@ const validateKeyPassword: (
 | name                   | description                                         |
 | ---------------------- | --------------------------------------------------- |
 | AUTH_INVALID_KEY_ID    | the user with the key does not exist                |
-| AUTH_INVALID_PASSWORD  | incorrect password                                  |
+| AUTH_EXPIRED_KEY       | the single use key was expired                      |
+| AUTH_INVALID_PASSWORD  | incorrect key password                              |
 | AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
 
 #### Example
@@ -801,11 +770,7 @@ const validateKeyPassword: (
 import { auth } from "$lib/server/lucia";
 
 try {
-	const key = await auth.validateKeyPassword(
-		"email",
-		"user@example.com",
-		"123456"
-	);
+	const key = await auth.useKey("email", "user@example.com", "123456");
 } catch {
 	// invalid credentials
 }

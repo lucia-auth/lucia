@@ -1,5 +1,9 @@
 import Mongoose from "mongoose";
-import { convertKeyDoc, convertSessionDoc, convertUserDoc } from "./utils.js";
+import {
+	transformKeyDoc,
+	transformSessionDoc,
+	transformUserDoc
+} from "./utils.js";
 import type { Adapter, AdapterFunction } from "lucia-auth";
 
 const createMongoValues = (object: Record<any, any>) => {
@@ -20,7 +24,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 			getUser: async (userId: string) => {
 				const userDoc = await User.findById(userId).lean();
 				if (!userDoc) return null;
-				return convertUserDoc(userDoc);
+				return transformUserDoc(userDoc);
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				const session = await Session.findById(sessionId).lean();
@@ -28,20 +32,20 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				const user = await User.findById(session.user_id).lean();
 				if (!user) return null;
 				return {
-					user: convertUserDoc(user),
-					session: convertSessionDoc(session)
+					user: transformUserDoc(user),
+					session: transformSessionDoc(session)
 				};
 			},
 			getSession: async (sessionId) => {
 				const session = await Session.findById(sessionId).lean();
 				if (!session) return null;
-				return convertSessionDoc(session);
+				return transformSessionDoc(session);
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessions = await Session.find({
 					user_id: userId
 				}).lean();
-				return sessions.map((val) => convertSessionDoc(val));
+				return sessions.map((val) => transformSessionDoc(val));
 			},
 			setUser: async (userId, userAttributes, key) => {
 				try {
@@ -60,7 +64,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 						const keyDoc = new Key(createMongoValues(key));
 						await keyDoc.save();
 					}
-					return convertUserDoc(userDoc.toObject());
+					return transformUserDoc(userDoc.toObject());
 				} catch (error) {
 					if (
 						error instanceof Error &&
@@ -104,17 +108,21 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 			updateUserAttributes: async (userId, attributes) => {
 				const userDoc = await User.findByIdAndUpdate(userId, attributes).lean();
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
-				return convertUserDoc(userDoc);
+				return transformUserDoc(userDoc);
 			},
-			getKey: async (key) => {
+			getKey: async (key, shouldDataBeDeleted) => {
 				const keyDoc = await Key.findById(key).lean();
 				if (!keyDoc) return null;
-				if (keyDoc.expires !== null) {
+				const transformedKeyData = transformKeyDoc(keyDoc);
+				const dataShouldBeDeleted = await shouldDataBeDeleted(
+					transformedKeyData
+				);
+				if (dataShouldBeDeleted) {
 					await Key.deleteOne({
 						_id: keyDoc._id
 					});
 				}
-				return convertKeyDoc(keyDoc);
+				return transformedKeyData;
 			},
 			setKey: async (key) => {
 				const userDoc = await User.findById(key.user_id);
@@ -136,7 +144,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				const keyDocs = await Key.find({
 					user_id: userId
 				}).lean();
-				return keyDocs.map((val) => convertKeyDoc(val));
+				return keyDocs.map((val) => transformKeyDoc(val));
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
 				const keyDoc = await Key.findByIdAndUpdate(key, {

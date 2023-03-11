@@ -42,21 +42,25 @@ await auth.createUser({
 
 Refer to [Keys](/learn/basics/keys) to learn more about keys.
 
-### With a password key
+### Create a primary key
+
+You can create primary keys alongside the user, which will be used when authenticating the user.s
+
+#### With a password key
 
 This is useful when you can't trust the provider to give you the correct information. For example, in a simple username/password authentication, your users are the provider and you have to validate the identity by using passwords.
 
-Lucia will hash the password for you, so just pass the raw string.
+Lucia will handle the password hashing.
 
 ```ts
 import { auth } from "./lucia.js";
 
 try {
 	await auth.createUser({
-		provider: {
+		primaryKey: {
 			providerId: "username", // provider id = authentication method
 			providerUserId: usernameInput, // the user's username is unique to the user
-			password: passwordInput // you don't need to worry about hashing
+			password: passwordInput
 		},
 		attributes: {}
 	});
@@ -65,7 +69,7 @@ try {
 }
 ```
 
-### Without a password key
+#### Without a password key
 
 This is useful when you can trust the input for the provider id and provider user id. When implementing OAuth, for example, you can trust that the provider has validated the user and has given you the correct provider user id (you will never get the information about user B when user A signs in with the OAuth provider).
 
@@ -74,7 +78,7 @@ import { auth } from "./lucia.js";
 
 try {
 	await auth.createUser({
-		provider: {
+		primaryKey: {
 			providerId: "github", // provider id = authentication method
 			providerUserId: githubUserId, // the user's Github user id is unique to the user
 			password: null
@@ -88,12 +92,14 @@ try {
 
 ### With user attributes
 
+You can define the user's attributes in `attributes`.
+
 ```ts
 import { auth } from "./lucia.js";
 
 try {
 	await auth.createUser({
-		provider: {
+		primaryKey: {
 			// ...
 		},
 		attributes: {
@@ -108,7 +114,7 @@ try {
 
 ### Without creating a key
 
-If you _just_ need to store users and authenticate users by yourself, you can set `provider` as `null`. Avoid doing this if you plan on using keys later or are unsure.
+If you _just_ need to store users and authenticate users by yourself, you can set `primaryKey` to `null`. **`createUser()` is the only way to create primary keys.** Avoid doing this if you plan on using keys later or are unsure.
 
 ## Get users
 

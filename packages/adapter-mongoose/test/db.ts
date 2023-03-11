@@ -7,7 +7,7 @@ import mongodb from "../src/index.js";
 
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { convertKeyDoc, convertSessionDoc } from "../src/utils.js";
+import { transformKeyDoc, transformSessionDoc } from "../src/utils.js";
 import { LuciaError, UserSchema } from "lucia-auth";
 
 dotenv.config({
@@ -118,7 +118,7 @@ export const queryHandler: LuciaQueryHandler = {
 		get: async () => {
 			await clientPromise;
 			const sessionDocs = await Session.find().lean();
-			return sessionDocs.map((doc) => convertSessionDoc(doc));
+			return sessionDocs.map((doc) => transformSessionDoc(doc));
 		},
 		insert: async (session) => {
 			const sessionDoc = new Session(inputToMongooseDoc(session));
@@ -132,7 +132,7 @@ export const queryHandler: LuciaQueryHandler = {
 		get: async () => {
 			await clientPromise;
 			const keyDocs = await Key.find().lean();
-			return keyDocs.map((doc) => convertKeyDoc(doc));
+			return keyDocs.map((doc) => transformKeyDoc(doc));
 		},
 		insert: async (key) => {
 			const keyDoc = new Key(inputToMongooseDoc(key));

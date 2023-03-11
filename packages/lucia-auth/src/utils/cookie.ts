@@ -50,7 +50,7 @@ export const parseCookie = (str: string, options?: CookieParseOptions) => {
 	return obj;
 };
 
-export interface CookieAttributes {
+export type CookieAttributes = {
 	domain?: string | undefined;
 	encode?: (value: string) => string;
 	expires?: Date | undefined;
@@ -60,7 +60,7 @@ export interface CookieAttributes {
 	priority?: "low" | "medium" | "high" | undefined;
 	sameSite?: true | false | "lax" | "strict" | "none" | undefined;
 	secure?: boolean | undefined;
-}
+};
 
 type CookieSerializeOptions = CookieAttributes;
 

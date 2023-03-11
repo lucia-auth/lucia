@@ -1,9 +1,9 @@
 import type { Kysely, Selectable } from "kysely";
 import {
 	Dialect,
-	convertKeyData,
-	convertKeySchemaToKyselyValues,
-	convertSessionData
+	transformKeyData,
+	transformKeySchemaToKyselyExpectedValue,
+	transformSessionData
 } from "./utils.js";
 import type { Adapter, AdapterFunction } from "lucia-auth";
 import type {
@@ -78,7 +78,7 @@ const adapter =
 				} = data;
 				return {
 					user,
-					session: convertSessionData({
+					session: transformSessionData({
 						id: _session_id,
 						user_id: _session_user_id,
 						active_expires: _session_active_expires,
@@ -93,7 +93,7 @@ const adapter =
 					.where("id", "=", sessionId)
 					.executeTakeFirst();
 				if (!data) return null;
-				return convertSessionData(data);
+				return transformSessionData(data);
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await kysely
@@ -101,7 +101,7 @@ const adapter =
 					.selectAll()
 					.where("user_id", "=", userId)
 					.execute();
-				return result.map((val) => convertSessionData(val));
+				return result.map((val) => transformSessionData(val));
 			},
 			setUser: async (userId, attributes, key) => {
 				try {
@@ -128,7 +128,7 @@ const adapter =
 						if (key) {
 							await trx
 								.insertInto("key")
-								.values(convertKeySchemaToKyselyValues(key, dialect))
+								.values(transformKeySchemaToKyselyExpectedValue(key, dialect))
 								.execute();
 						}
 						return result;
@@ -272,7 +272,7 @@ const adapter =
 				try {
 					await kysely
 						.insertInto("key")
-						.values(convertKeySchemaToKyselyValues(key, dialect))
+						.values(transformKeySchemaToKyselyExpectedValue(key, dialect))
 						.execute();
 				} catch (e) {
 					if (dialect === "pg") {
@@ -322,7 +322,7 @@ const adapter =
 					throw e;
 				}
 			},
-			getKey: async (key) => {
+			getKey: async (key, shouldDataBeDeleted) => {
 				return await kysely.transaction().execute(async (trx) => {
 					const data = await trx
 						.selectFrom("key")
@@ -330,13 +330,17 @@ const adapter =
 						.where("id", "=", key)
 						.executeTakeFirst();
 					if (!data) return null;
-					if (data.expires !== null) {
+					const transformedKeyData = transformKeyData(data);
+					const dataShouldBeDeleted = await shouldDataBeDeleted(
+						transformedKeyData
+					);
+					if (dataShouldBeDeleted) {
 						await trx
 							.deleteFrom("key")
 							.where("id", "=", data.id)
 							.executeTakeFirst();
 					}
-					return convertKeyData(data);
+					return transformedKeyData;
 				});
 			},
 			getKeysByUserId: async (userId) => {
@@ -345,7 +349,7 @@ const adapter =
 					.selectAll()
 					.where("user_id", "=", userId)
 					.execute();
-				return data.map((val) => convertKeyData(val));
+				return data.map((val) => transformKeyData(val));
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
 				if (dialect === "mysql2") {

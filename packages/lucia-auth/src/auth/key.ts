@@ -1,22 +1,31 @@
-import { Key, KeySchema } from "../types.js";
-import { LuciaError } from "./error.js";
+import type { KeySchema } from "./schema.type.js";
+import type { Key } from "./index.js";
+import { isWithinExpiration } from "../utils/date.js";
 
-export const validateDatabaseKey = (databaseKey: KeySchema): Key => {
-	const currentTime = new Date().getTime();
-	// invalid session
-	if (databaseKey.expires !== null && currentTime > databaseKey.expires) {
-		throw new LuciaError("AUTH_EXPIRED_KEY");
-	}
+export const transformDatabaseKey = (databaseKey: KeySchema): Key => {
 	const [providerId, ...providerUserIdSegments] = databaseKey.id.split(":");
-	const oneTimeExpires =
-		databaseKey.expires === null ? null : new Date(databaseKey.expires);
+	const isPersistent = databaseKey.expires === null;
+	const providerUserId = providerUserIdSegments.join(":");
+	const userId = databaseKey.user_id;
+	const isPasswordDefined = !!databaseKey.hashed_password;
+	if (isPersistent) {
+		return {
+			type: "persistent",
+			isPrimary: databaseKey.primary,
+			providerId,
+			providerUserId,
+			userId,
+			isPasswordDefined
+		};
+	}
 	return {
+		type: "single_use",
 		providerId,
-		providerUserId: providerUserIdSegments.join(":"),
-		isPrimary: databaseKey.primary,
-		isPasswordDefined: !!databaseKey.hashed_password,
-		userId: databaseKey.user_id,
-		oneTimeExpires
+		providerUserId,
+		userId,
+		expires: new Date(databaseKey.expires),
+		isExpired: () => !isWithinExpiration(databaseKey.expires),
+		isPasswordDefined
 	};
 };
 
