@@ -20,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	}
 	try {
 		const authRequest = new AuthRequest(auth, req, res);
-		const key = await auth.validateKeyPassword("username", username, password);
+		const key = await auth.useKey("username", username, password);
 		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session);
 		return res.redirect(302, "/");
