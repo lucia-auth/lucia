@@ -71,7 +71,7 @@ const validateCallback: (code: string) => Promise<ProviderSession>;
 type ProviderSession = {
 	existingUser: User | null;
 	createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
-	createKey: (userId: string) => Promise<Key>;
+	createPersistentKey: (userId: string) => Promise<Key>;
 	providerUser: ProviderUser;
 	tokens: {
 		accessToken: string;
@@ -80,13 +80,13 @@ type ProviderSession = {
 };
 ```
 
-| name                                                    | type                                          | description                                                    |
-| ------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------- |
-| existingUser                                            | [`User`](/reference/api/types#user)` \| null` | existing user - null if non-existent (= new user)              |
-| [createUser](/oauth/reference/api-reference#createuser) | `Function`                                    |                                                                |
-| [createKey](/oauth/reference/api-reference#createkey)   | `Function`                                    |                                                                |
-| providerUser                                            | `ProviderUser`                                | user info from the used provider - refer below                 |
-| tokens                                                  | `ProviderTokens`                              | access tokens (`accessToken`) among other tokens - refer below |
+| name                                                                      | type                                          | description                                                    |
+| ------------------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------- |
+| existingUser                                                              | [`User`](/reference/api/types#user)` \| null` | existing user - null if non-existent (= new user)              |
+| [createUser](/oauth/reference/api-reference#createuser)                   | `Function`                                    |                                                                |
+| [createPersistentKey](/oauth/reference/api-reference#createpersistentkey) | `Function`                                    |                                                                |
+| providerUser                                                              | `ProviderUser`                                | user info from the used provider - refer below                 |
+| tokens                                                                    | `ProviderTokens`                              | access tokens (`accessToken`) among other tokens - refer below |
 
 #### `ProviderUser`
 
@@ -114,12 +114,12 @@ type ProviderSession = {
 | Twitch   | [`TwitchTokens`](/oauth/providers/twitch#twitchtokens)       |
 | LinkedIn | [`LinkedInTokens`](/oauth/providers/linkedin#linkedintokens) |
 
-### `createKey()`
+### `createPersistentKey()`
 
 Creates a new persistent key using the authorized session by calling [`Lucia.createKey()`](/reference/api/auth#createkey) for the target user.
 
 ```ts
-const createKey: (userId: string) => Promise<Key>;
+const createPersistentKey: (userId: string) => Promise<Key>;
 ```
 
 #### Parameter

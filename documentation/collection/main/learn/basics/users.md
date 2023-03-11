@@ -29,7 +29,7 @@ By default, only the user id is stored in the user object. Other fields are call
 import { auth } from "./lucia.js";
 
 await auth.createUser({
-	key: {
+	primaryKey: {
 		providerId,
 		providerUserId,
 		password

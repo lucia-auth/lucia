@@ -77,7 +77,7 @@ This form will have an input field for username and password.
 
 ### Create users
 
-Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
+Users can be created with [`createUser()`](/reference/api/auth#createuser). This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling [`setSession()`](/sveltekit/api-reference/locals-api#setsession).
 
 ```ts
 // routes/signup/+page.server.ts
@@ -105,7 +105,7 @@ export const actions: Actions = {
 
 		try {
 			const user = await auth.createUser({
-				key: {
+				primaryKey: {
 					providerId: "username",
 					providerUserId: username,
 					password
@@ -156,7 +156,7 @@ This form will also have an input field for username and password.
 
 ### Authenticate users
 
-We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `validateKeyPassword()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for [`useKey()`](/reference/api/auth#usekey), which will return the key's user if the password is valid. Create a new session if the password is valid.
 
 ```ts
 // routes/login/+page.server.ts
@@ -179,7 +179,7 @@ export const actions: Actions = {
 		if (typeof username !== "string" || typeof password !== "string")
 			return fail(400);
 		try {
-			const key = await auth.validateKeyPassword(
+			const key = await auth.useKey(
 				"username",
 				username,
 				password

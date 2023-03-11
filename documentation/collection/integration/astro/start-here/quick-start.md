@@ -101,7 +101,7 @@ if (Astro.request.method === "POST") {
 	if (typeof username === "string" && typeof password === "string") {
 		try {
 			const user = await auth.createUser({
-				key: {
+				primaryKey: {
 					providerId: "username",
 					providerUserId: username,
 					password
@@ -167,7 +167,7 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 
 The same page will also handle form submissions.
 
-We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `validateKeyPassword()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `useKey()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
 
 ```astro
 ---
@@ -192,7 +192,7 @@ if (Astro.request.method === "POST") {
 	// check for empty values
 	if (typeof username === "string" && typeof password === "string") {
 		try {
-			const key = await auth.validateKeyPassword(
+			const key = await auth.useKey(
 				"username",
 				username,
 				password

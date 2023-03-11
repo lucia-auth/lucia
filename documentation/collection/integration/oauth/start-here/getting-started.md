@@ -114,11 +114,13 @@ export const handleGetRequests = async (request: Request) => {
 
 ### Add provider to existing user
 
-Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user. Calling `createKey` will create a new persistent key linked to the provided user id.
+Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user. Calling [`createPersistentKey()`](/oauth/reference/provider-api#createpersistentkey) will create a new persistent key linked to the provided user id.
 
 ```ts
-const { existingUser, createKey } = await githubAuth.validateCallback(code);
+const { existingUser, createPersistentKey } = await githubAuth.validateCallback(
+	code
+);
 if (!existingUser) {
-	await createKey(currentUser.userId);
+	await createPersistentKey(currentUser.userId);
 }
 ```
