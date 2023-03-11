@@ -160,7 +160,7 @@ export const testUserAdapter = async (
 			isOneTime: false
 		});
 		await key.set();
-		const result = await adapter.getKey(key.value.id, () => false);
+		const result = await adapter.getKey(key.value.id, async () => false);
 		key.compare(result);
 		await clearAll();
 	});
@@ -171,7 +171,7 @@ export const testUserAdapter = async (
 			isOneTime: true
 		});
 		await key.set();
-		const result = await adapter.getKey(key.value.id, () => true);
+		const result = await adapter.getKey(key.value.id, async () => true);
 		key.compare(result);
 		await clearAll();
 	});
@@ -185,7 +185,7 @@ export const testUserAdapter = async (
 				isOneTime: true
 			});
 			await key.set();
-			await adapter.getKey(key.value.id, () => true);
+			await adapter.getKey(key.value.id, async () => true);
 			await key.notExits();
 			await clearAll();
 		}
