@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	}
 	try {
 		const user = await auth.createUser({
-			key: {
+			primaryKey: {
 				providerId: "username",
 				providerUserId: username,
 				password

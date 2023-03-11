@@ -64,7 +64,7 @@ You can define the user's attributes on creation by passing on the column/value 
 import { auth } from "./lucia.js";
 
 await auth.createUser({
-	key: {
+	primaryKey: {
 		// ...
 	},
 	attributes: {
