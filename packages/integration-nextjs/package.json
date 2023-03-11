@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/nextjs",
-	"version": "0.5.5",
+	"version": "0.5.6",
 	"description": "Lucia integration for Next.js",
 	"main": "index.js",
 	"types": "index.d.ts",

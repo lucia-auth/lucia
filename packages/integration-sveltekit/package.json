@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/sveltekit",
-	"version": "0.6.9",
+	"version": "0.6.10",
 	"description": "SvelteKit integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",

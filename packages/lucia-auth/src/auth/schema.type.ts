@@ -1,4 +1,4 @@
-export type KeySchema =  Readonly<{
+export type KeySchema = Readonly<{
 	id: string;
 	hashed_password: string | null;
 	primary: boolean;

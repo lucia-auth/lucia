@@ -1,5 +1,12 @@
 # @lucia-auth/oauth
 
+## 0.7.0
+
+### Minor changes
+
+- [#398](https://github.com/pilcrowOnPaper/lucia/pull/398) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : **Breaking** Use `lucia-auth@0.9.0`
+  - Replaced `createKey()` with `createPersistentKey()`
+
 ## 0.6.4
 
 ### Patch changes
