@@ -11,7 +11,7 @@ While you can (and should) have multiple keys with the same provider id, the com
 
 ## Persistent keys
 
-The first type of keys are persistent keys. These can be used an infinite number of time. These are useful for the traditional sign ins and OAuth.
+The first type of keys are persistent keys. These persist across multiple usages in contrast to single use keys (defined below) which are consumed after a single use. These are useful for traditional email/password sign ins and OAuth sign ins.
 
 When authenticating users (log in), you get the user data from an external provider, such as the email from the user's input or the Github user id for social login. Persistent keys allow you to link such external data from a _provider_ with Lucia users stored in your database. This type of key can hold a password, which will be hashed and can be validated with Lucia's API. This is mainly for implementing password logins.
 
@@ -19,11 +19,11 @@ For example, for email/password, "email" can be the provider id, the user’s em
 
 ### Primary keys
 
-The primary keys are a special type of persistent keys. It is created alongside the user and can only be deleted alongside the user. This ensures the authentication method the user used for creating the account cannot be deleted (leading to a lockout) if someone else gains access to it.
+Primary keys are a special type of persistent key. They are created when the user is created and can only be deleted when the user is deleted. This ensures the authentication method the user used for creating the account cannot be deleted (leading to a lockout) if someone else gains access to it.
 
 ### Persistent vs. Single use
 
-Single use keys are single use only and is deleted on read. You can configure it to expire after a set duration of time as well. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
+Single use keys are single use only and are deleted on read. You can also configure a single use key to expire after a set duration of time. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
 
 ## Use keys
 
