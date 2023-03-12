@@ -22,15 +22,7 @@
 	],
 	"exports": {
 		"./package.json": "./package.json",
-		".": "./index.js",
-		"./adapter": "./adapter/index.js"
-	},
-	"typesVersions": {
-		"*": {
-			"adapter": [
-				"adapter/index.d.ts"
-			]
-		}
+		".": "./index.js"
 	},
 	"repository": {
 		"type": "git",
