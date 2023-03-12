@@ -7,13 +7,13 @@ import type { OAuthConfig } from "../core.js";
 const PROVIDER_ID = "auth0";
 
 type Config = OAuthConfig & {
-	baseUrl: string;
+	appDomain: string;
 	redirectUri: string;
 };
 
 export const auth0 = (auth: Auth, config: Config) => {
 	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl(`${config.baseUrl}/authorize`, {
+		const url = createUrl(new URL("/authorize", config.appDomain).toString(), {
 			client_id: config.clientId,
 			response_type: "code",
 			redirect_uri: config.redirectUri,
@@ -24,7 +24,7 @@ export const auth0 = (auth: Auth, config: Config) => {
 	};
 
 	const getTokens = async (code: string) => {
-		const request = new Request(`${config.baseUrl}/oauth/token`, {
+		const request = new Request(new URL("/oauth/token", config.appDomain), {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded"
@@ -53,7 +53,7 @@ export const auth0 = (auth: Auth, config: Config) => {
 	};
 
 	const getProviderUser = async (accessToken: string) => {
-		const request = new Request(`${config.baseUrl}/userinfo`, {
+		const request = new Request(new URL("/userinfo", config.appDomain), {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
 

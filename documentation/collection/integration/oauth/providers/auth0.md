@@ -22,7 +22,7 @@ const auth0Auth = auth0(auth, config);
 const auth0: (
 	auth: Auth,
 	config: {
-		baseUrl: string;
+		appDomain: string;
 		clientId: string;
 		clientSecret: string;
 		redirectUri: string;
@@ -36,7 +36,7 @@ const auth0: (
 | name                | type                          | description                                                    | optional |
 | ------------------- | ----------------------------- | -------------------------------------------------------------- | -------- |
 | auth                | [`Auth`](/reference/api/auth) | Lucia instance                                                 |          |
-| config.baseUrl      | `string`                      | Auth0 OAuth app domain                                         |          |
+| config.appDomain    | `string`                      | Auth0 OAuth app domain                                         |          |
 | config.clientId     | `string`                      | Auth0 OAuth app client id                                      |          |
 | config.clientSecret | `string`                      | Auth0 OAuth app client secret                                  |          |
 | config.redirectUri  | `string`                      | Auth0 OAuth app redirect uri                                   |          |
