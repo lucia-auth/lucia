@@ -97,20 +97,25 @@ export class Auth<C extends Configuration = any> {
 			path: "/"
 		};
 		if ("user" in config.adapter) {
-			if ("getSessionAndUserBySessionId" in config.adapter.user) {
-				delete config.adapter.user.getSessionAndUserBySessionId;
+			let userAdapter = config.adapter.user(LuciaError);
+			let sessionAdapter = config.adapter.session(LuciaError);
+			if ("getSessionAndUserBySessionId" in userAdapter) {
+				const { getSessionAndUserBySessionId: _, ...extractedUserAdapter } =
+					userAdapter;
+				userAdapter = extractedUserAdapter;
 			}
-			if ("getSessionAndUserBySessionId" in config.adapter.session) {
-				delete config.adapter.session.getSessionAndUserBySessionId;
+			if ("getSessionAndUserBySessionId" in sessionAdapter) {
+				const { getSessionAndUserBySessionId: _, ...extractedSessionAdapter } =
+					sessionAdapter;
+				sessionAdapter = extractedSessionAdapter;
 			}
+			this.adapter = {
+				...userAdapter,
+				...sessionAdapter
+			};
+		} else {
+			this.adapter = config.adapter(LuciaError);
 		}
-		this.adapter =
-			"user" in config.adapter
-				? {
-						...config.adapter.user(LuciaError),
-						...config.adapter.session(LuciaError)
-				  }
-				: config.adapter(LuciaError);
 		this.generateUserId =
 			config.generateCustomUserId ?? (() => generateRandomString(15));
 		this.ENV = config.env;
