@@ -192,11 +192,7 @@ if (Astro.request.method === "POST") {
 	// check for empty values
 	if (typeof username === "string" && typeof password === "string") {
 		try {
-			const key = await auth.useKey(
-				"username",
-				username,
-				password
-			);
+			const key = await auth.useKey("username", username, password);
 			const session = await auth.createSession(key.userId);
 			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt

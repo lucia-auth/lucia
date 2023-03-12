@@ -1,15 +1,27 @@
 # lucia-auth
 
+## 0.9.1
+
+### Patch changes
+
+- [#415](https://github.com/pilcrowOnPaper/lucia/pull/415) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix adapter config
+
 ## 0.9.0
 
 ### Minor changes
 
 - [#398](https://github.com/pilcrowOnPaper/lucia/pull/398) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : **Breaking changes** Better integrate single use keys and clean up APIÏ
+
   - Update `Key` type
+
   - Remove `getKeyUser()`
+
   - Replace `validateKeyPassword()` with `useKey()`
+
   - Replace `data.key` with `data.primaryKey` for `createUser()`
+
   - Update `createKey()`
+
   - `getAllUserKeys()` returns all keys, including those expired
 
 ## 0.8.0
