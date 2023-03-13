@@ -27,6 +27,10 @@ const auth0: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
+		connection?: string;
+		organization?: string;
+		invitation?: string;
+		loginHint?: string;
 	}
 ) => OAuthProvider;
 ```

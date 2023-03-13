@@ -9,6 +9,10 @@ const PROVIDER_ID = "auth0";
 type Config = OAuthConfig & {
 	appDomain: string;
 	redirectUri: string;
+	connection?: string;
+	organization?: string;
+	invitation?: string;
+	loginHint?: string;
 };
 
 export const auth0 = (auth: Auth, config: Config) => {
@@ -18,7 +22,11 @@ export const auth0 = (auth: Auth, config: Config) => {
 			response_type: "code",
 			redirect_uri: config.redirectUri,
 			scope: scope(["openid", "profile"], config.scope),
-			state
+			state,
+			...(config.connection && { connection: config.connection }),
+			...(config.organization && { organization: config.organization }),
+			...(config.invitation && { invitation: config.invitation }),
+			...(config.loginHint && { login_hint: config.loginHint })
 		});
 		return url;
 	};
