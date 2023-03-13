@@ -100,6 +100,7 @@ type ProviderSession = {
 | Reddit   | [`RedditUser`](/oauth/providers/reddit#reddituser)       |
 | Twitch   | [`TwitchUser`](/oauth/providers/twitch#twitchuser)       |
 | LinkedIn | [`LinkedInUser`](/oauth/providers/linkedin#linkedinuser) |
+| Auth0    | [`Auth0User`](/oauth/providers/auth0#auth0user)          |
 
 #### `ProviderTokens`
 
@@ -113,6 +114,7 @@ type ProviderSession = {
 | Reddit   | [`RedditTokens`](/oauth/providers/reddit#reddittokens)       |
 | Twitch   | [`TwitchTokens`](/oauth/providers/twitch#twitchtokens)       |
 | LinkedIn | [`LinkedInTokens`](/oauth/providers/linkedin#linkedintokens) |
+| Auth0    | [`Auth0Tokens`](/oauth/providers/auth0#auth0tokens)          |
 
 ### `createPersistentKey()`
 
