@@ -49,6 +49,7 @@ type Collection<Config extends BaseCollectionConfig = any> = {
 	id: string;
 	path: string;
 	$getAllNestedDocuments: () => Document<Config>[];
+	directoryIdMetaData: string | null;
 };
 
 type Document<Config extends BaseCollectionConfig = any> = {
@@ -58,6 +59,8 @@ type Document<Config extends BaseCollectionConfig = any> = {
 	path: string;
 	$Content: MDFile["Content"];
 	$getHeadings: MDFile["getHeadings"];
+	fileIdMetaData: string | null;
+	directoryId: string;
 };
 
 type CollectionMap<Config extends DBConfig = any> = {
@@ -143,12 +146,18 @@ export class DB<Config extends DBConfig> {
 						return getDirectory(childPath);
 					})
 					.sort(({ _order: aOrder }, { _order: bOrder }) => aOrder - bOrder);
+				const [directoryId, directoryIdMetaData] =
+					dirPath.split("/").at(-1)?.split(".") ?? [];
+				if (!directoryId) throw new Error();
 				const documents = markdownFiles
 					.filter(([filePath]) => isChildrenFile(filePath))
 					.map(([filePath, file]) => {
 						const fileName = filePath.split("/").at(-1);
 						if (!fileName) throw new Error();
-						const fileId = fileName.split(".").slice(0, -1).join(".");
+						const [fileId, fileIdMetaData] = fileName
+							.split(".")
+							.slice(0, -1)
+							.join(".");
 						const order = file.frontmatter._order ?? -1;
 						return {
 							_order: order,
@@ -159,12 +168,13 @@ export class DB<Config extends DBConfig> {
 							),
 							path: [dirPath, fileId].join("/"),
 							$Content: file.Content,
-							$getHeadings: file.getHeadings
+							$getHeadings: file.getHeadings,
+							fileIdMetaData: fileIdMetaData ?? null,
+							directoryId
 						} as const satisfies Document;
 					})
 					.sort(({ _order: aOrder }, { _order: bOrder }) => aOrder - bOrder);
-				const directoryId = dirPath.split("/").at(-1);
-				if (!directoryId) throw new Error();
+
 				const getAllNestedDocuments = (currentCollection: {
 					documents: Document<BaseCollectionConfig>[];
 					children: Collection<BaseCollectionConfig>[];
@@ -187,7 +197,8 @@ export class DB<Config extends DBConfig> {
 						getAllNestedDocuments({
 							documents,
 							children
-						})
+						}),
+					directoryIdMetaData
 				} as const;
 			};
 			for (const collectionConfig of config) {

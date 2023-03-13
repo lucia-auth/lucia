@@ -1,8 +1,7 @@
-export class Schema<T extends any[]> {
-	public parse: (input: any) => void;
-	public typeValue: T;
-	constructor(typeValue: T, parse: (input: any) => void) {
-		this.typeValue = typeValue;
+// generic needed for inferring type
+export class Schema<T> {
+	public parse: (input: unknown) => void;
+	constructor(parse: (input: unknown) => void) {
 		this.parse = parse;
 	}
 }
@@ -14,21 +13,20 @@ class ParseError extends TypeError {
 }
 
 export const String$ = () => {
-	return new Schema<string[]>([""], (input: any) => {
+	return new Schema<string>((input: unknown) => {
 		if (typeof input !== "string") throw new ParseError("string", input);
 	});
 };
 
 export const Number$ = () => {
-	return new Schema<number[]>([0], (input: any) => {
+	return new Schema<number>((input: unknown) => {
 		if (typeof input !== "number") throw new ParseError("number", input);
 	});
 };
 
-export const Optional$ = <S extends Schema<any[]>>(schema: S) => {
-	return new Schema<((typeof schema)["typeValue"][number] | undefined)[]>(
-		[schema.typeValue[0], undefined],
-		(input: any) => {
+export const Optional$ = <S extends Schema<any>>(schema: S) => {
+	return new Schema<S extends Schema<infer T> ? T | undefined : undefined>(
+		(input: unknown) => {
 			if (typeof input === "undefined") return;
 			schema.parse(input);
 		}
@@ -49,5 +47,5 @@ export const validateObjectSchema = <T extends SchemaObject>(
 };
 
 export type ParsedSchema<T extends SchemaObject> = {
-	[K in keyof T]: T[K] extends Schema<any> ? T[K]["typeValue"][0] : never;
+	[K in keyof T]: T[K] extends Schema<infer S> ? S : never;
 };

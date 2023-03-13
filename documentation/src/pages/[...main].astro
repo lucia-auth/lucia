@@ -5,8 +5,8 @@ import type { GetPropsFromGetStaticPaths, StaticPath } from "@lib/astro";
 import DocumentLayout from "@layouts/DocumentLayout.astro";
 
 export const getStaticPaths = async () => {
-	const mainCollection = await db.query("main");
-	return mainCollection.children
+	const sharedCollection = await db.query("shared");
+	return sharedCollection.children
 		.map((content) => {
 			const nestedDocuments = content.$getAllNestedDocuments();
 			return nestedDocuments.map((doc) => {
@@ -31,7 +31,7 @@ const { doc, content } = Astro.props;
 const mainCollection = await db.query("main");
 ---
 
-<DocumentLayout doc={doc}>
+<!-- <DocumentLayout doc={doc}>
 	<ContentTable
 		client:load
 		collections={mainCollection.children}
@@ -40,4 +40,4 @@ const mainCollection = await db.query("main");
 		slot="table"
 	/>
 	<doc.$Content slot="content" />
-</DocumentLayout>
+</DocumentLayout> -->

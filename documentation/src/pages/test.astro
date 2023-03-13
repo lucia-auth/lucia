@@ -1,0 +1,93 @@
+<head>
+	<link
+		rel="preconnect"
+		href="https://fonts.gstatic.com"
+		crossorigin="anonymous"
+	/>
+	<link
+		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+		rel="stylesheet"
+	/>
+</head>
+
+<main class="text-zinc-800">
+	<div
+		class="w-full fixed px-8 flex place-content-between py-4 place-items-center"
+	>
+		<a class="text-3xl font-semibold">Lucia</a>
+		<a>Reference</a>
+	</div>
+	<div class="fixed w-80 h-screen border-r pb-8 pt-24">
+		<div class="pl-8 pr-4">
+			<button
+				class="w-full px-4 py-1.5 text-left border rounded-md bg-zinc-50 my-2"
+				><span class="text-zinc-500">Framework:</span><span>
+					Svelte</span
+				></button
+			>
+			<!-- <ul class="mt-4">
+				<li>Core</li>
+				<li>Tokens integration</li>
+				<li>OAuth integration</li>
+			</ul> -->
+		</div>
+		<div class="my-4">
+			<p class="font-medium pl-8 pr-4 py-1">Start here</p>
+			<ul class="">
+				<li>
+					<a
+						class="block hover:bg-gray-100 pl-8 pr-4 text-main font-medium"
+						href="/"
+						><p class="w-full pl-4 border-l-2 border-l-zinc-800 py-1">
+							Introduction
+						</p></a
+					>
+				</li>
+				<li>
+					<a class="block hover:bg-gray-100 pl-8 pr-4" href="/"
+						><p class="w-full pl-4 border-l border-l-zinc-800 py-1">
+							Getting started
+						</p></a
+					>
+				</li>
+				<li>
+					<a class="block hover:bg-gray-100 pl-8 pr-4" href="/"
+						><p class="w-full pl-4 border-l border-zinc-800 py-1">
+							Quick start
+						</p></a
+					>
+				</li>
+			</ul>
+		</div>
+		<div class="my-4">
+			<p class="font-medium pl-8 pr-4 py-1">Basics</p>
+			<ul class="">
+				<li>
+					<a class="block hover:bg-gray-100 pl-8 pr-4" href="/"
+						><p class="w-full pl-4 border-l border-l-zinc-800 py-1">Users</p></a
+					>
+				</li>
+				<li>
+					<a class="block hover:bg-gray-100 pl-8 pr-4" href="/"
+						><p class="w-full pl-4 border-l border-zinc-800 py-1">Keys</p></a
+					>
+				</li>
+			</ul>
+		</div>
+		<div class="my-4">
+			<p class="font-medium pl-8 pr-4 py-1">
+				@lucia-auth/adapter-session-redis
+			</p>
+		</div>
+	</div>
+	<div class="ml-80"></div>
+</main>
+
+<style>
+	body {
+		font-family: IBM Plex Sans, sans-serif;
+	}
+	:global(::selection) {
+		background-color: #c0bdff;
+	}
+</style>
