@@ -5,9 +5,9 @@ import Github from "./icons/Github.astro";
 ---
 
 <div
-	class="z-50 pointer-events-none fixed left-0 w-full px-4 sm:px-8 lg:px-12 backdrop-blur-lg xl:backdrop-blur-none bg-white dark:bg-black-zinc xl:bg-transparent bg-opacity-80 dark:bg-opacity-10"
+	class="z-50 pointer-events-none fixed left-0 w-full px-4 sm:px-8 backdrop-blur-lg xl:backdrop-blur-none bg-white dark:bg-black-zinc xl:bg-transparent bg-opacity-80 dark:bg-opacity-10"
 >
-	<div class="py-3 flex place-content-between place-items-center">
+	<div class="py-4 flex place-content-between place-items-center">
 		<a class="flex place-items-center pointer-events-auto" href="/">
 			<img
 				src="/logo.svg"
@@ -19,9 +19,11 @@ import Github from "./icons/Github.astro";
 			<p class="text-2xl font-semibold">Lucia</p>
 		</a>
 		<div class="flex gap-x-4 place-items-center pointer-events-auto">
+			<a class="border-r px-2" href="/reference">Reference</a>
 			<Discord />
 			<Github />
 			<ThemeButton client:load />
+
 			<MenuButton client:load />
 		</div>
 	</div>

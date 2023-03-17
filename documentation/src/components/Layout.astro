@@ -1,0 +1,47 @@
+---
+import Header from "@components/Header.astro";
+import ContentTable from "@components/ContentTable.astro";
+
+interface Props {
+	title?: string;
+}
+const title = Astro.props.title ?? "Lucia";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>
+			{title}
+		</title>
+		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link
+			rel="preconnect"
+			href="https://fonts.gstatic.com"
+			crossorigin="anonymous"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+			rel="preload"
+		/>
+	</head>
+
+	<body
+		class="dark:bg-black-zinc dark:text-zinc-200 leading-relaxed text-black-zinc bg-main"
+	>
+		<Header />
+		<slot />
+		<style>
+			body {
+				font-family: IBM Plex Sans, sans-serif;
+			}
+			:global(::selection) {
+				background-color: #c0bdff;
+			}
+		</style>
+	</body>
+</html>

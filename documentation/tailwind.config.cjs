@@ -6,7 +6,11 @@ module.exports = {
 			colors: {
 				main: "#5f57ff",
 				"black-zinc": "#121214",
-				svelte: "#ff6430"
+				svelte: "#ff6430",
+				zinc: {
+					80: "#F5F5F6",
+					150: "#EDEDEF"
+				}
 			}
 		}
 	},

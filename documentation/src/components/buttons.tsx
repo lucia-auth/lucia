@@ -1,5 +1,7 @@
 import { toggleMenuOpen } from "@lib/state";
-import { Show, createSignal } from "solid-js";
+import { dynamicClassName } from "@lib/styles";
+import { For, Show, createSignal } from "solid-js";
+import frameworks from "src/framework";
 
 export const MenuButton = () => {
 	return (
@@ -44,7 +46,7 @@ export const ThemeButton = () => {
 	const [theme, toggleTheme] = useTheme();
 	return (
 		<button
-			class="h-6 w-6 fill-current dark:text-zinc-200 text-black"
+			class="h-6 w-6 fill-current dark:text-zinc-200 text-black-zinc"
 			onClick={toggleTheme}
 			aria-label="Toggle theme"
 		>
@@ -57,5 +59,65 @@ export const ThemeButton = () => {
 				</Show>
 			</svg>
 		</button>
+	);
+};
+
+export const FrameworkButton = (props: { current?: string | null }) => {
+	const currentSelection =
+		frameworks.find((option) => option.id === props.current) ?? frameworks[0];
+	const createToggle = () => {
+		const [signal, setSignal] = createSignal(false);
+		const toggle = () => setSignal((val) => !val);
+		return [signal, toggle] as const;
+	};
+	const [isBoxOpen, toggleBox] = createToggle();
+	return (
+		<div>
+			<button
+				class={dynamicClassName(
+					"w-full px-4 py-1.5 text-left  rounded-md bg-zinc-50 border ",
+					{
+						"border-main": isBoxOpen(),
+						"border-zinc-200": !isBoxOpen()
+					}
+				)}
+				onClick={toggleBox}
+			>
+				<span class="text-zinc-500">Framework:</span>
+				<span> {currentSelection.title}</span>
+			</button>
+			<div
+				class={
+					isBoxOpen()
+						? "absolute bg-white shadow-lg rounded-md z-50 w-48 py-2 mt-2 border border-zinc-200"
+						: "hidden"
+				}
+			>
+				<ul>
+					<For each={frameworks}>
+						{(option) => {
+							const searchParams = new URLSearchParams({
+								framework: option.id
+							});
+							const href = `/?${searchParams}`;
+							return (
+								<li
+									class={dynamicClassName("", {
+										"text-main": option.id === currentSelection.id
+									})}
+								>
+									<a
+										class="hover:bg-zinc-100 py-1 px-4 w-full block"
+										href={href}
+									>
+										{option.title}
+									</a>
+								</li>
+							);
+						}}
+					</For>
+				</ul>
+			</div>
+		</div>
 	);
 };

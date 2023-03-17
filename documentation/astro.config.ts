@@ -1,15 +1,41 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 
-// https://astro.build/config
 import solidJs from "@astrojs/solid-js";
-
 import type { Root, RootContent, Text } from "hast";
 import siena from "siena";
+import { generate, generateCollection } from "./cela/generate";
+
+import path from "path";
+
+// https://astro.build/config
+import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
 	integrations: [tailwind(), solidJs()],
+	vite: {
+		plugins: [
+			{
+				name: "cela",
+				buildStart: () => {
+					generate();
+				},
+				handleHotUpdate: async (ctx) => {
+					const collectionDirPath = path.join(process.cwd(), "content");
+					if (!ctx.file.startsWith(collectionDirPath)) return;
+					await ctx.read();
+					const workingPath = ctx.file.replace(
+						path.join(process.cwd(), "content"),
+						""
+					);
+					const [baseCollectionId] = workingPath.replace("/", "").split("/");
+					generateCollection(baseCollectionId);
+				}
+			}
+		]
+	},
+	output: "server",
 	markdown: {
 		shikiConfig: {
 			theme: "github-dark"
@@ -65,5 +91,8 @@ export default defineConfig({
 				}
 			]
 		]
-	}
+	},
+	adapter: node({
+		mode: "standalone"
+	})
 });

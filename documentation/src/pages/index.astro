@@ -1,11 +1,10 @@
 ---
-import BaseLayout from "@layouts/BaseLayout.astro";
-import Header from "@components/Header.astro";
-import ContentTable from "@components/doc/content-table";
-import { db } from "@lib/db";
+import Layout from "@components/Layout.astro";
+import ContentTable from "@components/ContentTable.astro";
 import { envVar } from "@lib/env";
+import { frameworkIds } from "src/framework";
 
-const GITHUB_API_KEY = await envVar("GITHUB_API_KEY")
+const GITHUB_API_KEY = await envVar("GITHUB_API_KEY");
 
 const contributorsResponse = await fetch(
 	"https://api.github.com/repos/pilcrowonpaper/lucia/contributors",
@@ -47,15 +46,24 @@ const contributors = Array.isArray(contributorsResult)
 	  })
 	: [];
 
-const mainCollection = await db.query("main");
+let frameworkId = Astro.url.searchParams.get("framework") ?? null;
+
+frameworkId ||= Astro.cookies.get("framework").value ?? "none";
+
+if (frameworkId && !frameworkIds.includes(frameworkId)) {
+	frameworkId = "none";
+}
+
+Astro.cookies.set("framework", frameworkId, {
+	path: "/"
+});
 ---
 
-<BaseLayout>
-	<Header />
-	<ContentTable collections={mainCollection.children} client:load />
-	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:ml-72 xl:pl-12 overflow-hidden">
-		<div class="sm:pt-12 lg:pt-20">
-			<h1 class="text-5xl sm:text-7xl font-semibold">
+<Layout>
+	<ContentTable />
+	<main class="ml-80 bg-white min-h-screen overflow-hidden">
+		<div class="sm:pt-12 lg:pt-48 px-24">
+			<h1 class="text-5xl sm:text-7xl font-semibold leading-relaxed">
 				Authentication, <br />simple and clean
 			</h1>
 			<p class="mb-4 mt-6">
@@ -64,8 +72,8 @@ const mainCollection = await db.query("main");
 				bare-bones by design, keeping everything easy to use and understand.
 			</p>
 			<a
-				href="/learn/start-here/introduction"
-				class="px-10 py-2 rounded-md my-2 block w-fit bg-black text-white dark:bg-white dark:text-black hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black dark:border-white transition"
+				href="/start-here/introduction"
+				class="px-10 py-2 rounded-md my-2 block w-fit bg-black-zinc text-white dark:bg-white dark:text-black-zinc hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black-zinc dark:border-white transition"
 				>Get started</a
 			>
 			<section class="my-12">
@@ -86,7 +94,7 @@ const mainCollection = await db.query("main");
 									src={val.avatar}
 									height="128"
 									width="128"
-									class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100 bg-geay-100"
+									class="w-8 h-8 rounded-full border dark:border-black-zinc hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100 bg-geay-100"
 									alt={val.username}
 									loading="lazy"
 								/>
@@ -97,7 +105,7 @@ const mainCollection = await db.query("main");
 			</section>
 		</div>
 	</main>
-</BaseLayout>
+</Layout>
 
 <style>
 	:global(.astro-code) {

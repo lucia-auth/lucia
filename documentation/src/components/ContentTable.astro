@@ -1,0 +1,62 @@
+---
+import { getCollection } from "cela/content";
+import { FrameworkButton } from "./buttons";
+import type { MarkdownDocument } from "cela/types";
+
+type Props = {
+	content?: MarkdownDocument;
+};
+
+// we dont have to check the input
+// since the cookie is always set in the previous step (in pages/*.astro )
+let frameworkId = Astro.cookies.get("framework").value ?? null;
+frameworkId = frameworkId === "none" ? null : frameworkId;
+
+const content = Astro.props.content ?? null;
+
+let collectionId = content?.metaData.collectionId ?? "main";
+const collection = await getCollection(collectionId, frameworkId);
+if (!collection) throw new Error();
+
+const currentPathname = Astro.url.pathname;
+---
+
+<div class="fixed w-80 h-screen pb-8 pt-20 bg-zinc-80 overflow-hidden">
+	<div class="ml-8 mr-4 border-b py-6 border-zinc-200">
+		{!!collection.title && <p class="text-lg font-semibold">{collection.title}</p>}
+		<FrameworkButton client:idle current={frameworkId} />
+	</div>
+	<div
+		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2"
+	>
+		{
+			collection.sections.map((section) => {
+				return (
+					<div class="">
+						<p class="font-medium pl-8 pr-4 py-1">{section.title}</p>
+						<ul>
+							{section.documents.map((doc) => {
+								const isSelected = doc.href === currentPathname;
+								return (
+									<li>
+										<a
+											class:list={[
+												"block hover:bg-zinc-150 pl-8 pr-4 py-1",
+												{
+													"text-main": isSelected
+												}
+											]}
+											href={doc.href}
+										>
+											{doc.title}
+										</a>
+									</li>
+								);
+							})}
+						</ul>
+					</div>
+				);
+			})
+		}
+	</div>
+</div>

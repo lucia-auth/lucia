@@ -21,3 +21,5 @@ pnpm-debug.log*
 # project
 .vscode/
 public/.siena
+
+.cela-generated
