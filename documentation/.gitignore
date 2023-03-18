@@ -23,3 +23,4 @@ pnpm-debug.log*
 public/.siena
 
 .cela-generated
+.github.json

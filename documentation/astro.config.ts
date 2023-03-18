@@ -10,6 +10,7 @@ import type { Root, RootContent, Text } from "hast";
 
 // https://astro.build/config
 import vercel from "@astrojs/vercel/edge";
+import { fetchGithub } from "./build/github";
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,8 +19,9 @@ export default defineConfig({
 		plugins: [
 			{
 				name: "cela",
-				buildStart: () => {
+				buildStart: async () => {
 					generate();
+					await fetchGithub();
 				},
 				handleHotUpdate: async (ctx) => {
 					const collectionDirPath = path.join(process.cwd(), "content");
