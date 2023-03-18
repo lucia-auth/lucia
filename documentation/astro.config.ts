@@ -1,15 +1,15 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-
 import solidJs from "@astrojs/solid-js";
-import type { Root, RootContent, Text } from "hast";
 import siena from "siena";
+// from "cela/generate" will result in an error
 import { generate, generateCollection } from "./cela/generate";
-
 import path from "path";
 
+import type { Root, RootContent, Text } from "hast";
+
 // https://astro.build/config
-import node from "@astrojs/node";
+import vercel from "@astrojs/vercel/edge";
 
 // https://astro.build/config
 export default defineConfig({
@@ -92,7 +92,5 @@ export default defineConfig({
 			]
 		]
 	},
-	adapter: node({
-		mode: "standalone"
-	})
+	adapter: vercel()
 });
