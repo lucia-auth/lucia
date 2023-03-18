@@ -3,7 +3,7 @@ title: "PasswordTokenWrapper"
 _order: 1
 ---
 
-All errors are thrown as [`TokenError`](/tokens/reference/tokenerror).
+All errors are thrown as [`TokenError`](/reference/tokens/tokenerror).
 
 ```ts
 type IdTokenWrapper = Readonly<{
@@ -32,7 +32,7 @@ const getAllUserTokens: (userId: string) => Promise<Token[]>;
 
 | type                                   |
 | -------------------------------------- |
-| [`Token`](/tokens/reference/token)`[]` |
+| [`Token`](/reference/tokens/token)`[]` |
 
 #### Errors
 
@@ -72,7 +72,7 @@ const issue: (userId: string) => Promise<Token>;
 
 | type                               |
 | ---------------------------------- |
-| [`Token`](/tokens/reference/token) |
+| [`Token`](/reference/tokens/token) |
 
 #### Errors
 
@@ -108,7 +108,7 @@ const validate: (token: string, userId: string) => Promise<Token>;
 
 | type                               |
 | ---------------------------------- |
-| [`Token`](/tokens/reference/token) |
+| [`Token`](/reference/tokens/token) |
 
 #### Errors
 

@@ -21,7 +21,7 @@ const handleHooks: (auth: Auth) => Handle;
 
 | name | type                          | description    |
 | ---- | ----------------------------- | -------------- |
-| auth | [`Auth`](/reference/api/auth) | Lucia instance |
+| auth | [`Auth`](/reference/lucia-auth/auth) | Lucia instance |
 
 #### Returns
 

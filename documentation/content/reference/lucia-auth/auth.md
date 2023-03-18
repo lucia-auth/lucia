@@ -3,7 +3,7 @@ _order: 1
 title: "Auth"
 ---
 
-Instance returned by [`lucia()`](/reference/api/api#lucia). Errors can be [`LuciaError`](/reference/api/luciaerror) or ones thrown from the database query library.
+Instance returned by [`lucia()`](/reference/lucia-auth/lucia-auth#lucia). Errors can be [`LuciaError`](/reference/lucia-auth/luciaerror) or ones thrown from the database query library.
 
 ## `createKey()`
 
@@ -44,7 +44,7 @@ const createKey: (
 
 | type                              | description           |
 | --------------------------------- | --------------------- |
-| [`Key`](/reference/api/types#key) | the newly created key |
+| [`Key`](/reference/lucia-auth/types#key) | the newly created key |
 
 #### Errors
 
@@ -102,7 +102,7 @@ const createSession: (userId: string) => Promise<Session>;
 
 | type                                      | description               |
 | ----------------------------------------- | ------------------------- |
-| [`Session`](/reference/api/types#session) | the newly created session |
+| [`Session`](/reference/lucia-auth/types#session) | the newly created session |
 
 #### Errors
 
@@ -123,7 +123,7 @@ try {
 
 ## `createSessionCookies()`
 
-Creates an array of session cookies in the form of [`Cookie`](/reference/api/types#cookie). Cookie options are based on [`sessionCookieOptions`](/reference/api/configuration#sessioncookieoptions). This method will return a blank session cookies that will override the existing cookie and clears them when provided a `null` session.
+Creates an array of session cookies in the form of [`Cookie`](/reference/lucia-auth/types#cookie). Cookie options are based on [`sessionCookieOptions`](/basics/configuration#sessioncookieoptions). This method will return a blank session cookies that will override the existing cookie and clears them when provided a `null` session.
 
 ```ts
 const createSessionCookies: (session: Session | null) => Cookie[];
@@ -133,13 +133,13 @@ const createSessionCookies: (session: Session | null) => Cookie[];
 
 | name    | type                                      | description |
 | ------- | ----------------------------------------- | ----------- |
-| session | [`Session`](/reference/api/types#session) |             |
+| session | [`Session`](/reference/lucia-auth/types#session) |             |
 
 #### Returns
 
 | type                                        | description                 |
 | ------------------------------------------- | --------------------------- |
-| [`Cookie`](/reference/api/types#cookie)`[]` | an array of session cookies |
+| [`Cookie`](/reference/lucia-auth/types#cookie)`[]` | an array of session cookies |
 
 #### Example
 
@@ -177,13 +177,13 @@ const createUser: (data: {
 | data.primaryKey.providerId     | provider id of the key                                              |                                               |
 | data.primaryKey.providerUserId | `string`                                                            | the user id within the provider               |
 | data.primaryKey.password       | `string`                                                            | the password for the key                      |
-| data.attributes                | [`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes) | additional user data to store in `user` table |
+| data.attributes                | [`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes) | additional user data to store in `user` table |
 
 #### Returns
 
 | type                                | description            |
 | ----------------------------------- | ---------------------- |
-| [`User`](/reference/api/types#user) | the newly created user |
+| [`User`](/reference/lucia-auth/types#user) | the newly created user |
 
 #### Errors
 
@@ -330,7 +330,7 @@ const getAllUserKeys: (userId: string) => Promise<Key[]>;
 
 | type                                  | description |
 | ------------------------------------- | ----------- |
-| [`Key`](/reference/api/types#key)`[]` |             |
+| [`Key`](/reference/lucia-auth/types#key)`[]` |             |
 
 #### Errors
 
@@ -368,7 +368,7 @@ const getAllUserKeys: (userId: string) => Promise<Session[]>;
 
 | type                                      | description |
 | ----------------------------------------- | ----------- |
-| [`Session`](/reference/api/types#key)`[]` |             |
+| [`Session`](/reference/lucia-auth/types#key)`[]` |             |
 
 #### Errors
 
@@ -390,7 +390,7 @@ try {
 
 ## `getKey()`
 
-Gets the target key. Returns the key even if it's expired, and will not delete the key on read. To validate the key, use [`useKey()](/reference/api/auth#usekey) method instead.
+Gets the target key. Returns the key even if it's expired, and will not delete the key on read. To validate the key, use [`useKey()](/reference/lucia-auth/auth#usekey) method instead.
 
 ```ts
 const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
@@ -407,7 +407,7 @@ const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
 
 | type                              | description |
 | --------------------------------- | ----------- |
-| [`Key`](/reference/api/types#key) | target key  |
+| [`Key`](/reference/lucia-auth/types#key) | target key  |
 
 #### Errors
 
@@ -445,7 +445,7 @@ const getSessionUser: (sessionId: string) => Promise<Session>;
 
 | type                                      | description                   |
 | ----------------------------------------- | ----------------------------- |
-| [`Session`](/reference/api/types#session) | the session of the session id |
+| [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
 
 #### Errors
 
@@ -491,8 +491,8 @@ const getSessionUser: (
 
 | name    | type                                      | description                   |
 | ------- | ----------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/api/types#session) | the session of the session id |
-| user    | [`User`](/reference/api/types#user)       | the user of the session       |
+| session | [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
+| user    | [`User`](/reference/lucia-auth/types#user)       | the user of the session       |
 
 #### Errors
 
@@ -530,7 +530,7 @@ const getUser: (userId: string) => Promise<User>;
 
 | type                                | description               |
 | ----------------------------------- | ------------------------- |
-| [`User`](/reference/api/types#user) | the user with the user id |
+| [`User`](/reference/lucia-auth/types#user) | the user with the user id |
 
 #### Errors
 
@@ -620,7 +620,7 @@ const renewSession: (sessionId: string) => Promise<Session>;
 
 | type                                      | description               |
 | ----------------------------------------- | ------------------------- |
-| [`Session`](/reference/api/types#session) | the newly created session |
+| [`Session`](/reference/lucia-auth/types#session) | the newly created session |
 
 #### Errors
 
@@ -695,13 +695,13 @@ const updateUserAttributes: (
 | name       | type                                                                             | description                                                             |
 | ---------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | userId     | `string`                                                                         | A refresh token                                                         |
-| attributes | `Partial<`[`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes)`>` | Key-value pairs of some or all of the column in `user` table to update. |
+| attributes | `Partial<`[`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes)`>` | Key-value pairs of some or all of the column in `user` table to update. |
 
 #### Returns
 
 | type                                | description      |
 | ----------------------------------- | ---------------- |
-| [`User`](/reference/api/types#user) | the updated user |
+| [`User`](/reference/lucia-auth/types#user) | the updated user |
 
 #### Errors
 
@@ -747,7 +747,7 @@ const useKey: (
 
 | type                              | description       |
 | --------------------------------- | ----------------- |
-| [`Key`](/reference/api/types#key) | the validated key |
+| [`Key`](/reference/lucia-auth/types#key) | the validated key |
 
 #### Errors
 
@@ -782,7 +782,7 @@ const validateRequestHeaders: (request: MinimalRequest) => string;
 
 | name    | type                                                    | description                  |
 | ------- | ------------------------------------------------------- | ---------------------------- |
-| request | [`MinimalRequest`](/reference/api/types#minimalrequest) | Node's `Request` can be used |
+| request | [`MinimalRequest`](/reference/lucia-auth/types#minimalrequest) | Node's `Request` can be used |
 
 #### Returns
 
@@ -824,7 +824,7 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 | type                                      | description                   |
 | ----------------------------------------- | ----------------------------- |
-| [`Session`](/reference/api/types#session) | the session of the session id |
+| [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
 
 #### Errors
 
@@ -854,7 +854,7 @@ try {
 
 ## `validateSessionUser()`
 
-Similar to [`validateSession()`](/reference/api/auth#validatesession) but returns both the session and user without an additional database call.
+Similar to [`validateSession()`](/reference/lucia-auth/auth#validatesession) but returns both the session and user without an additional database call.
 
 ```ts
 const validateSessionUser: (
@@ -872,8 +872,8 @@ const validateSessionUser: (
 
 | name    | type                                      | description                   |
 | ------- | ----------------------------------------- | ----------------------------- |
-| session | [`Session`](/reference/api/types#session) | the session of the session id |
-| user    | [`User`](/reference/api/types#user)       | the user of the session       |
+| session | [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
+| user    | [`User`](/reference/lucia-auth/types#user)       | the user of the session       |
 
 #### Errors
 

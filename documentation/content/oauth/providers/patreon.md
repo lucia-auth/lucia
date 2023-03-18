@@ -37,7 +37,7 @@ const patreon: (
 
 | name                 | type                          | description                                        | optional |
 | -------------------- | ----------------------------- | -------------------------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/api/auth) | Lucia instance                                     |          |
+| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                     |          |
 | configs.clientId     | `string`                      | Patreon OAuth app client id                        |          |
 | configs.clientSecret | `string`                      | Patreon OAuth app client secret                    |          |
 | configs.redirectUri  | `string`                      | one of the authorized redirect URIs                |          |
@@ -47,7 +47,7 @@ const patreon: (
 
 | type                                                           | description      |
 | -------------------------------------------------------------- | ---------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Patreon provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | Patreon provider |
 
 ## `PatreonTokens`
 

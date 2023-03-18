@@ -21,7 +21,7 @@ export const passwordResetToken = idToken(auth, "password-reset", {
 
 ### 2. Generate and send verification link
 
-Generate a new token using [`issue()`](/tokens/reference/idtokenwrapper#issue) and store it inside `token` parameter of the verification api url. Don't forget to use `toString()` to get the stringified value of the token.
+Generate a new token using [`issue()`](/reference/tokens/idtokenwrapper#issue) and store it inside `token` parameter of the verification api url. Don't forget to use `toString()` to get the stringified value of the token.
 
 ```ts
 import { passwordResetToken } from "./token.js";
@@ -40,7 +40,7 @@ sendEmail(email, {
 
 When the user opens the link, prompt the user to enter their new password.
 
-On form/POST request, get the token stored inside the url parameter and validate it using [`validate()`](/tokens/reference/idtokenwrapper#validate). If valid, update the password, invalidate all user sessions and tokens, create a new session, and send it to the validated client. Make sure to properly handle errors, like when the tokens are expired.
+On form/POST request, get the token stored inside the url parameter and validate it using [`validate()`](/reference/tokens/idtokenwrapper#validate). If valid, update the password, invalidate all user sessions and tokens, create a new session, and send it to the validated client. Make sure to properly handle errors, like when the tokens are expired.
 
 ```ts
 // POST /reset-password

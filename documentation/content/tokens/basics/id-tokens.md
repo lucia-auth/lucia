@@ -25,11 +25,11 @@ const tokenHandler = idToken(auth, "email-verification", {
 });
 ```
 
-You can also provide your own function to generate tokens. Refer to [`idToken()`](/tokens/reference/lucia-auth-tokens#idtoken).
+You can also provide your own function to generate tokens. Refer to [`idToken()`](/reference/tokens/lucia-auth-tokens#idtoken).
 
 ## Issue tokens
 
-You can issue a new token by providing [`issue()`](/tokens/reference/idtokenwrapper#issue) with the id of the user it'll be linked to.
+You can issue a new token by providing [`issue()`](/reference/tokens/idtokenwrapper#issue) with the id of the user it'll be linked to.
 
 ```ts
 import { idToken, TokenError } from "@lucia-auth/tokens";
@@ -45,11 +45,11 @@ try {
 }
 ```
 
-Since the returned [`Token`](/tokens/reference/token) is an object, use `.toString()` to get a stringified version of it.
+Since the returned [`Token`](/reference/tokens/token) is an object, use `.toString()` to get a stringified version of it.
 
 ## Validate tokens
 
-[`validate()`](/tokens/reference/idtokenwrapper#validate) can be used to validate a token. This takes in the stringified version of `Token` (returned by `issue()`) and returns `Token`.
+[`validate()`](/reference/tokens/idtokenwrapper#validate) can be used to validate a token. This takes in the stringified version of `Token` (returned by `issue()`) and returns `Token`.
 
 ```ts
 import { idToken, TokenError } from "@lucia-auth/tokens";
@@ -69,7 +69,7 @@ try {
 
 ## Invalidate tokens
 
-[`invalidate()`](/tokens/reference/idtokenwrapper#invalidate) can be used to invalidate a specific token. This will succeed regardless of the validity of the token.
+[`invalidate()`](/reference/tokens/idtokenwrapper#invalidate) can be used to invalidate a specific token. This will succeed regardless of the validity of the token.
 
 ```ts
 import { idToken } from "@lucia-auth/tokens";
@@ -80,7 +80,7 @@ const validatedToken = tokenHandler.invalidateToken(token);
 
 ### Invalidate all tokens of a user
 
-[`invalidateAllUserTokens()`](/tokens/reference/idtokenwrapper#invalidateallusertokens) can be used to invalidate all tokens belonging to a user. This will succeed regardless of the validity of the user id.
+[`invalidateAllUserTokens()`](/reference/tokens/idtokenwrapper#invalidateallusertokens) can be used to invalidate all tokens belonging to a user. This will succeed regardless of the validity of the user id.
 
 ```ts
 import { idToken } from "@lucia-auth/tokens";
@@ -91,7 +91,7 @@ const validatedToken = tokenHandler.invalidateAllUserTokens(userId);
 
 ## Get tokens
 
-You can list all tokens belonging to the user, both valid and expired, by using [`getAllUserTokens()`](/tokens/reference/idtokenwrapper#getallusertokens).
+You can list all tokens belonging to the user, both valid and expired, by using [`getAllUserTokens()`](/reference/tokens/idtokenwrapper#getallusertokens).
 
 ```ts
 import { idToken, TokenError } from "@lucia-auth/tokens";
@@ -108,7 +108,7 @@ try {
 
 ### Check expiration
 
-You can check if the token is expired or not with [`isExpired()`](/tokens/reference/token#isexpired).
+You can check if the token is expired or not with [`isExpired()`](/reference/tokens/token#isexpired).
 
 ```ts
 const tokens = tokenHandler.getAllUserTokens(userId);

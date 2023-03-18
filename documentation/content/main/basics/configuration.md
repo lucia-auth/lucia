@@ -3,7 +3,7 @@ _order: 5
 title: "Configuration"
 ---
 
-Configuration for [`lucia()`]().
+Configuration for [`lucia()`](/reference/lucia-auth/lucia-auth#lucia).
 
 ```ts
 type Configuration = {
@@ -57,7 +57,7 @@ An adapter for the database that stores users. Can be a normal `AdapterFunction<
 
 | type                                                                   |
 | ---------------------------------------------------------------------- |
-| `AdapterFunction<`[`UserAdapter`](/reference/api/types#useradapter)`>` |
+| `AdapterFunction<`[`UserAdapter`](/reference/lucia-auth/types#useradapter)`>` |
 
 #### `session` (required)
 
@@ -65,7 +65,7 @@ An adapter for the database that stores sessions.
 
 | type                                                                      |
 | ------------------------------------------------------------------------- |
-| `AdapterFunction<`[`SessionAdapter`](/reference/api/types#useradapter)`>` |
+| `AdapterFunction<`[`SessionAdapter`](/reference/lucia-auth/types#useradapter)`>` |
 
 ### `env`
 
@@ -79,7 +79,7 @@ Tells Lucia if the app is running on HTTP or HTTPS.
 
 ### `autoDatabaseCleanup`
 
-Will remove [dead sessions](/learn/start-here/concepts#session-states) from the database when certain methods are called.
+Will remove [dead sessions](/start-here/concepts#session-states) from the database when certain methods are called.
 
 | type      | default |
 | --------- | ------- |
@@ -100,7 +100,7 @@ and deletes the target user's dead sessions from the database on:
 
 ### `csrfProtection`
 
-Checks if the request is from a trusted origin (where the app is hosted) in [`validateRequestHeaders()`](/reference/api/auth#validaterequestheaders). If you set this to `false`, make sure to add your own CSRF protection.
+Checks if the request is from a trusted origin (where the app is hosted) in [`validateRequestHeaders()`](/reference/lucia-auth/auth#validaterequestheaders). If you set this to `false`, make sure to add your own CSRF protection.
 
 | type      | default |
 | --------- | ------- |
@@ -146,7 +146,7 @@ const generate: (s: string) => MaybePromise<string>;
 
 #### `validate()` (required)
 
-Validates a string against a hash generated using [`hash.generate()`](/reference/api/configuration#generate-required).
+Validates a string against a hash generated using [`hash.generate()`](/basics/configuration#generate-required).
 
 ```ts
 const validate: (s: string, hash: string) => MaybePromise<boolean>;
@@ -185,7 +185,7 @@ type CookieOption = {
 
 #### `activePeriod`
 
-The time in milliseconds the [active period](/learn/start-here/concepts#session-states) lasts for - or the time since session creation that it can be used.
+The time in milliseconds the [active period](/start-here/concepts#session-states) lasts for - or the time since session creation that it can be used.
 
 | type     | default                          |
 | -------- | -------------------------------- |
@@ -193,7 +193,7 @@ The time in milliseconds the [active period](/learn/start-here/concepts#session-
 
 #### `idlePeriod`
 
-The time in milliseconds the [idle period](/learn/start-here/concepts#session-states) lasts for - or the time since active period expiration that it can be renewed.
+The time in milliseconds the [idle period](/start-here/concepts#session-states) lasts for - or the time since active period expiration that it can be renewed.
 
 | type     | default                              |
 | -------- | ------------------------------------ |
@@ -201,7 +201,7 @@ The time in milliseconds the [idle period](/learn/start-here/concepts#session-st
 
 ### `transformUserData()`
 
-This will be called to transform the raw data from `user` table to an object that will be mapped to [`User`](/reference/api/types#user).
+This will be called to transform the raw data from `user` table to an object that will be mapped to [`User`](/reference/lucia-auth/types#user).
 
 ```ts
 const transformUserData: (userData: UserData) => Record<any, any>;
@@ -211,7 +211,7 @@ const transformUserData: (userData: UserData) => Record<any, any>;
 
 | name     | type                                        | description                 |
 | -------- | ------------------------------------------- | --------------------------- |
-| userData | [`UserData`](/reference/api/types#userdata) | the user data from database |
+| userData | [`UserData`](/reference/lucia-auth/types#userdata) | the user data from database |
 
 #### Returns
 

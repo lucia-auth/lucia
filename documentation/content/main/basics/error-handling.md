@@ -3,7 +3,7 @@ _order: 4
 title: "Error handling"
 ---
 
-Errors are handled by throwing [`LuciaError`](/reference/api/luciaerror) inside Lucia. All error messages are listed in the reference.
+Errors are handled by throwing [`LuciaError`](/reference/lucia-auth/luciaerror) inside Lucia. All error messages are listed in the reference.
 
 Using a try-catch block, the error message can be read like so:
 

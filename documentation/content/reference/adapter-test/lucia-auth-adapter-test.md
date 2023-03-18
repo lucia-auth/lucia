@@ -11,7 +11,7 @@ import { testAdapter } from "@lucia-auth/adapter-test";
 
 ## `testAdapter()`
 
-Test [`Adapter`]().
+Test [`Adapter`](/reference/lucia-auth/types#adapter).
 
 ```ts
 const testAdapter: (
@@ -25,13 +25,13 @@ const testAdapter: (
 
 | name         | type               | default | description                                    |
 | ------------ | ------------------ | ------- | ---------------------------------------------- |
-| adapter      | [`Adapter`]()      |         |                                                |
-| queryHandler | [`QueryHandler`]() |         |                                                |
+| adapter      | [`Adapter`](/reference/lucia-auth/types#adapter)      |         |                                                |
+| queryHandler | [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler) |         |                                                |
 | endProcess   | `boolean`          | `true`  | `true` to terminate process on successful test |
 
 ## `testSessionAdapter()`
 
-Test [`SessionAdapter`]().
+Test [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter).
 
 ```ts
 const SessionAdapter: (
@@ -45,13 +45,13 @@ const SessionAdapter: (
 
 | name         | type                 | default | description                                    |
 | ------------ | -------------------- | ------- | ---------------------------------------------- |
-| adapter      | [`SessionAdapter`]() |         |                                                |
-| queryHandler | [`QueryHandler`]()   |         |                                                |
+| adapter      | [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter) |         |                                                |
+| queryHandler | [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler)   |         |                                                |
 | endProcess   | `boolean`            | `true`  | `true` to terminate process on successful test |
 
 ## `testUserAdapter()`
 
-Test [`UserAdapter`]().
+Test [`UserAdapter`](/reference/lucia-auth/types#useradapter).
 
 ```ts
 const testUserAdapter: (
@@ -65,6 +65,6 @@ const testUserAdapter: (
 
 | name         | type               | default | description                                    |
 | ------------ | ------------------ | ------- | ---------------------------------------------- |
-| adapter      | [`UserAdapter`]()  |         |                                                |
-| queryHandler | [`QueryHandler`]() |         |                                                |
+| adapter      | [`UserAdapter`](/reference/lucia-auth/types#useradapter)  |         |                                                |
+| queryHandler | [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler) |         |                                                |
 | endProcess   | `boolean`          | `true`  | `true` to terminate process on successful test |

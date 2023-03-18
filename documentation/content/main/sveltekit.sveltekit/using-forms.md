@@ -15,7 +15,7 @@ When using `use:enhance` action, SvelteKit will handle them accordingly:
 - Redirect: Call [`goto()`](https://kit.svelte.dev/docs/modules#$app-navigation-goto)
 - Error: Go to the nearest error boundary
 
-For the session to update in the client, [`handleServerSession()`](/sveltekit/api-reference/server-api#handleserversession) load function must re-run. This means, when using the default behavior, for a session to update post-form submission, it has to receive a successful response and not a redirect response. This has to be kept on mind when using forms to handle sign ins and account creation.
+For the session to update in the client, [`handleServerSession()`](/reference/sveltekit/lucia-auth-sveltekit#handleserversession) load function must re-run. This means, when using the default behavior, for a session to update post-form submission, it has to receive a successful response and not a redirect response. This has to be kept on mind when using forms to handle sign ins and account creation.
 
 ```ts
 export const actions: Actions = {

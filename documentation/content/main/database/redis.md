@@ -21,7 +21,7 @@ const adapter: (redisClient: {
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of the Redis errors.
+The adapter and Lucia will not not handle [unknown errors](/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of the Redis errors.
 
 ## Installation
 
@@ -72,7 +72,7 @@ userSessionClient.connect();
 
 | key                  | value                                                                                     |
 | -------------------- | ----------------------------------------------------------------------------------------- |
-| session id: `string` | stringified [`SessionSchema`](/reference/adapters/database-model#schema-type-1): `string` |
+| session id: `string` | stringified [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1): `string` |
 
 ### `userSession`
 

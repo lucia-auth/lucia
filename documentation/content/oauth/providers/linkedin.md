@@ -3,7 +3,7 @@ _order: 0
 title: "LinkedIn"
 ---
 
-OAuth integration for LinkedIn. Refer to [LinkedIn OAuth documentation](https://learn.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
+OAuth integration for LinkedIn. Refer to [LinkedIn OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
 
 ```ts
 import { linkedin } from "@lucia-auth/oauth/providers";
@@ -34,7 +34,7 @@ const linkedin: (
 
 | name                | type                          | description                                             | optional |
 | ------------------- | ----------------------------- | ------------------------------------------------------- | -------- |
-| auth                | [`Auth`](/reference/api/auth) | Lucia instance                                          |          |
+| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                          |          |
 | config.clientId     | `string`                      | LinkedIn OAuth app client id                            |          |
 | config.clientSecret | `string`                      | LinkedIn OAuth app client secret                        |          |
 | config.redirectUri  | `string`                      | LinkedIn OAuth app redirect uri                         |          |
@@ -44,7 +44,7 @@ const linkedin: (
 
 | type                                                           | description       |
 | -------------------------------------------------------------- | ----------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | LinkedIn provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | LinkedIn provider |
 
 ## `LinkedInTokens`
 

@@ -21,7 +21,7 @@ This adapter will not handle database connection and you will need to connect to
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `MongooseError`.
+The adapter and Lucia will not not handle [unknown errors](/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw a `MongooseError`.
 
 ## Installation
 
@@ -59,7 +59,7 @@ mongoose.connect(mongoUri, options);
 
 ### `user`
 
-You may add additional fields to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
+You may add additional fields to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 ```ts
 const User = mongoose.model(
@@ -79,7 +79,7 @@ const User = mongoose.model(
 
 ### `session`
 
-This is not required if you're only using the Mongoose adapter for the `user` table via [`adapter.user`](/reference/api/configuration#adapter) config.
+This is not required if you're only using the Mongoose adapter for the `user` table via [`adapter.user`](/basics/configuration#adapter) config.
 
 ```ts
 const Session = mongoose.model(

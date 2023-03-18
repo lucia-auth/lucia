@@ -27,7 +27,7 @@ See [Database types](#database-types) for more information regarding the `Databa
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of these:
+The adapter and Lucia will not not handle [unknown errors](/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of these:
 
 - `DatabaseError` for `pg`.
 - `QueryError` for `mysql2`
@@ -129,7 +129,7 @@ const auth = lucia({
 
 #### `user`
 
-You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
+You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 | name | type   | foreign constraint | nullable | unique | primary |
 | ---- | ------ | ------------------ | -------- | ------ | ------- |
@@ -183,7 +183,7 @@ CREATE TABLE public.key (
 
 #### `user`
 
-The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 | name | type          | nullable | unique | primary |
 | ---- | ------------- | -------- | ------ | ------- |
@@ -242,7 +242,7 @@ CREATE TABLE `key` (
 
 #### `user`
 
-The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
+The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 | name | type          | nullable | unique | identity |
 | ---- | ------------- | -------- | ------ | -------- |

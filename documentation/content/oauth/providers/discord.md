@@ -36,7 +36,7 @@ const discord: (
 
 | name                | type                          | description                                        | optional |
 | ------------------- | ----------------------------- | -------------------------------------------------- | -------- |
-| auth                | [`Auth`](/reference/api/auth) | Lucia instance                                     |          |
+| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                     |          |
 | config.clientId     | `string`                      | Github OAuth app client id                         |          |
 | config.clientSecret | `string`                      | Github OAuth app client secret                     |          |
 | configs.redirectUri | `string`                      | an authorized redirect URI                         |          |
@@ -46,7 +46,7 @@ const discord: (
 
 | type                                                           | description      |
 | -------------------------------------------------------------- | ---------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Discord provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | Discord provider |
 
 ## `DiscordTokens`
 

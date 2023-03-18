@@ -5,7 +5,7 @@ title: "Getting started"
 
 While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.
 
-Supported providers are listed on the left. You can also add your own providers with [`provider`](/oauth/reference/api#provider) as well.
+Supported providers are listed on the left. You can also add your own providers with [`provider()`](/reference/oauth/lucia-auth-oauth#provider) as well.
 
 ## Installation
 
@@ -114,7 +114,7 @@ export const handleGetRequests = async (request: Request) => {
 
 ### Add provider to existing user
 
-Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user. Calling [`createPersistentKey()`](/oauth/reference/provider-api#createpersistentkey) will create a new persistent key linked to the provided user id.
+Alternatively, you may want to add a new provider (sign in method) to the user by creating a new key for the user. Calling [`createPersistentKey()`](/reference/oauth/providersession#createpersistentkey) will create a new persistent key linked to the provided user id.
 
 ```ts
 const { existingUser, createPersistentKey } = await githubAuth.validateCallback(

@@ -39,7 +39,7 @@ const auth0: (
 
 | name                | type                          | description                                                     | optional |
 | ------------------- | ----------------------------- | --------------------------------------------------------------- | -------- |
-| auth                | [`Auth`](/reference/api/auth) | Lucia instance                                                  |          |
+| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                  |          |
 | config.appDomain    | `string`                      | Auth0 OAuth app domain                                          |          |
 | config.clientId     | `string`                      | Auth0 OAuth app client id                                       |          |
 | config.clientSecret | `string`                      | Auth0 OAuth app client secret                                   |          |
@@ -54,7 +54,7 @@ const auth0: (
 
 | type                                                           | description    |
 | -------------------------------------------------------------- | -------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Auth0 provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | Auth0 provider |
 
 ## `Auth0Tokens`
 

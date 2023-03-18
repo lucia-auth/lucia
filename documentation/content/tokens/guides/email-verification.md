@@ -90,7 +90,7 @@ export const otpToken = idToken(auth, "otp", {
 
 ### 2. Generate and send OTP
 
-Generate a new token using [`issue()`](/tokens/reference/passwordtokenwrapper#issue). Don't forget to use `toString()` to get the stringified value of the token.
+Generate a new token using [`issue()`](/reference/tokens/passwordtokenwrapper#issue). Don't forget to use `toString()` to get the stringified value of the token.
 
 ```ts
 import { otpToken } from "./token.js";
@@ -155,7 +155,7 @@ export const emailVerificationToken = idToken(auth, "email-verification", {
 
 ### 2. Generate and send verification link
 
-Generate a new token using [`issue()`](/tokens/reference/idtokenwrapper#issue) and store it inside `token` parameter of the verification api url. Don't forget to use `toString()` to get the stringified value of the token.
+Generate a new token using [`issue()`](/reference/tokens/idtokenwrapper#issue) and store it inside `token` parameter of the verification api url. Don't forget to use `toString()` to get the stringified value of the token.
 
 ```ts
 import { emailVerificationToken } from "./token.js";
@@ -172,7 +172,7 @@ sendEmail(email, {
 
 ### 3. Handle verify requests
 
-Get the token stored inside the url parameter and validate it using [`validate()`](/tokens/reference/idtokenwrapper#validate). If valid, invalidate all user sessions, create a new session, and send it to the validated client. Make sure to properly handle errors, like when the tokens are expired.
+Get the token stored inside the url parameter and validate it using [`validate()`](/reference/tokens/idtokenwrapper#validate). If valid, invalidate all user sessions, create a new session, and send it to the validated client. Make sure to properly handle errors, like when the tokens are expired.
 
 ```ts
 // GET /verify-email

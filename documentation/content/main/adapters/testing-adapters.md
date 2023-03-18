@@ -11,7 +11,7 @@ pnpm add @lucia-auth/adapter-test
 yarn add @lucia-auth/adapter-test
 ```
 
-[`@lucia-auth/adapter-test`]() for a full reference.
+[`@lucia-auth/adapter-test`](/reference/adapter-test/lucia-auth-adapter-test) for a full reference.
 
 ## Setup
 
@@ -41,7 +41,7 @@ declare namespace Lucia {
 
 ## Query handler
 
-The test functions require a [`LuciaQueryHandler`]() to interact with the database.
+The test functions require a [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler) to interact with the database.
 
 ```ts
 type LuciaQueryHandler = {

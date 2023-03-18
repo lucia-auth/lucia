@@ -7,9 +7,9 @@ Lucia uses adapters to connect to your database. The following chart shows the b
 
 ## `user`
 
-Schema: [`UserSchema`]()
+Schema: [`UserSchema`](/reference/lucia-auth/types#userschema)
 
-The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/learn/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
+The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
 
 | name  | type                   | unique | description                                       |
 | ----- | ---------------------- | ------ | ------------------------------------------------- |
@@ -24,9 +24,9 @@ type UserSchema = {
 
 ## `session`
 
-Schema: [`SessionSchema`]()
+Schema: [`SessionSchema`](/reference/lucia-auth/types#sessionschema)
 
-The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/reference/api/configuration#adapter) config.
+The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/basics/configuration#adapter) config.
 
 | name           | type          | unique | reference | description                                        |
 | -------------- | ------------- | ------ | --------- | -------------------------------------------------- |
@@ -46,7 +46,7 @@ type SessionSchema = {
 
 ## `key`
 
-Schema: [`KeySchema`]()
+Schema: [`KeySchema`](/reference/lucia-auth/types#keyschema)
 
 The `key` table stores the user's keys.
 

@@ -33,7 +33,7 @@ const github: (
 
 | name                | type                          | description                    | optional |
 | ------------------- | ----------------------------- | ------------------------------ | -------- |
-| auth                | [`Auth`](/reference/api/auth) | Lucia instance                 |          |
+| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                 |          |
 | config.clientId     | `string`                      | Github OAuth app client id     |          |
 | config.clientSecret | `string`                      | Github OAuth app client secret |          |
 | config.scope        | `string[]`                    | an array of scopes             | true     |
@@ -42,7 +42,7 @@ const github: (
 
 | type                                                           | description     |
 | -------------------------------------------------------------- | --------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Github provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | Github provider |
 
 ## `GithubTokens`
 

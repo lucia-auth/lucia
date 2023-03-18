@@ -7,7 +7,7 @@ This page will guide you how to implement a simple username/password auth and co
 
 The [Next.js example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs) in the repo expands on this guide.
 
-Start off by following the steps in [the previous page](/nextjs/start-here/getting-started) to set up Lucia and your database.
+Start off by following the steps in [the previous page](/start-here/getting-started?framework=nextjs) to set up Lucia and your database.
 
 ## 1. Configure your database
 
@@ -33,7 +33,7 @@ declare namespace Lucia {
 }
 ```
 
-Add [`transformUserData()`](/reference/api/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
+Add [`transformUserData()`](/basics/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
 // lib/lucia.ts

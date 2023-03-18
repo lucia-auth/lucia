@@ -34,7 +34,7 @@ const reddit: (
 
 | name                 | type                          | description                                       | optional |
 | -------------------- | ----------------------------- | ------------------------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/api/auth) | Lucia instance                                    |          |
+| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                    |          |
 | configs.clientId     | `string`                      | Reddit OAuth app client id                        |          |
 | configs.clientSecret | `string`                      | Reddit OAuth app client secret                    |          |
 | configs.redirectUri  | `string`                      | Reddit OAuth app redirect Uri                     |          |
@@ -44,7 +44,7 @@ const reddit: (
 
 | type                                                           | description     |
 | -------------------------------------------------------------- | --------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Reddit provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | Reddit provider |
 
 ## `RedditTokens`
 

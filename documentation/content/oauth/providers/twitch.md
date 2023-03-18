@@ -35,7 +35,7 @@ const twitch: (
 
 | name                 | type                          | description                                                          | optional |
 | -------------------- | ----------------------------- | -------------------------------------------------------------------- | -------- |
-| auth                 | [`Auth`](/reference/api/auth) | Lucia instance                                                       |          |
+| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                       |          |
 | configs.clientId     | `string`                      | Twitch OAuth app client id                                           |          |
 | configs.clientSecret | `string`                      | Twitch OAuth app client secret                                       |          |
 | configs.redirectUri  | `string`                      | one of the authorized redirect URIs                                  |          |
@@ -46,7 +46,7 @@ const twitch: (
 
 | type                                                           | description     |
 | -------------------------------------------------------------- | --------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Twitch provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | Twitch provider |
 
 ## `TwitchTokens`
 

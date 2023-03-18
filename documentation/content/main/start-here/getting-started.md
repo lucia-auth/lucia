@@ -17,9 +17,9 @@ To support multiple databases, Lucia uses database adapters. These adapters prov
 
 Follow the guides below to set up your database:
 
-- [Prisma](/learn/adapters/prisma) (MySQL, SQLite, PostgreSQL)
-- [Kysely](/learn/adapters/kysely) (PostgreSQL, MySQL, SQLite)
-- [Mongoose](/learn/adapters/mongoose) (MongoDB).
+- [Prisma](/database/prisma) (MySQL, SQLite, PostgreSQL)
+- [Kysely](/database/kysely) (PostgreSQL, MySQL, SQLite)
+- [Mongoose](/database/mongoose) (MongoDB).
 
 ## Framework integration
 
@@ -41,7 +41,7 @@ import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 ```
 
-Initialize it and export it as `auth`. As for the config, `adapter` is your database adapter and [`env`](/reference/api/configuration#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
+Initialize it and export it as `auth`. As for the config, `adapter` is your database adapter and [`env`](/basics/configuration#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
 
 ```ts
 // lucia.ts

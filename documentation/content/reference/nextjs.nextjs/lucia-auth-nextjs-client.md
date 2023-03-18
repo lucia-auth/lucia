@@ -21,7 +21,7 @@ const getUser: () => Promise<User | null>;
 
 | type                                          | description               |
 | --------------------------------------------- | ------------------------- |
-| [`User`](/reference/api/types#user)` \| null` | `null` if unauthenticated |
+| [`User`](/reference/lucia-auth/types#user)` \| null` | `null` if unauthenticated |
 
 #### Example
 

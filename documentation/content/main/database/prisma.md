@@ -17,7 +17,7 @@ const adapter: (client: PrismaClient) => AdapterFunction<Adapter>;
 
 ### Errors
 
-The adapter and Lucia will not not handle [unknown errors](/learn/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of these:
+The adapter and Lucia will not not handle [unknown errors](/basics/error-handling#known-errors), which are database errors Lucia doesn't expect the adapter to catch. When it encounters such errors, it will throw one of these:
 
 - `Prisma.PrismaClientKnownRequestError`
 - `Prisma.PrismaClientValidationError`
@@ -52,7 +52,7 @@ Make sure to generate your types using `npx prisma generate` after you set up th
 
 ### `user`
 
-You may add additional columns to store user attributes. Refer to [User attributes](/learn/basics/user-attributes).
+You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 ```prisma
 model User {
@@ -68,7 +68,7 @@ model User {
 
 ### `session`
 
-This is not required if you're only using the Prisma adapter for the `user` table via the [`adapter.user`](/reference/api/configuration#adapter) config.
+This is not required if you're only using the Prisma adapter for the `user` table via the [`adapter.user`](/basics/configuration#adapter) config.
 
 ```prisma
 model Session {

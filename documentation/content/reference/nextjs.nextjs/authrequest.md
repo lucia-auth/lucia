@@ -28,7 +28,7 @@ const constructor: (
 
 | name     | type                                                                                                                                                                                                                   | description                                       |
 | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| auth     | [`Auth`](/reference/api/auth)                                                                                                                                                                                          | Lucia instance                                    |
+| auth     | [`Auth`](/reference/lucia-auth/auth)                                                                                                                                                                                          | Lucia instance                                    |
 | request  | [`GetServerSidePropsContext["req"]`](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)`\|`[`NextApiRequest`](https://nextjs.org/docs/basic-features/typescript#api-routes)  | request from `getServerSideProps()` or API route  |
 | response | [`GetServerSidePropsContext["res"]`](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)`\|`[`NextApiResponse`](https://nextjs.org/docs/basic-features/typescript#api-routes) | response from `getServerSideProps()` or API route |
 
@@ -58,7 +58,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 ## `setSession()`
 
-Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/auth#invalidatesession).
+Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession).
 
 ```ts
 const setSession: (session: Session | null) => void;
@@ -68,7 +68,7 @@ const setSession: (session: Session | null) => void;
 
 | name    | type                                                | description        |
 | ------- | --------------------------------------------------- | ------------------ |
-| session | [`Session`](/reference/api/types#session)` \| null` | the session to set |
+| session | [`Session`](/reference/lucia-auth/types#session)` \| null` | the session to set |
 
 #### Example
 
@@ -101,7 +101,7 @@ const validate: () => Promise<Session | null>;
 
 | type                                                | description               |
 | --------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
+| [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
 
 #### Example
 
@@ -129,8 +129,8 @@ if (session) {
 
 | name    | type                                                | description               |
 | ------- | --------------------------------------------------- | ------------------------- |
-| session | [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
-| user    | [`User`](/reference/api/types#user)` \| null`       | `null` if unauthenticated |
+| session | [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
+| user    | [`User`](/reference/lucia-auth/types#user)` \| null`       | `null` if unauthenticated |
 
 #### Example
 

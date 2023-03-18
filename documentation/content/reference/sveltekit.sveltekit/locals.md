@@ -26,11 +26,11 @@ const action: Action = async ({ locals }) => {
 
 ### Caching
 
-Methods that returns some data, specifically [`validate()`](/sveltekit/api-reference/locals-api#validate) and [`validateUser()`](/sveltekit/api-reference/locals-api#validateuser), will cache its result on initial call. This means that within a single request (page load), the session will only be validated once, and thus only a single database call made, regardless of how many times the function is called. If `validateUser()` was used first, `validate()` will use the cache from it. When used within load functions, it allows you to get the current session without awaiting for the parent load function and sending another database call, improving page loads.
+Methods that returns some data, specifically [`validate()`](/reference/sveltekit/locals-api#validate) and [`validateUser()`](/reference/sveltekit/locals-api#validateuser), will cache its result on initial call. This means that within a single request (page load), the session will only be validated once, and thus only a single database call made, regardless of how many times the function is called. If `validateUser()` was used first, `validate()` will use the cache from it. When used within load functions, it allows you to get the current session without awaiting for the parent load function and sending another database call, improving page loads.
 
 ## `setSession()`
 
-Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/auth#invalidatesession).
+Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession).
 
 ```ts
 const setSession: (session: Session | null) => void;
@@ -40,7 +40,7 @@ const setSession: (session: Session | null) => void;
 
 | name    | type                                                | description        |
 | ------- | --------------------------------------------------- | ------------------ |
-| session | [`Session`](/reference/api/types#session)` \| null` | the session to set |
+| session | [`Session`](/reference/lucia-auth/types#session)` \| null` | the session to set |
 
 #### Example
 
@@ -66,7 +66,7 @@ const validate: () => Promise<Session | null>;
 
 | type                                                | description               |
 | --------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
+| [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
 
 #### Example
 
@@ -83,7 +83,7 @@ const action: Action = async ({ locals }) => {
 
 ## `validateUser()`
 
-Similar to [`validate()`](/sveltekit/api-reference/locals-api#validate) but returns both the current session and user without an additional database.
+Similar to [`validate()`](/reference/sveltekit/locals-api#validate) but returns both the current session and user without an additional database.
 
 ```ts
 const validateUser: () => Promise<
@@ -102,8 +102,8 @@ const validateUser: () => Promise<
 
 | name    | type                                                | description               |
 | ------- | --------------------------------------------------- | ------------------------- |
-| session | [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
-| user    | [`User`](/reference/api/types#user)` \| null`       | `null` if unauthenticated |
+| session | [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
+| user    | [`User`](/reference/lucia-auth/types#user)` \| null`       | `null` if unauthenticated |
 
 #### Example
 

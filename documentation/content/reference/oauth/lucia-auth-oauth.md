@@ -25,11 +25,11 @@ const generateState: () => string;
 
 ## `LuciaOAuthRequestError`
 
-Refer to [`LuciaOAuthRequestError`]().
+Refer to [`LuciaOAuthRequestError`](/reference/oauth/luciaoauthrequesterror).
 
 ## `provider`
 
-Creates a new [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider). If you're creating your own provider, take a look at [Lucia's repository](https://github.com/pilcrowOnPaper/lucia/tree/main/packages/integration-oauth/src/providers/index.js) for examples.
+Creates a new [`OAuthProvider`](/reference/oauth/oauthprovider). If you're creating your own provider, take a look at [Lucia's repository](https://github.com/pilcrowOnPaper/lucia/tree/main/packages/integration-oauth/src/providers/index.js) for examples.
 
 ```ts
 const provider = (
@@ -61,7 +61,7 @@ const provider = (
 
 | type                                                           |
 | -------------------------------------------------------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) |
 
 ### `config.getAuthorizationUrl`
 

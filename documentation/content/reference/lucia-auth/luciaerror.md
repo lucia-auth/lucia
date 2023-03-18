@@ -3,7 +3,7 @@ _order: 2
 title: "LuciaError"
 ---
 
-All [known errors](/learn/basics/error-handling#known-errors) are thrown as `LuciaError`, which is a standard `Error` :
+All [known errors](/basics/error-handling#known-errors) are thrown as `LuciaError`, which is a standard `Error` :
 
 ```ts
 class LuciaError extends Error {}

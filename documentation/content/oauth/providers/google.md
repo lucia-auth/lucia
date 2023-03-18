@@ -34,7 +34,7 @@ const google: (
 
 | name                 | type                          | description                    | optional |
 | -------------------- | ----------------------------- | ------------------------------ | -------- |
-| auth                 | [`Auth`](/reference/api/auth) | Lucia instance                 |          |
+| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                 |          |
 | configs.clientId     | `string`                      | Google OAuth app client id     |          |
 | configs.clientSecret | `string`                      | Google OAuth app client secret |          |
 | configs.redirectUri  | `string`                      | an authorized redirect URI     |          |
@@ -44,7 +44,7 @@ const google: (
 
 | type                                                           | description     |
 | -------------------------------------------------------------- | --------------- |
-| [`OAuthProvider`](/oauth/reference/provider-api#oauthprovider) | Google provider |
+| [`OAuthProvider`](/reference/oauth/oauthprovider) | Google provider |
 
 ## `GoogleTokens`
 

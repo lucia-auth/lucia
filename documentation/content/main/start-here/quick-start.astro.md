@@ -7,7 +7,7 @@ This page will guide you how to implement a simple username/password authenticat
 
 The [Astro example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro) in the repo expands on this guide.
 
-Start off by following the steps in [the previous page](/astro/start-here/getting-started) to set up Lucia and your database.
+Start off by following the steps in [the previous page](/start-here/getting-started?framework=astro) to set up Lucia and your database.
 
 ## 1. Configure your database
 
@@ -33,7 +33,7 @@ declare namespace Lucia {
 }
 ```
 
-Add [`transformUserData()`](/reference/api/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
+Add [`transformUserData()`](/basics/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
 // lib/lucia.ts
@@ -73,7 +73,7 @@ Create `pages/signup.astro`. This form will have an input field for username and
 
 In the same page, we'll also handle the POST request from the form.
 
-`@lucia-auth/astro` provides [`AuthRequest`](/astro/api-reference/server-api#authrequest), which makes it easier to handle sessions and cookies within Astro. Initialize it with `auth` and the `Astro` context (an API route context can be used as well).
+`@lucia-auth/astro` provides [`AuthRequest`](/reference/astro/lucia-auth-astro#authrequest), which makes it easier to handle sessions and cookies within Astro. Initialize it with `auth` and the `Astro` context (an API route context can be used as well).
 
 Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
 
@@ -128,7 +128,7 @@ if (Astro.request.method === "POST") {
 
 ### Redirect authenticated users
 
-[`authRequest.validate()`](/astro/api-reference/server-api#validate) can be used inside a server context to validate the request and get the current session.
+[`authRequest.validate()`](/reference/astro/lucia-auth-astro#validate) can be used inside a server context to validate the request and get the current session.
 
 ```astro
 ---
@@ -233,7 +233,7 @@ This page will be the root page (`pages/index.astro`). This route will show the 
 
 ### Get current user
 
-The current user and session can be retrieved using [`authRequest.validateUser()`](/astro/api-reference/server-api#validateuser). Redirect the user to the login page if unauthenticated.
+The current user and session can be retrieved using [`authRequest.validateUser()`](/reference/astro/lucia-auth-astro#validateuser). Redirect the user to the login page if unauthenticated.
 
 ```astro
 ---

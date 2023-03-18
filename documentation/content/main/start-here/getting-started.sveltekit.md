@@ -19,7 +19,7 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `$lib/server/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/reference/api/configuration#env) config, checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
+In `$lib/server/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/basics/configuration#env) config, checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
 
 ```ts
 // lib/server/lucia.ts
@@ -43,7 +43,7 @@ SvelteKit specific functions are imported from `@lucia-auth/sveltekit`.
 
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/sveltekit/api-reference/server-api#handlehooks).
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/sveltekit/lucia-auth-sveltekit#handlehooks).
 
 ```ts
 // src/hooks.server.ts
@@ -70,7 +70,7 @@ In your route root, create `+layout.server.ts` and `+layout.svelte`.
 
 #### Client
 
-In `+layout.svelte`, import [`handleSession()`](/sveltekit/api-reference/client-api#handlesession) from `@lucia-auth/sveltekit`. This will listen for changes in sessions, sync sessions across tabs, and set a local client cache of the user. Since this also sets a context, it is required for other client side functions to work. Make sure not to subscribe to the `page` store passed on as the parameter.
+In `+layout.svelte`, import [`handleSession()`](/reference/sveltekit/lucia-auth-client#handlesession) from `@lucia-auth/sveltekit`. This will listen for changes in sessions, sync sessions across tabs, and set a local client cache of the user. Since this also sets a context, it is required for other client side functions to work. Make sure not to subscribe to the `page` store passed on as the parameter.
 
 ```svelte
 <!-- src/routes/+layout.svelte -->
@@ -86,7 +86,7 @@ In `+layout.svelte`, import [`handleSession()`](/sveltekit/api-reference/client-
 
 #### Server load functions
 
-In `+layout.server.ts`, create and export [`handleServerSession()`](/sveltekit/api-reference/server-api#handleserversession). This will pass on the session data from hooks to load functions.
+In `+layout.server.ts`, create and export [`handleServerSession()`](/reference/sveltekit/lucia-auth-sveltekit#handleserversession). This will pass on the session data from hooks to load functions.
 
 ```ts
 // src/routes/+layout.server.ts

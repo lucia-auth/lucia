@@ -6,7 +6,7 @@ Adapters provide a set of methods to interact with the database.
 
 ### Set up
 
-The value passed onto `adapter` configuration is an adapter function. This function should take in a [`LuciaError`](), which should be used to throw errors within the adapter (rather than importing it from `lucia-auth`).
+The value passed onto `adapter` configuration is an adapter function. This function should take in a [`LuciaError`](/reference/lucia-auth/luciaerror), which should be used to throw errors within the adapter (rather than importing it from `lucia-auth`).
 
 ```ts
 const customAdapter = () => {
@@ -22,7 +22,7 @@ lucia({
 
 ### Schema
 
-Lucia doesn't care how the data is stored, as long as it returns the correct data in the expected shape. Refer to [Database model]() for the base model and schema.
+Lucia doesn't care how the data is stored, as long as it returns the correct data in the expected shape. Refer to [Database model](/adapters/database-model) for the base model and schema.
 
 ## `Adapter`
 
@@ -38,8 +38,8 @@ type Adapter = {
 
 | type                                                     |
 | -------------------------------------------------------- |
-| [`SessionAdapter`](/reference/lucia-auth/sessionadapter) |
-| [`UserAdapter`](/reference/lucia-auth/useradapter)       |
+| [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter) |
+| [`UserAdapter`](/reference/lucia-auth/types#useradapter)       |
 
 ### `getSessionAndUserBySessionId()`
 
@@ -62,10 +62,10 @@ const getSessionAndUserBySessionId: (sessionId: string) => Promise<{
 
 If the session exists
 
-| name    | type                                                                | description                                       |
-| ------- | ------------------------------------------------------------------- | ------------------------------------------------- |
-| user    | [`UserSchema`](/reference/adapters/database-model#schema-type)      | user data of target: `user(id:session(user_id)`)` |
-| session | [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data of target                            |
+| name    | type                                                                       | description                                       |
+| ------- | -------------------------------------------------------------------------- | ------------------------------------------------- |
+| user    | [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type)      | user data of target: `user(id:session(user_id)`)` |
+| session | [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data of target                            |
 
 If the session doesn't exist
 
@@ -131,9 +131,9 @@ const getSession: (sessionId: string) => Promise<SessionSchema | null>;
 
 If the session exists
 
-| type                                                                | description            |
-| ------------------------------------------------------------------- | ---------------------- |
-| [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data of target |
+| type                                                                       | description            |
+| -------------------------------------------------------------------------- | ---------------------- |
+| [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data of target |
 
 If the session doesn't exist
 
@@ -159,9 +159,9 @@ const getSessionsByUserId: (userId: string) => Promise<SessionSchema | null>;
 
 If session exists:
 
-| type                                                                | description            |
-| ------------------------------------------------------------------- | ---------------------- |
-| [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data of target |
+| type                                                                       | description            |
+| -------------------------------------------------------------------------- | ---------------------- |
+| [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data of target |
 
 If not:
 
@@ -179,9 +179,9 @@ const setSession: (session: SessionSchema) => Promise<void>;
 
 #### Parameter
 
-| name      | type                                                                | description           |
-| --------- | ------------------------------------------------------------------- | --------------------- |
-| sessionId | [`SessionSchema`](/reference/adapters/database-model#schema-type-1) | session data to store |
+| name      | type                                                                       | description           |
+| --------- | -------------------------------------------------------------------------- | --------------------- |
+| sessionId | [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data to store |
 
 #### Errors
 
@@ -288,9 +288,9 @@ const getKey: (
 
 If key exists:
 
-| type                                                            | description        |
-| --------------------------------------------------------------- | ------------------ |
-| [`KeySchema`](/reference/adapters/database-model#schema-type-2) | key data of target |
+| type                                                                   | description        |
+| ---------------------------------------------------------------------- | ------------------ |
+| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target |
 
 If not:
 
@@ -316,9 +316,9 @@ const getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 
 If session exists:
 
-| type                                                            | description        |
-| --------------------------------------------------------------- | ------------------ |
-| [`KeySchema`](/reference/adapters/database-model#schema-type-2) | key data of target |
+| type                                                                   | description        |
+| ---------------------------------------------------------------------- | ------------------ |
+| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target |
 
 If not:
 
@@ -344,9 +344,9 @@ const getUser: (userId: string) => Promise<UserSchema | null>;
 
 If user exists:
 
-| type                                                           | description         |
-| -------------------------------------------------------------- | ------------------- |
-| [`UserSchema`](/reference/adapters/database-model#schema-type) | User data of target |
+| type                                                                  | description         |
+| --------------------------------------------------------------------- | ------------------- |
+| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type) | User data of target |
 
 If not:
 
@@ -393,17 +393,17 @@ const setUser: (
 
 #### Parameter
 
-| name           | type                                                                      | description                                     |
-| -------------- | ------------------------------------------------------------------------- | ----------------------------------------------- |
-| userId         | `string`                                                                  | unique target: `user(id)`                       |
-| userAttributes | `Record<string, any>`                                                     | each key names as [key] - target: `user([key])` |
-| key            | [`KeySchema`](/reference/adapters/database-model#schema-type-2) \| `null` | key to store                                    |
+| name           | type                                                                             | description                                     |
+| -------------- | -------------------------------------------------------------------------------- | ----------------------------------------------- |
+| userId         | `string`                                                                         | unique target: `user(id)`                       |
+| userAttributes | `Record<string, any>`                                                            | each key names as [key] - target: `user([key])` |
+| key            | [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) \| `null` | key to store                                    |
 
 #### Returns
 
-| type                                                           | description              |
-| -------------------------------------------------------------- | ------------------------ |
-| [`UserSchema`](/reference/adapters/database-model#schema-type) | data of the created user |
+| type                                                                  | description              |
+| --------------------------------------------------------------------- | ------------------------ |
+| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type) | data of the created user |
 
 #### Errors
 
@@ -456,9 +456,9 @@ const updateUser: (
 
 #### Returns
 
-| type                                                           | description              |
-| -------------------------------------------------------------- | ------------------------ |
-| [`UserSchema`](/reference/adapters/database-model#schema-type) | data of the updated user |
+| type                                                                  | description              |
+| --------------------------------------------------------------------- | ------------------------ |
+| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type) | data of the updated user |
 
 #### Errors
 

@@ -9,7 +9,7 @@ These can be imported from `lucia-auth` and should only be used inside a server 
 import { generateRandomString } from "lucia-auth";
 ```
 
-For exported types, refer to [Public types]().
+For exported types, refer to [Public types](/reference/lucia-auth/types).
 
 ## `generateRandomString()`
 
@@ -66,15 +66,15 @@ import { default as lucia } from "lucia-auth";
 
 #### Parameter
 
-| name   | type            | description                                                                                         |
-| ------ | --------------- | --------------------------------------------------------------------------------------------------- |
-| config | `Configuration` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
+| name   | type                                                         | description                                     |
+| ------ | ------------------------------------------------------------ | ----------------------------------------------- |
+| config | [`Configuration`](/reference/lucia-auth/types#configuration) | refer to [Configuration](/basics/configuration) |
 
 #### Returns
 
-| type                              |
-| --------------------------------- |
-| [`Auth`](/reference/api/api#auth) |
+| type                                 |
+| ------------------------------------ |
+| [`Auth`](/reference/lucia-auth/auth) |
 
 ## `LuciaError`
 

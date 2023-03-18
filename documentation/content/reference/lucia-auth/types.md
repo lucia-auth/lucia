@@ -21,10 +21,10 @@ type Adapter = {
 	SessionAdapter;
 ```
 
-| type                                                     |
-| -------------------------------------------------------- |
-| [`SessionAdapter`](/reference/lucia-auth/sessionadapter) |
-| [`UserAdapter`](/reference/lucia-auth/useradapter)       |
+| type                                                           |
+| -------------------------------------------------------------- |
+| [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter) |
+| [`UserAdapter`](/reference/lucia-auth/types#useradapter)       |
 
 ## `Configuration`
 
@@ -70,10 +70,10 @@ type MaybePromise<T> = T | Promise<T>;
 type Key = SingleUseKey | PersistentKey;
 ```
 
-| type                                                        |
-| ----------------------------------------------------------- |
-| [`SingleUseKey`](/reference/api/lucia-types#singleusekey)   |
-| [`PersistentKey`](/reference/api/lucia-types#persistentkey) |
+| type                                                         |
+| ------------------------------------------------------------ |
+| [`SingleUseKey`](/reference/lucia-auth/types#singleusekey)   |
+| [`PersistentKey`](/reference/lucia-auth/types#persistentkey) |
 
 ## `KeySchema`
 
@@ -102,7 +102,7 @@ declare namespace Lucia {
 
 ### `Auth`
 
-Should be set to [`Auth`](/reference/api/auth).
+Should be set to [`Auth`](/reference/lucia-auth/auth).
 
 #### Example
 
@@ -193,14 +193,14 @@ type Session = {
 
 #### Properties
 
-| name                | type                 | description                                                                       |
-| ------------------- | -------------------- | --------------------------------------------------------------------------------- |
-| activePeriodExpires | `Date`               | time of the [active period](/learn/start-here/concepts#session-states) expiration |
-| idlePeriodExpires   | `Date`               | time of the [idle period](/learn/start-here/concepts#session-states) expiration   |
-| isFresh             | `boolean`            | `true` if the session was newly created (including on renewal)                    |
-| sessionId           | `string`             | session id                                                                        |
-| state               | `"active" \| "idle"` | [session state](/learn/start-here/concepts#session-states)                        |
-| userId              | `string`             | user id of the user of the session                                                |
+| name                | type                 | description                                                                 |
+| ------------------- | -------------------- | --------------------------------------------------------------------------- |
+| activePeriodExpires | `Date`               | time of the [active period](/start-here/concepts#session-states) expiration |
+| idlePeriodExpires   | `Date`               | time of the [idle period](/start-here/concepts#session-states) expiration   |
+| isFresh             | `boolean`            | `true` if the session was newly created (including on renewal)              |
+| sessionId           | `string`             | session id                                                                  |
+| state               | `"active" \| "idle"` | [session state](/start-here/concepts#session-states)                        |
+| userId              | `string`             | user id of the user of the session                                          |
 
 ## `SessionAdapter`
 
@@ -266,7 +266,7 @@ const isExpired: () => boolean;
 
 ## `User`
 
-Return type of [`transformUserData()`]() config.
+Return type of [`transformUserData()`](/basics/configuration#transformuserdata) config.
 
 ```ts
 type User = ReturnType<typeof transformUserData>;
@@ -322,10 +322,10 @@ type UserData = {
 } & Required<Lucia.UserAttributes>;
 ```
 
-| name | type                                                                | description                        |
-| ---- | ------------------------------------------------------------------- | ---------------------------------- |
-| id   | `string`                                                            | user id of the user                |
-|      | [`Lucia.UserAttributes`](/reference/api/lucia-types#userattributes) | additional columns in `user` table |
+| name | type                                                                 | description                        |
+| ---- | -------------------------------------------------------------------- | ---------------------------------- |
+| id   | `string`                                                             | user id of the user                |
+|      | [`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes) | additional columns in `user` table |
 
 ## `UserSchema`
 
@@ -335,6 +335,6 @@ type UserSchema = {
 } & Lucia.UserAttributes;
 ```
 
-| type                       |
-| -------------------------- |
-| [`Lucia.UserAttributes`]() |
+| type                                                                 |
+| -------------------------------------------------------------------- |
+| [`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes) |

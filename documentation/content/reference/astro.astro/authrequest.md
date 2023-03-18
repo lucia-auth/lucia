@@ -30,7 +30,7 @@ const constructor: (
 
 | name            | type                                                                                 | description                                                                                                                                                                        |
 | --------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| auth            | [`Auth`](/reference/api/auth)                                                        | Lucia instance                                                                                                                                                                     |
+| auth            | [`Auth`](/reference/lucia-auth/auth)                                                        | Lucia instance                                                                                                                                                                     |
 | context.request | [`Request` ](https://developer.mozilla.org/en-US/docs/Web/API/Request)               | request from [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) or [`APIContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context) |
 | context.cookies | [`Astro.cookies`](https://docs.astro.build/en/reference/api-reference/#astrocookies) | Astro's `cookies` from `Astro` or `APIContext`                                                                                                                                     |
 
@@ -58,7 +58,7 @@ export const post: APIRoute = async (context) => {
 
 ## `setSession()`
 
-Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/auth#invalidatesession).
+Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession).
 
 ```ts
 const setSession: (session: Session | null) => void;
@@ -68,7 +68,7 @@ const setSession: (session: Session | null) => void;
 
 | name    | type                                                | description        |
 | ------- | --------------------------------------------------- | ------------------ |
-| session | [`Session`](/reference/api/types#session)` \| null` | the session to set |
+| session | [`Session`](/reference/lucia-auth/types#session)` \| null` | the session to set |
 
 #### Example
 
@@ -100,7 +100,7 @@ const validate: () => Promise<Session | null>;
 
 | type                                                | description               |
 | --------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
+| [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
 
 #### Example
 
@@ -127,8 +127,8 @@ const validate: () => Promise<{
 
 | name    | type                                                | description               |
 | ------- | --------------------------------------------------- | ------------------------- |
-| session | [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
-| user    | [`User`](/reference/api/types#user)` \| null`       | `null` if unauthenticated |
+| session | [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
+| user    | [`User`](/reference/lucia-auth/types#user)` \| null`       | `null` if unauthenticated |
 
 #### Example
 

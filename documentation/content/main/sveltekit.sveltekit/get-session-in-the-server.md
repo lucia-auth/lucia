@@ -5,13 +5,13 @@ title: "Get session in the server"
 
 This is for actions, standalone endpoints, and server load functions (ie. for +page.server.ts and +server.ts files).
 
-Inside `locals`, Lucia provides [`validate()`](/sveltekit/api-reference/locals-api#validate) method which will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
+Inside `locals`, Lucia provides [`validate()`](/reference/sveltekit/locals-api#validate) method which will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
 
 ```ts
 const session = await locals.validate();
 ```
 
-Alternatively, you can use [`locals.validateUser()`](/sveltekit/api-reference/locals-api#validateuser) which works similarly to `locals.validate()` but returns both the user and session without an additional database call.
+Alternatively, you can use [`locals.validateUser()`](/reference/sveltekit/locals-api#validateuser) which works similarly to `locals.validate()` but returns both the user and session without an additional database call.
 
 ```ts
 const { session, user } = await locals.validateUser();

@@ -5,7 +5,7 @@ _order: 1
 
 ## `LuciaQueryHandler`
 
-Refer to [Testing adapters]().
+Refer to [Testing adapters](/adapters/testing-adapters).
 
 ```ts
 type LuciaQueryHandler = {

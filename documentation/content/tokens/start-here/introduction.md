@@ -2,7 +2,7 @@
 title: "Introduction"
 ---
 
-The tokens integration provides wrappers to more easily implement tokens using Lucia's [single-use keys](/learn/basics/keys#persistent-vs-single-use). There are few important limitations to this approach:
+The tokens integration provides wrappers to more easily implement tokens using Lucia's [single-use keys](/basics/keys#single-use-keys). There are few important limitations to this approach:
 
 1. You cannot store custom attributes to tokens
 2. Tokens must be linked to a single user

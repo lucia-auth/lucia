@@ -9,7 +9,7 @@ While you can (and should) have multiple keys with the same provider id, the com
 
 > The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used.
 
-## Persistent keys
+### Persistent keys
 
 The first type of keys are persistent keys. These persist across multiple usages in contrast to single use keys (defined below) which are consumed after a single use. These are useful for traditional email/password sign ins and OAuth sign ins.
 
@@ -17,17 +17,17 @@ When authenticating users (log in), you get the user data from an external provi
 
 For example, for email/password, "email" can be the provider id, the user’s email can be the provider user id, and the user's password can be stored as the key's password. For Github OAuth, "github" can be the provider id and the user’s GitHub user id can be the provider user id.
 
-### Primary keys
+#### Primary keys
 
 Primary keys are a special type of persistent key. They are created when the user is created and can only be deleted when the user is deleted. This ensures the authentication method the user used for creating the account cannot be deleted (leading to a lockout) if someone else gains access to it.
 
-### Persistent vs. Single use
+### Single use keys
 
 Single use keys are single use only and are deleted on read. You can also configure a single use key to expire after a set duration of time. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
 
 ## Use keys
 
-You can validate both persistent and single-use keys with [`useKey()`](/reference/api/auth#usekey) using the provided password (can be `null`) and current time.
+You can validate both persistent and single-use keys with [`useKey()`](/reference/lucia-auth/auth#usekey) using the provided password (can be `null`) and current time.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -53,7 +53,7 @@ try {
 
 ## Get key
 
-There's also [`getKey()`](/reference/api/auth#getkey) to retrieve keys. However, you cannot validate passwords, and more importantly, this will **NOT** check the key's expiration for single use keys.
+There's also [`getKey()`](/reference/lucia-auth/auth#getkey) to retrieve keys. However, you cannot validate passwords, and more importantly, this will **NOT** check the key's expiration for single use keys.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -67,7 +67,7 @@ try {
 
 ### Get all keys of a user
 
-You can get all keys belonging to a user using [`getAllUserKeys()`](/reference/api/auth#getalluserkeys). As with `getKey()` above, this will not check for the key's expiration.
+You can get all keys belonging to a user using [`getAllUserKeys()`](/reference/lucia-auth/auth#getalluserkeys). As with `getKey()` above, this will not check for the key's expiration.
 
 ```ts
 try {
@@ -80,7 +80,7 @@ try {
 
 ## Create new keys
 
-You can create a new key for a user using [`createKey()`](/reference/api/auth#createkey).
+You can create a new key for a user using [`createKey()`](/reference/lucia-auth/auth#createkey).
 
 ### Persistent keys
 
@@ -119,7 +119,7 @@ try {
 
 ## Update key passwords
 
-You can update the password of a key with [`updateKeyPassword()`](/reference/api/auth#updatekeypassword). You can pass in `null` to remove the password.
+You can update the password of a key with [`updateKeyPassword()`](/reference/lucia-auth/auth#updatekeypassword). You can pass in `null` to remove the password.
 
 ```ts
 try {
@@ -131,7 +131,7 @@ try {
 
 ## Delete key
 
-You can delete a non-primary key with [`deleteKey()`](/reference/api/auth#deletekey). You cannot delete primary keys with this method. This will succeed regardless of the validity of key.
+You can delete a non-primary key with [`deleteKey()`](/reference/lucia-auth/auth#deletekey). You cannot delete primary keys with this method. This will succeed regardless of the validity of key.
 
 ```ts
 try {

@@ -21,9 +21,9 @@ const getUser: () => Readable<User | null>;
 
 `null` if unauthorized.
 
-| type       | description  |
-| ---------- | ------------ |
-| [`User`]() | current user |
+| type                                       | description  |
+| ------------------------------------------ | ------------ |
+| [`User`](/reference/lucia-auth/types#user) | current user |
 
 #### Example
 
