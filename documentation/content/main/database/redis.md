@@ -14,10 +14,10 @@ const adapter: (redisClient: {
 
 ### Parameter
 
-| name                    | type            | description                                                   | optional |
-| ----------------------- | --------------- | ------------------------------------------------------------- | -------- |
-| redisClient.session     | RedisClientType | client for Redis database for storing sessions                |          |
-| redisClient.userSession | RedisClientType | client for Redis database for storing user-sessions relations |          |
+| name                    | type            | description                                                   |
+| ----------------------- | --------------- | ------------------------------------------------------------- |
+| redisClient.session     | RedisClientType | client for Redis database for storing sessions                |
+| redisClient.userSession | RedisClientType | client for Redis database for storing user-sessions relations |
 
 ### Errors
 

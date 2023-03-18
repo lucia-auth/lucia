@@ -151,10 +151,10 @@ const contributePageUrl = new URL(
 		@apply overflow-auto whitespace-nowrap w-full;
 	}
 	:global(#md table thead tr) {
-		@apply border-b w-full;
+		@apply border-b w-full border-zinc-200;
 	}
 	:global(#md table :is(td, th)) {
-		@apply py-1.5 px-1 border-b;
+		@apply py-1.5 px-1 border-b border-zinc-200;
 	}
 	:global(.dark #md table :is(td, tr, th)) {
 		@apply border-black-zinc;
@@ -175,7 +175,7 @@ const contributePageUrl = new URL(
 		@apply bg-red-500 border-red-500 bg-opacity-20;
 	}
 	:global(#md img) {
-		@apply bg-gray-100 w-full appearance-none text-transparent border rounded-md;
+		@apply bg-gray-100 w-full appearance-none text-transparent border rounded-md border-zinc-200;
 	}
 	:global(#md strong) {
 		@apply font-semibold;

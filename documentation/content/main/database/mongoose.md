@@ -15,9 +15,9 @@ This adapter will not handle database connection and you will need to connect to
 
 ### Parameter
 
-| name     | type       | description     | optional |
-| -------- | ---------- | --------------- | -------- |
-| mongoose | `Mongoose` | Mongoose client |          |
+| name     | type       | description     |
+| -------- | ---------- | --------------- |
+| mongoose | `Mongoose` | Mongoose client |
 
 ### Errors
 
