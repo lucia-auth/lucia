@@ -7,6 +7,8 @@ Lucia uses adapters to connect to your database. The following chart shows the b
 
 ## `user`
 
+Schema: [`UserSchema`]()
+
 The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/learn/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
 
 | name  | type                   | unique | description                                       |
@@ -14,16 +16,15 @@ The `user` table stores the users. The `[any]` column represents the any number 
 | id    | string (min. 15 chars) | true   |                                                   |
 | [any] | any                    | any    | this represents any number of columns of any name |
 
-### Schema type
-
 ```ts
-// type imported from "lucia-auth/adapter"
 type UserSchema = {
 	id: string;
 } & Lucia.UserAttributes;
 ```
 
 ## `session`
+
+Schema: [`SessionSchema`]()
 
 The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/reference/api/configuration#adapter) config.
 
@@ -34,10 +35,7 @@ The `session` table stores the user's sessions. You do not need this if you're u
 | active_expires | number (int8) |        |           | the expiration time (unix) of the session (active) |
 | idle_expires   | number (int8) |        |           | the expiration time (unix) for the idle period     |
 
-### Schema type
-
 ```ts
-// type imported from "lucia-auth/adapter"
 type SessionSchema = {
 	id: string;
 	active_expires: number;
@@ -47,6 +45,8 @@ type SessionSchema = {
 ```
 
 ## `key`
+
+Schema: [`KeySchema`]()
 
 The `key` table stores the user's keys.
 
@@ -58,10 +58,7 @@ The `key` table stores the user's keys.
 | hashed_password | string \| null |        |           | hashed password of the key                               |
 | expires         | number \| null |        |           | expiration for key if defined (`number`)                 |
 
-### Schema type
-
 ```ts
-// type imported from "lucia-auth/adapter"
 type KeySchema = {
 	id: string;
 	user_id: string;

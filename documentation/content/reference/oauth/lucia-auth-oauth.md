@@ -1,12 +1,12 @@
 ---
-_order: 1
-title: "API"
+_order: 0
+title: "Main (/)"
 ---
 
 These can be imported from `@lucia-auth/oauth`.
 
 ```ts
-import type { provider } from "@lucia-auth/oauth";
+import type { generateState } from "@lucia-auth/oauth";
 ```
 
 ## `generateState`
@@ -25,23 +25,7 @@ const generateState: () => string;
 
 ## `LuciaOAuthRequestError`
 
-Error thrown if a request to a provider failed.
-
-```ts
-class LuciaOAuthRequestError extends Error {
-    status: number,
-    body: Record<string, any> | null
-    message: "REQUEST_FAILED"
-}
-```
-
-#### Properties
-
-| name    | type                          | description                                        |
-| ------- | ----------------------------- | -------------------------------------------------- |
-| status  | `number`                      | response status                                    |
-| body    | `Record<string, any> \| null` | JSON parsed response body, `null` if parsing fails |
-| message | `string`                      | error message                                      |
+Refer to [`LuciaOAuthRequestError`]().
 
 ## `provider`
 

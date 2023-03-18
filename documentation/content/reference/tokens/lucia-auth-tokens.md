@@ -1,5 +1,5 @@
 ---
-title: "@lucia-auth/tokens"
+title: "Main (/)"
 _order: 0
 ---
 

@@ -27,7 +27,7 @@ const reddit: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => RedditProvider;
+) => OAuthProvider<RedditUser, RedditTokens>;;
 ```
 
 #### Parameter

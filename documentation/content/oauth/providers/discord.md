@@ -29,7 +29,7 @@ const discord: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider;
+) => OAuthProvider<DiscordUser, DiscordTokens>;
 ```
 
 #### Parameter

@@ -45,5 +45,6 @@ Lucia aims to work well with any modern web framework and supports run-times oth
 - Redis integration: `@lucia-auth/adapter-session-redis`
 - Astro integration: `@lucia-auth/astro`
 - Next.js integration: `@lucia-auth/next-js`
-- OAuth integration: `@lucia-auth/oauth`
 - SvelteKit integration: `@lucia-auth/sveltekit`
+- OAuth integration: `@lucia-auth/oauth`
+- Tokens integration: `@lucia-auth/tokens`

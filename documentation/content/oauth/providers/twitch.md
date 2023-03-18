@@ -28,7 +28,7 @@ const twitch: (
 		forceVerify?: boolean;
 		scope?: string[];
 	}
-) => TwitchProvider;
+) => OAuthProvider<TwitchUser, TwitchTokens>;;
 ```
 
 #### Parameter

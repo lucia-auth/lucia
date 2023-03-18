@@ -1,9 +1,9 @@
 ---
 _order: 0
-title: "Server API"
+title: "Main (/)"
 ---
 
-These can be imported from `@lucia-auth/sveltekit`.
+These can be imported from `@lucia-auth/sveltekit` and should only be imported in the server.
 
 ```ts
 import { handleHooks } from "@lucia-auth/sveltekit";

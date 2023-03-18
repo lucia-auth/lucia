@@ -8,8 +8,9 @@ All [known errors](/learn/basics/error-handling#known-errors) are thrown as `Luc
 ```ts
 class LuciaError extends Error {}
 ```
+## properties
 
-## `message`
+### `message`
 
 The error message.
 

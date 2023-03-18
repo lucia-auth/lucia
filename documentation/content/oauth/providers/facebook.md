@@ -29,7 +29,7 @@ const facebook: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider;
+) => OAuthProvider<FacebookUser, FacebookTokens>;
 ```
 
 #### Parameter

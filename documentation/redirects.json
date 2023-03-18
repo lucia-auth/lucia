@@ -1,7 +1,7 @@
 [
 	{
 		"from": "/reference",
-		"to": "/reference/lucia-auth/overview"
+		"to": "/reference/lucia-auth/lucia-auth"
 	},
     {
 		"from": "/tokens",

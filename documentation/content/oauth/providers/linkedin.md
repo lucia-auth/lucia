@@ -27,7 +27,7 @@ const linkedin: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider;
+) => OAuthProvider<LinkedInUser, LinkedInTokens>;;
 ```
 
 #### Parameter

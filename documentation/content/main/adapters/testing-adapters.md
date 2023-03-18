@@ -11,118 +11,84 @@ pnpm add @lucia-auth/adapter-test
 yarn add @lucia-auth/adapter-test
 ```
 
-## Testing
+[`@lucia-auth/adapter-test`]() for a full reference.
 
-### Database
+## Setup
+
+### Database model
 
 Add `username` to `user` table (`string`, unique).
 
+```ts
+type TestUserSchema = UserSchema & {
+	username: string;
+};
+```
+
 ### Type declaration
 
-You may need to declare the `Lucia` and SvelteKit's `App` namespace in a `.d.ts` file.
+You may need to declare the `Lucia` namespace in a `.d.ts` file.
 
 ```ts
+// lucia.d.ts
 declare namespace Lucia {
 	type Auth = any;
 	type UserAttributes = {
 		username: string;
 	};
 }
-
-declare namespace App {
-	interface Locals {}
-}
 ```
 
-## Reference
+## Query handler
 
-These can be imported from the package:
+The test functions require a [`LuciaQueryHandler`]() to interact with the database.
+
+```ts
+type LuciaQueryHandler = {
+	user?: QueryHandler<TestUserSchema>;
+	session?: QueryHandler<SessionSchema>;
+	key?: QueryHandler<KeySchema>;
+};
+
+type QueryHandler<Schema> = {
+	get: () => Promise<Schema[]>;
+	insert: (data: Schema) => Promise<void>;
+	clear: () => Promise<void>;
+};
+```
+
+### `get()`
+
+Gets all stored data from the table.
+
+```ts
+const: get: () => Promise<Schema[]>
+```
+
+### `insert()`
+
+Adds the provided data to table.
+
+```ts
+const insert: (data: Schema) => Promise<void>;
+```
+
+### `clear()`
+
+Clears all stored data from table.
+
+```ts
+const clear: () => Promise<void>;
+```
+
+## Running tests
+
+Import one of the three testing function and provide both the adapter and query handler:
 
 ```ts
 import { testAdapter } from "@lucia-auth/adapter-test";
-```
+import { LuciaError } from "lucia-auth";
 
-### `testAdapter()`
-
-Runs tests that checks if the adapter interacts with the database correctly.
-
-```ts
-const testAdapter: (adapter: Adapter, db: Database) => Promise<void>;
-```
-
-### `testAdapterErrors()`
-
-Runs tests that checks if the adapter throws the correct errors. Used for testing officially supported adapters but is not required to pass for it to be used with Lucia.
-
-```ts
-const testAdapterErrors: (adapter: Adapter, db: Database) => Promise<void>;
-```
-
-### `testAdapterUserIdGeneration()`
-
-Runs tests that checks if the database can create its own id (for `user`). Change `user(id)` to `UUID` or other auto-generated ids.
-
-```ts
-const testAdapter: (adapter: Adapter, db: Database) => Promise<void>;
-```
-
-### `testSessionAdapter()`
-
-`testAdapter()` but for adapters only for `session` table.
-
-```ts
-const testSessionAdapter: (
-	adapter: SessionAdapter,
-	db: Database
-) => Promise<void>;
-```
-
-### `testSessionAdapterErrors`
-
-`testAdapterErrors()` but for adapters only for `session` table.
-
-```ts
-const testSessionAdapterErrors: (
-	adapter: SessionAdapter,
-	db: Database
-) => Promise<void>;
-```
-
-### `testUserAdapter()`
-
-`testAdapter()` but for adapters only for `user` table.
-
-```ts
-const testUserAdapter: (adapter: UserAdapter, db: Database) => Promise<void>;
-```
-
-### `testUserAdapterErrors`
-
-`testAdapterErrors()` but for adapters only for `user` table.
-
-```ts
-const testUserAdapterErrors: (
-	adapter: UserAdapter,
-	db: Database
-) => Promise<void>;
-```
-
-## Types
-
-### `Database`
-
-Provides methods to add, get, and delete from each table. `get` methods return all data inside the table and `clear` methods deletes everything from the table.
-
-```ts
-export type Database = {
-	getUsers: () => Promise<UserSchema[]>;
-	getSessions: () => Promise<SessionSchema[]>;
-	getKeys: () => Promise<KeySchema[]>;
-	clearUsers: () => Promise<void>;
-	clearSessions: () => Promise<void>;
-	clearKeys: () => Promise<void>;
-	insertUser: (data: UserSchema) => Promise<void>;
-	insertSession: (data: SessionSchema) => Promise<void>;
-	insertKey: (data: KeySchema) => Promise<void>;
-};
+const adapter = adapterKysely()(LuciaError);
+await testAdapter(adapter, queryHandler);
 ```

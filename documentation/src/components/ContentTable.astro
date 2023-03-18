@@ -21,13 +21,13 @@ if (!collection) throw new Error();
 const currentPathname = Astro.url.pathname;
 ---
 
-<div class="fixed w-80 h-screen pb-8 pt-20 bg-zinc-80 overflow-hidden">
+<div class="fixed w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden">
 	<div class="ml-8 mr-4 border-b py-6 border-zinc-200">
 		{!!collection.title && <p class="text-lg font-semibold">{collection.title}</p>}
 		<FrameworkButton client:idle current={frameworkId} />
 	</div>
 	<div
-		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2"
+		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2 bg-zinc-80"
 	>
 		{
 			collection.sections.map((section) => {

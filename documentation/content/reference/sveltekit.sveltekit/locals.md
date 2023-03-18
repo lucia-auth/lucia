@@ -1,9 +1,20 @@
 ---
-_order: 1
-title: "Locals API (server)"
+_order: 2
+title: "Locals"
 ---
 
-These are available inside `locals` from SvelteKit's `ServerRequest`.
+```ts
+type Locals = {
+	setSession: (session: Session | null) => void;
+	validate: () => Promise<Session | null>;
+	validateUser: () => Promise<{
+		session: Session;
+		user: User;
+	} | null>;
+};
+```
+
+This is the type for `locals` inside SvelteKit's `ServerRequest`.
 
 ```ts
 import type { Action } from "@sveltejs/kit";
@@ -16,6 +27,32 @@ const action: Action = async ({ locals }) => {
 ### Caching
 
 Methods that returns some data, specifically [`validate()`](/sveltekit/api-reference/locals-api#validate) and [`validateUser()`](/sveltekit/api-reference/locals-api#validateuser), will cache its result on initial call. This means that within a single request (page load), the session will only be validated once, and thus only a single database call made, regardless of how many times the function is called. If `validateUser()` was used first, `validate()` will use the cache from it. When used within load functions, it allows you to get the current session without awaiting for the parent load function and sending another database call, improving page loads.
+
+## `setSession()`
+
+Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/auth#invalidatesession).
+
+```ts
+const setSession: (session: Session | null) => void;
+```
+
+#### Parameter
+
+| name    | type                                                | description        |
+| ------- | --------------------------------------------------- | ------------------ |
+| session | [`Session`](/reference/api/types#session)` \| null` | the session to set |
+
+#### Example
+
+```ts
+import { auth } from "$lib/server/lucia";
+import type { Action } from "@sveltejs/kit";
+
+const action: Action = async ({ locals }) => {
+	const session = await auth.createSession();
+	locals.setSession(session);
+};
+```
 
 ## `validate()`
 
@@ -78,31 +115,5 @@ const action: Action = async ({ locals }) => {
 	if (!session) {
 		// invalid
 	}
-};
-```
-
-## `setSession()`
-
-Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/auth#invalidatesession).
-
-```ts
-const setSession: (session: Session | null) => void;
-```
-
-#### Parameter
-
-| name    | type                                                | description        |
-| ------- | --------------------------------------------------- | ------------------ |
-| session | [`Session`](/reference/api/types#session)` \| null` | the session to set |
-
-#### Example
-
-```ts
-import { auth } from "$lib/server/lucia";
-import type { Action } from "@sveltejs/kit";
-
-const action: Action = async ({ locals }) => {
-	const session = await auth.createSession();
-	locals.setSession(session);
 };
 ```

@@ -1,15 +1,9 @@
 ---
-_order: 0
+_order: 1
 title: "Auth"
 ---
 
 Instance returned by [`lucia()`](/reference/api/api#lucia). Errors can be [`LuciaError`](/reference/api/luciaerror) or ones thrown from the database query library.
-
-```ts
-class Auth {
-	// ...
-}
-```
 
 ## `createKey()`
 

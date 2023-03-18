@@ -1,6 +1,6 @@
 ---
 _order: 1
-title: "Client API"
+title: "/client"
 ---
 
 These can be imported from `@lucia-auth/nextjs/client`. Errors are thrown using the standard Error().

@@ -18,13 +18,18 @@ import Github from "./icons/Github.astro";
 			/>
 			<p class="text-2xl font-semibold">Lucia</p>
 		</a>
-		<div class="flex gap-x-4 place-items-center pointer-events-auto">
-			<a class="border-r px-2" href="/reference">Reference</a>
-			<Discord />
-			<Github />
-			<ThemeButton client:load />
+		<div class="flex place-items-center pointer-events-auto divide-x">
+			<a
+				class="px-2 block rounded py-0.5 hover:bg-zinc-100 my-1 mr-4 hover:text-zinc-800"
+				href="/reference">Reference</a
+			>
+			<div class="flex gap-x-4 place-items-center pl-4">
+				<Discord />
+				<Github />
+				<ThemeButton client:load />
 
-			<MenuButton client:load />
+				<MenuButton client:load />
+			</div>
 		</div>
 	</div>
 </div>

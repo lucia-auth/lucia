@@ -1,6 +1,6 @@
 ---
 _order: 0
-title: "lucia-auth"
+title: "Main (/)"
 ---
 
 These can be imported from `lucia-auth` and should only be used inside a server context.
@@ -9,32 +9,7 @@ These can be imported from `lucia-auth` and should only be used inside a server 
 import { generateRandomString } from "lucia-auth";
 ```
 
-## `lucia()`
-
-Creates a new `Auth` instance.
-
-```ts
-const lucia: (config: Configuration) => Auth;
-```
-
-This is exported as default:
-
-```ts
-import lucia from "lucia-auth";
-import { default as lucia } from "lucia-auth";
-```
-
-#### Parameter
-
-| name   | type            | description                                                                                         |
-| ------ | --------------- | --------------------------------------------------------------------------------------------------- |
-| config | `Configuration` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
-
-#### Returns
-
-| type                              |
-| --------------------------------- |
-| [`Auth`](/reference/api/api#auth) |
+For exported types, refer to [Public types]().
 
 ## `generateRandomString()`
 
@@ -74,13 +49,36 @@ const randomString = generateRandomString(8);
 const auth = lucia(configs);
 ```
 
-## `LuciaError`
+## `lucia()`
 
-Refer to [Error reference](/reference/types/errors).
+Creates a new `Auth` instance.
 
 ```ts
-class LuciaError extends Error {}
+const lucia: (config: Configuration) => Auth;
 ```
+
+This is exported as default:
+
+```ts
+import lucia from "lucia-auth";
+import { default as lucia } from "lucia-auth";
+```
+
+#### Parameter
+
+| name   | type            | description                                                                                         |
+| ------ | --------------- | --------------------------------------------------------------------------------------------------- |
+| config | `Configuration` | options for Lucia - refer to [Lucia configurations](/reference/configurations/lucia-configurations) |
+
+#### Returns
+
+| type                              |
+| --------------------------------- |
+| [`Auth`](/reference/api/api#auth) |
+
+## `LuciaError`
+
+Refer to [Error reference](/reference/lucia-auth/luciaerror).
 
 ## `SESSION_COOKIE_NAME`
 

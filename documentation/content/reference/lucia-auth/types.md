@@ -1,9 +1,9 @@
 ---
-_order: 3
-title: "Types"
+title: "Public types"
+_order: 0
 ---
 
-Types can be imported from `lucia-auth`.
+These types can be imported from `lucia-auth`:
 
 ```ts
 import type { Adapter } from "lucia-auth";
@@ -11,47 +11,60 @@ import type { Adapter } from "lucia-auth";
 
 ## `Adapter`
 
-Refer to [Adapters](/reference/adapters/api) reference.
-
-## `AdapterFunction`
-
-Refer to [Adapters](/reference/adapters/api) reference. `LuciaErrorConstructor` is the constructor function (class reference) of [`LuciaError`](/reference/api/luciaerror).
-
 ```ts
-export type AdapterFunction<A extends Adapter | UserAdapter | SessionAdapter> =
-	(LuciaError: LuciaErrorConstructor) => A;
+type Adapter = {
+	getSessionAndUserBySessionId?: (sessionId: string) => Promise<{
+		user: UserSchema;
+		session: SessionSchema;
+	} | null>;
+} & UserAdapter &
+	SessionAdapter;
 ```
 
-## `Cookie`
+| type                                                     |
+| -------------------------------------------------------- |
+| [`SessionAdapter`](/reference/lucia-auth/sessionadapter) |
+| [`UserAdapter`](/reference/lucia-auth/useradapter)       |
+
+## `Configuration`
+
+Refer to [Configuration](/basics/configuration) for full documentation.
 
 ```ts
-type Cookie = {
-	name: string;
-	value: string;
-	attributes: Record<string, any>;
-	serialize: () => string;
+type Configuration = {
+	// required
+	adapter:
+		| (luciaError: LuciaErrorConstructor) => Adapter
+		| {
+				user: (luciaError: LuciaErrorConstructor) => UserAdapter
+				session: (luciaError: LuciaErrorConstructor) => SessionAdapter
+		  };
+	env: Env;
+
+	// optional
+	autoDatabaseCleanup?: boolean;
+	csrfProtection?: boolean;
+	generateCustomUserId?: () => MaybePromise<string>;
+	hash?: {
+		generate: (s: string) => MaybePromise<string>;
+		validate: (s: string, hash: string) => MaybePromise<boolean>;
+	};
+	sessionCookie?: CookieOption[];
+	sessionTimeout?: {
+		activePeriod: number;
+		idlePeriod: number;
+	};
+	transformUserData?: (userData: UserData) => Record<any, any>;
 };
 ```
 
-#### Properties
-
-| name       | type                  | description                                                                              |
-| ---------- | --------------------- | ---------------------------------------------------------------------------------------- |
-| name       | `string`              |                                                                                          |
-| value      | `string`              |                                                                                          |
-| attributes | `Record<string, any>` | `cookie` NPM package [`serialize()` options](https://github.com/jshttp/cookie#options-1) |
-
-### `serialize()`
-
-Serializes the cookie using the name, value, and options using [`cookies`](https://www.npmjs.com/package/cookie) npm package.
+`MaybePromise` indicates it can be either a normal value or a promise:
 
 ```ts
-const serialize: () => string;
+type MaybePromise<T> = T | Promise<T>;
 ```
 
 ## `Key`
-
-Represents a key.
 
 ```ts
 type Key = SingleUseKey | PersistentKey;
@@ -62,12 +75,24 @@ type Key = SingleUseKey | PersistentKey;
 | [`SingleUseKey`](/reference/api/lucia-types#singleusekey)   |
 | [`PersistentKey`](/reference/api/lucia-types#persistentkey) |
 
+## `KeySchema`
+
+```ts
+type KeySchema = {
+	id: string;
+	user_id: string;
+	primary: boolean;
+	hashed_password: string | null;
+	expires: number | null;
+};
+```
+
 ## `Lucia`
 
 A namespace.
 
 ```ts
-// src/app.d.ts
+// lucia.d.ts
 /// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import("lucia-auth").Auth;
@@ -110,10 +135,6 @@ declare namespace Lucia {
 	}
 }
 ```
-
-## `LuciaError`
-
-Errors thrown by Lucia. Refer to [Errors](/reference/api/errors) for a list of error messages.
 
 ## `MinimalRequest`
 
@@ -183,11 +204,26 @@ type Session = {
 
 ## `SessionAdapter`
 
-Refer to [Adapters](/reference/adapters/api) reference.
+```ts
+type SessionAdapter = {
+	deleteSession: (...sessionIds: string[]) => Promise<void>;
+	deleteSessionsByUserId: (userId: string) => Promise<void>;
+	getSession: (sessionId: string) => Promise<SessionSchema | null>;
+	getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
+	setSession: (session: SessionSchema) => Promise<void>;
+};
+```
 
 ## `SessionSchema`
 
-Refer to [Database model](/reference/adapters/database-model#schema-type-1) reference.
+```ts
+type SessionSchema = {
+	id: string;
+	active_expires: number;
+	idle_expires: number;
+	user_id: string;
+};
+```
 
 ## `SingleUseKey`
 
@@ -214,7 +250,7 @@ type SingleUseKey = {
 | userId         | `string`       | user id of linked user                       |
 | expires        | `Date \| null` | expiration time, `null` if it doesn't expire |
 
-### `isExpired`
+### `isExpired()`
 
 Returns `true` if expired.
 
@@ -230,13 +266,13 @@ const isExpired: () => boolean;
 
 ## `User`
 
-Return type of [`transformUserData()`](/reference/api/configuration#transformuserdata) config.
+Return type of [`transformUserData()`]() config.
 
 ```ts
 type User = ReturnType<typeof transformUserData>;
 ```
 
-### Default
+#### Default
 
 If `transformUserData()` is undefined.
 
@@ -248,7 +284,33 @@ type User = {
 
 ## `UserAdapter`
 
-Refer to [Adapters](/reference/adapters/api) reference.
+```ts
+type UserAdapter = {
+	deleteKeysByUserId: (userId: string) => Promise<void>;
+	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
+	deleteUser: (userId: string) => Promise<void>;
+	getKey: (
+		keyId: string,
+		shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
+	) => Promise<KeySchema | null>;
+	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
+	getUser: (userId: string) => Promise<UserSchema | null>;
+	setKey: (key: KeySchema) => Promise<void>;
+	setUser: (
+		userId: string,
+		attributes: Record<string, any>,
+		key: KeySchema | null
+	) => Promise<UserSchema>;
+	updateKeyPassword: (
+		key: string,
+		hashedPassword: string | null
+	) => Promise<void>;
+	updateUserAttributes: (
+		userId: string,
+		attributes: Record<string, any>
+	) => Promise<UserSchema>;
+};
+```
 
 ## `UserData`
 
@@ -267,4 +329,12 @@ type UserData = {
 
 ## `UserSchema`
 
-Refer to [Database model](/reference/adapters/database-model#schema-type-1) reference.
+```ts
+type UserSchema = {
+	id: string;
+} & Lucia.UserAttributes;
+```
+
+| type                       |
+| -------------------------- |
+| [`Lucia.UserAttributes`]() |

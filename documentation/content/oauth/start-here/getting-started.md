@@ -3,9 +3,9 @@ _order: 0
 title: "Getting started"
 ---
 
-While Lucia doesn't directly support OAuth, we do provide an external library that handles OAuth using Lucia. This is a server-only module.
+While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.
 
-This package currently supports the following providers: Discord, Facebook, Github, Google, Patreon, Reddit, Twitch. You can also add your own providers with [`provider`](/oauth/reference/api#provider) as well.
+Supported providers are listed on the left. You can also add your own providers with [`provider`](/oauth/reference/api#provider) as well.
 
 ## Installation
 

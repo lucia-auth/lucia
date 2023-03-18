@@ -27,7 +27,7 @@ const google: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => GoogleProvider;
+) => OAuthProvider<GoogleUser, GoogleTokens>;;
 ```
 
 #### Parameter

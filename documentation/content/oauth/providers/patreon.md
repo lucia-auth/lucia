@@ -30,7 +30,7 @@ const patreon: (
 		scope?: string[];
 		allMemberships?: boolean;
 	}
-) => PatreonProvider;
+) => OAuthProvider<PatreonUser, PatreonTokens>;;
 ```
 
 #### Parameter

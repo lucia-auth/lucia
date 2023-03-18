@@ -1,9 +1,9 @@
 ---
-_order: 1
+_order: 5
 title: "Configuration"
 ---
 
-Configuration for `lucia()`.
+Configuration for [`lucia()`]().
 
 ```ts
 type Configuration = {
@@ -30,14 +30,6 @@ type Configuration = {
 		idlePeriod: number;
 	};
 	transformUserData?: (userData: UserData) => Record<any, any>;
-};
-```
-
-```ts
-type CookieOption = {
-	sameSite?: "strict" | "lax";
-	path?: string;
-	domain?: string;
 };
 ```
 
@@ -180,6 +172,14 @@ A list of cookie options for setting session cookie(s). Beware that setting the 
 | type             | default                            |
 | ---------------- | ---------------------------------- |
 | `CookieOption[]` | `[{ sameSite: "lax", path: "/" }]` |
+
+```ts
+type CookieOption = {
+	sameSite?: "strict" | "lax";
+	path?: string;
+	domain?: string;
+};
+```
 
 ### `sessionTimeout`
 

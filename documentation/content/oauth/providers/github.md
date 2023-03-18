@@ -26,7 +26,7 @@ const github: (
 		clientSecret: string;
 		scope?: string[];
 	}
-) => OAuthProvider;
+) => OAuthProvider<GithubUser, GithubTokens>;
 ```
 
 #### Parameter

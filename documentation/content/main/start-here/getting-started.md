@@ -27,9 +27,9 @@ You can use Lucia as is, or with one of the provided framework integrations. The
 
 If you're using one of the supported frameworks, follow the "Getting started" guides below instead of this page:
 
-- [SvelteKit](/sveltekit/start-here/getting-started)
-- [Astro](/astro/start-here/getting-started)
-- [Next.js](/nextjs/start-here/getting-started)
+- [SvelteKit](/start-here/getting-started?framework=sveltekit)
+- [Astro](/start-here/getting-started?framework=astro)
+- [Next.js](/start-here/getting-started?framework=nextjs)
 
 ## Initialize Lucia
 
