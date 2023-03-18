@@ -40,11 +40,11 @@ The testing package are documented at [Testing adapters](https://lucia-auth.com/
 
 ## Documentation
 
-The markdown files for documentation are stored in `/documentation/collection`. The documentation site is built with Astro, SolidJS, and Tailwind, though knowledge of these shouldn't be needed for updating the content.
+The markdown files for documentation are stored in `/documentation/content`. The documentation site is built with Astro, SolidJS, and Tailwind, though knowledge of these shouldn't be needed for updating the content.
 
 The documentation uses 2 specialized library:
 
-- [Custom content collection](https://github.com/pilcrowOnPaper/lucia/tree/main/documentation/db): For managing and querying markdown content
+- [Cela](https://github.com/pilcrowOnPaper/lucia/tree/main/documentation/cela): For managing and querying markdown content
 - [Siena](https://github.com/pilcrowOnPaper/siena): For optimizing images
 
 ## Changesets
