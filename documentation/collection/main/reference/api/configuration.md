@@ -87,7 +87,7 @@ Tells Lucia if the app is running on HTTP or HTTPS.
 
 ### `autoDatabaseCleanup`
 
-Will remove [dead sessions](/learn/start-here/concepts#session-states) from the database when certain methods are called.
+Will remove [dead sessions](/learn/basics/sessions#session-states) from the database when certain methods are called.
 
 | type      | default |
 | --------- | ------- |
@@ -185,7 +185,7 @@ A list of cookie options for setting session cookie(s). Beware that setting the 
 
 #### `activePeriod`
 
-The time in milliseconds the [active period](/learn/start-here/concepts#session-states) lasts for - or the time since session creation that it can be used.
+The time in milliseconds the [active period](/learn/basics/sessions#session-states) lasts for - or the time since session creation that it can be used.
 
 | type     | default                          |
 | -------- | -------------------------------- |
@@ -193,7 +193,7 @@ The time in milliseconds the [active period](/learn/start-here/concepts#session-
 
 #### `idlePeriod`
 
-The time in milliseconds the [idle period](/learn/start-here/concepts#session-states) lasts for - or the time since active period expiration that it can be renewed.
+The time in milliseconds the [idle period](/learn/basics/sessions#session-states) lasts for - or the time since active period expiration that it can be renewed.
 
 | type     | default                              |
 | -------- | ------------------------------------ |
