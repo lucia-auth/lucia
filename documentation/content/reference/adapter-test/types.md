@@ -3,6 +3,12 @@ title: "Public types"
 _order: 1
 ---
 
+These can be imported from `@lucia-auth/adapter-test`:
+
+```ts
+import type { LuciaQueryHandler } from "@lucia-auth/adapter-test";
+```
+
 ## `LuciaQueryHandler`
 
 Refer to [Testing adapters](/adapters/testing-adapters).

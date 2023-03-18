@@ -13,7 +13,7 @@ An adapter for [Kysely SQL query builder](https://github.com/koskimas/kysely). T
 const adapter: (
 	db: Kysely<Database>,
 	dialect: "pg" | "mysql" | "better-sqlite3"
-) => AdapterFunction<Adapter>;
+) => () => Adapter;
 ```
 
 ### Parameter

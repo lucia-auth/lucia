@@ -6,7 +6,7 @@ title: "Mongoose (MongoDB)"
 An adapter for Mongoose (MongoDB).
 
 ```ts
-const adapter: (mongoose: Mongoose) => AdapterFunction<Adapter>;
+const adapter: (mongoose: Mongoose) =>() => Adapter;
 ```
 
 If you pass `null` as the user id, the adapter will generate a new `ObjectId` and use the stringified version (24-character hexadecimal string) as the user id.

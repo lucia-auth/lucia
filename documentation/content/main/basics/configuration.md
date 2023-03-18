@@ -9,10 +9,10 @@ Configuration for [`lucia()`](/reference/lucia-auth/lucia-auth#lucia).
 type Configuration = {
 	// required
 	adapter:
-		| AdapterFunction<Adapter>
+		| (luciaError: typeof LuciaError) => Adapter
 		| {
-				user: AdapterFunction<UserAdapter>;
-				session: AdapterFunction<SessionAdapter>;
+				user:(luciaError: typeof LuciaError) => UserAdapter
+				session: (luciaError: typeof LuciaError) => SessionAdapter
 		  };
 	env: Env;
 
@@ -45,27 +45,42 @@ type MaybePromise<T> = T | Promise<T>;
 
 An adapter for your database. If you're using a single database:
 
-| type                                                                                                            |
-| --------------------------------------------------------------------------------------------------------------- |
-| [`AdapterFunction`](/reference/adapters/api#adapterfunction)`<`[`Adapter`](/reference/adapters/api#adapter) `>` |
+```ts
+const adapter: (luciaError: typeof LuciaError) => Adapter;
+```
+
+| type                                             |
+| ------------------------------------------------ |
+| [`LuciaError`](/reference/lucia-auth/luciaerror) |
+| [`Adapter`](/reference/lucia-auth/types#adapter) |
 
 or, it can take a different adapter for each table. A normal `Adapter` can be used for both `adapter.user` and `adapter.session`
-
-#### `user` (required)
-
-An adapter for the database that stores users. Can be a normal `AdapterFunction<Adapter>` adapter.
-
-| type                                                                   |
-| ---------------------------------------------------------------------- |
-| `AdapterFunction<`[`UserAdapter`](/reference/lucia-auth/types#useradapter)`>` |
 
 #### `session` (required)
 
 An adapter for the database that stores sessions.
 
-| type                                                                      |
-| ------------------------------------------------------------------------- |
-| `AdapterFunction<`[`SessionAdapter`](/reference/lucia-auth/types#useradapter)`>` |
+```ts
+const adapter: (luciaError: typeof LuciaError) => SessionAdapter;
+```
+
+| type                                                           |
+| -------------------------------------------------------------- |
+| [`LuciaError`](/reference/lucia-auth/luciaerror)               |
+| [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter) |
+
+#### `user` (required)
+
+An adapter for the database that stores users. Can be a normal `Adapter` function.
+
+```ts
+const adapter: (luciaError: typeof LuciaError) => UserAdapter;
+```
+
+| type                                                     |
+| -------------------------------------------------------- |
+| [`LuciaError`](/reference/lucia-auth/luciaerror)         |
+| [`UserAdapter`](/reference/lucia-auth/types#useradapter) |
 
 ### `env`
 
@@ -209,8 +224,8 @@ const transformUserData: (userData: UserData) => Record<any, any>;
 
 #### Parameter
 
-| name     | type                                        | description                 |
-| -------- | ------------------------------------------- | --------------------------- |
+| name     | type                                               | description                 |
+| -------- | -------------------------------------------------- | --------------------------- |
 | userData | [`UserData`](/reference/lucia-auth/types#userdata) | the user data from database |
 
 #### Returns

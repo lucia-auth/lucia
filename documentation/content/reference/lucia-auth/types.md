@@ -34,10 +34,10 @@ Refer to [Configuration](/basics/configuration) for full documentation.
 type Configuration = {
 	// required
 	adapter:
-		| (luciaError: LuciaErrorConstructor) => Adapter
+		| (luciaError: typeof LuciaError) => Adapter
 		| {
-				user: (luciaError: LuciaErrorConstructor) => UserAdapter
-				session: (luciaError: LuciaErrorConstructor) => SessionAdapter
+				user: (luciaError: typeof LuciaError) => UserAdapter
+				session: (luciaError: typeof LuciaError) => SessionAdapter
 		  };
 	env: Env;
 

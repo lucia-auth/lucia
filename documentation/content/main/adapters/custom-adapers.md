@@ -10,7 +10,7 @@ The value passed onto `adapter` configuration is an adapter function. This funct
 
 ```ts
 const customAdapter = () => {
-	return (luciaError: LuciaErrorConstructor) => ({
+	return (luciaError: typeof LuciaError) => ({
 		// adapter
 	});
 };

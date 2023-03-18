@@ -9,7 +9,7 @@ A session adapter for Redis.
 const adapter: (redisClient: {
 	session: RedisClientType;
 	userSession: RedisClientType;
-}) => AdapterFunction<SessionAdapter>;
+}) => () => SessionAdapter;
 ```
 
 ### Parameter
@@ -70,8 +70,8 @@ userSessionClient.connect();
 
 ### `session`
 
-| key                  | value                                                                                     |
-| -------------------- | ----------------------------------------------------------------------------------------- |
+| key                  | value                                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
 | session id: `string` | stringified [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1): `string` |
 
 ### `userSession`

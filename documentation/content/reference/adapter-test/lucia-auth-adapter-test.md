@@ -9,6 +9,8 @@ These can be imported from `@lucia-auth/adapter-test`:
 import { testAdapter } from "@lucia-auth/adapter-test";
 ```
 
+For exported types, refer to [Public types](/reference/lucia-auth/types).
+
 ## `testAdapter()`
 
 Test [`Adapter`](/reference/lucia-auth/types#adapter).
@@ -23,11 +25,11 @@ const testAdapter: (
 
 #### Parameters
 
-| name         | type               | default | description                                    |
-| ------------ | ------------------ | ------- | ---------------------------------------------- |
-| adapter      | [`Adapter`](/reference/lucia-auth/types#adapter)      |         |                                                |
+| name         | type                                                                   | default | description                                    |
+| ------------ | ---------------------------------------------------------------------- | ------- | ---------------------------------------------- |
+| adapter      | [`Adapter`](/reference/lucia-auth/types#adapter)                       |         |                                                |
 | queryHandler | [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler) |         |                                                |
-| endProcess   | `boolean`          | `true`  | `true` to terminate process on successful test |
+| endProcess   | `boolean`                                                              | `true`  | `true` to terminate process on successful test |
 
 ## `testSessionAdapter()`
 
@@ -43,11 +45,11 @@ const SessionAdapter: (
 
 #### Parameters
 
-| name         | type                 | default | description                                    |
-| ------------ | -------------------- | ------- | ---------------------------------------------- |
-| adapter      | [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter) |         |                                                |
-| queryHandler | [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler)   |         |                                                |
-| endProcess   | `boolean`            | `true`  | `true` to terminate process on successful test |
+| name         | type                                                                   | default | description                                    |
+| ------------ | ---------------------------------------------------------------------- | ------- | ---------------------------------------------- |
+| adapter      | [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter)         |         |                                                |
+| queryHandler | [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler) |         |                                                |
+| endProcess   | `boolean`                                                              | `true`  | `true` to terminate process on successful test |
 
 ## `testUserAdapter()`
 
@@ -63,8 +65,8 @@ const testUserAdapter: (
 
 #### Parameters
 
-| name         | type               | default | description                                    |
-| ------------ | ------------------ | ------- | ---------------------------------------------- |
-| adapter      | [`UserAdapter`](/reference/lucia-auth/types#useradapter)  |         |                                                |
+| name         | type                                                                   | default | description                                    |
+| ------------ | ---------------------------------------------------------------------- | ------- | ---------------------------------------------- |
+| adapter      | [`UserAdapter`](/reference/lucia-auth/types#useradapter)               |         |                                                |
 | queryHandler | [`LuciaQueryHandler`](/reference/adapter-test/types#luciaqueryhandler) |         |                                                |
-| endProcess   | `boolean`          | `true`  | `true` to terminate process on successful test |
+| endProcess   | `boolean`                                                              | `true`  | `true` to terminate process on successful test |

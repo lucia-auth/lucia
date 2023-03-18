@@ -6,7 +6,7 @@ title: "Prisma"
 An adapter for Prisma ORM. Can be used with: SQL, MySQL, PostgreSQL, and SQLite.
 
 ```ts
-const adapter: (client: PrismaClient) => AdapterFunction<Adapter>;
+const adapter: (client: PrismaClient) =>() => Adapter;
 ```
 
 ### Parameter
