@@ -4,12 +4,12 @@ export type Section = {
 	title: string;
 	order: number;
 	documents: {
-		id: string
+		id: string;
 		title: string;
 		href: string;
 		order: number;
 	}[];
-	id: string
+	id: string;
 };
 
 export type Collection = {

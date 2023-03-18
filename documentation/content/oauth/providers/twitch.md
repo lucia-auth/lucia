@@ -28,24 +28,24 @@ const twitch: (
 		forceVerify?: boolean;
 		scope?: string[];
 	}
-) => OAuthProvider<TwitchUser, TwitchTokens>;;
+) => OAuthProvider<TwitchUser, TwitchTokens>;
 ```
 
 #### Parameter
 
-| name                 | type                          | description                                                          | optional |
-| -------------------- | ----------------------------- | -------------------------------------------------------------------- | -------- |
+| name                 | type                                 | description                                                          | optional |
+| -------------------- | ------------------------------------ | -------------------------------------------------------------------- | -------- |
 | auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                       |          |
-| configs.clientId     | `string`                      | Twitch OAuth app client id                                           |          |
-| configs.clientSecret | `string`                      | Twitch OAuth app client secret                                       |          |
-| configs.redirectUri  | `string`                      | one of the authorized redirect URIs                                  |          |
-| configs.forceVerify  | `boolean`                     | forces the user to re-authorize your app’s access to their resources | true     |
-| configs.scope        | `string[]`                    | an array of scopes                                                   | true     |
+| configs.clientId     | `string`                             | Twitch OAuth app client id                                           |          |
+| configs.clientSecret | `string`                             | Twitch OAuth app client secret                                       |          |
+| configs.redirectUri  | `string`                             | one of the authorized redirect URIs                                  |          |
+| configs.forceVerify  | `boolean`                            | forces the user to re-authorize your app’s access to their resources | true     |
+| configs.scope        | `string[]`                           | an array of scopes                                                   | true     |
 
 #### Returns
 
-| type                                                           | description     |
-| -------------------------------------------------------------- | --------------- |
+| type                                              | description     |
+| ------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | Twitch provider |
 
 ## `TwitchTokens`

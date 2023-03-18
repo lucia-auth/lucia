@@ -27,23 +27,23 @@ const reddit: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider<RedditUser, RedditTokens>;;
+) => OAuthProvider<RedditUser, RedditTokens>;
 ```
 
 #### Parameter
 
-| name                 | type                          | description                                       | optional |
-| -------------------- | ----------------------------- | ------------------------------------------------- | -------- |
+| name                 | type                                 | description                                       | optional |
+| -------------------- | ------------------------------------ | ------------------------------------------------- | -------- |
 | auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                    |          |
-| configs.clientId     | `string`                      | Reddit OAuth app client id                        |          |
-| configs.clientSecret | `string`                      | Reddit OAuth app client secret                    |          |
-| configs.redirectUri  | `string`                      | Reddit OAuth app redirect Uri                     |          |
-| configs.scope        | `string[]`                    | an array of scopes (`identiy` is always selected) | true     |
+| configs.clientId     | `string`                             | Reddit OAuth app client id                        |          |
+| configs.clientSecret | `string`                             | Reddit OAuth app client secret                    |          |
+| configs.redirectUri  | `string`                             | Reddit OAuth app redirect Uri                     |          |
+| configs.scope        | `string[]`                           | an array of scopes (`identiy` is always selected) | true     |
 
 #### Returns
 
-| type                                                           | description     |
-| -------------------------------------------------------------- | --------------- |
+| type                                              | description     |
+| ------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | Reddit provider |
 
 ## `RedditTokens`

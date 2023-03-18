@@ -27,23 +27,23 @@ const google: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider<GoogleUser, GoogleTokens>;;
+) => OAuthProvider<GoogleUser, GoogleTokens>;
 ```
 
 #### Parameter
 
-| name                 | type                          | description                    | optional |
-| -------------------- | ----------------------------- | ------------------------------ | -------- |
+| name                 | type                                 | description                    | optional |
+| -------------------- | ------------------------------------ | ------------------------------ | -------- |
 | auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                 |          |
-| configs.clientId     | `string`                      | Google OAuth app client id     |          |
-| configs.clientSecret | `string`                      | Google OAuth app client secret |          |
-| configs.redirectUri  | `string`                      | an authorized redirect URI     |          |
-| configs.scope        | `string[]`                    | an array of scopes             | true     |
+| configs.clientId     | `string`                             | Google OAuth app client id     |          |
+| configs.clientSecret | `string`                             | Google OAuth app client secret |          |
+| configs.redirectUri  | `string`                             | an authorized redirect URI     |          |
+| configs.scope        | `string[]`                           | an array of scopes             | true     |
 
 #### Returns
 
-| type                                                           | description     |
-| -------------------------------------------------------------- | --------------- |
+| type                                              | description     |
+| ------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | Google provider |
 
 ## `GoogleTokens`

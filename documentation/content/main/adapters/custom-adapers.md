@@ -36,8 +36,8 @@ type Adapter = {
 	SessionAdapter;
 ```
 
-| type                                                     |
-| -------------------------------------------------------- |
+| type                                                           |
+| -------------------------------------------------------------- |
 | [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter) |
 | [`UserAdapter`](/reference/lucia-auth/types#useradapter)       |
 

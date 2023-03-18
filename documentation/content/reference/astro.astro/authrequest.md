@@ -30,7 +30,7 @@ const constructor: (
 
 | name            | type                                                                                 | description                                                                                                                                                                        |
 | --------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| auth            | [`Auth`](/reference/lucia-auth/auth)                                                        | Lucia instance                                                                                                                                                                     |
+| auth            | [`Auth`](/reference/lucia-auth/auth)                                                 | Lucia instance                                                                                                                                                                     |
 | context.request | [`Request` ](https://developer.mozilla.org/en-US/docs/Web/API/Request)               | request from [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) or [`APIContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context) |
 | context.cookies | [`Astro.cookies`](https://docs.astro.build/en/reference/api-reference/#astrocookies) | Astro's `cookies` from `Astro` or `APIContext`                                                                                                                                     |
 
@@ -66,8 +66,8 @@ const setSession: (session: Session | null) => void;
 
 #### Parameter
 
-| name    | type                                                | description        |
-| ------- | --------------------------------------------------- | ------------------ |
+| name    | type                                                       | description        |
+| ------- | ---------------------------------------------------------- | ------------------ |
 | session | [`Session`](/reference/lucia-auth/types#session)` \| null` | the session to set |
 
 #### Example
@@ -98,8 +98,8 @@ const validate: () => Promise<Session | null>;
 
 #### Returns
 
-| type                                                | description               |
-| --------------------------------------------------- | ------------------------- |
+| type                                                       | description               |
+| ---------------------------------------------------------- | ------------------------- |
 | [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
 
 #### Example
@@ -125,8 +125,8 @@ const validate: () => Promise<{
 
 #### Returns
 
-| name    | type                                                | description               |
-| ------- | --------------------------------------------------- | ------------------------- |
+| name    | type                                                       | description               |
+| ------- | ---------------------------------------------------------- | ------------------------- |
 | session | [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
 | user    | [`User`](/reference/lucia-auth/types#user)` \| null`       | `null` if unauthenticated |
 

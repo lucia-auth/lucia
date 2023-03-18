@@ -51,8 +51,8 @@ const validateCallback: (
 
 #### Returns
 
-| type                                                                | description       |
-| ------------------------------------------------------------------- | ----------------- |
+| type                                                  | description       |
+| ----------------------------------------------------- | ----------------- |
 | [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
 
 #### Errors

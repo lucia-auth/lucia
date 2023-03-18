@@ -42,8 +42,8 @@ const createKey: (
 
 #### Returns
 
-| type                              | description           |
-| --------------------------------- | --------------------- |
+| type                                     | description           |
+| ---------------------------------------- | --------------------- |
 | [`Key`](/reference/lucia-auth/types#key) | the newly created key |
 
 #### Errors
@@ -100,8 +100,8 @@ const createSession: (userId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                      | description               |
-| ----------------------------------------- | ------------------------- |
+| type                                             | description               |
+| ------------------------------------------------ | ------------------------- |
 | [`Session`](/reference/lucia-auth/types#session) | the newly created session |
 
 #### Errors
@@ -131,14 +131,14 @@ const createSessionCookies: (session: Session | null) => Cookie[];
 
 #### Parameter
 
-| name    | type                                      | description |
-| ------- | ----------------------------------------- | ----------- |
+| name    | type                                             | description |
+| ------- | ------------------------------------------------ | ----------- |
 | session | [`Session`](/reference/lucia-auth/types#session) |             |
 
 #### Returns
 
-| type                                        | description                 |
-| ------------------------------------------- | --------------------------- |
+| type                                               | description                 |
+| -------------------------------------------------- | --------------------------- |
 | [`Cookie`](/reference/lucia-auth/types#cookie)`[]` | an array of session cookies |
 
 #### Example
@@ -171,18 +171,18 @@ const createUser: (data: {
 
 #### Parameter
 
-| name                           | type                                                                | description                                   |
-| ------------------------------ | ------------------------------------------------------------------- | --------------------------------------------- |
-| data.primaryKey                | `null` \| `Record<string, any>`                                     |                                               |
-| data.primaryKey.providerId     | provider id of the key                                              |                                               |
-| data.primaryKey.providerUserId | `string`                                                            | the user id within the provider               |
-| data.primaryKey.password       | `string`                                                            | the password for the key                      |
+| name                           | type                                                                 | description                                   |
+| ------------------------------ | -------------------------------------------------------------------- | --------------------------------------------- |
+| data.primaryKey                | `null` \| `Record<string, any>`                                      |                                               |
+| data.primaryKey.providerId     | provider id of the key                                               |                                               |
+| data.primaryKey.providerUserId | `string`                                                             | the user id within the provider               |
+| data.primaryKey.password       | `string`                                                             | the password for the key                      |
 | data.attributes                | [`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes) | additional user data to store in `user` table |
 
 #### Returns
 
-| type                                | description            |
-| ----------------------------------- | ---------------------- |
+| type                                       | description            |
+| ------------------------------------------ | ---------------------- |
 | [`User`](/reference/lucia-auth/types#user) | the newly created user |
 
 #### Errors
@@ -328,8 +328,8 @@ const getAllUserKeys: (userId: string) => Promise<Key[]>;
 
 #### Returns
 
-| type                                  | description |
-| ------------------------------------- | ----------- |
+| type                                         | description |
+| -------------------------------------------- | ----------- |
 | [`Key`](/reference/lucia-auth/types#key)`[]` |             |
 
 #### Errors
@@ -366,8 +366,8 @@ const getAllUserKeys: (userId: string) => Promise<Session[]>;
 
 #### Returns
 
-| type                                      | description |
-| ----------------------------------------- | ----------- |
+| type                                             | description |
+| ------------------------------------------------ | ----------- |
 | [`Session`](/reference/lucia-auth/types#key)`[]` |             |
 
 #### Errors
@@ -405,8 +405,8 @@ const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
 
 #### Returns
 
-| type                              | description |
-| --------------------------------- | ----------- |
+| type                                     | description |
+| ---------------------------------------- | ----------- |
 | [`Key`](/reference/lucia-auth/types#key) | target key  |
 
 #### Errors
@@ -443,8 +443,8 @@ const getSessionUser: (sessionId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                      | description                   |
-| ----------------------------------------- | ----------------------------- |
+| type                                             | description                   |
+| ------------------------------------------------ | ----------------------------- |
 | [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
 
 #### Errors
@@ -489,8 +489,8 @@ const getSessionUser: (
 
 #### Returns
 
-| name    | type                                      | description                   |
-| ------- | ----------------------------------------- | ----------------------------- |
+| name    | type                                             | description                   |
+| ------- | ------------------------------------------------ | ----------------------------- |
 | session | [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
 | user    | [`User`](/reference/lucia-auth/types#user)       | the user of the session       |
 
@@ -528,8 +528,8 @@ const getUser: (userId: string) => Promise<User>;
 
 #### Returns
 
-| type                                | description               |
-| ----------------------------------- | ------------------------- |
+| type                                       | description               |
+| ------------------------------------------ | ------------------------- |
 | [`User`](/reference/lucia-auth/types#user) | the user with the user id |
 
 #### Errors
@@ -618,8 +618,8 @@ const renewSession: (sessionId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                      | description               |
-| ----------------------------------------- | ------------------------- |
+| type                                             | description               |
+| ------------------------------------------------ | ------------------------- |
 | [`Session`](/reference/lucia-auth/types#session) | the newly created session |
 
 #### Errors
@@ -692,15 +692,15 @@ const updateUserAttributes: (
 
 #### Parameter
 
-| name       | type                                                                             | description                                                             |
-| ---------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| userId     | `string`                                                                         | A refresh token                                                         |
+| name       | type                                                                              | description                                                             |
+| ---------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| userId     | `string`                                                                          | A refresh token                                                         |
 | attributes | `Partial<`[`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes)`>` | Key-value pairs of some or all of the column in `user` table to update. |
 
 #### Returns
 
-| type                                | description      |
-| ----------------------------------- | ---------------- |
+| type                                       | description      |
+| ------------------------------------------ | ---------------- |
 | [`User`](/reference/lucia-auth/types#user) | the updated user |
 
 #### Errors
@@ -745,8 +745,8 @@ const useKey: (
 
 #### Returns
 
-| type                              | description       |
-| --------------------------------- | ----------------- |
+| type                                     | description       |
+| ---------------------------------------- | ----------------- |
 | [`Key`](/reference/lucia-auth/types#key) | the validated key |
 
 #### Errors
@@ -780,8 +780,8 @@ const validateRequestHeaders: (request: MinimalRequest) => string;
 
 #### Parameter
 
-| name    | type                                                    | description                  |
-| ------- | ------------------------------------------------------- | ---------------------------- |
+| name    | type                                                           | description                  |
+| ------- | -------------------------------------------------------------- | ---------------------------- |
 | request | [`MinimalRequest`](/reference/lucia-auth/types#minimalrequest) | Node's `Request` can be used |
 
 #### Returns
@@ -822,8 +822,8 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 #### Returns
 
-| type                                      | description                   |
-| ----------------------------------------- | ----------------------------- |
+| type                                             | description                   |
+| ------------------------------------------------ | ----------------------------- |
 | [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
 
 #### Errors
@@ -870,8 +870,8 @@ const validateSessionUser: (
 
 #### Returns
 
-| name    | type                                      | description                   |
-| ------- | ----------------------------------------- | ----------------------------- |
+| name    | type                                             | description                   |
+| ------- | ------------------------------------------------ | ----------------------------- |
 | session | [`Session`](/reference/lucia-auth/types#session) | the session of the session id |
 | user    | [`User`](/reference/lucia-auth/types#user)       | the user of the session       |
 

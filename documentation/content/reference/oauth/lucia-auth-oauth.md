@@ -59,8 +59,8 @@ const provider = (
 
 #### `Returns`
 
-| type                                                           |
-| -------------------------------------------------------------- |
+| type                                              |
+| ------------------------------------------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) |
 
 ### `config.getAuthorizationUrl`

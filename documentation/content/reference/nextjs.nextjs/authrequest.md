@@ -28,7 +28,7 @@ const constructor: (
 
 | name     | type                                                                                                                                                                                                                   | description                                       |
 | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| auth     | [`Auth`](/reference/lucia-auth/auth)                                                                                                                                                                                          | Lucia instance                                    |
+| auth     | [`Auth`](/reference/lucia-auth/auth)                                                                                                                                                                                   | Lucia instance                                    |
 | request  | [`GetServerSidePropsContext["req"]`](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)`\|`[`NextApiRequest`](https://nextjs.org/docs/basic-features/typescript#api-routes)  | request from `getServerSideProps()` or API route  |
 | response | [`GetServerSidePropsContext["res"]`](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)`\|`[`NextApiResponse`](https://nextjs.org/docs/basic-features/typescript#api-routes) | response from `getServerSideProps()` or API route |
 
@@ -66,8 +66,8 @@ const setSession: (session: Session | null) => void;
 
 #### Parameter
 
-| name    | type                                                | description        |
-| ------- | --------------------------------------------------- | ------------------ |
+| name    | type                                                       | description        |
+| ------- | ---------------------------------------------------------- | ------------------ |
 | session | [`Session`](/reference/lucia-auth/types#session)` \| null` | the session to set |
 
 #### Example
@@ -88,7 +88,6 @@ await auth.invalidateSession(sessionId); // invalidate session
 authRequest.setSession(null); // remove session cookies
 ```
 
-
 ## `validate()`
 
 Validates the request and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
@@ -99,8 +98,8 @@ const validate: () => Promise<Session | null>;
 
 #### Returns
 
-| type                                                | description               |
-| --------------------------------------------------- | ------------------------- |
+| type                                                       | description               |
+| ---------------------------------------------------------- | ------------------------- |
 | [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
 
 #### Example
@@ -127,8 +126,8 @@ if (session) {
 
 #### Returns
 
-| name    | type                                                | description               |
-| ------- | --------------------------------------------------- | ------------------------- |
+| name    | type                                                       | description               |
+| ------- | ---------------------------------------------------------- | ------------------------- |
 | session | [`Session`](/reference/lucia-auth/types#session)` \| null` | `null` if unauthenticated |
 | user    | [`User`](/reference/lucia-auth/types#user)` \| null`       | `null` if unauthenticated |
 

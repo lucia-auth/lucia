@@ -18,13 +18,13 @@ type ProviderSession<ProviderUser, ProviderTokens> = {
 
 ## Properties
 
-| name                                                                      | type                                          | description                                       |
-| ------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------- |
-| existingUser                                                              | [`User`](/reference/lucia-auth/types#user)` \| null` | existing user - null if non-existent (= new user) |
-| [createUser](/reference/oauth/providersession#createuser)                   | `Function`                                    |                                                   |
-| [createPersistentKey](/reference/oauth/providersession#createpersistentkey) | `Function`                                    |                                                   |
-| providerUser                                                              | `ProviderUser`                                | user info from the used provider                  |
-| tokens                                                                    | `ProviderTokens`                              | access tokens (`accessToken`) among other tokens  |
+| name                                                                        | type                                                 | description                                       |
+| --------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------- |
+| existingUser                                                                | [`User`](/reference/lucia-auth/types#user)` \| null` | existing user - null if non-existent (= new user) |
+| [createUser](/reference/oauth/providersession#createuser)                   | `Function`                                           |                                                   |
+| [createPersistentKey](/reference/oauth/providersession#createpersistentkey) | `Function`                                           |                                                   |
+| providerUser                                                                | `ProviderUser`                                       | user info from the used provider                  |
+| tokens                                                                      | `ProviderTokens`                                     | access tokens (`accessToken`) among other tokens  |
 
 ## `createPersistentKey()`
 
@@ -42,8 +42,8 @@ const createPersistentKey: (userId: string) => Promise<Key>;
 
 #### Returns
 
-| type                              | description           |
-| --------------------------------- | --------------------- |
+| type                                     | description           |
+| ---------------------------------------- | --------------------- |
 | [`Key`](/reference/lucia-auth/types#key) | the newly created key |
 
 #### Errors
@@ -60,14 +60,14 @@ const createUser: (userAttributes: Lucia.UserAttribute) => Promise<User>;
 
 #### Parameter
 
-| name           | type                                                                | description                                 |
-| -------------- | ------------------------------------------------------------------- | ------------------------------------------- |
+| name           | type                                                                 | description                                 |
+| -------------- | -------------------------------------------------------------------- | ------------------------------------------- |
 | userAttributes | [`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes) | additional user data to store in user table |
 
 #### Returns
 
-| type                                | description            |
-| ----------------------------------- | ---------------------- |
+| type                                       | description            |
+| ------------------------------------------ | ---------------------- |
 | [`User`](/reference/lucia-auth/types#user) | the newly created user |
 
 #### Errors

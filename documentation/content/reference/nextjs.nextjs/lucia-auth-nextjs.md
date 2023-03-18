@@ -24,8 +24,8 @@ const handleApiRoutes = (auth: Auth) => (req: NextRequest, res: NextResponse) =>
 
 #### Parameter
 
-| name | type                          | description    |
-| ---- | ----------------------------- | -------------- |
+| name | type                                 | description    |
+| ---- | ------------------------------------ | -------------- |
 | auth | [`Auth`](/reference/lucia-auth/auth) | Lucia instance |
 
 #### Returns

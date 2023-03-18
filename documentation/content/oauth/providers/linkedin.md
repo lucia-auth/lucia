@@ -27,23 +27,23 @@ const linkedin: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider<LinkedInUser, LinkedInTokens>;;
+) => OAuthProvider<LinkedInUser, LinkedInTokens>;
 ```
 
 #### Parameter
 
-| name                | type                          | description                                             | optional |
-| ------------------- | ----------------------------- | ------------------------------------------------------- | -------- |
+| name                | type                                 | description                                             | optional |
+| ------------------- | ------------------------------------ | ------------------------------------------------------- | -------- |
 | auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                          |          |
-| config.clientId     | `string`                      | LinkedIn OAuth app client id                            |          |
-| config.clientSecret | `string`                      | LinkedIn OAuth app client secret                        |          |
-| config.redirectUri  | `string`                      | LinkedIn OAuth app redirect uri                         |          |
-| config.scope        | `string[]`                    | an array of scopes - `r_liteprofile` is always included | true     |
+| config.clientId     | `string`                             | LinkedIn OAuth app client id                            |          |
+| config.clientSecret | `string`                             | LinkedIn OAuth app client secret                        |          |
+| config.redirectUri  | `string`                             | LinkedIn OAuth app redirect uri                         |          |
+| config.scope        | `string[]`                           | an array of scopes - `r_liteprofile` is always included | true     |
 
 #### Returns
 
-| type                                                           | description       |
-| -------------------------------------------------------------- | ----------------- |
+| type                                              | description       |
+| ------------------------------------------------- | ----------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | LinkedIn provider |
 
 ## `LinkedInTokens`

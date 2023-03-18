@@ -1,8 +1,8 @@
 const frameworks = [
-    {
-        id: "none",
-        title: "None"
-    },
+	{
+		id: "none",
+		title: "None"
+	},
 	{
 		id: "sveltekit",
 		title: "SvelteKit"
