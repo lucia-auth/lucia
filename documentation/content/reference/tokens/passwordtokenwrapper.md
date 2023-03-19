@@ -3,7 +3,7 @@ title: "PasswordTokenWrapper"
 _order: 1
 ---
 
-All errors are thrown as [`TokenError`](/reference/tokens/tokenerror).
+All errors are thrown as [`LuciaTokenError`](/tokens/reference/luciatokenerror).
 
 ```ts
 type IdTokenWrapper = Readonly<{

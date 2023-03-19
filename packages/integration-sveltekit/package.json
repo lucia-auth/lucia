@@ -50,7 +50,7 @@
 		"svelte": "3.x"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.5.x - 0.9.x",
+		"lucia-auth": "0.5.x - 0.10.x",
 		"svelte": "3.x"
 	},
 	"dependencies": {

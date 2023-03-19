@@ -3,7 +3,7 @@ import { Token } from "./index.js";
 import { type LuciaError, generateRandomString } from "lucia-auth";
 
 import type { Auth, SingleUseKey } from "lucia-auth";
-import { TokenError } from "./error.js";
+import { LuciaTokenError } from "./error.js";
 
 type TokenWrapper = Readonly<{
 	issue: (...args: any) => Promise<Token>;
@@ -17,7 +17,7 @@ export const idToken = (
 	auth: Auth,
 	name: string,
 	options: {
-		timeout: number | null;
+		timeout: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}
@@ -38,9 +38,9 @@ export const idToken = (
 			} catch (e) {
 				const error = e as Partial<LuciaError>;
 				if (error.message === "AUTH_INVALID_USER_ID")
-					throw new TokenError("INVALID_USER_ID");
+					throw new LuciaTokenError("INVALID_USER_ID");
 				if (error.message === "AUTH_DUPLICATE_KEY_ID")
-					throw new TokenError("DUPLICATE_TOKEN");
+					throw new LuciaTokenError("DUPLICATE_TOKEN");
 				throw e;
 			}
 		},
@@ -51,9 +51,9 @@ export const idToken = (
 			} catch (e) {
 				const error = e as Partial<LuciaError>;
 				if (error.message === "AUTH_INVALID_KEY_ID")
-					throw new TokenError("INVALID_TOKEN");
+					throw new LuciaTokenError("INVALID_TOKEN");
 				if (error.message === "AUTH_EXPIRED_KEY")
-					throw new TokenError("EXPIRED_TOKEN");
+					throw new LuciaTokenError("EXPIRED_TOKEN");
 				throw e;
 			}
 		},
@@ -92,7 +92,7 @@ export const passwordToken = (
 	auth: Auth,
 	name: string,
 	options: {
-		timeout: number | null;
+		timeout: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}
@@ -115,9 +115,9 @@ export const passwordToken = (
 			} catch (e) {
 				const error = e as Partial<LuciaError>;
 				if (error.message === "AUTH_INVALID_USER_ID")
-					throw new TokenError("INVALID_USER_ID");
+					throw new LuciaTokenError("INVALID_USER_ID");
 				if (error.message === "AUTH_DUPLICATE_KEY_ID")
-					throw new TokenError("DUPLICATE_TOKEN");
+					throw new LuciaTokenError("DUPLICATE_TOKEN");
 				throw e;
 			}
 		},
@@ -129,9 +129,9 @@ export const passwordToken = (
 			} catch (e) {
 				const error = e as Partial<LuciaError>;
 				if (error.message === "AUTH_INVALID_KEY_ID")
-					throw new TokenError("INVALID_TOKEN");
+					throw new LuciaTokenError("INVALID_TOKEN");
 				if (error.message === "AUTH_EXPIRED_KEY")
-					throw new TokenError("EXPIRED_TOKEN");
+					throw new LuciaTokenError("EXPIRED_TOKEN");
 				throw e;
 			}
 		},
@@ -149,7 +149,7 @@ export const passwordToken = (
 			} catch (e) {
 				const error = e as Partial<LuciaError>;
 				if (error.message === "AUTH_INVALID_USER_ID")
-					throw new TokenError("INVALID_USER_ID");
+					throw new LuciaTokenError("INVALID_USER_ID");
 				throw e;
 			}
 		},
