@@ -41,7 +41,7 @@
 	},
 	"devDependencies": {
 		"@types/html-escaper": "^3.0.0",
-		"astro": "2.0.0",
+		"astro": "2.1",
 		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
