@@ -21,12 +21,42 @@ if (!collection) throw new Error();
 const currentPathname = Astro.url.pathname;
 ---
 
+<input type="hidden" value={collectionId} id="collection-id" />
 <div class="fixed w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden">
+	<script>
+		const target = document.getElementById("content-table");
+		const collectionIdElement = document.getElementById("collection-id");
+		if (target && collectionIdElement) {
+			const collectionId = collectionIdElement.value;
+			const storedScrollPosition = sessionStorage.getItem("scroll_position");
+			if (storedScrollPosition !== null) {
+				const [prevCollectionId, prevScrollPosition] =
+					storedScrollPosition.split(":");
+				if (prevCollectionId === collectionId) {
+					target.scrollTop = prevScrollPosition;
+				}
+			}
+			target.addEventListener("click", (e: MouseEvent) => {
+				if (!(e.target instanceof HTMLAnchorElement)) return;
+				e.preventDefault();
+				sessionStorage.setItem(
+					`scroll_position`,
+					`${collectionId}:${target.scrollTop.toString()}`
+				);
+				window.location.href = e.target.href;
+			});
+		}
+	</script>
 	<div class="ml-8 mr-4 border-b py-6 border-zinc-200">
-		{!!collection.title && <p class="text-lg font-semibold">{collection.title}</p>}
+		{
+			!!collection.title && (
+				<p class="text-lg font-semibold">{collection.title}</p>
+			)
+		}
 		<FrameworkButton client:idle current={frameworkId} />
 	</div>
 	<div
+		id="content-table"
 		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2 bg-zinc-80"
 	>
 		{
