@@ -81,7 +81,7 @@ const contributePageUrl = new URL(
 			class="relative h-full list-none overflow-auto overscroll-contain pb-8 text-sm text-zinc-500 dark:text-zinc-400"
 		>
 			<li class="my-1">
-				<a href="#" class="hover:text-black-zinc hover:dark:text-zinc-200">
+				<a href="#" class="hover:text-shadow-zinc hover:dark:text-zinc-200">
 					Overview
 				</a>
 			</li>
@@ -101,7 +101,7 @@ const contributePageUrl = new URL(
 							>
 								<a
 									href={`#${hash}`}
-									class="hover:text-black-zinc dark:hover:text-zinc-200"
+									class="hover:text-shadow-zinc dark:hover:text-zinc-200"
 								>
 									{heading.text}
 								</a>
@@ -140,7 +140,7 @@ const contributePageUrl = new URL(
 		scrollbar-width: none;
 	}
 	:global(.dark #md .astro-code) {
-		@apply !bg-black-zinc;
+		@apply !bg-shadow-zinc;
 	}
 	:global(#md pre::-webkit-scrollbar) {
 		display: none;
@@ -194,7 +194,7 @@ const contributePageUrl = new URL(
 		@apply w-full appearance-none rounded-md border border-zinc-200 bg-gray-100 text-transparent;
 	}
 	:global(.dark #md img) {
-		@apply !border-black-zinc;
+		@apply !border-shadow-zinc;
 	}
 	:global(#md strong) {
 		@apply font-semibold;

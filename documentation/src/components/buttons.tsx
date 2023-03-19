@@ -30,7 +30,7 @@ export const ThemeButton = (props: { initialTheme: string }) => {
 	const [theme, toggleTheme] = useTheme();
 	return (
 		<button
-			class="text-black-zinc h-6 w-6 fill-current dark:text-zinc-200"
+			class="text-shadow-zinc h-6 w-6 fill-current dark:text-zinc-200"
 			onClick={toggleTheme}
 			aria-label="Toggle theme"
 		>
@@ -86,7 +86,7 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 										})}
 									>
 										<a
-											class="block w-full py-1 px-4 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+											class="block w-full py-1 px-4 hover:bg-zinc-100 dark:hover:bg-zinc-950"
 											href={href}
 										>
 											{option.title}

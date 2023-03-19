@@ -43,7 +43,7 @@ const currentPathname = Astro.url.pathname;
 </script>
 
 <div
-	class="fixed w-full md:w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden z-40 hidden xl:block dark:bg-black-zinc dark:text-zinc-400"
+	class="fixed w-full md:w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden z-40 hidden xl:block dark:bg-shadow-zinc dark:text-zinc-400"
 	id="content-table-wrapper"
 >
 	<input type="hidden" value={collection.id} id="collection-id" />
@@ -58,7 +58,7 @@ const currentPathname = Astro.url.pathname;
 	</div>
 	<div
 		id="content-table"
-		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2 bg-zinc-80 dark:bg-black-zinc"
+		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2 bg-zinc-80 dark:bg-shadow-zinc"
 	>
 		{
 			collection.sections.map((section) => {
@@ -72,7 +72,7 @@ const currentPathname = Astro.url.pathname;
 									<li>
 										<a
 											class:list={[
-												"block hover:bg-zinc-150 pl-8 pr-4 py-1 hover:bg-black-zinc dark:hover:bg-zinc-900",
+												"block hover:bg-zinc-150 pl-8 pr-4 py-1 hover:bg-shadow-zinc dark:hover:bg-black-zinc",
 												{
 													"text-main": isSelected
 												}
@@ -92,7 +92,7 @@ const currentPathname = Astro.url.pathname;
 	</div>
 </div>
 <div
-	class="fixed w-full h-full bg-black-zinc opacity-30 overscroll-contain z-30 hidden xl:hidden"
+	class="fixed w-full h-full bg-shadow-zinc opacity-30 overscroll-contain z-30 hidden xl:hidden"
 	id="backdrop"
 >
 </div>
