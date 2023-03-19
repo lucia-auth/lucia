@@ -1,5 +1,15 @@
 # lucia-auth
 
+## 0.10.0
+
+### Minor changes
+
+- [#424](https://github.com/pilcrowOnPaper/lucia/pull/424) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix issues with single use keys
+
+  - [Breaking] Update `createKey()`
+
+- [#424](https://github.com/pilcrowOnPaper/lucia/pull/424) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Replace `Token.isExpired()` with `Token.isExpired`
+
 ## 0.9.1
 
 ### Patch changes

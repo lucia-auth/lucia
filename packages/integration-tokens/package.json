@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/tokens",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Tokens integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",

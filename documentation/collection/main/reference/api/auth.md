@@ -44,7 +44,7 @@ const createKey: (
 | keyData.providerId     | `string`                       | the provider id of the key                                      |
 | keyData.providerUserId | `string`                       | the provider user id of the key                                 |
 | keyData.password       | `string \| null`               | the password for the key                                        |
-| keyData.timeout        | `number`               | single use keys only - how long the key is valid for in seconds |
+| keyData.timeout        | `number`                       | single use keys only - how long the key is valid for in seconds |
 
 #### Returns
 
