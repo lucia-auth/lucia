@@ -47,6 +47,8 @@ export const idToken = (
 		validate: async (token: string) => {
 			try {
 				const key = await auth.useKey(name, token, null);
+				if (key.type !== "single_use")
+					throw new LuciaTokenError("INVALID_TOKEN");
 				return new Token(token, key);
 			} catch (e) {
 				const error = e as Partial<LuciaError>;
@@ -125,6 +127,8 @@ export const passwordToken = (
 			const providerUserId = [userId, token].join(".");
 			try {
 				const key = await auth.useKey(name, providerUserId, null);
+				if (key.type !== "single_use")
+					throw new LuciaTokenError("INVALID_TOKEN");
 				return new Token(token, key);
 			} catch (e) {
 				const error = e as Partial<LuciaError>;
