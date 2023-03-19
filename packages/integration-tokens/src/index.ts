@@ -1,7 +1,7 @@
 import type { Key } from "lucia-auth";
 
 export { idToken, passwordToken } from "./tokens.js";
-export { TokenError } from "./error.js";
+export { LuciaTokenError } from "./error.js";
 
 export class Token {
 	private readonly value: string;

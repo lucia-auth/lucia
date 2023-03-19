@@ -1,4 +1,4 @@
-export class TokenError extends Error {
+export class LuciaTokenError extends Error {
 	public message: ErrorMessage;
 	constructor(errorMessage: ErrorMessage) {
 		super(errorMessage);

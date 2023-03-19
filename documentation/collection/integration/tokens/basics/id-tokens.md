@@ -11,7 +11,7 @@ import { idToken } from "@lucia-auth/tokens";
 
 ## Initialization
 
-`auth` is the initialized Lucia instance, and `tokenName` is the id that all tokens will be generated under. Make sure it's unique and you don't have any other token type with the same name. You can set the generated tokens to expire by defining the duration in seconds, or set it to `null` for it to not expire automatically.
+`auth` is the initialized Lucia instance, and `tokenName` is the id that all tokens will be generated under. Make sure it's unique and you don't have any other token type with the same name. Duration until expiration in seconds must be defined.
 
 By default the length of the generated token will be 43. You can change this by defining `length`.
 
@@ -32,14 +32,14 @@ You can also provide your own function to generate tokens. Refer to [`idToken()`
 You can issue a new token by providing [`issue()`](/tokens/reference/idtokenwrapper#issue) with the id of the user it'll be linked to.
 
 ```ts
-import { idToken, TokenError } from "@lucia-auth/tokens";
+import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 const tokenHandler = idToken(auth, "token-name");
 try {
 	const token = tokenHandler.issue(userId);
 	const tokenValue = token.toString();
 } catch (e) {
-	if (e instanceof TokenError && e.message === "INVALID_USER_ID") {
+	if (e instanceof LuciaTokenError && e.message === "INVALID_USER_ID") {
 		// user does not exist
 	}
 }
@@ -52,16 +52,16 @@ Since the returned [`Token`](/tokens/reference/token) is an object, use `.toStri
 [`validate()`](/tokens/reference/idtokenwrapper#validate) can be used to validate a token. This takes in the stringified version of `Token` (returned by `issue()`) and returns `Token`.
 
 ```ts
-import { idToken, TokenError } from "@lucia-auth/tokens";
+import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 const tokenHandler = idToken(auth, "token-name");
 try {
 	const validatedToken = tokenHandler.validate(tokenValue);
 } catch (e) {
-	if (e instanceof TokenError && e.message === "EXPIRED_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "EXPIRED_TOKEN") {
 		// expired token
 	}
-	if (e instanceof TokenError && e.message === "INVALID_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
 		// invalid token
 	}
 }
@@ -94,13 +94,13 @@ const validatedToken = tokenHandler.invalidateAllUserTokens(userId);
 You can list all tokens belonging to the user, both valid and expired, by using [`getAllUserTokens()`](/tokens/reference/idtokenwrapper#getallusertokens).
 
 ```ts
-import { idToken, TokenError } from "@lucia-auth/tokens";
+import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 const tokenHandler = idToken(auth, "token-name");
 try {
 	const tokens = tokenHandler.getAllUserTokens(userId);
 } catch (e) {
-	if (e instanceof TokenError && e.message === "INVALID_USER_ID") {
+	if (e instanceof LuciaTokenError && e.message === "INVALID_USER_ID") {
 		// user does not exist
 	}
 }

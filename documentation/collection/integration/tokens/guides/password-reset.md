@@ -12,7 +12,7 @@ The tokens for verification links will use [id tokens](/tokens/basics/id-tokens)
 // token.ts
 
 import { auth } from "./lucia.js";
-import { idToken, TokenError } from "@lucia-auth/tokens";
+import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 export const passwordResetToken = idToken(auth, "password-reset", {
 	timeout: 60 * 60 // 1 hour
@@ -46,7 +46,7 @@ On form/POST request, get the token stored inside the url parameter and validate
 // POST /reset-password
 
 import { auth } from "./lucia.js";
-import { TokenError } from "@lucia-auth/tokens";
+import { LuciaTokenError } from "@lucia-auth/tokens";
 import { passwordResetToken } from "./token.js";
 
 const newPassword = formData.get("password"); // get input
@@ -65,11 +65,11 @@ try {
 	// store new session
 	// redirect user
 } catch (e) {
-	if (e instanceof TokenError && e.message === "EXPIRED_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "EXPIRED_TOKEN") {
 		// expired token/link
 		// generate new token and send new link
 	}
-	if (e instanceof TokenError && e.message === "INVALID_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
 		// invalid link
 	}
 }
