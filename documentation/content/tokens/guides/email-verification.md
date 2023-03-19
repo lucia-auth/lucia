@@ -81,7 +81,7 @@ One time passwords will use [password tokens](/tokens/basics/password-tokens). C
 // token.ts
 
 import { auth } from "./lucia.js";
-import { idToken, TokenError } from "@lucia-auth/tokens";
+import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 export const otpToken = idToken(auth, "otp", {
 	timeout: 60 * 60 // 1 hour
@@ -111,7 +111,7 @@ Using a form, prompt the user to input the password. Validate the password using
 // POST /
 
 import { auth } from "./lucia.js";
-import { TokenError } from "@lucia-auth/tokens";
+import { LuciaTokenError } from "@lucia-auth/tokens";
 import { otpToken } from "./token.js";
 
 const session = await getSessionFromRequest(); // getSessionFromRequest() is just an example
@@ -126,11 +126,11 @@ try {
 	// store new session
 	// redirect user
 } catch (e) {
-	if (e instanceof TokenError && e.message === "EXPIRED_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "EXPIRED_TOKEN") {
 		// expired password
 		// generate new password and send new email
 	}
-	if (e instanceof TokenError && e.message === "INVALID_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
 		// invalid password
 	}
 }
@@ -146,7 +146,7 @@ The tokens for verification links will use [id tokens](/tokens/basics/id-tokens)
 // token.ts
 
 import { auth } from "./lucia.js";
-import { idToken, TokenError } from "@lucia-auth/tokens";
+import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 export const emailVerificationToken = idToken(auth, "email-verification", {
 	timeout: 60 * 60 // 1 hour
@@ -178,7 +178,7 @@ Get the token stored inside the url parameter and validate it using [`validate()
 // GET /verify-email
 
 import { auth } from "./lucia.js";
-import { TokenError } from "@lucia-auth/tokens";
+import { LuciaTokenError } from "@lucia-auth/tokens";
 import { emailVerificationToken } from "./token.js";
 
 const tokenParams = url.searchParams.get("token");
@@ -192,11 +192,11 @@ try {
 	// store new session
 	// redirect user
 } catch (e) {
-	if (e instanceof TokenError && e.message === "EXPIRED_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "EXPIRED_TOKEN") {
 		// expired token/link
 		// generate new token and send new link
 	}
-	if (e instanceof TokenError && e.message === "INVALID_TOKEN") {
+	if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
 		// invalid link
 	}
 }

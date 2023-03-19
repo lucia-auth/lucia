@@ -1,12 +1,12 @@
 ---
-title: "TokenError"
+title: "LuciaTokenError"
 _order: 1
 ---
 
 Extends the standard [`Error`](https://developer.mozilla.org/en-US/docs/web/javascript/reference/global_objects/error).
 
 ```ts
-type TokenError = Error;
+type LuciaTokenError = Error;
 ```
 
 ## Properties

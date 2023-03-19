@@ -23,7 +23,7 @@ Primary keys are a special type of persistent key. They are created when the use
 
 ### Single use keys
 
-Single use keys are single use only and are deleted on read. You can also configure a single use key to expire after a set duration of time. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
+Single use keys are single use only and are deleted on read. Single use keys must have an expiration. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
 
 ## Use keys
 
@@ -101,7 +101,7 @@ try {
 
 ### Single use keys
 
-You can provide a `password` to set a password. You can define the duration (in seconds) of a single use key by providing a `timeout`. Set it to `null` if you don't want it to expire.
+You can provide a `password` to set a password. Define the duration (in seconds) of a single use key by providing a `timeout`.
 
 ```ts
 try {
