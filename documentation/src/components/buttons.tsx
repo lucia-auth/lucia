@@ -30,7 +30,7 @@ export const ThemeButton = (props: { initialTheme: string }) => {
 	const [theme, toggleTheme] = useTheme();
 	return (
 		<button
-			class="h-6 w-6 fill-current dark:text-zinc-200 text-black-zinc"
+			class="text-black-zinc h-6 w-6 fill-current dark:text-zinc-200"
 			onClick={toggleTheme}
 			aria-label="Toggle theme"
 		>
@@ -59,7 +59,7 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 		<div>
 			<button
 				class={dynamicClassName(
-					"w-full px-4 py-1.5 text-left rounded-md bg-zinc-50 dark:bg-zinc-900 border",
+					"w-full rounded-md border bg-zinc-50 px-4 py-1.5 text-left dark:bg-zinc-900",
 					{
 						"border-main": isBoxOpen(),
 						"border-zinc-200 dark:border-zinc-800": !isBoxOpen()
@@ -71,7 +71,7 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 				<span> {currentSelection.title}</span>
 			</button>
 			<Show when={isBoxOpen()}>
-				<div class="absolute bg-white dark:bg-zinc-900 shadow-lg rounded-md z-50 w-48 py-2 mt-2 border border-zinc-200 dark:border-zinc-800">
+				<div class="absolute z-50 mt-2 w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
 					<ul>
 						<For each={frameworks}>
 							{(option) => {
@@ -86,7 +86,7 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 										})}
 									>
 										<a
-											class="hover:bg-zinc-100 py-1 px-4 w-full block dark:hover:bg-zinc-800"
+											class="block w-full py-1 px-4 hover:bg-zinc-100 dark:hover:bg-zinc-800"
 											href={href}
 										>
 											{option.title}

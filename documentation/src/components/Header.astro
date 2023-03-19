@@ -33,7 +33,9 @@ if (theme !== "light" && theme !== "dark") {
 			/>
 			<p class="text-2xl font-semibold">Lucia</p>
 		</a>
-		<div class="flex place-items-center pointer-events-auto divide-x divide-zinc-200 dark:divide-zinc-700">
+		<div
+			class="flex place-items-center pointer-events-auto divide-x divide-zinc-200 dark:divide-zinc-700"
+		>
 			<a
 				class="px-2 block rounded py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 my-1 mr-4"
 				href="/reference">Reference</a
@@ -41,7 +43,7 @@ if (theme !== "light" && theme !== "dark") {
 			<div class="flex gap-x-4 place-items-center pl-4">
 				<Discord />
 				<Github />
-				<ThemeButton client:load initialTheme={theme}/>
+				<ThemeButton client:load initialTheme={theme} />
 
 				<button class="xl:hidden" aria-label="Toggle menubar" id="menu-button">
 					<div class="h-8 w-8 dark:text-zinc-200 fill-current">

@@ -1,5 +1,5 @@
-import fs from "fs"
-import path from "path"
+import fs from "fs";
+import path from "path";
 
 const loadEnv = async () => {
 	const envItems: string[] = [];
@@ -34,46 +34,49 @@ export const envVar = async (key: string): Promise<string> => {
 };
 
 export const fetchGithub = async () => {
-    const GITHUB_API_KEY = await envVar("GITHUB_API_KEY");
+	const GITHUB_API_KEY = await envVar("GITHUB_API_KEY");
 
-    const contributorsResponse = await fetch(
-        "https://api.github.com/repos/pilcrowonpaper/lucia/contributors",
-        {
-            headers: {
-                Authorization: `Bearer ${GITHUB_API_KEY}`
-            }
-        }
-    );
-    if (!contributorsResponse.ok) {
-        try {
-            console.dir(await contributorsResponse.json(), {
-                depth: null
-            });
-        } catch {
-            console.log("No error body was returned");
-        }
-        throw new Error("Something went wrong fetching to Github");
-    }
-    const contributorsResult = (await contributorsResponse.json()) as
-        | {
-                message: string;
-          }
-        | {
-                avatar_url: string;
-                html_url: string;
-                login: string;
-          }[];
-    const contributors = Array.isArray(contributorsResult)
-        ? contributorsResult.map((val) => {
-                const url = new URL(val.avatar_url);
-                url.searchParams.set("s", "128"); // set image size to 128 x 128
-                url.searchParams.delete("v");
-                return {
-                    avatar: url.href,
-                    profile: val.html_url,
-                    username: val.login
-                };
-          })
-        : [];
-    fs.writeFileSync(path.join(process.cwd(), ".github.json", ), JSON.stringify(contributors))
-}
+	const contributorsResponse = await fetch(
+		"https://api.github.com/repos/pilcrowonpaper/lucia/contributors",
+		{
+			headers: {
+				Authorization: `Bearer ${GITHUB_API_KEY}`
+			}
+		}
+	);
+	if (!contributorsResponse.ok) {
+		try {
+			console.dir(await contributorsResponse.json(), {
+				depth: null
+			});
+		} catch {
+			console.log("No error body was returned");
+		}
+		throw new Error("Something went wrong fetching to Github");
+	}
+	const contributorsResult = (await contributorsResponse.json()) as
+		| {
+				message: string;
+		  }
+		| {
+				avatar_url: string;
+				html_url: string;
+				login: string;
+		  }[];
+	const contributors = Array.isArray(contributorsResult)
+		? contributorsResult.map((val) => {
+				const url = new URL(val.avatar_url);
+				url.searchParams.set("s", "128"); // set image size to 128 x 128
+				url.searchParams.delete("v");
+				return {
+					avatar: url.href,
+					profile: val.html_url,
+					username: val.login
+				};
+		  })
+		: [];
+	fs.writeFileSync(
+		path.join(process.cwd(), ".github.json"),
+		JSON.stringify(contributors)
+	);
+};
