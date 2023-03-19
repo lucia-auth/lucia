@@ -1,13 +1,20 @@
 ---
 import { FrameworkButton } from "./buttons";
-import type { Collection } from "cela/types";
+import { getCollection } from "cela/content";
 
 type Props = {
-	frameworkId: string | null
-	collection: Collection
+	frameworkId: string | null;
+	collectionId?: string;
 };
 
-const collection = Astro.props.collection
+const { frameworkId } = Astro.props;
+let collectionId = Astro.props.collectionId ?? "main";
+const collection = await getCollection(collectionId, frameworkId);
+
+if (!collection)
+	return new Response(null, {
+		status: 404
+	});
 
 const currentPathname = Astro.url.pathname;
 ---

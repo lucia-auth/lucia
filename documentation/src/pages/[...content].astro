@@ -42,16 +42,8 @@ if (content.metaData.frameworkId) {
 	});
 }
 
-let collectionId = content?.metaData.collectionId ?? "main";
-
 const frameworkId =
 	requestedFrameworkId === "none" ? null : requestedFrameworkId;
-const collection = await getCollection(collectionId, frameworkId);
-
-if (!collection)
-	return new Response(null, {
-		status: 404
-	});
 
 const contributePageUrl = new URL(
 	`${content.metaData.path}.md`,
@@ -60,7 +52,10 @@ const contributePageUrl = new URL(
 ---
 
 <Layout>
-	<ContentTable collection={collection} frameworkId={frameworkId} />
+	<ContentTable
+		collectionId={content.metaData.collectionId}
+		frameworkId={frameworkId}
+	/>
 	<main
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200 lg:pr-64 xl:pl-80"
 	>
@@ -171,8 +166,14 @@ const contributePageUrl = new URL(
 	:global(#md table thead tr) {
 		@apply w-full border-b border-zinc-200;
 	}
+	:global(.dark #md table thead tr) {
+		@apply !border-zinc-700;
+	}
 	:global(#md table :is(td, th)) {
 		@apply border-b border-zinc-200 py-1.5 px-1;
+	}
+	:global(.dark #md table :is(td, th)) {
+		@apply !border-zinc-700;
 	}
 	:global(#md table th) {
 		@apply text-sm font-medium;
