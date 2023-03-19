@@ -9,7 +9,7 @@ While you can (and should) have multiple keys with the same provider id, the com
 
 > The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used.
 
-## Persistent keys
+### Persistent keys
 
 The first type of keys are persistent keys. These persist across multiple usages in contrast to single use keys (defined below) which are consumed after a single use. These are useful for traditional email/password sign ins and OAuth sign ins.
 
@@ -17,13 +17,13 @@ When authenticating users (log in), you get the user data from an external provi
 
 For example, for email/password, "email" can be the provider id, the user’s email can be the provider user id, and the user's password can be stored as the key's password. For Github OAuth, "github" can be the provider id and the user’s GitHub user id can be the provider user id.
 
-### Primary keys
+#### Primary keys
 
 Primary keys are a special type of persistent key. They are created when the user is created and can only be deleted when the user is deleted. This ensures the authentication method the user used for creating the account cannot be deleted (leading to a lockout) if someone else gains access to it.
 
-### Persistent vs. Single use
+### Single use keys
 
-Single use keys are single use only and are deleted on read. You can also configure a single use key to expire after a set duration of time. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
+Single use keys are single use only and are deleted on read. Single use keys must have an expiration. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
 
 ## Use keys
 
@@ -101,7 +101,7 @@ try {
 
 ### Single use keys
 
-You can provide a `password` to set a password. You can define the duration (in seconds) of a single use key by providing a `timeout`. Set it to `null` if you don't want it to expire.
+You can provide a `password` to set a password. Define the duration (in seconds) of a single use key by providing a `timeout`.
 
 ```ts
 try {

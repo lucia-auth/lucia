@@ -17,7 +17,7 @@ export const idToken = (
 	auth: Auth,
 	name: string,
 	options: {
-		timeout: number | null;
+		timeout: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}
@@ -92,7 +92,7 @@ export const passwordToken = (
 	auth: Auth,
 	name: string,
 	options: {
-		timeout: number | null;
+		timeout: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}

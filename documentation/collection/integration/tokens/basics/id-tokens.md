@@ -11,7 +11,7 @@ import { idToken } from "@lucia-auth/tokens";
 
 ## Initialization
 
-`auth` is the initialized Lucia instance, and `tokenName` is the id that all tokens will be generated under. Make sure it's unique and you don't have any other token type with the same name. You can set the generated tokens to expire by defining the duration in seconds, or set it to `null` for it to not expire automatically.
+`auth` is the initialized Lucia instance, and `tokenName` is the id that all tokens will be generated under. Make sure it's unique and you don't have any other token type with the same name. Duration until expiration in seconds must be defined.
 
 By default the length of the generated token will be 43. You can change this by defining `length`.
 

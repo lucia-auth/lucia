@@ -34,7 +34,7 @@ export type SingleUseKey = Readonly<{
 	providerUserId: string;
 	isPasswordDefined: boolean;
 	expires: Date | null;
-	isExpired: () => boolean;
+	isExpired: boolean;
 }>;
 
 export type PersistentKey = Readonly<{
@@ -464,7 +464,7 @@ export class Auth<C extends Configuration = any> {
 					providerId: string;
 					providerUserId: string;
 					password: string | null;
-					timeout: number | null;
+					timeout: number;
 			  }
 	>(
 		userId: string,
@@ -494,12 +494,13 @@ export class Auth<C extends Configuration = any> {
 			} satisfies PersistentKey as any;
 		}
 		const oneTimeExpires = getOneTimeKeyExpiration(keyData.timeout);
+		if (!oneTimeExpires) throw new TypeError();
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
-			hashed_password: null,
+			hashed_password: hashedPassword,
 			primary: false,
-			expires: oneTimeExpires?.getTime() ?? null
+			expires: oneTimeExpires.getTime()
 		});
 		return {
 			type: "single_use",
@@ -507,7 +508,7 @@ export class Auth<C extends Configuration = any> {
 			providerUserId: keyData.providerUserId,
 			userId,
 			expires: oneTimeExpires ?? null,
-			isExpired: () => isWithinExpiration(keyData.timeout),
+			isExpired: !isWithinExpiration(keyData.timeout),
 			isPasswordDefined: !!keyData.password
 		} satisfies SingleUseKey as any;
 	};

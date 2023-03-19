@@ -34,7 +34,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.6.x - 0.9.x",
+		"lucia-auth": "0.6.x - 0.10.x",
 		"redis": "4.x"
 	},
 	"devDependencies": {

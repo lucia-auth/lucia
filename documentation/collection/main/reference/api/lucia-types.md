@@ -200,7 +200,7 @@ type SingleUseKey = {
 	providerUserId: string;
 	userId: string;
 	expires: Date | null;
-	isExpired: () => boolean;
+	isExpired: boolean;
 };
 ```
 
@@ -213,20 +213,7 @@ type SingleUseKey = {
 | providerUserId | `string`       | provider user id                             |
 | userId         | `string`       | user id of linked user                       |
 | expires        | `Date \| null` | expiration time, `null` if it doesn't expire |
-
-### `isExpired`
-
-Returns `true` if expired.
-
-```ts
-const isExpired: () => boolean;
-```
-
-#### Returns
-
-| type      | description       |
-| --------- | ----------------- |
-| `boolean` | `true` if expired |
+| isExpired      | `boolean`      |                                              |
 
 ## `User`
 
