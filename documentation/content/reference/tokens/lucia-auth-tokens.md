@@ -18,7 +18,7 @@ const idToken: (
 	auth: Auth,
 	tokenName: string,
 	option: {
-		timeout: number | null;
+		timeout: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}
@@ -27,13 +27,13 @@ const idToken: (
 
 #### Parameters
 
-| name            | type                                 | optional | default                                                                           | description                                                         |
-| --------------- | ------------------------------------ | -------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| auth            | [`Auth`](/reference/lucia-auth/auth) |          |                                                                                   | initialized Lucia instance                                          |
-| tokenName       | `string`                             |          |                                                                                   | name of the token type                                              |
-| option.timeout  | `number \| null`                     |          |                                                                                   | how long the key is valid for in seconds - `null` for no expiration |
-| option.length   | `number`                             | true     | `43`                                                                              | the length of the token                                             |
-| option.generate | `Function`                           | true     | [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring) | a function that returns a random string                             |
+| name            | type                                 | optional | default                                                                           | description                              |
+| --------------- | ------------------------------------ | -------- | --------------------------------------------------------------------------------- | ---------------------------------------- |
+| auth            | [`Auth`](/reference/lucia-auth/auth) |          |                                                                                   | initialized Lucia instance               |
+| tokenName       | `string`                             |          |                                                                                   | name of the token type                   |
+| option.timeout  | `number`                             |          |                                                                                   | how long the key is valid for in seconds |
+| option.length   | `number`                             | true     | `43`                                                                              | the length of the token                  |
+| option.generate | `Function`                           | true     | [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring) | a function that returns a random string  |
 
 #### Returns
 
@@ -57,7 +57,7 @@ const passwordToken: (
 	auth: Auth,
 	tokenName: string,
 	option: {
-		timeout: number | null;
+		timeout: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}
@@ -70,7 +70,7 @@ const passwordToken: (
 | --------------- | ------------------------------------ | -------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | auth            | [`Auth`](/reference/lucia-auth/auth) |          |                                                                                   | initialized Lucia instance                                          |
 | tokenName       | `string`                             |          |                                                                                   | name of the token type                                              |
-| option.timeout  | `number \| null`                     |          |                                                                                   | how long the key is valid for in seconds - `null` for no expiration |
+| option.timeout  | `number`                     |          |                                                                                   | how long the key is valid for in seconds |
 | option.length   | `number`                             | true     | `8`                                                                               | the length of the token                                             |
 | option.generate | `Function`                           | true     | [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring) | a function that returns a random string                             |
 

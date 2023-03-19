@@ -33,7 +33,7 @@ export type SingleUseKey = Readonly<{
 	providerId: string;
 	providerUserId: string;
 	isPasswordDefined: boolean;
-	expires: Date | null;
+	expires: Date;
 	isExpired: boolean;
 }>;
 
@@ -507,7 +507,7 @@ export class Auth<C extends Configuration = any> {
 			providerId: keyData.providerId,
 			providerUserId: keyData.providerUserId,
 			userId,
-			expires: oneTimeExpires ?? null,
+			expires: oneTimeExpires,
 			isExpired: !isWithinExpiration(keyData.timeout),
 			isPasswordDefined: !!keyData.password
 		} satisfies SingleUseKey as any;

@@ -9,31 +9,18 @@ Represents a token.
 type Token = Readonly<{
 	expires: Date | null;
 	userId: string;
-	isExpired: () => boolean;
+	isExpired: boolean;
 	toString: () => string;
 }>;
 ```
 
 ## Properties
 
-| name    | type           | description                                           |
-| ------- | -------------- | ----------------------------------------------------- |
-| expires | `Date \| null` | expiration time of the token, `null` if no expiration |
-| userId  | `userId`       | the user the token belongs to                         |
-
-## `isExpired()`
-
-Returns whether the token is expired or not. **Should not be used for authentication or authorization.**
-
-```ts
-const isExpired: () => boolean;
-```
-
-#### Returns
-
-| type      | description       |
-| --------- | ----------------- |
-| `boolean` | `true` if expired |
+| name      | type           | description                                           |
+| --------- | -------------- | ----------------------------------------------------- |
+| expires   | `Date \| null` | expiration time of the token, `null` if no expiration |
+| userId    | `userId`       | the user the token belongs to                         |
+| isExpired | `boolean`      |                                                       |
 
 ## `toString()`
 

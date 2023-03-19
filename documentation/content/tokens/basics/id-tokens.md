@@ -108,12 +108,12 @@ try {
 
 ### Check expiration
 
-You can check if the token is expired or not with [`isExpired()`](/reference/tokens/token#isexpired).
+You can check if the token is expired or not with [`isExpired`](/reference/tokens/token#isexpired).
 
 ```ts
 const tokens = tokenHandler.getAllUserTokens(userId);
 for (const token of tokens) {
-	if (token.isExpired()) {
+	if (token.isExpired) {
 		// expired
 	}
 }
