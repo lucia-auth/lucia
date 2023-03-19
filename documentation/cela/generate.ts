@@ -211,7 +211,8 @@ export const generateCollection = (collectionId: string) => {
 		path.join(generatedCollectionsDirPath, [collectionId, "json"].join(".")),
 		JSON.stringify({
 			title: collectionTitle,
-			sections: baseSections.sort(sortItems)
+			sections: baseSections.sort(sortItems),
+			id: collectionId
 		} satisfies Collection)
 	);
 	for (const framework in frameworkSectionsMap) {
@@ -230,7 +231,8 @@ export const generateCollection = (collectionId: string) => {
 				sections: [
 					...frameworkSectionsMap[framework],
 					...uniqueBaseSections
-				].sort(sortItems)
+				].sort(sortItems),
+				id: collectionId
 			} satisfies Collection)
 		);
 	}

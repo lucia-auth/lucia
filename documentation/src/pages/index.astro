@@ -5,6 +5,7 @@ import ContentTable from "@components/ContentTable.astro";
 import contributors from ".github.json";
 
 import { frameworkIds } from "src/framework";
+import { getCollection } from "cela/content";
 
 let frameworkId = Astro.url.searchParams.get("framework") ?? null;
 
@@ -17,13 +18,22 @@ if (frameworkId && !frameworkIds.includes(frameworkId)) {
 Astro.cookies.set("framework", frameworkId, {
 	path: "/"
 });
+
+const collection = await getCollection("main", frameworkId);
+if (!collection) {
+	return new Response(null, {
+		status: 404
+	});
+}
 ---
 
 <Layout>
-	<ContentTable />
-	<main class="xl:ml-80 bg-white min-h-screen overflow-hidden dark:bg-zinc-900 dark:text-zinc-200">
-		<div class="pt-36 lg:pt-48 px-4 md:px-24">
-			<h1 class="text-6xl sm:text-7xl font-semibold leading-none">
+	<ContentTable collection={collection} frameworkId={frameworkId} />
+	<main
+		class="min-h-screen overflow-hidden bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:ml-80"
+	>
+		<div class="px-4 pt-36 md:px-24 lg:pt-48">
+			<h1 class="text-6xl font-semibold leading-none sm:text-7xl">
 				Authentication, <br />simple and clean
 			</h1>
 			<p class="mb-4 mt-6">
@@ -33,7 +43,7 @@ Astro.cookies.set("framework", frameworkId, {
 			</p>
 			<a
 				href="/start-here/introduction"
-				class="px-10 py-2 rounded-md my-2 block w-fit bg-black-zinc text-white dark:bg-white dark:text-black-zinc hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black-zinc dark:border-white transition"
+				class="bg-black-zinc dark:text-black-zinc hover:text-main dark:hover:text-main hover:border-main dark:hover:border-main border-black-zinc my-2 block w-fit rounded-md border px-10 py-2 font-medium text-white transition hover:bg-transparent dark:border-white dark:bg-white dark:hover:bg-transparent"
 				>Get started</a
 			>
 			<section class="my-12">
@@ -42,7 +52,7 @@ Astro.cookies.set("framework", frameworkId, {
 					contributors! Thank you to everyone who has helped with the
 					development!
 				</p>
-				<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
+				<div class="mt-2 flex w-full flex-wrap gap-2 pb-1">
 					{
 						contributors.map((val) => (
 							<a
@@ -54,7 +64,7 @@ Astro.cookies.set("framework", frameworkId, {
 									src={val.avatar}
 									height="128"
 									width="128"
-									class="w-8 h-8 rounded-full border dark:border-black-zinc hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100 bg-geay-100"
+									class="dark:border-black-zinc hover:border-main dark:hover:border-main bg-geay-100 h-8 w-8 rounded-full border object-fill transition duration-100 hover:scale-110"
 									alt={val.username}
 									loading="lazy"
 								/>
@@ -69,7 +79,7 @@ Astro.cookies.set("framework", frameworkId, {
 
 <style>
 	:global(.astro-code) {
-		@apply overflow-scroll rounded-md px-4 py-2 my-2 text-sm;
+		@apply my-2 overflow-scroll rounded-md px-4 py-2 text-sm;
 		scrollbar-width: none;
 	}
 	:global(.dark .astro-code) {

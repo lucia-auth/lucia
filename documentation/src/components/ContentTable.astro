@@ -1,22 +1,14 @@
 ---
 import { getCollection } from "cela/content";
 import { FrameworkButton } from "./buttons";
-import type { MarkdownDocument } from "cela/types";
+import type { Collection, MarkdownDocument } from "cela/types";
 
 type Props = {
-	content?: MarkdownDocument;
+	frameworkId: string | null
+	collection: Collection
 };
 
-// we dont have to check the input
-// since the cookie is always set in the previous step (in pages/*.astro )
-let frameworkId = Astro.cookies.get("framework").value ?? null;
-frameworkId = frameworkId === "none" ? null : frameworkId;
-
-const content = Astro.props.content ?? null;
-
-let collectionId = content?.metaData.collectionId ?? "main";
-const collection = await getCollection(collectionId, frameworkId);
-if (!collection) throw new Error();
+const collection = Astro.props.collection
 
 const currentPathname = Astro.url.pathname;
 ---
@@ -48,7 +40,7 @@ const currentPathname = Astro.url.pathname;
 	class="fixed w-full md:w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden z-40 hidden xl:block dark:bg-black-zinc dark:text-zinc-400"
 	id="content-table-wrapper"
 >
-	<input type="hidden" value={collectionId} id="collection-id" />
+	<input type="hidden" value={collection.id} id="collection-id" />
 
 	<div class="ml-8 mr-4 border-b py-6 border-zinc-200 dark:border-zinc-800">
 		{
@@ -56,7 +48,7 @@ const currentPathname = Astro.url.pathname;
 				<p class="text-lg font-semibold">{collection.title}</p>
 			)
 		}
-		<FrameworkButton client:idle current={frameworkId} />
+		<FrameworkButton client:idle current={Astro.props.frameworkId} />
 	</div>
 	<div
 		id="content-table"

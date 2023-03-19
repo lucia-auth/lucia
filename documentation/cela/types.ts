@@ -13,6 +13,7 @@ export type Section = {
 };
 
 export type Collection = {
+	id: string;
 	title: string;
 	sections: Section[];
 };

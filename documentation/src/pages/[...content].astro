@@ -1,7 +1,7 @@
 ---
 import ContentTable from "@components/ContentTable.astro";
 import Layout from "@components/Layout.astro";
-import { getContent } from "cela/content";
+import { getCollection, getContent } from "cela/content";
 import { frameworkIds } from "src/framework";
 import redirects from "redirects.json";
 
@@ -42,6 +42,17 @@ if (content.metaData.frameworkId) {
 	});
 }
 
+let collectionId = content?.metaData.collectionId ?? "main";
+
+const frameworkId =
+	requestedFrameworkId === "none" ? null : requestedFrameworkId;
+const collection = await getCollection(collectionId, frameworkId);
+
+if (!collection)
+	return new Response(null, {
+		status: 404
+	});
+
 const contributePageUrl = new URL(
 	`${content.metaData.path}.md`,
 	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation/collection"
@@ -49,7 +60,7 @@ const contributePageUrl = new URL(
 ---
 
 <Layout>
-	<ContentTable content={content} />
+	<ContentTable collection={collection} frameworkId={frameworkId} />
 	<main
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200 lg:pr-64 xl:pl-80"
 	>
