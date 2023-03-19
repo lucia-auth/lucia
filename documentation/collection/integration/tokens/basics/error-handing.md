@@ -8,12 +8,12 @@ Lucia [known errors](/learn/basics/error-handling#known-errors) are thrown as [`
 Using a try-catch block, the error message can be read like so:
 
 ```ts
-import { TokenError } from "@lucia-auth/tokens";
+import { LuciaTokenError } from "@lucia-auth/tokens";
 
 try {
 	// ...
 } catch (e) {
-	if (e instanceof TokenError) {
+	if (e instanceof LuciaTokenError) {
 		const message = e.message;
 	}
 }
