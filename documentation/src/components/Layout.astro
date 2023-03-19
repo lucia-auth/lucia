@@ -1,14 +1,32 @@
 ---
 import Header from "@components/Header.astro";
-import ContentTable from "@components/ContentTable.astro";
 
 interface Props {
 	title?: string;
 }
 const title = Astro.props.title ?? "Lucia";
+
+const themeCookie = Astro.cookies.get("theme");
+let theme = themeCookie.value ?? "light";
+if (theme !== "light" && theme !== "dark") {
+	theme = "light";
+}
 ---
 
-<html lang="en">
+<script>
+	import { addClassName, removeClassName } from "@lib/dom";
+	import { onMenuToggle } from "@lib/state";
+
+	onMenuToggle((isMenuOpen) => {
+		if (isMenuOpen) {
+			addClassName(document.body, "overflow-hidden");
+		} else {
+			removeClassName(document.body, "overflow-hidden");
+		}
+	});
+</script>
+
+<html lang="en" class="bg-main">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -31,7 +49,10 @@ const title = Astro.props.title ?? "Lucia";
 	</head>
 
 	<body
-		class="dark:bg-black-zinc dark:text-zinc-200 leading-relaxed text-black-zinc bg-main"
+		class:list={[
+			"dark:text-zinc-200 leading-relaxed text-black-zinc xl:overflow-auto",
+			theme
+		]}
 	>
 		<Header />
 		<slot />
@@ -39,9 +60,8 @@ const title = Astro.props.title ?? "Lucia";
 			body {
 				font-family: IBM Plex Sans, sans-serif;
 			}
-			:global(::selection) {
-				background-color: #c0bdff;
-			}
 		</style>
 	</body>
+	<!--not super proud of this - need this to hide main-color bg on chrome -->
+	<div class="-z-10 h-screen w-screen fixed top-0 bg-zinc-900"></div>
 </html>

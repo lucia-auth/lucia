@@ -50,9 +50,11 @@ const contributePageUrl = new URL(
 
 <Layout>
 	<ContentTable content={content} />
-	<main class="ml-80 bg-white min-h-screen">
-		<article class="pt-24 mr-64 pb-12">
-			<section id="md" class="px-24">
+	<main
+		class="xl:pl-80 bg-white min-h-screen h-full lg:pr-64 dark:bg-zinc-900 dark:text-zinc-200"
+	>
+		<article class="pt-24 pb-12">
+			<section id="md" class="px-16 xl:px-24 overflow-hidden">
 				<h1 class="font-semibold text-4xl sm:text-5xl mb-16">
 					{content.metaData.title}
 				</h1>
@@ -67,9 +69,13 @@ const contributePageUrl = new URL(
 			</section>
 		</article>
 	</main>
-	<div class="fixed right-0 top-0 pr-8 pt-24 h-screen w-64">
+	<div
+		class="fixed right-0 top-0 pr-8 pt-24 h-screen w-64 hidden lg:block "
+	>
 		<h2 class="font-medium text-sm mb-1">On this page</h2>
-		<ul class="list-none text-zinc-500 dark:text-zinc-400 text-sm relative overflow-auto overscroll-contain h-full pb-8">
+		<ul
+			class="list-none text-zinc-500 dark:text-zinc-400 text-sm relative overflow-auto overscroll-contain h-full pb-8"
+		>
 			<li class="my-1">
 				<a href="#" class="hover:text-black-zinc hover:dark:text-zinc-200">
 					Overview
@@ -107,6 +113,9 @@ const contributePageUrl = new URL(
 	:global(#md h2) {
 		@apply font-semibold text-2xl sm:text-3xl mb-4 mt-16 break-words border-t border-zinc-200 pt-8;
 	}
+	:global(.dark #md h2) {
+		@apply !border-zinc-700;
+	}
 	:global(#md h3) {
 		@apply font-semibold text-xl sm:text-2xl mb-4 mt-12 break-words;
 	}
@@ -127,7 +136,7 @@ const contributePageUrl = new URL(
 		scrollbar-width: none;
 	}
 	:global(.dark #md .astro-code) {
-		@apply !bg-zinc-900;
+		@apply !bg-black-zinc;
 	}
 	:global(#md pre::-webkit-scrollbar) {
 		display: none;
@@ -176,6 +185,9 @@ const contributePageUrl = new URL(
 	}
 	:global(#md img) {
 		@apply bg-gray-100 w-full appearance-none text-transparent border rounded-md border-zinc-200;
+	}
+	:global(.dark #md img) {
+		@apply !border-black-zinc;
 	}
 	:global(#md strong) {
 		@apply font-semibold;

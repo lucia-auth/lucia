@@ -1,45 +1,29 @@
-import { toggleMenuOpen } from "@lib/state";
+import { addClassName, removeClassName } from "@lib/dom";
 import { dynamicClassName } from "@lib/styles";
 import { For, Show, createSignal } from "solid-js";
 import frameworks from "src/framework";
 
-export const MenuButton = () => {
-	return (
-		<button
-			onClick={toggleMenuOpen}
-			class="xl:hidden"
-			aria-label="Toggle menubar"
-		>
-			<div class="h-8 w-8 dark:text-zinc-200 fill-current">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 48 48"
-					class="w-full h-full"
-				>
-					<path d="M6 36v-3h36v3Zm0-10.5v-3h36v3ZM6 15v-3h36v3Z" />
-				</svg>
-			</div>
-		</button>
-	);
+const setCookie = (name: string, value: string) => {
+	document.cookie = `${name}=${value};max-age=${60 * 60 * 24 * 365};path=/;`;
 };
 
-export const ThemeButton = () => {
-	type Theme = "light" | "dark";
+export const ThemeButton = (props: { initialTheme: string }) => {
 	const useTheme = () => {
-		const initialTheme: Theme =
-			typeof document !== "undefined"
-				? (window.localStorage.getItem("theme") as Theme)
-				: "light";
-		const [signal, setter] = createSignal<Theme>(initialTheme);
+		let initialTheme = props.initialTheme;
+		if (initialTheme !== "light" && initialTheme !== "dark") {
+			initialTheme = "light";
+		}
+		const [signal, setter] = createSignal(initialTheme);
 		const toggleTheme = () => {
-			const newTheme: Theme = signal() === "light" ? "dark" : "light";
-			setter(newTheme);
-			window.localStorage.setItem("theme", newTheme);
+			const newTheme = signal() === "light" ? "dark" : "light";
+			setCookie("theme", newTheme);
 			if (newTheme === "light") {
-				document.documentElement.classList.remove("dark");
-			} else {
-				document.documentElement.classList.add("dark");
+				removeClassName(document.body, "dark");
 			}
+			if (newTheme === "dark") {
+				addClassName(document.body, "dark");
+			}
+			setter(newTheme);
 		};
 		return [signal, toggleTheme] as const;
 	};
@@ -75,10 +59,10 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 		<div>
 			<button
 				class={dynamicClassName(
-					"w-full px-4 py-1.5 text-left  rounded-md bg-zinc-50 border ",
+					"w-full px-4 py-1.5 text-left rounded-md bg-zinc-50 dark:bg-zinc-900 border",
 					{
 						"border-main": isBoxOpen(),
-						"border-zinc-200": !isBoxOpen()
+						"border-zinc-200 dark:border-zinc-800": !isBoxOpen()
 					}
 				)}
 				onClick={toggleBox}
@@ -86,38 +70,34 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 				<span class="text-zinc-500">Framework:</span>
 				<span> {currentSelection.title}</span>
 			</button>
-			<div
-				class={
-					isBoxOpen()
-						? "absolute bg-white shadow-lg rounded-md z-50 w-48 py-2 mt-2 border border-zinc-200"
-						: "hidden"
-				}
-			>
-				<ul>
-					<For each={frameworks}>
-						{(option) => {
-							const searchParams = new URLSearchParams({
-								framework: option.id
-							});
-							const href = `/?${searchParams}`;
-							return (
-								<li
-									class={dynamicClassName("", {
-										"text-main": option.id === currentSelection.id
-									})}
-								>
-									<a
-										class="hover:bg-zinc-100 py-1 px-4 w-full block"
-										href={href}
+			<Show when={isBoxOpen()}>
+				<div class="absolute bg-white dark:bg-zinc-900 shadow-lg rounded-md z-50 w-48 py-2 mt-2 border border-zinc-200 dark:border-zinc-800">
+					<ul>
+						<For each={frameworks}>
+							{(option) => {
+								const searchParams = new URLSearchParams({
+									framework: option.id
+								});
+								const href = `/?${searchParams}`;
+								return (
+									<li
+										class={dynamicClassName("", {
+											"text-main": option.id === currentSelection.id
+										})}
 									>
-										{option.title}
-									</a>
-								</li>
-							);
-						}}
-					</For>
-				</ul>
-			</div>
+										<a
+											class="hover:bg-zinc-100 py-1 px-4 w-full block dark:hover:bg-zinc-800"
+											href={href}
+										>
+											{option.title}
+										</a>
+									</li>
+								);
+							}}
+						</For>
+					</ul>
+				</div>
+			</Show>
 		</div>
 	);
 };

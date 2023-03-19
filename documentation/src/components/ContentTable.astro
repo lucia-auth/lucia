@@ -21,33 +21,36 @@ if (!collection) throw new Error();
 const currentPathname = Astro.url.pathname;
 ---
 
-<input type="hidden" value={collectionId} id="collection-id" />
-<div class="fixed w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden">
-	<script>
-		const target = document.getElementById("content-table");
-		const collectionIdElement = document.getElementById("collection-id");
-		if (target && collectionIdElement) {
-			const collectionId = collectionIdElement.value;
-			const storedScrollPosition = sessionStorage.getItem("scroll_position");
-			if (storedScrollPosition !== null) {
-				const [prevCollectionId, prevScrollPosition] =
-					storedScrollPosition.split(":");
-				if (prevCollectionId === collectionId) {
-					target.scrollTop = prevScrollPosition;
-				}
+<script>
+	import { addClassName, removeClassName } from "@lib/dom";
+	import { onMenuToggle } from "../lib/state";
+	const backdropElement = document.getElementById("backdrop");
+	const contentTableWrapperElement = document.getElementById(
+		"content-table-wrapper"
+	);
+	if (
+		backdropElement instanceof HTMLDivElement &&
+		contentTableWrapperElement instanceof HTMLDivElement
+	) {
+		onMenuToggle((isMenuOpen) => {
+			if (isMenuOpen) {
+				removeClassName(backdropElement, "hidden");
+				removeClassName(contentTableWrapperElement, "hidden");
+			} else {
+				addClassName(backdropElement, "hidden");
+				addClassName(contentTableWrapperElement, "hidden");
 			}
-			target.addEventListener("click", (e: MouseEvent) => {
-				if (!(e.target instanceof HTMLAnchorElement)) return;
-				e.preventDefault();
-				sessionStorage.setItem(
-					`scroll_position`,
-					`${collectionId}:${target.scrollTop.toString()}`
-				);
-				window.location.href = e.target.href;
-			});
-		}
-	</script>
-	<div class="ml-8 mr-4 border-b py-6 border-zinc-200">
+		});
+	}
+</script>
+
+<div
+	class="fixed w-full md:w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden z-40 hidden xl:block dark:bg-black-zinc dark:text-zinc-400"
+	id="content-table-wrapper"
+>
+	<input type="hidden" value={collectionId} id="collection-id" />
+
+	<div class="ml-8 mr-4 border-b py-6 border-zinc-200 dark:border-zinc-800">
 		{
 			!!collection.title && (
 				<p class="text-lg font-semibold">{collection.title}</p>
@@ -57,7 +60,7 @@ const currentPathname = Astro.url.pathname;
 	</div>
 	<div
 		id="content-table"
-		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2 bg-zinc-80"
+		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2 bg-zinc-80 dark:bg-black-zinc"
 	>
 		{
 			collection.sections.map((section) => {
@@ -71,7 +74,7 @@ const currentPathname = Astro.url.pathname;
 									<li>
 										<a
 											class:list={[
-												"block hover:bg-zinc-150 pl-8 pr-4 py-1",
+												"block hover:bg-zinc-150 pl-8 pr-4 py-1 hover:bg-black-zinc dark:hover:bg-zinc-900",
 												{
 													"text-main": isSelected
 												}
@@ -90,3 +93,35 @@ const currentPathname = Astro.url.pathname;
 		}
 	</div>
 </div>
+<div
+	class="fixed w-full h-full bg-black-zinc opacity-30 overscroll-contain z-30 hidden xl:hidden"
+	id="backdrop"
+>
+</div>
+<script is:inline>
+	const contentTableElement = document.getElementById("content-table");
+	const collectionIdElement = document.getElementById("collection-id");
+	if (
+		contentTableElement instanceof HTMLDivElement &&
+		collectionIdElement instanceof HTMLInputElement
+	) {
+		const collectionId = collectionIdElement.value;
+		const storedScrollPosition = sessionStorage.getItem("scroll_position");
+		if (storedScrollPosition !== null) {
+			const [prevCollectionId, prevScrollPosition] =
+				storedScrollPosition.split(":");
+			if (prevCollectionId === collectionId) {
+				contentTableElement.scrollTop = Number(prevScrollPosition);
+			}
+		}
+		contentTableElement.addEventListener("click", (e) => {
+			if (!(e.target instanceof HTMLAnchorElement)) return;
+			e.preventDefault();
+			sessionStorage.setItem(
+				`scroll_position`,
+				`${collectionId}:${contentTableElement.scrollTop.toString()}`
+			);
+			window.location.href = e.target.href;
+		});
+	}
+</script>
