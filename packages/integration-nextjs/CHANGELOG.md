@@ -1,5 +1,11 @@
 # @lucia-auth/nextjs
 
+## 0.5.7
+
+### Patch changes
+
+- [#424](https://github.com/pilcrowOnPaper/lucia/pull/424) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : - Update dependencies
+
 ## 0.5.6
 
 ### Patch changes

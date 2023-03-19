@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-kysely
 
+## 0.7.1
+
+### Patch changes
+
+- [#424](https://github.com/pilcrowOnPaper/lucia/pull/424) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : - Update dependencies
+
 ## 0.7.0
 
 ### Minor changes
