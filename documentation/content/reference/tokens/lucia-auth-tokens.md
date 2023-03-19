@@ -99,4 +99,4 @@ Refer to [`Token`](/reference/tokens/token).
 
 ## `TokenError`
 
-Refer to [`TokenError`](/reference/tokens/tokenerror).
+Refer to [`LuciaTokenError`](/reference/tokens/luciatokenerror).

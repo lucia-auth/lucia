@@ -3,7 +3,7 @@ title: "Error handling"
 _order: 1
 ---
 
-Lucia [known errors](/basics/error-handling#known-errors) are thrown as [`TokenError`](/reference/tokens/tokenerror) and database errors are thrown as is.
+Lucia [known errors](/basics/error-handling#known-errors) are thrown as [`LuciaTokenError`](/reference/tokens/luciatokenerror) and database errors are thrown as is.
 
 Using a try-catch block, the error message can be read like so:
 
@@ -19,4 +19,4 @@ try {
 }
 ```
 
-Refer to [`TokenError`](/reference/tokens/tokenerror) for a full list of error messages.
+Refer to [`LuciaTokenError`](/reference/tokens/luciatokenerror) for a full list of error messages.
