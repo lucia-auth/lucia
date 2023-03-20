@@ -42,10 +42,10 @@ if (theme !== "light" && theme !== "dark") {
 		<meta property="og:title" content={title} />
 		<meta
 			property="og:url"
-			content={`https://lucia-auth.com${Astro.url.pathname}`}
+			content={`${Astro.url.origin}${Astro.url.pathname}`}
 		/>
 		<meta property="og:locale" content="en" />
-		<meta property="og:image" content="https://lucia-auth.com/preview.jpg" />
+		<meta property="og:image" content={`${Astro.url.origin}/preview.jpg`} />
 		<meta property="og:image:alt" content="" />
 		<meta name="description" property="og:description" content={description} />
 		<meta property="og:site_name" content="Lucia Documentation" />
