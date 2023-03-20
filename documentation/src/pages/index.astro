@@ -1,6 +1,8 @@
 ---
 import Layout from "@components/Layout.astro";
 import ContentTable from "@components/ContentTable.astro";
+import Header from "@components/Header.astro"
+
 // generated on build/dev start
 import contributors from ".github.json";
 
@@ -33,6 +35,7 @@ if (!collection) {
 		description: null
 	}}
 >
+	<Header />
 	<ContentTable frameworkId={frameworkId} />
 	<main
 		class="min-h-screen overflow-hidden bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:ml-80"

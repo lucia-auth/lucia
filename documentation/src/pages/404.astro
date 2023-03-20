@@ -1,0 +1,22 @@
+---
+export const prerender = true;
+
+import Layout from "@components/Layout.astro";
+---
+
+<Layout
+	meta={{
+		title: "404 Not found",
+		description: null
+	}}
+>
+	<div
+		class="w-scree text-zinc-shadow flex h-screen place-content-center place-items-center bg-white"
+	>
+		<div>
+			<p class="text-zinc-150 text-9xl font-bold">404</p>
+			<h1 class="font-medium text-xl">Not found</h1>
+			<a href="/" class="text-main hover:underline">Return to main page</a>
+		</div>
+	</div>
+</Layout>
