@@ -42,19 +42,13 @@ if (theme !== "light" && theme !== "dark") {
 		<meta property="og:title" content={title} />
 		<meta
 			property="og:url"
-			content={`https://lucia-auth${Astro.url.pathname}`}
+			content={`https://lucia-auth.com${Astro.url.pathname}`}
 		/>
 		<meta property="og:locale" content="en" />
-		<meta property="og:image" content="/preview.jpg" />
+		<meta property="og:image" content="https://lucia-auth.com/preview.jpg" />
 		<meta property="og:image:alt" content="" />
 		<meta name="description" property="og:description" content={description} />
 		<meta property="og:site_name" content="Lucia Documentation" />
-		<!-- Twitter tags -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:site" content="lucia" />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content="/preview.jpg" />
-		<meta name="twitter:image:alt" content="" />
 
 		<title>
 			{title}
