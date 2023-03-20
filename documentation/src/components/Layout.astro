@@ -7,7 +7,9 @@ interface Props {
 		description: string | null;
 	};
 }
-const title = Astro.props.meta.title ?? "Lucia";
+const title = Astro.props.meta.title
+	? `${Astro.props.meta.title} | Lucia`
+	: "Lucia";
 const description =
 	Astro.props.meta.description ?? "Authentication, simple and clean";
 
