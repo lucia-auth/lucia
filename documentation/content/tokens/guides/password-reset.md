@@ -1,5 +1,6 @@
 ---
 title: "Password reset"
+description: "Learn how to set up password reset with the tokens integration for Lucia"
 ---
 
 Password reset will be handled using verification links.

@@ -31,4 +31,5 @@ export type DocumentMetaData = {
 	id: string;
 	path: string;
 	href: string;
+	description: string | null;
 };

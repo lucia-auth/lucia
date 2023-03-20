@@ -1,6 +1,7 @@
 ---
 _order: 1
 title: "Keys"
+description: "Learn about keys in Lucia"
 ---
 
 Keys allow you to reference users using external data from a _provider_. Keys are defined with a _provider id_, which is just a unique id for the provider, and a _provider user id_, which is the unique identifier of the user within the provided data.

@@ -1,6 +1,7 @@
 ---
 _order: 1
 title: "Sign out users"
+description: "Learn how to sign out users in Astro"
 ---
 
 An endpoint that handles log out should be created and a sign out request should be sent using forms.

@@ -1,6 +1,7 @@
 ---
 _order: 2
 title: "Quick start"
+description: "Learn how to set up a basic SvelteKit app with Lucia"
 ---
 
 This page will guide you on how to implement a simple username/password auth using SvelteKit and cover the basics of Lucia.

@@ -1,5 +1,6 @@
 ---
 title: "Email verification"
+description: "Learn how to set up email verification with the tokens integration for Lucia"
 ---
 
 The basic steps of email verification is as follow:

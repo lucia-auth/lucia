@@ -1,6 +1,7 @@
 ---
 _order: 2
 title: "Load functions"
+description: "Learn how to effectively use SvelteKit's load function with Lucia"
 ---
 
 `locals.validate` and `locals.validateUser` can be used to get the current auth state in server load functions. In general, data fetching and auth guards should be handled solely with server load functions, and not shared load functions.

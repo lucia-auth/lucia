@@ -1,6 +1,7 @@
 ---
 _order: 1
 title: "Getting started"
+description: "Learn how to get started with Lucia using SvelteKit"
 ---
 
 Install Lucia and the SvelteKit integration using your package manager of your choice. `lucia-auth` can be used as is in a server environment (and only inside it), and `@lucia-auth/sveltekit` provides SvelteKit specific code for both the backend and frontend.

@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Getting started"
+description: "Learn about getting started with the OAuth integration for Lucia"
 ---
 
 While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.

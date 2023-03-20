@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "LinkedIn"
+description: "Learn about using the LinkedIn provider in Lucia OAuth integration"
 ---
 
 OAuth integration for LinkedIn. Refer to [LinkedIn OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.

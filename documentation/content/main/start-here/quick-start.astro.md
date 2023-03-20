@@ -1,6 +1,7 @@
 ---
 _order: 2
 title: "Quick start"
+description: "Learn how to set up a basic Astro app with Lucia"
 ---
 
 This page will guide you how to implement a simple username/password authentication using Astro and cover the basics of Lucia.

@@ -1,5 +1,7 @@
 ---
+_order: 0
 title: "Custom adapters"
+description: "Learn how to create your own database adapters for Lucia"
 ---
 
 Adapters provide a set of methods to interact with the database.

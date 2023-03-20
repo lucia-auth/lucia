@@ -149,14 +149,27 @@ export const generateCollection = (collectionId: string) => {
 				: documentHref;
 			const rawDocumentFile = fs.readFileSync(documentPath);
 			const frontmatterResult = matter(rawDocumentFile);
+			const frontmatterData = frontmatterResult.data as Partial<{
+				title: string;
+				description: string;
+				_redirect: string;
+			}>;
+			if (frontmatterData.title === undefined) {
+				throw new Error(
+					`Property "title" is undefined at: ${documentFsUrl} : ${
+						frameworkId ?? "-"
+					}`
+				);
+			}
 			const documentMetaData = {
-				title: frontmatterResult.data.title ?? "",
-				redirect: frontmatterResult.data._redirect ?? null,
+				title: frontmatterData.title ?? "",
+				redirect: frontmatterData._redirect ?? null,
 				collectionId,
 				frameworkId,
 				id: documentId,
 				href: documentHref,
-				path: documentFsUrl
+				path: documentFsUrl,
+				description: frontmatterData.description ?? null
 			} satisfies DocumentMetaData;
 			fs.writeFileSync(
 				path.join(

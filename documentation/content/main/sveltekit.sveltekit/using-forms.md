@@ -1,6 +1,7 @@
 ---
 _order: 5
 title: "Using forms"
+description: "Learn how to use forms with Lucia in SvelteKit"
 ---
 
 Forms can return 3 types of response

@@ -1,6 +1,7 @@
 ---
 _order: 1
 title: "Getting started"
+description: "Learn how to get started with Lucia"
 ---
 
 Install Lucia using your package manager of your choice.

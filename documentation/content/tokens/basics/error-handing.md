@@ -1,6 +1,7 @@
 ---
 title: "Error handling"
 _order: 1
+description: "Learn about handing errors in the tokens integration for Lucia"
 ---
 
 Lucia [known errors](/basics/error-handling#known-errors) are thrown as [`LuciaTokenError`](/reference/tokens/luciatokenerror) and database errors are thrown as is.

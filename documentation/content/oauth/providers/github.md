@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Github"
+description: "Learn about using the Github provider in Lucia OAuth integration"
 ---
 
 OAuth integration for Github. Refer to [Github OAuth documentation](https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps) for getting the required credentials. Provider id is `github`.

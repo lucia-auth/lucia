@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Get session in the server"
+description: "Learn how to get the current session in the server in SvelteKit"
 ---
 
 This is for actions, standalone endpoints, and server load functions (ie. for +page.server.ts and +server.ts files).

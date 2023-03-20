@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Kysely"
+description: "Learn how to use Kysely with Lucia"
 ---
 
 An adapter for [Kysely SQL query builder](https://github.com/koskimas/kysely). This adapter currently supports [all 3 dialects officially supported by Kysely](https://github.com/koskimas/kysely#installation):

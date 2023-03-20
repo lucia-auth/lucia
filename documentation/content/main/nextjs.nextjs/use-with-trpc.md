@@ -3,7 +3,7 @@ _order: 3
 title: "Use with tRPC"
 ---
 
-[tRPC](https://github.com/trpc/trpc) makes it easy to implement type-safe APIs in your Next.js application. Since [`AuthRequest()`](/nextjs/api-reference/server-api#authrequest) only requires Next.js `req` and `res`, it's super easy to add Lucia to tRPC.
+[tRPC](https://github.com/trpc/trpc) makes it easy to implement type-safe APIs in your Next.js application. Since [`AuthRequest()`](/reference/nextjs/lucia-auth-nextjs#authrequest) only requires Next.js `req` and `res`, it's super easy to add Lucia to tRPC.
 
 ```ts
 // src/pages/api/[trpc].ts

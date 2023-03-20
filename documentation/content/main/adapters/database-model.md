@@ -1,6 +1,7 @@
 ---
-_order: 0
+_order: 1
 title: "Database model"
+description: "Learn the basic database model required for Lucia"
 ---
 
 Lucia uses adapters to connect to your database. The following chart shows the basic structure of the database, though they may vary from database to database.

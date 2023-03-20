@@ -1,6 +1,7 @@
 ---
 title: "Id tokens"
 _order: 0
+description: "Learn about ID tokens in the tokens integration for Lucia"
 ---
 
 Id tokens are regular tokens, similar to sessions, linked to the user to identify the token holder, such as for magic links.

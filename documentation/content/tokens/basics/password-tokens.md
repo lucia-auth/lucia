@@ -1,6 +1,7 @@
 ---
 title: "Password tokens"
 _order: 0
+description: "Learn about password tokens in the tokens integration for Lucia"
 ---
 
 Password tokens are single use passwords linked to a user. Unlike [id tokens](/tokens/basics/id-tokens), a user id is required on token validation.

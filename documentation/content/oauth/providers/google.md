@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Google"
+description: "Learn about using the Google provider in Lucia OAuth integration"
 ---
 
 OAuth integration for Google. Refer to [Google OAuth documentation](https://developers.google.com/identity/protocols/oauth2/web-server#httprests) for getting the required credentials. Provider id is `google`.

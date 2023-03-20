@@ -1,6 +1,7 @@
 ---
 _order: 4
 title: "Sign out users"
+description: "Learn how to sign out users in SvelteKit"
 ---
 
 An action that handles log out should be created and a sign out request should be sent using forms. It can alternatively be an API endpoint.

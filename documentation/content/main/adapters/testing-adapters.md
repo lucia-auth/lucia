@@ -1,6 +1,7 @@
 ---
 _order: 2
 title: "Testing adapters"
+description: "Learn how to test your custom database adapters"
 ---
 
 Lucia provides a package for testing adapters.

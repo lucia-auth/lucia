@@ -1,9 +1,10 @@
 ---
-_order: 2
+_order: 4
 title: "HTTP API"
+description: "Learn about the API routes exposed by the Lucia Next.js integration"
 ---
 
-Using [`handleApiRoutes()`](/nextjs/api-reference/server-api#handleapiroutes), Lucia exposes a few endpoints that can be called from the client.
+Using [`handleApiRoutes()`](/reference/nextjs/lucia-auth-nextjs#handleapiroutes), Lucia exposes a few endpoints that can be called from the client.
 
 ## /api/auth/logout
 

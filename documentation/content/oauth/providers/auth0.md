@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Auth0"
+description: "Learn about using the Auth0 provider in Lucia OAuth integration"
 ---
 
 OAuth integration for Auth0. Refer to [Auth0 OAuth documentation](https://auth0.com/docs/get-started/authentication-and-authorization-flow/add-login-auth-code-flow) for getting the required credentials. Provider id is `auth0`.

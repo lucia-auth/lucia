@@ -51,7 +51,12 @@ const contributePageUrl = new URL(
 );
 ---
 
-<Layout>
+<Layout
+	meta={{
+		title: content.metaData.title,
+		description: content.metaData.description
+	}}
+>
 	<ContentTable
 		collectionId={content.metaData.collectionId}
 		frameworkId={frameworkId}

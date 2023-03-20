@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Get session in the server"
+description: "Learn how to get the current session in Astro"
 ---
 
 This can be used in any server context, including pages and API routes.

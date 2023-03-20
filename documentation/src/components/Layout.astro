@@ -2,9 +2,14 @@
 import Header from "@components/Header.astro";
 
 interface Props {
-	title?: string;
+	meta: {
+		title: string | null;
+		description: string | null;
+	};
 }
-const title = Astro.props.title ?? "Lucia";
+const title = Astro.props.meta.title ?? "Lucia";
+const description =
+	Astro.props.description.title ?? "Authentication, simple and clean";
 
 const themeCookie = Astro.cookies.get("theme");
 let theme = themeCookie.value ?? "light";
@@ -31,6 +36,24 @@ if (theme !== "light" && theme !== "dark") {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
+		<!-- OpenGraph tags -->
+		<meta property="og:title" content={title} />
+		<meta
+			property="og:url"
+			content={`https://lucia-auth${Astro.url.pathname}`}
+		/>
+		<meta property="og:locale" content="en" />
+		<meta property="og:image" content="/preview.jpg" />
+		<meta property="og:image:alt" content="" />
+		<meta name="description" property="og:description" content={description} />
+		<meta property="og:site_name" content="Lucia Documentation" />
+		<!-- Twitter tags -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="lucia" />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content="/preview.jpg" />
+		<meta name="twitter:image:alt" content="" />
+
 		<title>
 			{title}
 		</title>
@@ -63,5 +86,5 @@ if (theme !== "light" && theme !== "dark") {
 		</style>
 	</body>
 	<!--not super proud of this - need this to hide main-color bg on chrome -->
-	<div class="-z-10 h-screen w-screen fixed top-0 dark:bg-zinc-900"></div>
+	<div class="fixed top-0 -z-10 h-screen w-screen dark:bg-zinc-900"></div>
 </html>

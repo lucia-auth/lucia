@@ -1,6 +1,7 @@
 ---
 _order: 2
 title: "Sessions"
+description: "Learn about sessions in Lucia"
 ---
 
 Sessions are how you validate and keep track of users. You create new sessions for a user and store the id of the session to the user's browser or device. Session ids can then be used to validate the user.

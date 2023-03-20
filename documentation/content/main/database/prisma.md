@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Prisma"
+description: "Learn how to use Prisma with Lucia"
 ---
 
 An adapter for Prisma ORM. Can be used with: SQL, MySQL, PostgreSQL, and SQLite.

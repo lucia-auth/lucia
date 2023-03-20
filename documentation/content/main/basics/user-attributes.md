@@ -1,6 +1,7 @@
 ---
 _order: 3
 title: "User attributes"
+description: "Learn about user attributes in Lucia"
 ---
 
 In addition to the required user id, you can add any columns/fields to the user table to store user attributes.

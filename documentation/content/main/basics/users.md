@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Users"
+description: "Learn about users in Lucia"
 ---
 
 Users are stored in your database and are represented by a `User` object within Lucia:

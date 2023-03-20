@@ -1,6 +1,7 @@
 ---
 _order: 4
 title: "Error handling"
+description: "Learn how to handle errors thrown by Lucia"
 ---
 
 Errors are handled by throwing [`LuciaError`](/reference/lucia-auth/luciaerror) inside Lucia. All error messages are listed in the reference.

@@ -1,11 +1,12 @@
 ---
 _order: 0
 title: "Get session in the server"
+description: "Learn how to get the current session in the server in Next.js"
 ---
 
 This can be used in any server context, including `getServerSideProps()` and api routes.
 
-`@lucia-auth/nextjs` provides [`AuthRequest`](/nextjs/api-reference/server-api#authrequest) instance that takes in your Lucia `auth` instance, Next.js request, and Next.js response.
+`@lucia-auth/nextjs` provides [`AuthRequest`](/reference/nextjs/authrequest) instance that takes in your Lucia `auth` instance, Next.js request, and Next.js response.
 
 ```ts
 import { AuthRequest } from "@lucia-auth/nextjs";
@@ -14,13 +15,13 @@ import { auth } from "../lib/lucia";
 const authRequest = new AuthRequest(auth, request, response);
 ```
 
-This instance provides methods to interact with the current request, such as [`validate()`](/nextjs/api-reference/server-api#validate). This will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
+This instance provides methods to interact with the current request, such as [`validate()`](/reference/nextjs/authrequest#validate). This will validate the request and return the current session. This will also attempt to renew the session as well if the original session was invalid.
 
 ```ts
 const session = await locals.validate();
 ```
 
-Alternatively, you can use [`validateUser()`](/nextjs/api-reference/server-api#validateuser) which works similarly to `validate()` but returns both the user and session without an additional database call.
+Alternatively, you can use [`validateUser()`](/reference/nextjs/authrequest#validateuser) which works similarly to `validate()` but returns both the user and session without an additional database call.
 
 ```ts
 const { session, user } = await locals.validateUser();

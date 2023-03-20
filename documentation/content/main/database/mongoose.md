@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Mongoose (MongoDB)"
+description: "Learn how to use Mongoose with Lucia"
 ---
 
 An adapter for Mongoose (MongoDB).

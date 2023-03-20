@@ -1,6 +1,7 @@
 ---
 _order: 0
 title: "Introduction"
+description: "A quick introduction on Lucia"
 ---
 
 Lucia is a library that, at its core, makes managing users and sessions easy. It doesn't try to be something more than that and it allows you to quickly build on top of it. Here's a quick overview of what it does provide:

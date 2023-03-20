@@ -1,6 +1,7 @@
 ---
 _order: 1
 title: "Redis (session)"
+description: "Learn how to use Redis with Lucia"
 ---
 
 A session adapter for Redis.

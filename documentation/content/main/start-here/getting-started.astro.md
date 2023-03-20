@@ -1,6 +1,7 @@
 ---
 _order: 1
 title: "Getting started"
+description: "Learn how to get started with Lucia using Astro"
 ---
 
 Install Lucia and the Astro integration using your package manager of your choice. `lucia-auth` can be used as is in a server environment (and only inside it), and `@lucia-auth/astro` provides Astro specific code to be used in the server.
