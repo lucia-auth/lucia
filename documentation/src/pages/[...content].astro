@@ -8,7 +8,7 @@ import { frameworkIds } from "src/framework";
 import redirects from "redirects.json";
 
 const error404 = async () => {
-	const response = await fetch(`${Astro.url.origin}/404`);
+	const response = await fetch(`${Astro.url.origin}/404.html`);
 	return new Response(response.body, {
 		status: 404,
 		headers: {
