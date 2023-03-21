@@ -6,7 +6,7 @@ import Header from "@components/Header.astro";
 // generated on build/dev start
 import contributors from ".github.json";
 
-import { frameworkIds } from "src/framework";
+import { frameworkIds } from "../framework";
 import { getCollection } from "cela/content";
 
 let frameworkId = Astro.url.searchParams.get("framework") ?? null;
