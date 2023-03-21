@@ -21,15 +21,15 @@ import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
 import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.type.js";
 import type { LuciaErrorConstructor } from "./error.js";
 import type { Middleware } from "./request.js";
-import { standard as defaultMiddleware } from "../middleware/index.js";
+import { web as defaultMiddleware } from "../middleware/index.js";
 
 export type Session = Readonly<{
 	sessionId: string;
 	userId: string;
-	activePeriodExpires: Date;
-	idlePeriodExpires: Date;
+	activePeriodExpiresAt: Date;
+	idlePeriodExpiresAt: Date;
 	state: "idle" | "active";
-	isFresh: boolean;
+	fresh: boolean;
 }>;
 
 export type Key = SingleUseKey | PersistentKey;
@@ -39,9 +39,9 @@ export type SingleUseKey = Readonly<{
 	userId: string;
 	providerId: string;
 	providerUserId: string;
-	isPasswordDefined: boolean;
-	expires: Date;
-	isExpired: boolean;
+	passwordDefined: boolean;
+	expiresAt: Date;
+	expired: boolean;
 }>;
 
 export type PersistentKey = Readonly<{
@@ -49,8 +49,8 @@ export type PersistentKey = Readonly<{
 	userId: string;
 	providerId: string;
 	providerUserId: string;
-	isPasswordDefined: boolean;
-	isPrimary: boolean;
+	passwordDefined: boolean;
+	primary: boolean;
 }>;
 
 export type Env = "DEV" | "PROD";
@@ -73,7 +73,7 @@ export class Auth<C extends Configuration = any> {
 	private adapter: Adapter;
 	private generateUserId: () => MaybePromise<string>;
 	private sessionCookieOption: CookieOption;
-	private sessionTimeout: {
+	private sessionExpiresIn: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
@@ -121,9 +121,11 @@ export class Auth<C extends Configuration = any> {
 			config.generateCustomUserId ?? (() => generateRandomString(15));
 		this.ENV = config.env;
 		this.csrfProtection = config.csrfProtection ?? true;
-		this.sessionTimeout = {
-			activePeriod: config.sessionTimeout?.activePeriod ?? 1000 * 60 * 60 * 24,
-			idlePeriod: config.sessionTimeout?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
+		this.sessionExpiresIn = {
+			activePeriod:
+				config.sessionExpiresIn?.activePeriod ?? 1000 * 60 * 60 * 24,
+			idlePeriod:
+				config.sessionExpiresIn?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
 		this.autoDatabaseCleanup = config.autoDatabaseCleanup ?? true;
 		this.transformUserData = ({
@@ -214,7 +216,7 @@ export class Auth<C extends Configuration = any> {
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
-			primary: true,
+			primary_key: true,
 			expires: null
 		});
 		const user = this.transformUserData(userData);
@@ -364,23 +366,23 @@ export class Auth<C extends Configuration = any> {
 	] => {
 		const sessionId = generateRandomString(40);
 		const activePeriodExpires = new Date(
-			new Date().getTime() + this.sessionTimeout.activePeriod
+			new Date().getTime() + this.sessionExpiresIn.activePeriod
 		);
 		const idlePeriodExpires = new Date(
-			activePeriodExpires.getTime() + this.sessionTimeout.idlePeriod
+			activePeriodExpires.getTime() + this.sessionExpiresIn.idlePeriod
 		);
 		return [sessionId, activePeriodExpires, idlePeriodExpires];
 	};
 
 	public createSession = async (userId: string): Promise<Session> => {
-		const [sessionId, activePeriodExpires, idlePeriodExpires] =
+		const [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
 			this.generateSessionId();
 		await Promise.all([
 			this.adapter.setSession({
 				id: sessionId,
 				user_id: userId,
-				active_expires: activePeriodExpires.getTime(),
-				idle_expires: idlePeriodExpires.getTime()
+				active_expires: activePeriodExpiresAt.getTime(),
+				idle_expires: idlePeriodExpiresAt.getTime()
 			}),
 			this.autoDatabaseCleanup
 				? await this.deleteDeadUserSessions(userId)
@@ -388,11 +390,11 @@ export class Auth<C extends Configuration = any> {
 		]);
 		return {
 			userId,
-			activePeriodExpires,
+			activePeriodExpiresAt,
 			sessionId,
-			idlePeriodExpires,
+			idlePeriodExpiresAt,
 			state: "active",
-			isFresh: true
+			fresh: true
 		};
 	};
 
@@ -437,6 +439,8 @@ export class Auth<C extends Configuration = any> {
 	public parseRequestHeaders = (request: LuciaRequest): string | null => {
 		const cookies = parseCookie(request.headers.cookie ?? "");
 		const sessionId = cookies[SESSION_COOKIE_NAME] ?? null;
+		if (request.method === null || request.url === null)
+			throw new LuciaError("AUTH_INVALID_REQUEST");
 		const checkForCsrf =
 			request.method.toUpperCase() !== "GET" &&
 			request.method.toUpperCase() !== "HEAD";
@@ -475,7 +479,7 @@ export class Auth<C extends Configuration = any> {
 					providerId: string;
 					providerUserId: string;
 					password: string | null;
-					timeout: number;
+					expiresIn: number;
 			  }
 	>(
 		userId: string,
@@ -492,35 +496,35 @@ export class Auth<C extends Configuration = any> {
 				id: keyId,
 				user_id: userId,
 				hashed_password: hashedPassword,
-				primary: false,
+				primary_key: false,
 				expires: null
 			});
 			return {
 				type: "persistent",
 				providerId: keyData.providerId,
 				providerUserId: keyData.providerUserId,
-				isPrimary: false,
-				isPasswordDefined: !!keyData.password,
+				primary: false,
+				passwordDefined: !!keyData.password,
 				userId
 			} satisfies PersistentKey as any;
 		}
-		const oneTimeExpires = getOneTimeKeyExpiration(keyData.timeout);
-		if (!oneTimeExpires) throw new TypeError();
+		const expiresAt = getOneTimeKeyExpiration(keyData.expiresIn);
+		if (!expiresAt) throw new TypeError();
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
-			primary: false,
-			expires: oneTimeExpires.getTime()
+			primary_key: false,
+			expires: expiresAt.getTime()
 		});
 		return {
 			type: "single_use",
 			providerId: keyData.providerId,
 			providerUserId: keyData.providerUserId,
 			userId,
-			expires: oneTimeExpires,
-			isExpired: !isWithinExpiration(keyData.timeout),
-			isPasswordDefined: !!keyData.password
+			expiresAt,
+			expired: !isWithinExpiration(keyData.expiresIn),
+			passwordDefined: !!keyData.password
 		} satisfies SingleUseKey as any;
 	};
 
@@ -573,7 +577,7 @@ export type Configuration = {
 	env: Env;
 	generateCustomUserId?: () => MaybePromise<string>;
 	csrfProtection?: boolean;
-	sessionTimeout?: {
+	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
 	};

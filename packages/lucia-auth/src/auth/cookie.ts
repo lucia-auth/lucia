@@ -17,7 +17,7 @@ export const createSessionCookie = (
 	return new Cookie(SESSION_COOKIE_NAME, session?.sessionId ?? "", {
 		...options,
 		httpOnly: true,
-		expires: new Date(session?.idlePeriodExpires ?? 0),
+		expires: new Date(session?.idlePeriodExpiresAt ?? 0),
 		secure: env === "PROD"
 	});
 };

@@ -1,10 +1,10 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import { auth } from "../lib/lucia";
-import { AuthRequest } from "@lucia-auth/astro";
 
-const authRequest = new AuthRequest(auth, Astro);
+const authRequest = auth.handleRequest(Astro.request);
 const { user } = await authRequest.validateUser();
+authRequest.commit(Astro.response);
 if (!user) return Astro.redirect("/login", 302);
 ---
 
@@ -12,6 +12,6 @@ if (!user) return Astro.redirect("/login", 302);
 	<h2>Your profile</h2>
 	<pre class="code">{JSON.stringify(user!, null, 2)}</pre>
 	<form action="/api/logout" method="post">
-		<input type="submit" class="button" value="Sign out">
+		<input type="submit" class="button" value="Sign out" />
 	</form>
 </MainLayout>

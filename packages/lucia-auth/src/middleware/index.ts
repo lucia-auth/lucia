@@ -1,6 +1,8 @@
+import type { IncomingMessage } from "node:http";
 import type { Middleware } from "../index.js";
+import type { Request as ExpressRequest } from "express";
 
-export const standard = (): Middleware<Request, Response> => {
+export const web = (): Middleware<Request> => {
 	return {
 		transformRequest: (request) => {
 			return {
@@ -11,9 +13,36 @@ export const standard = (): Middleware<Request, Response> => {
 					cookie: request.headers.get("Cookie") ?? null
 				}
 			};
-		},
-		appendResponseHeader: (response, name, value) => {
-			response.headers.append(name, value);
+		}
+	};
+};
+
+export const node = (): Middleware<IncomingMessage> => {
+	return {
+		transformRequest: (request) => {
+			return {
+				url: request.url ?? "",
+				method: request.method ?? "",
+				headers: {
+					origin: request.headers.origin ?? null,
+					cookie: request.headers.cookie ?? null
+				}
+			};
+		}
+	};
+};
+
+export const express = (): Middleware<ExpressRequest> => {
+	return {
+		transformRequest: (request) => {
+			return {
+				url: request.url,
+				method: request.method,
+				headers: {
+					origin: request.headers.origin ?? null,
+					cookie: request.headers.cookie ?? null
+				}
+			};
 		}
 	};
 };

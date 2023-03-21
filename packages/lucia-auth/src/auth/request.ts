@@ -1,41 +1,34 @@
 import type { Auth, Session, User } from "./index.js";
 
 export type LuciaRequest = {
-	method: string;
-	url: string;
+	method: string | null;
+	url: string | null;
 	headers: {
 		origin: string | null;
 		cookie: string | null;
 	};
 };
 
-export type Middleware<RequestInstance = any, ResponseInstance = any> = {
+export type Middleware<RequestInstance = any> = {
 	transformRequest: (request: RequestInstance) => LuciaRequest;
-	appendResponseHeader: (
-		response: ResponseInstance,
-		name: string,
-		value: string
-	) => void;
 };
 
-export class AuthRequest<A extends Auth, M extends Middleware<any, any>> {
+export class AuthRequest<A extends Auth, M extends Middleware> {
 	private auth: A;
-	private middleware: M;
 	private request: LuciaRequest;
 	constructor(
 		auth: A,
 		middleware: M,
-		request: M extends Middleware<infer RequestInstance, any>
+		request: M extends Middleware<infer RequestInstance>
 			? RequestInstance
 			: never
 	) {
 		this.auth = auth;
-		this.middleware = middleware;
 		this.request = middleware.transformRequest(request);
 	}
 
-	private validateSessionPromise: Promise<Session | null> | null = null;
-	private validateSessionUserPromise: Promise<
+	private validatePromise: Promise<Session | null> | null = null;
+	private validateUserPromise: Promise<
 		| { user: User; session: Session }
 		| {
 				user: null;
@@ -46,19 +39,19 @@ export class AuthRequest<A extends Auth, M extends Middleware<any, any>> {
 
 	public setSession = (session: Session | null) => {
 		this.currentSession = session;
-		this.validateSessionPromise = null;
-		this.validateSessionUserPromise = null;
+		this.validatePromise = null;
+		this.validateUserPromise = null;
 	};
 
-	public validateSession = async (): Promise<Session | null> => {
+	public validate = async (): Promise<Session | null> => {
 		if (this.currentSession !== undefined) return this.currentSession;
-		if (this.validateSessionPromise) return this.validateSessionPromise;
-		if (this.validateSessionUserPromise) {
-			const { session } = await this.validateSessionUserPromise;
+		if (this.validatePromise) return this.validatePromise;
+		if (this.validateUserPromise) {
+			const { session } = await this.validateUserPromise;
 			return session;
 		}
 
-		this.validateSessionPromise = new Promise(async (resolve) => {
+		this.validatePromise = new Promise(async (resolve) => {
 			try {
 				const sessionId = this.auth.parseRequestHeaders(this.request);
 				if (!sessionId) {
@@ -73,9 +66,10 @@ export class AuthRequest<A extends Auth, M extends Middleware<any, any>> {
 				return resolve(null);
 			}
 		});
-		return this.validateSessionPromise;
+		return this.validatePromise;
 	};
-	public validateSessionUser = async (): Promise<
+
+	public validateUser = async (): Promise<
 		| { user: null; session: null }
 		| {
 				user: User;
@@ -101,7 +95,7 @@ export class AuthRequest<A extends Auth, M extends Middleware<any, any>> {
 		};
 
 		if (currentSession !== undefined) {
-			this.validateSessionUserPromise = new Promise(async (resolve) => {
+			this.validateUserPromise = new Promise(async (resolve) => {
 				try {
 					const user = await this.auth.getUser(currentSession.userId);
 					return resolve({ user, session: currentSession });
@@ -109,14 +103,14 @@ export class AuthRequest<A extends Auth, M extends Middleware<any, any>> {
 					return resolveNullSession(resolve);
 				}
 			});
-			return this.validateSessionUserPromise;
+			return this.validateUserPromise;
 		}
 
-		if (this.validateSessionUserPromise) return this.validateSessionUserPromise;
+		if (this.validateUserPromise) return this.validateUserPromise;
 
-		if (this.validateSessionPromise) {
-			this.validateSessionUserPromise = new Promise(async (resolve) => {
-				const session = await this.validateSessionPromise;
+		if (this.validatePromise) {
+			this.validateUserPromise = new Promise(async (resolve) => {
+				const session = await this.validatePromise;
 				if (!session) return resolveNullSession(resolve);
 				try {
 					const user = await this.auth.getUser(session.userId);
@@ -125,10 +119,10 @@ export class AuthRequest<A extends Auth, M extends Middleware<any, any>> {
 					return resolveNullSession(resolve);
 				}
 			});
-			return this.validateSessionUserPromise;
+			return this.validateUserPromise;
 		}
 
-		this.validateSessionUserPromise = new Promise(async (resolve) => {
+		this.validateUserPromise = new Promise(async (resolve) => {
 			try {
 				const sessionId = this.auth.parseRequestHeaders(this.request);
 				if (!sessionId) return resolveNullSession(resolve);
@@ -141,20 +135,12 @@ export class AuthRequest<A extends Auth, M extends Middleware<any, any>> {
 				return resolveNullSession(resolve);
 			}
 		});
-		return this.validateSessionUserPromise;
+		return this.validateUserPromise;
 	};
 
-	public commit = (
-		responseInstance: M extends Middleware<any, infer ResponseInstance>
-			? ResponseInstance
-			: never
-	) => {
+	public getCookie = () => {
 		const currentSession = this.currentSession;
 		if (currentSession === undefined) return null;
-		this.middleware.appendResponseHeader(
-			responseInstance,
-			"set-cookie",
-			this.auth.createSessionCookie(currentSession).serialize()
-		);
+		return this.auth.createSessionCookie(currentSession);
 	};
 }
