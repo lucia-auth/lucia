@@ -51,30 +51,28 @@ if (theme !== "light" && theme !== "dark") {
 		<meta property="og:site_name" content="Lucia Documentation" />
 
 		<!-- For Discord and Twitter thumbnail -->
-		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:card" content="summary_large_image" />
 
 		<!-- For Discord sidebar -->
-		<meta name="theme-color" content="#5f57ff">
+		<meta name="theme-color" content="#5f57ff" />
 		<title>
 			{title}
 		</title>
 		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link
-			rel="preconnect"
-			href="https://fonts.gstatic.com"
-			crossorigin="anonymous"
-		/>
+		<link rel="preload" href="https://fonts.googleapis.com" crossorigin />
+		<link rel="preload" href="https://fonts.gstatic.com" crossorigin />
 		<link
 			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
+			crossorigin
 			rel="preload"
 		/>
+		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
 	</head>
 
 	<body
 		class:list={[
-			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto bg-white",
+			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto bg-white dark:bg-zinc-900",
 			theme
 		]}
 	>
