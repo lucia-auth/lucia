@@ -13,6 +13,9 @@ module.exports = {
 					150: "#EDEDEF",
 					950: "#141416"
 				}
+			},
+			fontFamily: {
+				"ibm-plex-sans": ['"IBM Plex Sans"', 'sans-serif']
 			}
 		}
 	},

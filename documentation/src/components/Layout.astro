@@ -57,29 +57,29 @@ if (theme !== "light" && theme !== "dark") {
 			{title}
 		</title>
 		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			rel="preload"
-			as="style"
-			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-			crossorigin
+			rel="preconnect"
+			href="https://fonts.gstatic.com"
+			crossorigin="anonymous"
 		/>
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-			crossorigin
+			crossorigin="anonymous"
+			media="print"
 		/>
-		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
-		<style>
-			body {
-				font-family: IBM Plex Sans, sans-serif;
-			}
-		</style>
+		<link
+			href="/logo.svg"
+			rel="preload"
+			as="image"
+			type="image/svg+xml"
+			media="print"
+		/>
 	</head>
 
 	<body
 		class:list={[
-			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto bg-white dark:bg-zinc-900",
+			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto bg-white dark:bg-zinc-900 font-ibm-plex-sans",
 			theme
 		]}
 	>
