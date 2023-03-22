@@ -37,9 +37,12 @@ export default (props: {
 										.split("/")
 										.slice(1)
 										.join("/")}`;
-									const isSelected = currentPath.startsWith(urlPathname);
+									const isSelected =
+										currentPath.replaceAll("/", "") ===
+										urlPathname.replaceAll("/", "");
 									const href = page.metaData.redirect ?? urlPathname;
-									const target = "redirect" in page.metaData ? "_blank" : "";
+									const linkTarget =
+										"redirect" in page.metaData ? "_blank" : "";
 									return (
 										<li
 											class={dynamicClassName("my-1 pl-4 border-l-2", {
@@ -48,7 +51,7 @@ export default (props: {
 													!isSelected
 											})}
 										>
-											<a href={href} target={target}>
+											<a href={href} target={linkTarget}>
 												{page.metaData.title}
 											</a>
 										</li>

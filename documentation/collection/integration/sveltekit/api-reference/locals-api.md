@@ -27,9 +27,9 @@ const validate: () => Promise<Session | null>;
 
 #### Returns
 
-| type                                                        | description               |
-| ----------------------------------------------------------- | ------------------------- |
-| [`Session`](/reference/types/lucia-types#session)` \| null` | `null` if unauthenticated |
+| type                                                | description               |
+| --------------------------------------------------- | ------------------------- |
+| [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
 
 #### Example
 
@@ -63,10 +63,10 @@ const validateUser: () => Promise<
 
 #### Returns
 
-| name    | type                                                        | description               |
-| ------- | ----------------------------------------------------------- | ------------------------- |
-| session | [`Session`](/reference/types/lucia-types#session)` \| null` | `null` if unauthenticated |
-| user    | [`User`](/reference/types/lucia-types#user)` \| null`       | `null` if unauthenticated |
+| name    | type                                                | description               |
+| ------- | --------------------------------------------------- | ------------------------- |
+| session | [`Session`](/reference/api/types#session)` \| null` | `null` if unauthenticated |
+| user    | [`User`](/reference/api/types#user)` \| null`       | `null` if unauthenticated |
 
 #### Example
 
@@ -83,7 +83,7 @@ const action: Action = async ({ locals }) => {
 
 ## `setSession()`
 
-Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/server-api#invalidatesession).
+Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/api/auth#invalidatesession).
 
 ```ts
 const setSession: (session: Session | null) => void;
@@ -91,9 +91,9 @@ const setSession: (session: Session | null) => void;
 
 #### Parameter
 
-| name    | type                                                        | description        |
-| ------- | ----------------------------------------------------------- | ------------------ |
-| session | [`Session`](/reference/types/lucia-types#session)` \| null` | the session to set |
+| name    | type                                                | description        |
+| ------- | --------------------------------------------------- | ------------------ |
+| session | [`Session`](/reference/api/types#session)` \| null` | the session to set |
 
 #### Example
 

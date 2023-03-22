@@ -18,7 +18,7 @@ Working with it looks something like this. In the code below, you're creating a 
 
 ```ts
 const user = await auth.createUser({
-	key: {
+	primaryKey: {
 		providerId: "email",
 		providerUserId: email,
 		password

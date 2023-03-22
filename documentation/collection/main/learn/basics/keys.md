@@ -3,17 +3,63 @@ _order: 1
 title: "Keys"
 ---
 
-Keys allow you to reference users using external data from a provider. They're defined using a provider id and a provider user id. They can be persistent or single use, which is useful when implementing tokens for verification.
+Keys allow you to reference users using external data from a _provider_. Keys are defined with a _provider id_, which is just a unique id for the provider, and a _provider user id_, which is the unique identifier of the user within the provided data.
 
-## Get key
+While you can (and should) have multiple keys with the same provider id, the combination of the provider id and provider user id should be unique.
 
-You can get the key data using [`getKey()`](/reference/api/server-api#getkey).
+> The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used.
+
+### Persistent keys
+
+The first type of keys are persistent keys. These persist across multiple usages in contrast to single use keys (defined below) which are consumed after a single use. These are useful for traditional email/password sign ins and OAuth sign ins.
+
+When authenticating users (log in), you get the user data from an external provider, such as the email from the user's input or the Github user id for social login. Persistent keys allow you to link such external data from a _provider_ with Lucia users stored in your database. This type of key can hold a password, which will be hashed and can be validated with Lucia's API. This is mainly for implementing password logins.
+
+For example, for email/password, "email" can be the provider id, the user’s email can be the provider user id, and the user's password can be stored as the key's password. For Github OAuth, "github" can be the provider id and the user’s GitHub user id can be the provider user id.
+
+#### Primary keys
+
+Primary keys are a special type of persistent key. They are created when the user is created and can only be deleted when the user is deleted. This ensures the authentication method the user used for creating the account cannot be deleted (leading to a lockout) if someone else gains access to it.
+
+### Single use keys
+
+Single use keys are single use only and are deleted on read. Single use keys must have an expiration. This is useful for implementing single use verification tokens for one-time passwords and magic links. This type of key can also hold passwords.
+
+## Use keys
+
+You can validate both persistent and single-use keys with [`useKey()`](/reference/api/auth#usekey) using the provided password (can be `null`) and current time.
 
 ```ts
 import { auth } from "./lucia.js";
 
 try {
-	const key = await auth.getKey("github", githubUserId);
+	const key = await auth.useKey("email", email, password);
+} catch {
+	// invalid key
+}
+```
+
+> (warn) While the error will indicate it if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password").
+
+```ts
+import { auth } from "./lucia.js";
+
+try {
+	const key = await auth.useKey("github", githubUserId, null);
+} catch {
+	// invalid key
+}
+```
+
+## Get key
+
+There's also [`getKey()`](/reference/api/auth#getkey) to retrieve keys. However, you cannot validate passwords, and more importantly, this will **NOT** check the key's expiration for single use keys.
+
+```ts
+import { auth } from "./lucia.js";
+
+try {
+	const key = await auth.getKey("email", email);
 } catch {
 	// invalid key
 }
@@ -21,7 +67,7 @@ try {
 
 ### Get all keys of a user
 
-You can get all keys belonging to a user using [`getAllUserKeys()`](/reference/api/server-api#getalluserkeys).
+You can get all keys belonging to a user using [`getAllUserKeys()`](/reference/api/auth#getalluserkeys). As with `getKey()` above, this will not check for the key's expiration.
 
 ```ts
 try {
@@ -32,47 +78,18 @@ try {
 }
 ```
 
-## Get user from keys
+## Create new keys
 
-[`getKeyUser()`](/reference/api/server-api#getkeyuser) can be used to get the user of the key based on the provider id and provider user id. This will throw an error if the key doesn't exist.
+You can create a new key for a user using [`createKey()`](/reference/api/auth#createkey).
 
-```ts
-import { auth } from "./lucia.js";
+### Persistent keys
 
-try {
-	const { key, user } = await auth.getKeyUser("github", githubUserId);
-} catch {
-	// invalid key
-}
-```
-
-If the key was single use, this method will delete the key from the database.
-
-## Validate key password
-
-You can validate a key password and get the user with [`validateKeyPassword()`](/reference/api/server-api#validatekeypassword). This method will only work with keys with a password.
-
-```ts
-import { auth } from "./lucia.js";
-
-try {
-	const key = await auth.validateKeyPassword("username", username, password);
-} catch {
-	// invalid key or password
-}
-```
-
-> (warn) While the error will indicate it if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password").
-
-If the key was single use, this method will delete the key from the database.
-
-## Create new key
-
-You can create a new key for a user using [`createKey()`](/reference/api/server-api#createkey). You can only create non-primary keys with this method.
+Primary keys **CANNOT** be created with this method. You can provide a `password` to add a password to the key. Lucia will handle the hashing.
 
 ```ts
 try {
 	const key = await auth.createKey(userId, {
+		type: "persistent",
 		providerId: "github",
 		providerUserId: githubUsername,
 		password: null
@@ -84,14 +101,15 @@ try {
 
 ### Single use keys
 
-You can create single use keys by providing `timeout` property, which is the number of seconds the key is valid for.
+You can provide a `password` to set a password. Define the duration (in seconds) of a single use key by providing a `timeout`.
 
 ```ts
 try {
 	const key = await auth.createKey(userId, {
+		type: "single_use",
 		providerId: "email-verification",
-		providerUserId: "user@example.com",
-		password: "123456",
+		providerUserId: "user@example.com:12345678",
+		password: null,
 		timeout: 60 * 60 // 1 hour
 	});
 } catch {
@@ -99,9 +117,9 @@ try {
 }
 ```
 
-## Update key password
+## Update key passwords
 
-You can update the password of a key with [`updateKeyPassword()`](/reference/api/server-api#createkey). You can pass in `null` to remove the password.
+You can update the password of a key with [`updateKeyPassword()`](/reference/api/auth#updatekeypassword). You can pass in `null` to remove the password.
 
 ```ts
 try {
@@ -113,7 +131,7 @@ try {
 
 ## Delete key
 
-You can delete a non-primary key with [`deleteKey()`](/reference/api/server-api#deletekey). You cannot delete primary keys. This method will succeed regardless of the validity of key.
+You can delete a non-primary key with [`deleteKey()`](/reference/api/auth#deletekey). You cannot delete primary keys with this method. This will succeed regardless of the validity of key.
 
 ```ts
 try {
@@ -122,17 +140,3 @@ try {
 	// invalid key
 }
 ```
-
-## Using single use keys
-
-Single use keys allow you to implement tokens for email verification and password resets. For example, to implement a password reset mechanism,
-
-1. Find the user with the target email
-2. Generate a long, random string if it exists
-3. Create a new single use key with `"password-reset"` as the provider id and the random string as the provider user id
-4. Send a link with the token inside search query params
-
-To implement one-time passwords for email verification,
-
-1. Generate a random string (8 chars)
-2. Create a new single use key with `"email-verification"` as the provider id, the user id as as the provider user id, and the random string as the password

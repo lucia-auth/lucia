@@ -27,7 +27,12 @@
 		},
 		{
 			"source": "/reference",
-			"destination": "/reference/api/server-api",
+			"destination": "/reference/modules/lucia-auth",
+			"permanent": true
+		},
+		{
+			"source": "/tokens",
+			"destination": "/tokens/start-here/introduction",
 			"permanent": true
 		}
 	]

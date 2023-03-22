@@ -5,7 +5,7 @@ import type {
 	SessionSchema,
 	UserSchema
 } from "lucia-auth";
-import { convertKeyData, convertSessionData } from "./utils.js";
+import { transformKeyData, transformSessionData } from "./utils.js";
 import { PrismaClient, SmartPrismaClient } from "./prisma.js";
 
 interface PossiblePrismaError {
@@ -44,7 +44,7 @@ const adapter =
 				const { user, ...session } = data;
 				return {
 					user: user,
-					session: convertSessionData(session)
+					session: transformSessionData(session)
 				};
 			},
 			getSession: async (sessionId) => {
@@ -54,7 +54,7 @@ const adapter =
 					}
 				});
 				if (!session) return null;
-				return convertSessionData(session);
+				return transformSessionData(session);
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessions = await prisma.session.findMany({
@@ -62,7 +62,7 @@ const adapter =
 						user_id: userId
 					}
 				});
-				return sessions.map((session) => convertSessionData(session));
+				return sessions.map((session) => transformSessionData(session));
 			},
 			setUser: async (userId, attributes, key) => {
 				if (!key) {
@@ -160,7 +160,7 @@ const adapter =
 					throw error;
 				}
 			},
-			getKey: async (key) => {
+			getKey: async (key, shouldDataBeDeleted) => {
 				return await prisma.$transaction(async (tx) => {
 					const keyData = await tx.key.findUnique({
 						where: {
@@ -168,14 +168,18 @@ const adapter =
 						}
 					});
 					if (!keyData) return null;
-					if (keyData?.expires !== null) {
+					const transformedKeyData = transformKeyData(keyData);
+					const dataShouldBeDeleted = await shouldDataBeDeleted(
+						transformedKeyData
+					);
+					if (dataShouldBeDeleted) {
 						await tx.key.delete({
 							where: {
 								id: keyData.id
 							}
 						});
 					}
-					return convertKeyData(keyData);
+					return transformKeyData(keyData);
 				});
 			},
 			getKeysByUserId: async (userId) => {
@@ -184,7 +188,7 @@ const adapter =
 						user_id: userId
 					}
 				});
-				return keys.map((val) => convertKeyData(val));
+				return keys.map((val) => transformKeyData(val));
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
 				try {

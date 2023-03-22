@@ -1,5 +1,67 @@
 # @lucia-auth/oauth
 
+## 0.7.2
+
+### Patch changes
+
+- [#424](https://github.com/pilcrowOnPaper/lucia/pull/424) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : - Update dependencies
+
+## 0.7.1
+
+### Patch changes
+
+- [#411](https://github.com/pilcrowOnPaper/lucia/pull/411) by [@Jings](https://github.com/Jings) : Add Auth0 as an oauth provider
+
+## 0.7.0
+
+### Minor changes
+
+- [#398](https://github.com/pilcrowOnPaper/lucia/pull/398) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : **Breaking** Use `lucia-auth@0.9.0`
+
+  - Replaced `createKey()` with `createPersistentKey()`
+
+## 0.6.4
+
+### Patch changes
+
+- [#401](https://github.com/pilcrowOnPaper/lucia/pull/401) by [@Jings](https://github.com/Jings) : Added linkedin as an oauth provider
+
+## 0.6.3
+
+### Patch changes
+
+- [#391](https://github.com/pilcrowOnPaper/lucia/pull/391) by [@BenocxX](https://github.com/BenocxX) : Fix the default scope for the Discord provider
+
+## 0.6.2
+
+### Patch changes
+
+- [#392](https://github.com/pilcrowOnPaper/lucia/pull/392) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 0.6.1
+
+### Patch changes
+
+- [#388](https://github.com/pilcrowOnPaper/lucia/pull/388) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : remove unnecessary code
+
+## 0.6.0
+
+### Minor changes
+
+- [#385](https://github.com/pilcrowOnPaper/lucia/pull/385) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : **Breaking changes!!** Major rewrite of the package.
+
+  - New Discord and Facebook provider
+
+  - Import providers from `@lucia-auth/oauth/providers` (no more default imports)
+
+  - New `provider` API!
+
+  - Email scope is no longer added by default for any providers
+
+  - Reduced `providerUser` size for Patreon provider
+
+  - `OAuthProvider.getAuthorizationUrl` returns a promise and `[URL, string]` (`URL` used to be `string`)
+
 ## 0.5.4
 
 ### Patch changes

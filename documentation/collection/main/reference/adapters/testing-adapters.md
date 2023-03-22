@@ -114,7 +114,7 @@ const testUserAdapterErrors: (
 Provides methods to add, get, and delete from each table. `get` methods return all data inside the table and `clear` methods deletes everything from the table.
 
 ```ts
-export interface Database {
+export type Database = {
 	getUsers: () => Promise<UserSchema[]>;
 	getSessions: () => Promise<SessionSchema[]>;
 	getKeys: () => Promise<KeySchema[]>;
@@ -124,5 +124,5 @@ export interface Database {
 	insertUser: (data: UserSchema) => Promise<void>;
 	insertSession: (data: SessionSchema) => Promise<void>;
 	insertKey: (data: KeySchema) => Promise<void>;
-}
+};
 ```

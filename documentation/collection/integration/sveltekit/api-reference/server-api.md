@@ -19,9 +19,9 @@ const handleHooks: (auth: Auth) => Handle;
 
 #### Parameter
 
-| name | type                                        | description    |
-| ---- | ------------------------------------------- | -------------- |
-| auth | [`Auth`](/reference/types/lucia-types#auth) | Lucia instance |
+| name | type                          | description    |
+| ---- | ----------------------------- | -------------- |
+| auth | [`Auth`](/reference/api/auth) | Lucia instance |
 
 #### Returns
 

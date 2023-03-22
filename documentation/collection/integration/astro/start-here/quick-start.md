@@ -33,7 +33,7 @@ declare namespace Lucia {
 }
 ```
 
-Add [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
+Add [`transformUserData()`](/reference/api/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
 // lib/lucia.ts
@@ -101,7 +101,7 @@ if (Astro.request.method === "POST") {
 	if (typeof username === "string" && typeof password === "string") {
 		try {
 			const user = await auth.createUser({
-				key: {
+				primaryKey: {
 					providerId: "username",
 					providerUserId: username,
 					password
@@ -167,7 +167,7 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 
 The same page will also handle form submissions.
 
-We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `validateKeyPassword()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `useKey()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
 
 ```astro
 ---
@@ -192,11 +192,7 @@ if (Astro.request.method === "POST") {
 	// check for empty values
 	if (typeof username === "string" && typeof password === "string") {
 		try {
-			const key = await auth.validateKeyPassword(
-				"username",
-				username,
-				password
-			);
+			const key = await auth.useKey("username", username, password);
 			const session = await auth.createSession(key.userId);
 			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt

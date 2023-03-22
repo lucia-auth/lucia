@@ -18,7 +18,7 @@ const adapter: (
 
 ### Parameter
 
-See [Database interfaces](#database-interfaces) for more information regarding the `Database` type used for the Kysely instance.
+See [Database types](#database-types) for more information regarding the `Database` type used for the Kysely instance.
 
 | name    | type                                  | description     |
 | ------- | ------------------------------------- | --------------- |
@@ -57,11 +57,11 @@ const auth = lucia({
 });
 ```
 
-### Database interfaces
+### Database types
 
-Define interfaces for each table in your database or generate them automatically using [kysely-codegen](https://github.com/RobinBlomberg/kysely-codegen). Then, pass those interfaces to the `Kysely` constructor. See the [Kysely github repo](https://github.com/koskimas/kysely#minimal-example) for an example on creating the `Kysely` instance.
+Define types for each table in your database or generate them automatically using [kysely-codegen](https://github.com/RobinBlomberg/kysely-codegen). Then, pass those types to the `Kysely` constructor. See the [Kysely github repo](https://github.com/koskimas/kysely#minimal-example) for an example on creating the `Kysely` instance.
 
-The `Database` interface must be of the following structure.
+The `Database` type must be of the following structure.
 
 ```ts
 import { ColumnType, Generated } from "kysely";
@@ -96,7 +96,7 @@ type Database = {
 };
 ```
 
-You can also import the interfaces from `adapter-kysely` and extend them.
+You can also import the types from `adapter-kysely` and extend them.
 
 ```ts
 import type {
@@ -109,12 +109,12 @@ type User = {
 	username: string;
 } & KyselyUser;
 
-interface Database extends Omit<KyselyLuciaDatabase, "user"> {
+type Database = Omit<KyselyLuciaDatabase, "user"> & {
 	user: User;
 	other_table: {
 		//...
 	};
-}
+};
 
 const db = new Kysely<Database>(options);
 

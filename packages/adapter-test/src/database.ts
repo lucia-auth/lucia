@@ -176,8 +176,6 @@ class Session extends Model<"session"> {
 	}
 }
 
-type KeyExpiresOption = "ONE_TIME" | "REGULAR";
-
 class Key extends Model<"key"> {
 	constructor(
 		queryHandler: LuciaQueryHandler,

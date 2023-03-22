@@ -1,17 +1,23 @@
-import { Session, SessionSchema } from "../types.js";
+import { isWithinExpiration } from "../utils/date.js";
+import { Session } from "./index.js";
+import { SessionSchema } from "./schema.type.js";
 
-export const transformDatabaseSessionData = (
+export const validateDatabaseSessionData = (
 	databaseSession: SessionSchema
 ): Session | null => {
-	const currentTime = new Date().getTime();
-	// invalid session
-	if (currentTime > databaseSession.idle_expires) return null;
+	if (
+		databaseSession.idle_expires !== null &&
+		!isWithinExpiration(databaseSession.idle_expires)
+	) {
+		return null;
+	}
+	const isActive = isWithinExpiration(databaseSession.active_expires);
 	return {
 		sessionId: databaseSession.id,
 		userId: databaseSession.user_id,
 		activePeriodExpires: new Date(Number(databaseSession.active_expires)),
 		idlePeriodExpires: new Date(Number(databaseSession.idle_expires)),
-		state: currentTime > databaseSession.active_expires ? "idle" : "active",
+		state: isActive ? "active" : "idle",
 		isFresh: false
 	};
 };

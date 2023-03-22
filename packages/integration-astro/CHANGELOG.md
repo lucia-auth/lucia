@@ -1,5 +1,29 @@
 # @lucia-auth/astro
 
+## 0.5.7
+
+### Patch changes
+
+- [#424](https://github.com/pilcrowOnPaper/lucia/pull/424) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : - Update dependencies
+
+## 0.5.6
+
+### Patch changes
+
+- [#398](https://github.com/pilcrowOnPaper/lucia/pull/398) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 0.5.5
+
+### Patch changes
+
+- [#392](https://github.com/pilcrowOnPaper/lucia/pull/392) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 0.5.4
+
+### Patch changes
+
+- [#388](https://github.com/pilcrowOnPaper/lucia/pull/388) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : remove unnecessary code
+
 ## 0.5.3
 
 ### Patch changes

@@ -11,7 +11,7 @@ Lucia will re-throw the error from the database on user creation/update if the p
 
 ## Populate `User` object
 
-By default, the `User` object (returned by methods like [`getUser()`](/reference/api/server-api#getuser) only includes the user id:
+By default, the `User` object (returned by methods like [`getUser()`](/reference/api/auth#getuser) only includes the user id:
 
 ```ts
 type User = {
@@ -19,7 +19,7 @@ type User = {
 };
 ```
 
-You can customize this object by providing a [`transformUserData()`](/reference/configure/lucia-configurations#transformuserdata) function in the configs. The raw column data will be passed on to the function. Lucia will use the return type as the type of the `User` object.
+You can customize this object by providing a [`transformUserData()`](/reference/api/configuration#transformuserdata) function in the configs. The raw column data will be passed on to the function. Lucia will use the return type as the type of the `User` object.
 
 The default value is just as below:
 
@@ -56,17 +56,15 @@ type UserAttributes = {
 };
 ```
 
-Refer to [Type declaration](/reference/types/lucia-namespace) for more.
-
 ## Set user attributes
 
-You can define the user's attributes on creation by passing on the column/value object as `attributes` to [`createUser()`](/reference/api/server-api#createuser).
+You can define the user's attributes on creation by passing on the column/value object as `attributes` to [`createUser()`](/reference/api/auth#createuser).
 
 ```ts
 import { auth } from "./lucia.js";
 
 await auth.createUser({
-	key: {
+	primaryKey: {
 		// ...
 	},
 	attributes: {
@@ -99,7 +97,7 @@ declare namespace Lucia {
 }
 ```
 
-This username column can be accessed with `userData.username` inside `transformUserData()` in configs:
+This username column can be accessed with `userData.username` inside `transformUserData()` in config:
 
 ```ts
 export const auth = lucia({

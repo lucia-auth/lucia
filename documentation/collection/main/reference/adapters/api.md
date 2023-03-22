@@ -5,7 +5,7 @@ title: "API"
 
 Adapters are just objects with a handful of methods that interact with the database. This makes it easy to create your own and support any databases.
 
-The `adapter` configuration expects a [`AdapterFunction`](/reference/types/lucia-types#adapterfunction), which are functions that takes a [`LuciaError`](/reference/types/lucia-types#luciaerror) constructor as its parameter and returns an adapter object. **`LuciaError` thrown by adapters should use the object passed on and not the one imported from `lucia-auth` package**.
+The `adapter` configuration expects a [`AdapterFunction`](/reference/api/types#adapterfunction), which are functions that takes a [`LuciaError`](/reference/api/luciaerror) constructor as its parameter and returns an adapter object. **`LuciaError` thrown by adapters should use the object passed on and not the one imported from `lucia-auth` package**.
 
 Refer to [Database model](/reference/adapters/database-model) for database model and types.
 
@@ -25,7 +25,10 @@ type UserAdapter = {
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
 	deleteUser: (userId: string) => Promise<void>;
-	getKey: (keyId: string) => Promise<KeySchema | null>;
+	getKey: (
+		keyId: string,
+		shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
+	) => Promise<KeySchema | null>;
 	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 	getUser: (userId: string) => Promise<UserSchema | null>;
 	setKey: (key: KeySchema) => Promise<void>;
@@ -137,21 +140,29 @@ const deleteUser: (userId: string) => Promise<void>;
 
 ### `getKey()`
 
-Gets a key with the the target id (`key(id)`). Returns `null` is the user doesn't exist. Inside a transaction, it should delete the key if type of `KeySchema["expires"]` is `number`.
+Gets a key with the the target id (`key(id)`) inside a transaction:
+
+1. Get data
+2. If data exists and calling `shouldDataBeDeleted()` with that data returns `true`, delete the data from the database.
+3. Returns data or `null` is the key doesn't exist.
 
 ```ts
-const getKey: (keyId: string) => Promise<KeySchema | null>;
+const getKey: (
+	keyId: string,
+	shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
+) => Promise<KeySchema | null>;
 ```
 
 #### Parameter
 
-| name  | type     | description              |
-| ----- | -------- | ------------------------ |
-| keyId | `string` | unique target: `key(id)` |
+| name                | type       | description                              |
+| ------------------- | ---------- | ---------------------------------------- |
+| keyId               | `string`   | unique target: `key(id)`                 |
+| shouldDataBeDeleted | `Function` | returns `true` if data should be deleted |
 
 #### Returns
 
-If user exists:
+If key exists:
 
 | type                                                            | description        |
 | --------------------------------------------------------------- | ------------------ |
