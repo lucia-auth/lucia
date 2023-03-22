@@ -60,28 +60,79 @@ const slotHtml = await Astro.slots.render("default");
 		</title>
 		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
 		<link
-			rel="preconnect"
-			href="https://fonts.gstatic.com"
-			crossorigin="anonymous"
-		/>
-		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
 			crossorigin="anonymous"
-			media="print"
 		/>
+		<!-- preload fonts -->
+		<!-- latin-ext 400-->
 		<link
-			href="/logo.svg"
 			rel="preload"
-			as="image"
-			type="image/svg+xml"
-			media="print"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYXgKVElMYYaJe8bpLHnCwDKhd_eFaxOedfTDw.woff2"
+			crossorigin="anonymous"
+			as="font"
 		/>
+		<!-- latin 400-->
+		<link
+			rel="preload"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYXgKVElMYYaJe8bpLHnCwDKhdHeFaxOedc.woff2"
+			crossorigin="anonymous"
+			as="font"
+		/>
+		<!-- latin-ext 500-->
+		<link
+			rel="preload"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjSL9AI9sdP3pBmtF8A.woff2"
+			crossorigin="anonymous"
+			as="font"
+		/>
+		<!-- latin 500-->
+		<link
+			rel="preload"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjSL9AIFsdP3pBms.woff2"
+			crossorigin="anonymous"
+			as="font"
+		/>
+		<!-- latin-ext 600-->
+		<link
+			rel="preload"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjQ76AI9sdP3pBmtF8A.woff2"
+			crossorigin="anonymous"
+			as="font"
+		/>
+		<!-- latin 600-->
+		<link
+			rel="preload"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjQ76AIFsdP3pBms.woff2"
+			crossorigin="anonymous"
+			as="font"
+		/>
+		<!-- latin-ext 700-->
+		<link
+			rel="preload"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjWr7AI9sdP3pBmtF8A.woff2"
+			crossorigin="anonymous"
+			as="font"
+		/>
+		<!-- latin 700-->
+		<link
+			rel="preload"
+			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjWr7AIFsdP3pBms.woff2"
+			crossorigin="anonymous"
+			as="font"
+		/>
+
+		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+		<style is:inline>
+			body {
+				font-family: IBM Plex Sans, sans-serif;
+			}
+		</style>
 	</head>
 
 	<body
 		class:list={[
-			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto font-ibm-plex-sans",
+			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto",
 			theme
 		]}
 		set:html={slotHtml}

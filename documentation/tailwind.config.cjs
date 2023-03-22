@@ -14,9 +14,6 @@ module.exports = {
 					950: "#141416"
 				}
 			},
-			fontFamily: {
-				"ibm-plex-sans": ['"IBM Plex Sans"', 'sans-serif']
-			}
 		}
 	},
 	darkMode: "class",
