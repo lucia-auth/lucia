@@ -59,71 +59,87 @@ const slotHtml = await Astro.slots.render("default");
 			{title}
 		</title>
 		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link
-			rel="stylesheet"
+			rel="preload"
+			as="style"
 			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-			crossorigin="anonymous"
+			crossorigin
 		/>
+
 		<!-- preload fonts -->
 		<!-- latin-ext 400-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYXgKVElMYYaJe8bpLHnCwDKhd_eFaxOedfTDw.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
 		<!-- latin 400-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYXgKVElMYYaJe8bpLHnCwDKhdHeFaxOedc.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
 		<!-- latin-ext 500-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjSL9AI9sdP3pBmtF8A.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
 		<!-- latin 500-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjSL9AIFsdP3pBms.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
 		<!-- latin-ext 600-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjQ76AI9sdP3pBmtF8A.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
 		<!-- latin 600-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjQ76AIFsdP3pBms.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
 		<!-- latin-ext 700-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjWr7AI9sdP3pBmtF8A.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
 		<!-- latin 700-->
 		<link
 			rel="preload"
 			href="https://fonts.gstatic.com/s/ibmplexsans/v14/zYX9KVElMYYaJe8bpLHnCwDKjWr7AIFsdP3pBms.woff2"
-			crossorigin="anonymous"
+			crossorigin
 			as="font"
+			type="font/woff2"
 		/>
-
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+			crossorigin
+		/>
 		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
-		<style is:inline>
+		<style>
 			body {
 				font-family: IBM Plex Sans, sans-serif;
 			}
