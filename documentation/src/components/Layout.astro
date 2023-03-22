@@ -57,20 +57,24 @@ if (theme !== "light" && theme !== "dark") {
 			{title}
 		</title>
 		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-			as="style"
-			crossorigin
 			rel="preload"
+			as="style"
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+			crossorigin
 		/>
 		<link
+			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
 			crossorigin
-			rel="stylesheet"
 		/>
 		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+		<style>
+			body {
+				font-family: IBM Plex Sans, sans-serif;
+			}
+		</style>
 	</head>
 
 	<body
@@ -80,11 +84,6 @@ if (theme !== "light" && theme !== "dark") {
 		]}
 	>
 		<slot />
-		<style>
-			body {
-				font-family: IBM Plex Sans, sans-serif;
-			}
-		</style>
 	</body>
 	<!--not super proud of this - need this to hide main-color bg on chrome -->
 	<div class="fixed top-0 -z-10 h-screen w-screen dark:bg-zinc-900"></div>
