@@ -17,7 +17,7 @@ if (theme !== "light" && theme !== "dark") {
 	theme = "light";
 }
 
-const slotHtml =  await Astro.slots.render('default')
+const slotHtml = await Astro.slots.render("default");
 ---
 
 <script>
@@ -81,13 +81,13 @@ const slotHtml =  await Astro.slots.render('default')
 
 	<body
 		class:list={[
-			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto bg-white dark:bg-zinc-900 font-ibm-plex-sans",
+			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto font-ibm-plex-sans",
 			theme
 		]}
 		set:html={slotHtml}
 	>
-		
+		<!--not super proud of this - need this to hide main-color bg on chrome -->
+		<div class="fixed top-0 -z-10 h-screen w-screen bg-white dark:bg-zinc-900">
+		</div>
 	</body>
-	<!--not super proud of this - need this to hide main-color bg on chrome -->
-	<div class="fixed top-0 -z-10 h-screen w-screen dark:bg-zinc-900"></div>
 </html>
