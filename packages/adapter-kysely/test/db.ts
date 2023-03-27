@@ -8,13 +8,7 @@ import {
 	transformSessionData
 } from "../src/utils.js";
 
-type User = KyselyUser & {
-	username: string;
-};
-
-export type KyselyDatabase = Omit<KyselyLuciaDatabase, "auth_user"> & {
-	auth_user: User;
-};
+export type KyselyDatabase = KyselyLuciaDatabase<{ username: string }>;
 
 export const createQueryHandler = (
 	kysely: Kysely<KyselyDatabase>,

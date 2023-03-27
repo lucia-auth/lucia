@@ -9,9 +9,9 @@ export type KyselySession = {
 	user_id: string;
 };
 
-export type KyselyUser = {
+export type KyselyUser<UserAttributes extends {} = {}> = {
 	id: Generated<string>;
-};
+} & UserAttributes;
 
 export type KyselyKey = {
 	id: string;
@@ -21,8 +21,8 @@ export type KyselyKey = {
 	expires: BigIntColumnType | null;
 };
 
-export interface KyselyLuciaDatabase {
+export interface KyselyLuciaDatabase<UserAttributes extends {} = {}> {
 	auth_session: KyselySession;
-	auth_user: KyselyUser;
+	auth_user: KyselyUser<UserAttributes>;
 	auth_key: KyselyKey;
 }
