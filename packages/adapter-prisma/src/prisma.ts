@@ -3,9 +3,9 @@ type PayloadResult = {
 };
 
 type Model = {
-	schema: Record<string, any>,
-	relations: Record<string, Record<any, any>>
-}
+	schema: Record<string, any>;
+	relations: Record<string, Record<any, any>>;
+};
 
 export type PrismaClient<Models extends Record<string, Model>> = {
 	[K in keyof Models]: {
@@ -38,8 +38,12 @@ export type SmartPrismaClient<Models extends Record<string, Model>> = {
 		findMany: (options: {
 			where: Partial<Models[K]["schema"]>;
 		}) => Promise<Models[K]["schema"][]>;
-		create: (options: { data: Models[K]["schema"] }) => Promise<Models[K]["schema"]>;
-		delete: (options: { where: Partial<Models[K]["schema"]> }) => Promise<PayloadResult>;
+		create: (options: {
+			data: Models[K]["schema"];
+		}) => Promise<Models[K]["schema"]>;
+		delete: (options: {
+			where: Partial<Models[K]["schema"]>;
+		}) => Promise<PayloadResult>;
 		deleteMany: (options: {
 			where: Partial<Models[K]["schema"]>;
 		}) => Promise<PayloadResult>;
