@@ -15,13 +15,13 @@ import { parseCookie } from "../utils/cookie.js";
 import { validateDatabaseSessionData } from "./session.js";
 import { transformDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
 import { isWithinExpiration } from "../utils/date.js";
-import { AuthRequest, LuciaRequest } from "./request.js";
+import { AuthRequest } from "./request.js";
+import { node as defaultMiddleware } from "../middleware/index.js";
 
 import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
 import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.type.js";
 import type { LuciaErrorConstructor } from "./error.js";
-import type { Middleware } from "./request.js";
-import { web as defaultMiddleware } from "../middleware/index.js";
+import type { Middleware, LuciaRequest } from "./request.js";
 
 export type Session = Readonly<{
 	sessionId: string;
@@ -88,8 +88,11 @@ export class Auth<C extends Configuration = any> {
 	) => C["transformUserData"] extends {}
 		? ReturnType<C["transformUserData"]>
 		: { userId: string };
-	private middleware: Middleware;
+	protected middleware: C["middleware"] extends Middleware
+		? C["middleware"]
+		: ReturnType<typeof defaultMiddleware>;
 	private csrfProtection: boolean;
+	private origin: string[];
 
 	constructor(config: C) {
 		validateConfiguration(config);
@@ -149,6 +152,7 @@ export class Auth<C extends Configuration = any> {
 			validate: config.hash?.validate ?? validateScryptHash
 		};
 		this.middleware = config.middleware ?? defaultMiddleware();
+		this.origin = config.origin ?? [];
 	}
 	public getUser = async (userId: string): Promise<User> => {
 		const databaseUser = await this.adapter.getUser(userId);
@@ -445,21 +449,20 @@ export class Auth<C extends Configuration = any> {
 			request.method.toUpperCase() !== "GET" &&
 			request.method.toUpperCase() !== "HEAD";
 		if (checkForCsrf && this.csrfProtection) {
-			const origin = request.headers.origin;
-			if (!origin) throw new LuciaError("AUTH_INVALID_REQUEST");
+			const requestOrigin = request.headers.origin;
+			if (!requestOrigin) throw new LuciaError("AUTH_INVALID_REQUEST");
 			const url = new URL(request.url);
-			if (url.origin !== origin) throw new LuciaError("AUTH_INVALID_REQUEST");
+			if (![url.origin, ...this.origin].includes(requestOrigin))
+				throw new LuciaError("AUTH_INVALID_REQUEST");
 		}
 		return sessionId;
 	};
 
-	// can't seem to infer RequestInstance from Lucia.Auth["middleware"]
 	public handleRequest = (
-		request: C["middleware"] extends Middleware<infer RequestInstance>
-			? RequestInstance
-			: Request
-	): AuthRequest<Lucia.Auth, Lucia.Auth["middleware"]> => {
-		return new AuthRequest(this, this.middleware, request as any);
+		...args: Parameters<Lucia.Auth["middleware"]>
+	): AuthRequest<Lucia.Auth, ReturnType<Lucia.Auth["middleware"]>> => {
+		const middleware = this.middleware as Middleware;
+		return new AuthRequest(this, middleware(...args));
 	};
 
 	public createSessionCookie = (session: Session | null): Cookie => {
@@ -575,18 +578,20 @@ export type Configuration = {
 				session: (E: LuciaErrorConstructor) => SessionAdapter | Adapter;
 		  };
 	env: Env;
-	generateCustomUserId?: () => MaybePromise<string>;
+
+	autoDatabaseCleanup?: boolean;
 	csrfProtection?: boolean;
-	sessionExpiresIn?: {
-		activePeriod: number;
-		idlePeriod: number;
-	};
-	transformUserData?: (userData: UserData) => Record<string, any>;
-	sessionCookie?: CookieOption;
+	generateCustomUserId?: () => MaybePromise<string>;
 	hash?: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
-	autoDatabaseCleanup?: boolean;
 	middleware?: Middleware;
+	origin?: string[];
+	sessionExpiresIn?: {
+		activePeriod: number;
+		idlePeriod: number;
+	};
+	sessionCookie?: CookieOption;
+	transformUserData?: (userData: UserData) => Record<string, any>;
 };

@@ -19,7 +19,7 @@ export const transformKeyData = (key: Selectable<KyselyKey>): KeySchema => {
 	return {
 		id: key.id,
 		user_id: key.user_id,
-		primary: Boolean(key.primary),
+		primary_key: Boolean(key.primary_key),
 		hashed_password: key.hashed_password,
 		expires: key.expires === null ? null : Number(key.expires)
 	};
@@ -32,7 +32,7 @@ export const transformKeySchemaToKyselyExpectedValue = (
 	return {
 		id: key.id,
 		user_id: key.user_id,
-		primary: dialect === "pg" ? key.primary : Number(key.primary),
+		primary_key: dialect === "pg" ? key.primary_key : Number(key.primary_key),
 		hashed_password: key.hashed_password,
 		expires: key.expires
 	};

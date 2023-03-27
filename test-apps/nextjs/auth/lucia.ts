@@ -12,7 +12,7 @@ export const auth = lucia({
 			userId: userData.id,
 			username: userData.username
 		};
-	}
+	},
 });
 
 export const githubAuth = github(auth, {

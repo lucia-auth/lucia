@@ -1,30 +1,32 @@
+import { Cookie } from "./cookie.js";
 import type { Auth, Session, User } from "./index.js";
 
 export type LuciaRequest = {
-	method: string | null;
-	url: string | null;
+	method: string;
+	url: string;
 	headers: {
 		origin: string | null;
 		cookie: string | null;
 	};
 };
-
-export type Middleware<RequestInstance = any> = {
-	transformRequest: (request: RequestInstance) => LuciaRequest;
+export type RequestContext = {
+	request: LuciaRequest;
+	setCookie: (cookie: Cookie) => void;
 };
 
-export class AuthRequest<A extends Auth, M extends Middleware> {
+export type Middleware<Args extends any[] = any> = (
+	...args: Args
+) => RequestContext;
+
+export class AuthRequest<
+	A extends Auth = any,
+	Context extends RequestContext = any
+> {
 	private auth: A;
-	private request: LuciaRequest;
-	constructor(
-		auth: A,
-		middleware: M,
-		request: M extends Middleware<infer RequestInstance>
-			? RequestInstance
-			: never
-	) {
+	private context: Context;
+	constructor(auth: A, context: Context) {
 		this.auth = auth;
-		this.request = middleware.transformRequest(request);
+		this.context = context;
 	}
 
 	private validatePromise: Promise<Session | null> | null = null;
@@ -38,9 +40,12 @@ export class AuthRequest<A extends Auth, M extends Middleware> {
 	private currentSession: undefined | null | Session;
 
 	public setSession = (session: Session | null) => {
+		const storedSession = this.currentSession;
+		const storedSessionId = storedSession?.sessionId ?? null;
+		const newSessionId = session?.sessionId ?? null;
+		if (storedSession !== undefined && storedSessionId === newSessionId) return;
 		this.currentSession = session;
-		this.validatePromise = null;
-		this.validateUserPromise = null;
+		this.context.setCookie(this.auth.createSessionCookie(session));
 	};
 
 	public validate = async (): Promise<Session | null> => {
@@ -53,7 +58,7 @@ export class AuthRequest<A extends Auth, M extends Middleware> {
 
 		this.validatePromise = new Promise(async (resolve) => {
 			try {
-				const sessionId = this.auth.parseRequestHeaders(this.request);
+				const sessionId = this.auth.parseRequestHeaders(this.context.request);
 				if (!sessionId) {
 					this.setSession(null);
 					return resolve(null);
@@ -124,7 +129,7 @@ export class AuthRequest<A extends Auth, M extends Middleware> {
 
 		this.validateUserPromise = new Promise(async (resolve) => {
 			try {
-				const sessionId = this.auth.parseRequestHeaders(this.request);
+				const sessionId = this.auth.parseRequestHeaders(this.context.request);
 				if (!sessionId) return resolveNullSession(resolve);
 				const { session, user } = await this.auth.validateSessionUser(
 					sessionId

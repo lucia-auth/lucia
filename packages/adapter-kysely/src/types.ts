@@ -17,12 +17,12 @@ export type KyselyKey = {
 	id: string;
 	hashed_password: string | null;
 	user_id: string;
-	primary: boolean | number;
+	primary_key: boolean | number;
 	expires: BigIntColumnType | null;
 };
 
 export interface KyselyLuciaDatabase {
-	session: KyselySession;
-	user: KyselyUser;
-	key: KyselyKey;
+	auth_session: KyselySession;
+	auth_user: KyselyUser;
+	auth_key: KyselyKey;
 }

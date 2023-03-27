@@ -29,4 +29,8 @@ export type {
 	KeySchema,
 	SessionSchema
 } from "./auth/schema.type.js";
-export type { LuciaRequest, Middleware } from "./auth/request.js";
+export type {
+	RequestContext,
+	Middleware,
+	AuthRequest
+} from "./auth/request.js";

@@ -22,7 +22,7 @@ export const transformKeyDoc = (row: KeyDoc): KeySchema => {
 		id: row._id,
 		user_id: row.user_id,
 		hashed_password: row.hashed_password,
-		primary: row.primary,
+		primary_key: row.primary_key,
 		expires: row.expires
 	};
 };

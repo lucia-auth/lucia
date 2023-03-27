@@ -2,9 +2,8 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import { auth } from "../lib/lucia";
 
-const authRequest = auth.handleRequest(Astro.request);
+const authRequest = auth.handleRequest(Astro);
 const { user } = await authRequest.validateUser();
-authRequest.commit(Astro.response);
 if (!user) return Astro.redirect("/login", 302);
 ---
 
