@@ -1,7 +1,8 @@
----
-_order: 0
+auth\_---
+\_order: 0
 title: "Kysely"
 description: "Learn how to use Kysely with Lucia"
+
 ---
 
 An adapter for [Kysely SQL query builder](https://github.com/koskimas/kysely). This adapter currently supports [all 3 dialects officially supported by Kysely](https://github.com/koskimas/kysely#installation):
@@ -85,14 +86,14 @@ export type Key = {
 	id: string;
 	hashed_password: string | null;
 	user_id: string;
-	primary: number; // boolean for Postgres
+	primary_key: number; // boolean for Postgres
 	expires: BigIntColumnType | null;
 };
 
 type Database = {
-	session: Session;
-	user: User;
-	key: Key;
+	auth_session: Session;
+	auth_user: User;
+	auth_key: Key;
 	// Plus other tables
 };
 ```
@@ -110,8 +111,8 @@ type User = {
 	username: string;
 } & KyselyUser;
 
-type Database = Omit<KyselyLuciaDatabase, "user"> & {
-	user: User;
+type Database = Omit<KyselyLuciaDatabase, "auth_user"> & {
+	auth_user: User;
 	other_table: {
 		//...
 	};
@@ -128,7 +129,7 @@ const auth = lucia({
 
 ### PostgreSQL
 
-#### `user`
+#### `auth_user`
 
 You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
@@ -137,44 +138,44 @@ You may add additional columns to store user attributes. Refer to [User attribut
 | id   | `TEXT` |                    |          | true   | true    |
 
 ```sql
-CREATE TABLE public.user (
+CREATE TABLE auth_user (
     id TEXT PRIMARY KEY
 );
 ```
 
-#### `session`
+#### `auth_session`
 
 | name           | type     | foreign constraint | nullable | unique | primary |
 | -------------- | -------- | ------------------ | -------- | ------ | ------- |
 | id             | `TEXT`   |                    |          | true   | true    |
-| user_id        | `TEXT`   | `public.user(id)`  |          |        |         |
+| user_id        | `TEXT`   | `auth_user(id)`    |          |        |         |
 | active_expires | `BIGINT` |                    |          |        |         |
 | idle_expires   | `BIGINT` |                    |          |        |         |
 
 ```sql
-CREATE TABLE public.session (
+CREATE TABLE auth_session (
     id TEXT PRIMARY KEY,
-    user_id TEXT REFERENCES public.user(id) NOT NULL,
+    user_id TEXT REFERENCES auth_user(id) NOT NULL,
     active_expires BIGINT NOT NULL,
     idle_expires BIGINT NOT NULL
 );
 ```
 
-#### `key`
+#### `auth_key`
 
 | name            | type      | foreign constraint | nullable | unique | primary |
 | --------------- | --------- | ------------------ | -------- | ------ | ------- |
 | id              | `TEXT`    |                    |          | true   | true    |
-| user_id         | `TEXT`    | `public.user(id)`  |          |        |         |
-| primary         | `BOOLEAN` |                    |          |        |         |
+| user_id         | `TEXT`    | `auth_user(id)`    |          |        |         |
+| primary_key     | `BOOLEAN` |                    |          |        |         |
 | hashed_password | `TEXT`    |                    | true     |        |         |
 | expires         | `BIGINT`  |                    | true     |        |         |
 
 ```sql
-CREATE TABLE public.key (
+CREATE TABLE auth_key (
     id TEXT PRIMARY KEY,
-    user_id TEXT REFERENCES public.user(id) NOT NULL,
-    "primary" BOOLEAN NOT NULL,
+    user_id TEXT REFERENCES auth_user(id) NOT NULL,
+    primary_key BOOLEAN NOT NULL,
     hashed_password TEXT,
     expires BIGINT
 );
@@ -182,7 +183,7 @@ CREATE TABLE public.key (
 
 ### MySQL
 
-#### `user`
+#### `auth_user`
 
 The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
@@ -197,12 +198,12 @@ CREATE TABLE user (
 );
 ```
 
-#### `session`
+#### `auth_session`
 
 | name           | type                | foreign constraint | nullable | unique | identity |
 | -------------- | ------------------- | ------------------ | -------- | ------ | -------- |
 | id             | `VARCHAR(127)`      |                    |          | true   | true     |
-| user_id        | `VARCHAR(15)`       | `user(id)`         |          |        |          |
+| user_id        | `VARCHAR(15)`       | `auth_user(id)`    |          |        |          |
 | active_expires | `BIGINT` (UNSIGNED) |                    |          |        |          |
 | idle_expires   | `BIGINT` (UNSIGNED) |                    |          |        |          |
 
@@ -213,35 +214,35 @@ CREATE TABLE session (
     active_expires BIGINT UNSIGNED NOT NULL,
     idle_expires BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES user(id)
+    FOREIGN KEY (user_id) REFERENCES auth_user(id)
 );
 ```
 
-#### `key`
+#### `auth_key`
 
 | name            | type                 | foreign constraint | nullable | unique | identity |
 | --------------- | -------------------- | ------------------ | -------- | ------ | -------- |
 | id              | `VARCHAR(255)`       |                    |          | true   | true     |
-| user_id         | `VARCHAR(15)`        | `user(id)`         |          |        |          |
-| primary         | `TINYINT` (UNSIGNED) |                    |          |        |          |
+| user_id         | `VARCHAR(15)`        | `auth_user(id)`    |          |        |          |
+| primary_key     | `TINYINT` (UNSIGNED) |                    |          |        |          |
 | hashed_password | `VARCHAR(255)`       |                    | true     |        |          |
 | expires         | `BIGINT` (UNSIGNED)  |                    | true     |        |          |
 
 ```sql
-CREATE TABLE `key` (
+CREATE TABLE `auth_key` (
     id VARCHAR(255) NOT NULL,
     user_id VARCHAR(15) NOT NULL,
-    `primary` TINYINT UNSIGNED NOT NULL,
+    primary_key TINYINT UNSIGNED NOT NULL,
     hashed_password VARCHAR(255),
     expires BIGINT UNSIGNED,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES user(id)
+    FOREIGN KEY (user_id) REFERENCES auth_user(id)
 );
 ```
 
 ### SQLite
 
-#### `user`
+#### `auth_user`
 
 The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
@@ -250,54 +251,54 @@ The length of the `VARCHAR` type of `id` should be of appropriate length if you 
 | id   | `VARCHAR(15)` |          | true   | true     |
 
 ```sql
-CREATE TABLE user (
+CREATE TABLE auth_user (
     id VARCHAR(31) NOT NULL,
     PRIMARY KEY (id)
 );
 ```
 
-#### `session`
+#### `auth_session`
 
-Column type of `user_id` should match the type of `user(id)`.
+Column type of `user_id` should match the type of `auth_user(id)`.
 
 | name           | type           | foreign constraint | nullable | unique | identity |
 | -------------- | -------------- | ------------------ | -------- | ------ | -------- |
 | id             | `VARCHAR(127)` |                    |          | true   | true     |
-| user_id        | `VARCHAR(15)`  | `user(id)`         |          |        |          |
+| user_id        | `VARCHAR(15)`  | `auth_user(id)`    |          |        |          |
 | active_expires | `BIGINT`       |                    |          |        |          |
 | idle_expires   | `BIGINT`       |                    |          |        |          |
 
 ```sql
-CREATE TABLE session (
+CREATE TABLE auth_session (
     id VARCHAR(127) NOT NULL,
     user_id VARCHAR(15) NOT NULL,
     active_expires BIGINT NOT NULL,
     idle_expires BIGINT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES user(id)
+    FOREIGN KEY (user_id) REFERENCES auth_user(id)
 );
 ```
 
-#### `key`
+#### `auth_key`
 
 Column type of `user_id` should match the type of `user(id)`.
 
 | name            | type           | foreign constraint | nullable | unique | identity |
 | --------------- | -------------- | ------------------ | -------- | ------ | -------- |
 | id              | `VARCHAR(255)` |                    |          | true   | true     |
-| user_id         | `VARCHAR(15)`  | `user(id)`         |          |        |          |
-| primary         | `INT2`         |                    |          |        |          |
+| user_id         | `VARCHAR(15)`  | `auth_user(id)`    |          |        |          |
+| primary_key     | `INT2`         |                    |          |        |          |
 | hashed_password | `VARCHAR(255)` | true               | true     |        |          |
 | expires         | `BIGINT`       |                    | true     |        |          |
 
 ```sql
-CREATE TABLE key (
+CREATE TABLE auth_key (
     id VARCHAR(255) NOT NULL,
     user_id VARCHAR(15) NOT NULL,
     hashed_password VARCHAR(255),
-    "primary" INT2 NOT NULL,
+    primary_key INT2 NOT NULL,
     expires BIGINT,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES user(id)
+    FOREIGN KEY (user_id) REFERENCES auth_user(id)
 );
 ```

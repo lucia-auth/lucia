@@ -58,13 +58,13 @@ mongoose.connect(mongoUri, options);
 
 ## Models
 
-### `user`
+### `auth_user`
 
 You may add additional fields to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 ```ts
 const User = mongoose.model(
-	"user",
+	"auth_user",
 	new mongoose.Schema(
 		{
 			_id: {
@@ -78,13 +78,13 @@ const User = mongoose.model(
 );
 ```
 
-### `session`
+### `auth_session`
 
 This is not required if you're only using the Mongoose adapter for the `user` table via [`adapter.user`](/basics/configuration#adapter) config.
 
 ```ts
 const Session = mongoose.model(
-	"session",
+	"auth_session",
 	new mongoose.Schema(
 		{
 			_id: {
@@ -108,11 +108,11 @@ const Session = mongoose.model(
 );
 ```
 
-### `key`
+### `auth_key`
 
 ```ts
 const Key = mongoose.model(
-	"key",
+	"auth_key",
 	new mongoose.Schema(
 		{
 			_id: {
@@ -123,7 +123,7 @@ const Key = mongoose.model(
 				required: true
 			},
 			hashed_password: String,
-			primary: {
+			primary_key: {
 				type: Boolean,
 				required: true
 			},
@@ -135,3 +135,24 @@ const Key = mongoose.model(
 ```
 
 > You can only add custom fields to the user model. The session and key models are managed by Lucia, so you can't add custom fields to them.
+
+### Custom collection names
+
+You can defined the collection name of a model by defining `collection` when defining the schema:
+
+```ts
+const User = mongoose.model(
+	"auth_user",
+	new mongoose.Schema(
+		{
+			// ...
+		},
+		{
+			// ...
+			collection: "users"
+		}
+	)
+);
+```
+
+The model name however cannot be changed.

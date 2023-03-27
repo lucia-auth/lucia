@@ -47,57 +47,69 @@ const auth = lucia({
 });
 ```
 
-## Schema
+## Models
 
 Make sure to generate your types using `npx prisma generate` after you set up the schema!
 
-### `user`
+### `AuthUser`
 
 You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 ```prisma
-model User {
+model AuthUser {
   id       String    @id @unique
-  session  Session[]
-  Key      Key[]
+  session  AuthSession[]
+  Key      AuthKey[]
   // here you can add custom fields for your user
   // e.g. name, email, username, roles, etc.
 
-  @@map("user")
+  @@map("auth_user")
 }
 ```
 
-### `session`
+### `AuthSession`
 
 This is not required if you're only using the Prisma adapter for the `user` table via the [`adapter.user`](/basics/configuration#adapter) config.
 
 ```prisma
-model Session {
+model AuthSession {
   id             String @id @unique
   user_id        String
   active_expires BigInt
   idle_expires   BigInt
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user           AuthUser   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("session")
+  @@map("auth_session")
 }
 ```
 
-### `key`
+### `AuthKey`
 
 ```prisma
-model Key {
+model AuthKey {
   id              String  @id @unique
   hashed_password String?
   user_id         String
   primary         Boolean
   expires         BigInt?
-  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user            AuthUser    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("key")
+  @@map("auth_key")
 }
 ```
 
 > You can only add custom fields to the user model. The session and key models are managed by Lucia, so you can't add custom fields to them.
+
+### Define table names
+
+You can configure your table names by changing `@@map()`:
+
+```prisma
+model AuthUser {
+  // ...
+
+  @@map("user")
+}
+```
