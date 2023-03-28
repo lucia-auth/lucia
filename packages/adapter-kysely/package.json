@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-kysely",
-	"version": "0.7.1",
+	"version": "0.8.0",
 	"description": "Kysely adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
