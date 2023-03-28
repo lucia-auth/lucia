@@ -1,13 +1,28 @@
 ---
-import { MenuButton, ThemeButton } from "@components/buttons";
+import { ThemeButton } from "@components/buttons";
 import Discord from "./icons/Discord.astro";
 import Github from "./icons/Github.astro";
+
+const themeCookie = Astro.cookies.get("theme");
+let theme = themeCookie.value ?? "light";
+if (theme !== "light" && theme !== "dark") {
+	theme = "light";
+}
 ---
 
+<script>
+	import { toggleMenu } from "@lib/state";
+
+	const menuToggleButton = document.getElementById("menu-button");
+	if (menuToggleButton instanceof HTMLButtonElement) {
+		menuToggleButton.addEventListener("click", toggleMenu);
+	}
+</script>
+
 <div
-	class="z-50 pointer-events-none fixed left-0 w-full px-4 sm:px-8 lg:px-12 backdrop-blur-lg xl:backdrop-blur-none bg-white dark:bg-black-zinc xl:bg-transparent bg-opacity-80 dark:bg-opacity-10"
+	class="z-50 pointer-events-none fixed left-0 w-full px-4 sm:px-8 backdrop-blur-lg xl:backdrop-blur-none bg-white dark:bg-zinc-900 xl:bg-transparent bg-opacity-80 dark:bg-opacity-10 dark:text-zinc-200"
 >
-	<div class="py-3 flex place-content-between place-items-center">
+	<div class="py-4 flex place-content-between place-items-center">
 		<a class="flex place-items-center pointer-events-auto" href="/">
 			<img
 				src="/logo.svg"
@@ -18,11 +33,30 @@ import Github from "./icons/Github.astro";
 			/>
 			<p class="text-2xl font-semibold">Lucia</p>
 		</a>
-		<div class="flex gap-x-4 place-items-center pointer-events-auto">
-			<Discord />
-			<Github />
-			<ThemeButton client:load />
-			<MenuButton client:load />
+		<div
+			class="flex place-items-center pointer-events-auto sm:divide-x divide-zinc-200 dark:divide-zinc-700"
+		>
+			<a
+				class="px-2 rounded py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 my-1 mr-4 hidden sm:block"
+				href="/reference">Reference</a
+			>
+			<div class="flex gap-x-4 place-items-center pl-4">
+				<Discord />
+				<Github />
+				<ThemeButton client:load initialTheme={theme} />
+
+				<button class="xl:hidden" aria-label="Toggle menubar" id="menu-button">
+					<div class="h-8 w-8 dark:text-zinc-200 fill-current">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 48 48"
+							class="w-full h-full"
+						>
+							<path d="M6 36v-3h36v3Zm0-10.5v-3h36v3ZM6 15v-3h36v3Z"></path>
+						</svg>
+					</div>
+				</button>
+			</div>
 		</div>
 	</div>
 </div>

@@ -1,0 +1,14 @@
+[
+	{
+		"from": "/reference",
+		"to": "/reference/lucia-auth/lucia-auth"
+	},
+	{
+		"from": "/tokens",
+		"to": "/tokens/start-here/introduction"
+	},
+	{
+		"from": "/oauth",
+		"to": "/oauth/start-here/getting-started"
+	}
+]

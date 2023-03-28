@@ -1,15 +1,43 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-
-// https://astro.build/config
 import solidJs from "@astrojs/solid-js";
+import siena from "siena";
+// from "cela/generate" will result in an error
+import { generate, generateCollection } from "./cela/generate";
+import path from "path";
 
 import type { Root, RootContent, Text } from "hast";
-import siena from "siena";
+
+// https://astro.build/config
+import vercel from "@astrojs/vercel/edge";
+import { fetchGithub } from "./build/github";
 
 // https://astro.build/config
 export default defineConfig({
 	integrations: [tailwind(), solidJs()],
+	vite: {
+		plugins: [
+			{
+				name: "cela",
+				buildStart: async () => {
+					generate();
+					await fetchGithub();
+				},
+				handleHotUpdate: async (ctx) => {
+					const collectionDirPath = path.join(process.cwd(), "content");
+					if (!ctx.file.startsWith(collectionDirPath)) return;
+					await ctx.read();
+					const workingPath = ctx.file.replace(
+						path.join(process.cwd(), "content"),
+						""
+					);
+					const [baseCollectionId] = workingPath.replace("/", "").split("/");
+					generateCollection(baseCollectionId);
+				}
+			}
+		]
+	},
+	output: "server",
 	markdown: {
 		shikiConfig: {
 			theme: "github-dark"
@@ -65,5 +93,6 @@ export default defineConfig({
 				}
 			]
 		]
-	}
+	},
+	adapter: vercel()
 });

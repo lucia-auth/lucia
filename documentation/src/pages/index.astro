@@ -1,61 +1,47 @@
 ---
-import BaseLayout from "@layouts/BaseLayout.astro";
+import Layout from "@components/Layout.astro";
+import ContentTable from "@components/ContentTable.astro";
 import Header from "@components/Header.astro";
-import ContentTable from "@components/doc/content-table";
-import { db } from "@lib/db";
-import { envVar } from "@lib/env";
 
-const GITHUB_API_KEY = await envVar("GITHUB_API_KEY")
+// generated on build/dev start
+import contributors from "../../.github.json";
 
-const contributorsResponse = await fetch(
-	"https://api.github.com/repos/pilcrowonpaper/lucia/contributors",
-	{
-		headers: {
-			Authorization: `Bearer ${GITHUB_API_KEY}`
-		}
-	}
-);
-if (!contributorsResponse.ok) {
-	try {
-		console.dir(await contributorsResponse.json(), {
-			depth: null
-		});
-	} catch {
-		console.log("No error body was returned");
-	}
-	throw new Error("Something went wrong fetching to Github");
+import { frameworkIds } from "@lib/framework";
+import { getCollection } from "@cela/content";
+
+let frameworkId = Astro.url.searchParams.get("framework") ?? null;
+
+frameworkId ||= Astro.cookies.get("framework").value ?? "none";
+
+if (frameworkId && !frameworkIds.includes(frameworkId)) {
+	frameworkId = "none";
 }
-const contributorsResult = (await contributorsResponse.json()) as
-	| {
-			message: string;
-	  }
-	| {
-			avatar_url: string;
-			html_url: string;
-			login: string;
-	  }[];
-const contributors = Array.isArray(contributorsResult)
-	? contributorsResult.map((val) => {
-			const url = new URL(val.avatar_url);
-			url.searchParams.set("s", "128"); // set image size to 128 x 128
-			url.searchParams.delete("v");
-			return {
-				avatar: url.href,
-				profile: val.html_url,
-				username: val.login
-			};
-	  })
-	: [];
 
-const mainCollection = await db.query("main");
+Astro.cookies.set("framework", frameworkId, {
+	path: "/"
+});
+
+const collection = await getCollection("main", frameworkId);
+if (!collection) {
+	return new Response(null, {
+		status: 404
+	});
+}
 ---
 
-<BaseLayout>
+<Layout
+	meta={{
+		title: null,
+		description: null
+	}}
+>
 	<Header />
-	<ContentTable collections={mainCollection.children} client:load />
-	<main class="pt-36 lg:pt-20 min-w-0 pb-24 xl:ml-72 xl:pl-12 overflow-hidden">
-		<div class="sm:pt-12 lg:pt-20">
-			<h1 class="text-5xl sm:text-7xl font-semibold">
+	<ContentTable frameworkId={frameworkId} />
+	<main
+		class="min-h-screen overflow-hidden bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:ml-80"
+	>
+		<div class="px-4 pt-36 sm:pt-48 md:pt-36 md:px-24 lg:pt-48">
+			<h1 class="text-5xl break-words font-semibold leading-none sm:text-7xl">
 				Authentication, <br />simple and clean
 			</h1>
 			<p class="mb-4 mt-6">
@@ -64,32 +50,17 @@ const mainCollection = await db.query("main");
 				bare-bones by design, keeping everything easy to use and understand.
 			</p>
 			<a
-				href="/learn/start-here/introduction"
-				class="px-10 py-2 rounded-md my-2 block w-fit bg-black text-white dark:bg-white dark:text-black hover:text-main dark:hover:text-main font-medium dark:hover:bg-transparent hover:bg-transparent hover:border-main dark:hover:border-main border border-black dark:border-white transition"
+				href="/start-here/introduction"
+				class="bg-shadow-zinc dark:text-shadow-zinc hover:text-main dark:hover:text-main hover:border-main dark:hover:border-main border-shadow-zinc my-2 block w-fit rounded-md border px-10 py-2 font-medium text-white transition hover:bg-transparent dark:border-white dark:bg-white dark:hover:bg-transparent"
 				>Get started</a
 			>
-			<section class="mt-4">
-				<div
-					class="bg-main bg-opacity-20 px-4 py-1 my-3 border-l-4 border-l-main"
-				>
-					<h2 class="font-semibold">Lucia v0.7.0 is here!</h2>
-					<p class="">
-						See what's new on <a
-							class="text-main hover:underline"
-							target="_blank"
-							href="https://github.com/pilcrowOnPaper/lucia/discussions/372"
-							>Github</a
-						>.
-					</p>
-				</div>
-			</section>
 			<section class="my-12">
 				<p class="my-4">
 					This is a free and open source project made possible by our
 					contributors! Thank you to everyone who has helped with the
 					development!
 				</p>
-				<div class="flex w-full gap-2 flex-wrap mt-2 pb-1">
+				<div class="mt-2 flex w-full flex-wrap gap-2 pb-1">
 					{
 						contributors.map((val) => (
 							<a
@@ -101,7 +72,7 @@ const mainCollection = await db.query("main");
 									src={val.avatar}
 									height="128"
 									width="128"
-									class="w-8 h-8 rounded-full border dark:border-zinc-800 hover:border-main dark:hover:border-main hover:scale-110 transition object-fill duration-100 bg-geay-100"
+									class="dark:border-shadow-zinc hover:border-main dark:hover:border-main bg-geay-100 h-8 w-8 rounded-full border object-fill transition duration-100 hover:scale-110"
 									alt={val.username}
 									loading="lazy"
 								/>
@@ -112,11 +83,11 @@ const mainCollection = await db.query("main");
 			</section>
 		</div>
 	</main>
-</BaseLayout>
+</Layout>
 
 <style>
 	:global(.astro-code) {
-		@apply overflow-scroll rounded-md px-4 py-2 my-2 text-sm;
+		@apply my-2 overflow-scroll rounded-md px-4 py-2 text-sm;
 		scrollbar-width: none;
 	}
 	:global(.dark .astro-code) {

@@ -1,50 +1,36 @@
-import { toggleMenuOpen } from "@lib/state";
-import { Show, createSignal } from "solid-js";
+import { addClassName, removeClassName } from "@lib/dom";
+import { dynamicClassName } from "@lib/styles";
+import { For, Show, createSignal } from "solid-js";
+import frameworks from "@lib/framework";
 
-export const MenuButton = () => {
-	return (
-		<button
-			onClick={toggleMenuOpen}
-			class="xl:hidden"
-			aria-label="Toggle menubar"
-		>
-			<div class="h-8 w-8 dark:text-zinc-200 fill-current">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 48 48"
-					class="w-full h-full"
-				>
-					<path d="M6 36v-3h36v3Zm0-10.5v-3h36v3ZM6 15v-3h36v3Z" />
-				</svg>
-			</div>
-		</button>
-	);
+const setCookie = (name: string, value: string) => {
+	document.cookie = `${name}=${value};max-age=${60 * 60 * 24 * 365};path=/;`;
 };
 
-export const ThemeButton = () => {
-	type Theme = "light" | "dark";
+export const ThemeButton = (props: { initialTheme: string }) => {
 	const useTheme = () => {
-		const initialTheme: Theme =
-			typeof document !== "undefined"
-				? (window.localStorage.getItem("theme") as Theme)
-				: "light";
-		const [signal, setter] = createSignal<Theme>(initialTheme);
+		let initialTheme = props.initialTheme;
+		if (initialTheme !== "light" && initialTheme !== "dark") {
+			initialTheme = "light";
+		}
+		const [signal, setter] = createSignal(initialTheme);
 		const toggleTheme = () => {
-			const newTheme: Theme = signal() === "light" ? "dark" : "light";
-			setter(newTheme);
-			window.localStorage.setItem("theme", newTheme);
+			const newTheme = signal() === "light" ? "dark" : "light";
+			setCookie("theme", newTheme);
 			if (newTheme === "light") {
-				document.documentElement.classList.remove("dark");
-			} else {
-				document.documentElement.classList.add("dark");
+				removeClassName(document.body, "dark");
 			}
+			if (newTheme === "dark") {
+				addClassName(document.body, "dark");
+			}
+			setter(newTheme);
 		};
 		return [signal, toggleTheme] as const;
 	};
 	const [theme, toggleTheme] = useTheme();
 	return (
 		<button
-			class="h-6 w-6 fill-current dark:text-zinc-200 text-black"
+			class="text-shadow-zinc h-6 w-6 fill-current dark:text-zinc-200"
 			onClick={toggleTheme}
 			aria-label="Toggle theme"
 		>
@@ -57,5 +43,61 @@ export const ThemeButton = () => {
 				</Show>
 			</svg>
 		</button>
+	);
+};
+
+export const FrameworkButton = (props: { current?: string | null }) => {
+	const currentSelection =
+		frameworks.find((option) => option.id === props.current) ?? frameworks[0];
+	const createToggle = () => {
+		const [signal, setSignal] = createSignal(false);
+		const toggle = () => setSignal((val) => !val);
+		return [signal, toggle] as const;
+	};
+	const [isBoxOpen, toggleBox] = createToggle();
+	return (
+		<div>
+			<button
+				class={dynamicClassName(
+					"w-full rounded-md border bg-zinc-50 px-4 py-1.5 text-left dark:bg-zinc-900",
+					{
+						"border-main": isBoxOpen(),
+						"border-zinc-200 dark:border-zinc-800": !isBoxOpen()
+					}
+				)}
+				onClick={toggleBox}
+			>
+				<span class="text-zinc-500">Framework:</span>
+				<span> {currentSelection.title}</span>
+			</button>
+			<Show when={isBoxOpen()}>
+				<div class="absolute z-50 mt-2 w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+					<ul>
+						<For each={frameworks}>
+							{(option) => {
+								const searchParams = new URLSearchParams({
+									framework: option.id
+								});
+								const href = `/?${searchParams}`;
+								return (
+									<li
+										class={dynamicClassName("", {
+											"text-main": option.id === currentSelection.id
+										})}
+									>
+										<a
+											class="dark:hover:bg-zinc-950 block w-full py-1 px-4 hover:bg-zinc-100"
+											href={href}
+										>
+											{option.title}
+										</a>
+									</li>
+								);
+							}}
+						</For>
+					</ul>
+				</div>
+			</Show>
+		</div>
 	);
 };

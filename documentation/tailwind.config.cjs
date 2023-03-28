@@ -5,8 +5,14 @@ module.exports = {
 		extend: {
 			colors: {
 				main: "#5f57ff",
-				"black-zinc": "#121214",
-				svelte: "#ff6430"
+				"shadow-zinc": "#121214",
+				"black-zinc": "#0C0C0D",
+				svelte: "#ff6430",
+				zinc: {
+					80: "#F5F5F6",
+					150: "#EDEDEF",
+					950: "#141416"
+				}
 			}
 		}
 	},

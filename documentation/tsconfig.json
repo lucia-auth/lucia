@@ -6,7 +6,7 @@
 			"@layouts/*": ["src/layouts/*"],
 			"@lib/*": ["src/lib/*"],
 			"@components/*": ["src/components/*"],
-			"@db/*": ["db/*"]
+			"@cela/*": ["cela/*"]
 		},
 		"jsx": "preserve",
 		"jsxImportSource": "solid-js"
