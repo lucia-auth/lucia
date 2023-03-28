@@ -86,7 +86,7 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 										})}
 									>
 										<a
-											class="block w-full py-1 px-4 hover:bg-zinc-100 dark:hover:bg-zinc-950"
+											class="dark:hover:bg-zinc-950 block w-full py-1 px-4 hover:bg-zinc-100"
 											href={href}
 										>
 											{option.title}

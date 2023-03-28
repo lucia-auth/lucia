@@ -36,7 +36,7 @@ The recommended way to store sessions is by using cookies. You can generate cook
 
 ```ts
 const session = await auth.createSession(userId);
-const sessionCookie = auth.createSessionCookie(session).serialize()
+const sessionCookie = auth.createSessionCookie(session).serialize();
 setResponseHeaders("Set-Cookie", sessionCookie);
 ```
 

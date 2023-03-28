@@ -13,7 +13,7 @@ module.exports = {
 					150: "#EDEDEF",
 					950: "#141416"
 				}
-			},
+			}
 		}
 	},
 	darkMode: "class",
