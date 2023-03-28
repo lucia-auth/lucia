@@ -2,9 +2,8 @@ export const getTimeAfterSeconds = (seconds: number) => {
 	return new Date().getTime() + 1000 * seconds;
 };
 
-export const isWithinExpiration = (millisecond: number | bigint | null) => {
-	if (millisecond === null) return false;
+export const isWithinExpiration = (expiresInMs: number | bigint) => {
 	const currentTime = Date.now();
-	if (currentTime > millisecond) return false;
+	if (currentTime > expiresInMs) return false;
 	return true;
 };
