@@ -1,7 +1,5 @@
 import { useRouter } from "next/router";
-import { AuthRequest } from "@lucia-auth/nextjs";
-import { auth } from "../lib/lucia";
-import { signOut } from "@lucia-auth/nextjs/client";
+import { auth } from "../auth/lucia";
 
 import type {
 	GetServerSidePropsContext,
@@ -13,7 +11,7 @@ import type { User } from "lucia-auth";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ user: User }>> => {
-	const authRequest = new AuthRequest(auth, context.req, context.res);
+	const authRequest = auth.handleRequest(context.req, context.res);
 	const { user } = await authRequest.validateUser();
 	if (!user)
 		return {
@@ -43,7 +41,9 @@ const Index = (
 			<button
 				onClick={async () => {
 					try {
-						await signOut();
+						await fetch("/api/logout", {
+							method: "POST"
+						});
 						router.push("/login");
 					} catch (e) {
 						console.log(e);
