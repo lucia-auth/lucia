@@ -6,11 +6,11 @@ description: "Learn the basic database model required for Lucia"
 
 Lucia uses adapters to connect to your database. The following chart shows the basic structure of the database, though they may vary from database to database.
 
-## `user`
+## `auth_user`
 
 Schema: [`UserSchema`](/reference/lucia-auth/types#userschema)
 
-The `user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
+The `auth_user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
 
 | name  | type                   | unique | description                                       |
 | ----- | ---------------------- | ------ | ------------------------------------------------- |
@@ -23,7 +23,7 @@ type UserSchema = {
 } & Lucia.UserAttributes;
 ```
 
-## `session`
+## `auth_session`
 
 Schema: [`SessionSchema`](/reference/lucia-auth/types#sessionschema)
 
@@ -45,7 +45,7 @@ type SessionSchema = {
 };
 ```
 
-## `key`
+## `auth_key`
 
 Schema: [`KeySchema`](/reference/lucia-auth/types#keyschema)
 
@@ -55,7 +55,7 @@ The `key` table stores the user's keys.
 | --------------- | -------------- | ------ | --------- | -------------------------------------------------------- |
 | id              | string         | true   |           | key id in the form of: `${providerId}:${providerUserId}` |
 | user_id         | string         |        | user(id)  |                                                          |
-| primary         | boolean        |        |           | `true` for primary keys                                  |
+| primary_key     | boolean        |        |           | `true` for primary keys                                  |
 | hashed_password | string \| null |        |           | hashed password of the key                               |
 | expires         | number \| null |        |           | expiration for key if defined (`number`)                 |
 
@@ -63,7 +63,7 @@ The `key` table stores the user's keys.
 type KeySchema = {
 	id: string;
 	user_id: string;
-	primary: boolean;
+	primary_key: boolean;
 	hashed_password: string | null;
 	expires: number | null;
 };

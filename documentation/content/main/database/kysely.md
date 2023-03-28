@@ -1,8 +1,7 @@
-auth\_---
-\_order: 0
+---
+_order: 0
 title: "Kysely"
 description: "Learn how to use Kysely with Lucia"
-
 ---
 
 An adapter for [Kysely SQL query builder](https://github.com/koskimas/kysely). This adapter currently supports [all 3 dialects officially supported by Kysely](https://github.com/koskimas/kysely#installation):
@@ -61,68 +60,44 @@ const auth = lucia({
 
 ### Database types
 
-Define types for each table in your database or generate them automatically using [kysely-codegen](https://github.com/RobinBlomberg/kysely-codegen). Then, pass those types to the `Kysely` constructor. See the [Kysely github repo](https://github.com/koskimas/kysely#minimal-example) for an example on creating the `Kysely` instance.
-
-The `Database` type must be of the following structure.
+Import Lucia types from `adapter-kysely` and extend them.
 
 ```ts
-import { ColumnType, Generated } from "kysely";
+import type { KyselyLuciaDatabase } from "@lucia-auth/adapter-kysely";
 
-type BigIntColumnType = ColumnType<number | bigint>;
-
-type Session = {
-	expires: BigIntColumnType;
-	id: string;
-	idle_expires: BigIntColumnType;
-	user_id: string;
-};
-
-type User = {
-	id: Generated<string>;
-	// Plus other columns that you defined
-};
-
-export type Key = {
-	id: string;
-	hashed_password: string | null;
-	user_id: string;
-	primary_key: number; // boolean for Postgres
-	expires: BigIntColumnType | null;
-};
-
-type Database = {
-	auth_session: Session;
-	auth_user: User;
-	auth_key: Key;
-	// Plus other tables
-};
-```
-
-You can also import the types from `adapter-kysely` and extend them.
-
-```ts
-import type {
-	KyselyLuciaDatabase,
-	KyselyUser
-} from "@lucia-auth/adapter-kysely";
-
-// Add a column for username in your user table
-type User = {
-	username: string;
-} & KyselyUser;
-
-type Database = Omit<KyselyLuciaDatabase, "auth_user"> & {
-	auth_user: User;
-	other_table: {
-		//...
-	};
-};
-
-const db = new Kysely<Database>(options);
+const db = new Kysely<KyselyLuciaDatabase>(options);
 
 const auth = lucia({
 	adapter: kysely(db, dialect)
 });
+```
+
+#### Extending types
+
+To define custom user attributes in table `auth_user`, pass the additional column types as a generic:
+
+```ts
+import type { KyselyLuciaDatabase } from "@lucia-auth/adapter-kysely";
+
+type Database = KyselyLuciaDatabase<{
+	username: string;
+}>;
+
+const db = new Kysely<Database>(options);
+```
+
+To define additional tables, use intersection types (`&`):
+
+```ts
+import type { KyselyLuciaDatabase } from "@lucia-auth/adapter-kysely";
+
+type Database = KyselyLuciaDatabase & {
+	other_table: {
+		// ...
+	};
+};
+
+const db = new Kysely<Database>(options);
 ```
 
 ## Database structure

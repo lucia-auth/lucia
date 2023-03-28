@@ -4,12 +4,12 @@ title: "Getting started"
 description: "Learn how to get started with Lucia using Next.js"
 ---
 
-Install Lucia and the Next.js integration using your package manager of your choice. `lucia-auth` can be used as is in a server environment (and only inside it), and `@lucia-auth/nextjs` provides Next.js specific code for both the backend and frontend.
+Install Lucia using your package manager of your choice.
 
-```bash
-npm i lucia-auth @lucia-auth/nextjs
-pnpm add lucia-auth @lucia-auth/nextjs
-yarn add lucia-auth @lucia-auth/nextjs
+```
+npm i lucia-auth
+pnpm add lucia-auth
+yarn add lucia-auth
 ```
 
 ## Set up the database
@@ -18,10 +18,10 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `lib/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/basics/configuration#env) config, it should `DEV` if in development and `PROD` if in production.
+In `auth/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Make sure to export `typeof auth` as well.
 
 ```ts
-// lib/lucia.ts
+// auth/lucia.ts
 import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
 import { dev } from "$app/environment";
@@ -36,31 +36,15 @@ export type Auth = typeof auth;
 
 This module and the file that holds it **should NOT be imported from the client**.
 
-## Configure your Next.js project
-
-Next.js specific functions are imported from `@lucia-auth/nextjs`.
-
-### API endpoints
-
-Inside `pages/api` (or `pages/api/auth`), create `[...lucia].ts`. Import [`handleApiRoutes()`](/nextjs/api-reference/server-api#handleapiroutes) and export it as the default. This will handle API requests related to auth.
-
-```ts
-// pages/api/[...lucia].ts
-import { handleApiRoutes } from "@lucia-auth/nextjs";
-import { auth } from "../../lib/lucia";
-
-export default handleApiRoutes(auth);
-```
-
 ### Types
 
-Create `lucia.d.ts`, and inside it configure your types. The path in `import('./lib/lucia.js').Auth;` is where you exported `auth` (`lucia()`).
+Create `lucia.d.ts`, and inside it configure your types. The path in `import('./auth/lucia.js').Auth;` is where you exported `auth` (`lucia()`).
 
 ```ts
 // lucia.d.ts
 /// <reference types="lucia-auth" />
 declare namespace Lucia {
-	type Auth = import("./lib/lucia.js").Auth;
+	type Auth = import("./auth/lucia.js").Auth;
 	type UserAttributes = {};
 }
 ```

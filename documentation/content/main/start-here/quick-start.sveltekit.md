@@ -17,7 +17,7 @@ you could replace it with `email`, for example.
 
 | name     | type   | unique | description          |
 | -------- | ------ | ------ | -------------------- |
-| username | string | true   | Username of the user |
+| username | string | true   | username of the user |
 
 ## 2. Configure Lucia
 
@@ -41,6 +41,7 @@ Add `transformUserData()` to your Lucia config to expose the user's id and usern
 export const auth = lucia({
 	adapter: prisma(client),
 	env: dev ? "DEV" : "PROD",
+	middleware: sveltekit(),
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,
@@ -78,7 +79,7 @@ This form will have an input field for username and password.
 
 ### Create users
 
-Users can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling [`setSession()`](/reference/sveltekit/locals-api#setsession).
+Users can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling [`locals.auth.setSession()`](), which we is set in hooks.
 
 ```ts
 // routes/signup/+page.server.ts
@@ -88,7 +89,7 @@ import type { PageServerLoad, Actions } from "./$types";
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate();
+	const session = await locals.auth.validate();
 	if (session) throw redirect(302, "/");
 	return {};
 };
@@ -116,7 +117,7 @@ export const actions: Actions = {
 				}
 			});
 			const session = await auth.createSession(user.userId);
-			locals.setSession(session);
+			locals.auth.setSession(session);
 		} catch {
 			// username already in use
 			return fail(400);
@@ -124,10 +125,6 @@ export const actions: Actions = {
 	}
 };
 ```
-
-> For the session state to update in the client, we have to invalidate the root load function. `use:enhance` will only invalidate all load functions on a successful response and not on a redirect response. So, we're not redirecting the user inside the action and let the load functions, triggered by the invalidation, handle redirecting unauthenticated users.
->
-> Learn more in [Using forms](/sveltekit/basics/using-forms).
 
 ## 4. Sign in page
 
@@ -167,7 +164,7 @@ import type { PageServerLoad, Actions } from "./$types";
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate();
+	const session = await locals.auth.validate();
 	if (session) throw redirect(302, "/");
 };
 
@@ -182,7 +179,7 @@ export const actions: Actions = {
 		try {
 			const key = await auth.useKey("username", username, password);
 			const session = await auth.createSession(key.userId);
-			locals.setSession(session);
+			locals.auth.setSession(session);
 		} catch {
 			// invalid credentials
 			return fail(400);
@@ -197,23 +194,7 @@ This page will be the root (`/`). This route will show the user's data and have 
 
 ### Get current user
 
-You can get the current user using `getUser()`. Notice that the `username` property exists because it was included in the returned value of `transformPageData()`.
-
-```svelte
-<script lang="ts">
-	import { getUser } from "@lucia-auth/sveltekit/client";
-
-	const user = getUser();
-</script>
-
-<h1>Profile</h1>
-<div>
-	<p>User id: {$user?.userId}</p>
-	<p>Username: {$user?.username}</p>
-</div>
-```
-
-### Redirect unauthenticated user
+Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function. Let's also redirect unauthenticated users.
 
 ```ts
 // routes/+page.server.ts
@@ -221,9 +202,28 @@ import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate();
-	if (!session) throw redirect(302, "/login");
+	const { user } = await locals.auth.validateUser();
+	if (!user) throw redirect(302, "/login");
+	return {
+		user
+	};
 };
+```
+
+Now we can access the user from page data. Notice that the `username` property exists because it was included in the returned value of `transformPageData()`.
+
+```svelte
+<script lang="ts">
+	import type { PageData } from "./$types";
+
+	export let data: PageData;
+</script>
+
+<h1>Profile</h1>
+<div>
+	<p>User id: {data.user.userId}</p>
+	<p>Username: {data.user.username}</p>
+</div>
 ```
 
 ## 6. Validate requests
@@ -236,7 +236,7 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const actions: Actions = {
 	default: async ({ locals }) => {
-		const session = await locals.validate();
+		const session = await locals.auth.validate();
 		if (!session) {
 			// unauthenticated
 		}
@@ -244,7 +244,7 @@ export const actions: Actions = {
 };
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate();
+	const session = await locals.auth.validate();
 	if (!session) {
 		// unauthenticated
 	}
@@ -256,7 +256,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ locals }) => {
-	const session = await locals.validate();
+	const session = await locals.auth.validate();
 	if (!session) {
 		// unauthenticated
 	}
@@ -274,10 +274,10 @@ import { auth } from "$lib/server/lucia";
 
 export const actions: Actions = {
 	default: async ({ locals }) => {
-		const session = await locals.validate();
+		const session = await locals.auth.validate();
 		if (!session) return fail(401);
 		await auth.invalidateSession(session.sessionId); // invalidate session
-		locals.setSession(null); // remove cookie
+		locals.auth.setSession(null); // remove cookie
 	}
 };
 ```

@@ -1,5 +1,5 @@
 ---
-_order: 5
+_order: 7
 title: "Configuration"
 description: "Learn how to configure Lucia"
 ---

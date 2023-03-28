@@ -26,8 +26,4 @@ app.use((req, res, next) => {
 	res.locals.auth = auth.handleRequest(req, res);
 	next();
 });
-
-app.get("/", async (req, res) => {
-	const session = await res.locals.auth.validate();
-});
 ```

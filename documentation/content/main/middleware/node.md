@@ -16,32 +16,3 @@ const handleRequest: (
 | -------- | ------------------------------------------------------------------------------- |
 | request  | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
 | response | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |
-
-## Example
-
-### Next.js
-
-```ts
-import { auth } from "../auth/lucia";
-
-import type {
-	GetServerSidePropsContext,
-	GetServerSidePropsResult,
-} from "next";
-import type { User } from "lucia-auth";
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult> => {
-	const authRequest = auth.handleRequest(context.req, context.res);
-	const session = await authRequest.validate();
-	if (!session)
-		return {
-			redirect: {
-				destination: "/login",
-				permanent: false
-			}
-		};
-	return {};
-};
-```

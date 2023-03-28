@@ -4,12 +4,12 @@ title: "Getting started"
 description: "Learn how to get started with Lucia using Astro"
 ---
 
-Install Lucia and the Astro integration using your package manager of your choice. `lucia-auth` can be used as is in a server environment (and only inside it), and `@lucia-auth/astro` provides Astro specific code to be used in the server.
+Install Lucia using your package manager of your choice.
 
-```bash
-npm i lucia-auth @lucia-auth/astro
-pnpm add lucia-auth @lucia-auth/astro
-yarn add lucia-auth @lucia-auth/astro
+```
+npm i lucia-auth
+pnpm add lucia-auth
+yarn add lucia-auth
 ```
 
 ## Set up the database
@@ -18,17 +18,18 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `src/lib/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/basics/configuration#env) config, it should `DEV` if in development and `PROD` if in production.
+In `src/lib/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Additionally, we will import the Astro middleware and pass it on to `middleware`. Make sure to export `typeof auth` as well.
 
 ```ts
 // src/lib/lucia.ts
 import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
-import { dev } from "$app/environment";
+import { astro } from "lucia-auth/middleware";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: "DEV" // "PROD" if in prod
+	env: dev ? "DEV" : "PROD",
+	middleware: astro()
 });
 
 export type Auth = typeof auth;

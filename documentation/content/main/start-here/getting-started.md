@@ -12,6 +12,16 @@ pnpm add lucia-auth
 yarn add lucia-auth
 ```
 
+### Framework integration
+
+You can use Lucia as is, or with the provided framework support for a better DX.
+
+If you're using one of the supported frameworks, follow the "Getting started" guides below instead of this page:
+
+- [SvelteKit](/start-here/getting-started?framework=sveltekit)
+- [Astro](/start-here/getting-started?framework=astro)
+- [Next.js](/start-here/getting-started?framework=nextjs)
+
 ## Set up the database
 
 To support multiple databases, Lucia uses database adapters. These adapters provide a set of standardized methods to read from and update the database. Custom adapters can be created as well if Lucia does not provide one.
@@ -22,27 +32,9 @@ Follow the guides below to set up your database:
 - [Kysely](/database/kysely) (PostgreSQL, MySQL, SQLite)
 - [Mongoose](/database/mongoose) (MongoDB).
 
-## Framework integration
-
-You can use Lucia as is, or with one of the provided framework integrations. These are wrapper libraries that provide APIs that make working with Lucia a bit easier, though you'd still need to learn the APIs of the core Lucia library.
-
-If you're using one of the supported frameworks, follow the "Getting started" guides below instead of this page:
-
-- [SvelteKit](/start-here/getting-started?framework=sveltekit)
-- [Astro](/start-here/getting-started?framework=astro)
-- [Next.js](/start-here/getting-started?framework=nextjs)
-
 ## Initialize Lucia
 
-In a TypeScript file, import [`lucia`](/reference/modules/lucia-auth#lucia) and an adapter (the adapters are provided as a different NPM package).
-
-```ts
-// lucia.ts
-import lucia from "lucia-auth";
-import prisma from "@lucia-auth/adapter-prisma";
-```
-
-Initialize it and export it as `auth`. As for the config, `adapter` is your database adapter and [`env`](/basics/configuration#env) tells Lucia what environment the server is running on. In the code below, `NODE_ENV` is an environment variable with a value of `DEV` or `PROD`.
+In a TypeScript file, import [`lucia`](/reference/modules/lucia-auth#lucia) and an adapter (the adapters are provided as a different NPM package). Initialize it by defining `adapter` and `env` and export it. `env` should be set to `"DEV"` when testing in a HTTP environment (localhost), while it should be `"PROD"` if in a HTTPS environment.
 
 ```ts
 // lucia.ts
@@ -51,7 +43,7 @@ import prisma from "@lucia-auth/adapter-prisma";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient), // TODO: initialize Prisma client
-	env: process.env.NODE_ENV.
+	env: "DEV" // "PROD" if in prod
 });
 
 export type Auth = typeof auth;

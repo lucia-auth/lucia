@@ -8,7 +8,7 @@ Lucia is a library that, at its core, makes managing users and sessions easy. It
 
 - A core library to manage users and validate sessions
 - Database adapters that connect Lucia to your database or ORM of choice, like Prisma and Mongoose
-- Integration for popular frameworks like SvelteKit and Next.js
+- Support for popular frameworks like SvelteKit, Next.js, Express, and Astro
 - Packages to handle auth strategies like OAuth
 
 > (warn) One important thing to remember is **Lucia is a server side library**. Every API provided by the core Lucia library should only be used on the server.
@@ -44,8 +44,5 @@ Lucia aims to work well with any modern web framework and supports run-times oth
 - Mongoose adapter: `@lucia-auth/adapter-mongoose`
 - Prisma adapter: `@lucia-auth/adapter-prisma`
 - Redis integration: `@lucia-auth/adapter-session-redis`
-- Astro integration: `@lucia-auth/astro`
-- Next.js integration: `@lucia-auth/next-js`
-- SvelteKit integration: `@lucia-auth/sveltekit`
 - OAuth integration: `@lucia-auth/oauth`
 - Tokens integration: `@lucia-auth/tokens`

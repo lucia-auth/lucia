@@ -4,12 +4,12 @@ title: "Getting started"
 description: "Learn how to get started with Lucia using SvelteKit"
 ---
 
-Install Lucia and the SvelteKit integration using your package manager of your choice. `lucia-auth` can be used as is in a server environment (and only inside it), and `@lucia-auth/sveltekit` provides SvelteKit specific code for both the backend and frontend.
+Install Lucia using your package manager of your choice.
 
-```bash
-npm i lucia-auth @lucia-auth/sveltekit
-pnpm add lucia-auth @lucia-auth/sveltekit
-yarn add lucia-auth @lucia-auth/sveltekit
+```
+npm i lucia-auth
+pnpm add lucia-auth
+yarn add lucia-auth
 ```
 
 ## Set up the database
@@ -20,17 +20,19 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `$lib/server/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it and export it as `auth` as usual. For [`env`](/basics/configuration#env) config, checking if [`dev`](https://kit.svelte.dev/docs/modules#$app-environment-dev) (imported from `$app/environment`) is true is usually sufficient. Export the type of `auth` as well.
+In `$lib/server/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Additionally, we will import the SvelteKit middleware and pass it on to `middleware`. Make sure to export `typeof auth` as well.
 
 ```ts
 // lib/server/lucia.ts
 import lucia from "lucia-auth";
+import { sveltekit } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: dev ? "DEV" : "PROD"
+	env: dev ? "DEV" : "PROD",
+	middleware: sveltekit()
 });
 
 export type Auth = typeof auth;
@@ -40,75 +42,29 @@ This module and the file that holds it **should NOT be imported from the client*
 
 ## Configure your SvelteKit project
 
-SvelteKit specific functions are imported from `@lucia-auth/sveltekit`.
-
 ### Hooks
 
-Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Create and export a handle function with [`handleHooks()`](/reference/sveltekit/lucia-auth-sveltekit#handlehooks).
+Create a server hooks file (`src/hooks.server.ts`) and import the `auth` module. Since we used the SvelteKit middleware, `handleRequest()` is compatible with SvelteKit's APIs.
 
 ```ts
-// src/hooks.server.ts
+// hooks.server.ts
 import { auth } from "$lib/server/lucia";
-import { handleHooks } from "@lucia-auth/sveltekit";
+import type { Handle } from "@sveltejs/kit";
 
-export const handle = handleHooks(auth);
+export const handle: Handle = async ({ event, resolve }) => {
+	event.locals.auth = auth.handleRequest(event);
+	return await resolve(event);
+};
 ```
 
-If you have your own handle function, SvelteKit's [`sequence`](https://kit.svelte.dev/docs/modules#sveltejs-kit-hooks-sequence) can be used to chain multiple handle functions. Make sure Lucia's handle function is the first one.
+You can now get the current session and user using the methods within `event.locals.auth`, which is available in every server context.
 
 ```ts
-// src/hooks.server.ts
-import { auth } from "$lib/server/lucia";
-import { handleHooks } from "@lucia-auth/sveltekit";
-import { sequence } from "@sveltejs/kit/hooks";
-
-export const handle = sequence(handleHooks(auth), customHandle);
+const session = await event.locals.auth.validate();
+const { session, user } = await event.locals.auth.validateUser();
 ```
 
-### Root layout
-
-In your route root, create `+layout.server.ts` and `+layout.svelte`.
-
-#### Client
-
-In `+layout.svelte`, import [`handleSession()`](/reference/sveltekit/lucia-auth-client#handlesession) from `@lucia-auth/sveltekit`. This will listen for changes in sessions, sync sessions across tabs, and set a local client cache of the user. Since this also sets a context, it is required for other client side functions to work. Make sure not to subscribe to the `page` store passed on as the parameter.
-
-```svelte
-<!-- src/routes/+layout.svelte -->
-<script lang="ts">
-	import { page } from "$app/stores";
-	import { handleSession } from "@lucia-auth/sveltekit/client";
-
-	handleSession(page);
-</script>
-
-<slot />
-```
-
-#### Server load functions
-
-In `+layout.server.ts`, create and export [`handleServerSession()`](/reference/sveltekit/lucia-auth-sveltekit#handleserversession). This will pass on the session data from hooks to load functions.
-
-```ts
-// src/routes/+layout.server.ts
-import { handleServerSession } from "@lucia-auth/sveltekit";
-
-export const load = handleServerSession();
-```
-
-You can use your own load function by passing it on as an argument.
-
-```ts
-// src/routes/+layout.server.ts
-import { handleServerSession } from "@lucia-auth/sveltekit";
-import type { LayoutServerLoadEvent } from "./$types";
-
-export const load = handleServerSession((e: LayoutServerLoadEvent) => {
-	// ...
-});
-```
-
-### Types
+### Defining types
 
 In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.js').Auth;` is where you exported `auth` (`lucia()`).
 
@@ -123,9 +79,7 @@ declare namespace Lucia {
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
 	interface Locals {
-		validate: import("@lucia-auth/sveltekit").Validate;
-		validateUser: import("@lucia-auth/sveltekit").ValidateUser;
-		setSession: import("@lucia-auth/sveltekit").SetSession;
+		auth: import("lucia-auth").AuthRequest;
 	}
 }
 ```
