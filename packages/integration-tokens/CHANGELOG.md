@@ -1,5 +1,11 @@
 # @lucia-auth/tokens
 
+## 0.3.0
+
+### Minor changes
+
+- [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Rename `timeout` option to `expiresIn`
+
 ## 0.2.0
 
 ### Minor changes

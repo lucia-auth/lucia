@@ -1,5 +1,12 @@
 # @lucia-auth/adapter-test
 
+## 0.6.0
+
+### Minor changes
+
+- [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Require `lucia-auth` 0.11.0
+  - Update internals
+
 ## 0.5.1
 
 ### Patch changes
