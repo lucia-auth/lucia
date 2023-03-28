@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 import { LuciaError } from 'lucia-auth';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate();
+	const session = await locals.auth.validate();
 	if (session) throw redirect(302, '/');
 	return {};
 };
@@ -23,7 +23,7 @@ export const actions: Actions = {
 		try {
 			const key = await auth.useKey('username', username, password);
 			const session = await auth.createSession(key.userId);
-			locals.setSession(session);
+			locals.auth.setSession(session);
 		} catch (error) {
 			if (
 				error instanceof LuciaError &&

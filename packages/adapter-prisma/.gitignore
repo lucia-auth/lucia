@@ -3,4 +3,5 @@
 .DS_Store
 /prisma/migrations
 /prisma/dev.db
+/prisma/dev.db-journal
 .env

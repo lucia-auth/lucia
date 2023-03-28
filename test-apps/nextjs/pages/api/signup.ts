@@ -1,5 +1,4 @@
-import { auth } from "../../lib/lucia";
-import { AuthRequest } from "@lucia-auth/nextjs";
+import { auth } from "../../auth/lucia";
 import { LuciaError } from "lucia-auth";
 import { Prisma } from "@prisma/client";
 
@@ -31,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			}
 		});
 		const session = await auth.createSession(user.userId);
-		const authRequest = new AuthRequest(auth, req, res);
+		const authRequest = auth.handleRequest(req, res);
 		authRequest.setSession(session);
 		return res.redirect(302, "/");
 	} catch (error) {

@@ -6,18 +6,19 @@ import type { AwaitedReturnType } from "./utils.js";
 
 export const provider = <
 	A extends Auth,
-	GetProviderUser extends (
-		accessToken: string
-	) => Promise<readonly [providerUserId: string, providerUser: {}]>
+	ProviderUser extends {},
+	Tokens extends {
+		accessToken: string;
+	}
 >(
 	auth: A,
 	config: {
 		providerId: string;
 		getAuthorizationUrl: (state: string) => Promise<URL>;
-		getTokens: (code: string) => Promise<{
-			accessToken: string;
-		}>;
-		getProviderUser: GetProviderUser;
+		getTokens: (code: string) => Promise<Tokens>;
+		getProviderUser: (
+			accessToken: string
+		) => Promise<readonly [providerUserId: string, providerUser: ProviderUser]>;
 	}
 ) => {
 	return {
@@ -48,7 +49,7 @@ export const provider = <
 			};
 			const existingUser = await getExistingUser();
 			return {
-				providerUser: providerUser as AwaitedReturnType<GetProviderUser>[1],
+				providerUser: providerUser as ProviderUser,
 				providerUserId,
 				createPersistentKey: async (userId: string) => {
 					return await auth.createKey(userId, {

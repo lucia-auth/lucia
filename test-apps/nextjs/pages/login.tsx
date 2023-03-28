@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { auth } from "../lib/lucia";
-import { AuthRequest } from "@lucia-auth/nextjs";
+import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
@@ -9,7 +8,7 @@ import { useState } from "react";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = new AuthRequest(auth, context.req, context.res);
+	const authRequest = auth.handleRequest(context.req, context.res);
 	const session = await authRequest.validate();
 	if (session) {
 		return {

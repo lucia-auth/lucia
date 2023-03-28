@@ -7,14 +7,16 @@ export class Token {
 	private readonly value: string;
 
 	public readonly toString = () => this.value;
-	public readonly expires: Date;
-	public readonly isExpired: boolean;
+	public readonly expiresAt: Date;
+	public readonly expired: boolean;
 	public readonly userId: string;
+	public readonly key: Readonly<SingleUseKey>;
 
 	constructor(value: string, key: SingleUseKey) {
 		this.value = value;
-		this.expires = key.expires;
-		this.isExpired = key.isExpired;
+		this.expiresAt = key.expiresAt;
+		this.expired = key.expired;
 		this.userId = key.userId;
+		this.key = key;
 	}
 }

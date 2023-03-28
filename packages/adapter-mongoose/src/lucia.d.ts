@@ -29,6 +29,6 @@ type KeyDoc = {
 	__v?: any;
 	user_id: string;
 	hashed_password: string | null;
-	primary: boolean;
+	primary_key: boolean;
 	expires: number | null;
 };

@@ -15,9 +15,9 @@ export const validateDatabaseSessionData = (
 	return {
 		sessionId: databaseSession.id,
 		userId: databaseSession.user_id,
-		activePeriodExpires: new Date(Number(databaseSession.active_expires)),
-		idlePeriodExpires: new Date(Number(databaseSession.idle_expires)),
+		activePeriodExpiresAt: new Date(Number(databaseSession.active_expires)),
+		idlePeriodExpiresAt: new Date(Number(databaseSession.idle_expires)),
 		state: isActive ? "active" : "idle",
-		isFresh: false
+		fresh: false
 	};
 };

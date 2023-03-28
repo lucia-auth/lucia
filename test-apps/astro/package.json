@@ -13,7 +13,6 @@
 	"dependencies": {
 		"@astrojs/tailwind": "3.x",
 		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/astro": "workspace:*",
 		"@lucia-auth/oauth": "workspace:*",
 		"@prisma/client": "^4.7.0",
 		"astro": "^2.0.0",

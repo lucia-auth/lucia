@@ -1,4 +1,5 @@
-export { lucia as default, SESSION_COOKIE_NAME } from "./auth/index.js";
+export { lucia as default } from "./auth/index.js";
+export { SESSION_COOKIE_NAME, Cookie } from "./auth/cookie.js";
 export { LuciaError, LuciaErrorConstructor } from "./auth/error.js";
 export { generateRandomString } from "./utils/crypto.js";
 export { serializeCookie } from "./utils/cookie.js";
@@ -15,7 +16,6 @@ export type {
 	Configuration,
 	PersistentKey,
 	Env,
-	MinimalRequest,
 	Auth
 } from "./auth/index.js";
 export type {
@@ -29,3 +29,8 @@ export type {
 	KeySchema,
 	SessionSchema
 } from "./auth/schema.type.js";
+export type {
+	RequestContext,
+	Middleware,
+	AuthRequest
+} from "./auth/request.js";

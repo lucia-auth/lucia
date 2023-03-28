@@ -21,11 +21,11 @@ type SQLiteError = {
 };
 
 type IsValidKyselySchema<KyselyDatabase> = KyselyDatabase extends {
-	user: any;
-	session: any;
+	auth_user: any;
+	auth_session: any;
 }
-	? KyselyDatabase["user"] extends KyselyUser
-		? KyselyDatabase["session"] extends KyselySession
+	? KyselyDatabase["auth_user"] extends KyselyUser
+		? KyselyDatabase["auth_session"] extends KyselySession
 			? true
 			: false
 		: false
@@ -49,7 +49,7 @@ const adapter =
 		return {
 			getUser: async (userId) => {
 				const data = await kysely
-					.selectFrom("user")
+					.selectFrom("auth_user")
 					.selectAll()
 					.where("id", "=", userId)
 					.executeTakeFirst();
@@ -57,16 +57,16 @@ const adapter =
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
 				const data = await kysely
-					.selectFrom("session")
-					.innerJoin("user", "user.id", "session.user_id")
-					.selectAll("user")
+					.selectFrom("auth_session")
+					.innerJoin("auth_user", "auth_user.id", "auth_session.user_id")
+					.selectAll("auth_user")
 					.select([
-						"session.id as _session_id",
-						"session.active_expires as _session_active_expires",
-						"session.idle_expires as _session_idle_expires",
-						"session.user_id as _session_user_id"
+						"auth_session.id as _session_id",
+						"auth_session.active_expires as _session_active_expires",
+						"auth_session.idle_expires as _session_idle_expires",
+						"auth_session.user_id as _session_user_id"
 					])
-					.where("session.id", "=", sessionId)
+					.where("auth_session.id", "=", sessionId)
 					.executeTakeFirst();
 				if (!data) return null;
 				const {
@@ -88,7 +88,7 @@ const adapter =
 			},
 			getSession: async (sessionId) => {
 				const data = await kysely
-					.selectFrom("session")
+					.selectFrom("auth_session")
 					.selectAll()
 					.where("id", "=", sessionId)
 					.executeTakeFirst();
@@ -97,7 +97,7 @@ const adapter =
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await kysely
-					.selectFrom("session")
+					.selectFrom("auth_session")
 					.selectAll()
 					.where("user_id", "=", userId)
 					.execute();
@@ -109,7 +109,7 @@ const adapter =
 						let result: Selectable<KyselyUser> | null = null;
 						if (dialect === "pg") {
 							result = await trx
-								.insertInto("user")
+								.insertInto("auth_user")
 								.values({
 									id: userId,
 									...attributes
@@ -118,7 +118,7 @@ const adapter =
 								.executeTakeFirstOrThrow();
 						} else {
 							await trx
-								.insertInto("user")
+								.insertInto("auth_user")
 								.values({
 									id: userId,
 									...attributes
@@ -127,7 +127,7 @@ const adapter =
 						}
 						if (key) {
 							await trx
-								.insertInto("key")
+								.insertInto("auth_key")
 								.values(transformKeySchemaToKyselyExpectedValue(key, dialect))
 								.execute();
 						}
@@ -135,7 +135,7 @@ const adapter =
 					});
 					if (userResult) return userResult;
 					const result = await kysely
-						.selectFrom("user")
+						.selectFrom("auth_user")
 						.selectAll()
 						.where("id", "=", userId)
 						.executeTakeFirst();
@@ -170,11 +170,11 @@ const adapter =
 				}
 			},
 			deleteUser: async (userId) => {
-				await kysely.deleteFrom("user").where("id", "=", userId).execute();
+				await kysely.deleteFrom("auth_user").where("id", "=", userId).execute();
 			},
 			setSession: async (session) => {
 				try {
-					await kysely.insertInto("session").values(session).execute();
+					await kysely.insertInto("auth_session").values(session).execute();
 				} catch (e) {
 					if (dialect === "pg") {
 						const error = e as Partial<PgDatabaseError>;
@@ -207,7 +207,7 @@ const adapter =
 						const error = e as Partial<SQLiteError>;
 						if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
 							const result = await kysely
-								.selectFrom("user")
+								.selectFrom("auth_user")
 								.select("id")
 								.where("id", "is", session.user_id)
 								.executeTakeFirst();
@@ -225,20 +225,20 @@ const adapter =
 			},
 			deleteSession: async (...sessionIds) => {
 				await kysely
-					.deleteFrom("session")
+					.deleteFrom("auth_session")
 					.where("id", "in", sessionIds)
 					.execute();
 			},
 			deleteSessionsByUserId: async (userId) => {
 				await kysely
-					.deleteFrom("session")
+					.deleteFrom("auth_session")
 					.where("user_id", "=", userId)
 					.execute();
 			},
 			updateUserAttributes: async (userId, attributes) => {
 				if (Object.keys(attributes).length === 0) {
 					const user = await kysely
-						.selectFrom("user")
+						.selectFrom("auth_user")
 						.where("id", "=", userId)
 						.selectAll()
 						.executeTakeFirst();
@@ -247,12 +247,12 @@ const adapter =
 				}
 				if (dialect === "mysql2") {
 					await kysely
-						.updateTable("user")
+						.updateTable("auth_user")
 						.set(attributes)
 						.where("id", "=", userId)
 						.executeTakeFirst();
 					const user = await kysely
-						.selectFrom("user")
+						.selectFrom("auth_user")
 						.selectAll()
 						.where("id", "=", userId)
 						.executeTakeFirst();
@@ -260,7 +260,7 @@ const adapter =
 					return user;
 				}
 				const user = await kysely
-					.updateTable("user")
+					.updateTable("auth_user")
 					.set(attributes)
 					.where("id", "=", userId)
 					.returningAll()
@@ -271,7 +271,7 @@ const adapter =
 			setKey: async (key) => {
 				try {
 					await kysely
-						.insertInto("key")
+						.insertInto("auth_key")
 						.values(transformKeySchemaToKyselyExpectedValue(key, dialect))
 						.execute();
 				} catch (e) {
@@ -306,7 +306,7 @@ const adapter =
 						const error = e as Partial<SQLiteError>;
 						if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
 							const result = await kysely
-								.selectFrom("user")
+								.selectFrom("auth_user")
 								.select("id")
 								.where("id", "is", key.user_id)
 								.executeTakeFirst();
@@ -325,7 +325,7 @@ const adapter =
 			getKey: async (key, shouldDataBeDeleted) => {
 				return await kysely.transaction().execute(async (trx) => {
 					const data = await trx
-						.selectFrom("key")
+						.selectFrom("auth_key")
 						.selectAll()
 						.where("id", "=", key)
 						.executeTakeFirst();
@@ -336,7 +336,7 @@ const adapter =
 					);
 					if (dataShouldBeDeleted) {
 						await trx
-							.deleteFrom("key")
+							.deleteFrom("auth_key")
 							.where("id", "=", data.id)
 							.executeTakeFirst();
 					}
@@ -345,7 +345,7 @@ const adapter =
 			},
 			getKeysByUserId: async (userId) => {
 				const data = await kysely
-					.selectFrom("key")
+					.selectFrom("auth_key")
 					.selectAll()
 					.where("user_id", "=", userId)
 					.execute();
@@ -354,13 +354,13 @@ const adapter =
 			updateKeyPassword: async (key, hashedPassword) => {
 				if (dialect === "mysql2") {
 					const data = await kysely
-						.selectFrom("key")
+						.selectFrom("auth_key")
 						.selectAll()
 						.where("id", "=", key)
 						.executeTakeFirst();
 					if (!data) throw new LuciaError("AUTH_INVALID_KEY_ID");
 					await kysely
-						.updateTable("key")
+						.updateTable("auth_key")
 						.set({
 							hashed_password: hashedPassword
 						})
@@ -369,7 +369,7 @@ const adapter =
 					return;
 				}
 				const data = await kysely
-					.updateTable("key")
+					.updateTable("auth_key")
 					.set({
 						hashed_password: hashedPassword
 					})
@@ -379,14 +379,17 @@ const adapter =
 				if (!data) throw new LuciaError("AUTH_INVALID_KEY_ID");
 			},
 			deleteKeysByUserId: async (userId) => {
-				await kysely.deleteFrom("key").where("user_id", "=", userId).execute();
+				await kysely
+					.deleteFrom("auth_key")
+					.where("user_id", "=", userId)
+					.execute();
 			},
 			deleteNonPrimaryKey: async (key) => {
 				await kysely
-					.deleteFrom("key")
+					.deleteFrom("auth_key")
 					.where("id", "=", key)
 					.where(
-						"primary",
+						"primary_key",
 						"=",
 						dialect === "better-sqlite3" ? Number(false) : false
 					)

@@ -17,7 +17,7 @@ export const idToken = (
 	auth: Auth,
 	name: string,
 	options: {
-		timeout: number;
+		expiresIn: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}
@@ -32,7 +32,7 @@ export const idToken = (
 					providerId: name,
 					providerUserId: token,
 					password: null,
-					timeout: options.timeout
+					expiresIn: options.expiresIn
 				});
 				return new Token(token, key);
 			} catch (e) {
@@ -94,7 +94,7 @@ export const passwordToken = (
 	auth: Auth,
 	name: string,
 	options: {
-		timeout: number;
+		expiresIn: number;
 		length?: number;
 		generate?: (length?: number) => string;
 	}
@@ -111,7 +111,7 @@ export const passwordToken = (
 					providerId: name,
 					providerUserId: providerUserId,
 					password: null,
-					timeout: options.timeout
+					expiresIn: options.expiresIn
 				});
 				return new Token(token, key);
 			} catch (e) {

@@ -11,11 +11,11 @@ export const transformDatabaseKey = (databaseKey: KeySchema): Key => {
 	if (isPersistent) {
 		return {
 			type: "persistent",
-			isPrimary: databaseKey.primary,
+			primary: databaseKey.primary_key,
 			providerId,
 			providerUserId,
 			userId,
-			isPasswordDefined
+			passwordDefined: isPasswordDefined
 		};
 	}
 	return {
@@ -23,9 +23,9 @@ export const transformDatabaseKey = (databaseKey: KeySchema): Key => {
 		providerId,
 		providerUserId,
 		userId,
-		expires: new Date(databaseKey.expires),
-		isExpired: !isWithinExpiration(databaseKey.expires),
-		isPasswordDefined
+		expiresAt: new Date(databaseKey.expires),
+		expired: !isWithinExpiration(databaseKey.expires),
+		passwordDefined: isPasswordDefined
 	};
 };
 

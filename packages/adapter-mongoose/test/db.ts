@@ -8,7 +8,7 @@ import mongodb from "../src/index.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { transformKeyDoc, transformSessionDoc } from "../src/utils.js";
-import { LuciaError, UserSchema } from "lucia-auth";
+import { LuciaError } from "lucia-auth";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -19,7 +19,7 @@ const url = process.env.MONGODB_URL;
 if (!url) throw new Error(".env is not set up");
 
 const User = mongoose.model(
-	"user",
+	"auth_user",
 	new mongoose.Schema(
 		{
 			_id: {
@@ -36,7 +36,7 @@ const User = mongoose.model(
 );
 
 const Session = mongoose.model(
-	"session",
+	"auth_session",
 	new mongoose.Schema(
 		{
 			_id: {
@@ -60,7 +60,7 @@ const Session = mongoose.model(
 );
 
 const Key = mongoose.model(
-	"key",
+	"auth_key",
 	new mongoose.Schema(
 		{
 			_id: {

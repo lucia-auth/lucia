@@ -10,43 +10,43 @@ export const adapter = prisma(client)(LuciaError);
 export const db: LuciaQueryHandler = {
 	user: {
 		get: async () => {
-			return await client.user.findMany();
+			return await client.authUser.findMany();
 		},
 		insert: async (user) => {
-			await client.user.create({
+			await client.authUser.create({
 				data: user
 			});
 		},
 		clear: async () => {
-			await client.user.deleteMany();
+			await client.authUser.deleteMany();
 		}
 	},
 	session: {
 		get: async () => {
-			const sessions = await client.session.findMany();
+			const sessions = await client.authSession.findMany();
 			return sessions.map((session) => transformSessionData(session));
 		},
 		insert: async (session) => {
-			await client.session.create({
+			await client.authSession.create({
 				data: session
 			});
 		},
 		clear: async () => {
-			await client.session.deleteMany();
+			await client.authSession.deleteMany();
 		}
 	},
 	key: {
 		get: async () => {
-			const keys = (await client.key.findMany()) as unknown as KeySchema[];
+			const keys = (await client.authKey.findMany()) as unknown as KeySchema[];
 			return keys.map((key) => transformKeyData(key));
 		},
 		insert: async (key) => {
-			await client.key.create({
+			await client.authKey.create({
 				data: key
 			});
 		},
 		clear: async () => {
-			await client.key.deleteMany();
+			await client.authKey.deleteMany();
 		}
 	}
 };
