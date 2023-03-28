@@ -13,42 +13,55 @@ interface PossiblePrismaError {
 	message: string;
 }
 
-type Schemas = {
-	user: UserSchema;
-	session: SessionSchema;
-	key: KeySchema;
+type Models = {
+	authUser: {
+		schema: UserSchema;
+		relations: {};
+	};
+	authSession: {
+		schema: SessionSchema;
+		relations: {
+			auth_user: UserSchema;
+		};
+	};
+	authKey: {
+		schema: KeySchema;
+		relations: {
+			auth_user: UserSchema;
+		};
+	};
 };
 
 const adapter =
-	(prismaClient: PrismaClient<Schemas>): AdapterFunction<Adapter> =>
+	(prismaClient: PrismaClient<Models>): AdapterFunction<Adapter> =>
 	(LuciaError) => {
-		const prisma = prismaClient as any as SmartPrismaClient<Schemas>;
+		const prisma = prismaClient as any as SmartPrismaClient<Models>;
 		return {
 			getUser: async (userId) => {
-				return await prisma.user.findUnique({
+				return await prisma.authUser.findUnique({
 					where: {
 						id: userId
 					}
 				});
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
-				const data = await prisma.session.findUnique({
+				const data = await prisma.authSession.findUnique({
 					where: {
 						id: sessionId
 					},
 					include: {
-						user: true
+						auth_user: true
 					}
 				});
 				if (!data) return null;
-				const { user, ...session } = data;
+				const { auth_user: user, ...session } = data;
 				return {
-					user: user,
+					user,
 					session: transformSessionData(session)
 				};
 			},
 			getSession: async (sessionId) => {
-				const session = await prisma.session.findUnique({
+				const session = await prisma.authSession.findUnique({
 					where: {
 						id: sessionId
 					}
@@ -57,7 +70,7 @@ const adapter =
 				return transformSessionData(session);
 			},
 			getSessionsByUserId: async (userId) => {
-				const sessions = await prisma.session.findMany({
+				const sessions = await prisma.authSession.findMany({
 					where: {
 						user_id: userId
 					}
@@ -66,7 +79,7 @@ const adapter =
 			},
 			setUser: async (userId, attributes, key) => {
 				if (!key) {
-					return await prisma.user.create({
+					return await prisma.authUser.create({
 						data: {
 							id: userId,
 							...attributes
@@ -76,13 +89,13 @@ const adapter =
 				try {
 					return await prisma.$transaction(async (tx) => {
 						const [createdUser] = await Promise.all([
-							tx.user.create({
+							tx.authUser.create({
 								data: {
 									id: userId,
 									...attributes
 								}
 							}),
-							tx.key.create({
+							tx.authKey.create({
 								data: key
 							})
 						]);
@@ -96,7 +109,7 @@ const adapter =
 				}
 			},
 			deleteUser: async (userId) => {
-				await prisma.user.deleteMany({
+				await prisma.authUser.deleteMany({
 					where: {
 						id: userId
 					}
@@ -104,7 +117,7 @@ const adapter =
 			},
 			setSession: async (session) => {
 				try {
-					await prisma.session.create({
+					await prisma.authSession.create({
 						data: session
 					});
 				} catch (e) {
@@ -117,14 +130,14 @@ const adapter =
 				}
 			},
 			deleteSession: async (sessionId) => {
-				await prisma.session.delete({
+				await prisma.authSession.delete({
 					where: {
 						id: sessionId
 					}
 				});
 			},
 			deleteSessionsByUserId: async (userId) => {
-				await prisma.session.deleteMany({
+				await prisma.authSession.deleteMany({
 					where: {
 						user_id: userId
 					}
@@ -132,7 +145,7 @@ const adapter =
 			},
 			updateUserAttributes: async (userId, attributes) => {
 				try {
-					const data = await prisma.user.update({
+					const data = await prisma.authUser.update({
 						data: attributes,
 						where: {
 							id: userId
@@ -148,7 +161,7 @@ const adapter =
 			},
 			setKey: async (key) => {
 				try {
-					await prisma.key.create({
+					await prisma.authKey.create({
 						data: key
 					});
 				} catch (e) {
@@ -162,7 +175,7 @@ const adapter =
 			},
 			getKey: async (key, shouldDataBeDeleted) => {
 				return await prisma.$transaction(async (tx) => {
-					const keyData = await tx.key.findUnique({
+					const keyData = await tx.authKey.findUnique({
 						where: {
 							id: key
 						}
@@ -173,7 +186,7 @@ const adapter =
 						transformedKeyData
 					);
 					if (dataShouldBeDeleted) {
-						await tx.key.delete({
+						await tx.authKey.delete({
 							where: {
 								id: keyData.id
 							}
@@ -183,7 +196,7 @@ const adapter =
 				});
 			},
 			getKeysByUserId: async (userId) => {
-				const keys = await prisma.key.findMany({
+				const keys = await prisma.authKey.findMany({
 					where: {
 						user_id: userId
 					}
@@ -192,7 +205,7 @@ const adapter =
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
 				try {
-					await prisma.key.update({
+					await prisma.authKey.update({
 						data: {
 							hashed_password: hashedPassword
 						},
@@ -208,17 +221,17 @@ const adapter =
 				}
 			},
 			deleteKeysByUserId: async (userId) => {
-				await prisma.key.deleteMany({
+				await prisma.authKey.deleteMany({
 					where: {
 						user_id: userId
 					}
 				});
 			},
 			deleteNonPrimaryKey: async (key) => {
-				await prisma.key.deleteMany({
+				await prisma.authKey.deleteMany({
 					where: {
 						id: key,
-						primary: false
+						primary_key: false
 					}
 				});
 			}

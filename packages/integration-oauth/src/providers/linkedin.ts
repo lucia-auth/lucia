@@ -49,7 +49,7 @@ export const linkedin = (auth: Auth, config: Config) => {
 
 		return {
 			accessToken: tokens.access_token,
-			expiresIn: tokens.expires_in,
+			accessTokenExpiresIn: tokens.expires_in,
 			refreshToken: tokens.refresh_token,
 			refreshTokenExpiresIn: tokens.refresh_token_expires_in,
 			scope: tokens.scope

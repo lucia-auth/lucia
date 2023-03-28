@@ -8,13 +8,7 @@ import {
 	transformSessionData
 } from "../src/utils.js";
 
-type User = KyselyUser & {
-	username: string;
-};
-
-export type KyselyDatabase = Omit<KyselyLuciaDatabase, "user"> & {
-	user: User;
-};
+export type KyselyDatabase = KyselyLuciaDatabase<{ username: string }>;
 
 export const createQueryHandler = (
 	kysely: Kysely<KyselyDatabase>,
@@ -23,44 +17,53 @@ export const createQueryHandler = (
 	return {
 		user: {
 			get: async () => {
-				const result = await kysely.selectFrom("user").selectAll().execute();
+				const result = await kysely
+					.selectFrom("auth_user")
+					.selectAll()
+					.execute();
 				if (!result) throw new Error("Failed to fetch from database");
 				return result;
 			},
 			insert: async (user) => {
-				await kysely.insertInto("user").values(user).execute();
+				await kysely.insertInto("auth_user").values(user).execute();
 			},
 			clear: async () => {
-				await kysely.deleteFrom("user").execute();
+				await kysely.deleteFrom("auth_user").execute();
 			}
 		},
 		session: {
 			get: async () => {
-				const result = await kysely.selectFrom("session").selectAll().execute();
+				const result = await kysely
+					.selectFrom("auth_session")
+					.selectAll()
+					.execute();
 				if (!result) throw new Error("Failed to fetch from database");
 				return result.map((val) => transformSessionData(val));
 			},
 			insert: async (session) => {
-				await kysely.insertInto("session").values(session).execute();
+				await kysely.insertInto("auth_session").values(session).execute();
 			},
 			clear: async () => {
-				await kysely.deleteFrom("session").execute();
+				await kysely.deleteFrom("auth_session").execute();
 			}
 		},
 		key: {
 			get: async () => {
-				const result = await kysely.selectFrom("key").selectAll().execute();
+				const result = await kysely
+					.selectFrom("auth_key")
+					.selectAll()
+					.execute();
 				if (!result) throw new Error("Failed to fetch from database");
 				return result.map((val) => transformKeyData(val));
 			},
 			insert: async (key) => {
 				await kysely
-					.insertInto("key")
+					.insertInto("auth_key")
 					.values(transformKeySchemaToKyselyExpectedValue(key, dialect))
 					.execute();
 			},
 			clear: async () => {
-				await kysely.deleteFrom("key").execute();
+				await kysely.deleteFrom("auth_key").execute();
 			}
 		}
 	} as const;

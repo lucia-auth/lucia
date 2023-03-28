@@ -1,5 +1,4 @@
-import { AuthRequest } from "@lucia-auth/nextjs";
-import { auth } from "../../lib/lucia";
+import { auth } from "../../auth/lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { LuciaError } from "lucia-auth";
@@ -19,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		});
 	}
 	try {
-		const authRequest = new AuthRequest(auth, req, res);
+		const authRequest = auth.handleRequest(req, res);
 		const key = await auth.useKey("username", username, password);
 		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session);

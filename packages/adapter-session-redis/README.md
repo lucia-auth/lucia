@@ -14,11 +14,7 @@
 npm install @lucia-auth/adapter-session-redis
 ```
 
-## Lucia version compatibility
-
-| Redis adapter version | Lucia version |
-| --------------------- | ------------- |
-| 0.1.x                 | 0.6.x - 0.9.x |
+`lucia-auth@0.11.x` recommended.
 
 ## Testing
 

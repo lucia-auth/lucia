@@ -1,4 +1,5 @@
 import lucia from "lucia-auth";
+import { astro } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -12,7 +13,8 @@ export const auth = lucia({
 			userId: userData.id,
 			username: userData.username
 		};
-	}
+	},
+	middleware: astro()
 });
 
 export const githubAuth = github(auth, {

@@ -1,4 +1,9 @@
-import { Cookie, CookieOption, createSessionCookie } from "./cookie.js";
+import {
+	Cookie,
+	CookieOption,
+	SESSION_COOKIE_NAME,
+	createSessionCookie
+} from "./cookie.js";
 import { logError } from "../utils/log.js";
 import {
 	generateHashWithScrypt,
@@ -9,20 +14,22 @@ import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { validateDatabaseSessionData } from "./session.js";
 import { transformDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
-export { SESSION_COOKIE_NAME } from "./cookie.js";
+import { isWithinExpiration } from "../utils/date.js";
+import { AuthRequest } from "./request.js";
+import { node as defaultMiddleware } from "../middleware/index.js";
 
 import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
 import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.type.js";
 import type { LuciaErrorConstructor } from "./error.js";
-import { isWithinExpiration } from "../utils/date.js";
+import type { Middleware, LuciaRequest } from "./request.js";
 
 export type Session = Readonly<{
 	sessionId: string;
 	userId: string;
-	activePeriodExpires: Date;
-	idlePeriodExpires: Date;
+	activePeriodExpiresAt: Date;
+	idlePeriodExpiresAt: Date;
 	state: "idle" | "active";
-	isFresh: boolean;
+	fresh: boolean;
 }>;
 
 export type Key = SingleUseKey | PersistentKey;
@@ -32,9 +39,9 @@ export type SingleUseKey = Readonly<{
 	userId: string;
 	providerId: string;
 	providerUserId: string;
-	isPasswordDefined: boolean;
-	expires: Date;
-	isExpired: boolean;
+	passwordDefined: boolean;
+	expiresAt: Date;
+	expired: boolean;
 }>;
 
 export type PersistentKey = Readonly<{
@@ -42,20 +49,13 @@ export type PersistentKey = Readonly<{
 	userId: string;
 	providerId: string;
 	providerUserId: string;
-	isPasswordDefined: boolean;
-	isPrimary: boolean;
+	passwordDefined: boolean;
+	primary: boolean;
 }>;
 
 export type Env = "DEV" | "PROD";
 export type User = ReturnType<Lucia.Auth["transformUserData"]>;
 export type UserData = { id: string } & Required<Lucia.UserAttributes>;
-export type MinimalRequest = {
-	headers: {
-		get: (name: string) => null | string;
-	};
-	url: string;
-	method: string;
-};
 
 export const lucia = <C extends Configuration>(config: C) => {
 	return new Auth(config);
@@ -72,8 +72,8 @@ const validateConfiguration = (config: Configuration) => {
 export class Auth<C extends Configuration = any> {
 	private adapter: Adapter;
 	private generateUserId: () => MaybePromise<string>;
-	private sessionCookie: CookieOption[];
-	private sessionTimeout: {
+	private sessionCookieOption: CookieOption;
+	private sessionExpiresIn: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
@@ -88,7 +88,11 @@ export class Auth<C extends Configuration = any> {
 	) => C["transformUserData"] extends {}
 		? ReturnType<C["transformUserData"]>
 		: { userId: string };
+	protected middleware: C["middleware"] extends Middleware
+		? C["middleware"]
+		: ReturnType<typeof defaultMiddleware>;
 	private csrfProtection: boolean;
+	private origin: string[];
 
 	constructor(config: C) {
 		validateConfiguration(config);
@@ -120,9 +124,11 @@ export class Auth<C extends Configuration = any> {
 			config.generateCustomUserId ?? (() => generateRandomString(15));
 		this.ENV = config.env;
 		this.csrfProtection = config.csrfProtection ?? true;
-		this.sessionTimeout = {
-			activePeriod: config.sessionTimeout?.activePeriod ?? 1000 * 60 * 60 * 24,
-			idlePeriod: config.sessionTimeout?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
+		this.sessionExpiresIn = {
+			activePeriod:
+				config.sessionExpiresIn?.activePeriod ?? 1000 * 60 * 60 * 24,
+			idlePeriod:
+				config.sessionExpiresIn?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
 		this.autoDatabaseCleanup = config.autoDatabaseCleanup ?? true;
 		this.transformUserData = ({
@@ -139,11 +145,14 @@ export class Auth<C extends Configuration = any> {
 			const transform = config.transformUserData ?? defaultTransform;
 			return transform({ id, ...attributes }) as User;
 		};
-		this.sessionCookie = config.sessionCookie ?? [defaultSessionCookieOption];
+		this.sessionCookieOption =
+			config.sessionCookie ?? defaultSessionCookieOption;
 		this.hash = {
 			generate: config.hash?.generate ?? generateHashWithScrypt,
 			validate: config.hash?.validate ?? validateScryptHash
 		};
+		this.middleware = config.middleware ?? defaultMiddleware();
+		this.origin = config.origin ?? [];
 	}
 	public getUser = async (userId: string): Promise<User> => {
 		const databaseUser = await this.adapter.getUser(userId);
@@ -211,7 +220,7 @@ export class Auth<C extends Configuration = any> {
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
-			primary: true,
+			primary_key: true,
 			expires: null
 		});
 		const user = this.transformUserData(userData);
@@ -356,28 +365,28 @@ export class Auth<C extends Configuration = any> {
 
 	public generateSessionId = (): [
 		sessionId: string,
-		activePeriodExpires: Date,
-		idlePeriodExpires: Date
+		activePeriodExpiresAt: Date,
+		idlePeriodExpiresAt: Date
 	] => {
 		const sessionId = generateRandomString(40);
-		const activePeriodExpires = new Date(
-			new Date().getTime() + this.sessionTimeout.activePeriod
+		const activePeriodExpiresAt = new Date(
+			new Date().getTime() + this.sessionExpiresIn.activePeriod
 		);
-		const idlePeriodExpires = new Date(
-			activePeriodExpires.getTime() + this.sessionTimeout.idlePeriod
+		const idlePeriodExpiresAt = new Date(
+			activePeriodExpiresAt.getTime() + this.sessionExpiresIn.idlePeriod
 		);
-		return [sessionId, activePeriodExpires, idlePeriodExpires];
+		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
 	};
 
 	public createSession = async (userId: string): Promise<Session> => {
-		const [sessionId, activePeriodExpires, idlePeriodExpires] =
+		const [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
 			this.generateSessionId();
 		await Promise.all([
 			this.adapter.setSession({
 				id: sessionId,
 				user_id: userId,
-				active_expires: activePeriodExpires.getTime(),
-				idle_expires: idlePeriodExpires.getTime()
+				active_expires: activePeriodExpiresAt.getTime(),
+				idle_expires: idlePeriodExpiresAt.getTime()
 			}),
 			this.autoDatabaseCleanup
 				? await this.deleteDeadUserSessions(userId)
@@ -385,11 +394,11 @@ export class Auth<C extends Configuration = any> {
 		]);
 		return {
 			userId,
-			activePeriodExpires,
+			activePeriodExpiresAt,
 			sessionId,
-			idlePeriodExpires,
+			idlePeriodExpiresAt,
 			state: "active",
-			isFresh: true
+			fresh: true
 		};
 	};
 
@@ -424,31 +433,40 @@ export class Auth<C extends Configuration = any> {
 
 	public deleteDeadUserSessions = async (userId: string): Promise<void> => {
 		const sessions = await this.adapter.getSessionsByUserId(userId);
-		const currentTime = new Date().getTime();
 		const deadSessionIds = sessions
-			.filter((val) => val.idle_expires < currentTime)
+			.filter((val) => !isWithinExpiration(val.idle_expires))
 			.map((val) => val.id);
 		if (deadSessionIds.length === 0) return;
 		await this.adapter.deleteSession(...deadSessionIds);
 	};
 
-	public validateRequestHeaders = (request: MinimalRequest): string => {
-		const cookies = parseCookie(request.headers.get("cookie") ?? "");
-		const sessionId = cookies.auth_session ?? "";
-		const checkForCsrf = request.method !== "GET" && request.method !== "HEAD";
+	public parseRequestHeaders = (request: LuciaRequest): string | null => {
+		const cookies = parseCookie(request.headers.cookie ?? "");
+		const sessionId = cookies[SESSION_COOKIE_NAME] ?? null;
+		if (request.method === null || request.url === null)
+			throw new LuciaError("AUTH_INVALID_REQUEST");
+		const checkForCsrf =
+			request.method.toUpperCase() !== "GET" &&
+			request.method.toUpperCase() !== "HEAD";
 		if (checkForCsrf && this.csrfProtection) {
-			const origin = request.headers.get("Origin");
-			if (!origin) throw new LuciaError("AUTH_INVALID_REQUEST");
+			const requestOrigin = request.headers.origin;
+			if (!requestOrigin) throw new LuciaError("AUTH_INVALID_REQUEST");
 			const url = new URL(request.url);
-			if (url.origin !== origin) throw new LuciaError("AUTH_INVALID_REQUEST");
+			if (![url.origin, ...this.origin].includes(requestOrigin))
+				throw new LuciaError("AUTH_INVALID_REQUEST");
 		}
 		return sessionId;
 	};
 
-	public createSessionCookies = (session: Session | null): Cookie[] => {
-		return this.sessionCookie.map((options) =>
-			createSessionCookie(session, this.ENV, options)
-		);
+	public handleRequest = (
+		...args: Parameters<Lucia.Auth["middleware"]>
+	): AuthRequest<Lucia.Auth, ReturnType<Lucia.Auth["middleware"]>> => {
+		const middleware = this.middleware as Middleware;
+		return new AuthRequest(this, middleware(...args));
+	};
+
+	public createSessionCookie = (session: Session | null): Cookie => {
+		return createSessionCookie(session, this.ENV, this.sessionCookieOption);
 	};
 
 	public createKey = async <
@@ -464,7 +482,7 @@ export class Auth<C extends Configuration = any> {
 					providerId: string;
 					providerUserId: string;
 					password: string | null;
-					timeout: number;
+					expiresIn: number;
 			  }
 	>(
 		userId: string,
@@ -481,35 +499,35 @@ export class Auth<C extends Configuration = any> {
 				id: keyId,
 				user_id: userId,
 				hashed_password: hashedPassword,
-				primary: false,
+				primary_key: false,
 				expires: null
 			});
 			return {
 				type: "persistent",
 				providerId: keyData.providerId,
 				providerUserId: keyData.providerUserId,
-				isPrimary: false,
-				isPasswordDefined: !!keyData.password,
+				primary: false,
+				passwordDefined: !!keyData.password,
 				userId
 			} satisfies PersistentKey as any;
 		}
-		const oneTimeExpires = getOneTimeKeyExpiration(keyData.timeout);
-		if (!oneTimeExpires) throw new TypeError();
+		const expiresAt = getOneTimeKeyExpiration(keyData.expiresIn);
+		if (!expiresAt) throw new TypeError();
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
-			primary: false,
-			expires: oneTimeExpires.getTime()
+			primary_key: false,
+			expires: expiresAt.getTime()
 		});
 		return {
 			type: "single_use",
 			providerId: keyData.providerId,
 			providerUserId: keyData.providerUserId,
 			userId,
-			expires: oneTimeExpires,
-			isExpired: !isWithinExpiration(keyData.timeout),
-			isPasswordDefined: !!keyData.password
+			expiresAt,
+			expired: !isWithinExpiration(keyData.expiresIn),
+			passwordDefined: !!keyData.password
 		} satisfies SingleUseKey as any;
 	};
 
@@ -560,17 +578,20 @@ export type Configuration = {
 				session: (E: LuciaErrorConstructor) => SessionAdapter | Adapter;
 		  };
 	env: Env;
-	generateCustomUserId?: () => MaybePromise<string>;
+
+	autoDatabaseCleanup?: boolean;
 	csrfProtection?: boolean;
-	sessionTimeout?: {
-		activePeriod: number;
-		idlePeriod: number;
-	};
-	transformUserData?: (userData: UserData) => Record<string, any>;
-	sessionCookie?: CookieOption[];
+	generateCustomUserId?: () => MaybePromise<string>;
 	hash?: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
-	autoDatabaseCleanup?: boolean;
+	middleware?: Middleware;
+	origin?: string[];
+	sessionExpiresIn?: {
+		activePeriod: number;
+		idlePeriod: number;
+	};
+	sessionCookie?: CookieOption;
+	transformUserData?: (userData: UserData) => Record<string, any>;
 };

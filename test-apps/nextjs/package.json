@@ -10,7 +10,6 @@
 	},
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/nextjs": "workspace:*",
 		"@lucia-auth/oauth": "workspace:*",
 		"@prisma/client": "^4.7.0",
 		"@types/node": "18.11.9",

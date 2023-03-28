@@ -3,9 +3,5 @@ declare namespace Lucia {
 	export type UserAttributes = {
 		username?: string;
 	};
-	export type Auth = {
-		transformUserData: () => {
-			userId: string;
-		};
-	};
+	export type Auth = import("lucia-auth").Auth;
 }

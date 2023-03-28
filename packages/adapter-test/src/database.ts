@@ -128,9 +128,9 @@ class User extends Model<"user"> {
 		});
 	};
 	public key = (option: {
-		isPrimary: boolean;
-		hasPassword: boolean;
-		isOneTime: boolean;
+		primary: boolean;
+		passwordDefined: boolean;
+		oneTime: boolean;
 	}) => {
 		return new Key(this.queryHandler, [this], {
 			userId: this.value.id,
@@ -182,13 +182,13 @@ class Key extends Model<"key"> {
 		parent: Model<any>[],
 		options: {
 			userId: string;
-			isPrimary: boolean;
-			hasPassword: boolean;
-			isOneTime: boolean;
+			primary: boolean;
+			passwordDefined: boolean;
+			oneTime: boolean;
 		}
 	) {
 		const DURATION_SEC = 60 * 60;
-		const oneTimeExpires = options.isOneTime
+		const oneTimeExpires = options.oneTime
 			? new Date().getTime() + DURATION_SEC * 1000
 			: null;
 		super(
@@ -197,8 +197,8 @@ class Key extends Model<"key"> {
 			{
 				id: `test:${options.userId}@example.com`,
 				user_id: options.userId,
-				primary: options.isPrimary,
-				hashed_password: options.hasPassword ? "HASHED" : null,
+				primary_key: options.primary,
+				hashed_password: options.passwordDefined ? "HASHED" : null,
 				expires: oneTimeExpires
 			},
 			parent

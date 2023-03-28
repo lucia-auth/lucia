@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 0.7.3
+
+### Patch changes
+
+- [#431](https://github.com/pilcrowOnPaper/lucia/pull/431) by [@Jings](https://github.com/Jings) : missing facebook oauth index export
+
 ## 0.7.2
 
 ### Patch changes

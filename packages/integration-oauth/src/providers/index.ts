@@ -6,3 +6,4 @@ export { twitch, type TwitchUser } from "./twitch.js";
 export { reddit, type RedditUser } from "./reddit.js";
 export { linkedin, type LinkedinUser } from "./linkedin.js";
 export { auth0, type Auth0User } from "./auth0.js";
+export { facebook, type FacebookUser } from "./facebook.js";

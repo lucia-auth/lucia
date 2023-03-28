@@ -16,7 +16,20 @@ export const github = (auth: Auth, config: OAuthConfig) => {
 		return url;
 	};
 
-	const getTokens = async (code: string) => {
+	const getTokens = async (
+		code: string
+	): Promise<
+		| {
+				accessToken: string;
+				accessTokenExpiresIn: null;
+		  }
+		| {
+				accessToken: string;
+				accessTokenExpiresIn: number;
+				refreshToken: string;
+				refreshTokenExpiresIn: number;
+		  }
+	> => {
 		const requestUrl = createUrl(
 			"https://github.com/login/oauth/access_token",
 			{
@@ -31,12 +44,29 @@ export const github = (auth: Auth, config: OAuthConfig) => {
 				"Content-Type": "application/json"
 			}
 		});
-		const tokens = await handleRequest<{
-			access_token: string;
-		}>(request);
+		const tokens = await handleRequest<
+			| {
+					access_token: string;
+			  }
+			| {
+					access_token: string;
+					refresh_token: string;
+					expires_in: number;
 
+					refresh_token_expires_in: number;
+			  }
+		>(request);
+		if ("expires_in" in tokens) {
+			return {
+				accessToken: tokens.access_token,
+				refreshToken: tokens.refresh_token,
+				accessTokenExpiresIn: tokens.expires_in,
+				refreshTokenExpiresIn: tokens.refresh_token_expires_in
+			};
+		}
 		return {
-			accessToken: tokens.access_token
+			accessToken: tokens.access_token,
+			accessTokenExpiresIn: null
 		};
 	};
 

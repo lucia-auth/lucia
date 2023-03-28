@@ -1,7 +1,7 @@
 export type KeySchema = Readonly<{
 	id: string;
 	hashed_password: string | null;
-	primary: boolean;
+	primary_key: boolean;
 	user_id: string;
 	expires: number | null;
 }>;

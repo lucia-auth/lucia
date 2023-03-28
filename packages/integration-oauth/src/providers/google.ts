@@ -15,7 +15,10 @@ export const google = <A extends Auth>(auth: A, config: Config) => {
 		const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
 			client_id: config.clientId,
 			redirect_uri: config.redirectUri,
-			scope: scope([], config.scope),
+			scope: scope(
+				["https://www.googleapis.com/auth/userinfo.profile"],
+				config.scope
+			),
 			response_type: "code",
 			state
 		});
