@@ -121,12 +121,12 @@ try {
 }
 ```
 
-## `createSessionCookies()`
+## `createSessionCookie()`
 
-Creates an array of session cookies in the form of [`Cookie`](/reference/lucia-auth/types#cookie). Cookie options are based on [`sessionCookieOptions`](/basics/configuration#sessioncookieoptions). This method will return a blank session cookies that will override the existing cookie and clears them when provided a `null` session.
+Creates a session in the form of [`Cookie`](/reference/lucia-auth/types#cookie). Cookie options are based on [`sessionCookieOptions`](/basics/configuration#sessioncookieoptions). This method will return a blank session cookie that will override the existing cookie and clears them when provided a `null` session.
 
 ```ts
-const createSessionCookies: (session: Session | null) => Cookie[];
+const createSessionCookie: (session: Session | null) => Cookie[];
 ```
 
 #### Parameter
@@ -137,19 +137,19 @@ const createSessionCookies: (session: Session | null) => Cookie[];
 
 #### Returns
 
-| type                                               | description                 |
-| -------------------------------------------------- | --------------------------- |
-| [`Cookie`](/reference/lucia-auth/types#cookie)`[]` | an array of session cookies |
+| type                                               | description      |
+| -------------------------------------------------- | ---------------- |
+| [`Cookie`](/reference/lucia-auth/types#cookie)`[]` | a session cookie |
 
 #### Example
 
 ```ts
 import { auth } from "./lucia.js";
 
-const cookies = auth.createSessionCookies(session);
+const sessionCookie = auth.createSessionCookie(session);
 const response = new Response(null, {
 	headers: {
-		"Set-Cookie": cookies.map((val) => val.serialize()).toString()
+		"Set-Cookie": sessionCookie.serialize().toString()
 	}
 });
 ```
@@ -861,11 +861,8 @@ try {
 	const session = await auth.validateSession(sessionId);
 	if (session.fresh) {
 		// session was renewed
-		const stringifiedCookie = auth
-			.createSessionCookies(session)
-			.map((val) => val.serialize())
-			.toString();
-		setHeaders("set-cookie", stringifiedCookie);
+		const sessionCookie = auth.createSessionCookie(session).serialize();
+		setHeaders("Set-Cookie", sessionCookie);
 	}
 } catch {
 	// invalid
@@ -910,11 +907,8 @@ try {
 	const { session, user } = await auth.validateSessionUser(sessionId);
 	if (session.fresh) {
 		// session was renewed
-		const stringifiedCookie = auth
-			.createSessionCookies(session)
-			.map((val) => val.serialize())
-			.toString();
-		setHeaders("set-cookie", stringifiedCookie);
+		const sessionCookie = auth.createSessionCookie(session).serialize();
+		setHeaders("Set-Cookie", sessionCookie);
 	}
 } catch {
 	// invalid

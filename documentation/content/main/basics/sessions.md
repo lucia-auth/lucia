@@ -32,13 +32,12 @@ try {
 
 ### Create session cookie
 
-The recommended way to store sessions is by using cookies. You can generate cookies represented with [`Cookie`](/reference/lucia-auth/types#cookie) using [`createSessionCookies()`](/reference/lucia-auth/auth#createsessioncookies) and serialize them with the `serialize()` method.
+The recommended way to store sessions is by using cookies. You can generate cookies represented with [`Cookie`](/reference/lucia-auth/types#cookie) using [`createSessionCookie()`](/reference/lucia-auth/auth#createsessioncookie) and serialize them with the `serialize()` method.
 
 ```ts
 const session = await auth.createSession(userId);
-const sessionCookies = auth.createSessionCookies(session); // Cookie[]
-const serializedCookies = sessionCookies.map((cookie) => cookie.serialize());
-setResponseHeaders("set-cookie", serializedCookies.toString());
+const sessionCookie = auth.createSessionCookie(session).serialize()
+setResponseHeaders("Set-Cookie", sessionCookie);
 ```
 
 ## Validate session ids
