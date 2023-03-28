@@ -3,6 +3,8 @@ _order: 1
 title: "AuthRequest"
 ---
 
+Return type of [`handleRequest()`]().
+
 ```ts
 type AuthRequest = {
 	setSession: (session: Session | null) => void;
@@ -17,44 +19,15 @@ type AuthRequest = {
 ## Constructor
 
 ```ts
-const constructor: (
-	auth: Auth,
-	context: {
-		request: Request;
-		cookies: AstroCookie;
-	}
-) => AuthRequest;
+const constructor: (auth: Auth, context: RequestContext) => AuthRequest;
 ```
 
 #### Parameter
 
-| name            | type                                                                                 | description                                                                                                                                                                        |
-| --------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| auth            | [`Auth`](/reference/lucia-auth/auth)                                                 | Lucia instance                                                                                                                                                                     |
-| context.request | [`Request` ](https://developer.mozilla.org/en-US/docs/Web/API/Request)               | request from [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) or [`APIContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context) |
-| context.cookies | [`Astro.cookies`](https://docs.astro.build/en/reference/api-reference/#astrocookies) | Astro's `cookies` from `Astro` or `APIContext`                                                                                                                                     |
-
-#### Example
-
-```astro
----
-import { auth } from "../lib/lucia";
-import { AuthRequest } from "@lucia-auth/astro";
-
-const authRequest = new AuthRequest(auth, Astro);
----
-```
-
-```ts
-import { AuthRequest } from "@lucia-auth/astro";
-import { auth } from "../../lib/lucia";
-import type { APIRoute } from "astro";
-
-export const post: APIRoute = async (context) => {
-	const authRequest = new AuthRequest(auth, context);
-	// ...
-};
-```
+| name    | type                                 | description    |
+| ------- | ------------------------------------ | -------------- |
+| auth    | [`Auth`](/reference/lucia-auth/auth) | Lucia instance |
+| context | [`RequestContext`]()                 |                |
 
 ## `setSession()`
 
@@ -75,7 +48,7 @@ const setSession: (session: Session | null) => void;
 ```ts
 import { auth } from "../lucia";
 
-const authRequest = new AuthRequest();
+const authRequest = auth.handleRequest();
 const session = await auth.createSession();
 authRequest.setSession(session); // set session cookie
 ```
@@ -90,7 +63,7 @@ authRequest.setSession(null); // remove session cookies
 
 ## `validate()`
 
-Validates the request and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
+Validates the request, including a CSRF check if enabled (enabled by default), and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
 
 ```ts
 const validate: () => Promise<Session | null>;
@@ -114,7 +87,7 @@ if (session) {
 
 ## `validateUser()`
 
-Similar to [`validate()`](#validate) but returns both the current session and user without an additional database.
+Similar to [`validate()`](#validate) but returns both the current session and user in a single database call.
 
 ```ts
 const validate: () => Promise<{

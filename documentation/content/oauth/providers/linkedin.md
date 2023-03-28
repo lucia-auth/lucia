@@ -52,7 +52,7 @@ const linkedin: (
 ```ts
 type LinkedInTokens = {
 	accessToken: string;
-	expiresIn: number;
+	accessTokenExpiresIn: number;
 	refreshToken: string;
 	refreshTokenExpiresIn: number;
 	scope: string;

@@ -48,9 +48,17 @@ const github: (
 ## `GithubTokens`
 
 ```ts
-type GithubTokens = {
-	accessToken: string;
-};
+type GithubTokens =
+	| {
+			accessToken: string;
+			accessTokenExpiresIn: null;
+	  }
+	| {
+			accessToken: string;
+			accessTokenExpiresIn: number;
+			refreshToken: string;
+			refreshTokenExpiresIn: number;
+	  };
 ```
 
 ## `GithubUser`

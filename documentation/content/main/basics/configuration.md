@@ -25,8 +25,9 @@ type Configuration = {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
-	sessionCookie?: CookieOption[];
-	sessionTimeout?: {
+	origin: string[];
+	sessionCookie?: CookieOption;
+	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
@@ -181,13 +182,21 @@ const validate: (s: string, hash: string) => MaybePromise<boolean>;
 | --------- | --------------------------------------------------------------- |
 | `boolean` | `true` if valid, `false` otherwise - can be a promise if needed |
 
+### `origin`
+
+A list of valid url origin when checking for CSRF.
+
+```ts
+const origin: string[];
+```
+
 ### `sessionCookie`
 
 A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to **_all_** subdomains, which is a major security issue. Some options (`httpOnly`, `secure`, `expires`) cannot be configured due to security concerns.
 
-| type             | default                            |
-| ---------------- | ---------------------------------- |
-| `CookieOption[]` | `[{ sameSite: "lax", path: "/" }]` |
+| type           | default                            |
+| -------------- | ---------------------------------- |
+| `CookieOption` | `[{ sameSite: "lax", path: "/" }]` |
 
 ```ts
 type CookieOption = {
@@ -197,7 +206,7 @@ type CookieOption = {
 };
 ```
 
-### `sessionTimeout`
+### `sessionExpiresIn`
 
 #### `activePeriod`
 

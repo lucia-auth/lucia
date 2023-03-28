@@ -43,14 +43,14 @@ setResponseHeaders("set-cookie", serializedCookies.toString());
 
 ## Validate session ids
 
-The [`validateSession()`](/reference/lucia-auth/auth#validatesession) method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored. You can check if the returned session is a new session with the `isFresh` property.
+The [`validateSession()`](/reference/lucia-auth/auth#validatesession) method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored. You can check if the returned session is a new session with the `fresh` property.
 
 ```ts
 import { auth } from "./lucia.js";
 
 try {
 	const session = await auth.validateSession(sessionId);
-	if (session.isFresh) {
+	if (session.fresh) {
 		// session was renewed
 		storeSessionCookie(session);
 	}
@@ -66,7 +66,7 @@ import { auth } from "./lucia.js";
 
 try {
 	const { session, user } = await auth.validateSessionUser(sessionId);
-	if (session.isFresh) {
+	if (session.fresh) {
 		// session was renewed
 		storeSessionCookie(session);
 	}
@@ -158,6 +158,6 @@ Your database may be polluted with expired, dead sessions. Lucia will attempt to
 
 ## Configure sessions
 
-### Configure timeout
+### Configure expiration
 
-You can configure the active and idle period with [`sessionTimeout`](/basics/configuration#sessiontimeout).
+You can configure the active and idle period with [`sessionExpiresIn`]() configuration.

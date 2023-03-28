@@ -16,7 +16,7 @@ import { auth } from "./lucia.js";
 import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 export const passwordResetToken = idToken(auth, "password-reset", {
-	timeout: 60 * 60 // 1 hour
+	expiresIn: 60 * 60 // 1 hour
 });
 ```
 

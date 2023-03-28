@@ -23,7 +23,7 @@ import { idToken } from "@lucia-auth/tokens";
 import { auth } from "./lucia.js";
 
 const tokenHandler = idToken(auth, "email-verification", {
-	timeout: 60 * 60, // expiration in 1 hour,
+	expiresIn: 60 * 60, // expiration in 1 hour,
 	length: 8 // default
 });
 ```
@@ -100,12 +100,12 @@ try {
 
 ### Check expiration
 
-You can check if the token is expired or not with [`isExpired`](/reference/tokens/token#isexpired).
+You can check if the token is expired or not with [`expired`](/reference/tokens/token#expired).
 
 ```ts
 const tokens = tokenHandler.getAllUserTokens(userId);
 for (const token of tokens) {
-	if (token.isExpired) {
+	if (token.expired) {
 		// expired
 	}
 }

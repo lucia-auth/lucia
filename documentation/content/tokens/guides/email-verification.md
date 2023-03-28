@@ -85,7 +85,7 @@ import { auth } from "./lucia.js";
 import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 export const otpToken = idToken(auth, "otp", {
-	timeout: 60 * 60 // 1 hour
+	expiresIn: 60 * 60 // 1 hour
 });
 ```
 
@@ -150,7 +150,7 @@ import { auth } from "./lucia.js";
 import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
 
 export const emailVerificationToken = idToken(auth, "email-verification", {
-	timeout: 60 * 60 // 1 hour
+	expiresIn: 60 * 60 // 1 hour
 });
 ```
 

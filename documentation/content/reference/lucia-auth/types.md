@@ -50,7 +50,7 @@ type Configuration = {
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
 	sessionCookie?: CookieOption[];
-	sessionTimeout?: {
+	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
@@ -136,19 +136,39 @@ declare namespace Lucia {
 }
 ```
 
-## `MinimalRequest`
-
-A minimal representation of the standard [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) type needed for Lucia.
+## `LuciaRequest`
 
 ```ts
-type MinimalRequest = {
-	headers: {
-		get: (name: string) => null | string;
-	};
-	url: string;
+type LuciaRequest = {
 	method: string;
+	url: string;
+	headers: {
+		origin: string | null;
+		cookie: string | null;
+	};
 };
 ```
+
+#### Properties
+
+| name           | type             | description                       |
+| -------------- | ---------------- | --------------------------------- |
+| method         | `string`         | request method - case insensitive |
+| url            | `string`         | request url                       |
+| headers.origin | `string \| null` | `Origin` header value             |
+| headers.origin | `string \| null` | `Cookie` header value             |
+
+## `Middleware`
+
+```ts
+export type Middleware = (...args: any[]) => RequestContext;
+```
+
+#### Returns
+
+| type                 |
+| -------------------- |
+| [`RequestContext`]() |
 
 ## `PersistentKey`
 
@@ -157,8 +177,8 @@ A persistent key.
 ```ts
 type PersistentKey = {
 	type: "persistent";
-	isPrimary: boolean;
-	isPasswordDefined: boolean;
+	primary: boolean;
+	passwordDefined: boolean;
 	providerId: string;
 	providerUserId: string;
 	userId: string;
@@ -167,14 +187,43 @@ type PersistentKey = {
 
 #### Properties
 
-| name              | type           | description                |
-| ----------------- | -------------- | -------------------------- |
-| type              | `"persistent"` |                            |
-| providerId        | `string`       | provider id                |
-| providerUserId    | `string`       | provider user id           |
-| userId            | `string`       | user id of linked user     |
-| isPrimary         | `boolean`      | `true` if key is primary   |
-| isPasswordDefined | `boolean`      | `true` if holds a password |
+| name            | type           | description                |
+| --------------- | -------------- | -------------------------- |
+| type            | `"persistent"` |                            |
+| providerId      | `string`       | provider id                |
+| providerUserId  | `string`       | provider user id           |
+| userId          | `string`       | user id of linked user     |
+| primary         | `boolean`      | `true` if key is primary   |
+| passwordDefined | `boolean`      | `true` if holds a password |
+
+## `RequestContext`
+
+```ts
+type RequestContext = {
+	request: LuciaRequest;
+	setCookie: (cookie: Cookie) => void;
+};
+```
+
+#### Properties
+
+| name    | type                 |
+| ------- | -------------------- |
+| request | [`RequestContext`]() |
+
+### `setCookie`
+
+Sets the provided cookie. Can be called multiple times.
+
+```ts
+const setCookie: (cookie: Cookie) => void;
+```
+
+#### Parameters
+
+| name   | type         |
+| ------ | ------------ |
+| cookie | [`Cookie`]() |
 
 ## `Session`
 
@@ -182,9 +231,9 @@ A session.
 
 ```ts
 type Session = {
-	activePeriodExpires: Date;
-	idlePeriodExpires: Date;
-	isFresh: boolean;
+	activePeriodExpiresAt: Date;
+	idlePeriodExpiresAt: Date;
+	fresh: boolean;
 	sessionId: string;
 	state: "active" | "idle";
 	userId: string;
@@ -193,14 +242,14 @@ type Session = {
 
 #### Properties
 
-| name                | type                 | description                                                                 |
-| ------------------- | -------------------- | --------------------------------------------------------------------------- |
-| activePeriodExpires | `Date`               | time of the [active period](/start-here/concepts#session-states) expiration |
-| idlePeriodExpires   | `Date`               | time of the [idle period](/start-here/concepts#session-states) expiration   |
-| isFresh             | `boolean`            | `true` if the session was newly created (including on renewal)              |
-| sessionId           | `string`             | session id                                                                  |
-| state               | `"active" \| "idle"` | [session state](/start-here/concepts#session-states)                        |
-| userId              | `string`             | user id of the user of the session                                          |
+| name                  | type                 | description                                                                 |
+| --------------------- | -------------------- | --------------------------------------------------------------------------- |
+| activePeriodExpiresAt | `Date`               | time of the [active period](/start-here/concepts#session-states) expiration |
+| idlePeriodExpiresAt   | `Date`               | time of the [idle period](/start-here/concepts#session-states) expiration   |
+| fresh                 | `boolean`            | `true` if the session was newly created (including on renewal)              |
+| sessionId             | `string`             | session id                                                                  |
+| state                 | `"active" \| "idle"` | [session state](/start-here/concepts#session-states)                        |
+| userId                | `string`             | user id of the user of the session                                          |
 
 ## `SessionAdapter`
 
@@ -235,8 +284,8 @@ type SingleUseKey = {
 	providerId: string;
 	providerUserId: string;
 	userId: string;
-	expires: Date;
-	isExpired: boolean;
+	expiresAt: Date;
+	expired: boolean;
 };
 ```
 
@@ -248,8 +297,8 @@ type SingleUseKey = {
 | providerId     | `string`       | provider id            |
 | providerUserId | `string`       | provider user id       |
 | userId         | `string`       | user id of linked user |
-| expires        | `Date`         | expiration time        |
-| isExpired      | `boolean`      | expiration time       |
+| expiresAt      | `Date`         | expiration time        |
+| expired        | `boolean`      | expiration time        |
 
 ## `User`
 

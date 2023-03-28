@@ -102,7 +102,7 @@ try {
 
 ### Single use keys
 
-You can provide a `password` to set a password. Define the duration (in seconds) of a single use key by providing a `timeout`.
+You can provide a `password` to set a password. Define the duration (in seconds) of a single use key by providing a `expiresIn`.
 
 ```ts
 try {
@@ -111,7 +111,7 @@ try {
 		providerId: "email-verification",
 		providerUserId: "user@example.com:12345678",
 		password: null,
-		timeout: 60 * 60 // 1 hour
+		expiresIn: 60 * 60 // 1 hour
 	});
 } catch {
 	// invalid input

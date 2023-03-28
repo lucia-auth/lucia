@@ -7,9 +7,9 @@ Represents a token.
 
 ```ts
 type Token = Readonly<{
-	expires: Date | null;
+	expiresAt: Date | null;
 	userId: string;
-	isExpired: boolean;
+	expired: boolean;
 	toString: () => string;
 }>;
 ```
@@ -18,9 +18,9 @@ type Token = Readonly<{
 
 | name      | type           | description                                           |
 | --------- | -------------- | ----------------------------------------------------- |
-| expires   | `Date \| null` | expiration time of the token, `null` if no expiration |
+| expiresAt | `Date \| null` | expiration time of the token, `null` if no expiration |
 | userId    | `userId`       | the user the token belongs to                         |
-| isExpired | `boolean`      |                                                       |
+| expired   | `boolean`      |                                                       |
 
 ## `toString()`
 

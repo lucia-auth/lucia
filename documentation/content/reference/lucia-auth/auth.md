@@ -24,7 +24,7 @@ const createKey: (
 				providerId: string;
 				providerUserId: string;
 				password: string | null;
-				timeout: number;
+				expiresIn: number;
 		  }
 ) => Promise<Key>;
 ```
@@ -38,7 +38,7 @@ const createKey: (
 | keyData.providerId     | `string`                       | the provider id of the key                                      |
 | keyData.providerUserId | `string`                       | the provider user id of the key                                 |
 | keyData.password       | `string \| null`               | the password for the key                                        |
-| keyData.timeout        | `number`                       | single use keys only - how long the key is valid for in seconds |
+| keyData.expiresIn      | `number`                       | single use keys only - how long the key is valid for in seconds |
 
 #### Returns
 
@@ -77,7 +77,7 @@ try {
 		providerId: "email",
 		providerUserId: "user@example.com",
 		password: null,
-		timeout: 60 * 60 // 1 hour
+		expiresIn: 60 * 60 // 1 hour
 	});
 } catch {
 	// invalid user id
@@ -550,6 +550,26 @@ try {
 }
 ```
 
+## `handleRequest()`
+
+Creates a new [`AuthRequest`]() instance.
+
+```ts
+const handleRequest: (...args: Parameters<Middleware>) => AuthRequest;
+```
+
+#### Parameters
+
+| type                             | description                             |
+| -------------------------------- | --------------------------------------- |
+| `Parameters<`[`Middleware`]()`>` | Refer to the middleware's documentation |
+
+#### Returns
+
+| type              |
+| ----------------- |
+| [`AuthRequest`]() |
+
 ## `invalidateAllUserSessions()`
 
 Invalidates all sessions of a user. Will succeed regardless of the validity of the user id.
@@ -770,19 +790,19 @@ try {
 }
 ```
 
-## `validateRequestHeaders()`
+## `parseRequestHeaders()`
 
 Checks if the request is from a trusted origin if `configuration.csrfProtection` is true, and gets the session id from the cookie. Returns an empty string if none exists.
 
 ```ts
-const validateRequestHeaders: (request: MinimalRequest) => string;
+const parseRequestHeaders: (request: LuciaRequest) => string;
 ```
 
 #### Parameter
 
-| name    | type                                                           | description                  |
-| ------- | -------------------------------------------------------------- | ---------------------------- |
-| request | [`MinimalRequest`](/reference/lucia-auth/types#minimalrequest) | Node's `Request` can be used |
+| name    | type               |
+| ------- | ------------------ |
+| request | [`LuciaRequest`]() |
 
 #### Returns
 
@@ -800,7 +820,7 @@ const validateRequestHeaders: (request: MinimalRequest) => string;
 
 ```ts
 try {
-	const sessionId = auth.validateRequestHeaders(request);
+	const sessionId = auth.parseRequestHeaders(request);
 } catch {
 	// request from untrusted domain
 }
@@ -839,7 +859,7 @@ import { auth } from "lucia-auth";
 
 try {
 	const session = await auth.validateSession(sessionId);
-	if (session.isFresh) {
+	if (session.fresh) {
 		// session was renewed
 		const stringifiedCookie = auth
 			.createSessionCookies(session)
@@ -888,7 +908,7 @@ import { auth } from "lucia-auth";
 
 try {
 	const { session, user } = await auth.validateSessionUser(sessionId);
-	if (session.isFresh) {
+	if (session.fresh) {
 		// session was renewed
 		const stringifiedCookie = auth
 			.createSessionCookies(session)
