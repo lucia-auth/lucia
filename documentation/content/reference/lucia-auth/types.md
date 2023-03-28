@@ -166,9 +166,9 @@ export type Middleware = (...args: any[]) => RequestContext;
 
 #### Returns
 
-| type                 |
-| -------------------- |
-| [`RequestContext`]() |
+| type                                                         |
+| ------------------------------------------------------------ |
+| [`RequestContext`](/reference/lucia-auth/types#luciarequest) |
 
 ## `PersistentKey`
 
@@ -207,9 +207,9 @@ type RequestContext = {
 
 #### Properties
 
-| name    | type                 |
-| ------- | -------------------- |
-| request | [`RequestContext`]() |
+| name    | type                                                         |
+| ------- | ------------------------------------------------------------ |
+| request | [`RequestContext`](/reference/lucia-auth/types#luciarequest) |
 
 ### `setCookie`
 
@@ -221,9 +221,9 @@ const setCookie: (cookie: Cookie) => void;
 
 #### Parameters
 
-| name   | type         |
-| ------ | ------------ |
-| cookie | [`Cookie`]() |
+| name   | type                                     |
+| ------ | ---------------------------------------- |
+| cookie | [`Cookie`](/reference/lucia-auth/cookie) |
 
 ## `Session`
 

@@ -24,7 +24,7 @@ A common pattern in SvelteKit is to get the current auth state in the root layou
 
 However, doing so would mean all child load functions would have to wait for the parent to resolve, causing a waterfall just by trying to get the current auth state. Ideally, you'd want to validate the request inside each load functions so they can run independently of each other, but not make multiple requests to the database.
 
-As such, [`authRequest.validate()`]() and [`authRequest.validateUser`]() methods memoize the result. This means you can call these methods across multiple load functions in a single request (page load) and it will only call the database once.
+As such, [`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) and [`authRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) methods memoize the result. This means you can call these methods across multiple load functions in a single request (page load) and it will only call the database once.
 
 ![Preferred way of validating requests in load functions](/images/$lucia-sk-load-2.jpg)
 

@@ -79,20 +79,13 @@ This form will have an input field for username and password.
 
 ### Create users
 
-Users can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling [`locals.auth.setSession()`](), which we is set in hooks.
+Users can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling [`locals.auth.setSession()`](/reference/lucia-auth/authrequest#setsession). Remember that we set `locals.auth` in the hooks!
 
 ```ts
 // routes/signup/+page.server.ts
 import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/lucia";
 import type { PageServerLoad, Actions } from "./$types";
-
-// If the user exists, redirect authenticated users to the profile page.
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
-	if (session) throw redirect(302, "/");
-	return {};
-};
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -123,6 +116,23 @@ export const actions: Actions = {
 			return fail(400);
 		}
 	}
+};
+```
+
+### Redirect authenticated users
+
+Let's also redirect authenticated users to the profile page. We can get the current session in the server by using [`locals.auth.validate()`](/reference/lucia-auth/authrequest#validate).
+
+```ts
+// routes/signup/+page.server.ts
+import { fail, redirect } from "@sveltejs/kit";
+import { auth } from "$lib/server/lucia";
+import type { PageServerLoad, Actions } from "./$types";
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.auth.validate();
+	if (session) throw redirect(302, "/");
+	return {};
 };
 ```
 
@@ -194,7 +204,7 @@ This page will be the root (`/`). This route will show the user's data and have 
 
 ### Get current user
 
-Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function. Let's also redirect unauthenticated users.
+Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function. We can get both the session and user in a single database call with [`locals.auth.validateUser()`](/reference/lucia-auth/authrequest#validateuser) instead of `locals.auth.validate()`. Let's also redirect unauthenticated users like we did for the sign up page.
 
 ```ts
 // routes/+page.server.ts

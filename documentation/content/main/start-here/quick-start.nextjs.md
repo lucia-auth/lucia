@@ -149,7 +149,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 ### Redirect authenticated users
 
-[`authRequest.validate()`]() can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
 
 ```diff
 import Link from "next/link";

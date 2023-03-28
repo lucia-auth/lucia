@@ -74,7 +74,7 @@ In the same page, we'll also handle the POST request from the form.
 
 Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global when using the Astro middleware.
 
-Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We'll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```astro
 ---
@@ -126,7 +126,7 @@ if (Astro.request.method === "POST") {
 
 ### Redirect authenticated users
 
-[`authRequest.validate()`]() can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
 
 ```astro
 ---
@@ -173,6 +173,10 @@ import { auth } from "../lib/lucia";
 
 const authRequest = auth.handleRequest(Astro);
 
+// redirect to profile page if authenticated
+const session = await authRequest.validate();
+if (session) return Astro.redirect("/", 302);
+
 if (Astro.request.method === "POST") {
 	// csrf check
 	const requestOrigin = Astro.request.headers.get("origin");
@@ -203,32 +207,13 @@ if (Astro.request.method === "POST") {
 ---
 ```
 
-### Redirect authenticated users
-
-If the session exists, redirect authenticated users to the profile page.
-
-```astro
----
-// pages/signup.astro
-import { auth } from "../lib/lucia";
-
-const authRequest = auth.handleRequest(Astro);
-const session = await authRequest.validate();
-if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
-
-if (Astro.request.method === "POST") {
-	// ...
-}
----
-```
-
 ## 5. Profile page (protected)
 
 This page will be the root page (`pages/index.astro`). This route will show the user's data and have the note-taking portion of the app.
 
 ### Get current user
 
-The current user and session can be retrieved using [`authRequest.validateUser()`](). Redirect the user to the login page if unauthenticated.
+The current user and session can be retrieved using [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser). Redirect the user to the login page if unauthenticated.
 
 ```astro
 ---

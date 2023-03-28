@@ -552,7 +552,7 @@ try {
 
 ## `handleRequest()`
 
-Creates a new [`AuthRequest`]() instance.
+Creates a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance.
 
 ```ts
 const handleRequest: (...args: Parameters<Middleware>) => AuthRequest;
@@ -560,15 +560,15 @@ const handleRequest: (...args: Parameters<Middleware>) => AuthRequest;
 
 #### Parameters
 
-| type                             | description                             |
-| -------------------------------- | --------------------------------------- |
-| `Parameters<`[`Middleware`]()`>` | Refer to the middleware's documentation |
+| type                                                                   | description                             |
+| ---------------------------------------------------------------------- | --------------------------------------- |
+| `Parameters<`[`Middleware`](/reference/lucia-auth/types#middleware)`>` | Refer to the middleware's documentation |
 
 #### Returns
 
-| type              |
-| ----------------- |
-| [`AuthRequest`]() |
+| type                                               |
+| -------------------------------------------------- |
+| [`AuthRequest`](/reference/lucia-auth/authrequest) |
 
 ## `invalidateAllUserSessions()`
 
@@ -800,9 +800,9 @@ const parseRequestHeaders: (request: LuciaRequest) => string;
 
 #### Parameter
 
-| name    | type               |
-| ------- | ------------------ |
-| request | [`LuciaRequest`]() |
+| name    | type                                                       |
+| ------- | ---------------------------------------------------------- |
+| request | [`LuciaRequest`](/reference/lucia-auth/types#luciarequest) |
 
 #### Returns
 

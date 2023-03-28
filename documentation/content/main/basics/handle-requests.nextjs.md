@@ -4,9 +4,9 @@ title: "Handle requests"
 description: "Learn how to handle requests with Lucia"
 ---
 
-[`handleRequest()`]() returns [`AuthRequest`](), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
+[`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-With the default [Node middleware](), it expects Next.js [`NextApiRequest`]() and [`NextApiResponse`](), which are passed onto `getServerSideProps()` and API route handlers.
+With the default [Node middleware](/middleware/node), it expects Next.js `NextApiRequest` and `NextApiResponse`, which are passed onto `getServerSideProps()` and API route handlers.
 
 ```ts
 // pages/index.tsx
@@ -28,17 +28,17 @@ export default async (req, res) => {
 
 ### Middleware
 
-By default, Lucia uses the [Node middleware](), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
+By default, Lucia uses the [Node middleware](/middleware/node), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
 
-- [Astro]()
-- [Express]()
-- [SvelteKit]()
+- [Astro](/middleware/astro)
+- [Express](/middleware/express)
+- [SvelteKit](/middleware/sveltekit)
 
 > Use the default middleware for Next.js
 
 ## Validate requests
 
-[`AuthRequest.validate()`]() can be used to get the current session.
+[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used to get the current session.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -47,7 +47,7 @@ const authRequest = auth.handleRequest(req, responseres);
 const session = await authRequest.validate();
 ```
 
-You can also use [`AuthRequest.validateUser()`]() to get both the user and session.
+You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) to get both the user and session.
 
 ```ts
 const { user, session } = await authRequest.validateUser();
@@ -73,7 +73,7 @@ const session = await authRequest.validate();
 
 ## Set session cookie
 
-[`AuthRequest.setSession()`]() can be used to set a session, and therefore creating a session cookie.
+[`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#validateuser) can be used to set a session, and therefore creating a session cookie.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -88,4 +88,4 @@ You can also pass `null` to remove the current session cookie.
 authRequest.setSession(null);
 ```
 
-> (warn) When signing users out, remember to invalidate the current session with [`invalidateSession()`]() alongside removing the session cookie!
+> (warn) When signing users out, remember to invalidate the current session with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession) alongside removing the session cookie!

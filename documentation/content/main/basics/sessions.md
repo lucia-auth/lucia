@@ -159,4 +159,4 @@ Your database may be polluted with expired, dead sessions. Lucia will attempt to
 
 ### Configure expiration
 
-You can configure the active and idle period with [`sessionExpiresIn`]() configuration.
+You can configure the active and idle period with [`sessionExpiresIn`](/basics/configuration#sessionexpiresin) configuration.

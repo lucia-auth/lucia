@@ -3,7 +3,7 @@ _order: 1
 title: "AuthRequest"
 ---
 
-Return type of [`handleRequest()`]().
+Return type of [`handleRequest()`](/reference/lucia-auth/auth#handlerequest).
 
 ```ts
 type AuthRequest = {
@@ -24,10 +24,10 @@ const constructor: (auth: Auth, context: RequestContext) => AuthRequest;
 
 #### Parameter
 
-| name    | type                                 | description    |
-| ------- | ------------------------------------ | -------------- |
-| auth    | [`Auth`](/reference/lucia-auth/auth) | Lucia instance |
-| context | [`RequestContext`]()                 |                |
+| name    | type                                                         | description    |
+| ------- | ------------------------------------------------------------ | -------------- |
+| auth    | [`Auth`](/reference/lucia-auth/auth)                         | Lucia instance |
+| context | [`RequestContext`](/reference/lucia-auth/types#luciarequest) |                |
 
 ## `setSession()`
 
