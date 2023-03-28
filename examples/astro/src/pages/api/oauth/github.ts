@@ -1,12 +1,11 @@
 import { auth, githubAuth } from "../../../lib/lucia";
-import { AuthRequest } from "@lucia-auth/astro";
 import type { APIRoute } from "astro";
 
-export const get: APIRoute = async ({ cookies, url, request }) => {
-	const authRequest = new AuthRequest(auth, { cookies, request });
-	const code = url.searchParams.get("code");
-	const state = url.searchParams.get("state");
-	const storedState = cookies.get("oauth_state").value;
+export const get: APIRoute = async (context) => {
+	const authRequest = auth.handleRequest(context);
+	const code = context.url.searchParams.get("code");
+	const state = context.url.searchParams.get("state");
+	const storedState = context.cookies.get("oauth_state").value;
 	if (storedState !== state || !code || !state)
 		throw new Response(null, { status: 401 });
 	try {

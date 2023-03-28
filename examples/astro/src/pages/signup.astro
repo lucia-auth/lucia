@@ -1,12 +1,11 @@
 ---
 // pages/signup.astro
 import { auth } from "../lib/lucia";
-import { AuthRequest } from "@lucia-auth/astro";
 import MainLayout from "../layouts/MainLayout.astro";
 import { Prisma } from "@prisma/client";
 import { LuciaError } from "lucia-auth";
 
-const authRequest = new AuthRequest(auth, Astro);
+const authRequest = auth.handleRequest(Astro);
 const session = await authRequest.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
 
@@ -26,11 +25,16 @@ if (Astro.request.method === "POST") {
 	username = form.get("username");
 	password = form.get("password");
 	// check for empty values
-	if (username && password && typeof username === "string" && typeof password === "string") {
+	if (
+		username &&
+		password &&
+		typeof username === "string" &&
+		typeof password === "string"
+	) {
 		try {
 			const user = await auth.createUser({
 				primaryKey: {
-					providerId:"username",
+					providerId: "username",
 					providerUserId: username,
 					password
 				},
@@ -49,7 +53,10 @@ if (Astro.request.method === "POST") {
 				error.message?.includes("username")
 			) {
 				errorMessage = "Username already in use";
-			} else if (error instanceof LuciaError && error.message === "AUTH_DUPLICATE_KEY_ID") {
+			} else if (
+				error instanceof LuciaError &&
+				error.message === "AUTH_DUPLICATE_KEY_ID"
+			) {
 				errorMessage = "Username already in use";
 			} else {
 				errorMessage = "Unknown error occured";
@@ -69,9 +76,18 @@ if (Astro.request.method === "POST") {
 	<p class="center">or</p>
 	<form method="post">
 		<label for="username">username</label><br />
-		<input id="username" name="username" value={username?.toString() ?? ""} /><br />
+		<input
+			id="username"
+			name="username"
+			value={username?.toString() ?? ""}
+		/><br />
 		<label for="password">password</label><br />
-		<input type="password" id="password" name="password" value={password?.toString() ?? ""} /><br />
+		<input
+			type="password"
+			id="password"
+			name="password"
+			value={password?.toString() ?? ""}
+		/><br />
 		<input type="submit" value="Continue" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}

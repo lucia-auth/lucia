@@ -1,5 +1,4 @@
-import { AuthRequest } from "@lucia-auth/nextjs";
-import { auth, githubAuth } from "../../../lib/lucia";
+import { auth, githubAuth } from "../../../auth/lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
@@ -10,7 +9,7 @@ type Data = {
 
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	if (req.method !== "GET" || !req.url) return res.status(404).end();
-	const authRequest = new AuthRequest(auth, req, res);
+	const authRequest = auth.handleRequest(req, res);
 	const code = req.query.code;
 	const state = req.query.state;
 	const { oauth_state: storedState } = cookie.parse(req.headers.cookie || "");

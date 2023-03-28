@@ -10,34 +10,34 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model User {
-  id       String    @id @unique
-  username String    @unique
-  session  Session[]
-  Key      Key[]
+model AuthUser {
+  id           String        @id @unique
+  username     String        @unique
+  auth_session AuthSession[]
+  auth_key     AuthKey[]
 
-  @@map("user")
+  @@map("auth_user")
 }
 
-model Session {
-  id             String @id @unique
+model AuthSession {
+  id             String   @id @unique
   user_id        String
   active_expires BigInt
   idle_expires   BigInt
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("session")
+  @@map("auth_session")
 }
 
-model Key {
-  id              String  @id @unique
+model AuthKey {
+  id              String   @id @unique
   hashed_password String?
   user_id         String
-  primary         Boolean
+  primary_key     Boolean
   expires         BigInt?
-  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("key")
+  @@map("auth_key")
 }

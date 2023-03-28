@@ -1,4 +1,4 @@
-import { githubAuth } from "../../../lib/lucia";
+import { githubAuth } from "../../../auth/lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
