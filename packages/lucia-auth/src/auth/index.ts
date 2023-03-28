@@ -365,17 +365,17 @@ export class Auth<C extends Configuration = any> {
 
 	public generateSessionId = (): [
 		sessionId: string,
-		activePeriodExpires: Date,
-		idlePeriodExpires: Date
+		activePeriodExpiresAt: Date,
+		idlePeriodExpiresAt: Date
 	] => {
 		const sessionId = generateRandomString(40);
-		const activePeriodExpires = new Date(
+		const activePeriodExpiresAt = new Date(
 			new Date().getTime() + this.sessionExpiresIn.activePeriod
 		);
-		const idlePeriodExpires = new Date(
-			activePeriodExpires.getTime() + this.sessionExpiresIn.idlePeriod
+		const idlePeriodExpiresAt = new Date(
+			activePeriodExpiresAt.getTime() + this.sessionExpiresIn.idlePeriod
 		);
-		return [sessionId, activePeriodExpires, idlePeriodExpires];
+		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
 	};
 
 	public createSession = async (userId: string): Promise<Session> => {
