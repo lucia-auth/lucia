@@ -73,7 +73,7 @@ This is not required if you're only using the Prisma adapter for the `user` tabl
 
 ```prisma
 model AuthSession {
-  id             String @id @unique
+  id             String	@id @unique
   user_id        String
   active_expires BigInt
   idle_expires   BigInt
@@ -91,7 +91,7 @@ model AuthKey {
   id              String  @id @unique
   hashed_password String?
   user_id         String
-  primary         Boolean
+  primary_key     Boolean
   expires         BigInt?
   auth_user       AuthUser    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
