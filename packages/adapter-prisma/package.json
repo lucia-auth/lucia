@@ -38,7 +38,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.11.x"
+		"lucia-auth": "1.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",

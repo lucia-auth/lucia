@@ -1,25 +1,25 @@
 ---
-title: "Migrate to release candidate"
+title: "Migrate to version 1.0"
 _order: 3
-description: "Learn how to migrate to the release candidate"
+description: "Learn how to migrate to Lucia version 1.0"
 ---
 
-We are super excited to announce that we have entered the release candidate phase! Nothing major except for a guarantee that we will not introduce any more major breaking changes and features.
-
-Unfortunately, the latest version introduces tons of small breaking changes that adds up.
+We are super excited to announce that we have finally reached version 1.0!
 
 Most of these changes are things we just wanted to get over with early. It sucks but it's going to suck more if we do it later on.
 
+This guide covers migration from v0.10.x to v1.0.0. If you are using v0.11.x, no changes are required on your part unless you're using Next.js (see Next.js migration guide).
+
 ### Latest versions
 
-- `lucia-auth`: 0.11.0
-- `@lucia-auth/adapter-prisma`: 0.7.0
-- `@lucia-auth/adapter-mongoose`: 0.7.0
-- `@lucia-auth/adapter-kysely`: 0.8.0
-- `@lucia-auth/adapter-session-kysely`: 0.1.7
-- `@lucia-auth/adapter-test`: 0.6.0
-- `@lucia-auth/oauth`: 0.8.0
-- `@lucia-auth/tokens`: 0.3.0
+- `lucia-auth`: 1.0.0
+- `@lucia-auth/adapter-prisma`: 1.0.0
+- `@lucia-auth/adapter-mongoose`: 1.0.0
+- `@lucia-auth/adapter-kysely`: 1.0.0
+- `@lucia-auth/adapter-session-kysely`: 1.0.0
+- `@lucia-auth/adapter-test`: 1.0.0
+- `@lucia-auth/oauth`: 1.0.0
+- `@lucia-auth/tokens`: 1.0.0
 
 ## Deprecate framework integrations
 
@@ -81,6 +81,19 @@ declare namespace App {
 
 ### Next.js migration
 
+Add Node middleware (**new in v1.0**):
+
+```ts
+// astro
+import { node } from "lucia-auth/middleware";
+import lucia from "lucia-auth";
+
+export const auth = lucia({
+	// ...
+	middleware: node()
+});
+```
+
 Replace `new AuthRequest()`:
 
 ```ts
@@ -88,6 +101,8 @@ const authRequest = auth.handleRequest(request, response);
 ```
 
 ### Astro migration
+
+Add Astro middleware:
 
 ```ts
 // astro

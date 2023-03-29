@@ -41,6 +41,7 @@ Add [`transformUserData()`](/basics/configuration#transformuserdata) to your Luc
 export const auth = lucia({
 	adapter: prisma(),
 	env: dev ? "DEV" : "PROD",
+	middleware: node(),
 	transformUserData: (userData) => {
 		return {
 			userId: userData.id,

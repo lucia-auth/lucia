@@ -10,5 +10,9 @@
 	{
 		"from": "/oauth",
 		"to": "/oauth/start-here/getting-started"
+	},
+	{
+		"from": "/start-here/migrate-to-release-candidate",
+		"to": "/start-here/migrate-to-version-1"
 	}
 ]

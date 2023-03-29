@@ -3,7 +3,7 @@ title: "Node"
 description: "Learn how to handle requests with Lucia using the Node middleware"
 ---
 
-Default middleware. Can be used for Next.js as well.
+Can be used for Next.js as well.
 
 ```ts
 const handleRequest: (

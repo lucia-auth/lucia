@@ -7,7 +7,7 @@ import type {
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return (incomingMessage, outgoingMessage) => {
-		const serverContext = {
+		const requestContext = {
 			request: {
 				url: incomingMessage.url ?? "",
 				method: incomingMessage.method ?? "",
@@ -29,13 +29,13 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 				]);
 			}
 		} as const satisfies RequestContext;
-		return serverContext;
+		return requestContext;
 	};
 };
 
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	return (request, response) => {
-		const serverContext = {
+		const requestContext = {
 			request: {
 				url: request.url,
 				method: request.method,
@@ -48,7 +48,7 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 				response.cookie(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
-		return serverContext;
+		return requestContext;
 	};
 };
 
@@ -61,7 +61,7 @@ type SvelteKitRequestEvent = {
 
 export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 	return (event) => {
-		const serverContext = {
+		const requestContext = {
 			request: {
 				url: event.request.url,
 				method: event.request.method,
@@ -74,7 +74,7 @@ export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 				event.cookies.set(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
-		return serverContext;
+		return requestContext;
 	};
 };
 
@@ -87,7 +87,7 @@ type AstroAPIContext = {
 
 export const astro = (): Middleware<[AstroAPIContext]> => {
 	return (context) => {
-		const serverContext = {
+		const requestContext = {
 			request: {
 				url: context.request.url,
 				method: context.request.method,
@@ -100,6 +100,10 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 				context.cookies.set(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
-		return serverContext;
+		return requestContext;
 	};
+};
+
+export const lucia = (): Middleware<[RequestContext]> => {
+	return (requestContext) => requestContext;
 };

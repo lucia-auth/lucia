@@ -570,6 +570,14 @@ const handleRequest: (...args: Parameters<Middleware>) => AuthRequest;
 | -------------------------------------------------- |
 | [`AuthRequest`](/reference/lucia-auth/authrequest) |
 
+### Default middleware
+
+See [Lucia middleware](/middleware/lucia).
+
+```ts
+const handleRequest: (requestContext: RequestContext) => AuthRequest;
+```
+
 ## `invalidateAllUserSessions()`
 
 Invalidates all sessions of a user. Will succeed regardless of the validity of the user id.

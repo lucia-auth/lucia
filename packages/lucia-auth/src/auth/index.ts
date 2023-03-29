@@ -16,7 +16,7 @@ import { validateDatabaseSessionData } from "./session.js";
 import { transformDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
 import { isWithinExpiration } from "../utils/date.js";
 import { AuthRequest } from "./request.js";
-import { node as defaultMiddleware } from "../middleware/index.js";
+import { lucia as defaultMiddleware } from "../middleware/index.js";
 
 import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
 import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.type.js";
