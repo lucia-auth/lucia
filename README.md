@@ -1,6 +1,6 @@
 # Lucia
 
-**This library is still in beta! While APIs have been relatively stable recently in preparation for v1.0, expect breaking changes.**
+**This library is in the release candidate phase! Expect version 1.0 to be released soon!**
 
 Lucia is a simple and flexible user and session management library that provides an
 abstraction layer between your app and your database. It's bare-bones by design, keeping
