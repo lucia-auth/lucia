@@ -57,9 +57,9 @@ You may add additional columns to store user attributes. Refer to [User attribut
 
 ```prisma
 model AuthUser {
-  id       String    @id @unique
-  session  AuthSession[]
-  Key      AuthKey[]
+  id           String    @id @unique
+  auth_session AuthSession[]
+  auth_key     AuthKey[]
   // here you can add custom fields for your user
   // e.g. name, email, username, roles, etc.
 
@@ -77,7 +77,7 @@ model AuthSession {
   user_id        String
   active_expires BigInt
   idle_expires   BigInt
-  user           AuthUser   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  auth_user      AuthUser   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("auth_session")
@@ -93,7 +93,7 @@ model AuthKey {
   user_id         String
   primary         Boolean
   expires         BigInt?
-  user            AuthUser    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  auth_user       AuthUser    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("auth_key")
