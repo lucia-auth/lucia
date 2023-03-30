@@ -674,18 +674,17 @@ const updateKeyPassword: (
 
 #### Parameter
 
-| name           | type     | description                        |
-| -------------- | -------- | ---------------------------------- |
-| providerId     | `string` | provider id of the target key      |
-| providerUserId | `string` | provider user id of the target key |
-| password       | `string` | new password                       |
+| name           | type             | description                        |
+| -------------- | ---------------- | ---------------------------------- |
+| providerId     | `string`         | provider id of the target key      |
+| providerUserId | `string`         | provider user id of the target key |
+| password       | `string \| null` | new password                       |
 
 #### Errors
 
 | name                   | description                                         |
 | ---------------------- | --------------------------------------------------- |
 | AUTH_INVALID_KEY_ID    | the user with the key does not exist                |
-| AUTH_OUTDATED_PASSWORD | the user's password is hashed with an old algorithm |
 
 #### Example
 

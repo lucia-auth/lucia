@@ -420,16 +420,16 @@ Updates a key password `key(hashed_password)` with the key id (`key(id)`).
 ```ts
 const updateKeyPassword: (
 	keyId: string,
-	hashedPassword: string
+	hashedPassword: string | null
 ) => Promise<void>;
 ```
 
 #### Parameter
 
-| name           | type     | description                    |
-| -------------- | -------- | ------------------------------ |
-| keyId          | `string` | unique target: `key(id)`       |
-| hashedPassword | `string` | target: `key(hashed_password)` |
+| name           | type             | description                    |
+| -------------- | ---------------- | ------------------------------ |
+| keyId          | `string`         | unique target: `key(id)`       |
+| hashedPassword | `string \| null` | target: `key(hashed_password)` |
 
 #### Errors
 
