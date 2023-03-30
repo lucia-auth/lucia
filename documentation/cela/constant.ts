@@ -1,5 +1,5 @@
 import type { MarkdownInstance } from "astro";
-import type { Collection, DocumentMetaData, Section } from "./types";
+import type { Collection, DocumentMetaData } from "./types";
 
 export const CELA_GENERATED_DIR = ".cela-generated";
 
