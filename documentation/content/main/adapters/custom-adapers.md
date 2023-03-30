@@ -318,15 +318,9 @@ const getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 
 If session exists:
 
-| type                                                                   | description        |
-| ---------------------------------------------------------------------- | ------------------ |
-| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target |
-
-If not:
-
-| type   |
-| ------ |
-| `null` |
+| type                                                                   | description                                         |
+| ---------------------------------------------------------------------- | --------------------------------------------------- |
+| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target - empty array if invalid user id |
 
 ### `getUser()`
 
