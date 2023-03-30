@@ -43,8 +43,10 @@ const isBannerHidden = bannerHiddenCookie.boolean();
 	<main
 		class="min-h-screen overflow-hidden bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:ml-80"
 	>
-		<div class="px-4 pt-36 sm:pt-48 md:pt-36 md:px-24 lg:pt-48">
-			<h1 class="text-4xl xs:text-6xl break-words font-semibold leading-none sm:text-7xl">
+		<div class="px-4 pt-36 sm:pt-48 md:px-24 md:pt-36 lg:pt-48">
+			<h1
+				class="xs:text-6xl break-words text-4xl font-semibold leading-none sm:text-7xl"
+			>
 				Authentication, <br />simple and clean
 			</h1>
 			<p class="mb-4 mt-6">
@@ -93,7 +95,7 @@ const isBannerHidden = bannerHiddenCookie.boolean();
 					class="bg-main fixed bottom-0 z-50 flex w-full place-content-between py-1 px-8 text-white shadow-md"
 					id="banner"
 				>
-					<div class="flex flex-col gap-x-2 sm:flex-row">
+					<div class="xs:flex-row flex flex-col gap-x-2">
 						<p class="font-medium">Announcing Lucia 1.0!</p>
 						<a
 							class="hover:underline"
