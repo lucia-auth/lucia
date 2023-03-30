@@ -318,15 +318,9 @@ const getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 
 If session exists:
 
-| type                                                                   | description        |
-| ---------------------------------------------------------------------- | ------------------ |
-| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target |
-
-If not:
-
-| type   |
-| ------ |
-| `null` |
+| type                                                                   | description                                         |
+| ---------------------------------------------------------------------- | --------------------------------------------------- |
+| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target - empty array if invalid user id |
 
 ### `getUser()`
 
@@ -420,16 +414,16 @@ Updates a key password `key(hashed_password)` with the key id (`key(id)`).
 ```ts
 const updateKeyPassword: (
 	keyId: string,
-	hashedPassword: string
+	hashedPassword: string | null
 ) => Promise<void>;
 ```
 
 #### Parameter
 
-| name           | type     | description                    |
-| -------------- | -------- | ------------------------------ |
-| keyId          | `string` | unique target: `key(id)`       |
-| hashedPassword | `string` | target: `key(hashed_password)` |
+| name           | type             | description                    |
+| -------------- | ---------------- | ------------------------------ |
+| keyId          | `string`         | unique target: `key(id)`       |
+| hashedPassword | `string \| null` | target: `key(hashed_password)` |
 
 #### Errors
 
