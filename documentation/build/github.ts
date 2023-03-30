@@ -37,7 +37,7 @@ export const fetchGithub = async () => {
 	const GITHUB_API_KEY = await envVar("GITHUB_API_KEY");
 
 	const contributorsResponse = await fetch(
-		"https://api.github.com/repos/pilcrowonpaper/lucia/contributors",
+		"https://api.github.com/repos/pilcrowonpaper/lucia/contributors?per_page=100",
 		{
 			headers: {
 				Authorization: `Bearer ${GITHUB_API_KEY}`
