@@ -27,7 +27,7 @@ export type UserAdapter = Readonly<{
 		attributes: Record<string, any>
 	) => Promise<UserSchema>;
 	setKey: (key: KeySchema) => Promise<void>;
-	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
+	deleteNonPrimaryKey: (key: string) => Promise<void>;
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 	updateKeyPassword: (
 		key: string,
