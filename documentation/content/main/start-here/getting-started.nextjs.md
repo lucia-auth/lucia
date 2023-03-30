@@ -18,7 +18,7 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `auth/lucia.ts`, import [`lucia`](/reference/modules/lucia-auth#lucia) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Make sure to export `typeof auth` as well.
+In `auth/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Make sure to export `typeof auth` as well.
 
 ```ts
 // auth/lucia.ts

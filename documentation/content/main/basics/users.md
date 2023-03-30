@@ -174,7 +174,7 @@ const user = auth.deleteUser(userId);
 
 You can generate your own user ids by setting [`generateCustomUserId()`](/basics/configuration#generatecustomuserid), which can either be synchronous or asynchronous.
 
-If you need to generate a cryptographically random alphanumeric string, Lucia provides [`generateRandomString()`](/reference/modules/lucia-auth#generaterandomstring). This function uses the [`nanoid`](https://github.com/ai/nanoid) package.
+If you need to generate a cryptographically random alphanumeric string, Lucia provides [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring). This function uses the [`nanoid`](https://github.com/ai/nanoid) package.
 
 ```ts
 import { generateCustomUserId } from "lucia-auth";

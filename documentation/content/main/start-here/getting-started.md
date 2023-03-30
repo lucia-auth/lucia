@@ -34,7 +34,7 @@ Follow the guides below to set up your database:
 
 ## Initialize Lucia
 
-In a TypeScript file, import [`lucia`](/reference/modules/lucia-auth#lucia) and an adapter (the adapters are provided as a different NPM package). Initialize it by defining `adapter` and `env` and export it. `env` should be set to `"DEV"` when testing in a HTTP environment (localhost), while it should be `"PROD"` if in a HTTPS environment.
+In a TypeScript file, import [`lucia`](/reference/lucia-auth/auth) and an adapter (the adapters are provided as a different NPM package). Initialize it by defining `adapter` and `env` and export it. `env` should be set to `"DEV"` when testing in a HTTP environment (localhost), while it should be `"PROD"` if in a HTTPS environment.
 
 ```ts
 // lucia.ts
