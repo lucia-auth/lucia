@@ -118,7 +118,7 @@ model AuthUser {
 
 If you're looking to use Prisma with MongoDB the only change you need to make is on the `id` property. You need to change the `@unique` attribute to `@map("_id")`. Lucia under the hood generates a short id automatically for the 3 models (user, session, key) which means we won't use `@ObjectId`, `@default(auto())` or `@db.ObjectId` at all.
 
-So in a nutshell, replace `id String @id @unique` with `id String @id @map("_id")` in the 3 models (user, session, key) we saw above.
+So in a nutshell, replace `id String @id @unique` with `id String @id @map("_id")` in the 3 models (user, session, key) shown above.
 
 ```prisma
 id String @id @map("_id")
