@@ -124,7 +124,7 @@ So in a nutshell, replace `id String @id @unique` with `id String @id @map("_id"
 id String @id @map("_id")
 ```
 
-Obviously, our `datasource` will also need to change to `provider = "mongodb"`.
+Our `datasource` will also need to change to `provider = "mongodb"`.
 
 ```prisma
 datasource db {
