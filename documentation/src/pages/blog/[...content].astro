@@ -18,6 +18,7 @@ export const getStaticPaths = async () => {
 				title: string;
 				description: string;
 				date: string;
+				video?: string;
 			}>
 		>("/blog/*.md")
 	).map(([importPath, resolve]) => {
@@ -64,6 +65,7 @@ const { Content, metaData } = Astro.props;
 				<h1 class="break-words text-6xl font-semibold">
 					{metaData.title}
 				</h1>
+
 				<div class="mt-6 flex place-content-between place-items-center">
 					<a
 						href="https://github.com/pilcrowOnPaper"
@@ -79,6 +81,19 @@ const { Content, metaData } = Astro.props;
 					</a>
 					<p>{metaData.date}</p>
 				</div>
+				{
+					!!metaData.video && (
+						<div class="mt-6 aspect-video w-full rounded-xl border border-zinc-200 bg-zinc-100">
+							<iframe
+								src="https://www.youtube-nocookie.com/embed/j8lyUqKdmJQ?controls=0"
+								class="h-full w-full rounded-xl"
+								title="YouTube video player"
+								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+								allowfullscreen
+							/>
+						</div>
+					)
+				}
 			</div>
 			<MarkdownContent>
 				<Content />
