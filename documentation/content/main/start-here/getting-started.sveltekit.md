@@ -83,3 +83,17 @@ declare namespace App {
 	}
 }
 ```
+
+## Troubleshooting
+
+If you get the following error or something similar:
+
+```
+TypeError: Cannot read properties of undefined (reading 'validate')
+```
+
+Make sure your `handle` hook is running. Common mistakes include:
+
+1. `hook.sever.ts` (singular) instead of `hooks.server.ts` (plural)
+2. `hooks.server.ts` inside `routes` directory instead of `src` directory
+3. `+hooks.server.ts` (`+`) instead of `hooks.server.ts`
