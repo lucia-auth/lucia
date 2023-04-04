@@ -8,6 +8,7 @@ import { frameworkIds } from "@lib/framework";
 import redirects from "redirects.json";
 import { error404 } from "@lib/error";
 import MarkdownContent from "@components/MarkdownContent.astro";
+import Banner from "@components/Banner.astro";
 
 const redirectTarget = redirects.find((val) => val.from === Astro.url.pathname);
 
@@ -69,21 +70,20 @@ const contributePageUrl = new URL(
 	<main
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200 lg:pr-64 xl:pl-80"
 	>
-		<article class="pt-24 pb-12 overflow-hidden px-4 sm:px-8 md:px-24 xl:px-24 ">
-				<h1 class="mb-16 break-words text-4xl font-semibold sm:text-5xl">
-					{content.metaData.title}
-				</h1>
-				<MarkdownContent>
-					<content.Content />
-				</MarkdownContent>
-				<div class="mt-16">
-					<a
-						href={contributePageUrl}
-						class="text-main cursor-pointer; hover:underline"
-						>Contribute to this page</a
-					>
-				</div>
-
+		<article class="overflow-hidden px-4 pt-24 pb-12 sm:px-8 md:px-24 xl:px-24">
+			<h1 class="mb-16 break-words text-4xl font-semibold sm:text-5xl">
+				{content.metaData.title}
+			</h1>
+			<MarkdownContent>
+				<content.Content />
+			</MarkdownContent>
+			<div class="mt-16">
+				<a
+					href={contributePageUrl}
+					class="text-main cursor-pointer; hover:underline"
+					>Contribute to this page</a
+				>
+			</div>
 		</article>
 	</main>
 	<div class="fixed right-0 top-0 hidden h-screen w-64 pr-8 pt-24 lg:block">
@@ -122,4 +122,5 @@ const contributePageUrl = new URL(
 			}
 		</ul>
 	</div>
+	<Banner />
 </Layout>

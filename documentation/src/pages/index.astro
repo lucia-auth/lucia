@@ -8,6 +8,7 @@ import contributors from "../../.github.json";
 
 import { frameworkIds } from "@lib/framework";
 import { getCollection } from "@cela/content";
+import Banner from "@components/Banner.astro";
 
 let frameworkId = Astro.url.searchParams.get("framework") ?? null;
 
@@ -27,9 +28,6 @@ if (!collection) {
 		status: 404
 	});
 }
-
-const bannerHiddenCookie = Astro.cookies.get("banner-hidden");
-const isBannerHidden = bannerHiddenCookie.boolean();
 ---
 
 <Layout
@@ -88,33 +86,7 @@ const isBannerHidden = bannerHiddenCookie.boolean();
 			</section>
 		</div>
 	</main>
-	{
-		!isBannerHidden && (
-			<>
-				<div
-					class="bg-main fixed bottom-0 z-50 flex w-full place-content-between py-1 px-8 text-white shadow-md"
-					id="banner"
-				>
-					<div class="xs:flex-row flex flex-col gap-x-2">
-						<p class="font-medium">Announcing Lucia 1.0!</p>
-						<a
-							class="hover:underline"
-							href="/blog/lucia-1"
-							aria-label="Read more about Lucia 1.0"
-						>
-							Read more
-						</a>
-					</div>
-					<button
-						class="text-indigo-100 hover:underline"
-						id="banner-close-button"
-					>
-						Close
-					</button>
-				</div>
-			</>
-		)
-	}
+	<Banner />
 	<script>
 		import { setCookie } from "@lib/cookie";
 		import { addClassName } from "@lib/dom";
