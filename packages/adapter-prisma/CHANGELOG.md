@@ -1,10 +1,17 @@
 # @lucia-auth/adapter-prisma
 
+## 0.7.1
+
+### Patch changes
+
+- [#452](https://github.com/pilcrowOnPaper/lucia/pull/452) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix issue where all errors from `setUser()` were thrown as `INVALID_KEY_ID` Lucia error
+
 ## 0.7.0
 
 ### Minor changes
 
 - [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Require `lucia-auth` 0.11.0
+
   - Update schema
 
 ## 0.6.1
