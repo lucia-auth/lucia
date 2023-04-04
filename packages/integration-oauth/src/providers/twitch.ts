@@ -57,8 +57,8 @@ export const twitch = <A extends Auth>(auth: A, config: Config) => {
 				...authorizationHeaders("bearer", accessToken)
 			}
 		});
-		const twitchUser = await handleRequest<TwitchUser>(request);
-		const providerUserId = twitchUser.id;
+		const twitchUser = await handleRequest<TwitchUser[]>(request);
+		const providerUserId = twitchUser[0].id;
 
 		return [providerUserId, twitchUser] as const;
 	};

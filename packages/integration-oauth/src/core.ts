@@ -2,7 +2,6 @@ import { generateRandomString } from "lucia-auth";
 
 import type { Auth, Key, LuciaError } from "lucia-auth";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
-import type { AwaitedReturnType } from "./utils.js";
 
 export const provider = <
 	A extends Auth,
