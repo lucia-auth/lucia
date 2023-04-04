@@ -114,9 +114,9 @@ model AuthUser {
 }
 ```
 
-## Schema with MongoDB
+## Using MongoDB
 
-If you're looking to use Prisma with MongoDB the only change you need to make is on the `id` property. You need to change the `@unique` attribute to `@map("_id")`. Lucia under the hood generates a short id automatically for the 3 models (user, session, key) which means we won't use `@ObjectId`, `@default(auto())` or `@db.ObjectId` at all.
+If you're looking to use Prisma with MongoDB the only change you need to make is to the `id` property. You need to change the `@unique` attribute to `@map("_id")`. Lucia under the hood generates a short id automatically for the 3 models (user, session, key) which means we won't use `@ObjectId`, `@default(auto())` or `@db.ObjectId` at all.
 
 So in a nutshell, replace `id String @id @unique` with `id String @id @map("_id")` in the 3 models (user, session, key) shown above.
 
@@ -130,5 +130,17 @@ Our `datasource` will also need to change to `provider = "mongodb"`.
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+```
+
+## Using PrismaScale
+
+Since PrismaScale does not support foreign keys, change `relationMode` to `prisma` inside the schema `datasource`.
+
+```prisma
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 ```
