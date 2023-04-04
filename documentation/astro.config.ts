@@ -14,7 +14,7 @@ import { fetchGithub } from "./build/github";
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [tailwind(), solidJs()],
+	integrations: [tailwind(), solidJs(), siena()],
 	vite: {
 		plugins: [
 			{
@@ -43,7 +43,6 @@ export default defineConfig({
 			theme: "github-dark"
 		},
 		rehypePlugins: [
-			siena,
 			[
 				"rehype-wrap-all",
 				{
