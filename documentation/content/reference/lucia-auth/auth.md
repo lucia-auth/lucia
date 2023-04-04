@@ -682,9 +682,9 @@ const updateKeyPassword: (
 
 #### Errors
 
-| name                   | description                                         |
-| ---------------------- | --------------------------------------------------- |
-| AUTH_INVALID_KEY_ID    | the user with the key does not exist                |
+| name                | description                          |
+| ------------------- | ------------------------------------ |
+| AUTH_INVALID_KEY_ID | the user with the key does not exist |
 
 #### Example
 
