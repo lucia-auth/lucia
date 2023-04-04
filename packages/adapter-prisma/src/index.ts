@@ -103,7 +103,7 @@ const adapter =
 					});
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2002" && error.message?.includes("id"))
+					if (error.code === "P2002" && error.message?.includes("`id`"))
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					throw error;
 				}
@@ -124,7 +124,7 @@ const adapter =
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2003")
 						throw new LuciaError("AUTH_INVALID_USER_ID");
-					if (error.code === "P2002" && error.message?.includes("id"))
+					if (error.code === "P2002" && error.message?.includes("`id`"))
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 					throw error;
 				}
@@ -168,7 +168,7 @@ const adapter =
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2003")
 						throw new LuciaError("AUTH_INVALID_USER_ID");
-					if (error.code === "P2002" && error.message?.includes("id"))
+					if (error.code === "P2002" && error.message?.includes("`id`"))
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					throw error;
 				}
