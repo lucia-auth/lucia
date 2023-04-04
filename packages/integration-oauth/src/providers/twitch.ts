@@ -51,14 +51,17 @@ export const twitch = <A extends Auth>(auth: A, config: Config) => {
 	};
 
 	const getProviderUser = async (accessToken: string) => {
+		// https://dev.twitch.tv/docs/api/reference/#get-users
 		const request = new Request("https://api.twitch.tv/helix/users", {
 			headers: {
 				"Client-ID": config.clientId,
 				...authorizationHeaders("bearer", accessToken)
 			}
 		});
-		const twitchUser = await handleRequest<TwitchUser>(request);
-		const providerUserId = twitchUser.id;
+		const twitchUser = await handleRequest<{
+			data: TwitchUser[];
+		}>(request);
+		const providerUserId = twitchUser.data[0].id;
 
 		return [providerUserId, twitchUser] as const;
 	};

@@ -1,4 +1,4 @@
-import { LuciaOAuthRequestError } from "./index.js";
+import { LuciaOAuthRequestError } from "./core.js";
 
 export const handleRequest = async <T extends {}>(request: Request) => {
 	request.headers.set("User-Agent", "lucia");
