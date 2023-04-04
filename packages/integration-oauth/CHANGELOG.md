@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 0.8.1
+
+### Patch changes
+
+- [#450](https://github.com/pilcrowOnPaper/lucia/pull/450) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix Twitch provider
+
 ## 0.8.0
 
 ### Minor changes
@@ -11,7 +17,9 @@
 - [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix types
 
 - [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update providers
+
   - Add `GithubTokens.refresh_token`, `GithubTokens.refresh_token_expires_in`, `expires_in`
+
   - Add `https://www.googleapis.com/auth/userinfo.profile` scope to Google provider by default
 
 ## 0.7.3
