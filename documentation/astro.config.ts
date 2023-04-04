@@ -14,7 +14,13 @@ import { fetchGithub } from "./build/github";
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [tailwind(), solidJs(), siena()],
+	integrations: [
+		tailwind(),
+		solidJs(),
+		siena({
+			debug: true
+		})
+	],
 	vite: {
 		plugins: [
 			{
