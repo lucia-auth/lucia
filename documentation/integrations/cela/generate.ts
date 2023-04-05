@@ -26,7 +26,7 @@ const generatedCollectionsDirPath = path.join(
 	"collections"
 );
 
-export const generate = () => {
+export const generateContent = () => {
 	const baseCollectionPath = getCollectionPath();
 	const collectionIds = fs.readdirSync(baseCollectionPath);
 	const generatedDirPath = path.join(
