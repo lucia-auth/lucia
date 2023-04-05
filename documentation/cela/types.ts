@@ -23,7 +23,7 @@ export type MarkdownDocument = Exclude<
 	null
 >;
 
-export type DocumentMetaData = {
+export type ContentMetaData = {
 	collectionId: string;
 	frameworkId: string | null;
 	redirect: string | null;
@@ -32,4 +32,9 @@ export type DocumentMetaData = {
 	path: string;
 	href: string;
 	description: string | null;
+};
+
+export type ContentLink = {
+	metaData: ContentMetaData;
+	mappedContentPath: string;
 };

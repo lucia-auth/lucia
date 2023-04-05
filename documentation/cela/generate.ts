@@ -3,7 +3,12 @@ import path from "path";
 import matter from "gray-matter";
 import { CELA_GENERATED_DIR } from "./constant";
 
-import type { Collection, DocumentMetaData, Section } from "./types";
+import type {
+	Collection,
+	ContentMetaData,
+	ContentLink,
+	Section
+} from "./types";
 
 const getCollectionPath = (...pathSegments: string[]) => {
 	return path.join(process.cwd(), "content", ...pathSegments);
@@ -161,7 +166,7 @@ export const generateCollection = (collectionId: string) => {
 					}`
 				);
 			}
-			const documentMetaData = {
+			const contentMetaData = {
 				title: frontmatterData.title ?? "",
 				redirect: frontmatterData._redirect ?? null,
 				collectionId,
@@ -170,17 +175,17 @@ export const generateCollection = (collectionId: string) => {
 				href: documentHref,
 				path: documentFsUrl,
 				description: frontmatterData.description ?? null
-			} satisfies DocumentMetaData;
-			const generatedLink = {
-				metaData: documentMetaData,
-				mappedContent: documentPath
+			} satisfies ContentMetaData;
+			const generatedContentLink: ContentLink = {
+				metaData: contentMetaData,
+				mappedContentPath: documentPath.replace(process.cwd(), "")
 			};
 			fs.writeFileSync(
 				path.join(
 					generatedContentDirPath,
 					[documentFsUrl.replaceAll("/", "_"), "json"].join(".")
 				),
-				JSON.stringify(generatedLink)
+				JSON.stringify(generatedContentLink)
 			);
 			const doc = {
 				title: frontmatterResult.data.title,

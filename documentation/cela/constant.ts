@@ -1,18 +1,11 @@
 import type { MarkdownInstance } from "astro";
-import type { Collection, DocumentMetaData } from "./types";
+import type { Collection, ContentLink } from "./types";
 
 export const CELA_GENERATED_DIR = ".cela_generated";
 
 export const generatedLinksImports = import.meta.glob(
 	`/.cela_generated/content/*.json`
-) as Record<
-	string,
-	| undefined
-	| (() => Promise<{
-			metaData: DocumentMetaData;
-			mappedContent: string;
-	  }>)
->;
+) as Record<string, undefined | (() => Promise<ContentLink>)>;
 
 export const contentImports = import.meta.glob("/content/**/*.md") as Record<
 	string,

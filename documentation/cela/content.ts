@@ -6,13 +6,6 @@ import {
 	generatedLinksImports
 } from "./constant";
 
-const getCwd = () => {
-	console.log(process);
-	console.log(process.env);
-	const currentFilePath = import.meta.url;
-	return currentFilePath.replace("file://", "").replace("/cela/content.ts", "");
-};
-
 export const getContent = async (
 	contentPath: string,
 	requestedFrameworkId: string | null = null
@@ -50,15 +43,14 @@ export const getContent = async (
 		}
 		return null;
 	};
-	const readContentFile = async (absolutePath: string) => {
-		const importKey = absolutePath.replace(getCwd(), "");
+	const readContentFile = async (importKey: string) => {
 		const resolveContent = contentImports[importKey] ?? null;
 		if (!resolveContent) return null;
 		return resolveContent();
 	};
 	const contentLink = await getLink();
 	if (!contentLink) return null;
-	const content = await readContentFile(contentLink.mappedContent);
+	const content = await readContentFile(contentLink.mappedContentPath);
 	if (!content) return null;
 	return {
 		metaData: contentLink.metaData,
