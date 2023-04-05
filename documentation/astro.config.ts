@@ -10,24 +10,17 @@ import type { Root, RootContent, Text } from "hast";
 
 // https://astro.build/config
 import vercel from "@astrojs/vercel/edge";
-import { fetchGithub } from "./build/github";
+import { fetchGithub } from "./preprocess/github";
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [
-		tailwind(),
-		solidJs(),
-		siena({
-			debug: true
-		})
-	],
+	integrations: [tailwind(), solidJs(), siena()],
 	vite: {
 		plugins: [
 			{
 				name: "cela",
 				buildStart: async () => {
 					generate();
-					await fetchGithub();
 				},
 				handleHotUpdate: async (ctx) => {
 					const collectionDirPath = path.join(process.cwd(), "content");
@@ -39,6 +32,12 @@ export default defineConfig({
 					);
 					const [baseCollectionId] = workingPath.replace("/", "").split("/");
 					generateCollection(baseCollectionId);
+				}
+			},
+			{
+				name: "preprocess",
+				buildStart: async () => {
+					await fetchGithub();
 				}
 			}
 		]
