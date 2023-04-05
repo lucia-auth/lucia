@@ -134,7 +134,7 @@ const currentPathname = Astro.url.pathname;
 	const frameworkIdElement = document.getElementById("framework-id");
 	if (frameworkIdElement instanceof HTMLInputElement) {
 		const url = new URL(window.location.href);
-		url.searchParams.set("framework", frameworkIdElement.value ?? "none");
+		url.searchParams.set("framework", frameworkIdElement.value || "none");
 		window.history.replaceState({}, "", url);
 	}
 </script>
