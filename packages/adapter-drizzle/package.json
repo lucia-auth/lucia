@@ -1,0 +1,57 @@
+{
+	"name": "@lucia-auth/adapter-drizzle",
+	"version": "0.8.0",
+	"description": "drizzle adapter for Lucia",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"test-psql": "npx ts-node --esm -T test/psql/index.ts",
+		"test-mysql": "npx ts-node --esm -T test/mysql/index.ts",
+		"test-sqlite": "npx ts-node --esm -T test/sqlite/index.ts",
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks && cd ../"
+	},
+	"keywords": [
+		"lucia",
+		"drizzle-orm",
+		"lucia-auth",
+		"mysql",
+		"sqlite",
+		"postgres",
+		"postgresql",
+		"auth",
+		"authentication",
+		"adapter"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/adapter-drizzle"
+	},
+	"contributors": [
+		"pilcrowonpaper",
+		"rgodha24"
+	],
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-auth": "0.11.x"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"@types/pg": "^8.6.5",
+		"better-sqlite3": "^8.0.1",
+		"drizzle-orm": "^0.23.6",
+		"pg": "^8.8.0"
+	},
+	"dependencies": {
+		"lucia-auth": "workspace:*"
+	}
+}
