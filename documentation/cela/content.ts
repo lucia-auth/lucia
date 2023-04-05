@@ -7,6 +7,7 @@ import {
 } from "./constant";
 
 const getCwd = () => {
+	console.log(import.meta.url);
 	const currentFilePath = import.meta.url;
 	return currentFilePath.replace("file://", "").replace("/cela/content.ts", "");
 };
