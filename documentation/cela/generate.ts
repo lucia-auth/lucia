@@ -171,12 +171,16 @@ export const generateCollection = (collectionId: string) => {
 				path: documentFsUrl,
 				description: frontmatterData.description ?? null
 			} satisfies DocumentMetaData;
+			const generatedLink = {
+				metaData: documentMetaData,
+				mappedContent: documentPath
+			};
 			fs.writeFileSync(
 				path.join(
 					generatedContentDirPath,
-					[documentFsUrl.replaceAll("/", "_"), "md"].join(".")
+					[documentFsUrl.replaceAll("/", "_"), "json"].join(".")
 				),
-				matter.stringify(frontmatterResult.content, documentMetaData)
+				JSON.stringify(generatedLink)
 			);
 			const doc = {
 				title: frontmatterResult.data.title,

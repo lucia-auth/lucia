@@ -2,51 +2,61 @@ import { frameworkIds } from "@lib/framework";
 import {
 	CELA_GENERATED_DIR,
 	contentImports,
-	collectionImports
+	collectionImports,
+	generatedLinksImports
 } from "./constant";
 
 export const getContent = async (
 	contentPath: string,
 	requestedFrameworkId: string | null = null
 ) => {
-	const readContentFile = async () => {
-		const contentImportsKey = `${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
+	const getLink = async () => {
+		const generatedLinksImportsKey = `${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
 			"/",
 			"_"
-		)}.md`;
-		const resolveBaseContent = contentImports[contentImportsKey] ?? null;
+		)}.json`;
+		const resolveBaseLink =
+			generatedLinksImports[generatedLinksImportsKey] ?? null;
 		const filteredFrameworkId =
 			requestedFrameworkId === "none" ? null : requestedFrameworkId;
 		if (filteredFrameworkId) {
-			const resolveModifiedContent =
-				contentImports[
+			const resolveModifiedLink =
+				generatedLinksImports[
 					`${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
 						"/",
 						"_"
-					)}.${filteredFrameworkId}.md`
+					)}.${filteredFrameworkId}.json`
 				] ?? null;
-			if (resolveModifiedContent) return await resolveModifiedContent();
+			if (resolveModifiedLink) return await resolveModifiedLink();
 		}
-		if (resolveBaseContent) return await resolveBaseContent();
+		if (resolveBaseLink) return await resolveBaseLink();
 		for (const validFrameworkId of frameworkIds) {
 			if (validFrameworkId === "none") continue;
-			const resolveContent =
-				contentImports[
+			const resolveLink =
+				generatedLinksImports[
 					`${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
 						"/",
 						"_"
-					)}.${validFrameworkId}.md`
+					)}.${validFrameworkId}.json`
 				] ?? null;
-			if (resolveContent) return await resolveContent();
+			if (resolveLink) return await resolveLink();
 		}
 		return null;
 	};
-	const contentFile = await readContentFile();
-	if (!contentFile) return null;
+	const readContentFile = async (absolutePath: string) => {
+		const importKey = absolutePath.replace(process.cwd(), "");
+		const resolveContent = contentImports[importKey] ?? null;
+		if (!resolveContent) return null;
+		return resolveContent();
+	};
+	const contentLink = await getLink();
+	if (!contentLink) return null;
+	const content = await readContentFile(contentLink.mappedContent);
+	if (!content) return null;
 	return {
-		metaData: contentFile.frontmatter,
-		Content: contentFile.Content,
-		headings: contentFile.getHeadings()
+		metaData: contentLink.metaData,
+		Content: content.Content,
+		headings: content.getHeadings()
 	} as const;
 };
 
