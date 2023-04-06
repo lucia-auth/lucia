@@ -23,7 +23,7 @@ This page will use Github OAuth but the API and auth flow is nearly identical be
 Initialize the handler using the Lucia `Auth` instance and provider-specific config. This page will use Github OAuth but the auth flow is the same across providers. Refer to each provider's documentation for the specifics.
 
 ```ts
-// lucia.ts
+// lib/lucia.ts
 import { github } from "@lucia-auth/oauth/providers";
 
 export const auth = lucia({
@@ -38,24 +38,28 @@ export const githubAuth = github(auth, config);
 When a user clicks "Sign in with <provider>", redirect the user to a GET endpoint. This endpoint will redirect the user to the provider's sign in page. On request, store the [state](https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1) inside a http0nly cookie and redirect the user to the provider's authorization url. Both, the authorization url and state can be retrieved with `getAuthorizationUrl()`.
 
 ```ts
-// SERVER
+// routes/api/oauth/+server.ts
 import { auth, githubAuth } from "$lib/lucia.js";
 
-const handleGetRequests = async () => {
-	const providerAuth = provider(auth, config);
+import type { RequestHandler } from "./$types";
 
+export const GET: RequestHandler = async () => {
 	// get url to redirect the user to, with the state
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 
 	// the state can be stored in cookies or localstorage for request validation on callback
-	setCookie("github_oauth_state", state, {
+	cookies.set("github_oauth_state", state, {
 		path: "/",
-		httpOnly: true, // only readable in the server
-		maxAge: 60 * 60 // a reasonable expiration date
-	}); // example with cookie
+		maxAge: 60 * 60
+	});
 
 	// redirect to authorization url
-	redirect(url.toString());
+	return new Response(null, {
+		status: 302,
+		headers: {
+			location: url.toString()
+		}
+	});
 };
 ```
 
@@ -75,25 +79,23 @@ On sign in, the provider will redirect the user to your callback url. On callbac
 
 `createUser()` method can be used to create a new user if an existing user does not exist.
 
-The following is semi-pseudo-code (namely the provider part):
-
 ```ts
-// SERVER
+// routes/api/oauth/github/+server.ts
 import { auth, githubAuth } from "$lib/lucia.js";
+import { redirect } from "@sveltejs/kit";
 
-// handle GET requests
-export const handleGetRequests = async (request: Request) => {
+import type { RequestHandler } from "./$types";
+
+export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 	// get code and state params from url
-	const url = new URL(request.url);
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
 
 	// get stored state from cookies
-	const cookie = parseCookie(request.headers.get("cookie"));
-	const storedState = cookie.github_oauth_state;
+	const storedState = cookies.get("github_oauth_state");
 
 	// validate state
-	if (state !== storedState) throw new Error(); // invalid state
+	if (state !== storedState) throw new Response(null, { status: 401 });
 
 	try {
 		const { existingUser, providerUser, createUser } =
@@ -109,12 +111,14 @@ export const handleGetRequests = async (request: Request) => {
 		};
 		const user = await getUser();
 		const session = await auth.createSession(user.userId);
-
-		const authRequest = await auth.handleRequest();
-		authRequest.setSession(session); // store session cookie
-	} catch {
+		locals.auth.setSession(session);
+	} catch (e) {
 		// invalid code
+		return new Response(null, {
+			status: 500
+		});
 	}
+	throw redirect(302, "/");
 };
 ```
 
