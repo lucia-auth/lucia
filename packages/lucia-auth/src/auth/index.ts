@@ -12,14 +12,14 @@ import {
 } from "../utils/crypto.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
-import { validateDatabaseSessionData } from "./session.js";
+import { validateDatabaseSession } from "./session.js";
 import { transformDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
 import { isWithinExpiration } from "../utils/date.js";
 import { AuthRequest } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
 
-import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
-import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.type.js";
+import type { UserSchema, SessionSchema, KeySchema } from "./schema.js";
+import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.js";
 import type { LuciaErrorConstructor } from "./error.js";
 import type { Middleware, LuciaRequest } from "./request.js";
 
@@ -62,8 +62,8 @@ export const lucia = <C extends Configuration>(config: C) => {
 };
 
 const validateConfiguration = (config: Configuration) => {
-	const isAdapterProvided = config.adapter;
-	if (!isAdapterProvided) {
+	const adapterProvided = config.adapter;
+	if (!adapterProvided) {
 		logError('Adapter is not defined in configuration ("config.adapter")');
 		process.exit(1);
 	}
@@ -184,7 +184,7 @@ export class Auth<C extends Configuration = any> {
 				: null;
 		}
 		if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const session = validateDatabaseSessionData(sessionData);
+		const session = validateDatabaseSession(sessionData);
 		if (!session) {
 			if (this.autoDatabaseCleanup) {
 				await this.adapter.deleteSession(sessionId);
@@ -255,8 +255,8 @@ export class Auth<C extends Configuration = any> {
 		const keyId = `${providerId}:${providerUserId}`;
 
 		const shouldDataBeDeleted = async (data: KeySchema) => {
-			const isPersistent = data.expires === null;
-			if (isPersistent) return false;
+			const persistentKey = data.expires === null;
+			if (persistentKey) return false;
 
 			if (data.hashed_password === null) return true;
 			if (password === null) return false;
@@ -269,10 +269,10 @@ export class Auth<C extends Configuration = any> {
 			shouldDataBeDeleted
 		);
 		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		const isSingleUse = databaseKeyData.expires;
-		if (isSingleUse) {
-			const isValid = isWithinExpiration(databaseKeyData.expires);
-			if (!isValid) throw new LuciaError("AUTH_EXPIRED_KEY");
+		const singleUse = !!databaseKeyData.expires;
+		if (singleUse) {
+			const withinExpiration = isWithinExpiration(databaseKeyData.expires);
+			if (!withinExpiration) throw new LuciaError("AUTH_EXPIRED_KEY");
 		}
 		const hashedPassword = databaseKeyData.hashed_password;
 		if (hashedPassword) {
@@ -280,11 +280,8 @@ export class Auth<C extends Configuration = any> {
 			if (!hashedPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
 			if (hashedPassword.startsWith("$2a"))
 				throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-			const isValidPassword = await this.hash.validate(
-				password,
-				hashedPassword
-			);
-			if (!isValidPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
+			const validPassword = await this.hash.validate(password, hashedPassword);
+			if (!validPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		}
 
 		const key = transformDatabaseKey(databaseKeyData);
@@ -296,7 +293,7 @@ export class Auth<C extends Configuration = any> {
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const databaseSession = await this.adapter.getSession(sessionId);
 		if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const session = validateDatabaseSessionData(databaseSession);
+		const session = validateDatabaseSession(databaseSession);
 		if (!session) {
 			if (this.autoDatabaseCleanup) {
 				await this.adapter.deleteSession(sessionId);
@@ -307,41 +304,31 @@ export class Auth<C extends Configuration = any> {
 	};
 
 	public getAllUserSessions = async (userId: string): Promise<Session[]> => {
+		// validate user id
 		await this.getUser(userId);
 		const databaseData = await this.adapter.getSessionsByUserId(userId);
-		const storedUserSessions = databaseData.map((val) => {
-			const session = validateDatabaseSessionData(val);
-			if (session) {
-				return {
-					isValid: true,
-					session
-				} as const;
-			}
-			return {
-				isValid: false,
-				sessionId: val.id
-			} as const;
-		});
-		if (storedUserSessions.some((val) => val.isValid === false)) {
+		const validStoredUserSessions = databaseData
+			.map((databaseSession) => {
+				return validateDatabaseSession(databaseSession);
+			})
+			.filter((session): session is Session => session !== null);
+		const deadStoredUserSessionIds = databaseData
+			.map((databaseSession) => {
+				return databaseSession.id;
+			})
+			.filter((sessionId) => {
+				return !validStoredUserSessions.some(
+					(validSession) => validSession.sessionId === sessionId
+				);
+			});
+		if (deadStoredUserSessionIds.length > 0) {
 			await Promise.all(
-				storedUserSessions
-					.filter(
-						(
-							val
-						): val is {
-							isValid: false;
-							sessionId: string;
-						} => val.isValid === false
-					)
-					.map((val) => val)
+				deadStoredUserSessionIds.map((deadSessionId) =>
+					this.adapter.deleteSession(deadSessionId)
+				)
 			);
 		}
-		const validUserSessions = storedUserSessions
-			.map((val) => {
-				return val.isValid ? val.session : null;
-			})
-			.filter((val): val is Session => val !== null);
-		return validUserSessions;
+		return validStoredUserSessions;
 	};
 
 	public validateSession = async (sessionId: string): Promise<Session> => {
@@ -363,7 +350,7 @@ export class Auth<C extends Configuration = any> {
 		};
 	};
 
-	public generateSessionId = (): [
+	public generateSessionId = (): readonly [
 		sessionId: string,
 		activePeriodExpiresAt: Date,
 		idlePeriodExpiresAt: Date
@@ -405,9 +392,9 @@ export class Auth<C extends Configuration = any> {
 	public renewSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const sessionData = await this.adapter.getSession(sessionId);
-		if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const session = validateDatabaseSessionData(sessionData);
+		const databaseSession = await this.adapter.getSession(sessionId);
+		if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		const session = validateDatabaseSession(databaseSession);
 		if (!session) {
 			if (this.autoDatabaseCleanup) {
 				await this.adapter.deleteSession(sessionId);
@@ -432,12 +419,18 @@ export class Auth<C extends Configuration = any> {
 	};
 
 	public deleteDeadUserSessions = async (userId: string): Promise<void> => {
-		const sessions = await this.adapter.getSessionsByUserId(userId);
-		const deadSessionIds = sessions
-			.filter((val) => !isWithinExpiration(val.idle_expires))
-			.map((val) => val.id);
+		const databaseSessions = await this.adapter.getSessionsByUserId(userId);
+		const deadSessionIds = databaseSessions
+			.filter((databaseSession) => {
+				return validateDatabaseSession(databaseSession) === null;
+			})
+			.map((databaseSession) => databaseSession.id);
 		if (deadSessionIds.length === 0) return;
-		await this.adapter.deleteSession(...deadSessionIds);
+		await Promise.all(
+			deadSessionIds.map((deadSessionId) => {
+				this.adapter.deleteSession(deadSessionId);
+			})
+		);
 	};
 
 	public parseRequestHeaders = (request: LuciaRequest): string | null => {
@@ -531,7 +524,10 @@ export class Auth<C extends Configuration = any> {
 		} satisfies SingleUseKey as any;
 	};
 
-	public deleteKey = async (providerId: string, providerUserId: string) => {
+	public deleteKey = async (
+		providerId: string,
+		providerUserId: string
+	): Promise<void> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		await this.adapter.deleteNonPrimaryKey(keyId);
 	};
@@ -542,9 +538,9 @@ export class Auth<C extends Configuration = any> {
 	): Promise<Key> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		const shouldDataBeDeleted = async () => false;
-		const keyData = await this.adapter.getKey(keyId, shouldDataBeDeleted);
-		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		const key = transformDatabaseKey(keyData);
+		const databaseKey = await this.adapter.getKey(keyId, shouldDataBeDeleted);
+		if (!databaseKey) throw new LuciaError("AUTH_INVALID_KEY_ID");
+		const key = transformDatabaseKey(databaseKey);
 		return key;
 	};
 
