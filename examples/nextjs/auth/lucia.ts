@@ -9,7 +9,7 @@ export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
 	middleware: node(),
-	transformUserData: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username

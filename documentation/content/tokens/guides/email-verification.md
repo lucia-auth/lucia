@@ -82,9 +82,9 @@ One time passwords will use [password tokens](/tokens/basics/password-tokens). C
 // token.ts
 
 import { auth } from "./lucia.js";
-import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
+import { passwordToken } from "@lucia-auth/tokens";
 
-export const otpToken = idToken(auth, "otp", {
+export const otpToken = passwordToken(auth, "otp", {
 	expiresIn: 60 * 60 // 1 hour
 });
 ```
@@ -147,7 +147,7 @@ The tokens for verification links will use [id tokens](/tokens/basics/id-tokens)
 // token.ts
 
 import { auth } from "./lucia.js";
-import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
+import { idToken } from "@lucia-auth/tokens";
 
 export const emailVerificationToken = idToken(auth, "email-verification", {
 	expiresIn: 60 * 60 // 1 hour

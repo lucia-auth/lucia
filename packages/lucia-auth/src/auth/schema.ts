@@ -6,10 +6,11 @@ export type KeySchema = Readonly<{
 	expires: number | null;
 }>;
 
-export type UserSchema = Readonly<{
-	id: string;
-	[k: string]: any;
-}>;
+export type UserSchema = Readonly<
+	{
+		id: string;
+	} & Required<Lucia.UserAttributes>
+>;
 
 export type SessionSchema = Readonly<{
 	id: string;

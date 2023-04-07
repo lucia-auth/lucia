@@ -833,6 +833,28 @@ try {
 }
 ```
 
+## `transformDatabaseUser()`
+
+Function declared with `transformDatabaseUser()` config.
+
+```ts
+const transformDatabaseUser: (
+	databaseUser: Required<UserSchema>
+) => MaybePromise<User>;
+```
+
+#### Parameters
+
+| name         | type                                                                    |
+| ------------ | ----------------------------------------------------------------------- |
+| databaseUser | `Required<`[`UserSchema`](/reference/lucia-auth/types#sessionschema)`>` |
+
+#### Returns
+
+| type                                       |
+| ------------------------------------------ |
+| [`User`](/reference/lucia-auth/types#user) |
+
 ## `validateSession()`
 
 Validates an active session id, renewing idle sessions if needed. As such, the returned session may not match the input session id and should be stored as a cookie again.

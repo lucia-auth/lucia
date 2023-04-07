@@ -54,8 +54,8 @@ export type PersistentKey = Readonly<{
 }>;
 
 export type Env = "DEV" | "PROD";
-export type User = ReturnType<Lucia.Auth["transformUserData"]>;
-export type UserData = { id: string } & Required<Lucia.UserAttributes>;
+export type User = ReturnType<Lucia.Auth["_transformDatabaseUser"]>;
+type DatabaseUser = { id: string } & Required<Lucia.UserAttributes>;
 
 export const lucia = <C extends Configuration>(config: C) => {
 	return new Auth(config);
@@ -83,11 +83,6 @@ export class Auth<C extends Configuration = any> {
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
 	private autoDatabaseCleanup: boolean;
-	protected transformUserData: (
-		userData: UserSchema
-	) => C["transformUserData"] extends {}
-		? ReturnType<C["transformUserData"]>
-		: { userId: string };
 	protected middleware: C["middleware"] extends Middleware
 		? C["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
@@ -131,19 +126,14 @@ export class Auth<C extends Configuration = any> {
 				config.sessionExpiresIn?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
 		this.autoDatabaseCleanup = config.autoDatabaseCleanup ?? true;
-		this.transformUserData = ({
-			id,
-			hashed_password,
-			provider_id,
-			...attributes
-		}) => {
+		this._transformDatabaseUser = (databaseUser) => {
 			const defaultTransform = ({ id }: UserSchema) => {
 				return {
 					userId: id
 				} as const;
 			};
-			const transform = config.transformUserData ?? defaultTransform;
-			return transform({ id, ...attributes }) as User;
+			const transform = config.transformDatabaseUser ?? defaultTransform;
+			return transform(databaseUser) as any;
 		};
 		this.sessionCookieOption =
 			config.sessionCookie ?? defaultSessionCookieOption;
@@ -154,10 +144,18 @@ export class Auth<C extends Configuration = any> {
 		this.middleware = config.middleware ?? defaultMiddleware();
 		this.origin = config.origin ?? [];
 	}
+	protected _transformDatabaseUser: (
+		databaseUser: UserSchema
+	) => C["transformDatabaseUser"] extends Function
+		? ReturnType<C["transformDatabaseUser"]>
+		: { userId: string };
+	public transformDatabaseUser = (databaseUser: UserSchema): User => {
+		return this._transformDatabaseUser(databaseUser);
+	};
 	public getUser = async (userId: string): Promise<User> => {
 		const databaseUser = await this.adapter.getUser(userId);
 		if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
-		const user = this.transformUserData(databaseUser);
+		const user = this.transformDatabaseUser(databaseUser);
 		return user;
 	};
 
@@ -169,17 +167,17 @@ export class Auth<C extends Configuration = any> {
 	}> => {
 		if (sessionId.length !== 40)
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		let userData: UserSchema | null;
+		let databaseUser: UserSchema | null;
 		let sessionData: SessionSchema | null;
 		if (this.adapter.getSessionAndUserBySessionId !== undefined) {
 			const databaseUserSession =
 				await this.adapter.getSessionAndUserBySessionId(sessionId);
 			if (!databaseUserSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-			userData = databaseUserSession.user;
+			databaseUser = databaseUserSession.user;
 			sessionData = databaseUserSession.session;
 		} else {
 			sessionData = await this.adapter.getSession(sessionId);
-			userData = sessionData
+			databaseUser = sessionData
 				? await this.adapter.getUser(sessionData.user_id)
 				: null;
 		}
@@ -191,9 +189,9 @@ export class Auth<C extends Configuration = any> {
 			}
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		}
-		if (!userData) throw new LuciaError("AUTH_INVALID_USER_ID");
+		if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
 		return {
-			user: this.transformUserData(userData),
+			user: this.transformDatabaseUser(databaseUser),
 			session
 		};
 	};
@@ -209,21 +207,25 @@ export class Auth<C extends Configuration = any> {
 		const userId = await this.generateUserId();
 		const userAttributes = data.attributes ?? {};
 		if (data.primaryKey === null) {
-			const userData = await this.adapter.setUser(userId, userAttributes, null);
-			const user = this.transformUserData(userData);
+			const databaseUser = await this.adapter.setUser(
+				userId,
+				userAttributes,
+				null
+			);
+			const user = this.transformDatabaseUser(databaseUser);
 			return user;
 		}
 		const keyId = `${data.primaryKey.providerId}:${data.primaryKey.providerUserId}`;
 		const password = data.primaryKey.password;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
-		const userData = await this.adapter.setUser(userId, userAttributes, {
+		const databaseUser = await this.adapter.setUser(userId, userAttributes, {
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
 			primary_key: true,
 			expires: null
 		});
-		const user = this.transformUserData(userData);
+		const user = this.transformDatabaseUser(databaseUser);
 		return user;
 	};
 
@@ -231,13 +233,13 @@ export class Auth<C extends Configuration = any> {
 		userId: string,
 		attributes: Partial<Lucia.UserAttributes>
 	): Promise<User> => {
-		const [userData] = await Promise.all([
+		const [databaseUser] = await Promise.all([
 			this.adapter.updateUserAttributes(userId, attributes),
 			this.autoDatabaseCleanup
 				? await this.deleteDeadUserSessions(userId)
 				: null
 		]);
-		const user = this.transformUserData(userData);
+		const user = this.transformDatabaseUser(databaseUser);
 		return user;
 	};
 
@@ -589,5 +591,7 @@ export type Configuration = {
 		idlePeriod: number;
 	};
 	sessionCookie?: CookieOption;
-	transformUserData?: (userData: UserData) => Record<string, any>;
+	transformDatabaseUser?: (
+		databaseUser: Required<UserSchema>
+	) => Record<string, any>;
 };

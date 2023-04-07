@@ -34,7 +34,7 @@ declare namespace Lucia {
 }
 ```
 
-Add `transformUserData()` to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
+Add `transformDatabaseUser()` to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
 
 ```ts
 // lib/server/lucia.ts
@@ -42,7 +42,7 @@ export const auth = lucia({
 	adapter: prisma(client),
 	env: dev ? "DEV" : "PROD",
 	middleware: sveltekit(),
-	transformUserData: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username

@@ -9,7 +9,6 @@ export type GlobalUserAttributes = Lucia.UserAttributes;
 
 export type {
 	User,
-	UserData,
 	Key,
 	Session,
 	SingleUseKey,
