@@ -5,7 +5,7 @@ import { isValidFormSubmission } from "src/forms/submission";
 import MainLayout from "src/layouts/MainLayout.astro";
 
 const authRequest = auth.handleRequest(Astro);
-const handleFormSubmision = async () => {
+const handleFormSubmission = async () => {
 	const validSubmission = isValidFormSubmission(Astro.request);
 	if (!validSubmission) return null;
 	const session = await authRequest.validate();
@@ -14,7 +14,7 @@ const handleFormSubmision = async () => {
 	authRequest.setSession(null);
 };
 
-const response = await handleFormSubmision();
+const response = await handleFormSubmission();
 if (response) return response;
 
 const { user } = await authRequest.validateUser();

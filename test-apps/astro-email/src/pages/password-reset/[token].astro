@@ -26,7 +26,7 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 		return Astro.redirect("/", 302);
 	} catch (e) {
 		console.log(e);
-		errorMessage = "An error occured";
+		errorMessage = "An unknown error occurred";
 		return null;
 	}
 };

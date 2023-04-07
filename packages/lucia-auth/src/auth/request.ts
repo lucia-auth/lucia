@@ -45,7 +45,12 @@ export class AuthRequest<
 		const newSessionId = session?.sessionId ?? null;
 		if (storedSession !== undefined && storedSessionId === newSessionId) return;
 		this.currentSession = session;
-		this.context.setCookie(this.auth.createSessionCookie(session));
+		this.validateUserPromise = null;
+		try {
+			this.context.setCookie(this.auth.createSessionCookie(session));
+		} catch {
+			// response was already created
+		}
 	};
 
 	public validate = async (): Promise<Session | null> => {

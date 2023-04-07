@@ -22,7 +22,8 @@ export const get: APIRoute = async (context) => {
 				location: "/"
 			}
 		});
-	} catch {
+	} catch (e) {
+		console.log(e);
 		return new Response(null, {
 			status: 404
 		});

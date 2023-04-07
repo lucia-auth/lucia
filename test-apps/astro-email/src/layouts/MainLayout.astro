@@ -4,12 +4,16 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Demo mailbox</title>
+		<title>Lucia + Email demo</title>
 	</head>
 	<body>
-		<header class="px-4 fixed top-0 flex w-full place-content-between py-4 place-items-center">
+		<header
+			class="fixed top-0 flex w-full place-content-between place-items-center px-4 py-4"
+		>
 			<a href="/" class="text-xl font-semibold">Lucia Demo</a>
-			<a href="/email" class="hover:underline text-indigo-500" target="_blank">Open mailbox</a>
+			<a href="/email" class="text-indigo-500 hover:underline" target="_blank"
+				>Open mailbox</a
+			>
 		</header>
 		<main class="mx-auto max-w-sm px-4 py-16">
 			<slot />

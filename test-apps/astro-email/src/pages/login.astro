@@ -38,7 +38,7 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 			errorMessage = "Incorrect email or password";
 			return null;
 		}
-		errorMessage = "An unknown error occured";
+		errorMessage = "An unknown error occurred";
 		return null;
 	}
 };
@@ -64,5 +64,5 @@ if (user) {
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}
 	<a href="/password-reset">Forgot password?</a>
-	<a href="/signup">Create an acoount</a>
+	<a href="/signup">Create an account</a>
 </MainLayout>

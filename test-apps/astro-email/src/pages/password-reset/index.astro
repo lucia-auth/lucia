@@ -13,7 +13,6 @@ let errorMessage = "";
 let success = false;
 
 const handleFormSubmission = async (): Promise<Response | null> => {
-	success = false;
 	const validSubmission = isValidFormSubmission(Astro.request);
 	if (!validSubmission) return null;
 	const formData = await Astro.request.formData();
@@ -39,7 +38,7 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 		return null;
 	} catch (e) {
 		console.log(e);
-		errorMessage = "An unknown error occured";
+		errorMessage = "An unknown error occurred";
 		return null;
 	}
 };
@@ -57,7 +56,7 @@ if (session) {
 	<h1>Reset password</h1>
 	<form method="post">
 		<label for="email">Email</label>
-		<input id="email" name="email" />
+		<input id="email" name="email" value={email} />
 		<input type="submit" value="Send email" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}
