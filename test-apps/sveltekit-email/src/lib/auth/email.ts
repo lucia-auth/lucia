@@ -1,14 +1,14 @@
-import type { Email as DatabaseEmail } from "@prisma/client";
-import { prismaClient } from "$lib/db"
+import { prismaClient } from '$lib/db';
+import { customAlphabet } from 'nanoid';
+import type { Email as DatabaseEmail } from '@prisma/client';
 
-const sendEmail = async (
-	emailAddress: string,
-	subject: string,
-	content: string
-) => {
+const sendEmail = async (emailAddress: string, subject: string, content: string) => {
+	const generateId = customAlphabet(
+		'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+	);
 	await prismaClient.email.create({
 		data: {
-			id: Math.floor(Math.random() * 100_000).toString(),
+			id: generateId(8),
 			subject,
 			email_address: emailAddress,
 			content,
@@ -24,18 +24,15 @@ export const sendEmailVerificationEmail = async (
 	const verificationLink = `http://localhost:5173/email-verification/${verificationToken}`;
 	const emailContent = `Please verify your email by clicking the link below:<br/><br/>
 <a href="${verificationLink}">${verificationLink}</a>`;
-	await sendEmail(emailAddress, "Email verification", emailContent);
+	await sendEmail(emailAddress, 'Email verification', emailContent);
 };
 
-export const sendPasswordResetEmail = async (
-	emailAddress: string,
-	resetToken: string
-) => {
+export const sendPasswordResetEmail = async (emailAddress: string, resetToken: string) => {
 	const resetLink = `http://localhost:5173/password-reset/${resetToken}`;
 	const emailContent = `Please reset your password via the link below:<br/><br/>
     
 <a href="${resetLink}">${resetLink}</a>`;
-	await sendEmail(emailAddress, "Password reset", emailContent);
+	await sendEmail(emailAddress, 'Password reset', emailContent);
 };
 
 const transformDatabaseEmail = (databaseEmail: DatabaseEmail) => {
@@ -52,11 +49,11 @@ export const getEmails = async (emailAddressQuery?: string) => {
 	const databaseEmails = await prismaClient.email.findMany({
 		where: {
 			email_address: {
-				contains: emailAddressQuery ?? ""
+				contains: emailAddressQuery ?? ''
 			}
 		},
 		orderBy: {
-			date_sent: "desc"
+			date_sent: 'desc'
 		}
 	});
 	return databaseEmails.map((databaseEmail) => {

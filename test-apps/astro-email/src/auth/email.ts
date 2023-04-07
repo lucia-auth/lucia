@@ -1,14 +1,18 @@
-import type { Email as DatabaseEmail } from "@prisma/client";
 import { prismaClient } from "src/db";
+import { customAlphabet } from 'nanoid';
+import type { Email as DatabaseEmail } from "@prisma/client";
 
 const sendEmail = async (
 	emailAddress: string,
 	subject: string,
 	content: string
 ) => {
+	const generateId = customAlphabet(
+		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	);
 	await prismaClient.email.create({
 		data: {
-			id: Math.floor(Math.random() * 100_000).toString(),
+			id: generateId(8),
 			subject,
 			email_address: emailAddress,
 			content,
