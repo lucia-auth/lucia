@@ -18,6 +18,10 @@ if (theme !== "light" && theme !== "dark") {
 }
 
 const slotHtml = await Astro.slots.render("default");
+
+const origin = import.meta.env.DEV
+	? Astro.url.origin
+	: "https://lucia-auth.com";
 ---
 
 <script>
@@ -40,12 +44,9 @@ const slotHtml = await Astro.slots.render("default");
 		<meta name="generator" content={Astro.generator} />
 		<!-- OpenGraph tags -->
 		<meta property="og:title" content={title} />
-		<meta
-			property="og:url"
-			content={`${Astro.url.origin}${Astro.url.pathname}`}
-		/>
+		<meta property="og:url" content={`${origin}${Astro.url.pathname}`} />
 		<meta property="og:locale" content="en" />
-		<meta property="og:image" content={`${Astro.url.origin}/preview.jpg`} />
+		<meta property="og:image" content={`${origin}/preview.jpg`} />
 		<meta property="og:image:alt" content="" />
 		<meta name="description" property="og:description" content={description} />
 		<meta property="og:site_name" content="Lucia Documentation" />
