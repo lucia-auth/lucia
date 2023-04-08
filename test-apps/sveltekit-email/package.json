@@ -33,10 +33,10 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-prisma": "workspace:0.7.1",
-		"@lucia-auth/tokens": "workspace:0.3.0",
+		"@lucia-auth/adapter-prisma": "workspace:*",
+		"@lucia-auth/tokens": "workspace:*",
 		"@prisma/client": "^4.12.0",
-		"lucia-auth": "workspace:0.11.0",
+		"lucia-auth": "workspace:*",
 		"nanoid": "^4.0.0"
 	}
 }
