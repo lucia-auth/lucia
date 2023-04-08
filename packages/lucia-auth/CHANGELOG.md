@@ -1,5 +1,23 @@
 # lucia-auth
 
+## 1.0.0
+
+### Major changes
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Update `UserSchema`
+
+  - [Breaking] Remove type `UserData`
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Release version 1.0!
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Rename `transformUserData()` to `transformDatabaseUser()`
+
+  - Expose `transformDatabaseUser()`
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Set default middleware to `lucia` - Add `lucia` middleware
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Invalidate user cache on `AuthRequest.setSession()`
+
 ## 0.11.0
 
 ### Minor changes
@@ -7,19 +25,27 @@
 - [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Rename properties
 
   - Rename `SingleUseKey.expires` to `SingleUserKey.expiresAt`, `SingleUseKey.isExpired` to `SingleUserKey.expired`, `SingleUseKey.isPasswordDefined` to `SingleUseKey.passwordDefined`
+
   - Rename `PersistentKey.isPasswordDefined` to `PersistentKey.passwordDefined`
+
   - Rename `Session.isFresh` to `Session.fresh`, `Session.idlePeriodExpires` to `Session.idlePeriodExpiresAt`, `Session.activePeriodExpires` to `Session.activePeriodExpiresAt`
+
   - Rename `Configuration.sessionTimeout` to `Configuration.sessionExpiresIn`
+
   - Update `Auth.createKey()`
 
 - [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Introduce middleware
 
   - [Breaking] Rename `Auth.validateRequestHeaders()` to `Auth.parseRequestHeaders()`
+
   - [Breaking] Replace `Auth.createSessionCookies()` with `Auth.createSessionCookie()`
+
   - [Breaking] `Configuration.sessionCookie` expects an object
+
   - Add `origin` config
 
 - [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Update schema
+
   - Rename `Key.primary` to `Key.primary_key`
 
 ## 0.10.0

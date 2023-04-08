@@ -1,5 +1,5 @@
 import { prismaClient } from "src/db";
-import { customAlphabet } from 'nanoid';
+import { customAlphabet } from "nanoid";
 import type { Email as DatabaseEmail } from "@prisma/client";
 
 const sendEmail = async (

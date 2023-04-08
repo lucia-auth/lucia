@@ -1,5 +1,11 @@
 # @lucia-auth/tokens
 
+## 1.0.0
+
+### Major changes
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Release version 1.0!
+
 ## 0.3.0
 
 ### Minor changes

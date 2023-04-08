@@ -6,6 +6,6 @@ export const load: PageServerLoad = async ({ url }) => {
 	const emails = await getEmails(emailAddressQuery);
 	return {
 		emails,
-        emailAddressQuery
+		emailAddressQuery
 	};
 };
