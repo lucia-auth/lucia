@@ -41,5 +41,5 @@ p.center {
 }
 pre,
 .code {
-	@apply my-2 w-full overflow-auto rounded-md bg-zinc-900 py-2 px-4 text-gray-200;
+	@apply my-2 w-full overflow-auto rounded-md bg-zinc-900 px-4 py-2 text-gray-200;
 }
