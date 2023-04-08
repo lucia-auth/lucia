@@ -131,6 +131,20 @@ A lot of SQL databases seemed to have issues with `user`, `key`, and `primary`. 
 
 Refer to [the database migration guide](https://github.com/pilcrowOnPaper/lucia/discussions/435) for specifics.
 
+## Update config
+
+Replace `transformUserData()` config with `transformDatabaseUser()`. "user data" wasn't a really good name could represent anything.
+
+```ts
+export const auth = lucia({
+	transformDatabaseUser: (databaseUser) => {
+		return {
+			// ...
+		};
+	}
+});
+```
+
 ## API name changes
 
 `Auth` methods:
