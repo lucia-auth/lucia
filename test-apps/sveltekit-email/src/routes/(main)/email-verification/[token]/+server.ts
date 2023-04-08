@@ -1,14 +1,10 @@
-import { auth, emailVerificationToken } from '$lib/auth/lucia';
+import { auth, emailVerificationToken } from '$lib/lucia';
 import { redirect } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ params, locals }) => {
 	const tokenParams = params.token;
-	if (!tokenParams || tokenParams.length !== 43)
-		return new Response(null, {
-			status: 404
-		});
 	try {
 		const token = await emailVerificationToken.validate(tokenParams);
 		await auth.invalidateAllUserSessions(token.userId);
@@ -20,7 +16,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 	} catch (e) {
 		console.log(e);
 		return new Response(null, {
-			status: 404
+			status: 401
 		});
 	}
 	throw redirect(302, '/');

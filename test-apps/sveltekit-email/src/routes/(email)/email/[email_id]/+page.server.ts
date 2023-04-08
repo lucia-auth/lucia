@@ -1,5 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
-import { getEmail } from '$lib/auth/email';
+import { getEmail } from '$lib/email';
 import { prismaClient } from '$lib/db';
 
 import type { PageServerLoad, Actions } from './$types';

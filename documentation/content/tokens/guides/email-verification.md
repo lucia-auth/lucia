@@ -23,7 +23,7 @@ Add a `email_verified` column to store whether the user's email has been verifie
 ```ts
 export const auth = lucia({
 	// ...
-	transformUser: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			isEmailVerified: userData.email_verified
@@ -195,7 +195,6 @@ try {
 } catch (e) {
 	if (e instanceof LuciaTokenError && e.message === "EXPIRED_TOKEN") {
 		// expired token/link
-		// generate new token and send new link
 	}
 	if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
 		// invalid link

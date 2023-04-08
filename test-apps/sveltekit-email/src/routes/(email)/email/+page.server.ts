@@ -1,4 +1,4 @@
-import { getEmails } from '$lib/auth/email';
+import { getEmails } from '$lib/email';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {

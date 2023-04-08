@@ -2,11 +2,7 @@ import { auth, emailVerificationToken } from "@auth/lucia";
 import type { APIRoute } from "astro";
 
 export const get: APIRoute = async (context) => {
-	const tokenParams = context.params.token;
-	if (!tokenParams || tokenParams.length !== 43)
-		return new Response(null, {
-			status: 404
-		});
+	const tokenParams = context.params.token ?? "";
 	try {
 		const token = await emailVerificationToken.validate(tokenParams);
 		await auth.invalidateAllUserSessions(token.userId);

@@ -1,4 +1,4 @@
-import { auth } from '$lib/auth/lucia';
+import { auth } from '$lib/lucia';
 import { emailRegex } from '$lib/form-submission';
 import { LuciaError } from 'lucia-auth';
 import { fail, redirect } from '@sveltejs/kit';

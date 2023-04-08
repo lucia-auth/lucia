@@ -1,4 +1,4 @@
-import { auth, passwordResetToken } from '$lib/auth/lucia';
+import { auth, passwordResetToken } from '$lib/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 
 import type { Actions } from './$types';
@@ -14,7 +14,12 @@ export const actions: Actions = {
 		}
 		try {
 			const token = await passwordResetToken.validate(params.token ?? '');
-			const user = await auth.getUser(token.userId);
+			let user = await auth.getUser(token.userId);
+			if (!user.emailVerified) {
+				user = await auth.updateUserAttributes(user.userId, {
+					email_verified: true
+				});
+			}
 			await auth.invalidateAllUserSessions(user.userId);
 			await auth.updateKeyPassword('email', user.email, password);
 			const session = await auth.createSession(user.userId);

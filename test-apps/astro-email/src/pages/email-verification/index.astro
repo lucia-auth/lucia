@@ -14,8 +14,8 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 	if (!validSubmission) return null;
 	const { user } = await authRequest.validateUser();
 	if (!user || user.emailVerified) return null;
-	const token = await emailVerificationToken.issue(user.userId);
 	try {
+		const token = await emailVerificationToken.issue(user.userId);
 		await sendEmailVerificationEmail(user.email, token.toString());
 		return null;
 	} catch (e) {

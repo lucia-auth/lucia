@@ -1,5 +1,5 @@
-import { sendPasswordResetEmail } from '$lib/auth/email';
-import { auth, passwordResetToken } from '$lib/auth/lucia';
+import { sendPasswordResetEmail } from '$lib/email';
+import { auth, passwordResetToken } from '$lib/lucia';
 import { prismaClient } from '$lib/db';
 import { emailRegex } from '$lib/form-submission';
 import { fail } from '@sveltejs/kit';
