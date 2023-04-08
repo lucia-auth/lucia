@@ -1,0 +1,91 @@
+<section id="md" class="overflow-hidden">
+	<slot />
+</section>
+
+<style lang="postcss">
+	:global(#md h2) {
+		@apply mb-4 mt-16 break-words border-t border-zinc-200 pt-8 text-2xl font-semibold sm:text-3xl;
+	}
+	:global(.dark #md h2) {
+		@apply !border-zinc-700;
+	}
+	:global(#md h3) {
+		@apply mb-4 mt-12 break-words text-xl font-semibold sm:text-2xl;
+	}
+	:global(#md h4) {
+		@apply mt-6 break-words text-lg font-medium sm:text-xl;
+	}
+	:global(#md h5) {
+		@apply mt-2 break-words font-medium sm:text-lg;
+	}
+	:global(#md p) {
+		@apply my-3 leading-relaxed;
+	}
+	:global(#md p code) {
+		@apply text-sm;
+	}
+	:global(#md .astro-code) {
+		@apply my-2 overflow-scroll rounded-md px-4 py-2 text-sm leading-relaxed;
+		scrollbar-width: none;
+	}
+	:global(.dark #md .astro-code) {
+		@apply !bg-shadow-zinc;
+	}
+	:global(#md pre::-webkit-scrollbar) {
+		display: none;
+	}
+	:global(#md a) {
+		@apply text-main cursor-pointer hover:underline;
+	}
+	:global(#md ol) {
+		@apply mb-6 list-inside list-decimal;
+	}
+	:global(#md ul) {
+		@apply mb-6 list-inside list-disc;
+	}
+	:global(#md li) {
+		@apply my-0.5;
+	}
+	:global(#md table) {
+		@apply my-2 w-full table-auto border-collapse text-left;
+	}
+	:global(#md .table-wrapper) {
+		@apply w-full overflow-auto whitespace-nowrap;
+	}
+	:global(#md table thead tr) {
+		@apply w-full border-b border-zinc-200;
+	}
+	:global(.dark #md table thead tr) {
+		@apply !border-zinc-700;
+	}
+	:global(#md table :is(td, th)) {
+		@apply border-b border-zinc-200 py-1.5 px-1;
+	}
+	:global(.dark #md table :is(td, th)) {
+		@apply !border-zinc-700;
+	}
+	:global(#md table th) {
+		@apply text-sm font-medium;
+	}
+	:global(#md blockquote) {
+		@apply my-3 rounded-md border px-4 py-1 text-sm;
+	}
+	:global(#md blockquote.bq-default) {
+		@apply bg-main border-main bg-opacity-20;
+	}
+	:global(#md blockquote.bq-warn) {
+		@apply border-yellow-500 bg-yellow-500 bg-opacity-20;
+	}
+	:global(#md blockquote.bq-red) {
+		@apply border-red-500 bg-red-500 bg-opacity-20;
+	}
+	:global(#md img) {
+		@apply w-full appearance-none rounded-md border border-zinc-200 bg-zinc-100 text-transparent;
+	}
+	:global(.dark #md img) {
+		@apply !border-shadow-zinc;
+	}
+	:global(#md strong) {
+		@apply font-semibold;
+	}
+</style>

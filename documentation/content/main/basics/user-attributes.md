@@ -20,13 +20,13 @@ type User = {
 };
 ```
 
-You can customize this object by providing a [`transformUserData()`](/basics/configuration#transformuserdata) function in the configs. The raw column data will be passed on to the function. Lucia will use the return type as the type of the `User` object.
+You can customize this object by providing a [`transformDatabaseUser()`](/basics/configuration#transformuserdata) function in the configs. The raw column data will be passed on to the function. Lucia will use the return type as the type of the `User` object.
 
 The default value is just as below:
 
 ```ts
 export const auth = lucia({
-	transformUserData: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id
 		};
@@ -49,7 +49,7 @@ declare namespace Lucia {
 }
 ```
 
-If you have a column that has a default value, you can make the column optional by adding `?`. This will be a required field when passed onto `transformUserData()`.
+If you have a column that has a default value, you can make the column optional by adding `?`. This will be a required field when passed onto `transformDatabaseUser()`.
 
 ```ts
 type UserAttributes = {
@@ -98,11 +98,11 @@ declare namespace Lucia {
 }
 ```
 
-This username column can be accessed with `userData.username` inside `transformUserData()` in config:
+This username column can be accessed with `userData.username` inside `transformDatabaseUser()` in config:
 
 ```ts
 export const auth = lucia({
-	transformUserData: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username

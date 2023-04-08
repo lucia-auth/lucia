@@ -22,44 +22,62 @@ export const passwordResetToken = idToken(auth, "password-reset", {
 
 ### 2. Generate and send verification link
 
+The verification link should like something this:
+
+```
+https://localhost:3000/password-reset/[token]
+```
+
+You can alternatively store the token in a query params.
+
 Generate a new token using [`issue()`](/reference/tokens/idtokenwrapper#issue) and store it inside `token` parameter of the verification api url. Don't forget to use `toString()` to get the stringified value of the token.
+
+You can optionally add an check if the email exists in the database.
 
 ```ts
 import { passwordResetToken } from "./token.js";
 
-const token = await passwordResetToken.issue(user.userId);
-const url = new URL("https://example.com/reset-password"); // api to reset password
-url.searchParams.set("token", token.toString());
-
-// send email with verification link
-sendEmail(email, {
-	link: url
+const databaseUser = await db.authUser.findFirst({
+	where: {
+		email: email
+	}
 });
+if (!databaseUser) {
+	return fail(400, {
+		message: "Email does not exist",
+		email
+	});
+}
+const user = auth.transformDatabaseUser(databaseUser);
+try {
+	const token = await passwordResetToken.issue(user.userId);
+
+	// send email with verification link
+	sendVerificationEmail(email, token.toString());
+} catch {
+	// ...
+}
 ```
 
 ### 3. Handle verify requests
 
 When the user opens the link, prompt the user to enter their new password.
 
-On form/POST request, get the token stored inside the url parameter and validate it using [`validate()`](/reference/tokens/idtokenwrapper#validate). If valid, update the password, invalidate all user sessions and tokens, create a new session, and send it to the validated client. Make sure to properly handle errors, like when the tokens are expired.
+On form/POST request, get the token and validate it using [`validate()`](/reference/tokens/idtokenwrapper#validate). If valid, update the password, invalidate all user sessions and tokens, create a new session, and send it to the validated client. Make sure to properly handle errors, like when the tokens are expired.
+
+If you have implemented email verification, you can verify the user's email as well.
 
 ```ts
-// POST /reset-password
+// POST /password-reset
 
 import { auth } from "./lucia.js";
 import { LuciaTokenError } from "@lucia-auth/tokens";
 import { passwordResetToken } from "./token.js";
 
-const newPassword = formData.get("password"); // get input
-const tokenParams = url.searchParams.get("token");
 try {
-	const token = await passwordResetToken.validate(tokenParams);
-	await passwordResetToken.invalidateAllUserTokens(token.userId);
-	// check length etc
-	if (!isValidPassword(newPassword)) {
-		// prompt user to use a more secure password
-	}
-	// update password
+	// extract and validate token from url
+	const token = await passwordResetToken.validate(params.token ?? "");
+	const user = await auth.getUser(token.userId);
 	await auth.updateKeyPassword(providerId, providerUserId, newPassword);
 	await auth.invalidateAllUserSessions(token.userId);
 	const session = await auth.createSession(token.userId);
@@ -68,7 +86,6 @@ try {
 } catch (e) {
 	if (e instanceof LuciaTokenError && e.message === "EXPIRED_TOKEN") {
 		// expired token/link
-		// generate new token and send new link
 	}
 	if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
 		// invalid link

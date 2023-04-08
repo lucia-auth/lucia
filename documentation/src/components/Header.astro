@@ -20,37 +20,53 @@ if (theme !== "light" && theme !== "dark") {
 </script>
 
 <div
-	class="z-50 pointer-events-none fixed left-0 w-full px-4 sm:px-8 backdrop-blur-lg xl:backdrop-blur-none bg-white dark:bg-zinc-900 xl:bg-transparent bg-opacity-80 dark:bg-opacity-10 dark:text-zinc-200"
+	class="pointer-events-none fixed left-0 z-50 w-full bg-white bg-opacity-80 px-4 backdrop-blur-lg dark:bg-zinc-900 dark:bg-opacity-10 dark:text-zinc-200 sm:px-8 xl:bg-transparent xl:backdrop-blur-none"
 >
-	<div class="py-4 flex place-content-between place-items-center">
-		<a class="flex place-items-center pointer-events-auto" href="/">
+	<div class="flex place-content-between place-items-center py-4">
+		<a class="pointer-events-auto flex place-items-center" href="/">
 			<img
 				src="/logo.svg"
 				alt="Lucia logo"
 				width="100"
 				height="100"
-				class="w-6 h-6"
+				class="h-6 w-6"
 			/>
 			<p class="text-2xl font-semibold">Lucia</p>
 		</a>
 		<div
-			class="flex place-items-center pointer-events-auto sm:divide-x divide-zinc-200 dark:divide-zinc-700"
+			class="pointer-events-auto flex place-items-center divide-zinc-200 dark:divide-zinc-700 sm:divide-x"
 		>
 			<a
-				class="px-2 rounded py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 my-1 mr-4 hidden sm:block"
+				class="my-1 mr-4 hidden rounded px-2 py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 sm:block"
 				href="/reference">Reference</a
 			>
-			<div class="flex gap-x-4 place-items-center pl-4">
-				<Discord />
-				<Github />
+			<div class="flex place-items-center gap-x-4 pl-4">
+				<a
+					href="https://discord.gg/PwrK3kpVR3"
+					target="_blank"
+					class="flex h-5 w-5 cursor-pointer place-content-center fill-current hover:opacity-70 dark:text-zinc-200"
+					aria-label="Discord invite"
+				>
+					<Discord />
+				</a>
+
+				<a
+					href="https://github.com/pilcrowOnPaper/lucia"
+					target="_blank"
+					class="flex h-5 w-5 cursor-pointer place-content-center fill-current dark:text-zinc-200"
+					aria-label="Github repository"
+				>
+					<Github />
+				</a>
+
 				<ThemeButton client:load initialTheme={theme} />
 
 				<button class="xl:hidden" aria-label="Toggle menubar" id="menu-button">
-					<div class="h-8 w-8 dark:text-zinc-200 fill-current">
+					<div class="h-8 w-8 fill-current dark:text-zinc-200">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 48 48"
-							class="w-full h-full"
+							class="h-full w-full"
 						>
 							<path d="M6 36v-3h36v3Zm0-10.5v-3h36v3ZM6 15v-3h36v3Z"></path>
 						</svg>

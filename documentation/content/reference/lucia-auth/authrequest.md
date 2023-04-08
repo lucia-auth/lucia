@@ -16,22 +16,9 @@ type AuthRequest = {
 };
 ```
 
-## Constructor
-
-```ts
-const constructor: (auth: Auth, context: RequestContext) => AuthRequest;
-```
-
-#### Parameter
-
-| name    | type                                                         | description    |
-| ------- | ------------------------------------------------------------ | -------------- |
-| auth    | [`Auth`](/reference/lucia-auth/auth)                         | Lucia instance |
-| context | [`RequestContext`](/reference/lucia-auth/types#luciarequest) |                |
-
 ## `setSession()`
 
-Sets the session id cookie of the provided session, or if `null`, removes all session cookies. This will NOT invalidate the current session if the input is `null` - this can be down with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession).
+Sets the session id cookie of the provided session, or if `null`, removes the current session cookies. **The current session will NOT be invalidated in this case** - this can be down with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession). It will invalidate the cached user object.
 
 ```ts
 const setSession: (session: Session | null) => void;

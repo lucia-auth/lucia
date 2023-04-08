@@ -6,16 +6,9 @@ import Header from "@components/Header.astro";
 import { getContent } from "@cela/content";
 import { frameworkIds } from "@lib/framework";
 import redirects from "redirects.json";
-
-const error404 = async () => {
-	const response = await fetch(`${Astro.url.origin}/404.html`);
-	return new Response(response.body, {
-		status: 404,
-		headers: {
-			"Content-Type": "text/html"
-		}
-	});
-};
+import { error404 } from "@lib/error";
+import MarkdownContent from "@components/MarkdownContent.astro";
+import Banner from "@components/Banner.astro";
 
 const redirectTarget = redirects.find((val) => val.from === Astro.url.pathname);
 
@@ -39,7 +32,10 @@ if (requestedFrameworkId) {
 
 const content = await getContent(Astro.url.pathname, requestedFrameworkId);
 
-if (!content) return error404();
+if (!content) {
+	const errorResponse = error404(Astro.url);
+	return errorResponse;
+}
 
 if (content.metaData.redirect) {
 	return Astro.redirect(content.metaData.redirect, 302);
@@ -74,20 +70,20 @@ const contributePageUrl = new URL(
 	<main
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200 lg:pr-64 xl:pl-80"
 	>
-		<article class="pt-24 pb-12">
-			<section id="md" class="overflow-hidden px-4 sm:px-8 md:px-24 xl:px-24">
-				<h1 class="mb-16 text-4xl font-semibold sm:text-5xl break-words">
-					{content.metaData.title}
-				</h1>
+		<article class="overflow-hidden px-4 pt-24 pb-12 sm:px-8 md:px-24 xl:px-24">
+			<h1 class="mb-16 break-words text-4xl font-semibold sm:text-5xl">
+				{content.metaData.title}
+			</h1>
+			<MarkdownContent>
 				<content.Content />
-				<div class="mt-16">
-					<a
-						href={contributePageUrl}
-						class="text-main cursor-pointer; hover:underline"
-						>Contribute to this page</a
-					>
-				</div>
-			</section>
+			</MarkdownContent>
+			<div class="mt-16">
+				<a
+					href={contributePageUrl}
+					class="text-main cursor-pointer; hover:underline"
+					>Contribute to this page</a
+				>
+			</div>
 		</article>
 	</main>
 	<div class="fixed right-0 top-0 hidden h-screen w-64 pr-8 pt-24 lg:block">
@@ -126,92 +122,5 @@ const contributePageUrl = new URL(
 			}
 		</ul>
 	</div>
+	<Banner />
 </Layout>
-
-<style lang="postcss">
-	:global(#md h2) {
-		@apply mb-4 mt-16 break-words border-t border-zinc-200 pt-8 text-2xl font-semibold sm:text-3xl;
-	}
-	:global(.dark #md h2) {
-		@apply !border-zinc-700;
-	}
-	:global(#md h3) {
-		@apply mb-4 mt-12 break-words text-xl font-semibold sm:text-2xl;
-	}
-	:global(#md h4) {
-		@apply mt-6 break-words text-lg font-medium sm:text-xl;
-	}
-	:global(#md h5) {
-		@apply mt-2 break-words font-medium sm:text-lg;
-	}
-	:global(#md p) {
-		@apply my-3 leading-relaxed;
-	}
-	:global(#md p code) {
-		@apply text-sm;
-	}
-	:global(#md .astro-code) {
-		@apply my-2 overflow-scroll rounded-md px-4 py-2 text-sm leading-relaxed;
-		scrollbar-width: none;
-	}
-	:global(.dark #md .astro-code) {
-		@apply !bg-shadow-zinc;
-	}
-	:global(#md pre::-webkit-scrollbar) {
-		display: none;
-	}
-	:global(#md a) {
-		@apply text-main cursor-pointer hover:underline;
-	}
-	:global(#md ol) {
-		@apply mb-6 list-inside list-decimal;
-	}
-	:global(#md ul) {
-		@apply mb-6 list-inside list-disc;
-	}
-	:global(#md li) {
-		@apply my-0.5;
-	}
-	:global(#md table) {
-		@apply my-2 w-full table-auto border-collapse text-left;
-	}
-	:global(#md .table-wrapper) {
-		@apply w-full overflow-auto whitespace-nowrap;
-	}
-	:global(#md table thead tr) {
-		@apply w-full border-b border-zinc-200;
-	}
-	:global(.dark #md table thead tr) {
-		@apply !border-zinc-700;
-	}
-	:global(#md table :is(td, th)) {
-		@apply border-b border-zinc-200 py-1.5 px-1;
-	}
-	:global(.dark #md table :is(td, th)) {
-		@apply !border-zinc-700;
-	}
-	:global(#md table th) {
-		@apply text-sm font-medium;
-	}
-	:global(#md blockquote) {
-		@apply my-3 rounded-md border px-4 py-1 text-sm;
-	}
-	:global(#md blockquote.bq-default) {
-		@apply bg-main border-main bg-opacity-20;
-	}
-	:global(#md blockquote.bq-warn) {
-		@apply border-yellow-500 bg-yellow-500 bg-opacity-20;
-	}
-	:global(#md blockquote.bq-red) {
-		@apply border-red-500 bg-red-500 bg-opacity-20;
-	}
-	:global(#md img) {
-		@apply w-full appearance-none rounded-md border border-zinc-200 bg-gray-100 text-transparent;
-	}
-	:global(.dark #md img) {
-		@apply !border-shadow-zinc;
-	}
-	:global(#md strong) {
-		@apply font-semibold;
-	}
-</style>

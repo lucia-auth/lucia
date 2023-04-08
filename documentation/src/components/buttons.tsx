@@ -2,10 +2,7 @@ import { addClassName, removeClassName } from "@lib/dom";
 import { dynamicClassName } from "@lib/styles";
 import { For, Show, createSignal } from "solid-js";
 import frameworks from "@lib/framework";
-
-const setCookie = (name: string, value: string) => {
-	document.cookie = `${name}=${value};max-age=${60 * 60 * 24 * 365};path=/;`;
-};
+import { setCookie } from "@lib/cookie";
 
 export const ThemeButton = (props: { initialTheme: string }) => {
 	const useTheme = () => {

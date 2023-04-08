@@ -70,16 +70,36 @@ In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.
 
 ```ts
 // src/app.d.ts
-/// <reference types="lucia-auth" />
-declare namespace Lucia {
-	type Auth = import("$lib/server/lucia").Auth;
-	type UserAttributes = {};
-}
-
-/// <reference types="@sveltejs/kit" />
-declare namespace App {
-	interface Locals {
-		auth: import("lucia-auth").AuthRequest;
+declare global {
+	namespace App {
+		interface Locals {
+			auth: import("lucia-auth").AuthRequest;
+		}
 	}
 }
+
+/// <reference types="lucia-auth" />
+declare global {
+	namespace Lucia {
+		type Auth = import("$lib/lucia").Auth;
+		type UserAttributes = {};
+	}
+}
+
+// THIS IS IMPORTANT!!!
+export {}
 ```
+
+## Troubleshooting
+
+If you get the following error or something similar:
+
+```
+TypeError: Cannot read properties of undefined (reading 'validate')
+```
+
+Make sure your `handle` hook is running. Common mistakes include:
+
+1. `hook.sever.ts` (singular) instead of `hooks.server.ts` (plural)
+2. `hooks.server.ts` inside `routes` directory instead of `src` directory
+3. `+hooks.server.ts` (`+`) instead of `hooks.server.ts`

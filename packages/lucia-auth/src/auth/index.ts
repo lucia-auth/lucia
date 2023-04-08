@@ -12,14 +12,14 @@ import {
 } from "../utils/crypto.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
-import { validateDatabaseSessionData } from "./session.js";
+import { validateDatabaseSession } from "./session.js";
 import { transformDatabaseKey, getOneTimeKeyExpiration } from "./key.js";
 import { isWithinExpiration } from "../utils/date.js";
 import { AuthRequest } from "./request.js";
-import { node as defaultMiddleware } from "../middleware/index.js";
+import { lucia as defaultMiddleware } from "../middleware/index.js";
 
-import type { UserSchema, SessionSchema, KeySchema } from "./schema.type.js";
-import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.type.js";
+import type { UserSchema, SessionSchema, KeySchema } from "./schema.js";
+import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.js";
 import type { LuciaErrorConstructor } from "./error.js";
 import type { Middleware, LuciaRequest } from "./request.js";
 
@@ -54,16 +54,16 @@ export type PersistentKey = Readonly<{
 }>;
 
 export type Env = "DEV" | "PROD";
-export type User = ReturnType<Lucia.Auth["transformUserData"]>;
-export type UserData = { id: string } & Required<Lucia.UserAttributes>;
+export type User = ReturnType<Lucia.Auth["_transformDatabaseUser"]>;
+type DatabaseUser = { id: string } & Required<Lucia.UserAttributes>;
 
 export const lucia = <C extends Configuration>(config: C) => {
 	return new Auth(config);
 };
 
 const validateConfiguration = (config: Configuration) => {
-	const isAdapterProvided = config.adapter;
-	if (!isAdapterProvided) {
+	const adapterProvided = config.adapter;
+	if (!adapterProvided) {
 		logError('Adapter is not defined in configuration ("config.adapter")');
 		process.exit(1);
 	}
@@ -83,11 +83,6 @@ export class Auth<C extends Configuration = any> {
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
 	private autoDatabaseCleanup: boolean;
-	protected transformUserData: (
-		userData: UserSchema
-	) => C["transformUserData"] extends {}
-		? ReturnType<C["transformUserData"]>
-		: { userId: string };
 	protected middleware: C["middleware"] extends Middleware
 		? C["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
@@ -131,19 +126,14 @@ export class Auth<C extends Configuration = any> {
 				config.sessionExpiresIn?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
 		this.autoDatabaseCleanup = config.autoDatabaseCleanup ?? true;
-		this.transformUserData = ({
-			id,
-			hashed_password,
-			provider_id,
-			...attributes
-		}) => {
+		this._transformDatabaseUser = (databaseUser) => {
 			const defaultTransform = ({ id }: UserSchema) => {
 				return {
 					userId: id
 				} as const;
 			};
-			const transform = config.transformUserData ?? defaultTransform;
-			return transform({ id, ...attributes }) as User;
+			const transform = config.transformDatabaseUser ?? defaultTransform;
+			return transform(databaseUser) as any;
 		};
 		this.sessionCookieOption =
 			config.sessionCookie ?? defaultSessionCookieOption;
@@ -154,10 +144,18 @@ export class Auth<C extends Configuration = any> {
 		this.middleware = config.middleware ?? defaultMiddleware();
 		this.origin = config.origin ?? [];
 	}
+	protected _transformDatabaseUser: (
+		databaseUser: UserSchema
+	) => C["transformDatabaseUser"] extends Function
+		? ReturnType<C["transformDatabaseUser"]>
+		: { userId: string };
+	public transformDatabaseUser = (databaseUser: UserSchema): User => {
+		return this._transformDatabaseUser(databaseUser);
+	};
 	public getUser = async (userId: string): Promise<User> => {
 		const databaseUser = await this.adapter.getUser(userId);
 		if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
-		const user = this.transformUserData(databaseUser);
+		const user = this.transformDatabaseUser(databaseUser);
 		return user;
 	};
 
@@ -169,31 +167,31 @@ export class Auth<C extends Configuration = any> {
 	}> => {
 		if (sessionId.length !== 40)
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		let userData: UserSchema | null;
+		let databaseUser: UserSchema | null;
 		let sessionData: SessionSchema | null;
 		if (this.adapter.getSessionAndUserBySessionId !== undefined) {
 			const databaseUserSession =
 				await this.adapter.getSessionAndUserBySessionId(sessionId);
 			if (!databaseUserSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-			userData = databaseUserSession.user;
+			databaseUser = databaseUserSession.user;
 			sessionData = databaseUserSession.session;
 		} else {
 			sessionData = await this.adapter.getSession(sessionId);
-			userData = sessionData
+			databaseUser = sessionData
 				? await this.adapter.getUser(sessionData.user_id)
 				: null;
 		}
 		if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const session = validateDatabaseSessionData(sessionData);
+		const session = validateDatabaseSession(sessionData);
 		if (!session) {
 			if (this.autoDatabaseCleanup) {
 				await this.adapter.deleteSession(sessionId);
 			}
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		}
-		if (!userData) throw new LuciaError("AUTH_INVALID_USER_ID");
+		if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
 		return {
-			user: this.transformUserData(userData),
+			user: this.transformDatabaseUser(databaseUser),
 			session
 		};
 	};
@@ -209,21 +207,25 @@ export class Auth<C extends Configuration = any> {
 		const userId = await this.generateUserId();
 		const userAttributes = data.attributes ?? {};
 		if (data.primaryKey === null) {
-			const userData = await this.adapter.setUser(userId, userAttributes, null);
-			const user = this.transformUserData(userData);
+			const databaseUser = await this.adapter.setUser(
+				userId,
+				userAttributes,
+				null
+			);
+			const user = this.transformDatabaseUser(databaseUser);
 			return user;
 		}
 		const keyId = `${data.primaryKey.providerId}:${data.primaryKey.providerUserId}`;
 		const password = data.primaryKey.password;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
-		const userData = await this.adapter.setUser(userId, userAttributes, {
+		const databaseUser = await this.adapter.setUser(userId, userAttributes, {
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword,
 			primary_key: true,
 			expires: null
 		});
-		const user = this.transformUserData(userData);
+		const user = this.transformDatabaseUser(databaseUser);
 		return user;
 	};
 
@@ -231,13 +233,13 @@ export class Auth<C extends Configuration = any> {
 		userId: string,
 		attributes: Partial<Lucia.UserAttributes>
 	): Promise<User> => {
-		const [userData] = await Promise.all([
+		const [databaseUser] = await Promise.all([
 			this.adapter.updateUserAttributes(userId, attributes),
 			this.autoDatabaseCleanup
 				? await this.deleteDeadUserSessions(userId)
 				: null
 		]);
-		const user = this.transformUserData(userData);
+		const user = this.transformDatabaseUser(databaseUser);
 		return user;
 	};
 
@@ -255,8 +257,8 @@ export class Auth<C extends Configuration = any> {
 		const keyId = `${providerId}:${providerUserId}`;
 
 		const shouldDataBeDeleted = async (data: KeySchema) => {
-			const isPersistent = data.expires === null;
-			if (isPersistent) return false;
+			const persistentKey = data.expires === null;
+			if (persistentKey) return false;
 
 			if (data.hashed_password === null) return true;
 			if (password === null) return false;
@@ -269,10 +271,10 @@ export class Auth<C extends Configuration = any> {
 			shouldDataBeDeleted
 		);
 		if (!databaseKeyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		const isSingleUse = databaseKeyData.expires;
-		if (isSingleUse) {
-			const isValid = isWithinExpiration(databaseKeyData.expires);
-			if (!isValid) throw new LuciaError("AUTH_EXPIRED_KEY");
+		const singleUse = !!databaseKeyData.expires;
+		if (singleUse) {
+			const withinExpiration = isWithinExpiration(databaseKeyData.expires);
+			if (!withinExpiration) throw new LuciaError("AUTH_EXPIRED_KEY");
 		}
 		const hashedPassword = databaseKeyData.hashed_password;
 		if (hashedPassword) {
@@ -280,11 +282,8 @@ export class Auth<C extends Configuration = any> {
 			if (!hashedPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
 			if (hashedPassword.startsWith("$2a"))
 				throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-			const isValidPassword = await this.hash.validate(
-				password,
-				hashedPassword
-			);
-			if (!isValidPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
+			const validPassword = await this.hash.validate(password, hashedPassword);
+			if (!validPassword) throw new LuciaError("AUTH_INVALID_PASSWORD");
 		}
 
 		const key = transformDatabaseKey(databaseKeyData);
@@ -296,7 +295,7 @@ export class Auth<C extends Configuration = any> {
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		const databaseSession = await this.adapter.getSession(sessionId);
 		if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const session = validateDatabaseSessionData(databaseSession);
+		const session = validateDatabaseSession(databaseSession);
 		if (!session) {
 			if (this.autoDatabaseCleanup) {
 				await this.adapter.deleteSession(sessionId);
@@ -307,41 +306,31 @@ export class Auth<C extends Configuration = any> {
 	};
 
 	public getAllUserSessions = async (userId: string): Promise<Session[]> => {
+		// validate user id
 		await this.getUser(userId);
 		const databaseData = await this.adapter.getSessionsByUserId(userId);
-		const storedUserSessions = databaseData.map((val) => {
-			const session = validateDatabaseSessionData(val);
-			if (session) {
-				return {
-					isValid: true,
-					session
-				} as const;
-			}
-			return {
-				isValid: false,
-				sessionId: val.id
-			} as const;
-		});
-		if (storedUserSessions.some((val) => val.isValid === false)) {
+		const validStoredUserSessions = databaseData
+			.map((databaseSession) => {
+				return validateDatabaseSession(databaseSession);
+			})
+			.filter((session): session is Session => session !== null);
+		const deadStoredUserSessionIds = databaseData
+			.map((databaseSession) => {
+				return databaseSession.id;
+			})
+			.filter((sessionId) => {
+				return !validStoredUserSessions.some(
+					(validSession) => validSession.sessionId === sessionId
+				);
+			});
+		if (deadStoredUserSessionIds.length > 0) {
 			await Promise.all(
-				storedUserSessions
-					.filter(
-						(
-							val
-						): val is {
-							isValid: false;
-							sessionId: string;
-						} => val.isValid === false
-					)
-					.map((val) => val)
+				deadStoredUserSessionIds.map((deadSessionId) =>
+					this.adapter.deleteSession(deadSessionId)
+				)
 			);
 		}
-		const validUserSessions = storedUserSessions
-			.map((val) => {
-				return val.isValid ? val.session : null;
-			})
-			.filter((val): val is Session => val !== null);
-		return validUserSessions;
+		return validStoredUserSessions;
 	};
 
 	public validateSession = async (sessionId: string): Promise<Session> => {
@@ -363,7 +352,7 @@ export class Auth<C extends Configuration = any> {
 		};
 	};
 
-	public generateSessionId = (): [
+	public generateSessionId = (): readonly [
 		sessionId: string,
 		activePeriodExpiresAt: Date,
 		idlePeriodExpiresAt: Date
@@ -405,9 +394,9 @@ export class Auth<C extends Configuration = any> {
 	public renewSession = async (sessionId: string): Promise<Session> => {
 		if (sessionId.length !== 40)
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const sessionData = await this.adapter.getSession(sessionId);
-		if (!sessionData) throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		const session = validateDatabaseSessionData(sessionData);
+		const databaseSession = await this.adapter.getSession(sessionId);
+		if (!databaseSession) throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		const session = validateDatabaseSession(databaseSession);
 		if (!session) {
 			if (this.autoDatabaseCleanup) {
 				await this.adapter.deleteSession(sessionId);
@@ -432,12 +421,18 @@ export class Auth<C extends Configuration = any> {
 	};
 
 	public deleteDeadUserSessions = async (userId: string): Promise<void> => {
-		const sessions = await this.adapter.getSessionsByUserId(userId);
-		const deadSessionIds = sessions
-			.filter((val) => !isWithinExpiration(val.idle_expires))
-			.map((val) => val.id);
+		const databaseSessions = await this.adapter.getSessionsByUserId(userId);
+		const deadSessionIds = databaseSessions
+			.filter((databaseSession) => {
+				return validateDatabaseSession(databaseSession) === null;
+			})
+			.map((databaseSession) => databaseSession.id);
 		if (deadSessionIds.length === 0) return;
-		await this.adapter.deleteSession(...deadSessionIds);
+		await Promise.all(
+			deadSessionIds.map((deadSessionId) => {
+				this.adapter.deleteSession(deadSessionId);
+			})
+		);
 	};
 
 	public parseRequestHeaders = (request: LuciaRequest): string | null => {
@@ -531,7 +526,10 @@ export class Auth<C extends Configuration = any> {
 		} satisfies SingleUseKey as any;
 	};
 
-	public deleteKey = async (providerId: string, providerUserId: string) => {
+	public deleteKey = async (
+		providerId: string,
+		providerUserId: string
+	): Promise<void> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		await this.adapter.deleteNonPrimaryKey(keyId);
 	};
@@ -542,9 +540,9 @@ export class Auth<C extends Configuration = any> {
 	): Promise<Key> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		const shouldDataBeDeleted = async () => false;
-		const keyData = await this.adapter.getKey(keyId, shouldDataBeDeleted);
-		if (!keyData) throw new LuciaError("AUTH_INVALID_KEY_ID");
-		const key = transformDatabaseKey(keyData);
+		const databaseKey = await this.adapter.getKey(keyId, shouldDataBeDeleted);
+		if (!databaseKey) throw new LuciaError("AUTH_INVALID_KEY_ID");
+		const key = transformDatabaseKey(databaseKey);
 		return key;
 	};
 
@@ -593,5 +591,7 @@ export type Configuration = {
 		idlePeriod: number;
 	};
 	sessionCookie?: CookieOption;
-	transformUserData?: (userData: UserData) => Record<string, any>;
+	transformDatabaseUser?: (
+		databaseUser: Required<UserSchema>
+	) => Record<string, any>;
 };

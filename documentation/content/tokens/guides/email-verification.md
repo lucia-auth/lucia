@@ -23,7 +23,7 @@ Add a `email_verified` column to store whether the user's email has been verifie
 ```ts
 export const auth = lucia({
 	// ...
-	transformUser: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			isEmailVerified: userData.email_verified
@@ -82,9 +82,9 @@ One time passwords will use [password tokens](/tokens/basics/password-tokens). C
 // token.ts
 
 import { auth } from "./lucia.js";
-import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
+import { passwordToken } from "@lucia-auth/tokens";
 
-export const otpToken = idToken(auth, "otp", {
+export const otpToken = passwordToken(auth, "otp", {
 	expiresIn: 60 * 60 // 1 hour
 });
 ```
@@ -147,7 +147,7 @@ The tokens for verification links will use [id tokens](/tokens/basics/id-tokens)
 // token.ts
 
 import { auth } from "./lucia.js";
-import { idToken, LuciaTokenError } from "@lucia-auth/tokens";
+import { idToken } from "@lucia-auth/tokens";
 
 export const emailVerificationToken = idToken(auth, "email-verification", {
 	expiresIn: 60 * 60 // 1 hour
@@ -195,7 +195,6 @@ try {
 } catch (e) {
 	if (e instanceof LuciaTokenError && e.message === "EXPIRED_TOKEN") {
 		// expired token/link
-		// generate new token and send new link
 	}
 	if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
 		// invalid link
