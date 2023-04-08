@@ -2,10 +2,7 @@ import { addClassName, removeClassName } from "@lib/dom";
 import { dynamicClassName } from "@lib/styles";
 import { For, Show, createSignal } from "solid-js";
 import frameworks from "@lib/framework";
-
-const setCookie = (name: string, value: string) => {
-	document.cookie = `${name}=${value};max-age=${60 * 60 * 24 * 365};path=/;`;
-};
+import { setCookie } from "@lib/cookie";
 
 export const ThemeButton = (props: { initialTheme: string }) => {
 	const useTheme = () => {
@@ -86,7 +83,7 @@ export const FrameworkButton = (props: { current?: string | null }) => {
 										})}
 									>
 										<a
-											class="dark:hover:bg-zinc-950 block w-full py-1 px-4 hover:bg-zinc-100"
+											class="block w-full px-4 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-950"
 											href={href}
 										>
 											{option.title}

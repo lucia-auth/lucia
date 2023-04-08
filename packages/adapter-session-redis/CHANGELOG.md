@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-session-redis
 
+## 1.0.0
+
+### Major changes
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Release version 1.0!
+
 ## 0.1.7
 
 ### Patch changes

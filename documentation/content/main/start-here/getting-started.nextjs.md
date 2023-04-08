@@ -18,17 +18,19 @@ Using the guide from the adapter docs, set up the database and install the adapt
 
 ## Initialize Lucia
 
-In `auth/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Make sure to export `typeof auth` as well.
+In `auth/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Additionally, we will import the Node middleware and pass it on to `middleware`. Make sure to export `typeof auth` as well.
 
 ```ts
 // auth/lucia.ts
 import lucia from "lucia-auth";
+import { node } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD"
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: node()
 });
 
 export type Auth = typeof auth;

@@ -12,4 +12,5 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
-.cela-generated
+.cela_generated
+.vercel

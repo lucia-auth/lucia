@@ -223,10 +223,10 @@ const adapter =
 					throw e;
 				}
 			},
-			deleteSession: async (...sessionIds) => {
+			deleteSession: async (sessionId) => {
 				await kysely
 					.deleteFrom("auth_session")
-					.where("id", "in", sessionIds)
+					.where("id", "is", sessionId)
 					.execute();
 			},
 			deleteSessionsByUserId: async (userId) => {

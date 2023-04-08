@@ -8,6 +8,7 @@ import contributors from "../../.github.json";
 
 import { frameworkIds } from "@lib/framework";
 import { getCollection } from "@cela/content";
+import Banner from "@components/Banner.astro";
 
 let frameworkId = Astro.url.searchParams.get("framework") ?? null;
 
@@ -40,8 +41,10 @@ if (!collection) {
 	<main
 		class="min-h-screen overflow-hidden bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:ml-80"
 	>
-		<div class="px-4 pt-36 sm:pt-48 md:pt-36 md:px-24 lg:pt-48">
-			<h1 class="text-4xl xs:text-6xl break-words font-semibold leading-none sm:text-7xl">
+		<div class="px-4 pt-36 sm:pt-48 md:px-24 md:pt-36 lg:pt-48">
+			<h1
+				class="xs:text-6xl break-words text-4xl font-semibold leading-none sm:text-7xl"
+			>
 				Authentication, <br />simple and clean
 			</h1>
 			<p class="mb-4 mt-6">
@@ -72,7 +75,7 @@ if (!collection) {
 									src={val.avatar}
 									height="128"
 									width="128"
-									class="dark:border-shadow-zinc hover:border-main dark:hover:border-main bg-geay-100 h-8 w-8 rounded-full border object-fill transition duration-100 hover:scale-110"
+									class="dark:border-shadow-zinc hover:border-main dark:hover:border-main h-8 w-8 rounded-full border bg-zinc-100 object-fill transition duration-100 hover:scale-110"
 									alt={val.username}
 									loading="lazy"
 								/>
@@ -83,6 +86,20 @@ if (!collection) {
 			</section>
 		</div>
 	</main>
+	<Banner />
+	<script>
+		import { setCookie } from "@lib/cookie";
+		import { addClassName } from "@lib/dom";
+
+		const bannerCloseButton = document.getElementById("banner-close-button");
+		const bannerDiv = document.getElementById("banner");
+		if (bannerCloseButton && bannerDiv) {
+			bannerCloseButton.addEventListener("click", () => {
+				setCookie("banner-hidden", "true");
+				addClassName(bannerDiv, "hidden");
+			});
+		}
+	</script>
 </Layout>
 
 <style>

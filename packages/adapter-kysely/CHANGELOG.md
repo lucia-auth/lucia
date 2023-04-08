@@ -1,10 +1,17 @@
 # @lucia-auth/adapter-kysely
 
+## 1.0.0
+
+### Major changes
+
+- [#443](https://github.com/pilcrowOnPaper/lucia/pull/443) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Release version 1.0!
+
 ## 0.8.0
 
 ### Minor changes
 
 - [#430](https://github.com/pilcrowOnPaper/lucia/pull/430) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Require `lucia-auth` 0.11.0
+
   - Update schema
 
 ## 0.7.1

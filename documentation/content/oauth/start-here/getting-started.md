@@ -11,22 +11,26 @@ Supported providers are listed on the left. You can also add your own providers 
 ## Installation
 
 ```bash
-npm i lucia-auth @lucia-auth/oauth
-pnpm add lucia-auth @lucia-auth/oauth
-yarn add lucia-auth @lucia-auth/oauth
+npm i @lucia-auth/oauth
+pnpm add @lucia-auth/oauth
+yarn add @lucia-auth/oauth
 ```
 
 This page will use Github OAuth but the API and auth flow is nearly identical between providers.
 
 ## Initialize OAuth handler
 
-Initialize the handler using the Lucia `Auth` instance and provider-specific config. Refer to each provider's documentation for the specifics.
+Initialize the handler using the Lucia `Auth` instance and provider-specific config. This page will use Github OAuth but the auth flow is the same across providers. Refer to each provider's documentation for the specifics.
 
 ```ts
+// lucia.ts
 import { github } from "@lucia-auth/oauth/providers";
-import { auth } from "./lucia.js";
 
-const githubAuth = github(auth, config);
+export const auth = lucia({
+	// ...
+});
+
+export const githubAuth = github(auth, config);
 ```
 
 ## Sign in with the provider
@@ -35,8 +39,7 @@ When a user clicks "Sign in with <provider>", redirect the user to a GET endpoin
 
 ```ts
 // SERVER
-import { github } from "@lucia-auth/oauth/providers";
-import { auth } from "./lucia.js";
+import { auth, githubAuth } from "$lib/lucia.js";
 
 const handleGetRequests = async () => {
 	const providerAuth = provider(auth, config);
@@ -45,7 +48,7 @@ const handleGetRequests = async () => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 
 	// the state can be stored in cookies or localstorage for request validation on callback
-	setCookie("state", state, {
+	setCookie("github_oauth_state", state, {
 		path: "/",
 		httpOnly: true, // only readable in the server
 		maxAge: 60 * 60 // a reasonable expiration date
@@ -76,38 +79,42 @@ The following is semi-pseudo-code (namely the provider part):
 
 ```ts
 // SERVER
-import { github } from "@lucia-auth/oauth/providers";
-import { auth } from "./lucia.js";
-
-const githubAuth = provider(auth, config);
+import { auth, githubAuth } from "$lib/lucia.js";
 
 // handle GET requests
 export const handleGetRequests = async (request: Request) => {
 	// get code and state params from url
 	const url = new URL(request.url);
-	const code = url.searchParams.get("code"); // http://localhost:3000/api/google?code=abc&state=efg => abc
-	const state = url.searchParams.get("state"); // http://localhost:3000/api/google?code=abc&state=efg => efg
+	const code = url.searchParams.get("code");
+	const state = url.searchParams.get("state");
 
 	// get stored state from cookies
-	const storedState = request.headers.cookie.get("state");
+	const cookie = parseCookie(request.headers.get("cookie"));
+	const storedState = cookie.github_oauth_state;
 
 	// validate state
 	if (state !== storedState) throw new Error(); // invalid state
 
-	const { existingUser, providerUser, createUser } =
-		await githubAuth.validateCallback(code);
+	try {
+		const { existingUser, providerUser, createUser } =
+			await githubAuth.validateCallback(code);
 
-	const getUser = async () => {
-		if (existingUser) return existingUser;
-		// create a new user if the user does not exist
-		return await createUser({
-			username: providerUser.username // attributes
-		});
-	};
-	const user = await getUser();
+		const getUser = async () => {
+			if (existingUser) return existingUser;
+			// create a new user if the user does not exist
+			return await createUser({
+				// attributes
+				username: providerUser.login
+			});
+		};
+		const user = await getUser();
+		const session = await auth.createSession(user.userId);
 
-	const session = await auth.createSession(user.userId);
-	setSessionCookie(session); // store session cookie
+		const authRequest = await auth.handleRequest();
+		authRequest.setSession(session); // store session cookie
+	} catch {
+		// invalid code
+	}
 };
 ```
 

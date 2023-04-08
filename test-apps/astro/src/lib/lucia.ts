@@ -8,7 +8,7 @@ import { github } from "@lucia-auth/oauth/providers";
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
 	env: import.meta.env.DEV ? "DEV" : "PROD",
-	transformUserData: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username

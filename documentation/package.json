@@ -22,8 +22,6 @@
 	},
 	"devDependencies": {
 		"rehype": "^12.0.1",
-		"rehype-rewrite": "^3.0.6",
-		"rehype-wrap-all": "^1.1.0",
-		"siena": "^0.1.3"
+		"siena": "^0.3.0"
 	}
 }

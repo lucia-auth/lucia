@@ -1,0 +1,103 @@
+---
+import BlogHeader from "@components/BlogHeader.astro";
+import Layout from "@components/Layout.astro";
+import MarkdownContent from "@components/MarkdownContent.astro";
+
+import type {
+	MarkdownInstance,
+	GetStaticPathsResult,
+	InferGetStaticPropsType
+} from "astro";
+
+export const prerender = true;
+
+export const getStaticPaths = async () => {
+	const blogMdImports = Object.entries(
+		import.meta.glob<
+			MarkdownInstance<{
+				title: string;
+				description: string;
+				date: string;
+				video?: string;
+			}>
+		>("/blog/*.md")
+	).map(([importPath, resolve]) => {
+		return async () => {
+			const resolvedImport = await resolve();
+			return {
+				importPath,
+				...resolvedImport
+			};
+		};
+	});
+	const resolveBlogMdPromises = blogMdImports.map((resolve) => resolve());
+	const resolvedBlogMds = await Promise.all(resolveBlogMdPromises);
+	return resolvedBlogMds.map((md) => {
+		return {
+			params: {
+				content: md.importPath.replace("/blog/", "").replace(".md", "")
+			},
+			props: {
+				Content: md.Content,
+				metaData: md.frontmatter
+			}
+		};
+	}) satisfies GetStaticPathsResult;
+};
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { Content, metaData } = Astro.props;
+---
+
+<Layout
+	meta={{
+		title: metaData.title,
+		description: metaData.description
+	}}
+>
+	<BlogHeader />
+	<main
+		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200"
+	>
+		<article class="mx-auto max-w-3xl pt-24 pb-12">
+			<div class="mb-16">
+				<h1 class="break-words text-6xl font-semibold">
+					{metaData.title}
+				</h1>
+
+				<div class="mt-6 flex place-content-between place-items-center">
+					<a
+						href="https://github.com/pilcrowOnPaper"
+						class="group flex w-fit place-items-center gap-x-1.5"
+					>
+						<img
+							class="h-8 w-8 rounded-full object-fill"
+							width="128"
+							height="128"
+							src="https://avatars.githubusercontent.com/u/80624252?s=128"
+						/>
+						<p class="group-hover:text-main text-lg font-medium">pilcrow</p>
+					</a>
+					<p>{metaData.date}</p>
+				</div>
+				{
+					!!metaData.video && (
+						<div class="mt-6 aspect-video w-full rounded-xl border border-zinc-200 bg-zinc-100">
+							<iframe
+								src="https://www.youtube-nocookie.com/embed/j8lyUqKdmJQ?controls=0"
+								class="h-full w-full rounded-xl"
+								title="YouTube video player"
+								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+								allowfullscreen
+							/>
+						</div>
+					)
+				}
+			</div>
+			<MarkdownContent>
+				<Content />
+			</MarkdownContent>
+		</article>
+	</main>
+</Layout>

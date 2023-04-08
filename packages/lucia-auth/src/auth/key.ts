@@ -1,4 +1,4 @@
-import type { KeySchema } from "./schema.type.js";
+import type { KeySchema } from "./schema.js";
 import type { Key } from "./index.js";
 import { isWithinExpiration } from "../utils/date.js";
 

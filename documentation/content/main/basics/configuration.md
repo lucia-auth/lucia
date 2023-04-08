@@ -31,7 +31,7 @@ type Configuration = {
 		activePeriod: number;
 		idlePeriod: number;
 	};
-	transformUserData?: (userData: UserData) => Record<any, any>;
+	transformDatabaseUser?: (databaseUser: Required<UserSchema>) => Record<any, any>;
 };
 ```
 
@@ -224,19 +224,21 @@ The time in milliseconds the [idle period](/start-here/concepts#session-states) 
 | -------- | ------------------------------------ |
 | `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |
 
-### `transformUserData()`
+### `transformDatabaseUser()`
 
 This will be called to transform the raw data from `user` table to an object that will be mapped to [`User`](/reference/lucia-auth/types#user).
 
 ```ts
-const transformUserData: (userData: UserData) => Record<any, any>;
+const transformDatabaseUser: (
+	databaseUser: Required<UserSchema>
+) => Record<any, any>;
 ```
 
 #### Parameter
 
-| name     | type                                               | description                 |
-| -------- | -------------------------------------------------- | --------------------------- |
-| userData | [`UserData`](/reference/lucia-auth/types#userdata) | the user data from database |
+| name         | type                                                                 | description                 |
+| ------------ | -------------------------------------------------------------------- | --------------------------- |
+| databaseUser | `Required<`[`UserSchema`](/reference/lucia-auth/types#userschema)`>` | the user data from database |
 
 #### Returns
 
@@ -247,7 +249,7 @@ const transformUserData: (userData: UserData) => Record<any, any>;
 #### Default
 
 ```ts
-const transformUserData = async () => {
+const transformDatabaseUser = async () => {
 	userId: string;
 };
 ```

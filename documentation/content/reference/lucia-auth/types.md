@@ -54,7 +54,7 @@ type Configuration = {
 		activePeriod: number;
 		idlePeriod: number;
 	};
-	transformUserData?: (userData: UserData) => Record<any, any>;
+	transformDatabaseUser?: (databaseUser: Required<UserSchema>) => Record<any, any>;
 };
 ```
 
@@ -302,15 +302,15 @@ type SingleUseKey = {
 
 ## `User`
 
-Return type of [`transformUserData()`](/basics/configuration#transformuserdata) config.
+Return type of [`transformDatabaseUser()`](/basics/configuration#transformuserdata) config.
 
 ```ts
-type User = ReturnType<typeof transformUserData>;
+type User = ReturnType<typeof transformDatabaseUser>;
 ```
 
 #### Default
 
-If `transformUserData()` is undefined.
+If `transformDatabaseUser()` is undefined.
 
 ```ts
 type User = {
@@ -347,21 +347,6 @@ type UserAdapter = {
 	) => Promise<UserSchema>;
 };
 ```
-
-## `UserData`
-
-Data from `user` table.
-
-```ts
-type UserData = {
-	id: string;
-} & Required<Lucia.UserAttributes>;
-```
-
-| name | type                                                                 | description                        |
-| ---- | -------------------------------------------------------------------- | ---------------------------------- |
-| id   | `string`                                                             | user id of the user                |
-|      | [`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes) | additional columns in `user` table |
 
 ## `UserSchema`
 

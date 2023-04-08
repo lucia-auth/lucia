@@ -43,20 +43,21 @@ const currentPathname = Astro.url.pathname;
 </script>
 
 <div
-	class="fixed w-full md:w-80 h-full pb-8 pt-20 bg-zinc-80 overflow-hidden z-40 hidden xl:block dark:bg-shadow-zinc dark:text-zinc-400"
+	class="bg-zinc-80 dark:bg-shadow-zinc fixed z-40 hidden h-full w-full overflow-hidden pb-8 pt-20 dark:text-zinc-400 md:w-80 xl:block"
 	id="content-table-wrapper"
 >
 	<div
-		class=" block sm:hidden border-b border-zinc-200 dark:border-zinc-800 pb-4"
+		class="block border-b border-zinc-200 pb-4 dark:border-zinc-800 sm:hidden"
 	>
 		<a
-			class="pl-8 pr-4 rounded py-1 block w-full hover:bg-zinc-150 dark:hover:bg-black-zinc"
+			class="hover:bg-zinc-150 dark:hover:bg-black-zinc block w-full rounded py-1 pl-8 pr-4"
 			href="/reference">Reference</a
 		>
 	</div>
 	<input type="hidden" value={collection.id} id="collection-id" />
+	<input type="hidden" value={frameworkId} id="framework-id" />
 
-	<div class="ml-8 mr-4 border-b py-6 border-zinc-200 dark:border-zinc-800">
+	<div class="ml-8 mr-4 border-b border-zinc-200 py-6 dark:border-zinc-800">
 		{
 			!!collection.title && (
 				<p class="text-lg font-semibold">{collection.title}</p>
@@ -66,13 +67,13 @@ const currentPathname = Astro.url.pathname;
 	</div>
 	<div
 		id="content-table"
-		class="relative overflow-auto overscroll-contain h-full pb-24 gap-y-8 flex-col flex pt-2 bg-zinc-80 dark:bg-shadow-zinc"
+		class="bg-zinc-80 dark:bg-shadow-zinc relative flex h-full flex-col gap-y-8 overflow-auto overscroll-contain pb-24 pt-2"
 	>
 		{
 			collection.sections.map((section) => {
 				return (
 					<div class="">
-						<p class="font-medium pl-8 pr-4 py-1">{section.title}</p>
+						<p class="py-1 pl-8 pr-4 font-medium">{section.title}</p>
 						<ul>
 							{section.documents.map((doc) => {
 								const isSelected = doc.href === currentPathname;
@@ -100,7 +101,7 @@ const currentPathname = Astro.url.pathname;
 	</div>
 </div>
 <div
-	class="fixed w-full h-full bg-shadow-zinc opacity-30 overscroll-contain z-30 hidden xl:hidden"
+	class="bg-shadow-zinc fixed z-30 hidden h-full w-full overscroll-contain opacity-30 xl:hidden"
 	id="backdrop"
 >
 </div>
@@ -129,5 +130,11 @@ const currentPathname = Astro.url.pathname;
 			);
 			window.location.href = e.target.href;
 		});
+	}
+	const frameworkIdElement = document.getElementById("framework-id");
+	if (frameworkIdElement instanceof HTMLInputElement) {
+		const url = new URL(window.location.href);
+		url.searchParams.set("framework", frameworkIdElement.value || "none");
+		window.history.replaceState({}, "", url);
 	}
 </script>
