@@ -209,7 +209,7 @@ const adapter =
 							const result = await kysely
 								.selectFrom("auth_user")
 								.select("id")
-								.where("id", "is", session.user_id)
+								.where("id", "=", session.user_id)
 								.executeTakeFirst();
 							if (!result) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
 						}
@@ -226,7 +226,7 @@ const adapter =
 			deleteSession: async (sessionId) => {
 				await kysely
 					.deleteFrom("auth_session")
-					.where("id", "is", sessionId)
+					.where("id", "=", sessionId)
 					.execute();
 			},
 			deleteSessionsByUserId: async (userId) => {
@@ -308,7 +308,7 @@ const adapter =
 							const result = await kysely
 								.selectFrom("auth_user")
 								.select("id")
-								.where("id", "is", key.user_id)
+								.where("id", "=", key.user_id)
 								.executeTakeFirst();
 							if (!result) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
 						}
