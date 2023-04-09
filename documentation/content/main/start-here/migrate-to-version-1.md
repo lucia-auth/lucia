@@ -15,8 +15,8 @@ This guide covers migration from v0.10.x to v1.0.0. If you are using v0.11.x, no
 - `lucia-auth`: 1.0.0
 - `@lucia-auth/adapter-prisma`: 1.0.0
 - `@lucia-auth/adapter-mongoose`: 1.0.0
-- `@lucia-auth/adapter-kysely`: 1.0.0
-- `@lucia-auth/adapter-session-kysely`: 1.0.0
+- `@lucia-auth/adapter-kysely`: 1.0.1
+- `@lucia-auth/adapter-session-redis`: 1.0.0
 - `@lucia-auth/adapter-test`: 1.0.0
 - `@lucia-auth/oauth`: 1.0.0
 - `@lucia-auth/tokens`: 1.0.0
