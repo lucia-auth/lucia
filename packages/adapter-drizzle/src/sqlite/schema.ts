@@ -27,3 +27,7 @@ export const auth_key = sqliteTable("auth_key", {
 	hashedPassword: text("hashed_password"),
 	expires: integer("expires", { mode: "number" })
 });
+
+export type SqliteAuthUserTable = typeof auth_user;
+export type SqliteAuthSessionTable = typeof auth_session;
+export type SqliteAuthKeyTable = typeof auth_key;
