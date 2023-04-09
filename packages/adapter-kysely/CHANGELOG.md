@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-kysely
 
+## 1.0.1
+
+### Patch changes
+
+- [#463](https://github.com/pilcrowOnPaper/lucia/pull/463) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `deleteSession()`
+
 ## 1.0.0
 
 ### Major changes
