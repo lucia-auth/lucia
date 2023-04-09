@@ -173,7 +173,6 @@ export const generateCollection = (collectionId: string) => {
 				frameworkId,
 				id: documentId,
 				href: documentHref,
-				path: documentFsUrl,
 				description: frontmatterData.description ?? null
 			} satisfies ContentMetaData;
 			const generatedContentLink: ContentLink = {

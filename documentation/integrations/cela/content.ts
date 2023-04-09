@@ -55,7 +55,8 @@ export const getContent = async (
 	return {
 		metaData: contentLink.metaData,
 		Content: content.Content,
-		headings: content.getHeadings()
+		headings: content.getHeadings(),
+		mappedContentPath: contentLink.mappedContentPath
 	} as const;
 };
 
