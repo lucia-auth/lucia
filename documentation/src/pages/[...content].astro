@@ -52,7 +52,7 @@ const frameworkId =
 
 const contributePageUrl = new URL(
 	`${content.metaData.path}.md`,
-	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation/collection"
+	`https://github.com/pilcrowOnPaper/lucia/blob/main/documentation/content/${content.metaData.collectionId ?? "main"}`
 );
 ---
 
@@ -79,7 +79,7 @@ const contributePageUrl = new URL(
 			</MarkdownContent>
 			<div class="mt-16">
 				<a
-					href={contributePageUrl}
+					href={contributePageUrl.href}
 					class="text-main cursor-pointer; hover:underline"
 					>Contribute to this page</a
 				>
