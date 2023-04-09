@@ -634,6 +634,8 @@ try {
 
 Takes and validates an active or idle session id, and renews the session. The used session id (and its session) is invalidated.
 
+Throws an `AUTH_INVALID_SESSION_ID` if a dead session was provided.
+
 ```ts
 const renewSession: (sessionId: string) => Promise<Session>;
 ```
