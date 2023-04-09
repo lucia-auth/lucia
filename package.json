@@ -5,7 +5,8 @@
 	"scripts": {
 		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../integration-oauth && pnpm build && cd ../adapter-prisma && pnpm build && cd ../integration-tokens && pnpm build && cd ../",
 		"publish-setup": "cd packages/lucia-auth && pnpm install --no-frozen-lockfile && pnpm build && cd ../../ && cd packages/adapter-test && pnpm install --no-frozen-lockfile && pnpm build && cd ../../",
-		"format": "pnpm exec prettier --write ."
+		"format": "pnpm exec prettier --write .",
+		"preinstall": "npx only-allow pnpm"
 	},
 	"repository": {
 		"type": "git",
