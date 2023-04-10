@@ -23,8 +23,8 @@ jobs:
       - name: install dependencies
         run: |
           npm i -g pnpm
+          npm i -g vercel
           pnpm install --no-frozen-lockfile
-          pnpm i -g vercel
       - name: publish
         run: pnpm exec auri publish
       - name: prepare
