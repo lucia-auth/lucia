@@ -2,7 +2,7 @@
 
 Testing package for adapters for Lucia
 
-**[Documentation](https://lucia-auth.com/reference/adapters/testing-adapters)**
+**[Documentation](https://lucia-auth.com/adapters/testing-adapters)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
