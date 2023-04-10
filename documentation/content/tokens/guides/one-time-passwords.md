@@ -17,7 +17,6 @@ One time passwords will use [password tokens](/tokens/basics/password-tokens). C
 
 ```ts
 // token.ts
-
 import { auth } from "./lucia.js";
 import { passwordToken } from "@lucia-auth/tokens";
 
@@ -34,6 +33,7 @@ Generate a new token using [`issue()`](/reference/tokens/passwordtokenwrapper#is
 import { otpToken } from "./token.js";
 
 const sendOtp = async () => {
+	// ...
 	const otp = await otpToken.issue(user.userId);
 
 	// send email with verification link
@@ -54,8 +54,8 @@ import { otpToken } from "./token.js";
 
 const validateOtp = async () => {
 	// ...
-	const session = await getSessionFromRequest(); // getSessionFromRequest() is just an example
-	const password = formData.get("password"); // password from form
+	const authRequest = auth.handleRequest();
+	const session = await authRequest.validate();
 	try {
 		const token = await otpToken.validate(password, session.userId);
 
