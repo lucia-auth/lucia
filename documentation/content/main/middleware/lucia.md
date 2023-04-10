@@ -1,6 +1,6 @@
 ---
-title: "Astro"
-description: "Learn how to handle requests with Lucia using the Astro middleware"
+title: "Lucia"
+description: "Learn how to handle requests with Lucia using the Lucia middleware"
 ---
 
 Default middleware.
@@ -9,6 +9,6 @@ Default middleware.
 const handleRequest: (requestContext: RequestContext) => AuthRequest;
 ```
 
-| name           | type                                                |
-| -------------- | --------------------------------------------------- |
-| requestContext | [`RequestContext`](/reference/types#requestcontext) |
+| name           | type                                                           |
+| -------------- | -------------------------------------------------------------- |
+| requestContext | [`RequestContext`](/reference/lucia-auth/types#requestcontext) |
