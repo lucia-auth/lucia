@@ -7,6 +7,7 @@ on:
 env:
   AURI_GITHUB_TOKEN: ${{secrets.AURI_GITHUB_TOKEN}}
   NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+  VERCEL_DEPLOY_TOKEN: ${{secrets.VERCEL_DEPLOY_TOKEN}}
 
 jobs:
   auri:
@@ -23,6 +24,7 @@ jobs:
         run: |
           npm i -g pnpm
           pnpm install --no-frozen-lockfile
+          pnpm i -g vercel
       - name: publish
         run: pnpm exec auri publish
       - name: prepare

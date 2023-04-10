@@ -6,7 +6,9 @@
 		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../integration-oauth && pnpm build && cd ../adapter-prisma && pnpm build && cd ../integration-tokens && pnpm build && cd ../",
 		"publish-setup": "cd packages/lucia-auth && pnpm install --no-frozen-lockfile && pnpm build && cd ../../ && cd packages/adapter-test && pnpm install --no-frozen-lockfile && pnpm build && cd ../../",
 		"format": "pnpm exec prettier --write .",
-		"preinstall": "npx only-allow pnpm"
+		"preinstall": "npx only-allow pnpm",
+		"auri.format": "pnpm format",
+		"auri.publish_setup": "pnpm publish-setup"
 	},
 	"repository": {
 		"type": "git",
@@ -19,7 +21,7 @@
 		"@types/node": "18.15",
 		"@typescript-eslint/eslint-plugin": "^5.50.0",
 		"@typescript-eslint/parser": "^5.50.0",
-		"auri": "^0.4.1",
+		"auri": "^0.5.2",
 		"eslint": "^8.33.0",
 		"eslint-config-prettier": "^8.6.0",
 		"eslint-plugin-svelte3": "^4.0.0",
