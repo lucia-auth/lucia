@@ -2,7 +2,7 @@
 
 [Kysely](https://github.com/koskimas/kysely) adapter for Lucia
 
-**[Documentation](https://lucia-auth.com/learn/adapters/kysely)**
+**[Documentation](https://lucia-auth.com/database/kysely)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 

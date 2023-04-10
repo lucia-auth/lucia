@@ -2,7 +2,7 @@
 
 [Mongoose](https://mongoosejs.com) ([MongoDB](https://www.mongodb.com)) adapter for Lucia
 
-**[Documentation](https://lucia-auth.com/learn/adapters/mongoose)**
+**[Documentation](https://lucia-auth.com/database/mongoose)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
