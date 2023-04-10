@@ -42,13 +42,14 @@ export const load = async ({ locals }) => {
 
 ### Middleware
 
-By default, Lucia uses the [Node middleware](/middleware/node), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
+By default, Lucia uses the [Lucia middleware](/middleware/lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
 
 - [Astro](/middleware/astro)
 - [Express](/middleware/express)
+- [Node](/middleware/node)
 - [SvelteKit](/middleware/sveltekit)
 
-> Use the default middleware for Next.js
+> Use the Node middleware for Next.js
 
 ## Validate requests
 
