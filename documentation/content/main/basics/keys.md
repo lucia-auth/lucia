@@ -31,8 +31,6 @@ const githubUser = await authenticateWithGithub();
 const user = await auth.useKey("github", githubUser.userId);
 ```
 
-> The easiest way to think about keys is that the provider id is the authentication method, and the provider user id is something unique to the user within the method used.
-
 ### Persistent keys
 
 The first type of keys are persistent keys. These persist across multiple usages in contrast to single use keys (defined below) which are consumed after a single use.
