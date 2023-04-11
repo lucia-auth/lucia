@@ -15,7 +15,7 @@ try {
 	// their id is "user@example.com"
 	// when using "email" auth method
 	// and check their password
-	const user = await auth.useKey("email", "user@example.com", "123456");
+	const key = await auth.useKey("email", "user@example.com", "123456");
 } catch {
 	// such user does not exist
 	// or incorrect password
@@ -28,7 +28,7 @@ const githubUser = await authenticateWithGithub();
 // reference the user where
 // their identifier is their Github user id
 // when using "github" auth method
-const user = await auth.useKey("github", githubUser.userId);
+const key = await auth.useKey("github", githubUser.userId);
 ```
 
 ### Persistent keys
@@ -45,7 +45,7 @@ Single use keys are single use only and are deleted on read. Single use keys mus
 
 ## Create new keys
 
-You can create a new key for a user using [`createKey()`](/reference/lucia-auth/auth#createkey). If you're creating a key for newly created user, we recommend using [`createUser()`]() to make key a primary key. Primary keys cannot be created using `createKey()`.
+You can create a new key for a user using [`createKey()`](/reference/lucia-auth/auth#createkey). If you're creating a key for newly created user, we recommend using [`createUser()`](/reference/lucia-auth/auth?framework=sveltekit#createuser) to make key a primary key. Primary keys cannot be created using `createKey()`.
 
 ### Persistent keys
 
@@ -103,6 +103,20 @@ You can validate both persistent and single-use keys with [`useKey()`](/referenc
 import { auth } from "./lucia.js";
 
 try {
+	const key = await auth.useKey("github", githubUserId, null);
+} catch {
+	// invalid key
+}
+```
+
+### Validate password
+
+For single use keys, it will only be consumed (deleted) if the password is correct.
+
+```ts
+import { auth } from "./lucia.js";
+
+try {
 	const key = await auth.useKey("email", email, password);
 } catch {
 	// invalid key
@@ -110,16 +124,6 @@ try {
 ```
 
 > (warn) While the error will indicate it if the key or password was invalid, **be ambiguous with the error message** (eg. "Incorrect username or password").
-
-```ts
-import { auth } from "./lucia.js";
-
-try {
-	const key = await auth.useKey("github", githubUserId, null);
-} catch {
-	// invalid key
-}
-```
 
 ## Get key
 

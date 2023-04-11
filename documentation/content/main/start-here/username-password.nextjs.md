@@ -1,7 +1,7 @@
 ---
 _order: 2
 title: "Quick start"
-description: "Learn how to set up a Next.js Astro app with Lucia"
+description: "Learn how to use Lucia in Next.js by implementing a basic username/password auth"
 ---
 
 This page will guide you how to implement a simple username/password auth and cover the basics of Lucia.
@@ -12,8 +12,7 @@ Start off by following the steps in [the previous page](/start-here/getting-star
 
 ## 1. Configure your database
 
-As an example, we'll add a `username` column to the `user` table. The `username` column will be later used as an identifier for creating new users, but
-you could replace it with `email`, for example.
+As an example, we'll add a `username` column to the `user` table. The `username` column will be later used as an identifier for creating new users, but you could replace it with `email`, for example.
 
 | name     | type   | unique | description          |
 | -------- | ------ | ------ | -------------------- |
@@ -63,7 +62,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 
-const Index = () => {
+export default () => {
 	const router = useRouter();
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -104,8 +103,6 @@ const Index = () => {
 		</div>
 	);
 };
-
-export default Index;
 ```
 
 ### Create users
@@ -114,7 +111,7 @@ Create `pages/api/signup.ts`. This API route will handle account creation.
 
 Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `NextApiRequest` and `NextApiResponse`.
 
-Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session and make sure to store the session id by calling `setSession()`.
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth?framework=sveltekit#createsession) and make sure to store the session id by calling [`setSession()`]().
 
 ```ts
 // pages/api/signup.ts
@@ -146,6 +143,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		return res.status(400).json({}); // invalid
 	}
 };
+```
+
+#### Handle requests
+
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) and [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpserverresponse).
+
+In this case, we don't need to validate the request, but we do need it for setting the session cookie with [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
+
+```ts
+const authRequest = auth.handleRequest(Astro);
+```
+
+> (warn) Next.js does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+
+#### Set user passwords
+
+We don't store the password in the user, but in the key (`primaryKey`). Keys represent the relationship between a user and a auth method, in this case username/password. We'll set `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user).
+
+```ts
+const user = await auth.createUser({
+	primaryKey: {
+		providerId: "username",
+		providerUserId: username,
+		password
+	}
+	// ...
+});
 ```
 
 ### Redirect authenticated users
@@ -199,7 +223,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 
-const Index = () => {
+export default () => {
 	const router = useRouter();
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -240,15 +264,13 @@ const Index = () => {
 		</div>
 	);
 };
-
-export default Index;
 ```
 
 ### Authenticate users
 
 Create `pages/api/login.ts`. This API route will handle sign-ins.
 
-We’ll use the key created in the previous section to reference the user and authenticate them by validating the password. As such, "username" will be the provider id and the username will be the provider user id for `useKey()`, which will return the key's user if the password is valid. Create a new session if the password is valid.
+We’ll use the key created in the previous section to reference the user and authenticate them by validating the password with [`useKey()`](/reference/lucia-auth/auth#usekey) . Create a new session if the password is valid.
 
 ```ts
 // pages/api/login.ts
@@ -275,6 +297,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 	}
 };
+```
+
+#### Validating passwords
+
+We want to reference the key we created for the user in the previous step, so "username" will be the provider id and the username will be the provider user id. `useKey()` will throw an error if the key doesn't exist or if the password is incorrect.
+
+```ts
+const key = await auth.useKey("username", username, password);
 ```
 
 ### Redirect authenticated users
@@ -354,7 +384,7 @@ export const getServerSideProps = async (
 	};
 };
 
-const Index = (
+export default (
 	props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
 	return (
@@ -370,8 +400,6 @@ const Index = (
 		</>
 	);
 };
-
-export default Index;
 ```
 
 ### Sign out
@@ -418,7 +446,7 @@ This can be called with a fetch request:
 </button>
 ```
 
-## 6. Request validation
+## 6. Validate requests
 
 `AuthRequest` can also be used inside API routes:
 
