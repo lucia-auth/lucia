@@ -1,6 +1,6 @@
 ---
 _order: 2
-title: "Quick start"
+title: "Username/password example"
 description: "Learn how to use Lucia in Astro by implementing a basic username/password auth"
 ---
 

@@ -1,6 +1,6 @@
 ---
 _order: 2
-title: "Quick start"
+title: "Username/password example"
 description: "Learn how to use Lucia in Next.js by implementing a basic username/password auth"
 ---
 
