@@ -23,7 +23,7 @@ yarn add @lucia-auth/tokens
 
 This packages provides a wrapper for 2 types of tokens:
 
-- [Id tokens](/tokens/basics/id-tokens): Regular tokens that can be used to authenticate a user (magic links)
-- [Password tokens](/tokens/basics/password-tokens): Single use codes to be used within an auth context (one time passwords)
+- [Id tokens](/tokens/basics/id-tokens): Can be validated individually
+- [Password tokens](/tokens/basics/password-tokens): Requires both the token and user id to be validated (similar to username/password)
 
 Both of these provide a similar set of APIs.
