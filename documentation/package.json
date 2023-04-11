@@ -9,7 +9,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"auri.deploy": "vercel pull --yes --environment=production --token $VERCEL_DEPLOY_TOKEN && vercel deploy --yes --token $VERCEL_DEPLOY_TOKEN"
+		"auri.deploy": "curl -X POST $VERCEL_DEPLOY_HOOK"
 	},
 	"dependencies": {
 		"@astrojs/node": "^5.1.0",
