@@ -43,7 +43,7 @@ import { auth, githubAuth } from "$lib/lucia.js";
 
 import type { RequestHandler } from "./$types";
 
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async ({ cookies }) => {
 	// get url to redirect the user to, with the state
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 
