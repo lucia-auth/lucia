@@ -16,8 +16,6 @@ yarn add lucia-auth
 
 Using the guide from the adapter docs, set up the database and install the adapter (adapters are provided as a different NPM package).
 
-> (warn) Anything inside the `user` database will be sent to the client. While this is fine for most situations, make sure you aren't storing any sensitive data (like hashed passwords and secrets).
-
 ## Initialize Lucia
 
 In `$lib/server/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Additionally, we will import the SvelteKit middleware and pass it on to `middleware`. Make sure to export `typeof auth` as well.
