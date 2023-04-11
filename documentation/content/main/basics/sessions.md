@@ -40,9 +40,12 @@ const sessionCookie = auth.createSessionCookie(session).serialize();
 setResponseHeaders("Set-Cookie", sessionCookie);
 ```
 
+We recommend [using `handleRequest()` for setting sessions](/basics/handle-requests#set-session-cookie) instead however.
+
+
 ## Validate session ids
 
-The [`validateSession()`](/reference/lucia-auth/auth#validatesession) method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session id and should be stored. You can check if the returned session is a new session with the `fresh` property.
+The [`validateSession()`](/reference/lucia-auth/auth#validatesession) method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session. You can check if the returned session is a new session with the `fresh` property.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -74,9 +77,11 @@ try {
 }
 ```
 
+We recommend [using `handleRequest()` for validating requests](/basics/handle-requests#validate-requests) instead however, as it'll extract the session id for you.
+
 ### Get session from requests
 
-The recommended way to read the session id is by using [`validateRequestHeaders()`](/reference/lucia-auth/auth#validaterequestheaders). It takes the standard `Request` object, checks for CSRF using the `Origin` header, and returns the session id stored in the cookie. This does not validate the session itself.
+The recommended way to read the session id is by using [`parseRequestHeaders()`](/reference/lucia-auth/auth#parserequestheaders). It takes a [`LuciaRequest`](http://localhost:3000/reference/lucia-auth/types#luciarequest) object, checks for CSRF using the `Origin` header, and returns the session id stored in the cookie. This does not validate the session itself.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -98,9 +103,9 @@ import { auth } from "./lucia.js";
 const sessionId = getCookie(SESSION_COOKIE_NAME);
 ```
 
-### Get session
+### Validate sessions without renewing them
 
-You can get non-dead sessions using [`getSession()`](/reference/lucia-auth/auth#getsession). This does not renew idle sessions and returns both active and idle sessions.
+You can validate if the session is not dead by using [`getSession()`](/reference/lucia-auth/auth#getsession). This does not renew idle sessions and returns both active and idle sessions. See [Manually renew sessions](/basics/sessions#manually-renew-sessions) to learn how to renew idle sessions manually.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -108,7 +113,7 @@ import { auth } from "./lucia.js";
 try {
 	const session = await auth.getSession(sessionId);
 	if (session.state === "idle") {
-		// renew session
+		// renewal required
 	}
 } catch {
 	// invalid session
@@ -139,7 +144,7 @@ await auth.invalidateAllUserSessions(userId);
 
 ## Manually renew sessions
 
-You can renew idle sessions with [`renewSession()`](/reference/lucia-auth/auth#renewsession). Renewing sessions is not required if they're validated by using [`validateSession()`](/reference/lucia-auth/auth#validatesession).
+You can renew idle sessions with [`renewSession()`](/reference/lucia-auth/auth#renewsession). Renewing sessions is not required if you're validated them using [`validateSession()`](/reference/lucia-auth/auth#validatesession).
 
 ```ts
 import { auth } from "./lucia.js";
