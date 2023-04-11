@@ -25,6 +25,7 @@ In `auth/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-aut
 import lucia from "lucia-auth";
 import { node } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
+import { prismaClient } from "@prisma/client";
 import { dev } from "$app/environment";
 
 export const auth = lucia({

@@ -40,6 +40,7 @@ In a TypeScript file, import [`lucia`](/reference/lucia-auth/auth) and an adapte
 // lucia.ts
 import lucia from "lucia-auth";
 import prisma from "@lucia-auth/adapter-prisma";
+import { prismaClient } from "@prisma/client";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient), // TODO: initialize Prisma client
