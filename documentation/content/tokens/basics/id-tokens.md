@@ -4,7 +4,8 @@ _order: 0
 description: "Learn about ID tokens in the tokens integration for Lucia"
 ---
 
-Id tokens are regular tokens, similar to sessions, linked to the user to identify the token holder, such as for magic links.
+Id tokens are regular tokens linked to the user to identify the token holder, such as for magic links.
+These tokens can be validated individually and only the token itself is required for validation.
 
 ```ts
 import { idToken } from "@lucia-auth/tokens";

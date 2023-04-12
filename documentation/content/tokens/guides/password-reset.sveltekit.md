@@ -5,12 +5,20 @@ description: "Learn how to set up password reset with the tokens integration for
 
 Password reset will be handled using verification links.
 
+```
+/signup - sign up page
+/password-reset - ask for email
+/password-reset/[token] - ask for new password
+```
+
+The repository also includes [an example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit-email).
+
 ### 1. Initialize tokens
 
 The tokens for verification links will use [id tokens](/tokens/basics/id-tokens). Create a new token handler with a name of `password-reset`, and set tokens to expire in 1 hour.
 
 ```ts
-// $lib/lucia.ts
+// lucia.ts
 
 import { auth } from "./lucia.js";
 import { idToken } from "@lucia-auth/tokens";
@@ -39,8 +47,9 @@ Generate a new token using [`issue()`](/reference/tokens/idtokenwrapper#issue). 
 You can optionally add an check if the email exists in the database.
 
 ```ts
-// src/routes/password-reset/+page.server.ts
+// src/routes/password-reset
 // page to enter email
+import { auth } from "$lib/lucia";
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -60,9 +69,6 @@ export const actions: Actions = {
 			const user = auth.transformDatabaseUser(databaseUser);
 			const token = await passwordResetToken.issue(user.userId);
 			await sendPasswordResetEmail(user.email, token.toString());
-			return {
-				success: true
-			};
 		} catch {
 			// ...
 		}
@@ -81,6 +87,7 @@ If you have implemented email verification, you can verify the user's email as w
 ```ts
 // src/routes/password-reset/[token]/+page.server.ts
 // page to enter new password
+import { LuciaTokenError } from "@lucia-auth/tokens";
 import { auth, passwordResetToken } from "$lib/lucia";
 
 export const actions: Actions = {

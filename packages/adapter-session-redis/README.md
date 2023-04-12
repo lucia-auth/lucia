@@ -2,7 +2,7 @@
 
 [Redis](https://redis.io) session adapter for Lucia
 
-**[Documentation](https://lucia-auth.com/learn/adapters/redis)**
+**[Documentation](https://lucia-auth.com/database/redis)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 

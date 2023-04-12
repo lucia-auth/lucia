@@ -8,7 +8,8 @@
 		"start": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"astro": "astro"
+		"astro": "astro",
+		"auri.deploy": "curl -X POST $VERCEL_DEPLOY_HOOK"
 	},
 	"dependencies": {
 		"@astrojs/node": "^5.1.0",

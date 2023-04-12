@@ -29,7 +29,6 @@ export type ContentMetaData = {
 	redirect: string | null;
 	title: string;
 	id: string;
-	path: string;
 	href: string;
 	description: string | null;
 };

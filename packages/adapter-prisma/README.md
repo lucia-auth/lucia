@@ -2,7 +2,7 @@
 
 [Prisma](https://www.prisma.io) adapter for Lucia
 
-**[Documentation](https://lucia-auth.com/learn/adapters/prisma)**
+**[Documentation](https://lucia-auth.com/database/prisma)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 

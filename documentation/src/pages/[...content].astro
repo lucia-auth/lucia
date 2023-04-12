@@ -9,6 +9,7 @@ import redirects from "redirects.json";
 import { error404 } from "@lib/error";
 import MarkdownContent from "@components/MarkdownContent.astro";
 import Banner from "@components/Banner.astro";
+import { joinUrlPaths } from "@lib/path";
 
 const redirectTarget = redirects.find((val) => val.from === Astro.url.pathname);
 
@@ -50,9 +51,9 @@ if (content.metaData.frameworkId) {
 const frameworkId =
 	requestedFrameworkId === "none" ? null : requestedFrameworkId;
 
-const contributePageUrl = new URL(
-	`${content.metaData.path}.md`,
-	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation/collection"
+const contributePageHref = joinUrlPaths(
+	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation",
+	content.mappedContentPath
 );
 ---
 
@@ -79,7 +80,7 @@ const contributePageUrl = new URL(
 			</MarkdownContent>
 			<div class="mt-16">
 				<a
-					href={contributePageUrl}
+					href={contributePageHref}
 					class="text-main cursor-pointer; hover:underline"
 					>Contribute to this page</a
 				>
@@ -87,7 +88,7 @@ const contributePageUrl = new URL(
 		</article>
 	</main>
 	<div class="fixed right-0 top-0 hidden h-screen w-64 pr-8 pt-24 lg:block">
-		<h2 class="mb-1 text-sm font-medium">On this page</h2>
+		<h2 class="mb-1 text-sm font-medium dark:text-zinc-200">On this page</h2>
 		<ul
 			class="relative h-full list-none overflow-auto overscroll-contain pb-8 text-sm text-zinc-500 dark:text-zinc-400"
 		>
