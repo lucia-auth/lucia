@@ -1,9 +1,4 @@
-import {
-	sqliteTable,
-	text,
-	integer,
-	numeric
-} from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, numeric } from "drizzle-orm/sqlite-core";
 
 export const auth_user = sqliteTable("auth_user", {
 	id: text("id").primaryKey().notNull()
@@ -20,11 +15,11 @@ export const auth_session = sqliteTable("auth_session", {
 
 export const auth_key = sqliteTable("auth_key", {
 	id: text("id").primaryKey().notNull(),
-	userId: text("user_id")
+	user_id: text("user_id")
 		.references(() => auth_user.id)
 		.notNull(),
-	primaryKey: numeric("primary_key").notNull(),
-	hashedPassword: text("hashed_password"),
+	primary_key: integer("primary_key", { mode: "number" }).notNull(),
+	hashed_password: text("hashed_password"),
 	expires: integer("expires", { mode: "number" })
 });
 
