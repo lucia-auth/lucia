@@ -11,23 +11,26 @@ import type {
 
 export const prerender = true;
 
+type BlogFrontmatter = {
+	title: string;
+	description: string;
+	date: string;
+	video?: string;
+};
+
 export const getStaticPaths = async () => {
 	const blogMdImports = Object.entries(
-		import.meta.glob<
-			MarkdownInstance<{
-				title: string;
-				description: string;
-				date: string;
-				video?: string;
-			}>
-		>("/blog/*.md")
+		import.meta.glob("/blog/*.md") as Record<
+			string,
+			() => Promise<MarkdownInstance<BlogFrontmatter>>
+		>
 	).map(([importPath, resolve]) => {
 		return async () => {
 			const resolvedImport = await resolve();
 			return {
 				importPath,
 				...resolvedImport
-			};
+			} as const;
 		};
 	});
 	const resolveBlogMdPromises = blogMdImports.map((resolve) => resolve());

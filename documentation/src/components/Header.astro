@@ -1,5 +1,5 @@
 ---
-import { ThemeButton } from "@components/buttons";
+import ThemeButton from "@components/ThemeButton";
 import Discord from "./icons/Discord.astro";
 import Github from "./icons/Github.astro";
 
@@ -10,17 +10,8 @@ if (theme !== "light" && theme !== "dark") {
 }
 ---
 
-<script>
-	import { toggleMenu } from "@lib/state";
-
-	const menuToggleButton = document.getElementById("menu-button");
-	if (menuToggleButton instanceof HTMLButtonElement) {
-		menuToggleButton.addEventListener("click", toggleMenu);
-	}
-</script>
-
 <div
-	class="pointer-events-none fixed left-0 z-50 w-full bg-white bg-opacity-80 px-4 backdrop-blur-lg dark:bg-zinc-900 dark:bg-opacity-10 dark:text-zinc-200 sm:px-8 xl:bg-transparent xl:backdrop-blur-none"
+	class="pointer-events-none fixed left-0 z-40 w-full bg-white bg-opacity-80 px-4 backdrop-blur-lg dark:bg-zinc-900 dark:bg-opacity-10 dark:text-zinc-200 sm:px-8 xl:bg-transparent xl:backdrop-blur-none"
 >
 	<div class="flex place-content-between place-items-center py-4">
 		<a class="pointer-events-auto flex place-items-center" href="/">
@@ -60,7 +51,6 @@ if (theme !== "light" && theme !== "dark") {
 				</a>
 
 				<ThemeButton client:load initialTheme={theme} />
-
 				<button class="xl:hidden" aria-label="Toggle menubar" id="menu-button">
 					<div class="h-8 w-8 fill-current dark:text-zinc-200">
 						<svg
@@ -76,3 +66,15 @@ if (theme !== "light" && theme !== "dark") {
 		</div>
 	</div>
 </div>
+
+<script>
+	import { setMenuState } from "@lib/state";
+
+	const menuToggleButton = document.getElementById("menu-button");
+
+	if (menuToggleButton instanceof HTMLButtonElement) {
+		menuToggleButton.addEventListener("click", () => {
+			setMenuState((menuOpen) => !menuOpen);
+		});
+	}
+</script>

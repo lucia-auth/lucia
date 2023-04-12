@@ -1,5 +1,5 @@
 ---
-import { FrameworkButton } from "./buttons";
+import FrameworkSelect from "@components/FrameworkSelect";
 import { getCollection } from "@cela/content";
 
 type Props = {
@@ -19,31 +19,8 @@ if (!collection)
 const currentPathname = Astro.url.pathname;
 ---
 
-<script>
-	import { addClassName, removeClassName } from "@lib/dom";
-	import { onMenuToggle } from "../lib/state";
-	const backdropElement = document.getElementById("backdrop");
-	const contentTableWrapperElement = document.getElementById(
-		"content-table-wrapper"
-	);
-	if (
-		backdropElement instanceof HTMLDivElement &&
-		contentTableWrapperElement instanceof HTMLDivElement
-	) {
-		onMenuToggle((isMenuOpen) => {
-			if (isMenuOpen) {
-				removeClassName(backdropElement, "hidden");
-				removeClassName(contentTableWrapperElement, "hidden");
-			} else {
-				addClassName(backdropElement, "hidden");
-				addClassName(contentTableWrapperElement, "hidden");
-			}
-		});
-	}
-</script>
-
 <div
-	class="bg-zinc-80 dark:bg-shadow-zinc fixed z-40 hidden h-full w-full overflow-hidden pb-8 pt-20 dark:text-zinc-400 md:w-80 xl:block"
+	class="bg-zinc-80 dark:bg-shadow-zinc fixed z-30 hidden h-full w-full overflow-hidden pb-8 pt-20 dark:text-zinc-400 md:w-80 xl:block"
 	id="content-table-wrapper"
 >
 	<div
@@ -60,19 +37,25 @@ const currentPathname = Astro.url.pathname;
 	<div class="ml-8 mr-4 border-b border-zinc-200 py-6 dark:border-zinc-800">
 		{
 			!!collection.title && (
-				<p class="text-lg font-semibold">{collection.title}</p>
+				<p class="mb-1 text-lg font-semibold">{collection.title}</p>
 			)
 		}
-		<FrameworkButton client:idle current={Astro.props.frameworkId} />
+		<FrameworkSelect client:idle current={Astro.props.frameworkId} />
+		<a
+			href="/search"
+			id="search-button"
+			class="hover:border-main dark:hover:border-main mt-2 block w-full cursor-text rounded-md border border-zinc-200 bg-zinc-50 px-4 py-1.5 text-left text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900"
+			>Search</a
+		>
 	</div>
 	<div
 		id="content-table"
-		class="bg-zinc-80 dark:bg-shadow-zinc relative flex h-full flex-col gap-y-8 overflow-auto overscroll-contain pb-24 pt-2"
+		class="bg-zinc-80 dark:bg-shadow-zinc relative flex h-full flex-col gap-y-8 overflow-auto overscroll-contain pb-32 pt-2 md:pb-24"
 	>
 		{
 			collection.sections.map((section) => {
 				return (
-					<div class="">
+					<div>
 						<p class="py-1 pl-8 pr-4 font-medium">{section.title}</p>
 						<ul>
 							{section.documents.map((doc) => {
@@ -100,9 +83,10 @@ const currentPathname = Astro.url.pathname;
 		}
 	</div>
 </div>
+
 <div
-	class="bg-shadow-zinc fixed z-30 hidden h-full w-full overscroll-contain opacity-30 xl:hidden"
-	id="backdrop"
+	class="fixed z-20 hidden h-full w-full overscroll-contain bg-black bg-opacity-20 dark:bg-white dark:bg-opacity-5 xl:hidden"
+	id="menu-backdrop"
 >
 </div>
 <script is:inline>
@@ -131,10 +115,53 @@ const currentPathname = Astro.url.pathname;
 			window.location.href = e.target.href;
 		});
 	}
-	const frameworkIdElement = document.getElementById("framework-id");
-	if (frameworkIdElement instanceof HTMLInputElement) {
-		const url = new URL(window.location.href);
-		url.searchParams.set("framework", frameworkIdElement.value || "none");
-		window.history.replaceState({}, "", url);
+</script>
+
+<script>
+	import {
+		addClassName,
+		removeClassName,
+		unFreezePage,
+		freezePage
+	} from "@lib/dom";
+	import {
+		onMenuStateUpdate,
+		setSearchMenuState,
+		setMenuState
+	} from "../lib/state";
+
+	const contentTableWrapperElement = document.getElementById(
+		"content-table-wrapper"
+	);
+	const menuBackdropElement = document.getElementById("menu-backdrop");
+
+	if (
+		contentTableWrapperElement instanceof HTMLDivElement &&
+		menuBackdropElement instanceof HTMLDivElement
+	) {
+		onMenuStateUpdate((menuOpen) => {
+			if (menuOpen) {
+				freezePage();
+				removeClassName(contentTableWrapperElement, "hidden");
+				removeClassName(menuBackdropElement, "hidden");
+			} else {
+				unFreezePage();
+				addClassName(contentTableWrapperElement, "hidden");
+				addClassName(menuBackdropElement, "hidden");
+			}
+		});
+		menuBackdropElement.addEventListener("click", () => {
+			setMenuState(false);
+		});
+	}
+
+	const searchButtonElement = document.getElementById("search-button");
+
+	if (searchButtonElement instanceof HTMLAnchorElement) {
+		searchButtonElement.addEventListener("click", (e) => {
+			e.preventDefault();
+			setMenuState(false);
+			setSearchMenuState(true);
+		});
 	}
 </script>

@@ -1,5 +1,5 @@
 ---
-import { ThemeButton } from "@components/buttons";
+import ThemeButton from "@components/ThemeButton";
 
 const themeCookie = Astro.cookies.get("theme");
 let theme = themeCookie.value ?? "light";
@@ -7,15 +7,6 @@ if (theme !== "light" && theme !== "dark") {
 	theme = "light";
 }
 ---
-
-<script>
-	import { toggleMenu } from "@lib/state";
-
-	const menuToggleButton = document.getElementById("menu-button");
-	if (menuToggleButton instanceof HTMLButtonElement) {
-		menuToggleButton.addEventListener("click", toggleMenu);
-	}
-</script>
 
 <div
 	class="pointer-events-none fixed left-0 z-50 w-full bg-white bg-opacity-80 px-4 backdrop-blur-lg dark:bg-zinc-900 dark:bg-opacity-10 dark:text-zinc-200 sm:px-8 xl:bg-transparent xl:backdrop-blur-none"

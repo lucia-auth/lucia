@@ -13,3 +13,11 @@ export const removeClassName = (
 		.filter((item) => !className.includes(item))
 		.join(" ");
 };
+
+export const freezePage = () => {
+	addClassName(document.body, "overflow-hidden");
+};
+
+export const unFreezePage = () => {
+	removeClassName(document.body, "overflow-hidden");
+};
