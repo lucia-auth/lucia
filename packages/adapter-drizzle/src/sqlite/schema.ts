@@ -1,4 +1,9 @@
-import { sqliteTable, text, integer, numeric } from "drizzle-orm/sqlite-core";
+import {
+	sqliteTable,
+	text,
+	integer,
+	customType
+} from "drizzle-orm/sqlite-core";
 
 export const auth_user = sqliteTable("auth_user", {
 	id: text("id").primaryKey().notNull()
@@ -6,11 +11,11 @@ export const auth_user = sqliteTable("auth_user", {
 
 export const auth_session = sqliteTable("auth_session", {
 	id: text("id").primaryKey().notNull(),
-	userId: text("user_id")
+	user_id: text("user_id")
 		.notNull()
 		.references(() => auth_user.id),
-	activeExpires: integer("active_expires").notNull(),
-	idleExpires: integer("idle_expires", { mode: "number" }).notNull()
+	active_expires: integer("active_expires").notNull(),
+	idle_expires: integer("idle_expires", { mode: "number" }).notNull()
 });
 
 export const auth_key = sqliteTable("auth_key", {
@@ -18,7 +23,13 @@ export const auth_key = sqliteTable("auth_key", {
 	user_id: text("user_id")
 		.references(() => auth_user.id)
 		.notNull(),
-	primary_key: integer("primary_key", { mode: "number" }).notNull(),
+	primary_key: customType({
+		dataType: () => "boolean",
+		fromDriver: Boolean,
+		toDriver: Number
+	})("primary_key")
+		.notNull()
+		.$type<boolean>(),
 	hashed_password: text("hashed_password"),
 	expires: integer("expires", { mode: "number" })
 });
