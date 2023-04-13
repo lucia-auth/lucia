@@ -4,21 +4,25 @@ import {
 	integer,
 	customType
 } from "drizzle-orm/sqlite-core";
+import { AuthKeyTable, AuthSessionTable, AuthUserTable } from "../types";
 
-export const auth_user = sqliteTable("auth_user", {
+export const auth_user: AuthUserTable["sqlite"] = sqliteTable("auth_user", {
 	id: text("id").primaryKey().notNull()
 });
 
-export const auth_session = sqliteTable("auth_session", {
-	id: text("id").primaryKey().notNull(),
-	user_id: text("user_id")
-		.notNull()
-		.references(() => auth_user.id),
-	active_expires: integer("active_expires").notNull(),
-	idle_expires: integer("idle_expires", { mode: "number" }).notNull()
-});
+export const auth_session: AuthSessionTable["sqlite"] = sqliteTable(
+	"auth_session",
+	{
+		id: text("id").primaryKey().notNull(),
+		user_id: text("user_id")
+			.notNull()
+			.references(() => auth_user.id),
+		active_expires: integer("active_expires").notNull(),
+		idle_expires: integer("idle_expires", { mode: "number" }).notNull()
+	}
+);
 
-export const auth_key = sqliteTable("auth_key", {
+export const auth_key: AuthKeyTable["sqlite"] = sqliteTable("auth_key", {
 	id: text("id").primaryKey().notNull(),
 	user_id: text("user_id")
 		.references(() => auth_user.id)
@@ -33,7 +37,3 @@ export const auth_key = sqliteTable("auth_key", {
 	hashed_password: text("hashed_password"),
 	expires: integer("expires", { mode: "number" })
 });
-
-export type SqliteAuthUserTable = typeof auth_user;
-export type SqliteAuthSessionTable = typeof auth_session;
-export type SqliteAuthKeyTable = typeof auth_key;

@@ -1,24 +1,14 @@
 import type { Adapter, AdapterFunction } from "lucia-auth";
-import type {
-	SqliteAuthKeyTable,
-	SqliteAuthSessionTable,
-	SqliteAuthUserTable
-} from "./schema";
 import { eq, and } from "drizzle-orm/expressions";
-import type { LibSQLDatabase } from "drizzle-orm/libsql";
+import { DrizzleAdapterOptions } from "../types";
 
-export const adapter =
+export const sqliteAdapter =
 	({
 		db,
 		users,
 		sessions,
 		keys
-	}: {
-		db: LibSQLDatabase; // TODO: add all sqlite like dbs later
-		users: SqliteAuthUserTable;
-		sessions: SqliteAuthSessionTable;
-		keys: SqliteAuthKeyTable;
-	}): AdapterFunction<Adapter> =>
+	}: DrizzleAdapterOptions<"sqlite">): AdapterFunction<Adapter> =>
 	(LuciaError) => {
 		const adapter = {
 			async deleteKeysByUserId(userId) {
@@ -113,12 +103,13 @@ export const adapter =
 					.where(eq(keys.id, key))
 					.run();
 			},
+			// TODO: figure out if this works how it's supposed to...
 			async updateUserAttributes(userId, attributes) {
 				return db
 					.update(users)
 					.set(attributes)
 					.where(eq(users.id, userId))
-					.run();
+					.get();
 			},
 			async getSessionAndUserBySessionId(sessionId) {
 				const res = await db
