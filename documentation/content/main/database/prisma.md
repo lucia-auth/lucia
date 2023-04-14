@@ -133,9 +133,9 @@ datasource db {
 }
 ```
 
-## Using PrismaScale
+## Using Planetscale
 
-Since PrismaScale does not support foreign keys, change `relationMode` to `prisma` inside the schema `datasource`.
+Since Planetscale does not allow foreign keys, change `relationMode` to `prisma` inside the schema `datasource`.
 
 ```prisma
 datasource db {
