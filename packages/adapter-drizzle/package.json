@@ -11,9 +11,12 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"test-psql": "npx ts-node --esm -T test/psql/index.ts",
-		"test-mysql": "npx ts-node --esm -T test/mysql/index.ts",
-		"test-sqlite": "npx ts-node --esm -T test/sqlite/index.ts",
+		"gen-pg": "npx drizzle-kit generate:pg --out test/migrations/pg --schema src/pg/schema.ts",
+		"gen-sqlite": "npx drizzle-kit generate:sqlite --out test/migrations/sqlite --schema src/sqlite/schema.ts",
+		"gen-mysql": "npx drizzle-kit generate:mysql --out test/migrations/mysql --schema src/mysql/schema.ts",
+		"test-pg": "npx tsx test/pg/index.ts",
+		"test-sqlite": "npx tsx test/sqlite/index.ts",
+		"test-mysql": "npx tsx test/mysql/index.ts",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks && cd ../"
 	},
 	"keywords": [
@@ -42,16 +45,21 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.11.x"
+		"lucia-auth": "0.11.x",
+		"drizzle-orm": "^0.23.11"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
+		"@types/better-sqlite3": "^7.6.3",
 		"@types/pg": "^8.6.5",
 		"better-sqlite3": "^8.0.1",
-		"drizzle-orm": "^0.23.6",
-		"pg": "^8.8.0"
+		"drizzle-kit": "^0.17.4",
+		"drizzle-orm": "^0.23.11",
+		"pg": "^8.8.0",
+		"tsx": "^3.12.6"
 	},
 	"dependencies": {
+		"@libsql/client": "^0.1.1",
 		"lucia-auth": "workspace:*"
 	}
 }

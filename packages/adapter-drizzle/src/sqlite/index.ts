@@ -1,6 +1,8 @@
 import type { Adapter, AdapterFunction } from "lucia-auth";
 import { eq, and } from "drizzle-orm/expressions";
 import { DrizzleAdapterOptions } from "../types";
+import { LibsqlError } from "@libsql/client";
+import { SqliteError } from "better-sqlite3";
 
 export const sqliteAdapter =
 	({
@@ -20,7 +22,7 @@ export const sqliteAdapter =
 			async deleteNonPrimaryKey(key) {
 				await db
 					.delete(keys)
-					.where(and(eq(keys.id, key), eq(keys.primary_key, true)))
+					.where(and(eq(keys.id, key), eq(keys.primary_key, false)))
 					.run();
 			},
 			async deleteSessionsByUserId(userId) {
@@ -67,49 +69,99 @@ export const sqliteAdapter =
 				return db.select().from(users).where(eq(users.id, userId)).get();
 			},
 			async setKey(key) {
-				return db.insert(keys).values(key).run();
+				try {
+					await db.insert(keys).values(key).run();
+				} catch (e) {
+					if (
+						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						e.code === "SQLITE_CONSTRAINT_FOREIGNKEY"
+					)
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					if (
+						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						e.code === "SQLITE_CONSTRAINT_PRIMARYKEY"
+					)
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+
+					throw new Error(`${e}`);
+				}
 			},
 			async setSession(session) {
-				return db
-					.insert(sessions)
-					.values({
-						...session,
-						active_expires: Number(session.active_expires),
-						idle_expires: Number(session.idle_expires)
-					})
-					.run();
+				try {
+					await db
+						.insert(sessions)
+						.values({
+							...session,
+							active_expires: Number(session.active_expires),
+							idle_expires: Number(session.idle_expires)
+						})
+						.run();
+				} catch (e) {
+					if (
+						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						e.code === "SQLITE_CONSTRAINT_FOREIGNKEY"
+					)
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					if (
+						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						e.code === "SQLITE_CONSTRAINT_PRIMARYKEY"
+					)
+						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+
+					throw new Error(`${e}`);
+				}
 			},
 			async setUser(userId, userAttributes, key) {
-				if (!key) {
-					return db
+				if (key === null) {
+					await db
 						.insert(users)
 						.values({ id: userId, ...userAttributes })
-						.run();
+						.run
+
+					return { ...userAttributes, id: userId };
 				}
 
-				// No transactions in drizzle orm yet
-				return Promise.all([
-					db
-						.insert(users)
-						.values({ id: userId, ...userAttributes })
-						.run(),
-					db.insert(keys).values(key).run()
-				]);
+				await db.transaction(async (tx) => {
+					try {
+						await tx
+							.insert(users)
+							.values({ id: userId, ...userAttributes })
+							.run();
+
+						await tx.insert(keys).values(key).run();
+					} catch (e) {
+						if (
+							(e instanceof LibsqlError || e instanceof SqliteError) &&
+							e.code === "SQLITE_CONSTRAINT_PRIMARYKEY"
+						)
+							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+
+						throw new Error(`${e}`);
+					}
+				});
+
+				return { ...userAttributes, id: userId };
 			},
 			async updateKeyPassword(key, hashedPassword) {
-				return db
+				const res = await db
 					.update(keys)
 					.set({ hashed_password: hashedPassword })
 					.where(eq(keys.id, key))
 					.run();
+
+				if (res.rowsAffected === 0) throw new LuciaError("AUTH_INVALID_KEY_ID");
 			},
-			// TODO: figure out if this works how it's supposed to...
 			async updateUserAttributes(userId, attributes) {
-				return db
+				const res = await db
 					.update(users)
 					.set(attributes)
 					.where(eq(users.id, userId))
-					.get();
+					.run();
+
+				if (res.rowsAffected === 0)
+					throw new LuciaError("AUTH_INVALID_USER_ID");
+				// TODO: figure out if this is the right return type
+				return res;
 			},
 			async getSessionAndUserBySessionId(sessionId) {
 				const res = await db
@@ -118,9 +170,10 @@ export const sqliteAdapter =
 					.where(eq(sessions.id, sessionId))
 					.innerJoin(users, eq(users.id, sessions.user_id))
 					.get();
+				if (res === undefined) return null;
 
 				// in case they name the tables differently (i don't even know if ts would let them do that but just in case)
-				return { user: res[users._.name], session: res[sessions._.name] };
+				return { user: res["auth_user"], session: res["auth_session"] };
 			}
 		} satisfies Adapter;
 

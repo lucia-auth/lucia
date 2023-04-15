@@ -1,14 +1,12 @@
-import { AnyTable, ColumnBaseConfig, TableConfig } from "drizzle-orm";
-import { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
-import { AnyPgColumn } from "drizzle-orm/pg-core";
-import { AnyMySqlColumn, AnyMySqlTable } from "drizzle-orm/mysql-core";
-import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { MySql2Database } from "drizzle-orm/mysql2";
-import { PlanetScaleDatabase } from "drizzle-orm/planetscale-serverless";
-import { BunSQLiteDatabase } from "drizzle-orm/bun-sqlite";
-import { LibSQLDatabase } from "drizzle-orm/libsql";
-import { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import type { AnyTable, ColumnBaseConfig, TableConfig } from "drizzle-orm";
+import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
+import type { AnyMySqlColumn, AnyMySqlTable } from "drizzle-orm/mysql-core";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { MySql2Database } from "drizzle-orm/mysql2";
+import type { LibSQLDatabase } from "drizzle-orm/libsql";
+import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 
 export type Dbs = "pg" | "mysql" | "sqlite";
 
@@ -81,8 +79,8 @@ export type DrizzleAdapterOptions<T extends Dbs> = {
 
 export type Database = {
 	pg: NodePgDatabase | PostgresJsDatabase;
-	mysql: MySql2Database | PlanetScaleDatabase;
-	sqlite: BunSQLiteDatabase | LibSQLDatabase | BetterSQLite3Database;
+	mysql: MySql2Database;
+	sqlite: LibSQLDatabase | BetterSQLite3Database;
 };
 
 export type AnyTableWithColumns<T extends Partial<TableConfig>> =

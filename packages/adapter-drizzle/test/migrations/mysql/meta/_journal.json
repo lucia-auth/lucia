@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1681362055366,
+      "tag": "0000_absent_bastion",
+      "breakpoints": false
+    }
+  ]
+}
