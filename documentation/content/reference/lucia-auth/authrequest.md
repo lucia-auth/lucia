@@ -1,6 +1,6 @@
 ---
 _order: 1
-title: "AuthRequest"
+title: "`AuthRequest`"
 ---
 
 Return type of [`handleRequest()`](/reference/lucia-auth/auth#handlerequest).

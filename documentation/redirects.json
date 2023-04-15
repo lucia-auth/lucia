@@ -14,7 +14,8 @@
 	{
 		"from": "/start-here/migrate-to-release-candidate",
 		"to": "/start-here/migrate-to-version-1"
-	}, {
+	},
+	{
 		"from": "/start-here/quick-start",
 		"to": "/start-here/username-password"
 	}

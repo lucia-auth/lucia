@@ -74,7 +74,7 @@ await auth.createUser({
 });
 ```
 
-## Example
+#### Example
 
 To store a user's username, for example, a `username` column should be added to the `user` table:
 

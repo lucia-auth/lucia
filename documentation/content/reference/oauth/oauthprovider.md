@@ -1,5 +1,5 @@
 ---
-title: "OAuthProvider"
+title: "`OAuthProvider`"
 _order: 1
 ---
 

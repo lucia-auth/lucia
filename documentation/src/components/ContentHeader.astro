@@ -1,0 +1,63 @@
+---
+import Header from "@components/Header.astro";
+
+const themeCookie = Astro.cookies.get("theme");
+let theme = themeCookie.value ?? "light";
+if (theme !== "light" && theme !== "dark") {
+	theme = "light";
+}
+
+type Props = {
+	subCollectionTitleHtml?: string;
+	titleHtml?: string;
+};
+
+const titleHtml =
+	[Astro.props.subCollectionTitle, Astro.props.title]
+		.filter((val) => !!val)
+		.join(" - ") || null;
+---
+
+<Header includeSearch={true}>
+	<div
+		class="pointer-events-auto flex place-items-center gap-x-2 border-b border-zinc-200 px-4 py-1 dark:border-zinc-800 sm:px-8 xl:hidden xl:border-none"
+	>
+		<button
+			class="hover-zinc-80 flex place-items-center gap-x-1 rounded px-0.5 py-0.5 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+			aria-label="Toggle menubar"
+			id="menu-button"
+		>
+			<div class="h-7 w-7 fill-current text-zinc-800 dark:text-zinc-200">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 48 48"
+					class="h-full w-full"
+				>
+					<path d="M6 36v-3h36v3Zm0-10.5v-3h36v3ZM6 15v-3h36v3Z"></path>
+				</svg>
+			</div>
+		</button>
+		{titleHtml && <p class="text-sm " set:html={titleHtml} />}
+	</div>
+</Header>
+<script>
+	import { setMenuState, setSearchMenuState } from "@lib/state";
+
+	const menuToggleButton = document.getElementById("menu-button");
+
+	if (menuToggleButton instanceof HTMLButtonElement) {
+		menuToggleButton.addEventListener("click", () => {
+			setMenuState((menuOpen) => !menuOpen);
+		});
+	}
+
+	const searchButtonElement = document.getElementById("search-button");
+
+	if (searchButtonElement instanceof HTMLAnchorElement) {
+		searchButtonElement.addEventListener("click", (e) => {
+			e.preventDefault();
+			setMenuState(false);
+			setSearchMenuState(true);
+		});
+	}
+</script>

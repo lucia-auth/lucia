@@ -15,7 +15,7 @@ export default (props: { current?: string | null }) => {
 		<div>
 			<button
 				class={dynamicClassName(
-					"hover:border-main dark:hover:border-main w-full rounded-md border bg-zinc-50 px-4 py-1.5 text-left dark:bg-zinc-900",
+					"hover:border-main dark:hover:border-main group w-full rounded-md border bg-zinc-50 px-4 py-1.5 text-left dark:bg-zinc-900",
 					{
 						"border-main": isBoxOpen(),
 						"border-zinc-200 dark:border-zinc-800": !isBoxOpen()
@@ -23,8 +23,8 @@ export default (props: { current?: string | null }) => {
 				)}
 				onClick={toggleBox}
 			>
-				<span class="text-zinc-500">Framework:</span>
-				<span> {currentSelection.title}</span>
+				<span class="text-zinc-400">Framework:</span>
+				<span class="group-hover:text-main"> {currentSelection.title}</span>
 			</button>
 			<Show when={isBoxOpen()}>
 				<div class="absolute z-50 mt-2 w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">

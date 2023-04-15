@@ -1,5 +1,5 @@
 ---
-title: "IdTokenWrapper"
+title: "`IdTokenWrapper`"
 _order: 1
 ---
 

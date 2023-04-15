@@ -1,0 +1,62 @@
+---
+import Header from "@components/Header.astro";
+import Layout from "@components/Layout.astro";
+import { query } from "@search/query";
+import indexes from "../../.search.json";
+import { SearchResult } from "@components/Search";
+import { getFrameworkId } from "@lib/framework";
+
+const frameworkId = getFrameworkId(Astro);
+
+const queryParams = Astro.url.searchParams.get("q") ?? null;
+const getSearchResult = async () => {
+	if (!queryParams) return [];
+	return await query(indexes, queryParams, frameworkId);
+};
+
+const result = await getSearchResult();
+---
+
+<Layout
+	meta={{
+		title: "Search",
+		description: "Search Lucia"
+	}}
+>
+	<Header />
+	<main
+		class="w-full px-4 pt-36 dark:text-zinc-200 sm:px-8 sm:pt-48 md:px-24 md:pt-36 lg:pt-48"
+	>
+		<div class="mx-auto max-w-xl">
+			<h1 class="mb-4 text-4xl font-semibold sm:text-5xl">Search</h1>
+			<form>
+				<input
+					class="focus:border-main dark:focus:border-main mt-1 block w-full cursor-text rounded-md border border-zinc-200 bg-zinc-50 px-4 py-2 text-left outline-none dark:border-zinc-800 dark:bg-zinc-900"
+					value={Astro.url.searchParams.get("q") ?? ""}
+					name="q"
+					autofocus
+				/>
+			</form>
+
+			<div class="pt-6 pb-12">
+				<SearchResult result={result} />
+				{
+					!queryParams && result.length === 0 && (
+						<p class="py-4 text-center text-sm text-zinc-400">
+							Tip: Start your query with ":reference" or ":tokens" to filter by
+							sections
+						</p>
+					)
+				}
+
+				{
+					!!queryParams && result.length === 0 && (
+						<p class="py-4 text-center text-sm text-zinc-400">
+							No results for "{queryParams}"
+						</p>
+					)
+				}
+			</div>
+		</div>
+	</main>
+</Layout>

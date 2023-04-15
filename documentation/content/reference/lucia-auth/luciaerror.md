@@ -1,6 +1,6 @@
 ---
 _order: 2
-title: "LuciaError"
+title: "`LuciaError`"
 ---
 
 All [known errors](/basics/error-handling#known-errors) are thrown as `LuciaError`, which is a standard `Error` :

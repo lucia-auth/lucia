@@ -6,6 +6,10 @@ interface Props {
 		title: string | null;
 		description: string | null;
 	};
+	content?: {
+		collectionId?: string;
+		frameworkId?: string | null;
+	};
 }
 const title = Astro.props.meta.title
 	? `${Astro.props.meta.title} - Lucia`
@@ -137,12 +141,15 @@ const origin = import.meta.env.DEV
 	</head>
 
 	<body
-		class:list={["dark:text-zinc-200 leading-relaxed text-shadow-zinc", theme]}
+		class:list={["dark:text-zinc-200 text-shadow-zinc leading-relaxed ", theme]}
 		set:html={slotHtml}
 	>
-		<!--not super proud of this - need this to hide main-color bg on chrome -->
-		<div class="fixed top-0 -z-10 h-screen w-screen bg-white dark:bg-zinc-900">
-		</div>
-		<SearchMenu />
+		<SearchMenu
+			collectionId={Astro.props.content?.collectionId ?? null}
+			frameworkId={Astro.props.content?.frameworkId ?? null}
+		/>
 	</body>
+	<!--not super proud of this - need this to hide main-color bg on chrome -->
+	<div class="fixed top-0 -z-10 h-screen w-screen bg-white dark:bg-zinc-900">
+	</div>
 </html>

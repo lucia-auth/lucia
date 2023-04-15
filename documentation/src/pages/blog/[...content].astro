@@ -1,5 +1,5 @@
 ---
-import BlogHeader from "@components/BlogHeader.astro";
+import Header from "@components/Header.astro";
 import Layout from "@components/Layout.astro";
 import MarkdownContent from "@components/MarkdownContent.astro";
 
@@ -59,7 +59,7 @@ const { Content, metaData } = Astro.props;
 		description: metaData.description
 	}}
 >
-	<BlogHeader />
+	<Header />
 	<main
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200"
 	>

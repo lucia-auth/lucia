@@ -68,7 +68,7 @@ You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authreques
 const { user, session } = await authRequest.validateUser();
 ```
 
-### Examples
+#### Examples
 
 You create a new `AuthRequest` instance, or better yet, put it inside
 

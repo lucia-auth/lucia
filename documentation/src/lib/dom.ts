@@ -1,7 +1,5 @@
 export const addClassName = (element: HTMLElement, ...classNames: string[]) => {
-	element.className = [...element.className.split(" "), ...classNames].join(
-		" "
-	);
+	element.className = [...element.classList.values(), ...classNames].join(" ");
 };
 
 export const removeClassName = (
@@ -12,12 +10,4 @@ export const removeClassName = (
 		.split(" ")
 		.filter((item) => !className.includes(item))
 		.join(" ");
-};
-
-export const freezePage = () => {
-	addClassName(document.body, "overflow-hidden");
-};
-
-export const unFreezePage = () => {
-	removeClassName(document.body, "overflow-hidden");
 };

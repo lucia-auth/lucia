@@ -143,7 +143,7 @@ const session = await auth.createSession(user.userId);
 // store new session
 ```
 
-### Example
+#### Example
 
 ```ts
 import { auth } from "./lucia.js";
