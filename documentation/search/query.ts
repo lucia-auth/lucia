@@ -13,7 +13,6 @@ export type QueryResultItem = {
 
 export const initializeSearch = () => {
 	const importIndexesPromise = new Promise<Indexes>(async (resolve) => {
-		await new Promise((r) => setTimeout(r, 1000));
 		const indexes: Indexes = (await import(".search.json")) as any;
 		resolve(indexes);
 	});
