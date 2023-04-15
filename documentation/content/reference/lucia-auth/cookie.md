@@ -1,5 +1,5 @@
 ---
-title: "Cookie"
+title: "`Cookie`"
 _order: 1
 ---
 

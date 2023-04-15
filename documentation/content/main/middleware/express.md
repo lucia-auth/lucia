@@ -14,7 +14,7 @@ const handleRequest: (request: Request, response: Response) => AuthRequest;
 | request  | [`Request`](https://expressjs.com/en/4x/api.html#req)  |
 | response | [`Response`](https://expressjs.com/en/4x/api.html#res) |
 
-## Example
+#### Example
 
 ```ts
 import express from "express";

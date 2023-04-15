@@ -6,6 +6,7 @@ import siena from "siena";
 import cela from "./integrations/cela";
 import preprocess from "./integrations/preprocess";
 import markdown from "./integrations/markdown";
+import { generateSearchIndex } from "./search";
 
 import vercel from "@astrojs/vercel/edge";
 
@@ -14,7 +15,7 @@ export default defineConfig({
 		tailwind(),
 		solidJs(),
 		siena(),
-		cela(),
+		cela(generateSearchIndex),
 		preprocess(),
 		markdown()
 	],

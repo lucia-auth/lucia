@@ -42,7 +42,6 @@ setResponseHeaders("Set-Cookie", sessionCookie);
 
 We recommend [using `handleRequest()` for setting sessions](/basics/handle-requests#set-session-cookie) instead however.
 
-
 ## Validate session ids
 
 The [`validateSession()`](/reference/lucia-auth/auth#validatesession) method will validate the session id and return the session object, renewing the session if needed. As such, the returned session may not match the provided session. You can check if the returned session is a new session with the `fresh` property.

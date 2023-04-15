@@ -9,7 +9,8 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"auri.deploy": "curl -X POST $VERCEL_DEPLOY_HOOK"
+		"auri.deploy": "curl -X POST $VERCEL_DEPLOY_HOOK",
+		"generate": "vite-node scripts/generate.ts"
 	},
 	"dependencies": {
 		"@astrojs/node": "^5.1.0",

@@ -1,6 +1,6 @@
 ---
 _order: 1
-title: "Auth"
+title: "`Auth`"
 ---
 
 Instance returned by [`lucia()`](/reference/lucia-auth/lucia-auth#lucia). Errors can be [`LuciaError`](/reference/lucia-auth/luciaerror) or ones thrown from the database query library.

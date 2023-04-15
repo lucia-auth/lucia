@@ -24,6 +24,7 @@ By default, Lucia uses the [Lucia middleware](/middleware/lucia), but this can b
 - [SvelteKit](/middleware/sveltekit)
 
 > Use the Node middleware for Next.js
+
 ## Validate requests
 
 [`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used to get the current session.

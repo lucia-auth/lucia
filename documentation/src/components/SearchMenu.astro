@@ -1,0 +1,83 @@
+---
+import Search from "./Search";
+
+type Props = {
+	collectionId: string | null;
+	frameworkId: string | null
+};
+
+const queryCollectionId = Astro.props.collectionId === "main" ? null : Astro.props.collectionId;
+const queryFrameworkId = Astro.props.frameworkId ?? null
+---
+
+<div
+	class="text-shadow-zinc leading-relaxed  fixed z-50 hidden h-full w-full place-content-center place-items-center overscroll-contain bg-black bg-opacity-20 py-36 px-4 dark:bg-white dark:bg-opacity-5 dark:text-zinc-200"
+	id="search-backdrop"
+>
+	<div
+		class="dark:bg-zinc-900 h-full w-full max-w-xl overflow-auto rounded-xl bg-white px-6 py-8 shadow-xl"
+		id="search-modal"
+	>
+		<Search
+			frameworkId="sveltekit"
+			collectionId={queryCollectionId}
+			frameworkId={queryFrameworkId}
+			client:visible
+		/>
+	</div>
+</div>
+
+<script>
+	import {
+		addClassName,
+		removeClassName,
+	} from "@lib/dom";
+	import { onSearchMenuStateUpdate, setSearchMenuState } from "@lib/state";
+
+	import { focusOnSearchBar } from "./Search";
+
+	const searchBackdropElement = document.getElementById("search-backdrop");
+	const searchModalElement = document.getElementById("search-modal");
+
+	if (
+		searchBackdropElement instanceof HTMLDivElement &&
+		searchModalElement instanceof HTMLDivElement
+	) {
+		const closeSearchMenu = () => {
+			addClassName(searchBackdropElement, "hidden");
+			removeClassName(searchBackdropElement, "flex");
+			unFreezePage();
+		};
+
+		const openSearchMenu = () => {
+			removeClassName(searchBackdropElement, "hidden");
+			addClassName(searchBackdropElement, "flex");
+			freezePage();
+			focusOnSearchBar();
+		};
+
+		searchBackdropElement.addEventListener("click", (e) => {
+			setSearchMenuState(false);
+		});
+		searchBackdropElement.addEventListener("keypress", (e) => {
+			if (e.key !== "Escape") return;
+			closeSearchMenu();
+		});
+		searchModalElement.addEventListener("click", (e) => {
+			e.stopPropagation();
+		});
+
+		onSearchMenuStateUpdate((searchMenuOpen) => {
+			if (searchMenuOpen) return openSearchMenu();
+			closeSearchMenu();
+		});
+	}
+
+	const freezePage = () => {
+		addClassName(document.body, "overflow-hidden", "overflow-auto");
+	};
+
+	const unFreezePage = () => {
+		removeClassName(document.body, "overflow-hidden", "overflow-auto");
+	};
+</script>

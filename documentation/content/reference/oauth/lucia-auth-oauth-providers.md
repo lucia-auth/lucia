@@ -1,6 +1,6 @@
 ---
 _order: 1
-title: "/providers"
+title: "`/providers`"
 ---
 
 These are exported from `@lucia-auth/oauth/providers`:

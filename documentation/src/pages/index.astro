@@ -1,26 +1,16 @@
 ---
 import Layout from "@components/Layout.astro";
 import ContentTable from "@components/ContentTable.astro";
-import Header from "@components/Header.astro";
+import Header from "@components/ContentHeader.astro";
 
 // generated on build/dev start
 import contributors from "../../.github.json";
 
-import { frameworkIds } from "@lib/framework";
+import { getFrameworkId } from "@lib/framework";
 import { getCollection } from "@cela/content";
 import Banner from "@components/Banner.astro";
 
-let frameworkId = Astro.url.searchParams.get("framework") ?? null;
-
-frameworkId ||= Astro.cookies.get("framework").value ?? "none";
-
-if (frameworkId && !frameworkIds.includes(frameworkId)) {
-	frameworkId = "none";
-}
-
-Astro.cookies.set("framework", frameworkId, {
-	path: "/"
-});
+const frameworkId = getFrameworkId(Astro);
 
 const collection = await getCollection("main", frameworkId);
 if (!collection) {
@@ -35,16 +25,15 @@ if (!collection) {
 		title: null,
 		description: null
 	}}
+	content={{ collectionId: collection.id, frameworkId }}
 >
 	<Header />
 	<ContentTable frameworkId={frameworkId} />
 	<main
 		class="min-h-screen overflow-hidden bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:ml-80"
 	>
-		<div class="px-4 pt-36 sm:pt-48 md:px-24 md:pt-36 lg:pt-48">
-			<h1
-				class="xs:text-6xl break-words text-4xl font-semibold leading-none sm:text-7xl"
-			>
+		<div class="px-4 pt-36 sm:px-8 sm:pt-48 md:px-24 md:pt-36 lg:pt-48">
+			<h1 class="xs:text-6xl break-words text-4xl font-semibold sm:text-7xl">
 				Authentication, <br />simple and clean
 			</h1>
 			<p class="mb-4 mt-6">

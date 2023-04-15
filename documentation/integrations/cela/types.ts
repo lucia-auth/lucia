@@ -1,14 +1,16 @@
 import type { getContent } from "./content";
 
-export type Section = {
-	title: string;
+export type SectionDocument = {
+	rawTitle: string;
+	id: string;
+	pathname: string;
 	order: number;
-	documents: {
-		id: string;
-		title: string;
-		href: string;
-		order: number;
-	}[];
+};
+
+export type Section = {
+	rawTitle: string;
+	order: number;
+	documents: SectionDocument[];
 	id: string;
 };
 
@@ -27,13 +29,21 @@ export type ContentMetaData = {
 	collectionId: string;
 	frameworkId: string | null;
 	redirect: string | null;
-	title: string;
+	rawTitle: string;
 	id: string;
-	href: string;
+	pathname: string;
 	description: string | null;
+	rawSubCollectionTitle: string;
 };
 
 export type ContentLink = {
 	metaData: ContentMetaData;
 	mappedContentPath: string;
+	headings: ContentLinkHeading[];
+};
+
+export type ContentLinkHeading = {
+	rawText: string;
+	hash: string;
+	depth: number;
 };

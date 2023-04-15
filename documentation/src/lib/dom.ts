@@ -1,7 +1,5 @@
 export const addClassName = (element: HTMLElement, ...classNames: string[]) => {
-	element.className = [...element.className.split(" "), ...classNames].join(
-		" "
-	);
+	element.className = [...element.classList.values(), ...classNames].join(" ");
 };
 
 export const removeClassName = (
