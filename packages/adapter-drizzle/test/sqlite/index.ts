@@ -10,7 +10,7 @@ import {
 	drizzle as bsDrizzle
 } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
-import { rm } from "node:fs/promises";
+import { rm,  } from "node:fs/promises";
 
 await rm("test.db");
 

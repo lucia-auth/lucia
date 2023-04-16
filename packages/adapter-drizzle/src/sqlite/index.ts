@@ -1,8 +1,10 @@
 import type { Adapter, AdapterFunction } from "lucia-auth";
 import { eq, and } from "drizzle-orm/expressions";
 import { DrizzleAdapterOptions } from "../types";
-import { LibsqlError } from "@libsql/client";
+import { LibsqlError, ResultSet } from "@libsql/client";
+import type { RunResult } from "better-sqlite3";
 import { SqliteError } from "better-sqlite3";
+import { writeFile } from "fs/promises";
 
 export const sqliteAdapter =
 	({
@@ -73,12 +75,16 @@ export const sqliteAdapter =
 					await db.insert(keys).values(key).run();
 				} catch (e) {
 					if (
-						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
 						e.code === "SQLITE_CONSTRAINT_FOREIGNKEY"
 					)
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					if (
-						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
 						e.code === "SQLITE_CONSTRAINT_PRIMARYKEY"
 					)
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
@@ -98,12 +104,16 @@ export const sqliteAdapter =
 						.run();
 				} catch (e) {
 					if (
-						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
 						e.code === "SQLITE_CONSTRAINT_FOREIGNKEY"
 					)
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					if (
-						(e instanceof LibsqlError || e instanceof SqliteError) &&
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
 						e.code === "SQLITE_CONSTRAINT_PRIMARYKEY"
 					)
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
@@ -116,40 +126,48 @@ export const sqliteAdapter =
 					await db
 						.insert(users)
 						.values({ id: userId, ...userAttributes })
-						.run
+						.run();
 
 					return { ...userAttributes, id: userId };
 				}
-
-				await db.transaction(async (tx) => {
-					try {
+				try {
+					await db.transaction(async (tx) => {
 						await tx
 							.insert(users)
 							.values({ id: userId, ...userAttributes })
 							.run();
 
 						await tx.insert(keys).values(key).run();
-					} catch (e) {
-						if (
-							(e instanceof LibsqlError || e instanceof SqliteError) &&
-							e.code === "SQLITE_CONSTRAINT_PRIMARYKEY"
-						)
-							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-
-						throw new Error(`${e}`);
+					});
+				} catch (e) {
+					if (
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
+						e.code === "SQLITE_CONSTRAINT_PRIMARYKEY"
+					) {
+						// Bandaid solution because bettersqlite3 transactions aren't working :)
+						await db.delete(users).where(eq(users.id, userId)).run();
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
-				});
+
+					throw new Error(`${e}`);
+				}
 
 				return { ...userAttributes, id: userId };
 			},
 			async updateKeyPassword(key, hashedPassword) {
-				const res = await db
+				const res = (await db
 					.update(keys)
 					.set({ hashed_password: hashedPassword })
 					.where(eq(keys.id, key))
-					.run();
+					.run()) as RunResult | ResultSet;
 
-				if (res.rowsAffected === 0) throw new LuciaError("AUTH_INVALID_KEY_ID");
+				if (
+					("rowsAffected" in res && res.rowsAffected === 0) ||
+					("changes" in res && res.changes === 0)
+				)
+					throw new LuciaError("AUTH_INVALID_KEY_ID");
 			},
 			async updateUserAttributes(userId, attributes) {
 				const res = await db
@@ -158,10 +176,13 @@ export const sqliteAdapter =
 					.where(eq(users.id, userId))
 					.run();
 
-				if (res.rowsAffected === 0)
+				if (
+					("rowsAffected" in res && res.rowsAffected === 0) ||
+					("changes" in res && res.changes === 0)
+				)
 					throw new LuciaError("AUTH_INVALID_USER_ID");
-				// TODO: figure out if this is the right return type
-				return res;
+
+				return res as RunResult | ResultSet;
 			},
 			async getSessionAndUserBySessionId(sessionId) {
 				const res = await db
