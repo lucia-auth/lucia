@@ -91,14 +91,14 @@ export const getNextPage = async (
 
 	const collection = await getCollection(collectionId, frameworkId);
 
-	if(collection) {
+	if (collection) {
 		const sectionsCount = collection.sections.length - 1;
 		collection?.sections.forEach((section, secIdx) => {
 			let docsCount = section.documents.length - 1;
 			section.documents.map((document, docIdx) => {
-				if(document.pathname == currentPage) {
-					if(docIdx === docsCount) {
-						if(sectionsCount !== secIdx) {
+				if (document.pathname == currentPage) {
+					if (docIdx === docsCount) {
+						if (sectionsCount !== secIdx) {
 							nextPageInfo = collection?.sections[secIdx + 1].documents[0];
 						}
 					} else {
@@ -106,7 +106,7 @@ export const getNextPage = async (
 					}
 				}
 			});
-		})
+		});
 	}
 	return nextPageInfo;
-}
+};
