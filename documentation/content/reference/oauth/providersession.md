@@ -1,6 +1,6 @@
 ---
 _order: 1
-title: "ProviderSession"
+title: "`ProviderSession`"
 ---
 
 ```ts

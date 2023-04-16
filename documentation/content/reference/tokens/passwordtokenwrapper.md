@@ -1,5 +1,5 @@
 ---
-title: "PasswordTokenWrapper"
+title: "`PasswordTokenWrapper`"
 _order: 1
 ---
 

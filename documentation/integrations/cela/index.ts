@@ -4,7 +4,12 @@ import path from "path";
 import type { AstroIntegration } from "astro";
 import type { Plugin as VitePlugin } from "vite";
 
-export default () => {
+export { CELA_GENERATED_DIR } from "./constant";
+export * from "./types";
+
+export default (
+	celaCompletedCallback: () => void | Promise<void> = () => {}
+) => {
 	const integration: AstroIntegration = {
 		name: "lucia:cela",
 		hooks: {
@@ -13,6 +18,7 @@ export default () => {
 					name: "lucia:cela",
 					buildStart: async () => {
 						generateContent();
+						celaCompletedCallback();
 					},
 					handleHotUpdate: async (ctx) => {
 						const collectionDirPath = path.join(process.cwd(), "content");
@@ -24,6 +30,7 @@ export default () => {
 						);
 						const [baseCollectionId] = workingPath.replace("/", "").split("/");
 						generateCollection(baseCollectionId);
+						celaCompletedCallback();
 					}
 				};
 				updateConfig({

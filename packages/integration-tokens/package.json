@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/tokens",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Tokens integration for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -33,8 +33,7 @@
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"dependencies": {
-		"lucia-auth": "workspace:*",
-		"nanoid": "^4.0.0"
+		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
 		"lucia-auth": "1.x"

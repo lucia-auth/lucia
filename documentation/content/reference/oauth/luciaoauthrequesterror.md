@@ -1,5 +1,5 @@
 ---
-title: "LuciaOAuthRequestError"
+title: "`LuciaOAuthRequestError`"
 _order: 1
 ---
 

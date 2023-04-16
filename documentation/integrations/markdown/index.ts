@@ -19,3 +19,11 @@ export default () => {
 	};
 	return integration;
 };
+
+export const removeMarkdownFormatting = (text: string) => {
+	return text.replaceAll("`", "");
+};
+
+export const generateMarkdownHtml = (text: string) => {
+	return text.replace(/`(.*)`/g, "<code>$1</code>");
+};

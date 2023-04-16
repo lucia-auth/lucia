@@ -71,7 +71,7 @@ Create `pages/signup.astro`. This form will have an input field for username and
 
 In the same page, we'll also handle the POST request from the form.
 
-Users and keys can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). Create a new session with [`createSession()`](/reference/lucia-auth/auth?framework=astro#createsession) and make sure to store the session id by calling  [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
+Users and keys can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). Create a new session with [`createSession()`](/reference/lucia-auth/auth?framework=astro#createsession) and make sure to store the session id by calling [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```astro
 ---

@@ -17,8 +17,13 @@ module.exports = {
 				zinc: {
 					80: "#F5F5F6",
 					150: "#EDEDEF",
+					850: "#202023",
 					950: "#141416"
 				}
+			},
+			fontSize: {
+				xs: "0.825rem",
+				sm: "0.9rem"
 			}
 		}
 	},

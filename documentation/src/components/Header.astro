@@ -1,78 +1,57 @@
 ---
-import { ThemeButton } from "@components/buttons";
-import Discord from "./icons/Discord.astro";
-import Github from "./icons/Github.astro";
+import ThemeButton from "@components/ThemeButton";
+import Search from "@components/icons/Search.astro";
 
 const themeCookie = Astro.cookies.get("theme");
 let theme = themeCookie.value ?? "light";
 if (theme !== "light" && theme !== "dark") {
 	theme = "light";
 }
+
+type Props = {
+	includeSearch?: boolean;
+};
 ---
 
-<script>
-	import { toggleMenu } from "@lib/state";
-
-	const menuToggleButton = document.getElementById("menu-button");
-	if (menuToggleButton instanceof HTMLButtonElement) {
-		menuToggleButton.addEventListener("click", toggleMenu);
-	}
-</script>
-
 <div
-	class="pointer-events-none fixed left-0 z-50 w-full bg-white bg-opacity-80 px-4 backdrop-blur-lg dark:bg-zinc-900 dark:bg-opacity-10 dark:text-zinc-200 sm:px-8 xl:bg-transparent xl:backdrop-blur-none"
+	class="pointer-events-none fixed left-0 z-40 w-full bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:bg-transparent dark:xl:bg-transparent"
 >
-	<div class="flex place-content-between place-items-center py-4">
-		<a class="pointer-events-auto flex place-items-center" href="/">
-			<img
-				src="/logo.svg"
-				alt="Lucia logo"
-				width="100"
-				height="100"
-				class="h-6 w-6"
-			/>
-			<p class="text-2xl font-semibold">Lucia</p>
-		</a>
+	<div
+		class="flex place-content-between place-items-center px-4 pb-2 pt-3 sm:px-8"
+	>
+		<div class="flex place-items-center gap-x-4">
+			<a class="pointer-events-auto flex place-items-center" href="/">
+				<img
+					src="/logo.svg"
+					alt="Lucia logo"
+					width="100"
+					height="100"
+					class="h-6 w-6"
+				/>
+				<p class="text-2xl font-semibold">Lucia</p>
+			</a>
+		</div>
 		<div
 			class="pointer-events-auto flex place-items-center divide-zinc-200 dark:divide-zinc-700 sm:divide-x"
 		>
-			<a
-				class="my-1 mr-4 hidden rounded px-2 py-0.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 sm:block"
-				href="/reference">Reference</a
-			>
 			<div class="flex place-items-center gap-x-4 pl-4">
-				<a
-					href="https://discord.gg/PwrK3kpVR3"
-					target="_blank"
-					class="flex h-5 w-5 cursor-pointer place-content-center fill-current hover:opacity-70 dark:text-zinc-200"
-					aria-label="Discord invite"
-				>
-					<Discord />
-				</a>
-
-				<a
-					href="https://github.com/pilcrowOnPaper/lucia"
-					target="_blank"
-					class="flex h-5 w-5 cursor-pointer place-content-center fill-current dark:text-zinc-200"
-					aria-label="Github repository"
-				>
-					<Github />
-				</a>
+				{
+					Astro.props.includeSearch && (
+						<a
+							class="block rounded p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+							id="search-button"
+							href="/search"
+						>
+							<div class="h-5 w-5">
+								<Search />
+							</div>
+						</a>
+					)
+				}
 
 				<ThemeButton client:load initialTheme={theme} />
-
-				<button class="xl:hidden" aria-label="Toggle menubar" id="menu-button">
-					<div class="h-8 w-8 fill-current dark:text-zinc-200">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 48 48"
-							class="h-full w-full"
-						>
-							<path d="M6 36v-3h36v3Zm0-10.5v-3h36v3ZM6 15v-3h36v3Z"></path>
-						</svg>
-					</div>
-				</button>
 			</div>
 		</div>
 	</div>
+	<slot />
 </div>

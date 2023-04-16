@@ -6,7 +6,9 @@
 			"@layouts/*": ["src/layouts/*"],
 			"@lib/*": ["src/lib/*"],
 			"@components/*": ["src/components/*"],
-			"@cela/*": ["integrations/cela/*"]
+			"@cela/*": ["integrations/cela/*"],
+			"@search/*": ["search/*"],
+			"@markdown/*": ["integrations/markdown/*"]
 		},
 		"jsx": "preserve",
 		"jsxImportSource": "solid-js"

@@ -1,8 +1,14 @@
 ---
+import SearchMenu from "./SearchMenu.astro";
+
 interface Props {
 	meta: {
 		title: string | null;
 		description: string | null;
+	};
+	content?: {
+		collectionId?: string;
+		frameworkId?: string | null;
 	};
 }
 const title = Astro.props.meta.title
@@ -23,19 +29,6 @@ const origin = import.meta.env.DEV
 	? Astro.url.origin
 	: "https://lucia-auth.com";
 ---
-
-<script>
-	import { addClassName, removeClassName } from "@lib/dom";
-	import { onMenuToggle } from "@lib/state";
-
-	onMenuToggle((isMenuOpen) => {
-		if (isMenuOpen) {
-			addClassName(document.body, "overflow-hidden");
-		} else {
-			removeClassName(document.body, "overflow-hidden");
-		}
-	});
-</script>
 
 <html lang="en" class="bg-main">
 	<head>
@@ -148,14 +141,15 @@ const origin = import.meta.env.DEV
 	</head>
 
 	<body
-		class:list={[
-			"dark:text-zinc-200 leading-relaxed text-shadow-zinc xl:overflow-auto",
-			theme
-		]}
+		class:list={["dark:text-zinc-200 text-shadow-zinc leading-relaxed ", theme]}
 		set:html={slotHtml}
 	>
-		<!--not super proud of this - need this to hide main-color bg on chrome -->
-		<div class="fixed top-0 -z-10 h-screen w-screen bg-white dark:bg-zinc-900">
-		</div>
+		<SearchMenu
+			collectionId={Astro.props.content?.collectionId ?? null}
+			frameworkId={Astro.props.content?.frameworkId ?? null}
+		/>
 	</body>
+	<!--not super proud of this - need this to hide main-color bg on chrome -->
+	<div class="fixed top-0 -z-10 h-screen w-screen bg-white dark:bg-zinc-900">
+	</div>
 </html>

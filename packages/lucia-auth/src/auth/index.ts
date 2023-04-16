@@ -5,11 +5,8 @@ import {
 	createSessionCookie
 } from "./cookie.js";
 import { logError } from "../utils/log.js";
-import {
-	generateHashWithScrypt,
-	generateRandomString,
-	validateScryptHash
-} from "../utils/crypto.js";
+import { generateHashWithScrypt, validateScryptHash } from "../utils/crypto.js";
+import { generateRandomString } from "../utils/nanoid.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { validateDatabaseSession } from "./session.js";

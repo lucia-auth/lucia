@@ -1,12 +1,16 @@
 ---
 import ContentTable from "@components/ContentTable.astro";
 import Layout from "@components/Layout.astro";
-import Header from "@components/Header.astro";
+import Header from "@components/ContentHeader.astro";
 
 import { getContent } from "@cela/content";
 import { frameworkIds } from "@lib/framework";
 import redirects from "redirects.json";
 import { error404 } from "@lib/error";
+import {
+	generateMarkdownHtml,
+	removeMarkdownFormatting
+} from "@markdown/index";
 import MarkdownContent from "@components/MarkdownContent.astro";
 import Banner from "@components/Banner.astro";
 import { joinUrlPaths } from "@lib/path";
@@ -59,11 +63,17 @@ const contributePageHref = joinUrlPaths(
 
 <Layout
 	meta={{
-		title: content.metaData.title,
+		title: removeMarkdownFormatting(content.metaData.rawTitle),
 		description: content.metaData.description
 	}}
+	content={{ collectionId: content.metaData.collectionId, frameworkId }}
 >
-	<Header />
+	<Header
+		titleHtml={generateMarkdownHtml(content.metaData.rawTitle)}
+		subCollectionTitleHtml={generateMarkdownHtml(
+			content.metaData.rawSubCollectionTitle
+		)}
+	/>
 	<ContentTable
 		collectionId={content.metaData.collectionId}
 		frameworkId={frameworkId}
@@ -71,57 +81,108 @@ const contributePageHref = joinUrlPaths(
 	<main
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200 lg:pr-64 xl:pl-80"
 	>
-		<article class="overflow-hidden px-4 pt-24 pb-12 sm:px-8 md:px-24 xl:px-24">
-			<h1 class="mb-16 break-words text-4xl font-semibold sm:text-5xl">
-				{content.metaData.title}
-			</h1>
+		<article
+			class="overflow-hidden px-4 pt-36 pb-12 sm:px-8 md:px-24 xl:px-24 xl:pt-24"
+		>
+			<p
+				class="text-main mb-2 text-lg font-medium"
+				set:html={generateMarkdownHtml(content.metaData.rawSubCollectionTitle)}
+			/>
+			<h1
+				class="mb-16 break-words text-4xl font-semibold sm:text-5xl"
+				set:html={generateMarkdownHtml(content.metaData.rawTitle)}
+			/>
 			<MarkdownContent>
 				<content.Content />
 			</MarkdownContent>
 			<div class="mt-16">
-				<a
-					href={contributePageHref}
-					class="text-main cursor-pointer; hover:underline"
-					>Contribute to this page</a
-				>
+				<div class="lg:hidden">
+					<a
+						href={contributePageHref}
+						class="text-main cursor-pointer; hover:underline"
+						>Contribute to this page</a
+					>
+					<button class="text-main block hover:underline" id="copy-link"
+						>Copy link</button
+					>
+				</div>
 			</div>
 		</article>
 	</main>
-	<div class="fixed right-0 top-0 hidden h-screen w-64 pr-8 pt-24 lg:block">
-		<h2 class="mb-1 text-sm font-medium dark:text-zinc-200">On this page</h2>
-		<ul
-			class="relative h-full list-none overflow-auto overscroll-contain pb-8 text-sm text-zinc-500 dark:text-zinc-400"
-		>
-			<li class="my-1">
-				<a href="#" class="hover:text-shadow-zinc hover:dark:text-zinc-200">
-					Overview
-				</a>
-			</li>
-			{
-				content.headings
-					.filter((heading) => heading.depth < 4)
-					.map((heading) => {
-						const hash = heading.slug.split("/").reverse()[0];
-						return (
-							<li
-								class:list={[
-									"my-2",
-									{
-										"ml-4": heading.depth === 3
-									}
-								]}
-							>
-								<a
-									href={`#${hash}`}
-									class="hover:text-shadow-zinc dark:hover:text-zinc-200"
-								>
-									{heading.text}
-								</a>
-							</li>
-						);
-					})
-			}
-		</ul>
+	<div
+		class="fixed right-0 top-0 hidden h-screen w-64 pr-8 pt-36 lg:block xl:pt-24"
+	>
+		<div class="flex h-full flex-col">
+			<div class="grow overflow-auto overscroll-contain pb-4">
+				<h2 class="mb-4 text-sm font-medium dark:text-zinc-200">
+					On this page
+				</h2>
+
+				<ul
+					class="h-fit list-none text-sm text-zinc-500 dark:text-zinc-400"
+					id="heading-list"
+				>
+					<li class="my-1">
+						<a href="#" class="hover:text-shadow-zinc hover:dark:text-zinc-200">
+							Overview
+						</a>
+					</li>
+					{
+						content.headings
+							.filter((heading) => heading.depth < 4)
+							.map((heading) => {
+								return (
+									<li
+										class:list={[
+											"my-2",
+											{
+												"ml-4": heading.depth === 3
+											}
+										]}
+									>
+										<a
+											href={heading.hash}
+											class="hover:text-shadow-zinc dark:hover:text-zinc-200"
+											set:html={generateMarkdownHtml(heading.rawText)}
+										/>
+									</li>
+								);
+							})
+					}
+				</ul>
+				<div class="mt-6 text-sm">
+					<a
+						href={contributePageHref}
+						class="text-main cursor-pointer; hover:underline"
+						>Contribute to this page</a
+					>
+					<button class="text-main mt-2 block hover:underline" id="copy-link"
+						>Copy link</button
+					>
+				</div>
+			</div>
+		</div>
 	</div>
 	<Banner />
 </Layout>
+
+<style>
+	:global(#heading-list code) {
+		@apply text-xs;
+	}
+</style>
+
+<script>
+	const copyLinkButton = document.getElementById("copy-link");
+	const frameworkIdElement = document.getElementById("framework-id");
+	if (
+		copyLinkButton instanceof HTMLButtonElement &&
+		frameworkIdElement instanceof HTMLInputElement
+	) {
+		const url = new URL(window.location.href);
+		url.searchParams.set("framework", frameworkIdElement.value || "none");
+		copyLinkButton.addEventListener("click", () => {
+			navigator.clipboard.writeText(url.toString());
+		});
+	}
+</script>

@@ -7,8 +7,12 @@ import type {
 	Collection,
 	ContentMetaData,
 	ContentLink,
-	Section
+	Section,
+	SectionDocument,
+	ContentLinkHeading
 } from "./types";
+
+import { removeMarkdownFormatting } from "./../markdown";
 
 const getCollectionPath = (...pathSegments: string[]) => {
 	return path.join(process.cwd(), "content", ...pathSegments);
@@ -53,9 +57,11 @@ export const generateContent = () => {
 	}
 };
 
-const sortItems = (a: { title: string; order?: number }, b: typeof a) => {
+const sortItems = (a: { rawTitle: string; order?: number }, b: typeof a) => {
 	if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
-	return a.title.localeCompare(b.title);
+	return removeMarkdownFormatting(a.rawTitle).localeCompare(
+		removeMarkdownFormatting(b.rawTitle)
+	);
 };
 
 export const generateCollection = (collectionId: string) => {
@@ -88,7 +94,7 @@ export const generateCollection = (collectionId: string) => {
 		throw new Error(`Does not exist: ${collectionConfigJsonPath}`);
 	const collectionConfigJson = fs.readFileSync(collectionConfigJsonPath);
 	const collectionConfig = JSON.parse(collectionConfigJson.toString());
-	const collectionTitle = collectionConfig.title ?? null;
+	const collectionTitle = String(collectionConfig.title);
 
 	for (const subCollectionFsName of subCollectionFsNames) {
 		const subCollectionPath = getCollectionPath(
@@ -110,19 +116,19 @@ export const generateCollection = (collectionId: string) => {
 			subCollectionConfigJsonPath
 		);
 		const subCollectionConfig = JSON.parse(subCollectionConfigJson.toString());
-		const subCollectionOrder = subCollectionConfig._order ?? -1;
-		const subCollectionTitle = subCollectionConfig.title ?? null;
+		const subCollectionOrder = Number(subCollectionConfig._order ?? -1);
+		const subCollectionTitle = String(subCollectionConfig.title);
 		const baseSection: Section = {
 			order: subCollectionOrder,
-			title: subCollectionTitle,
+			rawTitle: subCollectionTitle,
 			documents: [],
 			id: subCollectionId
 		};
 		const frameworkSectionMap: Record<string, Section> = subCollectionFramework
 			? {
 					[subCollectionFramework]: {
+						rawTitle: subCollectionTitle,
 						order: subCollectionOrder,
-						title: subCollectionTitle,
 						documents: [],
 						id: subCollectionId
 					}
@@ -167,18 +173,41 @@ export const generateCollection = (collectionId: string) => {
 				);
 			}
 			const contentMetaData = {
-				title: frontmatterData.title ?? "",
+				rawTitle: frontmatterData.title,
 				redirect: frontmatterData._redirect ?? null,
 				collectionId,
+				rawSubCollectionTitle: subCollectionTitle,
 				frameworkId,
 				id: documentId,
-				href: documentHref,
+				pathname: documentHref,
 				description: frontmatterData.description ?? null
 			} satisfies ContentMetaData;
+
+			const extractedHeadings = frontmatterResult.content
+				.replace(/```[\s\S]*?```/g, "")
+				.split("\n")
+				.filter((chunk) => chunk.startsWith("#"));
+
+			const headings = extractedHeadings
+				.map((heading): ContentLinkHeading => {
+					const [headingPrefix, ...titleChunks] = heading.split(" ");
+					const rawText = titleChunks.join(" ");
+					return {
+						depth: headingPrefix.length,
+						rawText,
+						hash: `#${rawText
+							.replaceAll(" ", "-")
+							.toLocaleLowerCase()
+							.replace(/[^a-z0-9-]/gi, "")}`
+					};
+				})
+				.filter((heading) => heading.depth < 4);
 			const generatedContentLink: ContentLink = {
 				metaData: contentMetaData,
-				mappedContentPath: documentPath.replace(process.cwd(), "")
+				mappedContentPath: documentPath.replace(process.cwd(), ""),
+				headings
 			};
+
 			fs.writeFileSync(
 				path.join(
 					generatedContentDirPath,
@@ -187,19 +216,19 @@ export const generateCollection = (collectionId: string) => {
 				JSON.stringify(generatedContentLink)
 			);
 			const doc = {
-				title: frontmatterResult.data.title,
-				href: documentHref,
+				rawTitle: frontmatterResult.data.title,
+				pathname: documentHref,
 				order: frontmatterResult.data._order ?? -1,
 				id: documentId
-			};
+			} satisfies SectionDocument;
 			if (!frameworkId) {
 				baseSection.documents.push(doc);
 				continue;
 			}
 			if (!(frameworkId in frameworkSectionMap)) {
 				frameworkSectionMap[frameworkId] = {
+					rawTitle: subCollectionTitle,
 					order: subCollectionOrder,
-					title: subCollectionTitle,
 					documents: [],
 					id: subCollectionId
 				};
@@ -231,7 +260,7 @@ export const generateCollection = (collectionId: string) => {
 	fs.writeFileSync(
 		path.join(generatedCollectionsDirPath, [collectionId, "json"].join(".")),
 		JSON.stringify({
-			title: collectionTitle,
+			title: removeMarkdownFormatting(collectionTitle),
 			sections: baseSections.sort(sortItems),
 			id: collectionId
 		} satisfies Collection)
@@ -248,7 +277,7 @@ export const generateCollection = (collectionId: string) => {
 				[collectionId, framework, "json"].join(".")
 			),
 			JSON.stringify({
-				title: collectionTitle,
+				title: removeMarkdownFormatting(collectionTitle),
 				sections: [
 					...frameworkSectionsMap[framework],
 					...uniqueBaseSections

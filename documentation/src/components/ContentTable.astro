@@ -1,6 +1,9 @@
 ---
-import { FrameworkButton } from "./buttons";
+import FrameworkSelect from "@components/FrameworkSelect";
+import Discord from "./icons/Discord.astro";
+import Github from "./icons/Github.astro";
 import { getCollection } from "@cela/content";
+import { generateMarkdownHtml } from "@markdown/index";
 
 type Props = {
 	frameworkId: string | null;
@@ -19,77 +22,59 @@ if (!collection)
 const currentPathname = Astro.url.pathname;
 ---
 
-<script>
-	import { addClassName, removeClassName } from "@lib/dom";
-	import { onMenuToggle } from "../lib/state";
-	const backdropElement = document.getElementById("backdrop");
-	const contentTableWrapperElement = document.getElementById(
-		"content-table-wrapper"
-	);
-	if (
-		backdropElement instanceof HTMLDivElement &&
-		contentTableWrapperElement instanceof HTMLDivElement
-	) {
-		onMenuToggle((isMenuOpen) => {
-			if (isMenuOpen) {
-				removeClassName(backdropElement, "hidden");
-				removeClassName(contentTableWrapperElement, "hidden");
-			} else {
-				addClassName(backdropElement, "hidden");
-				addClassName(contentTableWrapperElement, "hidden");
-			}
-		});
-	}
-</script>
-
 <div
-	class="bg-zinc-80 dark:bg-shadow-zinc fixed z-40 hidden h-full w-full overflow-hidden pb-8 pt-20 dark:text-zinc-400 md:w-80 xl:block"
+	class="bg-zinc-80 dark:bg-shadow-zinc fixed z-30 hidden h-full w-full overflow-hidden pb-8 pt-24 md:w-80 xl:block"
 	id="content-table-wrapper"
 >
-	<div
-		class="block border-b border-zinc-200 pb-4 dark:border-zinc-800 sm:hidden"
-	>
-		<a
-			class="hover:bg-zinc-150 dark:hover:bg-black-zinc block w-full rounded py-1 pl-8 pr-4"
-			href="/reference">Reference</a
-		>
-	</div>
 	<input type="hidden" value={collection.id} id="collection-id" />
 	<input type="hidden" value={frameworkId} id="framework-id" />
 
-	<div class="ml-8 mr-4 border-b border-zinc-200 py-6 dark:border-zinc-800">
-		{
-			!!collection.title && (
-				<p class="text-lg font-semibold">{collection.title}</p>
-			)
-		}
-		<FrameworkButton client:idle current={Astro.props.frameworkId} />
+	<div class="py-2 pl-8 pr-4 dark:text-zinc-200">
+		<FrameworkSelect client:idle current={Astro.props.frameworkId} />
+	</div>
+
+	{
+		collection.id !== "reference" && (
+			<a
+				class:list={[
+					"block hover:bg-zinc-150 pl-8 pr-4 py-1 dark:hover:bg-black-zinc dark:text-zinc-400"
+				]}
+				href="/reference"
+			>
+				Reference
+			</a>
+		)
+	}
+	<div class="pl-8 pr-4">
+		<div class="my-2 border-t border-zinc-200 dark:border-zinc-800"></div>
 	</div>
 	<div
 		id="content-table"
-		class="bg-zinc-80 dark:bg-shadow-zinc relative flex h-full flex-col gap-y-8 overflow-auto overscroll-contain pb-24 pt-2"
+		class="bg-zinc-80 dark:bg-shadow-zinc relative flex h-full flex-col gap-y-8 overflow-auto overscroll-contain pt-2 pb-24"
 	>
 		{
 			collection.sections.map((section) => {
 				return (
-					<div class="">
-						<p class="py-1 pl-8 pr-4 font-medium">{section.title}</p>
-						<ul>
+					<div>
+						<p
+							class="py-1 pl-8 pr-4 font-medium dark:text-zinc-200"
+							set:html={generateMarkdownHtml(section.rawTitle)}
+						/>
+						<ul class="dark:text-zinc-400">
 							{section.documents.map((doc) => {
-								const isSelected = doc.href === currentPathname;
+								const isSelected = doc.pathname === currentPathname;
 								return (
 									<li>
 										<a
 											class:list={[
-												"block hover:bg-zinc-150 pl-8 pr-4 py-1  dark:hover:bg-black-zinc",
+												"block hover:bg-zinc-150 pl-8 pr-4 py-1 dark:hover:bg-black-zinc",
 												{
 													"text-main": isSelected
 												}
 											]}
-											href={doc.href}
-										>
-											{doc.title}
-										</a>
+											href={doc.pathname}
+											set:html={generateMarkdownHtml(doc.rawTitle)}
+										/>
 									</li>
 								);
 							})}
@@ -98,13 +83,34 @@ const currentPathname = Astro.url.pathname;
 				);
 			})
 		}
+		<div class="flex w-full place-content-center gap-x-4 text-zinc-500">
+			<a
+				href="https://discord.gg/PwrK3kpVR3"
+				target="_blank"
+				class="flex h-5 w-5 cursor-pointer place-content-center fill-current hover:opacity-70 dark:text-zinc-500"
+				aria-label="Discord invite"
+			>
+				<Discord />
+			</a>
+
+			<a
+				href="https://github.com/pilcrowOnPaper/lucia"
+				target="_blank"
+				class="flex h-5 w-5 cursor-pointer place-content-center fill-current dark:text-zinc-500"
+				aria-label="Github repository"
+			>
+				<Github />
+			</a>
+		</div>
 	</div>
 </div>
+
 <div
-	class="bg-shadow-zinc fixed z-30 hidden h-full w-full overscroll-contain opacity-30 xl:hidden"
-	id="backdrop"
+	class="fixed z-20 hidden h-full w-full overscroll-contain bg-black bg-opacity-20 dark:bg-white dark:bg-opacity-5 xl:hidden"
+	id="menu-backdrop"
 >
 </div>
+
 <script is:inline>
 	const contentTableElement = document.getElementById("content-table");
 	const collectionIdElement = document.getElementById("collection-id");
@@ -131,10 +137,48 @@ const currentPathname = Astro.url.pathname;
 			window.location.href = e.target.href;
 		});
 	}
-	const frameworkIdElement = document.getElementById("framework-id");
-	if (frameworkIdElement instanceof HTMLInputElement) {
-		const url = new URL(window.location.href);
-		url.searchParams.set("framework", frameworkIdElement.value || "none");
-		window.history.replaceState({}, "", url);
-	}
 </script>
+
+<script>
+	import { addClassName, removeClassName } from "@lib/dom";
+	import { onMenuStateUpdate, setMenuState } from "../lib/state";
+
+	const contentTableWrapperElement = document.getElementById(
+		"content-table-wrapper"
+	);
+	const menuBackdropElement = document.getElementById("menu-backdrop");
+
+	if (
+		contentTableWrapperElement instanceof HTMLDivElement &&
+		menuBackdropElement instanceof HTMLDivElement
+	) {
+		onMenuStateUpdate((menuOpen) => {
+			if (menuOpen) {
+				freezePage();
+				removeClassName(contentTableWrapperElement, "hidden");
+				removeClassName(menuBackdropElement, "hidden");
+			} else {
+				unFreezePage();
+				addClassName(contentTableWrapperElement, "hidden");
+				addClassName(menuBackdropElement, "hidden");
+			}
+		});
+		menuBackdropElement.addEventListener("click", () => {
+			setMenuState(false);
+		});
+	}
+
+	const freezePage = () => {
+		addClassName(document.body, "overflow-hidden", "xl:overflow-auto");
+	};
+
+	const unFreezePage = () => {
+		removeClassName(document.body, "overflow-hidden", "xl:overflow-auto");
+	};
+</script>
+
+<style>
+	:global(#content-table code) {
+		@apply text-sm;
+	}
+</style>

@@ -35,6 +35,8 @@ const sessionCookie = auth.createSessionCookie(session);
 
 Lucia aims to work well with any modern web framework and supports run-times other than Node such as Cloudflare edge workers.
 
+If you have any questions, feel free to ask in our [Discord server](https://discord.gg/PwrK3kpVR3)!
+
 > The name _Lucia_ is based on the country of Saint Lucia, so technically it's pronounced _loo-shya_. But based on a community poll, most people pronounce it _lu-si-a_. _loo-shya_, _lu-si-a_, _lu-chi-a_ your choice!
 
 ## Official packages
@@ -43,6 +45,6 @@ Lucia aims to work well with any modern web framework and supports run-times oth
 - Kysely adapter: `@lucia-auth/adapter-kysely`
 - Mongoose adapter: `@lucia-auth/adapter-mongoose`
 - Prisma adapter: `@lucia-auth/adapter-prisma`
-- Redis integration: `@lucia-auth/adapter-session-redis`
+- Redis adapter: `@lucia-auth/adapter-session-redis`
 - OAuth integration: `@lucia-auth/oauth`
 - Tokens integration: `@lucia-auth/tokens`

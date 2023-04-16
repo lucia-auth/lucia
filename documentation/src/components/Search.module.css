@@ -1,0 +1,3 @@
+:global(.search-result-item code) {
+	@apply text-xs;
+}

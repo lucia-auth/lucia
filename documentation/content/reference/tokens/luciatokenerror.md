@@ -1,5 +1,5 @@
 ---
-title: "LuciaTokenError"
+title: "`LuciaTokenError`"
 _order: 1
 ---
 

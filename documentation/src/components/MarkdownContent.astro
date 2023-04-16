@@ -18,14 +18,14 @@
 	:global(#md h5) {
 		@apply mt-2 break-words font-medium sm:text-lg;
 	}
-	:global(#md p) {
-		@apply my-3 leading-relaxed;
+	:global(#md p, #md table, #md ul, #md ol) {
+		@apply my-3;
 	}
-	:global(#md p code) {
+	:global(#md p code, #md ul code, #md ol code, #md table code) {
 		@apply text-sm;
 	}
 	:global(#md .astro-code) {
-		@apply my-2 overflow-scroll rounded-md px-4 py-2 text-sm leading-relaxed;
+		@apply my-2 overflow-scroll rounded-md px-4 py-2 text-sm ;
 		scrollbar-width: none;
 	}
 	:global(.dark #md .astro-code) {

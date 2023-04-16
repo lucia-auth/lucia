@@ -1,5 +1,5 @@
 ---
-import BlogHeader from "@components/BlogHeader.astro";
+import Header from "@components/Header.astro";
 import Layout from "@components/Layout.astro";
 import MarkdownContent from "@components/MarkdownContent.astro";
 
@@ -11,23 +11,26 @@ import type {
 
 export const prerender = true;
 
+type BlogFrontmatter = {
+	title: string;
+	description: string;
+	date: string;
+	video?: string;
+};
+
 export const getStaticPaths = async () => {
 	const blogMdImports = Object.entries(
-		import.meta.glob<
-			MarkdownInstance<{
-				title: string;
-				description: string;
-				date: string;
-				video?: string;
-			}>
-		>("/blog/*.md")
+		import.meta.glob("/blog/*.md") as Record<
+			string,
+			() => Promise<MarkdownInstance<BlogFrontmatter>>
+		>
 	).map(([importPath, resolve]) => {
 		return async () => {
 			const resolvedImport = await resolve();
 			return {
 				importPath,
 				...resolvedImport
-			};
+			} as const;
 		};
 	});
 	const resolveBlogMdPromises = blogMdImports.map((resolve) => resolve());
@@ -56,11 +59,13 @@ const { Content, metaData } = Astro.props;
 		description: metaData.description
 	}}
 >
-	<BlogHeader />
+	<Header />
 	<main
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200"
 	>
-		<article class="mx-auto max-w-3xl pt-24 pb-12">
+		<article
+			class="mx-auto max-w-3xl px-4 pt-24 pb-12 sm:px-8 md:px-24 xl:px-24"
+		>
 			<div class="mb-16">
 				<h1 class="break-words text-6xl font-semibold">
 					{metaData.title}
@@ -83,7 +88,7 @@ const { Content, metaData } = Astro.props;
 				</div>
 				{
 					!!metaData.video && (
-						<div class="mt-6 aspect-video w-full rounded-xl border border-zinc-200 bg-zinc-100">
+						<div class="mt-6 aspect-video w-full rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800">
 							<iframe
 								src="https://www.youtube-nocookie.com/embed/j8lyUqKdmJQ?controls=0"
 								class="h-full w-full rounded-xl"
