@@ -96,7 +96,7 @@ export const getNextPage = async (
 		collection?.sections.forEach((section, secIdx) => {
 			let docsCount = section.documents.length - 1;
 			section.documents.map((document, docIdx) => {
-				if(document.href == currentPage) {
+				if(document.pathname == currentPage) {
 					if(docIdx === docsCount) {
 						if(sectionsCount !== secIdx) {
 							nextPageInfo = collection?.sections[secIdx + 1].documents[0];

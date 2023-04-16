@@ -64,6 +64,7 @@ let collectionId = Astro.props.collectionId ?? "main";
 const currentPathname = Astro.url.pathname;
 
 const nextPage = await getNextPage(collectionId, frameworkId, currentPathname);
+console.log(nextPage);
 ---
 
 <Layout
@@ -103,9 +104,9 @@ const nextPage = await getNextPage(collectionId, frameworkId, currentPathname);
 			{nextPage && <div class="mt-8 text-right">
 					<span class="font-bold">Next:</span>
 					<a 
-						href={nextPage.href}
+						href={nextPage.pathname}
 					class="text-main cursor-pointer hover:underline"
-					>{nextPage.title} →</a>
+					>{nextPage.rawTitle} →</a>
 			</div>
 			}
 			<div class="mt-16">
