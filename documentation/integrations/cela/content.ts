@@ -86,27 +86,31 @@ export const getNextPage = async (
 	collectionId: string,
 	frameworkId: string | null,
 	currentPage: string
-) => {
-	let nextPageInfo = null;
-
+  ) => {
 	const collection = await getCollection(collectionId, frameworkId);
-
-	if (collection) {
-		const sectionsCount = collection.sections.length - 1;
-		collection?.sections.forEach((section, secIdx) => {
-			let docsCount = section.documents.length - 1;
-			section.documents.map((document, docIdx) => {
-				if (document.pathname == currentPage) {
-					if (docIdx === docsCount) {
-						if (sectionsCount !== secIdx) {
-							nextPageInfo = collection?.sections[secIdx + 1].documents[0];
-						}
-					} else {
-						nextPageInfo = collection?.sections[secIdx].documents[docIdx + 1];
-					}
-				}
-			});
-		});
+  
+	if (!collection) {
+	  return null;
 	}
-	return nextPageInfo;
+  
+	const sectionsCount = collection.sections.length - 1;
+  
+	for (let secIdx = 0; secIdx <= sectionsCount; secIdx++) {
+	  const section = collection.sections[secIdx];
+	  const docsCount = section.documents.length - 1;
+  
+	  for (let docIdx = 0; docIdx <= docsCount; docIdx++) {
+		const document = section.documents[docIdx];
+  
+		if (document.pathname === currentPage) {
+		  if (docIdx === docsCount && secIdx !== sectionsCount) {
+			return collection.sections[secIdx + 1]?.documents[0] ?? null;
+		  } else {
+			return collection.sections[secIdx]?.documents[docIdx + 1] ?? null;
+		  }
+		}
+	  }
+	}
+  
+	return null;
 };
