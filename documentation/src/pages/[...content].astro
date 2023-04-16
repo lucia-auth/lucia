@@ -60,11 +60,10 @@ const contributePageHref = joinUrlPaths(
 	content.mappedContentPath
 );
 
-let collectionId = Astro.props.collectionId ?? "main";
+const collectionId = Astro.props.collectionId ?? "main";
 const currentPathname = Astro.url.pathname;
 
 const nextPage = await getNextPage(collectionId, frameworkId, currentPathname);
-console.log(nextPage);
 ---
 
 <Layout
