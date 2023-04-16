@@ -21,7 +21,6 @@ export class Token {
 	}
 }
 
-
 type TokenWrapper = Readonly<{
 	issue: (...args: any) => Promise<Token>;
 	validate: (...args: any) => Promise<Token>;

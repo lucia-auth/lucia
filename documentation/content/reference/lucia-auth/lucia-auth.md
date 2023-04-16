@@ -41,7 +41,7 @@ Uses the following characters (uppercase, lowercase, numbers):
 #### Example
 
 ```ts
-// 8 char password consisting of 0-9 
+// 8 char password consisting of 0-9
 const randomPassword = generateRandomString(8, "0123456789");
 ```
 
