@@ -33,8 +33,7 @@
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"dependencies": {
-		"lucia-auth": "workspace:*",
-		"nanoid": "^4.0.0"
+		"lucia-auth": "workspace:*"
 	},
 	"peerDependencies": {
 		"lucia-auth": "1.x"

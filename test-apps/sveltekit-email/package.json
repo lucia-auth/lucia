@@ -36,7 +36,6 @@
 		"@lucia-auth/adapter-prisma": "workspace:*",
 		"@lucia-auth/tokens": "workspace:*",
 		"@prisma/client": "^4.12.0",
-		"lucia-auth": "workspace:*",
-		"nanoid": "^4.0.0"
+		"lucia-auth": "workspace:*"
 	}
 }

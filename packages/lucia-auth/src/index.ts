@@ -1,7 +1,7 @@
 export { lucia as default } from "./auth/index.js";
 export { SESSION_COOKIE_NAME, Cookie } from "./auth/cookie.js";
 export { LuciaError, LuciaErrorConstructor } from "./auth/error.js";
-export { generateRandomString } from "./utils/crypto.js";
+export { generateRandomString } from "./utils/nanoid.js";
 export { serializeCookie } from "./utils/cookie.js";
 
 export type GlobalAuth = Lucia.Auth;

@@ -13,10 +13,10 @@ For exported types, refer to [Public types](/reference/lucia-auth/types).
 
 ## `generateRandomString()`
 
-Generates a random string of a defined length using [`nanoid`](https://github.com/ai/nanoid) without special characters. The output is cryptographically random.
+Generates a random string of a defined length without special characters based on [`nanoid`](https://github.com/ai/nanoid). The output is cryptographically random.
 
 ```ts
-const generateRandomString: (length: number) => string;
+const generateRandomString: (length: number, alphabet?: string) => string;
 ```
 
 Uses the following characters (uppercase, lowercase, numbers):
@@ -27,9 +27,10 @@ Uses the following characters (uppercase, lowercase, numbers):
 
 #### Parameter
 
-| name   | type     | description                     |
-| ------ | -------- | ------------------------------- |
-| length | `number` | the length of the output string |
+| name     | type     | description                                   | optional |
+| -------- | -------- | --------------------------------------------- | -------- |
+| length   | `number` | the length of the output string               |          |
+| alphabet | `string` | a string from which to pick random characters | true     |
 
 #### Returns
 
@@ -40,7 +41,8 @@ Uses the following characters (uppercase, lowercase, numbers):
 #### Example
 
 ```ts
-const randomString = generateRandomString(8);
+// 8 char password consisting of 0-9 
+const randomPassword = generateRandomString(8, "0123456789");
 ```
 
 #### Example

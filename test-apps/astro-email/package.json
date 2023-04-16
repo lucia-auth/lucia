@@ -17,7 +17,6 @@
 		"@prisma/client": "^4.12.0",
 		"astro": "^2.1.3",
 		"lucia-auth": "workspace:*",
-		"nanoid": "^4.0.0",
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {
