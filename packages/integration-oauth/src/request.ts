@@ -33,16 +33,16 @@ export const authorizationHeaders = (
 	type: "bearer" | "basic",
 	token: string
 ) => {
-	const getHeadersValue = () => {
-		if (type === "basic") {
-			return ["Basic", token].join(" ");
-		}
-		if (type === "bearer") {
-			return ["Bearer", token].join(" ");
-		}
-		throw new TypeError("Invalid token type");
-	};
-	return {
-		Authorization: getHeadersValue()
-	};
+	if (type === "basic") {
+		return {
+			Authorization: "Basic " + token
+		};
+	}
+	if (type === "bearer") {
+		return {
+			Authorization: "Bearer " + token
+		};
+	}
+
+	throw new TypeError("Invalid token type");
 };

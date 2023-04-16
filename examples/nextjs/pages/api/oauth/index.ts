@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	if (!req.url) return res.status(400);
 	const provider = req.query.provider;
 	if (provider === "github") {
-		const [url, state] = await githubAuth.getAuthorizationUrl();
+		const [url, state] = githubAuth.getAuthorizationUrl();
 		const oauthStateCookie = cookie.serialize("oauth_state", state, {
 			path: "/",
 			maxAge: 60 * 60,

@@ -11,15 +11,14 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "discord";
 
 export const discord = (auth: Auth, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://discord.com/oauth2/authorize", {
+	const getAuthorizationUrl = (state: string) => {
+		return createUrl("https://discord.com/oauth2/authorize", {
 			response_type: "code",
 			client_id: config.clientId,
 			scope: scope(["identify"], config.scope),
 			redirect_uri: config.redirectUri,
 			state
 		});
-		return url;
 	};
 
 	const getTokens = async (code: string) => {

@@ -16,7 +16,7 @@ type Config = OAuthConfig & {
 };
 
 export const auth0 = (auth: Auth, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
+	const getAuthorizationUrl = (state: string) => {
 		const url = createUrl(new URL("/authorize", config.appDomain).toString(), {
 			client_id: config.clientId,
 			response_type: "code",

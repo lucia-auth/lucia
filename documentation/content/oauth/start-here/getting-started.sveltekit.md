@@ -45,7 +45,7 @@ import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ cookies }) => {
 	// get url to redirect the user to, with the state
-	const [url, state] = await githubAuth.getAuthorizationUrl();
+	const [url, state] = githubAuth.getAuthorizationUrl();
 
 	// the state can be stored in cookies or localstorage for request validation on callback
 	cookies.set("github_oauth_state", state, {

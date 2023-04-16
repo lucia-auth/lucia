@@ -45,7 +45,7 @@ const handleGetRequests = async () => {
 	const providerAuth = provider(auth, config);
 
 	// get url to redirect the user to, with the state
-	const [url, state] = await githubAuth.getAuthorizationUrl();
+	const [url, state] = githubAuth.getAuthorizationUrl();
 
 	// the state can be stored in cookies or localstorage for request validation on callback
 	setCookie("github_oauth_state", state, {

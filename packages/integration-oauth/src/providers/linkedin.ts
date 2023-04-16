@@ -11,15 +11,14 @@ type Config = OAuthConfig & {
 };
 
 export const linkedin = (auth: Auth, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://www.linkedin.com/oauth/v2/authorization", {
+	const getAuthorizationUrl = (state: string) => {
+		return createUrl("https://www.linkedin.com/oauth/v2/authorization", {
 			client_id: config.clientId,
 			response_type: "code",
 			redirect_uri: config.redirectUri,
 			scope: scope(["r_liteprofile"], config.scope),
 			state
 		});
-		return url;
 	};
 
 	const getTokens = async (code: string) => {

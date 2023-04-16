@@ -11,8 +11,8 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "reddit";
 
 export const reddit = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://www.reddit.com/api/v1/authorize", {
+	const getAuthorizationUrl = (state: string) => {
+		return createUrl("https://www.reddit.com/api/v1/authorize", {
 			client_id: config.clientId,
 			response_type: "code",
 			redirect_uri: config.redirectUri,
@@ -20,8 +20,6 @@ export const reddit = <A extends Auth>(auth: A, config: Config) => {
 			scope: scope([], config.scope),
 			state
 		});
-
-		return url;
 	};
 
 	const getTokens = async (code: string) => {

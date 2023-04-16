@@ -3,28 +3,34 @@ import { generateRandomString } from "lucia-auth";
 import type { Auth, Key, LuciaError } from "lucia-auth";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
 
+type TokensBase = {
+	accessToken: string;
+};
+
+export type OAuthProviderConfig<
+	Tokens extends TokensBase,
+	ProviderUser extends Record<string, any>
+> = {
+	providerId: string;
+	getAuthorizationUrl: (state: string) => URL;
+	getTokens: (code: string) => Promise<Tokens>;
+	getProviderUser: (
+		accessToken: string
+	) => Promise<readonly [providerUserId: string, providerUser: ProviderUser]>;
+};
+
 export const provider = <
 	A extends Auth,
-	ProviderUser extends {},
-	Tokens extends {
-		accessToken: string;
-	}
+	ProviderUser extends Record<string, any>,
+	Tokens extends TokensBase
 >(
 	auth: A,
-	config: {
-		providerId: string;
-		getAuthorizationUrl: (state: string) => Promise<URL>;
-		getTokens: (code: string) => Promise<Tokens>;
-		getProviderUser: (
-			accessToken: string
-		) => Promise<readonly [providerUserId: string, providerUser: ProviderUser]>;
-	}
+	config: OAuthProviderConfig<Tokens, ProviderUser>
 ) => {
 	return {
-		getAuthorizationUrl: async () => {
+		getAuthorizationUrl: () => {
 			const state = generateState();
-			const url = await config.getAuthorizationUrl(state);
-			return [url, state] as const;
+			return [config.getAuthorizationUrl(state), state] as const;
 		},
 		validateCallback: async (code: string) => {
 			const tokens = await config.getTokens(code);
@@ -94,7 +100,7 @@ export type OAuthProvider<A extends Auth> = {
 		providerUser: Record<string, any>;
 		tokens: Record<any, any>;
 	}>;
-	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	getAuthorizationUrl: () => readonly [url: URL, state: string];
 };
 
 export class LuciaOAuthRequestError extends Error {

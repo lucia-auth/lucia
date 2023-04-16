@@ -5,7 +5,7 @@ _order: 1
 
 ```ts
 type OAuthProvider<ProviderUser, ProviderTokens> = {
-	getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+	getAuthorizationUrl: () => [url: URL, state: string];
 	validateCallback: (
 		code: string
 	) => Promise<ProviderSession<ProviderUser, ProviderTokens>>;
@@ -17,7 +17,7 @@ type OAuthProvider<ProviderUser, ProviderTokens> = {
 Returns the authorization url for user redirection and a state for storage. This should generate and use a state using [`generateState()`](/reference/oauth/lucia-auth-oauth#generatestate).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: () => [url: URL, state: string];
 ```
 
 #### Parameter

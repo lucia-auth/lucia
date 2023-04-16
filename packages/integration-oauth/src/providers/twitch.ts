@@ -12,9 +12,10 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "twitch";
 
 export const twitch = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
+	const getAuthorizationUrl = (state: string) => {
 		const forceVerify = config.forceVerify ?? false;
-		const url = createUrl("https://id.twitch.tv/oauth2/authorize", {
+
+		return createUrl("https://id.twitch.tv/oauth2/authorize", {
 			client_id: config.clientId,
 			redirect_uri: config.redirectUri,
 			scope: scope([], config.scope),
@@ -22,8 +23,6 @@ export const twitch = <A extends Auth>(auth: A, config: Config) => {
 			force_verify: forceVerify.toString(),
 			state
 		});
-
-		return url;
 	};
 
 	const getTokens = async (code: string) => {

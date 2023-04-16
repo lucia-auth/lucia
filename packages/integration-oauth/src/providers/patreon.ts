@@ -12,16 +12,14 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "patreon";
 
 export const patreon = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://www.patreon.com/oauth2/authorize", {
+	const getAuthorizationUrl = (state: string) => {
+		return createUrl("https://www.patreon.com/oauth2/authorize", {
 			client_id: config.clientId,
 			redirect_uri: config.redirectUri,
 			scope: scope(["identity"], config.scope),
 			response_type: "code",
 			state
 		});
-
-		return url;
 	};
 
 	const getTokens = async (code: string) => {

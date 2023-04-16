@@ -36,7 +36,7 @@ const provider = (
 	auth: Auth,
 	config: {
 		providerId: string;
-		getAuthorizationUrl: (state: string) => Promise<URL>;
+		getAuthorizationUrl: (state: string) => URL;
 		getTokens: (code: string) => Promise<{
 			accessToken: string;
 		}>;
@@ -68,7 +68,7 @@ const provider = (
 Generates an authorization url using the provided state.
 
 ```ts
-const getAuthorizationUrl: (state: string) => Promise<URL>;
+const getAuthorizationUrl: (state: string) => URL;
 ```
 
 #### `Parameter`
@@ -88,7 +88,7 @@ const getAuthorizationUrl: (state: string) => Promise<URL>;
 Validates the provided callback code and retrieves an access token. Can return any object but must include `accessToken`.
 
 ```ts
-const getAuthorizationUrl: (code: string) => Promise<{
+const getTokens: (code: string) => Promise<{
 	accessToken: string;
 }>;
 ```
@@ -111,7 +111,7 @@ Retrieves the current user from the provider using the provided provider access 
 
 ```ts
 const getProviderUser: (accessToken: string) => Promise<[
-    providerUserId: string,
+  providerUserId: string,
 	providerUser: Record<string, any>;
 ]>;
 ```

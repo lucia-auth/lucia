@@ -11,8 +11,8 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "google";
 
 export const google = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
+	const getAuthorizationUrl = (state: string) => {
+		return createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
 			client_id: config.clientId,
 			redirect_uri: config.redirectUri,
 			scope: scope(
@@ -22,7 +22,6 @@ export const google = <A extends Auth>(auth: A, config: Config) => {
 			response_type: "code",
 			state
 		});
-		return url;
 	};
 
 	const getTokens = async (code: string) => {
