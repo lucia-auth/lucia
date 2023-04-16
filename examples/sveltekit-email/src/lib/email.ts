@@ -1,14 +1,11 @@
 import { prismaClient } from '$lib/db';
-import { customAlphabet } from 'nanoid';
 import type { Email as DatabaseEmail } from '@prisma/client';
+import { generateRandomString } from 'lucia-auth';
 
 const sendEmail = async (emailAddress: string, subject: string, content: string) => {
-	const generateId = customAlphabet(
-		'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-	);
 	await prismaClient.email.create({
 		data: {
-			id: generateId(8),
+			id: generateRandomString(8),
 			subject,
 			email_address: emailAddress,
 			content,

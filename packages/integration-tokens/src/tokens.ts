@@ -1,9 +1,26 @@
-import { customAlphabet } from "nanoid";
-import { Token } from "./index.js";
-import { type LuciaError, generateRandomString } from "lucia-auth";
-
-import type { Auth, SingleUseKey } from "lucia-auth";
 import { LuciaTokenError } from "./error.js";
+import { generateRandomString } from "./utils/nanoid.js";
+
+import type { Auth, SingleUseKey, LuciaError } from "lucia-auth";
+
+export class Token {
+	private readonly value: string;
+
+	public readonly toString = () => this.value;
+	public readonly expiresAt: Date;
+	public readonly expired: boolean;
+	public readonly userId: string;
+	public readonly key: Readonly<SingleUseKey>;
+
+	constructor(value: string, key: SingleUseKey) {
+		this.value = value;
+		this.expiresAt = key.expiresAt;
+		this.expired = key.expired;
+		this.userId = key.userId;
+		this.key = key;
+	}
+}
+
 
 type TokenWrapper = Readonly<{
 	issue: (...args: any) => Promise<Token>;
@@ -99,10 +116,12 @@ export const passwordToken = (
 		generate?: (length?: number) => string;
 	}
 ) => {
-	const generateRandomNumberString = customAlphabet("0123456789", 8);
+	const defaultGenerateRandomPassword = (length: number) => {
+		return generateRandomString(length, "0123456789");
+	};
 	return {
 		issue: async (userId: string) => {
-			const generate = options.generate ?? generateRandomNumberString;
+			const generate = options.generate ?? defaultGenerateRandomPassword;
 			const token = generate(options.length ?? 8);
 			const providerUserId = [userId, token].join(".");
 			try {
