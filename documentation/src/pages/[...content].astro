@@ -3,7 +3,7 @@ import ContentTable from "@components/ContentTable.astro";
 import Layout from "@components/Layout.astro";
 import Header from "@components/ContentHeader.astro";
 
-import { getContent } from "@cela/content";
+import { getContent, getNextPage } from "@cela/content";
 import { frameworkIds } from "@lib/framework";
 import redirects from "redirects.json";
 import { error404 } from "@lib/error";
@@ -59,6 +59,11 @@ const contributePageHref = joinUrlPaths(
 	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation",
 	content.mappedContentPath
 );
+
+let collectionId = Astro.props.collectionId ?? "main";
+const currentPathname = Astro.url.pathname;
+
+const nextPage = await getNextPage(collectionId, frameworkId, currentPathname);
 ---
 
 <Layout
@@ -95,6 +100,14 @@ const contributePageHref = joinUrlPaths(
 			<MarkdownContent>
 				<content.Content />
 			</MarkdownContent>
+			{nextPage && <div class="mt-8 text-right">
+					<span class="font-bold">Next:</span>
+					<a 
+						href={nextPage.href}
+					class="text-main cursor-pointer hover:underline"
+					>{nextPage.title} →</a>
+			</div>
+			}
 			<div class="mt-16">
 				<div class="lg:hidden">
 					<a

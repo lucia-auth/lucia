@@ -81,3 +81,32 @@ export const getCollection = async (
 	if (!collectionFile) return null;
 	return collectionFile.default;
 };
+
+export const getNextPage = async (
+	collectionId: string,
+	frameworkId: string | null,
+	currentPage: string
+) => {
+	let nextPageInfo = null;
+
+	const collection = await getCollection(collectionId, frameworkId);
+
+	if(collection) {
+		const sectionsCount = collection.sections.length - 1;
+		collection?.sections.forEach((section, secIdx) => {
+			let docsCount = section.documents.length - 1;
+			section.documents.map((document, docIdx) => {
+				if(document.href == currentPage) {
+					if(docIdx === docsCount) {
+						if(sectionsCount !== secIdx) {
+							nextPageInfo = collection?.sections[secIdx + 1].documents[0];
+						}
+					} else {
+						nextPageInfo = collection?.sections[secIdx].documents[docIdx + 1];
+					}
+				}
+			});
+		})
+	}
+	return nextPageInfo;
+}
