@@ -3,12 +3,12 @@ import { generateRandomString } from "lucia-auth";
 import type { Auth, Key, LuciaError } from "lucia-auth";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
 
-type TokensBase = {
+export type BaseToken = {
 	accessToken: string;
 };
 
 export type OAuthProviderConfig<
-	Tokens extends TokensBase,
+	Tokens extends BaseToken,
 	ProviderUser extends Record<string, any>
 > = {
 	providerId: string;
@@ -22,7 +22,7 @@ export type OAuthProviderConfig<
 export const provider = <
 	A extends Auth,
 	ProviderUser extends Record<string, any>,
-	Tokens extends TokensBase
+	Tokens extends BaseToken
 >(
 	auth: A,
 	config: OAuthProviderConfig<Tokens, ProviderUser>
