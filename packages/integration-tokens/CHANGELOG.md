@@ -1,5 +1,11 @@
 # @lucia-auth/tokens
 
+## 1.0.1
+
+### Patch changes
+
+- [#505](https://github.com/pilcrowOnPaper/lucia/pull/505) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `nanoid` dependency
+
 ## 1.0.0
 
 ### Major changes

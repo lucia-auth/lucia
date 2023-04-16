@@ -42,7 +42,7 @@ export default (props: { current?: string | null }) => {
 										})}
 									>
 										<a
-											class="dark:hover:bg-zinc-950 block w-full px-4 py-1 hover:bg-zinc-100"
+											class="block w-full px-4 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-950"
 											href={href}
 										>
 											{option.title}
