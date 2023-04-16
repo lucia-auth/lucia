@@ -12,12 +12,11 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
 		"gen-pg": "npx drizzle-kit generate:pg --out test/migrations/pg --schema src/pg/schema.ts",
-		"gen-sqlite": "npx drizzle-kit generate:sqlite --out test/migrations/sqlite --schema src/sqlite/schema.ts",
-		"gen-mysql": "npx drizzle-kit generate:mysql --out test/migrations/mysql --schema src/mysql/schema.ts",
 		"test-pg": "npx tsx test/pg/index.ts",
 		"test-sqlite": "npx tsx test/sqlite/index.ts",
 		"test-mysql": "npx tsx test/mysql/index.ts",
 		"pg-up": "docker run -p 5432:5432 -e POSTGRES_PASSWORD=password postgres",
+		"mysql-up": "docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=lucia mysql",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks && cd ../"
 	},
 	"keywords": [
@@ -46,8 +45,8 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"drizzle-orm": "^0.23.11",
-		"lucia-auth": "0.11.x"
+		"drizzle-orm": "^0.23.13",
+		"lucia-auth": "^1"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
@@ -55,7 +54,8 @@
 		"@types/pg": "^8.6.5",
 		"better-sqlite3": "^8.0.1",
 		"drizzle-kit": "^0.17.4",
-		"drizzle-orm": "^0.23.11",
+		"drizzle-orm": "^0.23.13",
+		"mysql2": "^2.3.3",
 		"pg": "^8.8.0",
 		"postgres": "^3.3.4",
 		"tsx": "^3.12.6"

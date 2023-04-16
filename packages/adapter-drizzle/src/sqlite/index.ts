@@ -180,7 +180,7 @@ export const sqliteAdapter =
 				)
 					throw new LuciaError("AUTH_INVALID_USER_ID");
 
-				return res as RunResult | ResultSet;
+				return { id: userId, ...attributes };
 			},
 			async getSessionAndUserBySessionId(sessionId) {
 				const res = await db

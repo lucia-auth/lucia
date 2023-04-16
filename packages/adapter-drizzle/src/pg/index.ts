@@ -167,13 +167,13 @@ export const pgAdapter =
 					.where(eq(users.id, userId))
 					.execute();
 
-					console.log(res)
-				
+				console.log(res);
+
 				// TODO: see if this can be replicated with 'postgres' package database
 				if (res.rowCount === 0) {
 					throw new LuciaError("AUTH_INVALID_USER_ID");
 				}
-				return res;
+				return { id: userId, ...attributes };
 			},
 			async getSessionAndUserBySessionId(sessionId) {
 				const res = (
