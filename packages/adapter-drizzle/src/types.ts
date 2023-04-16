@@ -78,7 +78,8 @@ export type DrizzleAdapterOptions<T extends Dbs> = {
 };
 
 export type Database = {
-	pg: NodePgDatabase | PostgresJsDatabase;
+	// PostgresJsDatabase doesn't work because there's no way to see the amount of rows a query affected...
+	pg: NodePgDatabase /*| PostgresJsDatabase*/;
 	mysql: MySql2Database;
 	sqlite: LibSQLDatabase | BetterSQLite3Database;
 };

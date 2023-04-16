@@ -21,7 +21,7 @@ export const test = async (
 
 export const end = () => {
 	console.log(`${clc.green.bold("Success!")} Completed all tests`);
-	// process.exit();
+	process.exit();
 };
 
 export const INVALID_INPUT = "INVALID_INPUT";

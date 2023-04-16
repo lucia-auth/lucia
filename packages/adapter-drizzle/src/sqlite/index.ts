@@ -1,10 +1,8 @@
 import type { Adapter, AdapterFunction } from "lucia-auth";
 import { eq, and } from "drizzle-orm/expressions";
 import { DrizzleAdapterOptions } from "../types";
-import { LibsqlError, ResultSet } from "@libsql/client";
+import { ResultSet } from "@libsql/client";
 import type { RunResult } from "better-sqlite3";
-import { SqliteError } from "better-sqlite3";
-import { writeFile } from "fs/promises";
 
 export const sqliteAdapter =
 	({
@@ -193,7 +191,6 @@ export const sqliteAdapter =
 					.get();
 				if (res === undefined) return null;
 
-				// in case they name the tables differently (i don't even know if ts would let them do that but just in case)
 				return { user: res["auth_user"], session: res["auth_session"] };
 			}
 		} satisfies Adapter;

@@ -29,7 +29,7 @@ const libsqlclient = lsDrizzle(libsql);
 // the drizzle migrator doesnt work for some reason...
 await migrate((sql) => libsql.execute(sql));
 
-testAdapter(adapter(libsqlclient), queryHandler(libsqlclient));
+testAdapter(adapter(libsqlclient), queryHandler(libsqlclient), false);
 
 await rm("test.db");
 

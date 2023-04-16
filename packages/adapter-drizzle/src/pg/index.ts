@@ -20,7 +20,7 @@ export const pgAdapter =
 			async deleteNonPrimaryKey(key) {
 				await db
 					.delete(keys)
-					.where(and(eq(keys.id, key), eq(keys.primary_key, true)))
+					.where(and(eq(keys.id, key), eq(keys.primary_key, false)))
 					.execute();
 			},
 			async deleteSessionsByUserId(userId) {
@@ -43,7 +43,7 @@ export const pgAdapter =
 				)[0];
 
 				if (await shouldDataBeDeleted(key)) {
-					db.delete(keys).where(eq(keys.id, keyId)).execute();
+					await db.delete(keys).where(eq(keys.id, keyId)).execute();
 				}
 				return key;
 			},
@@ -64,52 +64,116 @@ export const pgAdapter =
 					.execute();
 			},
 			async getUser(userId) {
-				return db.select().from(users).where(eq(users.id, userId)).execute();
+				const res = await db
+					.select()
+					.from(users)
+					.where(eq(users.id, userId))
+					.execute();
+				return res.length === 0 ? null : res[0];
 			},
 			async setKey(key) {
-				return db.insert(keys).values(key).execute();
+				try {
+					await db.insert(keys).values(key).execute();
+				} catch (e) {
+					if (
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
+						e.code === "23503"
+					) {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					if (
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
+						e.code === "23505"
+					) {
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					}
+				}
 			},
 			async setSession(session) {
-				return db
-					.insert(sessions)
-					.values({
-						...session,
-						active_expires: Number(session.active_expires),
-						idle_expires: Number(session.idle_expires)
-					})
-					.execute();
+				try {
+					await db
+						.insert(sessions)
+						.values({
+							...session,
+							active_expires: Number(session.active_expires),
+							idle_expires: Number(session.idle_expires)
+						})
+						.execute();
+				} catch (e) {
+					if (
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
+						e.code === "23503"
+					) {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					if (
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
+						e.code === "23505"
+					) {
+						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+					}
+				}
 			},
 			async setUser(userId, userAttributes, key) {
+				const user = { id: userId, ...userAttributes };
 				if (!key) {
-					return db
-						.insert(users)
-						.values({ id: userId, ...userAttributes })
-						.execute();
+					await db.insert(users).values(user).execute();
+					return user;
 				}
-
-				// No transactions in drizzle orm yet
-				return Promise.all([
-					db
-						.insert(users)
-						.values({ id: userId, ...userAttributes })
-						.execute(),
-					db.insert(keys).values(key).execute()
-				]);
+				try {
+					await db.transaction(async (tx) => {
+						await tx
+							.insert(users)
+							.values({ id: userId, ...userAttributes })
+							.execute();
+						await tx.insert(keys).values(key).execute();
+					});
+				} catch (e) {
+					if (
+						typeof e === "object" &&
+						e !== null &&
+						"code" in e &&
+						e.code === "23505"
+					) {
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					}
+					throw e;
+				}
+				return user;
 			},
 			async updateKeyPassword(key, hashedPassword) {
-				return db
+				const res = await db
 					.update(keys)
 					.set({ hashed_password: hashedPassword })
 					.where(eq(keys.id, key))
 					.execute();
+
+				if (res.rowCount === 0) {
+					throw new LuciaError("AUTH_INVALID_KEY_ID");
+				}
 			},
-			// TODO: figure out if this works how it's supposed to...
 			async updateUserAttributes(userId, attributes) {
-				return db
+				const res = await db
 					.update(users)
 					.set(attributes)
 					.where(eq(users.id, userId))
 					.execute();
+
+					console.log(res)
+				
+				// TODO: see if this can be replicated with 'postgres' package database
+				if (res.rowCount === 0) {
+					throw new LuciaError("AUTH_INVALID_USER_ID");
+				}
+				return res;
 			},
 			async getSessionAndUserBySessionId(sessionId) {
 				const res = (
@@ -120,9 +184,11 @@ export const pgAdapter =
 						.innerJoin(users, eq(users.id, sessions.user_id))
 						.execute()
 				)[0];
+				if (!res) {
+					return null;
+				}
 
-				// in case they name the tables differently (i don't even know if ts would let them do that but just in case)
-				return { user: res[users._.name], session: res[sessions._.name] };
+				return { user: res.auth_user, session: res.auth_session };
 			}
 		} satisfies Adapter;
 

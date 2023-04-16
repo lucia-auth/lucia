@@ -17,6 +17,7 @@
 		"test-pg": "npx tsx test/pg/index.ts",
 		"test-sqlite": "npx tsx test/sqlite/index.ts",
 		"test-mysql": "npx tsx test/mysql/index.ts",
+		"pg-up": "docker run -p 5432:5432 -e POSTGRES_PASSWORD=password postgres",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks && cd ../"
 	},
 	"keywords": [
@@ -45,8 +46,8 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "0.11.x",
-		"drizzle-orm": "^0.23.11"
+		"drizzle-orm": "^0.23.11",
+		"lucia-auth": "0.11.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
@@ -56,6 +57,7 @@
 		"drizzle-kit": "^0.17.4",
 		"drizzle-orm": "^0.23.11",
 		"pg": "^8.8.0",
+		"postgres": "^3.3.4",
 		"tsx": "^3.12.6"
 	},
 	"dependencies": {
