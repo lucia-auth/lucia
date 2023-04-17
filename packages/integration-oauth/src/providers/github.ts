@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -72,7 +72,7 @@ export const github = (auth: Auth, config: OAuthConfig) => {
 
 	const getProviderUser = async (accessToken: string) => {
 		const request = new Request("https://api.github.com/user", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: getAuthHeaders("bearer", accessToken)
 		});
 		const githubUser = await handleRequest<GithubUser>(request);
 		const providerUserId = githubUser.id.toString();

@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -62,7 +62,7 @@ export const auth0 = (auth: Auth, config: Config) => {
 
 	const getProviderUser = async (accessToken: string) => {
 		const request = new Request(new URL("/userinfo", config.appDomain), {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: getAuthHeaders("bearer", accessToken)
 		});
 
 		const auth0Profile = await handleRequest<Auth0Profile>(request);

@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -51,7 +51,7 @@ export const facebook = (auth: Auth, config: Config) => {
 			fields: ["id", "name", "picture"].join(",")
 		});
 		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: getAuthHeaders("bearer", accessToken)
 		});
 		const facebookUser = await handleRequest<FacebookUser>(request);
 		const providerUserId = facebookUser.id;

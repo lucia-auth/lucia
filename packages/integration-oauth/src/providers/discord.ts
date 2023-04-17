@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -51,7 +51,7 @@ export const discord = (auth: Auth, config: Config) => {
 
 	const getProviderUser = async (accessToken: string) => {
 		const request = new Request("https://discord.com/api/oauth2/@me", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: getAuthHeaders("bearer", accessToken)
 		});
 		const { user: discordUser } = await handleRequest<{
 			user: DiscordUser;

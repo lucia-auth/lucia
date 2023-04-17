@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -55,7 +55,7 @@ export const twitch = <A extends Auth>(auth: A, config: Config) => {
 		const request = new Request("https://api.twitch.tv/helix/users", {
 			headers: {
 				"Client-ID": config.clientId,
-				...authorizationHeaders("bearer", accessToken)
+				...getAuthHeaders("bearer", accessToken)
 			}
 		});
 		const twitchUser = await handleRequest<{

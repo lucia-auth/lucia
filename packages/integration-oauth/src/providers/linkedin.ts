@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -85,7 +85,7 @@ export const linkedin = (auth: Auth, config: Config) => {
 		});
 
 		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: getAuthHeaders("bearer", accessToken)
 		});
 
 		return handleRequest<LinkedinProfileResponse>(request);

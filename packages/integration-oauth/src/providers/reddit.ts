@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -32,7 +32,7 @@ export const reddit = <A extends Auth>(auth: A, config: Config) => {
 		});
 		const request = new Request(requestUrl, {
 			method: "POST",
-			headers: authorizationHeaders(
+			headers: getAuthHeaders(
 				"basic",
 				encodeBase64(config.clientId + ":" + config.clientSecret)
 			)
@@ -48,7 +48,7 @@ export const reddit = <A extends Auth>(auth: A, config: Config) => {
 
 	const getProviderUser = async (accessToken: string) => {
 		const request = new Request("https://oauth.reddit.com/api/v1/me", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: getAuthHeaders("bearer", accessToken)
 		});
 		const redditUser = await handleRequest<RedditUser>(request);
 		const providerUserId = redditUser.id;

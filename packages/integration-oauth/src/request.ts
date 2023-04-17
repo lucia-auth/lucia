@@ -29,10 +29,7 @@ export const createUrl = (
 	return url;
 };
 
-export const authorizationHeaders = (
-	type: "bearer" | "basic",
-	token: string
-) => {
+export const getAuthHeaders = (type: "bearer" | "basic", token: string) => {
 	if (type === "basic") {
 		return {
 			Authorization: "Basic " + token

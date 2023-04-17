@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -58,7 +58,7 @@ export const patreon = <A extends Auth>(auth: A, config: Config) => {
 			}
 		);
 		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: getAuthHeaders("bearer", accessToken)
 		});
 		const { data: patreonUser } = await handleRequest<{
 			data: PatreonUser;

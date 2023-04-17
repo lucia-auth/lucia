@@ -1,4 +1,4 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
+import { createUrl, handleRequest, getAuthHeaders } from "../request.js";
 import { scope, provider } from "../core.js";
 
 import type { Auth } from "lucia-auth";
@@ -52,7 +52,7 @@ export const google = <A extends Auth>(auth: A, config: Config) => {
 		const request = new Request(
 			"https://www.googleapis.com/oauth2/v3/userinfo",
 			{
-				headers: authorizationHeaders("bearer", accessToken)
+				headers: getAuthHeaders("bearer", accessToken)
 			}
 		);
 		const googleUser = await handleRequest<GoogleUser>(request);
