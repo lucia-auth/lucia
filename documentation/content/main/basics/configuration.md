@@ -141,7 +141,7 @@ const generateCustomUserId: () => MaybePromise<string>;
 
 #### `generate()` (required)
 
-Generates a password-safe hash. Uses `scrypt` from [noble-hashes](https://github.com/paulmillr/noble-hashes) by default.
+Generates a password-safe hash. Uses `scrypt` based on [noble-hashes](https://github.com/paulmillr/noble-hashes) by default.
 
 ```ts
 const generate: (s: string) => MaybePromise<string>;

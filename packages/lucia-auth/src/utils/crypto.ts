@@ -1,14 +1,14 @@
-import { scryptAsync } from "@noble/hashes/scrypt";
+import scrypt from "../scrypt/index.js";
 import { generateRandomString } from "./nanoid.js";
 
 export const generateHashWithScrypt = async (s: string) => {
 	const salt = generateRandomString(16);
-	const key = await scrypt(s.normalize("NFKC"), salt);
+	const key = await hashWithScrypt(s.normalize("NFKC"), salt);
 	return `s2:${salt}:${key}`;
 };
 
-const scrypt = async (s: string, salt: string, blockSize = 16) => {
-	const keyUint8Array = await scryptAsync(
+const hashWithScrypt = async (s: string, salt: string, blockSize = 16) => {
+	const keyUint8Array = await scrypt(
 		new TextEncoder().encode(s),
 		new TextEncoder().encode(salt),
 		{
@@ -25,13 +25,13 @@ export const validateScryptHash = async (s: string, hash: string) => {
 	const arr = hash.split(":");
 	if (arr.length === 2) {
 		const [salt, key] = arr;
-		const targetKey = await scrypt(s, salt, 8);
+		const targetKey = await hashWithScrypt(s, salt, 8);
 		return constantTimeEqual(targetKey, key);
 	}
 	if (arr.length !== 3) return false;
 	const [version, salt, key] = arr;
 	if (version === "s2") {
-		const targetKey = await scrypt(s, salt);
+		const targetKey = await hashWithScrypt(s, salt);
 		return constantTimeEqual(targetKey, key);
 	}
 	return false;
