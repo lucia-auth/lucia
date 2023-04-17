@@ -3,9 +3,9 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev",
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto next dev",
 		"build": "next build",
-		"start": "next start",
+		"start": "NODE_OPTIONS=--experimental-global-webcrypto next start",
 		"lint": "next lint"
 	},
 	"dependencies": {
