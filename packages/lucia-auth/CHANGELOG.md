@@ -1,10 +1,17 @@
 # lucia-auth
 
+## 1.2.1
+
+### Patch changes
+
+- [#516](https://github.com/pilcrowOnPaper/lucia/pull/516) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix broken import
+
 ## 1.2.0
 
 ### Minor changes
 
 - [#510](https://github.com/pilcrowOnPaper/lucia/pull/510) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `lucia-auth/polyfill/node`
+
   - Remove Node dependency
 
 ## 1.1.0
