@@ -23,12 +23,16 @@
 	"exports": {
 		"./package.json": "./package.json",
 		".": "./index.js",
-		"./middleware": "./middleware/index.js"
+		"./middleware": "./middleware/index.js",
+		"./polyfill/node": "./polyfill/node.js"
 	},
 	"typesVersions": {
 		"*": {
 			"middleware": [
 				"middleware/index.d.ts"
+			],
+			"polyfill/node": [
+				"polyfill/node.d.ts"
 			]
 		}
 	},

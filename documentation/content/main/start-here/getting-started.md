@@ -65,6 +65,39 @@ declare namespace Lucia {
 }
 ```
 
+## Polyfill `crypto` global
+
+**This is only required for Node.js v16-18.** Import `lucia-auth/polyfill/node` in `lucia.ts`.
+
+```ts
+// auth/lucia.ts
+import lucia from "lucia-auth";
+import "lucia-auth/polyfill/node"
+
+// ...
+
+export const auth = lucia({
+	adapter: prisma(prismaClient),
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: node()
+});
+
+export type Auth = typeof auth;
+```
+
+Alternatively, add the `--experimental-global-webcrypto` flag when running `node`:
+
+```
+node --experimental-global-webcrypto index.js
+```
+
+If you're using Node v14, you'll need to use a third party polyfill and set it as a global variable:
+
+```ts
+globalThis.crypto = cryptoPolyfill;
+```
+
+
 ## Next steps
 
 We recommend reading the "Basics" section from top to bottom to get the gist of the library. Cheers and happy coding!
