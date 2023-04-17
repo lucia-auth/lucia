@@ -192,7 +192,7 @@ const scryptInit = async (
 /**
  * Scrypt KDF from RFC 7914.
  */
-export const scrypt = async (
+export default async (
 	password: Uint8Array,
 	salt: Uint8Array,
 	opts: ScryptOpts
