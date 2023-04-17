@@ -163,7 +163,7 @@ TypeScript should be able to detect most, if not all, of these changes.
 ```ts
 // auth/lucia.ts
 import lucia from "lucia-auth";
-import "lucia-auth/polyfill/node"
+import "lucia-auth/polyfill/node";
 
 // ...
 
@@ -188,12 +188,12 @@ Alternatively, add the `--experimental-global-webcrypto` flag to the `dev` and `
 
 ```json
 {
-  // ...
-  "scripts": {
-    "dev": "NODE_OPTIONS=--experimental-global-webcrypto next dev",
-    "start": "NODE_OPTIONS=--experimental-global-webcrypto next start",
 	// ...
-  },
-  // ...
+	"scripts": {
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto next dev",
+		"start": "NODE_OPTIONS=--experimental-global-webcrypto next start"
+		// ...
+	}
+	// ...
 }
 ```
