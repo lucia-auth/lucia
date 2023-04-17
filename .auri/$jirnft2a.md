@@ -1,6 +1,7 @@
 ---
 package: "lucia-auth" # package name
-type: "patch" # "major", "minor", "patch"
+type: "minor" # "major", "minor", "patch"
 ---
 
-Remove Node dependency
+Add `lucia-auth/polyfill/node`
+    - Remove Node dependency
