@@ -155,3 +155,45 @@ export const auth = lucia({
 All properties starting with `is` (`isExpired` etc) has had `is` removed (`expired` etc) to be more consistent with the JS/Node ecosystem, and `expires` has been renamed to `expiresAt` or `expiresIn` to be more consistent across packages.
 
 TypeScript should be able to detect most, if not all, of these changes.
+
+## Polyfill `crypto` global
+
+**This is only required for Node.js v16-18.** Import `lucia-auth/polyfill/node` in `lucia.ts`.
+
+```ts
+// auth/lucia.ts
+import lucia from "lucia-auth";
+import "lucia-auth/polyfill/node"
+
+// ...
+
+export const auth = lucia({
+	adapter: prisma(prismaClient),
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: node()
+});
+
+export type Auth = typeof auth;
+```
+
+Alternatively, add the `--experimental-global-webcrypto` flag when running `node`:
+
+```
+node --experimental-global-webcrypto index.js
+```
+
+### Next.js
+
+Alternatively, add the `--experimental-global-webcrypto` flag to the `dev` and `build` command:
+
+```json
+{
+  // ...
+  "scripts": {
+    "dev": "NODE_OPTIONS=--experimental-global-webcrypto next dev",
+    "start": "NODE_OPTIONS=--experimental-global-webcrypto next start",
+	// ...
+  },
+  // ...
+}
+```
