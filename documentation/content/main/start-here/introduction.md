@@ -39,7 +39,7 @@ If you have any questions, feel free to ask in our [Discord server](https://disc
 
 ## Runtime support
 
-While Lucia does not rely on any native Node.js module, it does require the [`Crypto` web API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). It can be used without any configuration in the following runtimes:
+While Lucia does not rely on any native Node.js module, it does require the global [`Crypto` web API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). It can be used without any configuration in the following runtimes:
 
 - Node.js v19 or later (see below)
 - Deno v1.18 or later
@@ -53,7 +53,7 @@ Lucia can be used with Node v16 or later when `crypto` global is polyfilled. Thi
 - SvelteKit
 - Astro
 
-If you're not using one of the listed frameworks above, you can use the polyfill provided by Lucia or by enabling a Node flag. Node v14 can be used as well, though the listed solution will not work.
+If you're not using one of the listed frameworks above, you can use the polyfill provided by Lucia or by enabling a Node flag. Node v14 can be used as well, though a third party polyfill must be used.
 
 ## Official packages
 

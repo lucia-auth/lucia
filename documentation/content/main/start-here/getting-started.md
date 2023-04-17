@@ -65,7 +65,7 @@ declare namespace Lucia {
 }
 ```
 
-## Polyfill `crypto`
+## Polyfill `crypto` global
 
 **This is only required for Node.js v16-18.** Import `lucia-auth/polyfill/node` in `lucia.ts`.
 
