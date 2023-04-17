@@ -1,10 +1,18 @@
 # lucia-auth
 
+## 1.2.0
+
+### Minor changes
+
+- [#510](https://github.com/pilcrowOnPaper/lucia/pull/510) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `lucia-auth/polyfill/node`
+  - Remove Node dependency
+
 ## 1.1.0
 
 ### Minor changes
 
 - [#505](https://github.com/pilcrowOnPaper/lucia/pull/505) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : `generateRandomString()` takes an optional second parameter - alphabet
+
   - Remove `nanoid` dependency
 
 ## 1.0.0

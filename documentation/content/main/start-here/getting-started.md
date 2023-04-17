@@ -72,7 +72,7 @@ declare namespace Lucia {
 ```ts
 // auth/lucia.ts
 import lucia from "lucia-auth";
-import "lucia-auth/polyfill/node"
+import "lucia-auth/polyfill/node";
 
 // ...
 
@@ -96,7 +96,6 @@ If you're using Node v14, you'll need to use a third party polyfill and set it a
 ```ts
 globalThis.crypto = cryptoPolyfill;
 ```
-
 
 ## Next steps
 
