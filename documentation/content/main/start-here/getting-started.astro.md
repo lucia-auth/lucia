@@ -65,3 +65,47 @@ declare namespace Lucia {
 	type UserAttributes = {};
 }
 ```
+
+## Polyfill `crypto` global
+
+**This is only required for Node.js v18 and below.** Import `lucia-auth/polyfill/node` in `lucia.ts`.
+
+```ts
+// auth/lucia.ts
+import lucia from "lucia-auth";
+import "lucia-auth/polyfill/node";
+
+// ...
+
+export const auth = lucia({
+	// ...
+});
+
+export type Auth = typeof auth;
+```
+
+Alternatively, add the `--experimental-global-webcrypto` flag to all `astro` scripts:
+
+```json
+{
+	// ...
+	"scripts": {
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto astro dev",
+		"start": "NODE_OPTIONS=--experimental-global-webcrypto astro dev",
+		"build": "NODE_OPTIONS=--experimental-global-webcrypto astro build",
+		"preview": "NODE_OPTIONS=--experimental-global-webcrypto astro preview",
+		"astro": "astro"
+	}
+	// ...
+}
+```
+
+If you're using Node v14, you'll need to use a third party polyfill and set it as a global variable:
+
+```ts
+// can't override globalThis.crypto entirely
+// as Astro patches globalThis.crypto.getRandomValues() (but only that method)
+// and globalThis.crypto is set to writable=false
+globalThis.crypto.randomUUID = cryptoPolyfill.randomUUID;
+globalThis.crypto.subtle = cryptoPolyfill.subtle;
+```
