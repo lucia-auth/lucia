@@ -3,10 +3,10 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "astro dev",
-		"start": "astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto astro dev",
+		"start": "NODE_OPTIONS=--experimental-global-webcrypto astro dev",
+		"build": "NODE_OPTIONS=--experimental-global-webcrypto astro build",
+		"preview": "NODE_OPTIONS=--experimental-global-webcrypto astro preview",
 		"astro": "astro"
 	},
 	"dependencies": {

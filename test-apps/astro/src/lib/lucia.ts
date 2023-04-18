@@ -1,4 +1,5 @@
 import lucia from "lucia-auth";
+import "lucia-auth/polyfill/node"
 import { astro } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";

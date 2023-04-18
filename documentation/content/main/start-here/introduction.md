@@ -51,9 +51,8 @@ While Lucia does not rely on any native Node.js module, it does require the glob
 Lucia can be used with Node v16 or later when `crypto` global is polyfilled. This is already handled by the following frameworks:
 
 - SvelteKit
-- Astro
 
-If you're not using one of the listed frameworks above, you can use the polyfill provided by Lucia or by enabling a Node flag. Node v14 can be used as well, though a third party polyfill must be used.
+If you're not using one of the listed frameworks above, you can use the polyfill provided by Lucia or by enabling a Node flag. Node v14 can be used as well, though a third party polyfill must be used instead.
 
 ## Official packages
 
