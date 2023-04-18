@@ -1,5 +1,11 @@
 # lucia-auth
 
+## 1.2.2
+
+### Patch changes
+
+- [#521](https://github.com/pilcrowOnPaper/lucia/pull/521) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Improve `crypto` polyfill
+
 ## 1.2.1
 
 ### Patch changes
