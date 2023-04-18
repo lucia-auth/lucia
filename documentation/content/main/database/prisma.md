@@ -133,7 +133,7 @@ datasource db {
 }
 ```
 
-## Using Planet Scale
+## Using PlanetScale
 
 Since Planet Scale does not support foreign keys, change `relationMode` to `prisma` inside the schema `datasource`.
 
