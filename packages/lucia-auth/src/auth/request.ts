@@ -18,13 +18,10 @@ export type Middleware<Args extends any[] = any> = (
 	...args: [...Args, "DEV" | "PROD"]
 ) => RequestContext;
 
-export class AuthRequest<
-	A extends Auth = any,
-	Context extends RequestContext = any
-> {
+export class AuthRequest<A extends Auth = any> {
 	private auth: A;
-	private context: Context;
-	constructor(auth: A, context: Context) {
+	private context: RequestContext;
+	constructor(auth: A, context: RequestContext) {
 		this.auth = auth;
 		this.context = context;
 	}
