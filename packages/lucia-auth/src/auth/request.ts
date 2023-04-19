@@ -15,7 +15,7 @@ export type RequestContext = {
 };
 
 export type Middleware<Args extends any[] = any> = (
-	...args: Args
+	...args: [...Args, "DEV" | "PROD"]
 ) => RequestContext;
 
 export class AuthRequest<
