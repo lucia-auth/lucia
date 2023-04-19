@@ -456,7 +456,7 @@ export class Auth<C extends Configuration = any> {
 
 	public handleRequest = (
 		...args: Parameters<Lucia.Auth["middleware"]>
-	): AuthRequest<Lucia.Auth, ReturnType<Lucia.Auth["middleware"]>> => {
+	): AuthRequest<Lucia.Auth> => {
 		const middleware = this.middleware as Middleware;
 		return new AuthRequest(this, middleware(...[...args, this.env]));
 	};
