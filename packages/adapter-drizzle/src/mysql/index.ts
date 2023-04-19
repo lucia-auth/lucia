@@ -38,7 +38,6 @@ export const mysqlAdapter =
 					.execute();
 			},
 			async getKey(keyId, shouldDataBeDeleted) {
-				// No transactions in drizzle orm yet
 				const key = (
 					await db.select().from(keys).where(eq(keys.id, keyId)).execute()
 				)[0];
