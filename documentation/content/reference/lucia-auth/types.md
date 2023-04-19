@@ -154,15 +154,22 @@ type LuciaRequest = {
 | name           | type             | description                       |
 | -------------- | ---------------- | --------------------------------- |
 | method         | `string`         | request method - case insensitive |
-| url            | `string`         | request url                       |
+| url            | `string`         | request url/href                  |
 | headers.origin | `string \| null` | `Origin` header value             |
 | headers.origin | `string \| null` | `Cookie` header value             |
 
 ## `Middleware`
 
 ```ts
-export type Middleware = (...args: any[]) => RequestContext;
+export type Middleware = (...[...args: any[], "DEV" | "PROD"]) => RequestContext;
 ```
+
+#### Parameters
+
+| name | type              | description                                                      | introduced |
+| ---- | ----------------- | ---------------------------------------------------------------- | ---------- |
+| args | `any[]`           | any                                                              |            |
+| env  | `"DEV" \| "PROD"` | value passed to [`Configuration.env`](/basics/configuration#env) | 1.3.0      |
 
 #### Returns
 

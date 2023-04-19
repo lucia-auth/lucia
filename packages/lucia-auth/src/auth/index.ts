@@ -52,7 +52,6 @@ export type PersistentKey = Readonly<{
 
 export type Env = "DEV" | "PROD";
 export type User = ReturnType<Lucia.Auth["_transformDatabaseUser"]>;
-type DatabaseUser = { id: string } & Required<Lucia.UserAttributes>;
 
 export const lucia = <C extends Configuration>(config: C) => {
 	return new Auth(config);
@@ -74,7 +73,7 @@ export class Auth<C extends Configuration = any> {
 		activePeriod: number;
 		idlePeriod: number;
 	};
-	public ENV: Env;
+	private env: Env;
 	private hash: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
@@ -114,7 +113,7 @@ export class Auth<C extends Configuration = any> {
 		}
 		this.generateUserId =
 			config.generateCustomUserId ?? (() => generateRandomString(15));
-		this.ENV = config.env;
+		this.env = config.env;
 		this.csrfProtection = config.csrfProtection ?? true;
 		this.sessionExpiresIn = {
 			activePeriod:
@@ -443,9 +442,14 @@ export class Auth<C extends Configuration = any> {
 		if (checkForCsrf && this.csrfProtection) {
 			const requestOrigin = request.headers.origin;
 			if (!requestOrigin) throw new LuciaError("AUTH_INVALID_REQUEST");
-			const url = new URL(request.url);
-			if (![url.origin, ...this.origin].includes(requestOrigin))
+			try {
+				const url = new URL(request.url);
+				if (![url.origin, ...this.origin].includes(requestOrigin))
+					throw new LuciaError("AUTH_INVALID_REQUEST");
+			} catch {
+				// failed to parse url
 				throw new LuciaError("AUTH_INVALID_REQUEST");
+			}
 		}
 		return sessionId;
 	};
@@ -454,11 +458,11 @@ export class Auth<C extends Configuration = any> {
 		...args: Parameters<Lucia.Auth["middleware"]>
 	): AuthRequest<Lucia.Auth, ReturnType<Lucia.Auth["middleware"]>> => {
 		const middleware = this.middleware as Middleware;
-		return new AuthRequest(this, middleware(...args));
+		return new AuthRequest(this, middleware(...[...args, this.env]));
 	};
 
 	public createSessionCookie = (session: Session | null): Cookie => {
-		return createSessionCookie(session, this.ENV, this.sessionCookieOption);
+		return createSessionCookie(session, this.env, this.sessionCookieOption);
 	};
 
 	public createKey = async <

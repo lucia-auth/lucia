@@ -6,10 +6,17 @@ import type {
 } from "express";
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
-	return (incomingMessage, outgoingMessage) => {
+	return (incomingMessage, outgoingMessage, env) => {
+		const getUrl = () => {
+			if (!incomingMessage.headers.host) return "";
+			const protocol = env === "DEV" ? "http:" : "https:";
+			const host = incomingMessage.headers.host;
+			const pathname = incomingMessage.url ?? "";
+			return `${protocol}//${host}${pathname}`;
+		};
 		const requestContext = {
 			request: {
-				url: incomingMessage.url ?? "",
+				url: getUrl(),
 				method: incomingMessage.method ?? "",
 				headers: {
 					origin: incomingMessage.headers.origin ?? null,
