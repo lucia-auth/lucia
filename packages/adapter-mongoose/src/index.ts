@@ -106,7 +106,9 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				});
 			},
 			updateUserAttributes: async (userId, attributes) => {
-				const userDoc = await User.findByIdAndUpdate(userId, attributes).lean();
+				const userDoc = await User.findByIdAndUpdate(userId, attributes, {
+					new: true
+				}).lean();
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 				return transformUserDoc(userDoc);
 			},
@@ -149,6 +151,8 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 			updateKeyPassword: async (key, hashedPassword) => {
 				const keyDoc = await Key.findByIdAndUpdate(key, {
 					hashed_password: hashedPassword
+				}, {
+					new: true
 				}).lean();
 				if (!keyDoc) throw new LuciaError("AUTH_INVALID_KEY_ID");
 			},
@@ -160,7 +164,7 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 			deleteNonPrimaryKey: async (key) => {
 				await Key.deleteOne({
 					_id: key,
-					primary: false
+					primary_key: false
 				});
 			}
 		};
