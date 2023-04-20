@@ -1,4 +1,4 @@
-import Mongoose from "mongoose";
+import type { Mongoose } from "mongoose";
 import {
 	transformKeyDoc,
 	transformSessionDoc,
@@ -15,7 +15,7 @@ const createMongoValues = (object: Record<any, any>) => {
 	);
 };
 
-const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
+const adapter = (mongoose: Mongoose): AdapterFunction<Adapter> => {
 	const User = mongoose.model<UserDoc>("auth_user");
 	const Session = mongoose.model<SessionDoc>("auth_session");
 	const Key = mongoose.model<KeyDoc>("auth_key");

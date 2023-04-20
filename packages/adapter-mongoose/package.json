@@ -40,10 +40,10 @@
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"dotenv": "^16.0.3",
-		"tsx": "^3.12.6"
+		"tsx": "^3.12.6",
+		"mongoose": "^6.6.1"
 	},
 	"dependencies": {
-		"lucia-auth": "workspace:*",
-		"mongoose": "^6.6.1"
+		"lucia-auth": "workspace:*"
 	}
 }
