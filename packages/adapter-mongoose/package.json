@@ -11,7 +11,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"test": "npx ts-node --esm -T test/index.ts",
+		"test": "tsx test/index.ts",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -39,7 +39,8 @@
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
-		"dotenv": "^16.0.3"
+		"dotenv": "^16.0.3",
+		"tsx": "^3.12.6"
 	},
 	"dependencies": {
 		"lucia-auth": "workspace:*",

@@ -53,11 +53,9 @@ export type SmartPrismaClient<Models extends Record<string, Model>> = {
 		}) => Promise<Models[K]["schema"]>;
 	};
 } & {
-	$transaction: <
-		Queries extends readonly (Promise<any>)[]
-	>(
+	$transaction: <Queries extends readonly Promise<any>[]>(
 		queries: Queries
 	) => Promise<{
-		[I in keyof Queries]: Awaited<Queries[I]>
-	}>
+		[I in keyof Queries]: Awaited<Queries[I]>;
+	}>;
 };
