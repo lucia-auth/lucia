@@ -54,10 +54,10 @@ export type SmartPrismaClient<Models extends Record<string, Model>> = {
 	};
 } & {
 	$transaction: <
-		Transaction extends (
-			tx: Omit<SmartPrismaClient<Models>, "$transaction">
-		) => Promise<any>
+		Queries extends readonly (Promise<any>)[]
 	>(
-		transaction: Transaction
-	) => ReturnType<Transaction>;
+		queries: Queries
+	) => Promise<{
+		[I in keyof Queries]: Awaited<Queries[I]>
+	}>
 };
