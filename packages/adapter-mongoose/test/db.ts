@@ -71,7 +71,7 @@ const Key = mongoose.model(
 				required: true
 			},
 			hashed_password: String,
-			primary: {
+			primary_key: {
 				type: Boolean,
 				required: true
 			},
