@@ -1,11 +1,12 @@
 import { generateRandomString } from "lucia-auth";
 import { typeError, valueError } from "./validate.js";
 import "lucia-auth/polyfill/node";
-import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
+import type { KeySchema, SessionSchema } from "lucia-auth";
 
-export type TestUserSchema = UserSchema extends { username: string }
-	? UserSchema
-	: never;
+export type TestUserSchema = {
+	id: string;
+	username: string;
+};
 
 type QueryHandler<Schema> = {
 	get: () => Promise<Schema[]>;
