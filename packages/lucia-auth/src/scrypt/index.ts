@@ -168,7 +168,6 @@ const scryptInit = async (
 		);
 	}
 	const B = await pbkdf2(password, salt, { c: 1, dkLen: blockSize * p });
-	console.log(B);
 	const B32 = u32(B);
 	const V = u32(new Uint8Array(blockSize * N));
 	const tmp = u32(new Uint8Array(blockSize));
