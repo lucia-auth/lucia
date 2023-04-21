@@ -107,10 +107,12 @@ export const queryHandler: LuciaQueryHandler = {
 			});
 		},
 		insert: async (user) => {
+			await clientPromise;
 			const userDoc = new User(inputToMongooseDoc(user));
 			await userDoc.save();
 		},
 		clear: async () => {
+			await clientPromise;
 			await User.deleteMany().lean();
 		}
 	},
@@ -121,10 +123,12 @@ export const queryHandler: LuciaQueryHandler = {
 			return sessionDocs.map((doc) => transformSessionDoc(doc));
 		},
 		insert: async (session) => {
+			await clientPromise;
 			const sessionDoc = new Session(inputToMongooseDoc(session));
 			await sessionDoc.save();
 		},
 		clear: async () => {
+			await clientPromise;
 			await Session.deleteMany().lean();
 		}
 	},
@@ -135,10 +139,12 @@ export const queryHandler: LuciaQueryHandler = {
 			return keyDocs.map((doc) => transformKeyDoc(doc));
 		},
 		insert: async (key) => {
+			await clientPromise;
 			const keyDoc = new Key(inputToMongooseDoc(key));
 			await keyDoc.save();
 		},
 		clear: async () => {
+			await clientPromise;
 			await Key.deleteMany().lean();
 		}
 	}

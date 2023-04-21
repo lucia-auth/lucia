@@ -5,7 +5,3 @@ declare namespace Lucia {
 		username: string;
 	};
 }
-
-declare namespace App {
-	interface Locals {}
-}

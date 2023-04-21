@@ -1,7 +1,7 @@
 import type { SessionAdapter } from "lucia-auth";
 import { test, end } from "../test.js";
 import { Database, type LuciaQueryHandler } from "../database.js";
-import { compareErrorMessage, isEmptyArray, isNull } from "../validate.js";
+import { expectErrorMessage, isEmptyArray, isNull } from "../validate.js";
 
 const INVALID_INPUT = "INVALID_INPUT";
 
@@ -14,7 +14,7 @@ export const testSessionAdapter = async (
 	const clearAll = database.clear;
 	await test("getSession()", "Return the correct session", async () => {
 		const session = database.user().session();
-		await session.set();
+		await session.commit();
 		const result = await adapter.getSession(session.value.id);
 		session.compare(result);
 		await clearAll();
@@ -33,9 +33,9 @@ export const testSessionAdapter = async (
 		"Return the correct session",
 		async () => {
 			const session1 = database.user().session();
-			await session1.set();
+			await session1.commit();
 			const session2 = database.user().session();
-			await session2.set();
+			await session2.commit();
 			const result = await adapter.getSessionsByUserId(session1.value.user_id);
 			session1.find(result);
 			await clearAll();
@@ -55,7 +55,7 @@ export const testSessionAdapter = async (
 		"Insert a user's session into session table",
 		async () => {
 			const user = database.user();
-			await user.set();
+			await user.commit();
 			const session = user.session();
 			await adapter.setSession(session.value);
 			await session.exists();
@@ -67,9 +67,9 @@ export const testSessionAdapter = async (
 		"Delete a user's session from session table",
 		async () => {
 			const session1 = database.user().session();
-			await session1.set();
+			await session1.commit();
 			const session2 = database.user().session();
-			await session2.set();
+			await session2.commit();
 			await adapter.deleteSessionsByUserId(session1.value.user_id);
 			await session1.notExits();
 			await session2.exists();
@@ -81,9 +81,9 @@ export const testSessionAdapter = async (
 		"Delete a user's session from session table",
 		async () => {
 			const session1 = database.user().session();
-			await session1.set();
+			await session1.commit();
 			const session2 = database.user().session();
-			await session2.set();
+			await session2.commit();
 			await adapter.deleteSession(session1.value.id);
 			await session1.notExits();
 			await session2.exists();
@@ -95,7 +95,7 @@ export const testSessionAdapter = async (
 		"Throw AUTH_INVALID_USER_ID if user id doesn't exist",
 		async () => {
 			const session = database.user().session();
-			await compareErrorMessage(async () => {
+			await expectErrorMessage(async () => {
 				await adapter.setSession(session.value);
 			}, "AUTH_INVALID_USER_ID");
 			await clearAll();
@@ -106,14 +106,14 @@ export const testSessionAdapter = async (
 		"Throw AUTH_DUPLICATE_SESSION_ID if session id is already in use",
 		async () => {
 			const session1 = database.user().session();
-			await session1.set();
+			await session1.commit();
 			const user = database.user();
-			await user.set();
+			await user.commit();
 			const session2 = user.session();
 			session2.update({
 				id: session1.value.id
 			});
-			await compareErrorMessage(async () => {
+			await expectErrorMessage(async () => {
 				await adapter.setSession(session2.value);
 			}, "AUTH_DUPLICATE_SESSION_ID");
 			await clearAll();

@@ -4,15 +4,15 @@ title: "Mongoose (MongoDB)"
 description: "Learn how to use Mongoose with Lucia"
 ---
 
-An adapter for Mongoose (MongoDB).
+An adapter for Mongoose (MongoDB) version 6.x and 7.x.
 
 ```ts
 const adapter: (mongoose: Mongoose) => () => Adapter;
 ```
 
-If you pass `null` as the user id, the adapter will generate a new `ObjectId` and use the stringified version (24-character hexadecimal string) as the user id.
+This adapter will not handle database connections and it must be done manually.
 
-This adapter will not handle database connection and you will need to connect to the database manually.
+> Version 2 of the adapter requires `lucia-auth` version 1.3.0 or greater
 
 ### Parameter
 

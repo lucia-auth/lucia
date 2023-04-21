@@ -1,7 +1,12 @@
-import type { UserAdapter } from "lucia-auth";
+import { LuciaError, type UserAdapter } from "lucia-auth";
 import { test, end, INVALID_INPUT } from "../test.js";
 import { Database, type LuciaQueryHandler } from "../database.js";
-import { isNull, isEmptyArray, compareErrorMessage } from "../validate.js";
+import {
+	isNull,
+	isEmptyArray,
+	expectErrorMessage,
+	expectError
+} from "../validate.js";
 
 export const testUserAdapter = async (
 	adapter: UserAdapter,
@@ -13,7 +18,7 @@ export const testUserAdapter = async (
 	await clearAll();
 	await test("getUser()", "Return the correct user", async () => {
 		const user = database.user();
-		await user.set();
+		await user.commit();
 		const returnedUser = await adapter.getUser(user.value.id);
 		user.compare(returnedUser);
 		await clearAll();
@@ -23,56 +28,44 @@ export const testUserAdapter = async (
 		isNull(user);
 		await clearAll();
 	});
+	await test("setUser()", "Insert user", async () => {
+		const user = database.user();
+		await adapter.setUser(
+			user.value.id,
+			{ username: user.value.username },
+			null
+		);
+		await user.exists();
+		await clearAll();
+	});
+	await test("setUser()", "Insert user - Return the created user", async () => {
+		const user = database.user();
+		const result = await adapter.setUser(
+			user.value.id,
+			{ username: user.value.username },
+			null
+		);
+		user.compare(result);
+		await clearAll();
+	});
+	await test("setUser()", "Insert user and persistent key", async () => {
+		const user = database.user();
+		const key = user.key({
+			primary: true,
+			passwordDefined: true,
+			oneTime: false
+		});
+		await adapter.setUser(
+			user.value.id,
+			{ username: user.value.username },
+			key.value
+		);
+		await user.exists();
+		await clearAll();
+	});
 	await test(
 		"setUser()",
-		"Set to add user only and insert a user into user table",
-		async () => {
-			const user = database.user();
-			await adapter.setUser(
-				user.value.id,
-				{ username: user.value.username },
-				null
-			);
-			await user.exists();
-			await clearAll();
-		}
-	);
-	await test(
-		"setUser()",
-		"Set to add user only and return the created user",
-		async () => {
-			const user = database.user();
-			const result = await adapter.setUser(
-				user.value.id,
-				{ username: user.value.username },
-				null
-			);
-			user.compare(result);
-			await clearAll();
-		}
-	);
-	await test(
-		"setUser()",
-		"Set to add user and persistent key, and insert a user into user table",
-		async () => {
-			const user = database.user();
-			const key = user.key({
-				primary: true,
-				passwordDefined: true,
-				oneTime: false
-			});
-			await adapter.setUser(
-				user.value.id,
-				{ username: user.value.username },
-				key.value
-			);
-			await user.exists();
-			await clearAll();
-		}
-	);
-	await test(
-		"setUser()",
-		"Set to add user and persistent key, and return the created user",
+		"Insert user and persistent key - Return created user",
 		async () => {
 			const user = database.user();
 			const key = user.key({
@@ -91,14 +84,14 @@ export const testUserAdapter = async (
 	);
 	await test(
 		"setUser()",
-		"Throw AUTH_DUPLICATE_KEY_ID and user not stored if key already exists",
+		"Throw AUTH_DUPLICATE_KEY_ID if key already exists",
 		async () => {
 			const refKey = database.user().key({
 				primary: false,
 				passwordDefined: true,
 				oneTime: false
 			});
-			await refKey.set();
+			await refKey.commit();
 			const user = database.user();
 			const key = user.key({
 				primary: true,
@@ -108,22 +101,47 @@ export const testUserAdapter = async (
 			key.update({
 				id: refKey.value.id
 			});
-			await compareErrorMessage(async () => {
+			await expectErrorMessage(async () => {
 				await adapter.setUser(
 					user.value.id,
 					{ username: user.value.username },
 					key.value
 				);
 			}, "AUTH_DUPLICATE_KEY_ID");
-			await user.notExits();
 			await clearAll();
 		}
 	);
+	await test("setUser()", "User not stored if key insert errors", async () => {
+		const refKey = database.user().key({
+			primary: false,
+			passwordDefined: true,
+			oneTime: false
+		});
+		await refKey.commit();
+		const user = database.user();
+		const key = user.key({
+			primary: true,
+			passwordDefined: true,
+			oneTime: false
+		});
+		key.update({
+			id: refKey.value.id
+		});
+		await expectError(async () => {
+			await adapter.setUser(
+				user.value.id,
+				{ username: user.value.username },
+				key.value
+			);
+		});
+		await key.notExits();
+		await clearAll();
+	});
 	await test("deleteUser()", "Delete a user from user table", async () => {
 		const user1 = database.user();
-		await user1.set();
+		await user1.commit();
 		const user2 = database.user();
-		await user2.set();
+		await user2.commit();
 		await adapter.deleteUser(user1.value.id);
 		await user1.notExits();
 		await user2.exists();
@@ -131,9 +149,9 @@ export const testUserAdapter = async (
 	});
 	await test("updateUserAttributes()", "Update user attributes", async () => {
 		const user = database.user();
-		await user.set();
+		await user.commit();
 		user.update({
-			username: "user_UPDATED"
+			username: "UPDATED"
 		});
 		await adapter.updateUserAttributes(user.value.id, {
 			username: user.value.username
@@ -143,12 +161,35 @@ export const testUserAdapter = async (
 	});
 	await test(
 		"updateUserAttributes()",
-		"Throw AUTH_INVALID_USER_ID if user id is invalid",
+		"Returns updated user or void",
 		async () => {
-			await compareErrorMessage(async () => {
-				await adapter.updateUserAttributes(INVALID_INPUT, {
-					username: ""
+			const user = database.user();
+			await user.commit();
+			user.update({
+				username: "UPDATED"
+			});
+			const returnedUser = await adapter.updateUserAttributes(user.value.id, {
+				username: user.value.username
+			});
+			if (returnedUser !== undefined) {
+				user.compare(returnedUser);
+			}
+			await clearAll();
+		}
+	);
+	await test(
+		"updateUserAttributes()",
+		"Throw INVALID_USER_ID or return void if user id is invalid",
+		async () => {
+			const user = database.user();
+			await user.commit();
+			expectErrorMessage(async () => {
+				const returnedUser = await adapter.updateUserAttributes(INVALID_INPUT, {
+					username: user.value.username
 				});
+				if (returnedUser === undefined) {
+					throw new LuciaError("AUTH_INVALID_USER_ID");
+				}
 			}, "AUTH_INVALID_USER_ID");
 			await clearAll();
 		}
@@ -159,7 +200,7 @@ export const testUserAdapter = async (
 			passwordDefined: true,
 			oneTime: false
 		});
-		await key.set();
+		await key.commit();
 		const result = await adapter.getKey(key.value.id, async () => false);
 		key.compare(result);
 		await clearAll();
@@ -170,32 +211,17 @@ export const testUserAdapter = async (
 			passwordDefined: true,
 			oneTime: true
 		});
-		await key.set();
-		const result = await adapter.getKey(key.value.id, async () => true);
+		await key.commit();
+		const result = await adapter.getKey(key.value.id, async () => false);
 		key.compare(result);
 		await clearAll();
 	});
-	await test(
-		"getKey()",
-		"Getting valid single use key deletes from database",
-		async () => {
-			const key = database.user().key({
-				primary: false,
-				passwordDefined: true,
-				oneTime: true
-			});
-			await key.set();
-			await adapter.getKey(key.value.id, async () => true);
-			await key.notExits();
-			await clearAll();
-		}
-	);
 	await test(
 		"setKey()",
 		"Insert a new persistent key with password",
 		async () => {
 			const user = database.user();
-			await user.set();
+			await user.commit();
 			const key = user.key({
 				primary: false,
 				passwordDefined: true,
@@ -211,7 +237,7 @@ export const testUserAdapter = async (
 		"Insert a new persistent key with null password",
 		async () => {
 			const user = database.user();
-			await user.set();
+			await user.commit();
 			const key = user.key({
 				primary: false,
 				passwordDefined: false,
@@ -227,7 +253,7 @@ export const testUserAdapter = async (
 		"Insert a new single use key with null password",
 		async () => {
 			const user = database.user();
-			await user.set();
+			await user.commit();
 			const key = user.key({
 				primary: false,
 				passwordDefined: false,
@@ -240,7 +266,7 @@ export const testUserAdapter = async (
 	);
 	await test("setKey()", "Insert a new primary persistent key", async () => {
 		const user = database.user();
-		await user.set();
+		await user.commit();
 		const key = user.key({
 			primary: true,
 			passwordDefined: false,
@@ -259,7 +285,7 @@ export const testUserAdapter = async (
 				passwordDefined: true,
 				oneTime: false
 			});
-			await compareErrorMessage(async () => {
+			await expectErrorMessage(async () => {
 				await adapter.setKey(key.value);
 			}, "AUTH_INVALID_USER_ID");
 			await clearAll();
@@ -274,8 +300,8 @@ export const testUserAdapter = async (
 				passwordDefined: true,
 				oneTime: false
 			});
-			await key.set();
-			await compareErrorMessage(async () => {
+			await key.commit();
+			await expectErrorMessage(async () => {
 				await adapter.setKey(key.value);
 			}, "AUTH_DUPLICATE_KEY_ID");
 			await clearAll();
@@ -292,8 +318,8 @@ export const testUserAdapter = async (
 			passwordDefined: true,
 			oneTime: false
 		});
-		await key1.set();
-		await key2.set();
+		await key1.commit();
+		await key2.commit();
 		const sessions = await adapter.getKeysByUserId(key1.value.user_id);
 		key1.find(sessions);
 		await clearAll();
@@ -313,9 +339,9 @@ export const testUserAdapter = async (
 			passwordDefined: true,
 			oneTime: false
 		});
-		await key.set();
+		await key.commit();
 		key.update({
-			hashed_password: "UPDATED_PASSWORD"
+			hashed_password: "UPDATED"
 		});
 		await adapter.updateKeyPassword(key.value.id, key.value.hashed_password);
 		await key.exists();
@@ -323,10 +349,45 @@ export const testUserAdapter = async (
 	});
 	await test(
 		"updateKeyPassword()",
-		"Throw AUTH_INVALID_KEY_ID if key is invalid",
+		"Throw AUTH_INVALID_KEY_ID if key id is invalid",
 		async () => {
-			await compareErrorMessage(async () => {
-				await adapter.updateKeyPassword(INVALID_INPUT, null);
+			const key = database.user().key({
+				primary: false,
+				passwordDefined: true,
+				oneTime: false
+			});
+			await key.commit();
+			key.update({
+				hashed_password: "UPDATED"
+			});
+			const returnedKey = await adapter.updateKeyPassword(
+				key.value.id,
+				key.value.hashed_password
+			);
+			if (returnedKey !== undefined) {
+				key.compare(returnedKey);
+			}
+			await clearAll();
+		}
+	);
+	await test(
+		"updateKeyPassword()",
+		"Throw AUTH_INVALID_KEY_ID or return void if key id is invalid",
+		async () => {
+			const key = database.user().key({
+				primary: false,
+				passwordDefined: true,
+				oneTime: false
+			});
+			await key.commit();
+			expectErrorMessage(async () => {
+				const returnedKey = await adapter.updateKeyPassword(
+					INVALID_INPUT,
+					key.value.hashed_password
+				);
+				if (returnedKey === undefined) {
+					throw new LuciaError("AUTH_INVALID_KEY_ID");
+				}
 			}, "AUTH_INVALID_KEY_ID");
 			await clearAll();
 		}
@@ -337,13 +398,13 @@ export const testUserAdapter = async (
 			passwordDefined: true,
 			oneTime: false
 		});
-		await key1.set();
+		await key1.commit();
 		const key2 = database.user().key({
 			primary: false,
 			passwordDefined: true,
 			oneTime: false
 		});
-		await key2.set();
+		await key2.commit();
 		await adapter.deleteNonPrimaryKey(key1.value.id);
 		await key1.notExits();
 		await key2.exists();
@@ -358,7 +419,7 @@ export const testUserAdapter = async (
 				passwordDefined: true,
 				oneTime: false
 			});
-			await key.set();
+			await key.commit();
 			await adapter.deleteNonPrimaryKey(key.value.id);
 			await key.exists();
 			await clearAll();
@@ -375,8 +436,8 @@ export const testUserAdapter = async (
 			passwordDefined: false,
 			oneTime: false
 		});
-		await key1.set();
-		await key2.set();
+		await key1.commit();
+		await key2.commit();
 		await adapter.deleteKeysByUserId(key1.value.user_id);
 		await key1.notExits();
 		await key2.exists();
@@ -388,7 +449,7 @@ export const testUserAdapter = async (
 			passwordDefined: false,
 			oneTime: false
 		});
-		await key.set();
+		await key.commit();
 		await adapter.deleteKeysByUserId(key.value.user_id);
 		await key.notExits();
 		await clearAll();

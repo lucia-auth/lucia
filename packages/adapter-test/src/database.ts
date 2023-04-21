@@ -1,6 +1,12 @@
-import { KeySchema, SessionSchema, generateRandomString } from "lucia-auth";
+import { generateRandomString } from "lucia-auth";
 import { typeError, valueError } from "./validate.js";
-import { TestUserSchema } from "./type.js";
+import "lucia-auth/polyfill/node";
+import type { KeySchema, SessionSchema } from "lucia-auth";
+
+export type TestUserSchema = {
+	id: string;
+	username: string;
+};
 
 type QueryHandler<Schema> = {
 	get: () => Promise<Schema[]>;
@@ -51,9 +57,9 @@ class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
 		this.storeQueryHandler = queryHandler[name];
 		this.parent = parent;
 	}
-	public set = async () => {
+	public commit = async () => {
 		for (const parentModel of this.parent) {
-			await parentModel.set();
+			await parentModel.commit();
 		}
 		await this.storeQueryHandler?.insert(this.value as any);
 	};

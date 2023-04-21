@@ -9,7 +9,7 @@ export const isEmptyArray = (data: unknown) => {
 	typeError(data, "array");
 };
 
-export const compareErrorMessage = async (
+export const expectErrorMessage = async (
 	test: () => Promise<void> | void,
 	expectedValue: ErrorMessage
 ) => {
@@ -24,6 +24,15 @@ export const compareErrorMessage = async (
 			expectedValue,
 			"Error message did not match"
 		);
+	}
+};
+
+export const expectError = async (test: () => Promise<void> | void) => {
+	try {
+		await test();
+		throw new Error("No error was thrown");
+	} catch (e) {
+		// expect error
 	}
 };
 

@@ -11,7 +11,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"test": "npx ts-node --esm -T test/index.ts",
+		"test": "tsx test/index.ts",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -38,13 +38,15 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "1.x"
+		"@prisma/client": "^4.2.0",
+		"lucia-auth": "^1.3.0"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@prisma/client": "^4.9.0",
 		"prisma": "^4.9.0",
-		"ts-node": "^10.9.1"
+		"ts-node": "^10.9.1",
+		"tsx": "^3.12.6"
 	},
 	"dependencies": {
 		"lucia-auth": "workspace:*"

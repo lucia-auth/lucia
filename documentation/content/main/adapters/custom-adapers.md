@@ -8,23 +8,23 @@ Adapters provide a set of methods to interact with the database.
 
 ### Set up
 
-The value passed onto `adapter` configuration is an adapter function. This function should take in a [`LuciaError`](/reference/lucia-auth/luciaerror), which should be used to throw errors within the adapter (rather than importing it from `lucia-auth`).
+The value passed onto `adapter` configuration is an adapter function. This function takes in a [`LuciaError`](/reference/lucia-auth/luciaerror). All Lucia specified errors must be thrown as `LuciaError` and must use the one provided as an an argument. It must not use `LuciaError` imported from `lucia-auth`.
 
 ```ts
-const customAdapter = () => {
+const customAdapter = (adapterOptions: any) => {
 	return (luciaError: typeof LuciaError) => ({
 		// adapter
 	});
 };
 
 lucia({
-	adapter: customAdapter
+	adapter: customAdapter(options)
 });
 ```
 
 ### Schema
 
-Lucia doesn't care how the data is stored, as long as it returns the correct data in the expected shape. Refer to [Database model](/adapters/database-model) for the base model and schema.
+Lucia doesn't care how the data is stored, as long as it returns the correct data in the expected shape and that the schema follows certain constraints. Refer to [Database model](/adapters/database-model) for the base model and schema.
 
 ## `Adapter`
 
@@ -45,7 +45,12 @@ type Adapter = {
 
 ### `getSessionAndUserBySessionId()`
 
-_optional_ - Gets a session (`session` table) and user (`user` table) with the session id. Returns `null` if the session doesn't exist. While this is optional, Lucia will fetch the session and then user if this method is not provided, which may not be the fastest way of getting both user and session.
+- An adapter may include this method (_optional_ API)
+- Must select `auth_session` where `auth_session(id)` equals parameter `sessionId`
+- Must select `auth_user` where `auth_user(id)` equals selected `auth_session(user_id)`
+- Must return target user and session data, or `null` if neither exists
+
+This is recommended to be included if both the session and the user can be queried in a single database call.
 
 ```ts
 const getSessionAndUserBySessionId: (sessionId: string) => Promise<{
@@ -62,14 +67,14 @@ const getSessionAndUserBySessionId: (sessionId: string) => Promise<{
 
 #### Returns
 
-If the session exists
+If target session exists:
 
-| name    | type                                                                       | description                                       |
-| ------- | -------------------------------------------------------------------------- | ------------------------------------------------- |
-| user    | [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type)      | user data of target: `user(id:session(user_id)`)` |
-| session | [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data of target                            |
+| name    | type                                                                       | description                      |
+| ------- | -------------------------------------------------------------------------- | -------------------------------- |
+| user    | [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type)      | user data of target session data |
+| session | [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | target session data              |
 
-If the session doesn't exist
+If not:
 
 | type   |
 | ------ |
@@ -89,7 +94,8 @@ type SessionAdapter = {
 
 ### `deleteSession()`
 
-Deletes a session (`session` table) with the session id. Succeeds regardless of the validity of the session id.
+- Must delete single `auth_session` where `auth_session(id)` equals parameter `sessionId`
+- Must not throw error if parameter `userId` is invalid
 
 ```ts
 const deleteSession: (sessionId: string) => Promise<void>;
@@ -103,7 +109,8 @@ const deleteSession: (sessionId: string) => Promise<void>;
 
 ### `deleteSessionsByUserId()`
 
-Deletes multiple session (`session` table) with the user id. Succeeds regardless of the validity of the user id.
+- Must delete all `auth_session` where `auth_session(user_id)` equals parameter `userId`
+- Must not throw error if parameter `userId` is invalid
 
 ```ts
 const deleteSessionsByUserId: (userId: string) => Promise<void>;
@@ -117,7 +124,8 @@ const deleteSessionsByUserId: (userId: string) => Promise<void>;
 
 ### `getSession()`
 
-Gets a session (`session` table) with the session id.
+- Must select single `auth_key` where `auth_key(id)` equals parameter `keyId`
+- Must return target key data or `null` if target does not exist
 
 ```ts
 const getSession: (sessionId: string) => Promise<SessionSchema | null>;
@@ -131,24 +139,18 @@ const getSession: (sessionId: string) => Promise<SessionSchema | null>;
 
 #### Returns
 
-If the session exists
-
-| type                                                                       | description            |
-| -------------------------------------------------------------------------- | ---------------------- |
-| [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data of target |
-
-If the session doesn't exist
-
-| type   |
-| ------ |
-| `null` |
+| type                                                                                | description                          |
+| ----------------------------------------------------------------------------------- | ------------------------------------ |
+| [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1)` \| nul` | target session data - `null` if none |
 
 ### `getSessionsByUserId()`
 
-Gets sessions (`session` table`) with the user id.
+- Must select all `auth_key` where `auth_key(user_id)` equals parameter `userId`
+- Must return target key data as an array
+- Returned array must be empty if no target exists
 
 ```ts
-const getSessionsByUserId: (userId: string) => Promise<SessionSchema | null>;
+const getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
 ```
 
 #### Parameter
@@ -159,21 +161,15 @@ const getSessionsByUserId: (userId: string) => Promise<SessionSchema | null>;
 
 #### Returns
 
-If session exists:
-
-| type                                                                       | description            |
-| -------------------------------------------------------------------------- | ---------------------- |
-| [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data of target |
-
-If not:
-
-| type   |
-| ------ |
-| `null` |
+| type                                                                           | description                           |
+| ------------------------------------------------------------------------------ | ------------------------------------- |
+| [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1)`[]` | target key data - empty array if none |
 
 ### `setSession()`
 
-Creates a new session in `session` table.
+- Must create new `auth_session`
+- Must throw error if `auth_session(user_id)` violates foreign key constraint
+- Must throw error if `auth_session(id)` violates unique constraint
 
 ```ts
 const setSession: (session: SessionSchema) => Promise<void>;
@@ -181,16 +177,16 @@ const setSession: (session: SessionSchema) => Promise<void>;
 
 #### Parameter
 
-| name      | type                                                                       | description           |
-| --------- | -------------------------------------------------------------------------- | --------------------- |
-| sessionId | [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | session data to store |
+| name      | type                                                                       | description                |
+| --------- | -------------------------------------------------------------------------- | -------------------------- |
+| sessionId | [`SessionSchema`](/reference/lucia-auth/types#sessionschema#schema-type-1) | set values: `auth_session` |
 
 #### Errors
 
-| type                      |
-| ------------------------- |
-| AUTH_INVALID_USER_ID      |
-| AUTH_DUPLICATE_SESSION_ID |
+| type                    | description                                             |
+| ----------------------- | ------------------------------------------------------- |
+| AUTH_INVALID_SESSION_ID | `auth_session(id)` violates unique constraint           |
+| AUTH_INVALID_USER_ID    | `auth_session(user_id)` violates foreign key constraint |
 
 ## `UserAdapter`
 
@@ -199,10 +195,7 @@ type UserAdapter = {
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
 	deleteUser: (userId: string) => Promise<void>;
-	getKey: (
-		keyId: string,
-		shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
-	) => Promise<KeySchema | null>;
+	getKey: (keyId: string) => Promise<KeySchema | null>;
 	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 	getUser: (userId: string) => Promise<UserSchema | null>;
 	setKey: (key: KeySchema) => Promise<void>;
@@ -214,17 +207,18 @@ type UserAdapter = {
 	updateKeyPassword: (
 		key: string,
 		hashedPassword: string | null
-	) => Promise<void>;
+	) => Promise<KeySchema | void>;
 	updateUserAttributes: (
 		userId: string,
 		attributes: Record<string, any>
-	) => Promise<UserSchema>;
+	) => Promise<UserSchema | void>;
 };
 ```
 
 ### `deleteKeysByUserId()`
 
-Deletes all keys with the target user id (`key(user_id)`). Succeeds regardless of the validity of the user id.
+- Must delete all `auth_key` where `auth_key(user_id)` equals parameter `userId`
+- Must not throw error if parameter `userId` is invalid
 
 ```ts
 const deleteKeysByUserId: (userId: string) => Promise<void>;
@@ -238,21 +232,23 @@ const deleteKeysByUserId: (userId: string) => Promise<void>;
 
 ### `deleteNonPrimaryKey()`
 
-Deletes a non-primary (`key(primary) == true`) key with the id. Succeeds regardless of the validity of the id.
+- Must delete single `auth_key` where `auth_key(id)` equals parameter `keyId` and `auth_key(primary_key)` equals `false`
+- Must not throw error if parameter `keyId` is invalid
 
 ```ts
-const deleteNonPrimaryKey: (key: string) => Promise<void>;
+const deleteNonPrimaryKey: (keyId: string) => Promise<void>;
 ```
 
 #### Parameter
 
-| name | type  | description              |
-| ---- | ----- | ------------------------ |
-| key  | `key` | unique target: `key(id)` |
+| name  | type  | description                   |
+| ----- | ----- | ----------------------------- |
+| keyId | `key` | unique target: `auth_key(id)` |
 
 ### `deleteUser()`
 
-Deletes a user with the user id (`user(id)`). Succeeds regardless of the validity of the user id.
+- Must delete single `auth_user` where `auth_user(id)` equals parameter `userId`
+- Must not throw error if parameter `userId` is invalid
 
 ```ts
 const deleteUser: (userId: string) => Promise<void>;
@@ -266,43 +262,30 @@ const deleteUser: (userId: string) => Promise<void>;
 
 ### `getKey()`
 
-Gets a key with the the target id (`key(id)`) inside a transaction:
-
-1. Get data
-2. If data exists and calling `shouldDataBeDeleted()` with that data returns `true`, delete the data from the database.
-3. Returns data or `null` is the key doesn't exist.
+- Must select single `auth_key` where `auth_key(id)` equals parameter `keyId`
+- Must return target key data or `null` if target does not exist
 
 ```ts
-const getKey: (
-	keyId: string,
-	shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
-) => Promise<KeySchema | null>;
+const getKey: (keyId: string) => Promise<KeySchema | null>;
 ```
 
 #### Parameter
 
-| name                | type       | description                              |
-| ------------------- | ---------- | ---------------------------------------- |
-| keyId               | `string`   | unique target: `key(id)`                 |
-| shouldDataBeDeleted | `Function` | returns `true` if data should be deleted |
+| name  | type     | description              |
+| ----- | -------- | ------------------------ |
+| keyId | `string` | unique target: `key(id)` |
 
 #### Returns
 
-If key exists:
-
-| type                                                                   | description        |
-| ---------------------------------------------------------------------- | ------------------ |
-| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target |
-
-If not:
-
-| type   |
-| ------ |
-| `null` |
+| type                                                                             | description                         |
+| -------------------------------------------------------------------------------- | ----------------------------------- |
+| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2)` \| null` | key data of target - `null` if none |
 
 ### `getKeysByUserId()`
 
-Gets keys with the user id (`key(user_id)`).
+- Must select all `auth_key` where `auth_key(user_id)` equals parameter `userId`
+- Must return target key data as an array
+- Returned array must be empty if no target exists
 
 ```ts
 const getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
@@ -310,21 +293,20 @@ const getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 
 #### Parameter
 
-| name   | type     | description                |
-| ------ | -------- | -------------------------- |
-| userId | `string` | target: `session(user_id)` |
+| name   | type     | description                 |
+| ------ | -------- | --------------------------- |
+| userId | `string` | target: `auth_key(user_id)` |
 
 #### Returns
 
-If session exists:
-
-| type                                                                   | description                                         |
-| ---------------------------------------------------------------------- | --------------------------------------------------- |
-| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | key data of target - empty array if invalid user id |
+| type                                                                       | description                           |
+| -------------------------------------------------------------------------- | ------------------------------------- |
+| [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2)`[]` | target key data - empty array if none |
 
 ### `getUser()`
 
-Gets a user (`user` table) with the user id. Returns `null` is the user doesn't exist.
+- Must select single `auth_user` where `auth_user(id)` equals parameter `userId`
+- Must return target user data or `null` if target does not exist
 
 ```ts
 const getUser: (userId: string) => Promise<UserSchema | null>;
@@ -338,21 +320,15 @@ const getUser: (userId: string) => Promise<UserSchema | null>;
 
 #### Returns
 
-If user exists:
-
-| type                                                                  | description         |
-| --------------------------------------------------------------------- | ------------------- |
-| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type) | User data of target |
-
-If not:
-
-| type   |
-| ------ |
-| `null` |
+| type                                                                            | description                       |
+| ------------------------------------------------------------------------------- | --------------------------------- |
+| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type)` \| null` | target user data - `null` if none |
 
 ### `setKey()`
 
-Creates a new key in `key` table.
+- Must create new `auth_key`
+- Must throw error if `auth_key(user_id)` violates foreign key constraint
+- Must throw error if `auth_key(id)` violates unique constraint
 
 ```ts
 const setKey: (key: KeySchema) => Promise<void>;
@@ -360,24 +336,24 @@ const setKey: (key: KeySchema) => Promise<void>;
 
 #### Parameter
 
-| name                | type                  | description                                     |
-| ------------------- | --------------------- | ----------------------------------------------- |
-| userId              | `string`              | unique target: `user(id)`                       |
-| data.providerId     | `string`              | target: `user(provider_id)`                     |
-| data.hashedPassword | `string \| null`      | target: `user(hashed_password)`                 |
-| data.attributes     | `Record<string, any>` | each key names as [key] - target: `user([key])` |
+| name | type                                                                   | description            |
+| ---- | ---------------------------------------------------------------------- | ---------------------- |
+| key  | [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | set values: `auth_key` |
 
 #### Errors
 
-| type                |
-| ------------------- |
-| AUTH_INVALID_KEY_ID |
+| type                 | description                                         |
+| -------------------- | --------------------------------------------------- |
+| AUTH_INVALID_KEY_ID  | `auth_key(id)` violates unique constraint           |
+| AUTH_INVALID_USER_ID | `auth_key(user_id)` violates foreign key constraint |
 
 ### `setUser()`
 
-Creates a new user in `user` table. Each values of `userAttributes` should be stored in the column of the key name.
-
-This should store the provided `key` if not `null`. It is recommended to use transactions to insert both the user and key, as the user id of the user and key id of the key should be unique for the process to be successful.
+- Must create new `auth_user`.
+- Must create new `auth_key` if parameter `key` is not `null`.
+- Must attempt to remove added `create_user` if `auth_key` creation errors. Recommended to use transactions or batch queries.
+- Must return the newly created user
+- Must throw error if `auth_key(id)` violates unique constraint
 
 ```ts
 const setUser: (
@@ -389,27 +365,30 @@ const setUser: (
 
 #### Parameter
 
-| name           | type                                                                             | description                                     |
-| -------------- | -------------------------------------------------------------------------------- | ----------------------------------------------- |
-| userId         | `string`                                                                         | unique target: `user(id)`                       |
-| userAttributes | `Record<string, any>`                                                            | each key names as [key] - target: `user([key])` |
-| key            | [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) \| `null` | key to store                                    |
+| name           | type                                                                             | description                                              |
+| -------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| userId         | `string`                                                                         | set value: `auth_user(id)`                               |
+| userAttributes | `Record<string, any>`                                                            | set values: each key names as [key] - `auth_user([key])` |
+| key            | [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) \| `null` | set values if not `null`: `auth_key`                     |
 
 #### Returns
 
-| type                                                                  | description              |
-| --------------------------------------------------------------------- | ------------------------ |
-| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type) | data of the created user |
+| type                                                                  | description       |
+| --------------------------------------------------------------------- | ----------------- |
+| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type) | created user data |
 
 #### Errors
 
-| type                  |
-| --------------------- |
-| AUTH_DUPLICATE_KEY_ID |
+| type                  | description                                   |
+| --------------------- | --------------------------------------------- |
+| AUTH_DUPLICATE_KEY_ID | new `auth_key(id)` violates unique constraint |
 
 ### `updateKeyPassword()`
 
-Updates a key password `key(hashed_password)` with the key id (`key(id)`).
+- Must apply update to `auth_key` where `auth_key(id)` equals parameter `keyId`.
+- Must update key password `auth_key(hashed_password)` to parameter `hashedPassword`.
+- Must return either the updated key data or `void`.
+- May throw an error if the key id is invalid.
 
 ```ts
 const updateKeyPassword: (
@@ -420,45 +399,47 @@ const updateKeyPassword: (
 
 #### Parameter
 
-| name           | type             | description                    |
-| -------------- | ---------------- | ------------------------------ |
-| keyId          | `string`         | unique target: `key(id)`       |
-| hashedPassword | `string \| null` | target: `key(hashed_password)` |
+| name           | type             | description                          |
+| -------------- | ---------------- | ------------------------------------ |
+| keyId          | `string`         | unique target: `key(id)`             |
+| hashedPassword | `string \| null` | update value: `key(hashed_password)` |
 
 #### Errors
 
-| type                  |
-| --------------------- |
-| AUTH_DUPLICATE_KEY_ID |
-| AUTH_INVALID_USER_ID  |
+| type                | description                                  |
+| ------------------- | -------------------------------------------- |
+| AUTH_INVALID_Key_ID | key with the provided user id does not exist |
 
 ### `updateUserAttributes()`
 
-Updates a user with the user id (`user(id)`).
+- Must apply update to `auth_user` where `auth_user(id)` equals parameter `userId`.
+- Must update user attributes defined in `attributes`.
+- Must return either the updated user data or `void`.
+- May throw an error if the user id is invalid.
+- Provided user attributes `attributes` may not contain every property.
 
 ```ts
-const updateUser: (
+const updateUserAttributes: (
 	userId: string,
 	attributes: Partial<Lucia.UserAttributes>
-) => Promise<UserSchema>;
+) => Promise<UserSchema | void>;
 ```
 
 #### Parameter
 
-| name            | type                   | description               |
-| --------------- | ---------------------- | ------------------------- |
-| userId          | `string`               | unique target: `user(id)` |
-| data.attributes | `Lucia.UserAttributes` | each key/value as column  |
+| name            | type                                    | description                                              |
+| --------------- | --------------------------------------- | -------------------------------------------------------- |
+| userId          | `string`                                | target: `auth_user(id)`                                  |
+| data.attributes | `Partial<`[`Lucia.UserAttributes`]()`>` | set values: each key names as [key] - `auth_user([key])` |
 
 #### Returns
 
-| type                                                                  | description              |
-| --------------------------------------------------------------------- | ------------------------ |
-| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type) | data of the updated user |
+| type                                                                            | description                           |
+| ------------------------------------------------------------------------------- | ------------------------------------- |
+| [`UserSchema`](/reference/lucia-auth/types#sessionschema#schema-type)` \| void` | updated user data - `void` if unknown |
 
 #### Errors
 
-| type                  |
-| --------------------- |
-| AUTH_DUPLICATE_KEY_ID |
-| AUTH_INVALID_USER_ID  |
+| type                 | description                                   |
+| -------------------- | --------------------------------------------- |
+| AUTH_INVALID_USER_ID | user with the provided user id does not exist |

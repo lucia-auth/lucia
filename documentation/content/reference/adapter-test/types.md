@@ -33,10 +33,11 @@ type QueryHandler<Schema> = {
 
 ## `TestUserSchema`
 
-`user` schema for testing.
+`auth_user` schema for testing.
 
 ```ts
-type TestUserSchema = UserSchema & {
+type TestUserSchema = {
+	id: string;
 	username: string;
 };
 ```
