@@ -4,7 +4,7 @@ title: "Prisma"
 description: "Learn how to use Prisma with Lucia"
 ---
 
-An adapter for Prisma ORM. Can be used with: SQL, MySQL, PostgreSQL, and SQLite.
+An adapter for Prisma version 4.2 and greater. Can be used with: MySQL, PostgreSQL, SQLite, and MongoDB.
 
 ```ts
 const adapter: (client: PrismaClient) => () => Adapter;

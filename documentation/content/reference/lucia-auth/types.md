@@ -332,10 +332,7 @@ type UserAdapter = {
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 	deleteNonPrimaryKey: (...key: string[]) => Promise<void>;
 	deleteUser: (userId: string) => Promise<void>;
-	getKey: (
-		keyId: string,
-		shouldDataBeDeleted: (key: KeySchema) => Promise<boolean>
-	) => Promise<KeySchema | null>;
+	getKey: (keyId: string) => Promise<KeySchema | null>;
 	getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 	getUser: (userId: string) => Promise<UserSchema | null>;
 	setKey: (key: KeySchema) => Promise<void>;
@@ -347,11 +344,11 @@ type UserAdapter = {
 	updateKeyPassword: (
 		key: string,
 		hashedPassword: string | null
-	) => Promise<void>;
+	) => Promise<KeySchema | void>;
 	updateUserAttributes: (
 		userId: string,
 		attributes: Record<string, any>
-	) => Promise<UserSchema>;
+	) => Promise<UserSchema | void>;
 };
 ```
 

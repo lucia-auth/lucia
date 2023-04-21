@@ -113,8 +113,8 @@ const adapter = (mongoose: Mongoose): AdapterFunction<Adapter> => {
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 				return transformUserDoc(userDoc);
 			},
-			getKey: async (key) => {
-				const keyDoc = await Key.findById(key).lean();
+			getKey: async (keyId) => {
+				const keyDoc = await Key.findById(keyId).lean();
 				if (!keyDoc) return null;
 				const transformedKeyData = transformKeyDoc(keyDoc);
 				return transformedKeyData;

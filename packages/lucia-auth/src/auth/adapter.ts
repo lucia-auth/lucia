@@ -27,10 +27,10 @@ export type UserAdapter = Readonly<{
 		attributes: Record<string, any>
 	) => Promise<UserSchema | void>;
 	setKey: (key: KeySchema) => Promise<void>;
-	deleteNonPrimaryKey: (key: string) => Promise<void>;
+	deleteNonPrimaryKey: (keyId: string) => Promise<void>;
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 	updateKeyPassword: (
-		key: string,
+		keyId: string,
 		hashedPassword: string | null
 	) => Promise<void | KeySchema>;
 	getKey: (

@@ -171,10 +171,10 @@ const adapter =
 					throw error;
 				}
 			},
-			getKey: async (key) => {
+			getKey: async (keyId) => {
 				const databaseKey = await prisma.authKey.findUnique({
 					where: {
-						id: key
+						id: keyId
 					}
 				});
 				if (!databaseKey) return null;
@@ -188,14 +188,14 @@ const adapter =
 				});
 				return keys.map((val) => transformDatabaseKey(val));
 			},
-			updateKeyPassword: async (key, hashedPassword) => {
+			updateKeyPassword: async (keyId, hashedPassword) => {
 				try {
 					return await prisma.authKey.update({
 						data: {
 							hashed_password: hashedPassword
 						},
 						where: {
-							id: key
+							id: keyId
 						}
 					});
 				} catch (e) {
@@ -212,10 +212,10 @@ const adapter =
 					}
 				});
 			},
-			deleteNonPrimaryKey: async (key) => {
+			deleteNonPrimaryKey: async (keyId) => {
 				await prisma.authKey.deleteMany({
 					where: {
-						id: key,
+						id: keyId,
 						primary_key: false
 					}
 				});
