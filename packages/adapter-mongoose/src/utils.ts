@@ -2,7 +2,10 @@ import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
 import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
 
 export const transformUserDoc = (row: UserDoc): UserSchema => {
-	const { _id: id, __v, $__, _doc, ...attributes } = row;
+	delete row.$__;
+	delete row.__v;
+	delete row._doc;
+	const { _id: id, ...attributes } = row;
 	return {
 		id,
 		...attributes
