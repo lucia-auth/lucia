@@ -10,7 +10,9 @@ An adapter for Mongoose (MongoDB) version 6.x and 7.x.
 const adapter: (mongoose: Mongoose) => () => Adapter;
 ```
 
-This adapter will not handle database connection and you will need to connect to the database manually.
+This adapter will not handle database connections and it must be done manually.
+
+> Version 2 of the adapter requires `lucia-auth` version 1.3.0 or greater
 
 ### Parameter
 

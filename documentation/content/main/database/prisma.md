@@ -10,6 +10,8 @@ An adapter for Prisma version 4.2 and greater. Can be used with: MySQL, PostgreS
 const adapter: (client: PrismaClient) => () => Adapter;
 ```
 
+> Version 2 of the adapter requires `lucia-auth` version 1.3.0 or greater
+
 ### Parameter
 
 | name   | type           | description   | optional |

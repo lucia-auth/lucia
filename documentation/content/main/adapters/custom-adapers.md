@@ -336,9 +336,9 @@ const setKey: (key: KeySchema) => Promise<void>;
 
 #### Parameter
 
-| name | type                                                                    | description            |
-| ---- | ----------------------------------------------------------------------- | ---------------------- |
-| key  | [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2)` | set values: `auth_key` |
+| name | type                                                                   | description            |
+| ---- | ---------------------------------------------------------------------- | ---------------------- |
+| key  | [`KeySchema`](/reference/lucia-auth/types#sessionschema#schema-type-2) | set values: `auth_key` |
 
 #### Errors
 
