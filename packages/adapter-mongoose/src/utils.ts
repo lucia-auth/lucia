@@ -1,4 +1,5 @@
 import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
+import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
 
 export const transformUserDoc = (row: UserDoc): UserSchema => {
 	const { _id: id, __v, $__, _doc, ...attributes } = row;
@@ -21,8 +22,8 @@ export const transformKeyDoc = (row: KeyDoc): KeySchema => {
 	return {
 		id: row._id,
 		user_id: row.user_id,
-		hashed_password: row.hashed_password,
+		hashed_password: row.hashed_password ?? null,
 		primary_key: row.primary_key,
-		expires: row.expires
+		expires: row.expires ?? null
 	};
 };

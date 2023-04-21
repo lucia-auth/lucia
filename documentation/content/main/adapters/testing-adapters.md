@@ -18,17 +18,15 @@ yarn add @lucia-auth/adapter-test
 
 ### Database model
 
-Add `username` to `user` table (`string`, unique).
+Add `username` to `auth_user` table (`string`, unique).
 
-```ts
-type TestUserSchema = UserSchema & {
-	username: string;
-};
-```
+| name     | type     | unique |
+| -------- | -------- | ------ |
+| username | `string` | true   |
 
 ### Type declaration
 
-You may need to declare the `Lucia` namespace in a `.d.ts` file.
+Declare the [`Lucia`]() namespace in a `.d.ts` file and `username` to `Lucia.UserAttributes`.
 
 ```ts
 // lucia.d.ts

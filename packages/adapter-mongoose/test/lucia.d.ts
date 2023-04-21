@@ -2,6 +2,6 @@
 declare namespace Lucia {
 	type Auth = any;
 	type UserAttributes = {
-		username: string
+		username: string;
 	};
 }
