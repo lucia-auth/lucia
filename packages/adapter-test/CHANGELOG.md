@@ -1,5 +1,15 @@
 # @lucia-auth/adapter-test
 
+## 2.0.0
+
+### Major changes
+
+- [#529](https://github.com/pilcrowOnPaper/lucia/pull/529) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Update tests for `lucia-auth@^1.3.0`
+  - Update peer dependency
+  - Add test to check if user is not stored if `setUser()` errors
+  - Add test to check `updateUserAttributes()` returns the correct value
+  - Add test to check `updateKeyPassword()` returns the correct value
+
 ## 1.0.0
 
 ### Major changes
