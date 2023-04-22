@@ -3,9 +3,12 @@ export const u32 = (arr: Uint8Array) =>
 
 export const nextTick = async () => {};
 
-const isPlainObject = (obj: any) =>
-	Object.prototype.toString.call(obj) === "[object Object]" &&
-	obj.constructor === Object;
+const isPlainObject = (obj: any): obj is Record<any, any> => {
+	return (
+		Object.prototype.toString.call(obj) === "[object Object]" &&
+		obj.constructor === Object
+	);
+};
 
 export function checkOpts<T1 extends {}, T2 extends {}>(
 	defaults: T1,
@@ -25,7 +28,6 @@ export const asyncLoop = async (
 	let ts = Date.now();
 	for (let i = 0; i < iters; i++) {
 		cb(i);
-		// Date.now() is not monotonic, so in case if clock goes backwards we return return control too
 		const diff = Date.now() - ts;
 		if (diff >= 0 && diff < tick) continue;
 		await nextTick();

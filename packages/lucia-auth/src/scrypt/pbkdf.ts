@@ -1,6 +1,6 @@
 export const pbkdf2 = async (
-	salt: Uint8Array,
 	password: Uint8Array,
+	salt: Uint8Array,
 	options: {
 		c: number;
 		dkLen: number;

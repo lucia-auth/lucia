@@ -11,7 +11,6 @@ const XorAndSalsa = (
 	out: Uint32Array,
 	oi: number
 ) => {
-	// Based on https://cr.yp.to/salsa20.html
 	const y00 = prev[pi++] ^ input[ii++],
 		y01 = prev[pi++] ^ input[ii++];
 	const y02 = prev[pi++] ^ input[ii++],
