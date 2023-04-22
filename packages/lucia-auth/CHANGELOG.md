@@ -1,5 +1,31 @@
 # lucia-auth
 
+## 1.3.0
+
+### Minor changes
+
+- [#525](https://github.com/pilcrowOnPaper/lucia/pull/525) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `Middleware`
+
+  - Fix `node` middleware returning incorrect url
+
+- [#529](https://github.com/pilcrowOnPaper/lucia/pull/529) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update adapter requirements
+  - Removed: `UserAdapter.updateUserAttributes()` should validate provided user id
+  - `UserAdapter.updateUserAttributes()` may throw `AUTH_INVALID_USER_ID`
+  - `UserAdapter.updateUserAttributes()` should return `void` or `UserSchema`
+  - Removed: `UserAdapter.updateKeyPassword()` should validate provided key id
+  - `UserAdapter.updateKeyPassword()` may throw `AUTH_INVALID_KEY_ID`
+  - `UserAdapter.updateKeyPassword()` should return `void` or `KeySchema`
+  - UserAdapter: `UserAdapter.getKey()` should delete single use keys with `shouldDataBeDeleted()`
+  - `UserAdapter.setUser()` should use transactions or batch queries to store the user and key
+
+### Patch changes
+
+- [#529](https://github.com/pilcrowOnPaper/lucia/pull/529) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unnecessary generic from `AuthRequest`
+
+- [#531](https://github.com/pilcrowOnPaper/lucia/pull/531) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `console.log()`
+
+- [#535](https://github.com/pilcrowOnPaper/lucia/pull/535) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix hashing function
+
 ## 1.2.2
 
 ### Patch changes
