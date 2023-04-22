@@ -64,15 +64,13 @@ import "lucia-auth/polyfill/node";
 // ...
 
 export const auth = lucia({
-	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: node()
+	// ...
 });
 
 export type Auth = typeof auth;
 ```
 
-Alternatively, add the `--experimental-global-webcrypto` flag to the `dev` and `build` command:
+Alternatively, add the `--experimental-global-webcrypto` flag to the `dev` and `build` scripts:
 
 ```json
 {

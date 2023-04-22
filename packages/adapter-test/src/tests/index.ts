@@ -22,7 +22,7 @@ export const testAdapter = async (
 			if (!adapter.getSessionAndUserBySessionId) return;
 			const user = database.user();
 			const session = user.session();
-			await session.set(); // this will set user as well
+			await session.commit(); // this will set user as well
 			const result = await adapter.getSessionAndUserBySessionId(
 				session.value.id
 			);

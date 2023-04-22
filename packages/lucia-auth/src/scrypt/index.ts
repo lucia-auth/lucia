@@ -11,7 +11,6 @@ const XorAndSalsa = (
 	out: Uint32Array,
 	oi: number
 ) => {
-	// Based on https://cr.yp.to/salsa20.html
 	const y00 = prev[pi++] ^ input[ii++],
 		y01 = prev[pi++] ^ input[ii++];
 	const y02 = prev[pi++] ^ input[ii++],
@@ -168,7 +167,6 @@ const scryptInit = async (
 		);
 	}
 	const B = await pbkdf2(password, salt, { c: 1, dkLen: blockSize * p });
-	console.log(B);
 	const B32 = u32(B);
 	const V = u32(new Uint8Array(blockSize * N));
 	const tmp = u32(new Uint8Array(blockSize));

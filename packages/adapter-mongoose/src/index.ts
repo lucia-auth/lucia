@@ -1,10 +1,11 @@
-import Mongoose from "mongoose";
+import type { Mongoose } from "mongoose";
 import {
 	transformKeyDoc,
 	transformSessionDoc,
 	transformUserDoc
 } from "./utils.js";
 import type { Adapter, AdapterFunction } from "lucia-auth";
+import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
 
 const createMongoValues = (object: Record<any, any>) => {
 	return Object.fromEntries(
@@ -15,21 +16,33 @@ const createMongoValues = (object: Record<any, any>) => {
 	);
 };
 
-const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
+const DEFAULT_PROJECTION = {
+	$__: 0,
+	__v: 0,
+	_doc: 0
+};
+
+const adapter = (mongoose: Mongoose): AdapterFunction<Adapter> => {
 	const User = mongoose.model<UserDoc>("auth_user");
 	const Session = mongoose.model<SessionDoc>("auth_session");
 	const Key = mongoose.model<KeyDoc>("auth_key");
 	return (LuciaError) => {
 		return {
 			getUser: async (userId: string) => {
-				const userDoc = await User.findById(userId).lean();
+				const userDoc = await User.findById(userId, DEFAULT_PROJECTION).lean();
 				if (!userDoc) return null;
 				return transformUserDoc(userDoc);
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
-				const session = await Session.findById(sessionId).lean();
+				const session = await Session.findById(
+					sessionId,
+					DEFAULT_PROJECTION
+				).lean();
 				if (!session) return null;
-				const user = await User.findById(session.user_id).lean();
+				const user = await User.findById(
+					session.user_id,
+					DEFAULT_PROJECTION
+				).lean();
 				if (!user) return null;
 				return {
 					user: transformUserDoc(user),
@@ -37,35 +50,42 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				};
 			},
 			getSession: async (sessionId) => {
-				const session = await Session.findById(sessionId).lean();
+				const session = await Session.findById(
+					sessionId,
+					DEFAULT_PROJECTION
+				).lean();
 				if (!session) return null;
 				return transformSessionDoc(session);
 			},
 			getSessionsByUserId: async (userId) => {
-				const sessions = await Session.find({
-					user_id: userId
-				}).lean();
+				const sessions = await Session.find(
+					{
+						user_id: userId
+					},
+					DEFAULT_PROJECTION
+				).lean();
 				return sessions.map((val) => transformSessionDoc(val));
 			},
 			setUser: async (userId, userAttributes, key) => {
+				if (key) {
+					const refKeyDoc = await Key.findById(key.id, DEFAULT_PROJECTION);
+					if (refKeyDoc) throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+				}
+				const userDoc = new User(
+					createMongoValues({
+						id: userId,
+						...userAttributes
+					})
+				);
+				await userDoc.save();
 				try {
-					if (key) {
-						const refKeyDoc = await Key.findById(key.id);
-						if (refKeyDoc) throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					}
-					const userDoc = new User(
-						createMongoValues({
-							id: userId,
-							...userAttributes
-						})
-					);
-					await userDoc.save();
 					if (key) {
 						const keyDoc = new Key(createMongoValues(key));
 						await keyDoc.save();
 					}
 					return transformUserDoc(userDoc.toObject());
 				} catch (error) {
+					await Key.findByIdAndDelete(userId);
 					if (
 						error instanceof Error &&
 						error.message.includes("E11000") &&
@@ -82,7 +102,10 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				});
 			},
 			setSession: async (session) => {
-				const userDoc = await User.findById(session.user_id).lean();
+				const userDoc = await User.findById(
+					session.user_id,
+					DEFAULT_PROJECTION
+				).lean();
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 				try {
 					const sessionDoc = new Session(createMongoValues(session));
@@ -106,26 +129,21 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				});
 			},
 			updateUserAttributes: async (userId, attributes) => {
-				const userDoc = await User.findByIdAndUpdate(userId, attributes).lean();
+				const userDoc = await User.findByIdAndUpdate(userId, attributes, {
+					new: true,
+					projection: DEFAULT_PROJECTION
+				}).lean();
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 				return transformUserDoc(userDoc);
 			},
-			getKey: async (key, shouldDataBeDeleted) => {
-				const keyDoc = await Key.findById(key).lean();
+			getKey: async (keyId) => {
+				const keyDoc = await Key.findById(keyId, DEFAULT_PROJECTION).lean();
 				if (!keyDoc) return null;
 				const transformedKeyData = transformKeyDoc(keyDoc);
-				const dataShouldBeDeleted = await shouldDataBeDeleted(
-					transformedKeyData
-				);
-				if (dataShouldBeDeleted) {
-					await Key.deleteOne({
-						_id: keyDoc._id
-					});
-				}
 				return transformedKeyData;
 			},
 			setKey: async (key) => {
-				const userDoc = await User.findById(key.user_id);
+				const userDoc = await User.findById(key.user_id, DEFAULT_PROJECTION);
 				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
 				try {
 					const keyDoc = new Key(createMongoValues(key));
@@ -141,26 +159,37 @@ const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
 				}
 			},
 			getKeysByUserId: async (userId) => {
-				const keyDocs = await Key.find({
-					user_id: userId
-				}).lean();
+				const keyDocs = await Key.find(
+					{
+						user_id: userId
+					},
+					DEFAULT_PROJECTION
+				).lean();
 				return keyDocs.map((val) => transformKeyDoc(val));
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
-				const keyDoc = await Key.findByIdAndUpdate(key, {
-					hashed_password: hashedPassword
-				}).lean();
+				const keyDoc = await Key.findByIdAndUpdate(
+					key,
+					{
+						hashed_password: hashedPassword
+					},
+					{
+						new: true,
+						projection: DEFAULT_PROJECTION
+					}
+				).lean();
 				if (!keyDoc) throw new LuciaError("AUTH_INVALID_KEY_ID");
+				return transformKeyDoc(keyDoc);
 			},
 			deleteKeysByUserId: async (userId) => {
 				await Key.deleteMany({
 					user_id: userId
 				});
 			},
-			deleteNonPrimaryKey: async (key) => {
+			deleteNonPrimaryKey: async (keyId) => {
 				await Key.deleteOne({
-					_id: key,
-					primary: false
+					_id: keyId,
+					primary_key: false
 				});
 			}
 		};

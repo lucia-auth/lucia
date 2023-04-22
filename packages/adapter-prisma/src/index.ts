@@ -5,7 +5,7 @@ import type {
 	SessionSchema,
 	UserSchema
 } from "lucia-auth";
-import { transformKeyData, transformSessionData } from "./utils.js";
+import { transformDatabaseKey, transformDatabaseSession } from "./utils.js";
 import { PrismaClient, SmartPrismaClient } from "./prisma.js";
 
 interface PossiblePrismaError {
@@ -57,7 +57,7 @@ const adapter =
 				const { auth_user: user, ...session } = data;
 				return {
 					user,
-					session: transformSessionData(session)
+					session: transformDatabaseSession(session)
 				};
 			},
 			getSession: async (sessionId) => {
@@ -67,7 +67,7 @@ const adapter =
 					}
 				});
 				if (!session) return null;
-				return transformSessionData(session);
+				return transformDatabaseSession(session);
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessions = await prisma.authSession.findMany({
@@ -75,7 +75,7 @@ const adapter =
 						user_id: userId
 					}
 				});
-				return sessions.map((session) => transformSessionData(session));
+				return sessions.map((session) => transformDatabaseSession(session));
 			},
 			setUser: async (userId, attributes, key) => {
 				if (!key) {
@@ -87,20 +87,18 @@ const adapter =
 					});
 				}
 				try {
-					return await prisma.$transaction(async (tx) => {
-						const [createdUser] = await Promise.all([
-							tx.authUser.create({
-								data: {
-									id: userId,
-									...attributes
-								}
-							}),
-							tx.authKey.create({
-								data: key
-							})
-						]);
-						return createdUser;
-					});
+					const [databaseUser] = await prisma.$transaction([
+						prisma.authUser.create({
+							data: {
+								id: userId,
+								...attributes
+							}
+						}),
+						prisma.authKey.create({
+							data: key
+						})
+					] as const);
+					return databaseUser;
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2002" && error.message?.includes("`id`"))
@@ -145,13 +143,13 @@ const adapter =
 			},
 			updateUserAttributes: async (userId, attributes) => {
 				try {
-					const data = await prisma.authUser.update({
+					const databaseUser = await prisma.authUser.update({
 						data: attributes,
 						where: {
 							id: userId
 						}
 					});
-					return data;
+					return databaseUser;
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2025")
@@ -173,27 +171,14 @@ const adapter =
 					throw error;
 				}
 			},
-			getKey: async (key, shouldDataBeDeleted) => {
-				return await prisma.$transaction(async (tx) => {
-					const keyData = await tx.authKey.findUnique({
-						where: {
-							id: key
-						}
-					});
-					if (!keyData) return null;
-					const transformedKeyData = transformKeyData(keyData);
-					const dataShouldBeDeleted = await shouldDataBeDeleted(
-						transformedKeyData
-					);
-					if (dataShouldBeDeleted) {
-						await tx.authKey.delete({
-							where: {
-								id: keyData.id
-							}
-						});
+			getKey: async (keyId) => {
+				const databaseKey = await prisma.authKey.findUnique({
+					where: {
+						id: keyId
 					}
-					return transformKeyData(keyData);
 				});
+				if (!databaseKey) return null;
+				return transformDatabaseKey(databaseKey);
 			},
 			getKeysByUserId: async (userId) => {
 				const keys = await prisma.authKey.findMany({
@@ -201,16 +186,16 @@ const adapter =
 						user_id: userId
 					}
 				});
-				return keys.map((val) => transformKeyData(val));
+				return keys.map((val) => transformDatabaseKey(val));
 			},
-			updateKeyPassword: async (key, hashedPassword) => {
+			updateKeyPassword: async (keyId, hashedPassword) => {
 				try {
-					await prisma.authKey.update({
+					return await prisma.authKey.update({
 						data: {
 							hashed_password: hashedPassword
 						},
 						where: {
-							id: key
+							id: keyId
 						}
 					});
 				} catch (e) {
@@ -227,10 +212,10 @@ const adapter =
 					}
 				});
 			},
-			deleteNonPrimaryKey: async (key) => {
+			deleteNonPrimaryKey: async (keyId) => {
 				await prisma.authKey.deleteMany({
 					where: {
-						id: key,
+						id: keyId,
 						primary_key: false
 					}
 				});

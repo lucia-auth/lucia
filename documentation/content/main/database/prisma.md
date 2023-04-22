@@ -4,11 +4,13 @@ title: "Prisma"
 description: "Learn how to use Prisma with Lucia"
 ---
 
-An adapter for Prisma ORM. Can be used with: SQL, MySQL, PostgreSQL, and SQLite.
+An adapter for Prisma version 4.2 and greater. Can be used with: MySQL, PostgreSQL, SQLite, and MongoDB.
 
 ```ts
 const adapter: (client: PrismaClient) => () => Adapter;
 ```
+
+> Version 2 of the adapter requires `lucia-auth` version 1.3.0 or greater
 
 ### Parameter
 
@@ -133,9 +135,9 @@ datasource db {
 }
 ```
 
-## Using PrismaScale
+## Using PlanetScale
 
-Since PrismaScale does not support foreign keys, change `relationMode` to `prisma` inside the schema `datasource`.
+Since PlanetScale does not support foreign keys, change `relationMode` to `prisma` inside the schema `datasource`.
 
 ```prisma
 datasource db {

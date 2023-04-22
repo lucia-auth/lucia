@@ -1,5 +1,20 @@
 # @lucia-auth/adapter-mongoose
 
+## 2.0.0
+
+### Major changes
+
+- [#529](https://github.com/pilcrowOnPaper/lucia/pull/529) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Requires `lucia-auth@^1.3.0`
+  - Update to new specifications
+
+### Patch changes
+
+- [#532](https://github.com/pilcrowOnPaper/lucia/pull/532) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Use projection to fetch data
+
+- [#528](https://github.com/pilcrowOnPaper/lucia/pull/528) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix bugs
+  - Fix `Adapter.deleteNonPrimaryKey()` deleting non-primary keys
+  - Fix `Adapter.updateUserAttributes()` returning old data
+
 ## 1.0.0
 
 ### Major changes

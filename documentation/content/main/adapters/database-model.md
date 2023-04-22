@@ -4,18 +4,16 @@ title: "Database model"
 description: "Learn the basic database model required for Lucia"
 ---
 
-Lucia uses adapters to connect to your database. The following chart shows the basic structure of the database, though they may vary from database to database.
+Lucia uses adapters to connect to your database. While you can store the provided data in whatever structure is appropriate, it should follow certain constraints (unique, foreign key).
 
 ## `auth_user`
 
-Schema: [`UserSchema`](/reference/lucia-auth/types#userschema)
-
 The `auth_user` table stores the users. The `[any]` column represents the any number of columns you can add to store additional user attributes. Refer to [User attributes](/basics/user-attributes). `id` should hold minimum of 15 chars for the default configuration.
 
-| name  | type                   | unique | description                                       |
-| ----- | ---------------------- | ------ | ------------------------------------------------- |
-| id    | string (min. 15 chars) | true   |                                                   |
-| [any] | any                    | any    | this represents any number of columns of any name |
+| name  | type                     | unique | description                                       |
+| ----- | ------------------------ | ------ | ------------------------------------------------- |
+| id    | `string` (min. 15 chars) | true   |                                                   |
+| [any] | any                      | any    | this represents any number of columns of any name |
 
 ```ts
 type UserSchema = {
@@ -25,16 +23,14 @@ type UserSchema = {
 
 ## `auth_session`
 
-Schema: [`SessionSchema`](/reference/lucia-auth/types#sessionschema)
+The `auth_session` table stores the user's sessions.
 
-The `session` table stores the user's sessions. You do not need this if you're using the adapter for [`adapter.user`](/basics/configuration#adapter) config.
-
-| name           | type          | unique | reference | description                                        |
-| -------------- | ------------- | ------ | --------- | -------------------------------------------------- |
-| id             | string        | true   |           |                                                    |
-| user_id        | string        |        | user(id)  |                                                    |
-| active_expires | number (int8) |        |           | the expiration time (unix) of the session (active) |
-| idle_expires   | number (int8) |        |           | the expiration time (unix) for the idle period     |
+| name           | type            | unique | foreign key | description                                        |
+| -------------- | --------------- | ------ | ----------- | -------------------------------------------------- |
+| id             | `string`        | true   |             |                                                    |
+| user_id        | `string`        |        | user(id)    |                                                    |
+| active_expires | `number` (int8) |        |             | the expiration time (unix) of the session (active) |
+| idle_expires   | `number` (int8) |        |             | the expiration time (unix) for the idle period     |
 
 ```ts
 type SessionSchema = {
@@ -47,17 +43,15 @@ type SessionSchema = {
 
 ## `auth_key`
 
-Schema: [`KeySchema`](/reference/lucia-auth/types#keyschema)
+The `auth_key` table stores the user's keys.
 
-The `key` table stores the user's keys.
-
-| name            | type           | unique | reference | description                                              |
-| --------------- | -------------- | ------ | --------- | -------------------------------------------------------- |
-| id              | string         | true   |           | key id in the form of: `${providerId}:${providerUserId}` |
-| user_id         | string         |        | user(id)  |                                                          |
-| primary_key     | boolean        |        |           | `true` for primary keys                                  |
-| hashed_password | string \| null |        |           | hashed password of the key                               |
-| expires         | number \| null |        |           | expiration for key if defined (`number`)                 |
+| name            | type             | unique | foreign key | description                                              |
+| --------------- | ---------------- | ------ | ----------- | -------------------------------------------------------- |
+| id              | `string`         | true   |             | key id in the form of: `${providerId}:${providerUserId}` |
+| user_id         | `string`         |        | user(id)    |                                                          |
+| primary_key     | `boolean`        |        |             | `true` for primary keys                                  |
+| hashed_password | `string \| null` |        |             | hashed password of the key                               |
+| expires         | `number \| null` |        |             | expiration for key if defined (`number`)                 |
 
 ```ts
 type KeySchema = {
