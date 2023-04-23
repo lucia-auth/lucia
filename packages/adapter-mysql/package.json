@@ -1,7 +1,7 @@
 {
-	"name": "@lucia-auth/adapter-sqlite",
+	"name": "@lucia-auth/adapter-mysql",
 	"version": "1.0.0",
-	"description": "SQLite adapter for Lucia",
+	"description": "MySQL adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"module": "index.js",
@@ -11,15 +11,15 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"test.better-sqlite3": " tsx test/better-sqlite3/index.ts",
+		"test.mysql2": " tsx test/mysql2/index.ts",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
 		"lucia-auth",
 		"auth",
-		"better-sqlite3",
-		"sqlite",
+		"mysql",
+		"mysql",
 		"authentication",
 		"adapter",
 		"sql",
@@ -38,21 +38,20 @@
 	},
 	"peerDependencies": {
 		"lucia-auth": "^1.3.0",
-		"better-sqlite3": "^8.0.0"
+		"mysql2": "^3.0.0"
 	},
 	"peerDependenciesMeta": {
-		"better-sqlite3": {
+		"mysql2": {
 			"optional": true
 		}
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
-		"@types/better-sqlite3": "^7.6.3",
 		"dotenv": "^16.0.3",
 		"lucia-auth": "workspace:*",
 		"tsx": "^3.12.6"
 	},
 	"dependencies": {
-		"better-sqlite3": "^8.0.1"
+		"mysql2": "^3.2.3"
 	}
 }

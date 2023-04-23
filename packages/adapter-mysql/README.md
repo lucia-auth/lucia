@@ -1,6 +1,6 @@
-# `@lucia-auth/adapter-prisma`
+# `@lucia-auth/adapter-mysql`
 
-SQLite adapter for Lucia
+MySQL adapter for Lucia
 
 **[Documentation](https://lucia-auth.com/database/sqlite)**
 
@@ -10,7 +10,7 @@ SQLite adapter for Lucia
 
 ## Supported drivers
 
-- [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
+- [`mysql2`](https://github.com/sidorares/node-mysql2)
 
 ## Installation
 
@@ -22,14 +22,21 @@ yarn add @lucia-auth/adapter-prisma
 
 ## Version compatibility
 
-| `@lucia-auth/adapter-sqlite` | `lucia-auth` | `better-sqlite3` |
-| ---------------------------- | ------------ | ---------------- |
-| `^1.0.0`                     | `^1.3.0`     | `^8.0.0`         |
+| `@lucia-auth/adapter-mysql` | `lucia-auth` | `mysql2` |
+| --------------------------- | ------------ | -------- |
+| `^1.0.0`                    | `^1.3.0`     | `^2.0.0` |
 
 ## Testing
 
-### `better-sqlite3`
+Set MySQL database name and password to `.env`:
+
+```bash
+MYSQL_DATABASE=""
+MYSQL_PASSWORD=""
+```
+
+### `mysql2`
 
 ```
-pnpm test.better-sqlite3
+pnpm test.mysql2
 ```

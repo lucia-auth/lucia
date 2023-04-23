@@ -20,7 +20,7 @@ export type UserAdapter = Readonly<{
 		userId: string,
 		userAttributes: Record<any, any>,
 		key: KeySchema | null
-	) => Promise<UserSchema>;
+	) => Promise<UserSchema | void>;
 	deleteUser: (userId: string) => Promise<void>;
 	updateUserAttributes: (
 		userId: string,

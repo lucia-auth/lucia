@@ -13,10 +13,9 @@ export const testAdapter = async (
 	const database = new Database(queryHandler);
 	const clearAll = database.clear;
 	await clearAll();
-	await testOptionalMethods(adapter, queryHandler, false);
 	await testUserAdapter(adapter, queryHandler, false);
 	await testSessionAdapter(adapter, queryHandler, false);
-
+	await testOptionalMethods(adapter, queryHandler, false);
 	if (endProcess) {
 		end();
 	}

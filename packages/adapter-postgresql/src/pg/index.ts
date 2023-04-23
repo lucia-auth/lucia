@@ -1,40 +1,31 @@
 import { createOperator } from "../query.js";
-import { betterSqliteRunner } from "./runner.js";
-import {
-	transformDatabaseKey,
-	transformDatabaseSession,
-	transformToSqliteValue
-} from "../utils.js";
+import { pgRunner } from "./runner.js";
+import { transformDatabaseKey, transformDatabaseSession } from "../utils.js";
 
 import type { Adapter, AdapterFunction } from "lucia-auth";
-import type { Database } from "better-sqlite3";
+import type { Pool, DatabaseError } from "./types.js";
 import type {
-	SQLiteKeySchema,
-	SQLiteSessionSchema,
-	SQLiteUserSchema
+	PostgresKeySchema,
+	PostgresSessionSchema,
+	PostgresUserSchema
 } from "../utils.js";
 
-type BetterSQLiteError = {
-	code: string;
-	message: string;
-};
-
-export const betterSqliteAdapter = (db: Database): AdapterFunction<Adapter> => {
+export const pgAdapter = (pool: Pool): AdapterFunction<Adapter> => {
 	return (LuciaError) => {
-		const operator = createOperator(betterSqliteRunner(db));
+		const operator = createOperator(pgRunner(pool));
 		return {
 			getUser: async (userId) => {
-				return operator.get<SQLiteUserSchema>((ctx) => [
+				return await operator.get<PostgresUserSchema>((ctx) => [
 					ctx.selectFrom("auth_user", "*"),
 					ctx.where("id", "=", userId)
 				]);
 			},
 			getSessionAndUserBySessionId: async (sessionId) => {
-				const data = operator.get<
-					SQLiteUserSchema & {
-						_session_active_expires: number;
+				const data = await operator.get<
+					PostgresUserSchema & {
+						_session_active_expires: string;
 						_session_id: string;
-						_session_idle_expires: number;
+						_session_idle_expires: string;
 						_session_user_id: string;
 					}
 				>((ctx) => [
@@ -68,19 +59,23 @@ export const betterSqliteAdapter = (db: Database): AdapterFunction<Adapter> => {
 				};
 			},
 			getSession: async (sessionId) => {
-				const data = operator.get<SQLiteSessionSchema>((ctx) => [
-					ctx.selectFrom("auth_session", "*"),
-					ctx.where("id", "=", sessionId)
-				]);
-				if (!data) return null;
-				return transformDatabaseSession(data);
+				const databaseSession = await operator.get<PostgresSessionSchema>(
+					(ctx) => [
+						ctx.selectFrom("auth_session", "*"),
+						ctx.where("id", "=", sessionId)
+					]
+				);
+				if (!databaseSession) return null;
+				return transformDatabaseSession(databaseSession);
 			},
 			getSessionsByUserId: async (userId) => {
-				const data = operator.getAll<SQLiteSessionSchema>((ctx) => [
-					ctx.selectFrom("auth_session", "*"),
-					ctx.where("user_id", "=", userId)
-				]);
-				return data.map((val) => transformDatabaseSession(val));
+				const databaseSessions = await operator.getAll<PostgresSessionSchema>(
+					(ctx) => [
+						ctx.selectFrom("auth_session", "*"),
+						ctx.where("user_id", "=", userId)
+					]
+				);
+				return databaseSessions.map((val) => transformDatabaseSession(val));
 			},
 			setUser: async (userId, attributes, key) => {
 				const user = {
@@ -89,86 +84,77 @@ export const betterSqliteAdapter = (db: Database): AdapterFunction<Adapter> => {
 				};
 				try {
 					if (key) {
-						const databaseUser = operator.transaction(() => {
-							const databaseUser = operator.get<SQLiteUserSchema>((ctx) => [
-								ctx.insertInto("auth_user", user),
-								ctx.returning("*")
-							]);
+						const databaseUser = await operator.transaction(async () => {
+							const databaseUser = await operator.get<PostgresUserSchema>(
+								(ctx) => [ctx.insertInto("auth_user", user), ctx.returning("*")]
+							);
 							if (!databaseUser) throw new TypeError("Unexpected query result");
-							operator.run((ctx) => [
-								ctx.insertInto("auth_key", transformToSqliteValue(key))
-							]);
+							await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
 							return databaseUser;
 						});
 						return databaseUser;
 					}
-					const databaseUser = operator.get<SQLiteUserSchema>((ctx) => [
+					const databaseUser = await operator.get<PostgresUserSchema>((ctx) => [
 						ctx.insertInto("auth_user", user),
 						ctx.returning("*")
 					]);
 					if (!databaseUser) throw new TypeError("Unexpected type");
 					return databaseUser;
 				} catch (e) {
-					const error = e as Partial<BetterSQLiteError>;
-					if (
-						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-						error.message?.includes(".id")
-					) {
+					const error = e as Partial<DatabaseError>;
+					if (error.code === "23505" && error.detail?.includes("Key (id)")) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
 					throw e;
 				}
 			},
 			deleteUser: async (userId) => {
-				operator.run((ctx) => [
+				await operator.run((ctx) => [
 					ctx.deleteFrom("auth_user"),
 					ctx.where("id", "=", userId)
 				]);
 			},
 			setSession: async (session) => {
 				try {
-					operator.run((ctx) => [ctx.insertInto("auth_session", session)]);
+					await operator.run((ctx) => [
+						ctx.insertInto("auth_session", session)
+					]);
 				} catch (e) {
-					const error = e as Partial<BetterSQLiteError>;
-					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-						const data = operator.get<SQLiteSessionSchema>((ctx) => [
-							ctx.selectFrom("auth_user", "id"),
-							ctx.where("id", "=", session.user_id)
-						]);
-						if (!data) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
-						throw e;
-					}
+					const error = e as Partial<DatabaseError>;
 					if (
-						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-						error.message?.includes(".id")
+						error.code === "23503" &&
+						error.detail?.includes("Key (user_id)")
 					) {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					if (error.code === "23505" && error.detail?.includes("Key (id)")) {
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 					}
 					throw e;
 				}
 			},
 			deleteSession: async (sessionId) => {
-				operator.run((ctx) => [
+				await operator.run((ctx) => [
 					ctx.deleteFrom("auth_session"),
 					ctx.where("id", "=", sessionId)
 				]);
 			},
 			deleteSessionsByUserId: async (userId) => {
-				operator.run((ctx) => [
+				await operator.run((ctx) => [
 					ctx.deleteFrom("auth_session"),
 					ctx.where("user_id", "=", userId)
 				]);
 			},
 			updateUserAttributes: async (userId, attributes) => {
 				if (Object.keys(attributes).length === 0) {
-					const data = operator.get<SQLiteUserSchema>((ctx) => [
+					const data = await operator.get<PostgresUserSchema>((ctx) => [
 						ctx.selectFrom("auth_user", "*"),
 						ctx.where("id", "=", userId)
 					]);
 					if (!data) throw new LuciaError("AUTH_INVALID_USER_ID");
 					return data;
 				}
-				const data = operator.get<SQLiteUserSchema>((ctx) => [
+				const data = await operator.get<PostgresUserSchema>((ctx) => [
 					ctx.update("auth_user", attributes),
 					ctx.where("id", "=", userId),
 					ctx.returning("*")
@@ -178,46 +164,38 @@ export const betterSqliteAdapter = (db: Database): AdapterFunction<Adapter> => {
 			},
 			setKey: async (key) => {
 				try {
-					operator.run((ctx) => [
-						ctx.insertInto("auth_key", transformToSqliteValue(key))
-					]);
+					await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
 				} catch (e) {
-					const error = e as Partial<BetterSQLiteError>;
-					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-						const data = operator.get((ctx) => [
-							ctx.selectFrom("auth_user", "id"),
-							ctx.where("id", "=", key.user_id)
-						]);
-						if (!data) throw new LuciaError("AUTH_INVALID_USER_ID"); // foreign key error on user_id column
-						throw e;
-					}
+					const error = e as Partial<DatabaseError>;
 					if (
-						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-						error.message?.includes(".id")
+						error.code === "23503" &&
+						error.detail?.includes("Key (user_id)")
 					) {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					if (error.code === "23505" && error.detail?.includes("Key (id)")) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
-					throw e;
+					throw error;
 				}
 			},
 			getKey: async (keyId) => {
-				const databaseKey = operator.get<SQLiteKeySchema>((ctx) => [
+				const databaseKey = await operator.get<PostgresKeySchema>((ctx) => [
 					ctx.selectFrom("auth_key", "*"),
 					ctx.where("id", "=", keyId)
 				]);
 				if (!databaseKey) return null;
-				const transformedDatabaseKey = transformDatabaseKey(databaseKey);
-				return transformedDatabaseKey;
+				return transformDatabaseKey(databaseKey);
 			},
 			getKeysByUserId: async (userId) => {
-				const databaseKeys = operator.getAll<SQLiteKeySchema>((ctx) => [
+				const databaseKeys = await operator.getAll<PostgresKeySchema>((ctx) => [
 					ctx.selectFrom("auth_key", "*"),
 					ctx.where("user_id", "=", userId)
 				]);
 				return databaseKeys.map((val) => transformDatabaseKey(val));
 			},
 			updateKeyPassword: async (key, hashedPassword) => {
-				const databaseKey = operator.get<SQLiteKeySchema>((ctx) => [
+				const databaseKey = await operator.get<PostgresKeySchema>((ctx) => [
 					ctx.update("auth_key", {
 						hashed_password: hashedPassword
 					}),
@@ -228,15 +206,18 @@ export const betterSqliteAdapter = (db: Database): AdapterFunction<Adapter> => {
 				return transformDatabaseKey(databaseKey);
 			},
 			deleteKeysByUserId: async (userId) => {
-				operator.run((ctx) => [
+				await operator.run((ctx) => [
 					ctx.deleteFrom("auth_key"),
 					ctx.where("user_id", "=", userId)
 				]);
 			},
 			deleteNonPrimaryKey: async (keyId) => {
-				operator.run((ctx) => [
+				await operator.run((ctx) => [
 					ctx.deleteFrom("auth_key"),
-					ctx.and(ctx.where("id", "=", keyId), ctx.where("primary_key", "=", 0))
+					ctx.and(
+						ctx.where("id", "=", keyId),
+						ctx.where("primary_key", "=", false)
+					)
 				]);
 			}
 		};
