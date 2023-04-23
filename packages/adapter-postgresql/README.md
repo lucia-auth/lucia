@@ -24,7 +24,7 @@ yarn add @lucia-auth/adapter-postgresql
 
 | `@lucia-auth/adapter-postgresql` | `lucia-auth` | `pg`     |
 | -------------------------------- | ------------ | -------- |
-| `^1.0.0`                         | `^1.3.0`     | `^8.0.0` |
+| `^1.0.0`                         | `^1.4.0`     | `^8.0.0` |
 
 ## Testing
 

@@ -37,7 +37,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "^1.3.0",
+		"lucia-auth": "^1.4.0",
 		"pg": "^8.0.0"
 	},
 	"peerDependenciesMeta": {
