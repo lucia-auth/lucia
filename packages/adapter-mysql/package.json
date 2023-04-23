@@ -49,9 +49,7 @@
 		"@lucia-auth/adapter-test": "workspace:*",
 		"dotenv": "^16.0.3",
 		"lucia-auth": "workspace:*",
-		"tsx": "^3.12.6"
-	},
-	"dependencies": {
+		"tsx": "^3.12.6",
 		"mysql2": "^3.2.3"
 	}
 }

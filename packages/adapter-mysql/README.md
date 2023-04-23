@@ -2,11 +2,11 @@
 
 MySQL adapter for Lucia
 
-**[Documentation](https://lucia-auth.com/database/sqlite)**
+**[Documentation](https://lucia-auth.com/database/mysql)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-sqlite/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-mysql/CHANGELOG.md)**
 
 ## Supported drivers
 
@@ -15,9 +15,9 @@ MySQL adapter for Lucia
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-prisma
-pnpm add @lucia-auth/adapter-prisma
-yarn add @lucia-auth/adapter-prisma
+npm install @lucia-auth/adapter-postgresql
+pnpm add @lucia-auth/adapter-postgresql
+yarn add @lucia-auth/adapter-postgresql
 ```
 
 ## Version compatibility
@@ -28,7 +28,7 @@ yarn add @lucia-auth/adapter-prisma
 
 ## Testing
 
-Set MySQL database name and password to `.env`:
+Set MySQL database name and password in `.env`:
 
 ```bash
 MYSQL_DATABASE=""

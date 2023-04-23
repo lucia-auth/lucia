@@ -1,35 +1,41 @@
-# `@lucia-auth/adapter-prisma`
+# `@lucia-auth/adapter-postgresql`
 
-SQLite adapter for Lucia
+PostgreSQL adapter for Lucia
 
-**[Documentation](https://lucia-auth.com/database/sqlite)**
+**[Documentation](https://lucia-auth.com/database/postgresql)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-sqlite/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-postgresql/CHANGELOG.md)**
 
 ## Supported drivers
 
-- [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
+- [`pg`](https://github.com/brianc/node-postgres)
 
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-prisma
-pnpm add @lucia-auth/adapter-prisma
-yarn add @lucia-auth/adapter-prisma
+npm install @lucia-auth/adapter-postgresql
+pnpm add @lucia-auth/adapter-postgresql
+yarn add @lucia-auth/adapter-postgresql
 ```
 
 ## Version compatibility
 
-| `@lucia-auth/adapter-sqlite` | `lucia-auth` | `better-sqlite3` |
-| ---------------------------- | ------------ | ---------------- |
-| `^1.0.0`                     | `^1.3.0`     | `^8.0.0`         |
+| `@lucia-auth/adapter-postgresql` | `lucia-auth` | `pg`     |
+| -------------------------------- | ------------ | -------- |
+| `^1.0.0`                         | `^1.3.0`     | `^8.0.0` |
 
 ## Testing
 
-### `better-sqlite3`
+Set PostgreSQL database connection url in `.env`:
+
+```bash
+PSQL_DATABASE_URL="postgresql://localhost/lucia"
+```
+
+### `pg`
 
 ```
-pnpm test.better-sqlite3
+pnpm test.pg
 ```

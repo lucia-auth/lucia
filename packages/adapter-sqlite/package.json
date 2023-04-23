@@ -50,9 +50,7 @@
 		"@types/better-sqlite3": "^7.6.3",
 		"dotenv": "^16.0.3",
 		"lucia-auth": "workspace:*",
-		"tsx": "^3.12.6"
-	},
-	"dependencies": {
+		"tsx": "^3.12.6",
 		"better-sqlite3": "^8.0.1"
 	}
 }

@@ -1,4 +1,4 @@
-# `@lucia-auth/adapter-prisma`
+# `@lucia-auth/adapter-sqlite`
 
 SQLite adapter for Lucia
 
@@ -15,9 +15,9 @@ SQLite adapter for Lucia
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-prisma
-pnpm add @lucia-auth/adapter-prisma
-yarn add @lucia-auth/adapter-prisma
+npm install @lucia-auth/adapter-sqlite
+pnpm add @lucia-auth/adapter-sqlite
+yarn add @lucia-auth/adapter-sqlite
 ```
 
 ## Version compatibility

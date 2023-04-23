@@ -1,1 +1,1 @@
-# @lucia-auth/adapter-sqlite
+# @lucia-auth/adapter-mysql
