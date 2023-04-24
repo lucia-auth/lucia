@@ -9,7 +9,7 @@ export const pgRunner = (pool: Pool): AsyncRunner => {
 			return result.rows;
 		},
 		run: async (query, params) => {
-			console.log(query, params)
+			console.log(query, params);
 			await pool.query(query, params);
 		},
 		transaction: async (execute) => {

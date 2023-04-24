@@ -58,14 +58,16 @@ const resolveQueryBlock = (block: Block, paramCount: number): ResolvedBlock => {
 		};
 	}
 	if (block.type === "AND") {
-		const resolvedConditionQueryBlocks = block.whereBlocks.map((whereBlock, i) => {
-			return {
-				queryChunk: `${whereBlock.column} ${whereBlock.comparator} $${
-					paramCount + 1 + i
-				}`,
-				params: [whereBlock.value]
-			};
-		});
+		const resolvedConditionQueryBlocks = block.whereBlocks.map(
+			(whereBlock, i) => {
+				return {
+					queryChunk: `${whereBlock.column} ${whereBlock.comparator} $${
+						paramCount + 1 + i
+					}`,
+					params: [whereBlock.value]
+				};
+			}
+		);
 		const conditionQueryChunk = resolvedConditionQueryBlocks
 			.map((resolvedBlock) => resolvedBlock.queryChunk)
 			.join(" AND ");

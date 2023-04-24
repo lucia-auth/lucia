@@ -26,7 +26,7 @@ Add `username` to `auth_user` table (`string`, unique).
 
 ### Type declaration
 
-Declare the [`Lucia`]() namespace in a `.d.ts` file and `username` to `Lucia.UserAttributes`.
+Declare the [`Lucia`](/reference/lucia-auth/types#lucia) namespace in a `.d.ts` file and `username` to `Lucia.UserAttributes`.
 
 ```ts
 // lucia.d.ts

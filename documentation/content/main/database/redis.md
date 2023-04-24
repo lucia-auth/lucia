@@ -1,10 +1,10 @@
 ---
-_order: 1
-title: "Redis (session)"
+_order: 0
+title: "Redis"
 description: "Learn how to use Redis with Lucia"
 ---
 
-A session adapter for Redis.
+A session adapter for Redis. YA separate database/adapter is required for storing users and keys.
 
 ```ts
 const adapter: (redisClient: {

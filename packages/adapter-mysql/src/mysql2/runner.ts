@@ -6,7 +6,7 @@ export const mysql2Runner = (pool: Pool): AsyncRunner => {
 		type: "async",
 		get: async (query, params) => {
 			const [rows] = await pool.query(query, params);
-			return rows
+			return rows;
 		},
 		run: async (query, params) => {
 			await pool.query(query, params);
