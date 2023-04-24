@@ -208,8 +208,8 @@ export class Auth<C extends Configuration = any> {
 				userAttributes,
 				null
 			);
-			const user = this.transformDatabaseUser(databaseUser);
-			return user;
+			if (databaseUser) return this.transformDatabaseUser(databaseUser);
+			return await this.getUser(userId);
 		}
 		const keyId = `${data.primaryKey.providerId}:${data.primaryKey.providerUserId}`;
 		const password = data.primaryKey.password;
@@ -221,8 +221,8 @@ export class Auth<C extends Configuration = any> {
 			primary_key: true,
 			expires: null
 		});
-		const user = this.transformDatabaseUser(databaseUser);
-		return user;
+		if (databaseUser) return this.transformDatabaseUser(databaseUser);
+		return await this.getUser(userId);
 	};
 
 	public updateUserAttributes = async (
@@ -467,7 +467,8 @@ export class Auth<C extends Configuration = any> {
 	};
 
 	public handleRequest = (
-		...args: Parameters<Lucia.Auth["middleware"]>
+		// cant reference middleware type with Lucia.Auth
+		...args: Auth<C>["middleware"] extends Middleware<infer Args> ? Args : never
 	): AuthRequest<Lucia.Auth> => {
 		const middleware = this.middleware as Middleware;
 		return new AuthRequest(this, middleware(...[...args, this.env]));
