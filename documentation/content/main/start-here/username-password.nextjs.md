@@ -192,7 +192,7 @@ import React from "react";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(req, res);
+	const authRequest = auth.handleRequest(context.req, context.res);
 	const session = await authRequest.validate();
 	if (session) {
 		// redirect the user if authenticated
@@ -326,7 +326,7 @@ import React from "react";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(req, res);
+	const authRequest = auth.handleRequest(context.req, context.res);
 	const session = await authRequest.validate();
 	if (session) {
 		// redirect the user if authenticated
@@ -368,7 +368,7 @@ import type { User } from "lucia-auth";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ user: User }>> => {
-	const authRequest = auth.handleRequest(req, res);
+	const authRequest = auth.handleRequest(context.req, context.res);
 	const { user } = await authRequest.validateUser();
 	if (!user)
 		return {
