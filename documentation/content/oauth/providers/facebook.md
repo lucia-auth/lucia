@@ -36,12 +36,12 @@ const facebook: (
 #### Parameter
 
 | name                | type                                 | description                                        | optional |
-| ------------------- | ------------------------------------ | -------------------------------------------------- | -------- |
+| ------------------- | ------------------------------------ | -------------------------------------------------- | :------: |
 | auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                     |          |
 | config.clientId     | `string`                             | Facebook OAuth app client id                       |          |
 | config.clientSecret | `string`                             | Facebook OAuth app client secret                   |          |
 | configs.redirectUri | `string`                             | an authorized redirect URI                         |          |
-| config.scope        | `string[]`                           | an array of scopes - `identity` is always included | true     |
+| config.scope        | `string[]`                           | an array of scopes - `identity` is always included |    ✓     |
 
 #### Returns
 

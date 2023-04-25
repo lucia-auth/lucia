@@ -42,13 +42,10 @@
 		"lucia-auth": "^1.3.0"
 	},
 	"devDependencies": {
+		"lucia-auth": "workspace:*",
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@prisma/client": "^4.9.0",
 		"prisma": "^4.9.0",
-		"ts-node": "^10.9.1",
 		"tsx": "^3.12.6"
-	},
-	"dependencies": {
-		"lucia-auth": "workspace:*"
 	}
 }

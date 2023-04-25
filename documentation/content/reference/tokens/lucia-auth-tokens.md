@@ -28,12 +28,12 @@ const idToken: (
 #### Parameters
 
 | name             | type                                 | optional | default                                                                           | description                              |
-| ---------------- | ------------------------------------ | -------- | --------------------------------------------------------------------------------- | ---------------------------------------- |
+| ---------------- | ------------------------------------ | :------: | --------------------------------------------------------------------------------- | ---------------------------------------- |
 | auth             | [`Auth`](/reference/lucia-auth/auth) |          |                                                                                   | initialized Lucia instance               |
 | tokenName        | `string`                             |          |                                                                                   | name of the token type                   |
 | option.expiresIn | `number`                             |          |                                                                                   | how long the key is valid for in seconds |
-| option.length    | `number`                             | true     | `43`                                                                              | the length of the token                  |
-| option.generate  | `Function`                           | true     | [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring) | a function that returns a random string  |
+| option.length    | `number`                             |    ✓     | `43`                                                                              | the length of the token                  |
+| option.generate  | `Function`                           |    ✓     | [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring) | a function that returns a random string  |
 
 #### Returns
 
@@ -67,12 +67,12 @@ const passwordToken: (
 #### Parameters
 
 | name             | type                                 | optional | default                                                                           | description                              |
-| ---------------- | ------------------------------------ | -------- | --------------------------------------------------------------------------------- | ---------------------------------------- |
+| ---------------- | ------------------------------------ | :------: | --------------------------------------------------------------------------------- | ---------------------------------------- |
 | auth             | [`Auth`](/reference/lucia-auth/auth) |          |                                                                                   | initialized Lucia instance               |
 | tokenName        | `string`                             |          |                                                                                   | name of the token type                   |
 | option.expiresIn | `number`                             |          |                                                                                   | how long the key is valid for in seconds |
-| option.length    | `number`                             | true     | `8`                                                                               | the length of the token                  |
-| option.generate  | `Function`                           | true     | [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring) | a function that returns a random string  |
+| option.length    | `number`                             |    ✓     | `8`                                                                               | the length of the token                  |
+| option.generate  | `Function`                           |    ✓     | [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring) | a function that returns a random string  |
 
 #### Returns
 

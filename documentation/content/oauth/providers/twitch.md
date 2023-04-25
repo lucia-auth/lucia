@@ -35,13 +35,13 @@ const twitch: (
 #### Parameter
 
 | name                 | type                                 | description                                                          | optional |
-| -------------------- | ------------------------------------ | -------------------------------------------------------------------- | -------- |
+| -------------------- | ------------------------------------ | -------------------------------------------------------------------- | :------: |
 | auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                       |          |
 | configs.clientId     | `string`                             | Twitch OAuth app client id                                           |          |
 | configs.clientSecret | `string`                             | Twitch OAuth app client secret                                       |          |
 | configs.redirectUri  | `string`                             | one of the authorized redirect URIs                                  |          |
-| configs.forceVerify  | `boolean`                            | forces the user to re-authorize your app’s access to their resources | true     |
-| configs.scope        | `string[]`                           | an array of scopes                                                   | true     |
+| configs.forceVerify  | `boolean`                            | forces the user to re-authorize your app’s access to their resources |    ✓     |
+| configs.scope        | `string[]`                           | an array of scopes                                                   |    ✓     |
 
 #### Returns
 

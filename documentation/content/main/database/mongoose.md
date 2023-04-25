@@ -1,10 +1,12 @@
 ---
 _order: 0
-title: "Mongoose (MongoDB)"
+title: "Mongoose"
 description: "Learn how to use Mongoose with Lucia"
 ---
 
-An adapter for Mongoose (MongoDB) version 6.x and 7.x.
+[Mongoose](https://github.com/Automattic/mongoose) is a MongoDB object modeling tool designed to work in an asynchronous environment
+
+This adapter supports Mongoose version 6.x and 7.x.
 
 ```ts
 const adapter: (mongoose: Mongoose) => () => Adapter;
