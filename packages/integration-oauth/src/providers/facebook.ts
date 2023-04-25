@@ -10,7 +10,7 @@ type Config = OAuthConfig & {
 
 const PROVIDER_ID = "facebook";
 
-export const facebook = (auth: Auth, config: Config) => {
+export const facebook = <A extends Auth>(auth: A, config: Config) => {
 	const getAuthorizationUrl = async (state: string) => {
 		const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
 			client_id: config.clientId,

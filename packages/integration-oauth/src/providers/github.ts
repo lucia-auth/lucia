@@ -6,7 +6,7 @@ import type { OAuthConfig } from "../core.js";
 
 const PROVIDER_ID = "github";
 
-export const github = (auth: Auth, config: OAuthConfig) => {
+export const github = <A extends Auth>(auth: A, config: OAuthConfig) => {
 	const getAuthorizationUrl = async (state: string) => {
 		const url = createUrl("https://github.com/login/oauth/authorize", {
 			client_id: config.clientId,
