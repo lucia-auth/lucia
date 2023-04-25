@@ -12,7 +12,7 @@ export const handleRequest = (Astro: AstroGlobal) => {
 			Astro.cookies.set("framework", frameworkId, {
 				path: "/"
 			});
-			Astro.request.headers.set("framework_id", frameworkId);
+			Astro.request.headers.set("framework_id", frameworkId ?? "none");
 		} else {
 			Astro.cookies.set("framework", "", {
 				path: "/",
@@ -25,7 +25,8 @@ export const handleRequest = (Astro: AstroGlobal) => {
 	const getFrameworkId = (): FrameworkId | null => {
 		const getRequestFrameworkId = (): FrameworkId | null => {
 			const frameworkIdHeader = Astro.request.headers.get("framework_id");
-			if (isValidFrameworkId(frameworkIdHeader)) return frameworkIdHeader;
+			if (frameworkIdHeader === "none") return null
+			if (frameworkIdHeader && isValidFrameworkId(frameworkIdHeader)) return frameworkIdHeader;
 			for (const frameworkId of frameworkIds) {
 				if (Astro.url.searchParams.has(frameworkId)) return frameworkId;
 			}
