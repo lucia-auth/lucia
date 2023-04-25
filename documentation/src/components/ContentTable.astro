@@ -124,17 +124,15 @@ const currentPathname = Astro.url.pathname;
 			const [prevCollectionId, prevScrollPosition] =
 				storedScrollPosition.split(":");
 			if (prevCollectionId === collectionId) {
+				console.log(prevScrollPosition);
 				contentTableElement.scrollTop = Number(prevScrollPosition);
 			}
 		}
-		contentTableElement.addEventListener("click", (e) => {
-			if (!(e.target instanceof HTMLAnchorElement)) return;
-			e.preventDefault();
+		contentTableElement.addEventListener("click", () => {
 			sessionStorage.setItem(
 				`scroll_position`,
 				`${collectionId}:${contentTableElement.scrollTop.toString()}`
 			);
-			window.location.href = e.target.href;
 		});
 	}
 </script>
