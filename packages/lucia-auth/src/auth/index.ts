@@ -467,7 +467,8 @@ export class Auth<C extends Configuration = any> {
 	};
 
 	public handleRequest = (
-		...args: Parameters<Lucia.Auth["middleware"]>
+		// cant reference middleware type with Lucia.Auth
+		...args: Auth<C>["middleware"] extends Middleware<infer Args> ? Args : never
 	): AuthRequest<Lucia.Auth> => {
 		const middleware = this.middleware as Middleware;
 		return new AuthRequest(this, middleware(...[...args, this.env]));
