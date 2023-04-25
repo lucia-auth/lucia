@@ -54,8 +54,8 @@ The adapter and Lucia will not not handle [unknown errors](/basics/error-handlin
 The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 | name | type          | nullable | unique | primary |
-| ---- | ------------- | -------- | ------ | ------- |
-| id   | `VARCHAR(15)` |          | true   | true    |
+| ---- | ------------- | :------: | :----: | :-----: |
+| id   | `VARCHAR(15)` |          |   ✓    |    ✓    |
 
 ```sql
 CREATE TABLE user (
@@ -67,8 +67,8 @@ CREATE TABLE user (
 #### `auth_session`
 
 | name           | type                | foreign constraint | nullable | unique | identity |
-| -------------- | ------------------- | ------------------ | -------- | ------ | -------- |
-| id             | `VARCHAR(127)`      |                    |          | true   | true     |
+| -------------- | ------------------- | ------------------ | :------: | :----: | :------: |
+| id             | `VARCHAR(127)`      |                    |          |   ✓    |    ✓     |
 | user_id        | `VARCHAR(15)`       | `auth_user(id)`    |          |        |          |
 | active_expires | `BIGINT` (UNSIGNED) |                    |          |        |          |
 | idle_expires   | `BIGINT` (UNSIGNED) |                    |          |        |          |
@@ -87,12 +87,12 @@ CREATE TABLE session (
 #### `auth_key`
 
 | name            | type                 | foreign constraint | nullable | unique | identity |
-| --------------- | -------------------- | ------------------ | -------- | ------ | -------- |
-| id              | `VARCHAR(255)`       |                    |          | true   | true     |
+| --------------- | -------------------- | ------------------ | :------: | :----: | :------: |
+| id              | `VARCHAR(255)`       |                    |          |   ✓    |    ✓     |
 | user_id         | `VARCHAR(15)`        | `auth_user(id)`    |          |        |          |
 | primary_key     | `TINYINT` (UNSIGNED) |                    |          |        |          |
-| hashed_password | `VARCHAR(255)`       |                    | true     |        |          |
-| expires         | `BIGINT` (UNSIGNED)  |                    | true     |        |          |
+| hashed_password | `VARCHAR(255)`       |                    |    ✓     |        |          |
+| expires         | `BIGINT` (UNSIGNED)  |                    |    ✓     |        |          |
 
 ```sql
 CREATE TABLE `auth_key` (
@@ -104,64 +104,4 @@ CREATE TABLE `auth_key` (
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES auth_user(id)
 );
-```
-
-## Using query builders
-
-### Drizzle
-
-```ts
-import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
-
-const user = mysqlTable("auth_user", {
-	id: varchar("id", {
-		length: 15 // change this when using custom user ids
-	}).primaryKey()
-	// other user attributes
-});
-
-const session = mysqlTable("auth_session", {
-	id: varchar("id", {
-		length: 128
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
-		.notNull()
-		.references(() => user.id),
-	activeExpires: bigInt("active_expires", {
-		mode: "number"
-	}).notNull(),
-	idleExpires: bigInt("idle_expires", {
-		mode: "number"
-	}).notNull()
-});
-
-const key = mysqlTable("auth_session", {
-	id: varchar("id", {
-		length: 255
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
-		.notNull()
-		.references(() => user.id),
-	primaryKey: boolean().notNull(),
-	hashedPassword: varchar("hashed_password", {
-		length: 255
-	})
-});
-```
-
-#### `mysql2`
-
-```ts
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
-
-const poolConnection = mysql.createPool({
-	// ...
-});
-
-const db = drizzle(poolConnection);
 ```

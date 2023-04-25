@@ -52,8 +52,8 @@ The adapter and Lucia will not not handle [unknown errors](/basics/error-handlin
 The length of the `VARCHAR` type of `id` should be of appropriate length if you generate your own user ids. You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 | name | type          | nullable | unique | identity |
-| ---- | ------------- | -------- | ------ | -------- |
-| id   | `VARCHAR(15)` |          | true   | true     |
+| ---- | ------------- | :------: | :----: | :------: |
+| id   | `VARCHAR(15)` |          |   ✓    |    ✓     |
 
 ```sql
 CREATE TABLE auth_user (
@@ -67,8 +67,8 @@ CREATE TABLE auth_user (
 Column type of `user_id` should match the type of `auth_user(id)`.
 
 | name           | type           | foreign constraint | nullable | unique | identity |
-| -------------- | -------------- | ------------------ | -------- | ------ | -------- |
-| id             | `VARCHAR(127)` |                    |          | true   | true     |
+| -------------- | -------------- | ------------------ | :------: | :----: | :------: |
+| id             | `VARCHAR(127)` |                    |          |   ✓    |    ✓     |
 | user_id        | `VARCHAR(15)`  | `auth_user(id)`    |          |        |          |
 | active_expires | `BIGINT`       |                    |          |        |          |
 | idle_expires   | `BIGINT`       |                    |          |        |          |
@@ -89,12 +89,12 @@ CREATE TABLE auth_session (
 Column type of `user_id` should match the type of `user(id)`.
 
 | name            | type           | foreign constraint | nullable | unique | identity |
-| --------------- | -------------- | ------------------ | -------- | ------ | -------- |
-| id              | `VARCHAR(255)` |                    |          | true   | true     |
+| --------------- | -------------- | ------------------ | :------: | :----: | :------: |
+| id              | `VARCHAR(255)` |                    |          |   ✓    |    ✓     |
 | user_id         | `VARCHAR(15)`  | `auth_user(id)`    |          |        |          |
 | primary_key     | `INT2`         |                    |          |        |          |
-| hashed_password | `VARCHAR(255)` | true               | true     |        |          |
-| expires         | `BIGINT`       |                    | true     |        |          |
+| hashed_password | `VARCHAR(255)` | true               |    ✓     |        |          |
+| expires         | `BIGINT`       |                    |    ✓     |        |          |
 
 ```sql
 CREATE TABLE auth_key (

@@ -54,8 +54,8 @@ The adapter and Lucia will not not handle [unknown errors](/basics/error-handlin
 You may add additional columns to store user attributes. Refer to [User attributes](/basics/user-attributes).
 
 | name | type   | foreign constraint | nullable | unique | primary |
-| ---- | ------ | ------------------ | -------- | ------ | ------- |
-| id   | `TEXT` |                    |          | true   | true    |
+| ---- | ------ | ------------------ | :------: | :----: | :-----: |
+| id   | `TEXT` |                    |          |   ✓    |    ✓    |
 
 ```sql
 CREATE TABLE auth_user (
@@ -66,8 +66,8 @@ CREATE TABLE auth_user (
 #### `auth_session`
 
 | name           | type     | foreign constraint | nullable | unique | primary |
-| -------------- | -------- | ------------------ | -------- | ------ | ------- |
-| id             | `TEXT`   |                    |          | true   | true    |
+| -------------- | -------- | ------------------ | :------: | :----: | :-----: |
+| id             | `TEXT`   |                    |          |   ✓    |    ✓    |
 | user_id        | `TEXT`   | `auth_user(id)`    |          |        |         |
 | active_expires | `BIGINT` |                    |          |        |         |
 | idle_expires   | `BIGINT` |                    |          |        |         |
@@ -84,12 +84,12 @@ CREATE TABLE auth_session (
 #### `auth_key`
 
 | name            | type      | foreign constraint | nullable | unique | primary |
-| --------------- | --------- | ------------------ | -------- | ------ | ------- |
-| id              | `TEXT`    |                    |          | true   | true    |
+| --------------- | --------- | ------------------ | :------: | :----: | :-----: |
+| id              | `TEXT`    |                    |          |   ✓    |    ✓    |
 | user_id         | `TEXT`    | `auth_user(id)`    |          |        |         |
 | primary_key     | `BOOLEAN` |                    |          |        |         |
-| hashed_password | `TEXT`    |                    | true     |        |         |
-| expires         | `BIGINT`  |                    | true     |        |         |
+| hashed_password | `TEXT`    |                    |    ✓     |        |         |
+| expires         | `BIGINT`  |                    |    ✓     |        |         |
 
 ```sql
 CREATE TABLE auth_key (

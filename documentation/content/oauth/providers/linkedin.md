@@ -34,12 +34,12 @@ const linkedin: (
 #### Parameter
 
 | name                | type                                 | description                                             | optional |
-| ------------------- | ------------------------------------ | ------------------------------------------------------- | -------- |
+| ------------------- | ------------------------------------ | ------------------------------------------------------- | :------: |
 | auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                          |          |
 | config.clientId     | `string`                             | LinkedIn OAuth app client id                            |          |
 | config.clientSecret | `string`                             | LinkedIn OAuth app client secret                        |          |
 | config.redirectUri  | `string`                             | LinkedIn OAuth app redirect uri                         |          |
-| config.scope        | `string[]`                           | an array of scopes - `r_liteprofile` is always included | true     |
+| config.scope        | `string[]`                           | an array of scopes - `r_liteprofile` is always included |    ✓     |
 
 #### Returns
 
