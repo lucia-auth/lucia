@@ -4,7 +4,7 @@ import Layout from "@components/Layout.astro";
 import Header from "@components/ContentHeader.astro";
 
 import { getContent } from "@cela/content";
-import { frameworkIds } from "@lib/framework";
+import { frameworkIds, getFrameworkId, setFrameworkId } from "@lib/framework";
 import redirects from "redirects.json";
 import { error404 } from "@lib/error";
 import {
@@ -21,21 +21,9 @@ if (redirectTarget) {
 	return Astro.redirect(redirectTarget.to, 302);
 }
 
-let requestedFrameworkId = Astro.url.searchParams.get("framework") ?? null;
+let frameworkId = getFrameworkId(Astro)
 
-requestedFrameworkId ||= Astro.cookies.get("framework").value ?? null;
-
-if (requestedFrameworkId && !frameworkIds.includes(requestedFrameworkId)) {
-	requestedFrameworkId = null;
-}
-
-if (requestedFrameworkId) {
-	Astro.cookies.set("framework", requestedFrameworkId ?? "none", {
-		path: "/"
-	});
-}
-
-const content = await getContent(Astro.url.pathname, requestedFrameworkId);
+const content = await getContent(Astro.url.pathname, frameworkId);
 
 if (!content) {
 	const errorResponse = error404(Astro.url);
@@ -46,14 +34,8 @@ if (content.metaData.redirect) {
 	return Astro.redirect(content.metaData.redirect, 302);
 }
 
-if (content.metaData.frameworkId) {
-	Astro.cookies.set("framework", content.metaData.frameworkId ?? "none", {
-		path: "/"
-	});
-}
-
-const frameworkId =
-	requestedFrameworkId === "none" ? null : requestedFrameworkId;
+frameworkId = content.metaData.frameworkId
+setFrameworkId(Astro, frameworkId)
 
 const contributePageHref = joinUrlPaths(
 	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation",

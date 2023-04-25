@@ -4,9 +4,10 @@ import Discord from "./icons/Discord.astro";
 import Github from "./icons/Github.astro";
 import { getCollection } from "@cela/content";
 import { generateMarkdownHtml } from "@markdown/index";
+import type { FrameworkId } from "@lib/framework";
 
 type Props = {
-	frameworkId: string | null;
+	frameworkId: FrameworkId | null;
 	collectionId?: string;
 };
 
@@ -30,7 +31,7 @@ const currentPathname = Astro.url.pathname;
 	<input type="hidden" value={frameworkId} id="framework-id" />
 
 	<div class="py-2 pl-8 pr-4 dark:text-zinc-200">
-		<FrameworkSelect client:idle current={Astro.props.frameworkId} />
+		<FrameworkSelect client:idle frameworkId={Astro.props.frameworkId} />
 	</div>
 
 	{

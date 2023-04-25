@@ -2,10 +2,6 @@ import type { AstroGlobal } from "astro";
 
 const frameworks = [
 	{
-		id: "none",
-		title: "None"
-	},
-	{
 		id: "sveltekit",
 		title: "SvelteKit"
 	},
@@ -17,23 +13,49 @@ const frameworks = [
 		id: "astro",
 		title: "Astro"
 	}
-];
+] as const;
 
 export default frameworks;
 
 export const frameworkIds = frameworks.map((fw) => fw.id);
 
-export const getFrameworkId = (Astro: AstroGlobal) => {
-	let frameworkId = Astro.url.searchParams.get("framework") ?? null;
+export type FrameworkId = (typeof frameworkIds)[number];
 
-	frameworkId ||= Astro.cookies.get("framework").value ?? "none";
-
-	if (frameworkId && !frameworkIds.includes(frameworkId)) {
-		frameworkId = "none";
+export const setFrameworkId = async (
+	Astro: AstroGlobal,
+	frameworkId: FrameworkId | null
+) => {
+	if (frameworkId) {
+		Astro.cookies.set("framework", frameworkId, {
+			path: "/"
+		});
+	} else {
+		Astro.cookies.set("framework", "", {
+			path: "/",
+			maxAge: 0
+		});
 	}
+};
 
-	Astro.cookies.set("framework", frameworkId, {
-		path: "/"
-	});
+export const getFrameworkId = (Astro: AstroGlobal): FrameworkId | null => {
+	const getRequestFrameworkId = (): FrameworkId | null => {
+		for (const frameworkId of frameworkIds) {
+			if (Astro.url.searchParams.has(frameworkId)) return frameworkId;
+		}
+		if (Astro.url.searchParams.has("none")) return null;
+		const cookieFrameworkId = Astro.cookies.get("framework").value ?? null;
+		if (isValidFrameworkId(cookieFrameworkId)) return cookieFrameworkId;
+		return null;
+	};
+	const frameworkId = getRequestFrameworkId();
+	setFrameworkId(Astro, frameworkId);
 	return frameworkId;
+};
+
+export const isValidFrameworkId = (
+	val: any
+): val is (typeof frameworkIds)[number] | null => {
+	if (val === null) return true;
+	if (frameworkIds.includes(val)) return true;
+	return false;
 };
