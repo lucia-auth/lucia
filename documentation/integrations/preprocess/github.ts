@@ -34,6 +34,10 @@ export const envVar = async (key: string): Promise<string> => {
 };
 
 export const fetchGithub = async () => {
+	const githubJsonPath = path.join(process.cwd(), ".github.json");
+
+	if (fs.existsSync(githubJsonPath)) return;
+
 	const GITHUB_API_KEY = await envVar("GITHUB_API_KEY");
 
 	const contributorsResponse = await fetch(
@@ -75,8 +79,5 @@ export const fetchGithub = async () => {
 				};
 		  })
 		: [];
-	fs.writeFileSync(
-		path.join(process.cwd(), ".github.json"),
-		JSON.stringify(contributors)
-	);
+	fs.writeFileSync(path.join(githubJsonPath), JSON.stringify(contributors));
 };
