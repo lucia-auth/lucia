@@ -15,7 +15,7 @@ type Config = OAuthConfig & {
 	loginHint?: string;
 };
 
-export const auth0 = (auth: Auth, config: Config) => {
+export const auth0 = <A extends Auth>(auth: A, config: Config) => {
 	const getAuthorizationUrl = async (state: string) => {
 		const url = createUrl(new URL("/authorize", config.appDomain).toString(), {
 			client_id: config.clientId,
