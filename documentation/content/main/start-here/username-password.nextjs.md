@@ -64,16 +64,12 @@ import React from "react";
 
 export default () => {
 	const router = useRouter();
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const formValues = e.target as any as Record<
-			"username" | "password",
-			{
-				value: string;
-			}
-		>;
-		const username = formValues.username.value;
-		const password = formValues.password.value;
+		const formData = new FormData(e.currentTarget);
+		const username = formData.get("username") as string;
+		const password = formData.get("password") as string;
+
 		const response = await fetch("/api/signup", {
 			method: "POST",
 			body: JSON.stringify({
@@ -225,16 +221,12 @@ import React from "react";
 
 export default () => {
 	const router = useRouter();
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const formValues = e.target as any as Record<
-			"username" | "password",
-			{
-				value: string;
-			}
-		>;
-		const username = formValues.username.value;
-		const password = formValues.password.value;
+		const formData = new FormData(e.currentTarget);
+		const username = formData.get("username") as string;
+		const password = formData.get("password") as string;
+
 		const response = await fetch("/api/login", {
 			method: "POST",
 			body: JSON.stringify({
