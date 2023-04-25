@@ -4,16 +4,17 @@ import Layout from "@components/Layout.astro";
 import Header from "@components/ContentHeader.astro";
 
 import { getContent } from "@cela/content";
-import { frameworkIds, getFrameworkId, setFrameworkId } from "@lib/framework";
+import { frameworkIds } from "@utils/framework";
 import redirects from "redirects.json";
-import { error404 } from "@lib/error";
+import { error404 } from "@utils/error";
 import {
 	generateMarkdownHtml,
 	removeMarkdownFormatting
 } from "@markdown/index";
 import MarkdownContent from "@components/MarkdownContent.astro";
 import Banner from "@components/Banner.astro";
-import { joinUrlPaths } from "@lib/path";
+import { joinUrlPaths } from "@utils/path";
+import { handleRequest } from "@server/request";
 
 const redirectTarget = redirects.find((val) => val.from === Astro.url.pathname);
 
@@ -21,7 +22,8 @@ if (redirectTarget) {
 	return Astro.redirect(redirectTarget.to, 302);
 }
 
-let frameworkId = getFrameworkId(Astro)
+const request = handleRequest(Astro);
+let frameworkId = request.getFrameworkId();
 
 const content = await getContent(Astro.url.pathname, frameworkId);
 
@@ -34,8 +36,8 @@ if (content.metaData.redirect) {
 	return Astro.redirect(content.metaData.redirect, 302);
 }
 
-frameworkId = content.metaData.frameworkId
-setFrameworkId(Astro, frameworkId)
+frameworkId = content.metaData.frameworkId;
+request.setFrameworkId(frameworkId);
 
 const contributePageHref = joinUrlPaths(
 	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation",
@@ -83,9 +85,6 @@ const contributePageHref = joinUrlPaths(
 						href={contributePageHref}
 						class="text-main cursor-pointer; hover:underline"
 						>Contribute to this page</a
-					>
-					<button class="text-main block hover:underline" id="copy-link"
-						>Copy link</button
 					>
 				</div>
 			</div>
@@ -137,9 +136,6 @@ const contributePageHref = joinUrlPaths(
 						href={contributePageHref}
 						class="text-main cursor-pointer; hover:underline"
 						>Contribute to this page</a
-					>
-					<button class="text-main mt-2 block hover:underline" id="copy-link"
-						>Copy link</button
 					>
 				</div>
 			</div>

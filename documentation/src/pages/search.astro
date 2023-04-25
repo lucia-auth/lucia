@@ -4,9 +4,10 @@ import Layout from "@components/Layout.astro";
 import { query } from "@search/query";
 import indexes from "../../.search.json";
 import { SearchResult } from "@components/Search";
-import { getFrameworkId } from "@lib/framework";
+import { handleRequest } from "@server/request";
 
-const frameworkId = getFrameworkId(Astro);
+const request = handleRequest(Astro);
+const frameworkId = request.getFrameworkId();
 
 const queryParams = Astro.url.searchParams.get("q") ?? null;
 const getSearchResult = async () => {

@@ -1,4 +1,4 @@
-import { frameworkIds } from "@lib/framework";
+import { frameworkIds } from "src/utils/framework";
 import {
 	CELA_GENERATED_DIR,
 	contentImports,

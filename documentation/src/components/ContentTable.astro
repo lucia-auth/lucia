@@ -4,7 +4,7 @@ import Discord from "./icons/Discord.astro";
 import Github from "./icons/Github.astro";
 import { getCollection } from "@cela/content";
 import { generateMarkdownHtml } from "@markdown/index";
-import type { FrameworkId } from "@lib/framework";
+import type { FrameworkId } from "@utils/framework";
 
 type Props = {
 	frameworkId: FrameworkId | null;
@@ -139,8 +139,8 @@ const currentPathname = Astro.url.pathname;
 </script>
 
 <script>
-	import { addClassName, removeClassName } from "@lib/dom";
-	import { onMenuStateUpdate, setMenuState } from "../lib/state";
+	import { addClassName, removeClassName } from "@utils/dom";
+	import { onMenuStateUpdate, setMenuState } from "@utils/state";
 
 	const contentTableWrapperElement = document.getElementById(
 		"content-table-wrapper"

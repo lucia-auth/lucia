@@ -1,6 +1,6 @@
-import { dynamicClassName } from "@lib/styles";
+import { dynamicClassName } from "src/utils/styles";
 import { For, Show, createSignal } from "solid-js";
-import frameworks from "@lib/framework";
+import frameworks from "src/utils/framework";
 
 export default (props: { frameworkId: string | null }) => {
 	const noFrameworkOption = {

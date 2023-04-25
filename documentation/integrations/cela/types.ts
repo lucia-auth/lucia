@@ -1,4 +1,4 @@
-import type { FrameworkId } from "@lib/framework";
+import type { FrameworkId } from "src/utils/framework";
 import type { getContent } from "./content";
 
 export type SectionDocument = {
