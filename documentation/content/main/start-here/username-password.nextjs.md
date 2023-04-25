@@ -67,8 +67,8 @@ export default () => {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		const username = formData.get('username') as string;
-		const password = formData.get('password') as string;
+		const username = formData.get("username") as string;
+		const password = formData.get("password") as string;
 
 		const response = await fetch("/api/signup", {
 			method: "POST",
@@ -224,8 +224,8 @@ export default () => {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-        const username = formData.get('username') as string;
-        const password = formData.get('password') as string;
+		const username = formData.get("username") as string;
+		const password = formData.get("password") as string;
 
 		const response = await fetch("/api/login", {
 			method: "POST",
