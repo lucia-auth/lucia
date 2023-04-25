@@ -1,7 +1,7 @@
 ---
 title: "Lucia 1.0"
 description: "Announcing Lucia 1.0!"
-date: "April 9th, 2022"
+date: "April 9th, 2023"
 video: "https://www.youtube.com/watch?v=j8lyUqKdmJQ"
 ---
 
