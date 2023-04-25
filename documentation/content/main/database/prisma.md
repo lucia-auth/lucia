@@ -4,6 +4,8 @@ title: "Prisma"
 description: "Learn how to use Prisma with Lucia"
 ---
 
+[Prisma](https://github.com/prisma/prisma) is an open source next-generation ORM.
+
 An adapter for Prisma version 4.2 and greater. Can be used with: MySQL, PostgreSQL, SQLite, and MongoDB.
 
 ```ts

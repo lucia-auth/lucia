@@ -24,8 +24,8 @@ export const testUserAdapter = async (
 		await clearAll();
 	});
 	await test("getUser()", "Return null if user id is invalid", async () => {
-		const user = await adapter.getUser(INVALID_INPUT);
-		isNull(user);
+		const result = await adapter.getUser(INVALID_INPUT);
+		isNull(result);
 		await clearAll();
 	});
 	await test("setUser()", "Insert user", async () => {
@@ -38,16 +38,22 @@ export const testUserAdapter = async (
 		await user.exists();
 		await clearAll();
 	});
-	await test("setUser()", "Insert user - Return the created user", async () => {
-		const user = database.user();
-		const result = await adapter.setUser(
-			user.value.id,
-			{ username: user.value.username },
-			null
-		);
-		user.compare(result);
-		await clearAll();
-	});
+	await test(
+		"setUser()",
+		"Insert user - Return the created user or void",
+		async () => {
+			const user = database.user();
+			const result = await adapter.setUser(
+				user.value.id,
+				{ username: user.value.username },
+				null
+			);
+			if (result !== undefined) {
+				user.compare(result);
+			}
+			await clearAll();
+		}
+	);
 	await test("setUser()", "Insert user and persistent key", async () => {
 		const user = database.user();
 		const key = user.key({
@@ -65,7 +71,7 @@ export const testUserAdapter = async (
 	});
 	await test(
 		"setUser()",
-		"Insert user and persistent key - Return created user",
+		"Insert user and persistent key - Return created user or void",
 		async () => {
 			const user = database.user();
 			const key = user.key({
@@ -78,7 +84,9 @@ export const testUserAdapter = async (
 				{ username: user.value.username },
 				key.value
 			);
-			user.compare(result);
+			if (result !== undefined) {
+				user.compare(result);
+			}
 			await clearAll();
 		}
 	);
@@ -214,6 +222,11 @@ export const testUserAdapter = async (
 		await key.commit();
 		const result = await adapter.getKey(key.value.id, async () => false);
 		key.compare(result);
+		await clearAll();
+	});
+	await test("getKey()", "Return null if key id is invalid", async () => {
+		const result = await adapter.getUser(INVALID_INPUT);
+		isNull(result);
 		await clearAll();
 	});
 	await test(

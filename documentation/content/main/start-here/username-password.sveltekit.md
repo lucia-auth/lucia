@@ -15,8 +15,8 @@ Start off by following the steps in [Getting Started](/start-here/getting-starte
 As an example, we'll add a `username` column to the `user` table. The `username` column will be later used as an identifier for creating new users, but you could replace it with `email`, for example.
 
 | name     | type   | unique | description          |
-| -------- | ------ | ------ | -------------------- |
-| username | string | true   | username of the user |
+| -------- | ------ | :----: | -------------------- |
+| username | string |   ✓    | username of the user |
 
 ## 2. Configure Lucia
 

@@ -14,7 +14,18 @@ yarn add lucia-auth
 
 ## Set up the database
 
-Using the guide from the adapter docs, set up the database and install the adapter (adapters are provided as a different NPM package).
+To support multiple databases, Lucia uses database adapters. These adapters provide a set of standardized methods to read from and update the database. Custom adapters can be created as well if Lucia does not provide one.
+
+We currently support the following database/ORM options:
+
+- [Drizzle ORM](/database/drizzle)
+- [Kysely](/database/kysely)
+- [Mongoose](/database/mongoose)
+- [MySQL](/database/mysql)
+- [PostgreSQL](/database/postgresql)
+- [Prisma](/database/prisma)
+- [Redis](/database/redis)
+- [SQLite](/database/sqlite)
 
 ## Initialize Lucia
 

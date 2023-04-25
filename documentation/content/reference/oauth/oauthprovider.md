@@ -23,8 +23,8 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 #### Parameter
 
 | name  | type     | description                                                                           | optional |
-| ----- | -------- | ------------------------------------------------------------------------------------- | -------- |
-| state | `string` | an opaque value used by the client to maintain state between the request and callback | true     |
+| ----- | -------- | ------------------------------------------------------------------------------------- | :------: |
+| state | `string` | an opaque value used by the client to maintain state between the request and callback |    ✓     |
 
 #### Returns
 

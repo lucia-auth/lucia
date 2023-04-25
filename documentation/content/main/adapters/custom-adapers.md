@@ -203,7 +203,7 @@ type UserAdapter = {
 		userId: string,
 		attributes: Record<string, any>,
 		key: KeySchema | null
-	) => Promise<UserSchema>;
+	) => Promise<UserSchema | void>;
 	updateKeyPassword: (
 		key: string,
 		hashedPassword: string | null
@@ -351,8 +351,8 @@ const setKey: (key: KeySchema) => Promise<void>;
 
 - Must create new `auth_user`.
 - Must create new `auth_key` if parameter `key` is not `null`.
-- Must attempt to remove added `create_user` if `auth_key` creation errors. Recommended to use transactions or batch queries.
-- Must return the newly created user
+- Must attempt to remove added `auth_user` if `auth_key` creation errors. Recommended to use transactions or batch queries.
+- Must return the newly created user or `void`
 - Must throw error if `auth_key(id)` violates unique constraint
 
 ```ts
@@ -427,10 +427,10 @@ const updateUserAttributes: (
 
 #### Parameter
 
-| name            | type                                    | description                                              |
-| --------------- | --------------------------------------- | -------------------------------------------------------- |
-| userId          | `string`                                | target: `auth_user(id)`                                  |
-| data.attributes | `Partial<`[`Lucia.UserAttributes`]()`>` | set values: each key names as [key] - `auth_user([key])` |
+| name            | type                                                                              | description                                              |
+| --------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| userId          | `string`                                                                          | target: `auth_user(id)`                                  |
+| data.attributes | `Partial<`[`Lucia.UserAttributes`](/reference/lucia-auth/types#userattributes)`>` | set values: each key names as [key] - `auth_user([key])` |
 
 #### Returns
 

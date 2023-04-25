@@ -26,11 +26,16 @@ If you're using one of the supported frameworks, follow the "Getting started" gu
 
 To support multiple databases, Lucia uses database adapters. These adapters provide a set of standardized methods to read from and update the database. Custom adapters can be created as well if Lucia does not provide one.
 
-Follow the guides below to set up your database:
+We currently support the following database/ORM options:
 
-- [Prisma](/database/prisma) (MySQL, SQLite, PostgreSQL)
-- [Kysely](/database/kysely) (PostgreSQL, MySQL, SQLite)
-- [Mongoose](/database/mongoose) (MongoDB).
+- [Drizzle ORM](/database/drizzle)
+- [Kysely](/database/kysely)
+- [Mongoose](/database/mongoose)
+- [MySQL](/database/mysql)
+- [PostgreSQL](/database/postgresql)
+- [Prisma](/database/prisma)
+- [Redis](/database/redis)
+- [SQLite](/database/sqlite)
 
 ## Initialize Lucia
 
