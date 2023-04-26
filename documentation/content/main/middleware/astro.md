@@ -12,3 +12,14 @@ const handleRequest: (context: APIContext | Astro) => AuthRequest;
 | name    | type                                                                                                                                                                  |
 | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | context | [`APIContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context)`\|`[`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) |
+
+## Usage
+
+```ts
+import { astro } from "lucia-auth/middleware";
+
+const auth = lucia({
+	adapter: astro()
+	// ...
+});
+```

@@ -117,6 +117,6 @@ If you're using Node v14, you'll need to use a third party polyfill and set it a
 // can't override globalThis.crypto entirely
 // as Astro patches globalThis.crypto.getRandomValues() (but only that method)
 // and globalThis.crypto is set to writable=false
-globalThis.crypto.randomUUID = cryptoPolyfill.randomUUID;
-globalThis.crypto.subtle = cryptoPolyfill.subtle;
+globalThis.crypto.randomUUID = webCryptoPolyfill.randomUUID;
+globalThis.crypto.subtle = webCryptoPolyfill.subtle;
 ```

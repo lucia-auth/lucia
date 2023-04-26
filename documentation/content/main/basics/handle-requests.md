@@ -22,8 +22,30 @@ By default, Lucia uses the [Lucia middleware](/middleware/lucia), but this can b
 - [Express](/middleware/express)
 - [Node](/middleware/node)
 - [SvelteKit](/middleware/sveltekit)
+- [Web](/middleware/web)
 
 > Use the Node middleware for Next.js
+
+#### Using web standards
+
+If you're dealing with the standard [`Request`]()/[`Response`](), you can use the `web` middleware:
+
+```ts
+import { web } from "lucia-auth/middleware";
+
+const auth = lucia({
+	adapter: web()
+	// ...
+});
+
+const request = new Request();
+const headers = new Headers();
+const authRequest = auth.handleRequest(request, headers);
+// ...
+const response = new Response(null, {
+	headers
+});
+```
 
 ## Validate requests
 

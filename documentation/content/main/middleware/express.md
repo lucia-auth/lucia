@@ -14,7 +14,18 @@ const handleRequest: (request: Request, response: Response) => AuthRequest;
 | request  | [`Request`](https://expressjs.com/en/4x/api.html#req)  |
 | response | [`Response`](https://expressjs.com/en/4x/api.html#res) |
 
-#### Example
+## Usage
+
+```ts
+import { express } from "lucia-auth/middleware";
+
+const auth = lucia({
+	adapter: express()
+	// ...
+});
+```
+
+## Example
 
 ```ts
 import express from "express";

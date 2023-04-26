@@ -16,3 +16,14 @@ const handleRequest: (
 | -------- | ------------------------------------------------------------------------------- |
 | request  | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
 | response | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |
+
+## Usage
+
+```ts
+import { node } from "lucia-auth/middleware";
+
+const auth = lucia({
+	adapter: node()
+	// ...
+});
+```

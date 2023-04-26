@@ -12,3 +12,14 @@ const handleRequest: (requestContext: RequestContext) => AuthRequest;
 | name           | type                                                           |
 | -------------- | -------------------------------------------------------------- |
 | requestContext | [`RequestContext`](/reference/lucia-auth/types#requestcontext) |
+
+## Usage
+
+```ts
+import { lucia } from "lucia-auth/middleware";
+
+const auth = lucia({
+	adapter: lucia()
+	// ...
+});
+```

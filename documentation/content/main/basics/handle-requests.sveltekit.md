@@ -48,6 +48,7 @@ By default, Lucia uses the [Lucia middleware](/middleware/lucia), but this can b
 - [Express](/middleware/express)
 - [Node](/middleware/node)
 - [SvelteKit](/middleware/sveltekit)
+- [Web](/middleware/web)
 
 > Use the Node middleware for Next.js
 
