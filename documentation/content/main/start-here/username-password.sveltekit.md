@@ -152,6 +152,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 ```
 
+**`validate()` will only make a single database call regardless of how many times you call the method!**
+
 ## 4. Sign in page
 
 Create `routes/login/` route dir. This route will handle sign-ins. Create 2 files inside it: `+page.svelte` and `+page.server.ts`.
@@ -243,6 +245,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 	};
 };
 ```
+
+> Similar to `validate()`, calling `validateUser()` multiple times will only result in a single database call.
+>
+> If you're working with nested load functions, we recommend just sticking to `locals.auth.validateUser()` for load functions. **Using both `validate()` and `validateUser()` in a single request may lead to unnecessary database calls depending on the order it was called (2 instead of 1).**
 
 Now we can access the user from page data. Notice that the `username` property exists because it was included in the returned value of `transformPageData()`.
 
