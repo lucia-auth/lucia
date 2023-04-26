@@ -68,7 +68,7 @@ You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authreques
 const { user, session } = await authRequest.validateUser();
 ```
 
-**We recommend sticking to `validateUser()` if you need to get the user in any part of the process.** See the "Caching" section below for details.
+**We recommend sticking to only `validateUser()` in load functions if you need to get the user in any part of the process.** See the "Caching" section below for details.
 
 #### Examples
 
@@ -126,6 +126,8 @@ await authRequest.validate();
 // fetch user
 await authRequest.validateUser();
 ```
+
+Since load functions run in parallel, we recommend using only `validateUser()` inside load functions if you need the user on any one of the load function running.
 
 ## Set session cookie
 
