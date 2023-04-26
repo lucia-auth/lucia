@@ -248,7 +248,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 ```
 
-> When using `validateUser()` in a load function, we recommend every parent and child load function of it to use `validateUser()` instead of `validate()` as using both may lead to unnecessary database calls.
+> When using `validateUser()` in a load function, we recommend every parent and child load function of it to use `validateUser()` instead of `validate()` as calling both may lead to unnecessary database calls.
 
 Now we can access the user from page data. Notice that the `username` property exists because it was included in the returned value of `transformPageData()`.
 
