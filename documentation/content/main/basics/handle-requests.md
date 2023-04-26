@@ -83,7 +83,6 @@ The same is not true for the other way around. `validateUser()` will wait for `v
 ```ts
 // wait for database
 await authRequest.validate();
-
 // fetch user
 await authRequest.validateUser();
 ```
