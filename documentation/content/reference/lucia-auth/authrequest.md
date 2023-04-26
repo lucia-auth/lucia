@@ -1,5 +1,5 @@
 ---
-_order: 1
+_order: 3
 title: "`AuthRequest`"
 ---
 

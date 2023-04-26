@@ -1,5 +1,5 @@
 ---
-_order: 1
+_order: 3
 title: "`Auth`"
 ---
 
@@ -572,7 +572,7 @@ const handleRequest: (...args: Parameters<Middleware>) => AuthRequest;
 
 ### Default middleware
 
-See [Lucia middleware](/middleware/lucia).
+See [Lucia middleware](/reference/lucia-auth/middleware#lucia).
 
 ```ts
 const handleRequest: (requestContext: RequestContext) => AuthRequest;

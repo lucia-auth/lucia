@@ -45,7 +45,7 @@ Single use keys are single use only and are deleted on read. Single use keys mus
 
 ## Create new keys
 
-You can create a new key for a user using [`createKey()`](/reference/lucia-auth/auth#createkey). If you're creating a key for newly created user, we recommend using [`createUser()`](/reference/lucia-auth/auth?framework=sveltekit#createuser) to make key a primary key. Primary keys cannot be created using `createKey()`.
+You can create a new key for a user using [`createKey()`](/reference/lucia-auth/auth#createkey). If you're creating a key for newly created user, we recommend using [`createUser()`](/reference/lucia-auth/auth?sveltekit#createuser) to make key a primary key. Primary keys cannot be created using `createKey()`.
 
 ### Persistent keys
 
@@ -166,7 +166,7 @@ try {
 
 ## Delete key
 
-You can delete a non-primary key with [`deleteKey()`](/reference/lucia-auth/auth#deletekey). Primary keys cannot be deleted with this method and must deleted with the user using [`deleteUser()`](/reference/lucia-auth/auth?framework=none#deleteuser). This will succeed regardless of the validity of key.
+You can delete a non-primary key with [`deleteKey()`](/reference/lucia-auth/auth#deletekey). Primary keys cannot be deleted with this method and must deleted with the user using [`deleteUser()`](/reference/lucia-auth/auth?none#deleteuser). This will succeed regardless of the validity of key.
 
 ```ts
 try {

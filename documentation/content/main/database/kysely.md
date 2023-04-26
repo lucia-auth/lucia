@@ -18,7 +18,7 @@ Lucia does not provide an adapter for Kysely itself, rather supporting the under
 
 ## MySQL
 
-Use [the MySQL adapter](/database/mysql).
+Use the [MySQL adapter](/database/mysql).
 
 ```ts
 type DatabaseSchema = <{
@@ -71,7 +71,7 @@ const auth = lucia({
 
 ## PostgreSQL
 
-Use [the PostgreSQL adapter](/database/postgresql).
+Use the [PostgreSQL adapter](/database/postgresql).
 
 ```ts
 type DatabaseSchema = <{
@@ -124,7 +124,7 @@ const auth = lucia({
 
 ## SQLite
 
-Use [the SQLite adapter](/database/sqlite).
+Use the [SQLite adapter](/database/sqlite).
 
 ```ts
 type DatabaseSchema = <{

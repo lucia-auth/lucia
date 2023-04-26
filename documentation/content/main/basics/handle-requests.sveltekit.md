@@ -6,7 +6,7 @@ description: "Learn how to handle requests with Lucia"
 
 [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-With the [SvelteKit middleware](/middleware/sveltekit), it expects SvelteKit's [`RequestEvent`](https://kit.svelte.dev/docs/types#public-types-requestevent), which is passed onto hooks, server load functions, and actions.
+With the [SvelteKit middleware](/reference/lucia-auth/middleware#sveltekit), it expects SvelteKit's [`RequestEvent`](https://kit.svelte.dev/docs/types#public-types-requestevent), which is passed onto hooks, server load functions, and actions.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -42,12 +42,13 @@ export const load = async ({ locals }) => {
 
 ### Middleware
 
-By default, Lucia uses the [Lucia middleware](/middleware/lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
+By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
 
-- [Astro](/middleware/astro)
-- [Express](/middleware/express)
-- [Node](/middleware/node)
-- [SvelteKit](/middleware/sveltekit)
+- [Astro](/reference/lucia-auth/middleware#astro)
+- [Express](/reference/lucia-auth/middleware#express)
+- [Node](/reference/lucia-auth/middleware#node)
+- [SvelteKit](/reference/lucia-auth/middleware#sveltekit)
+- [Web](/reference/lucia-auth/middleware#web)
 
 > Use the Node middleware for Next.js
 

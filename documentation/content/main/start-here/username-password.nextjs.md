@@ -8,7 +8,28 @@ This page will guide you how to implement a simple username/password auth and co
 
 The [Next.js example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs) in the repo expands on this guide.
 
-Start off by following the steps in [the previous page](/start-here/getting-started?framework=nextjs) to set up Lucia and your database.
+Start off by following the steps in the [previous page](/start-here/getting-started?nextjs) to set up Lucia and your database.
+
+### Deploying to the Edge runtime
+
+This guide is intended for projects deployed using Node.js.
+
+If you're deploying your project to the Edge runtime, you have to use the standard `Request`/`Response` instead. Make sure you're using [Web middleware](/reference/lucia-auth/middleware#node) as well.
+
+```ts
+export default async (request) => {
+	const headers = new Headers();
+	const authRequest = auth.handleRequest(request, headers);
+	// ...
+	// whenever creating a new response
+	const response = new Response(null, {
+		headers
+	});
+	return response;
+};
+```
+
+Check out the [none-framework specific guide](/start-here/username-password?none) to see how to implement the backend.
 
 ## 1. Configure your database
 
@@ -107,7 +128,7 @@ Create `pages/api/signup.ts`. This API route will handle account creation.
 
 Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `NextApiRequest` and `NextApiResponse`.
 
-Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth?framework=nextjs#createsession) and make sure to store the session id by calling [`setSession()`](/reference/lucia-auth/authrequest#setsession).
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth?nextjs#createsession) and make sure to store the session id by calling [`setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```ts
 // pages/api/signup.ts

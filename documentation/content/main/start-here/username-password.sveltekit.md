@@ -8,7 +8,7 @@ This page will guide you on how to implement a simple username/password auth usi
 
 The [SvelteKit example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit) in the repo expands on this guide.
 
-Start off by following the steps in [Getting Started](/start-here/getting-started?framework=sveltekit) to set up Lucia and your database.
+Start off by following the steps in [Getting Started](/start-here/getting-started?sveltekit) to set up Lucia and your database.
 
 ## 1. Configure your database
 
@@ -80,7 +80,7 @@ This form will have an input field for username and password.
 
 ### Create users
 
-Users and keys can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). Create a new session with [`createSession()`](/reference/lucia-auth/auth?framework=sveltekit#createsession) and make sure to store the session id by calling [`locals.auth.setSession()`](/reference/lucia-auth/authrequest#setsession). Remember that we set `locals.auth` in the hooks!
+Users and keys can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). Create a new session with [`createSession()`](/reference/lucia-auth/auth?sveltekit#createsession) and make sure to store the session id by calling [`locals.auth.setSession()`](/reference/lucia-auth/authrequest#setsession). Remember that we set `locals.auth` in the hooks!
 
 ```ts
 // routes/signup/+page.server.ts

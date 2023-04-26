@@ -18,7 +18,7 @@ Lucia does not provide an adapter for Drizzle itself, rather supporting the unde
 
 ## MySQL
 
-Use [the MySQL adapter](/database/mysqls).
+Use the [MySQL adapter](/database/mysqls).
 
 ```ts
 import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
@@ -87,7 +87,7 @@ const auth = lucia({
 
 ## PostgreSQL
 
-Use [the PostgreSQL adapter](/database/postgresql).
+Use the [PostgreSQL adapter](/database/postgresql).
 
 ```ts
 import { pgTable, bigint, varchar, boolean } from "drizzle-orm/pg-core";
@@ -156,7 +156,7 @@ const auth = lucia({
 
 ## SQLite
 
-Use [the SQLite adapter](/database/sqlite).
+Use the [SQLite adapter](/database/sqlite).
 
 ```ts
 import { sqliteTable, varchar, integer } from "drizzle-orm/sqlite-core";
