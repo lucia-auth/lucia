@@ -1,6 +1,6 @@
 ---
 title: "Public types"
-_order: 0
+_order: 2
 ---
 
 These types can be imported from `lucia-auth`:

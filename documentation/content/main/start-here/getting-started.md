@@ -59,7 +59,7 @@ This module **should NOT be imported from the client**.
 
 ### Node.js
 
-If you're using Node as is for handling requests, use the [Node middleware](/middleware/node):
+If you're using Node as is for handling requests, use the [Node middleware](/reference/lucia-auth/middleware#node):
 
 ```ts
 import lucia from "lucia-auth";
@@ -74,7 +74,7 @@ export const auth = lucia({
 
 ### Express
 
-Use the [Express middleware](/middleware/edge):
+Use the [Express middleware](/reference/lucia-auth/middleware#edge):
 
 ```ts
 import lucia from "lucia-auth";
@@ -89,7 +89,7 @@ export const auth = lucia({
 
 ### Web standard
 
-And, if you're dealing with the standard `Request`/`Response`, use the [Web middleware](/middleware/web):
+And, if you're dealing with the standard `Request`/`Response`, use the [Web middleware](/reference/lucia-auth/middleware#web):
 
 ```ts
 import lucia from "lucia-auth";

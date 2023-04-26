@@ -54,7 +54,7 @@ This module and the file that holds it **should NOT be imported from the client*
 
 ### Deploying to the Edge Runtime
 
-If you're deploying to the Edge runtime (Vercel Edge, Cloudflare Pages/Workers, etc), you'll need to use the [Web middleware](/middleware/web) instead:
+If you're deploying to the Edge runtime (Vercel Edge, Cloudflare Pages/Workers, etc), you'll need to use the [Web middleware](/reference/lucia-auth/middleware#web) instead:
 
 ```ts
 import lucia from "lucia-auth";

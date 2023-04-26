@@ -1,5 +1,5 @@
 ---
-_order: 2
+_order: 3
 title: "`LuciaError`"
 ---
 

@@ -14,7 +14,7 @@ Start off by following the steps in the [previous page](/start-here/getting-star
 
 This guide is intended for projects deployed using Node.js.
 
-If you're deploying your project to the Edge runtime, you have to use the standard `Request`/`Response` instead. Make sure you're using [Web middleware](/middleware/node) as well.
+If you're deploying your project to the Edge runtime, you have to use the standard `Request`/`Response` instead. Make sure you're using [Web middleware](/reference/lucia-auth/middleware#node) as well.
 
 ```ts
 export default async (request) => {
