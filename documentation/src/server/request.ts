@@ -25,8 +25,9 @@ export const handleRequest = (Astro: AstroGlobal) => {
 	const getFrameworkId = (): FrameworkId | null => {
 		const getRequestFrameworkId = (): FrameworkId | null => {
 			const frameworkIdHeader = Astro.request.headers.get("framework_id");
-			if (frameworkIdHeader === "none") return null
-			if (frameworkIdHeader && isValidFrameworkId(frameworkIdHeader)) return frameworkIdHeader;
+			if (frameworkIdHeader === "none") return null;
+			if (frameworkIdHeader && isValidFrameworkId(frameworkIdHeader))
+				return frameworkIdHeader;
 			for (const frameworkId of frameworkIds) {
 				if (Astro.url.searchParams.has(frameworkId)) return frameworkId;
 			}
