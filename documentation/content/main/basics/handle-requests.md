@@ -78,7 +78,7 @@ await authRequest.validateUser();
 await authRequest.validate();
 ```
 
-The same is not true for the other way around. `validateUser()` will wait for `validate()` to resolve and then get the user from the returned `session`
+The same is not true for the other way around. `validateUser()` will wait for `validate()` to resolve and then get the user from the returned session.
 
 ```ts
 // wait for database

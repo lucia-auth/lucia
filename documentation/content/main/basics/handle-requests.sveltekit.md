@@ -117,7 +117,7 @@ await authRequest.validateUser();
 await authRequest.validate();
 ```
 
-The same is not true for the other way around. `validateUser()` will wait for `validate()` to resolve and then get the user from the returned `session`
+The same is not true for the other way around. `validateUser()` will wait for `validate()` to resolve and then get the user from the returned session.
 
 ```ts
 // wait for database
@@ -127,7 +127,7 @@ await authRequest.validate();
 await authRequest.validateUser();
 ```
 
-Since load functions run in parallel, we recommend using only `validateUser()` inside load functions if you need the user on any one of the load function running.
+As such, we recommend only using `validateUser()` inside load functions if you need the user in any part of the loading process.
 
 ## Set session cookie
 
