@@ -14,13 +14,13 @@ yarn add lucia-auth
 
 ### Framework integration
 
-You can use Lucia as is, or with the provided framework support for a better DX.
+You can use Lucia as is, or with the provided framework middleware for a better DX.
 
 If you're using one of the supported frameworks, follow the "Getting started" guides below instead of this page:
 
-- [SvelteKit](/start-here/getting-started?framework=sveltekit)
-- [Astro](/start-here/getting-started?framework=astro)
-- [Next.js](/start-here/getting-started?framework=nextjs)
+- [SvelteKit](/start-here/getting-started?sveltekit)
+- [Astro](/start-here/getting-started?astro)
+- [Next.js](/start-here/getting-started?nextjs)
 
 ## Set up the database
 
@@ -56,6 +56,53 @@ export type Auth = typeof auth;
 ```
 
 This module **should NOT be imported from the client**.
+
+### Node.js
+
+If you're using Node as is for handling requests, use the [Node middleware](/reference/lucia-auth/middleware#node):
+
+```ts
+import lucia from "lucia-auth";
+import { node } from "lucia-auth/middleware";
+// ...
+
+export const auth = lucia({
+	//...
+	middleware: node()
+});
+```
+
+### Express
+
+Use the [Express middleware](/reference/lucia-auth/middleware#edge):
+
+```ts
+import lucia from "lucia-auth";
+import { node } from "lucia-auth/middleware";
+// ...
+
+export const auth = lucia({
+	//...
+	middleware: node()
+});
+```
+
+### Web standard
+
+And, if you're dealing with the standard `Request`/`Response`, use the [Web middleware](/reference/lucia-auth/middleware#web):
+
+```ts
+import lucia from "lucia-auth";
+import { web } from "lucia-auth/middleware";
+// ...
+
+export const auth = lucia({
+	//...
+	middleware: web()
+});
+```
+
+This is intended for projects (including Next.js) deployed to the Edge runtime (Vercel Edge, Cloudflare Pages/Workers, etc).
 
 ## Configure type definition
 
@@ -99,7 +146,7 @@ node --experimental-global-webcrypto index.js
 If you're using Node v14, you'll need to use a third party polyfill and set it as a global variable:
 
 ```ts
-globalThis.crypto = cryptoPolyfill;
+globalThis.crypto = webCryptoPolyfill;
 ```
 
 ## Next steps

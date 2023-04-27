@@ -129,7 +129,7 @@ const authRequest = auth.handleRequest(Astro);
 
 A lot of SQL databases seemed to have issues with `user`, `key`, and `primary`. All database names are now preceded with `auth_` (`auth_user` etc). Column `auth_key.primary` has been renamed to `auth_key.primary_key`.
 
-Refer to [the database migration guide](https://github.com/pilcrowOnPaper/lucia/discussions/435) for specifics.
+Refer to the [database migration guide](https://github.com/pilcrowOnPaper/lucia/discussions/435) for specifics.
 
 ## Update config
 

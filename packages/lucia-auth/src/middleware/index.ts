@@ -114,3 +114,22 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 export const lucia = (): Middleware<[RequestContext]> => {
 	return (requestContext) => requestContext;
 };
+
+export const web = (): Middleware<[Request, Headers]> => {
+	return (request, headers) => {
+		const requestContext = {
+			request: {
+				url: request.url,
+				method: request.method,
+				headers: {
+					origin: request.headers.get("Origin") ?? null,
+					cookie: request.headers.get("Cookie") ?? null
+				}
+			},
+			setCookie: (cookie) => {
+				headers.append("Set-Cookie", cookie.serialize());
+			}
+		} as const satisfies RequestContext;
+		return requestContext;
+	};
+};

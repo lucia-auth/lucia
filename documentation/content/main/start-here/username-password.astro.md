@@ -8,7 +8,7 @@ This page will guide you how to implement a simple username/password authenticat
 
 The [Astro example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro) in the repo expands on this guide.
 
-Start off by following the steps in [the previous page](/start-here/getting-started?framework=astro) to set up Lucia and your database.
+Start off by following the steps in the [previous page](/start-here/getting-started?astro) to set up Lucia and your database.
 
 ## 1. Configure your database
 
@@ -71,7 +71,7 @@ Create `pages/signup.astro`. This form will have an input field for username and
 
 In the same page, we'll also handle the POST request from the form.
 
-Users and keys can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). Create a new session with [`createSession()`](/reference/lucia-auth/auth?framework=astro#createsession) and make sure to store the session id by calling [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
+Users and keys can be created with [`createUser()`](/reference/lucia-auth/auth#createuser). Create a new session with [`createSession()`](/reference/lucia-auth/auth?astro#createsession) and make sure to store the session id by calling [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```astro
 ---
