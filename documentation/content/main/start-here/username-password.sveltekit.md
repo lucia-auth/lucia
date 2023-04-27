@@ -152,6 +152,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 ```
 
+**`validate()` will only make a single database call regardless of how many times you call the method!**
+
 ## 4. Sign in page
 
 Create `routes/login/` route dir. This route will handle sign-ins. Create 2 files inside it: `+page.svelte` and `+page.server.ts`.
@@ -228,7 +230,9 @@ This page will be the root (`/`). This route will show the user's data and have 
 
 ### Get current user
 
-Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function. We can get both the session and user in a single database call with [`locals.auth.validateUser()`](/reference/lucia-auth/authrequest#validateuser) instead of `locals.auth.validate()`. Let's also redirect unauthenticated users like we did for the sign up page.
+Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function. We can get both the session and user in a single database call with [`locals.auth.validateUser()`](/reference/lucia-auth/authrequest#validateuser) instead of `locals.auth.validate()`. Similar to `validate()`, calling `validateUser()` multiple times will only result in a single database call.
+
+ Let's also redirect unauthenticated users like we did for the sign up page.
 
 ```ts
 // routes/+page.server.ts
@@ -243,6 +247,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 	};
 };
 ```
+
+> When using `validateUser()` in a load function, we recommend every parent and child load function of it to use `validateUser()` instead of `validate()` as calling both may lead to unnecessary database calls.
 
 Now we can access the user from page data. Notice that the `username` property exists because it was included in the returned value of `transformPageData()`.
 
