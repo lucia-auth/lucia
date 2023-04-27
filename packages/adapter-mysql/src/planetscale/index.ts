@@ -1,29 +1,16 @@
-import { mysql2Runner } from "./runner.js";
 import { createCoreAdapter } from "../core.js";
+import { planetscaleRunner } from "./runner.js";
 import { createOperator } from "../query.js";
 
+import type { Connection, DatabaseError } from "@planetscale/database";
 import type { Adapter, AdapterFunction } from "lucia-auth";
-import type { Pool, QueryError, Connection } from "mysql2/promise";
-import { MySQLUserSchema } from "../utils.js";
+import type { MySQLUserSchema } from "../utils.js";
 
-export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
-	const transaction = async <_Execute extends () => Promise<any>>(
-		execute: _Execute
-	) => {
-		const connection = await db.getConnection();
-		try {
-			await connection.beginTransaction();
-			await execute();
-			await connection.commit();
-			return;
-		} catch (e) {
-			await connection.rollback();
-			throw e;
-		}
-	};
-
+export const planetscaleAdapter = (
+	connection: Connection
+): AdapterFunction<Adapter> => {
 	return (LuciaError) => {
-		const operator = createOperator(mysql2Runner(db));
+		const operator = createOperator(planetscaleRunner(connection));
 		const coreAdapter = createCoreAdapter(operator);
 		return {
 			getUser: coreAdapter.getUser,
@@ -31,28 +18,30 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 			getSession: coreAdapter.getSession,
 			getSessionsByUserId: coreAdapter.getSessionsByUserId,
 			setUser: async (userId, attributes, key) => {
-				const user = {
-					id: userId,
-					...attributes
-				};
 				try {
+					const user = {
+						id: userId,
+						...attributes
+					};
 					if (key) {
-						await transaction(async () => {
-							await operator.run<MySQLUserSchema>((ctx) => [
+						await connection.transaction(async (trx) => {
+							const trxOperator = createOperator(planetscaleRunner(trx));
+							await trxOperator.run<MySQLUserSchema>((ctx) => [
 								ctx.insertInto("auth_user", user)
 							]);
-							await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+							await trxOperator.run((ctx) => [ctx.insertInto("auth_key", key)]);
 						});
-						return
+						return;
 					}
 					await operator.run<MySQLUserSchema>((ctx) => [
 						ctx.insertInto("auth_user", user)
 					]);
+					return;
 				} catch (e) {
-					const error = e as Partial<QueryError>;
+					const error = e as Partial<DatabaseError>;
 					if (
-						error.code === "ER_DUP_ENTRY" &&
-						error.message?.includes("PRIMARY")
+						error.body?.message.includes("AlreadyExists") &&
+						error.body?.message.includes("PRIMARY")
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -62,15 +51,17 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 			deleteUser: coreAdapter.deleteUser,
 			setSession: async (session) => {
 				try {
+					const databaseUser = await operator.get((ctx) => [
+						ctx.selectFrom("auth_user", "*"),
+						ctx.where("id", "=", session.user_id)
+					]);
+					if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
 					return await coreAdapter.setSession(session);
 				} catch (e) {
-					const error = e as Partial<QueryError>;
-					if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					}
+					const error = e as Partial<DatabaseError>;
 					if (
-						error.code === "ER_DUP_ENTRY" &&
-						error.message?.includes("PRIMARY")
+						error.body?.message.includes("AlreadyExists") &&
+						error.body?.message.includes("PRIMARY")
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
 					}
@@ -82,19 +73,21 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 			updateUserAttributes: coreAdapter.updateUserAttributes,
 			setKey: async (key) => {
 				try {
+					const databaseUser = await operator.get((ctx) => [
+						ctx.selectFrom("auth_user", "*"),
+						ctx.where("id", "=", key.user_id)
+					]);
+					if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
 					return await coreAdapter.setKey(key);
 				} catch (e) {
-					const error = e as Partial<QueryError>;
-					if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					}
+					const error = e as Partial<DatabaseError>;
 					if (
-						error.code === "ER_DUP_ENTRY" &&
-						error.message?.includes("PRIMARY")
+						error.body?.message.includes("AlreadyExists") &&
+						error.body?.message.includes("PRIMARY")
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
-					throw e
+					throw e;
 				}
 			},
 			getKey: coreAdapter.getKey,
