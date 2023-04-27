@@ -5,7 +5,7 @@ import { LuciaError } from "lucia-auth";
 import { pgAdapter } from "../../src/pg/index.js";
 import { pgRunner } from "../../src/pg/runner.js";
 import pg from "pg";
-import { createQueryHandlerFromAsyncRunner } from "../index.js";
+import { createQueryHandler } from "../index.js";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -16,4 +16,4 @@ const pool = new pg.Pool({
 });
 
 export const adapter = pgAdapter(pool)(LuciaError);
-export const queryHandler = createQueryHandlerFromAsyncRunner(pgRunner(pool));
+export const queryHandler = createQueryHandler(pgRunner(pool));

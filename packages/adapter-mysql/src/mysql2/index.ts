@@ -1,10 +1,9 @@
 import { mysql2Runner } from "./runner.js";
-import { createCoreAdapter } from "../core.js";
+import { createCoreAdapter, createQueryHelper } from "../core.js";
 import { createOperator } from "../query.js";
 
 import type { Adapter, AdapterFunction } from "lucia-auth";
-import type { Pool, QueryError, Connection } from "mysql2/promise";
-import { MySQLUserSchema } from "../utils.js";
+import type { Pool, QueryError } from "mysql2/promise";
 
 export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 	const transaction = async <_Execute extends () => Promise<any>>(
@@ -25,29 +24,19 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 	return (LuciaError) => {
 		const operator = createOperator(mysql2Runner(db));
 		const coreAdapter = createCoreAdapter(operator);
+		const helper = createQueryHelper(operator);
 		return {
-			getUser: coreAdapter.getUser,
-			getSessionAndUserBySessionId: coreAdapter.getSessionAndUserBySessionId,
-			getSession: coreAdapter.getSession,
-			getSessionsByUserId: coreAdapter.getSessionsByUserId,
+			...coreAdapter,
 			setUser: async (userId, attributes, key) => {
-				const user = {
-					id: userId,
-					...attributes
-				};
 				try {
 					if (key) {
 						await transaction(async () => {
-							await operator.run<MySQLUserSchema>((ctx) => [
-								ctx.insertInto("auth_user", user)
-							]);
-							await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+							await helper.insertUser(userId, attributes);
+							await helper.insertKey(key);
 						});
-						return
+						return;
 					}
-					await operator.run<MySQLUserSchema>((ctx) => [
-						ctx.insertInto("auth_user", user)
-					]);
+					await helper.insertUser(userId, attributes);
 				} catch (e) {
 					const error = e as Partial<QueryError>;
 					if (
@@ -59,10 +48,11 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 					throw e;
 				}
 			},
-			deleteUser: coreAdapter.deleteUser,
 			setSession: async (session) => {
 				try {
-					return await coreAdapter.setSession(session);
+					const user = await helper.getUser(session.user_id);
+					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+					await helper.insertSession(session);
 				} catch (e) {
 					const error = e as Partial<QueryError>;
 					if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
@@ -77,12 +67,11 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 					throw e;
 				}
 			},
-			deleteSession: coreAdapter.deleteSession,
-			deleteSessionsByUserId: coreAdapter.deleteSessionsByUserId,
-			updateUserAttributes: coreAdapter.updateUserAttributes,
 			setKey: async (key) => {
 				try {
-					return await coreAdapter.setKey(key);
+					const user = await helper.getUser(key.user_id);
+					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+					await helper.insertKey(key);
 				} catch (e) {
 					const error = e as Partial<QueryError>;
 					if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
@@ -94,14 +83,9 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
-					throw e
+					throw e;
 				}
-			},
-			getKey: coreAdapter.getKey,
-			getKeysByUserId: coreAdapter.getKeysByUserId,
-			updateKeyPassword: coreAdapter.updateKeyPassword,
-			deleteKeysByUserId: coreAdapter.deleteKeysByUserId,
-			deleteNonPrimaryKey: coreAdapter.deleteNonPrimaryKey
+			}
 		};
 	};
 };

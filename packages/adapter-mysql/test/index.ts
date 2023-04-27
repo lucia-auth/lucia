@@ -5,18 +5,15 @@ import {
 	transformDatabaseSession
 } from "../src/utils.js";
 
-import type {
-	MySQLKeySchema,
-	MySQLSessionSchema,
-	MySQLUserSchema
-} from "../src/utils.js";
+import type { MySQLKeySchema, MySQLSessionSchema } from "../src/utils.js";
+import type { TestUserSchema } from "@lucia-auth/adapter-test";
 
 export const createQueryHandler = (runner: Runner) => {
 	const operator = createOperator(runner);
 	return {
 		user: {
 			get: async () => {
-				return operator.getAll<MySQLUserSchema>((ctx) => [
+				return operator.getAll<TestUserSchema>((ctx) => [
 					ctx.selectFrom("auth_user", "*")
 				]);
 			},

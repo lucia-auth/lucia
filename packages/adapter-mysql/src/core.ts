@@ -4,8 +4,8 @@ import type {
 	MySQLUserSchema,
 	MySQLSessionSchema,
 	MySQLKeySchema
-} from "./index.js";
-import type { Adapter } from "lucia-auth";
+} from "./utils.js";
+import type { Adapter, KeySchema, SessionSchema } from "lucia-auth";
 import type { Operator } from "./query.js";
 
 export const createCoreAdapter = (operator: Operator) => {
@@ -148,4 +148,30 @@ export const createCoreAdapter = (operator: Operator) => {
 			]);
 		}
 	} satisfies Partial<Adapter>;
+};
+
+export const createQueryHelper = (operator: Operator) => {
+	return {
+		getUser: async (userId: string) => {
+			return await operator.get<MySQLUserSchema>((ctx) => [
+				ctx.selectFrom("auth_user", "*"),
+				ctx.where("id", "=", userId)
+			]);
+		},
+		insertUser: async (userId: string, attributes: Record<string, any>) => {
+			const user = {
+				id: userId,
+				...attributes
+			};
+			return await operator.run<MySQLUserSchema>((ctx) => [
+				ctx.insertInto("auth_user", user)
+			]);
+		},
+		insertSession: async (session: SessionSchema) => {
+			await operator.run((ctx) => [ctx.insertInto("auth_session", session)]);
+		},
+		insertKey: async (key: KeySchema) => {
+			await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+		}
+	};
 };

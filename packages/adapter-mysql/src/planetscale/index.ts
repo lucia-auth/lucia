@@ -1,10 +1,9 @@
-import { createCoreAdapter } from "../core.js";
+import { createCoreAdapter, createQueryHelper } from "../core.js";
 import { planetscaleRunner } from "./runner.js";
 import { createOperator } from "../query.js";
 
 import type { Connection, DatabaseError } from "@planetscale/database";
 import type { Adapter, AdapterFunction } from "lucia-auth";
-import type { MySQLUserSchema } from "../utils.js";
 
 export const planetscaleAdapter = (
 	connection: Connection
@@ -12,30 +11,21 @@ export const planetscaleAdapter = (
 	return (LuciaError) => {
 		const operator = createOperator(planetscaleRunner(connection));
 		const coreAdapter = createCoreAdapter(operator);
+		const helper = createQueryHelper(operator);
 		return {
-			getUser: coreAdapter.getUser,
-			getSessionAndUserBySessionId: coreAdapter.getSessionAndUserBySessionId,
-			getSession: coreAdapter.getSession,
-			getSessionsByUserId: coreAdapter.getSessionsByUserId,
+			...coreAdapter,
 			setUser: async (userId, attributes, key) => {
 				try {
-					const user = {
-						id: userId,
-						...attributes
-					};
 					if (key) {
 						await connection.transaction(async (trx) => {
 							const trxOperator = createOperator(planetscaleRunner(trx));
-							await trxOperator.run<MySQLUserSchema>((ctx) => [
-								ctx.insertInto("auth_user", user)
-							]);
-							await trxOperator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+							const trxHelper = createQueryHelper(trxOperator);
+							await trxHelper.insertUser(userId, attributes);
+							await trxHelper.insertKey(key);
 						});
 						return;
 					}
-					await operator.run<MySQLUserSchema>((ctx) => [
-						ctx.insertInto("auth_user", user)
-					]);
+					await helper.insertUser(userId, attributes);
 					return;
 				} catch (e) {
 					const error = e as Partial<DatabaseError>;
@@ -48,15 +38,11 @@ export const planetscaleAdapter = (
 					throw e;
 				}
 			},
-			deleteUser: coreAdapter.deleteUser,
 			setSession: async (session) => {
 				try {
-					const databaseUser = await operator.get((ctx) => [
-						ctx.selectFrom("auth_user", "*"),
-						ctx.where("id", "=", session.user_id)
-					]);
-					if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
-					return await coreAdapter.setSession(session);
+					const user = await helper.getUser(session.user_id);
+					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+					await helper.insertSession(session);
 				} catch (e) {
 					const error = e as Partial<DatabaseError>;
 					if (
@@ -68,17 +54,11 @@ export const planetscaleAdapter = (
 					throw e;
 				}
 			},
-			deleteSession: coreAdapter.deleteSession,
-			deleteSessionsByUserId: coreAdapter.deleteSessionsByUserId,
-			updateUserAttributes: coreAdapter.updateUserAttributes,
 			setKey: async (key) => {
 				try {
-					const databaseUser = await operator.get((ctx) => [
-						ctx.selectFrom("auth_user", "*"),
-						ctx.where("id", "=", key.user_id)
-					]);
-					if (!databaseUser) throw new LuciaError("AUTH_INVALID_USER_ID");
-					return await coreAdapter.setKey(key);
+					const user = await helper.getUser(key.user_id);
+					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+					await helper.insertKey(key);
 				} catch (e) {
 					const error = e as Partial<DatabaseError>;
 					if (
@@ -89,12 +69,7 @@ export const planetscaleAdapter = (
 					}
 					throw e;
 				}
-			},
-			getKey: coreAdapter.getKey,
-			getKeysByUserId: coreAdapter.getKeysByUserId,
-			updateKeyPassword: coreAdapter.updateKeyPassword,
-			deleteKeysByUserId: coreAdapter.deleteKeysByUserId,
-			deleteNonPrimaryKey: coreAdapter.deleteNonPrimaryKey
+			}
 		};
 	};
 };

@@ -9,6 +9,6 @@ export const mysql2Runner = (pool: Pool): Runner => {
 		},
 		run: async (query, params) => {
 			await pool.query(query, params);
-		},
+		}
 	};
 };

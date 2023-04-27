@@ -6,18 +6,15 @@ import {
 	transformToSqliteValue
 } from "../src/utils.js";
 
-import type {
-	SQLiteKeySchema,
-	SQLiteSessionSchema,
-	SQLiteUserSchema
-} from "../src/utils.js";
+import type { SQLiteKeySchema, SQLiteSessionSchema } from "../src/utils.js";
+import type { TestUserSchema } from "@lucia-auth/adapter-test";
 
 export const createQueryHandler = (runner: Runner) => {
 	const operator = createOperator(runner);
 	return {
 		user: {
 			get: async () => {
-				return operator.getAll<SQLiteUserSchema>((ctx) => [
+				return operator.getAll<TestUserSchema>((ctx) => [
 					ctx.selectFrom("auth_user", "*")
 				]);
 			},
