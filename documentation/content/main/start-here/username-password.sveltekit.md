@@ -232,7 +232,7 @@ This page will be the root (`/`). This route will show the user's data and have 
 
 Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function. We can get both the session and user in a single database call with [`locals.auth.validateUser()`](/reference/lucia-auth/authrequest#validateuser) instead of `locals.auth.validate()`. Similar to `validate()`, calling `validateUser()` multiple times will only result in a single database call.
 
- Let's also redirect unauthenticated users like we did for the sign up page.
+Let's also redirect unauthenticated users like we did for the sign up page.
 
 ```ts
 // routes/+page.server.ts

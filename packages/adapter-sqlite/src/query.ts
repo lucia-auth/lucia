@@ -17,11 +17,11 @@ const resolveQueryBlock = (block: Block): ResolvedBlock => {
 			params: []
 		};
 	}
-	if (block.type ==="RETURNING") {
+	if (block.type === "RETURNING") {
 		return {
 			queryChunk: `RETURNING ${block.columns}`,
 			params: []
-		}
+		};
 	}
 	if (block.type === "INSERT_INTO") {
 		const keys = Object.keys(block.values);

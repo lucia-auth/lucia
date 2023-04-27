@@ -14,6 +14,4 @@ dotenv.config({
 const db = sqlite("test/main.db");
 
 export const adapter = betterSqlite3Adapter(db)(LuciaError);
-export const queryHandler = createQueryHandler(
-	betterSqliteRunner(db)
-);
+export const queryHandler = createQueryHandler(betterSqliteRunner(db));

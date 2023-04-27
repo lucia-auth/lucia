@@ -5,11 +5,7 @@ import type {
 	PostgresUserSchema,
 	PostgresSessionSchema
 } from "./utils.js";
-import {
-	Adapter,
-	KeySchema,
-	SessionSchema
-} from "lucia-auth";
+import { Adapter, KeySchema, SessionSchema } from "lucia-auth";
 import type { ColumnValue, Operator } from "./query.js";
 
 export const createCoreAdapter = (operator: Operator) => {
@@ -82,7 +78,7 @@ export const createCoreAdapter = (operator: Operator) => {
 			]);
 		},
 		setSession: async (session) => {
-			await helper.insertSession(session)
+			await helper.insertSession(session);
 		},
 		deleteSession: async (sessionId) => {
 			await operator.run((ctx) => [
@@ -97,7 +93,7 @@ export const createCoreAdapter = (operator: Operator) => {
 			]);
 		},
 		setKey: async (key) => {
-			await helper.insertKey(key)
+			await helper.insertKey(key);
 		},
 		getKey: async (keyId) => {
 			const databaseKey = await operator.get<PostgresKeySchema>((ctx) => [
@@ -159,8 +155,8 @@ export const createQueryHelper = (operator: Operator) => {
 				ctx.where("id", "=", keyId),
 				ctx.returning("*")
 			]);
-			if (!databaseKey) return null
-			return transformDatabaseKey(databaseKey)
+			if (!databaseKey) return null;
+			return transformDatabaseKey(databaseKey);
 		},
 		insertUser: async (
 			userId: string,
@@ -180,6 +176,6 @@ export const createQueryHelper = (operator: Operator) => {
 		},
 		insertKey: async (key: KeySchema) => {
 			await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
-		},
+		}
 	};
 };

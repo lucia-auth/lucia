@@ -102,7 +102,7 @@ export const pgAdapter = (pool: Pool): AdapterFunction<Adapter> => {
 					hashedPassword
 				);
 				if (!updatedKey) throw new LuciaError("AUTH_INVALID_KEY_ID");
-				return updatedKey
+				return updatedKey;
 			}
 		};
 	};

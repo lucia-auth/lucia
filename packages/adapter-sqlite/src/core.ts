@@ -8,7 +8,7 @@ import type {
 	SQLiteKeySchema,
 	SQLiteSessionSchema,
 	SQLiteUserSchema
-} from "./index.js";
+} from "./utils.js";
 import type { Adapter } from "lucia-auth";
 import type { Operator } from "./query.js";
 
