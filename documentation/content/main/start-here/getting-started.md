@@ -28,14 +28,15 @@ To support multiple databases, Lucia uses database adapters. These adapters prov
 
 We currently support the following database/ORM options:
 
-- [Drizzle ORM](/database/drizzle)
-- [Kysely](/database/kysely)
-- [Mongoose](/database/mongoose)
-- [MySQL](/database/mysql)
-- [PostgreSQL](/database/postgresql)
-- [Prisma](/database/prisma)
-- [Redis](/database/redis)
-- [SQLite](/database/sqlite)
+- [Drizzle ORM](/adapters/drizzle)
+- [Kysely](/adapters/kysely)
+- [Mongoose](/adapters/mongoose)
+- [MySQL](/adapters/mysql)
+- [PlanetScale serverless](/adapters/planetscale)
+- [PostgreSQL](/adapters/postgresql)
+- [Prisma](/adapters/prisma)
+- [Redis](/adapters/redis)
+- [SQLite](/adapters/sqlite)
 
 ## Initialize Lucia
 

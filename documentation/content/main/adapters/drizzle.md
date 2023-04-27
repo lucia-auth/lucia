@@ -63,7 +63,7 @@ const key = mysqlTable("auth_session", {
 
 ### `mysql2`
 
-Refer to the [`mysql2`](/database/mysql#mysql2) section.
+Refer to the [`mysql2`](/adapters/mysql#mysql2) section.
 
 ```ts
 import mysql from "mysql2/promise";
@@ -85,7 +85,7 @@ const auth = lucia({
 
 ### `@planetscale/database`
 
-Refer to the [`planetscale`](/database/mysql#planetscale) section.
+Refer to the [`planetscale`](/adapters/mysql#planetscale) section.
 
 ```ts
 import { connect } from "@planetscale/database";
@@ -152,7 +152,7 @@ const key = pgTable("auth_session", {
 
 ### `pg`
 
-Refer to the [`pg`](/database/postgresql#pg) section.
+Refer to the [`pg`](/adapters/postgresql#pg) section.
 
 ```ts
 import postgres from "pg";
@@ -215,7 +215,7 @@ const key = mysqlTable("auth_session", {
 
 ### `better-sqlite3`
 
-Refer to the [`better-sqlite3`](/database/sqlite#better-sqlite3) section.
+Refer to the [`better-sqlite3`](/adapters/sqlite#better-sqlite3) section.
 
 ```ts
 import sqlite from "better-sqlite3";

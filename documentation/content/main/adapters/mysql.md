@@ -12,7 +12,7 @@ pnpm add @lucia-auth/adapter-mysql
 yarn add @lucia-auth/adapter-mysql
 ```
 
-You can alternatively use an ORM such as [Prisma](/database/prisma) with MySQl. Some drivers can be used with [Drizzle ORM](/database/drizzle) or [Kysely](/database/kysely) as well.
+You can alternatively use an ORM such as [Prisma](/adapters/prisma) with MySQl. Some drivers can be used with [Drizzle ORM](/adapters/drizzle) or [Kysely](/adapters/kysely) as well.
 
 ## `mysql2`
 

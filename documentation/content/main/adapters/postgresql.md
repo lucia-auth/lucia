@@ -12,7 +12,7 @@ pnpm add @lucia-auth/adapter-postgresql
 yarn add @lucia-auth/adapter-postgresql
 ```
 
-You can alternatively use an ORM such as [Prisma](/database/prisma) with PostgreSQL. Some drivers can be used with [Drizzle ORM](/database/drizzle) or [Kysely](/database/kysely) as well.
+You can alternatively use an ORM such as [Prisma](/adapters/prisma) with PostgreSQL. Some drivers can be used with [Drizzle ORM](/adapters/drizzle) or [Kysely](/adapters/kysely) as well.
 
 ## `pg`
 
