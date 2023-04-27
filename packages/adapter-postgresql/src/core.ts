@@ -1,24 +1,26 @@
 import { transformDatabaseSession, transformDatabaseKey } from "./utils.js";
 
 import type {
-	MySQLUserSchema,
-	MySQLSessionSchema,
-	MySQLKeySchema
-} from "./index.js";
-import type { Adapter } from "lucia-auth";
-import type { Operator } from "./query.js";
+	PostgresKeySchema,
+	PostgresUserSchema,
+	PostgresSessionSchema
+} from "./utils.js";
+import {
+	Adapter,
+	KeySchema,
+	SessionSchema
+} from "lucia-auth";
+import type { ColumnValue, Operator } from "./query.js";
 
 export const createCoreAdapter = (operator: Operator) => {
+	const helper = createQueryHelper(operator);
 	return {
 		getUser: async (userId) => {
-			return operator.get<MySQLUserSchema>((ctx) => [
-				ctx.selectFrom("auth_user", "*"),
-				ctx.where("id", "=", userId)
-			]);
+			return await helper.getUser(userId);
 		},
 		getSessionAndUserBySessionId: async (sessionId) => {
 			const data = await operator.get<
-				MySQLUserSchema & {
+				PostgresUserSchema & {
 					_session_active_expires: number;
 					_session_id: string;
 					_session_idle_expires: number;
@@ -55,15 +57,17 @@ export const createCoreAdapter = (operator: Operator) => {
 			};
 		},
 		getSession: async (sessionId) => {
-			const databaseSession = await operator.get<MySQLSessionSchema>((ctx) => [
-				ctx.selectFrom("auth_session", "*"),
-				ctx.where("id", "=", sessionId)
-			]);
+			const databaseSession = await operator.get<PostgresSessionSchema>(
+				(ctx) => [
+					ctx.selectFrom("auth_session", "*"),
+					ctx.where("id", "=", sessionId)
+				]
+			);
 			if (!databaseSession) return null;
 			return transformDatabaseSession(databaseSession);
 		},
 		getSessionsByUserId: async (userId) => {
-			const databaseSessions = await operator.getAll<MySQLSessionSchema>(
+			const databaseSessions = await operator.getAll<PostgresSessionSchema>(
 				(ctx) => [
 					ctx.selectFrom("auth_session", "*"),
 					ctx.where("user_id", "=", userId)
@@ -78,7 +82,7 @@ export const createCoreAdapter = (operator: Operator) => {
 			]);
 		},
 		setSession: async (session) => {
-			await operator.run((ctx) => [ctx.insertInto("auth_session", session)]);
+			await helper.insertSession(session)
 		},
 		deleteSession: async (sessionId) => {
 			await operator.run((ctx) => [
@@ -92,24 +96,11 @@ export const createCoreAdapter = (operator: Operator) => {
 				ctx.where("user_id", "=", userId)
 			]);
 		},
-		updateUserAttributes: async (userId, attributes) => {
-			if (Object.keys(attributes).length === 0) {
-				await operator.run<MySQLUserSchema>((ctx) => [
-					ctx.selectFrom("auth_user", "*"),
-					ctx.where("id", "=", userId)
-				]);
-				return;
-			}
-			await operator.run<MySQLUserSchema>((ctx) => [
-				ctx.update("auth_user", attributes),
-				ctx.where("id", "=", userId)
-			]);
-		},
 		setKey: async (key) => {
-			await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+			await helper.insertKey(key)
 		},
 		getKey: async (keyId) => {
-			const databaseKey = await operator.get<MySQLKeySchema>((ctx) => [
+			const databaseKey = await operator.get<PostgresKeySchema>((ctx) => [
 				ctx.selectFrom("auth_key", "*"),
 				ctx.where("id", "=", keyId)
 			]);
@@ -118,19 +109,11 @@ export const createCoreAdapter = (operator: Operator) => {
 			return transformedDatabaseKey;
 		},
 		getKeysByUserId: async (userId) => {
-			const databaseKeys = await operator.getAll<MySQLKeySchema>((ctx) => [
+			const databaseKeys = await operator.getAll<PostgresKeySchema>((ctx) => [
 				ctx.selectFrom("auth_key", "*"),
 				ctx.where("user_id", "=", userId)
 			]);
 			return databaseKeys.map((val) => transformDatabaseKey(val));
-		},
-		updateKeyPassword: async (key, hashedPassword) => {
-			await operator.run<MySQLKeySchema>((ctx) => [
-				ctx.update("auth_key", {
-					hashed_password: hashedPassword
-				}),
-				ctx.where("id", "=", key)
-			]);
 		},
 		deleteKeysByUserId: async (userId) => {
 			await operator.run((ctx) => [
@@ -148,4 +131,55 @@ export const createCoreAdapter = (operator: Operator) => {
 			]);
 		}
 	} satisfies Partial<Adapter>;
+};
+
+export const createQueryHelper = (operator: Operator) => {
+	return {
+		getUser: async (userId: string) => {
+			return await operator.get<PostgresUserSchema>((ctx) => [
+				ctx.selectFrom("auth_user", "*"),
+				ctx.where("id", "=", userId)
+			]);
+		},
+		updateUserAttributes: async (
+			userId: string,
+			attributes: Record<string, ColumnValue>
+		) => {
+			return await operator.get<PostgresUserSchema>((ctx) => [
+				ctx.update("auth_user", attributes),
+				ctx.where("id", "=", userId),
+				ctx.returning("*")
+			]);
+		},
+		updateKeyPassword: async (keyId: string, hashedPassword: string | null) => {
+			const databaseKey = await operator.get<PostgresKeySchema>((ctx) => [
+				ctx.update("auth_key", {
+					hashed_password: hashedPassword
+				}),
+				ctx.where("id", "=", keyId),
+				ctx.returning("*")
+			]);
+			if (!databaseKey) return null
+			return transformDatabaseKey(databaseKey)
+		},
+		insertUser: async (
+			userId: string,
+			attributes: Record<string, ColumnValue>
+		) => {
+			const user = {
+				id: userId,
+				...attributes
+			};
+			return await operator.get<PostgresUserSchema>((ctx) => [
+				ctx.insertInto("auth_user", user),
+				ctx.returning("*")
+			]);
+		},
+		insertSession: async (session: SessionSchema) => {
+			await operator.run((ctx) => [ctx.insertInto("auth_session", session)]);
+		},
+		insertKey: async (key: KeySchema) => {
+			await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+		},
+	};
 };
