@@ -18,8 +18,6 @@ Lucia does not provide an adapter for Drizzle itself, rather supporting the unde
 
 ## MySQL
 
-Use the [MySQL adapter](/database/mysqls).
-
 ```ts
 import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
 
@@ -65,7 +63,7 @@ const key = mysqlTable("auth_session", {
 
 ### `mysql2`
 
-Refer to the [`mysql2`](/database/mysql#mysql2) section.
+Refer to the [`mysql2`](/adapters/mysql#mysql2) section.
 
 ```ts
 import mysql from "mysql2/promise";
@@ -85,9 +83,29 @@ const auth = lucia({
 });
 ```
 
-## PostgreSQL
+### `@planetscale/database`
 
-Use the [PostgreSQL adapter](/database/postgresql).
+Refer to the [`planetscale`](/adapters/mysql#planetscale) section.
+
+```ts
+import { connect } from "@planetscale/database";
+import { drizzle } from "drizzle-orm/planetscale";
+import lucia from "lucia-auth";
+import { planetscale } from "@lucia-auth/adapter-mysql";
+
+const connection = connect({
+	// ...
+});
+
+const db = drizzle(connection);
+
+const auth = lucia({
+	adapter: planetscale(connection)
+	// ...
+});
+```
+
+## PostgreSQL
 
 ```ts
 import { pgTable, bigint, varchar, boolean } from "drizzle-orm/pg-core";
@@ -134,7 +152,7 @@ const key = pgTable("auth_session", {
 
 ### `pg`
 
-Refer to the [`pg`](/database/postgresql#pg) section.
+Refer to the [`pg`](/adapters/postgresql#pg) section.
 
 ```ts
 import postgres from "pg";
@@ -155,8 +173,6 @@ const auth = lucia({
 ```
 
 ## SQLite
-
-Use the [SQLite adapter](/database/sqlite).
 
 ```ts
 import { sqliteTable, varchar, integer } from "drizzle-orm/sqlite-core";
@@ -199,7 +215,7 @@ const key = mysqlTable("auth_session", {
 
 ### `better-sqlite3`
 
-Refer to the [`better-sqlite3`](/database/sqlite#better-sqlite3) section.
+Refer to the [`better-sqlite3`](/adapters/sqlite#better-sqlite3) section.
 
 ```ts
 import sqlite from "better-sqlite3";

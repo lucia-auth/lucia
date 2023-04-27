@@ -12,13 +12,9 @@ pnpm add @lucia-auth/adapter-sqlite
 yarn add @lucia-auth/adapter-sqlite
 ```
 
-You can alternatively use an ORM such as [Prisma](/database/prisma) with SQLite.
+You can alternatively use an ORM such as [Prisma](/adapters/prisma) with SQLite. Some drivers can be used with [Drizzle ORM](/adapters/drizzle) or [Kysely](/adapters/kysely) as well.
 
-## Supported drivers
-
-Some drivers can be used with [Drizzle ORM](/database/drizzle) or [Kysely](/database/kysely).
-
-### `better-sqlite3`
+## `better-sqlite3`
 
 ```ts
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
@@ -29,6 +25,10 @@ const db = sqlite("main.db");
 const auth = lucia({
 	adapter: betterSqlite3(db)
 });
+```
+
+```ts
+const betterSqlite3 = (db: Database) => () => Adapter;
 ```
 
 #### Parameter

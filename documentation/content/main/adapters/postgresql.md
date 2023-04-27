@@ -12,13 +12,9 @@ pnpm add @lucia-auth/adapter-postgresql
 yarn add @lucia-auth/adapter-postgresql
 ```
 
-You can alternatively use an ORM such as [Prisma](/database/prisma) with PostgreSQL.
+You can alternatively use an ORM such as [Prisma](/adapters/prisma) with PostgreSQL. Some drivers can be used with [Drizzle ORM](/adapters/drizzle) or [Kysely](/adapters/kysely) as well.
 
-## Supported drivers
-
-Some drivers can be used with [Drizzle ORM](/database/drizzle) or [Kysely](/database/kysely).
-
-### `pg`
+## `pg`
 
 Supports [`pg`](https://www.npmjs.com/package/pg) version 8.0.0 or greater.
 
@@ -33,6 +29,10 @@ const pool = new postgres.Pool({
 const auth = lucia({
 	adapter: pg(pool)
 });
+```
+
+```ts
+const pg = (pool: Pool) => () => Adapter;
 ```
 
 #### Parameter

@@ -1,69 +1,19 @@
 import { LuciaQueryHandler } from "@lucia-auth/adapter-test";
-import { AsyncRunner, createOperator, SyncRunner } from "../src/query.js";
+import { Runner, createOperator } from "../src/query.js";
 import {
 	transformDatabaseKey,
 	transformDatabaseSession
 } from "../src/utils.js";
 
-import type {
-	PostgresKeySchema,
-	PostgresSessionSchema,
-	PostgresUserSchema
-} from "../src/utils.js";
+import type { PostgresKeySchema, PostgresSessionSchema } from "../src/utils.js";
+import type { TestUserSchema } from "@lucia-auth/adapter-test";
 
-export const createQueryHandlerFromSyncRunner = (runner: SyncRunner) => {
+export const createQueryHandler = (runner: Runner) => {
 	const operator = createOperator(runner);
 	return {
 		user: {
 			get: async () => {
-				return operator.getAll<PostgresUserSchema>((ctx) => [
-					ctx.selectFrom("auth_user", "*")
-				]);
-			},
-			insert: async (user) => {
-				operator.run((ctx) => [ctx.insertInto("auth_user", user)]);
-			},
-			clear: async () => {
-				operator.run((ctx) => [ctx.deleteFrom("auth_user")]);
-			}
-		},
-		session: {
-			get: async () => {
-				return operator
-					.getAll<PostgresSessionSchema>((ctx) => [
-						ctx.selectFrom("auth_session", "*")
-					])
-					.map((val) => transformDatabaseSession(val));
-			},
-			insert: async (key) => {
-				operator.run((ctx) => [ctx.insertInto("auth_session", key)]);
-			},
-			clear: async () => {
-				operator.run((ctx) => [ctx.deleteFrom("auth_session")]);
-			}
-		},
-		key: {
-			get: async () => {
-				return operator
-					.getAll<PostgresKeySchema>((ctx) => [ctx.selectFrom("auth_key", "*")])
-					.map((val) => transformDatabaseKey(val));
-			},
-			insert: async (key) => {
-				operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
-			},
-			clear: async () => {
-				operator.run((ctx) => [ctx.deleteFrom("auth_key")]);
-			}
-		}
-	} satisfies LuciaQueryHandler;
-};
-
-export const createQueryHandlerFromAsyncRunner = (runner: AsyncRunner) => {
-	const operator = createOperator(runner);
-	return {
-		user: {
-			get: async () => {
-				return await operator.getAll<PostgresUserSchema>((ctx) => [
+				return await operator.getAll<TestUserSchema>((ctx) => [
 					ctx.selectFrom("auth_user", "*")
 				]);
 			},

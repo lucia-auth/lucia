@@ -1,101 +1,42 @@
-import { createOperator } from "../query.js";
 import { mysql2Runner } from "./runner.js";
-import { transformDatabaseKey, transformDatabaseSession } from "../utils.js";
+import { createCoreAdapter, createQueryHelper } from "../core.js";
+import { createOperator } from "../query.js";
 
 import type { Adapter, AdapterFunction } from "lucia-auth";
 import type { Pool, QueryError } from "mysql2/promise";
-import type {
-	MySQLKeySchema,
-	MySQLSessionSchema,
-	MySQLUserSchema
-} from "../utils.js";
 
 export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
+	const transaction = async <_Execute extends () => Promise<any>>(
+		execute: _Execute
+	) => {
+		const connection = await db.getConnection();
+		try {
+			await connection.beginTransaction();
+			await execute();
+			await connection.commit();
+			return;
+		} catch (e) {
+			await connection.rollback();
+			throw e;
+		}
+	};
+
 	return (LuciaError) => {
 		const operator = createOperator(mysql2Runner(db));
+		const coreAdapter = createCoreAdapter(operator);
+		const helper = createQueryHelper(operator);
 		return {
-			getUser: async (userId) => {
-				return operator.get<MySQLUserSchema>((ctx) => [
-					ctx.selectFrom("auth_user", "*"),
-					ctx.where("id", "=", userId)
-				]);
-			},
-			getSessionAndUserBySessionId: async (sessionId) => {
-				const data = await operator.get<
-					MySQLUserSchema & {
-						_session_active_expires: number;
-						_session_id: string;
-						_session_idle_expires: number;
-						_session_user_id: string;
-					}
-				>((ctx) => [
-					ctx.selectFrom(
-						"auth_session",
-						"auth_user.*",
-						"auth_session.id as _session_id",
-						"auth_session.active_expires as _session_active_expires",
-						"auth_session.idle_expires as _session_idle_expires",
-						"auth_session.user_id as _session_user_id"
-					),
-					ctx.innerJoin("auth_user", "auth_user.id", "auth_session.user_id"),
-					ctx.where("auth_session.id", "=", sessionId)
-				]);
-				if (!data) return null;
-				const {
-					_session_active_expires,
-					_session_id,
-					_session_idle_expires,
-					_session_user_id,
-					...user
-				} = data;
-				return {
-					user,
-					session: transformDatabaseSession({
-						id: _session_id,
-						user_id: _session_user_id,
-						active_expires: _session_active_expires,
-						idle_expires: _session_idle_expires
-					})
-				};
-			},
-			getSession: async (sessionId) => {
-				const databaseSession = await operator.get<MySQLSessionSchema>(
-					(ctx) => [
-						ctx.selectFrom("auth_session", "*"),
-						ctx.where("id", "=", sessionId)
-					]
-				);
-				if (!databaseSession) return null;
-				return transformDatabaseSession(databaseSession);
-			},
-			getSessionsByUserId: async (userId) => {
-				const databaseSessions = await operator.getAll<MySQLSessionSchema>(
-					(ctx) => [
-						ctx.selectFrom("auth_session", "*"),
-						ctx.where("user_id", "=", userId)
-					]
-				);
-				return databaseSessions.map((val) => transformDatabaseSession(val));
-			},
+			...coreAdapter,
 			setUser: async (userId, attributes, key) => {
-				const user = {
-					id: userId,
-					...attributes
-				};
 				try {
 					if (key) {
-						await operator.transaction(async () => {
-							await operator.run<MySQLUserSchema>((ctx) => [
-								ctx.insertInto("auth_user", user)
-							]);
-							await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+						await transaction(async () => {
+							await helper.insertUser(userId, attributes);
+							await helper.insertKey(key);
 						});
 						return;
 					}
-					await operator.run<MySQLUserSchema>((ctx) => [
-						ctx.insertInto("auth_user", user)
-					]);
-					return;
+					await helper.insertUser(userId, attributes);
 				} catch (e) {
 					const error = e as Partial<QueryError>;
 					if (
@@ -107,17 +48,11 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 					throw e;
 				}
 			},
-			deleteUser: async (userId) => {
-				await operator.run((ctx) => [
-					ctx.deleteFrom("auth_user"),
-					ctx.where("id", "=", userId)
-				]);
-			},
 			setSession: async (session) => {
 				try {
-					await operator.run((ctx) => [
-						ctx.insertInto("auth_session", session)
-					]);
+					const user = await helper.getUser(session.user_id);
+					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+					await helper.insertSession(session);
 				} catch (e) {
 					const error = e as Partial<QueryError>;
 					if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
@@ -132,34 +67,11 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 					throw e;
 				}
 			},
-			deleteSession: async (sessionId) => {
-				await operator.run((ctx) => [
-					ctx.deleteFrom("auth_session"),
-					ctx.where("id", "=", sessionId)
-				]);
-			},
-			deleteSessionsByUserId: async (userId) => {
-				await operator.run((ctx) => [
-					ctx.deleteFrom("auth_session"),
-					ctx.where("user_id", "=", userId)
-				]);
-			},
-			updateUserAttributes: async (userId, attributes) => {
-				if (Object.keys(attributes).length === 0) {
-					operator.run<MySQLUserSchema>((ctx) => [
-						ctx.selectFrom("auth_user", "*"),
-						ctx.where("id", "=", userId)
-					]);
-					return;
-				}
-				await operator.run<MySQLUserSchema>((ctx) => [
-					ctx.update("auth_user", attributes),
-					ctx.where("id", "=", userId)
-				]);
-			},
 			setKey: async (key) => {
 				try {
-					await operator.run((ctx) => [ctx.insertInto("auth_key", key)]);
+					const user = await helper.getUser(key.user_id);
+					if (!user) throw new LuciaError("AUTH_INVALID_USER_ID");
+					await helper.insertKey(key);
 				} catch (e) {
 					const error = e as Partial<QueryError>;
 					if (error.errno === 1452 && error.message?.includes("(`user_id`)")) {
@@ -171,46 +83,8 @@ export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
+					throw e;
 				}
-			},
-			getKey: async (keyId) => {
-				const databaseKey = await operator.get<MySQLKeySchema>((ctx) => [
-					ctx.selectFrom("auth_key", "*"),
-					ctx.where("id", "=", keyId)
-				]);
-				if (!databaseKey) return null;
-				const transformedDatabaseKey = transformDatabaseKey(databaseKey);
-				return transformedDatabaseKey;
-			},
-			getKeysByUserId: async (userId) => {
-				const databaseKeys = await operator.getAll<MySQLKeySchema>((ctx) => [
-					ctx.selectFrom("auth_key", "*"),
-					ctx.where("user_id", "=", userId)
-				]);
-				return databaseKeys.map((val) => transformDatabaseKey(val));
-			},
-			updateKeyPassword: async (key, hashedPassword) => {
-				await operator.run<MySQLKeySchema>((ctx) => [
-					ctx.update("auth_key", {
-						hashed_password: hashedPassword
-					}),
-					ctx.where("id", "=", key)
-				]);
-			},
-			deleteKeysByUserId: async (userId) => {
-				await operator.run((ctx) => [
-					ctx.deleteFrom("auth_key"),
-					ctx.where("user_id", "=", userId)
-				]);
-			},
-			deleteNonPrimaryKey: async (keyId) => {
-				await operator.run((ctx) => [
-					ctx.deleteFrom("auth_key"),
-					ctx.and(
-						ctx.where("id", "=", keyId),
-						ctx.where("primary_key", "=", false)
-					)
-				]);
 			}
 		};
 	};

@@ -1,6 +1,6 @@
 ---
 _order: 0
-title: "Custom adapters"
+title: "API reference"
 description: "Learn how to create your own database adapters for Lucia"
 ---
 
@@ -24,7 +24,7 @@ lucia({
 
 ### Schema
 
-Lucia doesn't care how the data is stored, as long as it returns the correct data in the expected shape and that the schema follows certain constraints. Refer to [Database model](/adapters/database-model) for the base model and schema.
+Lucia doesn't care how the data is stored, as long as it returns the correct data in the expected shape and that the schema follows certain constraints. Refer to [Database model](/custom-adapters/database-model) for the base model and schema.
 
 ## `Adapter`
 
