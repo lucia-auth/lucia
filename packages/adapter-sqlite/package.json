@@ -11,7 +11,8 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"test.better-sqlite3": " tsx test/better-sqlite3/index.ts",
+		"test.better-sqlite3": "tsx test/better-sqlite3/index.ts",
+		"test.d1": "tsx test/d1/generate.ts && wrangler dev test/d1/index.ts --local --persist",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -37,8 +38,8 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "^1.4.0",
-		"better-sqlite3": "^8.0.0"
+		"better-sqlite3": "^8.0.0",
+		"lucia-auth": "^1.4.0"
 	},
 	"peerDependenciesMeta": {
 		"better-sqlite3": {
@@ -46,11 +47,12 @@
 		}
 	},
 	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20230404.0",
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@types/better-sqlite3": "^7.6.3",
+		"better-sqlite3": "^8.0.1",
 		"dotenv": "^16.0.3",
 		"lucia-auth": "workspace:*",
-		"tsx": "^3.12.6",
-		"better-sqlite3": "^8.0.1"
+		"tsx": "^3.12.6"
 	}
 }

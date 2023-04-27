@@ -1,6 +1,5 @@
 import { generateRandomString } from "lucia-auth";
 import { typeError, valueError } from "./validate.js";
-import "lucia-auth/polyfill/node";
 import type { KeySchema, SessionSchema } from "lucia-auth";
 
 export type TestUserSchema = {

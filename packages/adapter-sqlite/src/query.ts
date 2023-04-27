@@ -198,7 +198,6 @@ export type Runner = {
 	get: (statement: string, params: ColumnValue[]) => Promise<any>;
 	run: (statement: string, params: ColumnValue[]) => Promise<void>;
 };
-
 type ColumnValue = string | number | null | bigint;
 
 type Block =
