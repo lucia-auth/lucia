@@ -193,10 +193,10 @@ const auth = lucia({
 auth.handleRequest(request as Request, response as Response);
 ```
 
-| name    | type          |
-| ------- | ------------- |
-| request | [`Request`]() |
-| headers | [`Headers`]() |
+| name    | type                                                                                            |
+| ------- | ----------------------------------------------------------------------------------------------- |
+| request | [`Request`](https://www.google.com/search?client=safari&rls=en&q=mdn+request&ie=UTF-8&oe=UTF-8) |
+| headers | [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers)                           |
 
 #### Example
 

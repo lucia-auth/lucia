@@ -9,6 +9,17 @@ description: "Learn how to use Prisma with Lucia"
 An adapter for Prisma version 4.2 and greater. Can be used with: MySQL, PostgreSQL, SQLite, and MongoDB.
 
 ```ts
+import prisma from "@lucia-auth/adapter-prisma";
+import { PrismaClient } from "@prisma/client";
+
+const client = new PrismaClient();
+
+const auth = lucia({
+	adapter: prisma(client)
+});
+```
+
+```ts
 const adapter: (client: PrismaClient) => () => Adapter;
 ```
 
@@ -36,19 +47,6 @@ The adapter and Lucia will not not handle [unknown errors](/basics/error-handlin
 npm i @lucia-auth/adapter-prisma
 pnpm add @lucia-auth/adapter-prisma
 yarn add @lucia-auth/adapter-prisma
-```
-
-## Usage
-
-```ts
-import prisma from "@lucia-auth/adapter-prisma";
-import { PrismaClient } from "@prisma/client";
-
-const client = new PrismaClient();
-
-const auth = lucia({
-	adapter: prisma(client)
-});
 ```
 
 ## Models
@@ -120,9 +118,9 @@ model AuthUser {
 
 ## Using MongoDB
 
-If you're looking to use Prisma with MongoDB the only change you need to make is to the `id` property. You need to change the `@unique` attribute to `@map("_id")`. Lucia under the hood generates a short id automatically for the 3 models (user, session, key) which means we won't use `@ObjectId`, `@default(auto())` or `@db.ObjectId` at all.
+If you're looking to use Prisma with MongoDB the only change you need to make is to the `id` property. You need to change the `@unique` attribute to `@map("_id")`. Lucia under the hood generates a short id automatically for the 3 models (user, session, key) which means the id should not be auto-generated.
 
-So in a nutshell, replace `id String @id @unique` with `id String @id @map("_id")` in the 3 models (user, session, key) shown above.
+Replace `id String @id @unique` with `id String @id @map("_id")` in the 3 models (user, session, key) shown above.
 
 ```prisma
 id String @id @map("_id")
@@ -139,7 +137,7 @@ datasource db {
 
 ## Using PlanetScale
 
-Since PlanetScale does not support foreign keys, change `relationMode` to `prisma` inside the schema `datasource`.
+Since PlanetScale does not support foreign keys, set `relationMode` to `prisma` inside the schema `datasource`. You can alternatively remove the foreign key constraint all together, though Lucia will not know if a user id is invalid on session or key creation.
 
 ```prisma
 datasource db {

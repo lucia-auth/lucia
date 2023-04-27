@@ -10,15 +10,13 @@ Lucia does not provide an adapter for Kysely itself, rather supporting the under
 
 ## Supported dialects
 
-| language   | dialects                                                       |
-| ---------- | -------------------------------------------------------------- |
-| MySQL      | [`mysql2`](https://github.com/sidorares/node-mysql2)           |
-| PostgreSQL | [`pg`](https://github.com/brianc/node-postgres)                |
-| SQLite     | [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3) |
+| language   | dialects                                                                                                                    |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| MySQL      | [`mysql2`](https://github.com/sidorares/node-mysql2), [`@planetscale/database`](https://github.com/planetscale/database-js) |
+| PostgreSQL | [`pg`](https://github.com/brianc/node-postgres)                                                                             |
+| SQLite     | [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)                                                              |
 
 ## MySQL
-
-Use the [MySQL adapter](/database/mysql).
 
 ```ts
 type DatabaseSchema = <{
@@ -44,7 +42,7 @@ type DatabaseSchema = <{
 
 ### `mysql2`
 
-Refer to the [`mysql2`](/database/mysql#mysql2) section.
+Refer to the [MySQL](/adapters/mysql) page for the schema and other details.
 
 ```ts
 import mysql from "mysql2/promise";
@@ -69,9 +67,38 @@ const auth = lucia({
 });
 ```
 
-## PostgreSQL
+### `@planetscale/database`
 
-Use the [PostgreSQL adapter](/database/postgresql).
+Requires a third party driver:
+
+```
+npm
+```
+
+```ts
+import { connect } from "@planetscale/database";
+import { Kysely, MysqlDialect } from "kysely";
+import lucia from "lucia-auth";
+import { planetscale } from "@lucia-auth/adapter-mysql";
+
+const connection = connect({
+	// ...
+});
+
+// refer above for types
+const db = new Kysely<DatabaseSchema>({
+	dialect: new MysqlDialect({
+		pool: connectionPool
+	})
+});
+
+const auth = lucia({
+	adapter: planetscale(connect)
+	// ...
+});
+```
+
+## PostgreSQL
 
 ```ts
 type DatabaseSchema = <{
@@ -97,7 +124,7 @@ type DatabaseSchema = <{
 
 ### `pg`
 
-Refer to the [`pg`](/database/postgresql#pg) section.
+Refer to the [PostgreSQL](/adapters/postgresql) page for the schema and other details.
 
 ```ts
 import postgres from "pg";
@@ -124,8 +151,6 @@ const auth = lucia({
 
 ## SQLite
 
-Use the [SQLite adapter](/database/sqlite).
-
 ```ts
 type DatabaseSchema = <{
 	auth_user: {
@@ -150,7 +175,7 @@ type DatabaseSchema = <{
 
 ### `better-sqlite3`
 
-Refer to the [`better-sqlite3`](/database/sqlite#better-sqlite3) section.
+Refer to the [SQLite](/adapters/sqlite) page for the schema and other details.
 
 ```ts
 import sqlite from "better-sqlite3";

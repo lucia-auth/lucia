@@ -131,7 +131,7 @@ const handleRequest = async (request) => {
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the standard [`Request`]() and [`Headers`]() when using the Web middleware.
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the standard [`Request`](https://www.google.com/search?client=safari&rls=en&q=mdn+request&ie=UTF-8&oe=UTF-8) and [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) when using the Web middleware.
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie.
 

@@ -18,8 +18,6 @@ Lucia does not provide an adapter for Drizzle itself, rather supporting the unde
 
 ## MySQL
 
-Use the [MySQL adapter](/database/mysqls).
-
 ```ts
 import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
 
@@ -85,9 +83,29 @@ const auth = lucia({
 });
 ```
 
-## PostgreSQL
+### `@planetscale/database`
 
-Use the [PostgreSQL adapter](/database/postgresql).
+Refer to the [`planetscale`](/database/mysql#planetscale) section.
+
+```ts
+import { connect } from "@planetscale/database";
+import { drizzle } from "drizzle-orm/planetscale";
+import lucia from "lucia-auth";
+import { planetscale } from "@lucia-auth/adapter-mysql";
+
+const connection = connect({
+	// ...
+});
+
+const db = drizzle(connection);
+
+const auth = lucia({
+	adapter: planetscale(connection)
+	// ...
+});
+```
+
+## PostgreSQL
 
 ```ts
 import { pgTable, bigint, varchar, boolean } from "drizzle-orm/pg-core";
@@ -155,8 +173,6 @@ const auth = lucia({
 ```
 
 ## SQLite
-
-Use the [SQLite adapter](/database/sqlite).
 
 ```ts
 import { sqliteTable, varchar, integer } from "drizzle-orm/sqlite-core";

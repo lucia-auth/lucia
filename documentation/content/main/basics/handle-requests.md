@@ -28,7 +28,7 @@ By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#l
 
 #### Using web standards
 
-If you're dealing with the standard [`Request`]()/[`Response`](), you can use the `web` middleware:
+If you're dealing with the standard [`Request`](https://www.google.com/search?client=safari&rls=en&q=mdn+request&ie=UTF-8&oe=UTF-8)/[`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response), you can use the `web` middleware:
 
 ```ts
 import { web } from "lucia-auth/middleware";
