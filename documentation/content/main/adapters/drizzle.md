@@ -21,14 +21,14 @@ Lucia does not provide an adapter for Drizzle itself, rather supporting the unde
 ```ts
 import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
 
-const user = mysqlTable("auth_user", {
+export const user = mysqlTable("auth_user", {
 	id: varchar("id", {
 		length: 15 // change this when using custom user ids
 	}).primaryKey()
 	// other user attributes
 });
 
-const session = mysqlTable("auth_session", {
+export const session = mysqlTable("auth_session", {
 	id: varchar("id", {
 		length: 128
 	}).primaryKey(),
@@ -37,15 +37,15 @@ const session = mysqlTable("auth_session", {
 	})
 		.notNull()
 		.references(() => user.id),
-	activeExpires: bigInt("active_expires", {
+	activeExpires: bigint("active_expires", {
 		mode: "number"
 	}).notNull(),
-	idleExpires: bigInt("idle_expires", {
+	idleExpires: bigint("idle_expires", {
 		mode: "number"
 	}).notNull()
 });
 
-const key = mysqlTable("auth_session", {
+export const key = mysqlTable("auth_key", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
@@ -54,7 +54,7 @@ const key = mysqlTable("auth_session", {
 	})
 		.notNull()
 		.references(() => user.id),
-	primaryKey: boolean().notNull(),
+	primaryKey: boolean("primary_key").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
 	})
@@ -134,7 +134,7 @@ const session = pgTable("auth_session", {
 	}).notNull()
 });
 
-const key = pgTable("auth_session", {
+const key = pgTable("auth_key", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
@@ -197,7 +197,7 @@ const session = mysqlTable("auth_session", {
 	idleExpires: integer("idle_expires").notNull()
 });
 
-const key = mysqlTable("auth_session", {
+const key = mysqlTable("auth_key", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
