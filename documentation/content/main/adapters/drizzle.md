@@ -37,10 +37,10 @@ const session = mysqlTable("auth_session", {
 	})
 		.notNull()
 		.references(() => user.id),
-	activeExpires: bigInt("active_expires", {
+	activeExpires: bigint("active_expires", {
 		mode: "number"
 	}).notNull(),
-	idleExpires: bigInt("idle_expires", {
+	idleExpires: bigint("idle_expires", {
 		mode: "number"
 	}).notNull()
 });
@@ -54,7 +54,7 @@ const key = mysqlTable("auth_session", {
 	})
 		.notNull()
 		.references(() => user.id),
-	primaryKey: boolean().notNull(),
+	primaryKey: boolean("primaryKey").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
 	})
