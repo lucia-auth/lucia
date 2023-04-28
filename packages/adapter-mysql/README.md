@@ -40,3 +40,19 @@ MYSQL2_PASSWORD=""
 ```
 pnpm test.mysql2
 ```
+
+### `@planetscale/database`
+
+Set up env var:
+
+```bash
+PLANETSCALE_HOST=""
+PLANETSCALE_USERNAME=""
+PLANETSCALE_PASSWORD= ""
+```
+
+Run:
+
+```
+pnpm test.planetscale
+```

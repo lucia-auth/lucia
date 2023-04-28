@@ -9,7 +9,7 @@ import type { SQLiteUserSchema } from "../utils.js";
 
 type BetterSQLiteError = SqliteError["prototype"];
 
-export const betterSqliteAdapter = (db: Database): AdapterFunction<Adapter> => {
+export const betterSqlite3 = (db: Database): AdapterFunction<Adapter> => {
 	const transaction = async <_Execute extends () => Promise<any>>(
 		execute: _Execute
 	): Promise<Awaited<ReturnType<_Execute>>> => {

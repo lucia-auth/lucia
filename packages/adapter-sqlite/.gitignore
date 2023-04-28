@@ -5,3 +5,4 @@
 /prisma/dev.db
 /prisma/dev.db-journal
 .env
+/test/d1/wrangler.toml
