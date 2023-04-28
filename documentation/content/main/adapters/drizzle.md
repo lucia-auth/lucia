@@ -54,7 +54,7 @@ export const key = mysqlTable("auth_key", {
 	})
 		.notNull()
 		.references(() => user.id),
-	primaryKey: boolean("primaryKey").notNull(),
+	primaryKey: boolean("primary_key").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
 	})
