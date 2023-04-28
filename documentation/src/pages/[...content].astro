@@ -35,9 +35,10 @@ if (!content) {
 if (content.metaData.redirect) {
 	return Astro.redirect(content.metaData.redirect, 302);
 }
-
-frameworkId = content.metaData.frameworkId;
-request.setFrameworkId(frameworkId);
+if (content.metaData.frameworkId) {
+	frameworkId = content.metaData.frameworkId;
+	request.setFrameworkId(frameworkId);
+}
 
 const contributePageHref = joinUrlPaths(
 	"https://github.com/pilcrowOnPaper/lucia/blob/main/documentation",
