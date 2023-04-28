@@ -140,27 +140,17 @@ export const createOperator = <_Runner extends Runner>(runner: _Runner) => {
 		const blocks = createQueryBlocks(ctx);
 		return resolveQueryBlocks(blocks);
 	};
-	const get = <_Selection extends Record<string, ColumnValue>>(
+	const get = async <_Selection extends Record<string, ColumnValue>>(
 		createQueryBlocks: CreateQueryBlocks
-	): _Runner extends AsyncRunner
-		? Promise<_Selection | null>
-		: _Selection | null => {
+	): Promise<_Selection | null> => {
 		const query = write(createQueryBlocks);
-		const result = runner.get(query.statement, query.params);
-		if (result instanceof Promise) {
-			return new Promise(async (resolve) => {
-				const awaitedResult = await result;
-				if (Array.isArray(awaitedResult))
-					return resolve(awaitedResult.at(0) ?? null);
-				resolve(awaitedResult ?? null);
-			}) as any;
-		}
+		const result = await runner.get(query.statement, query.params);
 		if (Array.isArray(result)) return result.at(0) ?? null;
 		return result ?? null;
 	};
 	const getAll = <_Selection extends Record<string, ColumnValue>>(
 		createQueryBlocks: CreateQueryBlocks
-	): _Runner extends AsyncRunner ? Promise<_Selection[]> : _Selection[] => {
+	): Promise<_Selection[]> => {
 		const query = write(createQueryBlocks);
 		const result = runner.get(query.statement, query.params);
 		if (result instanceof Promise) {
@@ -177,48 +167,32 @@ export const createOperator = <_Runner extends Runner>(runner: _Runner) => {
 	};
 	const run = <_Selection extends Record<string, ColumnValue>>(
 		createQueryBlocks: CreateQueryBlocks
-	): _Runner extends AsyncRunner ? Promise<void> : void => {
+	): Promise<void> => {
 		const query = write(createQueryBlocks);
 		return runner.run(query.statement, query.params) as any;
-	};
-
-	const transaction = <const _Execute extends () => any>(
-		execute: _Execute
-	): _Runner extends AsyncRunner
-		? Promise<ReturnType<_Execute>>
-		: ReturnType<_Execute> => {
-		return runner.transaction(execute) as any;
 	};
 	return {
 		write,
 		get,
 		getAll,
-		run,
-		transaction
+		run
 	} as const;
 };
 
-type CreateQueryBlocks = (context: typeof ctx) => Block[];
+export type Operator = ReturnType<typeof createOperator>;
+
+export type Context = typeof ctx;
+
+type CreateQueryBlocks = (context: Context) => Block[];
 
 type ResolvedBlock = {
 	queryChunk: string;
 	params: ColumnValue[];
 };
 
-type Runner = SyncRunner | AsyncRunner;
-
-export type SyncRunner = {
-	type: "sync";
-	get: (statement: string, params: ColumnValue[]) => any;
-	run: (statement: string, params: ColumnValue[]) => void;
-	transaction: (execute: () => any) => any;
-};
-
-export type AsyncRunner = {
-	type: "async";
+export type Runner = {
 	get: (statement: string, params: ColumnValue[]) => Promise<any>;
 	run: (statement: string, params: ColumnValue[]) => Promise<void>;
-	transaction: (execute: () => Promise<any>) => Promise<any>;
 };
 
 type ColumnValue = string | number | null | bigint | boolean;

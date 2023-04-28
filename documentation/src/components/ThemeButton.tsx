@@ -1,6 +1,6 @@
-import { addClassName, removeClassName } from "@lib/dom";
+import { addClassName, removeClassName } from "src/utils/dom";
 import { Show, createSignal } from "solid-js";
-import { setCookie } from "@lib/cookie";
+import { setCookie } from "src/utils/cookie";
 
 export default (props: { initialTheme: string }) => {
 	const useTheme = () => {

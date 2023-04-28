@@ -33,3 +33,27 @@ yarn add @lucia-auth/adapter-sqlite
 ```
 pnpm test.better-sqlite3
 ```
+
+### Cloudflare D1
+
+Make sure [Wrangler is installed](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
+
+Create a new `d1` database by running:
+
+```ts
+wrangler d1 create <DATABASE_NAME>
+```
+
+This will return the database binding, name, and id. Set those in `.env`:
+
+```bash
+D1_DATABASE_BINDING=""
+D1_DATABASE_NAME=""
+D1_DATABASE_ID=""
+```
+
+Finally, run:
+
+```
+pnpm test.d1
+```

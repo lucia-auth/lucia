@@ -12,6 +12,7 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
 		"test.mysql2": " tsx test/mysql2/index.ts",
+		"test.planetscale": " tsx test/planetscale/index.ts",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -38,18 +39,23 @@
 	},
 	"peerDependencies": {
 		"lucia-auth": "^1.4.0",
-		"mysql2": "^3.0.0"
+		"mysql2": "^3.0.0",
+		"@planetscale/database": "^1.7.0"
 	},
 	"peerDependenciesMeta": {
 		"mysql2": {
+			"optional": true
+		},
+		"@planetscale/database": {
 			"optional": true
 		}
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
+		"@planetscale/database": "^1.7.0",
 		"dotenv": "^16.0.3",
 		"lucia-auth": "workspace:*",
-		"tsx": "^3.12.6",
-		"mysql2": "^3.2.3"
+		"mysql2": "^3.2.3",
+		"tsx": "^3.12.6"
 	}
 }

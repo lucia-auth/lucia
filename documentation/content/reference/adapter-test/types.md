@@ -11,7 +11,7 @@ import type { LuciaQueryHandler } from "@lucia-auth/adapter-test";
 
 ## `LuciaQueryHandler`
 
-Refer to [Testing adapters](/adapters/testing-adapters).
+Refer to [Testing adapters](/custom-adapters/testing-adapters).
 
 ```ts
 type LuciaQueryHandler = {

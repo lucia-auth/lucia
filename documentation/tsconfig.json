@@ -4,10 +4,11 @@
 		"baseUrl": ".",
 		"paths": {
 			"@layouts/*": ["src/layouts/*"],
-			"@lib/*": ["src/lib/*"],
+			"@utils/*": ["src/utils/*"],
 			"@components/*": ["src/components/*"],
 			"@cela/*": ["integrations/cela/*"],
 			"@search/*": ["search/*"],
+			"@server/*": ["src/server/*"],
 			"@markdown/*": ["integrations/markdown/*"]
 		},
 		"jsx": "preserve",

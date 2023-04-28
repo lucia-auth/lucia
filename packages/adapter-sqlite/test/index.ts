@@ -1,72 +1,20 @@
 import { LuciaQueryHandler } from "@lucia-auth/adapter-test";
-import { AsyncRunner, createOperator, SyncRunner } from "../src/query.js";
+import { createOperator, Runner } from "../src/query.js";
 import {
 	transformDatabaseKey,
 	transformDatabaseSession,
 	transformToSqliteValue
 } from "../src/utils.js";
 
-import type {
-	SQLiteKeySchema,
-	SQLiteSessionSchema,
-	SQLiteUserSchema
-} from "../src/utils.js";
+import type { SQLiteKeySchema, SQLiteSessionSchema } from "../src/utils.js";
+import type { TestUserSchema } from "@lucia-auth/adapter-test";
 
-export const createQueryHandlerFromSyncRunner = (runner: SyncRunner) => {
+export const createQueryHandler = (runner: Runner) => {
 	const operator = createOperator(runner);
 	return {
 		user: {
 			get: async () => {
-				return operator.getAll<SQLiteUserSchema>((ctx) => [
-					ctx.selectFrom("auth_user", "*")
-				]);
-			},
-			insert: async (user) => {
-				operator.run((ctx) => [ctx.insertInto("auth_user", user)]);
-			},
-			clear: async () => {
-				operator.run((ctx) => [ctx.deleteFrom("auth_user")]);
-			}
-		},
-		session: {
-			get: async () => {
-				return operator
-					.getAll<SQLiteSessionSchema>((ctx) => [
-						ctx.selectFrom("auth_session", "*")
-					])
-					.map((val) => transformDatabaseSession(val));
-			},
-			insert: async (key) => {
-				operator.run((ctx) => [ctx.insertInto("auth_session", key)]);
-			},
-			clear: async () => {
-				operator.run((ctx) => [ctx.deleteFrom("auth_session")]);
-			}
-		},
-		key: {
-			get: async () => {
-				return operator
-					.getAll<SQLiteKeySchema>((ctx) => [ctx.selectFrom("auth_key", "*")])
-					.map((val) => transformDatabaseKey(val));
-			},
-			insert: async (key) => {
-				operator.run((ctx) => [
-					ctx.insertInto("auth_key", transformToSqliteValue(key))
-				]);
-			},
-			clear: async () => {
-				operator.run((ctx) => [ctx.deleteFrom("auth_key")]);
-			}
-		}
-	} satisfies LuciaQueryHandler;
-};
-
-export const createQueryHandlerFromAsyncRunner = (runner: AsyncRunner) => {
-	const operator = createOperator(runner);
-	return {
-		user: {
-			get: async () => {
-				return operator.getAll<SQLiteUserSchema>((ctx) => [
+				return operator.getAll<TestUserSchema>((ctx) => [
 					ctx.selectFrom("auth_user", "*")
 				]);
 			},

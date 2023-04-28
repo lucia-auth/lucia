@@ -57,9 +57,11 @@ If you're not using one of the listed frameworks above, you can use the polyfill
 ## Official packages
 
 - Core: `lucia-auth`
-- Kysely adapter: `@lucia-auth/adapter-kysely`
 - Mongoose adapter: `@lucia-auth/adapter-mongoose`
+- MySQL adapters: `@lucia-auth/adapter-mysql`
+- PostgreSQL adapters: `@lucia-auth/adapter-postgresql`
 - Prisma adapter: `@lucia-auth/adapter-prisma`
 - Redis adapter: `@lucia-auth/adapter-session-redis`
+- SQLite adapters: `@lucia-auth/adapter-sqlite`
 - OAuth integration: `@lucia-auth/oauth`
 - Tokens integration: `@lucia-auth/tokens`

@@ -10,7 +10,7 @@ type Config = OAuthConfig & {
 	redirectUri: string;
 };
 
-export const linkedin = (auth: Auth, config: Config) => {
+export const linkedin = <A extends Auth>(auth: A, config: Config) => {
 	const getAuthorizationUrl = async (state: string) => {
 		const url = createUrl("https://www.linkedin.com/oauth/v2/authorization", {
 			client_id: config.clientId,

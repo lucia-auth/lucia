@@ -1,4 +1,4 @@
-import { frameworkIds } from "@lib/framework";
+import { frameworkIds } from "src/utils/framework";
 import {
 	CELA_GENERATED_DIR,
 	contentImports,
@@ -8,7 +8,7 @@ import {
 
 export const getContent = async (
 	contentPath: string,
-	requestedFrameworkId: string | null = null
+	frameworkId: string | null = null
 ) => {
 	const getLink = async () => {
 		const generatedLinksImportsKey = `${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
@@ -17,30 +17,17 @@ export const getContent = async (
 		)}.json`;
 		const resolveBaseLink =
 			generatedLinksImports[generatedLinksImportsKey] ?? null;
-		const filteredFrameworkId =
-			requestedFrameworkId === "none" ? null : requestedFrameworkId;
-		if (filteredFrameworkId) {
+		if (frameworkId) {
 			const resolveModifiedLink =
 				generatedLinksImports[
 					`${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
 						"/",
 						"_"
-					)}.${filteredFrameworkId}.json`
+					)}.${frameworkId}.json`
 				] ?? null;
 			if (resolveModifiedLink) return await resolveModifiedLink();
 		}
 		if (resolveBaseLink) return await resolveBaseLink();
-		for (const validFrameworkId of frameworkIds) {
-			if (validFrameworkId === "none") continue;
-			const resolveLink =
-				generatedLinksImports[
-					`${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
-						"/",
-						"_"
-					)}.${validFrameworkId}.json`
-				] ?? null;
-			if (resolveLink) return await resolveLink();
-		}
 		return null;
 	};
 	const readContentFile = async (importKey: string) => {

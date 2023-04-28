@@ -31,12 +31,28 @@ yarn add @lucia-auth/adapter-postgresql
 Set MySQL database name and password in `.env`:
 
 ```bash
-MYSQL_DATABASE=""
-MYSQL_PASSWORD=""
+MYSQL2_DATABASE=""
+MYSQL2_PASSWORD=""
 ```
 
 ### `mysql2`
 
 ```
 pnpm test.mysql2
+```
+
+### `@planetscale/database`
+
+Set up env var:
+
+```bash
+PLANETSCALE_HOST=""
+PLANETSCALE_USERNAME=""
+PLANETSCALE_PASSWORD= ""
+```
+
+Run:
+
+```
+pnpm test.planetscale
 ```

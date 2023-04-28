@@ -18,14 +18,15 @@ To support multiple databases, Lucia uses database adapters. These adapters prov
 
 We currently support the following database/ORM options:
 
-- [Drizzle ORM](/database/drizzle)
-- [Kysely](/database/kysely)
-- [Mongoose](/database/mongoose)
-- [MySQL](/database/mysql)
-- [PostgreSQL](/database/postgresql)
-- [Prisma](/database/prisma)
-- [Redis](/database/redis)
-- [SQLite](/database/sqlite)
+- [Drizzle ORM](/adapters/drizzle)
+- [Kysely](/adapters/kysely)
+- [Mongoose](/adapters/mongoose)
+- [MySQL](/adapters/mysql)
+- [PlanetScale serverless](/adapters/planetscale)
+- [PostgreSQL](/adapters/postgresql)
+- [Prisma](/adapters/prisma)
+- [Redis](/adapters/redis)
+- [SQLite](/adapters/sqlite)
 
 ## Initialize Lucia
 
@@ -39,9 +40,11 @@ import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 import { dev } from "$app/environment";
 
+const env = process.env.NODE_ENV === "development" ? "DEV" : "PROD";
+
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env,
 	middleware: node()
 });
 
@@ -49,6 +52,25 @@ export type Auth = typeof auth;
 ```
 
 This module and the file that holds it **should NOT be imported from the client**.
+
+### Deploying to the Edge Runtime
+
+If you're deploying to the Edge runtime (Vercel Edge, Cloudflare Pages/Workers, etc), you'll need to use the [Web middleware](/reference/lucia-auth/middleware#web) instead:
+
+```ts
+import lucia from "lucia-auth";
+import { node, web } from "lucia-auth/middleware";
+// ...
+
+const env = process.env.NODE_ENV === "development" ? "DEV" : "PROD";
+
+export const auth = lucia({
+	// ...
+	middleware: env === "DEV" ? node() : web()
+});
+
+export type Auth = typeof auth;
+```
 
 ### Types
 
@@ -98,5 +120,5 @@ Alternatively, add the `--experimental-global-webcrypto` flag to the `dev` and `
 If you're using Node v14, you'll need to use a third party polyfill and set it as a global variable:
 
 ```ts
-globalThis.crypto = cryptoPolyfill;
+globalThis.crypto = webCryptoPolyfill;
 ```

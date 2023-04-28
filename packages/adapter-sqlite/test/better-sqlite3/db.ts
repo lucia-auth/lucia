@@ -5,7 +5,7 @@ import { LuciaError } from "lucia-auth";
 
 import { betterSqlite3 as betterSqlite3Adapter } from "../../src/index.js";
 import { betterSqliteRunner } from "../../src/better-sqlite3/runner.js";
-import { createQueryHandlerFromSyncRunner } from "../index.js";
+import { createQueryHandler } from "../index.js";
 
 dotenv.config({
 	path: `${resolve()}/.env`
@@ -14,6 +14,4 @@ dotenv.config({
 const db = sqlite("test/main.db");
 
 export const adapter = betterSqlite3Adapter(db)(LuciaError);
-export const queryHandler = createQueryHandlerFromSyncRunner(
-	betterSqliteRunner(db)
-);
+export const queryHandler = createQueryHandler(betterSqliteRunner(db));
