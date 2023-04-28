@@ -45,7 +45,7 @@ export const session = mysqlTable("auth_session", {
 	}).notNull()
 });
 
-export const key = mysqlTable("auth_session", {
+export const key = mysqlTable("auth_key", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
@@ -134,7 +134,7 @@ const session = pgTable("auth_session", {
 	}).notNull()
 });
 
-const key = pgTable("auth_session", {
+const key = pgTable("auth_key", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
@@ -197,7 +197,7 @@ const session = mysqlTable("auth_session", {
 	idleExpires: integer("idle_expires").notNull()
 });
 
-const key = mysqlTable("auth_session", {
+const key = mysqlTable("auth_key", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
