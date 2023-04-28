@@ -21,14 +21,14 @@ Lucia does not provide an adapter for Drizzle itself, rather supporting the unde
 ```ts
 import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
 
-const user = mysqlTable("auth_user", {
+export const user = mysqlTable("auth_user", {
 	id: varchar("id", {
 		length: 15 // change this when using custom user ids
 	}).primaryKey()
 	// other user attributes
 });
 
-const session = mysqlTable("auth_session", {
+export const session = mysqlTable("auth_session", {
 	id: varchar("id", {
 		length: 128
 	}).primaryKey(),
@@ -45,7 +45,7 @@ const session = mysqlTable("auth_session", {
 	}).notNull()
 });
 
-const key = mysqlTable("auth_session", {
+export const key = mysqlTable("auth_session", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
