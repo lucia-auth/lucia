@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -11,18 +11,7 @@ type Config = OAuthConfig & {
 
 const PROVIDER_ID = "patreon";
 
-export const patreon = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://www.patreon.com/oauth2/authorize", {
-			client_id: config.clientId,
-			redirect_uri: config.redirectUri,
-			scope: scope(["identity"], config.scope),
-			response_type: "code",
-			state
-		});
-
-		return url;
-	};
+export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl("https://www.patreon.com/api/oauth2/token", {
@@ -64,15 +53,33 @@ export const patreon = <A extends Auth>(auth: A, config: Config) => {
 			data: PatreonUser;
 		}>(request);
 
-		return [patreonUser.id, patreonUser] as const;
+		return patreonUser
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const url = createUrl("https://www.patreon.com/oauth2/authorize", {
+				client_id: config.clientId,
+				redirect_uri: config.redirectUri,
+				scope: scope(["identity"], config.scope),
+				response_type: "code",
+				state
+			});
+			return [url, state] as const;
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.id;
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type PatreonUser = {
