@@ -37,6 +37,8 @@ export const githubAuth = github(auth, config);
 
 When a user clicks "Sign in with <provider>", redirect the user to a GET endpoint. This endpoint will redirect the user to the provider's sign in page. On request, store the [state](https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1) inside a http0nly cookie and redirect the user to the provider's authorization url. Both, the authorization url and state can be retrieved with `getAuthorizationUrl()`.
 
+The state may not be returned depending on the provider, and it may return PKCE code verifier as well. Please check each provider's page (see left/menu).
+
 ```ts
 // SERVER
 import { auth, githubAuth } from "$lib/lucia.js";
@@ -61,7 +63,7 @@ const handleGetRequests = async () => {
 
 Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag.
 
-```svelte
+```jsx
 <a href={providerAuthorizationUrl}>Sign in with provider</a>
 ```
 

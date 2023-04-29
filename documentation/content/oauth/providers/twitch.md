@@ -49,6 +49,58 @@ const twitch: (
 | ------------------------------------------------- | --------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | Twitch provider |
 
+## `TwitchProvider`
+
+Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+
+### `getAuthorizationUrl()`
+
+Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+
+```ts
+const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+```
+
+#### Parameter
+
+| name  | type     | description                                                                           | optional |
+| ----- | -------- | ------------------------------------------------------------------------------------- | :------: |
+| state | `string` | an opaque value used by the client to maintain state between the request and callback |    ✓     |
+
+#### Returns
+
+| name    | type     | description          |
+| ------- | -------- | -------------------- |
+| `url`   | `URL`    | authorize url        |
+| `state` | `string` | state parameter used |
+
+### `validateCallback()`
+
+Validates the callback and returns the session.
+
+```ts
+const validateCallback: (code: string) => Promise<ProviderSession>;
+```
+
+#### Parameter
+
+| name | type     | description                      |
+| ---- | -------- | -------------------------------- |
+| code | `string` | authorization code from callback |
+
+#### Returns
+
+| type                                                  | description       |
+| ----------------------------------------------------- | ----------------- |
+| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
+
+#### Errors
+
+| name           | description                          |
+| -------------- | ------------------------------------ |
+| FAILED_REQUEST | invalid code, network error, unknown |
+
+
 ## `TwitchTokens`
 
 ```ts

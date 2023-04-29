@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -10,17 +10,8 @@ type Config = OAuthConfig & {
 
 const PROVIDER_ID = "facebook";
 
-export const facebook = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
-			client_id: config.clientId,
-			scope: scope([], config.scope),
-			redirect_uri: config.redirectUri,
-			state
-		});
-		return url;
-	};
-
+export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
+	
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl(
 			"https://graph.facebook.com/v16.0/oauth/access_token",
@@ -54,16 +45,32 @@ export const facebook = <A extends Auth>(auth: A, config: Config) => {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
 		const facebookUser = await handleRequest<FacebookUser>(request);
-		const providerUserId = facebookUser.id;
-		return [providerUserId, facebookUser] as const;
+		return facebookUser;
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
+				client_id: config.clientId,
+				scope: scope([], config.scope),
+				redirect_uri: config.redirectUri,
+				state
+			});
+			return [url, state] as const;
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.id;
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type FacebookUser = {

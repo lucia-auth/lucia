@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -10,20 +10,7 @@ type Config = OAuthConfig & {
 
 const PROVIDER_ID = "reddit";
 
-export const reddit = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://www.reddit.com/api/v1/authorize", {
-			client_id: config.clientId,
-			response_type: "code",
-			redirect_uri: config.redirectUri,
-			duration: "permanent",
-			scope: scope([], config.scope),
-			state
-		});
-
-		return url;
-	};
-
+export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl("https://www.reddit.com/api/v1/access_token", {
 			grant_type: "authorization_code",
@@ -51,17 +38,35 @@ export const reddit = <A extends Auth>(auth: A, config: Config) => {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
 		const redditUser = await handleRequest<RedditUser>(request);
-		const providerUserId = redditUser.id;
 
-		return [providerUserId, redditUser] as const;
+		return redditUser;
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const url = createUrl("https://www.reddit.com/api/v1/authorize", {
+				client_id: config.clientId,
+				response_type: "code",
+				redirect_uri: config.redirectUri,
+				duration: "permanent",
+				scope: scope([], config.scope),
+				state
+			});
+			return [url, state] as const;
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.id;
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 const encodeBase64 = (s: string) => {

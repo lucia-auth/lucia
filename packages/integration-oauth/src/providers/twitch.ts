@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -11,21 +11,7 @@ type Config = OAuthConfig & {
 
 const PROVIDER_ID = "twitch";
 
-export const twitch = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const forceVerify = config.forceVerify ?? false;
-		const url = createUrl("https://id.twitch.tv/oauth2/authorize", {
-			client_id: config.clientId,
-			redirect_uri: config.redirectUri,
-			scope: scope([], config.scope),
-			response_type: "code",
-			force_verify: forceVerify.toString(),
-			state
-		});
-
-		return url;
-	};
-
+export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl("https://id.twitch.tv/oauth2/token", {
 			client_id: config.clientId,
@@ -58,20 +44,38 @@ export const twitch = <A extends Auth>(auth: A, config: Config) => {
 				...authorizationHeaders("bearer", accessToken)
 			}
 		});
-		const twitchUser = await handleRequest<{
+		const twitchUsersResponse = await handleRequest<{
 			data: TwitchUser[];
 		}>(request);
-		const providerUserId = twitchUser.data[0].id;
-
-		return [providerUserId, twitchUser] as const;
+		return twitchUsersResponse.data[0];
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const forceVerify = config.forceVerify ?? false;
+			const url = createUrl("https://id.twitch.tv/oauth2/authorize", {
+				client_id: config.clientId,
+				redirect_uri: config.redirectUri,
+				scope: scope([], config.scope),
+				response_type: "code",
+				force_verify: forceVerify.toString(),
+				state
+			});
+			return [url, state] as const;
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.id;
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type TwitchUser = {
