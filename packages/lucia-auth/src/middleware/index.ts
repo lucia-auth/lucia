@@ -4,6 +4,10 @@ import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
 } from "express";
+import type {
+	RequestEventAction,
+	RequestEventLoader
+} from "@builder.io/qwik-city";
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return (incomingMessage, outgoingMessage, env) => {
@@ -107,6 +111,28 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 				context.cookies.set(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
+		return requestContext;
+	};
+};
+
+type QwikAPIContext = RequestEventLoader | RequestEventAction;
+
+export const qwik = (): Middleware<[QwikAPIContext]> => {
+	return (c) => {
+		const requestContext = {
+			request: {
+				url: c.request.url.toString(),
+				method: c.request.method,
+				headers: {
+					origin: c.request.headers.get("Origin") ?? null,
+					cookie: c.request.headers.get("Cookie") ?? null
+				}
+			},
+			setCookie: (cookie) => {
+				c.cookie.set(cookie.name, cookie.value, cookie.attributes);
+			}
+		} as const satisfies RequestContext;
+
 		return requestContext;
 	};
 };

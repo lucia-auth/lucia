@@ -44,6 +44,7 @@
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"devDependencies": {
+		"@builder.io/qwik-city": "^0.105.0",
 		"@sveltejs/kit": "1.10.0",
 		"@types/express": "^4.17.17",
 		"@types/node": "^18.6.2",
