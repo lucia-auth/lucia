@@ -23,6 +23,7 @@ By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#l
 - [Node](/reference/lucia-auth/middleware#node)
 - [SvelteKit](/reference/lucia-auth/middleware#sveltekit)
 - [Web](/reference/lucia-auth/middleware#web)
+- [Qwik City](/reference/lucia-auth/middleware#qwik)
 
 > Use the Node middleware for Next.js
 
