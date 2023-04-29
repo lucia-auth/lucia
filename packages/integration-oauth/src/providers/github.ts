@@ -1,35 +1,28 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, provider, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 const PROVIDER_ID = "github";
 
-export const github = <A extends Auth>(auth: A, config: OAuthConfig) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://github.com/login/oauth/authorize", {
-			client_id: config.clientId,
-			scope: scope([], config.scope),
-			state
-		});
-		return url;
-	};
+type Tokens =
+	| {
+			accessToken: string;
+			accessTokenExpiresIn: null;
+	  }
+	| {
+			accessToken: string;
+			accessTokenExpiresIn: number;
+			refreshToken: string;
+			refreshTokenExpiresIn: number;
+	  };
 
-	const getTokens = async (
-		code: string
-	): Promise<
-		| {
-				accessToken: string;
-				accessTokenExpiresIn: null;
-		  }
-		| {
-				accessToken: string;
-				accessTokenExpiresIn: number;
-				refreshToken: string;
-				refreshTokenExpiresIn: number;
-		  }
-	> => {
+export const github = <_Auth extends Auth>(
+	auth: _Auth,
+	config: OAuthConfig
+) => {
+	const getTokens = async (code: string): Promise<Tokens> => {
 		const requestUrl = createUrl(
 			"https://github.com/login/oauth/access_token",
 			{
@@ -44,7 +37,7 @@ export const github = <A extends Auth>(auth: A, config: OAuthConfig) => {
 				"Content-Type": "application/json"
 			}
 		});
-		const tokens = await handleRequest<
+		type ResponseBody =
 			| {
 					access_token: string;
 			  }
@@ -52,10 +45,9 @@ export const github = <A extends Auth>(auth: A, config: OAuthConfig) => {
 					access_token: string;
 					refresh_token: string;
 					expires_in: number;
-
 					refresh_token_expires_in: number;
-			  }
-		>(request);
+			  };
+		const tokens = await handleRequest<ResponseBody>(request);
 		if ("expires_in" in tokens) {
 			return {
 				accessToken: tokens.access_token,
@@ -75,16 +67,31 @@ export const github = <A extends Auth>(auth: A, config: OAuthConfig) => {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
 		const githubUser = await handleRequest<GithubUser>(request);
-		const providerUserId = githubUser.id.toString();
-		return [providerUserId, githubUser] as const;
+		return githubUser;
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const url = createUrl("https://github.com/login/oauth/authorize", {
+				client_id: config.clientId,
+				scope: scope([], config.scope),
+				state
+			});
+			return [url, state] as const;
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.id.toString();
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type GithubUser = {

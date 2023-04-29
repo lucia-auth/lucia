@@ -3,21 +3,24 @@ import { generateRandomString } from "lucia-auth";
 import type { Auth, Key, LuciaError } from "lucia-auth";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
 
+// deprecate in v2 for better api
 export const provider = <
-	A extends Auth,
-	ProviderUser extends {},
-	Tokens extends {
+	_Auth extends Auth,
+	_ProviderUser extends {},
+	_Tokens extends {
 		accessToken: string;
 	}
 >(
-	auth: A,
+	auth: _Auth,
 	config: {
 		providerId: string;
 		getAuthorizationUrl: (state: string) => Promise<URL>;
-		getTokens: (code: string) => Promise<Tokens>;
+		getTokens: (code: string) => Promise<_Tokens>;
 		getProviderUser: (
 			accessToken: string
-		) => Promise<readonly [providerUserId: string, providerUser: ProviderUser]>;
+		) => Promise<
+			readonly [providerUserId: string, providerUser: _ProviderUser]
+		>;
 	}
 ) => {
 	return {
@@ -31,51 +34,19 @@ export const provider = <
 			const [providerUserId, providerUser] = await config.getProviderUser(
 				tokens.accessToken
 			);
-			const getExistingUser = async () => {
-				try {
-					const key = await auth.useKey(
-						config.providerId,
-						providerUserId,
-						null
-					);
-					const user = await auth.getUser(key.userId);
-					return user as LuciaUser<A>;
-				} catch (e) {
-					const error = e as Partial<LuciaError>;
-					if (error?.message !== "AUTH_INVALID_KEY_ID") throw e;
-					return null;
-				}
-			};
-			const existingUser = await getExistingUser();
+			const providerAuth = await connectAuth(
+				auth,
+				config.providerId,
+				providerUserId
+			);
 			return {
-				providerUser: providerUser as ProviderUser,
+				...providerAuth,
+				providerUser: providerUser as _ProviderUser,
 				providerUserId,
-				createPersistentKey: async (userId: string) => {
-					return await auth.createKey(userId, {
-						type: "persistent",
-						providerId: config.providerId,
-						providerUserId,
-						password: null
-					});
-				},
-				createUser: async (
-					attributes: CreateUserAttributesParameter<A>
-				): Promise<LuciaUser<A>> => {
-					const user = await auth.createUser({
-						primaryKey: {
-							providerId: config.providerId,
-							providerUserId,
-							password: null
-						},
-						attributes
-					});
-					return user as LuciaUser<A>;
-				},
-				existingUser,
 				tokens
 			} as const;
 		}
-	} as const satisfies OAuthProvider<A>;
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type OAuthConfig = {
@@ -85,16 +56,21 @@ export type OAuthConfig = {
 };
 
 export type OAuthProvider<A extends Auth> = {
-	validateCallback: (code: string) => Promise<{
+	validateCallback: (
+		code: string,
+		...args: any[]
+	) => Promise<{
 		existingUser: LuciaUser<A> | null;
 		createUser: (
 			attributes: CreateUserAttributesParameter<A>
 		) => Promise<LuciaUser<A>>;
 		createPersistentKey: (userId: string) => Promise<Key>;
 		providerUser: Record<string, any>;
-		tokens: Record<any, any>;
+		tokens: {
+			accessToken: string;
+		};
 	}>;
-	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	getAuthorizationUrl: () => Promise<readonly [URL, ...any[]]>;
 };
 
 export class LuciaOAuthRequestError extends Error {
@@ -113,4 +89,47 @@ export const generateState = () => {
 
 export const scope = (base: string[], config: string[] = []) => {
 	return [...base, ...(config ?? [])].join(" ");
+};
+
+export const connectAuth = async <_Auth extends Auth>(
+	auth: _Auth,
+	providerId: string,
+	providerUserId: string
+) => {
+	const getExistingUser = async () => {
+		try {
+			const key = await auth.useKey(providerId, providerUserId, null);
+			const user = await auth.getUser(key.userId);
+			return user as LuciaUser<_Auth>;
+		} catch (e) {
+			const error = e as Partial<LuciaError>;
+			if (error?.message !== "AUTH_INVALID_KEY_ID") throw e;
+			return null;
+		}
+	};
+	const existingUser = await getExistingUser();
+	return {
+		existingUser,
+		createPersistentKey: async (userId: string) => {
+			return await auth.createKey(userId, {
+				type: "persistent",
+				providerId: providerId,
+				providerUserId,
+				password: null
+			});
+		},
+		createUser: async (
+			attributes: CreateUserAttributesParameter<_Auth>
+		): Promise<LuciaUser<_Auth>> => {
+			const user = await auth.createUser({
+				primaryKey: {
+					providerId: providerId,
+					providerUserId,
+					password: null
+				},
+				attributes
+			});
+			return user as LuciaUser<_Auth>;
+		}
+	} as const;
 };

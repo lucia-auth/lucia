@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 const PROVIDER_ID = "auth0";
 
@@ -15,21 +15,7 @@ type Config = OAuthConfig & {
 	loginHint?: string;
 };
 
-export const auth0 = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl(new URL("/authorize", config.appDomain).toString(), {
-			client_id: config.clientId,
-			response_type: "code",
-			redirect_uri: config.redirectUri,
-			scope: scope(["openid", "profile"], config.scope),
-			state,
-			...(config.connection && { connection: config.connection }),
-			...(config.organization && { organization: config.organization }),
-			...(config.invitation && { invitation: config.invitation }),
-			...(config.loginHint && { login_hint: config.loginHint })
-		});
-		return url;
-	};
+export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getTokens = async (code: string) => {
 		const request = new Request(new URL("/oauth/token", config.appDomain), {
@@ -75,15 +61,44 @@ export const auth0 = <A extends Auth>(auth: A, config: Config) => {
 			updated_at: auth0Profile.updated_at
 		};
 
-		return [auth0User.id, auth0User] as const;
+		return auth0User;
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const url = createUrl(
+				new URL("/authorize", config.appDomain).toString(),
+				{
+					client_id: config.clientId,
+					response_type: "code",
+					redirect_uri: config.redirectUri,
+					scope: scope(["openid", "profile"], config.scope),
+					state,
+					...(config.connection && { connection: config.connection }),
+					...(config.organization && { organization: config.organization }),
+					...(config.invitation && { invitation: config.invitation }),
+					...(config.loginHint && { login_hint: config.loginHint })
+				}
+			);
+			return [url, state] as const;
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.id;
+			const providerAuth = await connectAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 type Auth0Profile = {

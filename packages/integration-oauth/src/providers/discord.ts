@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { connectAuth, generateState, scope } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -10,18 +10,7 @@ type Config = OAuthConfig & {
 
 const PROVIDER_ID = "discord";
 
-export const discord = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://discord.com/oauth2/authorize", {
-			response_type: "code",
-			client_id: config.clientId,
-			scope: scope(["identify"], config.scope),
-			redirect_uri: config.redirectUri,
-			state
-		});
-		return url;
-	};
-
+export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getTokens = async (code: string) => {
 		const request = new Request("https://discord.com/api/oauth2/token", {
 			method: "POST",
@@ -56,16 +45,33 @@ export const discord = <A extends Auth>(auth: A, config: Config) => {
 		const { user: discordUser } = await handleRequest<{
 			user: DiscordUser;
 		}>(request);
-		const providerUserId = discordUser.id;
-		return [providerUserId, discordUser] as const;
+		return discordUser
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const url = createUrl("https://discord.com/oauth2/authorize", {
+				response_type: "code",
+				client_id: config.clientId,
+				scope: scope(["identify"], config.scope),
+				redirect_uri: config.redirectUri,
+				state
+			});
+			return [url, state];
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.id
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type DiscordUser = {
