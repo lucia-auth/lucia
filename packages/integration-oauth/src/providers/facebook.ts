@@ -11,16 +11,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "facebook";
 
 export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
-			client_id: config.clientId,
-			scope: scope([], config.scope),
-			redirect_uri: config.redirectUri,
-			state
-		});
-		return url;
-	};
-
+	
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl(
 			"https://graph.facebook.com/v16.0/oauth/access_token",
