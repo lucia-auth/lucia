@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-test
 
+## 3.0.1
+
+### Patch changes
+
+- [#563](https://github.com/pilcrowOnPaper/lucia/pull/563) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unintended Node.js polyfill
+
 ## 3.0.0
 
 ### Major changes

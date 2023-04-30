@@ -16,7 +16,6 @@ type Config = OAuthConfig & {
 };
 
 export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-
 	const getTokens = async (code: string) => {
 		const request = new Request(new URL("/oauth/token", config.appDomain), {
 			method: "POST",
@@ -87,11 +86,7 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id;
-			const providerAuth = await connectAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
 			return {
 				...providerAuth,
 				providerUser,

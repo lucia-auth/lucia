@@ -12,7 +12,6 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "patreon";
 
 export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl("https://www.patreon.com/api/oauth2/token", {
 			client_id: config.clientId,
@@ -53,7 +52,7 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			data: PatreonUser;
 		}>(request);
 
-		return patreonUser
+		return patreonUser;
 	};
 
 	return {
