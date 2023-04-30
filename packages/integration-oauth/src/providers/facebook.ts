@@ -11,7 +11,6 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "facebook";
 
 export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl(
 			"https://graph.facebook.com/v16.0/oauth/access_token",

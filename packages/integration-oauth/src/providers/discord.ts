@@ -45,7 +45,7 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		const { user: discordUser } = await handleRequest<{
 			user: DiscordUser;
 		}>(request);
-		return discordUser
+		return discordUser;
 	};
 
 	return {
@@ -63,7 +63,7 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		validateCallback: async (code: string) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id
+			const providerUserId = providerUser.id;
 			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
 			return {
 				...providerAuth,

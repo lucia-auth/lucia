@@ -108,7 +108,6 @@ const validateCallback: (code: string) => Promise<ProviderSession>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-
 ## `Auth0Tokens`
 
 ```ts

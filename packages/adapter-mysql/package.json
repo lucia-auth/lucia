@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-mysql",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "MySQL adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
