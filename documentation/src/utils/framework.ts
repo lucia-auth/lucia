@@ -12,6 +12,10 @@ const frameworks = [
 	{
 		id: "astro",
 		title: "Astro"
+	},
+	{
+		id: "qwik",
+		title: "Qwik"
 	}
 ] as const;
 
