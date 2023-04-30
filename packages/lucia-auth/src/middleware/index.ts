@@ -4,10 +4,6 @@ import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
 } from "express";
-import type {
-	RequestEventAction,
-	RequestEventLoader
-} from "@builder.io/qwik-city";
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return (incomingMessage, outgoingMessage, env) => {
@@ -115,9 +111,14 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 	};
 };
 
-type QwikAPIContext = RequestEventLoader | RequestEventAction;
+type QwikRequestEvent = {
+	request: Request;
+	cookie: {
+		set: (name: string, value: string, options?: Cookie["attributes"]) => void;
+	};
+};
 
-export const qwik = (): Middleware<[QwikAPIContext]> => {
+export const qwik = (): Middleware<[QwikRequestEvent]> => {
 	return (c) => {
 		const requestContext = {
 			request: {
