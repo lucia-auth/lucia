@@ -72,28 +72,37 @@ const auth = lucia({
 Requires a third party driver:
 
 ```
-npm
+npm install @planetscale/database kysely-planetscale
 ```
 
 ```ts
 import { connect } from "@planetscale/database";
-import { Kysely, MysqlDialect } from "kysely";
-import lucia from "lucia-auth";
+import { Kysely } from "kysely";
+import { PlanetScaleDialect } from "kysely-planetscale";
+import { lucia, type KeySchema, type SessionSchema, type UserSchema } from "lucia-auth";
 import { planetscale } from "@lucia-auth/adapter-mysql";
 
-const connection = connect({
-	// ...
-});
+
+type DatabaseSchema = {
+  auth_session: SessionSchema;
+  auth_user: UserSchema;
+  auth_key: KeySchema;
+  // ...
+};
+
+const dbConfig = {
+  host: process.env.DATABASE_HOST,
+  username: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+};
 
 // refer above for types
 const db = new Kysely<DatabaseSchema>({
-	dialect: new MysqlDialect({
-		pool: connectionPool
-	})
+	dialect: new PlanetScaleDialect(dbConfig)
 });
 
 const auth = lucia({
-	adapter: planetscale(connect)
+	  adapter: planetscale(connect(dbConfig)),
 	// ...
 });
 ```

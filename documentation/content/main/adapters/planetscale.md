@@ -17,7 +17,9 @@ import { planetscale } from "@lucia-auth/adapter-mysql";
 import { connect } from "@planetscale/database";
 
 const connection = connect({
-	// ...
+  host: ...,
+  username: ...,
+  password: ...,
 });
 
 const auth = lucia({
