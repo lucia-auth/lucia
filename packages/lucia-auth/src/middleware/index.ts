@@ -111,6 +111,33 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 	};
 };
 
+type QwikRequestEvent = {
+	request: Request;
+	cookie: {
+		set: (name: string, value: string, options?: Cookie["attributes"]) => void;
+	};
+};
+
+export const qwik = (): Middleware<[QwikRequestEvent]> => {
+	return (c) => {
+		const requestContext = {
+			request: {
+				url: c.request.url.toString(),
+				method: c.request.method,
+				headers: {
+					origin: c.request.headers.get("Origin") ?? null,
+					cookie: c.request.headers.get("Cookie") ?? null
+				}
+			},
+			setCookie: (cookie) => {
+				c.cookie.set(cookie.name, cookie.value, cookie.attributes);
+			}
+		} as const satisfies RequestContext;
+
+		return requestContext;
+	};
+};
+
 export const lucia = (): Middleware<[RequestContext]> => {
 	return (requestContext) => requestContext;
 };

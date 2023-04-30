@@ -212,3 +212,35 @@ const response = new Response(null, {
 });
 return response;
 ```
+
+## `qwik()`
+
+Middleware for Qwik City.
+
+```ts
+const qwik = () => Middleware;
+```
+
+#### Usage
+
+```ts
+import { qwik } from "lucia-auth/middleware";
+
+const auth = lucia({
+	middleware: qwik()
+	// ...
+});
+```
+
+```ts
+auth.handleRequest(requestEvent as RequestEventLoader);
+```
+
+```ts
+auth.handleRequest(requestEvent as RequestEventAction);
+```
+
+| name                  | type                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------- |
+| requestEvent (Loader) | [`RequestEventLoader`](https://qwik.builder.io/docs/route-loader/#requestevent)        |
+| requestEvent (Action) | [`RequestEventAction`](https://qwik.builder.io/docs/action/#http-request-and-response) |
