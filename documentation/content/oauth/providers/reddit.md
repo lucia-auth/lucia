@@ -98,7 +98,6 @@ const validateCallback: (code: string) => Promise<ProviderSession>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-
 ## `RedditTokens`
 
 ```ts

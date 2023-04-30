@@ -1,10 +1,19 @@
 # lucia-auth
 
+## 1.5.0
+
+### Minor changes
+
+- [#567](https://github.com/pilcrowOnPaper/lucia/pull/567) by [@gustavocadev](https://github.com/gustavocadev) : Add `qwik()` middleware
+
+- [#553](https://github.com/pilcrowOnPaper/lucia/pull/553) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `web()` middleware
+
 ## 1.4.0
 
 ### Minor changes
 
 - [#539](https://github.com/pilcrowOnPaper/lucia/pull/539) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update adapter specification
+
   - `setUser()` may return `void`
 
 ### Patch changes

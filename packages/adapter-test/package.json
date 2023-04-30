@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-test",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "Tests for database adapters for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
