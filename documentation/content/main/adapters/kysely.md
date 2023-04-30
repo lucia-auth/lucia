@@ -79,21 +79,25 @@ npm install @planetscale/database kysely-planetscale
 import { connect } from "@planetscale/database";
 import { Kysely } from "kysely";
 import { PlanetScaleDialect } from "kysely-planetscale";
-import { lucia, type KeySchema, type SessionSchema, type UserSchema } from "lucia-auth";
+import {
+	lucia,
+	type KeySchema,
+	type SessionSchema,
+	type UserSchema
+} from "lucia-auth";
 import { planetscale } from "@lucia-auth/adapter-mysql";
 
-
 type DatabaseSchema = {
-  auth_session: SessionSchema;
-  auth_user: UserSchema;
-  auth_key: KeySchema;
-  // ...
+	auth_session: SessionSchema;
+	auth_user: UserSchema;
+	auth_key: KeySchema;
+	// ...
 };
 
 const dbConfig = {
-  host: process.env.DATABASE_HOST,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
+	host: "<host>",
+	username: "<user>",
+	password: "<password>"
 };
 
 // refer above for types
@@ -102,7 +106,7 @@ const db = new Kysely<DatabaseSchema>({
 });
 
 const auth = lucia({
-	  adapter: planetscale(connect(dbConfig)),
+	adapter: planetscale(connect(dbConfig))
 	// ...
 });
 ```
