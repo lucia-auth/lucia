@@ -1,54 +1,53 @@
 import type { LuciaQueryHandler } from "@lucia-auth/adapter-test";
-import type { SessionSchema } from "lucia-auth/types.js";
+import type { SessionSchema } from "lucia-auth";
 
 import { createClient } from "redis";
 import redis from "../src/index.js";
 import { LuciaError } from "lucia-auth";
 
-const sessionInstance = createClient({
+const redisNamespaces = {
+	session: "session",
+	userSession: "userSession"
+};
+
+const redisClient = createClient({
 	socket: {
 		port: 6379
 	}
 });
 
-const userSessionInstance = createClient({
-	socket: {
-		port: 6380
-	}
-});
+// @ts-expect-error await is available in the current context
+await redisClient.connect();
 
-await sessionInstance.connect();
-await userSessionInstance.connect();
-
-export const adapter = redis({
-	session: sessionInstance,
-	userSession: userSessionInstance
-})(LuciaError);
+export const adapter = redis(redisClient, { namespaces: redisNamespaces })(
+	LuciaError
+);
 
 export const queryHandler: LuciaQueryHandler = {
 	session: {
 		get: async () => {
-			const sessionIds = await sessionInstance.keys("*");
+			const sessionIds = await redisClient.keys(`${redisNamespaces.session}:*`);
 			const sessionData = await Promise.all(
-				sessionIds.map((id) => sessionInstance.get(id))
+				sessionIds.map((id) => redisClient.get(id))
 			);
-			const sessions = sessionData
+			return sessionData
 				.filter((val): val is string => val !== null)
 				.map((data) => JSON.parse(data) as SessionSchema);
-
-			return sessions;
 		},
 		insert: async (session) => {
 			await Promise.all([
-				sessionInstance.set(session.id, JSON.stringify(session)),
-				userSessionInstance.lPush(session.user_id, session.id)
+				redisClient.lPush(
+					`${redisNamespaces.userSession}:${session.user_id}`,
+					session.id
+				),
+				redisClient.set(
+					`${redisNamespaces.session}:${session.id}`,
+					JSON.stringify(session)
+				)
 			]);
 		},
 		clear: async () => {
-			await Promise.all([
-				sessionInstance.flushAll(),
-				userSessionInstance.flushAll()
-			]);
+			await redisClient.flushAll();
 		}
 	}
 };

@@ -5,61 +5,100 @@ import type {
 } from "lucia-auth";
 import type { RedisClientType } from "redis";
 
+type AdapterSessionRedisOptions = {
+	namespaces?: {
+		session?: string;
+		userSession?: string;
+	};
+};
+
+const DEFAULT_SESSION_NAMESPACE = "session";
+const DEFAULT_USER_SESSION_NAMESPACE = "userSession";
+
 const adapter =
-	(redisClient: {
-		session: RedisClientType<any, any, any>;
-		userSession: RedisClientType<any, any, any>;
-	}): AdapterFunction<SessionAdapter> =>
+	(
+		redisClient: RedisClientType<any, any, any>,
+		options?: AdapterSessionRedisOptions
+	): AdapterFunction<SessionAdapter> =>
 	() => {
-		const { session: sessionRedis, userSession: userSessionRedis } =
-			redisClient;
+		const {
+			namespaces: {
+				session: sessionNamespace = DEFAULT_SESSION_NAMESPACE,
+				userSession: userSessionNamespace = DEFAULT_USER_SESSION_NAMESPACE
+			} = {}
+		} = options ?? {};
+
 		return {
 			getSession: async (sessionId) => {
-				const sessionData = await sessionRedis.get(sessionId);
+				const sessionData = await redisClient.get(
+					`${sessionNamespace}:${sessionId}`
+				);
 				if (!sessionData) return null;
-				const session = JSON.parse(sessionData) as SessionSchema;
-				return session;
+				return JSON.parse(sessionData) as SessionSchema;
 			},
 			getSessionsByUserId: async (userId) => {
-				const sessionIds = await userSessionRedis.lRange(userId, 0, -1);
-				const sessionData = await Promise.all(
-					sessionIds.map((id) => sessionRedis.get(id))
+				const sessionIds = await redisClient.lRange(
+					`${userSessionNamespace}:${userId}`,
+					0,
+					-1
 				);
-				const sessions = sessionData
+				const sessionData = await Promise.all(
+					sessionIds.map((id) => redisClient.get(`${sessionNamespace}:${id}`))
+				);
+				return sessionData
 					.filter((val): val is string => val !== null)
 					.map((val) => JSON.parse(val) as SessionSchema);
-				return sessions;
 			},
 			setSession: async (session) => {
 				await Promise.all([
-					userSessionRedis.lPush(session.user_id, session.id),
-					sessionRedis.set(session.id, JSON.stringify(session), {
-						EX: Math.floor(Number(session.idle_expires) / 1000)
-					})
+					redisClient.lPush(
+						`${userSessionNamespace}:${session.user_id}`,
+						session.id
+					),
+					redisClient.set(
+						`${sessionNamespace}:${session.id}`,
+						JSON.stringify(session),
+						{
+							EX: Math.floor(Number(session.idle_expires) / 1000)
+						}
+					)
 				]);
 			},
 			deleteSession: async (...sessionIds) => {
 				const targetSessionData = await Promise.all(
-					sessionIds.map((id) => sessionRedis.get(id))
+					sessionIds.map((id) => redisClient.get(`${sessionNamespace}:${id}`))
 				);
 				const sessions = targetSessionData
 					.filter((val): val is string => val !== null)
 					.map((val) => JSON.parse(val) as SessionSchema);
 				await Promise.all([
-					...sessionIds.map((id) => sessionRedis.del(id)),
+					...sessionIds.map((id) =>
+						redisClient.del(`${sessionNamespace}:${id}`)
+					),
 					...sessions.map((session) =>
-						userSessionRedis.lRem(session.user_id, 1, session.id)
+						redisClient.lRem(
+							`${userSessionNamespace}:${session.user_id}`,
+							0,
+							session.id
+						)
 					)
 				]);
 			},
 			deleteSessionsByUserId: async (userId) => {
-				const sessionIds = await userSessionRedis.lRange(userId, 0, -1);
+				const sessionIds = await redisClient.lRange(
+					`${userSessionNamespace}:${userId}`,
+					0,
+					-1
+				);
 				await Promise.all([
-					...sessionIds.map((id) => sessionRedis.del(id)),
-					userSessionRedis.del(userId)
+					...sessionIds.map((id) =>
+						redisClient.del(`${sessionNamespace}:${id}`)
+					),
+					redisClient.del(`${userSessionNamespace}:${userId}`)
 				]);
 			}
 		};
 	};
 
+export { AdapterSessionRedisOptions };
 export default adapter;
