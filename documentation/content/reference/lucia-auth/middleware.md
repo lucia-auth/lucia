@@ -31,7 +31,7 @@ auth.handleRequest(context as APIContext);
 import { astro } from "lucia-auth/middleware";
 
 const auth = lucia({
-	adapter: astro()
+	middleware: astro()
 	// ...
 });
 ```
@@ -60,7 +60,7 @@ const express = () => Middleware;
 import { express } from "lucia-auth/middleware";
 
 const auth = lucia({
-	adapter: express()
+	middleware: express()
 	// ...
 });
 ```
@@ -102,7 +102,7 @@ const lucia = () => Middleware;
 import { lucia } from "lucia-auth/middleware";
 
 const auth = lucia({
-	adapter: lucia()
+	middleware: lucia()
 	// ...
 });
 ```
@@ -129,7 +129,7 @@ const node = () => Middleware;
 import { node } from "lucia-auth/middleware";
 
 const auth = lucia({
-	adapter: node()
+	middleware: node()
 	// ...
 });
 ```
@@ -157,7 +157,7 @@ const sveltekit = () => Middleware;
 import { sveltekit } from "lucia-auth/middleware";
 
 const auth = lucia({
-	adapter: sveltekit()
+	middleware: sveltekit()
 	// ...
 });
 ```
@@ -184,7 +184,7 @@ const web = () => Middleware;
 import { web } from "lucia-auth/middleware";
 
 const auth = lucia({
-	adapter: web()
+	middleware: web()
 	// ...
 });
 ```
