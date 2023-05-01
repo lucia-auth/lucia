@@ -57,7 +57,10 @@ export const key = mysqlTable("auth_key", {
 	primaryKey: boolean("primary_key").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
-	})
+	}),
+	expires: bigint("expires", {
+    mode: "number",
+  }),
 });
 ```
 
