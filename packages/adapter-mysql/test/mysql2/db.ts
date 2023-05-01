@@ -1,4 +1,5 @@
-import mysql from "mysql2/promise";
+import * as mysql from "mysql2/promise";
+// @ts-expect-error dotenv exists in the monorepo root
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { LuciaError } from "lucia-auth";
