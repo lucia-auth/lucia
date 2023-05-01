@@ -2,7 +2,9 @@ import type {
 	Adapter,
 	AdapterFunction,
 	KeySchema,
+	SessionAdapter,
 	SessionSchema,
+	UserAdapter,
 	UserSchema
 } from "lucia-auth";
 import { transformDatabaseKey, transformDatabaseSession } from "./utils.js";
@@ -13,16 +15,10 @@ interface PossiblePrismaError {
 	message: string;
 }
 
-type Models = {
+type UserModels = {
 	authUser: {
 		schema: UserSchema;
 		relations: {};
-	};
-	authSession: {
-		schema: SessionSchema;
-		relations: {
-			auth_user: UserSchema;
-		};
 	};
 	authKey: {
 		schema: KeySchema;
@@ -32,10 +28,19 @@ type Models = {
 	};
 };
 
-const adapter =
-	(prismaClient: PrismaClient<Models>): AdapterFunction<Adapter> =>
+type SessionModels = {
+	authSession: {
+		schema: SessionSchema;
+		relations: {
+			auth_user: UserSchema;
+		};
+	};
+};
+
+const userAdapter =
+	(prismaClient: PrismaClient<UserModels>): AdapterFunction<UserAdapter> =>
 	(LuciaError) => {
-		const prisma = prismaClient as any as SmartPrismaClient<Models>;
+		const prisma = prismaClient as SmartPrismaClient<UserModels>;
 		return {
 			getUser: async (userId) => {
 				return await prisma.authUser.findUnique({
@@ -43,39 +48,6 @@ const adapter =
 						id: userId
 					}
 				});
-			},
-			getSessionAndUserBySessionId: async (sessionId) => {
-				const data = await prisma.authSession.findUnique({
-					where: {
-						id: sessionId
-					},
-					include: {
-						auth_user: true
-					}
-				});
-				if (!data) return null;
-				const { auth_user: user, ...session } = data;
-				return {
-					user,
-					session: transformDatabaseSession(session)
-				};
-			},
-			getSession: async (sessionId) => {
-				const session = await prisma.authSession.findUnique({
-					where: {
-						id: sessionId
-					}
-				});
-				if (!session) return null;
-				return transformDatabaseSession(session);
-			},
-			getSessionsByUserId: async (userId) => {
-				const sessions = await prisma.authSession.findMany({
-					where: {
-						user_id: userId
-					}
-				});
-				return sessions.map((session) => transformDatabaseSession(session));
 			},
 			setUser: async (userId, attributes, key) => {
 				if (!key) {
@@ -110,34 +82,6 @@ const adapter =
 				await prisma.authUser.deleteMany({
 					where: {
 						id: userId
-					}
-				});
-			},
-			setSession: async (session) => {
-				try {
-					await prisma.authSession.create({
-						data: session
-					});
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2003")
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					if (error.code === "P2002" && error.message?.includes("`id`"))
-						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
-					throw error;
-				}
-			},
-			deleteSession: async (sessionId) => {
-				await prisma.authSession.delete({
-					where: {
-						id: sessionId
-					}
-				});
-			},
-			deleteSessionsByUserId: async (userId) => {
-				await prisma.authSession.deleteMany({
-					where: {
-						user_id: userId
 					}
 				});
 			},
@@ -223,4 +167,91 @@ const adapter =
 		};
 	};
 
+const sessionAdapter =
+	(
+		prismaClient: PrismaClient<SessionModels>
+	): AdapterFunction<SessionAdapter> =>
+	(LuciaError) => {
+		const prisma = prismaClient as SmartPrismaClient<SessionModels>;
+		return {
+			getSession: async (sessionId) => {
+				const session = await prisma.authSession.findUnique({
+					where: {
+						id: sessionId
+					}
+				});
+				if (!session) return null;
+				return transformDatabaseSession(session);
+			},
+			getSessionsByUserId: async (userId) => {
+				const sessions = await prisma.authSession.findMany({
+					where: {
+						user_id: userId
+					}
+				});
+				return sessions.map((session) => transformDatabaseSession(session));
+			},
+			setSession: async (session) => {
+				try {
+					await prisma.authSession.create({
+						data: session
+					});
+				} catch (e) {
+					const error = e as Partial<PossiblePrismaError>;
+					if (error.code === "P2003")
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					if (error.code === "P2002" && error.message?.includes("`id`"))
+						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+					throw error;
+				}
+			},
+			deleteSession: async (sessionId) => {
+				await prisma.authSession.delete({
+					where: {
+						id: sessionId
+					}
+				});
+			},
+			deleteSessionsByUserId: async (userId) => {
+				await prisma.authSession.deleteMany({
+					where: {
+						user_id: userId
+					}
+				});
+			}
+		};
+	};
+
+const adapter = (
+	prismaClient: PrismaClient<UserModels & SessionModels>
+): AdapterFunction<Adapter> => {
+	const prisma = prismaClient as SmartPrismaClient<UserModels & SessionModels>;
+	const userAdapterInstance = userAdapter(prisma);
+	const sessionAdapterInstance = sessionAdapter(prisma);
+
+	return (LuciaError) => {
+		return {
+			...userAdapterInstance(LuciaError),
+			...sessionAdapterInstance(LuciaError),
+			getSessionAndUserBySessionId: async (sessionId) => {
+				const data = await prisma.authSession.findUnique({
+					where: {
+						id: sessionId
+					},
+					include: {
+						auth_user: true
+					}
+				});
+				if (!data) return null;
+				const { auth_user: user, ...session } = data;
+				return {
+					user,
+					session: transformDatabaseSession(session)
+				};
+			}
+		};
+	};
+};
+
+export { sessionAdapter, userAdapter };
 export default adapter;
