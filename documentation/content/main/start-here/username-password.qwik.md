@@ -300,7 +300,7 @@ We’ll use the key created in the previous section to reference the user and au
 We'll use [`routeAction$`](https://qwik.builder.io/docs/action/) to handle the form submission. This will be called when the form is submitted.
 
 ```tsx
-// src/routes/signup/index.tsx
+// src/routes/login/index.tsx
 import { component$ } from "@builder.io/qwik";
 import {
 	Form,
@@ -420,7 +420,7 @@ export default component$(() => {
 If the session exists, redirect authenticated users to the profile page.
 
 ```tsx
-// src/routes/signup/index.tsx
+// src/routes/login/index.tsx
 import { component$ } from "@builder.io/qwik";
 import {
 	Link,
@@ -452,9 +452,10 @@ This page will be the root page (`/`). This route will show the user's data and 
 
 ### Get current user
 
-Create `pages/index.tsx` and set up the page and `getServerSideProps()`. Redirect the user to `/login` if they are unauthenticated.
+We'll use [`routeLoader$`](https://qwik.builder.io/docs/loader/) to get the current user. This will be called when the page is loaded and if the user is not authenticated, we'll redirect them to the login page.
 
 ```tsx
+// src/routes/index.tsx
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, Form, routeAction$ } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
