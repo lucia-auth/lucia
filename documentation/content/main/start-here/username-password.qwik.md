@@ -191,22 +191,11 @@ We'll add the action to the form
 
 ```tsx
 export default component$(() => {
-```
+	const signupAction = useSignupAction();
 
-```diff
-+  const signupAction = useSignupAction();
-```
-
-```tsx
 	return (
 		<>
-```
-
-```diff
-+          <Form action={signupAction}>
-```
-
-```tsx
+			<Form action={signupAction}>
 				<label for="username">username</label>
 
 				<br />
@@ -396,43 +385,33 @@ import { LuciaError } from "lucia-auth";
 // .... the action hook shown above
 
 export default component$(() => {
-```
+	const loginAction = useLoginAction();
 
-```diff
-+ const loginAction = useLoginAction();
-```
+	return (
+		<>
+			<h2>Sign in</h2>
 
-```tsx
-  return (
-    <>
-      <h2>Sign in</h2>
-```
-
-```diff
-+     <Form action={loginAction}>
-```
-
-```tsx
-        <label for="username">username</label>
-        <br />
-        <input id="username" name="username" />
-        <br />
-        <label for="password">password</label>
-        <br />
-        <input type="password" id="password" name="password" />
-        <br />
-        <button class="button" type="submit">
-          Continue
-        </button>
-      </Form>
-      {loginAction.value?.failed && (
-        <p class="error">{loginAction.value.error ?? ''}</p>
-      )}
-      <Link href="/signup" class="link">
-        Create a new account
-      </Link>
-    </>
-  );
+			<Form action={loginAction}>
+				<label for="username">username</label>
+				<br />
+				<input id="username" name="username" />
+				<br />
+				<label for="password">password</label>
+				<br />
+				<input type="password" id="password" name="password" />
+				<br />
+				<button class="button" type="submit">
+					Continue
+				</button>
+			</Form>
+			{loginAction.value?.failed && (
+				<p class="error">{loginAction.value.error ?? ""}</p>
+			)}
+			<Link href="/signup" class="link">
+				Create a new account
+			</Link>
+		</>
+	);
 });
 ```
 
@@ -528,45 +507,32 @@ export const useSignoutAction = routeAction$(async (values, event) => {
 
 This can be called when submitting a form:
 
-```diff
+```tsx
 // src/routes/index.tsx
 import {
-  routeLoader$,
-  routeAction$,
-+ Form
+	routeLoader$,
+	routeAction$,
+	Form // Let's import the Form component
 } from "@builder.io/qwik-city";
-```
 
-```tsx
 // ...
 
 export default component$(() => {
-  const userLoader = useUserLoader();
+	const userLoader = useUserLoader();
+	const signoutAction = useSignoutAction();
 
-```
+	return (
+		<>
+			<p>
+				This page is protected and can only be accessed by authenticated users.
+			</p>
+			<pre class="code">{JSON.stringify(userLoader.value.user, null, 2)}</pre>
 
-```diff
-+ const signoutAction = useSignoutAction();
-```
-
-```tsx
-  return (
-    <>
-      <p>
-        This page is protected and can only be accessed by authenticated users.
-      </p>
-      <pre class="code">{JSON.stringify(userLoader.value.user, null, 2)}</pre>
-```
-
-```diff
-+      <Form action={signoutAction} class="button">
-+        <button type="submit">Sign out</button>
-+      </Form>
-```
-
-```tsx
-    </>
-  );
+			<Form action={signoutAction} class="button">
+				<button type="submit">Sign out</button>
+			</Form>
+		</>
+	);
 });
 ```
 
