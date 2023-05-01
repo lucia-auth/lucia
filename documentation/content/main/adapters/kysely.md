@@ -73,26 +73,16 @@ Requires a third party driver:
 
 ```
 npm install @planetscale/database kysely-planetscale
+pnpm add @planetscale/database kysely-planetscale
+yarn add @planetscale/database kysely-planetscale
 ```
 
 ```ts
 import { connect } from "@planetscale/database";
 import { Kysely } from "kysely";
 import { PlanetScaleDialect } from "kysely-planetscale";
-import {
-	lucia,
-	type KeySchema,
-	type SessionSchema,
-	type UserSchema
-} from "lucia-auth";
+import { lucia } from "lucia-auth";
 import { planetscale } from "@lucia-auth/adapter-mysql";
-
-type DatabaseSchema = {
-	auth_session: SessionSchema;
-	auth_user: UserSchema;
-	auth_key: KeySchema;
-	// ...
-};
 
 const dbConfig = {
 	host: "<host>",
