@@ -99,7 +99,7 @@ const lucia = () => Middleware;
 #### Usage
 
 ```ts
-import { lucia } from "lucia-auth/middleware";
+import { lucia as luciaMiddleware } from "lucia-auth/middleware";
 
 const auth = lucia({
 	middleware: lucia()
