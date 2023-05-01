@@ -102,7 +102,7 @@ const lucia = () => Middleware;
 import { lucia as luciaMiddleware } from "lucia-auth/middleware";
 
 const auth = lucia({
-	middleware: lucia()
+	middleware: luciaMiddleware()
 	// ...
 });
 ```
