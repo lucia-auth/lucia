@@ -592,8 +592,8 @@ export type Configuration = {
 	adapter:
 		| ((E: LuciaErrorConstructor) => Adapter)
 		| {
-				user: (E: LuciaErrorConstructor) => UserAdapter | Adapter;
-				session: (E: LuciaErrorConstructor) => SessionAdapter | Adapter;
+				user: (E: LuciaErrorConstructor) => UserAdapter;
+				session: (E: LuciaErrorConstructor) => SessionAdapter;
 		  };
 	env: Env;
 
