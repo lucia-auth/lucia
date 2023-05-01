@@ -5,6 +5,7 @@ import type {
 } from "@lucia-auth/adapter-test";
 import mongodb from "../src/index.js";
 
+// @ts-expect-error dotenv exists in the monorepo root
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { transformKeyDoc, transformSessionDoc } from "../src/utils.js";

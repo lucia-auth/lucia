@@ -4,7 +4,12 @@ import {
 	transformSessionDoc,
 	transformUserDoc
 } from "./utils.js";
-import type { Adapter, AdapterFunction } from "lucia-auth";
+import type {
+	Adapter,
+	AdapterFunction,
+	SessionAdapter,
+	UserAdapter
+} from "lucia-auth";
 import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
 
 const createMongoValues = (object: Record<any, any>) => {
@@ -22,49 +27,16 @@ const DEFAULT_PROJECTION = {
 	_doc: 0
 };
 
-const adapter = (mongoose: Mongoose): AdapterFunction<Adapter> => {
+const userAdapter = (mongoose: Mongoose): AdapterFunction<UserAdapter> => {
 	const User = mongoose.model<UserDoc>("auth_user");
-	const Session = mongoose.model<SessionDoc>("auth_session");
 	const Key = mongoose.model<KeyDoc>("auth_key");
+
 	return (LuciaError) => {
 		return {
 			getUser: async (userId: string) => {
 				const userDoc = await User.findById(userId, DEFAULT_PROJECTION).lean();
 				if (!userDoc) return null;
 				return transformUserDoc(userDoc);
-			},
-			getSessionAndUserBySessionId: async (sessionId) => {
-				const session = await Session.findById(
-					sessionId,
-					DEFAULT_PROJECTION
-				).lean();
-				if (!session) return null;
-				const user = await User.findById(
-					session.user_id,
-					DEFAULT_PROJECTION
-				).lean();
-				if (!user) return null;
-				return {
-					user: transformUserDoc(user),
-					session: transformSessionDoc(session)
-				};
-			},
-			getSession: async (sessionId) => {
-				const session = await Session.findById(
-					sessionId,
-					DEFAULT_PROJECTION
-				).lean();
-				if (!session) return null;
-				return transformSessionDoc(session);
-			},
-			getSessionsByUserId: async (userId) => {
-				const sessions = await Session.find(
-					{
-						user_id: userId
-					},
-					DEFAULT_PROJECTION
-				).lean();
-				return sessions.map((val) => transformSessionDoc(val));
 			},
 			setUser: async (userId, userAttributes, key) => {
 				if (key) {
@@ -99,33 +71,6 @@ const adapter = (mongoose: Mongoose): AdapterFunction<Adapter> => {
 			deleteUser: async (userId: string) => {
 				await User.findOneAndDelete({
 					_id: userId
-				});
-			},
-			setSession: async (session) => {
-				const userDoc = await User.findById(
-					session.user_id,
-					DEFAULT_PROJECTION
-				).lean();
-				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
-				try {
-					const sessionDoc = new Session(createMongoValues(session));
-					await Session.create(sessionDoc);
-				} catch (error) {
-					if (
-						error instanceof Error &&
-						error.message.includes("E11000") &&
-						error.message.includes("id")
-					)
-						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
-					throw error;
-				}
-			},
-			deleteSession: async (sessionId) => {
-				await Session.findByIdAndDelete(sessionId);
-			},
-			deleteSessionsByUserId: async (userId) => {
-				await Session.deleteMany({
-					user_id: userId
 				});
 			},
 			updateUserAttributes: async (userId, attributes) => {
@@ -196,4 +141,99 @@ const adapter = (mongoose: Mongoose): AdapterFunction<Adapter> => {
 	};
 };
 
+const sessionAdapter = (
+	mongoose: Mongoose
+): AdapterFunction<SessionAdapter> => {
+	const Session = mongoose.model<SessionDoc>("auth_session");
+
+	return (LuciaError) => {
+		return {
+			getSession: async (sessionId) => {
+				const session = await Session.findById(
+					sessionId,
+					DEFAULT_PROJECTION
+				).lean();
+				if (!session) return null;
+				return transformSessionDoc(session);
+			},
+			getSessionsByUserId: async (userId) => {
+				const sessions = await Session.find(
+					{
+						user_id: userId
+					},
+					DEFAULT_PROJECTION
+				).lean();
+				return sessions.map((val) => transformSessionDoc(val));
+			},
+			setSession: async (session) => {
+				try {
+					const sessionDoc = new Session(createMongoValues(session));
+					await Session.create(sessionDoc);
+				} catch (error) {
+					if (
+						error instanceof Error &&
+						error.message.includes("E11000") &&
+						error.message.includes("id")
+					)
+						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
+					throw error;
+				}
+			},
+			deleteSession: async (sessionId) => {
+				await Session.findByIdAndDelete(sessionId);
+			},
+			deleteSessionsByUserId: async (userId) => {
+				await Session.deleteMany({
+					user_id: userId
+				});
+			}
+		};
+	};
+};
+
+const adapter = (mongoose: Mongoose): AdapterFunction<Adapter> => {
+	const User = mongoose.model<UserDoc>("auth_user");
+	const Session = mongoose.model<SessionDoc>("auth_session");
+	const Key = mongoose.model<KeyDoc>("auth_key");
+
+	const userAdapterInstance = userAdapter(mongoose);
+	const sessionAdapterInstance = sessionAdapter(mongoose);
+
+	return (LuciaError) => {
+		const userMethods = userAdapterInstance(LuciaError);
+		const sessionMethods = sessionAdapterInstance(LuciaError);
+
+		return {
+			...userMethods,
+			...sessionMethods,
+			getSessionAndUserBySessionId: async (sessionId) => {
+				const session = await Session.findById(
+					sessionId,
+					DEFAULT_PROJECTION
+				).lean();
+				if (!session) return null;
+				const user = await User.findById(
+					session.user_id,
+					DEFAULT_PROJECTION
+				).lean();
+				if (!user) return null;
+				return {
+					user: transformUserDoc(user),
+					session: transformSessionDoc(session)
+				};
+			},
+			// NOTE: we override the setSession method here to ensure that the user exists
+			setSession: async (session) => {
+				const userDoc = await User.findById(
+					session.user_id,
+					DEFAULT_PROJECTION
+				).lean();
+				if (!userDoc) throw new LuciaError("AUTH_INVALID_USER_ID");
+				return sessionMethods.setSession(session);
+			}
+		};
+	};
+};
+
+export { userAdapter, sessionAdapter };
 export default adapter;
