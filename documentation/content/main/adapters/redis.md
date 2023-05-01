@@ -15,9 +15,9 @@ const adapter: (
 
 ### Parameter
 
-| name                          | type            | description                                                                                       | default     |
-| ----------------------------- | --------------- | ------------------------------------------------------------------------------------------------- | ----------- |
-| redisClient                   | RedisClientType | client for Redis database it uses namespace to differenetiate sessions to user-sessions relations |             |
+| name                           | type            | description                                                                                       | default     |
+| ------------------------------ | --------------- | ------------------------------------------------------------------------------------------------- | ----------- |
+| redisClient                    | RedisClientType | client for Redis database it uses namespace to differenetiate sessions to user-sessions relations |             |
 | options.namespaces.session     | string          | namespace used for the sessions data, used like `${options.namespace.session}:${sessionId}`       | session     |
 | options.namespaces.userSession | string          | namespace used for the user-sessions data, used like `${options.namespace.user}:${userId}`        | userSession |
 
