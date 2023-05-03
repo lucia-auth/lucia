@@ -59,8 +59,8 @@ export const key = mysqlTable("auth_key", {
 		length: 255
 	}),
 	expires: bigint("expires", {
-    mode: "number",
-  }),
+		mode: "number"
+	})
 });
 ```
 
