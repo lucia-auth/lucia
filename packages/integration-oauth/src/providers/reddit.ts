@@ -3,6 +3,7 @@ import { scope, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
+import { encodeBase64 } from "../utils.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -67,23 +68,6 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider<_Auth>;
-};
-
-const encodeBase64 = (s: string) => {
-	// ORDER IS IMPORTANT!!
-	// Buffer API EXISTS IN DENO!!
-	if (typeof window !== "undefined" && "Deno" in window) {
-		// deno
-		return btoa(s);
-	}
-	if (typeof Buffer === "function") {
-		// node
-		return Buffer.from(s).toString("base64");
-	}
-
-	// standard API
-	// IGNORE WARNING
-	return btoa(s);
 };
 
 export type RedditUser = {
