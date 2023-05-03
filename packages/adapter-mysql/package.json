@@ -40,7 +40,7 @@
 	"peerDependencies": {
 		"lucia-auth": "^1.4.0",
 		"mysql2": "^3.0.0",
-		"@planetscale/database": "^1.7.0"
+		"@planetscale/database": "^1.0.0"
 	},
 	"peerDependenciesMeta": {
 		"mysql2": {
