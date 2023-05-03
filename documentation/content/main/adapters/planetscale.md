@@ -8,7 +8,7 @@ There are few ways you can use Lucia with PlanetScale:
 
 - [PlanetScale serverless driver adapter](/adapters/planetscale)
 - [Prisma adapter](/adapters/prisma)
-- Query builders such as [Drizzle](/adapters/drizzle) and [Kysely](/adapters/drizzle) via one of the [MySQL adapters](/adapters/mysql)
+- Query builders such as [Drizzle](/adapters/drizzle) and [Kysely](/adapters/kysely) via one of the [MySQL adapters](/adapters/mysql)
 
 The serverless driver allows you to query PlanetScale databases in a serverless environment, including the Edge runtime. This can also be used with the query builders mentioned above.
 
