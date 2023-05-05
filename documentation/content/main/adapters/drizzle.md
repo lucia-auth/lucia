@@ -129,10 +129,10 @@ const session = pgTable("auth_session", {
 	})
 		.notNull()
 		.references(() => user.id),
-	activeExpires: bigInt("active_expires", {
+	activeExpires: bigint("active_expires", {
 		mode: "number"
 	}).notNull(),
-	idleExpires: bigInt("idle_expires", {
+	idleExpires: bigint("idle_expires", {
 		mode: "number"
 	}).notNull()
 });
@@ -146,7 +146,7 @@ const key = pgTable("auth_key", {
 	})
 		.notNull()
 		.references(() => user.id),
-	primaryKey: boolean().notNull(),
+	primaryKey: boolean("primary_key").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
 	})
