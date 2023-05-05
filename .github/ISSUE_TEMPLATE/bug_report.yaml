@@ -14,52 +14,21 @@ body:
       description: What package is affected?
       options:
         - lucia-auth
-        - ​@lucia-auth/astro
-        - ​@lucia-auth/nextjs
-        - ​@lucia-auth/sveltekit
         - ​@lucia-auth/oauth
-        - ​@lucia-auth/adapter-fauna
-        - ​@lucia-auth/adapter-kysely
+        - ​@lucia-auth/tokens
         - ​@lucia-auth/adapter-mongoose
+        - ​@lucia-auth/adapter-mysql
+        - ​@lucia-auth/adapter-postgresql
         - ​@lucia-auth/adapter-prisma
+        - ​@lucia-auth/adapter-sqlite
         - ​@lucia-auth/session-adapter-redis
         - ​@lucia-auth/adapter-test
-    validations:
-      required: true
-  - type: input
-    id: version
-    attributes:
-      label: Package version
-      description: Which version is affected?
-      placeholder: 0.1.0
     validations:
       required: true
   - type: textarea
     id: description
     attributes:
       label: Describe the bug
-      description: Also tell us, what did you expect to happen?
+      description: Also tell us, what was the expected behavior? Reproduction is helpful for weeeird bugs!
     validations:
       required: true
-  - type: textarea
-    id: system-info
-    attributes:
-      label: System info
-      description: What's your dev environment, and if it's a client-side issue, which browser and version?
-    validations:
-      required: true
-  - type: textarea
-    id: reproduction
-    attributes:
-      label: Reproduction
-      description: Tell us how we can recreate the bug or, ideally, provide us with a link to a repo!
-  - type: textarea
-    id: logs
-    attributes:
-      label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      render: shell
-  - type: textarea
-    id: additional-info
-    attributes:
-      label: Additional information

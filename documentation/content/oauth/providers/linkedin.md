@@ -34,18 +34,69 @@ const linkedin: (
 #### Parameter
 
 | name                | type                                 | description                                             | optional |
-| ------------------- | ------------------------------------ | ------------------------------------------------------- | -------- |
+| ------------------- | ------------------------------------ | ------------------------------------------------------- | :------: |
 | auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                          |          |
 | config.clientId     | `string`                             | LinkedIn OAuth app client id                            |          |
 | config.clientSecret | `string`                             | LinkedIn OAuth app client secret                        |          |
 | config.redirectUri  | `string`                             | LinkedIn OAuth app redirect uri                         |          |
-| config.scope        | `string[]`                           | an array of scopes - `r_liteprofile` is always included | true     |
+| config.scope        | `string[]`                           | an array of scopes - `r_liteprofile` is always included |    ✓     |
 
 #### Returns
 
 | type                                              | description       |
 | ------------------------------------------------- | ----------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | LinkedIn provider |
+
+## `LinkedInProvider`
+
+Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+
+### `getAuthorizationUrl()`
+
+Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+
+```ts
+const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+```
+
+#### Parameter
+
+| name  | type     | description                                                                           | optional |
+| ----- | -------- | ------------------------------------------------------------------------------------- | :------: |
+| state | `string` | an opaque value used by the client to maintain state between the request and callback |    ✓     |
+
+#### Returns
+
+| name    | type     | description          |
+| ------- | -------- | -------------------- |
+| `url`   | `URL`    | authorize url        |
+| `state` | `string` | state parameter used |
+
+### `validateCallback()`
+
+Validates the callback and returns the session.
+
+```ts
+const validateCallback: (code: string) => Promise<ProviderSession>;
+```
+
+#### Parameter
+
+| name | type     | description                      |
+| ---- | -------- | -------------------------------- |
+| code | `string` | authorization code from callback |
+
+#### Returns
+
+| type                                                  | description       |
+| ----------------------------------------------------- | ----------------- |
+| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
+
+#### Errors
+
+| name           | description                          |
+| -------------- | ------------------------------------ |
+| FAILED_REQUEST | invalid code, network error, unknown |
 
 ## `LinkedInTokens`
 

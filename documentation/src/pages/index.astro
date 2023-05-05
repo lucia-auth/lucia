@@ -5,12 +5,12 @@ import Header from "@components/ContentHeader.astro";
 
 // generated on build/dev start
 import contributors from "../../.github.json";
-
-import { getFrameworkId } from "@lib/framework";
 import { getCollection } from "@cela/content";
 import Banner from "@components/Banner.astro";
+import { handleRequest } from "@server/request";
 
-const frameworkId = getFrameworkId(Astro);
+const request = handleRequest(Astro)
+const frameworkId = request.getFrameworkId();
 
 const collection = await getCollection("main", frameworkId);
 if (!collection) {
@@ -77,8 +77,8 @@ if (!collection) {
 	</main>
 	<Banner />
 	<script>
-		import { setCookie } from "@lib/cookie";
-		import { addClassName } from "@lib/dom";
+		import { setCookie } from "@utils/cookie";
+		import { addClassName } from "@utils/dom";
 
 		const bannerCloseButton = document.getElementById("banner-close-button");
 		const bannerDiv = document.getElementById("banner");

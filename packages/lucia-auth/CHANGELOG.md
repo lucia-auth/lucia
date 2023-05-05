@@ -1,5 +1,25 @@
 # lucia-auth
 
+## 1.5.0
+
+### Minor changes
+
+- [#567](https://github.com/pilcrowOnPaper/lucia/pull/567) by [@gustavocadev](https://github.com/gustavocadev) : Add `qwik()` middleware
+
+- [#553](https://github.com/pilcrowOnPaper/lucia/pull/553) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `web()` middleware
+
+## 1.4.0
+
+### Minor changes
+
+- [#539](https://github.com/pilcrowOnPaper/lucia/pull/539) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update adapter specification
+
+  - `setUser()` may return `void`
+
+### Patch changes
+
+- [#546](https://github.com/pilcrowOnPaper/lucia/pull/546) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix types issue with `Auth.handleRequest()`
+
 ## 1.3.0
 
 ### Minor changes
@@ -9,13 +29,21 @@
   - Fix `node` middleware returning incorrect url
 
 - [#529](https://github.com/pilcrowOnPaper/lucia/pull/529) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update adapter requirements
+
   - Removed: `UserAdapter.updateUserAttributes()` should validate provided user id
+
   - `UserAdapter.updateUserAttributes()` may throw `AUTH_INVALID_USER_ID`
+
   - `UserAdapter.updateUserAttributes()` should return `void` or `UserSchema`
+
   - Removed: `UserAdapter.updateKeyPassword()` should validate provided key id
+
   - `UserAdapter.updateKeyPassword()` may throw `AUTH_INVALID_KEY_ID`
+
   - `UserAdapter.updateKeyPassword()` should return `void` or `KeySchema`
+
   - UserAdapter: `UserAdapter.getKey()` should delete single use keys with `shouldDataBeDeleted()`
+
   - `UserAdapter.setUser()` should use transactions or batch queries to store the user and key
 
 ### Patch changes

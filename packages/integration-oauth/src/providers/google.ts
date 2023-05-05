@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, provider, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -10,21 +10,7 @@ type Config = OAuthConfig & {
 
 const PROVIDER_ID = "google";
 
-export const google = <A extends Auth>(auth: A, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
-		const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
-			client_id: config.clientId,
-			redirect_uri: config.redirectUri,
-			scope: scope(
-				["https://www.googleapis.com/auth/userinfo.profile"],
-				config.scope
-			),
-			response_type: "code",
-			state
-		});
-		return url;
-	};
-
+export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getTokens = async (code: string) => {
 		const requestUrl = createUrl("https://oauth2.googleapis.com/token", {
 			client_id: config.clientId,
@@ -48,6 +34,7 @@ export const google = <A extends Auth>(auth: A, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+
 	const getProviderUser = async (accessToken: string) => {
 		const request = new Request(
 			"https://www.googleapis.com/oauth2/v3/userinfo",
@@ -56,15 +43,36 @@ export const google = <A extends Auth>(auth: A, config: Config) => {
 			}
 		);
 		const googleUser = await handleRequest<GoogleUser>(request);
-		const providerUserId = googleUser.sub;
-		return [providerUserId, googleUser] as const;
+		return googleUser;
 	};
-	return provider(auth, {
-		providerId: PROVIDER_ID,
-		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+
+	return {
+		getAuthorizationUrl: async () => {
+			const state = generateState();
+			const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
+				client_id: config.clientId,
+				redirect_uri: config.redirectUri,
+				scope: scope(
+					["https://www.googleapis.com/auth/userinfo.profile"],
+					config.scope
+				),
+				response_type: "code",
+				state
+			});
+			return [url, state] as const;
+		},
+		validateCallback: async (code: string) => {
+			const tokens = await getTokens(code);
+			const providerUser = await getProviderUser(tokens.accessToken);
+			const providerUserId = providerUser.sub;
+			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			return {
+				...providerAuth,
+				providerUser,
+				tokens
+			};
+		}
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type GoogleUser = {

@@ -28,9 +28,9 @@ Uses the following characters (uppercase, lowercase, numbers):
 #### Parameter
 
 | name     | type     | description                                   | optional | introduced |
-| -------- | -------- | --------------------------------------------- | -------- | ---------- |
+| -------- | -------- | --------------------------------------------- | :------: | ---------- |
 | length   | `number` | the length of the output string               |          |            |
-| alphabet | `string` | a string from which to pick random characters | true     | `1.1.0`    |
+| alphabet | `string` | a string from which to pick random characters |    ✓     | `1.1.0`    |
 
 #### Returns
 

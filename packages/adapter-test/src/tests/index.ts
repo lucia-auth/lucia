@@ -15,6 +15,19 @@ export const testAdapter = async (
 	await clearAll();
 	await testUserAdapter(adapter, queryHandler, false);
 	await testSessionAdapter(adapter, queryHandler, false);
+	await testOptionalMethods(adapter, queryHandler, false);
+	if (endProcess) {
+		end();
+	}
+};
+
+const testOptionalMethods = async (
+	adapter: Adapter,
+	queryHandler: LuciaQueryHandler,
+	endProcess = true
+) => {
+	const database = new Database(queryHandler);
+	const clearAll = database.clear;
 	await test(
 		"getSessionAndUserBySessionId()",
 		"Return the correct user and session",

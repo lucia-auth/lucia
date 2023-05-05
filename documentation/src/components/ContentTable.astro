@@ -4,9 +4,10 @@ import Discord from "./icons/Discord.astro";
 import Github from "./icons/Github.astro";
 import { getCollection } from "@cela/content";
 import { generateMarkdownHtml } from "@markdown/index";
+import type { FrameworkId } from "@utils/framework";
 
 type Props = {
-	frameworkId: string | null;
+	frameworkId: FrameworkId | null;
 	collectionId?: string;
 };
 
@@ -30,7 +31,7 @@ const currentPathname = Astro.url.pathname;
 	<input type="hidden" value={frameworkId} id="framework-id" />
 
 	<div class="py-2 pl-8 pr-4 dark:text-zinc-200">
-		<FrameworkSelect client:idle current={Astro.props.frameworkId} />
+		<FrameworkSelect client:idle frameworkId={Astro.props.frameworkId} />
 	</div>
 
 	{
@@ -124,24 +125,22 @@ const currentPathname = Astro.url.pathname;
 			const [prevCollectionId, prevScrollPosition] =
 				storedScrollPosition.split(":");
 			if (prevCollectionId === collectionId) {
+				console.log(prevScrollPosition);
 				contentTableElement.scrollTop = Number(prevScrollPosition);
 			}
 		}
-		contentTableElement.addEventListener("click", (e) => {
-			if (!(e.target instanceof HTMLAnchorElement)) return;
-			e.preventDefault();
+		contentTableElement.addEventListener("click", () => {
 			sessionStorage.setItem(
 				`scroll_position`,
 				`${collectionId}:${contentTableElement.scrollTop.toString()}`
 			);
-			window.location.href = e.target.href;
 		});
 	}
 </script>
 
 <script>
-	import { addClassName, removeClassName } from "@lib/dom";
-	import { onMenuStateUpdate, setMenuState } from "../lib/state";
+	import { addClassName, removeClassName } from "@utils/dom";
+	import { onMenuStateUpdate, setMenuState } from "@utils/state";
 
 	const contentTableWrapperElement = document.getElementById(
 		"content-table-wrapper"
