@@ -8,15 +8,15 @@ const PROVIDER_ID = "github";
 
 type Tokens =
 	| {
-			accessToken: string;
-			accessTokenExpiresIn: null;
-	  }
+		accessToken: string;
+		accessTokenExpiresIn: null;
+	}
 	| {
-			accessToken: string;
-			accessTokenExpiresIn: number;
-			refreshToken: string;
-			refreshTokenExpiresIn: number;
-	  };
+		accessToken: string;
+		accessTokenExpiresIn: number;
+		refreshToken: string;
+		refreshTokenExpiresIn: number;
+	};
 
 export const github = <_Auth extends Auth>(
 	auth: _Auth,
@@ -39,14 +39,14 @@ export const github = <_Auth extends Auth>(
 		});
 		type ResponseBody =
 			| {
-					access_token: string;
-			  }
+				access_token: string;
+			}
 			| {
-					access_token: string;
-					refresh_token: string;
-					expires_in: number;
-					refresh_token_expires_in: number;
-			  };
+				access_token: string;
+				refresh_token: string;
+				expires_in: number;
+				refresh_token_expires_in: number;
+			};
 		const tokens = await handleRequest<ResponseBody>(request);
 		if ("expires_in" in tokens) {
 			return {
@@ -71,13 +71,14 @@ export const github = <_Auth extends Auth>(
 	};
 
 	return {
-		getAuthorizationUrl: async () => {
+		getAuthorizationUrl: async (redirectUri?: string) => {
 			const state = generateState();
 			const url = createUrl("https://github.com/login/oauth/authorize", {
 				client_id: config.clientId,
 				scope: scope([], config.scope),
 				state
 			});
+			redirectUri ? url.searchParams.set("redirect_uri", redirectUri) : null;
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {

@@ -70,7 +70,7 @@ export type OAuthProvider<A extends Auth> = {
 			accessToken: string;
 		};
 	}>;
-	getAuthorizationUrl: () => Promise<readonly [URL, ...any[]]>;
+	getAuthorizationUrl: (redirectUri?: string) => Promise<readonly [URL, ...any[]]>;
 };
 
 export class LuciaOAuthRequestError extends Error {
