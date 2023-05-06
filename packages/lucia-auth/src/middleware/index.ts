@@ -4,6 +4,7 @@ import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
 } from "express";
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return (incomingMessage, outgoingMessage, env) => {
@@ -157,6 +158,40 @@ export const web = (): Middleware<[Request, Headers]> => {
 				headers.append("Set-Cookie", cookie.serialize());
 			}
 		} as const satisfies RequestContext;
+		return requestContext;
+	};
+};
+
+/**
+ * You need to register `setCookie` from:
+ * 
+ * ```
+ * import cookie from '@fastify/cookie';
+ * 
+ * await fastify.register(cookie, {
+ *  secret: 'my-secret', // for cookies signature
+ *  parseOptions: {}, // options for parsing cookies
+ * });
+ * ```
+ */
+// eslint-disable-next-line arrow-body-style
+export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
+	return (request, reply) => {
+		const requestContext = {
+			request: {
+				url: request.url,
+				method: request.method,
+				headers: {
+					origin: request.headers.origin ?? null,
+					cookie: request.headers.cookie ?? null,
+				},
+			},
+			setCookie: (cookie) => {
+				// FIXME: eslint
+				// eslint-disable-next-line @typescript-eslint/no-floating-promises
+				reply.setCookie(cookie.name, cookie.value, cookie.attributes);
+			},
+		}; /* as const satisfies RequestContext */
 		return requestContext;
 	};
 };
