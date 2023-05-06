@@ -210,7 +210,7 @@ type CookieOption = {
 
 #### `activePeriod`
 
-The time in milliseconds the [active period](/start-here/concepts#session-states) lasts for - or the time since session creation that it can be used.
+The time in milliseconds the [active period](/basics/sessions#session-states) lasts for - or the time since session creation that it can be used.
 
 | type     | default                          |
 | -------- | -------------------------------- |
@@ -218,7 +218,7 @@ The time in milliseconds the [active period](/start-here/concepts#session-states
 
 #### `idlePeriod`
 
-The time in milliseconds the [idle period](/start-here/concepts#session-states) lasts for - or the time since active period expiration that it can be renewed.
+The time in milliseconds the [idle period](/basics/sessions#session-states) lasts for - or the time since active period expiration that it can be renewed.
 
 | type     | default                              |
 | -------- | ------------------------------------ |
