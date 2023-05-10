@@ -18,9 +18,13 @@ type Tokens =
 		refreshTokenExpiresIn: number;
 	};
 
+type Config = OAuthConfig & {
+	redirectUri?: string;
+};
+
 export const github = <_Auth extends Auth>(
 	auth: _Auth,
-	config: OAuthConfig
+	config: Config
 ) => {
 	const getTokens = async (code: string): Promise<Tokens> => {
 		const requestUrl = createUrl(
@@ -78,7 +82,9 @@ export const github = <_Auth extends Auth>(
 				scope: scope([], config.scope),
 				state
 			});
-			redirectUri ? url.searchParams.set("redirect_uri", redirectUri) : null;
+			if (config.redirectUri != undefined || redirectUri != undefined) {
+				url.searchParams.set("redirect_uri", redirectUri ?? (config.redirectUri as string));
+			}
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
