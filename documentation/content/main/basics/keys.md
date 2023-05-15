@@ -170,7 +170,7 @@ You can delete a non-primary key with [`deleteKey()`](/reference/lucia-auth/auth
 
 ```ts
 try {
-	const key = await auth.updateKeyPassword("username", username, newPassword);
+	const key = await auth.deleteKey("username", username);
 } catch {
 	// invalid key
 }
