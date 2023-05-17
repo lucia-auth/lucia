@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-mysql",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "MySQL adapter for Lucia",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -40,7 +40,7 @@
 	"peerDependencies": {
 		"lucia-auth": "^1.4.0",
 		"mysql2": "^3.0.0",
-		"@planetscale/database": "^1.7.0"
+		"@planetscale/database": "^1.0.0"
 	},
 	"peerDependenciesMeta": {
 		"mysql2": {

@@ -16,6 +16,7 @@ export default (props: { frameworkId: string | null }) => {
 		return [signal, toggle] as const;
 	};
 	const [isBoxOpen, toggleBox] = createToggle();
+	console.log(selectedFrameworkOption)
 	return (
 		<div>
 			<button
@@ -28,9 +29,8 @@ export default (props: { frameworkId: string | null }) => {
 				)}
 				onClick={toggleBox}
 			>
-				<span class="text-zinc-400">Framework:</span>
+				<span class="text-zinc-400">Framework: </span>
 				<span class="group-hover:text-main">
-					{" "}
 					{selectedFrameworkOption.title}
 				</span>
 			</button>
