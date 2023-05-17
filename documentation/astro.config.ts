@@ -23,6 +23,7 @@ export default defineConfig({
 	adapter: vercel(),
 	vite: {
 		ssr: {
+			noExternal: true,
 			target: "webworker"
 		}
 	}
