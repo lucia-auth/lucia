@@ -19,6 +19,7 @@ const queryFrameworkId = Astro.props.frameworkId ?? null
 		id="search-modal"
 	>
 		<Search
+			client:idle
 			frameworkId="sveltekit"
 			collectionId={queryCollectionId}
 			frameworkId={queryFrameworkId}
