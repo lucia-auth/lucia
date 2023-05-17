@@ -12,25 +12,20 @@ type OAuthProvider = {
 
 ## `getAuthorizationUrl()`
 
-Returns the authorization url for user redirection and a state for storage. [`generateState()`](/reference/oauth/lucia-auth-oauth#generatestate) should be used if a state should be generated.
+Returns the authorization url for user redirection and a state for storage.
 
 ```ts
 const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 ```
 
-#### Parameter
-
-| name  | type     | description                                                                           | optional |
-| ----- | -------- | ------------------------------------------------------------------------------------- | :------: |
-| state | `string` | an opaque value used by the client to maintain state between the request and callback |    ✓     |
-
 #### Returns
 
 Refer to each provider's page for specifics.
 
-| name  | type  | description   |
-| ----- | ----- | ------------- |
-| `url` | `URL` | authorize url |
+| name    | type     | description             |
+| ------- | -------- | ----------------------- |
+| `url`   | `URL`    | authorize url           |
+| `state` | `string` | state to store (cookie) |
 
 ## `validateCallback()`
 
