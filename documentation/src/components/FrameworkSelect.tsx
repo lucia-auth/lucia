@@ -16,6 +16,7 @@ export default (props: { frameworkId: string | null }) => {
 		return [signal, toggle] as const;
 	};
 	const [isBoxOpen, toggleBox] = createToggle();
+	console.log(selectedFrameworkOption)
 	return (
 		<div>
 			<button
