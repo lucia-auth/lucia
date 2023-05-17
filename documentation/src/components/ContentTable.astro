@@ -31,7 +31,7 @@ const currentPathname = Astro.url.pathname;
 	<input type="hidden" value={frameworkId} id="framework-id" />
 
 	<div class="py-2 pl-8 pr-4 dark:text-zinc-200">
-		<FrameworkSelect client:idle frameworkId={Astro.props.frameworkId} />
+		<FrameworkSelect client:load frameworkId={Astro.props.frameworkId} />
 	</div>
 
 	{
