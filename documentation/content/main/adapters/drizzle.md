@@ -178,22 +178,16 @@ const auth = lucia({
 ## SQLite
 
 ```ts
-import { sqliteTable, varchar, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 const user = mysqlTable("auth_user", {
-	id: varchar("id", {
-		length: 15 // change this when using custom user ids
-	}).primaryKey()
+	id: text("id").primaryKey()
 	// other user attributes
 });
 
 const session = mysqlTable("auth_session", {
-	id: varchar("id", {
-		length: 128
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
+	id: text("id").primaryKey(),
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
 	activeExpires: integer("active_expires").notNull(),
@@ -201,18 +195,12 @@ const session = mysqlTable("auth_session", {
 });
 
 const key = mysqlTable("auth_key", {
-	id: varchar("id", {
-		length: 255
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
+	id: text("id").primaryKey(),
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
 	primaryKey: integer().notNull(),
-	hashedPassword: varchar("hashed_password", {
-		length: 255
-	})
+	hashedPassword: text("hashed_password")
 });
 ```
 
