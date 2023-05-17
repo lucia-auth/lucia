@@ -110,8 +110,18 @@ type DiscordTokens = {
 type DiscordUser = {
 	id: string;
 	username: string;
-	avatar: string;
 	discriminator: string;
-	public_flags: number;
+	avatar: string;
+	bot?: boolean;
+	system?: boolean;
+	mfa_enabled?: boolean;
+	verified?: boolean;
+	email?: string;
+	flags?: number;
+	banner?: string;
+	accent_color?: number;
+	premium_type?: number;
+	public_flags?: number;
+	locale?: string;
 };
 ```

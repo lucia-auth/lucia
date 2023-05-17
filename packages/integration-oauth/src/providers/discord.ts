@@ -38,49 +38,13 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken) => {
+	const getProviderUser = async (accessToken: string) => {
 		// do not use oauth/users/@me because it ignores intents, use oauth/users/@me instead
-		const request = new Request('https://discord.com/api/users/@me', {
-			headers: authorizationHeaders('bearer', accessToken)
+		const request = new Request("https://discord.com/api/users/@me", {
+			headers: authorizationHeaders("bearer", accessToken)
 		});
-
-		const response = await handleRequest(request);
-
-		const {
-			id,
-			username,
-			discriminator,
-			avatar,
-			system,
-			mfa_enabled,
-			banner,
-			accent_color,
-			locale,
-			verified,
-			email,
-			flags,
-			premium_type,
-			public_flags
-		} = response;
-
-		const discordUser = {
-			id,
-			username,
-			discriminator,
-			avatar,
-			system,
-			mfa_enabled,
-			banner,
-			accent_color,
-			locale,
-			verified,
-			email,
-			flags,
-			premium_type,
-			public_flags
-		};
-
-		return [id, discordUser];
+		const discordUser = await handleRequest<DiscordUser>(request);
+		return discordUser;
 	};
 
 	return {
@@ -112,7 +76,17 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 export type DiscordUser = {
 	id: string;
 	username: string;
-	avatar: string;
 	discriminator: string;
-	public_flags: number;
+	avatar: string;
+	bot?: boolean;
+	system?: boolean;
+	mfa_enabled?: boolean;
+	verified?: boolean;
+	email?: string;
+	flags?: number;
+	banner?: string;
+	accent_color?: number;
+	premium_type?: number;
+	public_flags?: number;
+	locale?: string;
 };
