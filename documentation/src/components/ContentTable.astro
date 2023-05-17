@@ -125,7 +125,6 @@ const currentPathname = Astro.url.pathname;
 			const [prevCollectionId, prevScrollPosition] =
 				storedScrollPosition.split(":");
 			if (prevCollectionId === collectionId) {
-				console.log(prevScrollPosition);
 				contentTableElement.scrollTop = Number(prevScrollPosition);
 			}
 		}
