@@ -57,12 +57,6 @@ Returns the authorization url for user redirection and a state for storage. The 
 const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 ```
 
-#### Parameter
-
-| name  | type     | description                                                                           | optional |
-| ----- | -------- | ------------------------------------------------------------------------------------- | :------: |
-| state | `string` | an opaque value used by the client to maintain state between the request and callback |    ✓     |
-
 #### Returns
 
 | name    | type     | description          |

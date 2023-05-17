@@ -75,16 +75,16 @@ export const auth = lucia({
 
 ### Express
 
-Use the [Express middleware](/reference/lucia-auth/middleware#edge):
+If you are using Express for handling requests, use the [Express middleware](/reference/lucia-auth/middleware#express):
 
 ```ts
 import lucia from "lucia-auth";
-import { node } from "lucia-auth/middleware";
+import { express } from "lucia-auth/middleware";
 // ...
 
 export const auth = lucia({
 	//...
-	middleware: node()
+	middleware: express()
 });
 ```
 

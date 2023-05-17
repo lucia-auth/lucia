@@ -39,12 +39,11 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	const getProviderUser = async (accessToken: string) => {
-		const request = new Request("https://discord.com/api/oauth2/@me", {
+		// do not use oauth/users/@me because it ignores intents, use oauth/users/@me instead
+		const request = new Request("https://discord.com/api/users/@me", {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
-		const { user: discordUser } = await handleRequest<{
-			user: DiscordUser;
-		}>(request);
+		const discordUser = await handleRequest<DiscordUser>(request);
 		return discordUser;
 	};
 
@@ -77,7 +76,17 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 export type DiscordUser = {
 	id: string;
 	username: string;
-	avatar: string;
 	discriminator: string;
-	public_flags: number;
+	avatar: string;
+	bot?: boolean;
+	system?: boolean;
+	mfa_enabled?: boolean;
+	verified?: boolean;
+	email?: string;
+	flags?: number;
+	banner?: string;
+	accent_color?: number;
+	premium_type?: number;
+	public_flags?: number;
+	locale?: string;
 };

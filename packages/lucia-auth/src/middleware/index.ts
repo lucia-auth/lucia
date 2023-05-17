@@ -44,7 +44,7 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	return (request, response) => {
 		const requestContext = {
 			request: {
-				url: request.url,
+				url: `${request.protocol}://${request.hostname}${request.path}`,
 				method: request.method,
 				headers: {
 					origin: request.headers.origin ?? null,
