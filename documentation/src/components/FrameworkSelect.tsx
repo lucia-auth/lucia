@@ -28,9 +28,8 @@ export default (props: { frameworkId: string | null }) => {
 				)}
 				onClick={toggleBox}
 			>
-				<span class="text-zinc-400">Framework:</span>
+				<span class="text-zinc-400">Framework: </span>
 				<span class="group-hover:text-main">
-					{" "}
 					{selectedFrameworkOption.title}
 				</span>
 			</button>

@@ -87,34 +87,30 @@ export default (props: {
 						<p class="py-4 text-center text-sm text-zinc-400">Loading...</p>
 					}
 				>
-					{() => {
-						return (
-							<>
-								<SearchResult result={queryResult().data} />
-								<Show
-									when={
-										queryResult().state === "ready" &&
-										queryResult().data.length === 0
-									}
-								>
-									<p class="py-4 text-center text-sm text-zinc-400">
-										Tip: Start your query with ":reference" or ":tokens" to
-										filter by sections
-									</p>
-								</Show>
-								<Show
-									when={
-										queryResult().state === "result" &&
-										queryResult().data.length === 0
-									}
-								>
-									<p class="py-4 text-center text-sm text-zinc-400">
-										No results for "{queryResult().queryInput}"
-									</p>
-								</Show>
-							</>
-						);
-					}}
+					<>
+						<SearchResult result={queryResult().data} />
+						<Show
+							when={
+								queryResult().state === "ready" &&
+								queryResult().data.length === 0
+							}
+						>
+							<p class="py-4 text-center text-sm text-zinc-400">
+								Tip: Start your query with ":reference" or ":tokens" to filter
+								by sections
+							</p>
+						</Show>
+						<Show
+							when={
+								queryResult().state === "result" &&
+								queryResult().data.length === 0
+							}
+						>
+							<p class="py-4 text-center text-sm text-zinc-400">
+								No results for "{queryResult().queryInput}"
+							</p>
+						</Show>
+					</>
 				</Show>
 			</div>
 		</div>
