@@ -180,12 +180,12 @@ const auth = lucia({
 ```ts
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-const user = mysqlTable("auth_user", {
+const user = sqliteTable("auth_user", {
 	id: text("id").primaryKey()
 	// other user attributes
 });
 
-const session = mysqlTable("auth_session", {
+const session = sqliteTable("auth_session", {
 	id: text("id").primaryKey(),
 	userId: text("user_id")
 		.notNull()
@@ -194,7 +194,7 @@ const session = mysqlTable("auth_session", {
 	idleExpires: integer("idle_expires").notNull()
 });
 
-const key = mysqlTable("auth_key", {
+const key = sqliteTable("auth_key", {
 	id: text("id").primaryKey(),
 	userId: text("user_id")
 		.notNull()
