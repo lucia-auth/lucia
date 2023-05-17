@@ -20,5 +20,11 @@ export default defineConfig({
 		markdown()
 	],
 	output: "server",
-	adapter: vercel()
+	adapter: vercel(),
+	vite: {
+		ssr: {
+			noExternal: true,
+			target: "webworker"
+		}
+	}
 });
