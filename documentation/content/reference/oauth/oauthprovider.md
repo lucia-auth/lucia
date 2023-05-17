@@ -15,8 +15,16 @@ type OAuthProvider = {
 Returns the authorization url for user redirection and a state for storage.
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: (
+	redirectUri?: string
+) => Promise<[url: URL, state: string]>;
 ```
+
+#### Parameter
+
+| name        | type     | description                | optional |
+| ----------- | -------- | -------------------------- | :------: |
+| redirectUri | `string` | an authorized redirect URI |    ✓     |
 
 #### Returns
 
