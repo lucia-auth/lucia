@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		});
 	}
 	try {
-		const authRequest = auth.handleRequest(req, res);
+		const authRequest = auth.handleRequest({ req, res });
 		const key = await auth.useKey("username", username, password);
 		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session);

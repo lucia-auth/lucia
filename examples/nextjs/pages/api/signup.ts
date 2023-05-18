@@ -30,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			}
 		});
 		const session = await auth.createSession(user.userId);
-		const authRequest = auth.handleRequest(req, res);
+		const authRequest = auth.handleRequest({ req, res });
 		authRequest.setSession(session);
 		return res.redirect(302, "/");
 	} catch (error) {
