@@ -179,7 +179,12 @@ export const web = (): Middleware<[Request, Headers | Response]> => {
 type NextJsAppServerContext = {
 	cookies: () => {
 		set?: (name: string, value: string, options?: CookieAttributes) => void;
-		get: (name: string) => string | undefined;
+		get: (name: string) =>
+			| {
+					name: string;
+					value: string;
+			  }
+			| undefined;
 	};
 	request?: Request;
 };
@@ -208,11 +213,11 @@ export const nextjs = (): Middleware<
 			const requestContext = {
 				request: {
 					url: serverContext.request?.url ?? "",
-					method: serverContext.request?.method ?? "",
+					method: serverContext.request?.method ?? "GET",
 					headers: {
 						origin: serverContext.request?.headers.get("Origin") ?? null,
 						cookie: sessionCookie
-							? `${SESSION_COOKIE_NAME}=${sessionCookie};`
+							? `${SESSION_COOKIE_NAME}=${sessionCookie.value}`
 							: null
 					}
 				},
@@ -221,7 +226,7 @@ export const nextjs = (): Middleware<
 						if (!cookieStore.set) return;
 						cookieStore.set(cookie.name, cookie.value, cookie.attributes);
 					} catch {
-						// ignore - set() is not available in page.tsx
+						// ignore - set() is not available
 					}
 				}
 			} as const satisfies RequestContext;

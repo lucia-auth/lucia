@@ -1,6 +1,6 @@
 # Lucia + Next.js demo
 
-Uses the `pages` router.
+Uses the `app` router.
 
 Install dependencies:
 

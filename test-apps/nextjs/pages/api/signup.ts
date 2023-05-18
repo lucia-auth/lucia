@@ -14,7 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	const { username, password } =
 		typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 	if (!username || !password) {
-		return res.status(200).json({
+		return res.status(400).json({
 			error: "Invalid input"
 		});
 	}
@@ -39,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			error.code === "P2002" &&
 			error.message?.includes("username")
 		) {
-			return res.status(200).json({
+			return res.status(400).json({
 				error: "Username already in use"
 			});
 		}
@@ -47,13 +47,13 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			error instanceof LuciaError &&
 			error.message === "AUTH_DUPLICATE_KEY_ID"
 		) {
-			return res.status(200).json({
+			return res.status(400).json({
 				error: "Username already in use"
 			});
 		}
 		// database connection error
 		console.error(error);
-		return res.status(200).json({
+		return res.status(500).json({
 			error: "Unknown error occurred"
 		});
 	}
