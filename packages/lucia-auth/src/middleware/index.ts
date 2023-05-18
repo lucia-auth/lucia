@@ -1,9 +1,15 @@
 import type { IncomingMessage, OutgoingMessage } from "node:http";
-import type { Cookie, Middleware, RequestContext } from "../index.js";
+import {
+	SESSION_COOKIE_NAME,
+	type Cookie,
+	type Middleware,
+	type RequestContext
+} from "../index.js";
 import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
 } from "express";
+import { CookieAttributes } from "../utils/cookie.js";
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return (incomingMessage, outgoingMessage, env) => {
@@ -62,7 +68,7 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 type SvelteKitRequestEvent = {
 	request: Request;
 	cookies: {
-		set: (name: string, value: string, options?: Cookie["attributes"]) => void;
+		set: (name: string, value: string, options?: CookieAttributes) => void;
 	};
 };
 
@@ -88,7 +94,7 @@ export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 type AstroAPIContext = {
 	request: Request;
 	cookies: {
-		set: (name: string, value: string, options?: Cookie["attributes"]) => void;
+		set: (name: string, value: string, options?: CookieAttributes) => void;
 	};
 };
 
@@ -114,7 +120,7 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 type QwikRequestEvent = {
 	request: Request;
 	cookie: {
-		set: (name: string, value: string, options?: Cookie["attributes"]) => void;
+		set: (name: string, value: string, options?: CookieAttributes) => void;
 	};
 };
 
@@ -169,64 +175,76 @@ export const web = (): Middleware<[Request, Headers | Response]> => {
 	};
 };
 
+type NextJsAppServerContext = {
+	cookies: () => {
+		set?: (name: string, value: string, options?: CookieAttributes) => void;
+		get: (name: string) => string | undefined;
+	};
+	request?: Request;
+};
+
+type NextJsPagesServerContext = {
+	req: IncomingMessage;
+	res: OutgoingMessage;
+};
+
 export const nextjs = (): Middleware<
-	[IncomingMessage | Request, OutgoingMessage | Response | Headers]
+	[NextJsPagesServerContext | NextJsAppServerContext]
 > => {
-	return (arg1, arg2, env) => {
-		const getLuciaRequest = () => {
-			if (arg1 instanceof Request) {
-				return {
-					url: arg1.url,
-					method: arg1.method,
+	return (serverContext, env) => {
+		if ("cookies" in serverContext) {
+			const cookieStore = serverContext.cookies();
+			const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME) ?? null;
+			const requestContext = {
+				request: {
+					url: serverContext.request?.url ?? "",
+					method: serverContext.request?.method ?? "",
 					headers: {
-						origin: arg1.headers.get("Origin") ?? null,
-						cookie: arg1.headers.get("Cookie") ?? null
+						origin: serverContext.request?.headers.get("Origin") ?? null,
+						cookie: sessionCookie
+							? `${SESSION_COOKIE_NAME}=${sessionCookie};`
+							: null
 					}
-				};
-			}
-			const getUrl = () => {
-				if (!arg1.headers.host) return "";
-				const protocol = env === "DEV" ? "http:" : "https:";
-				const host = arg1.headers.host;
-				const pathname = arg1.url ?? "";
-				return `${protocol}//${host}${pathname}`;
-			};
-			return {
-				url: getUrl(),
-				method: arg1.method ?? "",
-				headers: {
-					origin: arg1.headers.origin ?? null,
-					cookie: arg1.headers.cookie ?? null
+				},
+				setCookie: (cookie) => {
+					try {
+						if (!cookieStore.set) return;
+						cookieStore.set(cookie.name, cookie.value, cookie.attributes);
+					} catch {
+						// ignore - set() is not available in page.tsx
+					}
 				}
-			};
+			} as const satisfies RequestContext;
+			return requestContext;
+		}
+		const getUrl = () => {
+			if (!serverContext.req.headers.host) return "";
+			const protocol = env === "DEV" ? "http:" : "https:";
+			const host = serverContext.req.headers.host;
+			const pathname = serverContext.req.url ?? "";
+			return `${protocol}//${host}${pathname}`;
 		};
-		const createSetCookie = () => {
-			if (arg2 instanceof Response) {
-				return (cookie: Cookie) => {
-					arg2.headers.append("Set-Cookie", cookie.serialize());
-				};
-			}
-			if (arg2 instanceof Headers) {
-				return (cookie: Cookie) => {
-					arg2.append("Set-Cookie", cookie.serialize());
-				};
-			}
-			return (cookie: Cookie) => {
+		const requestContext = {
+			request: {
+				url: getUrl(),
+				method: serverContext.req.method ?? "",
+				headers: {
+					origin: serverContext.req.headers.origin ?? null,
+					cookie: serverContext.req.headers.cookie ?? null
+				}
+			},
+			setCookie: (cookie) => {
 				const setCookieHeaderValues =
-					arg2
+					serverContext.res
 						.getHeader("Set-Cookie")
 						?.toString()
 						.split(",")
 						.filter((val) => val) ?? [];
-				arg2.setHeader("Set-Cookie", [
+				serverContext.res.setHeader("Set-Cookie", [
 					cookie.serialize(),
 					...setCookieHeaderValues
 				]);
-			};
-		};
-		const requestContext = {
-			request: getLuciaRequest(),
-			setCookie: createSetCookie()
+			}
 		} as const satisfies RequestContext;
 		return requestContext;
 	};
