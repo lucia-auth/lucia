@@ -142,8 +142,18 @@ export const lucia = (): Middleware<[RequestContext]> => {
 	return (requestContext) => requestContext;
 };
 
-export const web = (): Middleware<[Request, Headers]> => {
-	return (request, headers) => {
+export const web = (): Middleware<[Request, Headers | Response]> => {
+	return (request, arg2) => {
+		const createSetCookie = () => {
+			if (arg2 instanceof Response) {
+				return (cookie: Cookie) => {
+					arg2.headers.append("Set-Cookie", cookie.serialize());
+				};
+			}
+			return (cookie: Cookie) => {
+				arg2.append("Set-Cookie", cookie.serialize());
+			};
+		};
 		const requestContext = {
 			request: {
 				url: request.url,
@@ -153,9 +163,70 @@ export const web = (): Middleware<[Request, Headers]> => {
 					cookie: request.headers.get("Cookie") ?? null
 				}
 			},
-			setCookie: (cookie) => {
-				headers.append("Set-Cookie", cookie.serialize());
+			setCookie: createSetCookie()
+		} as const satisfies RequestContext;
+		return requestContext;
+	};
+};
+
+export const nextjs = (): Middleware<
+	[IncomingMessage | Request, OutgoingMessage | Response | Headers]
+> => {
+	return (arg1, arg2, env) => {
+		const getLuciaRequest = () => {
+			if (arg1 instanceof Request) {
+				return {
+					url: arg1.url,
+					method: arg1.method,
+					headers: {
+						origin: arg1.headers.get("Origin") ?? null,
+						cookie: arg1.headers.get("Cookie") ?? null
+					}
+				};
 			}
+			const getUrl = () => {
+				if (!arg1.headers.host) return "";
+				const protocol = env === "DEV" ? "http:" : "https:";
+				const host = arg1.headers.host;
+				const pathname = arg1.url ?? "";
+				return `${protocol}//${host}${pathname}`;
+			};
+			return {
+				url: getUrl(),
+				method: arg1.method ?? "",
+				headers: {
+					origin: arg1.headers.origin ?? null,
+					cookie: arg1.headers.cookie ?? null
+				}
+			};
+		};
+		const createSetCookie = () => {
+			if (arg2 instanceof Response) {
+				return (cookie: Cookie) => {
+					arg2.headers.append("Set-Cookie", cookie.serialize());
+				};
+			}
+			if (arg2 instanceof Headers) {
+				return (cookie: Cookie) => {
+					arg2.append("Set-Cookie", cookie.serialize());
+				};
+			}
+			return (cookie: Cookie) => {
+				const setCookieHeaderValues =
+					arg2
+						.getHeader("Set-Cookie")
+						?.toString()
+						.split(",")
+						.filter((val) => val) ?? [];
+				arg2.setHeader("Set-Cookie", [
+					cookie.serialize(),
+					...setCookieHeaderValues
+				]);
+			};
+		};
+		const requestContext = {
+			request: getLuciaRequest(),
+			setCookie: createSetCookie()
 		} as const satisfies RequestContext;
 		return requestContext;
 	};
