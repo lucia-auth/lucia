@@ -185,7 +185,7 @@ type NextJsAppServerContext = {
 
 type NextJsPagesServerContext = {
 	req: IncomingMessage;
-	res: OutgoingMessage;
+	res?: OutgoingMessage;
 };
 
 export const nextjs = (): Middleware<
@@ -234,6 +234,7 @@ export const nextjs = (): Middleware<
 				}
 			},
 			setCookie: (cookie) => {
+				if (!serverContext.res) return;
 				const setCookieHeaderValues =
 					serverContext.res
 						.getHeader("Set-Cookie")
