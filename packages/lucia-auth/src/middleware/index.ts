@@ -10,6 +10,7 @@ import type {
 	Response as ExpressResponse
 } from "express";
 import { CookieAttributes } from "../utils/cookie.js";
+import { LuciaRequest } from "../auth/request.js";
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return (incomingMessage, outgoingMessage, env) => {
@@ -183,10 +184,19 @@ type NextJsAppServerContext = {
 	request?: Request;
 };
 
-type NextJsPagesServerContext = {
-	req: IncomingMessage;
-	res?: OutgoingMessage;
-};
+type NextJsPagesServerContext =
+	| {
+			req: IncomingMessage;
+			res?: OutgoingMessage;
+	  }
+	| {
+			req: IncomingMessage;
+			headers: Headers;
+	  }
+	| {
+			req: IncomingMessage;
+			response: Response;
+	  };
 
 export const nextjs = (): Middleware<
 	[NextJsPagesServerContext | NextJsAppServerContext]
@@ -224,16 +234,29 @@ export const nextjs = (): Middleware<
 			const pathname = serverContext.req.url ?? "";
 			return `${protocol}//${host}${pathname}`;
 		};
-		const requestContext = {
-			request: {
-				url: getUrl(),
-				method: serverContext.req.method ?? "",
-				headers: {
-					origin: serverContext.req.headers.origin ?? null,
-					cookie: serverContext.req.headers.cookie ?? null
-				}
-			},
-			setCookie: (cookie) => {
+		const request = {
+			url: getUrl(),
+			method: serverContext.req.method ?? "",
+			headers: {
+				origin: serverContext.req.headers.origin ?? null,
+				cookie: serverContext.req.headers.cookie ?? null
+			}
+		} satisfies LuciaRequest;
+		const createSetCookie = () => {
+			if ("headers" in serverContext) {
+				return (cookie: Cookie) => {
+					serverContext.headers.append("Set-Cookie", cookie.serialize());
+				};
+			}
+			if ("response" in serverContext) {
+				return (cookie: Cookie) => {
+					serverContext.response.headers.append(
+						"Set-Cookie",
+						cookie.serialize()
+					);
+				};
+			}
+			return (cookie: Cookie) => {
 				if (!serverContext.res) return;
 				const setCookieHeaderValues =
 					serverContext.res
@@ -245,7 +268,11 @@ export const nextjs = (): Middleware<
 					cookie.serialize(),
 					...setCookieHeaderValues
 				]);
-			}
+			};
+		};
+		const requestContext = {
+			request,
+			setCookie: createSetCookie()
 		} as const satisfies RequestContext;
 		return requestContext;
 	};

@@ -141,20 +141,40 @@ auth.handleRequest({
 });
 
 auth.handleRequest({
+	req: req as IncomingMessage,
+	headers: headers as Headers
+});
+
+auth.handleRequest({
+	req: req as IncomingMessage,
+	response: response as Response
+});
+
+auth.handleRequest({
 	cookies: cookies as Cookies,
 	request: request as Request
 });
 ```
 
-| name | type                                                                            |
-| ---- | ------------------------------------------------------------------------------- |
-| req  | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
-| res  | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |
+| name | type                                                                            | optional |
+| ---- | ------------------------------------------------------------------------------- | :------: |
+| req  | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |          |
+| res  | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |    ✓     |
 
-| name    | type                                                                     |
-| ------- | ------------------------------------------------------------------------ |
-| cookies | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) |
-| request | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)    |
+| name    | type                                                                            |
+| ------- | ------------------------------------------------------------------------------- |
+| req     | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
+| headers | [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers)           |
+
+| name     | type                                                                            |
+| -------- | ------------------------------------------------------------------------------- |
+| req      | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
+| response | [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)         |
+
+| name    | type                                                                     | optional |
+| ------- | ------------------------------------------------------------------------ | :------: |
+| cookies | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) |          |
+| request | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)    |    ✓     |
 
 ## `node()`
 
