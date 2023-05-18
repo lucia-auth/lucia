@@ -48,13 +48,13 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async () => {
+		getAuthorizationUrl: async (redirectUri?: string) => {
 			const state = generateState();
 			const url = createUrl("https://discord.com/oauth2/authorize", {
 				response_type: "code",
 				client_id: config.clientId,
 				scope: scope(["identify"], config.scope),
-				redirect_uri: config.redirectUri,
+				redirect_uri: redirectUri ?? config.redirectUri,
 				state
 			});
 			return [url, state];

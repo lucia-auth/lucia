@@ -26,6 +26,7 @@ const github: (
 		clientId: string;
 		clientSecret: string;
 		scope?: string[];
+		redirectUri?: string;
 	}
 ) => GithubProvider;
 ```
@@ -38,6 +39,7 @@ const github: (
 | config.clientId     | `string`                             | Github OAuth app client id     |          |
 | config.clientSecret | `string`                             | Github OAuth app client secret |          |
 | config.scope        | `string[]`                           | an array of scopes             |    ✓     |
+| configs.redirectUri | `string`                             | an authorized redirect URI     |    ✓     |
 
 #### Returns
 
@@ -54,8 +56,16 @@ Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: (
+	redirectUri?: string
+) => Promise<[url: URL, state: string]>;
 ```
+
+#### Parameter
+
+| name        | type     | description                | optional |
+| ----------- | -------- | -------------------------- | :------: |
+| redirectUri | `string` | an authorized redirect URI |    ✓     |
 
 #### Returns
 
