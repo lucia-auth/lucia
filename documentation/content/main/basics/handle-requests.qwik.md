@@ -6,7 +6,7 @@ description: "Learn how to handle requests with Lucia"
 
 [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-With the default [Qwik City middleware](/reference/lucia-auth/middleware#qwik), it expects Qwik City `RequestEventLoader` and `RequestEventAction`, which are passed onto `routeLoader$()` and `routeAction$()` and API route handlers.
+With the [Qwik City middleware](/reference/lucia-auth/middleware#qwik), it expects Qwik City `RequestEventLoader` and `RequestEventAction`, which are passed onto `routeLoader$()` and `routeAction$()` and API route handlers.
 
 ```ts
 // src/routes/index.tsx
