@@ -1,5 +1,11 @@
 # @lucia-auth/tokens
 
+## 1.0.2
+
+### Patch changes
+
+- [#619](https://github.com/pilcrowOnPaper/lucia/pull/619) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update types
+
 ## 1.0.1
 
 ### Patch changes
