@@ -1,10 +1,17 @@
 # @lucia-auth/oauth
 
+## 1.0.2
+
+### Patch changes
+
+- [#576](https://github.com/pilcrowOnPaper/lucia/pull/576) by [@Bewinxed](https://github.com/Bewinxed) : `providerUser` respects scope and update `DiscordUser`
+
 ## 1.0.1
 
 ### Patch changes
 
 - [#550](https://github.com/pilcrowOnPaper/lucia/pull/550) by [@pkb-pmj](https://github.com/pkb-pmj) : Fix OAuth provider types
+
   - Take `Auth` as a generic for every provider
 
 ## 1.0.0
