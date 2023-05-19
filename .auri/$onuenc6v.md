@@ -1,5 +1,5 @@
 ---
-package: "@lucia-auth/integration-oauth" # package name
+package: "@lucia-auth/oauth" # package name
 type: "minor" # "major", "minor", "patch"
 ---
 
