@@ -44,11 +44,9 @@ import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 import { dev } from "$app/environment";
 
-const env = process.env.NODE_ENV === "development" ? "DEV" : "PROD";
-
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env,
+	env: "DEV", // "PROD" if prod
 	middleware: nextjs()
 });
 

@@ -39,7 +39,7 @@ Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your
 // src/lib/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: qwik(),
 	transformDatabaseUser: (userData) => {
 		return {
