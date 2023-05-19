@@ -19,7 +19,7 @@ export const getServerSideProps = async (context) => {
 
 ## API routes
 
-You can call `handleRequest()` by passing on a [`Response`]() or [`Headers`]().
+You can call `handleRequest()` by passing on a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) or [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
 
 ```ts
 // pages/api/index.ts

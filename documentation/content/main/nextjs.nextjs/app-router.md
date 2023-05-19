@@ -1,5 +1,5 @@
 ---
-title: "Next.js App router"
+title: "Using the App router"
 _order: 0
 ---
 
@@ -54,7 +54,7 @@ export const GET = async (request: Request) => {
 
 ## Server actions
 
-Server actions are an alpha feature in Next.js that handles form actions. Lucia's CSRF protection does not work with it currently and it **must** be disabled (refer to the [`csrf`]() configuration).
+Server actions are an alpha feature in Next.js that handles form actions. Lucia's CSRF protection does not work with it currently and it **must** be disabled (refer to the [`csrfProtection`](http://localhost:3000/basics/configuration#csrfprotection) configuration).
 
 ```ts
 // app/page.tsx

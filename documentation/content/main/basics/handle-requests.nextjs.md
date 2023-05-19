@@ -6,7 +6,7 @@ description: "Learn how to handle requests with Lucia"
 
 [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-The [Next.js middleware]() is the recommended adapter for Next.js projects. It supports both the `pages` router and the newer App router, and as such, there are severals ways `handleRequest()` can be called. However, due to a limitation on cookies in the App router, Lucia cannot renew sessions. Refer to [Next.js App router]().
+The [Next.js middleware](/reference/lucia-auth/middleware#nextjs) is the recommended adapter for Next.js projects. It supports both the `pages` router and the newer App router, and as such, there are severals ways `handleRequest()` can be called. However, due to a limitation on cookies in the App router, Lucia cannot renew sessions. Refer to [Using the App router](/nextjs/app-router).
 
 ### `pages` router
 

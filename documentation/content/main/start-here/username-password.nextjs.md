@@ -4,7 +4,7 @@ title: "Username/password example"
 description: "Learn how to use Lucia in Next.js by implementing a basic username/password auth"
 ---
 
-This page will guide you how to implement a simple username/password auth and cover the basics of Lucia. This uses the Next.js `pages` router as it's the only configuration fully compatible with Lucia. To use the new App router, refer to [Username/password example with the App router]().
+This page will guide you how to implement a simple username/password auth and cover the basics of Lucia. This uses the Next.js `pages` router as it's the only configuration fully compatible with Lucia. To use the new App router, refer to [Username/password example with the App router](/nextjs/username-password-example-app-router).
 
 The [Next.js example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs) in the repo expands on this guide.
 
