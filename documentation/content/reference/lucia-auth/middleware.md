@@ -115,9 +115,70 @@ auth.handleRequest(requestContext as RequestContext);
 | -------------- | -------------------------------------------------------------- |
 | requestContext | [`RequestContext`](/reference/lucia-auth/types#requestcontext) |
 
+## `nextjs()`
+
+Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory.
+
+```ts
+const nextjs = () => Middleware;
+```
+
+#### Usage
+
+```ts
+import { nextjs } from "lucia-auth/middleware";
+
+const auth = lucia({
+	middleware: nextjs()
+	// ...
+});
+```
+
+```ts
+auth.handleRequest({
+	req: req as IncomingMessage,
+	res: res as OutgoingMessage
+});
+
+auth.handleRequest({
+	req: req as IncomingMessage,
+	headers: headers as Headers
+});
+
+auth.handleRequest({
+	req: req as IncomingMessage,
+	response: response as Response
+});
+
+auth.handleRequest({
+	cookies: cookies as Cookies,
+	request: request as Request
+});
+```
+
+| name | type                                                                            | optional |
+| ---- | ------------------------------------------------------------------------------- | :------: |
+| req  | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |          |
+| res  | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |    ✓     |
+
+| name    | type                                                                            |
+| ------- | ------------------------------------------------------------------------------- |
+| req     | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
+| headers | [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers)           |
+
+| name     | type                                                                            |
+| -------- | ------------------------------------------------------------------------------- |
+| req      | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
+| response | [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)         |
+
+| name    | type                                                                     | optional |
+| ------- | ------------------------------------------------------------------------ | :------: |
+| cookies | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) |          |
+| request | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)    |    ✓     |
+
 ## `node()`
 
-Middleware for Node.js, can be used for Next.js as well.
+Middleware for Node.js.
 
 ```ts
 const node = () => Middleware;
@@ -191,12 +252,13 @@ const auth = lucia({
 
 ```ts
 auth.handleRequest(request as Request, response as Response);
+auth.handleRequest(request as Request, headers as Headers);
 ```
 
-| name    | type                                                                                            |
-| ------- | ----------------------------------------------------------------------------------------------- |
-| request | [`Request`](https://www.google.com/search?client=safari&rls=en&q=mdn+request&ie=UTF-8&oe=UTF-8) |
-| headers | [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers)                           |
+| name    | type                                                                                                                                             |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| request | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)                                                                            |
+| headers | [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)`\|`[`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) |
 
 #### Example
 

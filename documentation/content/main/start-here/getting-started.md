@@ -131,7 +131,7 @@ import "lucia-auth/polyfill/node";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: node()
 });
 

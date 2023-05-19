@@ -21,9 +21,4 @@ export default defineConfig({
 	],
 	output: "server",
 	adapter: vercel(),
-	vite: {
-		ssr: {
-			noExternal: ["solid-js"]
-		}
-	}
 });

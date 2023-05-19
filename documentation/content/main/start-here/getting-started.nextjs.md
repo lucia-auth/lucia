@@ -12,6 +12,10 @@ pnpm add lucia-auth
 yarn add lucia-auth
 ```
 
+## Next.js support
+
+Lucia supports both the old `pages` and new `app` directory in Next.js, as well as both the Node and Edge runtime. However, **it will only work as expected when the `pages` directory is used with Node.js**. Currently, Next.js does not provide a way to set cookies inside pages when using the `app` directory or the `pages` directory in the edge runtime. As such, Lucia cannot store refreshed session ids under certain conditions.
+
 ## Set up the database
 
 To support multiple databases, Lucia uses database adapters. These adapters provide a set of standardized methods to read from and update the database. Custom adapters can be created as well if Lucia does not provide one.
@@ -30,47 +34,26 @@ We currently support the following database/ORM options:
 
 ## Initialize Lucia
 
-In `auth/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Additionally, we will import the Node middleware and pass it on to `middleware`. Make sure to export `typeof auth` as well.
+In `auth/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-auth`. Initialize it by defining `adapter` and `env` and export it. Additionally, we will import the Next.js middleware and pass it on to `middleware`. Make sure to export `typeof auth` as well.
 
 ```ts
 // auth/lucia.ts
 import lucia from "lucia-auth";
-import { node } from "lucia-auth/middleware";
+import { nextjs } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 import { dev } from "$app/environment";
 
-const env = process.env.NODE_ENV === "development" ? "DEV" : "PROD";
-
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env,
-	middleware: node()
+	env: "DEV", // "PROD" if prod
+	middleware: nextjs()
 });
 
 export type Auth = typeof auth;
 ```
 
 This module and the file that holds it **should NOT be imported from the client**.
-
-### Deploying to the Edge Runtime
-
-If you're deploying to the Edge runtime (Vercel Edge, Cloudflare Pages/Workers, etc), you'll need to use the [Web middleware](/reference/lucia-auth/middleware#web) instead:
-
-```ts
-import lucia from "lucia-auth";
-import { node, web } from "lucia-auth/middleware";
-// ...
-
-const env = process.env.NODE_ENV === "development" ? "DEV" : "PROD";
-
-export const auth = lucia({
-	// ...
-	middleware: env === "DEV" ? node() : web()
-});
-
-export type Auth = typeof auth;
-```
 
 ### Types
 

@@ -1,5 +1,7 @@
 # Lucia + Next.js demo
 
+Uses the `pages` router.
+
 Install dependencies:
 
 ```bash

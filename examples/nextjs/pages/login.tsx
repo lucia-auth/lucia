@@ -8,7 +8,7 @@ import { useState } from "react";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context.req, context.res);
+	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate();
 	if (session) {
 		return {
