@@ -4,7 +4,7 @@
 		"checkJs": true,
 		"noImplicitAny": true,
 		"module": "ES2022",
-		"moduleResolution": "NodeNext",
+		"moduleResolution": "nodenext",
 		"target": "ES2022",
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,

@@ -48,6 +48,6 @@ export default (request: Request) => {
 	const response = new Response(null, {
 		headers
 	});
-    // ...
+	// ...
 };
 ```

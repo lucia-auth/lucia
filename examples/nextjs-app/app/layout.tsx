@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
 	title: "Lucia + Next.js App router"
-}
+};
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
 	return (

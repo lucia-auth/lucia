@@ -74,7 +74,7 @@ By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#l
 ```ts
 import { auth } from "./lucia.js";
 
-const authRequest = auth.handleRequest({req, res});
+const authRequest = auth.handleRequest({ req, res });
 const session = await authRequest.validate();
 ```
 

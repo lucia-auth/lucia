@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 const Page = async () => {
 	const authRequest = auth.handleRequest({ cookies });
 	const { user } = await authRequest.validateUser();
-	if (!user) redirect("/login")
+	if (!user) redirect("/login");
 	return (
 		<>
 			<p>

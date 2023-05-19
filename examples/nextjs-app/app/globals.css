@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-	@apply flex w-full flex-col place-items-center px-4 pt-8  max-w-md  mx-auto;
+	@apply mx-auto flex w-full max-w-md flex-col place-items-center  px-4  pt-8;
 }
 h1 {
 	@apply mb-8 w-full text-3xl font-semibold;

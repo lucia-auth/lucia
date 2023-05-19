@@ -157,7 +157,8 @@ import { auth } from "../lib/lucia";
 
 const authRequest = auth.handleRequest(Astro);
 const session = await authRequest.validate();
-if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
+if (session) ___astro_return;
+throw Astro.redirect("/", 302); // redirect to profile page if authenticated
 
 if (Astro.request.method === "POST") {
 	// ...
@@ -197,7 +198,8 @@ const authRequest = auth.handleRequest(Astro);
 
 // redirect to profile page if authenticated
 const session = await authRequest.validate();
-if (session) return Astro.redirect("/", 302);
+if (session) ___astro_return;
+throw Astro.redirect("/", 302);
 
 if (Astro.request.method === "POST") {
 	// csrf check
@@ -253,7 +255,8 @@ import { auth } from "../lib/lucia";
 const authRequest = auth.handleRequest(Astro);
 const { user } = await authRequest.validateUser();
 
-if (!user) return Astro.redirect("/login", 302);
+if (!user) ___astro_return;
+throw Astro.redirect("/login", 302);
 ---
 
 <h1>Profile</h1>

@@ -20,5 +20,5 @@ export default defineConfig({
 		markdown()
 	],
 	output: "server",
-	adapter: vercel(),
+	adapter: vercel()
 });
