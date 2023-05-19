@@ -36,7 +36,7 @@ Name the adapter as `adapter-<database_name>` (no `-` or `_` in `<database_name>
 
 ### Tests
 
-The testing package are documented at [Testing adapters](https://lucia-auth.com/adapters/testing-adapters). They check if they return appropriate data and throw appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must pass.
+The testing package are documented at [Testing adapters](https://lucia-auth.com/custom-adapters/testing-adapters). They check if they return appropriate data and throw appropriate errors. You'll need to provide a `db` object that holds methods that read and modify the db. All tests must pass.
 
 ## Documentation
 

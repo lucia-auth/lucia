@@ -56,11 +56,11 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async () => {
+		getAuthorizationUrl: async (redirectUri?: string) => {
 			const state = generateState();
 			const url = createUrl("https://www.patreon.com/oauth2/authorize", {
 				client_id: config.clientId,
-				redirect_uri: config.redirectUri,
+				redirect_uri: redirectUri ?? config.redirectUri,
 				scope: scope(["identity"], config.scope),
 				response_type: "code",
 				state

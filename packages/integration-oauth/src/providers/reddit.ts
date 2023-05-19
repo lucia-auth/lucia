@@ -43,12 +43,12 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async () => {
+		getAuthorizationUrl: async (redirectUri?: string) => {
 			const state = generateState();
 			const url = createUrl("https://www.reddit.com/api/v1/authorize", {
 				client_id: config.clientId,
 				response_type: "code",
-				redirect_uri: config.redirectUri,
+				redirect_uri: redirectUri ?? config.redirectUri,
 				duration: "permanent",
 				scope: scope([], config.scope),
 				state
