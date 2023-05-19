@@ -1,5 +1,17 @@
 # lucia-auth
 
+## 1.6.0
+
+### Minor changes
+
+- [#626](https://github.com/pilcrowOnPaper/lucia/pull/626) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : `web()` middleware can take `Headers` or `Response`
+
+- [#626](https://github.com/pilcrowOnPaper/lucia/pull/626) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `nextjs()` middleware
+
+### Patch changes
+
+- [#626](https://github.com/pilcrowOnPaper/lucia/pull/626) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix Express middleware returning broken url
+
 ## 1.5.0
 
 ### Minor changes
