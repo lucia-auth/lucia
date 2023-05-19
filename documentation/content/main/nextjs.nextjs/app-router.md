@@ -7,6 +7,19 @@ While Lucia "works" with the new App router in Next.js v13, **your users will be
 
 There are no differences in Lucia's API between Node.js and the edge runtime when using the App router.
 
+### Extending session expiration
+
+```ts
+// auth/lucia.ts
+export const auth = lucia({
+	// ...
+	sessionExpiresIn: {
+		activePeriod: 60 * 60 * 24 * 30, // 1 month
+		idlePeriod: 0 // disable session renewal
+	}
+});
+```
+
 ## Pages
 
 ```ts

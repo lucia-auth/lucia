@@ -1,11 +1,11 @@
 ---
-title: "Username/password example with App router"
+title: "Username/password example with the App router"
 _order: 2
 ---
 
-This page will guide you how to implement a simple username/password auth with the App router and cover the basics of Lucia.
+This page will guide you how to implement a simple username/password auth with the App router and cover the basics of Lucia. Keep in mind that due to a limitation with cookies when using the App router, Lucia cannot automatically renew sessions.
 
-The [Next.js example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app) in the repo expands on this guide.
+The [Next.js App router example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app) in the repo expands on this guide.
 
 Make sure you've setup Lucia and your database as covered in [Getting started](/start-here/getting-started?nextjs).
 
@@ -32,56 +32,97 @@ declare namespace Lucia {
 }
 ```
 
-Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object.
+Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your Lucia config to expose the user's id and username (by default only `userId` is added). The returned value will be the `User` object. We also recommend extending the session expiration to a month since Lucia cannot renew sessions when using the App router.
 
 ```ts
-// lib/lucia.ts
+// auth/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
 	env: dev ? "DEV" : "PROD",
-	middleware: node(),
+	middleware: nextjs(),
 	transformDatabaseUser: (userData) => {
 		return {
 			userId: userData.id,
 			username: userData.username
 		};
+	},
+	sessionExpiresIn: {
+		activePeriod: 60 * 60 * 24 * 30, // 1 month
+		idlePeriod: 0 // disable session renewal
 	}
 });
 ```
 
-## 3. Sign up page
+## 3. Create a basic `Form` component
+
+Create a form component, that when submitted, will send a POST request to the endpoint defined in the `action` prop. It will also display an error message when the `fetch()` request returns an error.
+
+```tsx
+// components/form.tsx
+"use client";
+
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+
+const Form = ({
+	children,
+	action
+}: {
+	children: React.ReactNode;
+	action: string;
+}) => {
+	const router = useRouter();
+	const [errorMessage, setErrorMessage] = useState("");
+	return (
+		<>
+			<form
+				onSubmit={async (e) => {
+					e.preventDefault();
+					setErrorMessage("");
+					const formData = new FormData(e.currentTarget);
+					const username = formData.get("username");
+					const password = formData.get("password");
+
+					const response = await fetch(e.currentTarget.action, {
+						method: "POST",
+						body: JSON.stringify({
+							username,
+							password
+						})
+					});
+					if (response.redirected) return router.push(response.url);
+					const result = (await response.json()) as {
+						error: string;
+					};
+					setErrorMessage(result.error);
+				}}
+				action={action}
+			>
+				{children}
+			</form>
+			<p className="error">{errorMessage}</p>
+		</>
+	);
+};
+
+export default Form;
+```
+
+## 4. Sign up page
 
 ### Sign up form
 
-Create `pages/signup.tsx`. This form will have an input field for username and password.
+Create `app/signup/page.tsx`. This page will have a form with an input field for username and password, which will be handled by `/api/signup`.
 
 ```tsx
-// pages/signup.tsx
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+// app/signup/page.tsx
+import Form from "@/components/form";
 
-export default () => {
-	const router = useRouter();
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const formData = new FormData(e.currentTarget);
-		const username = formData.get("username") as string;
-		const password = formData.get("password") as string;
-
-		const response = await fetch("/api/signup", {
-			method: "POST",
-			body: JSON.stringify({
-				username,
-				password
-			})
-		});
-		if (response.redirected) return router.push(response.url); // redirect on redirect responses
-	};
+const Page = async () => {
 	return (
-		<div>
-			<h1>Create an account</h1>
-			<form method="post" onSubmit={handleSubmit} action="/api/signup">
+		<>
+			<h2>Create an account</h2>
+			<Form action="/api/signup">
 				<label htmlFor="username">username</label>
 				<br />
 				<input id="username" name="username" />
@@ -91,35 +132,48 @@ export default () => {
 				<input type="password" id="password" name="password" />
 				<br />
 				<input type="submit" value="Continue" className="button" />
-			</form>
-			<Link href="/login" className="link">
+			</Form>
+			<a href="/login" className="link">
 				Sign in
-			</Link>
-		</div>
+			</a>
+		</>
 	);
 };
+
+export default Page;
 ```
 
 ### Create users
 
-Create `pages/api/signup.ts`. This API route will handle account creation.
+Create `app/api/signup/route.ts`. This API route will handle account creation.
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `NextApiRequest` and `NextApiResponse`.
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies.
 
 Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth?nextjs#createsession) and make sure to store the session id by calling [`setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```ts
-// pages/api/signup.ts
-import type { NextApiRequest, NextApiResponse } from "next";
-import { auth } from "../../lib/lucia";
+// app/api/signup/route.ts
+import { auth } from "@/auth/lucia";
+import { LuciaError } from "lucia-auth";
+import { Prisma } from "@prisma/client";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST")
-		return res.status(404).json({ error: "Not found" });
-	const { username, password } = JSON.parse(req.body);
-	if (typeof username !== "string" || typeof password !== "string")
-		return res.status(400).json({});
-	const authRequest = auth.handleRequest({ req, res });
+export const POST = async (request: Request) => {
+	const { username, password } = (await request.json()) as Partial<{
+		username: string;
+		password: string;
+	}>;
+	if (!username || !password) {
+		return NextResponse.json(
+			{
+				error: "Invalid input"
+			},
+			{
+				status: 400
+			}
+		);
+	}
 	try {
 		const user = await auth.createUser({
 			primaryKey: {
@@ -132,29 +186,72 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			}
 		});
 		const session = await auth.createSession(user.userId);
-		authRequest.setSession(session); // set cookies
-		return res.redirect(302, "/"); // redirect user on account creations
-	} catch (e) {
-		return res.status(400).json({}); // invalid
+		const authRequest = auth.handleRequest({ request, cookies });
+		authRequest.setSession(session);
+		// using redirect() ignores cookie
+		new Response(null, {
+			status: 302,
+			headers: {
+				location: "/"
+			}
+		});
+	} catch (error) {
+		if (
+			error instanceof Prisma.PrismaClientKnownRequestError &&
+			error.code === "P2002" &&
+			error.message?.includes("username")
+		) {
+			return NextResponse.json(
+				{
+					error: "Username already in use"
+				},
+				{
+					status: 400
+				}
+			);
+		}
+		if (
+			error instanceof LuciaError &&
+			error.message === "AUTH_DUPLICATE_KEY_ID"
+		) {
+			return NextResponse.json(
+				{
+					error: "Username already in use"
+				},
+				{
+					status: 400
+				}
+			);
+		}
+		// database connection error
+		console.error(error);
+		return NextResponse.json(
+			{
+				error: "Unknown error occurred"
+			},
+			{
+				status: 500
+			}
+		);
 	}
 };
 ```
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `NextApiRequest` and `NextApiResponse`.
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `Request` and `cookies()`.
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie with [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```ts
-const authRequest = auth.handleRequest({ req, res });
+const authRequest = auth.handleRequest({ request, cookies });
 ```
 
 > (warn) Next.js does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 #### Set user passwords
 
-We don't store the password in the user, but in the key (`primaryKey`). Keys represent the relationship between a user and a auth method, in this case username/password. We'll set `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user).
+We don't store the password in the user, but in a key (`primaryKey`). Keys represent the relationship between a user and a auth method, in this case username/password. We'll set `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user).
 
 ```ts
 const user = await auth.createUser({
@@ -169,76 +266,41 @@ const user = await auth.createUser({
 
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server component to validate the request and get the current session.
 
 ```ts
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+// app/signup/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-// ADD:
-import { auth } from "../lib/lucia";
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-```
+import Form from "@/components/form";
 
-```ts
-// pages/signup.tsx
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context);
+const Page = async () => {
+	const authRequest = auth.handleRequest({ cookies });
 	const session = await authRequest.validate();
-	if (session) {
-		// redirect the user if authenticated
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false
-			}
-		};
-	}
-	return {
-		props: {}
-	};
+	if (session) redirect("/");
+	// ...
 };
 
-// ...
+export default Page;
 ```
 
-## 4. Sign in page
+## 5. Sign in page
 
 ### Sign in form
 
-Create `pages/login.tsx`. This route will handle sign ins. This form will also have an input field for username and password.
+Create `app/login/page.tsx`. This page will have a form with an input field for username and password, which will be handled by `/api/login`.
 
 ```tsx
 // pages/login.tsx
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+import Form from "@/components/form";
 
-export default () => {
-	const router = useRouter();
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const formData = new FormData(e.currentTarget);
-		const username = formData.get("username") as string;
-		const password = formData.get("password") as string;
-
-		const response = await fetch("/api/login", {
-			method: "POST",
-			body: JSON.stringify({
-				username,
-				password
-			})
-		});
-		if (response.redirected) return router.push(response.url);
-	};
+const Page = async () => {
 	return (
-		<div>
-			<h1>Sign in</h1>
-			<form method="post" onSubmit={handleSubmit} action="/api/login">
+		<>
+			<h2>Sign in</h2>
+			<Form action="/api/login">
 				<label htmlFor="username">username</label>
 				<br />
 				<input id="username" name="username" />
@@ -248,44 +310,81 @@ export default () => {
 				<input type="password" id="password" name="password" />
 				<br />
 				<input type="submit" value="Continue" className="button" />
-			</form>
-			<Link href="/signup" className="link">
+			</Form>
+			<a href="/signup" className="link">
 				Create a new account
-			</Link>
-		</div>
+			</a>
+		</>
 	);
 };
+
+export default Page;
 ```
 
 ### Authenticate users
 
-Create `pages/api/login.ts`. This API route will handle sign-ins.
+Create `app/api/login/route.ts`. This API route will handle sign-ins.
 
 We’ll use the key created in the previous section to reference the user and authenticate them by validating the password with [`useKey()`](/reference/lucia-auth/auth#usekey) . Create a new session if the password is valid.
 
 ```ts
-// pages/api/login.ts
+// app/api/login/route.ts
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { LuciaError } from "lucia-auth";
 
-import type { NextApiRequest, NextApiResponse } from "next";
-import { auth } from "../../lib/lucia";
-
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST")
-		return res.status(404).json({ error: "Not found" });
-	const { username, password } = JSON.parse(req.body);
-	if (typeof username !== "string" || typeof password !== "string")
-		return res.status(400).json({});
+export const POST = async (request: Request) => {
+	const { username, password } = (await request.json()) as Partial<{
+		username: string;
+		password: string;
+	}>;
+	if (!username || !password) {
+		return NextResponse.json(
+			{
+				error: "Invalid input"
+			},
+			{
+				status: 400
+			}
+		);
+	}
 	try {
-		const authRequest = auth.handleRequest({ req, res });
+		const authRequest = auth.handleRequest({ request, cookies });
 		const key = await auth.useKey("username", username, password);
 		const session = await auth.createSession(key.userId);
-		authRequest.setSession(session); // set cookie
-		return res.redirect(302, "/"); // redirect to profile page
-	} catch {
-		// invalid
-		return res.status(200).json({
-			error: "Incorrect username or password"
+		authRequest.setSession(session);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				location: "/"
+			}
 		});
+	} catch (error) {
+		if (
+			(error instanceof LuciaError &&
+				error.message === "AUTH_INVALID_KEY_ID") ||
+			(error instanceof LuciaError && error.message === "AUTH_INVALID_PASSWORD")
+		) {
+			return NextResponse.json(
+				{
+					error: "Incorrect username or password"
+				},
+				{
+					status: 400
+				}
+			);
+		}
+		// database connection error
+		console.error(error);
+		return NextResponse.json(
+			{
+				error: "Unknown error occurred"
+			},
+			{
+				status: 500
+			}
+		);
 	}
 };
 ```
@@ -303,151 +402,112 @@ const key = await auth.useKey("username", username, password);
 If the session exists, redirect authenticated users to the profile page.
 
 ```ts
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+// app/login/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-// ADD:
-import { auth } from "../lib/lucia";
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-```
+import Form from "@/components/form";
 
-```ts
-// pages/login.tsx
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context);
+const Page = async () => {
+	const authRequest = auth.handleRequest({ cookies });
 	const session = await authRequest.validate();
-	if (session) {
-		// redirect the user if authenticated
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false
-			}
-		};
-	}
-	return {
-		props: {}
-	};
-};
-
-// ...
-```
-
-## 5. Profile page (protected)
-
-This page will be the root page (`/`). This route will show the user's data and have the note-taking portion of the app.
-
-### Get current user
-
-Create `pages/index.tsx` and set up the page and `getServerSideProps()`. Redirect the user to `/login` if they are unauthenticated.
-
-```tsx
-import React from "react";
-
-import { auth } from "../lib/lucia";
-
-import type {
-	GetServerSidePropsContext,
-	GetServerSidePropsResult,
-	InferGetServerSidePropsType
-} from "next";
-import type { User } from "lucia-auth";
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ user: User }>> => {
-	const authRequest = auth.handleRequest(context);
-	const { user } = await authRequest.validateUser();
-	if (!user)
-		return {
-			redirect: {
-				destination: "/login",
-				permanent: false
-			}
-		};
-	return {
-		props: {
-			user
-		}
-	};
-};
-
-export default (
-	props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
+	if (session) redirect("/");
 	return (
 		<>
-			<h1>Profile</h1>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
-			<div>
-				<p>User id: {props.user?.userId}</p>
-				<p>Username: {props.user?.username}</p>
-			</div>
+			<h2>Sign in</h2>
+			<a href="/api/oauth?provider=github" className="button">
+				Continue with Github
+			</a>
+			<p className="center">or</p>
+			<Form action="/api/login">
+				<label htmlFor="username">username</label>
+				<br />
+				<input id="username" name="username" />
+				<br />
+				<label htmlFor="password">password</label>
+				<br />
+				<input type="password" id="password" name="password" />
+				<br />
+				<input type="submit" value="Continue" className="button" />
+			</Form>
+			<a href="/signup" className="link">
+				Create a new account
+			</a>
 		</>
 	);
 };
+
+export default Page;
+```
+
+## 6. Profile page (protected)
+
+This page will be the root page (`/`). This route will show the user's data.
+
+### Get current user
+
+Create `app/page.tsx`. Redirect the user to `/login` if they are unauthenticated. It will also have a form that handles for logging out.
+
+```tsx
+// app/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+import Form from "@/components/form";
+
+const Page = async () => {
+	const authRequest = auth.handleRequest({ cookies });
+	const { user } = await authRequest.validateUser();
+	if (!user) redirect("/login");
+	return (
+		<>
+			<p>
+				This page is protected and can only be accessed by authenticated users.
+			</p>
+			<pre className="code">{JSON.stringify(user, null, 2)}</pre>
+
+			<Form action="/api/logout">
+				<input type="submit" className="button" value="Sign out" />
+			</Form>
+		</>
+	);
+};
+
+export default Page;
 ```
 
 ### Sign out
 
-Create `pages/api/logout.ts`. This API route will handle sign-outs, and it will invalidate the current session and remove the session cookie.
+Create `app/api/logout/route.ts`. This API route will handle sign-outs, and it will invalidate the current session and remove the session cookie.
 
 ```ts
-import { auth } from "../../auth/lucia";
+// app/api/logout/route.ts
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-import type { NextApiRequest, NextApiResponse } from "next";
-
-type Data = {
-	error?: string;
-};
-
-export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-	if (req.method !== "POST")
-		return res.status(404).json({ error: "Not found" });
-	const authRequest = auth.handleRequest({ req, res });
+export const POST = async (request: Request) => {
+	const authRequest = auth.handleRequest({ request, cookies });
 	const session = await authRequest.validate();
-	if (!session) return res.status(401).json({ error: "Unauthorized" });
+	if (!session) {
+		return NextResponse.json(
+			{
+				error: "Unauthorized"
+			},
+			{
+				status: 401
+			}
+		);
+	}
 	await auth.invalidateSession(session.sessionId);
-	authRequest.setSession(null); // setting to null removes cookie
-	return res.redirect(302, "/");
-};
-```
-
-This can be called with a fetch request:
-
-```tsx
-<button
-	onClick={async () => {
-		try {
-			await fetch("/api/logout", {
-				method: "POST"
-			});
-			router.push("/login"); // login page
-		} catch (e) {
-			console.log(e);
+	authRequest.setSession(null);
+	return new Response(null, {
+		status: 302,
+		headers: {
+			location: "/login"
 		}
-	}}
->
-	Sign out
-</button>
-```
-
-## 6. Validate requests
-
-`AuthRequest` can also be used inside API routes:
-
-```ts
-import { auth } from "../../lib/lucia";
-import type { NextApiRequest, NextApiResponse } from "next";
-
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-	const authRequest = auth.handleRequest({ req, res });
-	const session = await authRequest.validate();
-	// ...
+	});
 };
 ```

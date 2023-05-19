@@ -3,8 +3,14 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const Form = ({ children, action }: { children: React.ReactNode, action: string }) => {
-    const router = useRouter();
+const Form = ({
+	children,
+	action
+}: {
+	children: React.ReactNode;
+	action: string;
+}) => {
+	const router = useRouter();
 	const [errorMessage, setErrorMessage] = useState("");
 	return (
 		<>
@@ -13,8 +19,8 @@ const Form = ({ children, action }: { children: React.ReactNode, action: string 
 					e.preventDefault();
 					setErrorMessage("");
 					const formData = new FormData(e.currentTarget);
-					const username = formData.get("username") as string;
-					const password = formData.get("password") as string;
+					const username = formData.get("username");
+					const password = formData.get("password");
 
 					const response = await fetch(e.currentTarget.action, {
 						method: "POST",

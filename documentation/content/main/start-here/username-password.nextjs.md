@@ -4,7 +4,7 @@ title: "Username/password example"
 description: "Learn how to use Lucia in Next.js by implementing a basic username/password auth"
 ---
 
-This page will guide you how to implement a simple username/password auth and cover the basics of Lucia.
+This page will guide you how to implement a simple username/password auth and cover the basics of Lucia. This uses the Next.js `pages` router as it's the only configuration fully compatible with Lucia. To use the new App router, refer to [Username/password example with the App router]().
 
 The [Next.js example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs) in the repo expands on this guide.
 
@@ -67,8 +67,8 @@ export default () => {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		const username = formData.get("username") as string;
-		const password = formData.get("password") as string;
+		const username = formData.get("username");
+		const password = formData.get("password");
 
 		const response = await fetch("/api/signup", {
 			method: "POST",
@@ -224,8 +224,8 @@ export default () => {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		const username = formData.get("username") as string;
-		const password = formData.get("password") as string;
+		const username = formData.get("username");
+		const password = formData.get("password");
 
 		const response = await fetch("/api/login", {
 			method: "POST",

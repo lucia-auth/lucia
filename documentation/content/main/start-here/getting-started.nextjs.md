@@ -12,7 +12,7 @@ pnpm add lucia-auth
 yarn add lucia-auth
 ```
 
-## Next.js oddities
+## Next.js support
 
 Lucia supports both the old `pages` and new `app` directory in Next.js, as well as both the Node and Edge runtime. However, **it will only work as expected when the `pages` directory is used with Node.js**. Currently, Next.js does not provide a way to set cookies inside pages when using the `app` directory or the `pages` directory in the edge runtime. As such, Lucia cannot store refreshed session ids under certain conditions.
 

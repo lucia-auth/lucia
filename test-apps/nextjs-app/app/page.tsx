@@ -1,7 +1,8 @@
 import { auth } from "@/auth/lucia";
-import Form from "@/components/form";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+import Form from "@/components/form";
 
 const Page = async () => {
 	const authRequest = auth.handleRequest({ cookies });
