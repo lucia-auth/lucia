@@ -1,10 +1,23 @@
 # @lucia-auth/oauth
 
+## 1.1.0
+
+### Minor changes
+
+- [#628](https://github.com/pilcrowOnPaper/lucia/pull/628) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Also adds the option to pass a default `redirectUri` to the github provider config.
+
+- [#628](https://github.com/pilcrowOnPaper/lucia/pull/628) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update OAuth Provider type to allow for a custom `redirectUri` to be passed to `getAuthorizationUrl` and update all providers accordingly.
+
+### Patch changes
+
+- [#626](https://github.com/pilcrowOnPaper/lucia/pull/626) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : `providerUser` respects scope and update `DiscordUser`
+
 ## 1.0.1
 
 ### Patch changes
 
 - [#550](https://github.com/pilcrowOnPaper/lucia/pull/550) by [@pkb-pmj](https://github.com/pkb-pmj) : Fix OAuth provider types
+
   - Take `Auth` as a generic for every provider
 
 ## 1.0.0
