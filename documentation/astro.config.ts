@@ -23,7 +23,8 @@ export default defineConfig({
 	adapter: vercel(),
 	vite: {
 		ssr: {
-			noExternal: ["solid-js"]
+			noExternal: ["solid-js"],
+			target: "webworker"
 		}
 	}
 });
