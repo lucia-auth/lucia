@@ -149,6 +149,9 @@ const key = pgTable("auth_key", {
 	primaryKey: boolean("primary_key").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
+	}),
+	expires: bigint("expires", {
+		mode: "number"
 	})
 });
 ```
@@ -200,7 +203,8 @@ const key = sqliteTable("auth_key", {
 		.notNull()
 		.references(() => user.id),
 	primaryKey: integer().notNull(),
-	hashedPassword: text("hashed_password")
+	hashedPassword: text("hashed_password"),
+	expires: integer("expires")
 });
 ```
 
