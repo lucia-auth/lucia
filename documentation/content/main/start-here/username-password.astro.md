@@ -63,7 +63,7 @@ Create `pages/signup.astro`. This form will have an input field for username and
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue"  />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
@@ -179,7 +179,7 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue"  />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
