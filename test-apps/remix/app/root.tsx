@@ -1,5 +1,5 @@
-import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
+
 import {
   Links,
   LiveReload,
@@ -9,8 +9,13 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
+import styles from "./root.css";
+
 export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  {
+    rel: "stylesheet",
+    href: styles,
+  },
 ];
 
 export default function App() {
