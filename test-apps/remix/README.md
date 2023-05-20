@@ -1,4 +1,4 @@
-# Lucia + Next.js demo
+# Lucia + Remix demo
 
 Install dependencies:
 
