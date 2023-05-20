@@ -6,8 +6,9 @@ export const get: APIRoute = async (context) => {
 	const code = context.url.searchParams.get("code");
 	const state = context.url.searchParams.get("state");
 	const storedState = context.cookies.get("oauth_state").value;
-	if (storedState !== state || !code || !state)
-		throw new Response(null, { status: 401 });
+	if (!storedState || storedState !== state || !code || !state) {
+		return new Response(null, { status: 401 });
+	}
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);

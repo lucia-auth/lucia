@@ -1,11 +1,15 @@
-import { auth, githubAuth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import { oauthStateCookie } from "@auth/cookie";
+import { auth, githubAuth } from "@auth/lucia.server";
 
-export const GET = async (request: Request) => {
+import { redirect, type LoaderArgs } from "@remix-run/node";
+
+export const loader = async ({ request }: LoaderArgs) => {
 	const url = new URL(request.url);
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
-	const storedState = cookies().get("oauth_state")?.value ?? null;
+	const storedState = await oauthStateCookie.parse(
+		request.headers.get("Cookie") ?? ""
+	);
 	if (!storedState || storedState !== state || !code || !state) {
 		return new Response(null, { status: 401 });
 	}
@@ -18,13 +22,11 @@ export const GET = async (request: Request) => {
 				username: providerUser.login
 			}));
 		const session = await auth.createSession(user.userId);
-		const authRequest = auth.handleRequest({ request, cookies });
+		const headers = new Headers();
+		const authRequest = auth.handleRequest(request, headers);
 		authRequest.setSession(session);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				location: "/"
-			}
+		return redirect("/", {
+			headers
 		});
 	} catch (e) {
 		return new Response(null, {
