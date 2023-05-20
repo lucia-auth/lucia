@@ -40,7 +40,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 	const session = await authRequest.validate();
 	if (session) return redirect("/");
 	return json(
-		{},
+		null,
 		{
 			headers
 		}

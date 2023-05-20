@@ -91,11 +91,9 @@ export default () => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<input type="submit" value="Continue" className="button" />
+				<input type="submit" value="Continue" />
 			</form>
-			<Link href="/login" className="link">
-				Sign in
-			</Link>
+			<Link href="/login">Sign in</Link>
 		</div>
 	);
 };
@@ -248,11 +246,9 @@ export default () => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<input type="submit" value="Continue" className="button" />
+				<input type="submit" value="Continue" />
 			</form>
-			<Link href="/signup" className="link">
-				Create a new account
-			</Link>
+			<Link href="/signup">Create a new account</Link>
 		</div>
 	);
 };
@@ -362,13 +358,14 @@ export const getServerSideProps = async (
 ): Promise<GetServerSidePropsResult<{ user: User }>> => {
 	const authRequest = auth.handleRequest(context);
 	const { user } = await authRequest.validateUser();
-	if (!user)
+	if (!user) {
 		return {
 			redirect: {
 				destination: "/login",
 				permanent: false
 			}
 		};
+	}
 	return {
 		props: {
 			user

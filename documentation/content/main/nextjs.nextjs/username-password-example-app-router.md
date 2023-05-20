@@ -100,7 +100,7 @@ const Form = ({
 			>
 				{children}
 			</form>
-			<p className="error">{errorMessage}</p>
+			<p>{errorMessage}</p>
 		</>
 	);
 };
@@ -131,11 +131,9 @@ const Page = async () => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<input type="submit" value="Continue" className="button" />
+				<input type="submit" value="Continue" />
 			</Form>
-			<a href="/login" className="link">
-				Sign in
-			</a>
+			<a href="/login">Sign in</a>
 		</>
 	);
 };
@@ -309,11 +307,9 @@ const Page = async () => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<input type="submit" value="Continue" className="button" />
+				<input type="submit" value="Continue" />
 			</Form>
-			<a href="/signup" className="link">
-				Create a new account
-			</a>
+			<a href="/signup">Create a new account</a>
 		</>
 	);
 };
@@ -401,7 +397,7 @@ const key = await auth.useKey("username", username, password);
 
 If the session exists, redirect authenticated users to the profile page.
 
-```ts
+```tsx
 // app/login/page.tsx
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
@@ -416,10 +412,6 @@ const Page = async () => {
 	return (
 		<>
 			<h2>Sign in</h2>
-			<a href="/api/oauth?provider=github" className="button">
-				Continue with Github
-			</a>
-			<p className="center">or</p>
 			<Form action="/api/login">
 				<label htmlFor="username">username</label>
 				<br />
@@ -429,11 +421,9 @@ const Page = async () => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<input type="submit" value="Continue" className="button" />
+				<input type="submit" value="Continue" />
 			</Form>
-			<a href="/signup" className="link">
-				Create a new account
-			</a>
+			<a href="/signup">Create a new account</a>
 		</>
 	);
 };
@@ -466,10 +456,12 @@ const Page = async () => {
 			<p>
 				This page is protected and can only be accessed by authenticated users.
 			</p>
-			<pre className="code">{JSON.stringify(user, null, 2)}</pre>
+			<pre>
+				<code>{JSON.stringify(user, null, 2)}</code>
+			</pre>
 
 			<Form action="/api/logout">
-				<input type="submit" className="button" value="Sign out" />
+				<input type="submit" value="Sign out" />
 			</Form>
 		</>
 	);

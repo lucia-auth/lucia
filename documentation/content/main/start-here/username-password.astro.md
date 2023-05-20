@@ -261,8 +261,8 @@ throw Astro.redirect("/login", 302);
 
 <h1>Profile</h1>
 <div>
-	<p>User id: {$user?.userId}</p>
-	<p>Username: {$user?.username}</p>
+	<p>User id: {user.userId}</p>
+	<p>Username: {user.username}</p>
 </div>
 ```
 
@@ -298,10 +298,11 @@ import type { APIRoute } from "astro";
 export const post: APIRoute = async (Astro) => {
 	const authRequest = auth.handleRequest(Astro);
 	const session = await authRequest.validate();
-	if (!session)
+	if (!session) {
 		return new Response(null, {
 			status: 400
 		});
+	}
 	await auth.invalidateSession(session.sessionId); // invalidate current session
 	authRequest.setSession(null); // clear session cookie
 

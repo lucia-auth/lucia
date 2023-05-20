@@ -6,7 +6,7 @@ description: "Learn how to use MySQL databases with Lucia"
 
 An adapter for MySQL databases.
 
-```bash
+```
 npm i @lucia-auth/adapter-mysql
 pnpm add @lucia-auth/adapter-mysql
 yarn add @lucia-auth/adapter-mysql
