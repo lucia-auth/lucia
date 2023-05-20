@@ -39,12 +39,9 @@ export const loader = async ({ request }: LoaderArgs) => {
 	const authRequest = auth.handleRequest(request, headers);
 	const session = await authRequest.validate();
 	if (session) return redirect("/");
-	return json(
-		{},
-		{
-			headers
-		}
-	);
+	return json(null, {
+		headers
+	});
 };
 
 export const action = async ({ request }: ActionArgs) => {
