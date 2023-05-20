@@ -14,7 +14,7 @@ module.exports = {
 		"lucia-auth/middleware",
 		"@lucia-auth/adapter-prisma",
 		"@lucia-auth/oauth",
-    "@lucia-auth/oauth/providers",
-    "lucia-auth/polyfill/node"
+		"@lucia-auth/oauth/providers",
+		"lucia-auth/polyfill/node"
 	]
 };

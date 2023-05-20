@@ -3,7 +3,7 @@ import { web } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 import { github } from "@lucia-auth/oauth/providers";
-import "lucia-auth/polyfill/node"
+import "lucia-auth/polyfill/node";
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
