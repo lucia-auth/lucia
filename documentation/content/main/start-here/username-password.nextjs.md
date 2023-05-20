@@ -91,11 +91,9 @@ export default () => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<input type="submit" value="Continue" className="button" />
+				<input type="submit" value="Continue" />
 			</form>
-			<Link href="/login" className="link">
-				Sign in
-			</Link>
+			<Link href="/login">Sign in</Link>
 		</div>
 	);
 };
@@ -136,7 +134,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		authRequest.setSession(session); // set cookies
 		return res.redirect(302, "/"); // redirect user on account creations
 	} catch (e) {
-		return res.status(400).json({}); // invalid
+		// username taken
+		return res.status(400).json({});
 	}
 };
 ```
@@ -248,11 +247,9 @@ export default () => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<input type="submit" value="Continue" className="button" />
+				<input type="submit" value="Continue" />
 			</form>
-			<Link href="/signup" className="link">
-				Create a new account
-			</Link>
+			<Link href="/signup">Create a new account</Link>
 		</div>
 	);
 };
@@ -283,10 +280,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		authRequest.setSession(session); // set cookie
 		return res.redirect(302, "/"); // redirect to profile page
 	} catch {
-		// invalid
-		return res.status(200).json({
-			error: "Incorrect username or password"
-		});
+		// invalid username/password
+		return res.status(400).json({});
 	}
 };
 ```
@@ -362,13 +357,14 @@ export const getServerSideProps = async (
 ): Promise<GetServerSidePropsResult<{ user: User }>> => {
 	const authRequest = auth.handleRequest(context);
 	const { user } = await authRequest.validateUser();
-	if (!user)
+	if (!user) {
 		return {
 			redirect: {
 				destination: "/login",
 				permanent: false
 			}
 		};
+	}
 	return {
 		props: {
 			user
@@ -382,9 +378,6 @@ export default (
 	return (
 		<>
 			<h1>Profile</h1>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
 			<div>
 				<p>User id: {props.user?.userId}</p>
 				<p>Username: {props.user?.username}</p>

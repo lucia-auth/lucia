@@ -6,7 +6,7 @@ description: "Learn how to test your custom database adapters"
 
 Lucia provides a package for testing adapters.
 
-```bash
+```
 npm i @lucia-auth/adapter-test
 pnpm add @lucia-auth/adapter-test
 yarn add @lucia-auth/adapter-test

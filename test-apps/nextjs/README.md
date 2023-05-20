@@ -2,32 +2,34 @@
 
 Uses the `pages` router.
 
-Install dependencies:
+## Setup
 
-```bash
+### Install dependencies
+
+```
 pnpm i
 ```
 
+### Prisma
+
 Migrate Prisma schema:
 
-```bash
-npx prisma migrate dev --name init
+```
+pnpm prisma migrate dev --name init
 ```
 
-Run:
+### Github OAuth
+
+Create a Github OAuth app and copy-paste client id and secret into `.env`.
 
 ```bash
+# .env
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
+```
+
+## Run
+
+```
 pnpm dev
-```
-
-## Polyfill for Node.js
-
-If you're using Node.js (v18 or below) for development or production, a polyfill is required! Replace `next dev` with `NODE_OPTIONS=--experimental-global-webcrypto next dev` etc in package.json or import `lucia-auth/polyfill/node` in `lucia.ts`:
-
-```ts
-import "lucia-auth/polyfill/node";
-
-export const auth = lucia({
-	// ...
-});
 ```

@@ -6,7 +6,7 @@ description: "Learn how to get started with Lucia"
 
 Install Lucia using your package manager of your choice.
 
-```bash
+```
 npm i lucia-auth
 pnpm add lucia-auth
 yarn add lucia-auth

@@ -68,7 +68,7 @@ const validateOtp = async () => {
 			// generate new password and send new email
 		}
 		if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
-			// invalid password
+			// invalid username/password
 		}
 	}
 };

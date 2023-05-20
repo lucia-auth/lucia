@@ -6,7 +6,7 @@ description: "Learn how to use SQLite databases with Lucia"
 
 An adapter for SQLite databases.
 
-```bash
+```
 npm i @lucia-auth/adapter-sqlite
 pnpm add @lucia-auth/adapter-sqlite
 yarn add @lucia-auth/adapter-sqlite

@@ -78,12 +78,10 @@ export default component$(() => {
 				<input type="password" id="password" name="password" />
 
 				<br />
-				<input type="submit" value="Continue" class="button" />
+				<input type="submit" value="Continue" />
 			</Form>
 
-			<Link href="/login" class="link">
-				Sign in
-			</Link>
+			<Link href="/login">Sign in</Link>
 		</>
 	);
 });
@@ -126,28 +124,9 @@ export const useSignupAction = routeAction$(
 			const authRequest = auth.handleRequest(event);
 			authRequest.setSession(session);
 		} catch (error) {
-			if (
-				error instanceof Prisma.PrismaClientKnownRequestError &&
-				error.code === "P2002" &&
-				error.message?.includes("username")
-			) {
-				return event.fail(500, {
-					error: "Username already in use"
-				});
-			}
-			if (
-				error instanceof LuciaError &&
-				error.message === "AUTH_DUPLICATE_KEY_ID"
-			) {
-				return event.fail(500, {
-					error: "Username already in use"
-				});
-			}
-			// database connection error
+			// username already used
 			console.error(error);
-			return event.fail(500, {
-				error: "Unknown error occurred"
-			});
+			return event.fail(400);
 		}
 
 		// if all goes well, redirect to home page
@@ -207,18 +186,10 @@ export default component$(() => {
 				<input type="password" id="password" name="password" />
 
 				<br />
-				<input type="submit" value="Continue" class="button" />
+				<input type="submit" value="Continue" />
 			</Form>
-			{signupAction.value?.failed && (
-				<>
-					<p class="error">{signupAction.value?.error}</p>
-					<p class="error">{signupAction.value.fieldErrors?.password}</p>
-				</>
-			)}
 
-			<Link href="/login" class="link">
-				Sign in
-			</Link>
+			<Link href="/login">Sign in</Link>
 		</>
 	);
 });
@@ -281,13 +252,9 @@ export default component$(() => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<button class="button" type="submit">
-					Continue
-				</button>
+				<button type="submit">Continue</button>
 			</Form>
-			<Link href="/signup" class="link">
-				Create a new account
-			</Link>
+			<Link href="/signup">Create a new account</Link>
 		</>
 	);
 });
@@ -328,19 +295,9 @@ export const useLoginAction = routeAction$(
 			const session = await auth.createSession(key.userId);
 			authRequest.setSession(session);
 		} catch (e) {
-			const error = e as LuciaError;
-			if (
-				error.message === "AUTH_INVALID_KEY_ID" ||
-				error.message === "AUTH_INVALID_PASSWORD"
-			) {
-				return event.fail(200, { error: "Incorrect username or password" });
-			}
-
-			// database connection error
+			// invalid username/password
 			console.error(error);
-			return event.fail(200, {
-				error: "Unknown error occurred"
-			});
+			return event.fail(400, {});
 		}
 
 		// if all goes well, redirect to home page
@@ -400,16 +357,9 @@ export default component$(() => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<button class="button" type="submit">
-					Continue
-				</button>
+				<button type="submit">Continue</button>
 			</Form>
-			{loginAction.value?.failed && (
-				<p class="error">{loginAction.value.error ?? ""}</p>
-			)}
-			<Link href="/signup" class="link">
-				Create a new account
-			</Link>
+			<Link href="/signup">Create a new account</Link>
 		</>
 	);
 });
@@ -475,10 +425,11 @@ export default component$(() => {
 	const userLoader = useUserLoader();
 	return (
 		<>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
-			<pre class="code">{JSON.stringify(userLoader.value.user, null, 2)}</pre>
+			<h1>Profile</h1>
+			<div>
+				<p>User id: {userLoader.value.user.userId}</p>
+				<p>Username: {userLoader.value.user.username}</p>
+			</div>
 		</>
 	);
 });
@@ -524,12 +475,13 @@ export default component$(() => {
 
 	return (
 		<>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
-			<pre class="code">{JSON.stringify(userLoader.value.user, null, 2)}</pre>
+			<h1>Profile</h1>
+			<div>
+				<p>User id: {userLoader.value.user.userId}</p>
+				<p>Username: {userLoader.value.user.username}</p>
+			</div>
 
-			<Form action={signoutAction} class="button">
+			<Form action={signoutAction}>
 				<button type="submit">Sign out</button>
 			</Form>
 		</>

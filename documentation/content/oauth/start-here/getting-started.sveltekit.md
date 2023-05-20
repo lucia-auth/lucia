@@ -10,7 +10,7 @@ Supported providers are listed on the left. You can also add your own providers 
 
 ## Installation
 
-```bash
+```
 npm i @lucia-auth/oauth
 pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth

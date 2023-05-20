@@ -2,6 +2,7 @@ import lucia from "lucia-auth";
 import { nextjs } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
+import "lucia-auth/polyfill/node";
 
 import { github } from "@lucia-auth/oauth/providers";
 

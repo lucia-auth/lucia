@@ -113,7 +113,7 @@ export const actions: Actions = {
 			const session = await auth.createSession(user.userId);
 			locals.auth.setSession(session);
 		} catch {
-			// username already in use
+			// username taken
 			return fail(400);
 		}
 	}
@@ -209,7 +209,7 @@ export const actions: Actions = {
 			const session = await auth.createSession(key.userId);
 			locals.auth.setSession(session);
 		} catch {
-			// invalid credentials
+			// invalid username/password
 			return fail(400);
 		}
 	}
@@ -330,6 +330,6 @@ Instead of a sign out button, add a form.
 </script>
 
 <form use:enhance method="post">
-	<input type="submit" class="button" value="Sign out" />
+	<input type="submit" value="Sign out" />
 </form>
 ```

@@ -2,16 +2,20 @@ import type { AstroGlobal } from "astro";
 
 const frameworks = [
 	{
-		id: "sveltekit",
-		title: "SvelteKit"
+		id: "astro",
+		title: "Astro"
 	},
 	{
 		id: "nextjs",
 		title: "Next.js"
 	},
 	{
-		id: "astro",
-		title: "Astro"
+		id: "remix",
+		title: "Remix"
+	},
+	{
+		id: "sveltekit",
+		title: "SvelteKit"
 	},
 	{
 		id: "qwik",

@@ -16,9 +16,12 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	if (
 		typeof code !== "string" ||
 		typeof code !== "string" ||
+		!storedState ||
+		!state ||
 		storedState !== state
-	)
+	) {
 		return res.status(400).end();
+	}
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);
