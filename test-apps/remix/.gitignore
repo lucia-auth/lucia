@@ -4,3 +4,7 @@ node_modules
 /build
 /public/build
 .env
+
+prisma/migrations
+prisma/dev.db
+prisma/dev.db-journal

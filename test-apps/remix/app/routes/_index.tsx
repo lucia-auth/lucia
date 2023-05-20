@@ -1,38 +1,52 @@
-import type { V2_MetaFunction } from "@remix-run/node";
+import { auth } from "@auth/lucia.server";
+import { Form, useLoaderData } from "@remix-run/react";
+import { redirect, json } from "@remix-run/node";
 
-export const meta: V2_MetaFunction = () => {
-  return [{ title: "New Remix App" }];
+import type { LoaderArgs, ActionArgs } from "@remix-run/node";
+
+export default () => {
+	const loaderData = useLoaderData<typeof loader>();
+	return (
+		<>
+			<p>
+				This page is protected and can only be accessed by authenticated users.
+			</p>
+			<pre className="code">{JSON.stringify(loaderData.user, null, 2)}</pre>
+			<Form method="post">
+				<input type="submit" className="button" value="Sign out" />˝
+			</Form>
+		</>
+	);
 };
 
-export default function Index() {
-  return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
-  );
-}
+export const loader = async ({ request }: LoaderArgs) => {
+	const headers = new Headers();
+	const authRequest = auth.handleRequest(request, headers);
+	const { user } = await authRequest.validateUser();
+	if (!user) return redirect("/login");
+	return json(
+		{ user },
+		{
+			headers
+		}
+	);
+};
+
+export const action = async ({ request }: ActionArgs) => {
+	const headers = new Headers();
+	const authRequest = auth.handleRequest(request, headers);
+	const session = await authRequest.validate();
+	if (!session)
+		return json(
+			{},
+			{
+				status: 401,
+				headers
+			}
+		);
+	await auth.invalidateSession(session.sessionId);
+	authRequest.setSession(null);
+	return redirect("/login", {
+		headers
+	});
+};
