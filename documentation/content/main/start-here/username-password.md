@@ -61,7 +61,7 @@ Create `/signup` page. This form will have an input field for username and passw
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
@@ -203,7 +203,7 @@ Create `/login` page. This route will handle sign ins using a form, which will a
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
@@ -259,7 +259,7 @@ const handleRequest = async (request) => {
 					headers // important!
 				});
 			} catch {
-				// invalid password
+				// invalid username/password
 			}
 		} else {
 			// invalid form

@@ -124,6 +124,7 @@ export const useSignupAction = routeAction$(
 			const authRequest = auth.handleRequest(event);
 			authRequest.setSession(session);
 		} catch (error) {
+			// username already used
 			console.error(error);
 			return event.fail(400);
 		}
@@ -294,6 +295,7 @@ export const useLoginAction = routeAction$(
 			const session = await auth.createSession(key.userId);
 			authRequest.setSession(session);
 		} catch (e) {
+			// invalid username/password
 			console.error(error);
 			return event.fail(400, {});
 		}

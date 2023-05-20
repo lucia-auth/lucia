@@ -136,6 +136,7 @@ export const action = async ({ request }: ActionArgs) => {
 			headers // IMPORTANT!
 		});
 	} catch (error) {
+		// username taken
 		console.error(error);
 		return json(null, {
 			status: 500,
@@ -282,6 +283,7 @@ export const action = async ({ request }: ActionArgs) => {
 			headers // IMPORTANT!
 		});
 	} catch (error) {
+		// invalid username/password
 		console.error(error);
 		return json(null, {
 			status: 500,

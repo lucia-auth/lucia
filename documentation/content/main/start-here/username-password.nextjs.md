@@ -134,7 +134,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		authRequest.setSession(session); // set cookies
 		return res.redirect(302, "/"); // redirect user on account creations
 	} catch (e) {
-		return res.status(400).json({}); // invalid
+		// username taken
+		return res.status(400).json({});
 	}
 };
 ```
@@ -279,10 +280,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		authRequest.setSession(session); // set cookie
 		return res.redirect(302, "/"); // redirect to profile page
 	} catch {
-		// invalid
-		return res.status(200).json({
-			error: "Incorrect username or password"
-		});
+		// invalid username/password
+		return res.status(400).json({});
 	}
 };
 ```
@@ -379,9 +378,6 @@ export default (
 	return (
 		<>
 			<h1>Profile</h1>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
 			<div>
 				<p>User id: {props.user?.userId}</p>
 				<p>Username: {props.user?.username}</p>

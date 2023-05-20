@@ -158,11 +158,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
-	const { username, password } = (await request.json()) as Partial<{
-		username: string;
-		password: string;
-	}>;
-	if (!username || !password) {
+	const { username, password } = await request.json();
+	if (typeof username !== "string" || typeof password !== "string") {
 		return NextResponse.json(
 			{
 				error: "Invalid input"
@@ -194,43 +191,10 @@ export const POST = async (request: Request) => {
 			}
 		});
 	} catch (error) {
-		if (
-			error instanceof Prisma.PrismaClientKnownRequestError &&
-			error.code === "P2002" &&
-			error.message?.includes("username")
-		) {
-			return NextResponse.json(
-				{
-					error: "Username already in use"
-				},
-				{
-					status: 400
-				}
-			);
-		}
-		if (
-			error instanceof LuciaError &&
-			error.message === "AUTH_DUPLICATE_KEY_ID"
-		) {
-			return NextResponse.json(
-				{
-					error: "Username already in use"
-				},
-				{
-					status: 400
-				}
-			);
-		}
-		// database connection error
-		console.error(error);
-		return NextResponse.json(
-			{
-				error: "Unknown error occurred"
-			},
-			{
-				status: 500
-			}
-		);
+		// username taken
+		return NextResponse.json(null, {
+			status: 400
+		});
 	}
 };
 ```
@@ -331,11 +295,8 @@ import { NextResponse } from "next/server";
 import { LuciaError } from "lucia-auth";
 
 export const POST = async (request: Request) => {
-	const { username, password } = (await request.json()) as Partial<{
-		username: string;
-		password: string;
-	}>;
-	if (!username || !password) {
+	const { username, password } = await request.json();
+	if (typeof username !== "string" || typeof password !== "string") {
 		return NextResponse.json(
 			{
 				error: "Invalid input"
@@ -357,30 +318,11 @@ export const POST = async (request: Request) => {
 			}
 		});
 	} catch (error) {
-		if (
-			(error instanceof LuciaError &&
-				error.message === "AUTH_INVALID_KEY_ID") ||
-			(error instanceof LuciaError && error.message === "AUTH_INVALID_PASSWORD")
-		) {
-			return NextResponse.json(
-				{
-					error: "Incorrect username or password"
-				},
-				{
-					status: 400
-				}
-			);
-		}
-		// database connection error
+		// invalid username/password
 		console.error(error);
-		return NextResponse.json(
-			{
-				error: "Unknown error occurred"
-			},
-			{
-				status: 500
-			}
-		);
+		return NextResponse.json(null, {
+			status: 400
+		});
 	}
 };
 ```
@@ -453,12 +395,11 @@ const Page = async () => {
 	if (!user) redirect("/login");
 	return (
 		<>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
-			<pre>
-				<code>{JSON.stringify(user, null, 2)}</code>
-			</pre>
+			<h1>Profile</h1>
+			<div>
+				<p>User id: {props.user?.userId}</p>
+				<p>Username: {props.user?.username}</p>
+			</div>
 
 			<Form action="/api/logout">
 				<input type="submit" value="Sign out" />
@@ -484,17 +425,12 @@ export const POST = async (request: Request) => {
 	const authRequest = auth.handleRequest({ request, cookies });
 	const session = await authRequest.validate();
 	if (!session) {
-		return NextResponse.json(
-			{
-				error: "Unauthorized"
-			},
-			{
-				status: 401
-			}
-		);
+		return NextResponse.json(null, {
+			status: 401
+		});
 	}
 	await auth.invalidateSession(session.sessionId);
-	authRequest.setSession(null);
+	authRequest.setSession(null); // delete session cookie
 	return new Response(null, {
 		status: 302,
 		headers: {

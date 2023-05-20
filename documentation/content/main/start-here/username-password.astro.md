@@ -63,7 +63,7 @@ Create `pages/signup.astro`. This form will have an input field for username and
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue"  />
 </form>
 ```
 
@@ -109,7 +109,7 @@ if (Astro.request.method === "POST") {
 			authRequest.setSession(session); // set session cookie
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch {
-			// username already in use
+			// username taken
 			Astro.response.status = 400;
 		}
 	} else {
@@ -179,7 +179,7 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue"  />
 </form>
 ```
 
@@ -221,7 +221,7 @@ if (Astro.request.method === "POST") {
 			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch {
-			// invalid password
+			// invalid username/password
 			Astro.response.status = 400;
 		}
 	} else {
