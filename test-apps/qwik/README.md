@@ -4,7 +4,7 @@
 
 ### Install dependencies
 
-```bash
+```
 pnpm i
 ```
 
@@ -12,6 +12,12 @@ pnpm i
 
 Migrate Prisma schema:
 
-```bash
+```
 pnpm prisma migrate dev --name init
+```
+
+## Run
+
+```
+pnpm dev
 ```

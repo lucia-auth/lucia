@@ -6,7 +6,7 @@ This project includes a mock mailbox.
 
 ### Install dependencies
 
-```bash
+```
 pnpm i
 ```
 
@@ -14,12 +14,22 @@ pnpm i
 
 Migrate Prisma schema:
 
-```bash
+```
 pnpm prisma migrate dev --name init
+```
+
+### Github OAuth
+
+Create a Github OAuth app and copy-paste client id and secret into `.env`.
+
+```bash
+# .env
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
 ```
 
 ## Run
 
-```bash
+```
 pnpm dev
 ```
