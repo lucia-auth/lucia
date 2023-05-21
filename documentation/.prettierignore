@@ -13,3 +13,6 @@ package-lock.json
 yarn.lock
 
 .vercel
+.cela_generated
+.github.json
+.search.json

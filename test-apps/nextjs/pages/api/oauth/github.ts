@@ -1,13 +1,9 @@
 import { auth, githubAuth } from "../../../auth/lucia";
-
-import type { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
 
-type Data = {
-	error?: string;
-};
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "GET" || !req.url) return res.status(404).end();
 	const authRequest = auth.handleRequest({ req, res });
 	const code = req.query.code;
@@ -25,11 +21,14 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);
-		const user =
-			existingUser ??
-			(await createUser({
+
+		const getUser = async () => {
+			if (existingUser) return existingUser;
+			return await createUser({
 				username: providerUser.login
-			}));
+			});
+		};
+		const user = await getUser();
 		const session = await auth.createSession(user.userId);
 		authRequest.setSession(session);
 		return res.status(302).redirect("/");

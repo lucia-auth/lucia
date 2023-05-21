@@ -1,13 +1,9 @@
 import { githubAuth } from "../../../auth/lucia";
-
-import type { NextApiRequest, NextApiResponse } from "next";
 import cookie from "cookie";
 
-type Data = {
-	error?: string;
-};
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "GET" || !req.url) return res.status(404).end();
 	if (!req.url) return res.status(400);
 	const provider = req.query.provider;

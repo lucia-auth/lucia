@@ -1,7 +1,7 @@
 ---
 _order: 0
 title: "Getting started"
-description: "Learn about getting started with the OAuth integration for Lucia in SvelteKit"
+description: "Learn about getting started with the OAuth integration for Lucia in Remix"
 ---
 
 While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.
@@ -40,29 +40,35 @@ When a user clicks "Sign in with <provider>", redirect the user to a GET endpoin
 The state may not be returned depending on the provider, and it may return PKCE code verifier as well. Please check each provider's page (see left/menu).
 
 ```ts
-// routes/api/oauth/+server.ts
-import { auth, githubAuth } from "$lib/lucia.js";
+// app/routes/api.oauth.ts
+import { oauthStateCookie } from "@auth/cookie";
+import { githubAuth } from "@auth/lucia.server";
+import { redirect } from "@remix-run/node";
 
-import type { RequestHandler } from "./$types";
+import type { LoaderArgs } from "@remix-run/node";
 
-export const GET: RequestHandler = async ({ cookies }) => {
+export const loader = async ({ request }: LoaderArgs) => {
 	// get url to redirect the user to, with the state
 	const [url, state] = await githubAuth.getAuthorizationUrl();
-
-	// the state can be stored in cookies or localstorage for request validation on callback
-	cookies.set("github_oauth_state", state, {
-		path: "/",
-		maxAge: 60 * 60
-	});
-
-	// redirect to authorization url
-	return new Response(null, {
-		status: 302,
+	return redirect(url.toString(), {
 		headers: {
-			location: url.toString()
+			// the state can be stored in cookies or localstorage for request validation on callback
+			"Set-Cookie": await oauthStateCookie.serialize(state)
 		}
 	});
 };
+```
+
+```ts
+// auth/cookie.server.ts
+import { createCookie } from "@remix-run/node";
+
+export const oauthStateCookie = createCookie("oauth_state", {
+	path: "/",
+	maxAge: 60 * 60,
+	httpOnly: true,
+	secure: false // true on prod
+});
 ```
 
 Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag.
@@ -82,23 +88,26 @@ On sign in, the provider will redirect the user to your callback url. On callbac
 `createUser()` method can be used to create a new user if an existing user does not exist.
 
 ```ts
-// routes/api/oauth/github/+server.ts
-import { auth, githubAuth } from "$lib/lucia.js";
-import { redirect } from "@sveltejs/kit";
+// app/routes/api.oauth.github.ts
+import { oauthStateCookie } from "@auth/cookie.server";
+import { auth, githubAuth } from "@auth/lucia.server";
+import { redirect } from "@remix-run/node";
 
-import type { RequestHandler } from "./$types";
+import type { LoaderArgs } from "@remix-run/node";
 
-export const GET: RequestHandler = async ({ cookies, url, locals }) => {
+export const loader = async ({ request }: LoaderArgs) => {
+	const url = new URL(request.url);
 	// get code and state params from url
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
-
 	// get stored state from cookies
-	const storedState = cookies.get("github_oauth_state");
-
+	const storedState = await oauthStateCookie.parse(
+		request.headers.get("Cookie") ?? ""
+	);
 	// validate state
-	if (state !== storedState) throw new Response(null, { status: 401 });
-
+	if (!storedState || storedState !== state || !code || !state) {
+		return new Response(null, { status: 401 });
+	}
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);
@@ -113,14 +122,18 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 		};
 		const user = await getUser();
 		const session = await auth.createSession(user.userId);
-		locals.auth.setSession(session);
+		const headers = new Headers();
+		const authRequest = auth.handleRequest(request, headers);
+		authRequest.setSession(session);
+		return redirect("/", {
+			headers // IMPORTANT!
+		});
 	} catch (e) {
 		// invalid code
 		return new Response(null, {
 			status: 500
 		});
 	}
-	throw redirect(302, "/");
 };
 ```
 

@@ -1,12 +1,14 @@
 ---
 _order: 0
 title: "Getting started"
-description: "Learn about getting started with the OAuth integration for Lucia in SvelteKit"
+description: "Learn about getting started with the OAuth integration for Lucia in Next.js"
 ---
 
 While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.
 
 Supported providers are listed on the left. You can also add your own providers with [`provider()`](/reference/oauth/lucia-auth-oauth#provider) as well.
+
+This guide uses the `pages` router but the code example for the App router version is shown at the end.
 
 ## Installation
 
@@ -23,7 +25,7 @@ This page will use Github OAuth but the API and auth flow is nearly identical be
 Initialize the handler using the Lucia `Auth` instance and provider-specific config. This page will use Github OAuth but the auth flow is the same across providers. Refer to each provider's documentation for the specifics.
 
 ```ts
-// lib/lucia.ts
+// auth/lucia.ts
 import { github } from "@lucia-auth/oauth/providers";
 
 export const auth = lucia({
@@ -40,28 +42,32 @@ When a user clicks "Sign in with <provider>", redirect the user to a GET endpoin
 The state may not be returned depending on the provider, and it may return PKCE code verifier as well. Please check each provider's page (see left/menu).
 
 ```ts
-// routes/api/oauth/+server.ts
-import { auth, githubAuth } from "$lib/lucia.js";
+// pages/api/oauth
+import { githubAuth } from "../../../auth/lucia";
+import cookie from "cookie";
 
-import type { RequestHandler } from "./$types";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export const GET: RequestHandler = async ({ cookies }) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+	if (req.method !== "GET" || !req.url) return res.status(404).end();
+	if (!req.url) return res.status(400);
+
 	// get url to redirect the user to, with the state
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 
 	// the state can be stored in cookies or localstorage for request validation on callback
-	cookies.set("github_oauth_state", state, {
+	const oauthStateCookie = cookie.serialize("oauth_state", state, {
 		path: "/",
-		maxAge: 60 * 60
+		maxAge: 60 * 60,
+		httpOnly: true,
+		secure: false // true on prod
 	});
 
 	// redirect to authorization url
-	return new Response(null, {
-		status: 302,
-		headers: {
-			location: url.toString()
-		}
-	});
+	return res
+		.status(302)
+		.setHeader("set-cookie", oauthStateCookie)
+		.redirect(url.toString());
 };
 ```
 
@@ -82,23 +88,30 @@ On sign in, the provider will redirect the user to your callback url. On callbac
 `createUser()` method can be used to create a new user if an existing user does not exist.
 
 ```ts
-// routes/api/oauth/github/+server.ts
-import { auth, githubAuth } from "$lib/lucia.js";
-import { redirect } from "@sveltejs/kit";
+// pages/api/oauth/github.ts
+import { auth, githubAuth } from "../../../auth/lucia";
+import cookie from "cookie";
 
-import type { RequestHandler } from "./$types";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export const GET: RequestHandler = async ({ cookies, url, locals }) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+	if (req.method !== "GET" || !req.url) return res.status(404).end();
+	const authRequest = auth.handleRequest({ req, res });
 	// get code and state params from url
-	const code = url.searchParams.get("code");
-	const state = url.searchParams.get("state");
-
+	const code = req.query.code;
+	const state = req.query.state;
 	// get stored state from cookies
-	const storedState = cookies.get("github_oauth_state");
-
+	const { oauth_state: storedState } = cookie.parse(req.headers.cookie || "");
 	// validate state
-	if (state !== storedState) throw new Response(null, { status: 401 });
-
+	if (
+		typeof code !== "string" ||
+		typeof code !== "string" ||
+		!storedState ||
+		!state ||
+		storedState !== state
+	) {
+		return res.status(400).end();
+	}
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);
@@ -113,14 +126,12 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 		};
 		const user = await getUser();
 		const session = await auth.createSession(user.userId);
-		locals.auth.setSession(session);
-	} catch (e) {
+		authRequest.setSession(session);
+		return res.status(302).redirect("/");
+	} catch {
 		// invalid code
-		return new Response(null, {
-			status: 500
-		});
+		return res.status(500).end();
 	}
-	throw redirect(302, "/");
 };
 ```
 
@@ -137,4 +148,74 @@ const { existingUser, createPersistentKey } = await githubAuth.validateCallback(
 if (!existingUser) {
 	await createPersistentKey(currentUser.userId);
 }
+```
+
+## App router
+
+### Get authorization url
+
+```ts
+// app/api/oauth/routes.ts
+import { githubAuth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+
+export const GET = async (request: Request) => {
+	const url = new URL(request.url);
+	const [url, state] = await githubAuth.getAuthorizationUrl();
+	cookies().set("oauth_state", state, {
+		path: "/",
+		maxAge: 60 * 60,
+		httpOnly: true,
+		secure: false // true on prod
+	});
+	return new Response(null, {
+		status: 302,
+		headers: {
+			location: url.toString()
+		}
+	});
+};
+```
+
+### Validate callback
+
+```ts
+// app/api/oauth/github/routes.ts
+import { auth, githubAuth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+
+export const GET = async (request: Request) => {
+	const url = new URL(request.url);
+	const code = url.searchParams.get("code");
+	const state = url.searchParams.get("state");
+	const storedState = cookies().get("oauth_state")?.value ?? null;
+	if (!storedState || storedState !== state || !code || !state) {
+		return new Response(null, { status: 401 });
+	}
+	try {
+		const { existingUser, providerUser, createUser } =
+			await githubAuth.validateCallback(code);
+
+		const getUser = async () => {
+			if (existingUser) return existingUser;
+			return await createUser({
+				username: providerUser.login
+			});
+		};
+		const user = await getUser();
+		const session = await auth.createSession(user.userId);
+		const authRequest = auth.handleRequest({ request, cookies });
+		authRequest.setSession(session);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				location: "/"
+			}
+		});
+	} catch (e) {
+		return new Response(null, {
+			status: 500
+		});
+	}
+};
 ```
