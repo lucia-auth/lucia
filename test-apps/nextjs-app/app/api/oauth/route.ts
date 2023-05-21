@@ -8,7 +8,8 @@ export const GET = async (request: Request) => {
 		const [url, state] = await githubAuth.getAuthorizationUrl();
 		cookies().set("oauth_state", state, {
 			path: "/",
-			maxAge: 60 * 60
+			maxAge: 60 * 60,
+			httpOnly: true
 		});
 		return new Response(null, {
 			status: 302,

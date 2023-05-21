@@ -1,7 +1,8 @@
-import { oauthStateCookie } from "@auth/cookie";
+import { oauthStateCookie } from "@auth/cookie.server";
 import { auth, githubAuth } from "@auth/lucia.server";
+import { redirect } from "@remix-run/node";
 
-import { redirect, type LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 
 export const loader = async ({ request }: LoaderArgs) => {
 	const url = new URL(request.url);
@@ -16,11 +17,13 @@ export const loader = async ({ request }: LoaderArgs) => {
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);
-		const user =
-			existingUser ??
-			(await createUser({
+		const getUser = async () => {
+			if (existingUser) return existingUser;
+			return await createUser({
 				username: providerUser.login
-			}));
+			});
+		};
+		const user = await getUser();
 		const session = await auth.createSession(user.userId);
 		const headers = new Headers();
 		const authRequest = auth.handleRequest(request, headers);

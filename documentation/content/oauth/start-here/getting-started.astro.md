@@ -1,7 +1,7 @@
 ---
 _order: 0
 title: "Getting started"
-description: "Learn about getting started with the OAuth integration for Lucia in SvelteKit"
+description: "Learn about getting started with the OAuth integration for Lucia in Astro"
 ---
 
 While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.
@@ -40,22 +40,21 @@ When a user clicks "Sign in with <provider>", redirect the user to a GET endpoin
 The state may not be returned depending on the provider, and it may return PKCE code verifier as well. Please check each provider's page (see left/menu).
 
 ```ts
-// routes/api/oauth/+server.ts
-import { auth, githubAuth } from "$lib/lucia.js";
+// src/pages/api/oauth/index.ts
+import { githubAuth } from "../../../lib/lucia";
 
-import type { RequestHandler } from "./$types";
+import type { APIRoute } from "astro";
 
-export const GET: RequestHandler = async ({ cookies }) => {
+export const get: APIRoute = async ({ url, cookies }) => {
 	// get url to redirect the user to, with the state
 	const [url, state] = await githubAuth.getAuthorizationUrl();
-
 	// the state can be stored in cookies or localstorage for request validation on callback
-	cookies.set("github_oauth_state", state, {
+	cookies.set("oauth_state", state, {
 		path: "/",
-		maxAge: 60 * 60
+		maxAge: 60 * 60,
+		httpOnly: true,
+		secure: import.meta.env.PROD
 	});
-
-	// redirect to authorization url
 	return new Response(null, {
 		status: 302,
 		headers: {
@@ -82,27 +81,24 @@ On sign in, the provider will redirect the user to your callback url. On callbac
 `createUser()` method can be used to create a new user if an existing user does not exist.
 
 ```ts
-// routes/api/oauth/github/+server.ts
-import { auth, githubAuth } from "$lib/lucia.js";
-import { redirect } from "@sveltejs/kit";
+// src/pages/api/oauth/github.ts
+import { auth, githubAuth } from "../../../lib/lucia";
+import type { APIRoute } from "astro";
 
-import type { RequestHandler } from "./$types";
-
-export const GET: RequestHandler = async ({ cookies, url, locals }) => {
+export const get: APIRoute = async (context) => {
+	const authRequest = auth.handleRequest(context);
 	// get code and state params from url
-	const code = url.searchParams.get("code");
-	const state = url.searchParams.get("state");
-
+	const code = context.url.searchParams.get("code");
+	const state = context.url.searchParams.get("state");
 	// get stored state from cookies
-	const storedState = cookies.get("github_oauth_state");
-
+	const storedState = context.cookies.get("oauth_state").value;
 	// validate state
-	if (state !== storedState) throw new Response(null, { status: 401 });
-
+	if (!storedState || storedState !== state || !code || !state) {
+		return new Response(null, { status: 401 });
+	}
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);
-
 		const getUser = async () => {
 			if (existingUser) return existingUser;
 			// create a new user if the user does not exist
@@ -113,14 +109,19 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 		};
 		const user = await getUser();
 		const session = await auth.createSession(user.userId);
-		locals.auth.setSession(session);
-	} catch (e) {
+		authRequest.setSession(session);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				location: "/"
+			}
+		});
+	} catch {
 		// invalid code
 		return new Response(null, {
 			status: 500
 		});
 	}
-	throw redirect(302, "/");
 };
 ```
 

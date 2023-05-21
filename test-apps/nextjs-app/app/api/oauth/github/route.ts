@@ -12,11 +12,15 @@ export const GET = async (request: Request) => {
 	try {
 		const { existingUser, providerUser, createUser } =
 			await githubAuth.validateCallback(code);
-		const user =
-			existingUser ??
-			(await createUser({
+
+		const getUser = async () => {
+			if (existingUser) return existingUser;
+			return await createUser({
 				username: providerUser.login
-			}));
+			});
+		};
+
+		const user = await getUser();
 		const session = await auth.createSession(user.userId);
 		const authRequest = auth.handleRequest({ request, cookies });
 		authRequest.setSession(session);

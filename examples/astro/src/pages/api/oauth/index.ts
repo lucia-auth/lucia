@@ -7,7 +7,9 @@ export const get: APIRoute = async ({ url, cookies }) => {
 		const [url, state] = await githubAuth.getAuthorizationUrl();
 		cookies.set("oauth_state", state, {
 			path: "/",
-			maxAge: 60 * 60
+			maxAge: 60 * 60,
+			httpOnly: true,
+			secure: import.meta.env.PROD
 		});
 		return new Response(null, {
 			status: 302,
