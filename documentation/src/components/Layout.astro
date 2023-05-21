@@ -140,14 +140,28 @@ const origin = import.meta.env.DEV
 
 	<body
 		class:list={["dark:text-zinc-200 text-shadow-zinc leading-relaxed ", theme]}
+		set:html={await Astro.slots.render("default")}
 	>
 		<SearchMenu
 			collectionId={Astro.props.content?.collectionId ?? null}
 			frameworkId={Astro.props.content?.frameworkId ?? null}
 		/>
-		<slot />
 	</body>
 	<!--not super proud of this - need this to hide main-color bg on chrome -->
 	<div class="fixed top-0 -z-10 h-screen w-screen bg-white dark:bg-zinc-900">
 	</div>
+	<input
+		type="hidden"
+		value={Astro.props.content?.frameworkId ?? ""}
+		id="framework-id"
+	/>
+	<script>
+		const frameworkIdInput = document.getElementById("framework-id");
+		if (frameworkIdInput instanceof HTMLInputElement) {
+			const frameworkId = frameworkIdInput.value;
+			const url = new URL(window.location.href);
+			url.searchParams.set(frameworkId ?? "none", "");
+			window.history.replaceState(null, "", url.href.replace("=", ""));
+		}
+	</script>
 </html>

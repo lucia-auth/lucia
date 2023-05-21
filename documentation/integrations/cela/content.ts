@@ -1,4 +1,4 @@
-import { frameworkIds } from "src/utils/framework";
+import { frameworkIds } from "@utils/framework";
 import {
 	CELA_GENERATED_DIR,
 	contentImports,
@@ -28,6 +28,16 @@ export const getContent = async (
 			if (resolveModifiedLink) return await resolveModifiedLink();
 		}
 		if (resolveBaseLink) return await resolveBaseLink();
+		for (const possibleFrameworkId of frameworkIds) {
+			if (possibleFrameworkId === frameworkId) continue
+			const importKey = `${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
+				"/",
+				"_"
+			)}.${possibleFrameworkId}.json`
+			const resolveLink = generatedLinksImports[importKey] ?? null;
+			if (!resolveLink) continue
+			return await resolveLink()
+		}
 		return null;
 	};
 	const readContentFile = async (importKey: string) => {
