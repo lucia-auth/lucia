@@ -14,5 +14,5 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	if (!session) return res.status(401).json({ error: "Unauthorized" });
 	await auth.invalidateSession(session.sessionId);
 	authRequest.setSession(null);
-	return res.redirect(302, "/");
+	return res.redirect(302, "/login");
 };

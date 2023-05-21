@@ -52,7 +52,7 @@ const Index = () => {
 				Github
 			</Link>
 			<p className="center">or</p>
-			<form method="post" onSubmit={handleSubmit} action="/api/login">
+			<form onSubmit={handleSubmit}>
 				<label htmlFor="username">username</label>
 				<br />
 				<input id="username" name="username" />

@@ -54,7 +54,7 @@ export const useSignupAction = routeAction$(
 				});
 			}
 			// database connection error
-			console.error(error);
+			console.log(error);
 			return event.fail(500, {
 				error: "Unknown error occurred"
 			});

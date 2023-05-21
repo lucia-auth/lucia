@@ -88,7 +88,7 @@ export const action = async ({ request }: ActionArgs) => {
 			);
 		}
 		// database connection error
-		console.error(error);
+		console.log(error);
 		return json(
 			{
 				error: "Unknown error occurred"
