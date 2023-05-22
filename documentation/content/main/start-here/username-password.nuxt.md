@@ -109,7 +109,10 @@ export default defineEventHandler(async (event) => {
 		return sendError(event, new Error());
 	}
 	const parsedBody = await readBody(event);
-	if (!parsedBody || typeof parsedBody !== "object") return;
+	if (!parsedBody || typeof parsedBody !== "object") {
+		event.node.res.statusCode = 400;
+		return sendError(event, new Error("Invalid input"));
+	}
 	const username = parsedBody.username;
 	const password = parsedBody.password;
 	if (!username || !password) {
@@ -169,7 +172,7 @@ const user = await auth.createUser({
 
 ### Sign in form
 
-Create `pages/login.tsx`. This route will handle sign ins. This form will also have an input field for username and password.
+Create `pages/login.vue`. This route will handle sign ins. This form will also have an input field for username and password.
 
 ```vue
 <!-- pages/login.vue -->
