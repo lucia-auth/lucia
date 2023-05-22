@@ -9,5 +9,5 @@ export default defineEventHandler(async (event) => {
 	}
 	await auth.invalidateSession(session.sessionId);
 	authRequest.setSession(null);
-	return null;
+	return null; // returns 204
 });

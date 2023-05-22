@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 	const state = query.state?.toString() ?? null;
 	const storedState = getCookie(event, "oauth_state");
 	if (!code || !storedState || !state || storedState !== state) {
-		return setResponseStatus(event, 400);
+		throw createError({ statusCode: 400 });
 	}
 	try {
 		const { existingUser, providerUser, createUser } =
@@ -22,6 +22,6 @@ export default defineEventHandler(async (event) => {
 		authRequest.setSession(session);
 		return await sendRedirect(event, "/", 302);
 	} catch {
-		return setResponseStatus(event, 400);
+		throw createError({ statusCode: 400 });
 	}
 });
