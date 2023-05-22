@@ -164,6 +164,8 @@ const user = await auth.createUser({
 });
 ```
 
+> (warn) In an actual production code, you want to make sure you check for password strength. See the checklist in the [OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls).
+
 ### Add the action to the form
 
 We'll add the action to the form

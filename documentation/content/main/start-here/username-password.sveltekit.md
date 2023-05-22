@@ -135,6 +135,8 @@ const user = await auth.createUser({
 });
 ```
 
+> (warn) In an actual production code, you want to make sure you check for password strength. See the checklist in the [OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls).
+
 ### Redirect authenticated users
 
 Let's also redirect authenticated users to the profile page. We can get the current session in the server by using [`locals.auth.validate()`](/reference/lucia-auth/authrequest#validate).
