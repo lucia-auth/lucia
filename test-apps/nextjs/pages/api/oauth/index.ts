@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			path: "/",
 			maxAge: 60 * 60,
 			httpOnly: true,
-			secure: process.env.NODE_ENV !== "development"
+			secure: process.env.NODE_ENV === "production"
 		});
 		return res
 			.status(302)

@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 			path: "/",
 			maxAge: 60 * 60,
 			httpOnly: true,
-			secure: process.env.NODE_ENV !== "development"
+			secure: process.env.NODE_ENV === "production"
 		})
         return await sendRedirect(event, url.toString(), 302)
 	}
