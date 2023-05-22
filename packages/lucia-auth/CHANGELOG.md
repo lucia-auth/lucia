@@ -1,5 +1,11 @@
 # lucia-auth
 
+## 1.7.0
+
+### Minor changes
+
+- [#638](https://github.com/pilcrowOnPaper/lucia/pull/638) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `h3()` middleware
+
 ## 1.6.0
 
 ### Minor changes

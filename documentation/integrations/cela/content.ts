@@ -29,14 +29,14 @@ export const getContent = async (
 		}
 		if (resolveBaseLink) return await resolveBaseLink();
 		for (const possibleFrameworkId of frameworkIds) {
-			if (possibleFrameworkId === frameworkId) continue
+			if (possibleFrameworkId === frameworkId) continue;
 			const importKey = `${CELA_GENERATED_DIR}/content/${contentPath.replaceAll(
 				"/",
 				"_"
-			)}.${possibleFrameworkId}.json`
+			)}.${possibleFrameworkId}.json`;
 			const resolveLink = generatedLinksImports[importKey] ?? null;
-			if (!resolveLink) continue
-			return await resolveLink()
+			if (!resolveLink) continue;
+			return await resolveLink();
 		}
 		return null;
 	};

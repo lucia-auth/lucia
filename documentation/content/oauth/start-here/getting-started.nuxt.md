@@ -107,7 +107,7 @@ export default defineEventHandler(async (event) => {
 			if (existingUser) return existingUser;
 			// create a new user if the user does not exist
 			return await createUser({
-						// attributes
+				// attributes
 				username: providerUser.login
 			});
 		};
