@@ -22,8 +22,8 @@ Create a Github OAuth app and copy-paste client id and secret into `.env`.
 
 ```bash
 # .env
-GITHUB_CLIENT_ID=""
-GITHUB_CLIENT_SECRET=""
+NUXT_GITHUB_CLIENT_ID=""
+NUXT_GITHUB_CLIENT_SECRET=""
 ```
 
 ## Run
