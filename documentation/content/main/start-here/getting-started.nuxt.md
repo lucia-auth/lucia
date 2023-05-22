@@ -42,7 +42,7 @@ import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env: "DEV", // "PROD" if prod
+	env: process.dev ? "DEV" : "PROD",
 	middleware: h3()
 });
 
