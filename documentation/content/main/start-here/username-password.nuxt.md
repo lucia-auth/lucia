@@ -69,10 +69,6 @@ const handleSubmit = async (e: Event) => {
 		body: Object.fromEntries(formData.entries())
 	});
 	if (error.value) return;
-	if (data.value) {
-		errorMessage.value = data.value.error;
-		return;
-	}
 	navigateTo("/");
 };
 </script>
@@ -113,7 +109,10 @@ export default defineEventHandler(async (event) => {
 		return sendError(event, new Error());
 	}
 	const parsedBody = await readBody(event);
-	if (!parsedBody || typeof parsedBody !== "object") return;
+	if (!parsedBody || typeof parsedBody !== "object") {
+		event.node.res.statusCode = 400;
+		return sendError(event, new Error("Invalid input"));
+	}
 	const username = parsedBody.username;
 	const password = parsedBody.password;
 	if (!username || !password) {
@@ -173,80 +172,93 @@ const user = await auth.createUser({
 
 ### Sign in form
 
-Create `pages/login.tsx`. This route will handle sign ins. This form will also have an input field for username and password.
+Create `pages/login.vue`. This route will handle sign ins. This form will also have an input field for username and password.
 
-```tsx
-// pages/login.tsx
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+```vue
+<!-- pages/login.vue -->
 
-export default () => {
-	const router = useRouter();
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const formData = new FormData(e.currentTarget);
-		const username = formData.get("username");
-		const password = formData.get("password");
-
-		const response = await fetch("/api/login", {
-			method: "POST",
-			body: JSON.stringify({
-				username,
-				password
-			})
-		});
-		if (response.redirected) return router.push(response.url);
-	};
-	return (
-		<div>
-			<h1>Sign in</h1>
-			<form onSubmit={handleSubmit}>
-				<label htmlFor="username">username</label>
-				<br />
-				<input id="username" name="username" />
-				<br />
-				<label htmlFor="password">password</label>
-				<br />
-				<input type="password" id="password" name="password" />
-				<br />
-				<input type="submit" value="Continue" />
-			</form>
-			<Link href="/signup">Create a new account</Link>
-		</div>
-	);
+<script lang="ts" setup>
+const handleSubmit = async (e: Event) => {
+	errorMessage.value = "";
+	e.preventDefault();
+	if (!(e.target instanceof HTMLFormElement)) return;
+	const formData = new FormData(e.target);
+	const { data, error } = await useFetch("/api/signup", {
+		method: "POST",
+		body: Object.fromEntries(formData.entries())
+	});
+	if (error.value) return;
+	navigateTo("/");
 };
+</script>
+
+<template>
+	<h2>Create an account</h2>
+	<a href="/api/oauth?provider=github" class="button">Github</a>
+	<p class="center">or</p>
+	<form @submit="handleSubmit">
+		<label htmlFor="username">username</label>
+		<br />
+		<input id="username" name="username" />
+		<br />
+		<label htmlFor="password">password</label>
+		<br />
+		<input type="password" id="password" name="password" />
+		<br />
+		<input type="submit" value="Continue" class="button" />
+	</form>
+	<p class="error">{{ errorMessage }}</p>
+	<NuxtLink to="/login" class="link"> Sign in </NuxtLink>
+</template>
 ```
 
 ### Authenticate users
 
-Create `pages/api/login.ts`. This API route will handle sign-ins.
+Create `server/api/login.ts`. This API route will handle sign-ins.
 
 We’ll use the key created in the previous section to reference the user and authenticate them by validating the password with [`useKey()`](/reference/lucia-auth/auth#usekey) . Create a new session if the password is valid.
 
 ```ts
-// pages/api/login.ts
+// server/api/login.ts
+import { Prisma } from "@prisma/client";
+import { LuciaError } from "lucia-auth";
 
-import type { NextApiRequest, NextApiResponse } from "next";
-import { auth } from "../../lib/lucia";
-
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST")
-		return res.status(404).json({ error: "Not found" });
-	const { username, password } = JSON.parse(req.body);
-	if (typeof username !== "string" || typeof password !== "string")
-		return res.status(400).json({});
-	try {
-		const authRequest = auth.handleRequest({ req, res });
-		const key = await auth.useKey("username", username, password);
-		const session = await auth.createSession(key.userId);
-		authRequest.setSession(session); // set cookie
-		return res.redirect(302, "/"); // redirect to profile page
-	} catch {
-		// invalid username/password
-		return res.status(400).json({});
+export default defineEventHandler(async (event) => {
+	if (event.node.req.method !== "POST") {
+		event.node.res.statusCode = 404;
+		return sendError(event, new Error());
 	}
-};
+	const parsedBody = await readBody(event);
+	if (!parsedBody || typeof parsedBody !== "object") {
+		event.node.res.statusCode = 400;
+		return sendError(event, new Error("Invalid input"));
+	}
+	const username = parsedBody.username;
+	const password = parsedBody.password;
+	if (!username || !password) {
+		event.node.res.statusCode = 400;
+		return sendError(event, new Error("Invalid input"));
+	}
+	try {
+		const user = await auth.createUser({
+			primaryKey: {
+				providerId: "username",
+				providerUserId: username,
+				password
+			},
+			attributes: {
+				username
+			}
+		});
+		const session = await auth.createSession(user.userId);
+		const authRequest = auth.handleRequest(event);
+		authRequest.setSession(session);
+		return send(event, null);
+	} catch (error) {
+		event.node.res.statusCode = 400;
+		return sendError(event, new Error("Invalid username/password"));
+	}
+});
 ```
 
 #### Validating passwords
