@@ -39,7 +39,7 @@ Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your
 // auth/lucia.server.ts
 export const auth = lucia({
 	adapter: prisma(),
-	env: dev ? "DEV" : "PROD",
+	env: "DEV" // "PROD" if prod,
 	middleware: node(),
 	transformDatabaseUser: (userData) => {
 		return {
@@ -381,7 +381,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 ### Sign out
 
-Define an `action()` for handle sign outs.
+Define an `action()` to handle sign outs, which can be done by invalidating the current session and removing the session cookie..
 
 ```tsx
 import { auth } from "@auth/lucia.server";

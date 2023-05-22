@@ -6,52 +6,13 @@ description: "Learn how to handle requests with Lucia"
 
 [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-The [Next.js middleware](/reference/lucia-auth/middleware#nextjs) is the recommended adapter for Next.js projects. It supports both the `pages` router and the newer App router, and as such, there are severals ways `handleRequest()` can be called. However, due to a limitation on cookies in the App router, Lucia cannot renew sessions. Refer to [Using the App router](/nextjs/app-router).
-
-### `pages` router
+The [H3 middleware](/reference/lucia-auth/middleware#h3) is the recommended adapter for Nuxt 3.
 
 ```ts
-// pages/index.tsx
-import { auth } from "./lucia.js";
-
-export const getServerSideProps = async (context) => {
-	const authRequest = auth.handleRequest(context);
-};
-```
-
-```ts
-// pages/index.ts
-import { auth } from "./lucia.js";
-
-export default async (req, res) => {
-	const authRequest = auth.handleRequest({ req, res });
-};
-```
-
-### App router
-
-```ts
-// app/page.tsx
-import { auth } from "auth/lucia.js";
-import { cookies } from "next/headers";
-
-export default () => {
-	const authRequest = auth.handleRequest({
-		cookies
-	});
-};
-```
-
-```ts
-// app/routes.ts
-import { auth } from "auth/lucia.js";
-
-export const GET = async (request: Request) => {
-	const authRequest = auth.handleRequest({
-		request,
-		cookies
-	});
-};
+// server/api/index.ts
+export default defineEventHandler(async (event) => {
+	const authRequest = auth.handleRequest(event);
+});
 ```
 
 ## Middleware
@@ -74,11 +35,11 @@ By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#l
 The middleware can be configured with the [`middleware`](/basics/configuration#middleware) config.
 
 ```ts
-import { nextjs } from "lucia-auth/middleware";
+import { h3 } from "lucia-auth/middleware";
 import lucia from "lucia-auth";
 
 const auth = lucia({
-	middleware: nextjs()
+	middleware: h3()
 });
 ```
 

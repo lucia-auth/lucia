@@ -39,7 +39,7 @@ Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your
 // lib/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
-	env: dev ? "DEV" : "PROD",
+	env: import.meta.env.DEV ? "DEV" : "PROD",
 	middleware: astro(),
 	transformDatabaseUser: (userData) => {
 		return {

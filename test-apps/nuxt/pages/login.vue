@@ -19,13 +19,13 @@ const handleSubmit = async (e: Event) => {
 	});
 	if (error.value) {
 		errorMessage.value = "An unknown error occurred";
-		return
+		return;
 	}
 	if (data.value) {
 		errorMessage.value = data.value.error;
-		return
+		return;
 	}
-	navigateTo("/")
+	navigateTo("/");
 };
 </script>
 
@@ -33,7 +33,7 @@ const handleSubmit = async (e: Event) => {
 	<h2>Sign in</h2>
 	<a href="/api/oauth?provider=github" class="button"> Github </a>
 	<p class="center">or</p>
-	<form method="post" action="/api/login" @submit="handleSubmit">
+	<form @submit="handleSubmit">
 		<label htmlFor="username">username</label>
 		<br />
 		<input id="username" name="username" />

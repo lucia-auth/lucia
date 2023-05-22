@@ -294,7 +294,7 @@ type H3Event = {
 	};
 };
 
-export const nuxt = (): Middleware<[H3Event]> => {
+export const h3 = (): Middleware<[H3Event]> => {
 	const nodeMiddleware = node();
 	return (context, env) => {
 		return nodeMiddleware(context.node.req, context.node.res, env);

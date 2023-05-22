@@ -25,6 +25,7 @@ type Configuration = {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
+	middleware: Middleware;
 	origin: string[];
 	sessionCookie?: CookieOption;
 	sessionExpiresIn?: {
@@ -181,6 +182,18 @@ const validate: (s: string, hash: string) => MaybePromise<boolean>;
 | type      | description                                                     |
 | --------- | --------------------------------------------------------------- |
 | `boolean` | `true` if valid, `false` otherwise - can be a promise if needed |
+
+### `middleware`
+
+[Middleware](basics/handle-requests#middleware).
+
+```ts
+const middleware: Middleware;
+```
+
+| type                                                   |
+| ------------------------------------------------------ |
+| [`Middleware`](/reference/lucia-auth/types#middleware) |
 
 ### `origin`
 

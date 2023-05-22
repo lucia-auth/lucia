@@ -28,18 +28,33 @@ export const useAction = routeAction$(async (_values, event) => {
 });
 ```
 
-### Middleware
+## Middleware
 
 By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
 
 - [Astro](/reference/lucia-auth/middleware#astro)
 - [Express](/reference/lucia-auth/middleware#express)
+- [H3](/reference/lucia-auth/middleware#h3)
+- [Next.js](/reference/lucia-auth/middleware#nextjs)
 - [Node](/reference/lucia-auth/middleware#node)
 - [SvelteKit](/reference/lucia-auth/middleware#sveltekit)
 - [Web](/reference/lucia-auth/middleware#web)
 - [Qwik City](/reference/lucia-auth/middleware#qwik)
 
-> Use the Node middleware for Next.js
+> Use the Web middleware for Remix
+
+### Configure
+
+The middleware can be configured with the [`middleware`](/basics/configuration#middleware) config.
+
+```ts
+import { qwik } from "lucia-auth/middleware";
+import lucia from "lucia-auth";
+
+const auth = lucia({
+	middleware: qwik()
+});
+```
 
 ## Validate requests
 

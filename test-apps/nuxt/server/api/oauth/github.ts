@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
 		authRequest.setSession(session);
 		return await sendRedirect(event, "/", 302)
 	} catch {
-		res.statusCode = 500;
+		res.statusCode = 400;
 		return res.end();
 	}
 });

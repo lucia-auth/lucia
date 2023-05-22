@@ -204,6 +204,33 @@ auth.handleRequest(request as IncomingMessage, response as OutgoingMessage);
 | request  | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
 | response | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |
 
+## `h3()`
+
+Middleware for H3 (Nuxt 3).
+
+```ts
+const h3 = () => Middleware;
+```
+
+#### Usage
+
+```ts
+import { h3 } from "lucia-auth/middleware";
+
+const auth = lucia({
+	middleware: h3()
+	// ...
+});
+```
+
+```ts
+auth.handleRequest(event as H3Event);
+```
+
+| name  | type                                                  |
+| ----- | ----------------------------------------------------- |
+| event | [`H3Event`](https://www.jsdocs.io/package/h3#H3Event) |
+
 ## `sveltekit()`
 
 Middleware for SvelteKit 1.x.

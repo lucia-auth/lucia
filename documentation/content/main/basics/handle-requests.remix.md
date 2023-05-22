@@ -6,23 +6,20 @@ description: "Learn how to handle requests with Lucia"
 
 [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-With the [Astro middleware](/reference/lucia-auth/middleware#astro), it expects Astro's [`ApiContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context) or [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global, which are available inside `.astro` pages and API routes.
+With the [Web middleware](/reference/lucia-auth/middleware#sveltekit), it expects a `Request` and `Headers`/`Response`.
 
 ```ts
-// index.astro
-import { auth } from "./lucia.js";
+import { auth } from "@auth/lucia.server";
 
-const authRequest = auth.handleRequest(Astro);
-```
+import type { LoaderArgs } from "@remix-run/node";
 
-```ts
-// index.ts
-import { auth } from "./lucia.js";
-
-export const get: APIRoute = async (context) => {
-	const authRequest = auth.handleRequest(apiContext);
+export const loader = async ({ request }: LoaderArgs) => {
+	const headers = new Headers();
+	const authRequest = auth.handleRequest(request, headers);
+	// ...
 };
 ```
+
 ## Middleware
 
 By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
@@ -43,11 +40,11 @@ By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#l
 The middleware can be configured with the [`middleware`](/basics/configuration#middleware) config.
 
 ```ts
-import { astro } from "lucia-auth/middleware";
+import { web } from "lucia-auth/middleware";
 import lucia from "lucia-auth";
 
 const auth = lucia({
-	middleware: astro()
+	middleware: web()
 });
 ```
 
@@ -56,21 +53,19 @@ const auth = lucia({
 [`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used to get the current session.
 
 ```ts
-// index.astro
 import { auth } from "./lucia.js";
 
-const authRequest = auth.handleRequest(Astro);
-const session = await authRequest.validate(Astro);
+const authRequest = auth.handleRequest(event);
+const session = await authRequest.validate();
 ```
 
 You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) to get both the user and session.
 
 ```ts
-// index.astro
-const { user, session } = await authRequest.validateUser(Astro);
+const { user, session } = await authRequest.validateUser();
 ```
 
-**We recommend sticking to `validateUser()` if you need to get the user in any part of the process.** See the section below for details.
+**We recommend sticking to only `validateUser()` in load functions if you need to get the user in any part of the process.** See the "Caching" section below for details.
 
 ### Caching
 
@@ -115,22 +110,23 @@ await authRequest.validate();
 await authRequest.validateUser();
 ```
 
+As such, we recommend only using `validateUser()` inside load functions if you need the user in any part of the loading process.
+
 ## Set session cookie
 
 [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#validateuser) can be used to set a session, and therefore creating a session cookie.
 
 ```ts
-// index.astro
 import { auth } from "./lucia.js";
 
-const authRequest = auth.handleRequest(Astro);
+const authRequest = auth.handleRequest();
 authRequest.setSession(session);
 ```
 
 You can also pass `null` to remove the current session cookie.
 
 ```ts
-authRequest.setSession(null);
+authRequest.setSession(session);
 ```
 
 > (warn) When signing users out, remember to invalidate the current session with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession) alongside removing the session cookie!
