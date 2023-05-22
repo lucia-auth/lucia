@@ -18,7 +18,7 @@ export const auth = lucia({
 	}
 });
 
-const config = useRuntimeConfig()
+const config = useRuntimeConfig();
 
 export const githubAuth = github(auth, {
 	clientId: config.github.clientId ?? "",

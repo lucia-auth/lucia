@@ -10,7 +10,7 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		github: {
 			clientId: "",
-			clientSecret: "",
+			clientSecret: ""
 		}
 	}
 });
