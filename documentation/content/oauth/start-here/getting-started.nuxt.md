@@ -42,13 +42,8 @@ When a user clicks "Sign in with <provider>", redirect the user to a GET endpoin
 The state may not be returned depending on the provider, and it may return PKCE code verifier as well. Please check each provider's page (see left/menu).
 
 ```ts
-// server/api/oauth/index.ts
+// server/api/oauth/index.get.ts
 export default defineEventHandler(async (event) => {
-	const { req, res } = event.node;
-	if (req.method !== "GET") {
-		res.statusCode = 404;
-		return res.end();
-	}
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 	setCookie(event, "oauth_state", state, {
 		path: "/",
@@ -77,13 +72,8 @@ On sign in, the provider will redirect the user to your callback url. On callbac
 `createUser()` method can be used to create a new user if an existing user does not exist.
 
 ```ts
-// server/api/oauth/github.ts
+// server/api/oauth/github.get.ts
 export default defineEventHandler(async (event) => {
-	const { req, res } = event.node;
-	if (req.method !== "POST" || !req.url) {
-		res.statusCode = 404;
-		return res.end();
-	}
 	const authRequest = auth.handleRequest(event);
 	// get code and state params from url
 	const query = getQuery(event);
@@ -95,8 +85,7 @@ export default defineEventHandler(async (event) => {
 
 	// validate state
 	if (!code || !storedState || !state || storedState !== state) {
-		res.statusCode = 400;
-		return res.end();
+		return setResponseStatus(event, 400);
 	}
 
 	try {
@@ -117,8 +106,7 @@ export default defineEventHandler(async (event) => {
 		return await sendRedirect(event, "/", 302);
 	} catch {
 		// invalid code
-		res.statusCode = 400;
-		return res.end();
+		return setResponseStatus(event, 400);
 	}
 });
 ```

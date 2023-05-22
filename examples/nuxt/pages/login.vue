@@ -10,22 +10,22 @@ const errorMessage = ref<string | null>(null);
 
 const handleSubmit = async (e: Event) => {
 	errorMessage.value = "";
-	e.preventDefault();
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
-	const { data, error } = await useFetch("/api/login", {
-		method: "POST",
-		body: Object.fromEntries(formData.entries())
-	});
-	if (error.value) {
+
+	try {
+		const data = await $fetch("/api/login", {
+			method: "POST",
+			body: Object.fromEntries(formData.entries())
+		});
+		if (data) {
+			errorMessage.value = data.error;
+			return;
+		}
+		navigateTo("/");
+	} catch (error) {
 		errorMessage.value = "An unknown error occurred";
-		return;
 	}
-	if (data.value) {
-		errorMessage.value = data.value.error;
-		return;
-	}
-	navigateTo("/");
 };
 </script>
 
@@ -33,7 +33,7 @@ const handleSubmit = async (e: Event) => {
 	<h2>Sign in</h2>
 	<a href="/api/oauth?provider=github" class="button"> Github </a>
 	<p class="center">or</p>
-	<form @submit="handleSubmit">
+	<form @submit.prevent="handleSubmit">
 		<label htmlFor="username">username</label>
 		<br />
 		<input id="username" name="username" />

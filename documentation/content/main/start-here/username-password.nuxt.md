@@ -54,28 +54,30 @@ export const auth = lucia({
 
 ### Sign up form
 
-Create `pages/signup.vie`. This form will have an input field for username and password.
+Create `pages/signup.vue`. This form will have an input field for username and password.
 
 ```vue
 <!-- pages/signup.vue -->
 
 <script lang="ts" setup>
 const handleSubmit = async (e: Event) => {
-	e.preventDefault();
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
-	const { data, error } = await useFetch("/api/signup", {
-		method: "POST",
-		body: Object.fromEntries(formData.entries())
-	});
-	if (error.value) return;
-	navigateTo("/");
+	try {
+		await $fetch("/api/signup", {
+			method: "POST",
+			body: Object.fromEntries(formData.entries())
+		});
+		navigateTo("/");
+	} catch (error) {
+		console.log(error);
+	}
 };
 </script>
 
 <template>
 	<h2>Create an account</h2>
-	<form @submit="handleSubmit">
+	<form @submit.prevent="handleSubmit">
 		<label htmlFor="username">username</label>
 		<br />
 		<input id="username" name="username" />
@@ -92,32 +94,24 @@ const handleSubmit = async (e: Event) => {
 
 ### Create users
 
-Create `server/api/signup.ts`. This API route will handle account creation.
+Create `server/api/signup.post.ts`. This API route will handle account creation.
 
 Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `H3Event`.
 
 Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth#createsession) and make sure to store the session id by calling [`setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```ts
-// server/api/signup.ts
+// server/api/signup.post.ts
 import { Prisma } from "@prisma/client";
 import { LuciaError } from "lucia-auth";
 
 export default defineEventHandler(async (event) => {
-	if (event.node.req.method !== "POST") {
-		event.node.res.statusCode = 404;
-		return sendError(event, new Error());
-	}
-	const parsedBody = await readBody(event);
-	if (!parsedBody || typeof parsedBody !== "object") {
-		event.node.res.statusCode = 400;
-		return sendError(event, new Error("Invalid input"));
-	}
-	const username = parsedBody.username;
-	const password = parsedBody.password;
+	const { username, password } = (await readBody(event)) ?? {};
 	if (!username || !password) {
-		event.node.res.statusCode = 400;
-		return sendError(event, new Error("Invalid input"));
+		throw createError({
+			statusCode: 400,
+			statusMessage: "Invalid input"
+		});
 	}
 	try {
 		const user = await auth.createUser({
@@ -133,10 +127,12 @@ export default defineEventHandler(async (event) => {
 		const session = await auth.createSession(user.userId);
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-		return send(event, null);
+		return null;
 	} catch (error) {
-		event.node.res.statusCode = 400;
-		return sendError(event, new Error("Username unavailable"));
+		throw createError({
+			statusCode: 400,
+			statusMessage: "Username unavailable"
+		});
 	}
 });
 ```
@@ -181,21 +177,22 @@ Create `pages/login.vue`. This route will handle sign ins. This form will also h
 
 <script lang="ts" setup>
 const handleSubmit = async (e: Event) => {
-	errorMessage.value = "";
-	e.preventDefault();
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
-	const { data, error } = await useFetch("/api/signup", {
-		method: "POST",
-		body: Object.fromEntries(formData.entries())
-	});
-	if (error.value) return;
-	navigateTo("/");
+	try {
+		await $fetch("/api/login", {
+			method: "POST",
+			body: Object.fromEntries(formData.entries())
+		});
+		navigateTo("/");
+	} catch (error) {
+		console.log(error);
+	}
 };
 </script>
 
 <template>
-	<form @submit="handleSubmit">
+	<form @submit.prevent="handleSubmit">
 		<label htmlFor="username">username</label>
 		<br />
 		<input id="username" name="username" />
@@ -206,37 +203,28 @@ const handleSubmit = async (e: Event) => {
 		<br />
 		<input type="submit" value="Continue" class="button" />
 	</form>
-	<p class="error">{{ errorMessage }}</p>
 	<NuxtLink to="/login" class="link"> Sign in </NuxtLink>
 </template>
 ```
 
 ### Authenticate users
 
-Create `server/api/login.ts`. This API route will handle sign-ins.
+Create `server/api/login.post.ts`. This API route will handle sign-ins.
 
 We’ll use the key created in the previous section to reference the user and authenticate them by validating the password with [`useKey()`](/reference/lucia-auth/auth#usekey) . Create a new session if the password is valid.
 
 ```ts
-// server/api/login.ts
+// server/api/login.post.ts
 import { Prisma } from "@prisma/client";
 import { LuciaError } from "lucia-auth";
 
 export default defineEventHandler(async (event) => {
-	if (event.node.req.method !== "POST") {
-		event.node.res.statusCode = 404;
-		return sendError(event, new Error());
-	}
-	const parsedBody = await readBody(event);
-	if (!parsedBody || typeof parsedBody !== "object") {
-		event.node.res.statusCode = 400;
-		return sendError(event, new Error("Invalid input"));
-	}
-	const username = parsedBody.username;
-	const password = parsedBody.password;
+	const { username, password } = (await readBody(event)) ?? {};
 	if (!username || !password) {
-		event.node.res.statusCode = 400;
-		return sendError(event, new Error("Invalid input"));
+		throw createError({
+			statusCode: 400,
+			statusMessage: "Invalid input"
+		});
 	}
 	try {
 		const user = await auth.createUser({
@@ -252,10 +240,12 @@ export default defineEventHandler(async (event) => {
 		const session = await auth.createSession(user.userId);
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-		return send(event, null);
+		return null;
 	} catch (error) {
-		event.node.res.statusCode = 400;
-		return sendError(event, new Error("Invalid username/password"));
+		throw createError({
+			statusCode: 400,
+			statusMessage: "Invalid username/password"
+		});
 	}
 });
 ```
@@ -276,15 +266,11 @@ const key = await auth.useKey("username", username, password);
 const { session, user } = await authRequest.validateUser();
 ```
 
-Create a `server/api/user.ts`, which will return the current user.
+Create a `server/api/user.get.ts`, which will return the current user.
 
 ```ts
-// server/api/user.ts
+// server/api/user.get.ts
 export default defineEventHandler(async (event) => {
-	if (event.node.req.method !== "GET") {
-		event.node.res.statusCode = 404;
-		return sendError(event, new Error());
-	}
 	const authRequest = auth.handleRequest(event);
 	const { user } = await authRequest.validateUser();
 	return { user };
@@ -325,16 +311,16 @@ Create `pages/index.vue`. This page will show the user's data. Redirect the user
 const { data } = await useFetch("/api/user");
 if (!data.value) throw createError("Failed to fetch data");
 const user = data.value.user;
-if (!user) throw await navigateTo("/login");
+if (!user) await navigateTo("/login");
 
-const handleSubmit = async (e: Event) => {
-	e.preventDefault();
-	if (!(e.target instanceof HTMLFormElement)) return;
-	const { data, error } = await useFetch("/api/logout", {
-		method: "POST"
-	});
-	if (!data.value && !error.value) {
+const handleSubmit = async () => {
+	try {
+		await $fetch("/api/logout", {
+			method: "POST"
+		});
 		navigateTo("/login");
+	} catch (error) {
+		console.log(error);
 	}
 };
 </script>
@@ -343,7 +329,7 @@ const handleSubmit = async (e: Event) => {
 	<p>This page is protected and can only be accessed by authenticated users.</p>
 	<pre class="code">{{ JSON.stringify(user, null, 2) }}</pre>
 
-	<form @submit="handleSubmit">
+	<form @submit.prevent="handleSubmit">
 		<input type="submit" class="button" value="Sign out" />
 	</form>
 </template>
@@ -351,24 +337,21 @@ const handleSubmit = async (e: Event) => {
 
 ### Sign out
 
-Create `server/api/logout.ts`. This API route will handle sign-outs by invalidating the current session and removing the session cookie.
+Create `server/api/logout.post.ts`. This API route will handle sign-outs by invalidating the current session and removing the session cookie.
 
 ```ts
-// server/api/logout
+// server/api/logout.post.ts
 export default defineEventHandler(async (event) => {
-	console.log(event.node.req.method);
-	if (event.node.req.method !== "POST") {
-		event.node.res.statusCode = 404;
-		return sendError(event, new Error());
-	}
 	const authRequest = auth.handleRequest(event);
 	const session = await authRequest.validate();
 	if (!session) {
-		event.node.res.statusCode = 401;
-		return sendError(event, new Error("Unauthorized"));
+		throw createError({
+			statusCode: 401,
+			statusMessage: "Unauthorized"
+		});
 	}
 	await auth.invalidateSession(session.sessionId); // invalidate current session
 	authRequest.setSession(null); // remove session cookie
-	return send(event, null);
+	return null;
 });
 ```
