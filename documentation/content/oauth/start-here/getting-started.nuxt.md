@@ -85,7 +85,7 @@ export default defineEventHandler(async (event) => {
 
 	// validate state
 	if (!code || !storedState || !state || storedState !== state) {
-		return setResponseStatus(event, 400);
+		throw createError({ statusCode: 400 });
 	}
 
 	try {
@@ -106,7 +106,7 @@ export default defineEventHandler(async (event) => {
 		return await sendRedirect(event, "/", 302);
 	} catch {
 		// invalid code
-		return setResponseStatus(event, 400);
+		throw createError({ statusCode: 400 });
 	}
 });
 ```
