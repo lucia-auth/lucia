@@ -7,8 +7,9 @@ export default defineEventHandler(async (event) => {
 			path: "/",
 			maxAge: 60 * 60,
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production"
+			secure: !process.dev
 		});
 		return await sendRedirect(event, url.toString(), 302);
 	}
+	throw createError({ statusCode: 400 });
 });

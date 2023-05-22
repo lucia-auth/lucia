@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 		const key = await auth.useKey("username", username, password);
 		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session);
-		return null;
+		return null; // returns 204
 	} catch (error) {
 		if (
 			error instanceof LuciaError &&

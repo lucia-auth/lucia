@@ -8,7 +8,7 @@ import { github } from "@lucia-auth/oauth/providers";
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: process.dev ? "DEV" : "PROD",
 	middleware: h3(),
 	transformDatabaseUser: (userData) => {
 		return {
@@ -18,9 +18,11 @@ export const auth = lucia({
 	}
 });
 
+const config = useRuntimeConfig();
+
 export const githubAuth = github(auth, {
-	clientId: process.env.GITHUB_CLIENT_ID ?? "",
-	clientSecret: process.env.GITHUB_CLIENT_SECRET ?? ""
+	clientId: config.github.clientId ?? "",
+	clientSecret: config.github.clientSecret ?? ""
 });
 
 export type Auth = typeof auth;

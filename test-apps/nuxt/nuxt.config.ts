@@ -6,5 +6,11 @@ export default defineNuxtConfig({
 	},
 	nitro: {
 		moduleSideEffects: ["lucia-auth/polyfill/node"]
+	},
+	runtimeConfig: {
+		github: {
+			clientId: "",
+			clientSecret: ""
+		}
 	}
 });
