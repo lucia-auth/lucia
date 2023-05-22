@@ -8,7 +8,7 @@ This page will guide you how to implement a simple username/password auth and co
 
 The [Nuxt example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt) in the repo expands on this guide.
 
-Start off by following the steps in the [previous page](/start-here/getting-started?nuxt) to set up Lucia and your database.
+Start off by following the steps in the [previous page](/start-here/getting-started) to set up Lucia and your database.
 
 ## 1. Configure your database
 
@@ -96,7 +96,7 @@ Create `server/api/signup.ts`. This API route will handle account creation.
 
 Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `H3Event`.
 
-Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth?nextjs#createsession) and make sure to store the session id by calling [`setSession()`](/reference/lucia-auth/authrequest#setsession).
+Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth#createsession) and make sure to store the session id by calling [`setSession()`](/reference/lucia-auth/authrequest#setsession).
 
 ```ts
 // server/api/signup.ts
@@ -193,9 +193,6 @@ const handleSubmit = async (e: Event) => {
 </script>
 
 <template>
-	<h2>Create an account</h2>
-	<a href="/api/oauth?provider=github" class="button">Github</a>
-	<p class="center">or</p>
 	<form @submit="handleSubmit">
 		<label htmlFor="username">username</label>
 		<br />
