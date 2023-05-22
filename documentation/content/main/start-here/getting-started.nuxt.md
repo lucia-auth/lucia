@@ -35,7 +35,7 @@ In `server/utils/auth.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lu
 ```ts
 // server/utils/auth.ts
 import lucia from "lucia-auth";
-import { nuxt } from "lucia-auth/middleware";
+import { h3 } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 import { dev } from "$app/environment";
