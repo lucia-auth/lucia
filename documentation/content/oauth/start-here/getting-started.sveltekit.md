@@ -97,7 +97,9 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 	const storedState = cookies.get("github_oauth_state");
 
 	// validate state
-	if (state !== storedState) throw new Response(null, { status: 401 });
+	if (!state || !storedState || state !== storedState) {
+		throw new Response(null, { status: 401 });
+	}
 
 	try {
 		const { existingUser, providerUser, createUser } =

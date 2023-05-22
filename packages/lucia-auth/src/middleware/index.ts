@@ -1,4 +1,8 @@
-import type { IncomingMessage, OutgoingMessage } from "node:http";
+import type {
+	IncomingMessage,
+	OutgoingMessage,
+	ServerResponse
+} from "node:http";
 import {
 	SESSION_COOKIE_NAME,
 	type Cookie,
@@ -280,5 +284,19 @@ export const nextjs = (): Middleware<
 			setCookie: createSetCookie()
 		} as const satisfies RequestContext;
 		return requestContext;
+	};
+};
+
+type H3Event = {
+	node: {
+		req: IncomingMessage;
+		res: ServerResponse;
+	};
+};
+
+export const h3 = (): Middleware<[H3Event]> => {
+	const nodeMiddleware = node();
+	return (context, env) => {
+		return nodeMiddleware(context.node.req, context.node.res, env);
 	};
 };

@@ -1,5 +1,6 @@
 import { auth, githubAuth } from "@/auth/lucia";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export const GET = async (request: Request) => {
 	const url = new URL(request.url);
@@ -19,17 +20,11 @@ export const GET = async (request: Request) => {
 				username: providerUser.login
 			});
 		};
-
 		const user = await getUser();
 		const session = await auth.createSession(user.userId);
 		const authRequest = auth.handleRequest({ request, cookies });
 		authRequest.setSession(session);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				location: "/"
-			}
-		});
+		return NextResponse.redirect(url.toString());
 	} catch (e) {
 		return new Response(null, {
 			status: 500

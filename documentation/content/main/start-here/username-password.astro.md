@@ -39,7 +39,7 @@ Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your
 // lib/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
-	env: dev ? "DEV" : "PROD",
+	env: import.meta.env.DEV ? "DEV" : "PROD",
 	middleware: astro(),
 	transformDatabaseUser: (userData) => {
 		return {
@@ -157,8 +157,9 @@ import { auth } from "../lib/lucia";
 
 const authRequest = auth.handleRequest(Astro);
 const session = await authRequest.validate();
-if (session) ___astro_return;
-throw Astro.redirect("/", 302); // redirect to profile page if authenticated
+if (session) {
+	return Astro.redirect("/", 302); // redirect to profile page if authenticated
+}
 
 if (Astro.request.method === "POST") {
 	// ...
@@ -198,8 +199,9 @@ const authRequest = auth.handleRequest(Astro);
 
 // redirect to profile page if authenticated
 const session = await authRequest.validate();
-if (session) ___astro_return;
-throw Astro.redirect("/", 302);
+if (session) {
+	return Astro.redirect("/", 302);
+}
 
 if (Astro.request.method === "POST") {
 	// csrf check
@@ -255,8 +257,9 @@ import { auth } from "../lib/lucia";
 const authRequest = auth.handleRequest(Astro);
 const { user } = await authRequest.validateUser();
 
-if (!user) ___astro_return;
-throw Astro.redirect("/login", 302);
+if (!user) {
+	return Astro.redirect("/login", 302);
+}
 ---
 
 <h1>Profile</h1>

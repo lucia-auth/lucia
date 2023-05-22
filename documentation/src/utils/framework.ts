@@ -10,6 +10,10 @@ const frameworks = [
 		title: "Next.js"
 	},
 	{
+		id: "nuxt",
+		title: "Nuxt"
+	},
+	{
 		id: "remix",
 		title: "Remix"
 	},

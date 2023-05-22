@@ -52,7 +52,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			});
 		}
 		// database connection error
-		console.error(error);
+		console.log(error);
 		return res.status(500).json({
 			error: "Unknown error occurred"
 		});

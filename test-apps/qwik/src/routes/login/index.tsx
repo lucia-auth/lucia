@@ -40,7 +40,7 @@ export const useLoginAction = routeAction$(
 			}
 
 			// database connection error
-			console.error(error);
+			console.log(error);
 			return event.fail(200, {
 				error: "Unknown error occurred"
 			});

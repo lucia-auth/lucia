@@ -34,7 +34,7 @@ export const actions: Actions = {
 				});
 			}
 			// database connection error
-			console.error(error);
+			console.log(error);
 			return fail(500, {
 				message: 'Unknown error occurred'
 			});

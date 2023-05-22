@@ -41,7 +41,7 @@ Add `transformDatabaseUser()` to your Lucia config to expose the user's id and u
 // lib/server/lucia.ts
 export const auth = lucia({
 	adapter: prisma(client),
-	env: dev ? "DEV" : "PROD",
+	env: "DEV" // "PROD" if prod,
 	middleware: sveltekit(),
 	transformDatabaseUser: (userData) => {
 		return {

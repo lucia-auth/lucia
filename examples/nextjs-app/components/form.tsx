@@ -19,10 +19,10 @@ const Form = ({
 					e.preventDefault();
 					setErrorMessage("");
 					const formData = new FormData(e.currentTarget);
-					const username = formData.get("username") as string;
-					const password = formData.get("password") as string;
+					const username = formData.get("username");
+					const password = formData.get("password");
 
-					const response = await fetch(e.currentTarget.action, {
+					const response = await fetch(action, {
 						method: "POST",
 						body: JSON.stringify({
 							username,
@@ -35,7 +35,6 @@ const Form = ({
 					};
 					setErrorMessage(result.error);
 				}}
-				action={action}
 			>
 				{children}
 			</form>

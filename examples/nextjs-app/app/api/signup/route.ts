@@ -68,7 +68,7 @@ export const POST = async (request: Request) => {
 			);
 		}
 		// database connection error
-		console.error(error);
+		console.log(error);
 		return NextResponse.json(
 			{
 				error: "Unknown error occurred"
