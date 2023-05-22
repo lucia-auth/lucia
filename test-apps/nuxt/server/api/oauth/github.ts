@@ -5,16 +5,11 @@ export default defineEventHandler(async (event) => {
 		return res.end();
 	}
 	const authRequest = auth.handleRequest(event);
-	const query = getQuery(event)
-    const code = query.code?.toString() ?? null
-	const state = query.state?.toString() ?? null
+	const query = getQuery(event);
+	const code = query.code?.toString() ?? null;
+	const state = query.state?.toString() ?? null;
 	const storedState = getCookie(event, "oauth_state");
-	if (
-        !code ||
-		!storedState ||
-		!state ||
-		storedState !== state
-	) {
+	if (!code || !storedState || !state || storedState !== state) {
 		res.statusCode = 400;
 		return res.end();
 	}
@@ -31,7 +26,7 @@ export default defineEventHandler(async (event) => {
 		const user = await getUser();
 		const session = await auth.createSession(user.userId);
 		authRequest.setSession(session);
-		return await sendRedirect(event, "/", 302)
+		return await sendRedirect(event, "/", 302);
 	} catch {
 		res.statusCode = 400;
 		return res.end();

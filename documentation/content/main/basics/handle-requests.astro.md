@@ -23,6 +23,7 @@ export const get: APIRoute = async (context) => {
 	const authRequest = auth.handleRequest(apiContext);
 };
 ```
+
 ## Middleware
 
 By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:

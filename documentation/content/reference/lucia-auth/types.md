@@ -161,7 +161,9 @@ type LuciaRequest = {
 ## `Middleware`
 
 ```ts
-export type Middleware = (...middlewareArgs: [...args: any[], "DEV" | "PROD"]) => RequestContext;
+export type Middleware = (
+	...middlewareArgs: [...args: any[], "DEV" | "PROD"]
+) => RequestContext;
 ```
 
 #### Parameters
