@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
 		path: "/",
 		maxAge: 60 * 60,
 		httpOnly: true,
-		secure: false // true in prod
+		secure: process.dev ? false : true
 	});
 	return await sendRedirect(event, url.toString(), 302);
 });
