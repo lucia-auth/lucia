@@ -31,6 +31,11 @@
 		"shx": "^0.3.4",
 		"typescript": "~5.0.4"
 	},
+	"resolutions": {
+		"lucia-auth": "workspace:*",
+		"@lucia-auth/adapter-prisma": "workspace:*",
+		"@lucia-auth/oauth": "workspace:*"
+	},
 	"engines": {
 		"node": "16.x - 20.x",
 		"pnpm": "*"
