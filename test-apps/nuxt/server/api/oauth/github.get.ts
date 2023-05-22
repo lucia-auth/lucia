@@ -1,17 +1,11 @@
 export default defineEventHandler(async (event) => {
-	const { req, res } = event.node;
-	if (req.method !== "POST" || !req.url) {
-		res.statusCode = 404;
-		return res.end();
-	}
 	const authRequest = auth.handleRequest(event);
 	const query = getQuery(event);
 	const code = query.code?.toString() ?? null;
 	const state = query.state?.toString() ?? null;
 	const storedState = getCookie(event, "oauth_state");
 	if (!code || !storedState || !state || storedState !== state) {
-		res.statusCode = 400;
-		return res.end();
+		return setResponseStatus(event, 400);
 	}
 	try {
 		const { existingUser, providerUser, createUser } =
@@ -28,7 +22,6 @@ export default defineEventHandler(async (event) => {
 		authRequest.setSession(session);
 		return await sendRedirect(event, "/", 302);
 	} catch {
-		res.statusCode = 400;
-		return res.end();
+		return setResponseStatus(event, 400);
 	}
 });
