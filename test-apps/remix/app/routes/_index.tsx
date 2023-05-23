@@ -35,7 +35,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const action = async ({ request }: ActionArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session) {
 		return json(null, {
 			status: 401,

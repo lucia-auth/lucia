@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	default: async ({ locals }) => {
-		const session = await locals.auth.validate();
+		const { session } = await locals.auth.validateUser();
 		if (!session) return null;
 		await auth.invalidateSession(session.sessionId);
 		locals.auth.setSession(null);

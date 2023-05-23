@@ -326,7 +326,7 @@ import { auth } from "../../lib/lucia";
 export const handleRequest = async (request) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const {session} = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 	if (!session)
 		return new Response(null, {
 			status: 400,

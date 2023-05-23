@@ -37,7 +37,7 @@ export default () => {
 export const loader = async ({ request }: LoaderArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) return redirect("/");
 	return json(null, {
 		headers

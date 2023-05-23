@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
 	const authRequest = auth.handleRequest({ request, cookies });
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session) {
 		return NextResponse.json(
 			{
