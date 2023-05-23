@@ -6,7 +6,7 @@ import Form from "@/components/form";
 
 const Page = async () => {
 	const authRequest = auth.handleRequest({ cookies });
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) redirect("/");
 	return (
 		<>

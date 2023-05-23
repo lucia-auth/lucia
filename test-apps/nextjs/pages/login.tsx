@@ -9,7 +9,7 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
 	const authRequest = auth.handleRequest(context);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		return {
 			redirect: {

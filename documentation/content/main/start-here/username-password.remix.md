@@ -93,7 +93,7 @@ export default () => {
 
 Define an `action()`.
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `Request` and `Headers`.
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `Request` and `Headers`.
 
 Users can be created with `createUser()`. This will create a new primary key that can be used to authenticate user as well. We’ll use `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user). Create a new session with [`createSession()`](/reference/lucia-auth/auth?nextjs#createsession) and make sure to store the session id by calling [`setSession()`](/reference/lucia-auth/authrequest#setsession).
 
@@ -156,7 +156,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `Request` and `Headers`. **When returning a response, you must set the `headers` you pass onto `handleRequest()`.**
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with `Request` and `Headers`. **When returning a response, you must set the `headers` you pass onto `handleRequest()`.**
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie with [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
 
@@ -164,7 +164,7 @@ In this case, we don't need to validate the request, but we do need it for setti
 const authRequest = auth.handleRequest(request, headers);
 ```
 
-> (warn) Remix does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+> (warn) Remix does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 #### Set user passwords
 
@@ -185,9 +185,9 @@ const user = await auth.createUser({
 
 ### Redirect authenticated users
 
-Defined a `loader()`.
+Define a `loader()`.
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 ```tsx
 // app/routes/signup.tsx
@@ -205,7 +205,7 @@ export default () => {
 export const loader = async ({ request }: LoaderArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) return redirect("/");
 	return json(null, {
 		headers // IMPORTANT!
@@ -331,7 +331,7 @@ export default () => {
 export const loader = async ({ request }: LoaderArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) return redirect("/");
 	return json(null, {
 		headers // IMPORTANT!
@@ -411,7 +411,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const action = async ({ request }: ActionArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session) {
 		return json(null, {
 			status: 401,

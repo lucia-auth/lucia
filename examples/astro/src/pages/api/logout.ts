@@ -3,7 +3,7 @@ import type { APIRoute } from "astro";
 
 export const post: APIRoute = async (Astro) => {
 	const authRequest = auth.handleRequest(Astro);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session)
 		return new Response(null, {
 			status: 400

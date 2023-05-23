@@ -128,7 +128,7 @@ export const useSignupAction = routeAction$(
 					username: values.username
 				}
 			});
-			const session = await auth.createSession(user.userId);
+			const { session } = await auth.createSession(user.userId);
 			const authRequest = auth.handleRequest(event);
 			authRequest.setSession(session);
 		} catch (error) {
@@ -149,7 +149,7 @@ export const useSignupAction = routeAction$(
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) and [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpserverresponse).
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) and [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpserverresponse).
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie with [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
 
@@ -207,7 +207,7 @@ export default component$(() => {
 
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 We'll use [`routeLoader$`](https://qwik.builder.io/docs/loader/) to make sure that the user is not already authenticated. If they are, we'll redirect them to the home page.
 
@@ -228,7 +228,7 @@ import { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -395,7 +395,7 @@ import type { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const session = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -457,7 +457,7 @@ import { auth } from "~/lib/lucia";
 
 export const useSignoutAction = routeAction$(async (values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const session = await authRequest.validateUser();
 
 	if (!session) throw event.redirect(302, "/login");
 
@@ -509,13 +509,13 @@ import { routeLoader$, routeAction$ } from "@builder.io/qwik-city";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session, user } = await authRequest.validateUser();
 	// ...
 });
 
 export const useUserAction = routeAction$(async (_values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session, user } = await authRequest.validateUser();
 	// ...
 });
 ```

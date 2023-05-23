@@ -12,7 +12,7 @@ import type { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
