@@ -6,9 +6,17 @@ description: "Learn how to use Lucia in SvelteKit by implementing a basic userna
 
 This page will guide you on how to implement a simple username/password auth using SvelteKit and cover the basics of Lucia.
 
-The [SvelteKit example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit) in the repo expands on this guide.
-
 Start off by following the steps in [Getting Started](/start-here/getting-started?sveltekit) to set up Lucia and your database.
+
+### Clone example project
+
+You can also clone the [SvelteKit example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit), which uses SQLite + Prisma. Clone it locally with a single command:
+
+```
+npx degit pilcrowonpaper/lucia/examples/sveltekit <project_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/sveltekit).
 
 ## 1. Configure your database
 

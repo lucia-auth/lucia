@@ -6,9 +6,17 @@ description: "Learn how to use Lucia in Nuxt by implementing a basic username/pa
 
 This page will guide you how to implement a simple username/password auth and cover the basics of Lucia.
 
-The [Nuxt example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt) in the repo expands on this guide.
-
 Start off by following the steps in the [previous page](/start-here/getting-started) to set up Lucia and your database.
+
+### Clone example project
+
+You can also clone the [Nuxt example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt), which uses SQLite + Prisma. Clone it locally with a single command:
+
+```
+npx degit pilcrowonpaper/lucia/examples/nuxt <project_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt).
 
 ## 1. Configure your database
 

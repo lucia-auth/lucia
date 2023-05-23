@@ -5,9 +5,17 @@ _order: 2
 
 This page will guide you how to implement a simple username/password auth with the App router and cover the basics of Lucia. Keep in mind that due to a limitation with cookies when using the App router, Lucia cannot automatically renew sessions.
 
-The [Next.js App router example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app) in the repo expands on this guide.
-
 Make sure you've setup Lucia and your database as covered in [Getting started](/start-here/getting-started?nextjs).
+
+### Clone example project
+
+You can also clone the [Next.js App router example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app), which uses SQLite + Prisma. Clone it locally with a single command:
+
+```
+npx degit pilcrowonpaper/lucia/examples/nextjs-app <project_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app).
 
 ## 1. Configure your database
 
