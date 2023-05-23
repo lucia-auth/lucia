@@ -70,22 +70,15 @@ const auth = lucia({
 
 ## Validate requests
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used to get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) can be used to get the current session and user.
 
 ```ts
+// index.astro
 import { auth } from "./lucia.js";
 
-const authRequest = auth.handleRequest(event);
-const session = await authRequest.validate();
+const authRequest = auth.handleRequest(Astro);
+const { user, session } = await authRequest.validateUser(Astro);
 ```
-
-You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) to get both the user and session.
-
-```ts
-const { user, session } = await authRequest.validateUser();
-```
-
-**We recommend sticking to only `validateUser()` in load functions if you need to get the user in any part of the process.** See the "Caching" section below for details.
 
 #### Examples
 
@@ -102,14 +95,7 @@ export const load = async (event) => {
 
 ### Caching
 
-Both `AuthRequest.validate()` and `AuthRequest.validateUser()` caches the result (or rather promise), so you won't be making unnecessary database calls.
-
-```ts
-// wait for database
-await authRequest.validate();
-// immediate response
-await authRequest.validate();
-```
+`AuthRequest.validateUser()` caches the result (or rather promise), so you won't be making unnecessary database calls.
 
 ```ts
 // wait for database
@@ -122,28 +108,8 @@ This functionality works when calling them in parallel as well.
 
 ```ts
 // single db call
-await Promise.all([authRequest.validate(), authRequest.validate()]);
+await Promise.all([authRequest.validateUser(), authRequest.validateUser()]);
 ```
-
-It also shares the result, so calling `validate()` will return the session portion of the result from `validateUser()`.
-
-```ts
-// wait for database
-await authRequest.validateUser();
-// immediate response
-await authRequest.validate();
-```
-
-The same is not true for the other way around. `validateUser()` will wait for `validate()` to resolve and then get the user from the returned session.
-
-```ts
-// wait for database
-await authRequest.validate();
-// fetch user
-await authRequest.validateUser();
-```
-
-As such, we recommend only using `validateUser()` inside load functions if you need the user in any part of the loading process.
 
 ## Set session cookie
 

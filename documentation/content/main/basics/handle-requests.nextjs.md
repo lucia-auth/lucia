@@ -84,22 +84,33 @@ const auth = lucia({
 
 ## Validate requests
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used to get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) can be used to get the current session and user.
 
 ```ts
+// index.astro
 import { auth } from "./lucia.js";
 
-const authRequest = auth.handleRequest({ req, res });
-const session = await authRequest.validate();
+const authRequest = auth.handleRequest(Astro);
+const { user, session } = await authRequest.validateUser(Astro);
 ```
 
-You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) to get both the user and session.
+### Caching
+
+`AuthRequest.validateUser()` caches the result (or rather promise), so you won't be making unnecessary database calls.
 
 ```ts
-const { user, session } = await authRequest.validateUser();
+// wait for database
+await authRequest.validateUser();
+// immediate response
+await authRequest.validateUser();
 ```
 
-We recommend sticking to `validateUser()` if you need to get the user in any part of the process.
+This functionality works when calling them in parallel as well.
+
+```ts
+// single db call
+await Promise.all([authRequest.validateUser(), authRequest.validateUser()]);
+```
 
 ## Set session cookie
 
