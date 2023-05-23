@@ -6,9 +6,17 @@ description: "Learn how to use Lucia in Astro by implementing a basic username/p
 
 This page will guide you how to implement a simple username/password authentication using Astro and cover the basics of Lucia.
 
-The [Astro example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro) in the repo expands on this guide.
-
 Start off by following the steps in the [previous page](/start-here/getting-started?astro) to set up Lucia and your database.
+
+### Clone example project
+
+You can also clone the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro), which uses SQLite + Prisma. Clone it locally with a single command:
+
+```
+npx degit pilcrowonpaper/lucia/examples/astro <project_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/astro).
 
 ## 1. Configure your database
 
