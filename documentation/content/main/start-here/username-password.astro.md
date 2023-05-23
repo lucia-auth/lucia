@@ -129,7 +129,7 @@ if (Astro.request.method === "POST") {
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global when using the Astro middleware.
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global when using the Astro middleware.
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie.
 
