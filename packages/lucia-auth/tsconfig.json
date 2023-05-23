@@ -4,7 +4,7 @@
 		"checkJs": true,
 		"noImplicitAny": true,
 		"module": "ES2022",
-		"moduleResolution": "nodenext",
+		"moduleResolution": "node",
 		"target": "ES2022",
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,
@@ -13,5 +13,5 @@
 		"isolatedModules": false
 	},
 	"include": ["src"],
-	"exclude": ["node_modules/", "**/__tests__/*"]
+	"exclude": ["node_modules/", "**/__tests__/*", "**/*.test.ts"]
 }

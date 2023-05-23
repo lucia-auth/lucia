@@ -1,7 +1,7 @@
 import scrypt from "../scrypt/index.js";
 import { generateRandomString } from "./nanoid.js";
 
-export const generateHashWithScrypt = async (s: string) => {
+export const generateScryptHash = async (s: string) => {
 	const salt = generateRandomString(16);
 	const key = await hashWithScrypt(s.normalize("NFKC"), salt);
 	return `s2:${salt}:${key}`;
@@ -51,6 +51,6 @@ const constantTimeEqual = (a: string, b: string) => {
 	return c === 0;
 };
 
-const convertUint8ArrayToHex = (arr: Uint8Array) => {
+export const convertUint8ArrayToHex = (arr: Uint8Array) => {
 	return [...arr].map((x) => x.toString(16).padStart(2, "0")).join("");
 };
