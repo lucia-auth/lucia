@@ -148,7 +148,7 @@ return new Response(null, {
 });
 ```
 
-> (warn) While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+> (warn) While `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 #### Set user passwords
 
@@ -169,7 +169,7 @@ const user = await auth.createUser({
 
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 ```ts
 import { auth } from "../lib/lucia";
@@ -177,7 +177,7 @@ import { auth } from "../lib/lucia";
 export const handleRequest = async (request) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		headers.set("location", "/");
 		return new Response(null, {
@@ -224,7 +224,7 @@ const handleRequest = async (request) => {
 	const authRequest = auth.handleRequest(request, headers);
 
 	// redirect to profile page if authenticated
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		headers.set("location", "/");
 		return new Response(null, {
@@ -289,7 +289,7 @@ This page will be the root page (`/`). This route will show the user's data and 
 
 ### Get current user
 
-The current user and session can be retrieved using [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser). Redirect the user to the login page if unauthenticated.
+Redirect unauthenticated users to the login page.
 
 ```ts
 // /index
@@ -315,7 +315,7 @@ export const handleRequest = async (request) => {
 };
 ```
 
-## 6. Sign out users
+### Sign out users
 
 Create a POST endpoint in `api/logout` that handles logout. It will invalidate the current session and remove the session cookie.
 
@@ -326,7 +326,7 @@ import { auth } from "../../lib/lucia";
 export const handleRequest = async (request) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const {session} = await authRequest.validateUser();
 	if (!session)
 		return new Response(null, {
 			status: 400,

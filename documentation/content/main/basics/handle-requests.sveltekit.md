@@ -89,7 +89,7 @@ You create a new `AuthRequest` instance, or better yet, put it inside `locals` i
 
 export const load = async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const session = await authRequest.validateUser();
 };
 ```
 

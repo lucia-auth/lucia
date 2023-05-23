@@ -217,7 +217,7 @@ In this case, we don't need to validate the request, but we do need it for setti
 const authRequest = auth.handleRequest({ request, cookies });
 ```
 
-> (warn) Next.js does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+> (warn) Next.js does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 #### Set user passwords
 
@@ -236,7 +236,7 @@ const user = await auth.createUser({
 
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server component to validate the request and get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) can be used inside a server component to validate the request and get the current session.
 
 ```ts
 // app/signup/page.tsx
@@ -248,7 +248,7 @@ import Form from "@/components/form";
 
 const Page = async () => {
 	const authRequest = auth.handleRequest({ cookies });
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) redirect("/");
 	// ...
 };
@@ -357,7 +357,7 @@ import Form from "@/components/form";
 
 const Page = async () => {
 	const authRequest = auth.handleRequest({ cookies });
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) redirect("/");
 	return (
 		<>
@@ -431,7 +431,7 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
 	const authRequest = auth.handleRequest({ request, cookies });
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session) {
 		return NextResponse.json(null, {
 			status: 401

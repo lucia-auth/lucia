@@ -41,7 +41,7 @@ export const auth = lucia({
 
 ```ts
 const authRequest = auth.handleRequest(request, response);
-const session = await authRequest.validate();
+const { user, session } = await authRequest.validateUser();
 ```
 
 We hope this makes it much more easier to support other frameworks.

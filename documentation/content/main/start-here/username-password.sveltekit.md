@@ -147,7 +147,7 @@ const user = await auth.createUser({
 
 ### Redirect authenticated users
 
-Let's also redirect authenticated users to the profile page. We can get the current session in the server by using [`locals.auth.validate()`](/reference/lucia-auth/authrequest#validate).
+Let's also redirect authenticated users to the profile page. [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 ```ts
 // routes/signup/+page.server.ts
@@ -156,13 +156,13 @@ import { auth } from "$lib/server/lucia";
 import type { PageServerLoad, Actions } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
+	const { session } = await locals.auth.validateUser();
 	if (session) throw redirect(302, "/");
 	return {};
 };
 ```
 
-**`validate()` will only make a single database call regardless of how many times you call the method!**
+**`local.auth.validateUser()` will only make a single database call regardless of how many times you call the method!**
 
 ## 4. Sign in page
 
@@ -202,7 +202,7 @@ import type { PageServerLoad, Actions } from "./$types";
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
+	const { session } = await locals.auth.validateUser();
 	if (session) throw redirect(302, "/");
 };
 
@@ -240,9 +240,9 @@ This page will be the root (`/`). This route will show the user's data and have 
 
 ### Get current user
 
-Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function. We can get both the session and user in a single database call with [`locals.auth.validateUser()`](/reference/lucia-auth/authrequest#validateuser) instead of `locals.auth.validate()`. Similar to `validate()`, calling `validateUser()` multiple times will only result in a single database call.
+Since the current session and user is only exposed in the server, we have to explicitly pass it on to the client with a server load function.
 
-Let's also redirect unauthenticated users like we did for the sign up page.
+Let's also redirect unauthenticated users to the login page.
 
 ```ts
 // routes/+page.server.ts
@@ -258,12 +258,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 ```
 
-> When using `validateUser()` in a load function, we recommend every parent and child load function of it to use `validateUser()` instead of `validate()` as calling both may lead to unnecessary database calls.
-
 Now we can access the user from page data. Notice that the `username` property exists because it was included in the returned value of `transformPageData()`.
 
 ```svelte
 <script lang="ts">
+	import { enhance } from "$app/forms";
 	import type { PageData } from "./$types";
 
 	export let data: PageData;
@@ -274,6 +273,29 @@ Now we can access the user from page data. Notice that the `username` property e
 	<p>User id: {data.user.userId}</p>
 	<p>Username: {data.user.username}</p>
 </div>
+<form use:enhance method="post">
+	<input type="submit" value="Sign out" />
+</form>
+```
+
+### Sign out users
+
+To sign out an user, create a new action. This may be an API endpoint as well. Invalidate the current session and delete the cookie by passing `null` to `setSession()`.
+
+```ts
+// routes/+page.sever.ts
+import { type Actions, fail } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+import { auth } from "$lib/server/lucia";
+
+export const actions: Actions = {
+	default: async ({ locals }) => {
+		const { session } = await locals.auth.validateUser();
+		if (!session) return fail(401);
+		await auth.invalidateSession(session.sessionId); // invalidate session
+		locals.auth.setSession(null); // remove cookie
+	}
+};
 ```
 
 ## 6. Validate requests
@@ -286,7 +308,7 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const actions: Actions = {
 	default: async ({ locals }) => {
-		const session = await locals.auth.validate();
+		const { session, user } = await locals.auth.validateUser();
 		if (!session) {
 			// unauthenticated
 		}
@@ -294,7 +316,7 @@ export const actions: Actions = {
 };
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
+	const { session, user } = await locals.auth.validateUser();
 	if (!session) {
 		// unauthenticated
 	}
@@ -306,40 +328,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ locals }) => {
-	const session = await locals.auth.validate();
+	const { session, user } = await locals.auth.validateUser();
 	if (!session) {
 		// unauthenticated
 	}
 };
-```
-
-## 7. Sign out users
-
-To sign out an user, create a new action. This may be an API endpoint as well. Invalidate the current session and delete the cookie by passing `null` to `setSession()`.
-
-```ts
-import { type Actions, fail } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
-import { auth } from "$lib/server/lucia";
-
-export const actions: Actions = {
-	default: async ({ locals }) => {
-		const session = await locals.auth.validate();
-		if (!session) return fail(401);
-		await auth.invalidateSession(session.sessionId); // invalidate session
-		locals.auth.setSession(null); // remove cookie
-	}
-};
-```
-
-Instead of a sign out button, add a form.
-
-```svelte
-<script lang="ts">
-	import { enhance } from "$app/forms";
-</script>
-
-<form use:enhance method="post">
-	<input type="submit" value="Sign out" />
-</form>
 ```

@@ -158,7 +158,7 @@ In this case, we don't need to validate the request, but we do need it for setti
 const authRequest = auth.handleRequest({ req, res });
 ```
 
-> (warn) Next.js does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+> (warn) Next.js does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 #### Set user passwords
 
@@ -179,26 +179,21 @@ const user = await auth.createUser({
 
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
-
-```ts
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
-
-// ADD:
-import { auth } from "../lib/lucia";
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-```
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 ```ts
 // pages/signup.tsx
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { auth } from "../lib/lucia";
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
 	const authRequest = auth.handleRequest(context);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		// redirect the user if authenticated
 		return {
@@ -324,7 +319,7 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
 	const authRequest = auth.handleRequest(context);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		// redirect the user if authenticated
 		return {
@@ -344,7 +339,7 @@ export const getServerSideProps = async (
 
 ## 5. Profile page (protected)
 
-This page will be the root page (`/`). This route will show the user's data and have the note-taking portion of the app.
+This page will be the root page (`/`). This route will display the authenticated user's data.
 
 ### Get current user
 
@@ -414,7 +409,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	if (req.method !== "POST")
 		return res.status(404).json({ error: "Not found" });
 	const authRequest = auth.handleRequest({ req, res });
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session) return res.status(401).json({ error: "Unauthorized" });
 	await auth.invalidateSession(session.sessionId);
 	authRequest.setSession(null); // setting to null removes cookie
@@ -451,7 +446,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const authRequest = auth.handleRequest({ req, res });
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	// ...
 };
 ```
