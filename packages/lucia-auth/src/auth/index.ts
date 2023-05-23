@@ -5,7 +5,7 @@ import {
 	createSessionCookie
 } from "./cookie.js";
 import { logError } from "../utils/log.js";
-import { generateHashWithScrypt, validateScryptHash } from "../utils/crypto.js";
+import { generateScryptHash, validateScryptHash } from "../utils/crypto.js";
 import { generateRandomString } from "../utils/nanoid.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
@@ -134,7 +134,7 @@ export class Auth<C extends Configuration = any> {
 		this.sessionCookieOption =
 			config.sessionCookie ?? defaultSessionCookieOption;
 		this.hash = {
-			generate: config.hash?.generate ?? generateHashWithScrypt,
+			generate: config.hash?.generate ?? generateScryptHash,
 			validate: config.hash?.validate ?? validateScryptHash
 		};
 		this.middleware = config.middleware ?? defaultMiddleware();
