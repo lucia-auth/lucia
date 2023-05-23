@@ -41,7 +41,7 @@ export const auth = lucia({
 
 ```ts
 const authRequest = auth.handleRequest(request, response);
-const session = await authRequest.validate();
+const { user, session } = await authRequest.validateUser();
 ```
 
 We hope this makes it much more easier to support other frameworks.
@@ -129,7 +129,7 @@ const authRequest = auth.handleRequest(Astro);
 
 A lot of SQL databases seemed to have issues with `user`, `key`, and `primary`. All database names are now preceded with `auth_` (`auth_user` etc). Column `auth_key.primary` has been renamed to `auth_key.primary_key`.
 
-Refer to [the database migration guide](https://github.com/pilcrowOnPaper/lucia/discussions/435) for specifics.
+Refer to the [database migration guide](https://github.com/pilcrowOnPaper/lucia/discussions/435) for specifics.
 
 ## Update config
 
@@ -169,7 +169,7 @@ import "lucia-auth/polyfill/node";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: node()
 });
 

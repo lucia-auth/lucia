@@ -43,7 +43,7 @@ export const actions: Actions = {
 					message: 'Username already in use'
 				});
 			}
-			console.error(error);
+			console.log(error);
 			return fail(500, {
 				message: 'Unknown error occurred'
 			});
@@ -52,7 +52,7 @@ export const actions: Actions = {
 };
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
+	const { session } = await locals.auth.validateUser();
 	if (session) throw redirect(302, '/');
 	return {};
 };

@@ -1,7 +1,7 @@
 ---
 _order: 0
 title: "Getting started"
-description: "Learn about getting started with the OAuth integration for Lucia"
+description: "Learn about getting started with the OAuth integration for Lucia in SvelteKit"
 ---
 
 While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.
@@ -10,7 +10,7 @@ Supported providers are listed on the left. You can also add your own providers 
 
 ## Installation
 
-```bash
+```
 npm i @lucia-auth/oauth
 pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth
@@ -36,6 +36,8 @@ export const githubAuth = github(auth, config);
 ## Sign in with the provider
 
 When a user clicks "Sign in with <provider>", redirect the user to a GET endpoint. This endpoint will redirect the user to the provider's sign in page. On request, store the [state](https://www.rfc-editor.org/rfc/rfc6749#section-4.1.1) inside a http0nly cookie and redirect the user to the provider's authorization url. Both, the authorization url and state can be retrieved with `getAuthorizationUrl()`.
+
+The state may not be returned depending on the provider, and it may return PKCE code verifier as well. Please check each provider's page (see left/menu).
 
 ```ts
 // routes/api/oauth/+server.ts
@@ -95,7 +97,9 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 	const storedState = cookies.get("github_oauth_state");
 
 	// validate state
-	if (state !== storedState) throw new Response(null, { status: 401 });
+	if (!state || !storedState || state !== storedState) {
+		throw new Response(null, { status: 401 });
+	}
 
 	try {
 		const { existingUser, providerUser, createUser } =

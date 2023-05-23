@@ -6,7 +6,7 @@ description: "Learn how to handle requests with Lucia"
 
 [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-With the [Astro middleware](/middleware/astro), it expects Astro's [`ApiContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context) or [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global, which are available inside `.astro` pages and API routes.
+With the [Astro middleware](/reference/lucia-auth/middleware#astro), it expects Astro's [`ApiContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context) or [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global, which are available inside `.astro` pages and API routes.
 
 ```ts
 // index.astro
@@ -24,52 +24,62 @@ export const get: APIRoute = async (context) => {
 };
 ```
 
-### Middleware
+## Middleware
 
-By default, Lucia uses the [Lucia middleware](/middleware/lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
+By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
 
-- [Astro](/middleware/astro)
-- [Express](/middleware/express)
-- [Node](/middleware/node)
-- [SvelteKit](/middleware/sveltekit)
+- [Astro](/reference/lucia-auth/middleware#astro)
+- [Express](/reference/lucia-auth/middleware#express)
+- [H3](/reference/lucia-auth/middleware#h3)
+- [Next.js](/reference/lucia-auth/middleware#nextjs)
+- [Node](/reference/lucia-auth/middleware#node)
+- [SvelteKit](/reference/lucia-auth/middleware#sveltekit)
+- [Web](/reference/lucia-auth/middleware#web)
+- [Qwik City](/reference/lucia-auth/middleware#qwik)
 
-> Use the Node middleware for Next.js
+> Use the Web middleware for Remix
+
+### Configure
+
+The middleware can be configured with the [`middleware`](/basics/configuration#middleware) config.
+
+```ts
+import { astro } from "lucia-auth/middleware";
+import lucia from "lucia-auth";
+
+const auth = lucia({
+	middleware: astro()
+});
+```
 
 ## Validate requests
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used to get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) can be used to get the current session and user.
 
 ```ts
 // index.astro
 import { auth } from "./lucia.js";
 
 const authRequest = auth.handleRequest(Astro);
-const session = await authRequest.validate(Astro);
-```
-
-You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) to get both the user and session.
-
-```ts
-// index.astro
 const { user, session } = await authRequest.validateUser(Astro);
 ```
 
 ### Caching
 
-Both `AuthRequest.validate()` and `AuthRequest.validateUser()` caches the result (or rather promise), so you won't be calling unnecessary database calls. This also means you can these methods in parallel.
+`AuthRequest.validateUser()` caches the result (or rather promise), so you won't be making unnecessary database calls.
 
 ```ts
 // wait for database
-const session = await authRequest.validate();
+await authRequest.validateUser();
 // immediate response
-const session = await authRequest.validate();
+await authRequest.validateUser();
 ```
 
+This functionality works when calling them in parallel as well.
+
 ```ts
-// wait for database
-const session = await authRequest.validateUser();
-// immediate response
-const session = await authRequest.validate();
+// single db call
+await Promise.all([authRequest.validateUser(), authRequest.validateUser()]);
 ```
 
 ## Set session cookie

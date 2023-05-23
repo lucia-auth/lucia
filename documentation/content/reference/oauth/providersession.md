@@ -4,11 +4,11 @@ title: "`ProviderSession`"
 ---
 
 ```ts
-type ProviderSession<ProviderUser, ProviderTokens> = {
+type ProviderSession = {
 	existingUser: User | null;
 	createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
 	createPersistentKey: (userId: string) => Promise<Key>;
-	providerUser: ProviderUser;
+	providerUser: Record<string, any>;
 	tokens: {
 		accessToken: string;
 		[data: string]: string;
@@ -18,13 +18,15 @@ type ProviderSession<ProviderUser, ProviderTokens> = {
 
 ## Properties
 
+Refer to each provider's page for specific type of `providerUser` and `tokens`.
+
 | name                                                                        | type                                                 | description                                       |
 | --------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------- |
 | existingUser                                                                | [`User`](/reference/lucia-auth/types#user)` \| null` | existing user - null if non-existent (= new user) |
 | [createUser](/reference/oauth/providersession#createuser)                   | `Function`                                           |                                                   |
 | [createPersistentKey](/reference/oauth/providersession#createpersistentkey) | `Function`                                           |                                                   |
-| providerUser                                                                | `ProviderUser`                                       | user info from the used provider                  |
-| tokens                                                                      | `ProviderTokens`                                     | access tokens (`accessToken`) among other tokens  |
+| providerUser                                                                | `Record<string, any>`                                | user info from the used provider                  |
+| tokens                                                                      | `Record<string, any>`                                | access tokens (`accessToken`) among other tokens  |
 
 ## `createPersistentKey()`
 

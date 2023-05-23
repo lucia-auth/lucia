@@ -14,7 +14,19 @@ yarn add lucia-auth
 
 ## Set up the database
 
-Using the guide from the adapter docs, set up the database and install the adapter (adapters are provided as a different NPM package).
+To support multiple databases, Lucia uses database adapters. These adapters provide a set of standardized methods to read from and update the database. Custom adapters can be created as well if Lucia does not provide one.
+
+We currently support the following database/ORM options:
+
+- [Drizzle ORM](/adapters/drizzle)
+- [Kysely](/adapters/kysely)
+- [Mongoose](/adapters/mongoose)
+- [MySQL](/adapters/mysql)
+- [PlanetScale serverless](/adapters/planetscale)
+- [PostgreSQL](/adapters/postgresql)
+- [Prisma](/adapters/prisma)
+- [Redis](/adapters/redis)
+- [SQLite](/adapters/sqlite)
 
 ## Initialize Lucia
 
@@ -25,11 +37,11 @@ In `$lib/server/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lu
 import lucia from "lucia-auth";
 import { sveltekit } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
-import { prismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { dev } from "$app/environment";
 
 export const auth = lucia({
-	adapter: prisma(prismaClient),
+	adapter: prisma(new PrismaClient()),
 	env: dev ? "DEV" : "PROD",
 	middleware: sveltekit()
 });
@@ -59,7 +71,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 You can now get the current session and user using the methods within `event.locals.auth`, which is available in every server context.
 
 ```ts
-const session = await event.locals.auth.validate();
 const { session, user } = await event.locals.auth.validateUser();
 ```
 
@@ -99,6 +110,6 @@ TypeError: Cannot read properties of undefined (reading 'validate')
 
 Make sure your `handle` hook is running. Common mistakes include:
 
-1. `hook.sever.ts` (singular) instead of `hooks.server.ts` (plural)
+1. `hook.server.ts` (singular) instead of `hooks.server.ts` (plural)
 2. `hooks.server.ts` inside `routes` directory instead of `src` directory
 3. `+hooks.server.ts` (`+`) instead of `hooks.server.ts`

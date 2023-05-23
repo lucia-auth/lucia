@@ -4,7 +4,7 @@
 
 ### Install dependencies
 
-```bash
+```
 pnpm i
 ```
 
@@ -12,28 +12,22 @@ pnpm i
 
 Migrate Prisma schema:
 
-```bash
-npx prisma migrate dev --name init
+```
+pnpm prisma migrate dev --name init
 ```
 
 ### Github OAuth
 
 Create a Github OAuth app and copy-paste client id and secret into `.env`.
 
-## Run
-
 ```bash
-pnpm dev
+# .env
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
 ```
 
-## Polyfill for Node.js
+## Run
 
-If you're using Node.js (v18 or below) for development or production, a polyfill is required! Replace `astro dev` with `NODE_OPTIONS=--experimental-global-webcrypto astro dev` etc in package.json or import `lucia-auth/polyfill/node` in `lib/lucia.ts`:
-
-```ts
-import "lucia-auth/polyfill/node";
-
-export const auth = lucia({
-	// ...
-});
+```
+pnpm dev
 ```

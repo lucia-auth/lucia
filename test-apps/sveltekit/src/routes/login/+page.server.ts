@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 import { LuciaError } from 'lucia-auth';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
+	const { session } = await locals.auth.validateUser();
 	if (session) throw redirect(302, '/');
 	return {};
 };
@@ -34,7 +34,7 @@ export const actions: Actions = {
 				});
 			}
 			// database connection error
-			console.error(error);
+			console.log(error);
 			return fail(500, {
 				message: 'Unknown error occurred'
 			});

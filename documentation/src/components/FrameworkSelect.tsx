@@ -1,10 +1,15 @@
-import { dynamicClassName } from "@lib/styles";
+import { dynamicClassName } from "src/utils/styles";
 import { For, Show, createSignal } from "solid-js";
-import frameworks from "@lib/framework";
+import frameworks from "src/utils/framework";
 
-export default (props: { current?: string | null }) => {
-	const currentSelection =
-		frameworks.find((option) => option.id === props.current) ?? frameworks[0];
+export default (props: { frameworkId: string | null }) => {
+	const noFrameworkOption = {
+		title: "None",
+		id: "none"
+	};
+	const selectedFrameworkOption =
+		frameworks.find((option) => option.id === props.frameworkId) ??
+		noFrameworkOption;
 	const createToggle = () => {
 		const [signal, setSignal] = createSignal(false);
 		const toggle = () => setSignal((val) => !val);
@@ -23,22 +28,21 @@ export default (props: { current?: string | null }) => {
 				)}
 				onClick={toggleBox}
 			>
-				<span class="text-zinc-400">Framework:</span>
-				<span class="group-hover:text-main"> {currentSelection.title}</span>
+				<span class="text-zinc-400">Framework: </span>
+				<span class="group-hover:text-main">
+					{selectedFrameworkOption.title}
+				</span>
 			</button>
 			<Show when={isBoxOpen()}>
 				<div class="absolute z-50 mt-2 w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
 					<ul>
-						<For each={frameworks}>
+						<For each={[noFrameworkOption, ...frameworks]}>
 							{(option) => {
-								const searchParams = new URLSearchParams({
-									framework: option.id
-								});
-								const href = `/?${searchParams}`;
+								const href = `${window.location.pathname}?${option.id}`;
 								return (
 									<li
 										class={dynamicClassName("", {
-											"text-main": option.id === currentSelection.id
+											"text-main": option.id === selectedFrameworkOption.id
 										})}
 									>
 										<a

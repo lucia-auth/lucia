@@ -70,6 +70,8 @@ try {
 }
 ```
 
+> (warn) Make sure to implement a proper password strength control. See the checklist in the [OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls).
+
 #### Without a password key
 
 This is useful when you can trust the input for the provider id and provider user id. When implementing OAuth, for example, you can trust that the provider has validated the user and has given you the correct provider user id (you will never get the information about user B when user A signs in with the OAuth provider).

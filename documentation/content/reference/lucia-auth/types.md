@@ -1,6 +1,6 @@
 ---
 title: "Public types"
-_order: 0
+_order: 2
 ---
 
 These types can be imported from `lucia-auth`:
@@ -161,7 +161,9 @@ type LuciaRequest = {
 ## `Middleware`
 
 ```ts
-export type Middleware = (...[...args: any[], "DEV" | "PROD"]) => RequestContext;
+export type Middleware = (
+	...middlewareArgs: [...args: any[], "DEV" | "PROD"]
+) => RequestContext;
 ```
 
 #### Parameters
@@ -340,7 +342,7 @@ type UserAdapter = {
 		userId: string,
 		attributes: Record<string, any>,
 		key: KeySchema | null
-	) => Promise<UserSchema>;
+	) => Promise<UserSchema | void>;
 	updateKeyPassword: (
 		key: string,
 		hashedPassword: string | null

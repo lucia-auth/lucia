@@ -25,6 +25,7 @@ type Configuration = {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
+	middleware: Middleware;
 	origin: string[];
 	sessionCookie?: CookieOption;
 	sessionExpiresIn?: {
@@ -182,6 +183,18 @@ const validate: (s: string, hash: string) => MaybePromise<boolean>;
 | --------- | --------------------------------------------------------------- |
 | `boolean` | `true` if valid, `false` otherwise - can be a promise if needed |
 
+### `middleware`
+
+[Middleware](basics/handle-requests#middleware).
+
+```ts
+const middleware: Middleware;
+```
+
+| type                                                   |
+| ------------------------------------------------------ |
+| [`Middleware`](/reference/lucia-auth/types#middleware) |
+
 ### `origin`
 
 A list of valid url origin when checking for CSRF.
@@ -210,7 +223,7 @@ type CookieOption = {
 
 #### `activePeriod`
 
-The time in milliseconds the [active period](/start-here/concepts#session-states) lasts for - or the time since session creation that it can be used.
+The time in milliseconds the [active period](/basics/sessions#session-states) lasts for - or the time since session creation that it can be used.
 
 | type     | default                          |
 | -------- | -------------------------------- |
@@ -218,7 +231,7 @@ The time in milliseconds the [active period](/start-here/concepts#session-states
 
 #### `idlePeriod`
 
-The time in milliseconds the [idle period](/start-here/concepts#session-states) lasts for - or the time since active period expiration that it can be renewed.
+The time in milliseconds the [idle period](/basics/sessions#session-states) lasts for - or the time since active period expiration that it can be renewed.
 
 | type     | default                              |
 | -------- | ------------------------------------ |

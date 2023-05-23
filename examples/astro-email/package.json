@@ -12,11 +12,11 @@
 	"dependencies": {
 		"@astrojs/node": "^5.1.0",
 		"@astrojs/tailwind": "^3.1.1",
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/tokens": "workspace:*",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/tokens": "latest",
 		"@prisma/client": "^4.12.0",
 		"astro": "^2.1.3",
-		"lucia-auth": "workspace:*",
+		"lucia-auth": "latest",
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {

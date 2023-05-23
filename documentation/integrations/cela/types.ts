@@ -1,3 +1,4 @@
+import type { FrameworkId } from "src/utils/framework";
 import type { getContent } from "./content";
 
 export type SectionDocument = {
@@ -27,7 +28,7 @@ export type MarkdownDocument = Exclude<
 
 export type ContentMetaData = {
 	collectionId: string;
-	frameworkId: string | null;
+	frameworkId: FrameworkId | null;
 	redirect: string | null;
 	rawTitle: string;
 	id: string;

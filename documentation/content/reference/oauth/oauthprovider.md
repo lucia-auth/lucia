@@ -4,34 +4,36 @@ _order: 1
 ---
 
 ```ts
-type OAuthProvider<ProviderUser, ProviderTokens> = {
-	getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
-	validateCallback: (
-		code: string
-	) => Promise<ProviderSession<ProviderUser, ProviderTokens>>;
+type OAuthProvider = {
+	getAuthorizationUrl: () => Promise<readonly [URL, ...any[]]>;
+	validateCallback: (code: string, ...args: any[]) => Promise<ProviderSession>;
 };
 ```
 
 ## `getAuthorizationUrl()`
 
-Returns the authorization url for user redirection and a state for storage. This should generate and use a state using [`generateState()`](/reference/oauth/lucia-auth-oauth#generatestate).
+Returns the authorization url for user redirection and a state for storage.
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: (
+	redirectUri?: string
+) => Promise<[url: URL, state: string]>;
 ```
 
 #### Parameter
 
-| name  | type     | description                                                                           | optional |
-| ----- | -------- | ------------------------------------------------------------------------------------- | -------- |
-| state | `string` | an opaque value used by the client to maintain state between the request and callback | true     |
+| name        | type     | description                | optional |
+| ----------- | -------- | -------------------------- | :------: |
+| redirectUri | `string` | an authorized redirect URI |    ✓     |
 
 #### Returns
 
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
+Refer to each provider's page for specifics.
+
+| name    | type     | description             |
+| ------- | -------- | ----------------------- |
+| `url`   | `URL`    | authorize url           |
+| `state` | `string` | state to store (cookie) |
 
 ## `validateCallback()`
 

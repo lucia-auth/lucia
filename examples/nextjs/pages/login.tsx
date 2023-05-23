@@ -8,8 +8,8 @@ import { useState } from "react";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context.req, context.res);
-	const session = await authRequest.validate();
+	const authRequest = auth.handleRequest(context);
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		return {
 			redirect: {
@@ -26,16 +26,12 @@ export const getServerSideProps = async (
 const Index = () => {
 	const router = useRouter();
 	const [message, setMessage] = useState("");
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const formValues = e.target as any as Record<
-			"username" | "password",
-			{
-				value: string;
-			}
-		>;
-		const username = formValues.username.value;
-		const password = formValues.password.value;
+		const formData = new FormData(e.currentTarget);
+		const username = formData.get("username") as string;
+		const password = formData.get("password") as string;
+
 		const response = await fetch("/api/login", {
 			method: "POST",
 			body: JSON.stringify({
@@ -56,7 +52,7 @@ const Index = () => {
 				Github
 			</Link>
 			<p className="center">or</p>
-			<form method="post" onSubmit={handleSubmit} action="/api/login">
+			<form onSubmit={handleSubmit}>
 				<label htmlFor="username">username</label>
 				<br />
 				<input id="username" name="username" />
