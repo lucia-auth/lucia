@@ -38,7 +38,6 @@ import lucia from "lucia-auth";
 import { web } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
-import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
