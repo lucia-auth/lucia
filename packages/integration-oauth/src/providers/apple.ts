@@ -18,6 +18,13 @@ type Config = {
 } & Omit<OAuthConfig, "clientSecret"> &
 	AppleConfig;
 
+type AppleTokens = {
+	access_token: string;
+	refresh_token?: string;
+	expires_in: number;
+	id_token: string;
+};
+
 const PROVIDER_ID = "apple";
 const APPLE_AUD = "https://appleid.apple.com";
 
@@ -66,12 +73,7 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			method: "POST"
 		});
 
-		const tokens = await handleRequest<{
-			access_token: string;
-			refresh_token?: string;
-			expires_in: number;
-			id_token: string;
-		}>(request);
+		const tokens = await handleRequest<AppleTokens>(request);
 
 		return {
 			accessToken: tokens.access_token,
@@ -121,6 +123,6 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 export type AppleUser = {
 	email: string;
-	email_verified: string | boolean;
+	email_verified: boolean;
 	sub: string;
 };
