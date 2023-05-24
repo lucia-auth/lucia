@@ -24,6 +24,11 @@ export class AuthRequest<A extends Auth = any> {
 	constructor(auth: A, context: RequestContext) {
 		this.auth = auth;
 		this.context = context;
+		try {
+			this.storedSessionId = auth.parseRequestHeaders(context.request);
+		} catch {
+			this.storedSessionId = null;
+		}
 	}
 
 	private validatePromise: Promise<Session | null> | null = null;
@@ -34,45 +39,44 @@ export class AuthRequest<A extends Auth = any> {
 				session: null;
 		  }
 	> | null = null;
-	private currentSession: undefined | null | Session;
+	public storedSessionId: string | null;
 
 	public setSession = (session: Session | null) => {
-		const storedSession = this.currentSession;
-		const storedSessionId = storedSession?.sessionId ?? null;
-		const newSessionId = session?.sessionId ?? null;
-		if (storedSession !== undefined && storedSessionId === newSessionId) return;
-		this.currentSession = session;
+		const sessionId = session?.sessionId ?? null;
+		if (this.storedSessionId === sessionId) return;
 		this.validateUserPromise = null;
+		this.validatePromise = null;
+		this.setSessionCookie(session);
+	};
+
+	private setSessionCookie = (session: Session | null) => {
+		const sessionId = session?.sessionId ?? null;
+		if (this.storedSessionId === sessionId) return;
+		this.storedSessionId = sessionId;
 		try {
 			this.context.setCookie(this.auth.createSessionCookie(session));
 		} catch {
-			// response was already created
+			// response was already created, etc
 		}
 	};
 
 	public validate = async (): Promise<Session | null> => {
-		if (this.currentSession !== undefined) return this.currentSession;
 		if (this.validatePromise) return this.validatePromise;
-		if (this.validateUserPromise) {
-			const { session } = await this.validateUserPromise;
-			return session;
-		}
 
 		this.validatePromise = new Promise(async (resolve) => {
+			if (!this.storedSessionId) return resolve(null);
 			try {
-				const sessionId = this.auth.parseRequestHeaders(this.context.request);
-				if (!sessionId) {
-					this.setSession(null);
-					return resolve(null);
+				const session = await this.auth.validateSession(this.storedSessionId);
+				if (session.fresh) {
+					this.setSessionCookie(session);
 				}
-				const session = await this.auth.validateSession(sessionId);
-				this.setSession(session);
 				return resolve(session);
 			} catch {
-				this.setSession(null);
+				this.setSessionCookie(null);
 				return resolve(null);
 			}
 		});
+
 		return this.validatePromise;
 	};
 
@@ -83,71 +87,33 @@ export class AuthRequest<A extends Auth = any> {
 				session: Session;
 		  }
 	> => {
-		const currentSession = this.currentSession;
-		if (currentSession === null) {
-			return {
-				session: null,
-				user: null
-			};
-		}
-
 		const resolveNullSession = (
 			resolve: (result: { user: null; session: null }) => void
 		) => {
-			this.setSession(null);
+			this.setSessionCookie(null);
 			return resolve({
 				user: null,
 				session: null
 			});
 		};
 
-		if (currentSession !== undefined) {
-			this.validateUserPromise = new Promise(async (resolve) => {
-				try {
-					const user = await this.auth.getUser(currentSession.userId);
-					return resolve({ user, session: currentSession });
-				} catch {
-					return resolveNullSession(resolve);
-				}
-			});
-			return this.validateUserPromise;
-		}
-
 		if (this.validateUserPromise) return this.validateUserPromise;
 
-		if (this.validatePromise) {
-			this.validateUserPromise = new Promise(async (resolve) => {
-				const session = await this.validatePromise;
-				if (!session) return resolveNullSession(resolve);
-				try {
-					const user = await this.auth.getUser(session.userId);
-					return resolve({ user, session });
-				} catch {
-					return resolveNullSession(resolve);
-				}
-			});
-			return this.validateUserPromise;
-		}
-
 		this.validateUserPromise = new Promise(async (resolve) => {
+			if (this.storedSessionId === null) return resolveNullSession(resolve);
 			try {
-				const sessionId = this.auth.parseRequestHeaders(this.context.request);
-				if (!sessionId) return resolveNullSession(resolve);
 				const { session, user } = await this.auth.validateSessionUser(
-					sessionId
+					this.storedSessionId
 				);
-				this.setSession(session);
+				if (session.fresh) {
+					this.setSessionCookie(session);
+				}
 				return resolve({ session, user });
 			} catch {
 				return resolveNullSession(resolve);
 			}
 		});
-		return this.validateUserPromise;
-	};
 
-	public getCookie = () => {
-		const currentSession = this.currentSession;
-		if (currentSession === undefined) return null;
-		return this.auth.createSessionCookie(currentSession);
+		return this.validateUserPromise;
 	};
 }
