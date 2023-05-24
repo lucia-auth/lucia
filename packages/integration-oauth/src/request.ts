@@ -12,7 +12,7 @@ export const handleRequest = async <T extends {}>(request: Request) => {
 				return null;
 			}
 		};
-		const errorBody = getErrorBody();
+		const errorBody = await getErrorBody();
 		throw new LuciaOAuthRequestError(response.status, errorBody);
 	}
 	return (await response.json()) as T;
