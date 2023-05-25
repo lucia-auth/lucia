@@ -64,7 +64,7 @@ const apple: (
 | configs.redirectUri     | `string`                             | an authorized redirect URI |          |
 | configs.teamId          | `string`                             | Apple teamId               |          |
 | configs.keyId           | `string`                             | Apple private keyId        |          |
-| configs.certificatePath | `string`                             | path of .p8 certificate    |          |
+| configs.certificate     | `string`                             | p8 certificate as string   |          |
 
 #### Returns
 
