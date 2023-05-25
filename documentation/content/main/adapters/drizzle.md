@@ -202,7 +202,7 @@ const key = sqliteTable("auth_key", {
 	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
-	primaryKey: integer().notNull(),
+	primaryKey: integer("primary_key").notNull(),
 	hashedPassword: text("hashed_password"),
 	expires: integer("expires")
 });
