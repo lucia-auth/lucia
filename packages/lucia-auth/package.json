@@ -13,7 +13,8 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../",
-		"test": "NODE_OPTIONS=--experimental-global-webcrypto vitest run"
+		"test": "NODE_OPTIONS=--experimental-global-webcrypto vitest run",
+		"test.debug": "vitest run src/utils/debug.test.ts"
 	},
 	"keywords": [
 		"lucia",

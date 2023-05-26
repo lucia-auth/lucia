@@ -1,4 +1,5 @@
 import scrypt from "../scrypt/index.js";
+import { debug } from "./debug.js";
 import { generateRandomString } from "./nanoid.js";
 
 export const generateScryptHash = async (s: string) => {
@@ -26,13 +27,15 @@ export const validateScryptHash = async (s: string, hash: string) => {
 	if (arr.length === 2) {
 		const [salt, key] = arr;
 		const targetKey = await hashWithScrypt(s, salt, 8);
-		return constantTimeEqual(targetKey, key);
+		const result = constantTimeEqual(targetKey, key);
+		return result;
 	}
 	if (arr.length !== 3) return false;
 	const [version, salt, key] = arr;
 	if (version === "s2") {
 		const targetKey = await hashWithScrypt(s, salt);
-		return constantTimeEqual(targetKey, key);
+		const result = constantTimeEqual(targetKey, key);
+		return result;
 	}
 	return false;
 };
