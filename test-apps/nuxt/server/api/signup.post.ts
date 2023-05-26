@@ -29,22 +29,14 @@ export default defineEventHandler(async (event) => {
 			error.code === "P2002" &&
 			error.message?.includes("username")
 		) {
-			return {
-				error: "Username unavailable"
-			};
+			throw createError({ message: "Username unavailable", statusCode: 400 });
 		}
 		if (
 			error instanceof LuciaError &&
 			error.message === "AUTH_DUPLICATE_KEY_ID"
 		) {
-			return {
-				error: "Username unavailable"
-			};
+			throw createError({ message: "Username unavailable", statusCode: 400 });
 		}
-		// database connection error
-		console.log(error);
-		return {
-			error: "An unknown error occurred"
-		};
+		throw createError({ message: "An unknown error occured", statusCode: 400 });
 	}
 });

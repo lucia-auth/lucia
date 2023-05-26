@@ -1,9 +1,12 @@
+// Register an Authorization callback URL to this in dev: http://localhost:3000/api/oauth/github
+// Use a different application in production with a real domain: https://example.com/api/oauth/github
 export default defineEventHandler(async (event) => {
 	const authRequest = auth.handleRequest(event);
 	const query = getQuery(event);
-	const code = query.code?.toString() ?? null;
-	const state = query.state?.toString() ?? null;
+	const code = query.code?.toString();
+	const state = query.state?.toString();
 	const storedState = getCookie(event, "oauth_state");
+
 	if (!code || !storedState || !state || storedState !== state) {
 		throw createError({ statusCode: 400 });
 	}
