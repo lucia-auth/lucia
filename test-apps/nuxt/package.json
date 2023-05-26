@@ -24,6 +24,7 @@
 		"lucia-auth": "workspace:*",
 		"nuxt": "^3.5.0",
 		"prisma": "^4.14.1",
+		"unctx": "^2.3.1",
 		"vue": "^3.3.4",
 		"vue-router": "^4.2.1"
 	},

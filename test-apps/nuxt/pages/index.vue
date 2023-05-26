@@ -23,4 +23,5 @@ const handleSubmit = async (e: Event) => {
 	<form @submit.prevent="handleSubmit">
 		<input type="submit" class="button" value="Sign out" />
 	</form>
+	<NuxtLink to="/middleware" class="button">Middleware</NuxtLink>
 </template>

@@ -72,10 +72,11 @@ const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
 	try {
-		await $fetch("/api/signup", {
+		const { error } = await useFetch("/api/signup", {
 			method: "POST",
 			body: Object.fromEntries(formData.entries())
 		});
+		if (error.value) throw new Error(error.value.message);
 		navigateTo("/");
 	} catch (error) {
 		console.log(error);
@@ -188,10 +189,11 @@ const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
 	try {
-		await $fetch("/api/login", {
+		const { error } = await useFetch("/api/login", {
 			method: "POST",
 			body: Object.fromEntries(formData.entries())
 		});
+		if (error.value) throw new Error(error.value.message);
 		navigateTo("/");
 	} catch (error) {
 		console.log(error);
@@ -294,11 +296,10 @@ In both the signup and login page, fetch the current user with `useFetch()`, and
 <!-- pages/login.vue -->
 
 <script lang="ts" setup>
-const { data } = await useFetch("/api/user");
-if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (user) {
-	await navigateTo("/");
+const { data, error } = await useFetch("/api/user");
+if (error.value) throw createError("Failed to fetch data");
+if (data?.value?.user) {
+	navigateTo("/");
 }
 // ...
 </script>
@@ -316,16 +317,17 @@ Create `pages/index.vue`. This page will show the user's data. Redirect the user
 <!-- pages/index.vue -->
 
 <script lang="ts" setup>
-const { data } = await useFetch("/api/user");
-if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (!user) await navigateTo("/login");
+const { data, error } = await useFetch("/api/user");
+if (error.value) throw createError("Failed to fetch data");
+const user = computed(() => data?.value?.user);
+if (!user.value) navigateTo("/login");
 
 const handleSubmit = async () => {
 	try {
-		await $fetch("/api/logout", {
+		const { error } = await useFetch("/api/logout", {
 			method: "POST"
 		});
+		if (error.value) throw new Error(error.value.message);
 		navigateTo("/login");
 	} catch (error) {
 		console.log(error);
@@ -362,4 +364,61 @@ export default defineEventHandler(async (event) => {
 	authRequest.setSession(null); // remove session cookie
 	return null;
 });
+```
+
+### Handle authentication with state and middleware
+
+Using middlewares and composables is a really neat way to avoid duplicating your authorization logic.
+
+Create a `useAuth` composable :
+
+```ts
+// composables/useAuth.ts
+import type { User } from "lucia-auth";
+
+export const useAuth = () => {
+	const user = useState<User | null>("user", () => null);
+
+	const fetchUser = async () => {
+		const { data } = await useFetch<{ user: User }>("/api/user");
+		if (data?.value?.user) {
+			user.value = data?.value?.user;
+		}
+		return computed(() => user.value);
+	};
+	return { user: readonly(user), fetchUser };
+};
+```
+
+Create an `auth` middleware :
+
+```ts
+// middlewares/auth.ts
+export default defineNuxtRouteMiddleware(async () => {
+	const { fetchUser } = useAuth();
+	const user = await fetchUser();
+	if (!user.value) {
+		// if there's no user found, navigate to the login page.
+		return navigateTo("/login");
+	}
+});
+```
+
+Then in your vue files ...
+
+```vue
+<script lang="ts" setup>
+definePageMeta({ middleware: "auth" });
+const { user } = useAuth(); // Grab the user from your composable ...
+</script>
+
+<template>
+	<h2>Secret page</h2>
+	<p>
+		This page is protected by a nuxt middleware and can only be accessed by
+		authenticated users.
+	</p>
+	<pre class="code">{{ JSON.stringify(user, null, 2) }}</pre>
+	<NuxtLink to="/" class="button">Home</NuxtLink>
+</template>
 ```
