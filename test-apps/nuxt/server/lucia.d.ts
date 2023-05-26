@@ -5,3 +5,9 @@ declare namespace Lucia {
 		username: string;
 	};
 }
+
+declare namespace NodeJS {
+	interface Process {
+		dev: any;
+	}
+}

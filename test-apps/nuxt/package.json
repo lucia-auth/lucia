@@ -4,18 +4,28 @@
 	"scripts": {
 		"build": "nuxt build",
 		"dev": "nuxt dev",
+		"prisma:generate": "prisma generate",
+		"prisma:migrate": "prisma migrate dev",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare"
 	},
 	"devDependencies": {
-		"lucia-auth": "workspace:*",
 		"@lucia-auth/adapter-prisma": "workspace:*",
 		"@lucia-auth/oauth": "workspace:*",
 		"@nuxtjs/tailwindcss": "^6.7.0",
 		"@types/node": "^18",
+		"@unhead/vue": "^1.1.27",
+		"@vue/reactivity": "^3.3.4",
+		"@vue/runtime-core": "^3.3.4",
+		"@vue/runtime-dom": "^3.3.4",
+		"@vue/shared": "^3.3.4",
+		"h3": "^1.6.6",
+		"lucia-auth": "workspace:*",
 		"nuxt": "^3.5.0",
-		"prisma": "^4.14.1"
+		"prisma": "^4.14.1",
+		"vue": "^3.3.4",
+		"vue-router": "^4.2.1"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.14.1"
