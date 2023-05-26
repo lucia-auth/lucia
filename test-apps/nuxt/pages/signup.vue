@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-const { data } = await useFetch("/api/user");
-if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (user) {
-	await navigateTo("/");
-}
+onBeforeMount(async () => {
+	const { data, error } = await useFetch<{ user: any }>("/api/user");
+	if (error.value) throw createError("Failed to fetch data");
+	if (data?.value?.user) navigateTo("/");
+});
 
 const errorMessage = ref<string | null>(null);
 
@@ -14,12 +13,12 @@ const handleSubmit = async (e: Event) => {
 	const formData = new FormData(e.target);
 
 	try {
-		const data = await $fetch("/api/signup", {
+		const { error } = await useFetch("/api/signup", {
 			method: "POST",
 			body: Object.fromEntries(formData.entries())
 		});
-		if (data) {
-			errorMessage.value = data.error;
+		if (error.value) {
+			errorMessage.value = error.value.message;
 			return;
 		}
 		navigateTo("/");
