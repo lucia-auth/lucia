@@ -20,7 +20,7 @@ const authRequest = auth.handleRequest(Astro);
 import { auth } from "./lucia.js";
 
 export const get: APIRoute = async (context) => {
-	const authRequest = auth.handleRequest(apiContext);
+	const authRequest = auth.handleRequest(context);
 };
 ```
 
