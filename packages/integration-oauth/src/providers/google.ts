@@ -6,7 +6,7 @@ import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
-	access_type?: "online" | "offline";
+	accessType?: "online" | "offline";
 };
 
 const PROVIDER_ID = "google";
@@ -58,7 +58,7 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 					config.scope
 				),
 				response_type: "code",
-				access_type: config.access_type ?? "online",
+				access_type: config.accessType ?? "online",
 				state
 			});
 			return [url, state] as const;
