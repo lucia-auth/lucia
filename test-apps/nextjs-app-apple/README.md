@@ -35,7 +35,6 @@ Refer to Apple Docs:
 - [Requesting Access Token](https://developer.apple.com/documentation/sign_in_with_apple/request_an_authorization_to_the_sign_in_with_apple_server)
 - [How to validate tokens](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens)
 
-
 ```bash
 # .env
 APPLE_TEAM_ID=""

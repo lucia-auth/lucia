@@ -10,21 +10,14 @@ description: "Learn about using the Apple provider in Lucia OAuth integration"
 
 OAuth integration for Apple. Refer to Apple Docs:
 
-[Creating App ID](https://developer.apple.com/help/account/manage-identifiers/register-an-app-id/)
-
-[Creating Service ID](https://developer.apple.com/help/account/manage-identifiers/register-a-services-id)
-
-[Enable "Sign In with Apple" Capability](https://developer.apple.com/help/account/manage-identifiers/enable-app-capabilities)
-
-[Creating Private Key](https://developer.apple.com/help/account/manage-keys/create-a-private-key)
-
-[Locate the keyId](https://developer.apple.com/help/account/manage-keys/get-a-key-identifier)
-
-[How to locate your teamId](https://developer.apple.com/help/account/manage-your-team/locate-your-team-id)
-
-[Requesting Access Token](https://developer.apple.com/documentation/sign_in_with_apple/request_an_authorization_to_the_sign_in_with_apple_server)
-
-[How to validate tokens](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens)
+- [Creating App ID](https://developer.apple.com/help/account/manage-identifiers/register-an-app-id/)
+- [Creating Service ID](https://developer.apple.com/help/account/manage-identifiers/register-a-services-id)
+- [Enable "Sign In with Apple" Capability](https://developer.apple.com/help/account/manage-identifiers/enable-app-capabilities)
+- [Creating Private Key](https://developer.apple.com/help/account/manage-keys/create-a-private-key)
+- [Locate the keyId](https://developer.apple.com/help/account/manage-keys/get-a-key-identifier)
+- [How to locate your teamId](https://developer.apple.com/help/account/manage-your-team/locate-your-team-id)
+- [Requesting Access Token](https://developer.apple.com/documentation/sign_in_with_apple/request_an_authorization_to_the_sign_in_with_apple_server)
+- [How to validate tokens](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens)
 
 Provider id is `apple`.
 
@@ -44,27 +37,27 @@ const appleAuth = apple(auth, configs);
 
 ```ts
 const apple: (
- auth: Auth,
- configs: {
-  clientId: string;
-  redirectUri: string;
-  teamId: string;
-  keyId: string;
-  certificatePath: string;
- }
+	auth: Auth,
+	configs: {
+		clientId: string;
+		redirectUri: string;
+		teamId: string;
+		keyId: string;
+		certificate: string;
+	}
 ) => OAuthProvider<AppleUser, AppleTokens>;
 ```
 
 #### Parameter
 
-| name                    | type                                 | description                | optional |
-| ----------------------- | ------------------------------------ | -------------------------- | :------: |
-| auth                    | [`Auth`](/reference/lucia-auth/auth) | Lucia instance             |          |
-| configs.clientId        | `string`                             | Apple service identifier   |          |
-| configs.redirectUri     | `string`                             | an authorized redirect URI |          |
-| configs.teamId          | `string`                             | Apple teamId               |          |
-| configs.keyId           | `string`                             | Apple private keyId        |          |
-| configs.certificate     | `string`                             | p8 certificate as string   |          |
+| name                | type                                 | description                | optional |
+| ------------------- | ------------------------------------ | -------------------------- | :------: |
+| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance             |          |
+| configs.clientId    | `string`                             | Apple service identifier   |          |
+| configs.redirectUri | `string`                             | an authorized redirect URI |          |
+| configs.teamId      | `string`                             | Apple teamId               |          |
+| configs.keyId       | `string`                             | Apple private keyId        |          |
+| configs.certificate | `string`                             | p8 certificate as string   |          |
 
 #### Returns
 
@@ -82,21 +75,21 @@ Returns the authorization url for user redirection and a state for storage. The 
 
 ```ts
 const getAuthorizationUrl: (
- redirectUri?: string
+	redirectUri?: string
 ) => Promise<[url: URL, state: string]>;
 ```
 
 #### Parameter
 
-| name | type | description | optional |
+| name        | type     | description                | optional |
 | ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI | ✓ |
+| redirectUri | `string` | an authorized redirect URI |    ✓     |
 
 #### Returns
 
-| name | type | description |
+| name    | type     | description          |
 | ------- | -------- | -------------------- |
-| `url` | `URL` | authorize url |
+| `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
 ### `validateCallback()`
@@ -109,19 +102,19 @@ const validateCallback: (code: string) => Promise<ProviderSession>;
 
 #### Parameter
 
-| name | type | description |
+| name | type     | description                      |
 | ---- | -------- | -------------------------------- |
 | code | `string` | authorization code from callback |
 
 #### Returns
 
-| type | description |
+| type                                                  | description       |
 | ----------------------------------------------------- | ----------------- |
 | [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
 
 #### Errors
 
-| name | description |
+| name           | description                          |
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
@@ -129,10 +122,10 @@ const validateCallback: (code: string) => Promise<ProviderSession>;
 
 ```ts
 type AppleTokens = {
- access_token: string;
- refresh_token?: string;
- expires_in: number;
- id_token: string;
+	access_token: string;
+	refresh_token?: string;
+	expires_in: number;
+	id_token: string;
 };
 ```
 
@@ -140,8 +133,8 @@ type AppleTokens = {
 
 ```ts
 type AppleUser = {
- email: string;
- email_verified: boolean;
- sub: string;
+	email: string;
+	email_verified: boolean;
+	sub: string;
 };
 ```
