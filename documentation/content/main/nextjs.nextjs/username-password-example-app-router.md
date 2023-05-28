@@ -55,7 +55,7 @@ export const auth = lucia({
 		};
 	},
 	sessionExpiresIn: {
-		activePeriod: 60 * 60 * 24 * 30, // 1 month
+		activePeriod: 1000 * 60 * 60 * 24 * 30, // 1 month
 		idlePeriod: 0 // disable session renewal
 	}
 });
