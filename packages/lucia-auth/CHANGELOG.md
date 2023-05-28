@@ -1,5 +1,11 @@
 # lucia-auth
 
+## 1.7.1
+
+### Patch changes
+
+- [#663](https://github.com/pilcrowOnPaper/lucia/pull/663) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add debug mode (experimental)
+
 ## 1.7.0
 
 ### Minor changes

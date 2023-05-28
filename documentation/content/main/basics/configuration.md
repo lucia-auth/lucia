@@ -280,5 +280,5 @@ You can enable experimental feature with the `experimental` config. Please keep 
 When enabled, Lucia logs relevant events to the console.
 
 ```ts
-const debugMode: boolean
+const debugMode: boolean;
 ```
