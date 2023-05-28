@@ -33,6 +33,10 @@ type Configuration = {
 		idlePeriod: number;
 	};
 	transformDatabaseUser?: (databaseUser: Required<UserSchema>) => Record<any, any>;
+
+	experimental?: {
+		debugMode?: boolean
+	}
 };
 ```
 
@@ -265,4 +269,16 @@ const transformDatabaseUser: (
 const transformDatabaseUser = async () => {
 	userId: string;
 };
+```
+
+## Experimental
+
+You can enable experimental feature with the `experimental` config. Please keep in mind that features marked as experimental are not stable and may change or be deleted anytime.
+
+### `experimental.debugMode`
+
+When enabled, Lucia logs relevant events to the console.
+
+```ts
+const debugMode: boolean;
 ```
