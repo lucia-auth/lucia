@@ -86,7 +86,7 @@ export const enableDebugMode = () => {
 
 const disableDebugMode = () => {
 	globalContext[DEBUG_GLOBAL] = false;
-}
+};
 
 export const debug = {
 	init: (debugEnabled: boolean) => {
@@ -94,7 +94,7 @@ export const debug = {
 		if (debugEnabled) {
 			enableDebugMode();
 		} else {
-			disableDebugMode()
+			disableDebugMode();
 		}
 		linebreak();
 		console.log(
