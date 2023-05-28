@@ -24,7 +24,7 @@ export const auth = lucia({
 
 ```ts
 // app/page.tsx
-import { auth } from "auth/lucia.js";
+import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 
 export default () => {
@@ -40,7 +40,7 @@ export default () => {
 
 ```ts
 // app/routes.ts
-import { auth } from "auth/lucia.js";
+import { auth } from "@/auth/lucia";
 
 export const GET = async (request: Request) => {
 	const authRequest = auth.handleRequest({
@@ -58,7 +58,7 @@ Server actions are an alpha feature in Next.js that handles form actions. Lucia'
 
 ```ts
 // app/page.tsx
-import { auth } from "auth/lucia.js";
+import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 
 export default async () => {

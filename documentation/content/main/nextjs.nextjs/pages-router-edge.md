@@ -9,7 +9,7 @@ The response object is not available inside `getServerSideProps()` when deployed
 
 ```ts
 // pages/index.tsx
-import { auth } from "auth/lucia.js";
+import { auth } from "../auth/lucia";
 
 export const getServerSideProps = async (context) => {
 	const authRequest = auth.handleRequest(context);
@@ -23,7 +23,7 @@ You can call `handleRequest()` by passing on a [`Response`](https://developer.mo
 
 ```ts
 // pages/api/index.ts
-import { auth } from "auth/lucia.js";
+import { auth } from "../../auth/lucia";
 
 export default (request: Request) => {
 	const response = new Response();
@@ -37,7 +37,7 @@ export default (request: Request) => {
 
 ```ts
 // pages/api/index.ts
-import { auth } from "auth/lucia.js";
+import { auth } from "../../auth/lucia";
 
 export default (request: Request) => {
 	const headers = new Headers();

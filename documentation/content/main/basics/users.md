@@ -45,7 +45,7 @@ Refer to [Keys](/basics/keys) to learn more about keys.
 
 ### Create a primary key
 
-You can create primary keys alongside the user, which will be used when authenticating the user.s
+You can create primary keys alongside the user, which will be used when authenticating the user.
 
 #### With a password key
 

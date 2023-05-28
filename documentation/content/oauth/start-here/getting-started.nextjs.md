@@ -202,7 +202,7 @@ export const GET = async (request: Request) => {
 		const session = await auth.createSession(user.userId);
 		const authRequest = auth.handleRequest({ request, cookies });
 		authRequest.setSession(session);
-		return NextResponse.redirect(url.toString());
+		return NextResponse.redirect(new URL("/", url));
 	} catch (e) {
 		return new Response(null, {
 			status: 500
