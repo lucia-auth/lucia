@@ -1,5 +1,6 @@
 import { Cookie } from "./cookie.js";
 import type { Auth, Session, User } from "./index.js";
+import { debug } from "../utils/debug.js";
 
 export type LuciaRequest = {
 	method: string;
@@ -26,7 +27,7 @@ export class AuthRequest<A extends Auth = any> {
 		this.context = context;
 		try {
 			this.storedSessionId = auth.parseRequestHeaders(context.request);
-		} catch {
+		} catch (e) {
 			this.storedSessionId = null;
 		}
 	}
@@ -55,23 +56,32 @@ export class AuthRequest<A extends Auth = any> {
 		this.storedSessionId = sessionId;
 		try {
 			this.context.setCookie(this.auth.createSessionCookie(session));
-		} catch {
-			// response was already created, etc
+			if (session) {
+				debug.request.notice("Session cookie stored", session.sessionId);
+			} else {
+				debug.request.notice("Session cookie deleted");
+			}
+		} catch (e) {
+			// ignore
 		}
 	};
 
 	public validate = async (): Promise<Session | null> => {
-		if (this.validatePromise) return this.validatePromise;
-
+		if (this.validatePromise) {
+			debug.request.info("Using cached result for session validation");
+			return this.validatePromise;
+		}
 		this.validatePromise = new Promise(async (resolve) => {
-			if (!this.storedSessionId) return resolve(null);
+			if (!this.storedSessionId) {
+				return resolve(null);
+			}
 			try {
 				const session = await this.auth.validateSession(this.storedSessionId);
 				if (session.fresh) {
 					this.setSessionCookie(session);
 				}
 				return resolve(session);
-			} catch {
+			} catch (e) {
 				this.setSessionCookie(null);
 				return resolve(null);
 			}
@@ -97,10 +107,15 @@ export class AuthRequest<A extends Auth = any> {
 			});
 		};
 
-		if (this.validateUserPromise) return this.validateUserPromise;
+		if (this.validateUserPromise) {
+			debug.request.info("Using cached result for session validation");
+			return this.validateUserPromise;
+		}
 
 		this.validateUserPromise = new Promise(async (resolve) => {
-			if (this.storedSessionId === null) return resolveNullSession(resolve);
+			if (!this.storedSessionId) {
+				return resolveNullSession(resolve);
+			}
 			try {
 				const { session, user } = await this.auth.validateSessionUser(
 					this.storedSessionId
@@ -109,7 +124,7 @@ export class AuthRequest<A extends Auth = any> {
 					this.setSessionCookie(session);
 				}
 				return resolve({ session, user });
-			} catch {
+			} catch (e) {
 				return resolveNullSession(resolve);
 			}
 		});
