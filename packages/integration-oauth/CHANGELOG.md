@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 1.1.1
+
+### Patch changes
+
+- [#672](https://github.com/pilcrowOnPaper/lucia/pull/672) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `LuciaOAuthRequestError`
+
 ## 1.1.0
 
 ### Minor changes
