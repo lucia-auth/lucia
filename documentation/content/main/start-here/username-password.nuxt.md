@@ -72,14 +72,13 @@ const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
 	try {
-		const { error } = await useFetch("/api/signup", {
+		await $fetch("/api/signup", {
 			method: "POST",
 			body: Object.fromEntries(formData.entries())
 		});
-		if (error.value) throw new Error(error.value.message);
 		navigateTo("/");
 	} catch (error) {
-		console.log(error);
+		errorMessage.value = "An unknown error occurred";
 	}
 };
 </script>
@@ -189,14 +188,13 @@ const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
 	try {
-		const { error } = await useFetch("/api/login", {
+		await $fetch("/api/login", {
 			method: "POST",
 			body: Object.fromEntries(formData.entries())
 		});
-		if (error.value) throw new Error(error.value.message);
 		navigateTo("/");
 	} catch (error) {
-		console.log(error);
+		errorMessage.value = "An unknown error occurred";
 	}
 };
 </script>
@@ -318,19 +316,15 @@ Create `pages/index.vue`. This page will show the user's data. Redirect the user
 
 <script lang="ts" setup>
 const { data, error } = await useFetch("/api/user");
-if (error.value) throw createError("Failed to fetch data");
-const user = computed(() => data?.value?.user);
-if (!user.value) navigateTo("/login");
+if (error.value) throw createError(error.value.message);
+if (!data.value?.user) navigateTo("/login");
 
 const handleSubmit = async () => {
 	try {
-		const { error } = await useFetch("/api/logout", {
-			method: "POST"
-		});
-		if (error.value) throw new Error(error.value.message);
+		await $fetch("/api/logout", { method: "POST" });
 		navigateTo("/login");
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 </script>
@@ -377,16 +371,10 @@ Create a `useAuth` composable :
 import type { User } from "lucia-auth";
 
 export const useAuth = () => {
-	const user = useState<User | null>("user", () => null);
-
-	const fetchUser = async () => {
-		const { data } = await useFetch<{ user: User }>("/api/user");
-		if (data?.value?.user) {
-			user.value = data?.value?.user;
-		}
-		return computed(() => user.value);
-	};
-	return { user: readonly(user), fetchUser };
+	const { data, execute: fetchUser } = useFetch("/api/user", {
+		immediate: false
+	});
+	return { user: computed(() => data.value?.user), fetchUser };
 };
 ```
 
@@ -395,8 +383,8 @@ Create an `auth` middleware :
 ```ts
 // middlewares/auth.ts
 export default defineNuxtRouteMiddleware(async () => {
-	const { fetchUser } = useAuth();
-	const user = await fetchUser();
+	const { user, fetchUser } = useAuth();
+	await fetchUser();
 	if (!user.value) {
 		// if there's no user found, navigate to the login page.
 		return navigateTo("/login");
