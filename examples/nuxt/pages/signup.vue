@@ -1,11 +1,7 @@
 <script lang="ts" setup>
-const { data } = await useFetch("/api/user");
-if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (user) {
-	await navigateTo("/");
-}
-
+const { data, error } = await useFetch("/api/user");
+if (error.value) throw createError("Failed to fetch data");
+if (data?.value?.user) navigateTo("/");
 const errorMessage = ref<string | null>(null);
 
 const handleSubmit = async (e: Event) => {
@@ -14,14 +10,10 @@ const handleSubmit = async (e: Event) => {
 	const formData = new FormData(e.target);
 
 	try {
-		const data = await $fetch("/api/signup", {
+		await $fetch("/api/signup", {
 			method: "POST",
 			body: Object.fromEntries(formData.entries())
 		});
-		if (data) {
-			errorMessage.value = data.error;
-			return;
-		}
 		navigateTo("/");
 	} catch (error) {
 		errorMessage.value = "An unknown error occurred";

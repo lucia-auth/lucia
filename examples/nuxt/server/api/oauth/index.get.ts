@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
 			httpOnly: true,
 			secure: !process.dev
 		});
-		return await sendRedirect(event, url.toString(), 302);
+		return sendRedirect(event, url.toString(), 302);
 	}
+	throw createError({ statusCode: 400 });
 });

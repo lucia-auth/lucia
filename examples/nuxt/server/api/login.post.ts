@@ -19,14 +19,14 @@ export default defineEventHandler(async (event) => {
 			(error.message === "AUTH_INVALID_KEY_ID" ||
 				error.message === "AUTH_INVALID_PASSWORD")
 		) {
-			return {
-				error: "Incorrect username or password"
-			};
+			throw createError({
+				message: "Incorrect username or password",
+				statusCode: 400
+			});
 		}
-		// database connection error
-		console.log(error);
-		return {
-			error: "An unknown error occurred"
-		};
+		throw createError({
+			message: "An unknown error occurred",
+			statusCode: 400
+		});
 	}
 });

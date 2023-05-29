@@ -5,3 +5,10 @@ declare namespace Lucia {
 		username: string;
 	};
 }
+
+// https://github.com/nuxt/nuxt/issues/21074
+declare namespace NodeJS {
+	interface Process {
+		dev: any;
+	}
+}

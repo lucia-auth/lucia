@@ -4,6 +4,8 @@
 	"scripts": {
 		"build": "nuxt build",
 		"dev": "nuxt dev",
+		"prisma:generate": "prisma generate",
+		"prisma:migrate": "prisma migrate dev",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare"

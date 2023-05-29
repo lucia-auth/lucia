@@ -1,27 +1,23 @@
 <script lang="ts" setup>
-const { data } = await useFetch("/api/user");
-if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (!user) await navigateTo("/login");
+const { data, error } = await useFetch("/api/user");
+if (error.value) throw createError(error.value.message);
+if (!data.value?.user) navigateTo("/login");
 
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
 	try {
-		const data = await $fetch("/api/logout", {
-			method: "POST"
-		});
-		if (data) {
-			return;
-		}
+		await $fetch("/api/logout", { method: "POST" });
 		navigateTo("/login");
-	} catch (error) {}
+	} catch (error) {
+		console.error(error);
+	}
 };
 </script>
 <template>
 	<p>This page is protected and can only be accessed by authenticated users.</p>
-	<pre class="code">{{ JSON.stringify(user, null, 2) }}</pre>
-
+	<pre class="code">{{ JSON.stringify(data?.user, null, 2) }}</pre>
 	<form @submit.prevent="handleSubmit">
 		<input type="submit" class="button" value="Sign out" />
 	</form>
+	<NuxtLink to="/middleware" class="button">Middleware</NuxtLink>
 </template>
