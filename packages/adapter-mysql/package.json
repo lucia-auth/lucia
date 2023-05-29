@@ -11,8 +11,12 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"test:db:prepare": "docker-compose up -d",
+		"test:db:down": "docker-compose down -v",
 		"test.mysql2": " tsx test/mysql2/index.ts",
 		"test.planetscale": " tsx test/planetscale/index.ts",
+		"test": "pnpm run test.mysql2",
+		"test:ci": "pnpm test:db:prepare && wait-on tcp:3306 -d 10000 && pnpm test",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -38,9 +42,9 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
+		"@planetscale/database": "^1.0.0",
 		"lucia-auth": "^1.4.0",
-		"mysql2": "^3.0.0",
-		"@planetscale/database": "^1.0.0"
+		"mysql2": "^3.0.0"
 	},
 	"peerDependenciesMeta": {
 		"mysql2": {
@@ -56,6 +60,7 @@
 		"dotenv": "^16.0.3",
 		"lucia-auth": "workspace:*",
 		"mysql2": "^3.2.3",
-		"tsx": "^3.12.6"
+		"tsx": "^3.12.6",
+		"wait-on": "^7.0.1"
 	}
 }

@@ -13,8 +13,8 @@ dotenv.config({
 const pool = mysql.createPool({
 	host: "localhost",
 	user: "root",
-	database: process.env.MYSQL2_DATABASE,
-	password: process.env.MYSQL2_PASSWORD
+	database: process.env.MYSQL2_DATABASE ?? "test",
+	password: process.env.MYSQL2_PASSWORD ?? "password"
 });
 export const adapter = mysql2Adapter(pool)(LuciaError);
 export const queryHandler = createQueryHandler(mysql2Runner(pool));
