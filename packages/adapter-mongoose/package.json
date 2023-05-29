@@ -11,7 +11,10 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"test:db:prepare": "docker-compose up -d",
+		"test:db:down": "docker-compose down -v",
 		"test": "tsx test/index.ts",
+		"test:ci": "pnpm test:db:prepare && pnpm test",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [

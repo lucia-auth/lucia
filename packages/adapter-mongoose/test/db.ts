@@ -14,7 +14,7 @@ dotenv.config({
 	path: `${resolve()}/.env`
 });
 
-const url = process.env.MONGODB_URL;
+const url = process.env.MONGODB_URL ?? "mongodb://localhost:27017";
 
 if (!url) throw new Error(".env is not set up");
 
