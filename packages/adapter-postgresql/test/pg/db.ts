@@ -12,7 +12,9 @@ dotenv.config({
 });
 
 const pool = new pg.Pool({
-	connectionString: process.env.PSQL_DATABASE_URL
+	connectionString:
+		process.env.PSQL_DATABASE_URL ??
+		"postgres://postgres:password@127.0.0.1:5432/test"
 });
 
 export const adapter = pgAdapter(pool)(LuciaError);

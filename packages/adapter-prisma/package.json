@@ -11,7 +11,10 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"prisma:generate": "prisma generate",
+		"prisma:migrate": "prisma migrate dev",
 		"test": "tsx test/index.ts",
+		"test:ci": "pnpm prisma:migrate && pnpm test",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
