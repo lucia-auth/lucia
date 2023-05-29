@@ -11,8 +11,11 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"wrangler": "tsx test/d1/generate.ts && wrangler dev test/d1/index.ts --persist-to=./d1/test/db",
 		"test.better-sqlite3": "tsx test/better-sqlite3/index.ts",
-		"test.d1": "tsx test/d1/generate.ts && wrangler dev test/d1/index.ts --local --persist",
+		"test.d1": "tsx test/d1/index.ts",
+		"test": "pnpm test.better-sqlite3 && pnpm test.d1",
+		"test:ci": "pnpm test",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -49,10 +52,15 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230404.0",
 		"@lucia-auth/adapter-test": "workspace:*",
+		"@miniflare/core": "^2.14.0",
+		"@miniflare/d1": "^2.14.0",
+		"@miniflare/shared": "^2.14.0",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.0.1",
 		"dotenv": "^16.0.3",
 		"lucia-auth": "workspace:*",
-		"tsx": "^3.12.6"
+		"miniflare": "^3.0.1",
+		"tsx": "^3.12.6",
+		"wrangler": "^3.0.1"
 	}
 }

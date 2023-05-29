@@ -1,19 +1,16 @@
-import { testAdapter } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia-auth";
-import { d1 as d1Adapter } from "../../src/index.js";
-import { d1Runner } from "../../src/d1/runner.js";
-import { createQueryHandler } from "../index.js";
-import { D1Database } from "@cloudflare/workers-types";
+import { createSQLiteDB } from "@miniflare/shared";
+import { D1Database, D1DatabaseAPI } from "@miniflare/d1";
+import { fileURLToPath } from "url";
+import path from "node:path";
+import worker from "./worker";
 
-type Env = {
-	DB: D1Database;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const main = async () => {
+	const db = await createSQLiteDB(path.join(__dirname, "../main.db"));
+	const DB = new D1Database(new D1DatabaseAPI(db));
+	await worker.fetch(new Request("http://localhost/"), { DB: DB as any });
 };
 
-export default {
-	fetch: async (_: Request, env: Env) => {
-		const adapter = d1Adapter(env.DB)(LuciaError);
-		const queryHandler = createQueryHandler(d1Runner(env.DB));
-		await testAdapter(adapter, queryHandler, false);
-		return new Response("Test successful");
-	}
-};
+main();
