@@ -78,7 +78,7 @@ const handleSubmit = async (e: Event) => {
 		});
 		navigateTo("/");
 	} catch (error) {
-		errorMessage.value = "An unknown error occurred";
+		console.error(error);
 	}
 };
 </script>
@@ -194,7 +194,7 @@ const handleSubmit = async (e: Event) => {
 		});
 		navigateTo("/");
 	} catch (error) {
-		errorMessage.value = "An unknown error occurred";
+		console.error(error);
 	}
 };
 </script>
