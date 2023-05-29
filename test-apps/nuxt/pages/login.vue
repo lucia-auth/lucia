@@ -1,26 +1,18 @@
 <script lang="ts" setup>
-onBeforeMount(async () => {
-	const { data, error } = await useFetch<{ user: any }>("/api/user");
-	if (error.value) throw createError("Failed to fetch data");
-	if (data?.value?.user) navigateTo("/");
-});
-
+const { data, error } = await useFetch("/api/user");
+if (error.value) throw createError("Failed to fetch data");
+if (data?.value?.user) navigateTo("/");
 const errorMessage = ref<string | null>(null);
 
 const handleSubmit = async (e: Event) => {
 	errorMessage.value = "";
 	if (!(e.target instanceof HTMLFormElement)) return;
 	const formData = new FormData(e.target);
-
 	try {
-		const { error } = await useFetch("/api/login", {
+		await $fetch("/api/login", {
 			method: "POST",
 			body: Object.fromEntries(formData.entries())
 		});
-		if (error.value) {
-			errorMessage.value = error.value.message;
-			return;
-		}
 		navigateTo("/");
 	} catch (error) {
 		errorMessage.value = "An unknown error occurred";

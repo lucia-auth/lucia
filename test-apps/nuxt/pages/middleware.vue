@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({ middleware: "auth" });
-const { user } = useAuth(); // Grab the user from your composable ...
+const { user } = await useAuth(); // Grab the user from your composable ...
 </script>
 
 <template>

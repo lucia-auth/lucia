@@ -6,6 +6,7 @@ declare namespace Lucia {
 	};
 }
 
+// https://github.com/nuxt/nuxt/issues/21074
 declare namespace NodeJS {
 	interface Process {
 		dev: any;
