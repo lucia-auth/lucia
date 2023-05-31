@@ -41,7 +41,7 @@ import { astro } from "lucia-auth/middleware";
 
 export const auth = lucia({
 	adapter: prisma(new PrismaClient()),
-	env: dev ? "DEV" : "PROD",
+	env: import.meta.env.DEV ? "DEV" : "PROD",
 	middleware: astro()
 });
 

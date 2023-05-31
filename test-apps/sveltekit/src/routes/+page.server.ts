@@ -12,7 +12,7 @@ export const load = async ({ locals }) => {
 export const actions: Actions = {
 	// signout
 	default: async ({ locals }) => {
-		const session = await locals.auth.validate();
+		const { session } = await locals.auth.validateUser();
 		if (!session) return fail(401);
 		await auth.invalidateSession(session.sessionId);
 		locals.auth.setSession(null);

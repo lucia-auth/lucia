@@ -1,0 +1,10 @@
+node_modules
+
+/.cache
+/build
+/public/build
+.env
+
+prisma/migrations
+prisma/dev.db
+prisma/dev.db-journal

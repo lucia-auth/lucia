@@ -48,12 +48,12 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async () => {
+		getAuthorizationUrl: async (redirectUri?: string) => {
 			const state = generateState();
 			const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
 				client_id: config.clientId,
 				scope: scope([], config.scope),
-				redirect_uri: config.redirectUri,
+				redirect_uri: redirectUri ?? config.redirectUri,
 				state
 			});
 			return [url, state] as const;

@@ -6,7 +6,6 @@ import Header from "@components/ContentHeader.astro";
 // generated on build/dev start
 import contributors from "../../.github.json";
 import { getCollection } from "@cela/content";
-import Banner from "@components/Banner.astro";
 import { handleRequest } from "@server/request";
 
 const request = handleRequest(Astro)
@@ -75,7 +74,6 @@ if (!collection) {
 			</section>
 		</div>
 	</main>
-	<Banner />
 	<script>
 		import { setCookie } from "@utils/cookie";
 		import { addClassName } from "@utils/dom";

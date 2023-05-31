@@ -11,7 +11,7 @@ import type { User } from "lucia-auth";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ user: User }>> => {
-	const authRequest = auth.handleRequest(context.req, context.res);
+	const authRequest = auth.handleRequest(context);
 	const { user } = await authRequest.validateUser();
 	if (!user)
 		return {

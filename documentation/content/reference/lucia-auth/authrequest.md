@@ -50,7 +50,7 @@ authRequest.setSession(null); // remove session cookies
 
 ## `validate()`
 
-Validates the request, including a CSRF check if enabled (enabled by default), and return the current session. This method will also attempt to renew the session if it was invalid and return the new session if so.
+Similar to `validateUser()` but only return the session.
 
 ```ts
 const validate: () => Promise<Session | null>;
@@ -74,7 +74,7 @@ if (session) {
 
 ## `validateUser()`
 
-Similar to [`validate()`](#validate) but returns both the current session and user in a single database call.
+Validates the request, including a CSRF check if enabled (enabled by default), and return the current session and user. This method will also attempt to renew the session if it was invalid and return the new session if so.
 
 ```ts
 const validate: () => Promise<{

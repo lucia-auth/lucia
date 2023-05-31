@@ -19,10 +19,10 @@ import { passwordToken } from "@lucia-auth/tokens";
 By default the length of the generated token will be 8. You can change this by defining `length`.
 
 ```ts
-import { idToken } from "@lucia-auth/tokens";
+import { passwordToken } from "@lucia-auth/tokens";
 import { auth } from "./lucia.js";
 
-const tokenHandler = idToken(auth, "email-verification", {
+const tokenHandler = passwordToken(auth, "email-verification", {
 	expiresIn: 60 * 60, // expiration in 1 hour,
 	length: 8 // default
 });

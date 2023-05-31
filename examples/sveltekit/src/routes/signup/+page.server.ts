@@ -43,7 +43,7 @@ export const actions: Actions = {
 					message: 'Username already in use'
 				});
 			}
-			console.error(error);
+			console.log(error);
 			return fail(500, {
 				message: 'Unknown error occurred'
 			});

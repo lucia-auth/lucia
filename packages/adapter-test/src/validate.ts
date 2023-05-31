@@ -1,4 +1,4 @@
-import type { ErrorMessage } from "lucia-auth/auth/error";
+import type { LuciaErrorConstructor } from "lucia-auth";
 
 export const isNull = (data: any) => {
 	if (data === null) return;
@@ -11,7 +11,7 @@ export const isEmptyArray = (data: unknown) => {
 
 export const expectErrorMessage = async (
 	test: () => Promise<void> | void,
-	expectedValue: ErrorMessage
+	expectedValue: ConstructorParameters<LuciaErrorConstructor>[0]
 ) => {
 	try {
 		await test();

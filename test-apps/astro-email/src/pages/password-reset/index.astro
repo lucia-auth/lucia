@@ -46,7 +46,7 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 const response = await handleFormSubmission();
 if (response) return response;
 
-const session = await authRequest.validate();
+const { session } = await authRequest.validateUser();
 if (session) {
 	return Astro.redirect("/", 302);
 }

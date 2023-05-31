@@ -1,7 +1,7 @@
 ---
 _order: 0
 title: "Getting started"
-description: "Learn about getting started with the OAuth integration for Lucia"
+description: "Learn about getting started with the OAuth integration for Lucia in SvelteKit"
 ---
 
 While Lucia doesn't directly support OAuth, we provide an external library that handles OAuth using Lucia. This is a server-only module.
@@ -10,7 +10,7 @@ Supported providers are listed on the left. You can also add your own providers 
 
 ## Installation
 
-```bash
+```
 npm i @lucia-auth/oauth
 pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth
@@ -97,7 +97,9 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 	const storedState = cookies.get("github_oauth_state");
 
 	// validate state
-	if (state !== storedState) throw new Response(null, { status: 401 });
+	if (!state || !storedState || state !== storedState) {
+		throw new Response(null, { status: 401 });
+	}
 
 	try {
 		const { existingUser, providerUser, createUser } =

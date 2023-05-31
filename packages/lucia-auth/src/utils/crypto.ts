@@ -1,7 +1,8 @@
 import scrypt from "../scrypt/index.js";
+import { debug } from "./debug.js";
 import { generateRandomString } from "./nanoid.js";
 
-export const generateHashWithScrypt = async (s: string) => {
+export const generateScryptHash = async (s: string) => {
 	const salt = generateRandomString(16);
 	const key = await hashWithScrypt(s.normalize("NFKC"), salt);
 	return `s2:${salt}:${key}`;
@@ -26,13 +27,15 @@ export const validateScryptHash = async (s: string, hash: string) => {
 	if (arr.length === 2) {
 		const [salt, key] = arr;
 		const targetKey = await hashWithScrypt(s, salt, 8);
-		return constantTimeEqual(targetKey, key);
+		const result = constantTimeEqual(targetKey, key);
+		return result;
 	}
 	if (arr.length !== 3) return false;
 	const [version, salt, key] = arr;
 	if (version === "s2") {
 		const targetKey = await hashWithScrypt(s, salt);
-		return constantTimeEqual(targetKey, key);
+		const result = constantTimeEqual(targetKey, key);
+		return result;
 	}
 	return false;
 };
@@ -51,6 +54,6 @@ const constantTimeEqual = (a: string, b: string) => {
 	return c === 0;
 };
 
-const convertUint8ArrayToHex = (arr: Uint8Array) => {
+export const convertUint8ArrayToHex = (arr: Uint8Array) => {
 	return [...arr].map((x) => x.toString(16).padStart(2, "0")).join("");
 };

@@ -13,5 +13,5 @@ pnpm i
 Migrate Prisma schema:
 
 ```bash
-npx prisma migrate dev --name init
+pnpm prisma migrate dev --name init
 ```

@@ -31,7 +31,7 @@ const currentPathname = Astro.url.pathname;
 	<input type="hidden" value={frameworkId} id="framework-id" />
 
 	<div class="py-2 pl-8 pr-4 dark:text-zinc-200">
-		<FrameworkSelect client:idle frameworkId={Astro.props.frameworkId} />
+		<FrameworkSelect client:visible frameworkId={Astro.props.frameworkId} />
 	</div>
 
 	{
@@ -51,7 +51,7 @@ const currentPathname = Astro.url.pathname;
 	</div>
 	<div
 		id="content-table"
-		class="bg-zinc-80 dark:bg-shadow-zinc relative flex h-full flex-col gap-y-8 overflow-auto overscroll-contain pt-2 pb-24"
+		class="bg-zinc-80 dark:bg-shadow-zinc relative flex h-full flex-col gap-y-8 overflow-auto overscroll-contain pb-24 pt-2"
 	>
 		{
 			collection.sections.map((section) => {
@@ -125,7 +125,6 @@ const currentPathname = Astro.url.pathname;
 			const [prevCollectionId, prevScrollPosition] =
 				storedScrollPosition.split(":");
 			if (prevCollectionId === collectionId) {
-				console.log(prevScrollPosition);
 				contentTableElement.scrollTop = Number(prevScrollPosition);
 			}
 		}
