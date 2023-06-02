@@ -68,10 +68,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 ```
 
-You can now get the current session and user using the methods within `event.locals.auth`, which is available in every server context.
+You can now get the current session and user using the methods within `locals.auth`, which is available in every server context.
 
 ```ts
-const { session, user } = await event.locals.auth.validateUser();
+const { session, user } = await locals.auth.validateUser();
 ```
 
 ### Defining types
