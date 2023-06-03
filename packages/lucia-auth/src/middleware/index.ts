@@ -31,7 +31,8 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 				method: incomingMessage.method ?? "",
 				headers: {
 					origin: incomingMessage.headers.origin ?? null,
-					cookie: incomingMessage.headers.cookie ?? null
+					cookie: incomingMessage.headers.cookie ?? null,
+					authorization: incomingMessage.headers.authorization ?? null
 				}
 			},
 			setCookie: (cookie) => {
@@ -59,7 +60,8 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 				method: request.method,
 				headers: {
 					origin: request.headers.origin ?? null,
-					cookie: request.headers.cookie ?? null
+					cookie: request.headers.cookie ?? null,
+					authorization: request.headers.authorization ?? null
 				}
 			},
 			setCookie: (cookie) => {
@@ -84,8 +86,9 @@ export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 				url: event.request.url,
 				method: event.request.method,
 				headers: {
-					origin: event.request.headers.get("Origin") ?? null,
-					cookie: event.request.headers.get("Cookie") ?? null
+					origin: event.request.headers.get("Origin"),
+					cookie: event.request.headers.get("Cookie"),
+					authorization: event.request.headers.get("Authorization")
 				}
 			},
 			setCookie: (cookie) => {
@@ -110,8 +113,9 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 				url: context.request.url,
 				method: context.request.method,
 				headers: {
-					origin: context.request.headers.get("Origin") ?? null,
-					cookie: context.request.headers.get("Cookie") ?? null
+					origin: context.request.headers.get("Origin"),
+					cookie: context.request.headers.get("Cookie"),
+					authorization: context.request.headers.get("Authorization")
 				}
 			},
 			setCookie: (cookie) => {
@@ -130,18 +134,19 @@ type QwikRequestEvent = {
 };
 
 export const qwik = (): Middleware<[QwikRequestEvent]> => {
-	return (c) => {
+	return (event) => {
 		const requestContext = {
 			request: {
-				url: c.request.url.toString(),
-				method: c.request.method,
+				url: event.request.url.toString(),
+				method: event.request.method,
 				headers: {
-					origin: c.request.headers.get("Origin") ?? null,
-					cookie: c.request.headers.get("Cookie") ?? null
+					origin: event.request.headers.get("Origin"),
+					cookie: event.request.headers.get("Cookie"),
+					authorization: event.request.headers.get("Authorization")
 				}
 			},
 			setCookie: (cookie) => {
-				c.cookie.set(cookie.name, cookie.value, cookie.attributes);
+				event.cookie.set(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
 
@@ -170,8 +175,9 @@ export const web = (): Middleware<[Request, Headers | Response]> => {
 				url: request.url,
 				method: request.method,
 				headers: {
-					origin: request.headers.get("Origin") ?? null,
-					cookie: request.headers.get("Cookie") ?? null
+					origin: request.headers.get("Origin"),
+					cookie: request.headers.get("Cookie"),
+					authorization: request.headers.get("Authorization")
 				}
 			},
 			setCookie: createSetCookie()
@@ -222,7 +228,9 @@ export const nextjs = (): Middleware<
 						origin: serverContext.request?.headers.get("Origin") ?? null,
 						cookie: sessionCookie
 							? `${SESSION_COOKIE_NAME}=${sessionCookie.value}`
-							: null
+							: null,
+						authorization:
+							serverContext.request?.headers.get("Authorization") ?? null
 					}
 				},
 				setCookie: (cookie) => {
@@ -248,7 +256,8 @@ export const nextjs = (): Middleware<
 			method: serverContext.req.method ?? "",
 			headers: {
 				origin: serverContext.req.headers.origin ?? null,
-				cookie: serverContext.req.headers.cookie ?? null
+				cookie: serverContext.req.headers.cookie ?? null,
+				authorization: serverContext.req.headers.authorization ?? null
 			}
 		} satisfies LuciaRequest;
 		const createSetCookie = () => {

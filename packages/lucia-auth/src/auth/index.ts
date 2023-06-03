@@ -70,7 +70,7 @@ export class Auth<C extends Configuration = any> {
 	protected middleware: C["middleware"] extends Middleware
 		? C["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
-	private csrfProtection: boolean;
+	private csrfProtectionEnabled: boolean;
 	private origin: string[];
 	private experimental: {
 		debugMode: boolean;
@@ -105,7 +105,7 @@ export class Auth<C extends Configuration = any> {
 		this.generateUserId =
 			config.generateCustomUserId ?? (() => generateRandomString(15));
 		this.env = config.env;
-		this.csrfProtection = config.csrfProtection ?? true;
+		this.csrfProtectionEnabled = config.csrfProtection ?? true;
 		this.sessionExpiresIn = {
 			activePeriod:
 				config.sessionExpiresIn?.activePeriod ?? 1000 * 60 * 60 * 24,
@@ -391,8 +391,7 @@ export class Auth<C extends Configuration = any> {
 		);
 	};
 
-	public parseRequestHeaders = (request: LuciaRequest): string | null => {
-		debug.request.init(request.method ?? "<method>", request.url ?? "<url>");
+	public validateRequestOrigin = (request: LuciaRequest): void => {
 		if (request.method === null) {
 			debug.request.fail("Request method unavailable");
 			throw new LuciaError("AUTH_INVALID_REQUEST");
@@ -401,17 +400,10 @@ export class Auth<C extends Configuration = any> {
 			debug.request.fail("Request url unavailable");
 			throw new LuciaError("AUTH_INVALID_REQUEST");
 		}
-		const cookies = parseCookie(request.headers.cookie ?? "");
-		const sessionId = cookies[SESSION_COOKIE_NAME] ?? null;
-		if (sessionId) {
-			debug.request.info("Found session cookie", sessionId);
-		} else {
-			debug.request.info("No session cookie found");
-		}
-		const csrfCheck =
+		const csrfCheckRequired =
 			request.method.toUpperCase() !== "GET" &&
 			request.method.toUpperCase() !== "HEAD";
-		if (csrfCheck && this.csrfProtection) {
+		if (this.csrfProtectionEnabled && csrfCheckRequired) {
 			const requestOrigin = request.headers.origin;
 			if (!requestOrigin) {
 				debug.request.fail("No request origin available");
@@ -432,7 +424,34 @@ export class Auth<C extends Configuration = any> {
 		} else {
 			debug.request.notice("Skipping CSRF check");
 		}
+	};
+
+	public readSessionCookie = (request: LuciaRequest): string | null => {
+		const cookies = parseCookie(request.headers.cookie ?? "");
+		const sessionId = cookies[SESSION_COOKIE_NAME] ?? null;
+		if (sessionId) {
+			debug.request.info("Found session cookie", sessionId);
+		} else {
+			debug.request.info("No session cookie found");
+		}
 		return sessionId;
+	};
+
+	public readBearerToken = (request: LuciaRequest): string | null => {
+		const authorizationHeader = request.headers.authorization;
+		if (!authorizationHeader) {
+			debug.request.info("No token found in authorization header");
+			return null
+		}
+		const [authScheme, token] = authorizationHeader.split(" ") as [
+			string,
+			string | undefined
+		];
+		if (authScheme !== "Bearer") {
+			debug.request.fail("Invalid authorization header auth scheme", authScheme)
+			return null;
+		}
+		return token ?? null;
 	};
 
 	public handleRequest = (

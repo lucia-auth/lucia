@@ -8,6 +8,7 @@ export type LuciaRequest = {
 	headers: {
 		origin: string | null;
 		cookie: string | null;
+		authorization: string | null;
 	};
 };
 export type RequestContext = {
@@ -26,14 +27,18 @@ export class AuthRequest<A extends Auth = any> {
 		this.auth = auth;
 		this.context = context;
 		try {
-			this.storedSessionId = auth.parseRequestHeaders(context.request);
+			auth.validateRequestOrigin(context.request);
+			this.storedSessionId = auth.readSessionCookie(context.request);
 		} catch (e) {
 			this.storedSessionId = null;
 		}
+		this.bearerToken = auth.readBearerToken(context.request);
 	}
 
 	private validatePromise: Promise<Session | null> | null = null;
-	public storedSessionId: string | null;
+	private validateBearerTokenPromise: Promise<Session | null> | null = null;
+	private storedSessionId: string | null;
+	private bearerToken: string | null;
 
 	public setSession = (session: Session | null) => {
 		const sessionId = session?.sessionId ?? null;
@@ -64,17 +69,34 @@ export class AuthRequest<A extends Auth = any> {
 			return this.validatePromise;
 		}
 		this.validatePromise = new Promise(async (resolve) => {
-			if (!this.storedSessionId) {
-				return resolve(null);
-			}
+			if (!this.storedSessionId) return resolve(null);
 			try {
 				const session = await this.auth.validateSession(this.storedSessionId);
 				if (session.fresh) {
 					this.setSessionCookie(session);
 				}
 				return resolve(session);
-			} catch (e) {
+			} catch {
 				this.setSessionCookie(null);
+				return resolve(null);
+			}
+		});
+
+		return await this.validatePromise;
+	};
+
+	public validateBearerToken = async (): Promise<Session | null> => {
+		if (this.validateBearerTokenPromise) {
+			debug.request.info("Using cached result for bearer token validation");
+			return this.validatePromise;
+		}
+		this.validatePromise = new Promise(async (resolve) => {
+			if (!this.bearerToken) return resolve(null);
+			try {
+				const session = await this.auth.getSession(this.bearerToken);
+				if (session.state === "idle") return resolve(null);
+				return resolve(session);
+			} catch {
 				return resolve(null);
 			}
 		});
