@@ -50,20 +50,41 @@ const apple: (
 
 #### Parameter
 
-| name                | type                                 | description                | optional |
-| ------------------- | ------------------------------------ | -------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance             |          |
-| configs.clientId    | `string`                             | Apple service identifier   |          |
-| configs.redirectUri | `string`                             | an authorized redirect URI |          |
-| configs.teamId      | `string`                             | Apple teamId               |          |
-| configs.keyId       | `string`                             | Apple private keyId        |          |
-| configs.certificate | `string`                             | p8 certificate as string   |          |
+| name                | type                                 | description                                                    | optional |
+| ------------------- | ------------------------------------ | -------------------------------------------------------------- | :------: |
+| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                 |          |
+| configs.clientId    | `string`                             | Apple service identifier                                       |          |
+| configs.redirectUri | `string`                             | an authorized redirect URI                                     |          |
+| configs.teamId      | `string`                             | Apple teamId                                                   |          |
+| configs.keyId       | `string`                             | Apple private keyId                                            |          |
+| configs.certificate | `string`                             | p8 certificate as string [See how](#how-to-import-certificate) |          |
 
 #### Returns
 
 | type                                              | description    |
 | ------------------------------------------------- | -------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | Apple provider |
+
+### How to import certificate
+
+```ts
+import * as fs from "node:fs";
+
+const certificatePath = path.join(
+	process.cwd(),
+	process.env.APPLE_CERT_PATH ?? ""
+);
+
+const certificate = fs.readFileSync(certPath, "utf-8");
+
+export const appleAuth = apple(auth, {
+	teamId: process.env.APPLE_TEAM_ID ?? "",
+	keyId: process.env.APPLE_KEY_ID ?? "",
+	certificate: certificate,
+	redirectUri: process.env.APPLE_REDIRECT_URI ?? "",
+	clientId: process.env.APPLE_CLIENT_ID ?? ""
+});
+```
 
 ## `AppleProvider`
 
