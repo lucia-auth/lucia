@@ -9,7 +9,7 @@ import { generateScryptHash, validateScryptHash } from "../utils/crypto.js";
 import { generateRandomString } from "../utils/nanoid.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
-import { isValidDatabaseSession, transformDatabaseSession } from "./session.js";
+import { isValidDatabaseSession } from "./session.js";
 import { transformDatabaseKey } from "./key.js";
 import { AuthRequest } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
@@ -19,6 +19,7 @@ import type { UserSchema, SessionSchema } from "./schema.js";
 import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.js";
 import type { LuciaErrorConstructor } from "./error.js";
 import type { Middleware, LuciaRequest } from "./request.js";
+import { isWithinExpiration } from "../utils/date.js";
 
 export type Session = Readonly<{
 	user: User;
@@ -27,7 +28,8 @@ export type Session = Readonly<{
 	idlePeriodExpiresAt: Date;
 	state: "idle" | "active";
 	fresh: boolean;
-}>;
+}> &
+	ReturnType<Lucia.Auth["getSessionAttributes"]>;
 
 export type Key = Readonly<{
 	userId: string;
@@ -42,7 +44,9 @@ export type User = {
 	userId: string;
 } & ReturnType<Lucia.Auth["getUserAttributes"]>;
 
-export const lucia = <C extends Configuration>(config: C) => {
+export const lucia = <_Configuration extends Configuration>(
+	config: _Configuration
+) => {
 	return new Auth(config);
 };
 
@@ -54,7 +58,7 @@ const validateConfiguration = (config: Configuration) => {
 	}
 };
 
-export class Auth<C extends Configuration = any> {
+export class Auth<_Configuration extends Configuration = any> {
 	private adapter: Adapter;
 	private generateUserId: () => MaybePromise<string>;
 	private sessionCookieOption: CookieOption;
@@ -67,8 +71,8 @@ export class Auth<C extends Configuration = any> {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
-	protected middleware: C["middleware"] extends Middleware
-		? C["middleware"]
+	protected middleware: _Configuration["middleware"] extends Middleware
+		? _Configuration["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
 	private csrfProtectionEnabled: boolean;
 	private origin: string[];
@@ -76,7 +80,7 @@ export class Auth<C extends Configuration = any> {
 		debugMode: boolean;
 	};
 
-	constructor(config: C) {
+	constructor(config: _Configuration) {
 		validateConfiguration(config);
 		const defaultSessionCookieOption: CookieOption = {
 			sameSite: "lax",
@@ -119,6 +123,13 @@ export class Auth<C extends Configuration = any> {
 			const transform = config.getUserAttributes ?? defaultTransform;
 			return transform(databaseUser);
 		};
+		this.getSessionAttributes = (databaseSession) => {
+			const defaultTransform = () => {
+				return {} as any;
+			};
+			const transform = config.getSessionAttributes ?? defaultTransform;
+			return transform(databaseSession);
+		};
 		this.sessionCookieOption =
 			config.sessionCookie ?? defaultSessionCookieOption;
 		this.hash = {
@@ -135,7 +146,15 @@ export class Auth<C extends Configuration = any> {
 
 	protected getUserAttributes: (
 		databaseUser: UserSchema
-	) => C extends Configuration<infer _UserAttributes> ? _UserAttributes : never;
+	) => _Configuration extends Configuration<infer _UserAttributes>
+		? _UserAttributes
+		: never;
+
+	protected getSessionAttributes: (
+		databaseSession: SessionSchema
+	) => _Configuration extends Configuration<any, infer _SessionAttributes>
+		? _SessionAttributes
+		: never;
 
 	public transformDatabaseUser = (databaseUser: UserSchema): User => {
 		const attributes = this.getUserAttributes(databaseUser);
@@ -145,11 +164,33 @@ export class Auth<C extends Configuration = any> {
 		};
 	};
 
-	public getUser = async (userId: string): Promise<User> => {
+	public transformDatabaseSession = (
+		databaseSession: SessionSchema,
+		user: User
+	): Session => {
+		const attributes = this.getSessionAttributes(databaseSession);
+		const active = isWithinExpiration(databaseSession.active_expires);
+		return {
+			...attributes,
+			user,
+			sessionId: databaseSession.id,
+			activePeriodExpiresAt: new Date(Number(databaseSession.active_expires)),
+			idlePeriodExpiresAt: new Date(Number(databaseSession.idle_expires)),
+			state: active ? "active" : "idle",
+			fresh: false
+		};
+	};
+
+	private getDatabaseUser = async (userId: string): Promise<UserSchema> => {
 		const databaseUser = await this.adapter.getUser(userId);
 		if (!databaseUser) {
 			throw new LuciaError("AUTH_INVALID_USER_ID");
 		}
+		return databaseUser;
+	};
+
+	public getUser = async (userId: string): Promise<User> => {
+		const databaseUser = await this.getDatabaseUser(userId);
 		const user = this.transformDatabaseUser(databaseUser);
 		return user;
 	};
@@ -164,33 +205,23 @@ export class Auth<C extends Configuration = any> {
 	}): Promise<User> => {
 		const userId = await this.generateUserId();
 		const userAttributes = data.attributes ?? {};
+		const databaseUser = {
+			...userAttributes,
+			id: userId
+		} satisfies UserSchema;
 		if (data.key === null) {
-			const databaseUser = await this.adapter.setUser(
-				{
-					id: userId,
-					...userAttributes
-				},
-				null
-			);
-			if (databaseUser) return this.transformDatabaseUser(databaseUser);
-			return await this.getUser(userId);
+			await this.adapter.setUser(databaseUser, null);
+			return this.transformDatabaseUser(databaseUser);
 		}
 		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
 		const password = data.key.password;
 		const hashedPassword = password ? await this.hash.generate(password) : null;
-		const databaseUser = await this.adapter.setUser(
-			{
-				id: userId,
-				...userAttributes
-			},
-			{
-				id: keyId,
-				user_id: userId,
-				hashed_password: hashedPassword
-			}
-		);
-		if (databaseUser) return this.transformDatabaseUser(databaseUser);
-		return await this.getUser(userId);
+		await this.adapter.setUser(databaseUser, {
+			id: keyId,
+			user_id: userId,
+			hashed_password: hashedPassword
+		});
+		return this.transformDatabaseUser(databaseUser);
 	};
 
 	public updateUserAttributes = async (
@@ -248,11 +279,27 @@ export class Auth<C extends Configuration = any> {
 		return key;
 	};
 
-	public getSession = async (sessionId: string): Promise<Session> => {
-		if (sessionId.length !== 40) {
-			debug.session.fail("Expected id length to be 40", sessionId);
+	private getDatabaseSession = async (
+		sessionId: string
+	): Promise<SessionSchema> => {
+		const databaseSession = await this.adapter.getSession(sessionId);
+		if (!databaseSession) {
+			debug.session.fail("Session not found", sessionId);
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		}
+		if (!isValidDatabaseSession(databaseSession)) {
+			debug.session.fail(
+				`Session expired at ${new Date(Number(databaseSession.idle_expires))}`,
+				sessionId
+			);
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		}
+		return databaseSession;
+	};
+
+	private getDatabaseSessionAndUser = async (
+		sessionId: string
+	): Promise<[SessionSchema, UserSchema]> => {
 		if (this.adapter.getSessionAndUser) {
 			const [databaseSession, databaseUser] =
 				await this.adapter.getSessionAndUser(sessionId);
@@ -269,30 +316,29 @@ export class Auth<C extends Configuration = any> {
 				);
 				throw new LuciaError("AUTH_INVALID_SESSION_ID");
 			}
-			return transformDatabaseSession(
-				databaseSession,
-				this.transformDatabaseUser(databaseUser)
-			);
+			return [databaseSession, databaseUser];
 		}
-		const databaseSession = await this.adapter.getSession(sessionId);
-		if (!databaseSession) {
-			debug.session.fail("Session not found", sessionId);
+		const databaseSession = await this.getDatabaseSession(sessionId);
+		const databaseUser = await this.getDatabaseUser(databaseSession.user_id);
+		return [databaseSession, databaseUser];
+	};
+
+	private validateSessionIdArgument = (sessionId: string) => {
+		if (sessionId.length !== 40) {
+			debug.session.fail("Expected id length to be 40", sessionId);
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		}
-		if (!isValidDatabaseSession(databaseSession)) {
-			debug.session.fail(
-				`Session expired at ${new Date(Number(databaseSession.idle_expires))}`,
-				sessionId
-			);
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		}
-		const user = await this.getUser(databaseSession.user_id);
-		return transformDatabaseSession(databaseSession, user);
+	};
+
+	public getSession = async (sessionId: string): Promise<Session> => {
+		this.validateSessionIdArgument(sessionId);
+		const [databaseSession, databaseUser] =
+			await this.getDatabaseSessionAndUser(sessionId);
+		const user = this.transformDatabaseUser(databaseUser);
+		return this.transformDatabaseSession(databaseSession, user);
 	};
 
 	public getAllUserSessions = async (userId: string): Promise<Session[]> => {
-		// validate user id
-		await this.getUser(userId);
 		const [user, databaseSessions] = await Promise.all([
 			this.getUser(userId),
 			await this.adapter.getSessionsByUserId(userId)
@@ -302,22 +348,37 @@ export class Auth<C extends Configuration = any> {
 				return isValidDatabaseSession(databaseSession);
 			})
 			.map((databaseSession) => {
-				return transformDatabaseSession(databaseSession, user);
+				return this.transformDatabaseSession(databaseSession, user);
 			});
 		return validStoredUserSessions;
 	};
 
 	public validateSession = async (sessionId: string): Promise<Session> => {
-		const session = await this.getSession(sessionId);
+		this.validateSessionIdArgument(sessionId);
+		const [databaseSession, databaseUser] =
+			await this.getDatabaseSessionAndUser(sessionId);
+		const user = this.transformDatabaseUser(databaseUser);
+		const session = this.transformDatabaseSession(databaseSession, user);
 		if (session.state === "active") {
 			debug.session.success("Validated session", session.sessionId);
 			return session;
 		}
-		const renewedSession = await this.renewSession(sessionId);
-		return renewedSession;
+		const [newSessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
+			this.generateSessionId();
+		const renewedDatabaseSession = {
+			...databaseSession,
+			id: newSessionId,
+			active_expires: activePeriodExpiresAt.getTime(),
+			idle_expires: idlePeriodExpiresAt.getTime()
+		} satisfies SessionSchema;
+		await Promise.all([
+			this.adapter.setSession(renewedDatabaseSession),
+			this.adapter.deleteSession(sessionId)
+		]);
+		return this.transformDatabaseSession(renewedDatabaseSession, user);
 	};
 
-	public generateSessionId = (): readonly [
+	private generateSessionId = (): readonly [
 		sessionId: string,
 		activePeriodExpiresAt: Date,
 		idlePeriodExpiresAt: Date
@@ -332,40 +393,66 @@ export class Auth<C extends Configuration = any> {
 		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
 	};
 
-	public createSession = async (userId: string): Promise<Session> => {
+	public createSession = async (
+		userId: string,
+		config: {
+			attributes: Lucia.DatabaseSessionAttributes;
+		}
+	): Promise<Session> => {
 		const [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
 			this.generateSessionId();
+		const databaseSession = {
+			...config.attributes,
+			id: sessionId,
+			user_id: userId,
+			active_expires: activePeriodExpiresAt.getTime(),
+			idle_expires: idlePeriodExpiresAt.getTime()
+		} satisfies SessionSchema;
 		const [user] = await Promise.all([
 			this.getUser(userId),
 			this.adapter.setSession({
+				...config.attributes,
 				id: sessionId,
 				user_id: userId,
 				active_expires: activePeriodExpiresAt.getTime(),
 				idle_expires: idlePeriodExpiresAt.getTime()
 			})
 		]);
-		return {
-			user: user,
-			activePeriodExpiresAt,
-			sessionId,
-			idlePeriodExpiresAt,
-			state: "active",
-			fresh: true
-		};
+		return this.transformDatabaseSession(databaseSession, user);
 	};
 
 	public renewSession = async (sessionId: string): Promise<Session> => {
-		if (sessionId.length !== 40) {
-			debug.session.fail("Expected id length to be 40", sessionId);
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		}
-		const session = await this.getSession(sessionId);
-		const [renewedSession] = await Promise.all([
-			this.createSession(session.user.userId),
+		const [databaseSession, databaseUser] =
+			await this.getDatabaseSessionAndUser(sessionId);
+		const user = this.transformDatabaseUser(databaseUser);
+		const [newSessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
+			this.generateSessionId();
+		const renewedDatabaseSession = {
+			...databaseSession,
+			id: newSessionId,
+			active_expires: activePeriodExpiresAt.getTime(),
+			idle_expires: idlePeriodExpiresAt.getTime()
+		} satisfies SessionSchema;
+		await Promise.all([
+			this.adapter.setSession(renewedDatabaseSession),
 			this.adapter.deleteSession(sessionId)
 		]);
-		debug.session.success("Session renewed", renewedSession.sessionId);
-		return renewedSession;
+		return this.transformDatabaseSession(renewedDatabaseSession, user);
+	};
+
+	public updateSessionAttributes = async (
+		sessionId: string,
+		attributes: Partial<Lucia.DatabaseSessionAttributes>
+	): Promise<Session> => {
+		const databaseSession = await this.adapter.updateSession(
+			sessionId,
+			attributes
+		);
+		if (databaseSession) {
+			const user = await this.getUser(databaseSession.user_id);
+			return this.transformDatabaseSession(databaseSession, user);
+		}
+		return this.getSession(sessionId);
 	};
 
 	public invalidateSession = async (sessionId: string): Promise<void> => {
@@ -441,14 +528,17 @@ export class Auth<C extends Configuration = any> {
 		const authorizationHeader = request.headers.authorization;
 		if (!authorizationHeader) {
 			debug.request.info("No token found in authorization header");
-			return null
+			return null;
 		}
 		const [authScheme, token] = authorizationHeader.split(" ") as [
 			string,
 			string | undefined
 		];
 		if (authScheme !== "Bearer") {
-			debug.request.fail("Invalid authorization header auth scheme", authScheme)
+			debug.request.fail(
+				"Invalid authorization header auth scheme",
+				authScheme
+			);
 			return null;
 		}
 		return token ?? null;
@@ -456,7 +546,9 @@ export class Auth<C extends Configuration = any> {
 
 	public handleRequest = (
 		// cant reference middleware type with Lucia.Auth
-		...args: Auth<C>["middleware"] extends Middleware<infer Args> ? Args : never
+		...args: Auth<_Configuration>["middleware"] extends Middleware<infer Args>
+			? Args
+			: never
 	): AuthRequest<Lucia.Auth> => {
 		const middleware = this.middleware as Middleware;
 		return new AuthRequest(this, middleware(...[...args, this.env]));
@@ -514,10 +606,11 @@ export class Auth<C extends Configuration = any> {
 	};
 
 	public getAllUserKeys = async (userId: string): Promise<Key[]> => {
-		// validate user id
-		await this.getUser(userId);
-		const databaseKeys = await this.adapter.getKeysByUserId(userId);
-		return databaseKeys.map((dbKey) => transformDatabaseKey(dbKey));
+		const [databaseKeys] = await Promise.all([
+			await this.adapter.getKeysByUserId(userId),
+			this.getUser(userId)
+		]);
+		return databaseKeys.map((databaseKey) => transformDatabaseKey(databaseKey));
 	};
 
 	public updateKeyPassword = async (
@@ -539,7 +632,10 @@ export class Auth<C extends Configuration = any> {
 
 type MaybePromise<T> = T | Promise<T>;
 
-export type Configuration<_UserAttributes extends Record<string, any> = {}> = {
+export type Configuration<
+	_UserAttributes extends Record<string, any> = {},
+	_SessionAttributes extends Record<string, any> = {}
+> = {
 	adapter:
 		| ((E: LuciaErrorConstructor) => Adapter)
 		| {
@@ -561,10 +657,8 @@ export type Configuration<_UserAttributes extends Record<string, any> = {}> = {
 		idlePeriod: number;
 	};
 	sessionCookie?: CookieOption;
-	getUserAttributes?: (databaseUser: Required<UserSchema>) => _UserAttributes;
-	getSessionAttributes?: (
-		databaseSession: Required<SessionSchema>
-	) => Record<string, any>;
+	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
+	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
 	experimental?: {
 		debugMode?: boolean;
 	};

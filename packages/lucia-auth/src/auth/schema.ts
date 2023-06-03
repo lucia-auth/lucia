@@ -7,12 +7,14 @@ export type KeySchema = Readonly<{
 export type UserSchema = Readonly<
 	{
 		id: string;
-	} & Required<Lucia.DatabaseUserAttributes>
+	} & Lucia.DatabaseUserAttributes
 >;
 
-export type SessionSchema = Readonly<{
-	id: string;
-	active_expires: number | bigint;
-	idle_expires: number | bigint;
-	user_id: string;
-}>;
+export type SessionSchema = Readonly<
+	{
+		id: string;
+		active_expires: number | bigint;
+		idle_expires: number | bigint;
+		user_id: string;
+	} & Lucia.DatabaseSessionAttributes
+>;

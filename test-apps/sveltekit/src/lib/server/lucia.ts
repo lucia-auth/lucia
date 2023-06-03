@@ -19,6 +19,8 @@ export const auth = lucia({
 	middleware: sveltekit()
 });
 
+export type Auth = typeof auth;
+
 export const githubAuth = github(auth, {
 	clientId: GITHUB_CLIENT_ID,
 	clientSecret: GITHUB_CLIENT_SECRET
