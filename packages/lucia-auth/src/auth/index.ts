@@ -189,6 +189,72 @@ export class Auth<_Configuration extends Configuration = any> {
 		return databaseUser;
 	};
 
+	private getDatabaseSession = async (
+		sessionId: string
+	): Promise<SessionSchema> => {
+		const databaseSession = await this.adapter.getSession(sessionId);
+		if (!databaseSession) {
+			debug.session.fail("Session not found", sessionId);
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		}
+		if (!isValidDatabaseSession(databaseSession)) {
+			debug.session.fail(
+				`Session expired at ${new Date(Number(databaseSession.idle_expires))}`,
+				sessionId
+			);
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		}
+		return databaseSession;
+	};
+
+	private getDatabaseSessionAndUser = async (
+		sessionId: string
+	): Promise<[SessionSchema, UserSchema]> => {
+		if (this.adapter.getSessionAndUser) {
+			const [databaseSession, databaseUser] =
+				await this.adapter.getSessionAndUser(sessionId);
+			if (!databaseSession) {
+				debug.session.fail("Session not found", sessionId);
+				throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			}
+			if (!isValidDatabaseSession(databaseSession)) {
+				debug.session.fail(
+					`Session expired at ${new Date(
+						Number(databaseSession.idle_expires)
+					)}`,
+					sessionId
+				);
+				throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			}
+			return [databaseSession, databaseUser];
+		}
+		const databaseSession = await this.getDatabaseSession(sessionId);
+		const databaseUser = await this.getDatabaseUser(databaseSession.user_id);
+		return [databaseSession, databaseUser];
+	};
+
+	private validateSessionIdArgument = (sessionId: string) => {
+		if (sessionId.length !== 40) {
+			debug.session.fail("Expected id length to be 40", sessionId);
+			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+		}
+	};
+
+	private generateSessionId = (): readonly [
+		sessionId: string,
+		activePeriodExpiresAt: Date,
+		idlePeriodExpiresAt: Date
+	] => {
+		const sessionId = generateRandomString(40);
+		const activePeriodExpiresAt = new Date(
+			new Date().getTime() + this.sessionExpiresIn.activePeriod
+		);
+		const idlePeriodExpiresAt = new Date(
+			activePeriodExpiresAt.getTime() + this.sessionExpiresIn.idlePeriod
+		);
+		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
+	};
+
 	public getUser = async (userId: string): Promise<User> => {
 		const databaseUser = await this.getDatabaseUser(userId);
 		const user = this.transformDatabaseUser(databaseUser);
@@ -275,59 +341,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			debug.key.info("No password included in key");
 		}
 		debug.key.success("Validated key", keyId);
-		const key = transformDatabaseKey(databaseKey);
-		return key;
-	};
-
-	private getDatabaseSession = async (
-		sessionId: string
-	): Promise<SessionSchema> => {
-		const databaseSession = await this.adapter.getSession(sessionId);
-		if (!databaseSession) {
-			debug.session.fail("Session not found", sessionId);
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		}
-		if (!isValidDatabaseSession(databaseSession)) {
-			debug.session.fail(
-				`Session expired at ${new Date(Number(databaseSession.idle_expires))}`,
-				sessionId
-			);
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		}
-		return databaseSession;
-	};
-
-	private getDatabaseSessionAndUser = async (
-		sessionId: string
-	): Promise<[SessionSchema, UserSchema]> => {
-		if (this.adapter.getSessionAndUser) {
-			const [databaseSession, databaseUser] =
-				await this.adapter.getSessionAndUser(sessionId);
-			if (!databaseSession) {
-				debug.session.fail("Session not found", sessionId);
-				throw new LuciaError("AUTH_INVALID_SESSION_ID");
-			}
-			if (!isValidDatabaseSession(databaseSession)) {
-				debug.session.fail(
-					`Session expired at ${new Date(
-						Number(databaseSession.idle_expires)
-					)}`,
-					sessionId
-				);
-				throw new LuciaError("AUTH_INVALID_SESSION_ID");
-			}
-			return [databaseSession, databaseUser];
-		}
-		const databaseSession = await this.getDatabaseSession(sessionId);
-		const databaseUser = await this.getDatabaseUser(databaseSession.user_id);
-		return [databaseSession, databaseUser];
-	};
-
-	private validateSessionIdArgument = (sessionId: string) => {
-		if (sessionId.length !== 40) {
-			debug.session.fail("Expected id length to be 40", sessionId);
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
-		}
+		return transformDatabaseKey(databaseKey);
 	};
 
 	public getSession = async (sessionId: string): Promise<Session> => {
@@ -378,21 +392,6 @@ export class Auth<_Configuration extends Configuration = any> {
 		return this.transformDatabaseSession(renewedDatabaseSession, user);
 	};
 
-	private generateSessionId = (): readonly [
-		sessionId: string,
-		activePeriodExpiresAt: Date,
-		idlePeriodExpiresAt: Date
-	] => {
-		const sessionId = generateRandomString(40);
-		const activePeriodExpiresAt = new Date(
-			new Date().getTime() + this.sessionExpiresIn.activePeriod
-		);
-		const idlePeriodExpiresAt = new Date(
-			activePeriodExpiresAt.getTime() + this.sessionExpiresIn.idlePeriod
-		);
-		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
-	};
-
 	public createSession = async (
 		userId: string,
 		config: {
@@ -422,6 +421,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	};
 
 	public renewSession = async (sessionId: string): Promise<Session> => {
+		this.validateSessionIdArgument(sessionId);
 		const [databaseSession, databaseUser] =
 			await this.getDatabaseSessionAndUser(sessionId);
 		const user = this.transformDatabaseUser(databaseUser);
@@ -444,6 +444,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		sessionId: string,
 		attributes: Partial<Lucia.DatabaseSessionAttributes>
 	): Promise<Session> => {
+		this.validateSessionIdArgument(sessionId);
 		const databaseSession = await this.adapter.updateSession(
 			sessionId,
 			attributes
@@ -456,6 +457,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	};
 
 	public invalidateSession = async (sessionId: string): Promise<void> => {
+		this.validateSessionIdArgument(sessionId);
 		await this.adapter.deleteSession(sessionId);
 		debug.session.notice("Invalidated session", sessionId);
 	};
