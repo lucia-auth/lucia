@@ -5,21 +5,19 @@ export { generateRandomString } from "./utils/nanoid.js";
 export { serializeCookie } from "./utils/cookie.js";
 
 export type GlobalAuth = Lucia.Auth;
-export type GlobalUserAttributes = Lucia.UserAttributes;
+export type GlobalDatabaseUserAttributes = Lucia.DatabaseUserAttributes;
 
 export type {
 	User,
 	Key,
 	Session,
-	SingleUseKey,
 	Configuration,
-	PersistentKey,
 	Env,
 	Auth
 } from "./auth/index.js";
 export type {
 	Adapter,
-	AdapterFunction,
+	InitializeAdapter,
 	UserAdapter,
 	SessionAdapter
 } from "./auth/adapter.js";

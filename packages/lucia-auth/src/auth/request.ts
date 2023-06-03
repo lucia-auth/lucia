@@ -33,19 +33,11 @@ export class AuthRequest<A extends Auth = any> {
 	}
 
 	private validatePromise: Promise<Session | null> | null = null;
-	private validateUserPromise: Promise<
-		| { user: User; session: Session }
-		| {
-				user: null;
-				session: null;
-		  }
-	> | null = null;
 	public storedSessionId: string | null;
 
 	public setSession = (session: Session | null) => {
 		const sessionId = session?.sessionId ?? null;
 		if (this.storedSessionId === sessionId) return;
-		this.validateUserPromise = null;
 		this.validatePromise = null;
 		this.setSessionCookie(session);
 	};
@@ -87,48 +79,6 @@ export class AuthRequest<A extends Auth = any> {
 			}
 		});
 
-		return this.validatePromise;
-	};
-
-	public validateUser = async (): Promise<
-		| { user: null; session: null }
-		| {
-				user: User;
-				session: Session;
-		  }
-	> => {
-		const resolveNullSession = (
-			resolve: (result: { user: null; session: null }) => void
-		) => {
-			this.setSessionCookie(null);
-			return resolve({
-				user: null,
-				session: null
-			});
-		};
-
-		if (this.validateUserPromise) {
-			debug.request.info("Using cached result for session validation");
-			return this.validateUserPromise;
-		}
-
-		this.validateUserPromise = new Promise(async (resolve) => {
-			if (!this.storedSessionId) {
-				return resolveNullSession(resolve);
-			}
-			try {
-				const { session, user } = await this.auth.validateSessionUser(
-					this.storedSessionId
-				);
-				if (session.fresh) {
-					this.setSessionCookie(session);
-				}
-				return resolve({ session, user });
-			} catch (e) {
-				return resolveNullSession(resolve);
-			}
-		});
-
-		return this.validateUserPromise;
+		return await this.validatePromise;
 	};
 }
