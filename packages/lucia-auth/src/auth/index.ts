@@ -40,7 +40,7 @@ export type Env = "DEV" | "PROD";
 
 export type User = {
 	userId: string;
-} & ReturnType<Lucia.Auth["_getUserAttributes"]>;
+} & ReturnType<Lucia.Auth["getUserAttributes"]>;
 
 export const lucia = <C extends Configuration>(config: C) => {
 	return new Auth(config);
@@ -112,7 +112,7 @@ export class Auth<C extends Configuration = any> {
 			idlePeriod:
 				config.sessionExpiresIn?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
-		this._getUserAttributes = (databaseUser) => {
+		this.getUserAttributes = (databaseUser) => {
 			const defaultTransform = () => {
 				return {} as any;
 			};
@@ -133,12 +133,12 @@ export class Auth<C extends Configuration = any> {
 		debug.init(this.experimental.debugMode);
 	}
 
-	protected _getUserAttributes: (
+	protected getUserAttributes: (
 		databaseUser: UserSchema
 	) => C extends Configuration<infer _UserAttributes> ? _UserAttributes : never;
 
 	public transformDatabaseUser = (databaseUser: UserSchema): User => {
-		const attributes = this._getUserAttributes(databaseUser);
+		const attributes = this.getUserAttributes(databaseUser);
 		return {
 			...attributes,
 			userId: databaseUser.id
