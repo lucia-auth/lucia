@@ -15,21 +15,6 @@ const Page = async () => {
 			<a href="/api/oauth?provider=apple" className="button">
 				Continue with Apple
 			</a>
-			<p className="center">or</p>
-			<Form action="/api/login">
-				<label htmlFor="username">username</label>
-				<br />
-				<input id="username" name="username" />
-				<br />
-				<label htmlFor="password">password</label>
-				<br />
-				<input type="password" id="password" name="password" />
-				<br />
-				<input type="submit" value="Continue" className="button" />
-			</Form>
-			<a href="/signup" className="link">
-				Create a new account
-			</a>
 		</>
 	);
 };
