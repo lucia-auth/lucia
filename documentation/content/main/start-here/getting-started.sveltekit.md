@@ -71,7 +71,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 You can now get the current session and user using the methods within `event.locals.auth`, which is available in every server context.
 
 ```ts
-const session = await event.locals.auth.validate();
 const { session, user } = await event.locals.auth.validateUser();
 ```
 
@@ -111,6 +110,6 @@ TypeError: Cannot read properties of undefined (reading 'validate')
 
 Make sure your `handle` hook is running. Common mistakes include:
 
-1. `hook.sever.ts` (singular) instead of `hooks.server.ts` (plural)
+1. `hook.server.ts` (singular) instead of `hooks.server.ts` (plural)
 2. `hooks.server.ts` inside `routes` directory instead of `src` directory
 3. `+hooks.server.ts` (`+`) instead of `hooks.server.ts`

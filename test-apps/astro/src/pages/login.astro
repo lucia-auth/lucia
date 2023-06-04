@@ -4,7 +4,7 @@ import { auth } from "../lib/lucia";
 import { LuciaError } from "lucia-auth";
 
 const authRequest = auth.handleRequest(Astro);
-const session = await authRequest.validate();
+const { session } = await authRequest.validateUser();
 if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
 
 let errorMessage = "";

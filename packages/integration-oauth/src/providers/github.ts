@@ -18,10 +18,11 @@ type Tokens =
 			refreshTokenExpiresIn: number;
 	  };
 
-export const github = <_Auth extends Auth>(
-	auth: _Auth,
-	config: OAuthConfig
-) => {
+type Config = OAuthConfig & {
+	redirectUri?: string;
+};
+
+export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getTokens = async (code: string): Promise<Tokens> => {
 		const requestUrl = createUrl(
 			"https://github.com/login/oauth/access_token",
@@ -71,13 +72,19 @@ export const github = <_Auth extends Auth>(
 	};
 
 	return {
-		getAuthorizationUrl: async () => {
+		getAuthorizationUrl: async (redirectUri?: string) => {
 			const state = generateState();
 			const url = createUrl("https://github.com/login/oauth/authorize", {
 				client_id: config.clientId,
 				scope: scope([], config.scope),
 				state
 			});
+			if (config.redirectUri != undefined || redirectUri != undefined) {
+				url.searchParams.set(
+					"redirect_uri",
+					redirectUri ?? (config.redirectUri as string)
+				);
+			}
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {

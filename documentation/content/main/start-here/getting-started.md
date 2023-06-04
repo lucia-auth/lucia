@@ -6,7 +6,7 @@ description: "Learn how to get started with Lucia"
 
 Install Lucia using your package manager of your choice.
 
-```bash
+```
 npm i lucia-auth
 pnpm add lucia-auth
 yarn add lucia-auth
@@ -75,16 +75,16 @@ export const auth = lucia({
 
 ### Express
 
-Use the [Express middleware](/reference/lucia-auth/middleware#edge):
+If you are using Express for handling requests, use the [Express middleware](/reference/lucia-auth/middleware#express):
 
 ```ts
 import lucia from "lucia-auth";
-import { node } from "lucia-auth/middleware";
+import { express } from "lucia-auth/middleware";
 // ...
 
 export const auth = lucia({
 	//...
-	middleware: node()
+	middleware: express()
 });
 ```
 
@@ -131,7 +131,7 @@ import "lucia-auth/polyfill/node";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: node()
 });
 

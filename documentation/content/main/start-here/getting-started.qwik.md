@@ -41,7 +41,7 @@ import { PrismaClient } from "@prisma/client";
 
 export const auth = lucia({
 	adapter: prismaAdapter(new PrismaClient()),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: qwik()
 });
 

@@ -55,7 +55,7 @@ import { otpToken } from "./token.js";
 const validateOtp = async () => {
 	// ...
 	const authRequest = auth.handleRequest();
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	try {
 		const token = await otpToken.validate(password, session.userId);
 
@@ -68,7 +68,7 @@ const validateOtp = async () => {
 			// generate new password and send new email
 		}
 		if (e instanceof LuciaTokenError && e.message === "INVALID_TOKEN") {
-			// invalid password
+			// invalid username/password
 		}
 	}
 };

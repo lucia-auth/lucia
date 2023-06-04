@@ -78,7 +78,7 @@ const connectionPool = mysql.createPool({
 	// ...
 });
 
-const db = drizzle(poolConnection);
+const db = drizzle(connectionPool);
 
 const auth = lucia({
 	adapter: mysql2(connectionPool)
@@ -149,6 +149,9 @@ const key = pgTable("auth_key", {
 	primaryKey: boolean("primary_key").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
+	}),
+	expires: bigint("expires", {
+		mode: "number"
 	})
 });
 ```
@@ -164,10 +167,11 @@ import lucia from "lucia-auth";
 import { pg } from "@lucia-auth/adapter-postgresql";
 
 const connectionPool = new postgres.Pool({
+	connectionString: CONNECTION_URL
 	// ...
 });
 
-const db = drizzle(poolConnection);
+const db = drizzle(connectionPool);
 
 const auth = lucia({
 	adapter: pg(connectionPool)
@@ -178,41 +182,30 @@ const auth = lucia({
 ## SQLite
 
 ```ts
-import { sqliteTable, varchar, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-const user = mysqlTable("auth_user", {
-	id: varchar("id", {
-		length: 15 // change this when using custom user ids
-	}).primaryKey()
+const user = sqliteTable("auth_user", {
+	id: text("id").primaryKey()
 	// other user attributes
 });
 
-const session = mysqlTable("auth_session", {
-	id: varchar("id", {
-		length: 128
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
+const session = sqliteTable("auth_session", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
 	activeExpires: integer("active_expires").notNull(),
 	idleExpires: integer("idle_expires").notNull()
 });
 
-const key = mysqlTable("auth_key", {
-	id: varchar("id", {
-		length: 255
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
+const key = sqliteTable("auth_key", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
-	primaryKey: integer().notNull(),
-	hashedPassword: varchar("hashed_password", {
-		length: 255
-	})
+	primaryKey: integer("primary_key").notNull(),
+	hashedPassword: text("hashed_password"),
+	expires: integer("expires")
 });
 ```
 

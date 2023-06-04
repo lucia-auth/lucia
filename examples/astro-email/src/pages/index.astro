@@ -8,7 +8,7 @@ const authRequest = auth.handleRequest(Astro);
 const handleFormSubmission = async () => {
 	const validSubmission = isValidFormSubmission(Astro.request);
 	if (!validSubmission) return null;
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session) return null;
 	await auth.invalidateSession(session.sessionId);
 	authRequest.setSession(null);

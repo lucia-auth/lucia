@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		});
 	}
 	try {
-		const authRequest = auth.handleRequest(req, res);
+		const authRequest = auth.handleRequest({ req, res });
 		const key = await auth.useKey("username", username, password);
 		const session = await auth.createSession(key.userId);
 		authRequest.setSession(session);
@@ -34,7 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			});
 		}
 		// database connection error
-		console.error(error);
+		console.log(error);
 		return res.status(200).json({
 			error: "Unknown error occurred"
 		});

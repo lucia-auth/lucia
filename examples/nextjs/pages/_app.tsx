@@ -5,11 +5,13 @@ import Link from "next/link";
 
 export default function App({ Component, pageProps }: AppProps) {
 	return (
-		<>
-			<h1>
-				<Link href="/">Lucia + Next.js demo</Link>
-			</h1>
-			<Component {...pageProps} />
-		</>
+		<html lang="en">
+			<body>
+				<h1>
+					<Link href="/">Lucia + Next.js demo</Link>
+				</h1>
+				<Component {...pageProps} />
+			</body>
+		</html>
 	);
 }

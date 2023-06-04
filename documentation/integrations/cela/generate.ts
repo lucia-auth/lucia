@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { CELA_GENERATED_DIR } from "./constant";
+import { removeMarkdownFormatting } from "./../markdown";
 
 import type {
 	Collection,
@@ -11,8 +12,7 @@ import type {
 	SectionDocument,
 	ContentLinkHeading
 } from "./types";
-
-import { removeMarkdownFormatting } from "./../markdown";
+import type { FrameworkId } from "@utils/framework";
 
 const getCollectionPath = (...pathSegments: string[]) => {
 	return path.join(process.cwd(), "content", ...pathSegments);
@@ -177,7 +177,7 @@ export const generateCollection = (collectionId: string) => {
 				redirect: frontmatterData._redirect ?? null,
 				collectionId,
 				rawSubCollectionTitle: subCollectionTitle,
-				frameworkId,
+				frameworkId: frameworkId as FrameworkId | null,
 				id: documentId,
 				pathname: documentHref,
 				description: frontmatterData.description ?? null

@@ -64,7 +64,7 @@ The length of the `VARCHAR` type of `id` should be of appropriate length if you 
 | id   | `VARCHAR(15)` |          |   ✓    |    ✓    |
 
 ```sql
-CREATE TABLE user (
+CREATE TABLE auth_user (
     id VARCHAR(15) NOT NULL,
     PRIMARY KEY (id)
 );
@@ -80,7 +80,7 @@ CREATE TABLE user (
 | idle_expires   | `BIGINT` (UNSIGNED) |          |        |          |
 
 ```sql
-CREATE TABLE session (
+CREATE TABLE auth_session (
     id VARCHAR(127) NOT NULL,
     user_id VARCHAR(15) NOT NULL,
     active_expires BIGINT UNSIGNED NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE session (
 | expires         | `BIGINT` (UNSIGNED)  |    ✓     |        |          |
 
 ```sql
-CREATE TABLE `auth_key` (
+CREATE TABLE auth_key (
     id VARCHAR(255) NOT NULL,
     user_id VARCHAR(15) NOT NULL,
     primary_key TINYINT UNSIGNED NOT NULL,

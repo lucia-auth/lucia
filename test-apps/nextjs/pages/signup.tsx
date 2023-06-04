@@ -8,8 +8,8 @@ import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context.req, context.res);
-	const session = await authRequest.validate();
+	const authRequest = auth.handleRequest(context);
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		return {
 			redirect: {
@@ -52,7 +52,7 @@ const Index = () => {
 				Github
 			</Link>
 			<p className="center">or</p>
-			<form method="post" onSubmit={handleSubmit} action="/api/signup">
+			<form onSubmit={handleSubmit}>
 				<label htmlFor="username">username</label>
 				<br />
 				<input id="username" name="username" />

@@ -41,7 +41,7 @@ export const auth = lucia({
 
 ```ts
 const authRequest = auth.handleRequest(request, response);
-const session = await authRequest.validate();
+const { user, session } = await authRequest.validateUser();
 ```
 
 We hope this makes it much more easier to support other frameworks.
@@ -169,7 +169,7 @@ import "lucia-auth/polyfill/node";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: node()
 });
 

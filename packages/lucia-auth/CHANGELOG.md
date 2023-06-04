@@ -1,5 +1,29 @@
 # lucia-auth
 
+## 1.7.1
+
+### Patch changes
+
+- [#663](https://github.com/pilcrowOnPaper/lucia/pull/663) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add debug mode (experimental)
+
+## 1.7.0
+
+### Minor changes
+
+- [#638](https://github.com/pilcrowOnPaper/lucia/pull/638) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `h3()` middleware
+
+## 1.6.0
+
+### Minor changes
+
+- [#626](https://github.com/pilcrowOnPaper/lucia/pull/626) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : `web()` middleware can take `Headers` or `Response`
+
+- [#626](https://github.com/pilcrowOnPaper/lucia/pull/626) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `nextjs()` middleware
+
+### Patch changes
+
+- [#626](https://github.com/pilcrowOnPaper/lucia/pull/626) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix Express middleware returning broken url
+
 ## 1.5.0
 
 ### Minor changes

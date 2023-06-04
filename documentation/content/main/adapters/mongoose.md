@@ -28,7 +28,7 @@ The adapter and Lucia will not not handle [unknown errors](/basics/error-handlin
 
 ## Installation
 
-```bash
+```
 npm i @lucia-auth/adapter-mongoose
 pnpm add @lucia-auth/adapter-mongoose
 yarn add @lucia-auth/adapter-mongoose
