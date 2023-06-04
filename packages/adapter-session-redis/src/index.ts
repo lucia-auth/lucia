@@ -1,8 +1,4 @@
-import type {
-	SessionSchema,
-	SessionAdapter,
-	AdapterFunction
-} from "lucia";
+import type { SessionSchema, SessionAdapter, AdapterFunction } from "lucia";
 import type { RedisClientType } from "redis";
 
 const adapter =

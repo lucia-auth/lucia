@@ -1,7 +1,7 @@
 {
 	"name": "lucia",
 	"version": "0.0.1",
-	"description": "monorepo for lucia-auth",
+	"description": "Authentication, simple and clean",
 	"scripts": {
 		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../integration-oauth && pnpm build && cd ../adapter-prisma && pnpm build && cd ../integration-tokens && pnpm build && cd .. && pnpm install --no-frozen-lockfile",
 		"publish-setup": "cd packages/lucia-auth && pnpm i --no-frozen-lockfile && pnpm build && cd ../../ && cd packages/adapter-test && pnpm i --no-frozen-lockfile && pnpm build && cd ../../ && pnpm i --no-frozen-lockfile",
@@ -31,13 +31,8 @@
 		"shx": "^0.3.4",
 		"typescript": "~5.0.4"
 	},
-	"resolutions": {
-		"lucia": "latest",
-		"@lucia-auth/adapter-prisma": "latest",
-		"@lucia-auth/oauth": "latest"
-	},
 	"engines": {
-		"node": "16.x - 20.x",
+		"node": "20.x",
 		"pnpm": "*"
 	}
 }

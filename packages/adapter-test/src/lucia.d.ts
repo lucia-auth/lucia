@@ -5,6 +5,6 @@ declare namespace Lucia {
 		username: string;
 	};
 	type DatabaseSessionAttributes = {
-		country: string
-	}
+		country: string;
+	};
 }
