@@ -8,7 +8,7 @@ import mongodb from "../src/index.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import { transformKeyDoc, transformSessionDoc } from "../src/utils.js";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 dotenv.config({
 	path: `${resolve()}/.env`

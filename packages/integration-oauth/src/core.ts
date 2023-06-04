@@ -1,6 +1,6 @@
-import { generateRandomString } from "lucia-auth";
+import { generateRandomString } from "lucia";
 
-import type { Auth, Key, LuciaError } from "lucia-auth";
+import type { Auth, Key, LuciaError } from "lucia";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
 
 // deprecate in v2 for better api

@@ -32,7 +32,7 @@ In `lucia.d.ts`, add `username` in `UserAttributes` since we added `username` co
 
 ```ts
 // lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {
@@ -101,7 +101,7 @@ Users can be created with `createUser()`. This will create a new primary key tha
 // app/routes/signup.tsx
 import { Form } from "@remix-run/react";
 import { auth } from "@auth/lucia.server";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { redirect, json } from "@remix-run/node";
 import { Prisma } from "@prisma/client";
 
@@ -193,7 +193,7 @@ Define a `loader()`.
 // app/routes/signup.tsx
 import { Form } from "@remix-run/react";
 import { auth } from "@auth/lucia.server";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { redirect, json } from "@remix-run/node";
 
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
@@ -259,7 +259,7 @@ We’ll use the key created in the previous section to reference the user and au
 // pages/api/login.ts
 import { Form } from "@remix-run/react";
 import { auth } from "@auth/lucia.server";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { redirect, json } from "@remix-run/node";
 import { Prisma } from "@prisma/client";
 
@@ -319,7 +319,7 @@ If the session exists, redirect authenticated users to the profile page.
 // app/routes/login.tsx
 import { Form } from "@remix-run/react";
 import { auth } from "@auth/lucia.server";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { redirect, json } from "@remix-run/node";
 
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";

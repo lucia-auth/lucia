@@ -15,7 +15,7 @@
 	},
 	"keywords": [
 		"lucia",
-		"lucia-auth",
+		"lucia",
 		"authentication",
 		"auth",
 		"oauth"
@@ -40,9 +40,9 @@
 		}
 	},
 	"devDependencies": {
-		"lucia-auth": "workspace:*"
+		"lucia": "latest"
 	},
 	"peerDependencies": {
-		"lucia-auth": "1.x"
+		"lucia": "1.x"
 	}
 }

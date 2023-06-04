@@ -1,4 +1,4 @@
-import { LuciaError, SessionSchema, type SessionAdapter } from "lucia-auth";
+import { LuciaError, SessionSchema, type SessionAdapter } from "lucia";
 import { Database } from "../database.js";
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";

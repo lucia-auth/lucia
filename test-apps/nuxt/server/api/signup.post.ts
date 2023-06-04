@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 export default defineEventHandler(async (event) => {
 	const { username, password } = (await readBody(event)) ?? {};

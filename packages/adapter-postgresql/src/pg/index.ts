@@ -2,7 +2,7 @@ import { createOperator } from "../query.js";
 import { pgRunner } from "./runner.js";
 import { createCoreAdapter, createQueryHelper } from "../core.js";
 
-import type { Adapter, AdapterFunction } from "lucia-auth";
+import type { Adapter, AdapterFunction } from "lucia";
 import type { Pool, DatabaseError } from "./types.js";
 
 export const pgAdapter = (pool: Pool): AdapterFunction<Adapter> => {

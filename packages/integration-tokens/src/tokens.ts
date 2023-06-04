@@ -1,7 +1,7 @@
 import { LuciaTokenError } from "./error.js";
 import { generateRandomString } from "./utils/nanoid.js";
 
-import type { Auth, SingleUseKey, LuciaError } from "lucia-auth";
+import type { Auth, SingleUseKey, LuciaError } from "lucia";
 
 export class Token {
 	private readonly value: string;

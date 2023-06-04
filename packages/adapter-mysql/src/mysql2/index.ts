@@ -2,7 +2,7 @@ import { mysql2Runner } from "./runner.js";
 import { createCoreAdapter, createQueryHelper } from "../core.js";
 import { createOperator } from "../query.js";
 
-import type { Adapter, AdapterFunction } from "lucia-auth";
+import type { Adapter, AdapterFunction } from "lucia";
 import type { Pool, QueryError } from "mysql2/promise";
 
 export const mysql2Adapter = (db: Pool): AdapterFunction<Adapter> => {

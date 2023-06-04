@@ -1,7 +1,7 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
 import { scope, generateState, connectAuth } from "../core.js";
 
-import type { Auth } from "lucia-auth";
+import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 const PROVIDER_ID = "auth0";

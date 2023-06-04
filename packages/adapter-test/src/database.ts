@@ -1,5 +1,5 @@
-import { generateRandomString } from "lucia-auth";
-import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
+import { generateRandomString } from "lucia";
+import type { KeySchema, SessionSchema, UserSchema } from "lucia";
 
 export type TestUserSchema = UserSchema & {
 	username: string;

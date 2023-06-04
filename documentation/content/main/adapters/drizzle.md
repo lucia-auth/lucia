@@ -71,7 +71,7 @@ Refer to the [`mysql2`](/adapters/mysql#mysql2) section.
 ```ts
 import mysql from "mysql2/promise";
 import { drizzle } from "drizzle-orm/mysql2";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { mysql2 } from "@lucia-auth/adapter-mysql";
 
 const connectionPool = mysql.createPool({
@@ -93,7 +93,7 @@ Refer to the [`planetscale`](/adapters/mysql#planetscale) section.
 ```ts
 import { connect } from "@planetscale/database";
 import { drizzle } from "drizzle-orm/planetscale";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { planetscale } from "@lucia-auth/adapter-mysql";
 
 const connection = connect({
@@ -163,7 +163,7 @@ Refer to the [`pg`](/adapters/postgresql#pg) section.
 ```ts
 import postgres from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { pg } from "@lucia-auth/adapter-postgresql";
 
 const connectionPool = new postgres.Pool({
@@ -215,7 +215,7 @@ Refer to the [`better-sqlite3`](/adapters/sqlite#better-sqlite3) section.
 ```ts
 import sqlite from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 
 const database = sqlite(pathToDbFile);

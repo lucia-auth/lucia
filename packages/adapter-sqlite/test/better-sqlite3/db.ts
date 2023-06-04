@@ -1,7 +1,7 @@
 import sqlite from "better-sqlite3";
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 import { betterSqlite3 as betterSqlite3Adapter } from "../../src/index.js";
 import { betterSqliteRunner } from "../../src/better-sqlite3/runner.js";

@@ -17,7 +17,7 @@
 	},
 	"keywords": [
 		"lucia",
-		"lucia-auth",
+		"lucia",
 		"auth",
 		"better-sqlite3",
 		"sqlite",
@@ -39,7 +39,7 @@
 	},
 	"peerDependencies": {
 		"better-sqlite3": "^8.0.0",
-		"lucia-auth": "^1.4.0"
+		"lucia": "^1.4.0"
 	},
 	"peerDependenciesMeta": {
 		"better-sqlite3": {
@@ -48,11 +48,11 @@
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230404.0",
-		"@lucia-auth/adapter-test": "workspace:*",
+		"@lucia-auth/adapter-test": "latest",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.0.1",
 		"dotenv": "^16.0.3",
-		"lucia-auth": "workspace:*",
+		"lucia": "latest",
 		"tsx": "^3.12.6"
 	}
 }

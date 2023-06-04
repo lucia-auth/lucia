@@ -1,5 +1,5 @@
 import { testAdapter } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { d1 as d1Adapter } from "../../src/index.js";
 import { d1Runner } from "../../src/d1/runner.js";
 import { createQueryHandler } from "../index.js";

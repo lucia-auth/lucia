@@ -3,7 +3,7 @@ import { planetscaleRunner } from "./runner.js";
 import { createOperator } from "../query.js";
 
 import type { Connection, DatabaseError } from "@planetscale/database";
-import type { Adapter, AdapterFunction } from "lucia-auth";
+import type { Adapter, AdapterFunction } from "lucia";
 
 export const planetscaleAdapter = (
 	connection: Connection

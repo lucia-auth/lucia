@@ -3,7 +3,7 @@ import { betterSqliteRunner } from "./runner.js";
 import { transformToSqliteValue } from "../utils.js";
 import { createCoreAdapter } from "../core.js";
 
-import type { Adapter, AdapterFunction } from "lucia-auth";
+import type { Adapter, AdapterFunction } from "lucia";
 import type { Database, SqliteError } from "better-sqlite3";
 import type { SQLiteUserSchema } from "../utils.js";
 

@@ -6,7 +6,7 @@ import type {
 	GetServerSidePropsResult,
 	InferGetServerSidePropsType
 } from "next";
-import type { User } from "lucia-auth";
+import type { User } from "lucia";
 
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext

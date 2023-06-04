@@ -3,7 +3,7 @@ import { d1Runner } from "./runner.js";
 import { transformToSqliteValue } from "../utils.js";
 import { createCoreAdapter } from "../core.js";
 
-import type { Adapter, AdapterFunction, UserSchema } from "lucia-auth";
+import type { Adapter, AdapterFunction, UserSchema } from "lucia";
 import type { SQLiteUserSchema } from "../utils.js";
 import type { D1Database } from "@cloudflare/workers-types";
 

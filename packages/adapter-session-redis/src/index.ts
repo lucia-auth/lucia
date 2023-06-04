@@ -2,7 +2,7 @@ import type {
 	SessionSchema,
 	SessionAdapter,
 	AdapterFunction
-} from "lucia-auth";
+} from "lucia";
 import type { RedisClientType } from "redis";
 
 const adapter =

@@ -35,10 +35,10 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/oauth": "workspace:*",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/oauth": "latest",
 		"@prisma/client": "^4.7.0",
 		"devalue": "^4.0.1",
-		"lucia-auth": "workspace:*"
+		"lucia": "latest"
 	}
 }

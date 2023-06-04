@@ -8,15 +8,15 @@
 		"typecheck": "tsc"
 	},
 	"dependencies": {
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/oauth": "workspace:*",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/oauth": "latest",
 		"@prisma/client": "^4.7.0",
 		"@remix-run/css-bundle": "^1.16.1",
 		"@remix-run/node": "^1.16.1",
 		"@remix-run/react": "^1.16.1",
 		"@remix-run/serve": "^1.16.1",
 		"isbot": "^3.6.8",
-		"lucia-auth": "workspace:*",
+		"lucia": "latest",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

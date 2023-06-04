@@ -1,4 +1,4 @@
-import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
+import type { KeySchema, SessionSchema, UserSchema } from "lucia";
 
 export const transformDatabaseSession = (
 	session: MySQLSessionSchema

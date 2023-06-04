@@ -1,4 +1,4 @@
-import type { SessionSchema, UserSchema, KeySchema } from "lucia-auth";
+import type { SessionSchema, UserSchema, KeySchema } from "lucia";
 import { ColumnValue } from "./query.js";
 
 export const transformDatabaseSession = (

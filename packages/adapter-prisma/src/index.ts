@@ -4,7 +4,7 @@ import type {
 	KeySchema,
 	SessionSchema,
 	UserSchema
-} from "lucia-auth";
+} from "lucia";
 import { transformDatabaseKey, transformDatabaseSession } from "./utils.js";
 import { PrismaClient, SmartPrismaClient } from "./prisma.js";
 

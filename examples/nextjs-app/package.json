@@ -9,7 +9,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"lucia-auth": "latest",
+		"lucia": "latest",
 		"@lucia-auth/adapter-prisma": "latest",
 		"@lucia-auth/oauth": "latest",
 		"@prisma/client": "^4.7.0",

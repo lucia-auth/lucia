@@ -1,9 +1,9 @@
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { test, describe, afterEach } from "node:test";
 import assert from "node:assert/strict";
 
 import type { Database } from "../database.js";
-import type { Adapter, SessionSchema, KeySchema, UserSchema } from "lucia-auth";
+import type { Adapter, SessionSchema, KeySchema, UserSchema } from "lucia";
 
 export const testAdapter = async (adapter: Adapter, database: Database) => {
 	afterEach(database.clear);

@@ -9,7 +9,7 @@ import type {
 	SQLiteSessionSchema,
 	SQLiteUserSchema
 } from "./utils.js";
-import type { Adapter } from "lucia-auth";
+import type { Adapter } from "lucia";
 import type { Operator } from "./query.js";
 
 export const createCoreAdapter = (operator: Operator) => {

@@ -4,7 +4,7 @@ import {
 	transformDatabaseKey,
 	transformDatabaseSession
 } from "../src/utils.js";
-import { KeySchema, LuciaError } from "lucia-auth";
+import { KeySchema, LuciaError } from "lucia";
 import type { LuciaQueryHandler } from "@lucia-auth/adapter-test";
 
 const client = new PrismaClient();

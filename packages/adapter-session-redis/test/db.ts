@@ -3,7 +3,7 @@ import type { SessionSchema } from "lucia-auth/types.js";
 
 import { createClient } from "redis";
 import redis from "../src/index.js";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 const sessionInstance = createClient({
 	socket: {

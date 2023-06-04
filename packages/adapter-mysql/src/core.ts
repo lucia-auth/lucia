@@ -5,7 +5,7 @@ import type {
 	MySQLSessionSchema,
 	MySQLKeySchema
 } from "./utils.js";
-import type { Adapter, KeySchema, SessionSchema } from "lucia-auth";
+import type { Adapter, KeySchema, SessionSchema } from "lucia";
 import type { Operator } from "./query.js";
 
 export const createCoreAdapter = (operator: Operator) => {

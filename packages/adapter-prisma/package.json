@@ -17,7 +17,7 @@
 	"keywords": [
 		"lucia",
 		"prisma",
-		"lucia-auth",
+		"lucia",
 		"auth",
 		"postgres",
 		"mysql",
@@ -39,11 +39,11 @@
 	},
 	"peerDependencies": {
 		"@prisma/client": "^4.2.0",
-		"lucia-auth": "^1.3.0"
+		"lucia": "^1.3.0"
 	},
 	"devDependencies": {
-		"lucia-auth": "workspace:*",
-		"@lucia-auth/adapter-test": "workspace:*",
+		"lucia": "latest",
+		"@lucia-auth/adapter-test": "latest",
 		"@prisma/client": "^4.9.0",
 		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"

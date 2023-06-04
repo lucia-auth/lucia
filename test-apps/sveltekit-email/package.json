@@ -33,9 +33,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/tokens": "workspace:*",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/tokens": "latest",
 		"@prisma/client": "^4.12.0",
-		"lucia-auth": "workspace:*"
+		"lucia": "latest"
 	}
 }

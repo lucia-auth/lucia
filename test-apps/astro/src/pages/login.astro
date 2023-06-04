@@ -1,7 +1,7 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import { auth } from "../lib/lucia";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 const authRequest = auth.handleRequest(Astro);
 const { session } = await authRequest.validateUser();

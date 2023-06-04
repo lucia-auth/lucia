@@ -9,9 +9,9 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"lucia-auth": "workspace:*",
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/oauth": "workspace:*",
+		"lucia": "latest",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/oauth": "latest",
 		"@prisma/client": "^4.7.0",
 		"@types/node": "20.2.1",
 		"@types/react": "18.0.24",

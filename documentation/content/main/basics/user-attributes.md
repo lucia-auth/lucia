@@ -40,7 +40,7 @@ Add the column names and the value type inside `Lucia.UserAttributes`:
 
 ```ts
 // app.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	// ...
 	type UserAttributes = {
@@ -89,7 +89,7 @@ This should be typed in `Lucia.UserAttributes`:
 
 ```ts
 // app.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	// ...
 	interface UserAttributes {

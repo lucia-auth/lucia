@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 import { pgAdapter } from "../../src/pg/index.js";
 import { pgRunner } from "../../src/pg/runner.js";

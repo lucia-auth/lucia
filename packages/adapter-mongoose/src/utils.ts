@@ -1,4 +1,4 @@
-import type { KeySchema, SessionSchema, UserSchema } from "lucia-auth";
+import type { KeySchema, SessionSchema, UserSchema } from "lucia";
 import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
 
 export const transformUserDoc = (row: UserDoc): UserSchema => {

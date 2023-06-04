@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { planetscale as planetscaleAdapter } from "../../src/index.js";
 import { planetscaleRunner } from "../../src/planetscale/runner.js";
 import { createQueryHandler } from "../index.js";

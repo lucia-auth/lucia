@@ -9,9 +9,9 @@
 		"postinstall": "nuxt prepare"
 	},
 	"devDependencies": {
-		"lucia-auth": "workspace:*",
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/oauth": "workspace:*",
+		"lucia": "latest",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/oauth": "latest",
 		"@nuxtjs/tailwindcss": "^6.7.0",
 		"@types/node": "^18",
 		"nuxt": "^3.5.0",

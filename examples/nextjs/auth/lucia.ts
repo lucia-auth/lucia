@@ -1,4 +1,4 @@
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { nextjs } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";

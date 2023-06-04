@@ -4,7 +4,7 @@ import {
 	transformSessionDoc,
 	transformUserDoc
 } from "./utils.js";
-import type { Adapter, AdapterFunction } from "lucia-auth";
+import type { Adapter, AdapterFunction } from "lucia";
 import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
 
 const createMongoValues = (object: Record<any, any>) => {

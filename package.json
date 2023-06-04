@@ -32,9 +32,9 @@
 		"typescript": "~5.0.4"
 	},
 	"resolutions": {
-		"lucia-auth": "workspace:*",
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/oauth": "workspace:*"
+		"lucia": "latest",
+		"@lucia-auth/adapter-prisma": "latest",
+		"@lucia-auth/oauth": "latest"
 	},
 	"engines": {
 		"node": "16.x - 20.x",

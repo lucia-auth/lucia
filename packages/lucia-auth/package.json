@@ -1,6 +1,6 @@
 {
-	"name": "lucia-auth",
-	"version": "2.0.0",
+	"name": "lucia",
+	"version": "1.7.1",
 	"description": "A simple and flexible authentication library",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
 	},
 	"keywords": [
 		"lucia",
-		"lucia-auth",
+		"lucia",
 		"authentication",
 		"auth"
 	],

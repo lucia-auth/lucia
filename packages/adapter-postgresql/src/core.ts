@@ -5,7 +5,7 @@ import type {
 	PostgresUserSchema,
 	PostgresSessionSchema
 } from "./utils.js";
-import { Adapter, KeySchema, SessionSchema } from "lucia-auth";
+import { Adapter, KeySchema, SessionSchema } from "lucia";
 import type { ColumnValue, Operator } from "./query.js";
 
 export const createCoreAdapter = (operator: Operator) => {

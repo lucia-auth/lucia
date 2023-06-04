@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { mysql2 as mysql2Adapter } from "../../src/index.js";
 import { mysql2Runner } from "../../src/mysql2/runner.js";
 import { createQueryHandler } from "../index.js";
