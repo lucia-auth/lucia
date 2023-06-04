@@ -1,8 +1,8 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider } from "../core.js";
+import { scope, provider, generateState, connectAuth } from "../core.js";
 
 import type { Auth } from "lucia-auth";
-import type { OAuthConfig } from "../core.js";
+import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -14,8 +14,9 @@ const PROVIDER_ID = "lichess";
 const PKCE_CODE_VERIFIER =
 	"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
-export const lichess = (auth: Auth, config: Config) => {
-	const getAuthorizationUrl = async (state: string) => {
+export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
+	const getAuthorizationUrl = async () => {
+		const state = generateState();
 		const url = createUrl("https://lichess.org/oauth", {
 			response_type: "code",
 			client_id: config.clientId,
@@ -27,7 +28,7 @@ export const lichess = (auth: Auth, config: Config) => {
 			redirect_uri: config.redirectUri,
 			state
 		});
-		return url;
+		return [url, state] as const;
 	};
 
 	const getTokens = async (code: string) => {
@@ -61,9 +62,20 @@ export const lichess = (auth: Auth, config: Config) => {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
 		const lichessUser = await handleRequest<LichessUser>(request);
-		const providerUserId = lichessUser.id;
-		return [providerUserId, lichessUser] as const;
+		return lichessUser;
 	};
+
+	const validateCallback = async (code: string) => {
+		const tokens = await getTokens(code);
+		const providerUser = await getProviderUser(tokens.accessToken);
+		const providerUserId = providerUser.id;
+		const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+		return {
+			...providerAuth,
+			providerUser,
+			tokens
+		};
+	}
 
 	// Base64url-encode as specified in RFC 7636 (OAuth PKCE).
 	const pkceBase64urlEncode = (arg: string) => {
@@ -81,12 +93,10 @@ export const lichess = (auth: Auth, config: Config) => {
 		return String.fromCharCode(...challengeArray);
 	};
 
-	return provider(auth, {
-		providerId: PROVIDER_ID,
+	return {
 		getAuthorizationUrl,
-		getTokens,
-		getProviderUser
-	});
+		validateCallback
+	} as const satisfies OAuthProvider<_Auth>;
 };
 
 export type LichessUser = {
