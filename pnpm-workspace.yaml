@@ -1,5 +1,4 @@
 packages:
-  - "packages/*/dist"
   - "packages/*"
   - "apps/**"
   - "documentation/**"

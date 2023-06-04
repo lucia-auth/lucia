@@ -10,7 +10,7 @@
 		"**/*"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"build": "tsc",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
@@ -32,13 +32,9 @@
 		".": "./index.js"
 	},
 	"devDependencies": {
-		"@types/cli-color": "^2.0.2",
-		"lucia-auth": "workspace:*"
-	},
-	"dependencies": {
-		"cli-color": "^2.0.3"
+		"lucia-auth": "latest"
 	},
 	"peerDependencies": {
-		"lucia-auth": "^1.3.0"
+		"lucia-auth": "^1.0.0"
 	}
 }

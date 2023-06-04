@@ -294,13 +294,10 @@ export class Auth<_Configuration extends Configuration = any> {
 		userId: string,
 		attributes: Partial<Lucia.DatabaseUserAttributes>
 	): Promise<User> => {
-		const updatedDatabaseUser = await this.adapter.updateUser(
+		await this.adapter.updateUser(
 			userId,
 			attributes
 		);
-		if (updatedDatabaseUser) {
-			return this.transformDatabaseUser(updatedDatabaseUser);
-		}
 		return await this.getUser(userId);
 	};
 
@@ -445,14 +442,10 @@ export class Auth<_Configuration extends Configuration = any> {
 		attributes: Partial<Lucia.DatabaseSessionAttributes>
 	): Promise<Session> => {
 		this.validateSessionIdArgument(sessionId);
-		const databaseSession = await this.adapter.updateSession(
+		await this.adapter.updateSession(
 			sessionId,
 			attributes
 		);
-		if (databaseSession) {
-			const user = await this.getUser(databaseSession.user_id);
-			return this.transformDatabaseSession(databaseSession, user);
-		}
 		return this.getSession(sessionId);
 	};
 
@@ -623,11 +616,9 @@ export class Auth<_Configuration extends Configuration = any> {
 		const keyId = `${providerId}:${providerUserId}`;
 		const hashedPassword =
 			password === null ? null : await this.hash.generate(password);
-		const databaseKey = await this.adapter.updateKey(keyId, {
+		await this.adapter.updateKey(keyId, {
 			hashed_password: hashedPassword
 		});
-		if (databaseKey) return;
-		// validate key
 		await this.getKey(providerId, providerUserId);
 	};
 }

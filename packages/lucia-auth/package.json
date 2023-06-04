@@ -1,17 +1,17 @@
 {
 	"name": "lucia-auth",
-	"version": "1.7.1",
+	"version": "2.0.0",
 	"description": "A simple and flexible authentication library",
-	"main": "index.js",
-	"types": "index.d.ts",
-	"module": "index.js",
-	"svelte": "index.js",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
+	"svelte": "dist/index.js",
 	"type": "module",
 	"files": [
 		"**/*"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"build": "shx rm -rf ./dist/* && tsc",
 		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../",
 		"test": "NODE_OPTIONS=--experimental-global-webcrypto vitest run",
 		"test.debug": "vitest run src/utils/debug.test.ts"
@@ -24,17 +24,17 @@
 	],
 	"exports": {
 		"./package.json": "./package.json",
-		".": "./index.js",
-		"./middleware": "./middleware/index.js",
-		"./polyfill/node": "./polyfill/node.js"
+		".": "./dist/index.js",
+		"./middleware": "./dist/middleware/index.js",
+		"./polyfill/node": "./dist/polyfill/node.js"
 	},
 	"typesVersions": {
 		"*": {
 			"middleware": [
-				"middleware/index.d.ts"
+				"dist/middleware/index.d.ts"
 			],
 			"polyfill/node": [
-				"polyfill/node.d.ts"
+				"dist/polyfill/node.d.ts"
 			]
 		}
 	},

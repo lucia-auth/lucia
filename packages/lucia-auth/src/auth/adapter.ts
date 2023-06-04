@@ -20,7 +20,7 @@ export type UserAdapter = Readonly<{
 	updateUser: (
 		userId: string,
 		partialUser: Partial<UserSchema>
-	) => Promise<UserSchema | null>;
+	) => Promise<void>;
 	deleteUser: (userId: string) => Promise<void>;
 
 	getKey: (keyId: string) => Promise<KeySchema | null>;
@@ -29,7 +29,7 @@ export type UserAdapter = Readonly<{
 	updateKey: (
 		keyId: string,
 		partialKey: Partial<KeySchema>
-	) => Promise<KeySchema | null>;
+	) => Promise<void>;
 	deleteKey: (keyId: string) => Promise<void>;
 	deleteKeysByUserId: (userId: string) => Promise<void>;
 }>;
@@ -41,7 +41,7 @@ export type SessionAdapter = Readonly<{
 	updateSession: (
 		sessionId: string,
 		partialSession: Partial<SessionSchema>
-	) => Promise<SessionSchema | null>;
+	) => Promise<void>;
 	deleteSession: (sessionId: string) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 }>;
