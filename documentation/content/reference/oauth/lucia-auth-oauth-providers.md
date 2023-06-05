@@ -17,3 +17,4 @@ import { auth0 } from "@lucia-auth/oauth/providers";
 - [Patreon](/oauth/providers/patreon)
 - [Reddit](/oauth/providers/reddit)
 - [Twitch](/oauth/providers/twitch)
+- [Lichess](/oauth/providers/lichess)
