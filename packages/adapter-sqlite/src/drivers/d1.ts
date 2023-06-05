@@ -37,10 +37,7 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 							`INSERT INTO auth_key ( ${keyFields} ) VALUES ( ${keyValues} )`
 						)
 						.bind(...keyArgs);
-					await db.batch([
-						insertUserStatement,
-						insertKeyStatement
-					]);
+					await db.batch([insertUserStatement, insertKeyStatement]);
 				} catch (e) {
 					const error = e as Partial<{
 						cause: Partial<Error>;
@@ -182,9 +179,9 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 			},
 
 			getSessionAndUser: async (sessionId) => {
-				const getSessionStatement = db.prepare(
-					`SELECT * FROM auth_session WHERE id = ?`
-				).bind(sessionId);
+				const getSessionStatement = db
+					.prepare(`SELECT * FROM auth_session WHERE id = ?`)
+					.bind(sessionId);
 				const getUserFromJoinStatement = db
 					.prepare(
 						`SELECT auth_user.*, auth_session.id as _auth_session_id FROM auth_session INNER JOIN auth_user ON auth_user.id = auth_session.user_id WHERE auth_session.id = ?`

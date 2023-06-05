@@ -14,7 +14,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 
 	afterEach(database.clear);
 
-	start()
+	start();
 
 	await method("getUser()", async (test) => {
 		await test("Returns target user", async () => {

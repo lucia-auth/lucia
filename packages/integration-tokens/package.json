@@ -2,17 +2,18 @@
 	"name": "@lucia-auth/tokens",
 	"version": "1.0.2",
 	"description": "Tokens integration for Lucia",
-	"main": "index.js",
-	"types": "index.d.ts",
-	"module": "index.js",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
 	"svelte": "index.js",
 	"type": "module",
 	"files": [
-		"**/*"
+		"/dist/",
+		"CHANGELOG.md"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
-		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+		"build": "shx rm -rf ./dist/* && tsc",
+		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
 	},
 	"keywords": [
 		"lucia",
@@ -22,13 +23,13 @@
 		"tokens"
 	],
 	"exports": {
-		"./package.json": "./package.json",
-		".": "./index.js"
+		"./package.json": "./dist/package.json",
+		".": "./dist/index.js"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia",
-		"directory": "packages/lucia-auth"
+		"directory": "packages/integration-tokens"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",

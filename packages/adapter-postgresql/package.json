@@ -2,17 +2,18 @@
 	"name": "@lucia-auth/adapter-postgresql",
 	"version": "1.0.1",
 	"description": "PostgreSQL adapter for Lucia",
-	"main": "index.js",
-	"types": "index.d.ts",
-	"module": "index.js",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
 	"type": "module",
 	"files": [
-		"**/*"
+		"/dist/",
+		"CHANGELOG.md"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"build": "shx rm -rf ./dist/* && tsc",
 		"test.pg": " tsx test/pg/index.ts",
-		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
 	},
 	"keywords": [
 		"lucia",
@@ -29,12 +30,12 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia",
-		"directory": "packages/adapter-prisma"
+		"directory": "packages/adapter-postgresql"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"exports": {
-		".": "./index.js"
+		".": "./dist/index.js"
 	},
 	"peerDependencies": {
 		"lucia": "^1.4.0",

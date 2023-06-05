@@ -1,7 +1,7 @@
 import { start, finish, method, afterEach } from "../test.js";
 import assert from "node:assert/strict";
 
-import type {  SessionSchema, SessionAdapter } from "lucia";
+import type { SessionSchema, SessionAdapter } from "lucia";
 import type { Database } from "../database.js";
 
 export const testSessionAdapter = async (
@@ -78,7 +78,7 @@ export const testSessionAdapter = async (
 			assert.deepStrictEqual(storedSessions, [session2]);
 		});
 	});
-	
+
 	await method("updateSession()", async (test) => {
 		await test("Update 'country' field of session", async () => {
 			const session = database.generateSession(null);

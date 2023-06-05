@@ -7,7 +7,8 @@
 	"module": "dist/index.js",
 	"type": "module",
 	"files": [
-		"**/*"
+		"/dist/",
+		"CHANGELOG.md"
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
@@ -30,7 +31,7 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia",
-		"directory": "packages/adapter-prisma"
+		"directory": "packages/adapter-sqlite"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
@@ -51,7 +52,7 @@
 		"@lucia-auth/adapter-test": "latest",
 		"@miniflare/d1": "^2.14.0",
 		"@types/better-sqlite3": "^7.6.3",
-		"better-sqlite3": "^8.0.1",
+		"better-sqlite3": "^8.4.0",
 		"dotenv": "^16.0.3",
 		"lucia": "latest",
 		"tsx": "^3.12.6"
