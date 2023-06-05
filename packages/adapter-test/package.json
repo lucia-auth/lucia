@@ -1,17 +1,17 @@
 {
 	"name": "@lucia-auth/adapter-test",
 	"version": "3.0.1",
-	"description": "Tests for database adapters for Lucia",
-	"main": "index.js",
-	"types": "index.d.ts",
-	"module": "index.js",
+	"description": "Testing module for Lucia database adapters",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
 	"type": "module",
 	"files": [
 		"**/*"
 	],
 	"scripts": {
-		"build": "tsc",
-		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+		"build": "shx rm -rf ./dist/* && tsc",
+		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
 	},
 	"keywords": [
 		"lucia",
@@ -29,12 +29,16 @@
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"exports": {
-		".": "./index.js"
+		".": "./dist/index.js"
 	},
 	"devDependencies": {
+		"@types/mocha": "^10.0.1",
 		"lucia": "latest"
 	},
 	"peerDependencies": {
 		"lucia": "^2.0.0"
+	},
+	"dependencies": {
+		"mocha": "^10.2.0"
 	}
 }

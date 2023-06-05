@@ -1,20 +1,22 @@
 import { LuciaError } from "lucia";
-import { test, describe, afterEach } from "node:test";
 import assert from "node:assert/strict";
+import { start, finish, method, afterEach } from "../test.js";
 
 import type { Database } from "../database.js";
 import type { Adapter, SessionSchema, KeySchema, UserSchema } from "lucia";
 
 export const testAdapter = async (adapter: Adapter, database: Database) => {
-	afterEach(database.clear);
-
 	await database.clear();
 
 	const User = database.user();
 	const Session = database.session();
 	const Key = database.key();
 
-	describe("getUser()", async () => {
+	afterEach(database.clear);
+
+	start()
+
+	await method("getUser()", async (test) => {
 		await test("Returns target user", async () => {
 			const user = database.generateUser();
 			await User.insert(user);
@@ -29,7 +31,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("setUser()", async () => {
+	await method("setUser()", async (test) => {
 		await test("Inserts user only", async () => {
 			const user = database.generateUser();
 			await adapter.setUser(user, null);
@@ -54,7 +56,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const key2 = database.generateKey(user2.id, {
 				id: key1.id
 			});
-			assert.throws(async () => {
+			assert.rejects(async () => {
 				await adapter.setUser(user2, key2);
 			}, new LuciaError("AUTH_DUPLICATE_KEY_ID"));
 		});
@@ -67,7 +69,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const key2 = database.generateKey(user2.id, {
 				id: key1.id
 			});
-			assert.throws(async () => {
+			assert.rejects(async () => {
 				await adapter.setUser(user2, key2);
 			}, new LuciaError("AUTH_DUPLICATE_KEY_ID"));
 			const storedUsers = await User.getAll();
@@ -75,8 +77,8 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("deleteUser()", async () => {
-		await test("Deletes user", async () => {
+	await method("deleteUser()", async (test) => {
+		await test("Deletes target user", async () => {
 			const user1 = database.generateUser();
 			const user2 = database.generateUser();
 			await User.insert(user1, user2);
@@ -86,7 +88,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("updateUser()", async () => {
+	await method("updateUser()", async (test) => {
 		await test("Updates user 'username' field", async () => {
 			const user = database.generateUser();
 			await User.insert(user);
@@ -102,7 +104,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("getKey()", async () => {
+	await method("getKey()", async (test) => {
 		await test("Returns target key", async () => {
 			const user = database.generateUser();
 			const key = database.generateKey(user.id);
@@ -117,13 +119,13 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("setKey()", async () => {
+	await method("setKey()", async (test) => {
 		await test("Inserts key", async () => {
 			const user = database.generateUser();
 			const key = database.generateKey(user.id);
 			await User.insert(user);
 			await adapter.setKey(key);
-			const storedKey = Key.get(key.id);
+			const storedKey = await Key.get(key.id);
 			assert.deepStrictEqual(storedKey, key);
 		});
 		await test("Throws AUTH_DUPLICATE_KEY_ID on duplicate key id", async () => {
@@ -134,16 +136,25 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const key2 = database.generateKey(user.id, {
 				id: key1.id
 			});
-			assert.throws(async () => {
+			assert.rejects(async () => {
 				await adapter.setKey(key2);
-			}, new LuciaError("AUTH_INVALID_KEY_ID"));
+			}, new LuciaError("AUTH_DUPLICATE_KEY_ID"));
+		});
+		await test("Optionally throws AUTH_INVALID_USER_ID on invalid user id", async () => {
+			const key = database.generateKey(null);
+			try {
+				await adapter.setKey(key);
+			} catch (e) {
+				assert.deepStrictEqual(e, new LuciaError("AUTH_INVALID_USER_ID"));
+			}
 		});
 	});
 
-	describe("updateKey", async () => {
+	await method("updateKey", async (test) => {
 		await test("Updates key 'hashed_password' field", async () => {
 			const user = database.generateUser();
 			const key = database.generateKey(user.id);
+			await User.insert(user);
 			await Key.insert(key);
 			await adapter.updateKey(key.id, {
 				hashed_password: "HASHED"
@@ -157,7 +168,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("getKeysByUserId()", async () => {
+	await method("getKeysByUserId()", async (test) => {
 		await test("Returns keys with target user id", async () => {
 			const user1 = database.generateUser();
 			const user2 = database.generateUser();
@@ -178,12 +189,13 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("deleteKeysByUserId()", async () => {
-		test("Deletes keys with target user id", async () => {
+	await method("deleteKeysByUserId()", async (test) => {
+		await test("Deletes keys with target user id", async () => {
 			const user1 = database.generateUser();
 			const user2 = database.generateUser();
 			const key1 = database.generateKey(user1.id);
 			const key2 = database.generateKey(user2.id);
+			await User.insert(user1, user2);
 			await Key.insert(key1, key2);
 			await adapter.deleteKeysByUserId(user1.id);
 			const storedKeys = await Key.getAll();
@@ -191,8 +203,8 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("deleteKey()", async () => {
-		await test("Deletes key", async () => {
+	await method("deleteKey()", async (test) => {
+		await test("Deletes target key", async () => {
 			const user = database.generateUser();
 			const key1 = database.generateKey(user.id);
 			const key2 = database.generateKey(user.id);
@@ -205,7 +217,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("getSession()", async () => {
+	await method("getSession()", async (test) => {
 		await test("Returns target session", async () => {
 			const user = database.generateUser();
 			const session = database.generateSession(user.id);
@@ -220,7 +232,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("getSessionsByUserId()", async () => {
+	await method("getSessionsByUserId()", async (test) => {
 		await test("Return sessions with target user id", async () => {
 			const user1 = database.generateUser();
 			const user2 = database.generateUser();
@@ -241,7 +253,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("setSession()", async () => {
+	await method("setSession()", async (test) => {
 		await test("Inserts session", async () => {
 			const user = database.generateUser();
 			await User.insert(user);
@@ -260,8 +272,8 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("deleteSession()", async () => {
-		await test("Deletes session", async () => {
+	await method("deleteSession()", async (test) => {
+		await test("Deletes target session", async () => {
 			const user = database.generateUser();
 			const session1 = database.generateSession(user.id);
 			const session2 = database.generateSession(user.id);
@@ -274,8 +286,8 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("deleteSessionsByUserId()", async () => {
-		test("Delete sessions with target user id", async () => {
+	await method("deleteSessionsByUserId()", async (test) => {
+		await test("Deletes sessions with target user id", async () => {
 			const user1 = database.generateUser();
 			const user2 = database.generateUser();
 			const session1 = database.generateSession(user1.id);
@@ -288,7 +300,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("updateSession()", async () => {
+	await method("updateSession()", async (test) => {
 		await test("Updates session 'country' field", async () => {
 			const user = database.generateUser();
 			const session = database.generateSession(user.id);
@@ -306,8 +318,8 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 	});
 
-	describe("getSessionAndUser()", async () => {
-		if (!adapter.getSessionAndUser) return;
+	await method("getSessionAndUser()", async (test, skip) => {
+		if (!adapter.getSessionAndUser) return skip();
 		await test("Returns target session and user", async () => {
 			if (!adapter.getSessionAndUser) return;
 			const user = database.generateUser();
@@ -328,4 +340,6 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			assert.deepStrictEqual(userResult, null);
 		});
 	});
+
+	finish();
 };

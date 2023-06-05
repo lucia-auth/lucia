@@ -3,7 +3,8 @@ export { testSessionAdapter } from "./tests/session.js";
 export { Database } from "./database.js";
 
 export type {
-	LuciaQueryHandler,
+	QueryHandler,
+	TableQueryHandler,
 	TestUserSchema,
 	TestSessionSchema
 } from "./database.js";

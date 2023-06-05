@@ -9,40 +9,51 @@ export type TestSessionSchema = SessionSchema & {
 	country: string;
 };
 
-type QueryHandler<
+export type TableQueryHandler<
 	Schema extends {
 		id: string;
-	}
+	} = any
 > = {
 	get: () => Promise<Schema[]>;
 	insert: (data: Schema) => Promise<void>;
 	clear: () => Promise<void>;
 };
 
-export type LuciaQueryHandler = {
-	user?: QueryHandler<TestUserSchema>;
-	session?: QueryHandler<SessionSchema>;
-	key?: QueryHandler<KeySchema>;
+export type QueryHandler = {
+	user?: TableQueryHandler<TestUserSchema>;
+	session?: TableQueryHandler<SessionSchema>;
+	key?: TableQueryHandler<KeySchema>;
 };
 
 export class Database {
-	private readonly luciaQueryHandler: LuciaQueryHandler;
+	private readonly queryHandler: QueryHandler;
+
+	constructor(queryHandler: QueryHandler) {
+		this.queryHandler = queryHandler;
+	}
+
 	public user = () => {
-		const queryHandler = this.luciaQueryHandler["user"];
-		if (!queryHandler) throw new Error("No query handler provided for 'user'");
-		return new Table<TestUserSchema>(queryHandler);
+		const userQueryHandler = this.queryHandler["user"];
+		if (!userQueryHandler) {
+			throw new Error("No query handler provided for 'user'");
+		}
+		return new Table<TestUserSchema>(userQueryHandler);
 	};
+
 	public session = () => {
-		const queryHandler = this.luciaQueryHandler["session"];
-		if (!queryHandler) {
+		const sessionQueryHandler = this.queryHandler["session"];
+		if (!sessionQueryHandler) {
 			throw new Error("No query handler provided for 'session'");
 		}
-		return new Table<TestSessionSchema>(queryHandler);
+		return new Table<TestSessionSchema>(sessionQueryHandler);
 	};
+
 	public key = () => {
-		const queryHandler = this.luciaQueryHandler["key"];
-		if (!queryHandler) throw new Error("No query handler provided for 'key'");
-		return new Table<KeySchema>(queryHandler);
+		const keyQueryHandler = this.queryHandler["key"];
+		if (!keyQueryHandler) {
+			throw new Error("No query handler provided for 'key'");
+		}
+		return new Table<KeySchema>(keyQueryHandler);
 	};
 
 	public generateUser = (options?: {
@@ -72,6 +83,7 @@ export class Database {
 			country: options?.country ?? "XX"
 		};
 	};
+
 	public generateKey = (
 		userId: string | null,
 		options?: {
@@ -80,24 +92,22 @@ export class Database {
 	): KeySchema => {
 		const keyUserId = userId ?? generateRandomString(8);
 		return {
-			id: options?.id ?? `test:${keyUserId}@example.com`,
+			id: options?.id ?? generateRandomString(30),
 			user_id: keyUserId,
 			hashed_password: null
 		};
 	};
+
 	public clear = async () => {
-		await this.luciaQueryHandler.key?.clear();
-		await this.luciaQueryHandler.session?.clear();
-		await this.luciaQueryHandler.user?.clear();
+		await this.queryHandler.key?.clear();
+		await this.queryHandler.session?.clear();
+		await this.queryHandler.user?.clear();
 	};
-	constructor(queryHandler: LuciaQueryHandler) {
-		this.luciaQueryHandler = queryHandler;
-	}
 }
 
 class Table<_Schema extends { id: string }> {
-	protected readonly queryHandler: QueryHandler<_Schema>;
-	constructor(queryHandler: QueryHandler<_Schema>) {
+	protected readonly queryHandler: TableQueryHandler<_Schema>;
+	constructor(queryHandler: TableQueryHandler<_Schema>) {
 		this.queryHandler = queryHandler;
 	}
 	public insert = async (...values: _Schema[]) => {

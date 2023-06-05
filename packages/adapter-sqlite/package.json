@@ -2,18 +2,18 @@
 	"name": "@lucia-auth/adapter-sqlite",
 	"version": "1.1.1",
 	"description": "SQLite adapter for Lucia",
-	"main": "index.js",
-	"types": "index.d.ts",
-	"module": "index.js",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
 	"type": "module",
 	"files": [
 		"**/*"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"build": "shx rm -rf ./dist/* && tsc",
+		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public",
 		"test.better-sqlite3": "tsx test/better-sqlite3/index.ts",
-		"test.d1": "tsx test/d1/generate.ts && wrangler dev test/d1/index.ts --local --persist",
-		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+		"test.d1": "tsx test/d1/index.ts"
 	},
 	"keywords": [
 		"lucia",
@@ -35,7 +35,7 @@
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"exports": {
-		".": "./index.js"
+		".": "./dist/index.js"
 	},
 	"peerDependencies": {
 		"better-sqlite3": "^8.0.0",
@@ -47,8 +47,9 @@
 		}
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20230404.0",
+		"@cloudflare/workers-types": "^4.20230518.0",
 		"@lucia-auth/adapter-test": "latest",
+		"@miniflare/d1": "^2.14.0",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.0.1",
 		"dotenv": "^16.0.3",

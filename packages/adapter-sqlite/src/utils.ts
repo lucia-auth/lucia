@@ -1,24 +1,10 @@
-import type { KeySchema, SessionSchema, UserSchema } from "lucia";
-
-export const transformToSqliteValue = <_Obj extends Record<any, any>>(
-	obj: _Obj
-): {
-	[K in keyof _Obj]: _Obj[K] extends boolean
-		? number | Exclude<_Obj[K], boolean>
-		: _Obj[K];
-} => {
-	return Object.fromEntries(
-		Object.entries(obj).map(([key, val]) => {
-			if (typeof val !== "boolean") return [key, val];
-			return [key, Number(val)];
-		})
-	) as any;
-};
+import type { SessionSchema } from "lucia";
 
 export const transformDatabaseSession = (
-	session: SQLiteSessionSchema
+	session: SessionSchema
 ): SessionSchema => {
 	return {
+		...session,
 		id: session.id,
 		user_id: session.user_id,
 		active_expires: Number(session.active_expires),
@@ -26,24 +12,43 @@ export const transformDatabaseSession = (
 	};
 };
 
-export const transformDatabaseKey = (key: SQLiteKeySchema): KeySchema => {
-	return {
-		id: key.id,
-		user_id: key.user_id,
-		primary_key: Boolean(key.primary_key),
-		hashed_password: key.hashed_password,
-		expires: key.expires === null ? null : Number(key.expires)
+const createPreparedStatementHelper = (
+	placeholder: (index: number) => string,
+	escapeChar: string
+) => {
+	const helper = (
+		values: Record<string, any>
+	): readonly [fields: string[], placeholders: string[], arguments: any[]] => {
+		const keys = Object.keys(values);
+		return [
+			keys.map((k) => escapeName(k, escapeChar)),
+			keys.map((_, i) => placeholder(i)),
+			keys.map((k) => values[k])
+		] as const;
 	};
+	return helper;
 };
 
-export type SQLiteUserSchema = UserSchema;
-export type SQLiteSessionSchema = SessionSchema;
-export type SQLiteKeySchema = TransformToSQLiteSchema<KeySchema>;
+const escapeName = (val: string, escapeChar: string) => {
+	return `${escapeChar}${val}${escapeChar}`;
+};
 
-export type ReplaceBooleanWithNumber<T> = Extract<T, boolean> extends never
-	? T
-	: Exclude<T, boolean> | number;
+export const helper = createPreparedStatementHelper(() => "?", "`");
 
-export type TransformToSQLiteSchema<_Schema extends {}> = {
-	[K in keyof _Schema]: ReplaceBooleanWithNumber<_Schema[K]>;
+export const get = <Result>(result: any): Result | null => {
+	if (!result) return null;
+	if (Array.isArray(result)) return result.at(0) ?? null;
+	return result;
+};
+
+export const getAll = <Result>(result: any): Result[] => {
+	if (!result) return [];
+	if (Array.isArray(result)) return result;
+	return [result];
+};
+
+export const getSetArgs = (fields: string[], placeholders: string[]) => {
+	return fields
+		.map((field, i) => [field, placeholders[i]].join(" = "))
+		.join(",");
 };
