@@ -1,8 +1,4 @@
-/node_modules
-.DS_Store
+.prettierignore
 /src
-/tsconfig.json
-.gitignore
-.env
-/prisma
 /test
+/node_modules
