@@ -15,11 +15,13 @@ const createPreparedStatementHelper = (
 	return helper;
 };
 
-const escapeName = (val: string, escapeChar: string) => {
+export const escapeName = (val: string, escapeChar: string) => {
 	return `${escapeChar}${val}${escapeChar}`;
 };
 
-export const helper = createPreparedStatementHelper(() => "?", "`");
+export const ESCAPE_CHAR ="`"
+
+export const helper = createPreparedStatementHelper(() => "?", ESCAPE_CHAR);
 
 export const getSetArgs = (fields: string[], placeholders: string[]) => {
 	return fields

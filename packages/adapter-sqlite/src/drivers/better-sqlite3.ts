@@ -1,4 +1,4 @@
-import { helper, getSetArgs } from "../utils.js";
+import { helper, getSetArgs, escapeName, ESCAPE_CHAR } from "../utils.js";
 
 import type {
 	SessionSchema,
@@ -11,7 +11,14 @@ import type { Database, SqliteError } from "better-sqlite3";
 
 type BetterSQLiteError = InstanceType<SqliteError>;
 
-export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
+export const betterSqlite3 = (
+	db: Database,
+	tables: {
+		user: string;
+		session: string;
+		key: string;
+	}
+): InitializeAdapter<Adapter> => {
 	const transaction = <_Query extends () => any>(query: _Query): void => {
 		try {
 			db.exec("BEGIN TRANSACTION");
@@ -26,11 +33,15 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 		}
 	};
 
+	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user, ESCAPE_CHAR);
+	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session, ESCAPE_CHAR);
+	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key, ESCAPE_CHAR);
+
 	return (LuciaError) => {
 		return {
 			getUser: async (userId) => {
 				const result: UserSchema | undefined = db
-					.prepare(`SELECT * FROM auth_user WHERE id = ?`)
+					.prepare(`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`)
 					.get(userId);
 				return result ?? null;
 			},
@@ -38,7 +49,7 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 				const insertUser = () => {
 					const [userFields, userValues, userArgs] = helper(user);
 					db.prepare(
-						`INSERT INTO auth_user ( ${userFields} ) VALUES ( ${userValues} )`
+						`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`
 					).run(...userArgs);
 				};
 				if (!key) return insertUser();
@@ -47,7 +58,7 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 						insertUser();
 						const [keyFields, keyValues, keyArgs] = helper(key);
 						db.prepare(
-							`INSERT INTO auth_key ( ${keyFields} ) VALUES ( ${keyValues} )`
+							`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`
 						).run(...keyArgs);
 					});
 				} catch (e) {
@@ -62,23 +73,30 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 				}
 			},
 			deleteUser: async (userId) => {
-				db.prepare(`DELETE FROM auth_user WHERE id = ?`).run(userId);
+				db.prepare(`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`).run(
+					userId
+				);
 			},
 			updateUser: async (userId, partialUser) => {
 				const [fields, values, args] = helper(partialUser);
 				db.prepare(
-					`UPDATE auth_user SET ${getSetArgs(fields, values)} WHERE id = ?`
+					`UPDATE ${ESCAPED_USER_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`
 				).run(...args, userId);
 			},
 			getSession: async (sessionId) => {
 				const result: SessionSchema | undefined = db
-					.prepare("SELECT * FROM auth_session WHERE id = ?")
+					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.get(sessionId);
 				return result ?? null;
 			},
 			getSessionsByUserId: async (userId) => {
 				const result: SessionSchema[] = db
-					.prepare("SELECT * FROM auth_session WHERE user_id = ?")
+					.prepare(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
+					)
 					.all(userId);
 				return result;
 			},
@@ -86,7 +104,7 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 				try {
 					const [fields, values, args] = helper(session);
 					db.prepare(
-						`INSERT INTO auth_session ( ${fields} ) VALUES ( ${values} )`
+						`INSERT INTO ${ESCAPED_SESSION_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`
 					).run(...args);
 				} catch (e) {
 					const error = e as Partial<BetterSQLiteError>;
@@ -97,27 +115,34 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 				}
 			},
 			deleteSession: async (sessionId) => {
-				db.prepare(`DELETE FROM auth_session WHERE id = ?`).run(sessionId);
+				db.prepare(
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`
+				).run(sessionId);
 			},
 			deleteSessionsByUserId: async (userId) => {
-				db.prepare(`DELETE FROM auth_session WHERE user_id = ?`).run(userId);
+				db.prepare(
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
+				).run(userId);
 			},
 			updateSession: async (sessionId, partialSession) => {
 				const [fields, values, args] = helper(partialSession);
 				db.prepare(
-					`UPDATE auth_session SET ${getSetArgs(fields, values)} WHERE id = ?`
+					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`
 				).run(...args, sessionId);
 			},
 
 			getKey: async (keyId) => {
 				const result: KeySchema | undefined = db
-					.prepare("SELECT * FROM auth_key WHERE id = ?")
+					.prepare(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`)
 					.get(keyId);
 				return result ?? null;
 			},
 			getKeysByUserId: async (userId) => {
 				const result: KeySchema[] = db
-					.prepare("SELECT * FROM auth_key WHERE user_id = ?")
+					.prepare(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`)
 					.all(userId);
 				return result;
 			},
@@ -125,7 +150,7 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 				try {
 					const [fields, values, args] = helper(key);
 					db.prepare(
-						`INSERT INTO auth_key ( ${fields} ) VALUES ( ${values} )`
+						`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`
 					).run(...args);
 				} catch (e) {
 					const error = e as Partial<BetterSQLiteError>;
@@ -142,15 +167,22 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 				}
 			},
 			deleteKey: async (keyId) => {
-				db.prepare(`DELETE FROM auth_key WHERE id = ?`).run(keyId);
+				db.prepare(`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`).run(
+					keyId
+				);
 			},
 			deleteKeysByUserId: async (userId) => {
-				db.prepare(`DELETE FROM auth_key WHERE user_id = ?`).run(userId);
+				db.prepare(
+					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`
+				).run(userId);
 			},
 			updateKey: async (keyId, partialKey) => {
 				const [fields, values, args] = helper(partialKey);
 				db.prepare(
-					`UPDATE auth_key SET ${getSetArgs(fields, values)} WHERE id = ?`
+					`UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`
 				).run(...args, keyId);
 			}
 		};

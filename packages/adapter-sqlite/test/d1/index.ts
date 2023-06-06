@@ -7,7 +7,7 @@ import { helper } from "../../src/utils.js";
 
 import type { D1Database as WorkerD1Database } from "@cloudflare/workers-types";
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-import { db } from "../db.js";
+import { TABLE_NAMES, db } from "../db.js";
 
 const D1 = new D1Database(new D1DatabaseAPI(db)) as any as WorkerD1Database;
 
@@ -32,12 +32,12 @@ const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 };
 
 const queryHandler: QueryHandler = {
-	user: createTableQueryHandler("auth_user"),
-	session: createTableQueryHandler("auth_session"),
-	key: createTableQueryHandler("auth_key")
+	user: createTableQueryHandler(TABLE_NAMES.user),
+	session: createTableQueryHandler(TABLE_NAMES.session),
+	key: createTableQueryHandler(TABLE_NAMES.key)
 };
 
-const adapter = d1Adapter(D1)(LuciaError);
+const adapter = d1Adapter(D1, TABLE_NAMES)(LuciaError);
 
 await testAdapter(adapter, new Database(queryHandler));
 

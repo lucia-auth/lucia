@@ -1,7 +1,7 @@
 import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
 
-import { db } from "../db.js";
+import { TABLE_NAMES, db } from "../db.js";
 import { betterSqlite3 as betterSqlite3Adapter } from "../../src/index.js";
 import { helper } from "../../src/utils.js";
 
@@ -25,11 +25,11 @@ const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 };
 
 const queryHandler: QueryHandler = {
-	user: createTableQueryHandler("auth_user"),
-	session: createTableQueryHandler("auth_session"),
-	key: createTableQueryHandler("auth_key")
+	user: createTableQueryHandler(TABLE_NAMES.user),
+	session: createTableQueryHandler(TABLE_NAMES.session),
+	key: createTableQueryHandler(TABLE_NAMES.key)
 };
 
-const adapter = betterSqlite3Adapter(db)(LuciaError);
+const adapter = betterSqlite3Adapter(db, TABLE_NAMES)(LuciaError);
 
 testAdapter(adapter, new Database(queryHandler));

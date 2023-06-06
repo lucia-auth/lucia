@@ -1,4 +1,4 @@
-import { helper, getSetArgs } from "../utils.js";
+import { helper, getSetArgs, escapeName, ESCAPE_CHAR } from "../utils.js";
 
 import type {
 	SessionSchema,
@@ -9,12 +9,23 @@ import type {
 } from "lucia";
 import type { D1Database } from "@cloudflare/workers-types";
 
-export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
+export const d1 = (
+	db: D1Database,
+	tables: {
+		user: string;
+		session: string;
+		key: string;
+	}
+): InitializeAdapter<Adapter> => {
+	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user, ESCAPE_CHAR);
+	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session, ESCAPE_CHAR);
+	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key, ESCAPE_CHAR);
+
 	return (LuciaError) => {
 		return {
 			getUser: async (userId) => {
 				const user = await db
-					.prepare(`SELECT * FROM auth_user WHERE id = ?`)
+					.prepare(`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`)
 					.bind(userId)
 					.first<UserSchema | null>();
 				return user;
@@ -23,7 +34,7 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 				const [userFields, userValues, userArgs] = helper(user);
 				const insertUserStatement = db
 					.prepare(
-						`INSERT INTO auth_user ( ${userFields} ) VALUES ( ${userValues} )`
+						`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`
 					)
 					.bind(...userArgs);
 				if (!key) {
@@ -34,7 +45,7 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 					const [keyFields, keyValues, keyArgs] = helper(key);
 					const insertKeyStatement = db
 						.prepare(
-							`INSERT INTO auth_key ( ${keyFields} ) VALUES ( ${keyValues} )`
+							`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`
 						)
 						.bind(...keyArgs);
 					await db.batch([insertUserStatement, insertKeyStatement]);
@@ -44,7 +55,7 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 					}>;
 					if (
 						error.cause?.message?.includes("UNIQUE constraint failed") &&
-						error.cause?.message?.includes("auth_key.id")
+						error.cause?.message?.includes(`${tables.key}.id`)
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -53,7 +64,7 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 			},
 			deleteUser: async (userId) => {
 				await db
-					.prepare(`DELETE FROM auth_user WHERE id = ?`)
+					.prepare(`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`)
 					.bind(userId)
 					.run();
 			},
@@ -61,7 +72,10 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 				const [fields, values, args] = helper(partialUser);
 				await db
 					.prepare(
-						`UPDATE auth_user SET ${getSetArgs(fields, values)} WHERE id = ?`
+						`UPDATE ${ESCAPED_USER_TABLE_NAME} SET ${getSetArgs(
+							fields,
+							values
+						)} WHERE id = ?`
 					)
 					.bind(...args, userId)
 					.run();
@@ -69,14 +83,16 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 
 			getSession: async (sessionId) => {
 				const session = await db
-					.prepare("SELECT * FROM auth_session WHERE id = ?")
+					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.bind(sessionId)
 					.first<SessionSchema | null>();
 				return session;
 			},
 			getSessionsByUserId: async (userId) => {
 				const { results: sessionResults } = await db
-					.prepare("SELECT * FROM auth_session WHERE user_id = ?")
+					.prepare(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
+					)
 					.bind(userId)
 					.all<SessionSchema>();
 				return sessionResults ?? [];
@@ -86,7 +102,7 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 					const [fields, values, args] = helper(session);
 					await db
 						.prepare(
-							`INSERT INTO auth_session ( ${fields} ) VALUES ( ${values} )`
+							`INSERT INTO ${ESCAPED_SESSION_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`
 						)
 						.bind(...args)
 						.run();
@@ -102,13 +118,15 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 			},
 			deleteSession: async (sessionId) => {
 				await db
-					.prepare(`DELETE FROM auth_session WHERE id = ?`)
+					.prepare(`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.bind(sessionId)
 					.run();
 			},
 			deleteSessionsByUserId: async (userId) => {
 				await db
-					.prepare(`DELETE FROM auth_session WHERE user_id = ?`)
+					.prepare(
+						`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
+					)
 					.bind(userId)
 					.run();
 			},
@@ -116,7 +134,10 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 				const [fields, values, args] = helper(partialSession);
 				await db
 					.prepare(
-						`UPDATE auth_session SET ${getSetArgs(fields, values)} WHERE id = ?`
+						`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
+							fields,
+							values
+						)} WHERE id = ?`
 					)
 					.bind(...args, sessionId)
 					.run();
@@ -124,14 +145,14 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 
 			getKey: async (keyId) => {
 				const key = await db
-					.prepare("SELECT * FROM auth_key WHERE id = ?")
+					.prepare(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`)
 					.bind(keyId)
 					.first<KeySchema | null>();
 				return key;
 			},
 			getKeysByUserId: async (userId) => {
 				const { results: keyResults } = await db
-					.prepare("SELECT * FROM auth_key WHERE user_id = ?")
+					.prepare(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`)
 					.bind(userId)
 					.all<KeySchema>();
 				return keyResults ?? [];
@@ -140,7 +161,9 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 				try {
 					const [fields, values, args] = helper(key);
 					await db
-						.prepare(`INSERT INTO auth_key ( ${fields} ) VALUES ( ${values} )`)
+						.prepare(
+							`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`
+						)
 						.bind(...args)
 						.run();
 				} catch (e) {
@@ -152,7 +175,7 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 					}
 					if (
 						error.cause?.message?.includes("UNIQUE constraint failed") &&
-						error.cause?.message?.includes("auth_key.id")
+						error.cause?.message?.includes(`${tables.key}.id`)
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -160,11 +183,14 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 				}
 			},
 			deleteKey: async (keyId) => {
-				await db.prepare(`DELETE FROM auth_key WHERE id = ?`).bind(keyId).run();
+				await db
+					.prepare(`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`)
+					.bind(keyId)
+					.run();
 			},
 			deleteKeysByUserId: async (userId) => {
 				await db
-					.prepare(`DELETE FROM auth_key WHERE user_id = ?`)
+					.prepare(`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`)
 					.bind(userId)
 					.run();
 			},
@@ -172,7 +198,10 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 				const [fields, values, args] = helper(partialKey);
 				await db
 					.prepare(
-						`UPDATE auth_key SET ${getSetArgs(fields, values)} WHERE id = ?`
+						`UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${getSetArgs(
+							fields,
+							values
+						)} WHERE id = ?`
 					)
 					.bind(...args, keyId)
 					.run();
@@ -180,11 +209,11 @@ export const d1 = (db: D1Database): InitializeAdapter<Adapter> => {
 
 			getSessionAndUser: async (sessionId) => {
 				const getSessionStatement = db
-					.prepare(`SELECT * FROM auth_session WHERE id = ?`)
+					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.bind(sessionId);
 				const getUserFromJoinStatement = db
 					.prepare(
-						`SELECT auth_user.*, auth_session.id as _auth_session_id FROM auth_session INNER JOIN auth_user ON auth_user.id = auth_session.user_id WHERE auth_session.id = ?`
+						`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as _auth_session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = ?`
 					)
 					.bind(sessionId);
 				type BatchQueryResult<Schema extends {}> = {
