@@ -236,13 +236,13 @@ export const mysql2Adapter = (
 						[sessionId]
 					)
 				);
-				const [session, userFromJoin] = await Promise.all([
+				const [sessionResult, userFromJoinResult] = await Promise.all([
 					getSessionPromise,
 					getUserFromJoinPromise
 				]);
-				if (!session || !userFromJoin) return [null, null];
-				const { __session_id: _, ...user } = userFromJoin;
-				return [session, user];
+				if (!sessionResult || !userFromJoinResult) return [null, null];
+				const { __session_id: _, ...userResult } = userFromJoinResult;
+				return [sessionResult, userResult];
 			}
 		};
 	};

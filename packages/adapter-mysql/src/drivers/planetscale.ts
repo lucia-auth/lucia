@@ -194,6 +194,7 @@ export const planetscaleAdapter = (
 					[...args, keyId]
 				);
 			},
+
 			getSessionAndUser: async (sessionId) => {
 				const [sessionResult, userFromJoinResult] = await Promise.all([
 					get<PlanetscaleSession>(

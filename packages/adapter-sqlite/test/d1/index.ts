@@ -15,7 +15,9 @@ const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	const ESCAPED_TABLE_NAME = escapeName(tableName);
 	return {
 		get: async () => {
-			const { results } = await D1.prepare(`SELECT * FROM ${ESCAPED_TABLE_NAME}`).all();
+			const { results } = await D1.prepare(
+				`SELECT * FROM ${ESCAPED_TABLE_NAME}`
+			).all();
 			return results ?? [];
 		},
 		insert: async (value: any) => {

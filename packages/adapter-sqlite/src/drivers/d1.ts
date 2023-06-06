@@ -17,7 +17,6 @@ export const d1 = (
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
-
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
 	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
@@ -233,11 +232,11 @@ export const d1 = (
 							}
 						>
 					];
-				const session = sessionResults?.at(0) ?? null;
-				const userFromJoin = userFromJoinResults?.at(0) ?? null;
-				if (!session || !userFromJoin) return [null, null];
-				const { __session_id: _, ...user } = userFromJoin;
-				return [session, user];
+				const sessionResult = sessionResults?.at(0) ?? null;
+				const userFromJoinResult = userFromJoinResults?.at(0) ?? null;
+				if (!sessionResult || !userFromJoinResult) return [null, null];
+				const { __session_id: _, ...userResult } = userFromJoinResult;
+				return [sessionResult, userResult];
 			}
 		};
 	};
