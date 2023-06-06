@@ -1,13 +1,12 @@
 const createPreparedStatementHelper = (
-	placeholder: (index: number) => string,
-	escapeChar: string
+	placeholder: (index: number) => string
 ) => {
 	const helper = (
 		values: Record<string, any>
 	): readonly [fields: string[], placeholders: string[], arguments: any[]] => {
 		const keys = Object.keys(values);
 		return [
-			keys.map((k) => escapeName(k, escapeChar)),
+			keys.map((k) => escapeName(k)),
 			keys.map((_, i) => placeholder(i)),
 			keys.map((k) => values[k])
 		] as const;
@@ -15,13 +14,13 @@ const createPreparedStatementHelper = (
 	return helper;
 };
 
-export const escapeName = (val: string, escapeChar: string) => {
-	return `${escapeChar}${val}${escapeChar}`;
+export const escapeName = (val: string) => {
+	return `${ESCAPE_CHAR}${val}${ESCAPE_CHAR}`;
 };
 
-export const ESCAPE_CHAR ="`"
+const ESCAPE_CHAR = "`";
 
-export const helper = createPreparedStatementHelper(() => "?", ESCAPE_CHAR);
+export const helper = createPreparedStatementHelper(() => "?");
 
 export const getSetArgs = (fields: string[], placeholders: string[]) => {
 	return fields

@@ -1,4 +1,4 @@
-import { helper, getSetArgs, escapeName, ESCAPE_CHAR } from "../utils.js";
+import { helper, getSetArgs, escapeName } from "../utils.js";
 
 import type {
 	SessionSchema,
@@ -17,9 +17,10 @@ export const d1 = (
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
-	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user, ESCAPE_CHAR);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session, ESCAPE_CHAR);
-	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key, ESCAPE_CHAR);
+
+	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
+	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
 		return {
@@ -213,7 +214,7 @@ export const d1 = (
 					.bind(sessionId);
 				const getUserFromJoinStatement = db
 					.prepare(
-						`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as _auth_session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = ?`
+						`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = ?`
 					)
 					.bind(sessionId);
 				type BatchQueryResult<Schema extends {}> = {
@@ -228,14 +229,14 @@ export const d1 = (
 						BatchQueryResult<SessionSchema>,
 						BatchQueryResult<
 							UserSchema & {
-								_auth_session_id: string;
+								__session_id: string;
 							}
 						>
 					];
 				const session = sessionResults?.at(0) ?? null;
 				const userFromJoin = userFromJoinResults?.at(0) ?? null;
 				if (!session || !userFromJoin) return [null, null];
-				const { _auth_session_id: _, ...user } = userFromJoin;
+				const { __session_id: _, ...user } = userFromJoin;
 				return [session, user];
 			}
 		};

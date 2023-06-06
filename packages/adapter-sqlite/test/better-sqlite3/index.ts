@@ -3,23 +3,24 @@ import { LuciaError } from "lucia";
 
 import { TABLE_NAMES, db } from "../db.js";
 import { betterSqlite3 as betterSqlite3Adapter } from "../../src/index.js";
-import { helper } from "../../src/utils.js";
+import { escapeName, helper } from "../../src/utils.js";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
 
 const createTableQueryHandler = (tableName: string): TableQueryHandler => {
+	const ESCAPED_TABLE_NAME = escapeName(tableName);
 	return {
 		get: async () => {
-			return db.prepare(`SELECT * FROM ${tableName}`).all();
+			return db.prepare(`SELECT * FROM ${ESCAPED_TABLE_NAME}`).all();
 		},
 		insert: async (value: any) => {
 			const [fields, placeholders, args] = helper(value);
 			db.prepare(
-				`INSERT INTO ${tableName} ( ${fields} ) VALUES ( ${placeholders} )`
+				`INSERT INTO ${ESCAPED_TABLE_NAME} ( ${fields} ) VALUES ( ${placeholders} )`
 			).run(...args);
 		},
 		clear: async () => {
-			db.exec(`DELETE FROM ${tableName}`);
+			db.exec(`DELETE FROM ${ESCAPED_TABLE_NAME}`);
 		}
 	};
 };

@@ -1,4 +1,4 @@
-import { getSetArgs, helper } from "../utils.js";
+import { escapeName, getSetArgs, helper } from "../utils.js";
 
 import type {
 	Connection,
@@ -14,13 +14,25 @@ import type {
 } from "lucia";
 
 export const planetscaleAdapter = (
-	connection: Connection
+	connection: Connection,
+	tables: {
+		user: string;
+		session: string;
+		key: string;
+	}
 ): InitializeAdapter<Adapter> => {
+	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
+	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
+
 	return (LuciaError) => {
 		return {
 			getUser: async (userId) => {
 				const result = await get<UserSchema>(
-					connection.execute("SELECT * FROM auth_user WHERE id = ?", [userId])
+					connection.execute(
+						`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`,
+						[userId]
+					)
 				);
 				return result;
 			},
@@ -28,7 +40,7 @@ export const planetscaleAdapter = (
 				if (!key) {
 					const [userFields, userValues, userArgs] = helper(user);
 					await connection.execute(
-						`INSERT INTO auth_user ( ${userFields} ) VALUES ( ${userValues} )`,
+						`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`,
 						userArgs
 					);
 					return;
@@ -37,12 +49,12 @@ export const planetscaleAdapter = (
 					await connection.transaction(async (tx) => {
 						const [userFields, userValues, userArgs] = helper(user);
 						await tx.execute(
-							`INSERT INTO auth_user ( ${userFields} ) VALUES ( ${userValues} )`,
+							`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`,
 							userArgs
 						);
 						const [keyFields, keyValues, keyArgs] = helper(key);
 						await tx.execute(
-							`INSERT INTO auth_key ( ${keyFields} ) VALUES ( ${keyValues} )`,
+							`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`,
 							keyArgs
 						);
 					});
@@ -51,7 +63,7 @@ export const planetscaleAdapter = (
 					if (
 						error.body?.message.includes("AlreadyExists") &&
 						error.body?.message.includes("PRIMARY") &&
-						error.body?.message.includes("auth_key")
+						error.body?.message.includes(`${tables.key}`)
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -59,70 +71,85 @@ export const planetscaleAdapter = (
 				}
 			},
 			deleteUser: async (userId) => {
-				await connection.execute(`DELETE FROM auth_user WHERE id = ?`, [
-					userId
-				]);
+				await connection.execute(
+					`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`,
+					[userId]
+				);
 			},
 			updateUser: async (userId, partialUser) => {
 				const [fields, values, args] = helper(partialUser);
 				await connection.execute(
-					`UPDATE auth_user SET ${getSetArgs(fields, values)} WHERE id = ?`,
+					`UPDATE ${ESCAPED_USER_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`,
 					[...args, userId]
 				);
 			},
 
 			getSession: async (sessionId) => {
 				const result = await get<PlanetscaleSession>(
-					connection.execute("SELECT * FROM auth_session WHERE id = ?", [
-						sessionId
-					])
+					connection.execute(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
+						[sessionId]
+					)
 				);
 				return result ? transformDatabaseSessionResult(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await getAll<PlanetscaleSession>(
-					connection.execute("SELECT * FROM auth_session WHERE user_id = ?", [
-						userId
-					])
+					connection.execute(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
+						[userId]
+					)
 				);
 				return result.map((val) => transformDatabaseSessionResult(val));
 			},
 			setSession: async (session) => {
 				const [fields, values, args] = helper(session);
 				await connection.execute(
-					`INSERT INTO auth_session ( ${fields} ) VALUES ( ${values} )`,
+					`INSERT INTO ${ESCAPED_SESSION_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`,
 					args
 				);
 			},
 			deleteSession: async (sessionId) => {
-				await connection.execute(`DELETE FROM auth_session WHERE id = ?`, [
-					sessionId
-				]);
+				await connection.execute(
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
+					[sessionId]
+				);
 			},
 			deleteSessionsByUserId: async (userId) => {
-				await connection.execute(`DELETE FROM auth_session WHERE user_id = ?`, [
-					userId
-				]);
+				await connection.execute(
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
+					[userId]
+				);
 			},
 			updateSession: async (sessionId, partialSession) => {
 				const [fields, values, args] = helper(partialSession);
 				await connection.execute(
-					`UPDATE auth_session SET ${getSetArgs(fields, values)} WHERE id = ?`,
+					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`,
 					[...args, sessionId]
 				);
 			},
 
 			getKey: async (keyId) => {
 				const result = await get<KeySchema>(
-					connection.execute("SELECT * FROM auth_key WHERE id = ?", [keyId])
+					connection.execute(
+						`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`,
+						[keyId]
+					)
 				);
 				return result;
 			},
 			getKeysByUserId: async (userId) => {
 				const result = getAll<KeySchema>(
-					connection.execute("SELECT * FROM auth_key WHERE user_id = ?", [
-						userId
-					])
+					connection.execute(
+						`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`,
+						[userId]
+					)
 				);
 				return result;
 			},
@@ -130,7 +157,7 @@ export const planetscaleAdapter = (
 				try {
 					const [fields, values, args] = helper(key);
 					await connection.execute(
-						`INSERT INTO auth_key ( ${fields} ) VALUES ( ${values} )`,
+						`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`,
 						args
 					);
 				} catch (e) {
@@ -138,7 +165,7 @@ export const planetscaleAdapter = (
 					if (
 						error.body?.message.includes("AlreadyExists") &&
 						error.body?.message.includes("PRIMARY") &&
-						error.body?.message.includes("auth_key")
+						error.body?.message.includes(`${tables.key}`)
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -146,40 +173,48 @@ export const planetscaleAdapter = (
 				}
 			},
 			deleteKey: async (keyId) => {
-				await connection.execute(`DELETE FROM auth_key WHERE id = ?`, [keyId]);
+				await connection.execute(
+					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`,
+					[keyId]
+				);
 			},
 			deleteKeysByUserId: async (userId) => {
-				await connection.execute(`DELETE FROM auth_key WHERE user_id = ?`, [
-					userId
-				]);
+				await connection.execute(
+					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`,
+					[userId]
+				);
 			},
 			updateKey: async (keyId, partialKey) => {
 				const [fields, values, args] = helper(partialKey);
 				await connection.execute(
-					`UPDATE auth_key SET ${getSetArgs(fields, values)} WHERE id = ?`,
+					`UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`,
 					[...args, keyId]
 				);
 			},
 			getSessionAndUser: async (sessionId) => {
 				const [sessionResult, userFromJoinResult] = await Promise.all([
 					get<PlanetscaleSession>(
-						connection.execute("SELECT * FROM auth_session WHERE id = ?", [
-							sessionId
-						])
+						connection.execute(
+							`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
+							[sessionId]
+						)
 					),
 					get<
 						UserSchema & {
-							_auth_session_id: string;
+							__session_id: string;
 						}
 					>(
 						connection.execute(
-							"SELECT auth_user.*, auth_session.id as _auth_session_id FROM auth_session INNER JOIN auth_user ON auth_user.id = auth_session.user_id WHERE auth_session.id = ?",
+							`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = ?`,
 							[sessionId]
 						)
 					)
 				]);
 				if (!sessionResult || !userFromJoinResult) return [null, null];
-				const { _auth_session_id: _, ...userResult } = userFromJoinResult;
+				const { __session_id: _, ...userResult } = userFromJoinResult;
 				return [transformDatabaseSessionResult(sessionResult), userResult];
 			}
 		};

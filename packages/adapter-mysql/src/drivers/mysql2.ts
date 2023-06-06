@@ -1,4 +1,4 @@
-import { helper, getSetArgs } from "../utils.js";
+import { helper, getSetArgs, escapeName } from "../utils.js";
 
 import type {
 	SessionSchema,
@@ -16,7 +16,18 @@ import type {
 	PoolConnection
 } from "mysql2/promise";
 
-export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
+export const mysql2Adapter = (
+	db: Pool,
+	tables: {
+		user: string;
+		session: string;
+		key: string;
+	}
+): InitializeAdapter<Adapter> => {
+	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
+	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
+
 	const transaction = async <
 		_Execute extends (connection: PoolConnection) => Promise<void>
 	>(
@@ -37,7 +48,9 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 		return {
 			getUser: async (userId) => {
 				const result = await get<UserSchema>(
-					db.query("SELECT * FROM auth_user WHERE id = ?", [userId])
+					db.query(`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`, [
+						userId
+					])
 				);
 				return result;
 			},
@@ -45,7 +58,7 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 				if (!key) {
 					const [userFields, userValues, userArgs] = helper(user);
 					await db.execute(
-						`INSERT INTO auth_user ( ${userFields} ) VALUES ( ${userValues} )`,
+						`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`,
 						userArgs
 					);
 					return;
@@ -54,12 +67,12 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 					await transaction(async (connection) => {
 						const [userFields, userValues, userArgs] = helper(user);
 						await connection.execute(
-							`INSERT INTO auth_user ( ${userFields} ) VALUES ( ${userValues} )`,
+							`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`,
 							userArgs
 						);
 						const [keyFields, keyValues, keyArgs] = helper(key);
 						await connection.execute(
-							`INSERT INTO auth_key ( ${keyFields} ) VALUES ( ${keyValues} )`,
+							`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`,
 							keyArgs
 						);
 					});
@@ -68,7 +81,7 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 					if (
 						error.code === "ER_DUP_ENTRY" &&
 						error.message?.includes("PRIMARY") &&
-						error.message?.includes("auth_key")
+						error.message?.includes(tables.key)
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -76,25 +89,35 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 				}
 			},
 			deleteUser: async (userId) => {
-				await db.query(`DELETE FROM auth_user WHERE id = ?`, [userId]);
+				await db.query(`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`, [
+					userId
+				]);
 			},
 			updateUser: async (userId, partialUser) => {
 				const [fields, values, args] = helper(partialUser);
 				await db.execute(
-					`UPDATE auth_user SET ${getSetArgs(fields, values)} WHERE id = ?`,
+					`UPDATE ${ESCAPED_USER_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`,
 					[...args, userId]
 				);
 			},
 
 			getSession: async (sessionId) => {
 				const result = await get<SessionSchema>(
-					db.query("SELECT * FROM auth_session WHERE id = ?", [sessionId])
+					db.query(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`, [
+						sessionId
+					])
 				);
 				return result;
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await getAll<SessionSchema>(
-					db.query("SELECT * FROM auth_session WHERE user_id = ?", [userId])
+					db.query(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
+						[userId]
+					)
 				);
 				return result;
 			},
@@ -102,7 +125,7 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 				try {
 					const [fields, values, args] = helper(session);
 					await db.execute(
-						`INSERT INTO auth_session ( ${fields} ) VALUES ( ${values} )`,
+						`INSERT INTO ${ESCAPED_SESSION_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`,
 						args
 					);
 				} catch (e) {
@@ -114,30 +137,42 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 				}
 			},
 			deleteSession: async (sessionId) => {
-				await db.execute(`DELETE FROM auth_session WHERE id = ?`, [sessionId]);
+				await db.execute(
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
+					[sessionId]
+				);
 			},
 			deleteSessionsByUserId: async (userId) => {
-				await db.execute(`DELETE FROM auth_session WHERE user_id = ?`, [
-					userId
-				]);
+				await db.execute(
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
+					[userId]
+				);
 			},
 			updateSession: async (sessionId, partialSession) => {
 				const [fields, values, args] = helper(partialSession);
 				await db.execute(
-					`UPDATE auth_session SET ${getSetArgs(fields, values)} WHERE id = ?`,
+					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`,
 					[...args, sessionId]
 				);
 			},
 
 			getKey: async (keyId) => {
 				const result = await get<KeySchema>(
-					db.query("SELECT * FROM auth_key WHERE id = ?", [keyId])
+					db.query(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`, [
+						keyId
+					])
 				);
 				return result;
 			},
 			getKeysByUserId: async (userId) => {
 				const result = getAll<KeySchema>(
-					db.execute("SELECT * FROM auth_key WHERE user_id = ?", [userId])
+					db.execute(
+						`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`,
+						[userId]
+					)
 				);
 				return result;
 			},
@@ -145,7 +180,7 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 				try {
 					const [fields, values, args] = helper(key);
 					await db.execute(
-						`INSERT INTO auth_key ( ${fields} ) VALUES ( ${values} )`,
+						`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`,
 						args
 					);
 				} catch (e) {
@@ -156,7 +191,7 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 					if (
 						error.code === "ER_DUP_ENTRY" &&
 						error.message?.includes("PRIMARY") &&
-						error.message?.includes("auth_key")
+						error.message?.includes(tables.key)
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -164,17 +199,50 @@ export const mysql2Adapter = (db: Pool): InitializeAdapter<Adapter> => {
 				}
 			},
 			deleteKey: async (keyId) => {
-				await db.execute(`DELETE FROM auth_key WHERE id = ?`, [keyId]);
+				await db.execute(`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`, [
+					keyId
+				]);
 			},
 			deleteKeysByUserId: async (userId) => {
-				await db.execute(`DELETE FROM auth_key WHERE user_id = ?`, [userId]);
+				await db.execute(
+					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`,
+					[userId]
+				);
 			},
 			updateKey: async (keyId, partialKey) => {
 				const [fields, values, args] = helper(partialKey);
 				await db.execute(
-					`UPDATE auth_key SET ${getSetArgs(fields, values)} WHERE id = ?`,
+					`UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${getSetArgs(
+						fields,
+						values
+					)} WHERE id = ?`,
 					[...args, keyId]
 				);
+			},
+
+			getSessionAndUser: async (sessionId) => {
+				const getSessionPromise = get<SessionSchema>(
+					db.query(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`, [
+						sessionId
+					])
+				);
+				const getUserFromJoinPromise = get<
+					UserSchema & {
+						__session_id: string;
+					}
+				>(
+					db.query(
+						`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = ?`,
+						[sessionId]
+					)
+				);
+				const [session, userFromJoin] = await Promise.all([
+					getSessionPromise,
+					getUserFromJoinPromise
+				]);
+				if (!session || !userFromJoin) return [null, null];
+				const { __session_id: _, ...user } = userFromJoin;
+				return [session, user];
 			}
 		};
 	};

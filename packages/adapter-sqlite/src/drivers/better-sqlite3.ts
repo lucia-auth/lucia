@@ -1,4 +1,4 @@
-import { helper, getSetArgs, escapeName, ESCAPE_CHAR } from "../utils.js";
+import { helper, getSetArgs, escapeName } from "../utils.js";
 
 import type {
 	SessionSchema,
@@ -33,9 +33,9 @@ export const betterSqlite3 = (
 		}
 	};
 
-	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user, ESCAPE_CHAR);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session, ESCAPE_CHAR);
-	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key, ESCAPE_CHAR);
+	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
+	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
 		return {
