@@ -9,5 +9,5 @@ dotenv.config({
 export const connection = connect({
 	host: process.env.PLANETSCALE_HOST,
 	username: process.env.PLANETSCALE_USERNAME,
-	password: process.env.PLANETSCALE_PASSWORD,
+	password: process.env.PLANETSCALE_PASSWORD
 });

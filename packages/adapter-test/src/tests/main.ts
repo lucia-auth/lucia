@@ -60,7 +60,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 				await adapter.setUser(user2, key2);
 			}, new LuciaError("AUTH_DUPLICATE_KEY_ID"));
 		});
-		
+
 		await test("Does not insert key if errors", async () => {
 			const user1 = database.generateUser();
 			const key1 = database.generateKey(user1.id);

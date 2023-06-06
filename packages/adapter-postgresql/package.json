@@ -13,6 +13,7 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test.pg": "tsx test/pg/index.ts",
+		"test-setup.pg": "tsx test/pg/setup.ts",
 		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
 	},
 	"keywords": [
@@ -38,7 +39,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "^1.4.0",
+		"lucia": "^2.0.0",
 		"pg": "^8.0.0"
 	},
 	"peerDependenciesMeta": {

@@ -23,13 +23,14 @@ const pool = mysql.createPool({
 const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	return {
 		get: async () => {
-			return await getAll(pool.query(`SELECT * FROM ${tableName}`)) 
+			return await getAll(pool.query(`SELECT * FROM ${tableName}`));
 		},
 		insert: async (value: any) => {
 			const [fields, placeholders, args] = helper(value);
 			await pool.execute(
-				`INSERT INTO ${tableName} ( ${fields} ) VALUES ( ${placeholders} )`
-			, args)
+				`INSERT INTO ${tableName} ( ${fields} ) VALUES ( ${placeholders} )`,
+				args
+			);
 		},
 		clear: async () => {
 			await pool.execute(`DELETE FROM ${tableName}`);
@@ -46,4 +47,4 @@ const queryHandler: QueryHandler = {
 const adapter = mysql2Adapter(pool)(LuciaError);
 
 await testAdapter(adapter, new Database(queryHandler));
-process.exit(0)
+process.exit(0);

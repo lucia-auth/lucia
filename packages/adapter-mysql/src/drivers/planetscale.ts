@@ -72,7 +72,7 @@ export const planetscaleAdapter = (
 			},
 
 			getSession: async (sessionId) => {
-				const result = await get<PlanetscaleSessionSchema>(
+				const result = await get<PlanetscaleSession>(
 					connection.execute("SELECT * FROM auth_session WHERE id = ?", [
 						sessionId
 					])
@@ -80,7 +80,7 @@ export const planetscaleAdapter = (
 				return result ? transformDatabaseSessionResult(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
-				const result = await getAll<PlanetscaleSessionSchema>(
+				const result = await getAll<PlanetscaleSession>(
 					connection.execute("SELECT * FROM auth_session WHERE user_id = ?", [
 						userId
 					])
@@ -162,7 +162,7 @@ export const planetscaleAdapter = (
 			},
 			getSessionAndUser: async (sessionId) => {
 				const [sessionResult, userFromJoinResult] = await Promise.all([
-					get<PlanetscaleSessionSchema>(
+					get<PlanetscaleSession>(
 						connection.execute("SELECT * FROM auth_session WHERE id = ?", [
 							sessionId
 						])
@@ -201,7 +201,7 @@ export const getAll = async <Schema>(
 	return rows as any;
 };
 
-export type PlanetscaleSessionSchema = Omit<
+export type PlanetscaleSession = Omit<
 	SessionSchema,
 	"active_expires" | "idle_expires"
 > & {
@@ -210,7 +210,7 @@ export type PlanetscaleSessionSchema = Omit<
 };
 
 export const transformDatabaseSessionResult = (
-	session: PlanetscaleSessionSchema
+	session: PlanetscaleSession
 ): SessionSchema => {
 	return {
 		...session,

@@ -3,18 +3,18 @@ import { LuciaError } from "lucia";
 
 import { connection } from "./db.js";
 import { helper } from "../../src/utils.js";
-import { getAll, planetscaleAdapter, transformDatabaseSessionResult } from "../../src/drivers/planetscale.js";
+import {
+	getAll,
+	planetscaleAdapter,
+	transformDatabaseSessionResult
+} from "../../src/drivers/planetscale.js";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-import type { PlanetscaleSessionSchema } from "../../src/drivers/planetscale.js";
+import type { PlanetscaleSession } from "../../src/drivers/planetscale.js";
 
 const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	return {
 		get: async () => {
-			if (tableName === "auth_session") {
-				const result = await getAll<PlanetscaleSessionSchema>(connection.execute(`SELECT * FROM ${tableName}`));
-				return result.map(val => transformDatabaseSessionResult(val))
-			}
 			return await getAll(connection.execute(`SELECT * FROM ${tableName}`));
 		},
 		insert: async (value: any) => {
@@ -32,7 +32,15 @@ const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 
 const queryHandler: QueryHandler = {
 	user: createTableQueryHandler("auth_user"),
-	session: createTableQueryHandler("auth_session"),
+	session: {
+		...createTableQueryHandler("auth_session"),
+		get: async () => {
+			const result = await getAll<PlanetscaleSession>(
+				connection.execute(`SELECT * FROM auth_session`)
+			);
+			return result.map((val) => transformDatabaseSessionResult(val));
+		}
+	},
 	key: createTableQueryHandler("auth_key")
 };
 
