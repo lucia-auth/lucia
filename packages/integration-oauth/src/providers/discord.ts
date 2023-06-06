@@ -11,7 +11,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "discord";
 
 export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getTokens = async (code: string, redirectUri?: string) => {
 		const request = new Request("https://discord.com/api/oauth2/token", {
 			method: "POST",
 			headers: {
@@ -21,7 +21,7 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				client_id: config.clientId,
 				client_secret: config.clientSecret,
 				grant_type: "authorization_code",
-				redirect_uri: config.redirectUri,
+				redirect_uri: redirectUri ?? config.redirectUri,
 				code
 			}).toString()
 		});
@@ -59,8 +59,8 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			});
 			return [url, state];
 		},
-		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
+		validateCallback: async (code: string, redirectUri?: string) => {
+			const tokens = await getTokens(code, redirectUri);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id;
 			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
