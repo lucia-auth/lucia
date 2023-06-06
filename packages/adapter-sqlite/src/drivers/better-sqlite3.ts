@@ -70,7 +70,6 @@ export const betterSqlite3 = (db: Database): InitializeAdapter<Adapter> => {
 					`UPDATE auth_user SET ${getSetArgs(fields, values)} WHERE id = ?`
 				).run(...args, userId);
 			},
-
 			getSession: async (sessionId) => {
 				const result: SessionSchema | undefined = db
 					.prepare("SELECT * FROM auth_session WHERE id = ?")

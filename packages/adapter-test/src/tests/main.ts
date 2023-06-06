@@ -56,10 +56,11 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const key2 = database.generateKey(user2.id, {
 				id: key1.id
 			});
-			assert.rejects(async () => {
+			await assert.rejects(async () => {
 				await adapter.setUser(user2, key2);
 			}, new LuciaError("AUTH_DUPLICATE_KEY_ID"));
 		});
+		
 		await test("Does not insert key if errors", async () => {
 			const user1 = database.generateUser();
 			const key1 = database.generateKey(user1.id);
@@ -69,7 +70,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const key2 = database.generateKey(user2.id, {
 				id: key1.id
 			});
-			assert.rejects(async () => {
+			await assert.rejects(async () => {
 				await adapter.setUser(user2, key2);
 			}, new LuciaError("AUTH_DUPLICATE_KEY_ID"));
 			const storedUsers = await User.getAll();
@@ -136,7 +137,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const key2 = database.generateKey(user.id, {
 				id: key1.id
 			});
-			assert.rejects(async () => {
+			await assert.rejects(async () => {
 				await adapter.setKey(key2);
 			}, new LuciaError("AUTH_DUPLICATE_KEY_ID"));
 		});

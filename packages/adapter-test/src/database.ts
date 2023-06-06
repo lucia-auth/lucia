@@ -61,7 +61,7 @@ export class Database {
 		username?: string;
 	}): TestUserSchema => {
 		const userId = options?.userId ?? generateRandomString(8);
-		const username = options?.username ?? "X";
+		const username = options?.username ?? generateRandomString(4);
 		return {
 			id: userId,
 			username

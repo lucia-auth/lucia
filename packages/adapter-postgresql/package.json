@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test.pg": " tsx test/pg/index.ts",
+		"test.pg": "tsx test/pg/index.ts",
 		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
 	},
 	"keywords": [
