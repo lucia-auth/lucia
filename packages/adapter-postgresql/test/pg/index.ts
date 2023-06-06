@@ -43,4 +43,5 @@ const queryHandler: QueryHandler = {
 const adapter = pgAdapter(pool)(LuciaError);
 
 await testAdapter(adapter, new Database(queryHandler));
+
 process.exit(0);

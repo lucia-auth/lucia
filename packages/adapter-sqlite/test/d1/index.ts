@@ -38,4 +38,7 @@ const queryHandler: QueryHandler = {
 };
 
 const adapter = d1Adapter(D1)(LuciaError);
+
 await testAdapter(adapter, new Database(queryHandler));
+
+process.exit(0);

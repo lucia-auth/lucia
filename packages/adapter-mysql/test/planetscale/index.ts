@@ -47,4 +47,5 @@ const queryHandler: QueryHandler = {
 const adapter = planetscaleAdapter(connection)(LuciaError);
 
 await testAdapter(adapter, new Database(queryHandler));
+
 process.exit(0);

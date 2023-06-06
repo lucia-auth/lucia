@@ -6,6 +6,7 @@ export { serializeCookie } from "./utils/cookie.js";
 
 export type GlobalAuth = Lucia.Auth;
 export type GlobalDatabaseUserAttributes = Lucia.DatabaseUserAttributes;
+export type GlobalDatabaseSessionAttributes = Lucia.DatabaseSessionAttributes;
 
 export type {
 	User,
