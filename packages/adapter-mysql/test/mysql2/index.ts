@@ -1,24 +1,11 @@
 import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
-import mysql from "mysql2/promise";
-import dotenv from "dotenv";
-import { resolve } from "path";
 
+import { pool } from "./db.js";
 import { helper } from "../../src/utils.js";
 import { getAll, mysql2Adapter } from "../../src/drivers/mysql2.js";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-
-dotenv.config({
-	path: `${resolve()}/.env`
-});
-
-const pool = mysql.createPool({
-	host: "localhost",
-	user: "root",
-	database: process.env.MYSQL2_DATABASE,
-	password: process.env.MYSQL2_PASSWORD
-});
 
 const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	return {
