@@ -78,12 +78,12 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
+		getAuthorizationUrl: async () => {
 			const state = generateState();
 			const url = createUrl("https://www.linkedin.com/oauth/v2/authorization", {
 				client_id: config.clientId,
 				response_type: "code",
-				redirect_uri: redirectUri ?? config.redirectUri,
+				redirect_uri: config.redirectUri,
 				scope: scope(["r_liteprofile"], config.scope),
 				state
 			});
@@ -93,7 +93,11 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpers = await useAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 			return {
 				...providerAuthHelpers,
 				providerUser,

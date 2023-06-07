@@ -47,11 +47,11 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
+		getAuthorizationUrl: async () => {
 			const state = generateState();
 			const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
 				client_id: config.clientId,
-				redirect_uri: redirectUri ?? config.redirectUri,
+				redirect_uri: config.redirectUri,
 				scope: scope(
 					["https://www.googleapis.com/auth/userinfo.profile"],
 					config.scope
@@ -65,7 +65,11 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.sub;
-			const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpers = await useAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 			return {
 				...providerAuthHelpers,
 				providerUser,

@@ -29,7 +29,6 @@
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"exports": {
-		"./package.json": "./dist/package.json",
 		".": "./dist/index.js",
 		"./providers": "./dist/providers/index.js"
 	},

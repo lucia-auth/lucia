@@ -51,12 +51,12 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
+		getAuthorizationUrl: async () => {
 			const state = generateState();
 			const forceVerify = config.forceVerify ?? false;
 			const url = createUrl("https://id.twitch.tv/oauth2/authorize", {
 				client_id: config.clientId,
-				redirect_uri: redirectUri ?? config.redirectUri,
+				redirect_uri: config.redirectUri,
 				scope: scope([], config.scope),
 				response_type: "code",
 				force_verify: forceVerify.toString(),
@@ -68,7 +68,11 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpers = await useAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 			return {
 				...providerAuthHelpers,
 				providerUser,

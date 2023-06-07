@@ -48,12 +48,12 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
+		getAuthorizationUrl: async () => {
 			const state = generateState();
 			const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
 				client_id: config.clientId,
 				scope: scope([], config.scope),
-				redirect_uri: redirectUri ?? config.redirectUri,
+				redirect_uri: config.redirectUri,
 				state
 			});
 			return [url, state] as const;
@@ -62,7 +62,11 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpers = await useAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 			return {
 				...providerAuthHelpers,
 				providerUser,

@@ -72,18 +72,15 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
+		getAuthorizationUrl: async () => {
 			const state = generateState();
 			const url = createUrl("https://github.com/login/oauth/authorize", {
 				client_id: config.clientId,
 				scope: scope([], config.scope),
 				state
 			});
-			if (config.redirectUri != undefined || redirectUri != undefined) {
-				url.searchParams.set(
-					"redirect_uri",
-					redirectUri ?? (config.redirectUri as string)
-				);
+			if (config.redirectUri) {
+				url.searchParams.set("redirect_uri", config.redirectUri);
 			}
 			return [url, state] as const;
 		},
@@ -91,7 +88,11 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id.toString();
-			const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpers = await useAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 			return {
 				...providerAuthHelpers,
 				providerUser,

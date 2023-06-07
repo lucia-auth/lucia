@@ -64,14 +64,14 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
+		getAuthorizationUrl: async () => {
 			const state = generateState();
 			const url = createUrl(
 				new URL("/authorize", config.appDomain).toString(),
 				{
 					client_id: config.clientId,
 					response_type: "code",
-					redirect_uri: redirectUri ?? config.redirectUri,
+					redirect_uri: config.redirectUri,
 					scope: scope(["openid", "profile"], config.scope),
 					state,
 					...(config.connection && { connection: config.connection }),
@@ -86,7 +86,11 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id;
-			const providerAuthHelpersHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpersHelpers = await useAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 			return {
 				...providerAuthHelpersHelpers,
 				providerUser,
