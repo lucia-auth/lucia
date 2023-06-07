@@ -48,10 +48,11 @@ const createKey: (
 
 #### Errors
 
-| name                  | description        |
-| --------------------- | ------------------ |
-| AUTH_INVALID_USER_ID  | invalid user id    |
-| AUTH_DUPLICATE_KEY_ID | key already exists |
+| name                      | description         |
+| ------------------------- | ------------------- |
+| AUTH_INVALID_USER_ID      | invalid user id     |
+| AUTH_DUPLICATE_KEY_ID     | key already exists  |
+| AUTH_INVALID_PROVIDER_ID  | invalid provider id |
 
 #### Example
 
@@ -187,9 +188,11 @@ const createUser: (data: {
 
 #### Errors
 
-| name                  | description                           |
-| --------------------- | ------------------------------------- |
-| AUTH_DUPLICATE_KEY_ID | the user with the provided key exists |
+| name                      | description                           |
+| ------------------------- | ------------------------------------- |
+| AUTH_DUPLICATE_KEY_ID     | the user with the provided key exists |
+| AUTH_INVALID_USER_ID      | invalid user id                       |
+| AUTH_INVALID_PROVIDER_ID  | invalid provider id                   |
 
 #### Example
 

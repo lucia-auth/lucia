@@ -35,3 +35,4 @@ const errorMessage = error.message;
 | `AUTH_EXPIRED_KEY`                      |
 | `REQUEST_UNAUTHORIZED`                  |
 | `UNKNOWN_ERROR`                         |
+| `AUTH_INVALID_PROVIDER_ID`              |
