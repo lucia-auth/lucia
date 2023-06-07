@@ -228,7 +228,6 @@ export const transformPrismaSession = (
 	};
 };
 
-
 type PrismaClient = {
 	$transaction: (...args: any) => any;
 } & { [K: string]: any };
