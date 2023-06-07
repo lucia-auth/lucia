@@ -35,6 +35,9 @@
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js"
+	},
 	"peerDependencies": {
 		"lucia": "^2.0.0",
 		"pg": "^8.0.0"

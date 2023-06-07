@@ -36,6 +36,9 @@
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js"
+	},
 	"peerDependencies": {
 		"@prisma/client": "^4.2.0",
 		"lucia": "^2.0.0"

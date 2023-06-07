@@ -24,6 +24,7 @@
 		"auth"
 	],
 	"exports": {
+		".": "./dist/index.js",
 		"./middleware": "./dist/middleware/index.js",
 		"./polyfill/node": "./dist/polyfill/node.js"
 	},
