@@ -53,7 +53,7 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				client_id: config.clientId,
 				redirect_uri: redirectUri ?? config.redirectUri,
 				scope: scope(
-					["https://www.googleapis.com/auth/userinfo.profile"],
+					["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
 					config.scope
 				),
 				response_type: "code",
@@ -79,10 +79,8 @@ export type GoogleUser = {
 	sub: string;
 	name: string;
 	given_name: string;
-	family_name: string;
 	picture: string;
 	email: string;
 	email_verified: boolean;
 	locale: string;
-	hd: string;
 };

@@ -1,5 +1,0 @@
-{
-	"repository": "https://github.com/pilcrowOnPaper/lucia",
-	"ignore": ["*", "!packages", "packages/*/dist", "!documentation"],
-	"debug": true
-}
