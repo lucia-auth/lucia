@@ -115,8 +115,14 @@ export class Auth<C extends Configuration = any> {
 		} else {
 			this.adapter = config.adapter(LuciaError);
 		}
-		this.generateUserId =
-			config.generateCustomUserId ?? (() => generateRandomString(15));
+		this.generateUserId = async () => {
+			let generator = config.generateCustomUserId ?? (() => generateRandomString(15));
+			let userId = await generator();
+			if (userId.includes(".")) {
+				throw new LuciaError("AUTH_INVALID_USER_ID");
+			}
+			return userId;
+		}
 		this.env = config.env;
 		this.csrfProtection = config.csrfProtection ?? true;
 		this.sessionExpiresIn = {
@@ -233,6 +239,9 @@ export class Auth<C extends Configuration = any> {
 			);
 			if (databaseUser) return this.transformDatabaseUser(databaseUser);
 			return await this.getUser(userId);
+		}
+		if (data.primaryKey.providerId.includes(":")) {
+			throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
 		}
 		const keyId = `${data.primaryKey.providerId}:${data.primaryKey.providerUserId}`;
 		const password = data.primaryKey.password;
@@ -594,6 +603,9 @@ export class Auth<C extends Configuration = any> {
 		userId: string,
 		keyData: KeyData
 	): Promise<GetKeyFromKeyType<KeyData["type"]>> => {
+		if (keyData.providerId.includes(":")) {
+			throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
+		}
 		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
 		let hashedPassword: string | null = null;
 		if (keyData.password !== null) {
@@ -672,6 +684,9 @@ export class Auth<C extends Configuration = any> {
 		providerUserId: string,
 		password: string | null
 	): Promise<void> => {
+		if (providerId.includes(":")) {
+			throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
+		}
 		const keyId = `${providerId}:${providerUserId}`;
 		let updatedDatabaseKey: KeySchema | void;
 		if (password === null) {

@@ -156,7 +156,7 @@ const response = new Response(null, {
 
 ## `createUser()`
 
-Creates a new user, with an option to create a primary key alongside the user.
+Creates a new user, with an option to create a primary key alongside the user. **`providerId` cannot include character `:`**.
 
 ```ts
 const createUser: (data: {
@@ -672,7 +672,7 @@ try {
 
 ## `updateKeyPassword()`
 
-Updates the password of a key.
+Updates the password of a key. **`providerId` cannot include character `:`**.
 
 ```ts
 const updateKeyPassword: (

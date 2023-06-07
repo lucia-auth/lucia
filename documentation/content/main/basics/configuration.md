@@ -130,7 +130,7 @@ Checks if the request is from a trusted origin (where the app is hosted) in [`va
 
 ### `generateCustomUserId()`
 
-A function that generates a random user id.
+A function that generates a random user id. **The generated user id cannot include character `.`**.
 
 ```ts
 const generateCustomUserId: () => MaybePromise<string>;

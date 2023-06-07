@@ -6,7 +6,7 @@ description: "Learn about keys in Lucia"
 
 Keys represent the relationship between a user and an auth method/strategy. It allows you to have multiple ways to reference users using external data (such as email in email/password auth) without needing to cram all that data into your user database instance. Such external data are provided by _providers_.
 
-Keys are defined with a _provider id_, which is just a unique id for the provider, and a _provider user id_, which is the unique identifier of the user within the method used (defined using provider id). Keys can also hold passwords, allowing to reference users and validate them using the provided password.
+Keys are defined with a _provider id_, which is just a unique id for the provider, and a _provider user id_, which is the unique identifier of the user within the method used (defined using provider id). Keys can also hold passwords, allowing to reference users and validate them using the provided password. Take note that **provider ids cannot contain a colon character**, or an error will be thrown.
 
 ```ts
 // email/password auth
