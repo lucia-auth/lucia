@@ -94,7 +94,7 @@ export const planetscaleAdapter = (
 						[sessionId]
 					)
 				);
-				return result ? transformDatabaseSessionResult(result) : null;
+				return result ? transformPlanetscaleSession(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await getAll<PlanetscaleSession>(
@@ -103,7 +103,7 @@ export const planetscaleAdapter = (
 						[userId]
 					)
 				);
-				return result.map((val) => transformDatabaseSessionResult(val));
+				return result.map((val) => transformPlanetscaleSession(val));
 			},
 			setSession: async (session) => {
 				const [fields, values, args] = helper(session);
@@ -216,7 +216,7 @@ export const planetscaleAdapter = (
 				]);
 				if (!sessionResult || !userFromJoinResult) return [null, null];
 				const { __session_id: _, ...userResult } = userFromJoinResult;
-				return [transformDatabaseSessionResult(sessionResult), userResult];
+				return [transformPlanetscaleSession(sessionResult), userResult];
 			}
 		};
 	};
@@ -245,7 +245,7 @@ export type PlanetscaleSession = Omit<
 	idle_expires: BigInt;
 };
 
-export const transformDatabaseSessionResult = (
+export const transformPlanetscaleSession = (
 	session: PlanetscaleSession
 ): SessionSchema => {
 	return {

@@ -6,7 +6,7 @@ import { helper, escapeName } from "../../src/utils.js";
 import {
 	getAll,
 	planetscaleAdapter,
-	transformDatabaseSessionResult
+	transformPlanetscaleSession
 } from "../../src/drivers/planetscale.js";
 import { TABLE_NAMES, ESCAPED_SESSION_TABLE_NAME } from "../shared.js";
 
@@ -42,7 +42,7 @@ const queryHandler: QueryHandler = {
 			const result = await getAll<PlanetscaleSession>(
 				connection.execute(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`)
 			);
-			return result.map((val) => transformDatabaseSessionResult(val));
+			return result.map((val) => transformPlanetscaleSession(val));
 		}
 	},
 	key: createTableQueryHandler(TABLE_NAMES.key)

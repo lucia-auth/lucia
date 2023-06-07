@@ -1,5 +1,3 @@
-import { transformDatabaseSession } from "./utils.js";
-
 import type {
 	Adapter,
 	InitializeAdapter,
@@ -91,7 +89,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(options: {
 					}
 				});
 				if (!result) return null;
-				return transformDatabaseSession(result);
+				return transformPrismaSession(result);
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessions = await Session.findMany({
@@ -99,7 +97,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(options: {
 						user_id: userId
 					}
 				});
-				return sessions.map((session) => transformDatabaseSession(session));
+				return sessions.map((session) => transformPrismaSession(session));
 			},
 			setSession: async (session) => {
 				try {
@@ -211,13 +209,25 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(options: {
 					...sessionResult
 				} = result;
 				return [
-					transformDatabaseSession(sessionResult as PrismaSession),
+					transformPrismaSession(sessionResult as PrismaSession),
 					userResult as UserSchema
 				];
 			}
 		};
 	};
 };
+
+export const transformPrismaSession = (
+	sessionData: PrismaSession
+): SessionSchema => {
+	const { active_expires, idle_expires: idleExpires, ...data } = sessionData;
+	return {
+		...data,
+		active_expires: Number(active_expires),
+		idle_expires: Number(idleExpires)
+	};
+};
+
 
 type PrismaClient = {
 	$transaction: (...args: any) => any;
