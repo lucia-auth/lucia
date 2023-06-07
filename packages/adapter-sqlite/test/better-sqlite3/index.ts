@@ -2,7 +2,7 @@ import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
 
 import { TABLE_NAMES, db } from "../db.js";
-import { betterSqlite3 as betterSqlite3Adapter } from "../../src/index.js";
+import { betterSqlite3Adapter } from "../../src/drivers/better-sqlite3.js";
 import { escapeName, helper } from "../../src/utils.js";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";

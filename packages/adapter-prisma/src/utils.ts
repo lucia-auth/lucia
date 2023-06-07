@@ -1,20 +1,13 @@
-import type { KeySchema, SessionSchema } from "lucia";
+import type { SessionSchema } from "lucia";
+import type { PrismaSession } from "./prisma.js";
 
 export const transformDatabaseSession = (
-	sessionData: SessionSchema
+	sessionData: PrismaSession
 ): SessionSchema => {
 	const { active_expires, idle_expires: idleExpires, ...data } = sessionData;
 	return {
+		...data,
 		active_expires: Number(active_expires),
-		idle_expires: Number(idleExpires),
-		...data
-	};
-};
-
-export const transformDatabaseKey = (keyData: KeySchema): KeySchema => {
-	const { expires, ...data } = keyData;
-	return {
-		expires: expires === null ? null : Number(expires),
-		...data
+		idle_expires: Number(idleExpires)
 	};
 };

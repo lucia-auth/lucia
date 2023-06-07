@@ -11,7 +11,7 @@ import type { Database, SqliteError } from "better-sqlite3";
 
 type BetterSQLiteError = InstanceType<SqliteError>;
 
-export const betterSqlite3 = (
+export const betterSqlite3Adapter = (
 	db: Database,
 	tables: {
 		user: string;
@@ -86,6 +86,7 @@ export const betterSqlite3 = (
 					)} WHERE id = ?`
 				).run(...args, userId);
 			},
+
 			getSession: async (sessionId) => {
 				const result: SessionSchema | undefined = db
 					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)

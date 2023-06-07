@@ -13,6 +13,7 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test": "tsx test/index.ts",
+		"test-setup": "prisma db push",
 		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
 	},
 	"keywords": [
@@ -40,7 +41,7 @@
 	},
 	"peerDependencies": {
 		"@prisma/client": "^4.2.0",
-		"lucia": "^1.3.0"
+		"lucia": "^2.0.0"
 	},
 	"devDependencies": {
 		"lucia": "latest",

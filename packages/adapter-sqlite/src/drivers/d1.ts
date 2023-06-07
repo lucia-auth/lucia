@@ -9,7 +9,7 @@ import type {
 } from "lucia";
 import type { D1Database } from "@cloudflare/workers-types";
 
-export const d1 = (
+export const d1Adapter = (
 	db: D1Database,
 	tables: {
 		user: string;
