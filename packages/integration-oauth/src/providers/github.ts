@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, provider, generateState, connectAuth } from "../core.js";
+import { scope, generateState, useAuth } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -91,9 +91,9 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id.toString();
-			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
 			return {
-				...providerAuth,
+				...providerAuthHelpers,
 				providerUser,
 				tokens
 			};

@@ -44,6 +44,6 @@
 		"lucia": "latest"
 	},
 	"peerDependencies": {
-		"lucia": "1.x"
+		"lucia": "^2.0.0"
 	}
 }

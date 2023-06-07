@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, connectAuth } from "../core.js";
+import { scope, generateState, useAuth } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -86,9 +86,9 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const tokens = await getTokens(code);
 			const providerUser = await getProviderUser(tokens.accessToken);
 			const providerUserId = providerUser.id;
-			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuthHelpersHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
 			return {
-				...providerAuth,
+				...providerAuthHelpersHelpers,
 				providerUser,
 				tokens
 			};
