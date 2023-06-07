@@ -29,9 +29,6 @@
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
-	"exports": {
-		".": "./dist/index.js"
-	},
 	"devDependencies": {
 		"@types/mocha": "^10.0.1",
 		"lucia": "latest"

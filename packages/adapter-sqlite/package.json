@@ -35,9 +35,6 @@
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
-	"exports": {
-		".": "./dist/index.js"
-	},
 	"peerDependencies": {
 		"better-sqlite3": "^8.0.0",
 		"lucia": "^2.0.0"
