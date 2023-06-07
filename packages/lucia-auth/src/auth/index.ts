@@ -684,9 +684,6 @@ export class Auth<C extends Configuration = any> {
 		providerUserId: string,
 		password: string | null
 	): Promise<void> => {
-		if (providerId.includes(":")) {
-			throw new LuciaError("AUTH_INVALID_PROVIDER_ID");
-		}
 		const keyId = `${providerId}:${providerUserId}`;
 		let updatedDatabaseKey: KeySchema | void;
 		if (password === null) {

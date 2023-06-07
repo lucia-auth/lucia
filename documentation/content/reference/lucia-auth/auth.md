@@ -672,7 +672,7 @@ try {
 
 ## `updateKeyPassword()`
 
-Updates the password of a key. **`providerId` cannot include character `:`**.
+Updates the password of a key.
 
 ```ts
 const updateKeyPassword: (
