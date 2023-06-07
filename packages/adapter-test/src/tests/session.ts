@@ -15,13 +15,13 @@ export const testSessionAdapter = async (
 	start();
 
 	await method("getSession()", async (test) => {
-		await test("Return the matching session", async () => {
+		await test("Returns target session", async () => {
 			const session = database.generateSession(null);
 			await Session.insert(session);
 			const sessionResult = await adapter.getSession(session.id);
 			assert.deepStrictEqual(sessionResult, session);
 		});
-		await test("Return null if session id is invalid", async () => {
+		await test("Returns null if invalid target session id", async () => {
 			const session = await adapter.getSession("*");
 			assert.deepStrictEqual(session, null);
 		});
@@ -38,14 +38,14 @@ export const testSessionAdapter = async (
 			const result = await adapter.getSessionsByUserId(user1.id);
 			assert.deepStrictEqual(result, [session1]);
 		});
-		await test("Returns an empty array if no sessions exist", async () => {
+		await test("Returns an empty array if none matches target", async () => {
 			const result = await adapter.getSessionsByUserId("*");
 			assert.deepStrictEqual(result, []);
 		});
 	});
 
 	await method("setSession()", async (test) => {
-		await test("Insert session into session table", async () => {
+		await test("Inserts session", async () => {
 			const session = database.generateSession(null);
 			await adapter.setSession(session);
 			const storedSession = await Session.get(session.id);
@@ -54,7 +54,7 @@ export const testSessionAdapter = async (
 	});
 
 	await method("deleteSession()", async (test) => {
-		await test("Delete session from session table", async () => {
+		await test("Deletes target session", async () => {
 			const user = database.generateUser();
 			const session1 = database.generateSession(user.id);
 			const session2 = database.generateSession(user.id);
@@ -67,7 +67,7 @@ export const testSessionAdapter = async (
 	});
 
 	await method("deleteSessionsByUserId()", async (test) => {
-		await test("Delete session by user id from session table", async () => {
+		await test("Deletes sessions with target user id", async () => {
 			const user1 = database.generateUser();
 			const user2 = database.generateUser();
 			const session1 = database.generateSession(user1.id);
@@ -80,7 +80,7 @@ export const testSessionAdapter = async (
 	});
 
 	await method("updateSession()", async (test) => {
-		await test("Update 'country' field of session", async () => {
+		await test("Updates session 'country' field", async () => {
 			const session = database.generateSession(null);
 			await Session.insert(session);
 			await adapter.updateSession(session.id, {

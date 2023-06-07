@@ -35,8 +35,8 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "1.x",
-		"redis": "4.x"
+		"lucia": "^2.0.0",
+		"redis": "^4.0.0"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "latest",
