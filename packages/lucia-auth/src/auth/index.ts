@@ -119,7 +119,7 @@ export class Auth<C extends Configuration = any> {
 			let generator = config.generateCustomUserId ?? (() => generateRandomString(15));
 			let userId = await generator();
 			if (userId.includes(".")) {
-				throw new LuciaError("AUTH_INVALID_USER_ID");
+				throw new LuciaError("GEN_INVALID_USER_ID");
 			}
 			return userId;
 		}

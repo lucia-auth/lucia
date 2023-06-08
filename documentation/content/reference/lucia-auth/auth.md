@@ -192,6 +192,7 @@ const createUser: (data: {
 | ------------------------- | ------------------------------------- |
 | AUTH_DUPLICATE_KEY_ID     | the user with the provided key exists |
 | AUTH_INVALID_USER_ID      | invalid user id                       |
+| GEN_INVALID_USER_ID       | invalid generated user id             |
 | AUTH_INVALID_PROVIDER_ID  | invalid provider id                   |
 
 #### Example
