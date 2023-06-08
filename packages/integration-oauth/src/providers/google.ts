@@ -47,14 +47,13 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string, getEmail?: boolean) => {
-			getEmail = getEmail ?? false;
+		getAuthorizationUrl: async (redirectUri?: string) => {
 			const state = generateState();
 			const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
 				client_id: config.clientId,
 				redirect_uri: redirectUri ?? config.redirectUri,
 				scope: scope(
-					[...(getEmail ? ['https://www.googleapis.com/auth/userinfo.email'] : []), "https://www.googleapis.com/auth/userinfo.profile"],
+					["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
 					config.scope
 				),
 				response_type: "code",
@@ -81,7 +80,7 @@ export type GoogleUser = {
 	name: string;
 	given_name: string;
 	picture: string;
-	email?: string;
-	email_verified?: boolean;
+	email: string;
+	email_verified: boolean;
 	locale: string;
 };
