@@ -13,16 +13,16 @@
 		"@lucia-auth/oauth": "workspace:*",
 		"@prisma/client": "^4.7.0",
 		"@types/node": "18.11.9",
-		"@types/react": "18.0.24",
-		"@types/react-dom": "18.0.8",
+		"@types/react": "^18.2.0",
+		"@types/react-dom": "^18.2.0",
 		"encoding": "^0.1.13",
 		"eslint": "8.26.0",
 		"eslint-config-next": "13.0.1",
 		"lucia-auth": "workspace:*",
-		"next": "13.0.1",
-		"react": "18.2.0",
-		"react-dom": "18.2.0",
-		"typescript": "4.x"
+		"next": "^13.4.4",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"typescript": "5.0.4"
 	},
 	"devDependencies": {
 		"@types/cookie": "^0.5.1",
