@@ -134,7 +134,7 @@ export const useSignupAction = routeAction$(
 		} catch (error) {
 			// username already used
 			console.error(error);
-			return event.fail(400);
+			return event.fail(400, {});
 		}
 
 		// if all goes well, redirect to home page
