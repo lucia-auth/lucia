@@ -1,4 +1,4 @@
-import { generateRandomString } from "lucia";
+import { generateRandomString } from "lucia/utils";
 
 import type { Auth, Key, LuciaError } from "lucia";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
