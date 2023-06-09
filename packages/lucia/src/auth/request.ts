@@ -1,6 +1,7 @@
-import { Cookie } from "./cookie.js";
-import type { Auth, Session, User } from "./index.js";
 import { debug } from "../utils/debug.js";
+
+import type { Auth, Env, Session } from "./index.js";
+import type { Cookie } from "./cookie.js";
 
 export type LuciaRequest = {
 	method: string;
@@ -16,9 +17,11 @@ export type RequestContext = {
 	setCookie: (cookie: Cookie) => void;
 };
 
-export type Middleware<Args extends any[] = any> = (
-	...args: [...Args, "DEV" | "PROD"]
-) => RequestContext;
+export type Middleware<Args extends any[] = any> = (context: {
+	args: Args;
+	env: Env;
+	cookieName: string;
+}) => RequestContext;
 
 export class AuthRequest<A extends Auth = any> {
 	private auth: A;

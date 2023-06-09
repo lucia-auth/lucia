@@ -3,12 +3,7 @@ import type {
 	OutgoingMessage,
 	ServerResponse
 } from "node:http";
-import {
-	SESSION_COOKIE_NAME,
-	type Cookie,
-	type Middleware,
-	type RequestContext
-} from "../index.js";
+import type { Cookie, Middleware, RequestContext } from "../index.js";
 import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
@@ -17,7 +12,8 @@ import { CookieAttributes } from "../utils/cookie.js";
 import { LuciaRequest } from "../auth/request.js";
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
-	return (incomingMessage, outgoingMessage, env) => {
+	return ({ args, env }) => {
+		const [incomingMessage, outgoingMessage] = args;
 		const getUrl = () => {
 			if (!incomingMessage.headers.host) return "";
 			const protocol = env === "DEV" ? "http:" : "https:";
@@ -53,7 +49,8 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 };
 
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
-	return (request, response) => {
+	return ({ args }) => {
+		const [request, response] = args;
 		const requestContext = {
 			request: {
 				url: `${request.protocol}://${request.hostname}${request.path}`,
@@ -80,7 +77,8 @@ type SvelteKitRequestEvent = {
 };
 
 export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
-	return (event) => {
+	return ({ args }) => {
+		const [event] = args;
 		const requestContext = {
 			request: {
 				url: event.request.url,
@@ -107,7 +105,8 @@ type AstroAPIContext = {
 };
 
 export const astro = (): Middleware<[AstroAPIContext]> => {
-	return (context) => {
+	return ({ args }) => {
+		const [context] = args;
 		const requestContext = {
 			request: {
 				url: context.request.url,
@@ -134,7 +133,8 @@ type QwikRequestEvent = {
 };
 
 export const qwik = (): Middleware<[QwikRequestEvent]> => {
-	return (event) => {
+	return ({ args }) => {
+		const [event] = args;
 		const requestContext = {
 			request: {
 				url: event.request.url.toString(),
@@ -155,11 +155,12 @@ export const qwik = (): Middleware<[QwikRequestEvent]> => {
 };
 
 export const lucia = (): Middleware<[RequestContext]> => {
-	return (requestContext) => requestContext;
+	return ({ args }) => args[0];
 };
 
 export const web = (): Middleware<[Request, Headers | Response]> => {
-	return (request, arg2) => {
+	return ({ args }) => {
+		const [request, arg2] = args;
 		const createSetCookie = () => {
 			if (arg2 instanceof Response) {
 				return (cookie: Cookie) => {
@@ -216,10 +217,11 @@ type NextJsPagesServerContext =
 export const nextjs = (): Middleware<
 	[NextJsPagesServerContext | NextJsAppServerContext]
 > => {
-	return (serverContext, env) => {
+	return ({ args, cookieName, env }) => {
+		const [serverContext] = args;
 		if ("cookies" in serverContext) {
 			const cookieStore = serverContext.cookies();
-			const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME) ?? null;
+			const sessionCookie = cookieStore.get(cookieName) ?? null;
 			const requestContext = {
 				request: {
 					url: serverContext.request?.url ?? "",
@@ -227,7 +229,7 @@ export const nextjs = (): Middleware<
 					headers: {
 						origin: serverContext.request?.headers.get("Origin") ?? null,
 						cookie: sessionCookie
-							? `${SESSION_COOKIE_NAME}=${sessionCookie.value}`
+							? `${cookieName}=${sessionCookie.value}`
 							: null,
 						authorization:
 							serverContext.request?.headers.get("Authorization") ?? null
@@ -305,7 +307,12 @@ type H3Event = {
 
 export const h3 = (): Middleware<[H3Event]> => {
 	const nodeMiddleware = node();
-	return (context, env) => {
-		return nodeMiddleware(context.node.req, context.node.res, env);
+	return ({ args, cookieName, env }) => {
+		const [context] = args;
+		return nodeMiddleware({
+			args: [context.node.req, context.node.res],
+			cookieName,
+			env
+		});
 	};
 };

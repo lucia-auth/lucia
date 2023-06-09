@@ -26,7 +26,8 @@
 	"exports": {
 		".": "./dist/index.js",
 		"./middleware": "./dist/middleware/index.js",
-		"./polyfill/node": "./dist/polyfill/node.js"
+		"./polyfill/node": "./dist/polyfill/node.js",
+		"./utils": "./dist/utils/index.js"
 	},
 	"typesVersions": {
 		"*": {
@@ -35,6 +36,9 @@
 			],
 			"polyfill/node": [
 				"dist/polyfill/node.d.ts"
+			],
+			"polyfill/utils": [
+				"dist/utils/index.d.ts"
 			]
 		}
 	},

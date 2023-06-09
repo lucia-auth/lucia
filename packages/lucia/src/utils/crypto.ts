@@ -1,5 +1,4 @@
 import scrypt from "../scrypt/index.js";
-import { debug } from "./debug.js";
 import { generateRandomString } from "./nanoid.js";
 
 export const generateScryptHash = async (s: string) => {

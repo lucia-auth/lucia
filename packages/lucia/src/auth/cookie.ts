@@ -1,9 +1,11 @@
-import { Env, Session } from "./index.js";
-import { type CookieAttributes, serializeCookie } from "../utils/cookie.js";
+import { serializeCookie } from "../utils/cookie.js";
 
-export const SESSION_COOKIE_NAME = "auth_session";
+import type { Env, Session } from "./index.js";
+import type { CookieAttributes } from "../utils/cookie.js";
 
-export type CookieOption = {
+export const DEFAULT_SESSION_COOKIE_NAME = "auth_session";
+
+export type SessionCookieAttributes = {
 	sameSite?: "strict" | "lax";
 	path?: string;
 	domain?: string;
@@ -12,14 +14,21 @@ export type CookieOption = {
 export const createSessionCookie = (
 	session: Session | null,
 	env: Env,
-	options: CookieOption
+	cookieConfig: {
+		name: string;
+		attributes: SessionCookieAttributes;
+	}
 ) => {
-	return new Cookie(SESSION_COOKIE_NAME, session?.sessionId ?? "", {
-		...options,
-		httpOnly: true,
-		expires: new Date(session?.idlePeriodExpiresAt ?? 0),
-		secure: env === "PROD"
-	});
+	return new Cookie(
+		cookieConfig.name ?? DEFAULT_SESSION_COOKIE_NAME,
+		session?.sessionId ?? "",
+		{
+			...cookieConfig.attributes,
+			httpOnly: true,
+			expires: new Date(session?.idlePeriodExpiresAt ?? 0),
+			secure: env === "PROD"
+		}
+	);
 };
 
 export class Cookie {

@@ -1,9 +1,4 @@
-import {
-	Cookie,
-	CookieOption,
-	SESSION_COOKIE_NAME,
-	createSessionCookie
-} from "./cookie.js";
+import { DEFAULT_SESSION_COOKIE_NAME, createSessionCookie } from "./cookie.js";
 import { logError } from "../utils/log.js";
 import { generateScryptHash, validateScryptHash } from "../utils/crypto.js";
 import { generateRandomString } from "../utils/nanoid.js";
@@ -16,11 +11,11 @@ import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
 import { isWithinExpiration } from "../utils/date.js";
 
+import type { Cookie, SessionCookieAttributes } from "./cookie.js";
 import type { UserSchema, SessionSchema } from "./schema.js";
 import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.js";
 import type { LuciaErrorConstructor } from "./error.js";
 import type { Middleware, LuciaRequest } from "./request.js";
-
 
 export type Session = Readonly<{
 	user: User;
@@ -59,16 +54,22 @@ const validateConfiguration = (config: Configuration) => {
 	}
 };
 
+const defaultSessionCookieAttributes: SessionCookieAttributes = {
+	sameSite: "lax",
+	path: "/"
+};
+
 export class Auth<_Configuration extends Configuration = any> {
 	private adapter: Adapter;
 	private generateUserId: () => MaybePromise<string>;
-	private sessionCookieOption: CookieOption;
+	private sessionCookieName: string;
+	private sessionCookieAttributes: SessionCookieAttributes;
 	private sessionExpiresIn: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
 	private env: Env;
-	private hash: {
+	private passwordHash: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
 	};
@@ -76,17 +77,14 @@ export class Auth<_Configuration extends Configuration = any> {
 		? _Configuration["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
 	private csrfProtectionEnabled: boolean;
-	private origin: string[];
+	private requestOrigins: string[];
 	private experimental: {
 		debugMode: boolean;
 	};
 
 	constructor(config: _Configuration) {
 		validateConfiguration(config);
-		const defaultSessionCookieOption: CookieOption = {
-			sameSite: "lax",
-			path: "/"
-		};
+
 		if ("user" in config.adapter) {
 			let userAdapter = config.adapter.user(LuciaError);
 			let sessionAdapter = config.adapter.session(LuciaError);
@@ -108,7 +106,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			this.adapter = config.adapter(LuciaError);
 		}
 		this.generateUserId =
-			config.generateCustomUserId ?? (() => generateRandomString(15));
+			config.generateUserId ?? (() => generateRandomString(15));
 		this.env = config.env;
 		this.csrfProtectionEnabled = config.csrfProtection ?? true;
 		this.sessionExpiresIn = {
@@ -131,17 +129,20 @@ export class Auth<_Configuration extends Configuration = any> {
 			const transform = config.getSessionAttributes ?? defaultTransform;
 			return transform(databaseSession);
 		};
-		this.sessionCookieOption =
-			config.sessionCookie ?? defaultSessionCookieOption;
-		this.hash = {
-			generate: config.hash?.generate ?? generateScryptHash,
-			validate: config.hash?.validate ?? validateScryptHash
+		this.sessionCookieName =
+			config.sessionCookie?.name ?? DEFAULT_SESSION_COOKIE_NAME;
+		this.sessionCookieAttributes =
+			config.sessionCookie?.attributes ?? defaultSessionCookieAttributes;
+		this.passwordHash = {
+			generate: config.passwordHash?.generate ?? generateScryptHash,
+			validate: config.passwordHash?.validate ?? validateScryptHash
 		};
 		this.middleware = config.middleware ?? defaultMiddleware();
-		this.origin = config.origin ?? [];
+		this.requestOrigins = config.requestOrigins ?? [];
 		this.experimental = {
 			debugMode: config.experimental?.debugMode ?? false
 		};
+
 		debug.init(this.experimental.debugMode);
 	}
 
@@ -241,17 +242,22 @@ export class Auth<_Configuration extends Configuration = any> {
 		}
 	};
 
-	private generateSessionId = (): readonly [
+	private generateSessionId = (sessionExpiresIn?: {
+		activePeriod: number;
+		idlePeriod: number;
+	}): readonly [
 		sessionId: string,
 		activePeriodExpiresAt: Date,
 		idlePeriodExpiresAt: Date
 	] => {
 		const sessionId = generateRandomString(40);
 		const activePeriodExpiresAt = new Date(
-			new Date().getTime() + this.sessionExpiresIn.activePeriod
+			new Date().getTime() +
+				(sessionExpiresIn?.activePeriod ?? this.sessionExpiresIn.activePeriod)
 		);
 		const idlePeriodExpiresAt = new Date(
-			activePeriodExpiresAt.getTime() + this.sessionExpiresIn.idlePeriod
+			activePeriodExpiresAt.getTime() +
+				(sessionExpiresIn?.idlePeriod ?? this.sessionExpiresIn.idlePeriod)
 		);
 		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
 	};
@@ -282,7 +288,9 @@ export class Auth<_Configuration extends Configuration = any> {
 		}
 		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
 		const password = data.key.password;
-		const hashedPassword = password ? await this.hash.generate(password) : null;
+		const hashedPassword = password
+			? await this.passwordHash.generate(password)
+			: null;
 		await this.adapter.setUser(databaseUser, {
 			id: keyId,
 			user_id: userId,
@@ -326,7 +334,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			if (hashedPassword.startsWith("$2a")) {
 				throw new LuciaError("AUTH_OUTDATED_PASSWORD");
 			}
-			const validPassword = await this.hash.validate(password, hashedPassword);
+			const validPassword = await this.passwordHash.validate(
+				password,
+				hashedPassword
+			);
 			if (!validPassword) {
 				debug.key.fail("Incorrect key password", password);
 				throw new LuciaError("AUTH_INVALID_PASSWORD");
@@ -499,7 +510,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			}
 			try {
 				const url = new URL(request.url);
-				if (![url.origin, ...this.origin].includes(requestOrigin)) {
+				if (![url.origin, ...this.requestOrigins].includes(requestOrigin)) {
 					debug.request.fail("Invalid request origin", requestOrigin);
 					throw new LuciaError("AUTH_INVALID_REQUEST");
 				}
@@ -516,7 +527,7 @@ export class Auth<_Configuration extends Configuration = any> {
 
 	public readSessionCookie = (request: LuciaRequest): string | null => {
 		const cookies = parseCookie(request.headers.cookie ?? "");
-		const sessionId = cookies[SESSION_COOKIE_NAME] ?? null;
+		const sessionId = cookies[this.sessionCookieName] ?? null;
 		if (sessionId) {
 			debug.request.info("Found session cookie", sessionId);
 		} else {
@@ -552,11 +563,21 @@ export class Auth<_Configuration extends Configuration = any> {
 			: never
 	): AuthRequest<Lucia.Auth> => {
 		const middleware = this.middleware as Middleware;
-		return new AuthRequest(this, middleware(...[...args, this.env]));
+		return new AuthRequest(
+			this,
+			middleware({
+				args,
+				env: this.env,
+				cookieName: this.sessionCookieName
+			})
+		);
 	};
 
 	public createSessionCookie = (session: Session | null): Cookie => {
-		return createSessionCookie(session, this.env, this.sessionCookieOption);
+		return createSessionCookie(session, this.env, {
+			name: this.sessionCookieName,
+			attributes: this.sessionCookieAttributes
+		});
 	};
 
 	public createKey = async (
@@ -570,7 +591,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
 		let hashedPassword: string | null = null;
 		if (keyData.password !== null) {
-			hashedPassword = await this.hash.generate(keyData.password);
+			hashedPassword = await this.passwordHash.generate(keyData.password);
 		}
 		await this.adapter.setKey({
 			id: keyId,
@@ -621,7 +642,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	): Promise<void> => {
 		const keyId = `${providerId}:${providerUserId}`;
 		const hashedPassword =
-			password === null ? null : await this.hash.generate(password);
+			password === null ? null : await this.passwordHash.generate(password);
 		await this.adapter.updateKey(keyId, {
 			hashed_password: hashedPassword
 		});
@@ -643,21 +664,24 @@ export type Configuration<
 		  };
 	env: Env;
 
-	csrfProtection?: boolean;
-	generateCustomUserId?: () => MaybePromise<string>;
-	hash?: {
-		generate: (s: string) => MaybePromise<string>;
-		validate: (s: string, hash: string) => MaybePromise<boolean>;
-	};
 	middleware?: Middleware;
-	origin?: string[];
-	sessionExpiresIn?: {
+	csrfProtection?: boolean;
+	requestOrigins?: string[];
+	sessionExpiresIn: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
-	sessionCookie?: CookieOption;
-	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
+	sessionCookie?: {
+		name?: string;
+		attributes?: SessionCookieAttributes;
+	};
 	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
+	generateUserId?: () => MaybePromise<string>;
+	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
+	passwordHash?: {
+		generate: (password: string) => MaybePromise<string>;
+		validate: (password: string, hash: string) => MaybePromise<boolean>;
+	};
 	experimental?: {
 		debugMode?: boolean;
 	};

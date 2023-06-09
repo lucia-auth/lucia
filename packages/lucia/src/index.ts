@@ -1,8 +1,6 @@
-export { lucia as default } from "./auth/index.js";
-export { SESSION_COOKIE_NAME, Cookie } from "./auth/cookie.js";
-export { LuciaError, LuciaErrorConstructor } from "./auth/error.js";
-export { generateRandomString } from "./utils/nanoid.js";
-export { serializeCookie } from "./utils/cookie.js";
+export { lucia } from "./auth/index.js";
+export { DEFAULT_SESSION_COOKIE_NAME } from "./auth/cookie.js";
+export { LuciaError } from "./auth/error.js";
 
 export type GlobalAuth = Lucia.Auth;
 export type GlobalDatabaseUserAttributes = Lucia.DatabaseUserAttributes;
@@ -28,3 +26,5 @@ export type {
 	Middleware,
 	AuthRequest
 } from "./auth/request.js";
+export type { Cookie } from "./auth/cookie.js";
+export type { LuciaErrorConstructor } from "./auth/error.js";

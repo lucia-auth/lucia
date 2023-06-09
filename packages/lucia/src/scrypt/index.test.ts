@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import scrypt from "./index.js";
 import crypto from "node:crypto";
-import { generateRandomString } from "../index.js";
+import { generateRandomString } from "../utils/nanoid.js";
 
 test("scrypt() output matches crypto", async () => {
 	const password = generateRandomString(16);
