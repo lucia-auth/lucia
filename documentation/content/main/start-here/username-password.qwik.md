@@ -134,7 +134,7 @@ export const useSignupAction = routeAction$(
 		} catch (error) {
 			// username already used
 			console.error(error);
-			return event.fail(400);
+			return event.fail(400, {});
 		}
 
 		// if all goes well, redirect to home page
@@ -395,7 +395,7 @@ import type { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -457,7 +457,7 @@ import { auth } from "~/lib/lucia";
 
 export const useSignoutAction = routeAction$(async (values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 
 	if (!session) throw event.redirect(302, "/login");
 
