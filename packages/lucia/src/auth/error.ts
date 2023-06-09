@@ -17,7 +17,6 @@ export type LuciaErrorConstructor = Constructor<typeof LuciaError>;
 export type ErrorMessage =
 	| "AUTH_INVALID_SESSION_ID"
 	| "AUTH_INVALID_PASSWORD"
-	| "AUTH_DUPLICATE_SESSION_ID"
 	| "AUTH_DUPLICATE_KEY_ID"
 	| "AUTH_INVALID_KEY_ID"
 	| "AUTH_INVALID_USER_ID"
@@ -26,5 +25,4 @@ export type ErrorMessage =
 	| "REQUEST_UNAUTHORIZED"
 	| "UNKNOWN_ERROR"
 	| "AUTH_OUTDATED_PASSWORD"
-	| "AUTO_USER_ID_GENERATION_NOT_SUPPORTED"
-	| "AUTH_EXPIRED_KEY";
+
