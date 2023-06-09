@@ -1,0 +1,48 @@
+{
+	"name": "@lucia-auth/adapter-upstash",
+	"version": "0.1.0",
+	"description": "Upstash Redis session adapter for Lucia using Upstash",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
+	"type": "module",
+	"files": [
+		"**/*"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"test": "tsx test/index.ts",
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
+	},
+	"keywords": [
+		"lucia",
+		"lucia-auth",
+		"auth",
+		"authentication",
+		"adapter",
+		"redis",
+		"session",
+		"upstash"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/session-adapter-redis"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./index.js"
+	},
+	"peerDependencies": {
+		"lucia-auth": "1.x",
+		"@upstash/redis": "1.x"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"@upstash/redis": "^1.21.0",
+		"dotenv": "^16.0.3",
+		"lucia-auth": "workspace:*",
+		"tsx": "^3.12.6"
+	}
+}
