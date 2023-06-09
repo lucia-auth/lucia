@@ -207,8 +207,20 @@ type NextJsPagesServerContext =
 			response: Response;
 	  };
 
+type NextRequest = Request & {
+	cookies: {
+		set: (name: string, value: string) => void;
+		get: (name: string) =>
+			| {
+					name: string;
+					value: string;
+			  }
+			| undefined;
+	};
+};
+
 export const nextjs = (): Middleware<
-	[NextJsPagesServerContext | NextJsAppServerContext]
+	[NextJsPagesServerContext | NextJsAppServerContext | { request: NextRequest }]
 > => {
 	return (serverContext, env) => {
 		if ("cookies" in serverContext) {
@@ -232,6 +244,26 @@ export const nextjs = (): Middleware<
 					} catch {
 						// ignore - set() is not available
 					}
+				}
+			} as const satisfies RequestContext;
+			return requestContext;
+		}
+		if ("request" in serverContext) {
+			const sessionCookie =
+				serverContext.request.cookies.get(SESSION_COOKIE_NAME) ?? null;
+			const requestContext = {
+				request: {
+					url: serverContext.request.url,
+					method: serverContext.request.method,
+					headers: {
+						origin: serverContext.request.headers.get("Origin") ?? null,
+						cookie: sessionCookie
+							? `${SESSION_COOKIE_NAME}=${sessionCookie.value}`
+							: null
+					}
+				},
+				setCookie: () => {
+					// ...
 				}
 			} as const satisfies RequestContext;
 			return requestContext;

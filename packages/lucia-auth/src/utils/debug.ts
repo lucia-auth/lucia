@@ -90,16 +90,17 @@ const disableDebugMode = () => {
 
 export const debug = {
 	init: (debugEnabled: boolean) => {
-		const text = debugEnabled ? "Debug mode enabled" : "Debug mode disabled";
 		if (debugEnabled) {
 			enableDebugMode();
+			linebreak();
+			console.log(
+				` ${bg.lucia(bold(fg.white(" lucia ")))}  ${fg.lucia(
+					bold("Debug mode enabled")
+				)}`
+			);
 		} else {
 			disableDebugMode();
 		}
-		linebreak();
-		console.log(
-			` ${bg.lucia(bold(fg.white(" lucia ")))}  ${fg.lucia(bold(text))}`
-		);
 	},
 	request: {
 		init: (method: string, href: string) => {
