@@ -13,8 +13,7 @@ import { isWithinExpiration } from "../utils/date.js";
 
 import type { Cookie, SessionCookieAttributes } from "./cookie.js";
 import type { UserSchema, SessionSchema } from "./schema.js";
-import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.js";
-import type { LuciaErrorConstructor } from "./error.js";
+import type { Adapter, SessionAdapter, InitializeAdapter } from "./adapter.js";
 import type { Middleware, LuciaRequest } from "./request.js";
 
 export type Session = Readonly<{
@@ -657,10 +656,10 @@ export type Configuration<
 	_SessionAttributes extends Record<string, any> = {}
 > = {
 	adapter:
-		| ((E: LuciaErrorConstructor) => Adapter)
+		| InitializeAdapter<Adapter>
 		| {
-				user: (E: LuciaErrorConstructor) => UserAdapter | Adapter;
-				session: (E: LuciaErrorConstructor) => SessionAdapter | Adapter;
+				user: InitializeAdapter<Adapter>;
+				session: InitializeAdapter<SessionAdapter>;
 		  };
 	env: Env;
 
