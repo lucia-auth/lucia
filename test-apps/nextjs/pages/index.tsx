@@ -4,7 +4,7 @@ import { auth } from "../auth/lucia";
 import type {
 	GetServerSidePropsContext,
 	GetServerSidePropsResult,
-	InferGetServerSidePropsType
+	InferGetServerSidePropsType,
 } from "next";
 import type { User } from "lucia-auth";
 
