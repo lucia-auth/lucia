@@ -525,6 +525,9 @@ export class Auth<_Configuration extends Configuration = any> {
 	};
 
 	public readSessionCookie = (request: LuciaRequest): string | null => {
+		if (typeof request.storedSessionCookie === "string") {
+			return request.storedSessionCookie;
+		}
 		const cookies = parseCookie(request.headers.cookie ?? "");
 		const sessionId = cookies[this.sessionCookieName] ?? null;
 		if (sessionId) {

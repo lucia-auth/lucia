@@ -73,11 +73,12 @@ type SvelteKitRequestEvent = {
 	request: Request;
 	cookies: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
+		get: (name: string) => string | undefined;
 	};
 };
 
 export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
-	return ({ args }) => {
+	return ({ args, cookieName }) => {
 		const [event] = args;
 		const requestContext = {
 			request: {
@@ -87,7 +88,8 @@ export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 					origin: event.request.headers.get("Origin"),
 					cookie: event.request.headers.get("Cookie"),
 					authorization: event.request.headers.get("Authorization")
-				}
+				},
+				storedSessionCookie: event.cookies.get(cookieName) ?? null
 			},
 			setCookie: (cookie) => {
 				event.cookies.set(cookie.name, cookie.value, cookie.attributes);
@@ -101,11 +103,14 @@ type AstroAPIContext = {
 	request: Request;
 	cookies: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
+		get: (name: string) => {
+			value: string;
+		};
 	};
 };
 
 export const astro = (): Middleware<[AstroAPIContext]> => {
-	return ({ args }) => {
+	return ({ args, cookieName }) => {
 		const [context] = args;
 		const requestContext = {
 			request: {
@@ -115,7 +120,8 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 					origin: context.request.headers.get("Origin"),
 					cookie: context.request.headers.get("Cookie"),
 					authorization: context.request.headers.get("Authorization")
-				}
+				},
+				storedSessionCookie: context.cookies.get(cookieName).value || null
 			},
 			setCookie: (cookie) => {
 				context.cookies.set(cookie.name, cookie.value, cookie.attributes);
@@ -129,11 +135,14 @@ type QwikRequestEvent = {
 	request: Request;
 	cookie: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
+		get: (key: string) => {
+			value: string;
+		} | null;
 	};
 };
 
 export const qwik = (): Middleware<[QwikRequestEvent]> => {
-	return ({ args }) => {
+	return ({ args, cookieName }) => {
 		const [event] = args;
 		const requestContext = {
 			request: {
@@ -143,7 +152,8 @@ export const qwik = (): Middleware<[QwikRequestEvent]> => {
 					origin: event.request.headers.get("Origin"),
 					cookie: event.request.headers.get("Cookie"),
 					authorization: event.request.headers.get("Authorization")
-				}
+				},
+				storedSessionCookie: event.cookie.get(cookieName)?.value ?? null
 			},
 			setCookie: (cookie) => {
 				event.cookie.set(cookie.name, cookie.value, cookie.attributes);
@@ -228,12 +238,11 @@ export const nextjs = (): Middleware<
 					method: serverContext.request?.method ?? "GET",
 					headers: {
 						origin: serverContext.request?.headers.get("Origin") ?? null,
-						cookie: sessionCookie
-							? `${cookieName}=${sessionCookie.value}`
-							: null,
+						cookie: null,
 						authorization:
 							serverContext.request?.headers.get("Authorization") ?? null
-					}
+					},
+					storedSessionCookie: sessionCookie?.value ?? null
 				},
 				setCookie: (cookie) => {
 					try {

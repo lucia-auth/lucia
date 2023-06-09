@@ -11,6 +11,7 @@ export type LuciaRequest = {
 		cookie: string | null;
 		authorization: string | null;
 	};
+	storedSessionCookie?: string | null
 };
 export type RequestContext = {
 	request: LuciaRequest;
