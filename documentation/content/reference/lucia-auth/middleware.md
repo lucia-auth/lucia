@@ -154,6 +154,10 @@ auth.handleRequest({
 	cookies: cookies as Cookies,
 	request: request as Request
 });
+
+auth.handleRequest({
+	request: request as Request
+});
 ```
 
 | name | type                                                                            | optional |
@@ -175,6 +179,10 @@ auth.handleRequest({
 | ------- | ------------------------------------------------------------------------ | :------: |
 | cookies | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) |          |
 | request | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)    |    ✓     |
+
+| name    | type                                                                     | 
+| ------- | ------------------------------------------------------------------------ | 
+| request | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)    |      
 
 ## `node()`
 
