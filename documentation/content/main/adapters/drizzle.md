@@ -78,7 +78,7 @@ const connectionPool = mysql.createPool({
 	// ...
 });
 
-const db = drizzle(poolConnection);
+const db = drizzle(connectionPool);
 
 const auth = lucia({
 	adapter: mysql2(connectionPool)
@@ -167,10 +167,11 @@ import lucia from "lucia";
 import { pg } from "@lucia-auth/adapter-postgresql";
 
 const connectionPool = new postgres.Pool({
+	connectionString: CONNECTION_URL
 	// ...
 });
 
-const db = drizzle(poolConnection);
+const db = drizzle(connectionPool);
 
 const auth = lucia({
 	adapter: pg(connectionPool)

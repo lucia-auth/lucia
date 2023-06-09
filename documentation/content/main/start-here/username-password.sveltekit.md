@@ -283,7 +283,7 @@ Now we can access the user from page data. Notice that the `username` property e
 To sign out an user, create a new action. This may be an API endpoint as well. Invalidate the current session and delete the cookie by passing `null` to `setSession()`.
 
 ```ts
-// routes/+page.sever.ts
+// routes/+page.server.ts
 import { type Actions, fail } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { auth } from "$lib/server/lucia";

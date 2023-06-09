@@ -91,7 +91,7 @@ declare global {
 /// <reference types="lucia" />
 declare global {
 	namespace Lucia {
-		type Auth = import("$lib/lucia").Auth;
+		type Auth = import("$lib/server/lucia").Auth;
 		type UserAttributes = {};
 	}
 }
