@@ -228,7 +228,7 @@ import { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -395,7 +395,7 @@ import type { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -457,7 +457,7 @@ import { auth } from "~/lib/lucia";
 
 export const useSignoutAction = routeAction$(async (values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 
 	if (!session) throw event.redirect(302, "/login");
 
