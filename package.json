@@ -29,7 +29,7 @@
 		"prettier-plugin-svelte": "^2.10.0",
 		"prettier-plugin-tailwindcss": "^0.2.8",
 		"shx": "^0.3.4",
-		"typescript": "~5.0.4"
+		"typescript": "latest"
 	},
 	"engines": {
 		"node": "20.x",

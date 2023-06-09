@@ -14,12 +14,13 @@ import { transformDatabaseKey } from "./key.js";
 import { AuthRequest } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
+import { isWithinExpiration } from "../utils/date.js";
 
 import type { UserSchema, SessionSchema } from "./schema.js";
 import type { Adapter, UserAdapter, SessionAdapter } from "./adapter.js";
 import type { LuciaErrorConstructor } from "./error.js";
 import type { Middleware, LuciaRequest } from "./request.js";
-import { isWithinExpiration } from "../utils/date.js";
+
 
 export type Session = Readonly<{
 	user: User;
@@ -386,16 +387,33 @@ export class Auth<_Configuration extends Configuration = any> {
 		return this.transformDatabaseSession(renewedDatabaseSession, user);
 	};
 
-	public createSession = async (
-		userId: string,
-		config: {
-			attributes: Lucia.DatabaseSessionAttributes;
-		}
+	public createSession = async <
+		// for some absurd reasons
+		// this needs to be a generic before doing a conditional check
+		// to work when exported
+		_Attributes extends Lucia.DatabaseSessionAttributes = Lucia.DatabaseSessionAttributes
+	>(
+		...args: _Attributes extends EmptyObject
+			? [
+					userId: string,
+					// options args is optional if no database session attributes are defined
+					options?: {
+						attributes?: Lucia.DatabaseSessionAttributes;
+					}
+			  ]
+			: [
+					userId: string,
+					options: {
+						attributes: Lucia.DatabaseSessionAttributes;
+					}
+			  ]
 	): Promise<Session> => {
 		const [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
 			this.generateSessionId();
+		const [userId, options] = args;
+		const attributes = options?.attributes ?? {};
 		const databaseSession = {
-			...config.attributes,
+			...attributes,
 			id: sessionId,
 			user_id: userId,
 			active_expires: activePeriodExpiresAt.getTime(),
@@ -403,13 +421,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		} satisfies SessionSchema;
 		const [user] = await Promise.all([
 			this.getUser(userId),
-			this.adapter.setSession({
-				...config.attributes,
-				id: sessionId,
-				user_id: userId,
-				active_expires: activePeriodExpiresAt.getTime(),
-				idle_expires: idlePeriodExpiresAt.getTime()
-			})
+			this.adapter.setSession(databaseSession)
 		]);
 		return this.transformDatabaseSession(databaseSession, user);
 	};
@@ -650,3 +662,5 @@ export type Configuration<
 		debugMode?: boolean;
 	};
 };
+
+type EmptyObject = Record<any, never>;
