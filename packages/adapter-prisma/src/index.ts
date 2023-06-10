@@ -1,1 +1,1 @@
-export { prismaAdapter } from "./prisma.js";
+export { prismaAdapter as prisma } from "./prisma.js";
