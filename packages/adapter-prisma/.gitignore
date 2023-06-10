@@ -3,3 +3,4 @@
 .DS_Store
 .env
 *.tgz
+/prisma/*.db
