@@ -489,7 +489,11 @@ export class Auth<_Configuration extends Configuration = any> {
 		);
 	};
 
-	public validateRequestOrigin = (request: LuciaRequest): void => {
+	public validateRequestOrigin = (
+		request: Omit<LuciaRequest, "headers"> & {
+			headers: Pick<LuciaRequest["headers"], "origin">;
+		}
+	): void => {
 		if (request.method === null) {
 			debug.request.fail("Request method unavailable");
 			throw new LuciaError("AUTH_INVALID_REQUEST");
