@@ -1,5 +1,17 @@
 # @lucia-auth/oauth
 
+## 1.2.0
+
+### Minor changes
+
+- [#666](https://github.com/pilcrowOnPaper/lucia/pull/666) by [@bachiitter](https://github.com/bachiitter) : Add Google OAuth Access type
+
+### Patch changes
+
+- [#694](https://github.com/pilcrowOnPaper/lucia/pull/694) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `GithubUser` type
+
+- [#694](https://github.com/pilcrowOnPaper/lucia/pull/694) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `GoogleUser` type
+
 ## 1.1.1
 
 ### Patch changes

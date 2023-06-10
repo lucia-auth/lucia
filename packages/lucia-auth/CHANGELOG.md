@@ -1,5 +1,15 @@
 # lucia-auth
 
+## 1.8.0
+
+### Minor changes
+
+- [#701](https://github.com/pilcrowOnPaper/lucia/pull/701) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `nextjs` middleware
+
+### Patch changes
+
+- [#700](https://github.com/pilcrowOnPaper/lucia/pull/700) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove debug status on initialization if disabled
+
 ## 1.7.1
 
 ### Patch changes
