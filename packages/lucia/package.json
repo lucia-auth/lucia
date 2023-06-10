@@ -19,7 +19,7 @@
 	},
 	"keywords": [
 		"lucia",
-		"lucia",
+		"lucia-auth",
 		"authentication",
 		"auth"
 	],
@@ -37,7 +37,7 @@
 			"polyfill/node": [
 				"dist/polyfill/node.d.ts"
 			],
-			"polyfill/utils": [
+			"utils": [
 				"dist/utils/index.d.ts"
 			]
 		}
