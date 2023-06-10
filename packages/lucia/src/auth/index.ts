@@ -673,7 +673,7 @@ export type Configuration<
 	middleware?: Middleware;
 	csrfProtection?: boolean;
 	requestOrigins?: string[];
-	sessionExpiresIn: {
+	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
