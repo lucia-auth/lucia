@@ -11,7 +11,7 @@ export type LuciaRequest = {
 		cookie: string | null;
 		authorization: string | null;
 	};
-	storedSessionCookie?: string | null
+	storedSessionCookie?: string | null;
 };
 export type RequestContext = {
 	request: LuciaRequest;
@@ -28,6 +28,7 @@ export class AuthRequest<A extends Auth = any> {
 	private auth: A;
 	private context: RequestContext;
 	constructor(auth: A, context: RequestContext) {
+		debug.request.init(context.request.method, context.request.url);
 		this.auth = auth;
 		this.context = context;
 		try {
