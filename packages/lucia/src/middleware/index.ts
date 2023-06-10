@@ -107,7 +107,7 @@ type AstroAPIContext = {
 	cookies: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
 		get: (name: string) => {
-			value: string;
+			value: string | undefined;
 		};
 	};
 };
