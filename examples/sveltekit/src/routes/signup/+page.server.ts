@@ -17,7 +17,7 @@ export const actions: Actions = {
 		}
 		try {
 			const user = await auth.createUser({
-				primaryKey: {
+				key: {
 					providerId: 'username',
 					providerUserId: username,
 					password
@@ -26,7 +26,11 @@ export const actions: Actions = {
 					username
 				}
 			});
-			const session = await auth.createSession(user.userId);
+			const session = await auth.createSession(user.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
 			locals.auth.setSession(session);
 		} catch (error) {
 			if (

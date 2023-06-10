@@ -22,7 +22,11 @@ export const actions: Actions = {
 		}
 		try {
 			const key = await auth.useKey('username', username, password);
-			const session = await auth.createSession(key.userId);
+			const session = await auth.createSession(key.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
 			locals.auth.setSession(session);
 		} catch (error) {
 			if (

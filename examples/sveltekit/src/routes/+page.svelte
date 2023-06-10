@@ -7,7 +7,7 @@
 
 <p>This page is protected and can only be accessed by authenticated users.</p>
 <pre class="code">
-{JSON.stringify(data.user, null, 2)}
+{JSON.stringify(data.session, null, 2)}
 </pre>
 
 <form use:enhance method="post">
