@@ -1,4 +1,4 @@
-import { generateRandomString } from "lucia";
+import { generateRandomString } from "lucia/utils";
 import type { KeySchema, SessionSchema, UserSchema } from "lucia";
 
 export type TestUserSchema = UserSchema & {
