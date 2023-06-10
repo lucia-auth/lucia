@@ -130,7 +130,7 @@ export const actions: Actions = {
 
 #### Set user passwords
 
-We don't store the password in the user, but in the key (`primaryKey`). Keys represent the relationship between a user and a auth method, in this case username/password. We'll set `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user).
+We don't store the password in the user, but in the key (`primaryKey`). Keys represent the relationship between a user and an auth method, in this case username/password. We'll set `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user).
 
 ```ts
 const user = await auth.createUser({
