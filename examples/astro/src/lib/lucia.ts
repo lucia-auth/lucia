@@ -1,21 +1,27 @@
-import lucia from "lucia";
-import "lucia-auth/polyfill/node";
-import { astro } from "lucia-auth/middleware";
-import prisma from "@lucia-auth/adapter-prisma";
+import { lucia } from "lucia";
+import { astro } from "lucia/middleware";
+import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 import { github } from "@lucia-auth/oauth/providers";
 
 export const auth = lucia({
-	adapter: prisma(new PrismaClient()),
+	adapter: prisma({
+		client: new PrismaClient(),
+		mode: "default"
+	}),
 	env: import.meta.env.DEV ? "DEV" : "PROD",
-	transformDatabaseUser: (userData) => {
+	middleware: astro(),
+	getUserAttributes: (userData) => {
 		return {
-			userId: userData.id,
 			username: userData.username
 		};
 	},
-	middleware: astro()
+	getSessionAttributes: (sessionData) => {
+		return {
+			createdAt: sessionData.created_at
+		}
+	}
 });
 
 export const githubAuth = github(auth, {

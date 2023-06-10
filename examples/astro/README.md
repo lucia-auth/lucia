@@ -2,18 +2,22 @@
 
 ## Setup
 
-### Install dependencies
+Install dependencies
 
-```bash
+```
 pnpm i
 ```
 
-### Prisma
+Setup database:
 
-Migrate Prisma schema:
+```
+pnpm prisma db push
+```
 
-```bash
-pnpm prisma migrate dev --name init
+Start server:
+
+```
+pnpm dev
 ```
 
 ### Github OAuth

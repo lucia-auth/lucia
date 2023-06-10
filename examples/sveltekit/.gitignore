@@ -3,7 +3,7 @@ node_modules
 /build
 /.svelte-kit
 /package
-!.env.example
+.env
 .vercel
 .output
 

@@ -3,8 +3,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import { auth } from "../lib/lucia";
 import { LuciaError } from "lucia";
 
-const authRequest = auth.handleRequest(Astro);
-const { session } = await authRequest.validateUser();
+const session = await Astro.locals.auth.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
 
 let errorMessage = "";
@@ -12,7 +11,8 @@ let username: FormDataEntryValue | null = null;
 let password: FormDataEntryValue | null = null;
 if (Astro.request.method === "POST") {
 	const requestOrigin = Astro.request.headers.get("origin");
-	const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+	const isValidRequest =
+		!!requestOrigin && requestOrigin === Astro.url.origin;
 	if (!isValidRequest) {
 		return new Response(null, {
 			status: 403
@@ -30,8 +30,12 @@ if (Astro.request.method === "POST") {
 	) {
 		try {
 			const key = await auth.useKey("username", username, password);
-			const session = await auth.createSession(key.userId);
-			authRequest.setSession(session);
+			const session = await auth.createSession(key.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
+			Astro.locals.auth.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch (error) {
 			// username already in use

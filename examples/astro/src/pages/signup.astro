@@ -5,8 +5,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import { Prisma } from "@prisma/client";
 import { LuciaError } from "lucia";
 
-const authRequest = auth.handleRequest(Astro);
-const { session } = await authRequest.validateUser();
+const session = await Astro.locals.auth.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
 
 let errorMessage = "";
@@ -15,7 +14,8 @@ let password: FormDataEntryValue | null = null;
 
 if (Astro.request.method === "POST") {
 	const requestOrigin = Astro.request.headers.get("origin");
-	const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+	const isValidRequest =
+		!!requestOrigin && requestOrigin === Astro.url.origin;
 	if (!isValidRequest) {
 		return new Response(null, {
 			status: 403
@@ -33,7 +33,7 @@ if (Astro.request.method === "POST") {
 	) {
 		try {
 			const user = await auth.createUser({
-				primaryKey: {
+				key: {
 					providerId: "username",
 					providerUserId: username,
 					password
@@ -42,8 +42,12 @@ if (Astro.request.method === "POST") {
 					username
 				}
 			});
-			const session = await auth.createSession(user.userId);
-			authRequest.setSession(session); // set session cookie
+			const session = await auth.createSession(user.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
+			Astro.locals.auth.setSession(session); // set session cookie
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch (error) {
 			// username already in use
