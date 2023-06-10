@@ -110,10 +110,6 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(options: {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 
-					if (error.code === "P2002" && error.message?.includes("`id`")) {
-						throw new LuciaError("AUTH_DUPLICATE_SESSION_ID");
-					}
-
 					throw error;
 				}
 			},
