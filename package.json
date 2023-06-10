@@ -1,10 +1,10 @@
 {
 	"name": "lucia",
 	"version": "0.0.1",
-	"description": "monorepo for lucia-auth",
+	"description": "Authentication, simple and clean",
 	"scripts": {
-		"ready": "pnpm i && cd packages/lucia-auth && pnpm build && pnpm i && cd ../adapter-test && pnpm build && pnpm i && cd ../integration-oauth && pnpm build && cd ../adapter-prisma && pnpm build && cd ../integration-tokens && pnpm build && cd .. && pnpm install --no-frozen-lockfile",
-		"publish-setup": "cd packages/lucia-auth && pnpm i --no-frozen-lockfile && pnpm build && cd ../../ && cd packages/adapter-test && pnpm i --no-frozen-lockfile && pnpm build && cd ../../ && pnpm i --no-frozen-lockfile",
+		"ready": "pnpm i && cd packages/lucia && pnpm build && cd ../adapter-test && pnpm build && cd ../oauth && pnpm build && cd ../adapter-prisma && pnpm build && cd ../../",
+		"publish-setup": "pnpm i --no-frozen-lockfile && cd packages/lucia && pnpm build && cd ../adapter-test && pnpm build && cd ../../",
 		"format": "pnpm exec prettier --write .",
 		"preinstall": "npx only-allow pnpm",
 		"auri.format": "pnpm format",
@@ -21,7 +21,7 @@
 		"@types/node": "~18.15.13",
 		"@typescript-eslint/eslint-plugin": "^5.59.6",
 		"@typescript-eslint/parser": "^5.59.6",
-		"auri": "^0.5.4",
+		"auri": "^0.6.0",
 		"eslint": "^8.40.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-svelte3": "^4.0.0",
@@ -29,15 +29,10 @@
 		"prettier-plugin-svelte": "^2.10.0",
 		"prettier-plugin-tailwindcss": "^0.2.8",
 		"shx": "^0.3.4",
-		"typescript": "~5.0.4"
-	},
-	"resolutions": {
-		"lucia-auth": "workspace:*",
-		"@lucia-auth/adapter-prisma": "workspace:*",
-		"@lucia-auth/oauth": "workspace:*"
+		"typescript": "latest"
 	},
 	"engines": {
-		"node": "16.x - 20.x",
+		"node": "20.x",
 		"pnpm": "*"
 	}
 }

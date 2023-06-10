@@ -9,7 +9,7 @@
 		"postinstall": "nuxt prepare"
 	},
 	"devDependencies": {
-		"lucia-auth": "latest",
+		"lucia": "latest",
 		"@lucia-auth/adapter-prisma": "latest",
 		"@lucia-auth/oauth": "latest",
 		"@nuxtjs/tailwindcss": "^6.7.0",

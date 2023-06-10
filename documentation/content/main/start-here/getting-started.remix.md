@@ -34,7 +34,7 @@ In `auth/lucia.server.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lu
 
 ```ts
 // auth/lucia.server.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { web } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
@@ -56,7 +56,7 @@ Create `lucia.d.ts`, and inside it configure your types. The path in `import('./
 
 ```ts
 // lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./auth/lucia.server.js").Auth;
 	type UserAttributes = {};
@@ -74,7 +74,7 @@ Lucia is an ESM package and you must define all modules in `serverDependenciesTo
 module.exports = {
 	// ...
 	serverDependenciesToBundle: [
-		"lucia-auth",
+		"lucia",
 		"lucia-auth/middleware",
 		"@lucia-auth/adapter-prisma",
 		"lucia-auth/polyfill/node",
@@ -91,7 +91,7 @@ module.exports = {
 
 ```ts
 // auth/lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import "lucia-auth/polyfill/node";
 
 // ...

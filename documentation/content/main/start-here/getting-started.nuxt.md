@@ -34,7 +34,7 @@ In `server/utils/auth.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lu
 
 ```ts
 // server/utils/auth.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { h3 } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
@@ -55,7 +55,7 @@ Create `server/lucia.d.ts`, and inside it configure your types. The path in `imp
 
 ```ts
 // server/lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./utils/auth.js").Auth;
 	type UserAttributes = {
@@ -70,7 +70,7 @@ declare namespace Lucia {
 
 ```ts
 // server/utils/auth.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import "lucia-auth/polyfill/node";
 
 // ...

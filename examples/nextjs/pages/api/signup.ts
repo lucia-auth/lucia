@@ -1,5 +1,5 @@
 import { auth } from "../../auth/lucia";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { Prisma } from "@prisma/client";
 
 import type { NextApiRequest, NextApiResponse } from "next";

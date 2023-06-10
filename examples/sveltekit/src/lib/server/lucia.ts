@@ -1,5 +1,5 @@
-import lucia from 'lucia-auth';
-import { sveltekit } from 'lucia-auth/middleware';
+import lucia from 'lucia';
+import { sveltekit } from 'lucia/middleware';
 import prisma from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
 import { PrismaClient } from '@prisma/client';

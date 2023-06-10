@@ -2,7 +2,7 @@
 import { sendEmailVerificationEmail } from "@auth/email";
 import { auth, emailVerificationToken } from "@auth/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { emailRegex, isValidFormSubmission } from "src/forms/submission";
 
 import MainLayout from "src/layouts/MainLayout.astro";
