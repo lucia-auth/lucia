@@ -1,6 +1,6 @@
 # @lucia-auth/oauth
 
-## 1.2.0
+## 1.2.1
 
 ### Minor changes
 
