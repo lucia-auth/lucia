@@ -16,24 +16,42 @@ type ExtractModelNames<_PrismaClient extends PrismaClient> = Exclude<
 	`$${string}`
 >;
 
-export const prismaAdapter = <_PrismaClient extends PrismaClient>(options: {
-	client: _PrismaClient;
-	models: {
-		user: ExtractModelNames<_PrismaClient>;
-		session: ExtractModelNames<_PrismaClient>;
-		key: ExtractModelNames<_PrismaClient>;
+export const prismaAdapter = <_PrismaClient extends PrismaClient>(
+	config:
+		| {
+				client: _PrismaClient;
+				mode: "default";
+		  }
+		| {
+				client: _PrismaClient;
+				modelNames: {
+					user: ExtractModelNames<_PrismaClient>;
+					session: ExtractModelNames<_PrismaClient>;
+					key: ExtractModelNames<_PrismaClient>;
+				};
+				userRelationKey: string;
+		  }
+): InitializeAdapter<Adapter> => {
+	const getModels = () => {
+		if ("mode" in config) {
+			return {
+				User: config.client["user"] as SmartPrismaModel<UserSchema>,
+				Session: config.client["session"] as SmartPrismaModel<SessionSchema>,
+				Key: config.client["key"] as SmartPrismaModel<KeySchema>
+			};
+		}
+		return {
+			User: config.client[
+				config.modelNames.user
+			] as SmartPrismaModel<UserSchema>,
+			Session: config.client[
+				config.modelNames.session
+			] as SmartPrismaModel<SessionSchema>,
+			Key: config.client[config.modelNames.key] as SmartPrismaModel<KeySchema>
+		};
 	};
-	tables?: {
-		user: string;
-	};
-}): InitializeAdapter<Adapter> => {
-	const User = options.client[
-		options.models.user
-	] as SmartPrismaModel<UserSchema>;
-	const Session = options.client[
-		options.models.session
-	] as SmartPrismaModel<PrismaSession>;
-	const Key = options.client[options.models.key] as SmartPrismaModel<KeySchema>;
+	const { User, Session, Key } = getModels();
+	const userRelationKey = "mode" in config ? "user" : config.userRelationKey;
 
 	return (LuciaError) => {
 		return {
@@ -52,7 +70,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(options: {
 					return;
 				}
 				try {
-					await options.client.$transaction([
+					await config.client.$transaction([
 						User.create({
 							data: user
 						}),
@@ -196,14 +214,11 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(options: {
 						id: sessionId
 					},
 					include: {
-						[options.tables?.user ?? options.models.user]: true
+						[userRelationKey]: true
 					}
 				});
 				if (!result) return [null, null];
-				const {
-					[options.tables?.user ?? options.models.user]: userResult,
-					...sessionResult
-				} = result;
+				const { [userRelationKey]: userResult, ...sessionResult } = result;
 				return [
 					transformPrismaSession(sessionResult as PrismaSession),
 					userResult as UserSchema
