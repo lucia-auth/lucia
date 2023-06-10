@@ -9,7 +9,7 @@ A simple authentication library for managing users and sessions
 ## Installation
 
 ```bash
-npm install lucia-auth
-pnpm add lucia-auth
-yarn add lucia-auth
+npm install lucia
+pnpm add lucia
+yarn add lucia
 ```
