@@ -8,7 +8,7 @@ Update configuration
     - Remove `transformDatabaseUser()` (see `transformUserAttributes()`)
     - Replace `generateCustomUserId()` with `generateUserId()`
     - Replace `hash` with `passwordHash`
-    - Replace `origin` with `requestOrigin`
+    - Replace `origin` with `requestOrigins`
     - Replace `sessionCookie` with `sessionCookie.attributes`
     - Add `sessionCookie.name` for setting session cookie name
     - Add `transformUserAttributes()` for defining user attributes (**`userId` is automatically included**)
