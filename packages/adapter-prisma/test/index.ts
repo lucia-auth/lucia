@@ -41,14 +41,7 @@ const queryHandler: QueryHandler = {
 
 const adapter = prismaAdapter({
 	client,
-	models: {
-		user: "user",
-		session: "session",
-		key: "key"
-	},
-	tables: {
-		user: "test_user"
-	}
+	mode: "default"
 })(LuciaError);
 
 await testAdapter(adapter, new Database(queryHandler));

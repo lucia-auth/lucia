@@ -15,8 +15,6 @@ model User {
   username     String    @unique
   auth_session Session[]
   auth_key     Key[]
-
-  @@map("test_user")
 }
 
 model Session {
@@ -25,18 +23,16 @@ model Session {
   active_expires BigInt
   idle_expires   BigInt
   country        String
-  test_user      User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("user_session")
 }
 
 model Key {
   id              String  @id @unique
   hashed_password String?
   user_id         String
-  test_user       User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("user_key")
 }
