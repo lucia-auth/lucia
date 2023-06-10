@@ -1,15 +1,18 @@
+import { DEFAULT_SESSION_COOKIE_NAME } from "../index.js";
+
+import type { CookieAttributes } from "../utils/cookie.js";
+import type { LuciaRequest } from "../auth/request.js";
+import type { Cookie, Middleware, RequestContext } from "../index.js";
+
 import type {
 	IncomingMessage,
 	OutgoingMessage,
 	ServerResponse
 } from "node:http";
-import type { Cookie, Middleware, RequestContext } from "../index.js";
 import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
 } from "express";
-import { CookieAttributes } from "../utils/cookie.js";
-import { LuciaRequest } from "../auth/request.js";
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return ({ args, env }) => {
@@ -269,17 +272,18 @@ export const nextjs = (): Middleware<
 		}
 		if ("request" in serverContext) {
 			const sessionCookie =
-				serverContext.request.cookies.get(SESSION_COOKIE_NAME) ?? null;
+				serverContext.request.cookies.get(DEFAULT_SESSION_COOKIE_NAME) ?? null;
 			const requestContext = {
 				request: {
 					url: serverContext.request.url,
 					method: serverContext.request.method,
 					headers: {
 						origin: serverContext.request.headers.get("Origin") ?? null,
-						cookie: sessionCookie
-							? `${SESSION_COOKIE_NAME}=${sessionCookie.value}`
-							: null
-					}
+						authorization:
+							serverContext.request?.headers.get("Authorization") ?? null,
+						cookie: null
+					},
+					storedSessionCookie: sessionCookie?.value ?? null
 				},
 				setCookie: () => {
 					// ...
