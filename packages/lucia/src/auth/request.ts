@@ -28,6 +28,7 @@ export class AuthRequest<A extends Auth = any> {
 	private auth: A;
 	private context: RequestContext;
 	constructor(auth: A, context: RequestContext) {
+		debug.request.init(context.request.method, context.request.url)
 		this.auth = auth;
 		this.context = context;
 		try {
