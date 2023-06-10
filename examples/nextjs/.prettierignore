@@ -11,3 +11,7 @@ node_modules
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+prisma/migrations
+prisma/dev.db
+prisma/dev.db-journal

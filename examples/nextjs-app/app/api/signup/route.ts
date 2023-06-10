@@ -21,7 +21,7 @@ export const POST = async (request: Request) => {
 	}
 	try {
 		const user = await auth.createUser({
-			primaryKey: {
+			key: {
 				providerId: "username",
 				providerUserId: username,
 				password
@@ -30,7 +30,11 @@ export const POST = async (request: Request) => {
 				username
 			}
 		});
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		const authRequest = auth.handleRequest({ request, cookies });
 		authRequest.setSession(session);
 		new Response(null, {

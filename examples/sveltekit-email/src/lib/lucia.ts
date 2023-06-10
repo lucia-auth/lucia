@@ -1,6 +1,6 @@
 import lucia from 'lucia';
 import prisma from '@lucia-auth/adapter-prisma';
-import { sveltekit } from 'lucia-auth/middleware';
+import { sveltekit } from 'lucia/middleware';
 import { idToken } from '@lucia-auth/tokens';
 import { prismaClient } from '$lib/db';
 

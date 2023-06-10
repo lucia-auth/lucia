@@ -11,7 +11,7 @@ export default () => {
 			<p>
 				This page is protected and can only be accessed by authenticated users.
 			</p>
-			<pre className="code">{JSON.stringify(loaderData.user, null, 2)}</pre>
+			<pre className="code">{JSON.stringify(loaderData.session, null, 2)}</pre>
 			<Form method="post">
 				<input type="submit" className="button" value="Sign out" />˝
 			</Form>
@@ -22,10 +22,10 @@ export default () => {
 export const loader = async ({ request }: LoaderArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const { user } = await authRequest.validateUser();
-	if (!user) return redirect("/login");
+	const session = await authRequest.validate();
+	if (!session) return redirect("/login");
 	return json(
-		{ user },
+		{ session },
 		{
 			headers
 		}
@@ -35,7 +35,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const action = async ({ request }: ActionArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const { session } = await authRequest.validateUser();
+	const session = await authRequest.validate();
 	if (!session) {
 		return json(null, {
 			status: 401,

@@ -4,7 +4,7 @@ import { auth } from '$lib/lucia';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user } = await locals.auth.validateUser();
-	if (!user) {
+	if (!session) {
 		throw redirect(302, '/login');
 	}
 	if (!user.emailVerified) {

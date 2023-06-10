@@ -9,18 +9,18 @@ import { auth } from "~/lib/lucia";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const { user } = await authRequest.validateUser();
+	const session = await authRequest.validate();
 
-	if (!user) throw event.redirect(302, "/login");
+	if (!session) throw event.redirect(302, "/login");
 
 	return {
-		user
+		session
 	};
 });
 
 export const useSignoutAction = routeAction$(async (values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const { session } = await authRequest.validateUser();
+	const session = await authRequest.validate();
 
 	if (!session) throw event.redirect(302, "/login");
 
@@ -37,7 +37,9 @@ export default component$(() => {
 			<p>
 				This page is protected and can only be accessed by authenticated users.
 			</p>
-			<pre class="code">{JSON.stringify(userLoader.value.user, null, 2)}</pre>
+			<pre class="code">
+				{JSON.stringify(userLoader.value.session, null, 2)}
+			</pre>
 
 			<Form action={signoutAction} class="button">
 				<button type="submit">Sign out</button>

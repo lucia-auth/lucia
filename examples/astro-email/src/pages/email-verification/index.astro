@@ -12,7 +12,7 @@ let errorMessage = "";
 const handleFormSubmission = async (): Promise<Response | null> => {
 	const validSubmission = isValidFormSubmission(Astro.request);
 	if (!validSubmission) return null;
-	const { user } = await authRequest.validateUser();
+	const session = await authRequest.validate();
 	if (!user || user.emailVerified) return null;
 	try {
 		const token = await emailVerificationToken.issue(user.userId);
@@ -28,9 +28,9 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 const response = await handleFormSubmission();
 if (response) return response;
 
-const { user } = await authRequest.validateUser();
+const session = await authRequest.validate();
 
-if (!user) {
+if (!session) {
 	return Astro.redirect("/login", 302);
 }
 if (user.emailVerified) {

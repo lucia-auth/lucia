@@ -18,7 +18,11 @@ export default defineEventHandler(async (event) => {
 			});
 		};
 		const user = await getUser();
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		authRequest.setSession(session);
 		return await sendRedirect(event, "/", 302);
 	} catch {

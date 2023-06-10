@@ -6,14 +6,14 @@ import Form from "@/components/form";
 
 const Page = async () => {
 	const authRequest = auth.handleRequest({ cookies });
-	const { user } = await authRequest.validateUser();
-	if (!user) redirect("/login");
+	const session = await authRequest.validate();
+	if (!session) redirect("/login");
 	return (
 		<>
 			<p>
 				This page is protected and can only be accessed by authenticated users.
 			</p>
-			<pre className="code">{JSON.stringify(user, null, 2)}</pre>
+			<pre className="code">{JSON.stringify(session, null, 2)}</pre>
 
 			<Form action="/api/logout">
 				<input type="submit" className="button" value="Sign out" />

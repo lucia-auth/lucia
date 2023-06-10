@@ -21,7 +21,11 @@ export const GET = async (request: Request) => {
 			});
 		};
 		const user = await getUser();
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		const authRequest = auth.handleRequest({ request, cookies });
 		authRequest.setSession(session);
 		return NextResponse.redirect(new URL("/", url));

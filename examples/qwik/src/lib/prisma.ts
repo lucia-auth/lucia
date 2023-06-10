@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 
-let prisma: PrismaClient;
+let prismaClient: PrismaClient;
 
 declare global {
+	// eslint-disable-next-line no-var
 	var __prisma: PrismaClient | undefined;
 }
 
@@ -10,14 +11,14 @@ declare global {
 // the server with every change, but we want to make sure we don't
 // create a new connection to the prisma with every change either.
 if (process.env.NODE_ENV === "production") {
-	prisma = new PrismaClient();
-	prisma.$connect();
+	prismaClient = new PrismaClient();
+	prismaClient.$connect();
 } else {
 	if (!global.__prisma) {
 		global.__prisma = new PrismaClient();
 		global.__prisma.$connect();
 	}
-	prisma = global.__prisma;
+	prismaClient = global.__prisma;
 }
 
-export { prisma };
+export { prismaClient };

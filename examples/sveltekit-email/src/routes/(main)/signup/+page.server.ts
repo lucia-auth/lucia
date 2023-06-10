@@ -34,7 +34,7 @@ export const actions: Actions = {
 		}
 		try {
 			const user = await auth.createUser({
-				primaryKey: {
+				key: {
 					providerId: 'email',
 					providerUserId: email,
 					password
@@ -44,7 +44,11 @@ export const actions: Actions = {
 					email_verified: false
 				}
 			});
-			const session = await auth.createSession(user.userId);
+			const session = await auth.createSession(user.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
 			locals.auth.setSession(session);
 			const token = await emailVerificationToken.issue(user.userId);
 			await sendEmailVerificationEmail(user.email, token.toString());

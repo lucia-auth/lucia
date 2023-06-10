@@ -25,7 +25,11 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 		}
 		await auth.invalidateAllUserSessions(user.userId);
 		await auth.updateKeyPassword("email", user.email, password);
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
 		const authRequest = auth.handleRequest(Astro);
 		authRequest.setSession(session);
 		return Astro.redirect("/", 302);

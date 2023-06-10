@@ -11,7 +11,7 @@ module.exports = {
 	},
 	serverDependenciesToBundle: [
 		"lucia",
-		"lucia-auth/middleware",
+		"lucia/middleware",
 		"@lucia-auth/adapter-prisma",
 		"@lucia-auth/oauth",
 		"@lucia-auth/oauth/providers",

@@ -36,7 +36,7 @@ export default () => {
 export const loader = async ({ request }: LoaderArgs) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const { session } = await authRequest.validateUser();
+	const session = await authRequest.validate();
 	if (session) return redirect("/");
 	return json(null, {
 		headers
@@ -65,7 +65,11 @@ export const action = async ({ request }: ActionArgs) => {
 	const headers = new Headers();
 	try {
 		const key = await auth.useKey("username", username, password);
-		const session = await auth.createSession(key.userId);
+		const session = await auth.createSession(key.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		const authRequest = auth.handleRequest(request, headers);
 		authRequest.setSession(session);
 		return redirect("/", {

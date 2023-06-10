@@ -8,8 +8,10 @@ type Data = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-	if (req.method !== "POST")
+	if (req.method !== "POST") {
 		return res.status(404).json({ error: "Not found" });
+	}
+
 	const { username, password } =
 		typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 	if (!username || !password) {
@@ -20,7 +22,11 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	try {
 		const authRequest = auth.handleRequest({ req, res });
 		const key = await auth.useKey("username", username, password);
-		const session = await auth.createSession(key.userId);
+		const session = await auth.createSession(key.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		authRequest.setSession(session);
 		return res.redirect(302, "/");
 	} catch (e) {

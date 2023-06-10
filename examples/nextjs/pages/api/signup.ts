@@ -9,8 +9,10 @@ type Data = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-	if (req.method !== "POST")
+	if (req.method !== "POST") {
 		return res.status(404).json({ error: "Not found" });
+	}
+
 	const { username, password } =
 		typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 	if (!username || !password) {
@@ -20,7 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 	}
 	try {
 		const user = await auth.createUser({
-			primaryKey: {
+			key: {
 				providerId: "username",
 				providerUserId: username,
 				password
@@ -29,7 +31,11 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 				username
 			}
 		});
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		const authRequest = auth.handleRequest({ req, res });
 		authRequest.setSession(session);
 		return res.redirect(302, "/");

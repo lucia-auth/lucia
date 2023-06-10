@@ -28,7 +28,7 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 	}
 	try {
 		const user = await auth.createUser({
-			primaryKey: {
+			key: {
 				providerId: "email",
 				providerUserId: email,
 				password
@@ -38,7 +38,11 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 				email_verified: false
 			}
 		});
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
 		authRequest.setSession(session);
 		const token = await emailVerificationToken.issue(user.userId);
 		await sendEmailVerificationEmail(email, token.toString());
@@ -64,7 +68,7 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 const formSubmissionResponse = await handleFormSubmission();
 if (formSubmissionResponse) return formSubmissionResponse;
 
-const { user } = await authRequest.validateUser();
+const session = await authRequest.validate();
 if (user) {
 	if (!user.emailVerified) return Astro.redirect("/email-verification", 302);
 	return Astro.redirect("/", 302);

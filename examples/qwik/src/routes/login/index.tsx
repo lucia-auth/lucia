@@ -12,7 +12,7 @@ import type { LuciaError } from "lucia";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const { session } = await authRequest.validateUser();
+	const session = await authRequest.validate();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -28,7 +28,11 @@ export const useLoginAction = routeAction$(
 				values.password
 			);
 
-			const session = await auth.createSession(key.userId);
+			const session = await auth.createSession(key.userId, {
+				attributes: {
+					created_at: new Date()
+				}
+			});
 			authRequest.setSession(session);
 		} catch (e) {
 			const error = e as LuciaError;

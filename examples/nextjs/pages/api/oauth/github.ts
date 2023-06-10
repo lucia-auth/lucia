@@ -23,7 +23,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 		};
 		const user = await getUser();
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		authRequest.setSession(session);
 		return res.status(302).redirect("/");
 	} catch {

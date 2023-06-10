@@ -1,6 +1,6 @@
-import lucia from "lucia";
-import prisma from "@lucia-auth/adapter-prisma";
-import { astro } from "lucia-auth/middleware";
+import { lucia } from "lucia";
+import { prisma } from "@lucia-auth/adapter-prisma";
+import { astro } from "lucia/middleware";
 import { idToken } from "@lucia-auth/tokens";
 import { prismaClient } from "src/db";
 

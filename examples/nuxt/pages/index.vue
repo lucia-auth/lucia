@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 const { data } = await useFetch("/api/user");
 if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (!user) await navigateTo("/login");
+const session = data.value.session;
+if (!session) await navigateTo("/login");
 
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
@@ -19,7 +19,7 @@ const handleSubmit = async (e: Event) => {
 </script>
 <template>
 	<p>This page is protected and can only be accessed by authenticated users.</p>
-	<pre class="code">{{ JSON.stringify(user, null, 2) }}</pre>
+	<pre class="code">{{ JSON.stringify(session, null, 2) }}</pre>
 
 	<form @submit.prevent="handleSubmit">
 		<input type="submit" class="button" value="Sign out" />

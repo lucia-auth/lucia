@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 	}
 	try {
 		const user = await auth.createUser({
-			primaryKey: {
+			key: {
 				providerId: "username",
 				providerUserId: username,
 				password
@@ -19,7 +19,11 @@ export default defineEventHandler(async (event) => {
 				username
 			}
 		});
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
 		return null;

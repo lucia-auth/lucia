@@ -6,14 +6,14 @@ import type {
 	GetServerSidePropsResult,
 	InferGetServerSidePropsType
 } from "next";
-import type { User } from "lucia";
+import type { Session } from "lucia";
 
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ user: User }>> => {
+): Promise<GetServerSidePropsResult<{ session: Session }>> => {
 	const authRequest = auth.handleRequest(context);
-	const { user } = await authRequest.validateUser();
-	if (!user)
+	const session = await authRequest.validate();
+	if (!session)
 		return {
 			redirect: {
 				destination: "/login",
@@ -22,7 +22,7 @@ export const getServerSideProps = async (
 		};
 	return {
 		props: {
-			user
+			session
 		}
 	};
 };
@@ -36,7 +36,7 @@ const Index = (
 			<p>
 				This page is protected and can only be accessed by authenticated users.
 			</p>
-			<pre className="code">{JSON.stringify(props.user, null, 2)}</pre>
+			<pre className="code">{JSON.stringify(props.session, null, 2)}</pre>
 
 			<button
 				onClick={async () => {

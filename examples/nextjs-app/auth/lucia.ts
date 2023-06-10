@@ -1,18 +1,25 @@
-import lucia from "lucia";
-import { nextjs } from "lucia-auth/middleware";
-import prisma from "@lucia-auth/adapter-prisma";
+import { lucia } from "lucia";
+import { nextjs } from "lucia/middleware";
+import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 import { github } from "@lucia-auth/oauth/providers";
 
 export const auth = lucia({
-	adapter: prisma(new PrismaClient()),
+	adapter: prisma({
+		client: new PrismaClient(),
+		mode: "default"
+	}),
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
 	middleware: nextjs(),
-	transformDatabaseUser: (userData) => {
+	getUserAttributes: (userData) => {
 		return {
-			userId: userData.id,
 			username: userData.username
+		};
+	},
+	getSessionAttributes: (sessionData) => {
+		return {
+			createdAt: sessionData.created_at
 		};
 	}
 });

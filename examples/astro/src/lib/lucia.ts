@@ -20,7 +20,7 @@ export const auth = lucia({
 	getSessionAttributes: (sessionData) => {
 		return {
 			createdAt: sessionData.created_at
-		}
+		};
 	}
 });
 

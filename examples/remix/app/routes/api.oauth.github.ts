@@ -24,7 +24,11 @@ export const loader = async ({ request }: LoaderArgs) => {
 			});
 		};
 		const user = await getUser();
-		const session = await auth.createSession(user.userId);
+		const session = await auth.createSession(user.userId, {
+			attributes: {
+				created_at: new Date()
+			}
+		});
 		const headers = new Headers();
 		const authRequest = auth.handleRequest(request, headers);
 		authRequest.setSession(session);
