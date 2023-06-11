@@ -92,7 +92,7 @@ Refer to the [`planetscale`](/adapters/mysql#planetscale) section.
 
 ```ts
 import { connect } from "@planetscale/database";
-import { drizzle } from "drizzle-orm/planetscale";
+import { drizzle } from "drizzle-orm/planetscale-serverless";
 import lucia from "lucia";
 import { planetscale } from "@lucia-auth/adapter-mysql";
 
