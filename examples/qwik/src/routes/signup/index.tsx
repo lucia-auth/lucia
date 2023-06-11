@@ -9,7 +9,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia";
+import { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);

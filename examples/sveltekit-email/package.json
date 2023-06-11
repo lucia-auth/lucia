@@ -36,6 +36,6 @@
 		"@lucia-auth/adapter-prisma": "^1.0.0",
 		"@lucia-auth/tokens": "^1.0.0",
 		"@prisma/client": "^4.12.0",
-		"lucia": "^1.0.0"
+		"lucia-auth": "^1.0.0"
 	}
 }

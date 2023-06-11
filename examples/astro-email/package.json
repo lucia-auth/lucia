@@ -16,7 +16,7 @@
 		"@lucia-auth/tokens": "latest",
 		"@prisma/client": "^4.12.0",
 		"astro": "^2.1.3",
-		"lucia": "latest",
+		"lucia-auth": "latest",
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {

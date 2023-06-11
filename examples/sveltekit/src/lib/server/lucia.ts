@@ -1,6 +1,6 @@
 import { lucia } from 'lucia';
-import { sveltekit } from 'lucia/middleware';
-import { prisma } from '@lucia-auth/adapter-prisma';
+import { sveltekit } from 'lucia-auth/middleware';
+import prisma from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
 import { PrismaClient } from '@prisma/client';
 
@@ -8,20 +8,11 @@ import { github } from '@lucia-auth/oauth/providers';
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '$env/static/private';
 
 export const auth = lucia({
-	adapter: prisma({
-		client: new PrismaClient(),
-		models: {
-			user: 'user',
-			session: 'session',
-			key: 'key'
-		},
-		tables: {
-			user: 'example_user'
-		}
-	}),
+	adapter: prisma(new PrismaClient()),
 	env: dev ? 'DEV' : 'PROD',
-	getUserAttributes: (userData) => {
+	transformDatabaseUser: (userData) => {
 		return {
+			userId: userData.id,
 			username: userData.username
 		};
 	},

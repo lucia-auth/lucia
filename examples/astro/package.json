@@ -17,7 +17,7 @@
 		"@lucia-auth/oauth": "latest",
 		"@prisma/client": "^4.7.0",
 		"astro": "^1.6.0",
-		"lucia": "latest",
+		"lucia-auth": "latest",
 		"svelte": "^3.46.4",
 		"tailwindcss": "^3.0.24"
 	},

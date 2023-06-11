@@ -1,5 +1,5 @@
 import { auth } from "@auth/lucia.server";
-import { LuciaError } from "lucia";
+import { LuciaError } from "lucia-auth";
 import { Form, useActionData } from "@remix-run/react";
 import { redirect, json } from "@remix-run/node";
 import { Prisma } from "@prisma/client";

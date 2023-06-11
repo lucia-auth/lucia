@@ -1,4 +1,4 @@
-import { LuciaError } from "lucia";
+import { LuciaError } from "lucia-auth";
 
 export default defineEventHandler(async (event) => {
 	const { username, password } = (await readBody(event)) ?? {};

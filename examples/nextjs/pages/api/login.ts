@@ -1,7 +1,7 @@
 import { auth } from "../../auth/lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { LuciaError } from "lucia";
+import type { LuciaError } from "lucia-auth";
 
 type Data = {
 	error?: string;
