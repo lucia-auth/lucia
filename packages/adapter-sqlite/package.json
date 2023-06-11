@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public",
+		"auri.build": "pnpm build",
 		"test.better-sqlite3": "tsx test/better-sqlite3/index.ts",
 		"test.d1": "tsx test/d1/index.ts"
 	},

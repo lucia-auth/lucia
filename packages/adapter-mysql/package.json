@@ -16,7 +16,7 @@
 		"test.planetscale": "tsx test/planetscale/index.ts",
 		"test-setup.planetscale": "tsx test/planetscale/setup.ts",
 		"test-setup.mysql2": "tsx test/mysql2/setup.ts",
-		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
+		"auri.build": "pnpm build"
 	},
 	"keywords": [
 		"lucia",
