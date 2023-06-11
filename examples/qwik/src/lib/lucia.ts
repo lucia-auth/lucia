@@ -1,5 +1,5 @@
 import prismaAdapter from "@lucia-auth/adapter-prisma";
-import lucia from "lucia";
+import lucia from "lucia-auth";
 import { qwik } from "lucia-auth/middleware";
 import { prisma } from "./prisma";
 

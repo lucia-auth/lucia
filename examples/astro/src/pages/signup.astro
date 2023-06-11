@@ -3,7 +3,7 @@
 import { auth } from "../lib/lucia";
 import MainLayout from "../layouts/MainLayout.astro";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia";
+import { LuciaError } from "lucia-auth";
 
 const authRequest = auth.handleRequest(Astro);
 const { session } = await authRequest.validateUser();

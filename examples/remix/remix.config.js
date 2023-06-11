@@ -10,7 +10,7 @@ module.exports = {
 		v2_routeConvention: true
 	},
 	serverDependenciesToBundle: [
-		"lucia",
+		"lucia-auth",
 		"lucia-auth/middleware",
 		"@lucia-auth/adapter-prisma",
 		"@lucia-auth/oauth",

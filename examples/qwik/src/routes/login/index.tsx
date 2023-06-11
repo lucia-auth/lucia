@@ -8,7 +8,7 @@ import {
 	routeAction$
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
-import type { LuciaError } from "lucia";
+import type { LuciaError } from "lucia-auth";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);

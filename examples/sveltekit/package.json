@@ -39,6 +39,6 @@
 		"@lucia-auth/oauth": "latest",
 		"@prisma/client": "~4.7.0",
 		"devalue": "^4.0.1",
-		"lucia": "latest"
+		"lucia-auth": "latest"
 	}
 }

@@ -1,7 +1,7 @@
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { LuciaError } from "lucia";
+import { LuciaError } from "lucia-auth";
 
 export const POST = async (request: Request) => {
 	const { username, password } = (await request.json()) as Partial<{

@@ -1,11 +1,8 @@
-/// <reference types="lucia" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import('$lib/server/lucia.js').Auth;
-	type DatabaseUserAttributes = {
+	type UserAttributes = {
 		username: string;
-	};
-	type DatabaseSessionAttributes = {
-		created_at: Date;
 	};
 }
 
