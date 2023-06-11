@@ -33,11 +33,7 @@ export const actions: Actions = {
 			}
 			await auth.invalidateAllUserSessions(user.userId);
 			await auth.updateKeyPassword('email', user.email, password);
-			const session = await auth.createSession(user.userId, {
-				attributes: {
-					created_at: new Date()
-				}
-			});
+			const session = await auth.createSession(user.userId);
 			locals.auth.setSession(session);
 		} catch (e) {
 			console.log(e);

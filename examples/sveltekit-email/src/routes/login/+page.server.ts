@@ -16,7 +16,7 @@ export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const email = formData.get('email')?.toString() ?? '';
-		if (email === null || !email.includes("@")) {
+		if (email === null || !email.includes('@')) {
 			return fail(400, {
 				message: 'Incorrect email or password',
 				email
@@ -31,11 +31,7 @@ export const actions: Actions = {
 		}
 		try {
 			const key = await auth.useKey('email', email, password);
-			const session = await auth.createSession(key.userId, {
-				attributes: {
-					created_at: new Date()
-				}
-			});
+			const session = await auth.createSession(key.userId);
 			locals.auth.setSession(session);
 		} catch (e) {
 			if (e instanceof LuciaError && e.message === 'AUTH_INVALID_KEY_ID') {

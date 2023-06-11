@@ -5,10 +5,10 @@
 	export let form: ActionData;
 </script>
 
-<h1>Reset password</h1>
+<h2>Reset password</h2>
 <form method="post" use:enhance>
 	<label for="new-password">New password</label>
-	<input id="new-password" name="new-password" />
+	<input id="new-password" name="new-password" type="password" />
 	<input type="submit" value="Reset password" class="button" />
 </form>
 {#if form?.message}

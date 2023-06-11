@@ -5,7 +5,7 @@
 	export let form: ActionData;
 </script>
 
-<h1>Reset password</h1>
+<h2>Reset password</h2>
 <form method="post" use:enhance>
 	<label for="email">Email</label>
 	<input id="email" name="email" value={form?.email ?? ''} />
