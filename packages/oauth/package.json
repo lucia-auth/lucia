@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"auri.publish": "pnpm build && pnpm publish --no-git-checks --access public"
+		"auri.build": "pnpm build"
 	},
 	"keywords": [
 		"lucia",
