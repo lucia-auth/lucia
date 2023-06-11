@@ -1,36 +1,32 @@
 ---
 import { auth } from "@auth/lucia";
-import { isValidFormSubmission } from "src/forms/submission";
 
 import MainLayout from "src/layouts/MainLayout.astro";
 
-const authRequest = auth.handleRequest(Astro);
 const handleFormSubmission = async () => {
-	const validSubmission = isValidFormSubmission(Astro.request);
-	if (!validSubmission) return null;
-	const session = await authRequest.validate();
+	if (!Astro.locals.isValidFormSubmission()) return null;
+	const session = await Astro.locals.auth.validate();
 	if (!session) return null;
 	await auth.invalidateSession(session.sessionId);
-	authRequest.setSession(null);
+	Astro.locals.auth.setSession(null);
 };
 
 const response = await handleFormSubmission();
 if (response) return response;
 
-const session = await authRequest.validate();
+const session = await Astro.locals.auth.validate();
 if (!session) {
 	return Astro.redirect("/login", 302);
 }
-if (!user.emailVerified) {
-	// TODO
+if (!session.user.emailVerified) {
 	return Astro.redirect("/email-verification", 302);
 }
 ---
 
 <MainLayout>
-	<h1>Welcome, user</h1>
-	<p>Your email is {user.email}</p>
-	<form method="post">
-		<input type="submit" value="Sign out" />
+	<h2>Your profile</h2>
+	<pre class="code">{JSON.stringify(session, null, 2)}</pre>
+	<form action="/api/logout" method="post">
+		<input type="submit" class="button" value="Sign out" />
 	</form>
 </MainLayout>

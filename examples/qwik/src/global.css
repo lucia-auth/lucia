@@ -41,7 +41,7 @@ label {
 	@apply py-1;
 }
 div:not(.ignore):not(.code) {
-	@apply flex w-full max-w-2xl flex-col place-items-center py-4;
+	@apply flex w-full max-w-lg flex-col place-items-center py-4;
 }
 form {
 	@apply my-2 w-full;

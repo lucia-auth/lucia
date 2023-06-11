@@ -1,28 +1,21 @@
 import { lucia } from "lucia";
-import { prisma } from "@lucia-auth/adapter-prisma";
 import { astro } from "lucia/middleware";
-import { idToken } from "@lucia-auth/tokens";
+import { prisma } from "@lucia-auth/adapter-prisma";
 import { prismaClient } from "src/db";
 
 export const auth = lucia({
+	adapter: prisma({
+		client: prismaClient,
+		mode: "default"
+	}),
 	env: import.meta.env.DEV ? "DEV" : "PROD",
-	adapter: prisma(prismaClient),
 	middleware: astro(),
-	transformDatabaseUser: (userData) => {
+	getUserAttributes: (userData) => {
 		return {
-			userId: userData.id,
-			email: userData.email,
-			emailVerified: userData.email_verified
+			emailVerified: userData.email_verified,
+			email: userData.email
 		};
 	}
 });
 
 export type Auth = typeof auth;
-
-export const emailVerificationToken = idToken(auth, "email_verification", {
-	expiresIn: 60 * 60
-});
-
-export const passwordResetToken = idToken(auth, "email_reset", {
-	expiresIn: 60 * 60
-});

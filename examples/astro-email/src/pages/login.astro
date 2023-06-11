@@ -1,21 +1,17 @@
 ---
 import { auth } from "@auth/lucia";
 import { LuciaError } from "lucia";
-import { emailRegex, isValidFormSubmission } from "src/forms/submission";
 
 import MainLayout from "src/layouts/MainLayout.astro";
-
-const authRequest = auth.handleRequest(Astro);
 
 let errorMessage: string | null = null;
 let email = "";
 
 const handleFormSubmission = async (): Promise<Response | null> => {
-	const validSubmission = isValidFormSubmission(Astro.request);
-	if (!validSubmission) return null;
+	if (!Astro.locals.isValidFormSubmission()) return null;
 	const formData = await Astro.request.formData();
 	email = formData.get("email")?.toString() ?? "";
-	if (email === null || !emailRegex.test(email)) {
+	if (email === null || !email.includes("@")) {
 		errorMessage = "Incorrect email or password";
 		return null;
 	}
@@ -26,12 +22,8 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 	}
 	try {
 		const key = await auth.useKey("email", email, password);
-		const session = await auth.createSession(key.userId, {
-				attributes: {
-					created_at: new Date()
-				}
-			});
-		authRequest.setSession(session);
+		const session = await auth.createSession(key.userId);
+		Astro.locals.auth.setSession(session);
 		return Astro.redirect("/", 302);
 	} catch (e) {
 		if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
@@ -50,23 +42,34 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 const formSubmissionResponse = await handleFormSubmission();
 if (formSubmissionResponse) return formSubmissionResponse;
 
-const session = await authRequest.validate();
-if (user) {
-	if (!user.emailVerified) return Astro.redirect("/email-verification", 302);
+const session = await Astro.locals.auth.validate();
+if (session) {
+	if (!session.user.emailVerified) {
+		return Astro.redirect("/email-verification", 302);
+	}
 	return Astro.redirect("/", 302);
 }
 ---
 
+
 <MainLayout>
-	<h1>Sign in</h1>
+	<h2>Sign in</h2>
 	<form method="post">
 		<label for="email">Email</label><br />
-		<input id="email" name="email" value={email} /><br />
-		<label for="password">Password</label>
-		<input id="password" name="password" type="password" /><br />
-		<input type="submit" value="Continue" />
+		<input
+			id="email"
+			name="email"
+			value={email?.toString() ?? ""}
+		/><br />
+		<label for="password">password</label><br />
+		<input
+			type="password"
+			id="password"
+			name="password"
+		/><br />
+		<input type="submit" value="Continue" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}
-	<a href="/password-reset">Forgot password?</a>
-	<a href="/signup">Create an account</a>
+	<a href="/signup" class="link">Create an account</a>
+	<a href="/password-reset" class="link">Forgot password?</a>
 </MainLayout>

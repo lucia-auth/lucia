@@ -1,49 +1,42 @@
 ---
-import { sendEmailVerificationEmail } from "@auth/email";
-import { auth, emailVerificationToken } from "@auth/lucia";
-import { isValidFormSubmission } from "src/forms/submission";
+import { sendEmailVerificationLink } from "@auth/email";
+import { generateEmailVerificationToken } from "@auth/tokens";
 
 import MainLayout from "src/layouts/MainLayout.astro";
 
-const authRequest = auth.handleRequest(Astro);
-
 let errorMessage = "";
 
-const handleFormSubmission = async (): Promise<Response | null> => {
-	const validSubmission = isValidFormSubmission(Astro.request);
-	if (!validSubmission) return null;
-	const session = await authRequest.validate();
-	if (!user || user.emailVerified) return null;
-	try {
-		const token = await emailVerificationToken.issue(user.userId);
-		await sendEmailVerificationEmail(user.email, token.toString());
-		return null;
-	} catch (e) {
-		console.log(e);
-		errorMessage = "An unknown error occurred";
-		return null;
+if (Astro.locals.isValidFormSubmission()) {
+	const session = await Astro.locals.auth.validate();
+	if (session && !session.user.emailVerified) {
+		try {
+			const token = await generateEmailVerificationToken(
+				session.user.userId
+			);
+			await sendEmailVerificationLink(token);
+		} catch (e) {
+			console.log(e);
+			errorMessage = "An unknown error occurred";
+		}
 	}
-};
+}
 
-const response = await handleFormSubmission();
-if (response) return response;
-
-const session = await authRequest.validate();
+const session = await Astro.locals.auth.validate();
 
 if (!session) {
 	return Astro.redirect("/login", 302);
 }
-if (user.emailVerified) {
+if (session.user.emailVerified) {
 	return Astro.redirect("/", 302);
 }
 ---
 
 <MainLayout>
 	<h1>Email verification</h1>
-	<p>Please check your inbox ({user.email}) for a verification email</p>
+	<p>Check your console for the verification link!</p>
 	<h2>Resend verification email</h2>
 	<form method="post">
-		<input type="submit" value="Resend email" />
+		<input type="submit" value="Resend email" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}
 </MainLayout>

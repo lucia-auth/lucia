@@ -1,23 +1,20 @@
 ---
-import { sendEmailVerificationEmail } from "@auth/email";
-import { auth, emailVerificationToken } from "@auth/lucia";
+import { sendEmailVerificationLink } from "@auth/email";
+import { generateEmailVerificationToken } from "@auth/tokens";
+import { auth } from "@auth/lucia";
 import { Prisma } from "@prisma/client";
 import { LuciaError } from "lucia";
-import { emailRegex, isValidFormSubmission } from "src/forms/submission";
 
 import MainLayout from "src/layouts/MainLayout.astro";
-
-const authRequest = auth.handleRequest(Astro);
 
 let errorMessage: string | null = null;
 let email = "";
 
 const handleFormSubmission = async (): Promise<Response | null> => {
-	const validSubmission = isValidFormSubmission(Astro.request);
-	if (!validSubmission) return null;
+	if (!Astro.locals.isValidFormSubmission()) return null;
 	const formData = await Astro.request.formData();
 	email = formData.get("email")?.toString() ?? "";
-	if (email === null || !emailRegex.test(email)) {
+	if (email === null || !email.includes("@")) {
 		errorMessage = "Invalid email";
 		return null;
 	}
@@ -38,16 +35,13 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 				email_verified: false
 			}
 		});
-		const session = await auth.createSession(user.userId, {
-				attributes: {
-					created_at: new Date()
-				}
-			});
-		authRequest.setSession(session);
-		const token = await emailVerificationToken.issue(user.userId);
-		await sendEmailVerificationEmail(email, token.toString());
+		const session = await auth.createSession(user.userId);
+		Astro.locals.auth.setSession(session);
+		const token = await generateEmailVerificationToken(user.userId);
+		await sendEmailVerificationLink(token);
 		return Astro.redirect("/email-verification", 302);
 	} catch (e) {
+		console.log(e);
 		if (e instanceof LuciaError && e.message === "AUTH_DUPLICATE_KEY_ID") {
 			errorMessage = "Email is already taken";
 			return null;
@@ -68,24 +62,33 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 const formSubmissionResponse = await handleFormSubmission();
 if (formSubmissionResponse) return formSubmissionResponse;
 
-const session = await authRequest.validate();
-if (user) {
-	if (!user.emailVerified) return Astro.redirect("/email-verification", 302);
+const session = await Astro.locals.auth.validate();
+if (session) {
+	if (!session.user.emailVerified) {
+		return Astro.redirect("/email-verification", 302);
+	}
 	return Astro.redirect("/", 302);
 }
 ---
 
 <MainLayout>
-	<h1>Create an account</h1>
+	<h2>Create an account</h2>
 	<form method="post">
 		<label for="email">Email</label><br />
-		<input id="email" name="email" value={email} /><br />
-		<label for="password">Password</label>
-		<p>Password should be at least 8 characters long</p>
-		<input id="password" name="password" type="password" /><br />
-
-		<input type="submit" value="Continue" />
+		<input
+			id="email"
+			name="email"
+			value={email?.toString() ?? ""}
+		/><br />
+		<label for="password">password</label><br />
+		<input
+			type="password"
+			id="password"
+			name="password"
+		/><br />
+		<input type="submit" value="Continue" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}
-	<a href="/login">Sign in</a>
+	<a href="/login" class="link">Sign in</a>
+	<a href="/password-reset" class="link">Forgot password?</a>
 </MainLayout>
