@@ -1,6 +1,6 @@
 import { auth } from '$lib/lucia';
 import { emailRegex } from '$lib/form-submission';
-import { LuciaError } from 'lucia';
+import { LuciaError } from 'lucia-auth';
 import { fail, redirect } from '@sveltejs/kit';
 
 import type { PageServerLoad, Actions } from './$types';

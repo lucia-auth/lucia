@@ -2,7 +2,7 @@ import { emailRegex } from '$lib/form-submission';
 import { fail, redirect } from '@sveltejs/kit';
 import { auth, emailVerificationToken } from '$lib/lucia';
 import { sendEmailVerificationEmail } from '$lib/email';
-import { LuciaError } from 'lucia';
+import { LuciaError } from 'lucia-auth';
 import { Prisma } from '@prisma/client';
 
 import type { PageServerLoad, Actions } from './$types';

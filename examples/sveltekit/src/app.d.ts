@@ -9,6 +9,6 @@ declare namespace Lucia {
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
 	interface Locals {
-		auth: import('lucia').AuthRequest;
+		auth: import('lucia-auth').AuthRequest;
 	}
 }
