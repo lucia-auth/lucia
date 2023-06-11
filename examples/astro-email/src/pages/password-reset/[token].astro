@@ -19,11 +19,7 @@ if (tokenParams) {
 		if (!Astro.locals.isValidFormSubmission()) return null;
 		const formData = await Astro.request.formData();
 		const password = formData.get("new-password");
-		if (
-			password instanceof File ||
-			password === null ||
-			password.length < 8
-		) {
+		if (password instanceof File || !password) {
 			errorMessage = "Invalid password";
 			return null;
 		}
@@ -57,7 +53,6 @@ if (tokenParams) {
 	<h1>Reset password</h1>
 	<form method="post">
 		<label for="new-password">New password</label>
-		<p>Password must be at least 8 characters long</p>
 		<input id="new-password" name="new-password" type="password" />
 		<input type="submit" value="Reset password" class="button" />
 	</form>

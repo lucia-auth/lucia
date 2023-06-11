@@ -80,7 +80,7 @@ export default component$(() => {
 			{loginAction.value?.failed && (
 				<p class="error">{loginAction.value.error ?? ""}</p>
 			)}
-			<Link href="/signup" class="link">
+			<Link href="/signup" >
 				Create a new account
 			</Link>
 		</>

@@ -45,5 +45,5 @@ const handleSubmit = async (e: Event) => {
 		<input type="submit" value="Continue" class="button" />
 	</form>
 	<p class="error">{{ errorMessage }}</p>
-	<NuxtLink to="/signup" class="link"> Create a new account </NuxtLink>
+	<NuxtLink to="/signup" > Create a new account </NuxtLink>
 </template>

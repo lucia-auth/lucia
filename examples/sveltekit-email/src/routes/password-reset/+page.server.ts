@@ -1,7 +1,6 @@
-import { sendPasswordResetEmail } from '$lib/email';
-import { auth, passwordResetToken } from '$lib/lucia';
-import { prismaClient } from '$lib/db';
-import { emailRegex } from '$lib/form-submission';
+import { sendPasswordResetLink } from '$lib/server/email';
+import { generatePasswordResetToken } from '$lib/server/tokens';
+import { prismaClient } from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
 
 import type { Actions } from './$types';
@@ -10,14 +9,14 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
 		const email = formData.get('email')?.toString() ?? '';
-		if (email === null || !emailRegex.test(email)) {
+		if (email === null || !email.includes('@')) {
 			return fail(400, {
 				message: 'Invalid email',
 				email
 			});
 		}
 		try {
-			const databaseUser = await prismaClient.authUser.findFirst({
+			const databaseUser = await prismaClient.user.findFirst({
 				where: {
 					email: email
 				}
@@ -28,9 +27,9 @@ export const actions: Actions = {
 					email
 				});
 			}
-			const user = auth.transformDatabaseUser(databaseUser);
-			const token = await passwordResetToken.issue(user.userId);
-			await sendPasswordResetEmail(user.email, token.toString());
+			const userId = databaseUser.id;
+			const token = await generatePasswordResetToken(userId);
+			await sendPasswordResetLink(token);
 			return {
 				success: true
 			};

@@ -10,10 +10,9 @@
 	<label for="email">Email</label><br />
 	<input id="email" name="email" value={form?.email ?? ""} /><br />
 	<label for="password">Password</label>
-	<p>Password should be at least 8 characters long</p>
 	<input id="password" name="password" type="password" /><br />
 
-	<input type="submit" value="Continue" />
+	<input type="submit" value="Continue" class="button" />
 </form>
 {#if form?.message}
 	<p class="error">{form.message}</p>

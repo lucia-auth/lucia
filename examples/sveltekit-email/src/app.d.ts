@@ -12,7 +12,12 @@ declare global {
 declare global {
 	namespace Lucia {
 		type Auth = import('$lib/lucia').Auth;
-		type UserAttributes = Omit<import('@prisma/client').AuthUser, 'id'>;
+		type DatabaseUserAttributes = {
+			email: string;
+			email_verified: boolean;
+		};
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		type DatabaseSessionAttributes = {};
 	}
 }
 

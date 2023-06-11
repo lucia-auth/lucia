@@ -20,7 +20,7 @@ export const RouterHead = component$(() => {
 				<meta key={m.key} {...m} />
 			))}
 
-			{head.links.map((l) => (
+			{headas.map((l) => (
 				<link key={l.key} {...l} />
 			))}
 

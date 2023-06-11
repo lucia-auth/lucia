@@ -20,4 +20,4 @@
 {#if form?.message}
 	<p class="error">{form.message || ''}</p>
 {/if}
-<a href="/login" class="link">Sign in</a>
+<a href="/login" >Sign in</a>

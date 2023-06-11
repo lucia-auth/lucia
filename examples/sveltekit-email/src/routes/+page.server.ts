@@ -1,17 +1,18 @@
 import { redirect } from '@sveltejs/kit';
+import { auth } from '$lib/server/lucia';
+
 import type { Actions, PageServerLoad } from './$types';
-import { auth } from '$lib/lucia';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = await locals.auth.validateUser();
+	const session = await locals.auth.validate();
 	if (!session) {
 		throw redirect(302, '/login');
 	}
-	if (!user.emailVerified) {
+	if (!session.user.emailVerified) {
 		throw redirect(302, '/email-verification');
 	}
 	return {
-		user
+		session
 	};
 };
 

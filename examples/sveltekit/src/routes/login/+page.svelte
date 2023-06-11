@@ -20,4 +20,4 @@
 {#if form?.message}
 	<p class="error">{form.message || ''}</p>
 {/if}
-<a href="/signup" class="link">Create a new account</a>
+<a href="/signup" >Create a new account</a>

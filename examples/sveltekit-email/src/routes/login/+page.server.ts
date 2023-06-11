@@ -1,14 +1,13 @@
-import { auth } from '$lib/lucia';
-import { emailRegex } from '$lib/form-submission';
+import { auth } from '$lib/server/lucia';
 import { LuciaError } from 'lucia';
 import { fail, redirect } from '@sveltejs/kit';
 
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = await locals.auth.validateUser();
-	if (user) {
-		if (!user.emailVerified) throw redirect(302, '/email-verification');
+	const session = await locals.auth.validate();
+	if (session) {
+		if (!session.user.emailVerified) throw redirect(302, '/email-verification');
 		throw redirect(302, '/');
 	}
 };
@@ -17,14 +16,14 @@ export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const email = formData.get('email')?.toString() ?? '';
-		if (email === null || !emailRegex.test(email)) {
+		if (email === null || !email.includes("@")) {
 			return fail(400, {
 				message: 'Incorrect email or password',
 				email
 			});
 		}
 		const password = formData.get('password');
-		if (password instanceof File || password === null) {
+		if (password instanceof File || !password) {
 			return fail(400, {
 				message: 'Incorrect email or password',
 				email

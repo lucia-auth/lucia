@@ -2,5 +2,5 @@
 	import '../app.css';
 </script>
 
-<h1>Lucia + SvelteKit demo</h1>
+<h1>Lucia + Astro demo</h1>
 <slot />

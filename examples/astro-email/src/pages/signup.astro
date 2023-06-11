@@ -19,7 +19,7 @@ const handleFormSubmission = async (): Promise<Response | null> => {
 		return null;
 	}
 	const password = formData.get("password");
-	if (password instanceof File || password === null || password.length < 8) {
+	if (password instanceof File || !password) {
 		errorMessage = "Invalid password";
 		return null;
 	}
@@ -89,6 +89,6 @@ if (session) {
 		<input type="submit" value="Continue" class="button" />
 	</form>
 	{errorMessage && <p class="error">{errorMessage}</p>}
-	<a href="/login" class="link">Sign in</a>
-	<a href="/password-reset" class="link">Forgot password?</a>
+	<a href="/login" >Sign in</a>
+	<a href="/password-reset" >Forgot password?</a>
 </MainLayout>

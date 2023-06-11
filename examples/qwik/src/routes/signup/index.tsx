@@ -99,7 +99,7 @@ export default component$(() => {
 				</>
 			)}
 
-			<Link href="/login" class="link">
+			<Link href="/login" >
 				Sign in
 			</Link>
 		</>

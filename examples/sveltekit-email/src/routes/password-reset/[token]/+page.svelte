@@ -8,9 +8,8 @@
 <h1>Reset password</h1>
 <form method="post" use:enhance>
 	<label for="new-password">New password</label>
-	<p>Password must be at least 8 characters long</p>
 	<input id="new-password" name="new-password" />
-	<input type="submit" value="Reset password" />
+	<input type="submit" value="Reset password" class="button" />
 </form>
 {#if form?.message}
 	<p class="error">{form.message}</p>
