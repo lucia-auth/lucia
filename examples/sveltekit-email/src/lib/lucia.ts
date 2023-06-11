@@ -1,4 +1,4 @@
-import lucia from 'lucia';
+import lucia from 'lucia-auth';
 import prisma from '@lucia-auth/adapter-prisma';
 import { sveltekit } from 'lucia-auth/middleware';
 import { idToken } from '@lucia-auth/tokens';

@@ -1,6 +1,6 @@
 import { prismaClient } from '$lib/db';
 import type { Email as DatabaseEmail } from '@prisma/client';
-import { generateRandomString } from 'lucia';
+import { generateRandomString } from 'lucia-auth';
 
 const sendEmail = async (emailAddress: string, subject: string, content: string) => {
 	await prismaClient.email.create({

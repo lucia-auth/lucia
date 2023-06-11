@@ -2,7 +2,7 @@ import { auth } from '$lib/server/lucia';
 import { fail, type Actions } from '@sveltejs/kit';
 import { Prisma } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
-import { LuciaError } from 'lucia';
+import { LuciaError } from 'lucia-auth';
 import type { PageServerLoad } from './$types';
 
 export const actions: Actions = {
