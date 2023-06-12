@@ -86,7 +86,7 @@ The recommended way to read the session id is by using [`parseRequestHeaders()`]
 import { auth } from "./lucia.js";
 
 try {
-	const sessionId = auth.validateRequestHeaders(request);
+	const sessionId = auth.parseRequestHeaders(request);
 	const session = await auth.validateSession(sessionId);
 } catch {
 	// invalid request
