@@ -108,6 +108,8 @@ const auth = lucia({
 });
 ```
 
+> Note: PlanetScale doesn't support foreign keys, which means that you don't have to add .references() to the MySQL tables shown above in order to work with Drizzle Kit to push your changes of the schema and synchronize the table data to the PlanetScale database.
+
 ## PostgreSQL
 
 ```ts
