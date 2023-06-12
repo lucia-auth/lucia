@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-test
 
+## 4.0.0-beta.0
+
+### Major changes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
+    - Update tests
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `testAdapter()` and `testSessionAdapter()`
+    - Rename type `QueryHandler` to `LuciaQueryHandler`
+    - Remove `testUserAdapter()`
+    - Test modules no longer end process by default
+
 ## 3.0.1
 
 ### Patch changes
