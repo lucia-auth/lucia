@@ -1,12 +1,8 @@
 # @lucia-auth/adapter-mysql
 
-## 2.0.0-beta.2
-
-### Patch changes
+## 2.0.0-beta.1
 
 - [#731](https://github.com/pilcrowOnPaper/lucia/pull/731) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix internal imports
-
-## 2.0.0-beta.1
 
 ### Patch changes
 
