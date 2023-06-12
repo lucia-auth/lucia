@@ -2,6 +2,8 @@
 
 ## 2.0.0-beta.1
 
+- [#731](https://github.com/pilcrowOnPaper/lucia/pull/731) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix internal imports
+
 ### Patch changes
 
 - [#729](https://github.com/pilcrowOnPaper/lucia/pull/729) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Export `d1` adapter
