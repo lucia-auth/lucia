@@ -2,17 +2,15 @@
 import ContentTable from "@components/ContentTable.astro";
 import Layout from "@components/Layout.astro";
 import Header from "@components/ContentHeader.astro";
+import MarkdownContent from "@components/MarkdownContent.astro";
 
 import { getContent } from "@cela/content";
-import { frameworkIds } from "@utils/framework";
 import redirects from "redirects.json";
 import { error404 } from "@utils/error";
 import {
 	generateMarkdownHtml,
 	removeMarkdownFormatting
 } from "@markdown/index";
-import MarkdownContent from "@components/MarkdownContent.astro";
-import Banner from "@components/Banner.astro";
 import { joinUrlPaths } from "@utils/path";
 import { handleRequest } from "@server/request";
 
@@ -53,12 +51,7 @@ const contributePageHref = joinUrlPaths(
 	}}
 	content={{ collectionId: content.metaData.collectionId, frameworkId }}
 >
-	<Header
-		titleHtml={generateMarkdownHtml(content.metaData.rawTitle)}
-		subCollectionTitleHtml={generateMarkdownHtml(
-			content.metaData.rawSubCollectionTitle
-		)}
-	/>
+	<Header />
 	<ContentTable
 		collectionId={content.metaData.collectionId}
 		frameworkId={frameworkId}
@@ -67,7 +60,7 @@ const contributePageHref = joinUrlPaths(
 		class="h-full min-h-screen bg-white dark:bg-zinc-900 dark:text-zinc-200 lg:pr-64 xl:pl-80"
 	>
 		<article
-			class="overflow-hidden px-4 pt-36 pb-12 sm:px-8 md:px-24 xl:px-24 xl:pt-24"
+			class="overflow-hidden px-4 pb-12 pt-36 sm:px-8 md:px-24 xl:px-24 xl:pt-24"
 		>
 			<p
 				class="text-main mb-2 text-lg font-medium"
@@ -142,7 +135,6 @@ const contributePageHref = joinUrlPaths(
 			</div>
 		</div>
 	</div>
-	<Banner />
 </Layout>
 
 <style>

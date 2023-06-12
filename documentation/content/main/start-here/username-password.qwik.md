@@ -6,9 +6,17 @@ description: "Learn how to use Lucia in Qwik by implementing a basic username/pa
 
 This page will guide you how to implement a simple username/password auth and cover the basics of Lucia.
 
-The [Qwik example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/qwik) in the repo expands on this guide.
-
 Start off by following the steps in the [previous page](/start-here/getting-started?qwik) to set up Lucia and your database.
+
+### Clone example project
+
+You can also clone the [Qwik example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/qwik), which uses SQLite + Prisma. Clone it locally with a single command:
+
+```
+npx degit pilcrowonpaper/lucia/examples/qwik <project_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/qwik).
 
 ## 1. Configure your database
 
@@ -24,7 +32,7 @@ In `lucia.d.ts`, add `username` in `UserAttributes` since we added `username` co
 
 ```ts
 // src/lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./lib/lucia.js").Auth;
 	type UserAttributes = {
@@ -39,7 +47,7 @@ Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your
 // src/lib/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: qwik(),
 	transformDatabaseUser: (userData) => {
 		return {
@@ -78,12 +86,10 @@ export default component$(() => {
 				<input type="password" id="password" name="password" />
 
 				<br />
-				<input type="submit" value="Continue" class="button" />
+				<input type="submit" value="Continue" />
 			</Form>
 
-			<Link href="/login" class="link">
-				Sign in
-			</Link>
+			<Link href="/login">Sign in</Link>
 		</>
 	);
 });
@@ -106,7 +112,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 // create an action to handle the form submission
 export const useSignupAction = routeAction$(
@@ -122,32 +128,13 @@ export const useSignupAction = routeAction$(
 					username: values.username
 				}
 			});
-			const session = await auth.createSession(user.userId);
+			const { session } = await auth.createSession(user.userId);
 			const authRequest = auth.handleRequest(event);
 			authRequest.setSession(session);
 		} catch (error) {
-			if (
-				error instanceof Prisma.PrismaClientKnownRequestError &&
-				error.code === "P2002" &&
-				error.message?.includes("username")
-			) {
-				return event.fail(500, {
-					error: "Username already in use"
-				});
-			}
-			if (
-				error instanceof LuciaError &&
-				error.message === "AUTH_DUPLICATE_KEY_ID"
-			) {
-				return event.fail(500, {
-					error: "Username already in use"
-				});
-			}
-			// database connection error
+			// username already used
 			console.error(error);
-			return event.fail(500, {
-				error: "Unknown error occurred"
-			});
+			return event.fail(400, {});
 		}
 
 		// if all goes well, redirect to home page
@@ -162,7 +149,7 @@ export const useSignupAction = routeAction$(
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) and [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpserverresponse).
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) and [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpserverresponse).
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie with [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#setsession).
 
@@ -184,6 +171,8 @@ const user = await auth.createUser({
 	// ...
 });
 ```
+
+> (warn) In an actual production code, you want to make sure you check for password strength. See the checklist in the [OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls).
 
 ### Add the action to the form
 
@@ -207,18 +196,10 @@ export default component$(() => {
 				<input type="password" id="password" name="password" />
 
 				<br />
-				<input type="submit" value="Continue" class="button" />
+				<input type="submit" value="Continue" />
 			</Form>
-			{signupAction.value?.failed && (
-				<>
-					<p class="error">{signupAction.value?.error}</p>
-					<p class="error">{signupAction.value.fieldErrors?.password}</p>
-				</>
-			)}
 
-			<Link href="/login" class="link">
-				Sign in
-			</Link>
+			<Link href="/login">Sign in</Link>
 		</>
 	);
 });
@@ -226,7 +207,7 @@ export default component$(() => {
 
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 We'll use [`routeLoader$`](https://qwik.builder.io/docs/loader/) to make sure that the user is not already authenticated. If they are, we'll redirect them to the home page.
 
@@ -243,11 +224,11 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -281,13 +262,9 @@ export default component$(() => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<button class="button" type="submit">
-					Continue
-				</button>
+				<button type="submit">Continue</button>
 			</Form>
-			<Link href="/signup" class="link">
-				Create a new account
-			</Link>
+			<Link href="/signup">Create a new account</Link>
 		</>
 	);
 });
@@ -312,7 +289,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 // create an action to handle the form submission
 export const useLoginAction = routeAction$(
@@ -328,19 +305,9 @@ export const useLoginAction = routeAction$(
 			const session = await auth.createSession(key.userId);
 			authRequest.setSession(session);
 		} catch (e) {
-			const error = e as LuciaError;
-			if (
-				error.message === "AUTH_INVALID_KEY_ID" ||
-				error.message === "AUTH_INVALID_PASSWORD"
-			) {
-				return event.fail(200, { error: "Incorrect username or password" });
-			}
-
-			// database connection error
+			// invalid username/password
 			console.error(error);
-			return event.fail(200, {
-				error: "Unknown error occurred"
-			});
+			return event.fail(400, {});
 		}
 
 		// if all goes well, redirect to home page
@@ -380,7 +347,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 // .... the action hook shown above
 
@@ -400,16 +367,9 @@ export default component$(() => {
 				<br />
 				<input type="password" id="password" name="password" />
 				<br />
-				<button class="button" type="submit">
-					Continue
-				</button>
+				<button type="submit">Continue</button>
 			</Form>
-			{loginAction.value?.failed && (
-				<p class="error">{loginAction.value.error ?? ""}</p>
-			)}
-			<Link href="/signup" class="link">
-				Create a new account
-			</Link>
+			<Link href="/signup">Create a new account</Link>
 		</>
 	);
 });
@@ -431,11 +391,11 @@ import {
 	routeAction$
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
-import type { LuciaError } from "lucia-auth";
+import type { LuciaError } from "lucia";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -475,10 +435,11 @@ export default component$(() => {
 	const userLoader = useUserLoader();
 	return (
 		<>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
-			<pre class="code">{JSON.stringify(userLoader.value.user, null, 2)}</pre>
+			<h1>Profile</h1>
+			<div>
+				<p>User id: {userLoader.value.user.userId}</p>
+				<p>Username: {userLoader.value.user.username}</p>
+			</div>
 		</>
 	);
 });
@@ -496,7 +457,7 @@ import { auth } from "~/lib/lucia";
 
 export const useSignoutAction = routeAction$(async (values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 
 	if (!session) throw event.redirect(302, "/login");
 
@@ -524,12 +485,13 @@ export default component$(() => {
 
 	return (
 		<>
-			<p>
-				This page is protected and can only be accessed by authenticated users.
-			</p>
-			<pre class="code">{JSON.stringify(userLoader.value.user, null, 2)}</pre>
+			<h1>Profile</h1>
+			<div>
+				<p>User id: {userLoader.value.user.userId}</p>
+				<p>Username: {userLoader.value.user.username}</p>
+			</div>
 
-			<Form action={signoutAction} class="button">
+			<Form action={signoutAction}>
 				<button type="submit">Sign out</button>
 			</Form>
 		</>
@@ -547,13 +509,13 @@ import { routeLoader$, routeAction$ } from "@builder.io/qwik-city";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session, user } = await authRequest.validateUser();
 	// ...
 });
 
 export const useUserAction = routeAction$(async (_values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validate();
+	const { session, user } = await authRequest.validateUser();
 	// ...
 });
 ```

@@ -6,7 +6,7 @@ description: "Learn how to test your custom database adapters"
 
 Lucia provides a package for testing adapters.
 
-```bash
+```
 npm i @lucia-auth/adapter-test
 pnpm add @lucia-auth/adapter-test
 yarn add @lucia-auth/adapter-test
@@ -86,7 +86,7 @@ Import one of the three testing function and provide both the adapter and query 
 
 ```ts
 import { testAdapter } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 const adapter = adapterKysely()(LuciaError);
 await testAdapter(adapter, queryHandler);

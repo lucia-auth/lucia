@@ -6,7 +6,7 @@ description: "Learn how to get started with Lucia"
 
 Install Lucia using your package manager of your choice.
 
-```bash
+```
 npm i lucia-auth
 pnpm add lucia-auth
 yarn add lucia-auth
@@ -44,7 +44,7 @@ In a TypeScript file, import [`lucia`](/reference/lucia-auth/auth) and an adapte
 
 ```ts
 // lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -63,7 +63,7 @@ This module **should NOT be imported from the client**.
 If you're using Node as is for handling requests, use the [Node middleware](/reference/lucia-auth/middleware#node):
 
 ```ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { node } from "lucia-auth/middleware";
 // ...
 
@@ -75,16 +75,16 @@ export const auth = lucia({
 
 ### Express
 
-Use the [Express middleware](/reference/lucia-auth/middleware#edge):
+If you are using Express for handling requests, use the [Express middleware](/reference/lucia-auth/middleware#express):
 
 ```ts
-import lucia from "lucia-auth";
-import { node } from "lucia-auth/middleware";
+import lucia from "lucia";
+import { express } from "lucia-auth/middleware";
 // ...
 
 export const auth = lucia({
 	//...
-	middleware: node()
+	middleware: express()
 });
 ```
 
@@ -93,7 +93,7 @@ export const auth = lucia({
 And, if you're dealing with the standard `Request`/`Response`, use the [Web middleware](/reference/lucia-auth/middleware#web):
 
 ```ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { web } from "lucia-auth/middleware";
 // ...
 
@@ -111,7 +111,7 @@ In a TypeScript declaration file (`.d.ts`), declare a `Lucia` namespace. The pat
 
 ```ts
 // app.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./lucia.js").Auth;
 	type UserAttributes = {};
@@ -124,14 +124,14 @@ declare namespace Lucia {
 
 ```ts
 // auth/lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import "lucia-auth/polyfill/node";
 
 // ...
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: node()
 });
 

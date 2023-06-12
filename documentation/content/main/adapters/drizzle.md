@@ -59,8 +59,8 @@ export const key = mysqlTable("auth_key", {
 		length: 255
 	}),
 	expires: bigint("expires", {
-    mode: "number",
-  }),
+		mode: "number"
+	})
 });
 ```
 
@@ -71,14 +71,14 @@ Refer to the [`mysql2`](/adapters/mysql#mysql2) section.
 ```ts
 import mysql from "mysql2/promise";
 import { drizzle } from "drizzle-orm/mysql2";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { mysql2 } from "@lucia-auth/adapter-mysql";
 
 const connectionPool = mysql.createPool({
 	// ...
 });
 
-const db = drizzle(poolConnection);
+const db = drizzle(connectionPool);
 
 const auth = lucia({
 	adapter: mysql2(connectionPool)
@@ -93,7 +93,7 @@ Refer to the [`planetscale`](/adapters/mysql#planetscale) section.
 ```ts
 import { connect } from "@planetscale/database";
 import { drizzle } from "drizzle-orm/planetscale";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { planetscale } from "@lucia-auth/adapter-mysql";
 
 const connection = connect({
@@ -129,10 +129,10 @@ const session = pgTable("auth_session", {
 	})
 		.notNull()
 		.references(() => user.id),
-	activeExpires: bigInt("active_expires", {
+	activeExpires: bigint("active_expires", {
 		mode: "number"
 	}).notNull(),
-	idleExpires: bigInt("idle_expires", {
+	idleExpires: bigint("idle_expires", {
 		mode: "number"
 	}).notNull()
 });
@@ -146,9 +146,12 @@ const key = pgTable("auth_key", {
 	})
 		.notNull()
 		.references(() => user.id),
-	primaryKey: boolean().notNull(),
+	primaryKey: boolean("primary_key").notNull(),
 	hashedPassword: varchar("hashed_password", {
 		length: 255
+	}),
+	expires: bigint("expires", {
+		mode: "number"
 	})
 });
 ```
@@ -160,14 +163,15 @@ Refer to the [`pg`](/adapters/postgresql#pg) section.
 ```ts
 import postgres from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { pg } from "@lucia-auth/adapter-postgresql";
 
 const connectionPool = new postgres.Pool({
+	connectionString: CONNECTION_URL
 	// ...
 });
 
-const db = drizzle(poolConnection);
+const db = drizzle(connectionPool);
 
 const auth = lucia({
 	adapter: pg(connectionPool)
@@ -178,41 +182,30 @@ const auth = lucia({
 ## SQLite
 
 ```ts
-import { sqliteTable, varchar, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-const user = mysqlTable("auth_user", {
-	id: varchar("id", {
-		length: 15 // change this when using custom user ids
-	}).primaryKey()
+const user = sqliteTable("auth_user", {
+	id: text("id").primaryKey()
 	// other user attributes
 });
 
-const session = mysqlTable("auth_session", {
-	id: varchar("id", {
-		length: 128
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
+const session = sqliteTable("auth_session", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
 	activeExpires: integer("active_expires").notNull(),
 	idleExpires: integer("idle_expires").notNull()
 });
 
-const key = mysqlTable("auth_key", {
-	id: varchar("id", {
-		length: 255
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
+const key = sqliteTable("auth_key", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
-	primaryKey: integer().notNull(),
-	hashedPassword: varchar("hashed_password", {
-		length: 255
-	})
+	primaryKey: integer("primary_key").notNull(),
+	hashedPassword: text("hashed_password"),
+	expires: integer("expires")
 });
 ```
 
@@ -223,7 +216,7 @@ Refer to the [`better-sqlite3`](/adapters/sqlite#better-sqlite3) section.
 ```ts
 import sqlite from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 
 const database = sqlite(pathToDbFile);

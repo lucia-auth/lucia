@@ -96,7 +96,7 @@ try {
 Alternatively, you can read the cookie directly. The cookie name is provided as a `SESSION_COOKIE_NAME` constant. Make sure to implement your own CSRF protection in this case.
 
 ```ts
-import { SESSION_COOKIE_NAME } from "lucia-auth";
+import { SESSION_COOKIE_NAME } from "lucia";
 import { auth } from "./lucia.js";
 
 const sessionId = getCookie(SESSION_COOKIE_NAME);

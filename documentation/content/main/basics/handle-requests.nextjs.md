@@ -6,68 +6,97 @@ description: "Learn how to handle requests with Lucia"
 
 [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) returns [`AuthRequest`](/reference/lucia-auth/authrequest), which provides a set of methods that makes it easy to validate incoming requests. It will handle session renewals for you including cookies.
 
-With the default [Node middleware](/reference/lucia-auth/middleware#node), it expects Next.js `NextApiRequest` and `NextApiResponse`, which are passed onto `getServerSideProps()` and API route handlers.
+The [Next.js middleware](/reference/lucia-auth/middleware#nextjs) is the recommended adapter for Next.js projects. It supports both the `pages` router and the newer App router, and as such, there are severals ways `handleRequest()` can be called. However, due to a limitation on cookies in the App router, Lucia cannot renew sessions. Refer to [Using the App router](/nextjs/app-router).
+
+### `pages` router
 
 ```ts
 // pages/index.tsx
-import { auth } from "./lucia.js";
+import { auth } from "../auth/lucia";
 
 export const getServerSideProps = async (context) => {
-	const authRequest = auth.handleRequest(context.req, context.res);
+	const authRequest = auth.handleRequest(context);
 };
 ```
 
 ```ts
 // pages/index.ts
-import { auth } from "./lucia.js";
+import { auth } from "../../auth/lucia";
 
 export default async (req, res) => {
-	const authRequest = auth.handleRequest(req, res);
+	const authRequest = auth.handleRequest({ req, res });
 };
 ```
 
-### Middleware
+### App router
+
+```ts
+// app/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+
+export default () => {
+	const authRequest = auth.handleRequest({
+		cookies
+	});
+};
+```
+
+```ts
+// app/routes.ts
+import { auth } from "@/auth/lucia";
+
+export const GET = async (request: Request) => {
+	const authRequest = auth.handleRequest({
+		request,
+		cookies
+	});
+};
+```
+
+## Middleware
 
 By default, Lucia uses the [Lucia middleware](/reference/lucia-auth/middleware#lucia), but this can be changed by providing a middleware. Lucia out of the box provides middleware for:
 
 - [Astro](/reference/lucia-auth/middleware#astro)
 - [Express](/reference/lucia-auth/middleware#express)
+- [H3](/reference/lucia-auth/middleware#h3)
+- [Next.js](/reference/lucia-auth/middleware#nextjs)
 - [Node](/reference/lucia-auth/middleware#node)
 - [SvelteKit](/reference/lucia-auth/middleware#sveltekit)
 - [Web](/reference/lucia-auth/middleware#web)
 - [Qwik City](/reference/lucia-auth/middleware#qwik)
 
-> Use the Node middleware for Next.js
+> Use the Web middleware for Remix
+
+### Configure
+
+The middleware can be configured with the [`middleware`](/basics/configuration#middleware) config.
+
+```ts
+import { nextjs } from "lucia-auth/middleware";
+import lucia from "lucia";
+
+const auth = lucia({
+	middleware: nextjs()
+});
+```
 
 ## Validate requests
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used to get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) can be used to get the current session and user.
 
 ```ts
-import { auth } from "./lucia.js";
+// index.ts
+import { auth } from "./lucia";
 
-const authRequest = auth.handleRequest(req, responseres);
-const session = await authRequest.validate();
-```
-
-You can also use [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) to get both the user and session.
-
-```ts
+const authRequest = auth.handleRequest({ req, res });
 const { user, session } = await authRequest.validateUser();
 ```
 
-**We recommend sticking to `validateUser()` if you need to get the user in any part of the process.** See the section below for details.
-
 ### Caching
 
-Both `AuthRequest.validate()` and `AuthRequest.validateUser()` caches the result (or rather promise), so you won't be making unnecessary database calls.
-
-```ts
-// wait for database
-await authRequest.validate();
-// immediate response
-await authRequest.validate();
-```
+`AuthRequest.validateUser()` caches the result (or rather promise), so you won't be making unnecessary database calls.
 
 ```ts
 // wait for database
@@ -80,25 +109,7 @@ This functionality works when calling them in parallel as well.
 
 ```ts
 // single db call
-await Promise.all([authRequest.validate(), authRequest.validate()]);
-```
-
-It also shares the result, so calling `validate()` will return the session portion of the result from `validateUser()`.
-
-```ts
-// wait for database
-await authRequest.validateUser();
-// immediate response
-await authRequest.validate();
-```
-
-The same is not true for the other way around. `validateUser()` will wait for `validate()` to resolve and then get the user from the returned session.
-
-```ts
-// wait for database
-await authRequest.validate();
-// fetch user
-await authRequest.validateUser();
+await Promise.all([authRequest.validateUser(), authRequest.validateUser()]);
 ```
 
 ## Set session cookie
@@ -106,7 +117,7 @@ await authRequest.validateUser();
 [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#validateuser) can be used to set a session, and therefore creating a session cookie.
 
 ```ts
-import { auth } from "./lucia.js";
+import { auth } from "./lucia";
 
 const authRequest = auth.handleRequest(req, res);
 authRequest.setSession(session);

@@ -6,16 +6,6 @@ let theme = themeCookie.value ?? "light";
 if (theme !== "light" && theme !== "dark") {
 	theme = "light";
 }
-
-type Props = {
-	subCollectionTitleHtml?: string;
-	titleHtml?: string;
-};
-
-const titleHtml =
-	[Astro.props.subCollectionTitle, Astro.props.title]
-		.filter((val) => !!val)
-		.join(" - ") || null;
 ---
 
 <Header includeSearch={true}>
@@ -37,7 +27,6 @@ const titleHtml =
 				</svg>
 			</div>
 		</button>
-		{titleHtml && <p class="text-sm " set:html={titleHtml} />}
 	</div>
 </Header>
 <script>

@@ -8,7 +8,7 @@ There are few ways you can use Lucia with PlanetScale:
 
 - [PlanetScale serverless driver adapter](/adapters/planetscale)
 - [Prisma adapter](/adapters/prisma)
-- Query builders such as [Drizzle](/adapters/drizzle) and [Kysely](/adapters/drizzle) via one of the [MySQL adapters](/adapters/mysql)
+- Query builders such as [Drizzle](/adapters/drizzle) and [Kysely](/adapters/kysely) via one of the [MySQL adapters](/adapters/mysql)
 
 The serverless driver allows you to query PlanetScale databases in a serverless environment, including the Edge runtime. This can also be used with the query builders mentioned above.
 
@@ -17,7 +17,9 @@ import { planetscale } from "@lucia-auth/adapter-mysql";
 import { connect } from "@planetscale/database";
 
 const connection = connect({
-	// ...
+	host: "<host>",
+	username: "<user>",
+	password: "<password>"
 });
 
 const auth = lucia({
@@ -62,7 +64,7 @@ The length of the `VARCHAR` type of `id` should be of appropriate length if you 
 | id   | `VARCHAR(15)` |          |   ✓    |    ✓    |
 
 ```sql
-CREATE TABLE user (
+CREATE TABLE auth_user (
     id VARCHAR(15) NOT NULL,
     PRIMARY KEY (id)
 );
@@ -78,7 +80,7 @@ CREATE TABLE user (
 | idle_expires   | `BIGINT` (UNSIGNED) |          |        |          |
 
 ```sql
-CREATE TABLE session (
+CREATE TABLE auth_session (
     id VARCHAR(127) NOT NULL,
     user_id VARCHAR(15) NOT NULL,
     active_expires BIGINT UNSIGNED NOT NULL,
@@ -98,7 +100,7 @@ CREATE TABLE session (
 | expires         | `BIGINT` (UNSIGNED)  |    ✓     |        |          |
 
 ```sql
-CREATE TABLE `auth_key` (
+CREATE TABLE auth_key (
     id VARCHAR(255) NOT NULL,
     user_id VARCHAR(15) NOT NULL,
     primary_key TINYINT UNSIGNED NOT NULL,

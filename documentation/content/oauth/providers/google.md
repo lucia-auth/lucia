@@ -27,19 +27,21 @@ const google: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
+		accessType?: "online" | "offline";
 	}
 ) => OAuthProvider<GoogleUser, GoogleTokens>;
 ```
 
 #### Parameter
 
-| name                 | type                                 | description                    | optional |
-| -------------------- | ------------------------------------ | ------------------------------ | :------: |
-| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                 |          |
-| configs.clientId     | `string`                             | Google OAuth app client id     |          |
-| configs.clientSecret | `string`                             | Google OAuth app client secret |          |
-| configs.redirectUri  | `string`                             | an authorized redirect URI     |          |
-| configs.scope        | `string[]`                           | an array of scopes             |    ✓     |
+| name                 | type                                 | description                                                                     | optional | default  |
+| -------------------- | ------------------------------------ | ------------------------------------------------------------------------------- | :------: | :------: |
+| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                                  |          |          |
+| configs.clientId     | `string`                             | Google OAuth app client id                                                      |          |          |
+| configs.clientSecret | `string`                             | Google OAuth app client secret                                                  |          |          |
+| configs.redirectUri  | `string`                             | an authorized redirect URI                                                      |          |          |
+| configs.scope        | `string[]`                           | an array of scopes                                                              |    ✓     |          |
+| configs.accessType   | `"online" \| "offline"`              | Google OAuth Access type ("online" (default) or "offline" (gets refresh_token)) |    ✓     | "online" |
 
 #### Returns
 
@@ -56,14 +58,16 @@ Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: (
+	redirectUri?: string
+) => Promise<[url: URL, state: string]>;
 ```
 
 #### Parameter
 
-| name  | type     | description                                                                           | optional |
-| ----- | -------- | ------------------------------------------------------------------------------------- | :------: |
-| state | `string` | an opaque value used by the client to maintain state between the request and callback |    ✓     |
+| name        | type     | description                | optional |
+| ----------- | -------- | -------------------------- | :------: |
+| redirectUri | `string` | an authorized redirect URI |    ✓     |
 
 #### Returns
 

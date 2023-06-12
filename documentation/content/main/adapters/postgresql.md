@@ -6,7 +6,7 @@ description: "Learn how to use PostgreSQL databases with Lucia"
 
 An adapter for PostgreSQL databases.
 
-```bash
+```
 npm i @lucia-auth/adapter-postgresql
 pnpm add @lucia-auth/adapter-postgresql
 yarn add @lucia-auth/adapter-postgresql

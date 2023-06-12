@@ -31,7 +31,7 @@ Middlewares are similar to database adapters but for frameworks, and they are al
 
 ```ts
 import { node } from "lucia-auth/middleware";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 
 export const auth = lucia({
 	// ...
@@ -41,7 +41,7 @@ export const auth = lucia({
 
 ```ts
 const authRequest = auth.handleRequest(request, response);
-const session = await authRequest.validate();
+const { user, session } = await authRequest.validateUser();
 ```
 
 We hope this makes it much more easier to support other frameworks.
@@ -52,7 +52,7 @@ With this update, `getUser()` and other SvelteKit specific functions are no long
 
 ```ts
 import { sveltekit } from "lucia-auth/middleware";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 
 export const auth = lucia({
 	// ...
@@ -75,7 +75,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 // app.d.ts
 /// <reference types="@sveltejs/kit" />
 declare namespace App {
-	type AuthRequest = import("lucia-auth").AuthRequest;
+	type AuthRequest = import("lucia").AuthRequest;
 	// Locals must be an interface and not a type
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
 	interface Locals extends AuthRequest {}
@@ -89,7 +89,7 @@ Add Node middleware (**new in v1.0**):
 ```ts
 // astro
 import { node } from "lucia-auth/middleware";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 
 export const auth = lucia({
 	// ...
@@ -110,7 +110,7 @@ Add Astro middleware:
 ```ts
 // astro
 import { astro } from "lucia-auth/middleware";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 
 export const auth = lucia({
 	// ...
@@ -162,14 +162,14 @@ TypeScript should be able to detect most, if not all, of these changes.
 
 ```ts
 // auth/lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import "lucia-auth/polyfill/node";
 
 // ...
 
 export const auth = lucia({
 	adapter: prisma(prismaClient),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: node()
 });
 

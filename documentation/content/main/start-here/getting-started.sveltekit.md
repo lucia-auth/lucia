@@ -34,7 +34,7 @@ In `$lib/server/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lu
 
 ```ts
 // lib/server/lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { sveltekit } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
@@ -71,7 +71,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 You can now get the current session and user using the methods within `event.locals.auth`, which is available in every server context.
 
 ```ts
-const session = await event.locals.auth.validate();
 const { session, user } = await event.locals.auth.validateUser();
 ```
 
@@ -84,15 +83,15 @@ In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.
 declare global {
 	namespace App {
 		interface Locals {
-			auth: import("lucia-auth").AuthRequest;
+			auth: import("lucia").AuthRequest;
 		}
 	}
 }
 
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare global {
 	namespace Lucia {
-		type Auth = import("$lib/lucia").Auth;
+		type Auth = import("$lib/server/lucia").Auth;
 		type UserAttributes = {};
 	}
 }
@@ -111,6 +110,6 @@ TypeError: Cannot read properties of undefined (reading 'validate')
 
 Make sure your `handle` hook is running. Common mistakes include:
 
-1. `hook.sever.ts` (singular) instead of `hooks.server.ts` (plural)
+1. `hook.server.ts` (singular) instead of `hooks.server.ts` (plural)
 2. `hooks.server.ts` inside `routes` directory instead of `src` directory
 3. `+hooks.server.ts` (`+`) instead of `hooks.server.ts`

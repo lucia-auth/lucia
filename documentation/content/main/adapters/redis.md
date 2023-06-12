@@ -26,7 +26,7 @@ The adapter and Lucia will not not handle [unknown errors](/basics/error-handlin
 
 ## Installation
 
-```bash
+```
 npm i @lucia-auth/adapter-session-redis
 pnpm add @lucia-auth/adapter-session-redis
 yarn add @lucia-auth/adapter-session-redis
@@ -38,7 +38,7 @@ You will need to set up a different adapter for storing users.
 
 ```ts
 // lucia.js
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import redis from "@lucia-auth/adapter-session-redis";
 import prisma from "@lucia-auth/adapter-prisma";
 import { createClient } from "redis";

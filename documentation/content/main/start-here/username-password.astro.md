@@ -6,9 +6,17 @@ description: "Learn how to use Lucia in Astro by implementing a basic username/p
 
 This page will guide you how to implement a simple username/password authentication using Astro and cover the basics of Lucia.
 
-The [Astro example project](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro) in the repo expands on this guide.
-
 Start off by following the steps in the [previous page](/start-here/getting-started?astro) to set up Lucia and your database.
+
+### Clone example project
+
+You can also clone the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro), which uses SQLite + Prisma. Clone it locally with a single command:
+
+```
+npx degit pilcrowonpaper/lucia/examples/astro <project_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/astro).
 
 ## 1. Configure your database
 
@@ -24,7 +32,7 @@ In `src/lucia.d.ts`, add `username` in `UserAttributes` since we added `username
 
 ```ts
 // src/lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {
@@ -39,7 +47,7 @@ Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your
 // lib/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
-	env: dev ? "DEV" : "PROD",
+	env: import.meta.env.DEV ? "DEV" : "PROD",
 	middleware: astro(),
 	transformDatabaseUser: (userData) => {
 		return {
@@ -63,7 +71,7 @@ Create `pages/signup.astro`. This form will have an input field for username and
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
@@ -109,7 +117,7 @@ if (Astro.request.method === "POST") {
 			authRequest.setSession(session); // set session cookie
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch {
-			// username already in use
+			// username taken
 			Astro.response.status = 400;
 		}
 	} else {
@@ -121,7 +129,7 @@ if (Astro.request.method === "POST") {
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global when using the Astro middleware.
+Calling [`handleRequest()`] will create a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the [`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) global when using the Astro middleware.
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie.
 
@@ -129,7 +137,7 @@ In this case, we don't need to validate the request, but we do need it for setti
 const authRequest = auth.handleRequest(Astro);
 ```
 
-> (warn) Astro does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+> (warn) Astro does not check for [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) on API requests. While `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 #### Set user passwords
 
@@ -148,7 +156,7 @@ const user = await auth.createUser({
 
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 ```astro
 ---
@@ -156,8 +164,10 @@ const user = await auth.createUser({
 import { auth } from "../lib/lucia";
 
 const authRequest = auth.handleRequest(Astro);
-const session = await authRequest.validate();
-if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
+const { session } = await authRequest.validateUser();
+if (session) {
+	return Astro.redirect("/", 302); // redirect to profile page if authenticated
+}
 
 if (Astro.request.method === "POST") {
 	// ...
@@ -178,7 +188,7 @@ Create `pages/login.astro`. This route will handle sign ins using a form, which 
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
@@ -196,8 +206,10 @@ import { auth } from "../lib/lucia";
 const authRequest = auth.handleRequest(Astro);
 
 // redirect to profile page if authenticated
-const session = await authRequest.validate();
-if (session) return Astro.redirect("/", 302);
+const { session } = await authRequest.validateUser();
+if (session) {
+	return Astro.redirect("/", 302);
+}
 
 if (Astro.request.method === "POST") {
 	// csrf check
@@ -219,7 +231,7 @@ if (Astro.request.method === "POST") {
 			authRequest.setSession(session);
 			return Astro.redirect("/", 302); // redirect on successful attempt
 		} catch {
-			// invalid password
+			// invalid username/password
 			Astro.response.status = 400;
 		}
 	} else {
@@ -239,11 +251,11 @@ const key = await auth.useKey("username", username, password);
 
 ## 5. Profile page (protected)
 
-This page will be the root page (`pages/index.astro`). This route will show the user's data and have the note-taking portion of the app.
+This page will be the root page (`/`). This route will display the user's data.
 
 ### Get current user
 
-The current user and session can be retrieved using [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser). Redirect the user to the login page if unauthenticated.
+Create `pages/index.astro` and redirect unauthenticated user to the login page.
 
 ```astro
 ---
@@ -253,52 +265,35 @@ import { auth } from "../lib/lucia";
 const authRequest = auth.handleRequest(Astro);
 const { user } = await authRequest.validateUser();
 
-if (!user) return Astro.redirect("/login", 302);
+if (!user) {
+	return Astro.redirect("/login", 302);
+}
 ---
 
 <h1>Profile</h1>
 <div>
-	<p>User id: {$user?.userId}</p>
-	<p>Username: {$user?.username}</p>
+	<p>User id: {user.userId}</p>
+	<p>Username: {user.username}</p>
 </div>
 ```
 
-## 6. Validate requests
-
-`AuthRequest` can be used inside API routes as well:
-
-```ts
-// pages/api/random-number.ts
-import { auth } from "../../lib/lucia";
-import type { APIRoute } from "astro";
-
-export const get: APIRoute = async (context) => {
-	const authRequest = auth.handleRequest(Astro);
-	const session = await authRequest.validate();
-	// ...
-};
-
-export const post: APIRoute = async (context) => {
-	const authRequest = auth.handleRequest(Astro);
-	// ...
-};
-```
-
-## 7. Sign out users
+### Sign out users
 
 Create a POST endpoint in `api/logout` that handles logout. It will invalidate the current session and remove the session cookie.
 
 ```ts
+// pages/api/logout.ts
 import { auth } from "../../lib/lucia";
 import type { APIRoute } from "astro";
 
 export const post: APIRoute = async (Astro) => {
 	const authRequest = auth.handleRequest(Astro);
-	const session = await authRequest.validate();
-	if (!session)
+	const { session } = await authRequest.validateUser();
+	if (!session) {
 		return new Response(null, {
 			status: 400
 		});
+	}
 	await auth.invalidateSession(session.sessionId); // invalidate current session
 	authRequest.setSession(null); // clear session cookie
 
@@ -318,4 +313,24 @@ In the frontend, create a new form that sends a POST request to the endpoint. Au
 <form action="/api/logout" method="post">
 	<input type="submit" value="Sign out" />
 </form>
+```
+
+## 6. Validate requests
+
+`AuthRequest` can be used inside API routes as well:
+
+```ts
+// pages/api/index.ts
+import { auth } from "../../lib/lucia";
+import type { APIRoute } from "astro";
+
+export const get: APIRoute = async (context) => {
+	const authRequest = auth.handleRequest(context);
+	// ...
+};
+
+export const post: APIRoute = async (context) => {
+	const authRequest = auth.handleRequest(context);
+	// ...
+};
 ```

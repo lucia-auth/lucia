@@ -22,7 +22,7 @@ In `src/lucia.d.ts`, add `username` in `UserAttributes` since we added `username
 
 ```ts
 // src/lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {
@@ -37,7 +37,7 @@ Add [`transformDatabaseUser()`](/basics/configuration#transformuserdata) to your
 // lib/lucia.ts
 export const auth = lucia({
 	adapter: prisma(),
-	env: dev ? "DEV" : "PROD",
+	env: "DEV" // "PROD" if prod,
 	middleware: web(),
 	transformDatabaseUser: (userData) => {
 		return {
@@ -61,7 +61,7 @@ Create `/signup` page. This form will have an input field for username and passw
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
@@ -131,7 +131,7 @@ const handleRequest = async (request) => {
 
 #### Handle requests
 
-Calling [`handleRequest()`] will create a new [`AuthRequest`](/referencel/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the standard [`Request`](https://www.google.com/search?client=safari&rls=en&q=mdn+request&ie=UTF-8&oe=UTF-8) and [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) when using the Web middleware.
+Calling [`handleRequest()`](/reference/lucia-auth/auth#handlerequest) will create a new [`AuthRequest`](/reference/lucia-auth/authrequest) instance, which makes it easier to handle sessions and cookies. This can be initialized with the standard [`Request`](https://www.google.com/search?client=safari&rls=en&q=mdn+request&ie=UTF-8&oe=UTF-8) and [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) when using the Web middleware.
 
 In this case, we don't need to validate the request, but we do need it for setting the session cookie.
 
@@ -148,7 +148,7 @@ return new Response(null, {
 });
 ```
 
-> (warn) While `AuthRequest.validate()` and `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
+> (warn) While `AuthRequest.validateUser()` will do a CSRF check and only return a user/session if it passes the check, **make sure to add CSRF protection** to routes that doesn't rely on Lucia for validation. You can check if the request is coming from the same domain as where the app is hosted by using the `Origin` header.
 
 #### Set user passwords
 
@@ -165,9 +165,11 @@ const user = await auth.createUser({
 });
 ```
 
+> (warn) In an actual production code, you want to make sure you check for password strength. See the checklist in the [OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls).
+
 ### Redirect authenticated users
 
-[`AuthRequest.validate()`](/reference/lucia-auth/authrequest#validate) can be used inside a server context to validate the request and get the current session.
+[`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validate) can be used to validate the request and get the current session and user.
 
 ```ts
 import { auth } from "../lib/lucia";
@@ -175,7 +177,7 @@ import { auth } from "../lib/lucia";
 export const handleRequest = async (request) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		headers.set("location", "/");
 		return new Response(null, {
@@ -203,7 +205,7 @@ Create `/login` page. This route will handle sign ins using a form, which will a
 	<input id="username" name="username" /><br />
 	<label for="password">password</label><br />
 	<input type="password" id="password" name="password" /><br />
-	<input type="submit" value="Continue" class="button" />
+	<input type="submit" value="Continue" />
 </form>
 ```
 
@@ -222,7 +224,7 @@ const handleRequest = async (request) => {
 	const authRequest = auth.handleRequest(request, headers);
 
 	// redirect to profile page if authenticated
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (session) {
 		headers.set("location", "/");
 		return new Response(null, {
@@ -259,7 +261,7 @@ const handleRequest = async (request) => {
 					headers // important!
 				});
 			} catch {
-				// invalid password
+				// invalid username/password
 			}
 		} else {
 			// invalid form
@@ -287,7 +289,7 @@ This page will be the root page (`/`). This route will show the user's data and 
 
 ### Get current user
 
-The current user and session can be retrieved using [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser). Redirect the user to the login page if unauthenticated.
+Redirect unauthenticated users to the login page.
 
 ```ts
 // /index
@@ -313,7 +315,7 @@ export const handleRequest = async (request) => {
 };
 ```
 
-## 6. Sign out users
+### Sign out users
 
 Create a POST endpoint in `api/logout` that handles logout. It will invalidate the current session and remove the session cookie.
 
@@ -324,7 +326,7 @@ import { auth } from "../../lib/lucia";
 export const handleRequest = async (request) => {
 	const headers = new Headers();
 	const authRequest = auth.handleRequest(request, headers);
-	const session = await authRequest.validate();
+	const { session } = await authRequest.validateUser();
 	if (!session)
 		return new Response(null, {
 			status: 400,

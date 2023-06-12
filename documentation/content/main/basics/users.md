@@ -45,7 +45,7 @@ Refer to [Keys](/basics/keys) to learn more about keys.
 
 ### Create a primary key
 
-You can create primary keys alongside the user, which will be used when authenticating the user.s
+You can create primary keys alongside the user, which will be used when authenticating the user.
 
 #### With a password key
 
@@ -69,6 +69,8 @@ try {
 	// invalid input
 }
 ```
+
+> (warn) Make sure to implement a proper password strength control. See the checklist in the [OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls).
 
 #### Without a password key
 
@@ -177,7 +179,7 @@ You can generate your own user ids by setting [`generateCustomUserId()`](/basics
 If you need to generate a cryptographically random alphanumeric string, Lucia provides [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring). This function is based on the [`nanoid`](https://github.com/ai/nanoid) package.
 
 ```ts
-import { generateCustomUserId } from "lucia-auth";
+import { generateCustomUserId } from "lucia";
 
 lucia({
 	generateCustomUserId: () => {

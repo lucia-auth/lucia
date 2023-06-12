@@ -34,14 +34,14 @@ In `$lib/server/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lu
 
 ```ts
 // src/lib/lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { qwik } from "lucia-auth/middleware";
 import prismaAdapter from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 export const auth = lucia({
 	adapter: prismaAdapter(new PrismaClient()),
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: "DEV", // "PROD" if prod
 	middleware: qwik()
 });
 
@@ -56,7 +56,7 @@ Create lucia.d.ts, and inside it configure your types. The path in import('./lib
 
 ```ts
 // src/lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./lib/lucia.js").Auth;
 	type UserAttributes = {};
