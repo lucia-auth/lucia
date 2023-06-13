@@ -18,20 +18,22 @@ npm install @lucia-auth/adapter-session-unstorage
 
 ```ts
 import lucia from "lucia-auth";
-import Unstorage from "@lucia-auth/adapter-session-unstorage";
+import { unstorage } from "@lucia-auth/adapter-session-unstorage";
 import prisma from "@lucia-auth/adapter-prisma";
 
-const session = createStorage();
+const client = createStorage();
 
 export const auth = lucia({
 	adapter: {
 		user: prisma(), // any database adapter
-		session: Unstorage({ session })
+		session: unstorage(client)
 	}
 });
 ```
 
 ## Testing
+
+The tests will be run against unstorage memory driver.
 
 ```
 pnpm test
