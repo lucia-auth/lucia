@@ -29,8 +29,9 @@ We currently support the following database/ORM options:
 - [PlanetScale serverless](/adapters/planetscale)
 - [PostgreSQL](/adapters/postgresql)
 - [Prisma](/adapters/prisma)
-- [Redis](/adapters/redis)
 - [SQLite](/adapters/sqlite)
+- [Redis](/adapters/redis)
+- [Unstorage](/adapters/unstorage)
 
 ## Initialize Lucia
 

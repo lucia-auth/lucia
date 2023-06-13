@@ -27,6 +27,7 @@ We currently support the following database/ORM options:
 - [Prisma](/adapters/prisma)
 - [Redis](/adapters/redis)
 - [SQLite](/adapters/sqlite)
+- [Unstorage](/adapters/unstorage)
 
 ## Initialize Lucia
 
