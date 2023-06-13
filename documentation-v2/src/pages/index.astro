@@ -1,0 +1,17 @@
+---
+import { getSubCollections, getPage } from "../content";
+import MainLayout from "../layouts/MainLayout.astro";
+
+console.log(await getPage("main", "overview/introduction"))
+---
+
+<MainLayout>
+	<h1 class="text-6xl font-bold mt-8 mb-8">
+		Authentication,</br> simple and clean
+	</h1>
+	<p>
+		Lucia is a simple and flexible user and session management library that
+		provides an abstraction layer between your app and your database. It's
+		bare-bones by design, keeping everything easy to use and understand.
+	</p>
+</MainLayout>

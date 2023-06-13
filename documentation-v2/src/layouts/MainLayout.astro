@@ -1,0 +1,87 @@
+---
+import { getSubCollections } from "../content";
+const subCollections = await getSubCollections("main");
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Lucia</title>
+        <link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+    </head>
+    <body class="text-zinc-700 leading-relaxed text-base">
+        <header class="w-full py-4 px-8 fixed top-0 border-b bg-white z-30">
+            <a class="pointer-events-auto flex place-items-center" href="/">
+				<img
+					src="/logo.svg"
+					alt="Lucia logo"
+					width="100"
+					height="100"
+					class="h-5 w-5"
+				/>
+				<p class="text-xl font-bold ">Lucia</p>
+			</a>
+        </header>
+        <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
+            <div
+                class="flex flex-col gap-y-6 overflow-auto h-full overscroll-auto pt-4 pb-8 text-sm"
+            >
+                {
+                    subCollections.map((subCollection) => {
+                        return (
+                            <div>
+                                <p class="ml-8 text-sm font-medium text-zinc-400">
+                                    {subCollection.title}
+                                </p>
+                                <ul class="mt-0.5">
+                                    {subCollection.pages.map((page) => {
+                                        const urlPathname = [
+                                            "",
+                                            page.subCollection,
+                                            page.pageId
+                                        ].join("/");
+                                        return (
+                                            <li>
+                                                <a
+                                                    href={page.pathname.replace(
+                                                        "main",
+                                                        ""
+                                                    )}
+                                                    class:list={[
+                                                        "w-full py-1 pl-8 hover:bg-indigo-50 block",
+                                                        {
+                                                            "bg-gray-100":
+                                                                Astro.url
+                                                                    .pathname ===
+                                                                urlPathname
+                                                        }
+                                                    ]}
+                                                    set:html={page.htmlTitle}
+                                                />
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                        );
+                    })
+                }
+            </div>
+        </div>
+        <main class="py-20 px-16 ml-80 overflow-hidden">
+            <slot />
+        </main>
+        <style>
+            /* adjust font size for code block */
+            :global(code) {
+                @apply text-code-base;
+            }
+            :global(.text-sm code) {
+                @apply text-code-sm;
+            }
+        </style>
+    </body>
+</html>
