@@ -35,21 +35,19 @@ You will need to set up a different adapter for storing users.
 
 ```ts
 // lucia.ts
-import lucia from "lucia-auth";
-import Unstorage from "@lucia-auth/adapter-session-unstorage";
+import lucia from "lucia";
+import { unstorage as adapter } from "@lucia-auth/adapter-session-unstorage";
 import prisma from "@lucia-auth/adapter-prisma";
 import { createStorage } from "unstorage";
 
-const session = createStorage(/* options */);
+const unstorage = createStorage(/* options */);
 
 export const auth = lucia({
 	adapter: {
 		user: prisma(), // any database adapter
-		session: Unstorage({
-			session,
-			sessionKeyPrefix: "session", //optional, this is the default value
-			userSessionKeyPrefix: "user_session" //optional, this is the default value
-		})
+		session: adapter(unstorage)
+		// You can pass custom keys like this
+		// session: adapter(unstorage, {sessions: "s", userSessions: "us"}})
 	}
 });
 ```
@@ -58,7 +56,7 @@ export const auth = lucia({
 
 ### `session`
 
-| Key                                                    | Value                             |
-| ------------------------------------------------------ | --------------------------------- |
-| session id: `session:${session.id}`                    | SessionSchema : `SessionSchema[]` |
-| user id: `user_session:${session.userId}:${timestamp}` | list of session ids: `string[]`   |
+| Key                                                                  | Value                             |
+| -------------------------------------------------------------------- | --------------------------------- |
+| session id: `session:${session.id}`                                  | SessionSchema : `SessionSchema[]` |
+| user id: `user_session:${session.userId}:${session.id}:${timestamp}` | list of session ids: `string[]`   |
