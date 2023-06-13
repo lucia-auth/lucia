@@ -7,13 +7,16 @@
 		@apply mb-2 mt-8 break-words pt-8 text-2xl font-semibold;
 	}
 	:global(#md h3) {
-		@apply mb-4 mt-12 break-words text-lg font-semibold;
+		@apply mb-4 mt-12 break-words text-xl font-semibold;
 	}
 	:global(#md h4) {
-		@apply mt-6 break-words text-lg font-medium;
+		@apply mt-6 break-words text-lg font-semibold;
 	}
-	:global(#md p, #md table, #md ul, #md ol) {
+	:global(#md :not(h4) + p, #md table, #md ul, #md ol) {
 		@apply my-3;
+	}
+	:global(#md h4 + p,) {
+		@apply mb-3;
 	}
 	:global(#md p code, #md ul code, #md ol code, #md table code) {
 		@apply text-code-base;

@@ -25,16 +25,11 @@ export const getStaticPaths = async () => {
 };
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-const { page, subCollection } = Astro.props;
+const { page } = Astro.props;
 ---
 
 <MainLayout>
-    <div class="my-4">
-        <p
-            class="text-main font-medium text-lg -mb-0.5"
-            set:html={subCollection.htmlTitle}
-        >
-        </p>
+    <div class="mt-2 mb-8">
         <h1 class="text-5xl font-bold" set:html={page.htmlTitle}></h1>
     </div>
     <MarkdownStyle>
