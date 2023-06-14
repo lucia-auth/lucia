@@ -111,17 +111,16 @@ try {
 	});
 } catch (e) {
 	if (e instanceof LuciaError && e.message === `AUTH_INVALID_USER_ID`) {
-		// invalid session
-		deleteSessionCookie();
+		// invalid user id
 	}
 	// provided session attributes violates database rules (e.g. unique constraint)
-	// unexpected database errors
+	// or unexpected database errors
 }
 ```
 
 ### Session attributes errors
 
-If the session attributes provided violates a database rule (such a unique contraint), Lucia will throw the database/driver/ORM error instead of a regular `LuciaError`. For example, if you're using Prisma, Lucia will throw a Prisma error.
+If the session attributes provided violates a database rule (such a unique constraint), Lucia will throw the database/driver/ORM error instead of a regular `LuciaError`. For example, if you're using Prisma, Lucia will throw a Prisma error.
 
 ## Session cookies
 
@@ -253,6 +252,33 @@ import { auth } from "./lucia.js";
 await auth.invalidateAllUserSessions(userId);
 ```
 
+## Update session attributes
+
+You can update attributes of a session with [`Auth.updateSessionAttributes()`](). You can update a single field or multiple fields. It returns the update session, or throws `AUTH_INVALID_SESSION_ID` if the session does not exist.
+
+In general however, **invalidating the current session and creating a new session is preferred.**
+
+
+```ts
+import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
+
+try {
+	const user = await auth.updateSessionAttributes(
+		sessionId,
+		{
+			updated_at: new Date()
+		} // expects partial `Lucia.DatabaseUserAttributes`
+	);
+} catch (e) {
+	if (e instanceof LuciaError && e.message === `AUTH_INVALID_SESSION_ID`) {
+		// invalid user id
+	}
+	// provided session attributes violates database rules (e.g. unique constraint)
+	// or unexpected database errors
+}
+```
+
 ## Delete dead user sessions
 
 You can delete dead user sessions with [`Auth.deleteDeadUserSessions()`]() to cleanup your database. It may be useful to call this whenever a user signs in or signs out. This will succeed regardless of the validity of the user id.
@@ -265,7 +291,7 @@ await auth.deleteDeadUserSessions(userId);
 
 ## Configuration
 
-You can configure few aspects of your sessions:
+You can configure sessions in a few ways:
 
 - Session attributes with [`getSessionAttributes()`]()
 - Session expiration with [`sessionExpiresIn`]()

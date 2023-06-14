@@ -8,6 +8,15 @@ Keys represent the relationship between a user and a reference to that user. Whi
 
 A user can have any number of keys, allowing for multiple ways of referencing and authenticating users without cramming your user table. Key can also optionally hold a password, which is useful for implementing a password based authentication. If provided, passwords are automatically hashed by Lucia before storage.
 
+```ts
+const key: Key = {
+	providerId: "email",
+	providerUserId: "user@example.com",
+	passwordDefined: true,
+	userId: "laRZ8RgA34YYcgj"
+};
+```
+
 ### Examples
 
 #### Email & password
@@ -17,13 +26,8 @@ Below, you're referencing a user where they're identified with "user@example.com
 ```ts
 import { auth } from "./lucia.js";
 
-try {
-	const key = await auth.useKey("email", "user@example.com", "123456");
-	const user = await auth.getUser(key.userId);
-} catch {
-	// key does not exist
-	// or incorrect password
-}
+const key = await auth.useKey("email", "user@example.com", "123456");
+const user = await auth.getUser(key.userId);
 ```
 
 #### OAuth
@@ -34,11 +38,7 @@ Below, you're referencing a user where they're identified with their Github user
 import { auth } from "./lucia.js";
 
 const githubUser = await authenticateWithGithub(); // example - exact API not provided by Lucia
-try {
-	const key = await auth.useKey("github", githubUser.userId);
-} catch {
-	// key does not exist
-}
+const key = await auth.useKey("github", githubUser.userId);
 ```
 
 ## Create keys
@@ -47,30 +47,28 @@ Keys can be created with [`Auth.createKey()`]().
 
 ```ts
 import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
 
 try {
-	await auth.createKey(userId, {
+	const key = await auth.createKey(userId, {
 		providerId: "email",
 		providerUserId: "user@example.com",
 		password: "123456"
 	});
-} catch {
-	// key already exists
+} catch (e) {
+	if (e instanceof LuciaError && e.message === `DUPLICATE_KEY_ID`) {
+		// key already exists
+	}
+	// unexpected database errors
 }
 ```
 
 ```ts
-import { auth } from "./lucia.js";
-
-try {
-	await auth.createKey(userId, {
-		providerId: "github",
-		providerUserId: githubUserId,
-		password: null // a value must be provided
-	});
-} catch {
-	// key already exists
-}
+await auth.createKey(userId, {
+	providerId: "github",
+	providerUserId: githubUserId,
+	password: null // a value must be provided
+});
 ```
 
 ### Create keys when creating users
@@ -79,6 +77,7 @@ In most cases, you want to create a key whenever you create (i.e. register) a ne
 
 ```ts
 import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
 
 try {
 	await auth.createUser({
@@ -89,9 +88,12 @@ try {
 		} // same params as `Auth.createKey()`,
 		// ...
 	});
-} catch {
-	// key already exists
-	// or unique constraint failed for user attributes
+} catch (e) {
+	if (e instanceof LuciaError && e.message === `DUPLICATE_KEY_ID`) {
+		// key already exists
+	}
+	// provided user attributes violates database rules (e.g. unique constraint)
+	// or unexpected database errors
 }
 ```
 
@@ -103,22 +105,32 @@ try {
 
 ```ts
 import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
 
 try {
 	const key = await auth.useKey("email", "user@example.com", "123456"); // validate password too
 	const user = await auth.getUser(key.userId);
-} catch {
-	// key does not exist
-	// or incorrect password
+} catch (e) {
+	if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
+		// invalid key
+	}
+	if (e instanceof LuciaError && e.message === "AUTH_INVALID_PASSWORD") {
+		// incorrect password
+	}
+	// unexpected database error
 }
 ```
 
 ```ts
 const githubUser = await authenticateWithGithub(); // example - exact API not provided by Lucia
 try {
-	const key = await auth.useKey("github", githubUser.userId);
+	// must pass `null` as the password for it to be valid
+	const key = await auth.useKey("github", githubUser.userId, null);
 } catch {
-	// key does not exist
+	if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
+		// invalid key
+	}
+	// unexpected database error
 }
 ```
 
@@ -128,25 +140,33 @@ You can get a key with [`Auth.getKey()`](). Unlike `Auth.useKey()`, this does no
 
 ```ts
 import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
 
 try {
 	const key = await auth.getKey(providerId, providerUserId);
 } catch {
-	// key does not exist
+	if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
+		// invalid key
+	}
+	// unexpected database error
 }
 ```
 
 ## Get all keys of a user
 
-[`Auth.getAllUserKeys()`]() can be used to get all keys linked to a user.
+[`Auth.getAllUserKeys()`]() can be used to get all keys linked to a user. It will throw
 
 ```ts
 import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
 
 try {
 	const keys = await auth.getAllUserKeys(userId);
 } catch {
-	// invalid user id
+	if (e instanceof LuciaError && e.message === `AUTH_INVALID_USER_ID`) {
+		// invalid user id
+	}
+	// unexpected database error
 }
 ```
 
@@ -158,11 +178,19 @@ You can update a key's password with [`Auth.updateKeyPassword()`](). You can pas
 import { auth } from "./lucia.js";
 
 try {
-	const key = await auth.updateKeyPassword(providerId, providerUserId, newPassword);
-} catch {
-	// key does not exist
+	const key = await auth.updateKeyPassword(
+		providerId,
+		providerUserId,
+		newPassword
+	);
+} catch (e) {
+	if (e instanceof LuciaError && e.message === `AUTH_INVALID_KEY_ID`) {
+		// invalid key
+	}
+	// unexpected database error
 }
 ```
+
 ```ts
 await auth.updateKeyPassword("email", "user@example.com", "654321");
 ```

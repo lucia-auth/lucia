@@ -71,6 +71,7 @@ You can create new users by calling [`Auth.createUser()`]().
 
 ```ts
 import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
 
 try {
 	await auth.createUser({
@@ -83,9 +84,12 @@ try {
 			username
 		} // expects `Lucia.DatabaseUserAttributes`
 	});
-} catch {
-	// key already exists
-	// or unique constraint failed for user attributes
+} catch (e) {
+	if (e instanceof LuciaError && e.message === `DUPLICATE_KEY_ID`) {
+		// key already exists
+	}
+	// provided user attributes violates database rules (e.g. unique constraint)
+	// or unexpected database errors
 }
 ```
 
@@ -100,6 +104,10 @@ await auth.createUser({
 });
 ```
 
+### User attributes errors
+
+If the user attributes provided violates a database rule (such a unique constraint), Lucia will throw the database/driver/ORM error instead of a regular `LuciaError`. For example, if you're using Prisma, Lucia will throw a Prisma error.
+
 ## Update user attributes
 
 You can update attributes of a user with [`Auth.updateUserAttributes()`](). You can update a single field or multiple fields. It returns the user of the updated user, or throws `AUTH_INVALID_USER_ID` if the user does not exist.
@@ -108,6 +116,7 @@ You can update attributes of a user with [`Auth.updateUserAttributes()`](). You 
 
 ```ts
 import { auth } from "./lucia.js";
+import { LuciaError } from "lucia";
 
 try {
 	const user = await auth.updateUserAttributes(
@@ -116,9 +125,12 @@ try {
 			username: newUsername
 		} // expects partial `Lucia.DatabaseUserAttributes`
 	);
-} catch {
-	// invalid user id
-	// or unique constraint failed for user attributes
+} catch (e) {
+	if (e instanceof LuciaError && e.message === `AUTH_INVALID_USER_ID`) {
+		// invalid user id
+	}
+	// provided user attributes violates database rules (e.g. unique constraint)
+	// or unexpected database errors
 }
 ```
 
@@ -143,7 +155,7 @@ await auth.deleteUser(userId);
 
 ## Configuration
 
-You can configure few aspects of your users:
+You can configure users in a few ways:
 
 - User id with [`generateUserId()`]()
 - User attributes with [`getUserAttributes`]()
