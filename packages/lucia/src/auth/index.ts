@@ -167,18 +167,21 @@ export class Auth<_Configuration extends Configuration = any> {
 
 	public transformDatabaseSession = (
 		databaseSession: SessionSchema,
-		user: User
+		context: {
+			user: User;
+			fresh: boolean;
+		}
 	): Session => {
 		const attributes = this.getSessionAttributes(databaseSession);
 		const active = isWithinExpiration(databaseSession.active_expires);
 		return {
 			...attributes,
-			user,
+			user: context.user,
 			sessionId: databaseSession.id,
 			activePeriodExpiresAt: new Date(Number(databaseSession.active_expires)),
 			idlePeriodExpiresAt: new Date(Number(databaseSession.idle_expires)),
 			state: active ? "active" : "idle",
-			fresh: false
+			fresh: context.fresh
 		};
 	};
 
@@ -354,7 +357,10 @@ export class Auth<_Configuration extends Configuration = any> {
 		const [databaseSession, databaseUser] =
 			await this.getDatabaseSessionAndUser(sessionId);
 		const user = this.transformDatabaseUser(databaseUser);
-		return this.transformDatabaseSession(databaseSession, user);
+		return this.transformDatabaseSession(databaseSession, {
+			user,
+			fresh: false
+		});
 	};
 
 	public getAllUserSessions = async (userId: string): Promise<Session[]> => {
@@ -367,7 +373,10 @@ export class Auth<_Configuration extends Configuration = any> {
 				return isValidDatabaseSession(databaseSession);
 			})
 			.map((databaseSession) => {
-				return this.transformDatabaseSession(databaseSession, user);
+				return this.transformDatabaseSession(databaseSession, {
+					user,
+					fresh: false
+				});
 			});
 		return validStoredUserSessions;
 	};
@@ -377,7 +386,10 @@ export class Auth<_Configuration extends Configuration = any> {
 		const [databaseSession, databaseUser] =
 			await this.getDatabaseSessionAndUser(sessionId);
 		const user = this.transformDatabaseUser(databaseUser);
-		const session = this.transformDatabaseSession(databaseSession, user);
+		const session = this.transformDatabaseSession(databaseSession, {
+			user,
+			fresh: false
+		});
 		if (session.state === "active") {
 			debug.session.success("Validated session", session.sessionId);
 			return session;
@@ -394,7 +406,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			this.adapter.setSession(renewedDatabaseSession),
 			this.adapter.deleteSession(sessionId)
 		]);
-		return this.transformDatabaseSession(renewedDatabaseSession, user);
+		return this.transformDatabaseSession(renewedDatabaseSession, {
+			user,
+			fresh: true
+		});
 	};
 
 	public createSession = async <
@@ -433,7 +448,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			this.getUser(userId),
 			this.adapter.setSession(databaseSession)
 		]);
-		return this.transformDatabaseSession(databaseSession, user);
+		return this.transformDatabaseSession(databaseSession, {
+			user,
+			fresh: false
+		});
 	};
 
 	public renewSession = async (sessionId: string): Promise<Session> => {
@@ -453,7 +471,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			this.adapter.setSession(renewedDatabaseSession),
 			this.adapter.deleteSession(sessionId)
 		]);
-		return this.transformDatabaseSession(renewedDatabaseSession, user);
+		return this.transformDatabaseSession(renewedDatabaseSession, {
+			user,
+			fresh: true
+		});
 	};
 
 	public updateSessionAttributes = async (
@@ -530,6 +551,7 @@ export class Auth<_Configuration extends Configuration = any> {
 
 	public readSessionCookie = (request: LuciaRequest): string | null => {
 		if (typeof request.storedSessionCookie === "string") {
+			debug.request.info("Found session cookie", request.storedSessionCookie);
 			return request.storedSessionCookie;
 		}
 		const cookies = parseCookie(request.headers.cookie ?? "");
