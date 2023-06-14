@@ -67,14 +67,14 @@ declare namespace Lucia {
 
 ## Create users
 
-You can create new users by calling [`Auth.createUser()`]().
+You can create new users by calling [`Auth.createUser()`](). This returns the created user.
 
 ```ts
 import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
 try {
-	await auth.createUser({
+	const user = await auth.createUser({
 		key: {
 			providerId,
 			providerUserId,
@@ -110,7 +110,7 @@ If the user attributes provided violates a database rule (such a unique constrai
 
 ## Update user attributes
 
-You can update attributes of a user with [`Auth.updateUserAttributes()`](). You can update a single field or multiple fields. It returns the user of the updated user, or throws `AUTH_INVALID_USER_ID` if the user does not exist.
+You can update attributes of a user with [`Auth.updateUserAttributes()`](). You can update a single field or multiple fields. It returns the updated user, or throws `AUTH_INVALID_USER_ID` if the user does not exist.
 
 > (red) **Make sure to invalidate all sessions of the user on password or privilege level change.** You can create a new session to prevent the current user from being logged out.
 
