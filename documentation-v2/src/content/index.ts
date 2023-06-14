@@ -133,7 +133,6 @@ export const getPage = async (
 	const pathname = [collection, collectionPathname].join("/");
 	if (collection === "main") {
 		const pages = await getPagesFromImports(mainCollectionImports);
-		console.log(pages);
 		return pages.find((page) => page.pathname === pathname) ?? null;
 	}
 };
