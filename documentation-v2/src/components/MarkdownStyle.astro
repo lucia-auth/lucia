@@ -7,22 +7,22 @@
 		@apply mb-2 mt-8 break-words pt-8 text-2xl font-semibold;
 	}
 	:global(#md h3) {
-		@apply mb-4 mt-12 break-words text-xl font-semibold;
+		@apply mt-12 break-words text-xl font-semibold;
 	}
 	:global(#md h4) {
-		@apply mt-6 break-words text-lg font-semibold;
+		@apply mt-6 break-words text-lg font-medium;
 	}
 	:global(#md :not(h4) + p, #md table, #md ul, #md ol) {
 		@apply my-3;
 	}
-	:global(#md h4 + p,) {
-		@apply mb-3;
+	:global(#md h4 + p) {
+		@apply mb-3 mt-1;
 	}
 	:global(#md p code, #md ul code, #md ol code, #md table code) {
 		@apply text-code-base;
 	}
 	:global(#md .astro-code) {
-		@apply my-2 overflow-scroll rounded-lg px-4 py-6 text-code-sm !bg-zinc-100 leading-normal;
+		@apply text-code-sm my-2 overflow-scroll rounded-lg !bg-zinc-100 px-4 py-6 leading-normal;
 		scrollbar-width: none;
 	}
 	:global(#md pre::-webkit-scrollbar) {
@@ -50,7 +50,7 @@
 		@apply w-full border-b border-zinc-200;
 	}
 	:global(#md table :is(td, th)) {
-		@apply border-b border-zinc-200 py-1.5 px-1;
+		@apply border-b border-zinc-200 px-1 py-1.5;
 	}
 	:global(#md table th) {
 		@apply text-sm font-medium;
