@@ -18,54 +18,50 @@ The primary way to identify users is by their user id. It's randomly generated b
 
 #### User attributes
 
-You can store additional data to your users by defining user attributes, such as email and username.
+You can define additional attributes of your users such as email and username.
 
 ## Defining user attributes
 
-User attributes are inferred by the return type of [`Configuration.getUserAttributes()`](). The function takes in the user object directly from the user table.
+You can define custom user attributes by returning them in [`getUserAttributes()`]() configuration. As long as the required fields are defined in the user table, you can add any number of fields to the user table.
 
 ```ts
 import { lucia } from "lucia";
 
 lucia({
 	// ...
-
-	// setting params type as an example - DO NOT DO THIS
-	// argument `databaseUser` is automatically typed
-	// see next section
-	getUserAttributes: (databaseUser: DatabaseUser) => {
+	getUserAttributes: (databaseUser) => {
 		return {
 			username: databaseUser.username
 		};
 	}
 });
 
-type DatabaseUser = {
-	id: string;
-	username: string; // 'username' column in user table
-};
+const user: User = await auth.getUser(userId);
+// `userId` is always defined
+const { userId, username } = user;
 
-// expected `User` object
-type User = {
-	userId: string; // always included
-	username: string; // return type of `getUserAttributes()`
-};
+// `getUserAttributes()` params
+// `Lucia.databaseUser`: see next section
+type DatabaseUser = {
+	// user table must have these fields
+	id: string;
+} & Lucia.databaseUser;
 ```
 
 You can add additional columns to the user table so long as the `id` column exists as primary key. In the example above, the `username` column is added to the table and is included in `databaseUser`.
 
-### Typing database user attributes
+### Typing additional fields in the user table
 
-You can define database user attributes with `Lucia.DatabaseUserAttributes`. You cannot make any of the field optional.
+Additional fields in your session table should be defined in [`Lucia.DatabaseUserAttributes`]().
 
 ```ts
 /// <reference types="lucia" />
 declare namespace Lucia {
 	// ...
 	type DatabaseUserAttributes = {
-		// id should not be defined here
+		// required fields (i.e. id) should not be defined here
 		username: string;
-	}; // => `username` included in `getUserAttributes()` argument
+	};
 }
 ```
 
@@ -144,3 +140,10 @@ import { auth } from "./lucia.js";
 
 await auth.deleteUser(userId);
 ```
+
+## Configuration
+
+You can configure few aspects of your users:
+
+- User id with [`generateUserId()`]()
+- User attributes with [`getUserAttributes`]()
