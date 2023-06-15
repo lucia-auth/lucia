@@ -1,12 +1,33 @@
 ---
 order: -1
-title: "Database model"
-description: "Learn Lucia's basic database model"
+title: "Database"
+description: "Learn about how your database works with Lucia"
 ---
+
+A database is required for storing your users and sessions. Lucia connects to your database via an adapter, which provides a set of basic, standardized querying methods that Lucia can use.
+
+## Database adapters
+
+There are 2 types of adapters provided by Lucia: Regular adapters, and session adapters. As the name implies, session adapters only handles queries to the session table. This useful for when you want to store your sessions in a different database then your users, such as Redis and other memory stores.
+
+We currently provide the following adapters:
+
+- [`better-sqlite3`]()
+- [Cloudflare D1]()
+- [Mongoose]()
+- [`mysql2`]()
+- [`pg`]()
+- [PlanetScale serverless]()
+- [Prisma]()
+- [Redis]()
+
+You can also use query builders like Drizzle ORM and Kysely since they rely on underlying drivers that we provide adapters for.
+
+## Database model
 
 Lucia requires 3 tables to work, which are then connected to Lucia via a database adapter. This is only the basic model and the specifics depend on the adapter.
 
-## User table
+### User table
 
 In addition to the required fields shown below, you can add any additional fields which should be [declared in type `Lucia.DatabaseUserAttributes`](). You can then [define custom user attributes]().
 
@@ -20,7 +41,7 @@ type UserSchema = {
 } & Lucia.DatabaseUserAttributes;
 ```
 
-## Session table
+### Session table
 
 In addition to the required fields shown below, you can add any additional fields which should be [declared in type `Lucia.DatabaseSessionAttributes`](). You can then [define custom session attributes]().
 
@@ -40,7 +61,7 @@ type SessionSchema = {
 } & Lucia.DatabaseSessionAttributes;
 ```
 
-## Key table
+### Key table
 
 | name            | type             | primary key | references | description                                              |
 | --------------- | ---------------- | :---------: | ---------- | -------------------------------------------------------- |

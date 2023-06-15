@@ -34,14 +34,14 @@ auth.handleRequest(incomingMessage, outgoingMessage);
 
 ## List of middleware
 
-- [Astro](#astro)
+- [Astro]()
 - [Express]()
-- [H3](#h3-nuxt) (Nuxt)
-- [Next.js](#nextjs)
-- [Node.js](#nodejs)
-- [Qwik](#qwik)
-- [SvelteKit](#sveltekit)
-- [Web standard](#web-standard) (Remix, Cloudflare workers)
+- [H3]() (Nuxt)
+- [Next.js]()
+- [Node.js]()
+- [Qwik]()
+- [SvelteKit]()
+- [Web standard]() (Remix, Cloudflare workers)
 
 ### Lucia (default)
 
