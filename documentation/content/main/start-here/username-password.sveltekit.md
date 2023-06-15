@@ -35,7 +35,7 @@ In `src/app.d.ts`, add `username` in `UserAttributes` since we added a `username
 /// <reference types="lucia" />
 declare global {
 	namespace Lucia {
-		type Auth = import("$lib/lucia").Auth;
+		type Auth = import("$lib/server/lucia").Auth;
 		type UserAttributes = {
 			username: string;
 		};
