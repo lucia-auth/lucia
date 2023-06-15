@@ -15,19 +15,19 @@ const subCollections = await getSubCollections("main");
     <body class="text-zinc-700 leading-relaxed text-base">
         <header class="w-full py-4 px-8 fixed top-0 border-b bg-white z-30">
             <a class="pointer-events-auto flex place-items-center" href="/">
-				<img
-					src="/logo.svg"
-					alt="Lucia logo"
-					width="100"
-					height="100"
-					class="h-5 w-5"
-				/>
-				<p class="text-xl font-bold ">Lucia</p>
-			</a>
+                <img
+                    src="/logo.svg"
+                    alt="Lucia logo"
+                    width="100"
+                    height="100"
+                    class="h-5 w-5"
+                />
+                <p class="text-xl font-bold">Lucia</p>
+            </a>
         </header>
         <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
             <div
-                class="flex flex-col gap-y-6 overflow-auto h-full overscroll-auto pt-4 pb-8 text-sm"
+                class="flex flex-col gap-y-6 overflow-auto h-full overscroll-contain pt-4 pb-8 text-sm"
             >
                 {
                     subCollections.map((subCollection) => {
