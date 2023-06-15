@@ -128,7 +128,7 @@ const githubUser = await authenticateWithGithub(); // example - exact API not pr
 try {
 	// must pass `null` as the password for it to be valid
 	const key = await auth.useKey("github", githubUser.userId, null);
-} catch {
+} catch (e) {
 	if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
 		// invalid key
 	}
@@ -146,7 +146,7 @@ import { LuciaError } from "lucia";
 
 try {
 	const key = await auth.getKey(providerId, providerUserId);
-} catch {
+} catch (e) {
 	if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
 		// invalid key
 	}
@@ -164,7 +164,7 @@ import { LuciaError } from "lucia";
 
 try {
 	const keys = await auth.getAllUserKeys(userId);
-} catch {
+} catch (e) {
 	if (e instanceof LuciaError && e.message === "AUTH_INVALID_USER_ID") {
 		// invalid user id
 	}

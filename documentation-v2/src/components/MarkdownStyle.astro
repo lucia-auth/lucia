@@ -12,6 +12,9 @@
 	:global(#md h4) {
 		@apply mt-6 break-words text-lg font-medium;
 	}
+	:global(#md h5) {
+		@apply mt-2 break-words font-medium;
+	}
 	:global(#md :not(h4) + p, #md table, #md ul, #md ol) {
 		@apply my-3;
 	}
@@ -22,7 +25,7 @@
 		@apply text-code-base;
 	}
 	:global(#md .astro-code) {
-		@apply text-code-sm my-2 overflow-scroll rounded-lg !bg-zinc-100 px-4 py-6 leading-normal;
+		@apply text-code-sm my-2 overflow-scroll rounded-lg !bg-zinc-100 px-4 py-3 leading-normal;
 		scrollbar-width: none;
 	}
 	:global(#md pre::-webkit-scrollbar) {
