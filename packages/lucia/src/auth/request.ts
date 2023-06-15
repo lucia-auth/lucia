@@ -33,11 +33,15 @@ export class AuthRequest<A extends Auth = any> {
 		this.context = context;
 		try {
 			auth.validateRequestOrigin(context.request);
-			this.storedSessionId = auth.readSessionCookie(context.request);
+			this.storedSessionId =
+				context.request.storedSessionCookie ??
+				auth.readSessionCookie(context.request.headers.cookie);
 		} catch (e) {
 			this.storedSessionId = null;
 		}
-		this.bearerToken = auth.readBearerToken(context.request);
+		this.bearerToken = auth.readBearerToken(
+			context.request.headers.authorization
+		);
 	}
 
 	private validatePromise: Promise<Session | null> | null = null;
@@ -107,5 +111,15 @@ export class AuthRequest<A extends Auth = any> {
 		});
 
 		return await this.validatePromise;
+	};
+
+	public renewBearerToken = async (): Promise<Session | null> => {
+		if (!this.bearerToken) return null;
+		try {
+			const session = await this.auth.renewSession(this.bearerToken);
+			return session;
+		} catch {
+			return null;
+		}
 	};
 }
