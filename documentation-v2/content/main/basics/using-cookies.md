@@ -42,6 +42,19 @@ if (sessionId) {
 }
 ```
 
+### Caching
+
+`AuthRequest.validate()` caches the request, so it will only run once no matter how many times you call it. The cache is invalidated whenever `AuthRequest.setSession()` is called. This is useful when you have multiple pages/components the method can be called.
+
+```ts
+await authRequest.validate();
+await authRequest.validate(); // uses first cache
+```
+
+```ts
+await Promise([authRequest.validate(), authRequest.validate()]); // only runs once
+```
+
 ## Set session cookies
 
 You can set session cookies by passing `Session` to [`AuthRequest.setSession()`](). You can pass `null` to

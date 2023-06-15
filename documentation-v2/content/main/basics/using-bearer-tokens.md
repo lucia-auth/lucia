@@ -50,6 +50,19 @@ const authorizationHeader = request.headers.get("Authorization");
 const sessionId = auth.readBearerToken(authorizationHeader);
 ```
 
+### Caching
+
+`AuthRequest.validateBearerToken()` caches the request, so it will only run once no matter how many times you call it. This is useful when you have multiple pages/components the method can be called.
+
+```ts
+await authRequest.validateBearerToken();
+await authRequest.validateBearerToken(); // uses first cache
+```
+
+```ts
+await Promise([authRequest.validateBearerToken(), authRequest.validateBearerToken()]); // only runs once
+```
+
 ## Renew bearer tokens
 
 You can renew the bearer token using `AuthRequest.renewBearerToken()`, which returns a session if successful or `null` if the session is invalid.
