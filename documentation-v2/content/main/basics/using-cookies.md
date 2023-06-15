@@ -4,32 +4,37 @@ title: "Using cookies"
 description: "Learn about how to use session cookies with Lucia"
 ---
 
-Reading session cookies, validating them, and setting new ones are a bit tedious.
+Cookies is the preferred way of storing and sending session ids when the frontend and backend is hosted on the same domain.
 
-### CSRF protection
+Some methods shown in this page is included in [`AuthRequest`](), which is explained in [Handle requests]() page.
 
-If you're working with cookies, **CSRF protection must be implemented** to prevent cross site request forgery (CSRF). Some Lucia methods includes CSRF protection by checking if the incoming request comes from a trusted origin, which includes the origin where the server is hosted on and origins defined in [`requestOrigins`]() configuration. CSRF checks are only done on POST and other non-GET method requests. **GET requests are not protected by Lucia and they should not modify server state (e.g. update password and profile) without additional protections.**
+### Security
 
-You can disable CSRF protection via [`csrfProtection`]() configuration.
+If you're working with cookies, **CSRF protection must be implemented** to prevent [cross site request forgery (CSRF)]().
 
 ## Validate session cookies
 
 [`AuthRequest.validateRequest()`]() validates the request origin and the session cookie stored, renewing sessions if they're idle. It returns a valid session, or `null` if the session cookie is invalid or if the request is from an untrusted request origin.
 
 ```ts
-const authRequest = auth.handleRequest();
+import { auth } from "./lucia.js";
 
+const authRequest = auth.handleRequest();
 const session = await authRequest.validate();
 if (session) {
 	// valid request
 }
 ```
 
+CSRF protection is implemented by [using `Auth.validateRequestOrigin()`](). You can disable this with [`csrfProtection`]() configuration.
+
 ### Read session cookie
 
 Alternatively, you can use [`Auth.readSessionCookie()`]() to read the session cookie. It takes a [`LuciaRequest`]() and returns the session cookie value if it exists or `null` if it doesn't. This _does not_ validate the session, nor does it validate the request origin. As such, [using `Auth.validateRequestOrigin()`]() is recommended.
 
 ```ts
+import { auth } from "./lucia.js";
+
 auth.validateRequestOrigin(luciaRequest); // csrf protection
 const sessionId = auth.readSessionCookie(luciaRequest);
 if (sessionId) {
@@ -39,18 +44,23 @@ if (sessionId) {
 
 ## Set session cookies
 
-You can set session cookies by passing `Session` to [`AuthRequest.]
+You can set session cookies by passing `Session` to [`AuthRequest.setSession()`](). You can pass `null` to
 
 ```ts
+import { auth } from "./lucia.js";
+
+const authRequest = auth.handleRequest();
 authRequest.setSession(session);
 authRequest.setSession(null); // delete session cookie
 ```
 
-### Create session cookie
+### Create session cookies
 
 You can create a new [`Cookie`]() with [`Auth.createSessionCookie()`](), which takes in a `Session`. `Cookie.serialize()` can be used to generate a new `Set-Cookie` response headers value. You can also access the cookie name, value, and attributes (such a `httpOnly` and `maxAge`).
 
 ```ts
+import { auth } from "./lucia.js";
+
 const sessionCookie = auth.createSessionCookie(session);
 
 setResponseHeaders("Set-Cookie", sessionCookie.serialize());
@@ -61,43 +71,27 @@ setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 You can pass `null` to create an empty session cookie that when set, will delete the current session cookie.
 
 ```ts
+import { auth } from "./lucia.js";
+
 const sessionCookie = auth.createSessionCookie(null);
 setResponseHeaders("Set-Cookie", sessionCookie.serialize());
 ```
 
-## Validate bearer tokens
-
-```ts
-const authRequest = auth.handleRequest();
-
-const session = await authRequest.validateBearerToken();
-if (session) {
-	// valid request
-}
-```
-
-## Read bearer token
-
-```ts
-const sessionId = auth.readBearerToken(luciaRequest);
-if (sessionId) {
-	// `validateSession()` throws an error if session is invalid
-	// we're using `getSession()` here since it won't renew idle sessions
-	const session = await auth.getSession(sessionId);
-	if (session.state === "active") {
-		// valid session
-	} else {
-		// idle session
-		// prompt client to renew session
-	}
-}
-```
-
 ## Validate request origin
 
+[`Auth.validateRequestOrigin()`]() prevents CSRF by checking if the source of the request is from a trusted host (origin) by comparing the request url and the origin header. Trusted origins include where the API is hosted and origins defined in [`requestOrigins`]() configuration. This check is only done on POST and other non-GET method requests. **GET requests are not protected by Lucia and they should not modify server state (e.g. update password and profile) without additional protections.**
+
 ```ts
+import { auth } from "./lucia.js";
+
 try {
-	await;
+	auth.validateRequestOrigin({
+		url: "http://localhost:3000", // request url
+		headers: {
+			origin: "http://localhost:3000" // 'Origin' header
+		},
+		method: "POST" // can be lowercase
+	});
 } catch {
 	// invalid request origin
 }
