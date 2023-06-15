@@ -41,7 +41,7 @@
 		@apply my-0.5;
 	}
 	:global(#md table) {
-		@apply my-2 w-full table-auto border-collapse text-left;
+		@apply my-2 w-full table-auto border-collapse text-left text-sm;
 	}
 	:global(#md .table-wrapper) {
 		@apply w-full overflow-auto whitespace-nowrap;
@@ -50,10 +50,10 @@
 		@apply w-full border-b border-zinc-200;
 	}
 	:global(#md table :is(td, th)) {
-		@apply border-b border-zinc-200 px-1 py-1.5;
+		@apply border-b border-zinc-200 px-1 py-1;
 	}
 	:global(#md table th) {
-		@apply text-sm font-medium;
+		@apply text-xs font-medium;
 	}
 	:global(#md blockquote) {
 		@apply my-3 rounded-md border px-4 py-1 text-sm;
