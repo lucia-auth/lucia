@@ -549,12 +549,14 @@ export class Auth<_Configuration extends Configuration = any> {
 		}
 	};
 
-	public readSessionCookie = (request: LuciaRequest): string | null => {
-		if (typeof request.storedSessionCookie === "string") {
-			debug.request.info("Found session cookie", request.storedSessionCookie);
-			return request.storedSessionCookie;
+	public readSessionCookie = (
+		cookieHeader: string | null | undefined
+	): string | null => {
+		if (!cookieHeader) {
+			debug.request.info("No session cookie found");
+			return null;
 		}
-		const cookies = parseCookie(request.headers.cookie ?? "");
+		const cookies = parseCookie(cookieHeader);
 		const sessionId = cookies[this.sessionCookieName] ?? null;
 		if (sessionId) {
 			debug.request.info("Found session cookie", sessionId);
@@ -564,8 +566,9 @@ export class Auth<_Configuration extends Configuration = any> {
 		return sessionId;
 	};
 
-	public readBearerToken = (request: LuciaRequest): string | null => {
-		const authorizationHeader = request.headers.authorization;
+	public readBearerToken = (
+		authorizationHeader: string | null | undefined
+	): string | null => {
 		if (!authorizationHeader) {
 			debug.request.info("No token found in authorization header");
 			return null;
