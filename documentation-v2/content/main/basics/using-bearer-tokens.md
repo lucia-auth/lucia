@@ -14,7 +14,7 @@ Some methods shown in this page is included in [`AuthRequest`](), which is descr
 
 ## Validate bearer tokens
 
-You can use [`AuthRequest.validateBearerToken()`]() to validate the bearer token. It returns a session if the session is active, and `null` if the session is idle or dead.
+You can use [`AuthRequest.validateBearerToken()`]() to validate the bearer token. It returns a session if the session is active, or `null` if the session is idle or dead.
 
 ```ts
 const authRequest = auth.handleRequest();

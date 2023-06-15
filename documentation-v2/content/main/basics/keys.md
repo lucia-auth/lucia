@@ -103,7 +103,7 @@ try {
 
 [`Auth.useKey()`]() can be used to validate a key password and get the key (which includes the user id). This method returns the validated key, or throws `AUTH_INVALID_KEY_ID` on invalid key and `AUTH_INVALID_PASSWORD` on invalid key password.
 
-You must pass `null` if the key does not hold a password, and pass a valid password if it does. To skip the password check, [use `Auth.getKey()`]() instead.
+You must pass `null` if the key does not hold a password, or pass a valid password if it does. To skip the password check, [use `Auth.getKey()`]() instead.
 
 ```ts
 import { auth } from "./lucia.js";
