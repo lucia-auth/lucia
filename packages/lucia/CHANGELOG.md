@@ -1,5 +1,11 @@
 # lucia
 
+### 2.0.0-beta.1
+
+#### Patch changes
+
+- [#735](https://github.com/pilcrowOnPaper/lucia/pull/735) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Session.fresh` fixed to `false`
+
 ### 2.0.0-beta.0
 
 #### Major changes
