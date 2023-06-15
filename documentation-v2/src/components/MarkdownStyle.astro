@@ -21,8 +21,11 @@
 	:global(#md h4 + p) {
 		@apply mb-3 mt-1;
 	}
-	:global(#md p code, #md ul code, #md ol code, #md table code) {
+	:global(#md p code, #md ul code, #md ol code) {
 		@apply text-code-base;
+	}
+	:global(#md table code) {
+		@apply text-code-sm;
 	}
 	:global(#md .astro-code) {
 		@apply text-code-sm my-2 overflow-scroll rounded-lg !bg-zinc-100 px-4 py-3 leading-normal;
