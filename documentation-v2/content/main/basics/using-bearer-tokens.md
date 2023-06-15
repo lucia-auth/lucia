@@ -10,7 +10,7 @@ Sending session ids as bearer tokens is useful when your frontend and backend is
 Authorization: Bearer <session_id>
 ```
 
-Some methods shown in this page is included in [`AuthRequest`](), which is explained in [Handle requests]() page.
+Some methods shown in this page is included in [`AuthRequest`](), which is described in [Handle requests]() page.
 
 ## Validate bearer tokens
 

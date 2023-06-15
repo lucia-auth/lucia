@@ -6,7 +6,7 @@ description: "Learn about how to use session cookies with Lucia"
 
 Cookies is the preferred way of storing and sending session ids when the frontend and backend is hosted on the same domain.
 
-Some methods shown in this page is included in [`AuthRequest`](), which is explained in [Handle requests]() page.
+Some methods shown in this page is included in [`AuthRequest`](), which is described in [Handle requests]() page.
 
 ### Security
 

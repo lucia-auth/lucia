@@ -8,7 +8,7 @@ module.exports = {
 			},
 			fontSize: {
 				"code-sm": "0.825rem",
-				"code-base": "0.95rem",
+				"code-base": "0.925rem",
 				"code-5xl": "2.9rem"
 			}
 		},
