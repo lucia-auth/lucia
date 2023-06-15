@@ -62,7 +62,7 @@ const auth = lucia({
 });
 ```
 
-## SQLite3 schema
+## MySQL schema
 
 You can choose any table names, just make sure to define them in the adapter argument.
 

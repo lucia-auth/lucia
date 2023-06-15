@@ -62,6 +62,10 @@ const auth = lucia({
 });
 ```
 
+## PostgreSQL schema
+
+You can choose any table names, just make sure to define them in the adapter argument.
+
 ### User table
 
 You can add additional columns to store user attributes.
