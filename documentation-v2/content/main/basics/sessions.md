@@ -31,6 +31,10 @@ Sessions can be in one of 3 states:
 
 This allows sessions to be persisted for active users, while invalidating inactive users. If you have used access tokens and refresh tokens, Lucia's sessions are a combination of both. Active sessions are your access tokens, and idle sessions are your refresh tokens.
 
+### Validating requests
+
+Requests can be validated by validating the session id included. There are mainly ways to send sessions: cookies and bearer tokens. Cookies are preferred for regular websites and web-apps, whereas bearer tokens are preferred for standalone servers for mobile/desktop apps. Refer to [Handle requests]() page to learn more about how to validate and work with incoming requests from your clients.
+
 ## Defining session attributes
 
 You can define custom session attributes by returning them in [`getSessionAttributes()`]() configuration. As long as the required fields are defined in the session table, you can add any number of fields to the session table.
@@ -121,25 +125,6 @@ try {
 ### Session attributes errors
 
 If the session attributes provided violates a database rule (such a unique constraint), Lucia will throw the database/driver/ORM error instead of a regular `LuciaError`. For example, if you're using Prisma, Lucia will throw a Prisma error.
-
-## Session cookies
-
-You can create a new [`Cookie`]() with [`Auth.createSessionCookie()`](), which takes in a `Session`. `Cookie.serialize()` can be used to generate a new `Set-Cookie` response headers value. You can also access the cookie name, value, and attributes (such a `httpOnly` and `maxAge`).
-
-```ts
-const sessionCookie = auth.createSessionCookie(session);
-
-setResponseHeaders("Set-Cookie", sessionCookie.serialize());
-// alternatively
-setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-```
-
-You can pass `null` to create an empty session cookie that when set, will delete the current session cookie.
-
-```ts
-const sessionCookie = auth.createSessionCookie(null);
-setResponseHeaders("Set-Cookie", sessionCookie.serialize());
-```
 
 ## Validate sessions
 
