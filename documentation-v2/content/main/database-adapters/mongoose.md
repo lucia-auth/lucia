@@ -4,7 +4,7 @@ title: "Mongoose"
 description: "Learn how to use Mongoose with Lucia"
 ---
 
-Adapter for [`mongoose`]() provided by the Mongoose adapter package.
+Adapter for [Mongoose]() provided by the Mongoose adapter package.
 
 ```ts
 import { mongoose } from "@lucia-auth/adapter-mongoose";
