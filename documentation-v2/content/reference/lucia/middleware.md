@@ -18,8 +18,8 @@ const astro: Middleware;
 auth.handleRequest(context as APIContext);
 ```
 
-| name    | type                                                                                                                                                                  |
-| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| name      | type                                                                                                                                                                  |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `context` | [`APIContext`](https://docs.astro.build/en/reference/api-reference/#endpoint-context)`\|`[`Astro`](https://docs.astro.build/en/reference/api-reference/#astro-global) |
 
 ```ts
