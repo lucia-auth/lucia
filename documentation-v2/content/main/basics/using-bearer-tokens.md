@@ -56,11 +56,14 @@ const sessionId = auth.readBearerToken(authorizationHeader);
 
 ```ts
 await authRequest.validateBearerToken();
-await authRequest.validateBearerToken(); // uses first cache
+await authRequest.validateBearerToken(); // uses cache from previous call
 ```
 
 ```ts
-await Promise([authRequest.validateBearerToken(), authRequest.validateBearerToken()]); // only runs once
+await Promise([
+	authRequest.validateBearerToken(),
+	authRequest.validateBearerToken() // waits for first call to resolve
+]);
 ```
 
 ## Renew bearer tokens

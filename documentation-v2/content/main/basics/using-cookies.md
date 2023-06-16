@@ -48,11 +48,14 @@ if (sessionId) {
 
 ```ts
 await authRequest.validate();
-await authRequest.validate(); // uses first cache
+await authRequest.validate(); // uses cache from previous call
 ```
 
 ```ts
-await Promise([authRequest.validate(), authRequest.validate()]); // only runs once
+await Promise([
+	authRequest.validate(),
+	authRequest.validate() // waits for first call to resolve
+]);
 ```
 
 ## Set session cookies
