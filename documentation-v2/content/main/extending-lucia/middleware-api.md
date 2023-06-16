@@ -1,5 +1,5 @@
 ---
 order: 2
-title: "Custom middleware"
+title: "Middleware API"
 description: "Learn how to implement your own middleware"
 ---
