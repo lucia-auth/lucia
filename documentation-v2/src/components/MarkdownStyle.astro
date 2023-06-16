@@ -4,16 +4,19 @@
 
 <style lang="postcss">
 	:global(#md h2) {
-		@apply mb-2 mt-8 break-words pt-8 text-2xl font-semibold;
+		@apply mb-2 mt-10 break-words text-2xl font-semibold;
 	}
 	:global(#md h3) {
-		@apply mt-12 break-words text-xl font-semibold;
+		@apply mt-8 break-words text-xl font-semibold;
 	}
 	:global(#md h4) {
 		@apply mt-6 break-words text-lg font-medium;
 	}
 	:global(#md h5) {
 		@apply mt-2 break-words font-medium;
+	}
+	:global(#md h2:first-child) {
+		@apply mt-0;
 	}
 	:global(#md :not(h4) + p, #md table, #md ul, #md ol) {
 		@apply my-3;

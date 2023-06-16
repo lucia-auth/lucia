@@ -32,16 +32,16 @@ lucia({
 auth.handleRequest(incomingMessage, outgoingMessage);
 ```
 
-## List of middleware
+## List of middleware and examples
 
-- [Astro]()
-- [Express]()
-- [H3]() (Nuxt)
-- [Next.js]()
-- [Node.js]()
-- [Qwik]()
-- [SvelteKit]()
-- [Web standard]() (Remix, Cloudflare workers)
+- [Astro](#astro)
+- [Express](#express)
+- [H3](#h3) ([Nuxt](#nuxt))
+- [Next.js](#nextjs)
+- [Node.js](#nodejs)
+- [Qwik](#qwik)
+- [SvelteKit](#sveltekit)
+- [Web standard](#web-standard) ([Remix](#remix), Cloudflare workers)
 
 ### Lucia (default)
 
@@ -72,11 +72,13 @@ export const get = async (context) => {
 
 We recommend storing `AuthRequest` in `locals`.
 
-### H3 (Nuxt)
+### H3
 
 ```ts
 import { h3 } from "lucia/middleware";
 ```
+
+#### Nuxt
 
 ```ts
 // api routes (server/api/index.ts)
@@ -91,6 +93,7 @@ export default defineEventHandler(async (event) => {
 ```ts
 import { express } from "lucia/middleware";
 ```
+
 ```ts
 app.use((req, res, next) => {
 	res.locals.auth = auth.handleRequest(req, res);
@@ -103,7 +106,6 @@ app.use((req, res, next) => {
 ```ts
 import { nextjs } from "lucia/middleware";
 ```
-
 
 #### Pages router
 

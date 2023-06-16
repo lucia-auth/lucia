@@ -1,6 +1,9 @@
 import type { MarkdownInstance } from "astro";
 
 const mainCollectionImports = import.meta.glob("../../content/main/**");
+const referenceCollectionImports = import.meta.glob(
+	"../../content/reference/**"
+);
 
 export type Page = {
 	pathname: string;
@@ -10,6 +13,7 @@ export type Page = {
 	order: number;
 	title: string;
 	htmlTitle: string;
+	hidden: boolean;
 	Content: MarkdownInstance<any>["Content"];
 };
 
@@ -51,6 +55,7 @@ const getPagesFromImports = async (
 					title: string;
 					order: number;
 					format?: "code";
+					hidden?: boolean;
 				}> = await importFile();
 				const title = markdown.frontmatter.title;
 				const htmlTitle =
@@ -63,6 +68,7 @@ const getPagesFromImports = async (
 					pageId: pathnameSegments[3] ?? pathnameSegments[2],
 					order: markdown.frontmatter.order,
 					title: markdown.frontmatter.title,
+					hidden: markdown.frontmatter.hidden ?? false,
 					htmlTitle,
 					Content: markdown.Content
 				};
@@ -110,18 +116,24 @@ const parseCollectionImports = async (
 			return {
 				...subCollectionConfig,
 				pages: pages
-					.filter(
-						(page) => page.subCollection === subCollectionConfig.subCollection
-					)
+					.filter((page) => {
+						return (
+							page.subCollection === subCollectionConfig.subCollection &&
+							!page.hidden
+						);
+					})
 					.sort((a, b) => a.order - b.order)
 			};
 		})
 		.sort((a, b) => a.order - b.order);
 };
 
-export const getSubCollections = async (collection: "main") => {
+export const getSubCollections = async (collection: "main" | "reference") => {
 	if (collection === "main") {
 		return await parseCollectionImports(mainCollectionImports);
+	}
+	if (collection === "reference") {
+		return await parseCollectionImports(referenceCollectionImports);
 	}
 	throw new Error(`Unknown collection name: ${collection}`);
 };
