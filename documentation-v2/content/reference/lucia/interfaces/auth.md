@@ -531,6 +531,13 @@ const readBearerToken: (
 | -------- | --------------------------- |
 | `string` | Bearer token value          |
 | `null`   | Bearer token does not exist |
+#### Example
+
+```ts
+import { auth } from "./lucia.js";
+
+const sessionId = auth.readBearerToken("Bearer CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM")
+```
 
 ## `readSessionCookie()`
 
@@ -554,6 +561,14 @@ const readSessionCookie: (
 | -------- | ----------------------------- |
 | `string` | Session cookie value          |
 | `null`   | Session cookie does not exist |
+
+#### Example
+
+```ts
+import { auth } from "./lucia.js";
+
+const sessionId = auth.readSessionCookie("auth_session=CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM")
+```
 
 ## `renewSession()`
 
@@ -774,6 +789,18 @@ const validateRequestOrigin: (request: {
 | name                   |
 | ---------------------- |
 | `AUTH_INVALID_REQUEST` |
+
+#### Example
+
+```ts
+import { auth } from "./lucia.js";
+
+auth.validateRequestOrigin({
+    url: "http://localhost:3000/api",
+    method: "POST",
+    originHeader: "http://localhost:3000"
+})
+```
 
 ## `validateSession()`
 
