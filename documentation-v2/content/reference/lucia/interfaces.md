@@ -15,7 +15,7 @@ See [Database adapter API](/extending-lucia/database-adapters-api#adapter).
 
 ## `Auth`
 
-See [`Auth`]().
+See [`Auth`](/reference/lucia/interfaces/auth).
 
 ## `AuthRequest`
 

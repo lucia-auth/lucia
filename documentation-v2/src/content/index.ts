@@ -60,15 +60,16 @@ const getPagesFromImports = async (
 				const title = markdown.frontmatter.title;
 				const htmlTitle =
 					markdown.frontmatter.format === "code" ? formatCode(title) : title;
+				console.log(pathnameSegments)
 				return {
 					pathname,
 					collection: pathnameSegments[0],
 					subCollection:
 						pathnameSegments.length < 3 ? null : pathnameSegments[1],
-					pageId: pathnameSegments[3] ?? pathnameSegments[2],
+					pageId: pathnameSegments.slice(2).join("/"),
 					order: markdown.frontmatter.order,
 					title: markdown.frontmatter.title,
-					hidden: markdown.frontmatter.hidden ?? false,
+					hidden: pathnameSegments.length > 3 ? true: markdown.frontmatter.hidden ?? false,
 					htmlTitle,
 					Content: markdown.Content
 				};
@@ -118,8 +119,7 @@ const parseCollectionImports = async (
 				pages: pages
 					.filter((page) => {
 						return (
-							page.subCollection === subCollectionConfig.subCollection &&
-							!page.hidden
+							page.subCollection === subCollectionConfig.subCollection
 						);
 					})
 					.sort((a, b) => a.order - b.order)
