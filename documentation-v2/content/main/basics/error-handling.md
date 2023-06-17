@@ -4,7 +4,7 @@ title: "Error handling"
 description: "Learn about how to handle errors in Lucia"
 ---
 
-Errors in Lucia is thrown as [`LuciaError`](), which extends the standard `Error`. See the API reference for a full list of errors. Alternatively, the API reference for each API methods list possible errors it could throw.
+Errors in Lucia are thrown as [`LuciaError`](), which extends the standard `Error`. See the API reference for a full list of errors. Alternatively, the API reference for each API methods list possible errors it could throw.
 
 Using a try-catch block, the error message can be read like so:
 

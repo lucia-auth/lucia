@@ -19,7 +19,7 @@ See [`Auth`](/reference/lucia/interfaces/auth).
 
 ## `AuthRequest`
 
-See [`AuthRequest`]().
+See [`AuthRequest`](/reference/lucia/interfaces/authrequest).
 
 ## `Configuration`
 

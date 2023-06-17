@@ -283,6 +283,20 @@ const updateUser: (
 
 ## `SessionAdapter`
 
+```ts
+type SessionAdapter = Readonly<{
+	getSession: (sessionId: string) => Promise<SessionSchema | null>;
+	getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
+	setSession: (session: SessionSchema) => Promise<void>;
+	updateSession: (
+		sessionId: string,
+		partialSession: Partial<SessionSchema>
+	) => Promise<void>;
+	deleteSession: (sessionId: string) => Promise<void>;
+	deleteSessionsByUserId: (userId: string) => Promise<void>;
+}>;
+```
+
 ### `deleteSession()`
 
 - Must delete unique `session` where `session(id)` equals parameter `sessionId`
