@@ -35,20 +35,23 @@ const subCollections = await getSubCollections("main");
                                                 page.subCollection,
                                                 page.pageId
                                             ].join("/");
+                                            const selected =
+                                                Astro.url.pathname.split("/")
+                                                    .length >=
+                                                    page.pathname.split("/")
+                                                        .length &&
+                                                Astro.url.pathname.includes(
+                                                    urlPathname
+                                                );
                                             return (
                                                 <li>
                                                     <a
-                                                        href={page.pathname.replace(
-                                                            "main",
-                                                            ""
-                                                        )}
+                                                        href={urlPathname}
                                                         class:list={[
                                                             "w-full py-1 pl-8 hover:bg-indigo-50 block",
                                                             {
                                                                 "bg-gray-100":
-                                                                    Astro.url
-                                                                        .pathname ===
-                                                                    urlPathname
+                                                                    selected
                                                             }
                                                         ]}
                                                         set:html={
