@@ -7,16 +7,16 @@ description: "Learn about using the LinkedIn provider in Lucia OAuth integration
 OAuth integration for LinkedIn. Refer to [LinkedIn OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
 
 ```ts
-import { linkedin } from "@lucia-auth/oauth/providers";
+import { linkedIn } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
-const linkedinAuth = linkedin(auth, config);
+const linkedInAuth = linkedIn(auth, config);
 ```
 
-### Initialization
+## `linkedIn()`
 
 ```ts
-const linkedin: (
+const linkedIn: (
 	auth: Auth,
 	config: {
 		clientId: string;
@@ -39,8 +39,8 @@ const linkedin: (
 
 ##### Returns
 
-| type                | description       |
-| ------------------- | ----------------- |
+| type                   | description       |
+| ---------------------- | ----------------- |
 | [`LinkedInProvider`]() | LinkedIn provider |
 
 ## `LinkedInProvider`
@@ -50,7 +50,6 @@ Satisfies [`OAuthProvider`]().
 ```ts
 type LinkedInProvider = OAuthProvider<LinkedInUser, LinkedInTokens>;
 ```
-
 
 ### `getAuthorizationUrl()`
 

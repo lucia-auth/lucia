@@ -13,7 +13,7 @@ import { auth } from "./lucia.js";
 const googleAuth = google(auth, configs);
 ```
 
-### Initialization
+## `google()`
 
 ```ts
 const google: (

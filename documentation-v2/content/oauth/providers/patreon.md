@@ -15,7 +15,7 @@ const patreonAuth = patreon(auth, configs);
 
 The `identity` scope is always included regardless of provided `scope` config.
 
-### `patreon()`
+## `patreon()`
 
 ```ts
 const patreon: (
