@@ -45,15 +45,13 @@ const discord: (
 | --------------------- | ---------------- |
 | [`DiscordProvider`]() | Discord provider |
 
-## `DiscordProvider`
+## Interfaces
+
+### `DiscordProvider`
 
 Satisfies [`OAuthProvider`]().
 
-```ts
-type DiscordProvider = OAuthProvider<DiscordUser, DiscordTokens>;
-```
-
-### `getAuthorizationUrl()`
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
@@ -68,12 +66,12 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and creates a new [`ProviderUserAuth`]() instance.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderUserAuth>;
+const validateCallback: (code: string) => Promise<DiscordUserAuth>;
 ```
 
 ##### Parameters
@@ -84,9 +82,9 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
+| type                  |
+| --------------------- |
+| [`DiscordUserAuth`]() |
 
 ##### Errors
 
@@ -94,11 +92,20 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-## Types
+### `DiscordUserAuth`
 
 ```ts
-import type { DiscordTokens, DiscordUser } from "@lucia-auth/oauth/providers";
+type DiscordUserAuth = ProviderUserAuth & {
+	discordUser: DiscordUser;
+	discordTokens: DiscordTokens;
+};
 ```
+
+| type                   |
+| ---------------------- |
+| [`ProviderUserAuth`]() |
+| [`DiscordUser`]()      |
+| [`DiscordTokens`]()    |
 
 ### `DiscordTokens`
 

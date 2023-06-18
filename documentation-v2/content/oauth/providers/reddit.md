@@ -43,7 +43,9 @@ const reddit: (
 | -------------------- | --------------- |
 | [`RedditProvider`]() | Reddit provider |
 
-## `RedditProvider`
+## Interfaces
+
+### `RedditProvider`
 
 Satisfied [`OAuthProvider`]().
 
@@ -51,7 +53,7 @@ Satisfied [`OAuthProvider`]().
 type RedditProvider = OAuthProvider<Reddit, RedditTokens>;
 ```
 
-### `getAuthorizationUrl()`
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
@@ -66,12 +68,12 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and creates a new [`ProviderUserAuth`]() instance.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderUserAuth>;
+const validateCallback: (code: string) => Promise<RedditUserAuth>;
 ```
 
 ##### Parameters
@@ -82,9 +84,9 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
+| type                 |
+| -------------------- |
+| [`RedditUserAuth`]() |
 
 ##### Errors
 
@@ -92,11 +94,20 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-## Types
+### `RedditUserAuth`
 
 ```ts
-import type { RedditTokens, RedditUser } from "@lucia-auth/oauth/providers";
+type RedditUserAuth = ProviderUserAuth & {
+	redditUser: RedditUser;
+	redditTokens: RedditTokens;
+};
 ```
+
+| type                   |
+| ---------------------- |
+| [`ProviderUserAuth`]() |
+| [`RedditUser`]()       |
+| [`RedditTokens`]()     |
 
 ### `RedditTokens`
 

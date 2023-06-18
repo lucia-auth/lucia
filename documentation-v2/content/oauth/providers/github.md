@@ -43,15 +43,13 @@ const github: (
 | -------------------- | --------------- |
 | [`GithubProvider`]() | Github provider |
 
-## `GithubProvider`
+## Interfaces
+
+### `GithubProvider`
 
 Satisfies [`OAuthProvider`]().
 
-```ts
-type GithubProvider = OAuthProvider<GithubUser, GithubTokens>;
-```
-
-### `getAuthorizationUrl()`
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
@@ -66,12 +64,12 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and creates a new [`ProviderUserAuth`]() instance.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderUserAuth>;
+const validateCallback: (code: string) => Promise<GithubUserAuth>;
 ```
 
 ##### Parameters
@@ -82,9 +80,9 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
+| type                 |
+| -------------------- |
+| [`GithubUserAuth`]() |
 
 ##### Errors
 
@@ -92,11 +90,22 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-## Types
+
+### `GithubUserAuth`
 
 ```ts
-import type { GithubTokens, GithubUser } from "@lucia-auth/oauth/providers";
+type GithubUserAuth = ProviderUserAuth & {
+	githubUser: GithubUser;
+	githubTokens: GithubTokens;
+};
 ```
+
+| type                   |
+| ---------------------- |
+| [`ProviderUserAuth`]() |
+| [`GithubUser`]()       |
+| [`GithubTokens`]()     |
+
 
 ### `GithubTokens`
 

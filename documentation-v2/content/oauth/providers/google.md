@@ -45,7 +45,9 @@ const google: (
 | -------------------- | --------------- |
 | [`GoogleProvider`]() | Google provider |
 
-## `GoogleProvider`
+## Interfaces
+
+### `GoogleProvider`
 
 Satisfies [`OAuthProvider`]().
 
@@ -53,7 +55,7 @@ Satisfies [`OAuthProvider`]().
 type GoogleProvider = OAuthProvider<GoogleUser, GoogleTokens>;
 ```
 
-### `getAuthorizationUrl()`
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
@@ -68,12 +70,12 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and creates a new [`ProviderUserAuth`]() instance.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderUserAuth>;
+const validateCallback: (code: string) => Promise<GoogleUserAuth>;
 ```
 
 ##### Parameters
@@ -84,9 +86,9 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
+| type                 |
+| -------------------- |
+| [`GoogleUserAuth`]() |
 
 ##### Errors
 
@@ -94,11 +96,20 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-## Types
+### `GoogleUserAuth`
 
 ```ts
-import type { GoogleTokens, GoogleUser } from "@lucia-auth/oauth/providers";
+type GoogleUserAuth = ProviderUserAuth & {
+	googleUser: GoogleUser;
+	googleTokens: GoogleTokens;
+};
 ```
+
+| type                   |
+| ---------------------- |
+| [`ProviderUserAuth`]() |
+| [`GoogleUser`]()       |
+| [`GoogleTokens`]()     |
 
 ### `GoogleTokens`
 

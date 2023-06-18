@@ -45,7 +45,9 @@ const facebook: (
 | ---------------------- | ----------------- |
 | [`FacebookProvider`]() | Facebook provider |
 
-## `FacebookProvider`
+## Interfaces
+
+### `FacebookProvider`
 
 Satisfies [`OAuthProvider`]().
 
@@ -53,7 +55,7 @@ Satisfies [`OAuthProvider`]().
 type FacebookProvider = OAuthProvider<FacebookUser, FacebookTokens>;
 ```
 
-### `getAuthorizationUrl()`
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
@@ -68,12 +70,12 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and creates a new [`ProviderUserAuth`]() instance.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderUserAuth>;
+const validateCallback: (code: string) => Promise<FacebookUserAuth>;
 ```
 
 ##### Parameters
@@ -86,7 +88,7 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 
 | type                   |
 | ---------------------- |
-| [`ProviderUserAuth`]() |
+| [`FacebookUserAuth`]() |
 
 ##### Errors
 
@@ -94,11 +96,20 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-## Types
+### `FacebookUserAuth`
 
 ```ts
-import type { FacebookTokens, FacebookUser } from "@lucia-auth/oauth/providers";
+type FacebookUserAuth = ProviderUserAuth & {
+	facebookUser: FacebookUser;
+	facebookTokens: FacebookTokens;
+};
 ```
+
+| type                   |
+| ---------------------- |
+| [`ProviderUserAuth`]() |
+| [`FacebookUser`]()     |
+| [`FacebookTokens`]()   |
 
 ### `FacebookTokens`
 

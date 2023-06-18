@@ -53,15 +53,13 @@ const auth0: (
 | ------------------- | -------------- |
 | [`Auth0Provider`]() | Auth0 provider |
 
-## `Auth0Provider`
+## Interfaces
+
+### `Auth0Provider`
 
 Satisfies [`OAuthProvider`]().
 
-```ts
-type Auth0Provider = OAuthProvider<Auth0User, Auth0Tokens>;
-```
-
-### `getAuthorizationUrl()`
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
@@ -76,12 +74,12 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and creates a new [`ProviderUserAuth`]() instance.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderUserAuth>;
+const validateCallback: (code: string) => Promise<Auth0UserAuth>;
 ```
 
 ##### Parameters
@@ -92,9 +90,9 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
+| type                |
+| ------------------- |
+| [`Auth0UserAuth`]() |
 
 ##### Errors
 
@@ -102,7 +100,20 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-## Types
+### `Auth0UserAuth`
+
+```ts
+type Auth0UserAuth = ProviderUserAuth & {
+	auth0User: Auth0User;
+	auth0Tokens: Auth0Tokens;
+};
+```
+
+| type                   |
+| ---------------------- |
+| [`ProviderUserAuth`]() |
+| [`Auth0User`]()        |
+| [`Auth0Tokens`]()      |
 
 ```ts
 import type { Auth0Tokens, Auth0User } from "@lucia-auth/oauth/providers";

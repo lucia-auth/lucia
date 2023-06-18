@@ -46,7 +46,9 @@ const patreon: (
 | --------------------- | ---------------- |
 | [`PatreonProvider`]() | Patreon provider |
 
-## `PatreonProvider`
+## Interfaces
+
+### `PatreonProvider`
 
 Satisfied [`OAuthProvider`]().
 
@@ -54,7 +56,7 @@ Satisfied [`OAuthProvider`]().
 type PatreonProvider = OAuthProvider<PatreonUser, PatreonTokens>;
 ```
 
-### `getAuthorizationUrl()`
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
@@ -69,12 +71,12 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and creates a new [`ProviderUserAuth`]() instance.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderUserAuth>;
+const validateCallback: (code: string) => Promise<PatreonUserAuth>;
 ```
 
 ##### Parameters
@@ -85,9 +87,9 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
+| type                  |
+| --------------------- |
+| [`PatreonUserAuth`]() |
 
 ##### Errors
 
@@ -95,11 +97,20 @@ const validateCallback: (code: string) => Promise<ProviderUserAuth>;
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
 
-## Types
+### `PatreonUserAuth`
 
 ```ts
-import type { PatreonTokens, PatreonUser } from "@lucia-auth/oauth/providers";
+type PatreonUserAuth = ProviderUserAuth & {
+	patreonUser: PatreonUser;
+	patreonTokens: PatreonTokens;
+};
 ```
+
+| type                   |
+| ---------------------- |
+| [`ProviderUserAuth`]() |
+| [`PatreonUser`]()      |
+| [`PatreonTokens`]()    |
 
 ### `PatreonTokens`
 
