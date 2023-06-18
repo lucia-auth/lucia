@@ -14,7 +14,7 @@ const subCollections = await getSubCollections("reference");
         <link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
     </head>
     <body class="text-zinc-700 leading-relaxed text-base">
-        <Header/>
+        <Header />
         <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
             <p class="ml-8 font-semibold">Reference</p>
             <div
@@ -72,6 +72,21 @@ const subCollections = await getSubCollections("reference");
             }
             :global(.text-sm code) {
                 @apply text-code-sm;
+            }
+            :global(.text-lg code) {
+                @apply text-code-lg;
+            }
+            :global(.text-xl code) {
+                @apply text-code-xl;
+            }
+            :global(.text-2xl code) {
+                @apply text-code-2xl;
+            }
+            :global(.text-3xl code) {
+                @apply text-code-3xl;
+            }
+            :global(.text-4xl code) {
+                @apply text-code-4xl;
             }
             :global(.text-5xl code) {
                 @apply text-code-5xl;
