@@ -1,3 +1,8 @@
+---
+title: "OAuth overview"
+order: -1
+---
+
 While Lucia doesn't directly support OAuth, we provide an external, server-side library that handles OAuth using Lucia.
 
 Specifically, it handles 2 parts of the authentication process. First, it generates an authorization URL for your users to be redirected to, so they can be authenticated with your provider. Once the user authenticates with the provider, they will be redirected back to your application with a code. Then, you can pass the code to the module to be validated.
