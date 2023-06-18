@@ -4,6 +4,7 @@ const mainCollectionImports = import.meta.glob("../../content/main/**");
 const referenceCollectionImports = import.meta.glob(
 	"../../content/reference/**"
 );
+const oauthCollectionImports = import.meta.glob("../../content/oauth/**");
 
 export type Page = {
 	pathname: string;
@@ -60,7 +61,6 @@ const getPagesFromImports = async (
 				const title = markdown.frontmatter.title;
 				const htmlTitle =
 					markdown.frontmatter.format === "code" ? formatCode(title) : title;
-				console.log(pathnameSegments)
 				return {
 					pathname,
 					collection: pathnameSegments[0],
@@ -69,7 +69,10 @@ const getPagesFromImports = async (
 					pageId: pathnameSegments.slice(2).join("/"),
 					order: markdown.frontmatter.order,
 					title: markdown.frontmatter.title,
-					hidden: pathnameSegments.length > 3 ? true: markdown.frontmatter.hidden ?? false,
+					hidden:
+						pathnameSegments.length > 3
+							? true
+							: markdown.frontmatter.hidden ?? false,
 					htmlTitle,
 					Content: markdown.Content
 				};
@@ -118,9 +121,7 @@ const parseCollectionImports = async (
 				...subCollectionConfig,
 				pages: pages
 					.filter((page) => {
-						return (
-							page.subCollection === subCollectionConfig.subCollection
-						);
+						return page.subCollection === subCollectionConfig.subCollection;
 					})
 					.sort((a, b) => a.order - b.order)
 			};
@@ -128,23 +129,17 @@ const parseCollectionImports = async (
 		.sort((a, b) => a.order - b.order);
 };
 
-export const getSubCollections = async (collection: "main" | "reference") => {
+export const getSubCollections = async (
+	collection: "main" | "reference" | "oauth"
+) => {
 	if (collection === "main") {
 		return await parseCollectionImports(mainCollectionImports);
 	}
 	if (collection === "reference") {
 		return await parseCollectionImports(referenceCollectionImports);
 	}
-	throw new Error(`Unknown collection name: ${collection}`);
-};
-
-export const getPage = async (
-	collection: "main",
-	collectionPathname: string
-) => {
-	const pathname = [collection, collectionPathname].join("/");
-	if (collection === "main") {
-		const pages = await getPagesFromImports(mainCollectionImports);
-		return pages.find((page) => page.pathname === pathname) ?? null;
+	if (collection === "oauth") {
+		return await parseCollectionImports(oauthCollectionImports);
 	}
+	throw new Error(`Unknown collection name: ${collection}`);
 };

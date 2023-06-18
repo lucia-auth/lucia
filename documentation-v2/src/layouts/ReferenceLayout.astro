@@ -16,8 +16,9 @@ const subCollections = await getSubCollections("reference");
     <body class="text-zinc-700 leading-relaxed text-base">
         <Header/>
         <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
+            <p class="ml-8 font-semibold">Reference</p>
             <div
-                class="flex flex-col gap-y-6 overflow-auto h-full overscroll-contain pt-4 pb-8 text-sm"
+                class="flex flex-col gap-y-6 overflow-auto h-full overscroll-contain pt-2 pb-8 text-sm"
             >
                 {
                     subCollections.map((subCollection) => {

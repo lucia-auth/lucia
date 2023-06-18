@@ -204,7 +204,7 @@ Generates a hash for a password synchronously or asynchronously.
 
 Validates a hash generated using `passwordHash.generate()` synchronously or asynchronously.
 
-##### Parameter
+##### Parameters
 
 | name         | type     | description                                        |
 | ------------ | -------- | -------------------------------------------------- |
