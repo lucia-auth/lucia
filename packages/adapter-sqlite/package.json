@@ -14,10 +14,10 @@
 		"build": "shx rm -rf ./dist/* && tsc",
 		"auri.build": "pnpm build",
 		"test.better-sqlite3": "tsx test/better-sqlite3/index.ts",
-		"test.d1": "tsx test/d1/index.ts"
+		"test.d1": "tsx test/d1/index.ts",
+		"test.libsql": "tsx test/libsql/index.ts"
 	},
 	"keywords": [
-		"lucia",
 		"lucia",
 		"auth",
 		"better-sqlite3",
@@ -40,15 +40,20 @@
 	},
 	"peerDependencies": {
 		"better-sqlite3": "^8.0.0",
+		"@libsql/client": "^0.2.1",
 		"lucia": "^2.0.0"
 	},
 	"peerDependenciesMeta": {
 		"better-sqlite3": {
 			"optional": true
+		},
+		"@libsql/client": {
+			"optional": true
 		}
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230518.0",
+		"@libsql/client": "^0.2.1",
 		"@lucia-auth/adapter-test": "latest",
 		"@miniflare/d1": "^2.14.0",
 		"@types/better-sqlite3": "^7.6.3",
