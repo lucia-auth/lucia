@@ -1,7 +1,7 @@
 ---
-order: 1
-title: "Getting started"
-description: "Learn how to set up Lucia in your project"
+order: 0
+title: "Getting started in Express"
+description: "Learn how to set up Lucia in your Express project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -12,52 +12,33 @@ pnpm add lucia
 yarn add lucia
 ```
 
+### ESM
+
+Lucia is an ESM only package. Make sure your package type is `module` and use ESM imports instead of CJS `require()`.
+
+```json
+// package.json
+{
+	"type": "module"
+}
+```
+
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that later.
+Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it. Export `auth` and its type as `Auth`. Make sure to pass the `express()` middleware We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that later.
 
 ```ts
 // lucia.ts
 import { lucia } from "lucia";
+import { express } from "lucia/middleware";
 
 // expect error
 export const auth = lucia({
-	env: "DEV" // "PROD" if deployed to HTTPS
+	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: express()
 });
 
 export type Auth = typeof auth;
-```
-
-### Middleware
-
-[Middleware](/basics/handle-requests) allows Lucia to read the request and response since these are different across frameworks and runtime. See [a full list of middleware](/basics/handle-requests#list-of-middleware-and-examples).
-
-#### Node.js
-
-Use the Node.js middleware if you're using Node.js' `IncomingMessage` and `OutgoingMessage`.
-
-```ts
-import { lucia } from "lucia";
-import { node } from "lucia/middleware";
-
-export const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: node()
-});
-```
-
-#### Web standard
-
-Use the web standard middleware if you're using the standard `Request` and `Response`.
-
-```ts
-import { lucia } from "lucia";
-import { web } from "lucia/middleware";
-
-export const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: web()
-});
 ```
 
 ## Setup your database
@@ -66,6 +47,7 @@ Lucia uses adapters to connect to your database. We provide official adapters fo
 
 ```ts
 import { lucia } from "lucia";
+import { express } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -73,6 +55,7 @@ const client = new PrismaClient();
 
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: express(),
 	adapter: prisma({
 		mode: "default",
 		client
@@ -125,4 +108,27 @@ Optionally, instead of doing a side-effect import, add the `--experimental-globa
 
 ```
 node --experimental-global-webcrypto index.js
+```
+
+## Middleware
+
+This is optional but highly recommended. Create a new middleware that stores [`AuthRequest`]() to `res.locals.auth` (or `req.locals`).
+
+```ts
+import express from "express";
+
+const app = express();
+
+app.use((req, res, next) => {
+	res.locals.auth = auth.handleRequest(req, res);
+	return next();
+});
+```
+
+This allows us to validate sessions using a single line of code.
+
+```ts
+app.get("/", async (req, res) => {
+	const session = await res.locals.validate();
+});
 ```

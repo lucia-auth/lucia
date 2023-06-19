@@ -1,7 +1,7 @@
 ---
-order: 1
-title: "Getting started"
-description: "Learn how to set up Lucia in your project"
+order: 0
+title: "Getting started in Next.js"
+description: "Learn how to set up Lucia in your Next.js project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -12,52 +12,26 @@ pnpm add lucia
 yarn add lucia
 ```
 
+## Next.js support
+
+Lucia supports both the old pages and new app directory in Next.js, with support for Node.js and the edge runtime as well. However, it will only work as expected when the pages directory is used with Node.js. Currently, Next.js does not provide a way to set cookies inside pages when using the app directory or the pages directory with the edge runtime. As such, Lucia cannot store renewed session ids under certain conditions.
+
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that later.
+Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `nextjs()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
 ```ts
-// lucia.ts
+// auth/lucia.ts
 import { lucia } from "lucia";
+import { nextjs } from "lucia/middleware";
 
 // expect error
 export const auth = lucia({
-	env: "DEV" // "PROD" if deployed to HTTPS
+	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: nextjs()
 });
 
 export type Auth = typeof auth;
-```
-
-### Middleware
-
-[Middleware](/basics/handle-requests) allows Lucia to read the request and response since these are different across frameworks and runtime. See [a full list of middleware](/basics/handle-requests#list-of-middleware-and-examples).
-
-#### Node.js
-
-Use the Node.js middleware if you're using Node.js' `IncomingMessage` and `OutgoingMessage`.
-
-```ts
-import { lucia } from "lucia";
-import { node } from "lucia/middleware";
-
-export const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: node()
-});
-```
-
-#### Web standard
-
-Use the web standard middleware if you're using the standard `Request` and `Response`.
-
-```ts
-import { lucia } from "lucia";
-import { web } from "lucia/middleware";
-
-export const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: web()
-});
 ```
 
 ## Setup your database
@@ -65,7 +39,9 @@ export const auth = lucia({
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/extending-lucia/database-adapters-api). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
+// auth/lucia.ts
 import { lucia } from "lucia";
+import { nextjs } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -73,6 +49,7 @@ const client = new PrismaClient();
 
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: nextjs(),
 	adapter: prisma({
 		mode: "default",
 		client
@@ -96,13 +73,13 @@ const auth = lucia({
 
 ## Set up types
 
-Create a `.d.ts` file and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a TS declaration file (`lucia.d.ts`) and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// env.d.ts
+// lucia.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
+	type Auth = import("./auth/lucia").Auth;
 	type DatabaseUserAttributes = {};
 	type DatabaseSessionAttributes = {};
 }
@@ -121,8 +98,17 @@ export const auth = lucia({
 });
 ```
 
-Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `node`.
+Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `next`.
 
-```
-node --experimental-global-webcrypto index.js
+```json
+// package.json
+{
+	// ...
+	"scripts": {
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto next dev",
+		"start": "NODE_OPTIONS=--experimental-global-webcrypto next start"
+		// ...
+	}
+	// ...
+}
 ```

@@ -1,7 +1,7 @@
 ---
-order: 1
-title: "Getting started"
-description: "Learn how to set up Lucia in your project"
+order: 0
+title: "Getting started in Nuxt"
+description: "Learn how to set up Lucia in your Nuxt project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -14,50 +14,20 @@ yarn add lucia
 
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that later.
+Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own api module (file). Export `auth` and its type as `Auth`. Make sure to pass the `h3()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
 ```ts
-// lucia.ts
+// server/utils/auth.ts
 import { lucia } from "lucia";
+import { h3 } from "lucia-auth/middleware";
 
 // expect error
 export const auth = lucia({
-	env: "DEV" // "PROD" if deployed to HTTPS
+	env: process.dev ? "DEV" : "PROD",
+	middleware: h3()
 });
 
 export type Auth = typeof auth;
-```
-
-### Middleware
-
-[Middleware](/basics/handle-requests) allows Lucia to read the request and response since these are different across frameworks and runtime. See [a full list of middleware](/basics/handle-requests#list-of-middleware-and-examples).
-
-#### Node.js
-
-Use the Node.js middleware if you're using Node.js' `IncomingMessage` and `OutgoingMessage`.
-
-```ts
-import { lucia } from "lucia";
-import { node } from "lucia/middleware";
-
-export const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: node()
-});
-```
-
-#### Web standard
-
-Use the web standard middleware if you're using the standard `Request` and `Response`.
-
-```ts
-import { lucia } from "lucia";
-import { web } from "lucia/middleware";
-
-export const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: web()
-});
 ```
 
 ## Setup your database
@@ -65,7 +35,9 @@ export const auth = lucia({
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/extending-lucia/database-adapters-api). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
+// server/utils/auth.ts
 import { lucia } from "lucia";
+import { h3 } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -73,6 +45,7 @@ const client = new PrismaClient();
 
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: h3(),
 	adapter: prisma({
 		mode: "default",
 		client
@@ -96,13 +69,13 @@ const auth = lucia({
 
 ## Set up types
 
-Create a `.d.ts` file and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a TS declaration file (`lucia.d.ts`) in the `server` dir and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// env.d.ts
+// server/lucia.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
+	type Auth = import("./utils/auth.js").Auth;
 	type DatabaseUserAttributes = {};
 	type DatabaseSessionAttributes = {};
 }
@@ -121,8 +94,31 @@ export const auth = lucia({
 });
 ```
 
-Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `node`.
+This is a side-effect import which is excluded by Nuxt by default. Update your config to escape from the default behavior:
 
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+	// ...
+	nitro: {
+		moduleSideEffects: ["lucia/polyfill/node"]
+	}
+});
 ```
-node --experimental-global-webcrypto index.js
+
+Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `next`.
+
+```json
+// package.json
+{
+	// ...
+	"scripts": {
+		"build": "NODE_OPTIONS=--experimental-global-webcrypto nuxt build",
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto nuxt dev",
+		"generate": "NODE_OPTIONS=--experimental-global-webcrypto nuxt generate",
+		"preview": "NODE_OPTIONS=--experimental-global-webcrypto nuxt preview",
+		"postinstall": "NODE_OPTIONS=--experimental-global-webcrypto nuxt prepare"
+	}
+	// ...
+}
 ```
