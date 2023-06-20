@@ -31,8 +31,11 @@
 		@apply text-code-sm;
 	}
 	:global(#md .astro-code) {
-		@apply text-code-sm my-2 overflow-scroll rounded-lg !bg-zinc-100 px-4 py-3 leading-normal;
+		@apply  my-2 overflow-scroll rounded-lg !bg-zinc-80 px-4 py-3 !leading-tight;
 		scrollbar-width: none;
+	}
+	:global(#md .astro-code span) {
+		@apply !text-code-sm ;
 	}
 	:global(#md pre::-webkit-scrollbar) {
 		display: none;

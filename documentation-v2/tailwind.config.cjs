@@ -4,7 +4,10 @@ module.exports = {
 	theme: {
 		extend: {
 			colors: {
-				main: "#5f57ff"
+				main: "#5f57ff",
+				zinc: {
+					80: "#F5F5F6"
+				}
 			},
 			fontSize: {
 				"code-sm": "0.825rem",

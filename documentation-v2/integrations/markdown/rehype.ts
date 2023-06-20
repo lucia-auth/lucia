@@ -27,7 +27,7 @@ class HastElement implements HastElementInstance {
 	}
 }
 
-const handleBlockquoteElement = async (element: HastElement) => {
+const handleBlockquoteElement = (element: HastElement) => {
 	if (element.tagName !== "blockquote") return;
 	const pElement = element.children.find((child) => {
 		if (child.type !== "element") return false;
@@ -55,7 +55,7 @@ const handleBlockquoteElement = async (element: HastElement) => {
 	element.properties.class = classNames.join(" ");
 };
 
-const wrapTableElement = async (content: Root) => {
+const wrapTableElement = (content: Root) => {
 	const tableChildren = content.children
 		.map((child, i) => {
 			return [child, i] as const;
@@ -73,7 +73,7 @@ const wrapTableElement = async (content: Root) => {
 	}
 };
 
-const parseContent = async (content: Root | RootContent) => {
+const parseContent = (content: Root | RootContent) => {
 	if (content.type !== "element" && content.type !== "root") return;
 	if (content.type === "root") {
 		wrapTableElement(content);
@@ -81,11 +81,13 @@ const parseContent = async (content: Root | RootContent) => {
 	if (content.type === "element") {
 		handleBlockquoteElement(content);
 	}
-	await Promise.all(content.children.map((children) => parseContent(children)));
+	for (const children of content.children) {
+		parseContent(children);
+	}
 };
 
-const rehypePlugin = async (root: Root) => {
-	await parseContent(root);
+const rehypePlugin = (root: Root) => {
+	parseContent(root);
 };
 
 export default () => {

@@ -12,11 +12,13 @@ Furthermore, it's built to support all modern frameworks and runtimes. Of course
 
 ```ts
 const user = await auth.createUser({
+	// user identified using their email
 	key: {
 		providerId: "email",
 		providerUserId: email,
 		password
 	},
+	// custom attributes
 	attributes: {
 		email,
 		username
