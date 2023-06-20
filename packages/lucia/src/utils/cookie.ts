@@ -11,17 +11,11 @@ const __toString = Object.prototype.toString;
 // eslint-disable-next-line no-control-regex
 const fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
 
-interface CookieParseOptions {
-	decode?(value: string): string;
-}
-
-export const parseCookie = (str: string, options?: CookieParseOptions) => {
+export const parseCookie = (str: string) => {
 	if (typeof str !== "string") {
 		throw new TypeError("argument str must be a string");
 	}
-	const obj: Record<any, string | undefined> = {};
-	const opt = options ?? {};
-	const dec = opt.decode ?? decode;
+	const obj: Record<string, string> = {};
 	let index = 0;
 	while (index < str.length) {
 		const eqIdx = str.indexOf("=", index);
@@ -37,13 +31,13 @@ export const parseCookie = (str: string, options?: CookieParseOptions) => {
 		}
 		const key = str.slice(index, eqIdx).trim();
 		// only assign once
-		if (undefined === obj[key]) {
+		if (!(key in obj)) {
 			let val = str.slice(eqIdx + 1, endIdx).trim();
 			// quoted values
 			if (val.charCodeAt(0) === 0x22) {
 				val = val.slice(1, -1);
 			}
-			obj[key] = tryDecode(val, dec);
+			obj[key] = tryDecode(val);
 		}
 		index = endIdx + 1;
 	}
@@ -164,9 +158,9 @@ const isDate = (val: any): val is Date => {
 	return __toString.call(val) === "[object Date]" || val instanceof Date;
 };
 
-const tryDecode = (str: string, decodeFunction: typeof decode) => {
+const tryDecode = (str: string) => {
 	try {
-		return decodeFunction(str);
+		return decode(str);
 	} catch (e) {
 		return str;
 	}
