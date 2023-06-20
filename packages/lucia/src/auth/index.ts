@@ -76,7 +76,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		? _Configuration["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
 	public csrfProtectionEnabled: boolean;
-	private requestOrigins: string[];
+	private allowedRequestOrigins: string[];
 	private experimental: {
 		debugMode: boolean;
 	};
