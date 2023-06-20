@@ -199,11 +199,28 @@ export const handle = async ({ event, resolve }) => {
 
 ### Web standard
 
+Since the cookie will be stored in the provided `Response` or `Headers`, it's crucial that they are used when returning a response.
+
 ```ts
 import { web } from "lucia/middleware";
 
 auth.handleRequest(request as Request, response as Response);
 auth.handleRequest(request as Request, headers as Headers);
+```
+
+```ts
+const headers = new Headers();
+auth.handleRequest(request, headers);
+const response = new Response(null, {
+	headers // always create responses using the headers passed on to `Auth.handleRequest()`
+});
+return response;
+```
+
+```ts
+const response = new Response(null);
+auth.handleRequest(request, response);
+return response; // always use the response passed on to `Auth.handleRequest()`
 ```
 
 #### Remix
