@@ -1,0 +1,40 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Lucia</title>
+        <link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+    </head>
+    <body class="text-zinc-700 leading-relaxed text-base">
+        <slot />
+        <style>
+            /* adjust font size for code block */
+            :global(code) {
+                @apply text-code-base;
+            }
+            :global(.text-sm code) {
+                @apply text-code-sm;
+            }
+            :global(.text-lg code) {
+                @apply text-code-lg;
+            }
+            :global(.text-xl code) {
+                @apply text-code-xl;
+            }
+            :global(.text-2xl code) {
+                @apply text-code-2xl;
+            }
+            :global(.text-3xl code) {
+                @apply text-code-3xl;
+            }
+            :global(.text-4xl code) {
+                @apply text-code-4xl;
+            }
+            :global(.text-5xl code) {
+                @apply text-code-5xl;
+            }
+        </style>
+    </body>
+</html>

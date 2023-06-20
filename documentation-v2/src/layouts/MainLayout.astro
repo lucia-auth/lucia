@@ -1,102 +1,18 @@
 ---
+import DocumentationNav from "../components/DocumentationNav.astro";
 import Header from "../components/Header.astro";
 import { getSubCollections } from "../content";
+import BaseLayout from "./BaseLayout.astro";
+
 const subCollections = await getSubCollections("main");
 ---
 
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <meta name="viewport" content="width=device-width" />
-        <meta name="generator" content={Astro.generator} />
-        <title>Lucia</title>
-        <link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
-    </head>
-    <body class="text-zinc-700 leading-relaxed text-base">
-        <Header />
-        <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
-            <div
-                class="flex flex-col gap-y-6 overflow-auto h-full overscroll-contain pt-2 pb-8 text-sm"
-            >
-                {
-                    subCollections.map((subCollection) => {
-                        return (
-                            <div>
-                                <p class="ml-8 text-sm font-medium text-zinc-400">
-                                    {subCollection.title}
-                                </p>
-                                <ul class="mt-0.5">
-                                    {subCollection.pages
-                                        .filter((page) => !page.hidden)
-                                        .map((page) => {
-                                            const urlPathname = [
-                                                "",
-                                                page.subCollection,
-                                                page.pageId
-                                            ].join("/");
-                                            const selected =
-                                                Astro.url.pathname.split("/")
-                                                    .length >=
-                                                    page.pathname.split("/")
-                                                        .length &&
-                                                Astro.url.pathname.includes(
-                                                    urlPathname
-                                                );
-                                            return (
-                                                <li>
-                                                    <a
-                                                        href={urlPathname}
-                                                        class:list={[
-                                                            "w-full py-1 pl-8 hover:bg-indigo-50 block",
-                                                            {
-                                                                "bg-gray-100":
-                                                                    selected
-                                                            }
-                                                        ]}
-                                                        set:html={
-                                                            page.htmlTitle
-                                                        }
-                                                    />
-                                                </li>
-                                            );
-                                        })}
-                                </ul>
-                            </div>
-                        );
-                    })
-                }
-            </div>
-        </div>
-        <main class="py-20 px-16 ml-80 overflow-hidden">
-            <slot />
-        </main>
-        <style>
-            /* adjust font size for code block */
-            :global(code) {
-                @apply text-code-base;
-            }
-            :global(.text-sm code) {
-                @apply text-code-sm;
-            }
-            :global(.text-lg code) {
-                @apply text-code-lg;
-            }
-            :global(.text-xl code) {
-                @apply text-code-xl;
-            }
-            :global(.text-2xl code) {
-                @apply text-code-2xl;
-            }
-            :global(.text-3xl code) {
-                @apply text-code-3xl;
-            }
-            :global(.text-4xl code) {
-                @apply text-code-4xl;
-            }
-            :global(.text-5xl code) {
-                @apply text-code-5xl;
-            }
-        </style>
-    </body>
-</html>
+<BaseLayout>
+    <Header />
+    <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
+        <DocumentationNav subCollections={subCollections} />
+    </div>
+    <main class="py-20 px-16 ml-80 overflow-hidden">
+        <slot />
+    </main>
+</BaseLayout>
