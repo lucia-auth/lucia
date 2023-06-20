@@ -1,14 +1,21 @@
 ---
-import MainLayout from "@layouts/MainLayout.astro";
+import { getPage } from "@content";
+import MainLayout from "../layouts/MainLayout.astro";
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+
+const markdown =await  getPage("main", "index")
 ---
 
 <MainLayout>
-	<h1 class="text-6xl font-bold mt-8 mb-8">
-		Authentication,</br> simple and clean
-	</h1>
-	<p>
-		Lucia is a simple and flexible user and session management library that
-		provides an abstraction layer between your app and your database. It's
-		bare-bones by design, keeping everything easy to use and understand.
-	</p>
+	<div class="pt-8 pb-12 max-w-2xl">
+		<h1 class="text-7xl font-bold">Lucia</h1>
+		<p class="mb-2 text-2xl mt-2 font-medium">
+			A simple and flexible auth layer between your app and your
+			database.
+		</p>
+	</div>
+	<MarkdownStyle>
+		<markdown.Content/>
+	</MarkdownStyle>
+	
 </MainLayout>

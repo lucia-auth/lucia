@@ -1,6 +1,6 @@
 ---
 order: 0
-title: "Getting started in Nuxt"
+title: "Getting started in Remix"
 description: "Learn how to set up Lucia in your Remix project"
 ---
 
