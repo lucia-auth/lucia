@@ -37,7 +37,7 @@
 		"lucia": "latest"
 	},
 	"peerDependencies": {
-		"lucia": "^2.0.0"
+		"lucia": "^2.0.0@beta"
 	},
 	"dependencies": {
 		"mocha": "^10.2.0"
