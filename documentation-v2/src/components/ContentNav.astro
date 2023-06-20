@@ -1,12 +1,15 @@
 ---
 import type { SubCollection } from "@content";
 type Props = {
+    collectionId: string;
     subCollections: SubCollection[];
 };
 ---
 
+<input type="hidden" value={Astro.props.collectionId} id="collection-id" />
 <div
     class="flex flex-col gap-y-6 overflow-auto h-full overscroll-contain pt-2 pb-8 text-sm"
+    id="content-nav"
 >
     {
         Astro.props.subCollections.map((subCollection) => {
@@ -54,3 +57,28 @@ type Props = {
         })
     }
 </div>
+
+<script is:inline>
+const contentNavigationElement = document.getElementById("content-nav");
+const collectionIdElement = document.getElementById("collection-id");
+if (
+    contentNavigationElement instanceof HTMLDivElement &&
+    collectionIdElement instanceof HTMLInputElement
+) {
+    const collectionId = collectionIdElement.value;
+    const storedScrollPosition = sessionStorage.getItem("scroll_position");
+    if (storedScrollPosition !== null) {
+        const [prevCollectionId, prevScrollPosition] =
+            storedScrollPosition.split(":");
+        if (prevCollectionId === collectionId) {
+            contentNavigationElement.scrollTop = Number(prevScrollPosition);
+        }
+    }
+    contentNavigationElement.addEventListener("click", () => {
+        sessionStorage.setItem(
+            `scroll_position`,
+            `${collectionId}:${contentNavigationElement.scrollTop.toString()}`
+        );
+    });
+}
+</script>

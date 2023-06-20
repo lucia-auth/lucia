@@ -1,5 +1,5 @@
 ---
-import DocumentationNav from "@components/DocumentationNav.astro";
+import DocumentationNav from "@components/ContentNav.astro";
 import Header from "@components/Header.astro";
 import { getSubCollections } from "@content";
 import BaseLayout from "./BaseLayout.astro";
@@ -19,7 +19,10 @@ const subCollections = await getSubCollections("reference");
                 }
             ]}>Overview</a
         >
-        <DocumentationNav subCollections={subCollections} />
+        <DocumentationNav
+            subCollections={subCollections}
+            collectionId="reference"
+        />
     </div>
     <main class="py-20 px-16 ml-80 overflow-hidden">
         <slot />
