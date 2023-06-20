@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
+import { scope, generateState, providerUserAuth } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -11,7 +11,7 @@ type Config = OAuthConfig & {
 };
 
 export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getLinkedinTokens = async (code: string) => {
 		const requestUrl = createUrl(
 			"https://www.linkedin.com/oauth/v2/accessToken",
 			{
@@ -45,17 +45,17 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
-		const linkedinProfile = await getProfile(accessToken);
-		const displayImageElement = linkedinProfile.profilePicture[
+	const getLinkedinUser = async (accessToken: string) => {
+		const linkedinUserProfile = await getProfile(accessToken);
+		const displayImageElement = linkedinUserProfile.profilePicture[
 			"displayImage~"
 		]?.elements
 			?.slice(-1)
 			?.pop();
 		const linkedinUser: LinkedinUser = {
-			id: linkedinProfile.id,
-			firstName: linkedinProfile.localizedFirstName,
-			lastName: linkedinProfile.localizedLastName,
+			id: linkedinUserProfile.id,
+			firstName: linkedinUserProfile.localizedFirstName,
+			lastName: linkedinUserProfile.localizedLastName,
 			profilePicture: displayImageElement?.identifiers?.pop()?.identifier
 		};
 
@@ -90,21 +90,21 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(
+			const linkedinTokens = await getLinkedinTokens(code);
+			const linkedinUser = await getLinkedinUser(linkedinTokens.accessToken);
+			const providerUserId = linkedinUser.id;
+			const linkedinUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpers,
-				providerUser,
-				tokens
+				...linkedinUserAuth,
+				linkedinUser,
+				linkedinTokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 type LinkedinProfileResponse = {
