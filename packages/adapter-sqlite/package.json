@@ -40,7 +40,7 @@
 	},
 	"peerDependencies": {
 		"better-sqlite3": "^8.0.0",
-		"lucia": "^2.0.0"
+		"lucia": "^2.0.0@beta"
 	},
 	"peerDependenciesMeta": {
 		"better-sqlite3": {
