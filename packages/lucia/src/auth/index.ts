@@ -75,7 +75,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	protected middleware: _Configuration["middleware"] extends Middleware
 		? _Configuration["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
-	private csrfProtectionEnabled: boolean;
+	public csrfProtectionEnabled: boolean;
 	private requestOrigins: string[];
 	private experimental: {
 		debugMode: boolean;
@@ -523,10 +523,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			debug.request.fail("Request url unavailable");
 			throw new LuciaError("AUTH_INVALID_REQUEST");
 		}
-		const csrfCheckRequired =
+		if (
 			request.method.toUpperCase() !== "GET" &&
-			request.method.toUpperCase() !== "HEAD";
-		if (this.csrfProtectionEnabled && csrfCheckRequired) {
+			request.method.toUpperCase() !== "HEAD"
+		) {
 			const requestOrigin = request.headers.origin;
 			if (!requestOrigin) {
 				debug.request.fail("No request origin available");
