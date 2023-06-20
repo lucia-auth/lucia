@@ -1,7 +1,7 @@
 ---
-import DocumentationNav from "../components/DocumentationNav.astro";
-import Header from "../components/Header.astro";
-import { getSubCollections } from "../content";
+import DocumentationNav from "@components/DocumentationNav.astro";
+import Header from "@components/Header.astro";
+import { getSubCollections } from "@content";
 import BaseLayout from "./BaseLayout.astro";
 const subCollections = await getSubCollections("reference");
 ---

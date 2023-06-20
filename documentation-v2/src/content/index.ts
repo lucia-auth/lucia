@@ -1,6 +1,6 @@
 import type { MarkdownInstance } from "astro";
 
-const collectionImports = import.meta.glob("../../content/**");
+const collectionImports = import.meta.glob("@content/**");
 
 export type Page = {
 	pathname: string;
