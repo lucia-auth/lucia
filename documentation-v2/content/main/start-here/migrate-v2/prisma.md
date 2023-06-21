@@ -31,12 +31,20 @@ db.authKey.deleteMany({
 });
 ```
 
-## Update schema
+## Update `AuthKey` model
 
 Remove `Key(primary_key)` and `Key(expires)` from the schema.
 
 ```prisma
-// OLD SCHEMA
+model AuthKey {
+  id              String   @id @unique
+  hashed_password String?
+  user_id         String
+  auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_key")
+}
 ```
 
 ## Initialize adapter

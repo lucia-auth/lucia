@@ -20,7 +20,7 @@ DELETE FROM auth_key
 WHERE expires != null;
 ```
 
-### Update schema
+### Update `auth_key` schema
 
 Remove columns `auth_key(primary_key)` and `auth_key(expires)`.
 

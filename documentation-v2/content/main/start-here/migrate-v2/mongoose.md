@@ -20,7 +20,28 @@ db.authKey.deleteMany({
 });
 ```
 
-## Update models
+## Update `Key` model
+
+Remove `expires` and `primary_key` fields.
+
+```ts
+const Key = mongoose.model(
+	"auth_key",
+	new mongoose.Schema(
+		{
+			_id: {
+				type: String
+			},
+			user_id: {
+				type: String,
+				required: true
+			},
+			hashed_password: String,
+		},
+		{ _id: false }
+	)
+);
+```
 
 ## Initialize adapter
 
