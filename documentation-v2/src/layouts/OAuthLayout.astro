@@ -3,10 +3,18 @@ import DocumentationNav from "@components/ContentNav.astro";
 import Header from "@components/Header.astro";
 import { getSubCollections } from "@content";
 import BaseLayout from "./BaseLayout.astro";
+
 const subCollections = await getSubCollections("oauth");
+
+type Props = {
+    title: string;
+    description?: string | null;
+};
+
+const { title, description } = Astro.props;
 ---
 
-<BaseLayout>
+<BaseLayout title={title} description={description}>
     <Header />
     <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
         <p class="ml-8 font-semibold mb-2">OAuth</p>

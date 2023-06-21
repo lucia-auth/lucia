@@ -11,6 +11,7 @@ export type Page = {
 	title: string;
 	htmlTitle: string;
 	hidden: boolean;
+	description: string | null;
 	Content: MarkdownInstance<any>["Content"];
 };
 
@@ -61,12 +62,14 @@ const transformMarkdownImport = async (
 		order: number;
 		format?: "code";
 		hidden?: boolean;
+		description?: string;
 	}> = await resolveImport();
 	const title = markdown.frontmatter.title;
 	const htmlTitle =
 		markdown.frontmatter.format === "code" ? formatCode(title) : title;
 	return {
 		pathname,
+		description: markdown.frontmatter.description ?? null,
 		collection: pathnameSegments[0],
 		subCollection: pathnameSegments.length < 3 ? null : pathnameSegments[1],
 		pageId: pathnameSegments.slice(2).join("/"),

@@ -29,7 +29,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { page } = Astro.props;
 ---
 
-<OAuthLayout>
+<OAuthLayout title={`${page.title} | Lucia`}>
     <div class="mt-6 mb-8">
         <h1 class="text-5xl font-bold" set:html={page.htmlTitle}></h1>
     </div>

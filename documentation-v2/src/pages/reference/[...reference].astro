@@ -26,9 +26,16 @@ export const getStaticPaths = async () => {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { page } = Astro.props;
+
+const getPageTitle =  () => {
+    if (page.title === "Main") return page.subCollection;
+    if (page.title.startsWith("/")) return `${page.subCollection}${page.title}`;
+    return `${page.subCollection} ${page.title}`;
+};
+const title = getPageTitle();
 ---
 
-<ReferenceLayout>
+<ReferenceLayout title={`${title} | Lucia reference`}>
     <div class="mt-6 mb-8">
         <h1 class="text-5xl font-bold" set:html={page.htmlTitle}></h1>
     </div>
