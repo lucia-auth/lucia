@@ -72,7 +72,7 @@ You can add additional columns to store user attributes.
 
 ```sql
 CREATE TABLE auth_user (
-    id TEXT NOT NULL PRIMARY KEY,
+    id TEXT NOT NULL PRIMARY KEY
 );
 ```
 
@@ -84,7 +84,7 @@ Make sure to update the foreign key statement if you change the user table name.
 CREATE TABLE user_key (
     id TEXT NOT NULL PRIMARY KEY,
     user_id TEXT NOT NULL REFERENCES auth_user(id),
-    hashed_password TEXT,
+    hashed_password TEXT
 );
 ```
 
@@ -97,6 +97,6 @@ CREATE TABLE user_session (
     id TEXT NOT NULL PRIMARY KEY,
     user_id TEXT NOT NULL REFERENCES auth_user(id),
     active_expires BIGINT NOT NULL,
-    idle_expires BIGINT NOT NULL,
+    idle_expires BIGINT NOT NULL
 );
 ```
