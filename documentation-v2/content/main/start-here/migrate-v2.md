@@ -260,3 +260,7 @@ We now provide [`providerUserAuth()`](/reference/oauth/interfaces#provideruserau
 ```ts
 const { githubUser, githubTokens } = await githubAuth.validateCallback(code);
 ```
+
+### Removed `LuciaOAuthRequestError`
+
+`LuciaOAuthRequestError` is replaced with [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
