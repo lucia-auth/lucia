@@ -44,7 +44,7 @@ The markdown files for documentation are stored in `/documentation/content`. The
 
 The documentation uses 2 specialized library:
 
-- [Cela](https://github.com/pilcrowOnPaper/lucia/tree/main/documentation/cela): For managing and querying markdown content
+- [Cela](https://github.com/pilcrowOnPaper/lucia/tree/main/documentation/integrations/cela): For managing and querying markdown content
 - [Siena](https://github.com/pilcrowOnPaper/siena): For optimizing images
 
 ## Changesets
