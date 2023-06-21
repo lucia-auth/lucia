@@ -96,9 +96,7 @@ const validateCallback: (code: string) => Promise<Auth0UserAuth>;
 
 ##### Errors
 
-| name             | description                          |
-| ---------------- | ------------------------------------ |
-| `FAILED_REQUEST` | invalid code, network error, unknown |
+Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
 
 ### `Auth0UserAuth`
 

@@ -86,9 +86,7 @@ const validateCallback: (code: string) => Promise<GithubUserAuth>;
 
 ##### Errors
 
-| name             | description                          |
-| ---------------- | ------------------------------------ |
-| `FAILED_REQUEST` | invalid code, network error, unknown |
+Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
 
 ### `GithubUserAuth`
 

@@ -132,3 +132,19 @@ const { githubTokens } = await githubAuth.validateCallback(code);
 githubTokens.accessToken;
 githubTokens.accessTokenExpiresIn;
 ```
+
+## Errors
+
+Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror), which includes a request and response object.
+
+```ts
+import { OAuthRequestError } from "@lucia-auth/oauth";
+
+try {
+	await githubAuth.validateCallback(code);
+} catch (e) {
+	if (e instanceof OAuthRequestError) {
+		const { request, response } = e;
+	}
+}
+```

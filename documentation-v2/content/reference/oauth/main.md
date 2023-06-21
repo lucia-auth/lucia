@@ -3,9 +3,33 @@ order: 0
 title: "Main"
 ---
 
+## `OAuthRequestError`
+
+See [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
+
+```ts
+import { OAuthRequestError } from "@lucia-auth/oauth";
+```
+
+##### Example
+
+```ts
+try {
+	// ...
+} catch (e) {
+	if (e instanceof OAuthRequestError) {
+		// ...
+	}
+}
+```
+
 ## `providerUserAuth()`
 
 Creates a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth).
+
+```ts
+import { providerUserAuth } from "@lucia-auth/oauth";
+```
 
 ```ts
 const providerUserAuth: (

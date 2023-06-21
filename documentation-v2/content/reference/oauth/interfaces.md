@@ -17,6 +17,17 @@ type OAuthProvider = {
 };
 ```
 
+## `OAuthRequestError`
+
+Extends standard `Error`.
+
+```ts
+type OAuthRequestError = Error & {
+	request: Request;
+	response: Response;
+};
+```
+
 ## `ProviderUserAuth`
 
 ```ts

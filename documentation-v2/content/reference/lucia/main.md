@@ -39,7 +39,7 @@ const lucia: (config: Configuration) => Auth;
 | ------------------------------------------ |
 | [`Auth`](/reference/lucia/interfaces/auth) |
 
-## `LuciaError`
+## `LuciaError()`
 
 Error class thrown by Lucia. See reference for [`LuciaError`](/reference/lucia/main#luciaerror).
 
