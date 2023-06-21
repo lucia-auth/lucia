@@ -158,4 +158,4 @@ await auth.deleteUser(userId);
 You can configure users in a few ways:
 
 - User id with [`generateUserId()`]()
-- User attributes with [`getUserAttributes`]()
+- User attributes with [`getUserAttributes()`]()
