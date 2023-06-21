@@ -24,12 +24,12 @@ description: "Learn how to migrate Lucia version 1 to version 2 beta"
 
 ## Installation
 
-Remove `lucia-auth` from your package.json. Install the beta version of `lucia` and your adapter:
+Remove `lucia-auth` from your package.json. Install the beta version of `lucia`:
 
 ```
-npm i lucia@beta @lucia-auth/adapter-prisma@beta
-pnpm add lucia@beta @lucia-auth/adapter-prisma@beta
-yarn add lucia@beta @lucia-auth/adapter-prisma@beta
+npm i lucia@beta
+pnpm add lucia@beta
+yarn add lucia@beta
 ```
 
 If you're using the OAuth integration, install the beta version of it as well:
@@ -50,7 +50,6 @@ See each database adapter package's migration guide:
 - [`@lucia-auth/adapter-prisma`](/start-here/migrate-v2/prisma)
 - [`@lucia-auth/adapter-session-redis`](/start-here/migrate-v2/redis)
 - [`@lucia-auth/adapter-sqlite`](/start-here/migrate-v2/sqlite)
-
 
 ## `Lucia` namespace
 
@@ -75,7 +74,7 @@ import lucia from "lucia-auth";
 import { lucia } from "lucia";
 ```
 
-You should find and replace all instances of "lucia-auth" (or 'lucia-auth') with "lucia". 
+You should find and replace all instances of "lucia-auth" (or 'lucia-auth') with "lucia".
 
 ## Initialize Lucia
 
@@ -124,7 +123,7 @@ const auth = lucia({
 	},
 
 	// autoDatabaseCleanup: false, <= removed for now
-	csrfProtection: true, // as is
+	csrfProtection: true, // no change
 	generateUserId: () => generateRandomString(16), // previously `generateCustomUserId()`
 	passwordHash, // previously `hash`
 	allowedRequestOrigins: ["https://foo.example.com"], // previously `origin`
@@ -244,4 +243,20 @@ import {
 	serializeCookie,
 	isWithinExpiration
 } from "lucia/utils";
+```
+
+## OAuth
+
+The OAuth package also had some changes as well.
+
+### Removed `provider()`
+
+We now provide [`providerUserAuth()`]() which is a lower level API for implementing your own provider.
+
+### Renamed `providerUser` and `tokens`
+
+`providerUser` and `tokens` of the `validateCallback()` return value is now renamed to `githubUser` and `githubTokens`, etc.
+
+```ts
+const { githubUser, githubTokens } = await githubAuth.validateCallback(code);
 ```
