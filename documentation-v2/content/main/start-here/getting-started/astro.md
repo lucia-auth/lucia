@@ -45,10 +45,7 @@ const client = new PrismaClient();
 const auth = lucia({
 	env: import.meta.env.DEV ? "DEV" : "PROD",
 	middleware: astro(),
-	adapter: prisma({
-		mode: "default",
-		client
-	})
+	adapter: prisma(client)
 });
 ```
 

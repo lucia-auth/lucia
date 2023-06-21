@@ -47,10 +47,7 @@ const client = new PrismaClient();
 const auth = lucia({
 	env: dev ? "DEV" : "PROD",
 	middleware: sveltekit(),
-	adapter: prisma({
-		mode: "default",
-		client
-	})
+	adapter: prisma(client)
 });
 ```
 

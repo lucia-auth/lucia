@@ -56,10 +56,7 @@ const client = new PrismaClient();
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
 	middleware: express(),
-	adapter: prisma({
-		mode: "default",
-		client
-	})
+	adapter: prisma(client)
 });
 ```
 

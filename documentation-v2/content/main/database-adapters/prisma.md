@@ -11,40 +11,31 @@ import { prisma } from "@lucia-auth/adapter-prisma";
 ```
 
 ```ts
-const prisma: (config: {
-	client: PrismaClient;
-	mode: "default";
-}) => InitializeAdapter<Adapter>;
-
-const prisma: (config: {
-	client: PrismaClient;
-	modelNames: {
-		user: string;
-		key: string;
-		session: string;
-	};
-	userRelationKey: string;
-}) => InitializeAdapter<Adapter>;
+const prisma: (
+	client: PrismaClient,
+	options?: {
+		modelNames: {
+			user: string;
+			key: string;
+			session: string;
+		};
+		userRelationKey: string;
+	}
+) => InitializeAdapter<Adapter>;
 ```
 
 ##### Parameters
 
-| name   | type           | description       |
-| ------ | -------------- | ----------------- |
-| client | `PrismaClient` | The Prisma client |
-| mode   | `"default"`    | Default mode      |
+| name                         | type           | description       | optional |
+| ---------------------------- | -------------- | ----------------- | :------: |
+| `client`                     | `PrismaClient` | The Prisma client |          |
+| `options`                    |                |                   |    ✓     |
+| `options.modelNames.user`    | `string`       |                   |          |
+| `options.modelNames.key`     | `string`       |                   |          |
+| `options.modelNames.session` | `string`       |                   |          |
+| `options.userRelationKey`    | `string`       |                   |          |
 
-| name               | type           | description       |
-| ------------------ | -------------- | ----------------- |
-| client             | `PrismaClient` | The Prisma client |
-| modelNames.user    | `string`       |                   |
-| modelNames.key     | `string`       |                   |
-| modelNames.session | `string`       |                   |
-| userRelationKey    | `string`       |                   |
-
-### Default mode
-
-When using the default mode, the adapter uses predefined adapter configs, and as such, your Prisma schema must match exactly the one listed below this page. You can still add columns to the user and session table.
+When `options` is undefined, the adapter uses predefined adapter configs, and as such, your Prisma schema must match exactly the one listed below this page. You can still add columns to the user and session table.
 
 The values for the `modelNames` params of the adapter config is the `camelCase` version of your `PascalCase` model names defined in your schema (sounds confusing but the TS auto-complete should help you). The `userRelationKey` is key that represents foreign key relations (`user_relation_key` in the example):
 
@@ -70,17 +61,13 @@ import { PrismaClient } from "@prisma/client";
 const client = new PrismaClient();
 
 const auth = lucia({
-	adapter: prisma({
-		mode: "default",
-		client
-	})
+	adapter: prisma(client)
 	// ...
 });
 
-// default mode values
+// default values
 const auth = lucia({
-	adapter: prisma({
-		client,
+	adapter: prisma(client, {
 		modelNames: {
 			user: "user",
 			key: "key",
@@ -94,7 +81,7 @@ const auth = lucia({
 
 ## Prisma schema
 
-You can add additional columns to the user model to store user attributes, and to the session model to store session attributes. **Your schema must exactly match this if you're using the default mode** (you can still add columns for attributes).
+You can add additional columns to the user model to store user attributes, and to the session model to store session attributes. **Your schema must exactly match this if you're `options` params is undefined** (you can still add columns for attributes).
 
 ```prisma
 model User {
