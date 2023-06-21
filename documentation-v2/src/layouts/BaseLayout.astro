@@ -1,0 +1,88 @@
+---
+type Props = {
+    title: string;
+    description?: string | null;
+};
+
+const { title, description } = Astro.props;
+
+const origin = import.meta.env.DEV
+	? Astro.url.origin
+	: "https://v2.lucia-auth.com";
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        <link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+
+        <!-- OpenGraph tags -->
+        <meta property="og:title" content={title} />
+        <meta property="og:url" content={`${origin}${Astro.url.pathname}`} />
+        <meta property="og:locale" content="en" />
+        <meta property="og:image" content={`${origin}/preview.jpg`} />
+        <meta property="og:image:alt" content="" />
+        <meta
+            name="description"
+            property="og:description"
+            content={description ?? ""}
+        />
+        <meta property="og:site_name" content="Lucia Documentation" />
+
+        <!-- For Discord and Twitter thumbnail -->
+        <meta name="twitter:card" content="summary_large_image" />
+
+        <!-- For Discord sidebar -->
+        <meta name="theme-color" content="#5f57ff" />
+        <title>
+            {title}
+        </title>
+        <link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            rel="preconnect"
+            href="https://fonts.googleapis.com"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            as="style"
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+            crossorigin
+        />
+    </head>
+    <body class="text-zinc-700 leading-relaxed text-base">
+        <slot />
+        <style>
+            /* adjust font size for code block */
+            :global(code) {
+                @apply text-code-base;
+            }
+            :global(.text-sm code) {
+                @apply text-code-sm;
+            }
+            :global(.text-lg code) {
+                @apply text-code-lg;
+            }
+            :global(.text-xl code) {
+                @apply text-code-xl;
+            }
+            :global(.text-2xl code) {
+                @apply text-code-2xl;
+            }
+            :global(.text-3xl code) {
+                @apply text-code-3xl;
+            }
+            :global(.text-4xl code) {
+                @apply text-code-4xl;
+            }
+            :global(.text-5xl code) {
+                @apply text-code-5xl;
+            }
+        </style>
+    </body>
+</html>
