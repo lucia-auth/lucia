@@ -5,6 +5,11 @@ import { generateRandomString } from "lucia-auth";
 import type { Auth } from "lucia-auth";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
 
+type Tokens = {
+	accessToken: string;
+	accessTokenExpiresIn: null;
+};
+
 type Config = OAuthConfig & {
 	redirectUri: string;
 };
