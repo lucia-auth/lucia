@@ -22,7 +22,7 @@ You can define additional attributes of your users such as email and username.
 
 ## Defining user attributes
 
-You can define custom user attributes by returning them in [`getUserAttributes()`]() configuration. As long as the required fields are defined in the user table, you can add any number of fields to the user table.
+You can define custom user attributes by returning them in [`getUserAttributes()`]() configuration. The params for `getUserAttributes()` will include every field in the `user` table. See [Database](/basics/database#user-table) for adding custom fields to your user table. 
 
 ```ts
 import { lucia } from "lucia";
@@ -39,30 +39,6 @@ lucia({
 const user: User = await auth.getUser(userId);
 // `userId` is always defined
 const { userId, username } = user;
-
-// `getUserAttributes()` params
-// `Lucia.databaseUser`: see next section
-type DatabaseUser = {
-	// user table must have these fields
-	id: string;
-} & Lucia.databaseUser;
-```
-
-You can add additional columns to the user table so long as the `id` column exists as primary key. In the example above, the `username` column is added to the table and is included in `databaseUser`.
-
-### Typing additional fields in the user table
-
-Additional fields in your session table should be defined in [`Lucia.DatabaseUserAttributes`]().
-
-```ts
-/// <reference types="lucia" />
-declare namespace Lucia {
-	// ...
-	type DatabaseUserAttributes = {
-		// required fields (i.e. id) should not be defined here
-		username: string;
-	};
-}
 ```
 
 ## Create users

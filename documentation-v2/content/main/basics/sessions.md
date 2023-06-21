@@ -37,7 +37,7 @@ Requests can be validated by validating the session id included. There are mainl
 
 ## Defining session attributes
 
-You can define custom session attributes by returning them in [`getSessionAttributes()`]() configuration. As long as the required fields are defined in the session table, you can add any number of fields to the session table.
+You can define custom user attributes by returning them in [`getSessionAttributes()`]() configuration. The params for `getSessionAttributes()` will include every field in the `session` table. See [Database](/basics/database#session-table) for adding custom fields to your session table.
 
 ```ts
 import { lucia } from "lucia";
@@ -54,31 +54,6 @@ lucia({
 const session: Session = await auth.validateSession(sessionId);
 // `sessionId` etc are always included
 const { sessionId, createdAt } = session;
-
-// `getSessionAttributes()` params
-// `Lucia.DatabaseSessionAttributes`: see next section
-type DatabaseSession = {
-	// session table must have these fields
-	id: string;
-	user_id: string;
-	active_expires: number;
-	idle_expires;
-} & Lucia.DatabaseSessionAttributes;
-```
-
-### Typing additional fields in the session table
-
-Additional fields in your session table should be defined in [`Lucia.DatabaseSessionAttributes`]().
-
-```ts
-/// <reference types="lucia" />
-declare namespace Lucia {
-	// ...
-	type DatabaseSessionAttributes = {
-		// do not include required fields (e.g. id, user_id, etc)
-		created_at: Date;
-	}; // =>
-}
 ```
 
 ## Create sessions
@@ -242,7 +217,6 @@ await auth.invalidateAllUserSessions(userId);
 You can update attributes of a session with [`Auth.updateSessionAttributes()`](). You can update a single field or multiple fields. It returns the update session, or throws `AUTH_INVALID_SESSION_ID` if the session does not exist.
 
 In general however, **invalidating the current session and creating a new session is preferred.**
-
 
 ```ts
 import { auth } from "./lucia.js";

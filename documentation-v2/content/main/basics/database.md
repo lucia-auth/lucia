@@ -29,8 +29,6 @@ Lucia requires 3 tables to work, which are then connected to Lucia via a databas
 
 ### User table
 
-In addition to the required fields shown below, you can add any additional fields which should be [declared in type `Lucia.DatabaseUserAttributes`](). You can then [define custom user attributes]().
-
 | name | type     | primary key | description |
 | ---- | -------- | :---------: | ----------- |
 | id   | `string` |      ✓      | User id     |
@@ -41,9 +39,19 @@ type UserSchema = {
 } & Lucia.DatabaseUserAttributes;
 ```
 
-### Session table
+In addition to the required fields shown below, you can add any additional fields to the table, in which case they should be declared in type `Lucia.DatabaseUserAttributes`.
 
-In addition to the required fields shown below, you can add any additional fields which should be [declared in type `Lucia.DatabaseSessionAttributes`](). You can then [define custom session attributes]().
+```ts
+declare namespace Lucia {
+	// ...
+	type DatabaseUserAttributes = {
+		// required fields (i.e. id) should not be defined here
+		username: string;
+	};
+}
+```
+
+### Session table
 
 | name           | type            | primary key | references | description                                        |
 | -------------- | --------------- | :---------: | ---------- | -------------------------------------------------- |
@@ -59,6 +67,18 @@ type SessionSchema = {
 	idle_expires: number;
 	user_id: string;
 } & Lucia.DatabaseSessionAttributes;
+```
+
+In addition to the required fields shown below, you can add any additional fields to the table, in which case they should be declared in type `Lucia.DatabaseSessionAttributes`.
+
+```ts
+declare namespace Lucia {
+	// ...
+	type DatabaseSessionAttributes = {
+		// required fields (i.e. id) should not be defined here
+		username: string;
+	};
+}
 ```
 
 ### Key table
