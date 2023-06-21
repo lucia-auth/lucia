@@ -1,212 +1,125 @@
-import { generateRandomString } from "lucia-auth";
-import { typeError, valueError } from "./validate.js";
-import type { KeySchema, SessionSchema } from "lucia-auth";
+import { generateRandomString } from "lucia/utils";
+import type { KeySchema, SessionSchema, UserSchema } from "lucia";
 
-export type TestUserSchema = {
-	id: string;
+export type TestUserSchema = UserSchema & {
 	username: string;
 };
 
-type QueryHandler<Schema> = {
+export type TestSessionSchema = SessionSchema & {
+	country: string;
+};
+
+export type TableQueryHandler<
+	Schema extends {
+		id: string;
+	} = any
+> = {
 	get: () => Promise<Schema[]>;
 	insert: (data: Schema) => Promise<void>;
 	clear: () => Promise<void>;
 };
 
-export type LuciaQueryHandler = {
-	user?: QueryHandler<TestUserSchema>;
-	session?: QueryHandler<SessionSchema>;
-	key?: QueryHandler<KeySchema>;
+export type QueryHandler = {
+	user?: TableQueryHandler<TestUserSchema>;
+	session?: TableQueryHandler<SessionSchema>;
+	key?: TableQueryHandler<KeySchema>;
 };
 
 export class Database {
-	private readonly queryHandler: LuciaQueryHandler;
+	private readonly queryHandler: QueryHandler;
+
+	constructor(queryHandler: QueryHandler) {
+		this.queryHandler = queryHandler;
+	}
+
 	public user = () => {
-		return new User(this.queryHandler);
+		const userQueryHandler = this.queryHandler["user"];
+		if (!userQueryHandler) {
+			throw new Error("No query handler provided for 'user'");
+		}
+		return new Table<TestUserSchema>(userQueryHandler);
 	};
+
+	public session = () => {
+		const sessionQueryHandler = this.queryHandler["session"];
+		if (!sessionQueryHandler) {
+			throw new Error("No query handler provided for 'session'");
+		}
+		return new Table<TestSessionSchema>(sessionQueryHandler);
+	};
+
+	public key = () => {
+		const keyQueryHandler = this.queryHandler["key"];
+		if (!keyQueryHandler) {
+			throw new Error("No query handler provided for 'key'");
+		}
+		return new Table<KeySchema>(keyQueryHandler);
+	};
+
+	public generateUser = (options?: {
+		userId?: string;
+		username?: string;
+	}): TestUserSchema => {
+		const userId = options?.userId ?? generateRandomString(8);
+		const username = options?.username ?? generateRandomString(4);
+		return {
+			id: userId,
+			username
+		};
+	};
+	public generateSession = (
+		userId: string | null,
+		options?: {
+			id?: string;
+			country?: string;
+		}
+	): TestSessionSchema => {
+		const activeExpires = new Date().getTime() + 1000 * 60 * 60 * 8;
+		return {
+			user_id: userId ?? generateRandomString(8),
+			id: options?.id ?? `at_${generateRandomString(40)}`,
+			active_expires: activeExpires,
+			idle_expires: activeExpires + 1000 * 60 * 60 * 24,
+			country: options?.country ?? "XX"
+		};
+	};
+
+	public generateKey = (
+		userId: string | null,
+		options?: {
+			id?: string;
+		}
+	): KeySchema => {
+		const keyUserId = userId ?? generateRandomString(8);
+		return {
+			id: options?.id ?? generateRandomString(30),
+			user_id: keyUserId,
+			hashed_password: null
+		};
+	};
+
 	public clear = async () => {
 		await this.queryHandler.key?.clear();
 		await this.queryHandler.session?.clear();
 		await this.queryHandler.user?.clear();
 	};
-	constructor(queryHandler: LuciaQueryHandler) {
+}
+
+class Table<_Schema extends { id: string }> {
+	protected readonly queryHandler: TableQueryHandler<_Schema>;
+	constructor(queryHandler: TableQueryHandler<_Schema>) {
 		this.queryHandler = queryHandler;
 	}
-}
-
-type ExtractQueryHandlerSchema<Q> = Q extends QueryHandler<infer Schema>
-	? Schema
-	: never;
-
-class Model<StoreName extends Extract<keyof LuciaQueryHandler, string>> {
-	public value: ExtractQueryHandlerSchema<LuciaQueryHandler[StoreName]>;
-	protected readonly name: string;
-	protected readonly queryHandler: LuciaQueryHandler;
-	private storeQueryHandler: LuciaQueryHandler[StoreName];
-	private readonly parent: Model<any>[];
-	constructor(
-		name: StoreName,
-		queryHandler: LuciaQueryHandler,
-		value: ExtractQueryHandlerSchema<LuciaQueryHandler[StoreName]>,
-		parent: Model<any>[] = []
-	) {
-		this.name = name;
-		this.value = value;
-		this.queryHandler = queryHandler;
-		this.storeQueryHandler = queryHandler[name];
-		this.parent = parent;
-	}
-	public commit = async () => {
-		for (const parentModel of this.parent) {
-			await parentModel.commit();
+	public insert = async (...values: _Schema[]) => {
+		for (const value of values) {
+			await this.queryHandler.insert(value);
 		}
-		await this.storeQueryHandler?.insert(this.value as any);
 	};
-	private safeCompare = (target: unknown) => {
-		if (typeof target !== "object" || target === null)
-			throw typeError(target, "object");
-		for (const [refKey, refValue] of Object.entries(this.value) as [any, any]) {
-			if (target[refKey as keyof Object] !== refValue) {
-				return false;
-			}
-		}
-		return true;
+	public get = async (id: string) => {
+		const result = await this.queryHandler.get();
+		return result.find((val) => val.id === id) ?? null;
 	};
-	public compare = (target: unknown) => {
-		const isEqual = this.safeCompare(target);
-		if (isEqual) return;
-		throw valueError(target, this.value, "Target was not the expected value");
+	public getAll = async () => {
+		return await this.queryHandler.get();
 	};
-	public find = (target: unknown) => {
-		if (!Array.isArray(target)) {
-			throw typeError(target, "array");
-		}
-		for (const value of target) {
-			const isEqual = this.safeCompare(value);
-			if (isEqual) return;
-		}
-		throw valueError(
-			target,
-			this.value,
-			"Target did not include the expected value"
-		);
-	};
-	public exists = async () => {
-		const databaseData = (await this.storeQueryHandler?.get()) ?? [];
-		const existsInDatabase = databaseData.some(this.safeCompare);
-		if (existsInDatabase) return;
-		console.log("target:");
-		console.dir(this.value, {
-			depth: null
-		});
-		console.log("store");
-		console.dir(databaseData, {
-			depth: null
-		});
-		throw new Error(`Target not found in store ${this.name}`);
-	};
-	public notExits = async () => {
-		const databaseData = (await this.storeQueryHandler?.get()) ?? [];
-		const existsInDatabase = databaseData.some(this.safeCompare);
-		if (!existsInDatabase) return;
-		console.log("target:");
-		console.dir(this.value, {
-			depth: null
-		});
-		console.log("store");
-		console.dir(databaseData, {
-			depth: null
-		});
-		throw new Error(`Target found in store ${this.name}`);
-	};
-	public update = (
-		value: Partial<ExtractQueryHandlerSchema<LuciaQueryHandler[StoreName]>>
-	) => {
-		this.value = { ...this.value, ...value };
-	};
-}
-
-class User extends Model<"user"> {
-	public session = () => {
-		return new Session(this.queryHandler, [this], {
-			userId: this.value.id
-		});
-	};
-	public key = (option: {
-		primary: boolean;
-		passwordDefined: boolean;
-		oneTime: boolean;
-	}) => {
-		return new Key(this.queryHandler, [this], {
-			userId: this.value.id,
-			...option
-		});
-	};
-	constructor(
-		queryHandler: LuciaQueryHandler,
-		options?: {
-			userId?: string;
-			username?: string;
-		}
-	) {
-		const userId = options?.userId ?? generateRandomString(8);
-		const username = options?.username ?? `user_${generateRandomString(4)}`;
-		super("user", queryHandler, {
-			id: userId,
-			username
-		});
-	}
-}
-
-class Session extends Model<"session"> {
-	constructor(
-		queryHandler: LuciaQueryHandler,
-		parent: Model<any>[],
-		options: {
-			userId: string;
-		}
-	) {
-		const activeExpires = new Date().getTime() + 1000 * 60 * 60 * 8;
-		super(
-			"session",
-			queryHandler,
-			{
-				user_id: options.userId,
-				id: `at_${generateRandomString(40)}`,
-				active_expires: activeExpires,
-				idle_expires: activeExpires + 1000 * 60 * 60 * 24
-			},
-			parent
-		);
-	}
-}
-
-class Key extends Model<"key"> {
-	constructor(
-		queryHandler: LuciaQueryHandler,
-		parent: Model<any>[],
-		options: {
-			userId: string;
-			primary: boolean;
-			passwordDefined: boolean;
-			oneTime: boolean;
-		}
-	) {
-		const DURATION_SEC = 60 * 60;
-		const oneTimeExpires = options.oneTime
-			? new Date().getTime() + DURATION_SEC * 1000
-			: null;
-		super(
-			"key",
-			queryHandler,
-			{
-				id: `test:${options.userId}@example.com`,
-				user_id: options.userId,
-				primary_key: options.primary,
-				hashed_password: options.passwordDefined ? "HASHED" : null,
-				expires: oneTimeExpires
-			},
-			parent
-		);
-	}
 }

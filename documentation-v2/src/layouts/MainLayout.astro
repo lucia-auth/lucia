@@ -1,0 +1,25 @@
+---
+import DocumentationNav from "@components/ContentNav.astro";
+import Header from "@components/Header.astro";
+import { getSubCollections } from "@content";
+import BaseLayout from "./BaseLayout.astro";
+
+const subCollections = await getSubCollections("main");
+
+type Props = {
+    title: string;
+    description?: string | null;
+};
+
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+    <Header />
+    <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
+        <DocumentationNav subCollections={subCollections} collectionId="main" />
+    </div>
+    <main class="py-20 px-16 ml-80 overflow-hidden">
+        <slot />
+    </main>
+</BaseLayout>

@@ -1,27 +1,47 @@
-import clc from "cli-color";
+type Test = (name: string, fn: () => Promise<void>) => Promise<void>;
+type Skip = () => void;
 
-export const test = async (
-	name: string,
-	description: string,
-	func: () => Promise<void>
-) => {
-	console.log(
-		`\n${clc.bold.blue("[Test]")} ${clc.bold(name)} : ${description}`
-	);
+let passedCount = 0;
+
+const test: Test = async (name, fn) => {
 	try {
-		await func();
-		console.log(`${clc.green.bold("[Success]")} ${name}`);
-	} catch (e) {
-		const error = e as Error;
-		console.error(`${clc.red("[Error]")} ${error.message}`);
-		console.error(`${clc.bold.red("[Failed]")} ${name}`);
-		throw new Error();
+		await fn();
+		passedCount += 1;
+		console.log(`     \x1B[32m✓ \x1B[0;2m${name}\x1B[0m`);
+		await afterEachFn();
+	} catch (error) {
+		console.log(`     \x1B[31m✗ \x1B[0;2m${name}\x1B[0m`);
+		throw error;
 	}
 };
 
-export const end = () => {
-	console.log(`${clc.green.bold("Success!")} Completed all tests`);
-	process.exit();
+const skip: Skip = () => {
+	console.log(`     \x1B[33m! \x1B[0;2mSkipped tests\x1B[0m`);
 };
 
-export const INVALID_INPUT = "INVALID_INPUT";
+export const method = async (
+	name: string,
+	runTests: (test: Test, skip: Skip) => Promise<void>
+) => {
+	console.log(`\n  \x1B[36m${name}\x1B[0m`);
+
+	await runTests(test, skip);
+};
+
+export const start = () => {
+	console.log(
+		`\n\x1B[38;5;63;1m[start] \x1B[0;2m Running adapter testing module\x1B[0m`
+	);
+};
+
+export const finish = () => {
+	console.log(
+		`\n\x1B[32;1m[success] \x1B[0;2m Adapter passed \x1B[3m${passedCount}\x1B[23m tests\x1B[0m\n`
+	);
+};
+
+let afterEachFn = async () => {};
+
+export const afterEach = (fn: () => Promise<void>) => {
+	afterEachFn = fn;
+};

@@ -1,5 +1,23 @@
 # @lucia-auth/adapter-mysql
 
+## 2.0.0-beta.1
+
+- [#731](https://github.com/pilcrowOnPaper/lucia/pull/731) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix internal imports
+
+### Patch changes
+
+- [#729](https://github.com/pilcrowOnPaper/lucia/pull/729) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Export `d1` adapter
+
+## 2.0.0-beta.0
+
+### Major changes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
+
+### Minor changes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add option to configure table names in `mysql2()` and `planetscale()`
+
 ## 1.1.1
 
 ### Patch changes

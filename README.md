@@ -30,7 +30,7 @@ const sessionCookie = auth.createSessionCookie(session);
 
 **[Join the Discord server!](https://discord.gg/PwrK3kpVR3)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia-auth/CHANGELOG.md)**
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
 
 **[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia/blob/main/CONTRIBUTING.md)**
 

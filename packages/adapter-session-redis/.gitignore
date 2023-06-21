@@ -2,3 +2,4 @@
 /dist
 .DS_Store
 .env
+*.tgz

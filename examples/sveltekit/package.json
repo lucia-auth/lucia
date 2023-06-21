@@ -30,7 +30,7 @@
 		"svelte-preprocess": "^4.10.7",
 		"tailwindcss": "^3.1.8",
 		"tslib": "^2.4.0",
-		"typescript": "5.x",
+		"typescript": "latest",
 		"vite": "4.x"
 	},
 	"type": "module",

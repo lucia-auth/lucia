@@ -230,7 +230,7 @@ const deleteDeadUserSessions: (userId: string) => Promise<void>;
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "lucia";
 
 try {
 	await auth.deleteExpiredUserSession(userId);
@@ -257,7 +257,7 @@ const deleteKey: (providerId: string, providerUserId: string) => Promise<void>;
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "lucia";
 
 try {
 	await auth.deleteKey("username", "user@example.com");
@@ -621,7 +621,7 @@ const invalidateSession: (sessionId: string) => Promise<void>;
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "lucia";
 
 try {
 	await auth.invalidateSession(sessionId);
@@ -661,7 +661,7 @@ const renewSession: (sessionId: string) => Promise<Session>;
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "lucia";
 
 try {
 	const renewedSession = await auth.renewSession(session.sessionId);
@@ -741,7 +741,7 @@ const updateUserAttributes: (
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "lucia";
 
 try {
 	await auth.updateUserAttributes(userId, {
@@ -886,7 +886,7 @@ const validateSession: (sessionId: string) => Promise<Session>;
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "lucia";
 
 try {
 	const session = await auth.validateSession(sessionId);
@@ -932,7 +932,7 @@ const validateSessionUser: (
 #### Example
 
 ```ts
-import { auth } from "lucia-auth";
+import { auth } from "lucia";
 
 try {
 	const { session, user } = await auth.validateSessionUser(sessionId);

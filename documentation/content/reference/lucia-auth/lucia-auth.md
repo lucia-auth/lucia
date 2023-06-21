@@ -6,7 +6,7 @@ title: "Main (/)"
 These can be imported from `lucia-auth` and should only be used inside a server context.
 
 ```ts
-import { generateRandomString } from "lucia-auth";
+import { generateRandomString } from "lucia";
 ```
 
 For exported types, refer to [Public types](/reference/lucia-auth/types).
@@ -62,8 +62,9 @@ const lucia: (config: Configuration) => Auth;
 This is exported as default:
 
 ```ts
-import lucia from "lucia-auth";
-import { default as lucia } from "lucia-auth";
+import lucia from "lucia";
+// or
+import { default as lucia } from "lucia";
 ```
 
 #### Parameter
