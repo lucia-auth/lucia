@@ -1,3 +1,3 @@
-export { generateState, LuciaOAuthRequestError, useAuth } from "./core.js";
+export { generateState, OAuthRequestError, useAuth } from "./core.js";
 
 export type { OAuthProvider } from "./core.js";

@@ -29,13 +29,14 @@ export type OAuthProvider<A extends Auth> = {
 	) => Promise<readonly [URL, ...any[]]>;
 };
 
-export class LuciaOAuthRequestError extends Error {
-	public status;
-	public body;
-	constructor(status: number, body: Record<string, any> | null) {
-		super("REQUEST_FAILED");
-		this.status = status;
-		this.body = body;
+export class OAuthRequestError extends Error {
+	public request: Request;
+	public response: Response;
+	public message = "OAUTH_REQUEST_FAILED" as const;
+	constructor(request: Request, response: Response) {
+		super("OAUTH_REQUEST_FAILED");
+		this.request = request;
+		this.response = response;
 	}
 }
 
