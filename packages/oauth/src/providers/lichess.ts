@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, connectAuth } from "../core.js";
+import { scope, generateState, useAuth } from "../core.js";
 import { generateRandomString } from "lucia-auth";
 
 import type { Auth } from "lucia-auth";
@@ -76,9 +76,9 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		const tokens = await getTokens(code, code_verifier);
 		const providerUser = await getProviderUser(tokens.accessToken);
 		const providerUserId = providerUser.id;
-		const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+		const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
 		return {
-			...providerAuth,
+			...providerAuthHelpers,
 			providerUser,
 			tokens
 		};
