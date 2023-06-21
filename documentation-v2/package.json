@@ -7,7 +7,8 @@
 		"start": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"astro": "astro"
+		"astro": "astro",
+		"auri.deploy": "curl -X POST $V2_VERCEL_DEPLOY_HOOK",
 	},
 	"dependencies": {
 		"@astrojs/tailwind": "^3.1.3",
