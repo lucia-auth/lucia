@@ -25,12 +25,12 @@ const planetscale: (
 
 Table names are automatically escaped.
 
-| name               | type         | description                              |
-| ------------------ | ------------ | ---------------------------------------- |
-| connection         | `Connection` | PlanetScale serverless driver connection |
-| tableNames.user    | `string`     | User table name                          |
-| tableNames.key     | `string`     | Key table name                           |
-| tableNames.session | `string`     | Session table name                       |
+| name                 | type         | description                              |
+| -------------------- | ------------ | ---------------------------------------- |
+| `connection`         | `Connection` | PlanetScale serverless driver connection |
+| `tableNames.user`    | `string`     | User table name                          |
+| `tableNames.key`     | `string`     | Key table name                           |
+| `tableNames.session` | `string`     | Session table name                       |
 
 ## Installation
 

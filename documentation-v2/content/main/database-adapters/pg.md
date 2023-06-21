@@ -26,12 +26,12 @@ const pg: (
 
 Table names are automatically escaped.
 
-| name               | type     | description          |
-| ------------------ | -------- | -------------------- |
-| pool               | `Pool`   | `pg` connection pool |
-| tableNames.user    | `string` | User table name      |
-| tableNames.key     | `string` | Key table name       |
-| tableNames.session | `string` | Session table name   |
+| name                 | type     | description          |
+| -------------------- | -------- | -------------------- |
+| `pool`               | `Pool`   | `pg` connection pool |
+| `tableNames.user`    | `string` | User table name      |
+| `tableNames.key`     | `string` | Key table name       |
+| `tableNames.session` | `string` | Session table name   |
 
 ## Installation
 

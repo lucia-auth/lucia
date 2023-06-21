@@ -31,13 +31,13 @@ const facebook: (
 
 ##### Parameters
 
-| name                | type                                       | description                                        | optional |
-| ------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
-| config.clientId     | `string`                                   | Facebook OAuth app client id                       |          |
-| config.clientSecret | `string`                                   | Facebook OAuth app client secret                   |          |
-| configs.redirectUri | `string`                                   | an authorized redirect URI                         |          |
-| config.scope        | `string[]`                                 | an array of scopes - `identity` is always included |    ✓     |
+| name                  | type                                       | description                                        | optional |
+| --------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| `config.clientId`     | `string`                                   | Facebook OAuth app client id                       |          |
+| `config.clientSecret` | `string`                                   | Facebook OAuth app client secret                   |          |
+| `configs.redirectUri` | `string`                                   | an authorized redirect URI                         |          |
+| `config.scope`        | `string[]`                                 | an array of scopes - `identity` is always included |    ✓     |
 
 ##### Returns
 
@@ -80,9 +80,9 @@ const validateCallback: (code: string) => Promise<FacebookUserAuth>;
 
 ##### Parameters
 
-| name | type     | description                          |
-| ---- | -------- | ------------------------------------ |
-| code | `string` | The authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
 ##### Returns
 
@@ -92,9 +92,9 @@ const validateCallback: (code: string) => Promise<FacebookUserAuth>;
 
 ##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+| name             | description                          |
+| ---------------- | ------------------------------------ |
+| `FAILED_REQUEST` | invalid code, network error, unknown |
 
 ### `FacebookUserAuth`
 

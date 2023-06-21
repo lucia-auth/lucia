@@ -31,13 +31,13 @@ const discord: (
 
 ##### Parameters
 
-| name                | type                                       | description                                        | optional |
-| ------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
-| config.clientId     | `string`                                   | Discord OAuth app client id                        |          |
-| config.clientSecret | `string`                                   | Discord OAuth app client secret                    |          |
-| configs.redirectUri | `string`                                   | an authorized redirect URI                         |          |
-| config.scope        | `string[]`                                 | an array of scopes - `identify` is always included |    ✓     |
+| name                  | type                                       | description                                        | optional |
+| --------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| `config.clientId`     | `string`                                   | Discord OAuth app client id                        |          |
+| `config.clientSecret` | `string`                                   | Discord OAuth app client secret                    |          |
+| `configs.redirectUri` | `string`                                   | an authorized redirect URI                         |          |
+| `config.scope`        | `string[]`                                 | an array of scopes - `identify` is always included |    ✓     |
 
 ##### Returns
 
@@ -76,9 +76,9 @@ const validateCallback: (code: string) => Promise<DiscordUserAuth>;
 
 ##### Parameters
 
-| name | type     | description                          |
-| ---- | -------- | ------------------------------------ |
-| code | `string` | The authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
 ##### Returns
 
@@ -88,9 +88,9 @@ const validateCallback: (code: string) => Promise<DiscordUserAuth>;
 
 ##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+| name             | description                          |
+| ---------------- | ------------------------------------ |
+| `FAILED_REQUEST` | invalid code, network error, unknown |
 
 ### `DiscordUserAuth`
 

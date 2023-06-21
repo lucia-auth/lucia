@@ -30,14 +30,14 @@ const twitch: (
 
 ##### Parameters
 
-| name                 | type                                       | description                                                          | optional |
-| -------------------- | ------------------------------------------ | -------------------------------------------------------------------- | :------: |
-| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                       |          |
-| configs.clientId     | `string`                                   | Twitch OAuth app client id                                           |          |
-| configs.clientSecret | `string`                                   | Twitch OAuth app client secret                                       |          |
-| configs.redirectUri  | `string`                                   | one of the authorized redirect URIs                                  |          |
-| configs.forceVerify  | `boolean`                                  | forces the user to re-authorize your app’s access to their resources |    ✓     |
-| configs.scope        | `string[]`                                 | an array of scopes                                                   |    ✓     |
+| name                   | type                                       | description                                                          | optional |
+| ---------------------- | ------------------------------------------ | -------------------------------------------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                       |          |
+| `configs.clientId`     | `string`                                   | Twitch OAuth app client id                                           |          |
+| `configs.clientSecret` | `string`                                   | Twitch OAuth app client secret                                       |          |
+| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs                                  |          |
+| `configs.forceVerify`  | `boolean`                                  | forces the user to re-authorize your app’s access to their resources |    ✓     |
+| `configs.scope`        | `string[]`                                 | an array of scopes                                                   |    ✓     |
 
 ##### Returns
 
@@ -80,9 +80,9 @@ const validateCallback: (code: string) => Promise<TwitchUserAuth>;
 
 ##### Parameters
 
-| name | type     | description                          |
-| ---- | -------- | ------------------------------------ |
-| code | `string` | The authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
 ##### Returns
 
@@ -92,9 +92,9 @@ const validateCallback: (code: string) => Promise<TwitchUserAuth>;
 
 ##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+| name             | description                          |
+| ---------------- | ------------------------------------ |
+| `FAILED_REQUEST` | invalid code, network error, unknown |
 
 ### `TwitchUserAuth`
 

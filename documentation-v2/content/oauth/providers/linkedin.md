@@ -29,13 +29,13 @@ const linkedin: (
 
 ##### Parameters
 
-| name                | type                                       | description                                             | optional |
-| ------------------- | ------------------------------------------ | ------------------------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                          |          |
-| config.clientId     | `string`                                   | Linkedin OAuth app client id                            |          |
-| config.clientSecret | `string`                                   | Linkedin OAuth app client secret                        |          |
-| config.redirectUri  | `string`                                   | Linkedin OAuth app redirect uri                         |          |
-| config.scope        | `string[]`                                 | an array of scopes - `r_liteprofile` is always included |    ✓     |
+| name                  | type                                       | description                                             | optional |
+| --------------------- | ------------------------------------------ | ------------------------------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                          |          |
+| `config.clientId`     | `string`                                   | Linkedin OAuth app client id                            |          |
+| `config.clientSecret` | `string`                                   | Linkedin OAuth app client secret                        |          |
+| `config.redirectUri`  | `string`                                   | Linkedin OAuth app redirect uri                         |          |
+| `config.scope`        | `string[]`                                 | an array of scopes - `r_liteprofile` is always included |    ✓     |
 
 ##### Returns
 
@@ -78,9 +78,9 @@ const validateCallback: (code: string) => Promise<LinkedinUserAuth>;
 
 ##### Parameters
 
-| name | type     | description                          |
-| ---- | -------- | ------------------------------------ |
-| code | `string` | The authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
 ##### Returns
 
@@ -90,9 +90,9 @@ const validateCallback: (code: string) => Promise<LinkedinUserAuth>;
 
 ##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+| name             | description                          |
+| ---------------- | ------------------------------------ |
+| `FAILED_REQUEST` | invalid code, network error, unknown |
 
 ### `LinkedinUserAuth`
 

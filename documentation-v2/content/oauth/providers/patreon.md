@@ -32,13 +32,13 @@ const patreon: (
 
 ##### Parameters
 
-| name                 | type                                       | description                                        | optional |
-| -------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
-| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
-| configs.clientId     | `string`                                   | Patreon OAuth app client id                        |          |
-| configs.clientSecret | `string`                                   | Patreon OAuth app client secret                    |          |
-| configs.redirectUri  | `string`                                   | one of the authorized redirect URIs                |          |
-| configs.scope        | `string[]`                                 | an array of scopes - `identity` is always included |    ✓     |
+| name                   | type                                       | description                                        | optional |
+| ---------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| `configs.clientId`     | `string`                                   | Patreon OAuth app client id                        |          |
+| `configs.clientSecret` | `string`                                   | Patreon OAuth app client secret                    |          |
+| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs                |          |
+| `configs.scope`        | `string[]`                                 | an array of scopes - `identity` is always included |    ✓     |
 
 ##### Returns
 
@@ -81,9 +81,9 @@ const validateCallback: (code: string) => Promise<PatreonUserAuth>;
 
 ##### Parameters
 
-| name | type     | description                          |
-| ---- | -------- | ------------------------------------ |
-| code | `string` | The authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
 ##### Returns
 
@@ -93,9 +93,9 @@ const validateCallback: (code: string) => Promise<PatreonUserAuth>;
 
 ##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+| name             | description                          |
+| ---------------- | ------------------------------------ |
+| `FAILED_REQUEST` | invalid code, network error, unknown |
 
 ### `PatreonUserAuth`
 

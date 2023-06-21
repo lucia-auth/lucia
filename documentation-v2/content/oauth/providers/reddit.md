@@ -29,13 +29,13 @@ const reddit: (
 
 ##### Parameters
 
-| name                 | type                                       | description                                       | optional |
-| -------------------- | ------------------------------------------ | ------------------------------------------------- | :------: |
-| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                    |          |
-| configs.clientId     | `string`                                   | Reddit OAuth app client id                        |          |
-| configs.clientSecret | `string`                                   | Reddit OAuth app client secret                    |          |
-| configs.redirectUri  | `string`                                   | Reddit OAuth app redirect Uri                     |          |
-| configs.scope        | `string[]`                                 | an array of scopes (`identiy` is always selected) |    ✓     |
+| name                   | type                                       | description                                       | optional |
+| ---------------------- | ------------------------------------------ | ------------------------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                    |          |
+| `configs.clientId`     | `string`                                   | Reddit OAuth app client id                        |          |
+| `configs.clientSecret` | `string`                                   | Reddit OAuth app client secret                    |          |
+| `configs.redirectUri`  | `string`                                   | Reddit OAuth app redirect Uri                     |          |
+| `configs.scope`        | `string[]`                                 | an array of scopes (`identiy` is always selected) |    ✓     |
 
 ##### Returns
 
@@ -78,9 +78,9 @@ const validateCallback: (code: string) => Promise<RedditUserAuth>;
 
 ##### Parameters
 
-| name | type     | description                          |
-| ---- | -------- | ------------------------------------ |
-| code | `string` | The authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
 ##### Returns
 
@@ -90,9 +90,9 @@ const validateCallback: (code: string) => Promise<RedditUserAuth>;
 
 ##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+| name             | description                          |
+| ---------------- | ------------------------------------ |
+| `FAILED_REQUEST` | invalid code, network error, unknown |
 
 ### `RedditUserAuth`
 

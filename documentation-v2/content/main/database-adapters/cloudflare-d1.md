@@ -25,12 +25,12 @@ const d1: (
 
 Table names are automatically escaped.
 
-| name               | type         | description           |
-| ------------------ | ------------ | --------------------- |
-| database           | `D1Database` | Cloudflare D1 binding |
-| tableNames.user    | `string`     | User table name       |
-| tableNames.key     | `string`     | Key table name        |
-| tableNames.session | `string`     | Session table name    |
+| name                 | type         | description           |
+| -------------------- | ------------ | --------------------- |
+| `database`           | `D1Database` | Cloudflare D1 binding |
+| `tableNames.user`    | `string`     | User table name       |
+| `tableNames.key`     | `string`     | Key table name        |
+| `tableNames.session` | `string`     | Session table name    |
 
 ## Installation
 

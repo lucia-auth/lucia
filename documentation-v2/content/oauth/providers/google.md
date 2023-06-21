@@ -30,14 +30,14 @@ const google: (
 
 ##### Parameters
 
-| name                 | type                                       | description                                                                     | optional | default  |
-| -------------------- | ------------------------------------------ | ------------------------------------------------------------------------------- | :------: | :------: |
-| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                                  |          |          |
-| configs.clientId     | `string`                                   | Google OAuth app client id                                                      |          |          |
-| configs.clientSecret | `string`                                   | Google OAuth app client secret                                                  |          |          |
-| configs.redirectUri  | `string`                                   | an authorized redirect URI                                                      |          |          |
-| configs.scope        | `string[]`                                 | an array of scopes                                                              |    ✓     |          |
-| configs.accessType   | `"online" \| "offline"`                    | Google OAuth Access type ("online" (default) or "offline" (gets refresh_token)) |    ✓     | "online" |
+| name                   | type                                       | description                                                                     | optional | default  |
+| ---------------------- | ------------------------------------------ | ------------------------------------------------------------------------------- | :------: | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                                  |          |          |
+| `configs.clientId`     | `string`                                   | Google OAuth app client id                                                      |          |          |
+| `configs.clientSecret` | `string`                                   | Google OAuth app client secret                                                  |          |          |
+| `configs.redirectUri`  | `string`                                   | an authorized redirect URI                                                      |          |          |
+| `configs.scope`        | `string[]`                                 | an array of scopes                                                              |    ✓     |          |
+| `configs.accessType`   | `"online" \| "offline"`                    | Google OAuth Access type ("online" (default) or "offline" (gets refresh_token)) |    ✓     | "online" |
 
 ##### Returns
 
@@ -80,9 +80,9 @@ const validateCallback: (code: string) => Promise<GoogleUserAuth>;
 
 ##### Parameters
 
-| name | type     | description                          |
-| ---- | -------- | ------------------------------------ |
-| code | `string` | The authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
 ##### Returns
 
@@ -92,9 +92,9 @@ const validateCallback: (code: string) => Promise<GoogleUserAuth>;
 
 ##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+| name             | description                          |
+| ---------------- | ------------------------------------ |
+| `FAILED_REQUEST` | invalid code, network error, unknown |
 
 ### `GoogleUserAuth`
 

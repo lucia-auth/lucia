@@ -22,10 +22,10 @@ const redis: (
 
 ##### Parameters
 
-| name     | type                     | optional | description  |
-| -------- | ------------------------ | :------: | ------------ |
-| client   | `RedisClientType`        |          | Redis client |
-| prefixes | `Record<string, string>` |    ✓     | Key prefixes |
+| name       | type                     | optional | description  |
+| ---------- | ------------------------ | :------: | ------------ |
+| `client`   | `RedisClientType`        |          | Redis client |
+| `prefixes` | `Record<string, string>` |    ✓     | Key prefixes |
 
 ### Key prefixes
 

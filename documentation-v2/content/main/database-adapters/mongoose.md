@@ -22,11 +22,11 @@ const mongoose: (models: {
 
 Table names are automatically escaped.
 
-| name           | type    | description                           |
-| -------------- | ------- | ------------------------------------- |
-| models.User    | `Model` | Mongoose model for user collection    |
-| models.Key     | `Model` | Mongoose model for key collection     |
-| models.Session | `Model` | Mongoose model for session collection |
+| name             | type    | description                           |
+| ---------------- | ------- | ------------------------------------- |
+| `models.User`    | `Model` | Mongoose model for user collection    |
+| `models.Key`     | `Model` | Mongoose model for key collection     |
+| `models.Session` | `Model` | Mongoose model for session collection |
 
 ## Installation
 

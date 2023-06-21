@@ -123,9 +123,9 @@ const getSessionAttributes: (
 
 ##### Parameters
 
-| name            | type                                                         | description                    |
-| --------------- | ------------------------------------------------------------ | ------------------------------ |
-| databaseSession | [`SessionSchema`](/reference/lucia/interfaces#sessionschema) | Session stored in the database |
+| name              | type                                                         | description                    |
+| ----------------- | ------------------------------------------------------------ | ------------------------------ |
+| `databaseSession` | [`SessionSchema`](/reference/lucia/interfaces#sessionschema) | Session stored in the database |
 
 ##### Returns
 
@@ -151,9 +151,9 @@ const getUserAttributes: (databaseUser: UserSchema) => Record<any, any>;
 
 ##### Parameters
 
-| name         | type                                                   | description                 |
-| ------------ | ------------------------------------------------------ | --------------------------- |
-| databaseUser | [`UserSchema`](/reference/lucia/interfaces#userschema) | User stored in the database |
+| name           | type                                                   | description                 |
+| -------------- | ------------------------------------------------------ | --------------------------- |
+| `databaseUser` | [`UserSchema`](/reference/lucia/interfaces#userschema) | User stored in the database |
 
 ##### Returns
 
@@ -198,9 +198,9 @@ Generates a hash for a password synchronously or asynchronously.
 
 ##### Parameters
 
-| name     | type     | description          |
-| -------- | -------- | -------------------- |
-| password | `string` | The password to hash |
+| name       | type     | description          |
+| ---------- | -------- | -------------------- |
+| `password` | `string` | The password to hash |
 
 ##### Returns
 
@@ -214,10 +214,10 @@ Validates a hash generated using `passwordHash.generate()` synchronously or asyn
 
 ##### Parameters
 
-| name         | type     | description                                        |
-| ------------ | -------- | -------------------------------------------------- |
-| password     | `string` | The password to validate                           |
-| passwordHash | `string` | The password hash to validate the password against |
+| name           | type     | description                                        |
+| -------------- | -------- | -------------------------------------------------- |
+| `password`     | `string` | The password to validate                           |
+| {passwordHash} | `string` | The password hash to validate the password against |
 
 ##### Returns
 
