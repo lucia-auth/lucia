@@ -10,12 +10,6 @@ Documentation for Lucia v2 **WORK IN PROGRESS**
 pnpm i
 ```
 
-### Generate content
-
-```
-pnpm generate
-```
-
 ### Run server
 
 ```
