@@ -24,9 +24,9 @@ See [Github]() provider.
 
 See [Google]() provider.
 
-## `linkedIn()`
+## `linkedin()`
 
-See [LinkedIn]() provider.
+See [Linkedin]() provider.
 
 ## `patreon()`
 
