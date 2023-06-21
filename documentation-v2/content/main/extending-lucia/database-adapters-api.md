@@ -6,7 +6,7 @@ description: "Learn how to build your own database adapters"
 
 ### Errors
 
-Errors defined in the specification, such as `AUTH_INVALID_USER_ID` must be thrown as a [`LuciaError`]().
+Errors defined in the specification, such as `AUTH_INVALID_USER_ID` must be thrown as a [`LuciaError`](/reference/lucia/main#luciaerror).
 
 ```ts
 throw new LuciaError("AUTH_INVALID_USER_ID");
@@ -39,10 +39,10 @@ type Adapter = {
 	SessionAdapter;
 ```
 
-| type                 |
-| -------------------- |
-| [`UserAdapter`]()    |
-| [`SessionAdapter`]() |
+| type                                                                      |
+| ------------------------------------------------------------------------- |
+| [`UserAdapter`](/extending-lucia/database-adapters-api#useradapter)       |
+| [`SessionAdapter`](/extending-lucia/database-adapters-api#sessionadapter) |
 
 ### `getSessionAndUser()`
 
@@ -67,10 +67,10 @@ const getSessionAndUser: (
 
 ##### Returns
 
-| name      | type                          | description            |
-| --------- | ----------------------------- | ---------------------- |
-| `session` | [`SessionSchema`]()` \| null` | Target session         |
-| `user`    | [`UserSchema`]()` \| null`    | User of target session |
+| name      | type                                                        | description            |
+| --------- | ----------------------------------------------------------- | ---------------------- |
+| `session` | [`SessionSchema`](/basics/database#session-table)` \| null` | Target session         |
+| `user`    | [`UserSchema`](/basics/database#user-table)` \| null`       | User of target session |
 
 ## `UserAdapter`
 
@@ -161,9 +161,9 @@ const getKey: (keyId: string) => Promise<KeySchema | null>;
 
 ##### Returns
 
-| type            | description  |
-| --------------- | ------------ |
-| [`KeySchema`]() | Target `key` |
+| type                                      | description  |
+| ----------------------------------------- | ------------ |
+| [`KeySchema`](/basics/database#key-table) | Target `key` |
 
 ### `getKeysByUserId()`
 
@@ -182,9 +182,9 @@ const getKeysByUserId: (userId: string) => Promise<KeySchema[]>;
 
 ##### Returns
 
-| type                | description            |
-| ------------------- | ---------------------- |
-| [`KeySchema`]()`[]` | Array of matched `key` |
+| type                                          | description            |
+| --------------------------------------------- | ---------------------- |
+| [`KeySchema`](/basics/database#key-table)`[]` | Array of matched `key` |
 
 ### `getUser()`
 
@@ -203,9 +203,9 @@ const getUser: (userId: string) => Promise<UserSchema | null>;
 
 ##### Returns
 
-| type             | description   |
-| ---------------- | ------------- |
-| [`UserSchema`]() | Target `user` |
+| type                                        | description   |
+| ------------------------------------------- | ------------- |
+| [`UserSchema`](/basics/database#user-table) | Target `user` |
 
 ### `setKey()`
 
@@ -219,9 +219,9 @@ const setKey: (key: KeySchema) => Promise<void>;
 
 ##### Parameters
 
-| name  | type            | description     |
-| ----- | --------------- | --------------- |
-| `key` | [`KeySchema`]() | `key` to create |
+| name  | type                                      | description     |
+| ----- | ----------------------------------------- | --------------- |
+| `key` | [`KeySchema`](/basics/database#key-table) | `key` to create |
 
 ### `setUser()`
 
@@ -236,10 +236,10 @@ const setUser: (user: UserSchema, key: KeySchema | null) => Promise<void>;
 
 ##### Parameters
 
-| name   | type                     | description                 |
-| ------ | ------------------------ | --------------------------- |
-| `user` | [`UserSchema`]()         | `user` to create            |
-| `key`  | [`KeySchema`]()`\| null` | `key` to create, if defined |
+| name   | type                                               | description                 |
+| ------ | -------------------------------------------------- | --------------------------- |
+| `user` | [`UserSchema`](/basics/database#user-table)        | `user` to create            |
+| `key`  | [`KeySchema`](/basics/database#key-table)`\| null` | `key` to create, if defined |
 
 ### `updateKey()`
 
@@ -256,10 +256,10 @@ const updateKey: (
 
 ##### Parameters
 
-| name         | type                         | description             |
-| ------------ | ---------------------------- | ----------------------- |
-| `keyId`      | `string`                     | Unique target `key(id)` |
-| `partialKey` | `Partial<`[`KeySchema`]()`>` | `key` fields to update  |
+| name         | type                                                   | description             |
+| ------------ | ------------------------------------------------------ | ----------------------- |
+| `keyId`      | `string`                                               | Unique target `key(id)` |
+| `partialKey` | `Partial<`[`KeySchema`](/basics/database#key-table)`>` | `key` fields to update  |
 
 ### `updateUser()`
 
@@ -276,10 +276,10 @@ const updateUser: (
 
 ##### Parameters
 
-| name          | type                          | description              |
-| ------------- | ----------------------------- | ------------------------ |
-| `userId`      | `string`                      | Unique target `user(id)` |
-| `partialUser` | `Partial<`[`UserSchema`]()`>` | `user` fields to update  |
+| name          | type                                                     | description              |
+| ------------- | -------------------------------------------------------- | ------------------------ |
+| `userId`      | `string`                                                 | Unique target `user(id)` |
+| `partialUser` | `Partial<`[`UserSchema`](/basics/database#user-table)`>` | `user` fields to update  |
 
 ## `SessionAdapter`
 
@@ -348,9 +348,9 @@ const getSession: (sessionId: string) => Promise<SessionSchema | null>;
 
 ##### Returns
 
-| type                | description      |
-| ------------------- | ---------------- |
-| [`SessionSchema`]() | Target `session` |
+| type                                              | description      |
+| ------------------------------------------------- | ---------------- |
+| [`SessionSchema`](/basics/database#session-table) | Target `session` |
 
 ### `getSessionsByUserId()`
 
@@ -369,9 +369,9 @@ const getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
 
 ##### Returns
 
-| type                    | description                |
-| ----------------------- | -------------------------- |
-| [`SessionSchema`]()`[]` | Array of matched `session` |
+| type                                                  | description                |
+| ----------------------------------------------------- | -------------------------- |
+| [`SessionSchema`](/basics/database#session-table)`[]` | Array of matched `session` |
 
 ### `setSession()`
 
@@ -384,9 +384,9 @@ const setSession: (session: SessionSchema) => Promise<void>;
 
 ##### Parameters
 
-| name      | type                | description         |
-| --------- | ------------------- | ------------------- |
-| `session` | [`SessionSchema`]() | `session` to create |
+| name      | type                                              | description         |
+| --------- | ------------------------------------------------- | ------------------- |
+| `session` | [`SessionSchema`](/basics/database#session-table) | `session` to create |
 
 ### `updateSession()`
 
@@ -403,7 +403,7 @@ const updateSession: (
 
 ##### Parameters
 
-| name             | type                             | description                 |
-| ---------------- | -------------------------------- | --------------------------- |
-| `sessionId`      | `string`                         | Unique target `session(id)` |
-| `partialSession` | `Partial<`[`SessionSchema`]()`>` | `session` fields to update  |
+| name             | type                                                           | description                 |
+| ---------------- | -------------------------------------------------------------- | --------------------------- |
+| `sessionId`      | `string`                                                       | Unique target `session(id)` |
+| `partialSession` | `Partial<`[`SessionSchema`](/basics/database#session-table)`>` | `session` fields to update  |

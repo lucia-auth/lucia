@@ -109,7 +109,7 @@ node --experimental-global-webcrypto index.js
 
 ## Middleware
 
-This is optional but highly recommended. Create a new middleware that stores [`AuthRequest`]() to `res.locals.auth` (or `req.locals`).
+This is optional but highly recommended. Create a new middleware that stores [`Auth`](/reference/lucia/interfaces/authrequest) to `res.locals.auth` (or `req.locals`).
 
 ```ts
 import express from "express";

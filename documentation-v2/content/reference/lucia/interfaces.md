@@ -110,7 +110,7 @@ type KeySchema = {
 
 ## `LuciaErrorConstructor`
 
-Constructor for [`LuciaError`]().
+Constructor for [`LuciaError`](/reference/lucia/main#luciaerror).
 
 ```ts
 const LuciaErrorConstructor: (message: string) => LuciaError;
@@ -146,11 +146,11 @@ Optional property `storedSessionCookie` is for frameworks with APIs to directly 
 
 ## `Middleware`
 
-See [Middleware API]().
+See [Middleware API](/extending-lucia/middleware-api#middleware).
 
 ## `RequestContext`
 
-See [Middleware API]().
+See [Middleware API](/extending-lucia/middleware-api#requestcontext).
 
 ## `Session`
 
@@ -167,16 +167,16 @@ type Session = {
 
 ### Properties
 
-`ReturnType<_Configuration["getSessionAttributes"]>` represents the return type of [`getSessionAttributes()`]() configuration.
+`ReturnType<_Configuration["getSessionAttributes"]>` represents the return type of [`getSessionAttributes()`](/basics/configuration#getsessionattributes) configuration.
 
-| name                    | type                 | description                                                                 |
-| ----------------------- | -------------------- | --------------------------------------------------------------------------- |
-| `activePeriodExpiresAt` | `Date`               | Time of the [active period](/start-here/concepts#session-states) expiration |
-| `idlePeriodExpiresAt`   | `Date`               | Time of the [idle period](/start-here/concepts#session-states) expiration   |
-| `fresh`                 | `boolean`            | `true` if the session was newly created (including on renewal)              |
-| `sessionId`             | `string`             | Session id                                                                  |
-| `state`                 | `"active" \| "idle"` | [Session state](/start-here/concepts#session-states)                        |
-| `user`                  | [`User`]()           | User of the session                                                         |
+| name                    | type                                       | description                                                                 |
+| ----------------------- | ------------------------------------------ | --------------------------------------------------------------------------- |
+| `activePeriodExpiresAt` | `Date`                                     | Time of the [active period](/start-here/concepts#session-states) expiration |
+| `idlePeriodExpiresAt`   | `Date`                                     | Time of the [idle period](/start-here/concepts#session-states) expiration   |
+| `fresh`                 | `boolean`                                  | `true` if the session was newly created (including on renewal)              |
+| `sessionId`             | `string`                                   | Session id                                                                  |
+| `state`                 | `"active" \| "idle"`                       | [Session state](/start-here/concepts#session-states)                        |
+| `user`                  | [`User`](/reference/lucia/interfaces#user) | User of the session                                                         |
 
 ## `SessionAdapter`
 
@@ -203,7 +203,7 @@ type User = {
 
 ### Properties
 
-`ReturnType<_Configuration["getUserAttributes"]>` represents the return type of [`getUserAttributes()`]() configuration.
+`ReturnType<_Configuration["getUserAttributes"]>` represents the return type of [`getUserAttributes()`](/basics/configuration#getuserattributes) configuration.
 
 | name     | type     | description |
 | -------- | -------- | ----------- |

@@ -32,25 +32,25 @@ const patreon: (
 
 ##### Parameters
 
-| name                 | type       | description                                        | optional |
-| -------------------- | ---------- | -------------------------------------------------- | :------: |
-| auth                 | [`Auth`]() | Lucia instance                                     |          |
-| configs.clientId     | `string`   | Patreon OAuth app client id                        |          |
-| configs.clientSecret | `string`   | Patreon OAuth app client secret                    |          |
-| configs.redirectUri  | `string`   | one of the authorized redirect URIs                |          |
-| configs.scope        | `string[]` | an array of scopes - `identity` is always included |    ✓     |
+| name                 | type                                       | description                                        | optional |
+| -------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| configs.clientId     | `string`                                   | Patreon OAuth app client id                        |          |
+| configs.clientSecret | `string`                                   | Patreon OAuth app client secret                    |          |
+| configs.redirectUri  | `string`                                   | one of the authorized redirect URIs                |          |
+| configs.scope        | `string[]`                                 | an array of scopes - `identity` is always included |    ✓     |
 
 ##### Returns
 
-| type                  | description      |
-| --------------------- | ---------------- |
-| [`PatreonProvider`]() | Patreon provider |
+| type                                  | description      |
+| ------------------------------------- | ---------------- |
+| [`PatreonProvider`](#patreonprovider) | Patreon provider |
 
 ## Interfaces
 
 ### `PatreonProvider`
 
-Satisfied [`OAuthProvider`]().
+Satisfied [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 ```ts
 type PatreonProvider = OAuthProvider<PatreonUser, PatreonTokens>;
@@ -87,9 +87,9 @@ const validateCallback: (code: string) => Promise<PatreonUserAuth>;
 
 ##### Returns
 
-| type                  |
-| --------------------- |
-| [`PatreonUserAuth`]() |
+| type                                  |
+| ------------------------------------- |
+| [`PatreonUserAuth`](#patreonuserauth) |
 
 ##### Errors
 
@@ -106,11 +106,11 @@ type PatreonUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`PatreonUser`]()      |
-| [`PatreonTokens`]()    |
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`PatreonUser`](#patreonuser)                                      |
+| [`PatreonTokens`](#patreontokens)                                  |
 
 ### `PatreonTokens`
 

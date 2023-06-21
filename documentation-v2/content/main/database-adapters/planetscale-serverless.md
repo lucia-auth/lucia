@@ -4,7 +4,7 @@ title: "PlanetScale serverless"
 description: "Learn how to use the PlanetScale serverless driver with Lucia"
 ---
 
-Adapter for [PlanetScale serverless driver]() provided by the MySQL adapter package.
+Adapter for [PlanetScale serverless driver](https://github.com/planetscale/database-js) provided by the MySQL adapter package.
 
 ```ts
 import { planetscale } from "@lucia-auth/adapter-mysql";

@@ -4,7 +4,7 @@ title: "Middleware API"
 description: "Learn how to implement your own middleware"
 ---
 
-Middleware transform framework and runtime specific request/response objects passed to [`Auth.handleRequest()`]() into Lucia's specific API.
+Middleware transform framework and runtime specific request/response objects passed to [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) into Lucia's specific API.
 
 ## `Middleware`
 
@@ -18,17 +18,17 @@ type Middleware<_Args extends any[] = any> = (context: {
 
 ##### Parameters
 
-| name                | type              | description                                                                                          |
-| ------------------- | ----------------- | ---------------------------------------------------------------------------------------------------- |
-| `context.args`      | `_Args`           | Arguments passed to [`Auth.handleRequest()`]() when the middleware is used                           |
-| `context.env`       | `"DEV" \| "PROD"` | Project [`env`]() configuration                                                                      |
-| `sessionCookieName` | `string`          | Session cookie name defined in [`sessionCookie.name`]() configuration (or default name if undefined) |
+| name                | type              | description                                                                                                                             |
+| ------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `context.args`      | `_Args`           | Arguments passed to [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) when the middleware is used                |
+| `context.env`       | `"DEV" \| "PROD"` | Project [`env`](/basics/configuration#env) configuration                                                                                |
+| `sessionCookieName` | `string`          | Session cookie name defined in [`sessionCookie.name`](/basics/configuration#sessioncookie) configuration (or default name if undefined) |
 
 ##### Generics
 
-| name    | extends | description                                                              |
-| ------- | ------- | ------------------------------------------------------------------------ |
-| `_Args` | `any[]` | Parameter type of [`Auth.handleRequest()`]() when the middleware is used |
+| name    | extends | description                                                                                                            |
+| ------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `_Args` | `any[]` | Parameter type of [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) when the middleware is used |
 
 ### `RequestContext`
 
@@ -41,9 +41,9 @@ type RequestContext = {
 
 #### Properties
 
-| property  | type               |
-| --------- | ------------------ |
-| `request` | [`LuciaRequest`]() |
+| property  | type                                                       |
+| --------- | ---------------------------------------------------------- |
+| `request` | [`LuciaRequest`](/reference/lucia/interfaces#luciarequest) |
 
 #### `setCookie()`
 
@@ -55,9 +55,9 @@ const setCookie: (cookie: Cookie) => void;
 
 ##### Parameters
 
-| name     | type         | description   |
-| -------- | ------------ | ------------- |
-| `cookie` | [`Cookie`]() | Cookie to set |
+| name     | type                                           | description   |
+| -------- | ---------------------------------------------- | ------------- |
+| `cookie` | [`Cookie`](/reference/lucia/interfaces#cookie) | Cookie to set |
 
 ## Typing `Middleware`
 

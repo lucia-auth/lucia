@@ -79,7 +79,7 @@ declare namespace Lucia {
 
 ## Set up middleware
 
-This is optional but highly recommended. Create a new middleware that stores [`AuthRequest`]() to `locals.auth`.
+This is optional but highly recommended. Create a new middleware that stores [`Auth`](/reference/lucia/interfaces/authrequest) to `locals.auth`.
 
 ```ts
 // src/middleware.ts

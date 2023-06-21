@@ -33,11 +33,11 @@ This allows sessions to be persisted for active users, while invalidating inacti
 
 ### Validating requests
 
-Requests can be validated by validating the session id included. There are mainly ways to send sessions: cookies and bearer tokens. Cookies are preferred for regular websites and web-apps, whereas bearer tokens are preferred for standalone servers for mobile/desktop apps. Refer to [Handle requests]() page to learn more about how to validate and work with incoming requests from your clients.
+Requests can be validated by validating the session id included. There are mainly ways to send sessions: cookies and bearer tokens. Cookies are preferred for regular websites and web-apps, whereas bearer tokens are preferred for standalone servers for mobile/desktop apps. Refer to [Handle requests](/basics/handle-requests) page to learn more about how to validate and work with incoming requests from your clients.
 
 ## Defining session attributes
 
-You can define custom user attributes by returning them in [`getSessionAttributes()`]() configuration. The params for `getSessionAttributes()` will include every field in the `session` table. See [Database](/basics/database#session-table) for adding custom fields to your session table.
+You can define custom user attributes by returning them in [`getSessionAttributes()`](/basics/configuration#getsessionattributes) configuration. The params for `getSessionAttributes()` will include every field in the `session` table. See [Database](/basics/database#session-table) for adding custom fields to your session table.
 
 ```ts
 import { lucia } from "lucia";
@@ -58,7 +58,7 @@ const { sessionId, createdAt } = session;
 
 ## Create sessions
 
-[`Auth.createSession()`]() can be used to create a new session. It takes a user id and returns the newly created session. If the user id is invalid, it will throw `AUTH_INVALID_USER_ID`.
+[`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) can be used to create a new session. It takes a user id and returns the newly created session. If the user id is invalid, it will throw `AUTH_INVALID_USER_ID`.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -103,7 +103,7 @@ If the session attributes provided violates a database rule (such a unique const
 
 ## Validate sessions
 
-Sessions can be validated using [`Auth.validateSession()`](). This will renew idle sessions, which may be unwanted if you're sending your session id via an authorization header. [Use `Auth.getSession()`]() instead if you do not want to renew idle sessions.
+Sessions can be validated using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession). This will renew idle sessions, which may be unwanted if you're sending your session id via an authorization header. [Use `Auth.getSession()`](/basics/sessions#get-sessions) instead if you do not want to renew idle sessions.
 
 It will return the session provided if it's active, or a newly created sessions if the provided session was idle and hence renewed. You can check if the returned session was newly created with the `Session.fresh` property. If the session is dead (invalid), it will throw `AUTH_INVALID_SESSION_ID`.
 
@@ -129,7 +129,7 @@ try {
 
 ## Get sessions
 
-You can get a session with [`Auth.getSession()`](). Unlike `Auth.validateSession()`, it will not renew idle sessions and as such, the returned session may be active or idle.
+You can get a session with [`Auth.getSession()`](/reference/lucia/interfaces/auth#getsession). Unlike `Auth.validateSession()`, it will not renew idle sessions and as such, the returned session may be active or idle.
 
 It takes a session id, and returns the session if it exists or throw `AUTH_INVALID_SESSION_ID` if not.
 
@@ -155,7 +155,7 @@ try {
 
 ### Get all user sessions
 
-You can get all valid sessions of a user, both active and idle, with [`Auth.getAllUserSessions()`](). It will throw `AUTH_INVALID_USER_ID` if the provided user is invalid.
+You can get all valid sessions of a user, both active and idle, with [`Auth.getAllUserSessions()`](/reference/lucia/interfaces/auth#getallusersessions). It will throw `AUTH_INVALID_USER_ID` if the provided user is invalid.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -172,7 +172,7 @@ try {
 
 ## Renew sessions
 
-You can renew a valid session (active or idle) using [`Auth.renewSession()`](). The session provided will be invalidated immediately, and a new session will be created and returned. It will throw `AUTH_INVALID_SESSION_ID` if the provided session is invalid.
+You can renew a valid session (active or idle) using [`Auth.renewSession()`](/reference/lucia/interfaces/auth#renewsession). The session provided will be invalidated immediately, and a new session will be created and returned. It will throw `AUTH_INVALID_SESSION_ID` if the provided session is invalid.
 
 The newly created session will inherit all the session attribute values of the provided session.
 
@@ -194,7 +194,7 @@ try {
 
 ## Invalidate sessions
 
-You can invalidate sessions with [`Auth.invalidateSession()`](). This will succeed regardless of the validity of the session.
+You can invalidate sessions with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). This will succeed regardless of the validity of the session.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -204,7 +204,7 @@ await auth.invalidateSession(sessionId);
 
 ### Invalid all user sessions
 
-[`Auth.invalidateAllUserSessions()`]() can be used to invalidate all sessions belonging to a user. This will succeed regardless of the validity of the user id.
+[`Auth.invalidateAllUserSessions()`](/reference/lucia/interfaces/auth#invalidateallusersessions) can be used to invalidate all sessions belonging to a user. This will succeed regardless of the validity of the user id.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -214,7 +214,7 @@ await auth.invalidateAllUserSessions(userId);
 
 ## Update session attributes
 
-You can update attributes of a session with [`Auth.updateSessionAttributes()`](). You can update a single field or multiple fields. It returns the update session, or throws `AUTH_INVALID_SESSION_ID` if the session does not exist.
+You can update attributes of a session with [`Auth.updateSessionAttributes()`](/reference/lucia/interfaces/auth#updatesessionattributes). You can update a single field or multiple fields. It returns the update session, or throws `AUTH_INVALID_SESSION_ID` if the session does not exist.
 
 In general however, **invalidating the current session and creating a new session is preferred.**
 
@@ -240,7 +240,7 @@ try {
 
 ## Delete dead user sessions
 
-You can delete dead user sessions with [`Auth.deleteDeadUserSessions()`]() to cleanup your database. It may be useful to call this whenever a user signs in or signs out. This will succeed regardless of the validity of the user id.
+You can delete dead user sessions with [`Auth.createUser()`](/reference/lucia/interfaces/auth#deletedeadusersesions) to cleanup your database. It may be useful to call this whenever a user signs in or signs out. This will succeed regardless of the validity of the user id.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -252,5 +252,5 @@ await auth.deleteDeadUserSessions(userId);
 
 You can configure sessions in a few ways:
 
-- Session attributes with [`getSessionAttributes()`]()
-- Session expiration with [`sessionExpiresIn`]()
+- Session attributes with [`getSessionAttributes()`](/basics/configuration#getsessionattributes)
+- Session expiration with [`sessionExpiresIn`](/basics/configuration#sessionexpiresin)

@@ -65,7 +65,7 @@ Upon authentication, the provider will redirect the user back to your applicatio
 
 ### Validate callback
 
-Validate the code using `validateCallback()`. If the code is valid, this will return a new [`ProviderUserAuth`]() among provider specific items (such as provider user data and access tokens).
+Validate the code using `validateCallback()`. If the code is valid, this will return a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth)among provider specific items (such as provider user data and access tokens).
 
 ```ts
 import { auth, githubAuth } from "$lib/lucia.js";
@@ -90,7 +90,7 @@ try {
 
 ### Authenticate user with Lucia
 
-`validateCallback()` returns a few properties and method. [`ProviderUserAuth.existingUser`]() will be defined if a Lucia user already exists for the authenticated provider account. If not, you can create a new Lucia user linked to the provider with [`ProviderUserAuth.createUser()`](). You can get the provider user data with `githubUser` for Github, etc.
+`validateCallback()` returns a few properties and method. [`ProviderUserAuth.existingUser`](/reference/oauth/interfaces#provideruserauth) will be defined if a Lucia user already exists for the authenticated provider account. If not, you can create a new Lucia user linked to the provider with [`ProviderUserAuth.createUser()`](/reference/oauth/interfaces#createuser). You can get the provider user data with `githubUser` for Github, etc.
 
 ```ts
 const { existingUser, createUser, githubUser } =
@@ -113,7 +113,7 @@ authRequest.setSession(session); // store session cookie
 
 ### Add provider to existing user
 
-Alternatively, you may want to add a new provider (sign in method) to an authenticated user by creating a new key for the user. Calling [`ProviderUserAuth.createKey()`]() will create a new key linked to the provided user id.
+Alternatively, you may want to add a new provider (sign in method) to an authenticated user by creating a new key for the user. Calling [`ProviderUserAuth.createKey()`](/reference/oauth/interfaces#createkey) will create a new key linked to the provided user id.
 
 ```ts
 const { existingUser, createKey } = await githubAuth.validateCallback(code);

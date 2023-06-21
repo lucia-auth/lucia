@@ -17,7 +17,7 @@ const DEFAULT_SESSION_COOKIE_NAME = "auth_session";
 
 ## `lucia()`
 
-Initialize Lucia and create a new [`Auth`]() instance.
+Initialize Lucia and create a new [`Auth`](/reference/lucia/interfaces/auth) instance.
 
 ```ts
 import { lucia } from "lucia";
@@ -29,19 +29,19 @@ const lucia: (config: Configuration) => Auth;
 
 ##### Parameters
 
-| name     | type                | description         |
-| -------- | ------------------- | ------------------- |
-| `config` | [`Configuration`]() | Lucia configuration |
+| name     | type                                     | description         |
+| -------- | ---------------------------------------- | ------------------- |
+| `config` | [`Configuration`](/basics/configuration) | Lucia configuration |
 
 ##### Returns
 
-| type       |
-| ---------- |
-| [`Auth`]() |
+| type                                       |
+| ------------------------------------------ |
+| [`Auth`](/reference/lucia/interfaces/auth) |
 
 ## `LuciaError`
 
-Error class thrown by Lucia. See reference for [`LuciaError` instance]().  
+Error class thrown by Lucia. See reference for [`LuciaError`](/reference/lucia/main#luciaerror).
 
 ```ts
 import { LuciaError } from "lucia";

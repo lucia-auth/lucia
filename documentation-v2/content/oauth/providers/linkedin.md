@@ -29,25 +29,25 @@ const linkedin: (
 
 ##### Parameters
 
-| name                | type       | description                                             | optional |
-| ------------------- | ---------- | ------------------------------------------------------- | :------: |
-| auth                | [`Auth`]() | Lucia instance                                          |          |
-| config.clientId     | `string`   | Linkedin OAuth app client id                            |          |
-| config.clientSecret | `string`   | Linkedin OAuth app client secret                        |          |
-| config.redirectUri  | `string`   | Linkedin OAuth app redirect uri                         |          |
-| config.scope        | `string[]` | an array of scopes - `r_liteprofile` is always included |    ✓     |
+| name                | type                                       | description                                             | optional |
+| ------------------- | ------------------------------------------ | ------------------------------------------------------- | :------: |
+| auth                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                          |          |
+| config.clientId     | `string`                                   | Linkedin OAuth app client id                            |          |
+| config.clientSecret | `string`                                   | Linkedin OAuth app client secret                        |          |
+| config.redirectUri  | `string`                                   | Linkedin OAuth app redirect uri                         |          |
+| config.scope        | `string[]`                                 | an array of scopes - `r_liteprofile` is always included |    ✓     |
 
 ##### Returns
 
-| type                   | description       |
-| ---------------------- | ----------------- |
-| [`LinkedinProvider`]() | Linkedin provider |
+| type                                    | description       |
+| --------------------------------------- | ----------------- |
+| [`LinkedinProvider`](#linkedinprovider) | Linkedin provider |
 
 ## Interfaces
 
 ### `LinkedinProvider`
 
-Satisfies [`OAuthProvider`]().
+Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 ```ts
 type LinkedinProvider = OAuthProvider<LinkedinUser, LinkedinTokens>;
@@ -84,9 +84,9 @@ const validateCallback: (code: string) => Promise<LinkedinUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`LinkedinUserAuth`]() |
+| type                                    |
+| --------------------------------------- |
+| [`LinkedinUserAuth`](#linkedinuserauth) |
 
 ##### Errors
 
@@ -103,11 +103,11 @@ type LinkedinUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`LinkedinUser`]()     |
-| [`LinkedinTokens`]()   |
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`LinkedinUser`](#linkedinuser)                                    |
+| [`LinkedinTokens`](#linkedintokens)                                |
 
 ### `LinkedinTokens`
 

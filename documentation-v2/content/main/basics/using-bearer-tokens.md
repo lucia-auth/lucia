@@ -10,11 +10,11 @@ Sending session ids as bearer tokens is useful when your frontend and backend is
 Authorization: Bearer <session_id>
 ```
 
-Some methods shown in this page is included in [`AuthRequest`](), which is described in [Handle requests]() page.
+Some methods shown in this page is included in [`Auth`](/reference/lucia/interfaces/authrequest), which is described in [Handle requests](/basics/handle-requests) page.
 
 ## Validate bearer tokens
 
-You can use [`AuthRequest.validateBearerToken()`]() to validate the bearer token. It returns a session if the session is active, or `null` if the session is idle or dead.
+You can use [`AuthRequest.validateBearerToken()`](/reference/lucia/interfaces/authrequest#validatebearertoken) to validate the bearer token. It returns a session if the session is active, or `null` if the session is idle or dead.
 
 ```ts
 const authRequest = auth.handleRequest();
@@ -25,7 +25,7 @@ if (session) {
 }
 ```
 
-You can alternatively validate the session id manually. [Use `Auth.getSession()`]() since we don't want to renew idle sessions and invalidate the session stored in the client (unlike cookies, the server can't update the session stored in the client).
+You can alternatively validate the session id manually. [Use `Auth.getSession()`](/basics/sessions#get-sessions) since we don't want to renew idle sessions and invalidate the session stored in the client (unlike cookies, the server can't update the session stored in the client).
 
 ```ts
 try {
@@ -43,7 +43,7 @@ try {
 
 ### Read bearer tokens
 
-You can get the session id from the authorization header using `Auth.readBearerToken()`, which returns a session id or `null` if the token does not exist. This _does not_ validate the session id.
+You can get the session id from the authorization header using [`Auth.readBearerToken()`](/reference/lucia/interfaces/auth#readbearertoken), which returns a session id or `null` if the token does not exist. This _does not_ validate the session id.
 
 ```ts
 const authorizationHeader = request.headers.get("Authorization");
@@ -68,7 +68,7 @@ await Promise([
 
 ## Renew bearer tokens
 
-You can renew the bearer token using `AuthRequest.renewBearerToken()`, which returns a session if successful or `null` if the session is invalid.
+You can renew the bearer token using [`AuthRequest.renewBearerToken()`](/reference/lucia/interfaces/authrequest#renewbearertoken), which returns a session if successful or `null` if the session is invalid.
 
 ```ts
 const authRequest = auth.handleRequest();

@@ -31,25 +31,25 @@ const discord: (
 
 ##### Parameters
 
-| name                | type       | description                                        | optional |
-| ------------------- | ---------- | -------------------------------------------------- | :------: |
-| auth                | [`Auth`]() | Lucia instance                                     |          |
-| config.clientId     | `string`   | Discord OAuth app client id                        |          |
-| config.clientSecret | `string`   | Discord OAuth app client secret                    |          |
-| configs.redirectUri | `string`   | an authorized redirect URI                         |          |
-| config.scope        | `string[]` | an array of scopes - `identify` is always included |    ✓     |
+| name                | type                                       | description                                        | optional |
+| ------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| auth                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| config.clientId     | `string`                                   | Discord OAuth app client id                        |          |
+| config.clientSecret | `string`                                   | Discord OAuth app client secret                    |          |
+| configs.redirectUri | `string`                                   | an authorized redirect URI                         |          |
+| config.scope        | `string[]`                                 | an array of scopes - `identify` is always included |    ✓     |
 
 ##### Returns
 
-| type                  | description      |
-| --------------------- | ---------------- |
-| [`DiscordProvider`]() | Discord provider |
+| type                                  | description      |
+| ------------------------------------- | ---------------- |
+| [`DiscordProvider`](#discordprovider) | Discord provider |
 
 ## Interfaces
 
 ### `DiscordProvider`
 
-Satisfies [`OAuthProvider`]().
+Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 #### `getAuthorizationUrl()`
 
@@ -82,9 +82,9 @@ const validateCallback: (code: string) => Promise<DiscordUserAuth>;
 
 ##### Returns
 
-| type                  |
-| --------------------- |
-| [`DiscordUserAuth`]() |
+| type                                  |
+| ------------------------------------- |
+| [`DiscordUserAuth`](#discorduserauth) |
 
 ##### Errors
 
@@ -101,11 +101,11 @@ type DiscordUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`DiscordUser`]()      |
-| [`DiscordTokens`]()    |
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`DiscordUser`](#discorduser)                                      |
+| [`DiscordTokens`](#discordtokens)                                  |
 
 ### `DiscordTokens`
 

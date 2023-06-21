@@ -30,26 +30,26 @@ const twitch: (
 
 ##### Parameters
 
-| name                 | type       | description                                                          | optional |
-| -------------------- | ---------- | -------------------------------------------------------------------- | :------: |
-| auth                 | [`Auth`]() | Lucia instance                                                       |          |
-| configs.clientId     | `string`   | Twitch OAuth app client id                                           |          |
-| configs.clientSecret | `string`   | Twitch OAuth app client secret                                       |          |
-| configs.redirectUri  | `string`   | one of the authorized redirect URIs                                  |          |
-| configs.forceVerify  | `boolean`  | forces the user to re-authorize your app’s access to their resources |    ✓     |
-| configs.scope        | `string[]` | an array of scopes                                                   |    ✓     |
+| name                 | type                                       | description                                                          | optional |
+| -------------------- | ------------------------------------------ | -------------------------------------------------------------------- | :------: |
+| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                       |          |
+| configs.clientId     | `string`                                   | Twitch OAuth app client id                                           |          |
+| configs.clientSecret | `string`                                   | Twitch OAuth app client secret                                       |          |
+| configs.redirectUri  | `string`                                   | one of the authorized redirect URIs                                  |          |
+| configs.forceVerify  | `boolean`                                  | forces the user to re-authorize your app’s access to their resources |    ✓     |
+| configs.scope        | `string[]`                                 | an array of scopes                                                   |    ✓     |
 
 ##### Returns
 
-| type                 | description     |
-| -------------------- | --------------- |
-| [`TwitchProvider`]() | Twitch provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`TwitchProvider`](#twitchprovider) | Twitch provider |
 
 ## Interfaces
 
 ### `TwitchProvider`
 
-Satisfied [`OAuthProvider`]().
+Satisfied [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 ```ts
 type TwitchProvider = OAuthProvider<TwitchUser, TwitchTokens>;
@@ -86,9 +86,9 @@ const validateCallback: (code: string) => Promise<TwitchUserAuth>;
 
 ##### Returns
 
-| type                 |
-| -------------------- |
-| [`TwitchUserAuth`]() |
+| type                                |
+| ----------------------------------- |
+| [`TwitchUserAuth`](#twitchuserauth) |
 
 ##### Errors
 
@@ -105,11 +105,11 @@ type TwitchUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`TwitchUser`]()       |
-| [`TwitchTokens`]()     |
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`TwitchUser`](#twitchuser)                                        |
+| [`TwitchTokens`](#twitchtokens)                                    |
 
 ### `TwitchTokens`
 

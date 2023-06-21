@@ -72,4 +72,4 @@ const auth = lucia({
 });
 ```
 
-You can now the models as well. Without the second `options` params, the adapter expects the [default schema](), which is different from the one required in v1.
+You can now the models as well. Without the second `options` params, the adapter expects the [default schema](/database-adapters/prisma#prisma-schema), which is different from the one required in v1.

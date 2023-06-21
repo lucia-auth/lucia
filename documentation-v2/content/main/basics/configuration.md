@@ -4,7 +4,7 @@ title: "Configuration"
 description: "Learn how to configure Lucia"
 ---
 
-This page describes all the configuration available for [`lucia()`](). `MaybePromise` indicates the function can synchronous or asynchronous.
+This page describes all the configuration available for [`lucia()`](/reference/lucia/main#lucia). `MaybePromise` indicates the function can synchronous or asynchronous.
 
 ```ts
 type Configuration = {
@@ -86,11 +86,11 @@ Provides Lucia with the current server context.
 const allowedRequestOrigins: string[];
 ```
 
-A list of allowed request origins for CSRF check used by [`Auth.validateRequestOrigin()`]() and [`AuthRequest.validate()`](). Does not accept wildcard `*`.
+A list of allowed request origins for CSRF check used by [`Auth.validateRequestOrigin()`](/reference/lucia/interfaces/auth#validaterequestorigin) and [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). Does not accept wildcard `*`.
 
 ### `csrfProtection`
 
-Enabled by default. When enabled, [`AuthRequest.validate()`]() checks if the incoming request is from a trusted origin. Trusted origin includes the origin where the server is hosted and those defined in [`allowedRequestOrigins`]() configuration.
+Enabled by default. When enabled, [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) checks if the incoming request is from a trusted origin. Trusted origin includes the origin where the server is hosted and those defined in [`allowedRequestOrigins`](/basics/configuration#allowedrequestorigins) configuration.
 
 | value   | description              |
 | ------- | ------------------------ |
@@ -113,7 +113,7 @@ const generateUserId: () => MaybePromise<string>;
 
 ### `getSessionAttributes()`
 
-Generates session attributes for the user. The returned properties will be included in [`Session`]() as is.
+Generates session attributes for the user. The returned properties will be included in [`Session`](/reference/lucia/interfaces#session) as is.
 
 ```ts
 const getSessionAttributes: (
@@ -123,9 +123,9 @@ const getSessionAttributes: (
 
 ##### Parameters
 
-| name            | type                | description                    |
-| --------------- | ------------------- | ------------------------------ |
-| databaseSession | [`SessionSchema`]() | Session stored in the database |
+| name            | type                                                         | description                    |
+| --------------- | ------------------------------------------------------------ | ------------------------------ |
+| databaseSession | [`SessionSchema`](/reference/lucia/interfaces#sessionschema) | Session stored in the database |
 
 ##### Returns
 
@@ -143,7 +143,7 @@ const getSessionAttributes = () => {
 
 ### `getUserAttributes()`
 
-Generates user attributes for the user. The returned properties will be included in [`User`]() as is.
+Generates user attributes for the user. The returned properties will be included in [`User`](/reference/lucia/interfaces#user) as is.
 
 ```ts
 const getUserAttributes: (databaseUser: UserSchema) => Record<any, any>;
@@ -151,9 +151,9 @@ const getUserAttributes: (databaseUser: UserSchema) => Record<any, any>;
 
 ##### Parameters
 
-| name         | type             | description                 |
-| ------------ | ---------------- | --------------------------- |
-| databaseUser | [`UserSchema`]() | User stored in the database |
+| name         | type                                                   | description                 |
+| ------------ | ------------------------------------------------------ | --------------------------- |
+| databaseUser | [`UserSchema`](/reference/lucia/interfaces#userschema) | User stored in the database |
 
 ##### Returns
 
@@ -175,11 +175,11 @@ const getUserAttributes = () => {
 const middleware: Middleware;
 ```
 
-Lucia middleware for [`AuthRequest.handleRequest()`](). [Learn more about middleware]().
+Lucia middleware for [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest). [Learn more about middleware](/basics/handle-requests).
 
-| type             | default value                |
-| ---------------- | ---------------------------- |
-| [`Middleware`]() | [Lucia default middleware]() |
+| type                                                       | default value                                  |
+| ---------------------------------------------------------- | ---------------------------------------------- |
+| [`Middleware`](/extending-lucia/middleware-api#middleware) | [`lucia()`](/reference/lucia/middleware#lucia) |
 
 ### `passwordHash`
 
@@ -257,10 +257,10 @@ const sessionExpiresIn: {
 
 The active period is the span of time sessions are valid for, while the idle period is span of time since the end of the active period that sessions could be renewed.
 
-| property       | type     | description                            | default              |
-| -------------- | -------- | -------------------------------------- | -------------------- |
-| `activePeriod` | `number` | The [active period]() in milliseconds. | 86400000 (1 day)     |
-| `idlePeriod    | `number` | The [idle period]() in milliseconds    | 1209600000 (2 weeks) |
+| property       | type     | description                                                           | default              |
+| -------------- | -------- | --------------------------------------------------------------------- | -------------------- |
+| `activePeriod` | `number` | The [active period](/basics/sessions#session-states) in milliseconds. | 86400000 (1 day)     |
+| `idlePeriod    | `number` | The [idle period](/basics/sessions#session-states) in milliseconds    | 1209600000 (2 weeks) |
 
 ## Experimental
 

@@ -4,7 +4,7 @@ title: "Redis"
 description: "Learn how to use Redis with Lucia"
 ---
 
-Session adapter for [Redis]() provided by the Redis session adapter package. This only handles sessions, and not users or keys.
+Session adapter for [Redis](https://redis.io) provided by the Redis session adapter package. This only handles sessions, and not users or keys.
 
 ```ts
 import { redis } from "@lucia-auth/adapter-session-redis";

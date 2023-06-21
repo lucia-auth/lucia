@@ -29,9 +29,9 @@ type ProviderUserAuth = {
 
 ### Properties
 
-| name           | type                 | description                                       |
-| -------------- | -------------------- | ------------------------------------------------- |
-| `existingUser` | [`User`]()` \| null` | User linked to the provider account, if it exists |
+| name           | type                                                 | description                                       |
+| -------------- | ---------------------------------------------------- | ------------------------------------------------- |
+| `existingUser` | [`User`](/reference/lucia/interfaces#user)` \| null` | User linked to the provider account, if it exists |
 
 ### `createKey()`
 
@@ -49,9 +49,9 @@ const createKey: (userId: string) => Promise<Key>;
 
 ##### Returns
 
-| type      | description |
-| --------- | ----------- |
-| [`Key`]() | A new key   |
+| type                                     | description |
+| ---------------------------------------- | ----------- |
+| [`Key`](/reference/lucia/interfaces#key) | A new key   |
 
 ### `createUser()`
 
@@ -63,15 +63,15 @@ const createUser: (attributes: Lucia.DatabaseUserAttributes) => Promise<User>;
 
 ##### Parameters
 
-| name         | type                               | description                     |
-| ------------ | ---------------------------------- | ------------------------------- |
-| `attributes` | [`Lucia.DatabaseUserAttributes`]() | User attributes of the new user |
+| name         | type                           | description                     |
+| ------------ | ------------------------------ | ------------------------------- |
+| `attributes` | `Lucia.DatabaseUserAttributes` | User attributes of the new user |
 
 ##### Returns
 
-| type       | description |
-| ---------- | ----------- |
-| [`User`]() | A new user  |
+| type                                       | description |
+| ------------------------------------------ | ----------- |
+| [`User`](/reference/lucia/interfaces#user) | A new user  |
 
 #### Example
 

@@ -30,26 +30,26 @@ const google: (
 
 ##### Parameters
 
-| name                 | type                    | description                                                                     | optional | default  |
-| -------------------- | ----------------------- | ------------------------------------------------------------------------------- | :------: | :------: |
-| auth                 | [`Auth`]()              | Lucia instance                                                                  |          |          |
-| configs.clientId     | `string`                | Google OAuth app client id                                                      |          |          |
-| configs.clientSecret | `string`                | Google OAuth app client secret                                                  |          |          |
-| configs.redirectUri  | `string`                | an authorized redirect URI                                                      |          |          |
-| configs.scope        | `string[]`              | an array of scopes                                                              |    ✓     |          |
-| configs.accessType   | `"online" \| "offline"` | Google OAuth Access type ("online" (default) or "offline" (gets refresh_token)) |    ✓     | "online" |
+| name                 | type                                       | description                                                                     | optional | default  |
+| -------------------- | ------------------------------------------ | ------------------------------------------------------------------------------- | :------: | :------: |
+| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                                  |          |          |
+| configs.clientId     | `string`                                   | Google OAuth app client id                                                      |          |          |
+| configs.clientSecret | `string`                                   | Google OAuth app client secret                                                  |          |          |
+| configs.redirectUri  | `string`                                   | an authorized redirect URI                                                      |          |          |
+| configs.scope        | `string[]`                                 | an array of scopes                                                              |    ✓     |          |
+| configs.accessType   | `"online" \| "offline"`                    | Google OAuth Access type ("online" (default) or "offline" (gets refresh_token)) |    ✓     | "online" |
 
 ##### Returns
 
-| type                 | description     |
-| -------------------- | --------------- |
-| [`GoogleProvider`]() | Google provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`GoogleProvider`](#googleprovider) | Google provider |
 
 ## Interfaces
 
 ### `GoogleProvider`
 
-Satisfies [`OAuthProvider`]().
+Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 ```ts
 type GoogleProvider = OAuthProvider<GoogleUser, GoogleTokens>;
@@ -86,9 +86,9 @@ const validateCallback: (code: string) => Promise<GoogleUserAuth>;
 
 ##### Returns
 
-| type                 |
-| -------------------- |
-| [`GoogleUserAuth`]() |
+| type                                |
+| ----------------------------------- |
+| [`GoogleUserAuth`](#googleuserauth) |
 
 ##### Errors
 
@@ -105,11 +105,11 @@ type GoogleUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`GoogleUser`]()       |
-| [`GoogleTokens`]()     |
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`GoogleUser`](#googleuser)                                        |
+| [`GoogleTokens`](#googletokens)                                    |
 
 ### `GoogleTokens`
 

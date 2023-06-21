@@ -78,7 +78,7 @@ You should find and replace all instances of "lucia-auth" (or 'lucia-auth') with
 
 ## Initialize Lucia
 
-The configuration for `lucia()` has been overhauled. See [Configuration]() for details.
+The configuration for `lucia()` has been overhauled. See [Configuration](/basics/configuration) for details.
 
 ```ts
 // v1
@@ -152,7 +152,7 @@ const user = session.user;
 
 ### Reading cookies manually
 
-`Auth.parseRequestHeaders()` has been removed and replaced with [`Auth.validateRequestOrigin()`]() and [`Auth.readSessionCookie()`]().
+`Auth.parseRequestHeaders()` has been removed and replaced with [`Auth.validateRequestOrigin()`](/reference/lucia/interfaces/auth#validaterequestorigin) and [`Auth.readSessionCookie()`](/reference/lucia/interfaces/auth#readsessioncookie).
 
 ```ts
 auth.validateRequestOrigin(request as LuciaRequest); // csrf check
@@ -251,7 +251,7 @@ The OAuth package also had some changes as well.
 
 ### Removed `provider()`
 
-We now provide [`providerUserAuth()`]() which is a lower level API for implementing your own provider.
+We now provide [`providerUserAuth()`](/reference/oauth/interfaces#provideruserauth) which is a lower level API for implementing your own provider.
 
 ### Renamed `providerUser` and `tokens`
 

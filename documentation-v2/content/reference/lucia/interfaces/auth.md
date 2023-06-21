@@ -30,9 +30,9 @@ const createKey: (
 
 ##### Returns
 
-| type      | description |
-| --------- | ----------- |
-| [`Key`]() | A new key   |
+| type                                     | description |
+| ---------------------------------------- | ----------- |
+| [`Key`](/reference/lucia/interfaces#key) | A new key   |
 
 ##### Errors
 
@@ -76,16 +76,16 @@ const createSession: (
 
 `options` can be undefined if `Lucia.DatabaseSessionAttributes` is an empty object.
 
-| name                 | type                                  | description                          |
-| -------------------- | ------------------------------------- | ------------------------------------ |
-| `userId`             | `string`                              | The user id of the session to create |
-| `options.attributes` | [`Lucia.DatabaseSessionAttributes`]() | Database session attributes          |
+| name                 | type                              | description                          |
+| -------------------- | --------------------------------- | ------------------------------------ |
+| `userId`             | `string`                          | The user id of the session to create |
+| `options.attributes` | `Lucia.DatabaseSessionAttributes` | Database session attributes          |
 
 ##### Returns
 
-| type          | description   |
-| ------------- | ------------- |
-| [`Session`]() | A new session |
+| type                                             | description   |
+| ------------------------------------------------ | ------------- |
+| [`Session`](/reference/lucia/interfaces#session) | A new session |
 
 ##### Errors
 
@@ -107,7 +107,7 @@ const session = await auth.createSession(userId, {
 
 ## `createSessionCookie()`
 
-Creates a session in the form of [`Cookie`](). Returns a blank session cookie that will override the existing cookie and clears them if `null` is provided as parameter `session`.
+Creates a session in the form of [`Cookie`](/reference/lucia/interfaces#cookie). Returns a blank session cookie that will override the existing cookie and clears them if `null` is provided as parameter `session`.
 
 ```ts
 const createSessionCookie: (session: Session | null) => Cookie;
@@ -115,15 +115,15 @@ const createSessionCookie: (session: Session | null) => Cookie;
 
 ##### Parameters
 
-| name      | type                    | description                    |
-| --------- | ----------------------- | ------------------------------ |
-| `session` | [`Session`]()` \| null` | Session to create a cookie for |
+| name      | type                                                       | description                    |
+| --------- | ---------------------------------------------------------- | ------------------------------ |
+| `session` | [`Session`](/reference/lucia/interfaces#session)` \| null` | Session to create a cookie for |
 
 ##### Returns
 
-| type         | description    |
-| ------------ | -------------- |
-| [`Cookie`]() | Session cookie |
+| type                                           | description    |
+| ---------------------------------------------- | -------------- |
+| [`Cookie`](/reference/lucia/interfaces#cookie) | Session cookie |
 
 #### Example
 
@@ -161,13 +161,13 @@ const createUser: (options: {
 | `options.key?.providerId`     | `string`                        | Key provider id                                        |
 | `options.key?.providerUserId` | `string`                        | Key provider user id                                   |
 | `options.key?.password`       | `string`                        | Key password                                           |
-| `options.attributes`          | [`Lucia.UserAttributes`]()      | Database user attributes                               |
+| `options.attributes`          | `Lucia.DatabaseUserAttributes`  | Database user attributes                               |
 
 ###### Returns
 
-| type       | description |
-| ---------- | ----------- |
-| [`User`]() | A new user  |
+| type                                       | description |
+| ------------------------------------------ | ----------- |
+| [`User`](/reference/lucia/interfaces#user) | A new user  |
 
 ##### Errors
 
@@ -276,9 +276,9 @@ const getAllUserKeys: (userId: string) => Promise<Key[]>;
 
 ##### Returns
 
-| type          |
-| ------------- |
-| [`Key`]()`[]` |
+| type                                         |
+| -------------------------------------------- |
+| [`Key`](/reference/lucia/interfaces#key)`[]` |
 
 ##### Errors
 
@@ -310,9 +310,9 @@ const getAllUserKeys: (userId: string) => Promise<Session[]>;
 
 ##### Returns
 
-| type              |
-| ----------------- |
-| [`Session`]()`[]` |
+| type                                                 |
+| ---------------------------------------------------- |
+| [`Session`](/reference/lucia/interfaces#session)`[]` |
 
 ##### Errors
 
@@ -334,7 +334,7 @@ try {
 
 ## `getKey()`
 
-Gets a key. Use [`useKey()]() method for validating key passwords.
+Gets a key. Use [`Auth.useKey()](/reference/lucia/interfaces/auth#usekey) method for validating key passwords.
 
 ```ts
 const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
@@ -423,9 +423,9 @@ const getUser: (userId: string) => Promise<User>;
 
 ##### Returns
 
-| type       |
-| ---------- |
-| [`User`]() |
+| type                                       |
+| ------------------------------------------ |
+| [`User`](/reference/lucia/interfaces#user) |
 
 ##### Errors
 
@@ -443,7 +443,7 @@ const user = await auth.getUser(userId);
 
 ## `handleRequest()`
 
-Creates a new [`AuthRequest`]() instance.
+Creates a new [`Auth`](/reference/lucia/interfaces/authrequest) instance.
 
 ```ts
 const handleRequest: (...args: any[]) => AuthRequest;
@@ -531,12 +531,15 @@ const readBearerToken: (
 | -------- | --------------------------- |
 | `string` | Bearer token value          |
 | `null`   | Bearer token does not exist |
+
 #### Example
 
 ```ts
 import { auth } from "./lucia.js";
 
-const sessionId = auth.readBearerToken("Bearer CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM")
+const sessionId = auth.readBearerToken(
+	"Bearer CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM"
+);
 ```
 
 ## `readSessionCookie()`
@@ -567,7 +570,9 @@ const readSessionCookie: (
 ```ts
 import { auth } from "./lucia.js";
 
-const sessionId = auth.readSessionCookie("auth_session=CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM")
+const sessionId = auth.readSessionCookie(
+	"auth_session=CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM"
+);
 ```
 
 ## `renewSession()`
@@ -586,9 +591,9 @@ const renewSession: (sessionId: string) => Promise<Session>;
 
 ##### Returns
 
-| type          | description   |
-| ------------- | ------------- |
-| [`Session`]() | A new session |
+| type                                             | description   |
+| ------------------------------------------------ | ------------- |
+| [`Session`](/reference/lucia/interfaces#session) | A new session |
 
 ##### Errors
 
@@ -652,16 +657,16 @@ const updateSessionAttributes: (
 
 ##### Parameters
 
-| name         | type                                               | description                |
-| ------------ | -------------------------------------------------- | -------------------------- |
-| `sessionId`  | `string`                                           | A session id               |
-| `attributes` | `Partial<`[`Lucia.DatabaseSessionAttributes`]()`>` | `session` fields to update |
+| name         | type                                       | description                |
+| ------------ | ------------------------------------------ | -------------------------- |
+| `sessionId`  | `string`                                   | A session id               |
+| `attributes` | `Partial<Lucia.DatabaseSessionAttributes>` | `session` fields to update |
 
 ##### Returns
 
-| type          | description         |
-| ------------- | ------------------- |
-| [`Session`]() | The updated session |
+| type                                             | description         |
+| ------------------------------------------------ | ------------------- |
+| [`Session`](/reference/lucia/interfaces#session) | The updated session |
 
 ##### Errors
 
@@ -693,16 +698,16 @@ const updateUserAttributes: (
 
 ##### Parameters
 
-| name         | type                                            | description             |
-| ------------ | ----------------------------------------------- | ----------------------- |
-| `userId`     | `string`                                        | A user id               |
-| `attributes` | `Partial<`[`Lucia.DatabaseUserAttributes`]()`>` | `user` fields to update |
+| name         | type                                    | description             |
+| ------------ | --------------------------------------- | ----------------------- |
+| `userId`     | `string`                                | A user id               |
+| `attributes` | `Partial<Lucia.DatabaseUserAttributes>` | `user` fields to update |
 
 ##### Returns
 
-| type       | description      |
-| ---------- | ---------------- |
-| [`User`]() | The updated user |
+| type                                       | description      |
+| ------------------------------------------ | ---------------- |
+| [`User`](/reference/lucia/interfaces#user) | The updated user |
 
 ##### Errors
 
@@ -743,9 +748,9 @@ const useKey: (
 
 ##### Returns
 
-| type      | description       |
-| --------- | ----------------- |
-| [`Key`]() | The validated key |
+| type                                     | description       |
+| ---------------------------------------- | ----------------- |
+| [`Key`](/reference/lucia/interfaces#key) | The validated key |
 
 ##### Errors
 
@@ -766,7 +771,7 @@ const key = await auth.useKey("github", githubUserId, null);
 
 ## `validateRequestOrigin()`
 
-Used for CSRF protection. Checks if the request origin is trusted for non-GET and non-HEAD requests (e.g. POST, PUT, DELETE), and throws an error if the origin is invalid. Trusted origins include the request url and those defined in [`allowedRequestOrigins`]() configuration.
+Used for CSRF protection. Checks if the request origin is trusted for non-GET and non-HEAD requests (e.g. POST, PUT, DELETE), and throws an error if the origin is invalid. Trusted origins include the request url and those defined in [`allowedRequestOrigins`](/basics/configuration#allowedrequestorigins) configuration.
 
 ```ts
 const validateRequestOrigin: (request: {
@@ -796,10 +801,10 @@ const validateRequestOrigin: (request: {
 import { auth } from "./lucia.js";
 
 auth.validateRequestOrigin({
-    url: "http://localhost:3000/api",
-    method: "POST",
-    originHeader: "http://localhost:3000"
-})
+	url: "http://localhost:3000/api",
+	method: "POST",
+	originHeader: "http://localhost:3000"
+});
 ```
 
 ## `validateSession()`

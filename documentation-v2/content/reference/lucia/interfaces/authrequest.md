@@ -4,7 +4,7 @@ title: "AuthRequest"
 format: "code"
 ---
 
-On initialization, it will check the request origin with [`Auth.validateRequestOrigin()`](). If the request is from an untrusted origin, it will ignore all cookies sent with the request. This can be disabled with [`csrfProtection`]() configuration.
+On initialization, it will check the request origin with [`Auth.validateRequestOrigin()`](/reference/lucia/interfaces/auth#validaterequestorigin). If the request is from an untrusted origin, it will ignore all cookies sent with the request. This can be disabled with [`csrfProtection`](/basics/configuration#csrfprotection) configuration.
 
 ## `renewBearerToken()`
 
@@ -16,10 +16,10 @@ const renewBearerToken: () => Promise<Session | null>;
 
 ##### Returns
 
-| type          | description                   |
-| ------------- | ----------------------------- |
-| [`Session`]() | The renewed session           |
-| `null`        | The session stored is invalid |
+| type                                             | description                   |
+| ------------------------------------------------ | ----------------------------- |
+| [`Session`](/reference/lucia/interfaces#session) | The renewed session           |
+| `null`                                           | The session stored is invalid |
 
 ## `setSession()`
 
@@ -31,9 +31,9 @@ const setSession: (session: Session | null) => void;
 
 ##### Parameters
 
-| name      | type                   | description      |
-| --------- | ---------------------- | ---------------- |
-| `session` | [`Session`]()`\| null` | Session to store |
+| name      | type                                                      | description      |
+| --------- | --------------------------------------------------------- | ---------------- |
+| `session` | [`Session`](/reference/lucia/interfaces#session)`\| null` | Session to store |
 
 #### Example
 
@@ -47,7 +47,7 @@ authRequest.setSession(null); // delete session cookie
 
 ## `validate()`
 
-Validates the session cookie using [`Auth.validateSession()`](). It returns the validated or renewed session if the cookie is valid, or `null` if not. Additionally, when a session is renewed, a new session cookie is set.
+Validates the session cookie using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession). It returns the validated or renewed session if the cookie is valid, or `null` if not. Additionally, when a session is renewed, a new session cookie is set.
 
 By default,this method will also return `null` if the request is from an untrusted origin.
 
@@ -57,10 +57,10 @@ const validate: () => Promise<Session | null>;
 
 ##### Returns
 
-| type          | description                   |
-| ------------- | ----------------------------- |
-| [`Session`]() | The validated session         |
-| `null`        | The session stored is invalid |
+| type                                             | description                   |
+| ------------------------------------------------ | ----------------------------- |
+| [`Session`](/reference/lucia/interfaces#session) | The validated session         |
+| `null`                                           | The session stored is invalid |
 
 #### Example
 
@@ -76,7 +76,7 @@ if (session) {
 
 ## `validateBearerToken()`
 
-Validates the session cookie using [`Auth.getSession()`](). It returns the validated session if the session is valid, or `null` if not. **Idle sessions are not renewed and `null` is returned.**
+Validates the session cookie using [`Auth.getSession()`](/reference/lucia/interfaces/auth#getsession). It returns the validated session if the session is valid, or `null` if not. **Idle sessions are not renewed and `null` is returned.**
 
 ```ts
 const validateBearerToken: () => Promise<Session | null>;
@@ -84,10 +84,10 @@ const validateBearerToken: () => Promise<Session | null>;
 
 ##### Returns
 
-| type          | description                       |
-| ------------- | --------------------------------- |
-| [`Session`]() | The validated session             |
-| `null`        | The session is invalid or expired |
+| type                                             | description                       |
+| ------------------------------------------------ | --------------------------------- |
+| [`Session`](/reference/lucia/interfaces#session) | The validated session             |
+| `null`                                           | The session is invalid or expired |
 
 #### Example
 

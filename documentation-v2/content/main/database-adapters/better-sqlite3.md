@@ -5,7 +5,7 @@ description: "Learn how to use better-sqlite3 with Lucia"
 format: "code"
 ---
 
-Adapter for [`better-sqlite3`]() provided by the SQLite adapter package.
+Adapter for [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3) provided by the SQLite adapter package.
 
 ```ts
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";

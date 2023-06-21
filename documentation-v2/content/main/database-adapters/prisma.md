@@ -4,7 +4,7 @@ title: "Prisma"
 description: "Learn how to use Prisma with Lucia"
 ---
 
-Adapter for [Prisma]() provided by the Prisma adapter package. There are 2 ways to initialize it.
+Adapter for [Prisma](https://www.prisma.io) provided by the Prisma adapter package. There are 2 ways to initialize it.
 
 ```ts
 import { prisma } from "@lucia-auth/adapter-prisma";

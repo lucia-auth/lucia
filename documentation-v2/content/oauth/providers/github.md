@@ -29,25 +29,25 @@ const github: (
 
 ##### Parameters
 
-| name                | type       | description                    | optional |
-| ------------------- | ---------- | ------------------------------ | :------: |
-| auth                | [`Auth`]() | Lucia instance                 |          |
-| config.clientId     | `string`   | Github OAuth app client id     |          |
-| config.clientSecret | `string`   | Github OAuth app client secret |          |
-| config.scope        | `string[]` | an array of scopes             |    ✓     |
-| configs.redirectUri | `string`   | an authorized redirect URI     |    ✓     |
+| name                | type                                       | description                    | optional |
+| ------------------- | ------------------------------------------ | ------------------------------ | :------: |
+| auth                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
+| config.clientId     | `string`                                   | Github OAuth app client id     |          |
+| config.clientSecret | `string`                                   | Github OAuth app client secret |          |
+| config.scope        | `string[]`                                 | an array of scopes             |    ✓     |
+| configs.redirectUri | `string`                                   | an authorized redirect URI     |    ✓     |
 
 ##### Returns
 
-| type                 | description     |
-| -------------------- | --------------- |
-| [`GithubProvider`]() | Github provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`GithubProvider`](#githubprovider) | Github provider |
 
 ## Interfaces
 
 ### `GithubProvider`
 
-Satisfies [`OAuthProvider`]().
+Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 #### `getAuthorizationUrl()`
 
@@ -80,16 +80,15 @@ const validateCallback: (code: string) => Promise<GithubUserAuth>;
 
 ##### Returns
 
-| type                 |
-| -------------------- |
-| [`GithubUserAuth`]() |
+| type                                |
+| ----------------------------------- |
+| [`GithubUserAuth`](#githubuserauth) |
 
 ##### Errors
 
 | name           | description                          |
 | -------------- | ------------------------------------ |
 | FAILED_REQUEST | invalid code, network error, unknown |
-
 
 ### `GithubUserAuth`
 
@@ -100,12 +99,11 @@ type GithubUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`GithubUser`]()       |
-| [`GithubTokens`]()     |
-
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`GithubUser`](#githubuser)                                        |
+| [`GithubTokens`](#githubtokens)                                    |
 
 ### `GithubTokens`
 

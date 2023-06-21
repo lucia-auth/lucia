@@ -6,7 +6,7 @@
 			"@layouts/*": ["src/layouts/*"],
 			"@content": ["src/content/index.ts"],
 			"@components/*": ["src/components/*"],
-			"@cela/*": ["integrations/cela/*"],
+			"@cela/*": ["integrations/cela/*"]
 		}
 	}
 }

@@ -5,7 +5,7 @@ description: "Learn how to use pg with Lucia"
 format: "code"
 ---
 
-Adapter for [`pg`]() provided by the PostgreSQL adapter package.
+Adapter for [`pg`](https://github.com/brianc/node-postgres) provided by the PostgreSQL adapter package.
 
 ```ts
 import { pg } from "@lucia-auth/adapter-postgresql";

@@ -86,7 +86,7 @@ export {};
 
 ## Set up hooks
 
-This is optional but highly recommended. Create a new `handle()` hook that stores [`AuthRequest`]() to `locals.auth`.
+This is optional but highly recommended. Create a new `handle()` hook that stores [`Auth`](/reference/lucia/interfaces/authrequest) to `locals.auth`.
 
 ```ts
 // src/hooks.server.ts

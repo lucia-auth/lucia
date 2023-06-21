@@ -31,25 +31,25 @@ const facebook: (
 
 ##### Parameters
 
-| name                | type       | description                                        | optional |
-| ------------------- | ---------- | -------------------------------------------------- | :------: |
-| auth                | [`Auth`]() | Lucia instance                                     |          |
-| config.clientId     | `string`   | Facebook OAuth app client id                       |          |
-| config.clientSecret | `string`   | Facebook OAuth app client secret                   |          |
-| configs.redirectUri | `string`   | an authorized redirect URI                         |          |
-| config.scope        | `string[]` | an array of scopes - `identity` is always included |    ✓     |
+| name                | type                                       | description                                        | optional |
+| ------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| auth                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| config.clientId     | `string`                                   | Facebook OAuth app client id                       |          |
+| config.clientSecret | `string`                                   | Facebook OAuth app client secret                   |          |
+| configs.redirectUri | `string`                                   | an authorized redirect URI                         |          |
+| config.scope        | `string[]`                                 | an array of scopes - `identity` is always included |    ✓     |
 
 ##### Returns
 
-| type                   | description       |
-| ---------------------- | ----------------- |
-| [`FacebookProvider`]() | Facebook provider |
+| type                                    | description       |
+| --------------------------------------- | ----------------- |
+| [`FacebookProvider`](#facebookprovider) | Facebook provider |
 
 ## Interfaces
 
 ### `FacebookProvider`
 
-Satisfies [`OAuthProvider`]().
+Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 ```ts
 type FacebookProvider = OAuthProvider<FacebookUser, FacebookTokens>;
@@ -86,9 +86,9 @@ const validateCallback: (code: string) => Promise<FacebookUserAuth>;
 
 ##### Returns
 
-| type                   |
-| ---------------------- |
-| [`FacebookUserAuth`]() |
+| type                                    |
+| --------------------------------------- |
+| [`FacebookUserAuth`](#facebookuserauth) |
 
 ##### Errors
 
@@ -105,11 +105,11 @@ type FacebookUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`FacebookUser`]()     |
-| [`FacebookTokens`]()   |
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`FacebookUser`](#facebookuser)                                    |
+| [`FacebookTokens`](#facebooktokens)                                |
 
 ### `FacebookTokens`
 

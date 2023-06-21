@@ -6,36 +6,36 @@ format: "code"
 
 ## `auth0()`
 
-See [Auth0]() provider.
+See [Auth0](/oauth/providers/auth0) provider.
 
 ## `discord()`
 
-See [Discord]() provider.
+See [Discord](/oauth/providers/discord) provider.
 
 ## `facebook()`
 
-See [Facebook]() provider.
+See [Facebook](/oauth/providers/facebook) provider.
 
 ## `github()`
 
-See [Github]() provider.
+See [Github](/oauth/providers/github) provider.
 
 ## `google()`
 
-See [Google]() provider.
+See [Google](/oauth/providers/google) provider.
 
 ## `linkedin()`
 
-See [Linkedin]() provider.
+See [Linkedin](/oauth/providers/linkedin) provider.
 
 ## `patreon()`
 
-See [Patreon]() provider.
+See [Patreon](/oauth/providers/patreon) provider.
 
 ## `reddit()`
 
-See [Reddit]() provider.
+See [Reddit](/oauth/providers/reddit) provider.
 
 ## `twitch()`
 
-See [Twitch]() provider.
+See [Twitch](/oauth/providers/twitch) provider.

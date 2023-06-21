@@ -36,7 +36,7 @@ const Key = mongoose.model(
 				type: String,
 				required: true
 			},
-			hashed_password: String,
+			hashed_password: String
 		},
 		{ _id: false }
 	)

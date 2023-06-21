@@ -4,7 +4,7 @@ title: "Cloudflare D1"
 description: "Learn how to use Cloudflare D1 with Lucia"
 ---
 
-Adapter for [Cloudflare D1]() provided by the SQLite adapter package.
+Adapter for [Cloudflare D1](https://developers.cloudflare.com/d1) provided by the SQLite adapter package.
 
 ```ts
 import { d1 } from "@lucia-auth/adapter-sqlite";

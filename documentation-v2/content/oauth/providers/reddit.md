@@ -29,25 +29,25 @@ const reddit: (
 
 ##### Parameters
 
-| name                 | type       | description                                       | optional |
-| -------------------- | ---------- | ------------------------------------------------- | :------: |
-| auth                 | [`Auth`]() | Lucia instance                                    |          |
-| configs.clientId     | `string`   | Reddit OAuth app client id                        |          |
-| configs.clientSecret | `string`   | Reddit OAuth app client secret                    |          |
-| configs.redirectUri  | `string`   | Reddit OAuth app redirect Uri                     |          |
-| configs.scope        | `string[]` | an array of scopes (`identiy` is always selected) |    ✓     |
+| name                 | type                                       | description                                       | optional |
+| -------------------- | ------------------------------------------ | ------------------------------------------------- | :------: |
+| auth                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                    |          |
+| configs.clientId     | `string`                                   | Reddit OAuth app client id                        |          |
+| configs.clientSecret | `string`                                   | Reddit OAuth app client secret                    |          |
+| configs.redirectUri  | `string`                                   | Reddit OAuth app redirect Uri                     |          |
+| configs.scope        | `string[]`                                 | an array of scopes (`identiy` is always selected) |    ✓     |
 
 ##### Returns
 
-| type                 | description     |
-| -------------------- | --------------- |
-| [`RedditProvider`]() | Reddit provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`RedditProvider`](#redditprovider) | Reddit provider |
 
 ## Interfaces
 
 ### `RedditProvider`
 
-Satisfied [`OAuthProvider`]().
+Satisfied [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
 
 ```ts
 type RedditProvider = OAuthProvider<Reddit, RedditTokens>;
@@ -84,9 +84,9 @@ const validateCallback: (code: string) => Promise<RedditUserAuth>;
 
 ##### Returns
 
-| type                 |
-| -------------------- |
-| [`RedditUserAuth`]() |
+| type                                |
+| ----------------------------------- |
+| [`RedditUserAuth`](#reddituserauth) |
 
 ##### Errors
 
@@ -103,11 +103,11 @@ type RedditUserAuth = ProviderUserAuth & {
 };
 ```
 
-| type                   |
-| ---------------------- |
-| [`ProviderUserAuth`]() |
-| [`RedditUser`]()       |
-| [`RedditTokens`]()     |
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`RedditUser`](#reddituser)                                        |
+| [`RedditTokens`](#reddittokens)                                    |
 
 ### `RedditTokens`
 

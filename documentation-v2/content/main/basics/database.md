@@ -12,14 +12,14 @@ There are 2 types of adapters provided by Lucia: Regular adapters, and session a
 
 We currently provide the following adapters:
 
-- [`better-sqlite3`]()
-- [Cloudflare D1]()
-- [Mongoose]()
-- [`mysql2`]()
-- [`pg`]()
-- [PlanetScale serverless]()
-- [Prisma]()
-- [Redis]()
+- [`better-sqlite3`](/database-adapters/better-sqlite3)
+- [Cloudflare D1](/database-adapters/cloudflare-d1)
+- [Mongoose](/database-adapters/mongoose)
+- [`mysql2`](/database-adapters/mysql2)
+- [`pg`](/database-adapters/pg)
+- [PlanetScale serverless](/database-adapters/planetscale-serverless)
+- [Prisma](/database-adapters/prisma)
+- [Redis](/database-adapters/redis)
 
 You can also use query builders like Drizzle ORM and Kysely since they rely on underlying drivers that we provide adapters for.
 
