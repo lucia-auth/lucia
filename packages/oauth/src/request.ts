@@ -1,19 +1,11 @@
-import { LuciaOAuthRequestError } from "./core.js";
+import { OAuthRequestError } from "./core.js";
 
 export const handleRequest = async <T extends {}>(request: Request) => {
 	request.headers.set("User-Agent", "lucia");
 	request.headers.set("Accept", "application/json");
 	const response = await fetch(request);
 	if (!response.ok) {
-		const getErrorBody = async () => {
-			try {
-				return await response.json();
-			} catch {
-				return null;
-			}
-		};
-		const errorBody = await getErrorBody();
-		throw new LuciaOAuthRequestError(response.status, errorBody);
+		throw new OAuthRequestError(request, response);
 	}
 	return (await response.json()) as T;
 };
