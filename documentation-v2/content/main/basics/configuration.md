@@ -18,6 +18,7 @@ type Configuration = {
 	env: "DEV" | "PROD";
 
 	// optional
+	allowedRequestOrigins: string[];
 	csrfProtection?: boolean;
 	generateUserId?: () => MaybePromise<string>;
 	getSessionAttributes?: (databaseSession: SessionSchema) => Record<any, any>;
@@ -30,7 +31,6 @@ type Configuration = {
 			hashedPassword: string
 		) => MaybePromise<boolean>;
 	};
-	requestOrigins: string[];
 	sessionCookie?: {
 		name?: string;
 		attributes?: SessionCookieAttributes;
@@ -80,9 +80,17 @@ Provides Lucia with the current server context.
 
 ## Optional
 
+### `allowedRequestOrigins`
+
+```ts
+const allowedRequestOrigins: string[];
+```
+
+A list of allowed request origins for CSRF check used by [`Auth.validateRequestOrigin()`]() and [`AuthRequest.validate()`](). Does not accept wildcard `*`.
+
 ### `csrfProtection`
 
-Enabled by default. When enabled, [`AuthRequest.validate()`]() checks if the incoming request is from a trusted origin. Trusted origin includes the origin where the server is hosted and those defined in [`requestOrigins`]() configuration.
+Enabled by default. When enabled, [`AuthRequest.validate()`]() checks if the incoming request is from a trusted origin. Trusted origin includes the origin where the server is hosted and those defined in [`allowedRequestOrigins`]() configuration.
 
 | value   | description              |
 | ------- | ------------------------ |
@@ -217,14 +225,6 @@ Validates a hash generated using `passwordHash.generate()` synchronously or asyn
 | ------- | --------------------------------- |
 | `true`  | Argument of `password` is valid   |
 | `false` | Argument of `password` is invalid |
-
-### `requestOrigins`
-
-```ts
-const requestOrigins: string[];
-```
-
-A list of trusted request origins for CSRF check used by [`Auth.validateRequestOrigin()`]() and [`AuthRequest.validate()`](). Does not accept wildcard `*`. The default session cookie name is `auth_session`.
 
 ### `sessionCookie`
 

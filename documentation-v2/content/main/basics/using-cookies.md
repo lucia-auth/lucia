@@ -95,7 +95,7 @@ setResponseHeaders("Set-Cookie", sessionCookie.serialize());
 
 ## Validate request origin
 
-[`Auth.validateRequestOrigin()`]() prevents CSRF by checking if the source of the request is from a trusted host (origin) by comparing the request url and the origin header. Trusted origins include where the API is hosted and origins defined in [`requestOrigins`]() configuration. This check is only done on POST and other non-GET method requests. **GET requests are not protected by Lucia and they should not modify server state (e.g. update password and profile) without additional protections.**
+[`Auth.validateRequestOrigin()`]() prevents CSRF by checking if the source of the request is from a trusted host (origin) by comparing the request url and the origin header. Trusted origins include where the API is hosted and origins defined in [`allowedRequestOrigins`]() configuration. This check is only done on POST and other non-GET method requests. **GET requests are not protected by Lucia and they should not modify server state (e.g. update password and profile) without additional protections.**
 
 ```ts
 import { auth } from "./lucia.js";
