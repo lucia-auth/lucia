@@ -8,7 +8,7 @@ format: "code"
 Adapter for [`pg`]() provided by the PostgreSQL adapter package.
 
 ```ts
-import { pg } from "@lucia-auth/adapter-mysql";
+import { pg } from "@lucia-auth/adapter-postgresql";
 ```
 
 ```ts
