@@ -69,7 +69,7 @@ You can add additional columns to store user attributes.
 
 ```sql
 CREATE TABLE user (
-    id VARCHAR(31) NOT NULL PRIMARY KEY,
+    id VARCHAR(31) NOT NULL PRIMARY KEY
 );
 ```
 
