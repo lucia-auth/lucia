@@ -17,46 +17,51 @@ import MoreIcon from "@icons/MoreIcon.astro";
             />
             <p class="text-xl font-bold">Lucia</p>
         </a>
-        <div
-            class="gap-x-10 place-items-center text-sm hidden sm:flex"
-        >
+        <div class="gap-x-10 place-items-center text-sm hidden sm:flex">
             <a href="/reference" class="hover:text-main">Reference</a>
             <a href="/oauth" class="hover:text-main">OAuth</a>
             <a href="/guidebook" class="hover:text-main">Guidebook</a>
         </div>
         <div class="sm:hidden">
-            <button class="p-1 rounded block hover:bg-indigo-50" id="more-button">
+            <button
+                class="p-1 rounded block hover:bg-indigo-50"
+                id="more-button"
+            >
                 <div class="w-5 h-5 fill-current">
                     <MoreIcon />
                 </div>
             </button>
-            <div class="absolute right-0 mr-4 bg-white rounded border text-sm  py-2 w-36 shadow hidden sm:hidden" id="more-dropdown">
-                <a href="/reference" class="hover:bg-indigo-50 block px-4 py-1.5">Reference</a>
-                <a href="/oauth" class="hover:bg-indigo-50 block px-4 py-1.5">OAuth</a>
-                <a href="/guidebook" class="hover:bg-indigo-50 block px-4 py-1.5">Guidebook</a>
+            <div
+                class="absolute right-0 mr-4 bg-white rounded border text-sm py-2 w-36 shadow hidden sm:hidden"
+                id="more-dropdown"
+            >
+                <a
+                    href="/reference"
+                    class="hover:bg-indigo-50 block px-4 py-1.5">Reference</a
+                >
+                <a href="/oauth" class="hover:bg-indigo-50 block px-4 py-1.5"
+                    >OAuth</a
+                >
+                <a
+                    href="/guidebook"
+                    class="hover:bg-indigo-50 block px-4 py-1.5">Guidebook</a
+                >
             </div>
         </div>
     </div>
-    <div class="lg:hidden px-4 sm:px-8 py-1.5 border-b">
-        <button class="p-1 rounded block hover:bg-indigo-50" id="menu-button">
-            <div class="w-5 h-5 fill-current">
-                <MenuIcon />
-            </div>
-        </button>
-    </div>
 </header>
+
 <script>
-    import { onMoreToggle, toggleMore , toggleMenu} from "@utils/state";
-    const menuButton = document.getElementById("menu-button");
-    const moreButton = document.getElementById("more-button")
-    if (menuButton instanceof HTMLButtonElement) {
-        menuButton.addEventListener("click", toggleMenu);
-    }
+    import { onMoreToggle, toggleMore } from "@utils/state";
+
+    const moreButton = document.getElementById("more-button");
+
     if (moreButton instanceof HTMLButtonElement) {
         moreButton.addEventListener("click", toggleMore);
     }
 
-    const moreDropdownDiv = document.getElementById("more-dropdown")
+    const moreDropdownDiv = document.getElementById("more-dropdown");
+    
     if (moreDropdownDiv instanceof HTMLDivElement) {
         onMoreToggle((dropdownOpened) => {
             if (dropdownOpened) {
@@ -66,5 +71,4 @@ import MoreIcon from "@icons/MoreIcon.astro";
             }
         });
     }
-
 </script>
