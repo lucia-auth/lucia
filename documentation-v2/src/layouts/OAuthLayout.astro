@@ -1,5 +1,5 @@
 ---
-import DocumentationNav from "@components/ContentNav.astro";
+import Menu from "@components/Menu.astro";
 import Header from "@components/Header.astro";
 import { getSubCollections } from "@content";
 import BaseLayout from "./BaseLayout.astro";
@@ -16,20 +16,25 @@ const { title, description } = Astro.props;
 
 <BaseLayout title={title} description={description}>
     <Header />
-    <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
-        <p class="ml-8 font-semibold mb-2">OAuth</p>
+    <Menu subCollections={subCollections} collectionId="oauth" title="OAuth">
         <a
             href="/oauth"
             class:list={[
-                "w-full py-1 pl-8 hover:bg-indigo-50 block text-sm mb-2",
+                "w-full py-1 pl-8 hover:bg-indigo-50 block text-sm mb-4",
                 {
                     "bg-gray-100": Astro.url.pathname === "/oauth"
                 }
             ]}>Overview</a
         >
-        <DocumentationNav subCollections={subCollections}collectionId="oauth"  />
-    </div>
-    <main class="py-20 px-16 ml-80 overflow-hidden">
-        <slot />
-    </main>
+    </Menu>
+    <main
+    class="mt-24 lg:mt-20 pb-20 px-4 sm:px-8 md:px-16 lg:ml-72 overflow-hidden"
+>
+    <slot />
+</main>
 </BaseLayout>
+<style>
+    :global(html) {
+        @apply scroll-p-20;
+    }
+</style>

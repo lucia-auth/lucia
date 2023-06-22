@@ -1,18 +1,68 @@
-<header
-    class="w-full py-3 px-8 fixed top-0 border-b bg-white z-30 flex place-items-center gap-x-16"
->
-    <a class="pointer-events-auto flex place-items-center" href="/">
-        <img
-            src="/logo.svg"
-            alt="Lucia logo"
-            width="100"
-            height="100"
-            class="h-5 w-5"
-        />
-        <p class="text-xl font-bold">Lucia</p>
-    </a>
-    <div class="flex gap-x-10 place-items-center text-sm font-medium">
-        <a href="/reference" class="hover:text-main">Reference</a>
-        <a href="/oauth" class="hover:text-main">OAuth</a>
+---
+import MenuIcon from "@icons/MenuIcon.astro";
+import MoreIcon from "@icons/MoreIcon.astro";
+---
+
+<header class="w-full fixed top-0 bg-white z-30">
+    <div
+        class="flex place-items-center place-content-between sm:place-content-start gap-x-16 py-3 border-b px-4 sm:px-8"
+    >
+        <a class="pointer-events-auto flex place-items-center" href="/">
+            <img
+                src="/logo.svg"
+                alt="Lucia logo"
+                width="100"
+                height="100"
+                class="h-5 w-5"
+            />
+            <p class="text-xl font-bold">Lucia</p>
+        </a>
+        <div
+            class="gap-x-10 place-items-center text-sm font-medium hidden sm:flex"
+        >
+            <a href="/reference" class="hover:text-main">Reference</a>
+            <a href="/oauth" class="hover:text-main">OAuth</a>
+        </div>
+        <div class="sm:hidden">
+            <button class="p-1 rounded block hover:bg-indigo-50" id="more-button">
+                <div class="w-5 h-5 fill-current">
+                    <MoreIcon />
+                </div>
+            </button>
+            <div class="absolute right-0 mr-4 bg-white rounded border text-sm font-medium py-2 w-36 shadow hidden sm:hidden" id="more-dropdown">
+                <a href="/reference" class="hover:bg-indigo-50 block px-4 py-1.5">Reference</a>
+                <a href="/oauth" class="hover:bg-indigo-50 block px-4 py-1.5">OAuth</a>
+            </div>
+        </div>
+    </div>
+    <div class="lg:hidden px-4 sm:px-8 py-1.5 border-b">
+        <button class="p-1 rounded block hover:bg-indigo-50" id="menu-button">
+            <div class="w-5 h-5 fill-current">
+                <MenuIcon />
+            </div>
+        </button>
     </div>
 </header>
+<script>
+    import { onMoreToggle, toggleMore , toggleMenu} from "@utils/state";
+    const menuButton = document.getElementById("menu-button");
+    const moreButton = document.getElementById("more-button")
+    if (menuButton instanceof HTMLButtonElement) {
+        menuButton.addEventListener("click", toggleMenu);
+    }
+    if (moreButton instanceof HTMLButtonElement) {
+        moreButton.addEventListener("click", toggleMore);
+    }
+
+    const moreDropdownDiv = document.getElementById("more-dropdown")
+    if (moreDropdownDiv instanceof HTMLDivElement) {
+        onMoreToggle((dropdownOpened) => {
+            if (dropdownOpened) {
+                moreDropdownDiv.classList.remove("hidden");
+            } else {
+                moreDropdownDiv.classList.add("hidden");
+            }
+        });
+    }
+
+</script>
