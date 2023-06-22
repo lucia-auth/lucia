@@ -1,8 +1,8 @@
 ---
-import DocumentationNav from "@components/ContentNav.astro";
 import Header from "@components/Header.astro";
 import { getSubCollections } from "@content";
 import BaseLayout from "./BaseLayout.astro";
+import Menu from "@components/Menu.astro";
 
 const subCollections = await getSubCollections("main");
 
@@ -16,10 +16,15 @@ const { title, description } = Astro.props;
 
 <BaseLayout title={title} description={description}>
     <Header />
-    <div class="h-screen fixed left-0 top-0 border-r w-80 bg-white pt-16">
-        <DocumentationNav subCollections={subCollections} collectionId="main" />
-    </div>
-    <main class="py-20 px-16 ml-80 overflow-hidden">
+    <Menu subCollections={subCollections} collectionId="main" />
+    <main
+        class="mt-24 lg:mt-20 pb-20 px-4 sm:px-8 md:px-16 lg:ml-72 overflow-hidden"
+    >
         <slot />
     </main>
 </BaseLayout>
+<style>
+    :global(html) {
+        @apply scroll-p-20;
+    }
+</style>
