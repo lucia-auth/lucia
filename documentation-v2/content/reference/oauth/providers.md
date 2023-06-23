@@ -40,6 +40,10 @@ See [Patreon](/oauth/providers/patreon) provider.
 
 See [Reddit](/oauth/providers/reddit) provider.
 
+## `spotify()`
+
+See [Spotify](/oauth/providers/spotify) provider.
+
 ## `twitch()`
 
 See [Twitch](/oauth/providers/twitch) provider.
