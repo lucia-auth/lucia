@@ -20,7 +20,7 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getAuthorizationUrl = async () => {
 		const state = generateState();
 		// PKCE code verifier length and alphabet defined in RFC 7636 section 4.1
-		const code_verifier = generateRandomString(
+		const codeVerifier = generateRandomString(
 			96,
 			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~"
 		);
@@ -29,13 +29,13 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			client_id: config.clientId,
 			code_challenge_method: "S256",
 			code_challenge: pkceBase64urlEncode(
-				await pkceCodeChallenge(code_verifier)
+				await pkceCodeChallenge(codeVerifier)
 			),
 			scope: scope([], config.scope),
 			redirect_uri: config.redirectUri,
 			state
 		});
-		return [url, state, code_verifier] as const;
+		return [url, state, codeVerifier] as const;
 	};
 
 	const getLichessTokens = async (code: string, codeVerifier: string) => {
