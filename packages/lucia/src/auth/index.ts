@@ -270,7 +270,8 @@ export class Auth<_Configuration extends Configuration = any> {
 		return user;
 	};
 
-	public createUser = async (data: {
+	public createUser = async (options: {
+		userId?: string;
 		key: {
 			providerId: string;
 			providerUserId: string;
@@ -278,18 +279,18 @@ export class Auth<_Configuration extends Configuration = any> {
 		} | null;
 		attributes: Lucia.DatabaseUserAttributes;
 	}): Promise<User> => {
-		const userId = await this.generateUserId();
-		const userAttributes = data.attributes ?? {};
+		const userId = options.userId ?? (await this.generateUserId());
+		const userAttributes = options.attributes ?? {};
 		const databaseUser = {
 			...userAttributes,
 			id: userId
 		} satisfies UserSchema;
-		if (data.key === null) {
+		if (options.key === null) {
 			await this.adapter.setUser(databaseUser, null);
 			return this.transformDatabaseUser(databaseUser);
 		}
-		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
-		const password = data.key.password;
+		const keyId = `${options.key.providerId}:${options.key.providerUserId}`;
+		const password = options.key.password;
 		const hashedPassword = password
 			? await this.passwordHash.generate(password)
 			: null;
@@ -412,31 +413,14 @@ export class Auth<_Configuration extends Configuration = any> {
 		});
 	};
 
-	public createSession = async <
-		// for some absurd reasons
-		// this needs to be a generic before doing a conditional check
-		// to work when exported
-		_Attributes extends Lucia.DatabaseSessionAttributes = Lucia.DatabaseSessionAttributes
-	>(
-		...args: _Attributes extends EmptyObject
-			? [
-					userId: string,
-					// options args is optional if no database session attributes are defined
-					options?: {
-						attributes?: Lucia.DatabaseSessionAttributes;
-					}
-			  ]
-			: [
-					userId: string,
-					options: {
-						attributes: Lucia.DatabaseSessionAttributes;
-					}
-			  ]
-	): Promise<Session> => {
+	public createSession = async (options: {
+		userId: string;
+		attributes: Lucia.DatabaseSessionAttributes;
+	}): Promise<Session> => {
 		const [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
 			this.generateSessionId();
-		const [userId, options] = args;
-		const attributes = options?.attributes ?? {};
+		const userId = options.userId;
+		const attributes = options.attributes;
 		const databaseSession = {
 			...attributes,
 			id: sessionId,
@@ -613,28 +597,27 @@ export class Auth<_Configuration extends Configuration = any> {
 		});
 	};
 
-	public createKey = async (
-		userId: string,
-		keyData: {
-			providerId: string;
-			providerUserId: string;
-			password: string | null;
-		}
-	): Promise<Key> => {
-		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
+	public createKey = async (options: {
+		userId: string;
+		providerId: string;
+		providerUserId: string;
+		password: string | null;
+	}): Promise<Key> => {
+		const keyId = `${options.providerId}:${options.providerUserId}`;
 		let hashedPassword: string | null = null;
-		if (keyData.password !== null) {
-			hashedPassword = await this.passwordHash.generate(keyData.password);
+		if (options.password !== null) {
+			hashedPassword = await this.passwordHash.generate(options.password);
 		}
+		const userId = options.userId;
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword
 		});
 		return {
-			providerId: keyData.providerId,
-			providerUserId: keyData.providerUserId,
-			passwordDefined: !!keyData.password,
+			providerId: options.providerId,
+			providerUserId: options.providerUserId,
+			passwordDefined: !!options.password,
 			userId
 		} satisfies Key as any;
 	};
