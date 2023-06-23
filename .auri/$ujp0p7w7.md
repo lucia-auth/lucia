@@ -1,6 +1,7 @@
 ---
 package: "@lucia-auth/oauth" # package name
 type: "minor" # "major", "minor", "patch"
+pull: "542"
 ---
 
-Add Spotify OAuth provider
+Add Lichess OAuth provider
