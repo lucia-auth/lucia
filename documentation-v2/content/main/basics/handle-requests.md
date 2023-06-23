@@ -12,8 +12,7 @@ const authRequest = auth.handleRequest();
 const session = authRequest.validate();
 authRequest.setSession(session);
 
-const session = authRequest.validateBearerToken(); // renew
-const session = authRequest.renewBearerToken(); // renew session stored in bearer token
+const session = authRequest.validateBearerToken();
 ```
 
 However, every framework and runtime has their own representation of an incoming request and outgoing response, such as the web standard `Request`/`Response` and Node.js' `IncomingMessage`/`OutgoingMessage`. Lucia uses its own implementation of `RequestContext` as well, which is the default parameter type of `Auth.handleRequest()`. Since this is an annoying problem that is easy to solve, Lucia provides _middleware_.
