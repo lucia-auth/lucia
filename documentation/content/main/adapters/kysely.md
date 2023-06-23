@@ -47,7 +47,7 @@ Refer to the [MySQL](/adapters/mysql) page for the schema and other details.
 ```ts
 import mysql from "mysql2/promise";
 import { Kysely, MysqlDialect } from "kysely";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { mysql2 } from "@lucia-auth/adapter-mysql";
 
 const connectionPool = mysql.createPool({
@@ -81,7 +81,7 @@ yarn add @planetscale/database kysely-planetscale
 import { connect } from "@planetscale/database";
 import { Kysely } from "kysely";
 import { PlanetScaleDialect } from "kysely-planetscale";
-import { lucia } from "lucia-auth";
+import { lucia } from "lucia";
 import { planetscale } from "@lucia-auth/adapter-mysql";
 
 const dbConfig = {
@@ -132,7 +132,7 @@ Refer to the [PostgreSQL](/adapters/postgresql) page for the schema and other de
 ```ts
 import postgres from "pg";
 import { Kysely, PostgresDialect } from "kysely";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { pg } from "@lucia-auth/adapter-postgresql";
 
 const connectionPool = new postgres.Pool({
@@ -183,7 +183,7 @@ Refer to the [SQLite](/adapters/sqlite) page for the schema and other details.
 ```ts
 import sqlite from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 
 const database = sqlite(pathToDbFile);

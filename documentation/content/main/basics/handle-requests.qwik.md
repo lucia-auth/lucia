@@ -49,7 +49,7 @@ The middleware can be configured with the [`middleware`](/basics/configuration#m
 
 ```ts
 import { qwik } from "lucia-auth/middleware";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 
 const auth = lucia({
 	middleware: qwik()

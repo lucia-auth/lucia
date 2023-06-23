@@ -1,8 +1,0 @@
-/node_modules
-.DS_Store
-/src
-/tsconfig.json
-.gitignore
-.env
-/prisma
-/test
