@@ -80,7 +80,6 @@ export const load = async (event) => {
 	const authRequest = auth.handleRequest(event);
 	const { user, session } = await authRequest.validateUser();
 };
-
 ```
 
 #### Examples

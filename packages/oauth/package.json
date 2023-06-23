@@ -1,1 +1,48 @@
-{"name":"@lucia-auth/oauth","version":"2.0.0-beta.2","description":"OAuth integration for Lucia","main":"dist/index.js","types":"dist/index.d.ts","module":"dist/index.js","type":"module","files":["/dist/","CHANGELOG.md"],"scripts":{"build":"shx rm -rf ./dist/* && tsc","auri.build":"pnpm build"},"keywords":["lucia","lucia","authentication","auth","oauth"],"repository":{"type":"git","url":"https://github.com/pilcrowOnPaper/lucia","directory":"packages/oauth"},"author":"pilcrowonpaper","license":"MIT","exports":{".":"./dist/index.js","./providers":"./dist/providers/index.js"},"typesVersions":{"*":{"providers":["dist/providers/index.d.ts"]}},"devDependencies":{"lucia":"latest"},"peerDependencies":{"lucia":"2.0.0-beta.2"}}
+{
+	"name": "@lucia-auth/oauth",
+	"version": "2.0.0-beta.3",
+	"description": "OAuth integration for Lucia",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
+	"type": "module",
+	"files": [
+		"/dist/",
+		"CHANGELOG.md"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc",
+		"auri.build": "pnpm build"
+	},
+	"keywords": [
+		"lucia",
+		"lucia",
+		"authentication",
+		"auth",
+		"oauth"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/oauth"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js",
+		"./providers": "./dist/providers/index.js"
+	},
+	"typesVersions": {
+		"*": {
+			"providers": [
+				"dist/providers/index.d.ts"
+			]
+		}
+	},
+	"devDependencies": {
+		"lucia": "latest"
+	},
+	"peerDependencies": {
+		"lucia": "2.0.0-beta.2"
+	}
+}

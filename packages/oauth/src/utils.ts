@@ -21,7 +21,6 @@ export const encodeBase64 = (s: string) => {
 	return btoa(s);
 };
 
-
 export const generateState = () => {
 	return generateRandomString(43);
 };
