@@ -534,7 +534,9 @@ export class Auth<_Configuration extends Configuration = any> {
 			}
 			try {
 				const url = new URL(request.url);
-				if (![url.origin, ...this.allowedRequestOrigins].includes(requestOrigin)) {
+				if (
+					![url.origin, ...this.allowedRequestOrigins].includes(requestOrigin)
+				) {
 					debug.request.fail("Invalid request origin", requestOrigin);
 					throw new LuciaError("AUTH_INVALID_REQUEST");
 				}

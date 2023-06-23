@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 2.0.0-beta.2
+
+### Patch changes
+
+- [#768](https://github.com/pilcrowOnPaper/lucia/pull/768) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.1
 
 ### Major changes
@@ -20,9 +26,9 @@
 
 - [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
 
-    - Export `useAuth()`
+  - Export `useAuth()`
 
-    - Remove `provider()`
+  - Remove `provider()`
 
 ## 1.2.1
 
