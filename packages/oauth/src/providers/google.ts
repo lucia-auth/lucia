@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
+import { scope, generateState, providerUserAuth } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -11,7 +11,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "google";
 
 export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getGoogleTokens = async (code: string) => {
 		const requestUrl = createUrl("https://oauth2.googleapis.com/token", {
 			client_id: config.clientId,
 			client_secret: config.clientSecret,
@@ -35,7 +35,7 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getGoogleUser = async (accessToken: string) => {
 		const request = new Request(
 			"https://www.googleapis.com/oauth2/v3/userinfo",
 			{
@@ -62,21 +62,21 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.sub;
-			const providerAuthHelpers = await useAuth(
+			const googleTokens = await getGoogleTokens(code);
+			const googleUser = await getGoogleUser(googleTokens.accessToken);
+			const providerUserId = googleUser.sub;
+			const googleUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpers,
-				providerUser,
-				tokens
+				...googleUserAuth,
+				googleUser,
+				googleTokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 export type GoogleUser = {

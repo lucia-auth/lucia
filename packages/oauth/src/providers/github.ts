@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
+import { scope, generateState, providerUserAuth } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -23,7 +23,7 @@ type Config = OAuthConfig & {
 };
 
 export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string): Promise<Tokens> => {
+	const getGithubTokens = async (code: string): Promise<Tokens> => {
 		const requestUrl = createUrl(
 			"https://github.com/login/oauth/access_token",
 			{
@@ -63,7 +63,7 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getGithubUser = async (accessToken: string) => {
 		const request = new Request("https://api.github.com/user", {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
@@ -85,21 +85,21 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id.toString();
-			const providerAuthHelpers = await useAuth(
+			const githubTokens = await getGithubTokens(code);
+			const githubUser = await getGithubUser(githubTokens.accessToken);
+			const providerUserId = githubUser.id.toString();
+			const githubUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpers,
-				providerUser,
-				tokens
+				...githubUserAuth,
+				githubUser,
+				githubTokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 type PublicGithubUser = {

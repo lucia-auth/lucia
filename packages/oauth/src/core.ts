@@ -9,20 +9,14 @@ export type OAuthConfig = {
 	scope?: string[];
 };
 
-export type OAuthProvider<A extends Auth> = {
+export type OAuthProvider = {
 	validateCallback: (
 		code: string,
 		...args: any[]
 	) => Promise<{
-		existingUser: LuciaUser<A> | null;
-		createUser: (
-			attributes: CreateUserAttributesParameter<A>
-		) => Promise<LuciaUser<A>>;
+		existingUser: Record<any, any> | null;
+		createUser: (attributes: Record<string, any>) => Promise<Record<any, any>>;
 		createKey: (userId: string) => Promise<Key>;
-		providerUser: Record<string, any>;
-		tokens: {
-			accessToken: string;
-		};
 	}>;
 	getAuthorizationUrl: (
 		redirectUri?: string
@@ -48,7 +42,7 @@ export const scope = (base: string[], config: string[] = []) => {
 	return [...base, ...(config ?? [])].join(" ");
 };
 
-export const useAuth = async <_Auth extends Auth>(
+export const providerUserAuth = async <_Auth extends Auth>(
 	auth: _Auth,
 	providerId: string,
 	providerUserId: string

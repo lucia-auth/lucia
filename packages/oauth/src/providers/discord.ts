@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { useAuth, generateState, scope } from "../core.js";
+import { providerUserAuth, generateState, scope } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -11,7 +11,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "discord";
 
 export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getDiscordTokens = async (code: string) => {
 		const request = new Request("https://discord.com/api/oauth2/token", {
 			method: "POST",
 			headers: {
@@ -38,7 +38,7 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getDiscordUser = async (accessToken: string) => {
 		// do not use oauth/users/@me because it ignores intents, use oauth/users/@me instead
 		const request = new Request("https://discord.com/api/users/@me", {
 			headers: authorizationHeaders("bearer", accessToken)
@@ -60,21 +60,21 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state];
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(
+			const discordTokens = await getDiscordTokens(code);
+			const discordUser = await getDiscordUser(discordTokens.accessToken);
+			const providerUserId = discordUser.id;
+			const discordUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpers,
-				providerUser,
-				tokens
+				...discordUserAuth,
+				discordUser,
+				discordTokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 export type DiscordUser = {
