@@ -5,7 +5,6 @@ import { scope, generateState, encodeBase64 } from "../utils.js";
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-
 type Config = OAuthConfig & {
 	redirectUri: string;
 	showDialog: boolean;
@@ -58,13 +57,13 @@ export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
+		getAuthorizationUrl: async () => {
 			const state = generateState();
 
 			const url = createUrl("https://accounts.spotify.com/authorize", {
 				client_id: config.clientId,
 				response_type: "code",
-				redirect_uri: redirectUri ?? config.redirectUri,
+				redirect_uri: config.redirectUri,
 				scope: scope([], config.scope),
 				state,
 				show_dialog: config.showDialog.toString()
@@ -76,7 +75,11 @@ export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			const spotifyTokens = await getSpotifyTokens(code);
 			const spotifyUser = await getSpotifyUser(spotifyTokens.accessToken);
 			const providerUserId = spotifyUser.id;
-			const spotifyUserAuth = await providerUserAuth(auth, PROVIDER_ID, providerUserId);
+			const spotifyUserAuth = await providerUserAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 			return {
 				...spotifyUserAuth,
 				spotifyUser,
