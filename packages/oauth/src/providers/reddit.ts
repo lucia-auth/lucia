@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
+import { scope, generateState, providerUserAuth } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -11,7 +11,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "reddit";
 
 export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getRedditTokens = async (code: string) => {
 		const requestUrl = createUrl("https://www.reddit.com/api/v1/access_token", {
 			grant_type: "authorization_code",
 			redirect_uri: config.redirectUri,
@@ -33,7 +33,7 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getRedditUser = async (accessToken: string) => {
 		const request = new Request("https://oauth.reddit.com/api/v1/me", {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
@@ -56,21 +56,21 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(
+			const redditTokens = await getRedditTokens(code);
+			const redditUser = await getRedditUser(redditTokens.accessToken);
+			const providerUserId = redditUser.id;
+			const redditUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpers,
-				providerUser,
-				tokens
+				...redditUserAuth,
+				redditUser,
+				redditTokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 const encodeBase64 = (s: string) => {

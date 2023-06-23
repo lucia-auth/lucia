@@ -1,5 +1,5 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
+import { scope, generateState, providerUserAuth } from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -16,7 +16,7 @@ type Config = OAuthConfig & {
 };
 
 export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getAuth0Tokens = async (code: string) => {
 		const request = new Request(new URL("/oauth/token", config.appDomain), {
 			method: "POST",
 			headers: {
@@ -45,7 +45,7 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getAuth0User = async (accessToken: string) => {
 		const request = new Request(new URL("/userinfo", config.appDomain), {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
@@ -83,21 +83,21 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id;
-			const providerAuthHelpersHelpers = await useAuth(
+			const auth0Tokens = await getAuth0Tokens(code);
+			const auth0User = await getAuth0User(auth0Tokens.accessToken);
+			const providerUserId = auth0User.id;
+			const auth0UserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpersHelpers,
-				providerUser,
-				tokens
+				...auth0UserAuth,
+				auth0User,
+				auth0Tokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 type Auth0Profile = {
