@@ -47,11 +47,9 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getProviderUser = async (accessToken: string) => {
 		const linkedinProfile = await getProfile(accessToken);
-		const displayImageElement = linkedinProfile.profilePicture[
-			"displayImage~"
-		]?.elements
-			?.slice(-1)
-			?.pop();
+		const displayImageElement = linkedinProfile?.profilePicture?.["displayImage~"]?.elements
+            ?.slice(-1)
+            ?.pop() ?? null;
 		const linkedinUser: LinkedinUser = {
 			id: linkedinProfile.id,
 			firstName: linkedinProfile.localizedFirstName,
