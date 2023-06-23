@@ -1,10 +1,6 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import {
-	scope,
-	generateState,
-	providerUserAuth,
-	encodeBase64
-} from "../core.js";
+import { providerUserAuth } from "../core.js";
+import { scope, generateState, encodeBase64 } from "../utils.js";
 import { generateRandomString } from "lucia/utils";
 
 import type { Auth } from "lucia";

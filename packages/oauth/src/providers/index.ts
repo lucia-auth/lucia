@@ -8,3 +8,4 @@ export { lichess, type LichessUser } from "./lichess.js";
 export { linkedin, type LinkedinUser } from "./linkedin.js";
 export { auth0, type Auth0User } from "./auth0.js";
 export { facebook, type FacebookUser } from "./facebook.js";
+export { spotify, type SpotifyUser } from "./spotify.js";
