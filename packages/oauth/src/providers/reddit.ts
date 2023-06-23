@@ -1,5 +1,10 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, providerUserAuth } from "../core.js";
+import {
+	scope,
+	generateState,
+	providerUserAuth,
+	encodeBase64
+} from "../core.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -71,23 +76,6 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
-};
-
-const encodeBase64 = (s: string) => {
-	// ORDER IS IMPORTANT!!
-	// Buffer API EXISTS IN DENO!!
-	if (typeof window !== "undefined" && "Deno" in window) {
-		// deno
-		return btoa(s);
-	}
-	if (typeof Buffer === "function") {
-		// node
-		return Buffer.from(s).toString("base64");
-	}
-
-	// standard API
-	// IGNORE WARNING
-	return btoa(s);
 };
 
 export type RedditUser = {
