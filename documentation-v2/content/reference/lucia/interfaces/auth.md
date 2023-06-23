@@ -399,7 +399,7 @@ if (session.state === "active") {
 	// valid session
 }
 if (session.state === "idle") {
-	// should be renewed
+	// should be reset
 }
 ```
 
@@ -569,40 +569,6 @@ import { auth } from "./lucia.js";
 const sessionId = auth.readSessionCookie(
 	"auth_session=CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM"
 );
-```
-
-## `renewSession()`
-
-Validates an active or idle session id, and renews the session if valid. The session provided is invalidated.
-
-```ts
-const renewSession: (sessionId: string) => Promise<Session>;
-```
-
-##### Parameters
-
-| name        | type     | description                  |
-| ----------- | -------- | ---------------------------- |
-| `sessionId` | `string` | An active or idle session id |
-
-##### Returns
-
-| type                                             | description   |
-| ------------------------------------------------ | ------------- |
-| [`Session`](/reference/lucia/interfaces#session) | A new session |
-
-##### Errors
-
-| name                      |
-| ------------------------- |
-| `AUTH_INVALID_SESSION_ID` |
-
-#### Example
-
-```ts
-import { auth } from "./lucia.js";
-
-const renewedSession = await auth.renewSession(session.sessionId);
 ```
 
 ## `updateKeyPassword()`
@@ -805,7 +771,7 @@ auth.validateRequestOrigin({
 
 ## `validateSession()`
 
-Validates a session, renewing it if it's idle. As such, the returned session may be different from the one provided.
+Validates a session, resetting it if it's idle.
 
 ```ts
 const validateSession: (sessionId: string) => Promise<Session>;
@@ -819,9 +785,9 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 ##### Returns
 
-| type                                             | description                      |
-| ------------------------------------------------ | -------------------------------- |
-| [`Session`](/reference/lucia-auth/types#session) | The validated or renewed session |
+| type                                             | description           |
+| ------------------------------------------------ | --------------------- |
+| [`Session`](/reference/lucia-auth/types#session) | The validated session |
 
 ##### Errors
 
@@ -836,7 +802,7 @@ import { auth } from "./lucia.js";
 
 const session = await auth.validateSession(sessionId);
 if (session.fresh) {
-	// session was renewed
-	// should set the new session cookie
+	// session was reset
+	// extend cookie expiration
 }
 ```

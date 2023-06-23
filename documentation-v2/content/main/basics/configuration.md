@@ -240,7 +240,7 @@ const sessionExpiresIn: {
 };
 ```
 
-The active period is the span of time sessions are valid for, while the idle period is span of time since the end of the active period that sessions could be renewed.
+The active period is the span of time sessions are valid for, while the idle period is span of time since the end of the active period that sessions could be reset (extend expiration).
 
 | property       | type     | description                                                           | default              |
 | -------------- | -------- | --------------------------------------------------------------------- | -------------------- |
