@@ -28,17 +28,17 @@ const lichess: (
 
 ##### Parameter
 
-| name                | type                                 | description                             | optional |
-| ------------------- | ------------------------------------ | --------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                          |          |
-| config.clientId     | `string`                             | client id - choose any unique client id |          |
-| config.redirectUri  | `string`                             | redirect URI                            |          |
-| config.scope        | `string[]`                           | an array of scopes                      |    ✓     |
+| name               | type                                 | description                             | optional |
+| ------------------ | ------------------------------------ | --------------------------------------- | :------: |
+| auth               | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                          |          |
+| config.clientId    | `string`                             | client id - choose any unique client id |          |
+| config.redirectUri | `string`                             | redirect URI                            |          |
+| config.scope       | `string[]`                           | an array of scopes                      |    ✓     |
 
 ##### Returns
 
-| type                                              | description      |
-| ------------------------------------------------- | ---------------- |
+| type                                  | description      |
+| ------------------------------------- | ---------------- |
 | [`LichessProvider`](#lichessprovider) | Lichess provider |
 
 ## Interfaces
@@ -52,44 +52,41 @@ Satisfies [`LichessProvider`](/reference/oauth/oauthprovider).
 Returns the authorization url for user redirection, a state and PKCE code verifier. The state and code verifier should be stored in a cookie and validated on callback.
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: () => Promise<
+	[url: URL, state: string, codeVerifier: string]
+>;
 ```
-
-##### Parameter
-
-| name        | type     | description    | optional |
-| ----------- | -------- | -------------- | :------: |
-| redirectUri | `string` | a redirect URI |    ✓     |
 
 ##### Returns
 
-| name            | type     | description          |
-| --------------- | -------- | -------------------- |
-| `url`           | `URL`    | authorization url    |
-| `state`         | `string` | state parameter used |
-| `code_verifier` | `string` | PKCE code verifier   |
+| name           | type     | description          |
+| -------------- | -------- | -------------------- |
+| `url`          | `URL`    | authorization url    |
+| `state`        | `string` | state parameter used |
+| `codeVerifier` | `string` | PKCE code verifier   |
 
 #### `validateCallback()`
 
-Validates the callback code.
+Validates the callback code. Requires the PKCE code verifier generated with `getAuthorizationUrl()`.
 
 ```ts
-const validateCallback: (code: string, code_verifier: string) => Promise<ProviderSession>;
+const validateCallback: (
+	code: string,
+	codeVerifier: string
+) => Promise<ProviderSession>;
 ```
 
 ##### Parameter
 
-| name            | type     | description                      |
-| --------------- | -------- | -------------------------------- |
-| `code`          | `string` | authorization code from callback |
-| `code_verifier` | `string` | PKCE code verifier               |
+| name           | type     | description                                               |
+| -------------- | -------- | --------------------------------------------------------- |
+| `code`         | `string` | authorization code from callback                          |
+| `codeVerifier` | `string` | PKCE code verifier generated with `getAuthorizationUrl()` |
 
 ##### Returns
 
 | type                                  |
-| --------------------------------------|
+| ------------------------------------- |
 | [`LichessUserAuth`](#lichessuserauth) |
 
 ##### Errors
