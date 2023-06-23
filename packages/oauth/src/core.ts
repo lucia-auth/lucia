@@ -68,7 +68,8 @@ export const useAuth = async <_Auth extends Auth>(
 	return {
 		existingUser,
 		createKey: async (userId: string) => {
-			return await auth.createKey(userId, {
+			return await auth.createKey({
+				userId,
 				providerId: providerId,
 				providerUserId,
 				password: null
