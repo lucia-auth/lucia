@@ -1,10 +1,10 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
 import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import { scope, generateState, encodeBase64 } from "../utils.js";
 
-import type { Auth } from "lucia-auth";
+import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
-import { encodeBase64 } from "../utils.js";
+
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -14,7 +14,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "spotify";
 
 export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getSpotifyTokens = async (code: string) => {
 		const request = new Request("https://accounts.spotify.com/api/token", {
 			method: "POST",
 			body: new URLSearchParams({
@@ -47,7 +47,7 @@ export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getSpotifyUser = async (accessToken: string) => {
 		// https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
 		const request = new Request("https://api.spotify.com/v1/me", {
 			headers: {
@@ -73,17 +73,17 @@ export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id;
-			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			const spotifyTokens = await getSpotifyTokens(code);
+			const spotifyUser = await getSpotifyUser(spotifyTokens.accessToken);
+			const providerUserId = spotifyUser.id;
+			const spotifyUserAuth = await providerUserAuth(auth, PROVIDER_ID, providerUserId);
 			return {
-				...providerAuth,
-				providerUser,
-				tokens
+				...spotifyUserAuth,
+				spotifyUser,
+				spotifyTokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 export type SpotifyUser = {
