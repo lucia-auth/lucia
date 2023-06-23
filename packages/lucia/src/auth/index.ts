@@ -60,7 +60,6 @@ const defaultSessionCookieAttributes: SessionCookieAttributes = {
 
 export class Auth<_Configuration extends Configuration = any> {
 	private adapter: Adapter;
-	private generateUserId: () => MaybePromise<string>;
 	private sessionCookieName: string;
 	private sessionCookieAttributes: SessionCookieAttributes;
 	private sessionExpiresIn: {
@@ -104,8 +103,6 @@ export class Auth<_Configuration extends Configuration = any> {
 		} else {
 			this.adapter = config.adapter(LuciaError);
 		}
-		this.generateUserId =
-			config.generateUserId ?? (() => generateRandomString(15));
 		this.env = config.env;
 		this.csrfProtectionEnabled = config.csrfProtection ?? true;
 		this.sessionExpiresIn = {
@@ -279,7 +276,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		} | null;
 		attributes: Lucia.DatabaseUserAttributes;
 	}): Promise<User> => {
-		const userId = options.userId ?? (await this.generateUserId());
+		const userId = options.userId ?? generateRandomString(15);
 		const userAttributes = options.attributes ?? {};
 		const databaseUser = {
 			...userAttributes,
@@ -692,7 +689,6 @@ export type Configuration<
 		attributes?: SessionCookieAttributes;
 	};
 	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
-	generateUserId?: () => MaybePromise<string>;
 	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
 	passwordHash?: {
 		generate: (password: string) => MaybePromise<string>;
