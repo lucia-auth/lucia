@@ -17,41 +17,34 @@ type ExtractModelNames<_PrismaClient extends PrismaClient> = Exclude<
 >;
 
 export const prismaAdapter = <_PrismaClient extends PrismaClient>(
-	config:
-		| {
-				client: _PrismaClient;
-				mode: "default";
-		  }
-		| {
-				client: _PrismaClient;
-				modelNames: {
-					user: ExtractModelNames<_PrismaClient>;
-					session: ExtractModelNames<_PrismaClient>;
-					key: ExtractModelNames<_PrismaClient>;
-				};
-				userRelationKey: string;
-		  }
+	client: _PrismaClient,
+	options?: {
+		modelNames: {
+			user: ExtractModelNames<_PrismaClient>;
+			session: ExtractModelNames<_PrismaClient>;
+			key: ExtractModelNames<_PrismaClient>;
+		};
+		userRelationKey: string;
+	}
 ): InitializeAdapter<Adapter> => {
 	const getModels = () => {
-		if ("mode" in config) {
+		if (!options) {
 			return {
-				User: config.client["user"] as SmartPrismaModel<UserSchema>,
-				Session: config.client["session"] as SmartPrismaModel<SessionSchema>,
-				Key: config.client["key"] as SmartPrismaModel<KeySchema>
+				User: client["user"] as SmartPrismaModel<UserSchema>,
+				Session: client["session"] as SmartPrismaModel<SessionSchema>,
+				Key: client["key"] as SmartPrismaModel<KeySchema>
 			};
 		}
 		return {
-			User: config.client[
-				config.modelNames.user
-			] as SmartPrismaModel<UserSchema>,
-			Session: config.client[
-				config.modelNames.session
+			User: client[options.modelNames.user] as SmartPrismaModel<UserSchema>,
+			Session: client[
+				options.modelNames.session
 			] as SmartPrismaModel<SessionSchema>,
-			Key: config.client[config.modelNames.key] as SmartPrismaModel<KeySchema>
+			Key: client[options.modelNames.key] as SmartPrismaModel<KeySchema>
 		};
 	};
 	const { User, Session, Key } = getModels();
-	const userRelationKey = "mode" in config ? "user" : config.userRelationKey;
+	const userRelationKey = options?.userRelationKey ?? "user";
 
 	return (LuciaError) => {
 		return {
@@ -70,7 +63,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					return;
 				}
 				try {
-					await config.client.$transaction([
+					await client.$transaction([
 						User.create({
 							data: user
 						}),

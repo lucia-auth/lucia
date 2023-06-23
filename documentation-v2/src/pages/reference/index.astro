@@ -1,0 +1,16 @@
+---
+import ReferenceLayout from "@layouts/ReferenceLayout.astro";
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+import { getPage } from "@content";
+
+const oauthPage = await getPage("reference", "index")
+---
+
+<ReferenceLayout title="Lucia reference">
+    <div class="mt-6 mb-8">
+        <h1 class="text-5xl font-bold">Overview</h1>
+    </div>
+    <MarkdownStyle>
+        <oauthPage.Content/>
+    </MarkdownStyle>
+</ReferenceLayout>

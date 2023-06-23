@@ -2,4 +2,5 @@ packages:
   - "packages/*"
   - "apps/**"
   - "documentation/**"
+  - "documentation-v2/**"
   - "examples/**"

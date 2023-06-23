@@ -32,7 +32,9 @@ export class AuthRequest<A extends Auth = any> {
 		this.auth = auth;
 		this.context = context;
 		try {
-			auth.validateRequestOrigin(context.request);
+			if (auth.csrfProtectionEnabled) {
+				auth.validateRequestOrigin(context.request);
+			}
 			this.storedSessionId =
 				context.request.storedSessionCookie ??
 				auth.readSessionCookie(context.request.headers.cookie);
