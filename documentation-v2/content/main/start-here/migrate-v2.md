@@ -11,11 +11,13 @@ description: "Learn how to migrate Lucia version 1 to version 2 beta"
 - **`lucia-auth` is published under `lucia`** (all other packages remain the same)
 - **`@lucia-auth/tokens` is not compatible with version 2** (See [Implementing 2FA without the tokens integration (v1/v2)](https://github.com/pilcrowOnPaper/lucia/discussions/728))
 - **Removed single use and primary keys**
+- Replace session renewal with session resets
 - Database tables cannot use default values
 - Official adapters no longer enforce table names
 - Some items previously exported from `lucia-auth` are now exported from `lucia/utils`
 - Updated adapter API to be more simple and future-proof
 - Repo requires Node.js 20
+- Update `nextjs()` and `web()` middleware
 
 ### New features
 
