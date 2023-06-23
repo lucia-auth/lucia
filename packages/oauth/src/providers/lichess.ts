@@ -1,14 +1,14 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
-import { generateRandomString } from "lucia-auth";
+import {
+	scope,
+	generateState,
+	providerUserAuth,
+	encodeBase64
+} from "../core.js";
+import { generateRandomString } from "lucia/utils";
 
-import type { Auth } from "lucia-auth";
+import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
-
-type Tokens = {
-	accessToken: string;
-	accessTokenExpiresIn: null;
-};
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -38,7 +38,7 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		return [url, state, code_verifier] as const;
 	};
 
-	const getTokens = async (code: string, code_verifier: string) => {
+	const getLichessTokens = async (code: string, code_verifier: string) => {
 		// Not using createUrl since we need to POST
 		const request = new Request("https://lichess.org/api/token", {
 			method: "POST",
@@ -64,7 +64,7 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getLichessUser = async (accessToken: string) => {
 		const request = new Request("https://lichess.org/api/account", {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
@@ -73,40 +73,44 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	const validateCallback = async (code: string, code_verifier: string) => {
-		const tokens = await getTokens(code, code_verifier);
-		const providerUser = await getProviderUser(tokens.accessToken);
-		const providerUserId = providerUser.id;
-		const providerAuthHelpers = await useAuth(auth, PROVIDER_ID, providerUserId);
-		return {
-			...providerAuthHelpers,
-			providerUser,
-			tokens
-		};
-	};
-
-	// Base64url-encode as specified in RFC 7636 (OAuth PKCE).
-	const pkceBase64urlEncode = (arg: string) => {
-		return btoa(arg).split("=")[0].replace(/\+/g, "-").replace(/\//g, "_");
-	};
-
-	// Generates code_challenge from code_verifier, as specified in RFC 7636.
-	const pkceCodeChallenge = async (verifier: string) => {
-		const verifierBuffer = new TextEncoder().encode(verifier);
-		const challengeBuffer = await crypto.subtle.digest(
-			"SHA-256",
-			verifierBuffer
+		const lichessTokens = await getLichessTokens(code, code_verifier);
+		const lichessUser = await getLichessUser(lichessTokens.accessToken);
+		const providerUserId = lichessUser.id;
+		const lichessUserAuth = await providerUserAuth(
+			auth,
+			PROVIDER_ID,
+			providerUserId
 		);
-		const challengeArray = Array.from(new Uint8Array(challengeBuffer));
-		return String.fromCharCode(...challengeArray);
+		return {
+			...lichessUserAuth,
+			lichessUser,
+			lichessTokens
+		};
 	};
 
 	return {
 		getAuthorizationUrl,
 		validateCallback
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 export type LichessUser = {
 	id: string;
 	username: string;
+};
+
+// Base64url-encode as specified in RFC 7636 (OAuth PKCE).
+const pkceBase64urlEncode = (arg: string) => {
+	return encodeBase64(arg)
+		.split("=")[0]
+		.replace(/\+/g, "-")
+		.replace(/\//g, "_");
+};
+
+// Generates code_challenge from code_verifier, as specified in RFC 7636.
+const pkceCodeChallenge = async (verifier: string) => {
+	const verifierBuffer = new TextEncoder().encode(verifier);
+	const challengeBuffer = await crypto.subtle.digest("SHA-256", verifierBuffer);
+	const challengeArray = Array.from(new Uint8Array(challengeBuffer));
+	return String.fromCharCode(...challengeArray);
 };
