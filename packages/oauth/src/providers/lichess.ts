@@ -38,7 +38,7 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		return [url, state, code_verifier] as const;
 	};
 
-	const getLichessTokens = async (code: string, code_verifier: string) => {
+	const getLichessTokens = async (code: string, codeVerifier: string) => {
 		// Not using createUrl since we need to POST
 		const request = new Request("https://lichess.org/api/token", {
 			method: "POST",
@@ -49,7 +49,7 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				client_id: config.clientId,
 				grant_type: "authorization_code",
 				redirect_uri: config.redirectUri,
-				code_verifier,
+				code_verifier: codeVerifier,
 				code
 			}).toString()
 		});
