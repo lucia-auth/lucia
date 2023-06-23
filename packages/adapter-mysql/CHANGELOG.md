@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-mysql
 
+## 2.0.0-beta.3
+
+### Patch changes
+
+- [#768](https://github.com/pilcrowOnPaper/lucia/pull/768) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 2.0.0-beta.2
+
+### Patch changes
+
+- [#756](https://github.com/pilcrowOnPaper/lucia/pull/756) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix peer dependency version
+
 ## 2.0.0-beta.1
 
 - [#731](https://github.com/pilcrowOnPaper/lucia/pull/731) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix internal imports

@@ -1,0 +1,100 @@
+<section id="md" class="overflow-hidden">
+	<slot />
+</section>
+
+<style lang="postcss">
+	:global(#md h2) {
+		@apply mb-2 mt-10 break-words text-2xl font-semibold;
+	}
+	:global(#md h2 > code) {
+		@apply text-code-2xl;
+	}
+	:global(#md h3) {
+		@apply mt-8 break-words text-xl font-semibold;
+	}
+	:global(#md h3 > code) {
+		@apply text-code-xl;
+	}
+	:global(#md h4) {
+		@apply mt-6 break-words text-lg font-medium;
+	}
+	:global(#md h4 > code) {
+		@apply text-code-lg;
+	}
+	:global(#md h5) {
+		@apply mt-2 break-words font-medium;
+	}
+	:global(#md h5 > code) {
+		@apply text-code-base;
+	}
+	:global(#md h2:first-child) {
+		@apply mt-0;
+	}
+	:global(#md :not(h4) + p, #md table, #md ul, #md ol) {
+		@apply my-3;
+	}
+	:global(#md h4 + p) {
+		@apply mb-3 mt-1;
+	}
+	:global(#md p code, #md ul code, #md ol code) {
+		@apply text-code-base;
+	}
+	:global(#md table code) {
+		@apply text-code-sm;
+	}
+	:global(#md .astro-code) {
+		@apply !bg-zinc-80 my-2 overflow-scroll rounded-lg px-4 py-3 !leading-tight;
+		scrollbar-width: none;
+	}
+	:global(#md .astro-code span) {
+		@apply !text-code-sm;
+	}
+	:global(#md pre::-webkit-scrollbar) {
+		display: none;
+	}
+	:global(#md a) {
+		@apply text-main cursor-pointer hover:underline;
+	}
+	:global(#md ol) {
+		@apply mb-6 list-inside list-decimal;
+	}
+	:global(#md ul) {
+		@apply mb-6 list-inside list-disc;
+	}
+	:global(#md li) {
+		@apply my-0.5;
+	}
+	:global(#md table) {
+		@apply my-2 w-full table-auto border-collapse text-left text-sm;
+	}
+	:global(#md .table-wrapper) {
+		@apply w-full overflow-auto whitespace-nowrap;
+	}
+	:global(#md table thead tr) {
+		@apply w-full border-b border-zinc-200;
+	}
+	:global(#md table :is(td, th)) {
+		@apply border-b border-zinc-200 px-1 py-1;
+	}
+	:global(#md table th) {
+		@apply text-xs font-medium;
+	}
+	:global(#md blockquote) {
+		@apply my-3 rounded-md border px-4 py-2 text-sm;
+	}
+	:global(#md blockquote.bq-default) {
+		@apply bg-main border-main bg-opacity-20;
+	}
+	:global(#md blockquote.bq-warn) {
+		@apply border-yellow-500 bg-yellow-500 bg-opacity-20;
+	}
+	:global(#md blockquote.bq-red) {
+		@apply border-red-500 bg-red-500 bg-opacity-20;
+	}
+	:global(#md img) {
+		@apply w-full appearance-none rounded-md border border-zinc-200 bg-zinc-100 text-transparent;
+	}
+	:global(#md strong) {
+		@apply font-semibold;
+	}
+</style>
