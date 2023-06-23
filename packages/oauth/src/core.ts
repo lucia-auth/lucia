@@ -1,5 +1,3 @@
-import { generateRandomString } from "lucia/utils";
-
 import type { Auth, Key, LuciaError } from "lucia";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
 
@@ -33,31 +31,6 @@ export class OAuthRequestError extends Error {
 		this.response = response;
 	}
 }
-
-export const generateState = () => {
-	return generateRandomString(43);
-};
-
-export const encodeBase64 = (s: string) => {
-	// ORDER IS IMPORTANT!!
-	// Buffer API EXISTS IN DENO!!
-	if (typeof window !== "undefined" && "Deno" in window) {
-		// deno
-		return btoa(s);
-	}
-	if (typeof Buffer === "function") {
-		// node
-		return Buffer.from(s).toString("base64");
-	}
-
-	// standard API
-	// IGNORE WARNING
-	return btoa(s);
-};
-
-export const scope = (base: string[], config: string[] = []) => {
-	return [...base, ...(config ?? [])].join(" ");
-};
 
 export const providerUserAuth = async <_Auth extends Auth>(
 	auth: _Auth,

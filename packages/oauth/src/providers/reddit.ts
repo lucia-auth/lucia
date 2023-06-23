@@ -1,14 +1,9 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import {
-	scope,
-	generateState,
-	providerUserAuth,
-	encodeBase64
-} from "../core.js";
+import { providerUserAuth } from "../core.js";
+import { scope, generateState, encodeBase64 } from "../utils.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
-import { encodeBase64 } from "../utils.js";
 
 type Config = OAuthConfig & {
 	redirectUri: string;
@@ -76,11 +71,7 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				redditTokens
 			};
 		}
-<<<<<<< HEAD:packages/integration-oauth/src/providers/reddit.ts
-	} as const satisfies OAuthProvider<_Auth>;
-=======
 	} as const satisfies OAuthProvider;
->>>>>>> main:packages/oauth/src/providers/reddit.ts
 };
 
 export type RedditUser = {

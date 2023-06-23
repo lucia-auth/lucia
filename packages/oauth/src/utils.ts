@@ -1,3 +1,5 @@
+import { generateRandomString } from "lucia/utils";
+
 export type AwaitedReturnType<T extends (...args: any[]) => any> = Awaited<
 	ReturnType<T>
 >;
@@ -17,4 +19,13 @@ export const encodeBase64 = (s: string) => {
 	// standard API
 	// IGNORE WARNING
 	return btoa(s);
+};
+
+
+export const generateState = () => {
+	return generateRandomString(43);
+};
+
+export const scope = (base: string[], config: string[] = []) => {
+	return [...base, ...(config ?? [])].join(" ");
 };

@@ -1,5 +1,6 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth, generateState, scope } from "../core.js";
+import { providerUserAuth } from "../core.js";
+import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
