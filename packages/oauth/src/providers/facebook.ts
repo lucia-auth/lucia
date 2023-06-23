@@ -80,11 +80,11 @@ export type FacebookUser = {
 	id: string;
 	name: string;
 	picture: {
-    data: {
-      height: number,
-      is_silhouette: boolean,
-      url: string,
-      width: number
-    }
-  };
+		data: {
+			height: number;
+			is_silhouette: boolean;
+			url: string;
+			width: number;
+		};
+	};
 };
