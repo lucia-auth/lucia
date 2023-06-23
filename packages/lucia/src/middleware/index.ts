@@ -171,10 +171,19 @@ export const lucia = (): Middleware<[RequestContext]> => {
 	return ({ args }) => args[0];
 };
 
-export const web = (): Middleware<[Request, Headers | Response]> => {
+export const web = (): Middleware<
+	[Request, Headers | Response] | [Request]
+> => {
 	return ({ args }) => {
 		const [request, arg2] = args;
 		const createSetCookie = () => {
+			if (!arg2) {
+				return () => {
+					throw new Error(
+						"Cookies cannot be set if a `Response` or `Headers` is not provided"
+					);
+				};
+			}
 			if (arg2 instanceof Response) {
 				return (cookie: Cookie) => {
 					arg2.headers.append("Set-Cookie", cookie.serialize());
@@ -246,7 +255,7 @@ export const nextjs = (): Middleware<
 		const [serverContext] = args;
 		if ("cookies" in serverContext) {
 			const cookieStore = serverContext.cookies();
-			const sessionCookie = cookieStore.get(cookieName) ?? null;
+			const sessionCookie = cookieStore.get(cookieName)?.value ?? null;
 			const requestContext = {
 				request: {
 					url: serverContext.request?.url ?? "",
@@ -257,7 +266,7 @@ export const nextjs = (): Middleware<
 						authorization:
 							serverContext.request?.headers.get("Authorization") ?? null
 					},
-					storedSessionCookie: sessionCookie?.value ?? null
+					storedSessionCookie: sessionCookie
 				},
 				setCookie: (cookie) => {
 					try {

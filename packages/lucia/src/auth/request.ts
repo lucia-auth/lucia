@@ -114,14 +114,4 @@ export class AuthRequest<A extends Auth = any> {
 
 		return await this.validatePromise;
 	};
-
-	public renewBearerToken = async (): Promise<Session | null> => {
-		if (!this.bearerToken) return null;
-		try {
-			const session = await this.auth.renewSession(this.bearerToken);
-			return session;
-		} catch {
-			return null;
-		}
-	};
 }
