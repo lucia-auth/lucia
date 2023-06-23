@@ -16,9 +16,9 @@
 
 - [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
 
-    - Export adapter as named exports (`prisma()`)
+  - Export adapter as named exports (`prisma()`)
 
-    - Update adapter params
+  - Update adapter params
 
 ## 2.0.0
 

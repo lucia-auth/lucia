@@ -94,7 +94,9 @@ export const debug = {
 			enableDebugMode();
 			linebreak();
 			console.log(
-				` ${bg.lucia(bold(fg.white(" lucia ")))}  ${fg.lucia(bold("Debug mode enabled"))}`
+				` ${bg.lucia(bold(fg.white(" lucia ")))}  ${fg.lucia(
+					bold("Debug mode enabled")
+				)}`
 			);
 		} else {
 			disableDebugMode();
