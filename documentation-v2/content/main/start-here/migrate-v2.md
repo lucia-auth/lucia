@@ -142,7 +142,7 @@ const auth = lucia({
 
 ### Use custom user id
 
-While `generateCustomUserId()` configuration has been removed, you can now pass a custom user id to [`Auth.createUser()`]().
+While `generateCustomUserId()` configuration has been removed, you can now pass a custom user id to [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser).
 
 ```ts
 await auth.createUser({

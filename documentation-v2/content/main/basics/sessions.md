@@ -26,10 +26,10 @@ const session: Session = {
 Sessions can be in one of 3 states:
 
 - Active: A valid session. Goes "idle" after some time.
-- Idle: A valid session but Lucia will reset the expiration. Becomes "dead" if the session is not reset.
+- Idle: A valid session but Lucia will reset the expiration. Becomes "dead" if the session is not used.
 - Dead: An invalid session. The user must sign in again.
 
-Instead of renewing idle sessions, Lucia will *reset* idle sessions by extending the expiration.
+Instead of invalidating an idle session and creating a new one, Lucia will *reset* the session by extending the expiration.
 
 This allows sessions to be persisted for active users, while invalidating inactive users. If you have used access tokens and refresh tokens, Lucia's sessions are a combination of both. Active sessions are your access tokens, and idle sessions are your refresh tokens.
 

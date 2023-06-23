@@ -33,6 +33,7 @@ type Configuration = {
 	sessionCookie?: {
 		name?: string;
 		attributes?: SessionCookieAttributes;
+		indefiniteExpiration?: boolean;
 	};
 	sessionExpiresIn?: {
 		activePeriod: number;
@@ -217,6 +218,7 @@ Validates a hash generated using `passwordHash.generate()` synchronously or asyn
 const sessionCookie: {
 	name?: string;
 	attributes?: SessionCookieAttributes;
+	indefiniteExpiration: boolean;
 };
 
 type SessionCookieAttributes = {
@@ -226,10 +228,11 @@ type SessionCookieAttributes = {
 };
 ```
 
-| property    | type                      | optional | description               |
-| ----------- | ------------------------- | :------: | ------------------------- |
-| `name`      | `string`                  |    ✓     | Session cookie name       |
-| `attributes | `SessionCookieAttributes` |    ✓     | Session cookie attributes |
+| property               | type                      | optional | description                                            |
+| ---------------------- | ------------------------- | :------: | ------------------------------------------------------ |
+| `name`                 | `string`                  |    ✓     | Session cookie name                                    |
+| `attributes            | `SessionCookieAttributes` |    ✓     | Session cookie attributes                              |
+| `indefiniteExpiration` | `boolean`                 |    ✓     | Session cookie does not expire (session still expires) |
 
 ### `sessionExpiresIn`
 
@@ -242,10 +245,10 @@ const sessionExpiresIn: {
 
 The active period is the span of time sessions are valid for, while the idle period is span of time since the end of the active period that sessions could be reset (extend expiration).
 
-| property       | type     | description                                                           | default              |
-| -------------- | -------- | --------------------------------------------------------------------- | -------------------- |
-| `activePeriod` | `number` | The [active period](/basics/sessions#session-states) in milliseconds. | 86400000 (1 day)     |
-| `idlePeriod    | `number` | The [idle period](/basics/sessions#session-states) in milliseconds    | 1209600000 (2 weeks) |
+| property       | type     | description                                                                              | default              |
+| -------------- | -------- | ---------------------------------------------------------------------------------------- | -------------------- |
+| `activePeriod` | `number` | The [active period](/basics/sessions#session-states-and-session-resets) in milliseconds. | 86400000 (1 day)     |
+| `idlePeriod    | `number` | The [idle period](/basics/sessions#session-states-and-session-resets) in milliseconds    | 1209600000 (2 weeks) |
 
 ## Experimental
 

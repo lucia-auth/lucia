@@ -88,7 +88,7 @@ auth.handleRequest(requestContext as RequestContext);
 
 ## `nextjs()`
 
-Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`]() is disabled when just `IncomingMessage` or `NextRequest` is passed.**
+Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when just `IncomingMessage` or `NextRequest` is passed.**
 
 ```ts
 const nextjs: () => Middleware;
@@ -226,7 +226,7 @@ auth.handleRequest(event as RequestEvent);
 
 ## `web()`
 
-Middleware for web standard request. **[`AuthRequest.setSession()`]() is disabled when using the `web()` middleware.**
+Middleware for web standard request. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when using the `web()` middleware.**
 
 ```ts
 const web: () => Middleware;

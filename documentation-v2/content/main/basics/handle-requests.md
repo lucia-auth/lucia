@@ -140,7 +140,7 @@ export default async (request: NextRequest) => {
 
 #### App router
 
-We recommend enabling [`sessionCookie.indefiniteExpiration`]() when using this middleware.
+We recommend enabling [`sessionCookie.indefiniteExpiration`](/basics/configuration#sessioncookie) configuration when using this middleware.
 
 ```ts
 // app/page.tsx
@@ -233,7 +233,7 @@ export const handle = async ({ event, resolve }) => {
 
 ### Web standard
 
-**[`AuthRequest.setSession()`]() is disabled when using the `web()` middleware.** We recommend enabling [`sessionCookie.indefiniteExpiration`]() when using this middleware.
+**[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when using the `web()` middleware.** We recommend enabling [`sessionCookie.indefiniteExpiration`](/basics/configuration#sessioncookie) configuration when using this middleware.
 
 ```ts
 import { web } from "lucia/middleware";
