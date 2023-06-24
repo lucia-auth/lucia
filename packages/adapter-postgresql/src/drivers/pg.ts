@@ -1,12 +1,12 @@
-import { helper, getSetArgs, escapeName } from "../utils.js";
+import {
+	helper,
+	getSetArgs,
+	escapeName,
+	transformPgSession,
+	PgSession
+} from "../utils.js";
 
-import type {
-	Adapter,
-	InitializeAdapter,
-	UserSchema,
-	SessionSchema,
-	KeySchema
-} from "lucia";
+import type { Adapter, InitializeAdapter, UserSchema, KeySchema } from "lucia";
 import type {
 	QueryResult,
 	DatabaseError,
@@ -261,20 +261,4 @@ export const getAll = async <_Schema extends QueryResultRow>(
 ): Promise<_Schema[]> => {
 	const { rows } = await queryPromise;
 	return rows;
-};
-
-export type PgSession = Omit<
-	SessionSchema,
-	"active_expires" | "idle_expires"
-> & {
-	active_expires: BigInt;
-	idle_expires: BigInt;
-};
-
-export const transformPgSession = (session: PgSession): SessionSchema => {
-	return {
-		...session,
-		active_expires: Number(session.active_expires),
-		idle_expires: Number(session.idle_expires)
-	};
 };

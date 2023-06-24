@@ -2,12 +2,12 @@ import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
 
 import { pool } from "./db.js";
-import { escapeName, helper } from "../../src/utils.js";
-import { getAll, pgAdapter, transformPgSession } from "../../src/drivers/pg.js";
+import { escapeName, helper, transformPgSession } from "../../src/utils.js";
+import { getAll, pgAdapter } from "../../src/drivers/pg.js";
 import { ESCAPED_SESSION_TABLE_NAME, TABLE_NAMES } from "../shared.js";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-import type { PgSession } from "../../src/drivers/pg.js";
+import type { PgSession } from "../../src/utils.js";
 
 const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	const ESCAPED_TABLE_NAME = escapeName(tableName);
