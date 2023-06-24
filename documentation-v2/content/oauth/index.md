@@ -106,7 +106,10 @@ const getUser = async () => {
 const user = await getUser();
 
 // login user
-const session = await auth.createSession(user.userId);
+const session = await auth.createSession({
+	userId: user.userId,
+	attributes: {}
+});
 const authRequest = await auth.handleRequest();
 authRequest.setSession(session); // store session cookie
 ```

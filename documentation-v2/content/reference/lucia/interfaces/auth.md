@@ -44,13 +44,15 @@ const createKey: (options: {
 ```ts
 import { auth } from "./lucia.js";
 
-const key = await auth.createKey(userId, {
+const key = await auth.createKey({
+	userId,
 	providerId: "email",
 	providerUserId: "user@example.com",
 	password: "123456"
 });
 
-const key = await auth.createKey(userId, {
+const key = await auth.createKey({
+	userId,
 	providerId: "github",
 	providerUserId: githubUserId,
 	password: null
@@ -92,7 +94,8 @@ const createSession: (options: {
 ```ts
 import { auth } from "./lucia.js";
 
-const session = await auth.createSession(userId, {
+const session = await auth.createSession({
+	userId,
 	attributes: {
 		created_at: new Date()
 	}
