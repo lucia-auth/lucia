@@ -34,7 +34,10 @@ type OAuthRequestError = Error & {
 type ProviderUserAuth = {
 	existingUser: User | null;
 	createKey: (userId: string) => Promise<Key>;
-	createUser: (attributes: Lucia.DatabaseUserAttributes) => Promise<User>;
+	createUser: (options: {
+		userId?: string;
+		attributes: Lucia.DatabaseUserAttributes;
+	}) => Promise<User>;
 };
 ```
 
