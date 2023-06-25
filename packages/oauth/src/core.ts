@@ -75,16 +75,17 @@ export const useAuth = async <_Auth extends Auth>(
 				password: null
 			});
 		},
-		createUser: async (
-			attributes: CreateUserAttributesParameter<_Auth>
-		): Promise<LuciaUser<_Auth>> => {
+		createUser: async (options: {
+			userId?: string;
+			attributes: CreateUserAttributesParameter<_Auth>;
+		}): Promise<LuciaUser<_Auth>> => {
 			const user = await auth.createUser({
 				key: {
 					providerId: providerId,
 					providerUserId,
 					password: null
 				},
-				attributes
+				...options
 			});
 			return user as LuciaUser<_Auth>;
 		}
