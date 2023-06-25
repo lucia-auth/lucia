@@ -21,7 +21,7 @@
 		"@types/node": "~18.15.13",
 		"@typescript-eslint/eslint-plugin": "^5.59.6",
 		"@typescript-eslint/parser": "^5.59.6",
-		"auri": "^0.7.3",
+		"auri": "^0.7.4",
 		"eslint": "^8.40.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-svelte3": "^4.0.0",
