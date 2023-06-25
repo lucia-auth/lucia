@@ -99,8 +99,9 @@ const getUser = async () => {
 	if (existingUser) return existingUser;
 	// create a new user if the user does not exist
 	return await createUser({
-		// attributes
-		username: githubUser.login
+		attributes: {
+			username: githubUser.login
+		}
 	});
 };
 const user = await getUser();

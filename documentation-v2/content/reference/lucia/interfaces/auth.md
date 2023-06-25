@@ -160,7 +160,7 @@ const createUser: (options: {
 | `options.key?.providerUserId` | `string`                        |          | Key provider user id                                   |
 | `options.key?.password`       | `string`                        |          | Key password                                           |
 | `options.attributes`          | `Lucia.DatabaseUserAttributes`  |          | Database user attributes                               |
-| `userId`                      | `string`                        |    ✓     | Custom user id                                         |
+| `userId`                      | `string`                        |    ✓     | User id of the new user                                    |
 
 ###### Returns
 
