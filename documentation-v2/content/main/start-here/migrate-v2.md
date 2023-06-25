@@ -261,7 +261,8 @@ await auth.createKey(userId, {
 });
 
 // v2
-await auth.createKey(userId, {
+await auth.createKey({
+	userId,
 	providerId,
 	providerUserId,
 	password

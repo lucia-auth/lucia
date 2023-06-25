@@ -136,7 +136,10 @@ const user = await auth.updateUserAttributes(userId, {
 	role: "admin" // new privileges
 });
 await auth.invalidateAllUserSessions(user.userId); // invalidate all user sessions => logout all sessions
-const session = await auth.createSession(user.userId); // new session
+const session = await auth.createSession({
+	userId: user.userId,
+	attributes: {}
+}); // new session
 // store new session
 ```
 

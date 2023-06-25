@@ -34,7 +34,10 @@ type OAuthRequestError = Error & {
 type ProviderUserAuth = {
 	existingUser: User | null;
 	createKey: (userId: string) => Promise<Key>;
-	createUser: (attributes: Lucia.DatabaseUserAttributes) => Promise<User>;
+	createUser: (options: {
+		userId?: string;
+		attributes: Lucia.DatabaseUserAttributes;
+	}) => Promise<User>;
 };
 ```
 
@@ -69,14 +72,18 @@ const createKey: (userId: string) => Promise<Key>;
 Creates a new user and a key using the OAuth provider.
 
 ```ts
-const createUser: (attributes: Lucia.DatabaseUserAttributes) => Promise<User>;
+const createUser: (options: {
+	userId?: string;
+	attributes: Lucia.DatabaseUserAttributes;
+}) => Promise<User>;
 ```
 
 ##### Parameters
 
-| name         | type                           | description                     |
-| ------------ | ------------------------------ | ------------------------------- |
-| `attributes` | `Lucia.DatabaseUserAttributes` | User attributes of the new user |
+| name                 | type                           | optional | description                     |
+| -------------------- | ------------------------------ | :------: | ------------------------------- |
+| `options.userId`     | `string`                       |    ✓     | User id of new user             |
+| `options.attributes` | `Lucia.DatabaseUserAttributes` |          | User attributes of the new user |
 
 ##### Returns
 
@@ -88,6 +95,15 @@ const createUser: (attributes: Lucia.DatabaseUserAttributes) => Promise<User>;
 
 ```ts
 createUser({
-	username: githubUsername
+	attributes: {
+		username: githubUsername
+	}
+});
+```
+
+```ts
+createUser({
+	userId: generateCustomUserId(),
+	attributes: {}
 });
 ```

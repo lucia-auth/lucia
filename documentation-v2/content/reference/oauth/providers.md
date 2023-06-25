@@ -24,6 +24,10 @@ See [Github](/oauth/providers/github) provider.
 
 See [Google](/oauth/providers/google) provider.
 
+## `lichess()`
+
+See [Lichess](/oauth/providers/lichess) provider.
+
 ## `linkedin()`
 
 See [Linkedin](/oauth/providers/linkedin) provider.
@@ -35,6 +39,10 @@ See [Patreon](/oauth/providers/patreon) provider.
 ## `reddit()`
 
 See [Reddit](/oauth/providers/reddit) provider.
+
+## `spotify()`
+
+See [Spotify](/oauth/providers/spotify) provider.
 
 ## `twitch()`
 
