@@ -124,7 +124,7 @@ const auth = lucia({
 
 	// autoDatabaseCleanup: false, <= removed for now
 	csrfProtection: true, // no change
-	generateUserId: () => generateRandomString(16), // previously `generateCustomUserId()`
+	// generateCustomUserId, <= removed
 	passwordHash, // previously `hash`
 	allowedRequestOrigins: ["https://foo.example.com"], // previously `origin`
 	sessionCookie: {
@@ -135,6 +135,39 @@ const auth = lucia({
 		}
 	},
 	sessionExpiresIn // no change
+});
+```
+
+### Use custom user id
+
+While `generateCustomUserId()` configuration has been removed, you can now pass a custom user id to [`Auth.createUser()`]().
+
+```ts
+await auth.createUser({
+	userId: generateCustomUserId(),
+	attributes: {}
+});
+```
+
+## Creating sessions and keys
+
+`Auth.createSession()` and `Auth.createKey()` now takes a single parameter.
+
+```ts
+// v1
+await auth.createSession(userId);
+await auth.createKey(userId, {
+	// ...
+});
+
+// v2
+await auth.createSession({
+	userId,
+	attributes: {} // must be defined!
+});
+await auth.createKey({
+	userId
+	// ...
 });
 ```
 
@@ -226,7 +259,8 @@ await auth.createKey(userId, {
 });
 
 // v2
-await auth.createKey(userId, {
+await auth.createKey({
+	userId,
 	providerId,
 	providerUserId,
 	password

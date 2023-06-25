@@ -68,10 +68,12 @@ await Promise([
 
 ## Renew bearer tokens
 
-You can renew the bearer token using [`AuthRequest.renewBearerToken()`](/reference/lucia/interfaces/authrequest#renewbearertoken), which returns a session if successful or `null` if the session is invalid.
+Bearer tokens can be renewed by [getting them manually](#read-bearer-tokens) and calling [`Auth.renewSession()`]().
 
 ```ts
-const authRequest = auth.handleRequest();
-
-const renewedSession = await authRequest.renewBearerToken();
+const authorizationHeader = request.headers.get("Authorization"); // get authorization header
+const sessionId = auth.readBearerToken(authorizationHeader);
+if (sessionId) {
+	const renewedSession = await auth.renewSession(sessionId);
+}
 ```

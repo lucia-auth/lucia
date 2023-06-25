@@ -20,7 +20,6 @@ type Configuration = {
 	// optional
 	allowedRequestOrigins: string[];
 	csrfProtection?: boolean;
-	generateUserId?: () => MaybePromise<string>;
 	getSessionAttributes?: (databaseSession: SessionSchema) => Record<any, any>;
 	getUserAttributes?: (databaseUser: UserSchema) => Record<any, any>;
 	middleware?: Middleware<any>;
@@ -96,20 +95,6 @@ Enabled by default. When enabled, [`AuthRequest.validate()`](/reference/lucia/in
 | ------- | ------------------------ |
 | `true`  | CSRF protection enabled  |
 | `false` | CSRF protection disabled |
-
-### `generateUserId()`
-
-Generated a random user id. By default, user ids are 15 characters long.
-
-```ts
-const generateUserId: () => MaybePromise<string>;
-```
-
-##### Returns
-
-| type     | description |
-| -------- | ----------- |
-| `string` | A user id   |
 
 ### `getSessionAttributes()`
 

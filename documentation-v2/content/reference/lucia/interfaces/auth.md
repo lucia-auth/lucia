@@ -9,24 +9,22 @@ format: "code"
 Creates a new key for a user.
 
 ```ts
-const createKey: (
-	userId: string,
-	keyData: {
-		providerId: string;
-		providerUserId: string;
-		password: string | null;
-	}
-) => Promise<Key>;
+const createKey: (options: {
+	userId: string;
+	providerId: string;
+	providerUserId: string;
+	password: string | null;
+}) => Promise<Key>;
 ```
 
 ##### Parameters
 
 | name                     | type             | description                      |
 | ------------------------ | ---------------- | -------------------------------- |
-| `userId`                 | `string`         | The user id of the key to create |
-| `keyData.providerId`     | `string`         | The provider id of the key       |
-| `keyData.providerUserId` | `string`         | The provider user id of the key  |
-| `keyData.password`       | `string \| null` | The password for the key         |
+| `options.userId`         | `string`         | The user id of the key to create |
+| `options.providerId`     | `string`         | The provider id of the key       |
+| `options.providerUserId` | `string`         | The provider user id of the key  |
+| `options.password`       | `string \| null` | The password for the key         |
 
 ##### Returns
 
@@ -46,13 +44,15 @@ const createKey: (
 ```ts
 import { auth } from "./lucia.js";
 
-const key = await auth.createKey(userId, {
+const key = await auth.createKey({
+	userId,
 	providerId: "email",
 	providerUserId: "user@example.com",
 	password: "123456"
 });
 
-const key = await auth.createKey(userId, {
+const key = await auth.createKey({
+	userId,
 	providerId: "github",
 	providerUserId: githubUserId,
 	password: null
@@ -64,21 +64,17 @@ const key = await auth.createKey(userId, {
 Creates a new session for a user.
 
 ```ts
-const createSession: (
-	userId: string,
-	options: {
-		attributes: Lucia.DatabaseSessionAttributes;
-	}
-) => Promise<Session>;
+const createSession: (options: {
+	userId: string;
+	attributes: Lucia.DatabaseSessionAttributes;
+}) => Promise<Session>;
 ```
 
 ##### Parameters
 
-`options` can be undefined if `Lucia.DatabaseSessionAttributes` is an empty object.
-
 | name                 | type                              | description                          |
 | -------------------- | --------------------------------- | ------------------------------------ |
-| `userId`             | `string`                          | The user id of the session to create |
+| `options.userId`     | `string`                          | The user id of the session to create |
 | `options.attributes` | `Lucia.DatabaseSessionAttributes` | Database session attributes          |
 
 ##### Returns
@@ -98,7 +94,8 @@ const createSession: (
 ```ts
 import { auth } from "./lucia.js";
 
-const session = await auth.createSession(userId, {
+const session = await auth.createSession({
+	userId,
 	attributes: {
 		created_at: new Date()
 	}
@@ -150,18 +147,20 @@ const createUser: (options: {
 		password: string | null;
 	} | null;
 	attributes: Lucia.UserAttributes;
+	userId?: string;
 }) => Promise<User>;
 ```
 
 ##### Parameters
 
-| name                          | type                            | description                                            |
-| ----------------------------- | ------------------------------- | ------------------------------------------------------ |
-| `options.key`                 | `null` \| `Record<string, any>` | If defined, the key will be created alongside the user |
-| `options.key?.providerId`     | `string`                        | Key provider id                                        |
-| `options.key?.providerUserId` | `string`                        | Key provider user id                                   |
-| `options.key?.password`       | `string`                        | Key password                                           |
-| `options.attributes`          | `Lucia.DatabaseUserAttributes`  | Database user attributes                               |
+| name                          | type                            | optional | description                                            |
+| ----------------------------- | ------------------------------- | :------: | ------------------------------------------------------ |
+| `options.key`                 | `null` \| `Record<string, any>` |          | If defined, the key will be created alongside the user |
+| `options.key?.providerId`     | `string`                        |          | Key provider id                                        |
+| `options.key?.providerUserId` | `string`                        |          | Key provider user id                                   |
+| `options.key?.password`       | `string`                        |          | Key password                                           |
+| `options.attributes`          | `Lucia.DatabaseUserAttributes`  |          | Database user attributes                               |
+| `userId`                      | `string`                        |    ✓     | User id of the new user                                    |
 
 ###### Returns
 

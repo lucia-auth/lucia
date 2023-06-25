@@ -58,14 +58,17 @@ const { sessionId, createdAt } = session;
 
 ## Create sessions
 
-[`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) can be used to create a new session. It takes a user id and returns the newly created session. If the user id is invalid, it will throw `AUTH_INVALID_USER_ID`.
+[`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) can be used to create a new session. It takes a user id and the attributes (empty for default configuration), and returns the newly created session. If the user id is invalid, it will throw `AUTH_INVALID_USER_ID`.
 
 ```ts
 import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
 try {
-	const session = await auth.createSession(userId);
+	const session = await auth.createSession({
+		userId,
+		attributes: {} // expects `Lucia.DatabaseSessionAttributes`
+	});
 	const sessionCookie = auth.createSessionCookie(session);
 	setSessionCookie(session);
 } catch (e) {
@@ -83,7 +86,8 @@ import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
 try {
-	const session = await auth.createSession(userId, {
+	const session = await auth.createSession({
+		userId,
 		attributes: {
 			created_at: new Date()
 		} // expects `Lucia.DatabaseSessionAttributes`

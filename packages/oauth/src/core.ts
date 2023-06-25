@@ -13,7 +13,10 @@ export type OAuthProvider = {
 		...args: any[]
 	) => Promise<{
 		existingUser: Record<any, any> | null;
-		createUser: (attributes: Record<string, any>) => Promise<Record<any, any>>;
+		createUser: (options: {
+			userId?: string,
+			attributes: Record<string, any>
+		}) => Promise<Record<any, any>>;
 		createKey: (userId: string) => Promise<Key>;
 	}>;
 	getAuthorizationUrl: (
@@ -52,22 +55,24 @@ export const providerUserAuth = async <_Auth extends Auth>(
 	return {
 		existingUser,
 		createKey: async (userId: string) => {
-			return await auth.createKey(userId, {
+			return await auth.createKey({
+				userId,
 				providerId: providerId,
 				providerUserId,
 				password: null
 			});
 		},
-		createUser: async (
-			attributes: CreateUserAttributesParameter<_Auth>
-		): Promise<LuciaUser<_Auth>> => {
+		createUser: async (options: {
+			userId?: string;
+			attributes: CreateUserAttributesParameter<_Auth>;
+		}): Promise<LuciaUser<_Auth>> => {
 			const user = await auth.createUser({
 				key: {
 					providerId: providerId,
 					providerUserId,
 					password: null
 				},
-				attributes
+				...options
 			});
 			return user as LuciaUser<_Auth>;
 		}
