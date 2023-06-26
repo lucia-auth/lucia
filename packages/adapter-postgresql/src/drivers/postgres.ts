@@ -2,8 +2,8 @@ import {
 	helper,
 	getSetArgs,
 	escapeName,
-	transformPgSession,
-	PgSession
+	transformDatabaseSession,
+	DatabaseSession
 } from "../utils.js";
 
 import type { Adapter, InitializeAdapter, UserSchema, KeySchema } from "lucia";
@@ -79,20 +79,20 @@ export const postgresAdapter = (
 			},
 
 			getSession: async (sessionId) => {
-				const result = await get<PgSession>(
+				const result = await get<DatabaseSession>(
 					sql,
 					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 					[sessionId]
 				);
-				return result ? transformPgSession(result) : null;
+				return result ? transformDatabaseSession(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
-				const result = await getAll<PgSession>(
+				const result = await getAll<DatabaseSession>(
 					sql,
 					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 					[userId]
 				);
-				return result.map((val) => transformPgSession(val));
+				return result.map((val) => transformDatabaseSession(val));
 			},
 			setSession: async (session) => {
 				try {
@@ -196,7 +196,7 @@ export const postgresAdapter = (
 			},
 
 			getSessionAndUser: async (sessionId) => {
-				const getSessionPromise = get<PgSession>(
+				const getSessionPromise = get<DatabaseSession>(
 					sql,
 					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 					[sessionId]
@@ -216,7 +216,7 @@ export const postgresAdapter = (
 				]);
 				if (!sessionResult || !userFromJoinResult) return [null, null];
 				const { __session_id: _, ...userResult } = userFromJoinResult;
-				return [transformPgSession(sessionResult), userResult];
+				return [transformDatabaseSession(sessionResult), userResult];
 			}
 		};
 	};

@@ -30,7 +30,7 @@ export const getSetArgs = (fields: string[], placeholders: string[]) => {
 		.join(",");
 };
 
-export type PgSession = Omit<
+export type DatabaseSession = Omit<
 	SessionSchema,
 	"active_expires" | "idle_expires"
 > & {
@@ -38,7 +38,9 @@ export type PgSession = Omit<
 	idle_expires: BigInt;
 };
 
-export const transformPgSession = (session: PgSession): SessionSchema => {
+export const transformDatabaseSession = (
+	session: DatabaseSession
+): SessionSchema => {
 	return {
 		...session,
 		active_expires: Number(session.active_expires),

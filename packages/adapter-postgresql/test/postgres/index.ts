@@ -5,8 +5,8 @@ import { sql } from "./db.js";
 import {
 	escapeName,
 	helper,
-	PgSession,
-	transformPgSession
+	DatabaseSession,
+	transformDatabaseSession
 } from "../../src/utils.js";
 import { postgresAdapter, getAll } from "../../src/drivers/postgres.js";
 import { ESCAPED_SESSION_TABLE_NAME, TABLE_NAMES } from "../shared.js";
@@ -37,11 +37,11 @@ const queryHandler: QueryHandler = {
 	session: {
 		...createTableQueryHandler(TABLE_NAMES.session),
 		get: async () => {
-			const result = await getAll<PgSession>(
+			const result = await getAll<DatabaseSession>(
 				sql,
 				`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`
 			);
-			return result.map((val) => transformPgSession(val));
+			return result.map((val) => transformDatabaseSession(val));
 		}
 	},
 	key: createTableQueryHandler(TABLE_NAMES.key)

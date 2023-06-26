@@ -2,12 +2,16 @@ import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
 
 import { pool } from "./db.js";
-import { escapeName, helper, transformPgSession } from "../../src/utils.js";
+import {
+	escapeName,
+	helper,
+	transformDatabaseSession
+} from "../../src/utils.js";
 import { getAll, pgAdapter } from "../../src/drivers/pg.js";
 import { ESCAPED_SESSION_TABLE_NAME, TABLE_NAMES } from "../shared.js";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-import type { PgSession } from "../../src/utils.js";
+import type { DatabaseSession } from "../../src/utils.js";
 
 const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	const ESCAPED_TABLE_NAME = escapeName(tableName);
@@ -34,9 +38,11 @@ const queryHandler: QueryHandler = {
 		...createTableQueryHandler(TABLE_NAMES.session),
 		get: async () => {
 			const result = await getAll(
-				pool.query<PgSession>(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`)
+				pool.query<DatabaseSession>(
+					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`
+				)
 			);
-			return result.map((val) => transformPgSession(val));
+			return result.map((val) => transformDatabaseSession(val));
 		}
 	},
 	key: createTableQueryHandler(TABLE_NAMES.key)
