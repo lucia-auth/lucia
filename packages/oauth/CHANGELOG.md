@@ -1,14 +1,10 @@
 # @lucia-auth/oauth
 
-## 2.0.0-beta.5
-
-### Major changes
-
-- [#790](https://github.com/pilcrowOnPaper/lucia/pull/790) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@2.0.0-beta.3P
-
 ## 2.0.0-beta.4
 
 ### Major changes
+
+- [#788](https://github.com/pilcrowOnPaper/lucia/pull/790) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@2.0.0-beta.3`
 
 - [#772](https://github.com/pilcrowOnPaper/lucia/pull/772) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `ProviderUserAuth.createUser()` params
 
