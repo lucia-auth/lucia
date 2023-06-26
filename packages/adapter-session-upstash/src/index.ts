@@ -1,62 +1,93 @@
 import type { Redis } from "@upstash/redis";
-import type {
-	AdapterFunction,
-	SessionAdapter,
-	SessionSchema
-} from "lucia-auth";
+import type { InitializeAdapter, SessionAdapter, SessionSchema } from "lucia";
 
-export const upstashAdapter =
-	(upstashClient: Redis): AdapterFunction<SessionAdapter> =>
-	() => {
+export const DEFAULT_SESSION_PREFIX = "session";
+export const DEFAULT_USER_SESSIONS_PREFIX = "user_sessions";
+
+export const upstashSessionAdapter = (
+	upstashClient: Redis,
+	prefixes?: {
+		session: string;
+		userSessions: string;
+	}
+): InitializeAdapter<SessionAdapter> => {
+	return () => {
+		const sessionKey = (sessionId: string) => {
+			return [prefixes?.session ?? DEFAULT_SESSION_PREFIX, sessionId].join(":");
+		};
+		const userSessionsKey = (userId: string) => {
+			return [
+				prefixes?.userSessions ?? DEFAULT_USER_SESSIONS_PREFIX,
+				userId
+			].join(":");
+		};
 		return {
 			getSession: async (sessionId) => {
-				const sessionData = await upstashClient.get(sessionId);
+				const sessionData = await upstashClient.get(sessionKey(sessionId));
 				if (!sessionData) return null;
 
 				return sessionData as SessionSchema;
 			},
 			getSessionsByUserId: async (userId) => {
-				const sessionIds = await upstashClient.lrange(userId, 0, -1);
+				const sessionIds = await upstashClient.smembers(
+					userSessionsKey(userId)
+				);
 
 				if (sessionIds.length === 0) return [];
 
 				const pipeline = upstashClient.pipeline();
-				sessionIds.forEach((id) => pipeline.get(id));
-				const sessionData = await pipeline.exec<SessionSchema[]>();
+				sessionIds.forEach((id) => pipeline.get(sessionKey(id)));
+				const sessions = await pipeline.exec<SessionSchema[]>();
 
-				return sessionData;
+				return sessions;
 			},
 			setSession: async (session) => {
 				const pipeline = upstashClient.pipeline();
-				pipeline.lpush(session.user_id, session.id);
-				pipeline.set(session.id, JSON.stringify(session), {
+
+				pipeline.sadd(userSessionsKey(session.user_id), session.id);
+				pipeline.set(sessionKey(session.id), JSON.stringify(session), {
 					ex: Math.floor(Number(session.idle_expires) / 1000)
 				});
 				await pipeline.exec();
 			},
-			deleteSession: async (...sessionIds) => {
-				const pipeline = upstashClient.pipeline();
-				sessionIds.forEach((id) => pipeline.get(id));
-				const targetSessionData = await pipeline.exec<SessionSchema[]>();
-
-				const pipeline2 = upstashClient.pipeline();
-				sessionIds.forEach((id) => pipeline2.del(id));
-				targetSessionData.forEach((session) =>
-					pipeline2.lrem(session.user_id, 1, session.id)
+			deleteSession: async (sessionId) => {
+				const session = await upstashClient.get<SessionSchema>(
+					sessionKey(sessionId)
 				);
+				if (!session) return;
 
-				await pipeline2.exec();
+				const pipeline = upstashClient.pipeline();
+				pipeline.del(sessionKey(sessionId));
+				pipeline.srem(userSessionsKey(session.user_id), sessionId);
+				await pipeline.exec();
 			},
 			deleteSessionsByUserId: async (userId) => {
-				const sessionIds = await upstashClient.lrange(userId, 0, -1);
-				const pipeline = upstashClient.pipeline();
+				const sessionIds = await upstashClient.smembers(
+					userSessionsKey(userId)
+				);
 
-				sessionIds.forEach((id) => pipeline.del(id));
-				pipeline.del(userId);
+				const pipeline = upstashClient.pipeline();
+				sessionIds.forEach((sessionId) => pipeline.del(sessionKey(sessionId)));
+				pipeline.del(userSessionsKey(userId));
 
 				await pipeline.exec();
+			},
+			updateSession: async (sessionId, partialSession) => {
+				const session = await upstashClient.get<SessionSchema>(
+					sessionKey(sessionId)
+				);
+				if (!session) return;
+				const updatedSession = { ...session, ...partialSession };
+				await upstashClient.set(
+					sessionKey(sessionId),
+					JSON.stringify(updatedSession),
+					{
+						ex: Math.floor(Number(updatedSession.idle_expires) / 1000)
+					}
+				);
 			}
 		};
 	};
+};
 
-export default upstashAdapter;
+export default upstashSessionAdapter;

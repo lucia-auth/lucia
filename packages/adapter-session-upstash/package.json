@@ -35,14 +35,14 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia-auth": "1.x",
-		"@upstash/redis": "1.x"
+		"@upstash/redis": "1.x",
+		"lucia": "2.0.0-beta.3"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@upstash/redis": "^1.21.0",
-		"dotenv": "^16.0.3",
-		"lucia-auth": "workspace:*",
-		"tsx": "^3.12.6"
+		"dotenv": "^16.3.1",
+		"lucia": "workspace:*",
+		"tsx": "^3.12.7"
 	}
 }
