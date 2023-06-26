@@ -17,15 +17,15 @@ export const createSessionCookie = (
 		env: Env;
 		name: string;
 		attributes: SessionCookieAttributes;
-		indefiniteExpiration: boolean;
+		expires: boolean;
 	}
 ) => {
 	const getExpiration = () => {
 		if (session === null) return 0;
-		if (options.indefiniteExpiration) {
-			return new Date().getTime() + 1000 * 60 * 60 * 24 * 365; // + 1 year
+		if (options.expires) {
+			return session.idlePeriodExpiresAt;
 		}
-		return session.idlePeriodExpiresAt;
+		return new Date().getTime() + 1000 * 60 * 60 * 24 * 365; // + 1 year
 	};
 	return new Cookie(
 		options.name ?? DEFAULT_SESSION_COOKIE_NAME,

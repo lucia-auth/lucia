@@ -63,7 +63,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	private sessionCookie: {
 		name: string;
 		attributes: SessionCookieAttributes;
-		indefiniteExpiration: boolean;
+		expires: boolean;
 	};
 	private sessionExpiresIn: {
 		activePeriod: number;
@@ -132,7 +132,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			name: config.sessionCookie?.name ?? DEFAULT_SESSION_COOKIE_NAME,
 			attributes:
 				config.sessionCookie?.attributes ?? defaultSessionCookieAttributes,
-			indefiniteExpiration: config.sessionCookie?.indefiniteExpiration ?? false
+			expires: config.sessionCookie?.expires ?? true
 		};
 		this.passwordHash = {
 			generate: config.passwordHash?.generate ?? generateScryptHash,
@@ -666,7 +666,7 @@ export type Configuration<
 	sessionCookie?: {
 		name?: string;
 		attributes?: SessionCookieAttributes;
-		indefiniteExpiration?: boolean;
+		expires?: boolean;
 	};
 	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
 	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
