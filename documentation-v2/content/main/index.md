@@ -16,7 +16,10 @@ const user = await auth.createUser({
 		username
 	}
 });
-const session = await auth.createSession(user.userId);
+const session = await auth.createSession({
+	userId: user.userId,
+	attributes: {} // custom attributes
+});
 const sessionCookie = auth.createSessionCookie(session);
 ```
 

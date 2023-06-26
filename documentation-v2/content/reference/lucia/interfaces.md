@@ -169,14 +169,14 @@ type Session = {
 
 `ReturnType<_Configuration["getSessionAttributes"]>` represents the return type of [`getSessionAttributes()`](/basics/configuration#getsessionattributes) configuration.
 
-| name                    | type                                       | description                                                                 |
-| ----------------------- | ------------------------------------------ | --------------------------------------------------------------------------- |
-| `activePeriodExpiresAt` | `Date`                                     | Time of the [active period](/start-here/concepts#session-states) expiration |
-| `idlePeriodExpiresAt`   | `Date`                                     | Time of the [idle period](/start-here/concepts#session-states) expiration   |
-| `fresh`                 | `boolean`                                  | `true` if the session was newly created (including on renewal)              |
-| `sessionId`             | `string`                                   | Session id                                                                  |
-| `state`                 | `"active" \| "idle"`                       | [Session state](/start-here/concepts#session-states)                        |
-| `user`                  | [`User`](/reference/lucia/interfaces#user) | User of the session                                                         |
+| name                    | type                                       | description                                                                                    |
+| ----------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `activePeriodExpiresAt` | `Date`                                     | Time of the [active period](/start-here/concepts#session-states-and-session-resets) expiration |
+| `idlePeriodExpiresAt`   | `Date`                                     | Time of the [idle period](/start-here/concepts#session-states-and-session-resets) expiration   |
+| `fresh`                 | `boolean`                                  | `true` if the session was newly created or reset                                               |
+| `sessionId`             | `string`                                   | Session id                                                                                     |
+| `state`                 | `"active" \| "idle"`                       | [Session state](/start-here/concepts#session-states-and-session-resets)                        |
+| `user`                  | [`User`](/reference/lucia/interfaces#user) | User of the session                                                                            |
 
 ## `SessionAdapter`
 

@@ -1,5 +1,6 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
+import { providerUserAuth } from "../core.js";
+import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -11,7 +12,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "facebook";
 
 export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getFacebookTokens = async (code: string) => {
 		const requestUrl = createUrl(
 			"https://graph.facebook.com/v16.0/oauth/access_token",
 			{
@@ -35,7 +36,7 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getFacebookUser = async (accessToken: string) => {
 		const requestUrl = createUrl("https://graph.facebook.com/me", {
 			access_token: accessToken,
 			fields: ["id", "name", "picture"].join(",")
@@ -59,25 +60,32 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(
+			const tokens = await getFacebookTokens(code);
+			const facebookUser = await getFacebookUser(tokens.accessToken);
+			const providerUserId = facebookUser.id;
+			const facebookUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpers,
-				providerUser,
+				...facebookUserAuth,
+				facebookUser,
 				tokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 export type FacebookUser = {
 	id: string;
 	name: string;
-	picture: string;
+	picture: {
+		data: {
+			height: number;
+			is_silhouette: boolean;
+			url: string;
+			width: number;
+		};
+	};
 };

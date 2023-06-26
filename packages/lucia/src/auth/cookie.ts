@@ -13,20 +13,28 @@ export type SessionCookieAttributes = {
 
 export const createSessionCookie = (
 	session: Session | null,
-	env: Env,
-	cookieConfig: {
+	options: {
+		env: Env;
 		name: string;
 		attributes: SessionCookieAttributes;
+		expires: boolean;
 	}
 ) => {
+	const getExpiration = () => {
+		if (session === null) return 0;
+		if (options.expires) {
+			return session.idlePeriodExpiresAt;
+		}
+		return new Date().getTime() + 1000 * 60 * 60 * 24 * 365; // + 1 year
+	};
 	return new Cookie(
-		cookieConfig.name ?? DEFAULT_SESSION_COOKIE_NAME,
+		options.name ?? DEFAULT_SESSION_COOKIE_NAME,
 		session?.sessionId ?? "",
 		{
-			...cookieConfig.attributes,
+			...options.attributes,
 			httpOnly: true,
-			expires: new Date(session?.idlePeriodExpiresAt ?? 0),
-			secure: env === "PROD"
+			expires: new Date(getExpiration()),
+			secure: options.env === "PROD"
 		}
 	);
 };

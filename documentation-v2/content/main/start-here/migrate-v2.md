@@ -11,11 +11,12 @@ description: "Learn how to migrate Lucia version 1 to version 2 beta"
 - **`lucia-auth` is published under `lucia`** (all other packages remain the same)
 - **`@lucia-auth/tokens` is not compatible with version 2** (See [Implementing 2FA without the tokens integration (v1/v2)](https://github.com/pilcrowOnPaper/lucia/discussions/728))
 - **Removed single use and primary keys**
+- **Update `nextjs()` and `web()` middleware**
+- Replace session renewal with session resets
 - Database tables cannot use default values
 - Official adapters no longer enforce table names
 - Some items previously exported from `lucia-auth` are now exported from `lucia/utils`
 - Updated adapter API to be more simple and future-proof
-- Repo requires Node.js 20
 
 ### New features
 
@@ -124,7 +125,7 @@ const auth = lucia({
 
 	// autoDatabaseCleanup: false, <= removed for now
 	csrfProtection: true, // no change
-	generateUserId: () => generateRandomString(16), // previously `generateCustomUserId()`
+	// generateCustomUserId, <= removed
 	passwordHash, // previously `hash`
 	allowedRequestOrigins: ["https://foo.example.com"], // previously `origin`
 	sessionCookie: {
@@ -138,6 +139,108 @@ const auth = lucia({
 });
 ```
 
+### Use custom user id
+
+While `generateCustomUserId()` configuration has been removed, you can now pass a custom user id to [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser).
+
+```ts
+await auth.createUser({
+	userId: generateCustomUserId(),
+	attributes: {}
+});
+```
+
+## Creating sessions and keys
+
+`Auth.createSession()` and `Auth.createKey()` now takes a single parameter.
+
+```ts
+// v1
+await auth.createSession(userId);
+await auth.createKey(userId, {
+	// ...
+});
+
+// v2
+await auth.createSession({
+	userId,
+	attributes: {} // must be defined!
+});
+await auth.createKey({
+	userId
+	// ...
+});
+```
+
+## Middleware
+
+With v2, Lucia no longer needs to set new session cookies when validating sessions if `sessionCookie.expires` configuration is set to `false`.
+
+```ts
+lucia({
+	sessionCookie: {
+		expires: false
+	}
+});
+```
+
+This should only be enabled when necessary:
+
+- If you're using `web()` middleware
+- Next.js project using the app directory, or deployed to the edge
+
+### `nextjs()`
+
+`Auth.handleRequest()` no longer accepts `Response` and `Headers` when using the Next.js middleware. Passing only `IncomingMessage` or `Request` will disable `AuthRequest.setSession()`. We recommend setting cookies manually when creating a new session.
+
+```ts
+// removed
+auth.handleRequest({
+	req: req as IncomingMessage,
+	headers: headers as Headers
+});
+auth.handleRequest({
+	req: req as IncomingMessage,
+	response: response as Response
+});
+auth.handleRequest({
+	request: request as Request
+});
+
+// new - `AuthRequest.setSession()` disabled
+auth.handleRequest(req as IncomingMessage);
+auth.handleRequest(request as Request);
+```
+
+`request` must be defined as well:
+
+```ts
+// v1
+auth.handleRequest({
+	cookies: cookies as Cookies,
+	request: request as Request
+});
+
+// v2
+auth.handleRequest({
+	cookies: cookies as Cookies,
+	request: request as Request | null
+});
+```
+
+### `web()`
+
+`Auth.handleRequest()` no longer accepts `Response` and `Headers` when using the web standard middleware. This means `AuthRequest.setSession()` is disabled, and we recommend setting cookies manually.
+
+```ts
+// v1
+auth.handleRequest(request as Request, response as Response);
+auth.handleRequest(request as Request, headers as Headers);
+
+// v2
+auth.handleRequest(request as Request);
+```
+
 ## Validating sessions
 
 `Auth.validateSessionUser()` and `AuthRequest.validateUser()` has been removed. The User object can now be accessed via `Session.user`.
@@ -149,6 +252,10 @@ const session = await authRequest.validate();
 
 const user = session.user;
 ```
+
+### Session renewal
+
+`Auth.renewSession()` has been removed.
 
 ### Reading cookies manually
 
@@ -226,7 +333,8 @@ await auth.createKey(userId, {
 });
 
 // v2
-await auth.createKey(userId, {
+await auth.createKey({
+	userId,
 	providerId,
 	providerUserId,
 	password
@@ -264,3 +372,20 @@ const { githubUser, githubTokens } = await githubAuth.validateCallback(code);
 ### Removed `LuciaOAuthRequestError`
 
 `LuciaOAuthRequestError` is replaced with [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
+
+
+### Update `ProviderUserAuth.validateCallback()`
+
+User attributes should be provided as its own property.
+
+```ts
+const { createUser } = await githubAuth.validateCallback(code);
+
+// v1
+await createUser(attributes);
+
+// v2
+await createUser({
+	attributes
+});
+```

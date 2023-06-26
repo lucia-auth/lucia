@@ -12,9 +12,13 @@ Some methods shown in this page is included in [`Auth`](/reference/lucia/interfa
 
 If you're working with cookies, **CSRF protection must be implemented** to prevent [cross site request forgery (CSRF)]().
 
+### Cookie expiration
+
+By default, session cookies are set to expire when the session expires. This behavior may not be preferable if you cannot always set cookies after validating sessions, as the session may be reset (expiration extended) and the cookie will expire before the sessions itself. You can set the session cookies to last indefinitely by setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false`. Enabling this will not change the session expiration, but rather only the cookie.
+
 ## Validate session cookies
 
-[`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) validates the request origin and the session cookie stored, renewing sessions if they're idle. It returns a valid session, or `null` if the session cookie is invalid or if the request is from an untrusted request origin.
+[`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) validates the request origin and the session cookie stored, resetting sessions if they're idle. It returns a valid session, or `null` if the session cookie is invalid or if the request is from an untrusted request origin.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -69,6 +73,8 @@ const authRequest = auth.handleRequest();
 authRequest.setSession(session);
 authRequest.setSession(null); // delete session cookie
 ```
+
+This is disabled when using [`web()`](/reference/lucia/middleware#web) and some configuration of [`nextjs()`](/reference/lucia/middleware#nextjs) middleware. If you're using them, set sesion cookies manually as described below.
 
 ### Create session cookies
 

@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-prisma
 
+## 3.0.0-beta.3
+
+### Major changes
+
+- [#788](https://github.com/pilcrowOnPaper/lucia/pull/790) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@2.0.0-beta.3`
+
+## 3.0.0-beta.2
+
+### Patch changes
+
+- [#768](https://github.com/pilcrowOnPaper/lucia/pull/768) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 3.0.0-beta.1
 
 ### Major changes
@@ -16,9 +28,9 @@
 
 - [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
 
-    - Export adapter as named exports (`prisma()`)
+  - Export adapter as named exports (`prisma()`)
 
-    - Update adapter params
+  - Update adapter params
 
 ## 2.0.0
 

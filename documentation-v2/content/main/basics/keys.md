@@ -50,7 +50,8 @@ import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
 try {
-	const key = await auth.createKey(userId, {
+	const key = await auth.createKey({
+		userId,
 		providerId: "email",
 		providerUserId: "user@example.com",
 		password: "123456"
@@ -64,7 +65,8 @@ try {
 ```
 
 ```ts
-const key = await auth.createKey(userId, {
+const key = await auth.createKey({
+	userId,
 	providerId: "github",
 	providerUserId: githubUserId,
 	password: null // a value must be provided
@@ -82,7 +84,7 @@ import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
 try {
-	const user await auth.createUser({
+	const user = await auth.createUser({
 		key: {
 			providerId,
 			providerUserId,
