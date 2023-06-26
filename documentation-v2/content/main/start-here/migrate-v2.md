@@ -272,6 +272,10 @@ const session = await authRequest.validate();
 const user = session.user;
 ```
 
+### Session renewal
+
+`Auth.renewSession()` has been removed.
+
 ### Reading cookies manually
 
 `Auth.parseRequestHeaders()` has been removed and replaced with [`Auth.validateRequestOrigin()`](/reference/lucia/interfaces/auth#validaterequestorigin) and [`Auth.readSessionCookie()`](/reference/lucia/interfaces/auth#readsessioncookie).
