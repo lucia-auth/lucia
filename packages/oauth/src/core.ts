@@ -14,8 +14,8 @@ export type OAuthProvider = {
 	) => Promise<{
 		existingUser: Record<any, any> | null;
 		createUser: (options: {
-			userId?: string,
-			attributes: Record<string, any>
+			userId?: string;
+			attributes: Record<string, any>;
 		}) => Promise<Record<any, any>>;
 		createKey: (userId: string) => Promise<Key>;
 	}>;
