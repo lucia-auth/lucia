@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-postgresql
 
+## 2.0.0-beta.3
+
+### Major changes
+
+- [#788](https://github.com/pilcrowOnPaper/lucia/pull/790) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@2.0.0-beta.3`
+
 ## 2.0.0-beta.2
 
 ### Patch changes
