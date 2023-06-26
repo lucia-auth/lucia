@@ -9,7 +9,7 @@ import {
 	DEFAULT_SESSION_PREFIX,
 	DEFAULT_USER_SESSIONS_PREFIX,
 	upstashSessionAdapter
-} from "../src/upstash";
+} from "../src/drivers/upstash";
 
 dotenv.config({
 	path: `${resolve()}/.env`

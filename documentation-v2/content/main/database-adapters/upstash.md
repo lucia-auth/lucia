@@ -7,7 +7,7 @@ description: "Learn how to use Upstas Redis with Lucia"
 Session adapter for [Upstash Redis](https://upstash.com) provided by the Upstash session adapter package. This only handles sessions, and not users or keys.
 
 ```ts
-import { upstash } from "@lucia-auth/adapter-session-upstash";
+import { upstash } from "@lucia-auth/adapter-session-redis";
 ```
 
 ```ts
@@ -35,7 +35,7 @@ Key are defined as a combination of a prefix and an id so everything can be stor
 
 ```ts
 import { lucia } from "lucia";
-import { upstash } from "@lucia-auth/adapter-session-upstash";
+import { upstash } from "@lucia-auth/adapter-session-redis";
 import { Redis } from "@upstash/redis";
 
 const upstashClient = new Redis({

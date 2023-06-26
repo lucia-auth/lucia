@@ -14,11 +14,13 @@
 npm install @lucia-auth/adapter-session-redis
 ```
 
-`lucia-auth@0.11.x` recommended.
+`lucia@2.0.0-beta.3` recommended.
 
 ## Testing
 
-Add a postgresql database url to `.env`.
+Add the port of a local Redis DB to `.env`. \
+Add the UPSTASH_REDIS_REST_URL to `.env`.\
+Add the UPSTASH_REDIS_REST_TOKEN to `.env`.
 
 ```
 npm run test
