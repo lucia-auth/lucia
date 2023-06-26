@@ -6,7 +6,7 @@ import ArticleIcon from "@icons/ArticleIcon.astro";
 
 <BaseLayout title="The Lucia Guidebook">
     <GuidebookHeader />
-    <main class="px-4 sm:px-8 md:px-16 bg-zinc-50 pb-24">
+    <main class="px-4 sm:px-8 md:px-16 bg-zinc-80 pb-24">
         <div class="max-w-5xl mx-auto">
             <div class="pt-32 pb-16 w-full">
                 <div class="mx-auto">
@@ -18,86 +18,56 @@ import ArticleIcon from "@icons/ArticleIcon.astro";
                     <p
                         class="text-lg xs:text-xl text-center mt-4 max-w-2xl mx-auto overflow-hidden"
                     >
-                        The Guidebook is a collection of tutorials and resources
-                        for Lucia. Framework and runtimes specific guides are
-                        also available.
+                        The Guidebook is a collection of tutorials and guides on
+                        using Lucia, with resources available for a wide range
+                        of frameworks and runtimes.
                     </p>
                 </div>
             </div>
             <div class="w-full flex flex-col gap-y-6">
-                <article class="w-full bg-white rounded-lg group border">
-                    <a class="block px-4 xs:px-6 py-4" href="/">
-                        <h2 class="text-xl font-semibold">
-                            Sign in with username and password
-                        </h2>
-                        <p class="mt-1">
-                            Learn the basics of Lucia by implementing a simple
-                            username and password authentication.
-                        </p>
-                        <div
-                            class="text-main flex place-items-center mt-1 gap-x-0.5"
-                        >
-                            <div class="fill-current w-5 h-5">
-                                <ArticleIcon />
-                            </div>
-                            <p class="group-hover:underline">Read</p>
-                        </div>
-                    </a>
-                </article>
-                <article class="w-full bg-white rounded-lg group border">
-                    <a class="block px-4 xs:px-6 py-4" href="/">
-                        <h2 class="text-xl font-semibold">Github OAuth</h2>
-                        <p class="mt-1">
-                            Learn the basics of Lucia and the OAuth integration
-                            by implementing Github OAuth.
-                        </p>
-                        <div
-                            class="text-main flex place-items-center mt-1 gap-x-0.5"
-                        >
-                            <div class="fill-current w-5 h-5">
-                                <ArticleIcon />
-                            </div>
-                            <p class="group-hover:underline">Read</p>
-                        </div>
-                    </a>
-                </article>
-                <article class="w-full bg-white rounded-lg group border">
-                    <a class="block px-4 xs:px-6 py-4" href="/">
-                        <h2 class="text-xl font-semibold">
-                            Email verification links
-                        </h2>
-                        <p class="mt-1">
-                            Learn how to verify emails with verification links.
-                        </p>
-                        <div
-                            class="text-main flex place-items-center mt-1 gap-x-0.5"
-                        >
-                            <div class="fill-current w-5 h-5">
-                                <ArticleIcon />
-                            </div>
-                            <p class="group-hover:underline">Read</p>
-                        </div>
-                    </a>
-                </article>
-                <article class="w-full bg-white rounded-lg group border">
-                    <a class="block px-4 xs:px-6 py-4" href="/">
-                        <h2 class="text-xl font-semibold">
-                            One time passwords for verification
-                        </h2>
-                        <p class="mt-1">
-                            Learn how to verify emails and phone numbers with
-                            one time passwords.
-                        </p>
-                        <div
-                            class="text-main flex place-items-center mt-1 gap-x-0.5"
-                        >
-                            <div class="fill-current w-5 h-5">
-                                <ArticleIcon />
-                            </div>
-                            <p class="group-hover:underline">Read</p>
-                        </div>
-                    </a>
-                </article>
+                {
+                    [
+                        {
+                            title: "Sign in with username and password",
+                            description:
+                                "Learn the basics of Lucia by implementing a simple username and password authentication"
+                        },
+                        {
+                            title: "Github OAuth",
+                            description:
+                                "Learn the basics of Lucia and the OAuth integration by implementing Github OAuth."
+                        },
+                        {
+                            title: "Email verification links",
+                            description:
+                                "Learn how to verify emails with verification links."
+                        },
+                        {
+                            title: "One time passwords for verification",
+                            description:
+                                "Learn how to verify emails and phone numbers with one time passwords."
+                        }
+                    ].map(({ title, description }) => {
+                        return (
+                            <article class="group w-full rounded-lg bg-white">
+                                <a class="xs:px-6 block px-4 py-4" href="/">
+                                    <h2 class="text-xl font-semibold">
+                                        {title}
+                                    </h2>
+                                    <p class="mt-1">{description}</p>
+                                    <div class="text-main mt-1 flex place-items-center gap-x-0.5">
+                                        <div class="h-5 w-5 fill-current">
+                                            <ArticleIcon />
+                                        </div>
+                                        <p class="group-hover:underline">
+                                            Read
+                                        </p>
+                                    </div>
+                                </a>
+                            </article>
+                        );
+                    })
+                }
             </div>
         </div>
     </main>
