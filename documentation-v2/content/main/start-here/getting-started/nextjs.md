@@ -26,7 +26,7 @@ export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
 	middleware: nextjs(),
 	sessionCookie: {
-		indefiniteExpiration: true // only enable it for app dir and projects deployed to Vercel Edge
+		expires: false // only disable it for app dir and projects deployed to Vercel Edge
 	}
 });
 

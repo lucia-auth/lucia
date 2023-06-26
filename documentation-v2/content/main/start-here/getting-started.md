@@ -56,7 +56,10 @@ import { web } from "lucia/middleware";
 
 export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: web()
+	middleware: web(),
+	sessionCookie: {
+		expires: false
+	}
 });
 ```
 

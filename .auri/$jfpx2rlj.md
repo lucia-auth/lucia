@@ -5,4 +5,4 @@ type: "major" # "major", "minor", "patch"
 
 Overhaul session renewal
     - Remove `Auth.renewSession()`
-    - Add `sessionCookie.indefiniteExpiration()` configuration
+    - Add `sessionCookie.expires` configuration

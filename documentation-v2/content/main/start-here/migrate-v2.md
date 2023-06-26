@@ -193,12 +193,12 @@ await createUser({
 
 ## Middleware
 
-With v2, Lucia no longer needs to set new session cookies when validating sessions if `sessionCookie.indefiniteExpiration` configuration is enabled.
+With v2, Lucia no longer needs to set new session cookies when validating sessions if `sessionCookie.expires` configuration is disabled.
 
 ```ts
 lucia({
 	sessionCookie: {
-		indefiniteExpiration: true
+		expires: false
 	}
 });
 ```

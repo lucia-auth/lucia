@@ -33,7 +33,7 @@ type Configuration = {
 	sessionCookie?: {
 		name?: string;
 		attributes?: SessionCookieAttributes;
-		indefiniteExpiration?: boolean;
+		expires?: boolean;
 	};
 	sessionExpiresIn?: {
 		activePeriod: number;
@@ -218,7 +218,7 @@ Validates a hash generated using `passwordHash.generate()` synchronously or asyn
 const sessionCookie: {
 	name?: string;
 	attributes?: SessionCookieAttributes;
-	indefiniteExpiration: boolean;
+	expires: boolean;
 };
 
 type SessionCookieAttributes = {
@@ -228,11 +228,11 @@ type SessionCookieAttributes = {
 };
 ```
 
-| property               | type                      | optional | description                                            |
-| ---------------------- | ------------------------- | :------: | ------------------------------------------------------ |
-| `name`                 | `string`                  |    ✓     | Session cookie name                                    |
-| `attributes            | `SessionCookieAttributes` |    ✓     | Session cookie attributes                              |
-| `indefiniteExpiration` | `boolean`                 |    ✓     | Session cookie does not expire (session still expires) |
+| property    | type                      | optional | description                             |
+| ----------- | ------------------------- | :------: | --------------------------------------- |
+| `name`      | `string`                  |    ✓     | Session cookie name                     |
+| `attributes | `SessionCookieAttributes` |    ✓     | Session cookie attributes               |
+| `expires`   | `boolean`                 |    ✓     | Toggle if session cookie expires or not |
 
 ### `sessionExpiresIn`
 
