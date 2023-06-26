@@ -5,11 +5,11 @@ import dotenv from "dotenv";
 import type { SessionSchema } from "lucia";
 import { LuciaError } from "lucia";
 import { resolve } from "path";
-
-import upstashSessionAdapter, {
+import {
 	DEFAULT_SESSION_PREFIX,
-	DEFAULT_USER_SESSIONS_PREFIX
-} from "../src";
+	DEFAULT_USER_SESSIONS_PREFIX,
+	upstashSessionAdapter
+} from "../src/upstash";
 
 dotenv.config({
 	path: `${resolve()}/.env`
