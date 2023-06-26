@@ -4,7 +4,7 @@ title: "Upstash"
 description: "Learn how to use Upstas Redis with Lucia"
 ---
 
-Session adapter for [Upstash Redis](https://upstash.com) provided by the Upstash session adapter package. This only handles sessions, and not users or keys.
+Session adapter for [Upstash Redis](https://upstash.com) provided by the Redis session adapter package. This only handles sessions, and not users or keys.
 
 ```ts
 import { upstash } from "@lucia-auth/adapter-session-redis";
