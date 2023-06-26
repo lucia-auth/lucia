@@ -21,13 +21,15 @@ const session: Session = {
 };
 ```
 
-### Session states
+### Session states and session reset
 
 Sessions can be in one of 3 states:
 
 - Active: A valid session. Goes "idle" after some time.
-- Idle: Still a valid session but must be renewed by Lucia. Goes "dead" after some time.
+- Idle: A valid session but Lucia will reset the expiration. Becomes "dead" if the session is not used.
 - Dead: An invalid session. The user must sign in again.
+
+Instead of invalidating an idle session and creating a new one, Lucia will *reset* the session by extending the expiration.
 
 This allows sessions to be persisted for active users, while invalidating inactive users. If you have used access tokens and refresh tokens, Lucia's sessions are a combination of both. Active sessions are your access tokens, and idle sessions are your refresh tokens.
 
@@ -107,9 +109,9 @@ If the session attributes provided violates a database rule (such a unique const
 
 ## Validate sessions
 
-Sessions can be validated using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession). This will renew idle sessions, which may be unwanted if you're sending your session id via an authorization header. [Use `Auth.getSession()`](/basics/sessions#get-sessions) instead if you do not want to renew idle sessions.
+Sessions can be validated using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession). This will reset the session if its idle.
 
-It will return the session provided if it's active, or a newly created sessions if the provided session was idle and hence renewed. You can check if the returned session was newly created with the `Session.fresh` property. If the session is dead (invalid), it will throw `AUTH_INVALID_SESSION_ID`.
+You can check if the returned session was just reset with the `Session.fresh` property. If the session is dead (invalid), it will throw `AUTH_INVALID_SESSION_ID`.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -118,7 +120,7 @@ import { LuciaError } from "lucia";
 try {
 	const session = await auth.validateSession(sessionId);
 	if (session.fresh) {
-		// newly created
+		// expiration extended
 		const sessionCookie = auth.createSessionCookie(session);
 		setSessionCookie(session);
 	}
@@ -133,7 +135,7 @@ try {
 
 ## Get sessions
 
-You can get a session with [`Auth.getSession()`](/reference/lucia/interfaces/auth#getsession). Unlike `Auth.validateSession()`, it will not renew idle sessions and as such, the returned session may be active or idle.
+You can get a session with [`Auth.getSession()`](/reference/lucia/interfaces/auth#getsession). Unlike `Auth.validateSession()`, this will not reset idle sessions and as such, the returned session may be active or idle.
 
 It takes a session id, and returns the session if it exists or throw `AUTH_INVALID_SESSION_ID` if not.
 
@@ -147,7 +149,7 @@ try {
 		// valid sessions
 	} else {
 		// idle session
-		// should be renewed
+		// should be reset
 	}
 } catch (e) {
 	if (e instanceof LuciaError && e.message === `AUTH_INVALID_SESSION_ID`) {
@@ -171,28 +173,6 @@ try {
 		// invalid user id
 	}
 	// unexpected database error
-}
-```
-
-## Renew sessions
-
-You can renew a valid session (active or idle) using [`Auth.renewSession()`](/reference/lucia/interfaces/auth#renewsession). The session provided will be invalidated immediately, and a new session will be created and returned. It will throw `AUTH_INVALID_SESSION_ID` if the provided session is invalid.
-
-The newly created session will inherit all the session attribute values of the provided session.
-
-```ts
-import { auth } from "./lucia.js";
-import { LuciaError } from "lucia";
-
-try {
-	const session = await auth.renewSession(sessionId);
-	const sessionCookie = auth.createSessionCookie(session);
-	setSessionCookie(session);
-} catch (e) {
-	if (e instanceof LuciaError && e.message === `AUTH_INVALID_SESSION_ID`) {
-		// invalid session
-	}
-	// unexpected database errors
 }
 ```
 

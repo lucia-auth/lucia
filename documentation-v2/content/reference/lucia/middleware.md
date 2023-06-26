@@ -88,7 +88,7 @@ auth.handleRequest(requestContext as RequestContext);
 
 ## `nextjs()`
 
-Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory.
+Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when just `IncomingMessage` or `NextRequest` is passed.**
 
 ```ts
 const nextjs: () => Middleware;
@@ -112,48 +112,35 @@ auth.handleRequest({
 });
 
 auth.handleRequest({
-	req: req as IncomingMessage,
-	headers: headers as Headers
-});
-
-auth.handleRequest({
-	req: req as IncomingMessage,
-	response: response as Response
-});
-
-auth.handleRequest({
-	cookies: cookies as Cookies,
-	request: request as Request
-});
-
-auth.handleRequest({
-	request: request as Request
+	request: request as NextRequest | null,
+	cookies: cookies as Cookies
 });
 ```
 
-| name  | type                                                                            | optional |
-| ----- | ------------------------------------------------------------------------------- | :------: |
-| `req` | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |          |
-| `res` | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |    ✓     |
+```ts
+// for middleware and API routes in edge runtime
+const authRequest = auth.handleRequest(req as IncomingMessage);
+const authRequest = auth.handleRequest(request as NextRequest);
+authRequest.setSession(); // error!
+```
 
-| name      | type                                                                            |
-| --------- | ------------------------------------------------------------------------------- |
-| `req`     | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
-| `headers` | [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers)           |
+| name  | type                                                                            |
+| ----- | ------------------------------------------------------------------------------- |
+| `req` | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
+| `res` | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |
 
-| name       | type                                                                            |
-| ---------- | ------------------------------------------------------------------------------- |
-| `req`      | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
-| `response` | [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)         |
+| name      | type                                                                                       | description                              |
+| --------- | ------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| `request` | [`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request)`\| null` | Should be provided when using API routes |
+| `cookies` | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies)                   |                                          |
 
-| name      | type                                                                     | optional |
-| --------- | ------------------------------------------------------------------------ | :------: |
-| `cookies` | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) |          |
-| `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)    |    ✓     |
+| name  | type                                                                            |
+| ----- | ------------------------------------------------------------------------------- |
+| `req` | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
 
-| name      | type                                                                  |
-| --------- | --------------------------------------------------------------------- |
-| `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) |
+| name      | type                                                                              |
+| --------- | --------------------------------------------------------------------------------- |
+| `request` | [`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request) |
 
 ## `node()`
 
@@ -239,7 +226,7 @@ auth.handleRequest(event as RequestEvent);
 
 ## `web()`
 
-Middleware for web standard request/response. Requires the framework/provider to support multiple `Set-Cookie` header value.
+Middleware for web standard request. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when using the `web()` middleware.**
 
 ```ts
 const web: () => Middleware;
@@ -257,14 +244,13 @@ const auth = lucia({
 ```
 
 ```ts
-auth.handleRequest(request as Request, response as Response);
-auth.handleRequest(request as Request, headers as Headers);
+const authRequest = auth.handleRequest(request as Request);
+authRequest.setSession(); // error!
 ```
 
-| name      | type                                                                                                                                             |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)                                                                            |
-| `headers` | [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)`\|`[`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) |
+| name      | type                                                                  |
+| --------- | --------------------------------------------------------------------- |
+| `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) |
 
 ## `qwik()`
 

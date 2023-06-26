@@ -60,8 +60,11 @@ const defaultSessionCookieAttributes: SessionCookieAttributes = {
 
 export class Auth<_Configuration extends Configuration = any> {
 	private adapter: Adapter;
-	private sessionCookieName: string;
-	private sessionCookieAttributes: SessionCookieAttributes;
+	private sessionCookie: {
+		name: string;
+		attributes: SessionCookieAttributes;
+		expires: boolean;
+	};
 	private sessionExpiresIn: {
 		activePeriod: number;
 		idlePeriod: number;
@@ -125,10 +128,12 @@ export class Auth<_Configuration extends Configuration = any> {
 			const transform = config.getSessionAttributes ?? defaultTransform;
 			return transform(databaseSession);
 		};
-		this.sessionCookieName =
-			config.sessionCookie?.name ?? DEFAULT_SESSION_COOKIE_NAME;
-		this.sessionCookieAttributes =
-			config.sessionCookie?.attributes ?? defaultSessionCookieAttributes;
+		this.sessionCookie = {
+			name: config.sessionCookie?.name ?? DEFAULT_SESSION_COOKIE_NAME,
+			attributes:
+				config.sessionCookie?.attributes ?? defaultSessionCookieAttributes,
+			expires: config.sessionCookie?.expires ?? true
+		};
 		this.passwordHash = {
 			generate: config.passwordHash?.generate ?? generateScryptHash,
 			validate: config.passwordHash?.validate ?? validateScryptHash
@@ -235,21 +240,19 @@ export class Auth<_Configuration extends Configuration = any> {
 	};
 
 	private validateSessionIdArgument = (sessionId: string) => {
-		if (sessionId.length !== 40) {
-			debug.session.fail("Expected id length to be 40", sessionId);
+		if (!sessionId) {
+			debug.session.fail("Empty session id");
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		}
 	};
 
-	private generateSessionId = (sessionExpiresIn?: {
+	private getNewSessionExpiration = (sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
-	}): readonly [
-		sessionId: string,
-		activePeriodExpiresAt: Date,
-		idlePeriodExpiresAt: Date
-	] => {
-		const sessionId = generateRandomString(40);
+	}): {
+		activePeriodExpiresAt: Date;
+		idlePeriodExpiresAt: Date;
+	} => {
 		const activePeriodExpiresAt = new Date(
 			new Date().getTime() +
 				(sessionExpiresIn?.activePeriod ?? this.sessionExpiresIn.activePeriod)
@@ -258,7 +261,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			activePeriodExpiresAt.getTime() +
 				(sessionExpiresIn?.idlePeriod ?? this.sessionExpiresIn.idlePeriod)
 		);
-		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
+		return { activePeriodExpiresAt, idlePeriodExpiresAt };
 	};
 
 	public getUser = async (userId: string): Promise<User> => {
@@ -392,31 +395,30 @@ export class Auth<_Configuration extends Configuration = any> {
 			debug.session.success("Validated session", session.sessionId);
 			return session;
 		}
-		const [newSessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
-			this.generateSessionId();
-		const renewedDatabaseSession = {
-			...databaseSession,
-			id: newSessionId,
+		const { activePeriodExpiresAt, idlePeriodExpiresAt } =
+			this.getNewSessionExpiration();
+		await this.adapter.updateSession(session.sessionId, {
 			active_expires: activePeriodExpiresAt.getTime(),
 			idle_expires: idlePeriodExpiresAt.getTime()
-		} satisfies SessionSchema;
-		await Promise.all([
-			this.adapter.setSession(renewedDatabaseSession),
-			this.adapter.deleteSession(sessionId)
-		]);
-		return this.transformDatabaseSession(renewedDatabaseSession, {
-			user,
-			fresh: true
 		});
+		const renewedDatabaseSession: Session = {
+			...session,
+			idlePeriodExpiresAt,
+			activePeriodExpiresAt,
+			fresh: true
+		};
+		return renewedDatabaseSession;
 	};
 
 	public createSession = async (options: {
+		sessionId?: string;
 		userId: string;
 		attributes: Lucia.DatabaseSessionAttributes;
 	}): Promise<Session> => {
-		const [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
-			this.generateSessionId();
+		const { activePeriodExpiresAt, idlePeriodExpiresAt } =
+			this.getNewSessionExpiration();
 		const userId = options.userId;
+		const sessionId = options?.sessionId ?? generateRandomString(40);
 		const attributes = options.attributes;
 		const databaseSession = {
 			...attributes,
@@ -432,29 +434,6 @@ export class Auth<_Configuration extends Configuration = any> {
 		return this.transformDatabaseSession(databaseSession, {
 			user,
 			fresh: false
-		});
-	};
-
-	public renewSession = async (sessionId: string): Promise<Session> => {
-		this.validateSessionIdArgument(sessionId);
-		const [databaseSession, databaseUser] =
-			await this.getDatabaseSessionAndUser(sessionId);
-		const user = this.transformDatabaseUser(databaseUser);
-		const [newSessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
-			this.generateSessionId();
-		const renewedDatabaseSession = {
-			...databaseSession,
-			id: newSessionId,
-			active_expires: activePeriodExpiresAt.getTime(),
-			idle_expires: idlePeriodExpiresAt.getTime()
-		} satisfies SessionSchema;
-		await Promise.all([
-			this.adapter.setSession(renewedDatabaseSession),
-			this.adapter.deleteSession(sessionId)
-		]);
-		return this.transformDatabaseSession(renewedDatabaseSession, {
-			user,
-			fresh: true
 		});
 	};
 
@@ -540,7 +519,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			return null;
 		}
 		const cookies = parseCookie(cookieHeader);
-		const sessionId = cookies[this.sessionCookieName] ?? null;
+		const sessionId = cookies[this.sessionCookie.name] ?? null;
 		if (sessionId) {
 			debug.request.info("Found session cookie", sessionId);
 		} else {
@@ -582,15 +561,15 @@ export class Auth<_Configuration extends Configuration = any> {
 			middleware({
 				args,
 				env: this.env,
-				cookieName: this.sessionCookieName
+				cookieName: this.sessionCookie.name
 			})
 		);
 	};
 
 	public createSessionCookie = (session: Session | null): Cookie => {
-		return createSessionCookie(session, this.env, {
-			name: this.sessionCookieName,
-			attributes: this.sessionCookieAttributes
+		return createSessionCookie(session, {
+			env: this.env,
+			...this.sessionCookie
 		});
 	};
 
@@ -687,6 +666,7 @@ export type Configuration<
 	sessionCookie?: {
 		name?: string;
 		attributes?: SessionCookieAttributes;
+		expires?: boolean;
 	};
 	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
 	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
@@ -698,5 +678,3 @@ export type Configuration<
 		debugMode?: boolean;
 	};
 };
-
-type EmptyObject = Record<any, never>;

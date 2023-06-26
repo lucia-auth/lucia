@@ -117,13 +117,30 @@ export const getServerSideProps = async (context) => {
 
 ```ts
 // pages/index.ts
-export default async (req, res) => {
+export default async (req: IncomingMessage, res: OutgoingMessage) => {
 	auth.handleRequest({ req, res });
 	// ...
 };
 ```
 
+```ts
+// pages/index.ts (deployed to edge)
+export default async (request: NextRequest) => {
+	// `AuthRequest.setSession()` is not supported when only `Request` is passed
+	auth.handleRequest(request);
+	// ...
+	const session = await auth.createSession({
+		// ...
+	});
+	const sessionCookie = auth.createSessionCookie(session);
+	const response = new Response(null);
+	response.headers.append("Set-Cookie", sessionCookie.serialize());
+};
+```
+
 #### App router
+
+We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false` when using this middleware.
 
 ```ts
 // app/page.tsx
@@ -131,6 +148,7 @@ import { cookies } from "next/headers";
 
 export default () => {
 	auth.handleRequest({
+		request: null,
 		cookies
 	});
 	// ...
@@ -139,12 +157,29 @@ export default () => {
 
 ```ts
 // app/routes.ts
-export const GET = async (request: Request) => {
+export const GET = async (request: NextRequest) => {
 	auth.handleRequest({
 		request,
 		cookies
 	});
 	// ...
+};
+```
+
+#### Middleware
+
+```ts
+// middleware.ts
+export const middleware = async (request: NextRequest) => {
+	// `AuthRequest.setSession()` is not supported when only `NextRequest` is passed
+	auth.handleRequest(request);
+	// ...
+	const session = await auth.createSession({
+		// ...
+	});
+	const sessionCookie = auth.createSessionCookie(session);
+	const response = new Response(null);
+	response.headers.append("Set-Cookie", sessionCookie.serialize());
 };
 ```
 
@@ -198,41 +233,25 @@ export const handle = async ({ event, resolve }) => {
 
 ### Web standard
 
-Since the cookie will be stored in the provided `Response` or `Headers`, it's crucial that they are used when returning a response.
+**[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when using the `web()` middleware.** We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false` when using this middleware.
 
 ```ts
 import { web } from "lucia/middleware";
 
-auth.handleRequest(request as Request, response as Response);
-auth.handleRequest(request as Request, headers as Headers);
+auth.handleRequest(request as Request);
 ```
 
 ```ts
-const headers = new Headers();
-auth.handleRequest(request, headers);
-const response = new Response(null, {
-	headers // always create responses using the headers passed on to `Auth.handleRequest()`
-});
-return response;
-```
-
-```ts
-const response = new Response(null);
-auth.handleRequest(request, response);
-return response; // always use the response passed on to `Auth.handleRequest()`
+const authRequest = auth.handleRequest(request);
+await authRequest.validate();
+await authRequest.setSession(session); // error!
 ```
 
 #### Remix
 
 ```ts
 export const loader = async ({ request }: LoaderArgs) => {
-	const headers = new Headers();
-	const authRequest = auth.handleRequest(request, headers);
-	return json(
-		{},
-		{
-			headers // IMPORTANT!
-		}
-	);
+	const authRequest = auth.handleRequest(request);
+	return json({});
 };
 ```

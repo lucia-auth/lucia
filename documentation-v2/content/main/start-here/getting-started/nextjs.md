@@ -12,10 +12,6 @@ pnpm add lucia
 yarn add lucia
 ```
 
-## Next.js support
-
-Lucia supports both the old pages and new app directory in Next.js, with support for Node.js and the edge runtime as well. However, it will only work as expected when the pages directory is used with Node.js. Currently, Next.js does not provide a way to set cookies inside pages when using the app directory or the pages directory with the edge runtime. As such, Lucia cannot store renewed session ids under certain conditions.
-
 ## Initialize Lucia
 
 Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `nextjs()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
@@ -28,7 +24,10 @@ import { nextjs } from "lucia/middleware";
 // expect error
 export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: nextjs()
+	middleware: nextjs(),
+	sessionCookie: {
+		expires: false // only disable it for app dir and projects deployed to Vercel Edge
+	}
 });
 
 export type Auth = typeof auth;
