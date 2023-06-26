@@ -172,28 +172,9 @@ await auth.createKey({
 });
 ```
 
-`ProviderUserAuth.createUser()` has been updated accordingly as well.
-
-```ts
-const { createUser } = await githubAuth.validateCallback(code);
-
-// v1
-await createUser({
-	// attributes
-	username
-});
-
-// v2
-await createUser({
-	attributes: {
-		username
-	}
-});
-```
-
 ## Middleware
 
-With v2, Lucia no longer needs to set new session cookies when validating sessions if `sessionCookie.expires` configuration is disabled.
+With v2, Lucia no longer needs to set new session cookies when validating sessions if `sessionCookie.expires` configuration is set to `false`.
 
 ```ts
 lucia({
@@ -391,3 +372,20 @@ const { githubUser, githubTokens } = await githubAuth.validateCallback(code);
 ### Removed `LuciaOAuthRequestError`
 
 `LuciaOAuthRequestError` is replaced with [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
+
+
+### Update `ProviderUserAuth.validateCallback()`
+
+User attributes should be provided as its own property.
+
+```ts
+const { createUser } = await githubAuth.validateCallback(code);
+
+// v1
+await createUser(attributes);
+
+// v2
+await createUser({
+	attributes
+});
+```
