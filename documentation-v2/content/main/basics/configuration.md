@@ -228,11 +228,11 @@ type SessionCookieAttributes = {
 };
 ```
 
-| property    | type                      | optional | description                             |
-| ----------- | ------------------------- | :------: | --------------------------------------- |
-| `name`      | `string`                  |    ✓     | Session cookie name                     |
-| `attributes | `SessionCookieAttributes` |    ✓     | Session cookie attributes               |
-| `expires`   | `boolean`                 |    ✓     | Toggle if session cookie expires or not |
+| property    | type                      | optional | description                                                  |
+| ----------- | ------------------------- | :------: | ------------------------------------------------------------ |
+| `name`      | `string`                  |    ✓     | Session cookie name                                          |
+| `attributes | `SessionCookieAttributes` |    ✓     | Session cookie attributes                                    |
+| `expires`   | `boolean`                 |    ✓     | Toggle if session cookie expires or not - enabled by default |
 
 ### `sessionExpiresIn`
 
