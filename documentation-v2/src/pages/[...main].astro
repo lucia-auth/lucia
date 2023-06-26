@@ -1,0 +1,38 @@
+---
+import { getSubCollections } from "@content";
+import MainLayout from "@layouts/MainLayout.astro";
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+
+import type { InferGetStaticPropsType } from "astro";
+
+export const getStaticPaths = async () => {
+    const subCollections = await getSubCollections("main");
+    return subCollections
+        .map((subCollection) => {
+            return subCollection.pages.map((page) => {
+                return {
+                    params: {
+                        main: [page.subCollection, page.pageId].join("/")
+                    },
+                    props: {
+                        subCollection,
+                        page
+                    }
+                };
+            });
+        })
+        .flat();
+};
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props;
+---
+
+<MainLayout title={`${page.title} | Lucia`} description={page.description}>
+    <div class="mt-6 mb-8">
+        <h1 class="text-5xl font-bold" set:html={page.htmlTitle}></h1>
+    </div>
+    <MarkdownStyle>
+        <page.Content />
+    </MarkdownStyle>
+</MainLayout>

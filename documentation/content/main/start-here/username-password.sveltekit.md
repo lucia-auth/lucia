@@ -32,10 +32,10 @@ In `src/app.d.ts`, add `username` in `UserAttributes` since we added a `username
 
 ```ts
 // src/app.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare global {
 	namespace Lucia {
-		type Auth = import("$lib/lucia").Auth;
+		type Auth = import("$lib/server/lucia").Auth;
 		type UserAttributes = {
 			username: string;
 		};
@@ -49,7 +49,7 @@ Add `transformDatabaseUser()` to your Lucia config to expose the user's id and u
 // lib/server/lucia.ts
 export const auth = lucia({
 	adapter: prisma(client),
-	env: "DEV" // "PROD" if prod,
+	env: "DEV", // "PROD" if prod
 	middleware: sveltekit(),
 	transformDatabaseUser: (userData) => {
 		return {
@@ -130,7 +130,7 @@ export const actions: Actions = {
 
 #### Set user passwords
 
-We don't store the password in the user, but in the key (`primaryKey`). Keys represent the relationship between a user and a auth method, in this case username/password. We'll set `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user).
+We don't store the password in the user, but in the key (`primaryKey`). Keys represent the relationship between a user and an auth method, in this case username/password. We'll set `"username"` as the provider id (authentication method) and the username as the provider user id (something unique to the user).
 
 ```ts
 const user = await auth.createUser({

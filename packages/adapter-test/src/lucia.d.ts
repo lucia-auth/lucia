@@ -1,7 +1,10 @@
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = any;
-	type UserAttributes = {
+	type DatabaseUserAttributes = {
 		username: string;
+	};
+	type DatabaseSessionAttributes = {
+		country: string;
 	};
 }

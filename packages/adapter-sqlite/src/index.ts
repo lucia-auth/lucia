@@ -1,2 +1,2 @@
-export { betterSqlite3 } from "./better-sqlite3/index.js";
-export { d1 } from "./d1/index.js";
+export { betterSqlite3Adapter as betterSqlite3 } from "./drivers/better-sqlite3.js";
+export { d1Adapter as d1 } from "./drivers/d1.js";
