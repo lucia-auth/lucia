@@ -11,13 +11,12 @@ description: "Learn how to migrate Lucia version 1 to version 2 beta"
 - **`lucia-auth` is published under `lucia`** (all other packages remain the same)
 - **`@lucia-auth/tokens` is not compatible with version 2** (See [Implementing 2FA without the tokens integration (v1/v2)](https://github.com/pilcrowOnPaper/lucia/discussions/728))
 - **Removed single use and primary keys**
+- **Update `nextjs()` and `web()` middleware**
 - Replace session renewal with session resets
 - Database tables cannot use default values
 - Official adapters no longer enforce table names
 - Some items previously exported from `lucia-auth` are now exported from `lucia/utils`
 - Updated adapter API to be more simple and future-proof
-- Repo requires Node.js 20
-- Update `nextjs()` and `web()` middleware
 
 ### New features
 
@@ -171,6 +170,94 @@ await auth.createKey({
 	userId
 	// ...
 });
+```
+
+`ProviderUserAuth.createUser()` has been updated accordingly as well.
+
+```ts
+const { createUser } = await githubAuth.validateCallback(code);
+
+// v1
+await createUser({
+	// attributes
+	username
+});
+
+// v2
+await createUser({
+	attributes: {
+		username
+	}
+});
+```
+
+## Middleware
+
+With v2, Lucia no longer needs to set new session cookies when validating sessions if `sessionCookie.indefiniteExpiration` configuration is enabled.
+
+```ts
+lucia({
+	sessionCookie: {
+		indefiniteExpiration: true
+	}
+});
+```
+
+This should only be enabled when necessary:
+
+- If you're using `web()` middleware
+- Next.js project using the app directory, or deployed to the edge
+
+### `nextjs()`
+
+`Auth.handleRequest()` no longer accepts `Response` and `Headers` when using the Next.js middleware. Passing only `IncomingMessage` or `Request` will disable `AuthRequest.setSession()`. We recommend setting cookies manually when creating a new session.
+
+```ts
+// removed
+auth.handleRequest({
+	req: req as IncomingMessage,
+	headers: headers as Headers
+});
+auth.handleRequest({
+	req: req as IncomingMessage,
+	response: response as Response
+});
+auth.handleRequest({
+	request: request as Request
+});
+
+// new - `AuthRequest.setSession()` disabled
+auth.handleRequest(req as IncomingMessage);
+auth.handleRequest(request as Request);
+```
+
+`request` must be defined as well:
+
+```ts
+// v1
+auth.handleRequest({
+	cookies: cookies as Cookies,
+	request: request as Request
+});
+
+// v2
+auth.handleRequest({
+	cookies: cookies as Cookies,
+	request: request as Request | null
+});
+```
+
+### `web()`
+
+`Auth.handleRequest()` no longer accepts `Response` and `Headers` when using the web standard middleware. This means `AuthRequest.setSession()` is disabled, and we recommend setting cookies manually.
+
+```ts
+// v1
+auth.handleRequest(request as Request, response as Response);
+auth.handleRequest(request as Request, headers as Headers);
+
+// v2
+auth.handleRequest(request as Request);
 ```
 
 ## Validating sessions
