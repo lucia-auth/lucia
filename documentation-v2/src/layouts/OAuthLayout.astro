@@ -3,7 +3,7 @@ import Menu from "@components/Menu.astro";
 import Header from "@components/Header.astro";
 import BaseLayout from "./BaseLayout.astro";
 
-import { getSubCollections } from "@content";
+import { getSubCollections } from "@utils/content";
 
 const subCollections = await getSubCollections("oauth");
 
