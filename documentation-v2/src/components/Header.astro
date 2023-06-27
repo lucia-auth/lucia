@@ -8,7 +8,7 @@ import MoreIcon from "@icons/MoreIcon.astro";
         class="flex place-items-center place-content-between sm:place-content-start gap-x-16 pt-4 pb-3 border-b px-4 sm:px-8"
     >
         <div class="gap-x-8 place-items-center text-sm flex">
-            <a class="pointer-events-auto flex place-items-center" href="/">
+            <a class="pointer-events-auto flex place-items-end" href="/">
                 <img
                     src="/logo.svg"
                     alt="Lucia logo"
@@ -16,10 +16,11 @@ import MoreIcon from "@icons/MoreIcon.astro";
                     height="100"
                     class="h-5 w-5"
                 />
+                <p class="text-lg font-semibold leading-none">Lucia</p>
             </a>
-            <a href="/reference" class="hover:text-main hidden sm:inline-block">Reference</a>
-            <a href="/oauth" class="hover:text-main hidden sm:inline-block">OAuth</a>
-            <a href="/guidebook" class="hover:text-main hidden sm:inline-block">Guidebook</a>
+            <a href="/reference" class="hover:text-zinc-500 hidden sm:inline-block">Reference</a>
+            <a href="/oauth" class="hover:text-zinc-500 hidden sm:inline-block">OAuth</a>
+            <a href="/guidebook" class="hover:text-zinc-500 hidden sm:inline-block">Guidebook</a>
         </div>
         <div class="sm:hidden">
             <button
