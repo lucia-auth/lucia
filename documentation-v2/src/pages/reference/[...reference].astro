@@ -12,7 +12,7 @@ export const getStaticPaths = async () => {
             return subCollection.pages.map((page) => {
                 return {
                     params: {
-                        reference: [page.subCollection, page.pageId].join("/")
+                        reference: [page.subCollectionId, page.pageId].join("/")
                     },
                     props: {
                         subCollection,
@@ -28,9 +28,9 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { page } = Astro.props;
 
 const getPageTitle =  () => {
-    if (page.title === "Main") return page.subCollection;
-    if (page.title.startsWith("/")) return `${page.subCollection}${page.title}`;
-    return `${page.subCollection} ${page.title}`;
+    if (page.title === "Main") return page.subCollectionId;
+    if (page.title.startsWith("/")) return `${page.subCollectionId}${page.title}`;
+    return `${page.subCollectionId} ${page.title}`;
 };
 const title = getPageTitle();
 ---

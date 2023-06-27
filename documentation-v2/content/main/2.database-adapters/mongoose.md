@@ -1,6 +1,6 @@
 ---
-order: 0
-title: "Mongoose"
+menuTitle: "Mongoose"
+title: "Mongoose adapter"
 description: "Learn how to use Mongoose with Lucia"
 ---
 

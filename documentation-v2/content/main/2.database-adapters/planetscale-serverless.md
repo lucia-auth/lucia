@@ -1,6 +1,6 @@
 ---
-order: 0
-title: "PlanetScale serverless"
+menuTitle: "PlanetScale serverless"
+title: "PlanetScale serverless adapter"
 description: "Learn how to use the PlanetScale serverless driver with Lucia"
 ---
 

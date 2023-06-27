@@ -1,8 +1,7 @@
 ---
-order: 0
-title: "pg"
+menuTitle: "`pg`"
+title: "`pg` adapter"
 description: "Learn how to use pg with Lucia"
-format: "code"
 ---
 
 Adapter for [`pg`](https://github.com/brianc/node-postgres) provided by the PostgreSQL adapter package.

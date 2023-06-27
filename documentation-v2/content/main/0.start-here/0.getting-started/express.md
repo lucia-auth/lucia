@@ -1,7 +1,8 @@
 ---
 order: 0
-title: "Getting started in Nuxt"
-description: "Learn how to set up Lucia in your Nuxt project"
+title: "Getting started in Express"
+menuTitle: "Express"
+description: "Learn how to set up Lucia in your Express project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -12,19 +13,30 @@ pnpm add lucia
 yarn add lucia
 ```
 
+### ESM
+
+Lucia is an ESM only package. Make sure your package type is `module` and use ESM imports instead of CJS `require()`.
+
+```json
+// package.json
+{
+	"type": "module"
+}
+```
+
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own api module (file). Export `auth` and its type as `Auth`. Make sure to pass the `h3()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
+Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it. Export `auth` and its type as `Auth`. Make sure to pass the `express()` middleware We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that later.
 
 ```ts
-// server/utils/auth.ts
+// lucia.ts
 import { lucia } from "lucia";
-import { h3 } from "lucia-auth/middleware";
+import { express } from "lucia/middleware";
 
 // expect error
 export const auth = lucia({
-	env: process.dev ? "DEV" : "PROD",
-	middleware: h3()
+	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: express()
 });
 
 export type Auth = typeof auth;
@@ -35,9 +47,8 @@ export type Auth = typeof auth;
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/extending-lucia/database-adapters-api). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
-// server/utils/auth.ts
 import { lucia } from "lucia";
-import { h3 } from "lucia/middleware";
+import { express } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -45,7 +56,7 @@ const client = new PrismaClient();
 
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: h3(),
+	middleware: express(),
 	adapter: prisma(client)
 });
 ```
@@ -66,13 +77,13 @@ const auth = lucia({
 
 ## Set up types
 
-Create a TS declaration file (`lucia.d.ts`) in the `server` dir and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a `.d.ts` file and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// server/lucia.d.ts
+// env.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./utils/auth.js").Auth;
+	type Auth = import("./lucia.js").Auth;
 	type DatabaseUserAttributes = {};
 	type DatabaseSessionAttributes = {};
 }
@@ -91,31 +102,31 @@ export const auth = lucia({
 });
 ```
 
-This is a side-effect import which is excluded by Nuxt by default. Update your config to escape from the default behavior:
+Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `node`.
+
+```
+node --experimental-global-webcrypto index.js
+```
+
+## Middleware
+
+This is optional but highly recommended. Create a new middleware that stores [`Auth`](/reference/lucia/interfaces/authrequest) to `res.locals.auth` (or `req.locals`).
 
 ```ts
-// nuxt.config.ts
-export default defineNuxtConfig({
-	// ...
-	nitro: {
-		moduleSideEffects: ["lucia/polyfill/node"]
-	}
+import express from "express";
+
+const app = express();
+
+app.use((req, res, next) => {
+	res.locals.auth = auth.handleRequest(req, res);
+	return next();
 });
 ```
 
-Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `next`.
+This allows us to validate sessions using a single line of code.
 
-```json
-// package.json
-{
-	// ...
-	"scripts": {
-		"build": "NODE_OPTIONS=--experimental-global-webcrypto nuxt build",
-		"dev": "NODE_OPTIONS=--experimental-global-webcrypto nuxt dev",
-		"generate": "NODE_OPTIONS=--experimental-global-webcrypto nuxt generate",
-		"preview": "NODE_OPTIONS=--experimental-global-webcrypto nuxt preview",
-		"postinstall": "NODE_OPTIONS=--experimental-global-webcrypto nuxt prepare"
-	}
-	// ...
-}
+```ts
+app.get("/", async (req, res) => {
+	const session = await res.locals.validate();
+});
 ```

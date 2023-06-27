@@ -1,6 +1,6 @@
 ---
-order: 0
-title: "Prisma"
+menuTitle: "Prisma"
+title: "Prisma adapter"
 description: "Learn how to use Prisma with Lucia"
 ---
 

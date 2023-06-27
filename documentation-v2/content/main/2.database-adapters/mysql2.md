@@ -1,8 +1,7 @@
 ---
-order: 0
-title: "mysql2"
+menuTitle: "`mysql2`"
+title: "`mysql2` adapter"
 description: "Learn how to use mysql2 with Lucia"
-format: "code"
 ---
 
 Adapter for [`mysql2`](https://github.com/sidorares/node-mysql) provided by the MySQL adapter package.

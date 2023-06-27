@@ -1,41 +1,11 @@
 ---
-import { getPage } from "@content";
+import { getPage, getPages } from "@content";
 import MainLayout from "@layouts/MainLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
 import ArticleIcon from "@icons/ArticleIcon.astro";
 import SelectLink from "@components/SelectLink.astro";
 
-const page = await getPage("main", "start-here", "getting-started");
-
-const frameworks: {
-    id: string;
-    name: string;
-}[] = [
-    {
-        name: "Astro",
-        id: "astro"
-    },
-    {
-        name: "Express",
-        id: "express"
-    },
-    {
-        name: "Next.js",
-        id: "nextjs"
-    },
-    {
-        name: "Nuxt",
-        id: "nuxt"
-    },
-    {
-        name: "Remix",
-        id: "remix"
-    },
-    {
-        name: "SvelteKit",
-        id: "sveltekit"
-    }
-];
+const {page, nestedPages} = await getPages("main", "start-here", "getting-started");
 ---
 
 <MainLayout
@@ -45,10 +15,10 @@ const frameworks: {
     <div class="mt-6 mb-6">
         <SelectLink
             title="Select framework"
-            options={frameworks.map(({ name, id }) => {
+            options={nestedPages.map((nestedPage) => {
                 return {
-                    title: name,
-                    href: `/start-here/getting-started/${id}`
+                    title: nestedPage.htmlMenuTitle,
+                    href: nestedPage.pathname.replace("main", "")
                 };
             })}
         />

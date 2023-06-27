@@ -1,19 +1,18 @@
 ---
-order: 0
-title: "better-sqlite3"
-description: "Learn how to use better-sqlite3 with Lucia"
-format: "code"
+menuTitle: "Cloudflare D1"
+title: "Cloudflare D1 adapter"
+description: "Learn how to use Cloudflare D1 with Lucia"
 ---
 
-Adapter for [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3) provided by the SQLite adapter package.
+Adapter for [Cloudflare D1](https://developers.cloudflare.com/d1) provided by the SQLite adapter package.
 
 ```ts
-import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
+import { d1 } from "@lucia-auth/adapter-sqlite";
 ```
 
 ```ts
-const betterSqlite3: (
-	db: Database,
+const d1: (
+	database: D1Database,
 	tableNames: {
 		user: string;
 		key: string;
@@ -26,12 +25,12 @@ const betterSqlite3: (
 
 Table names are automatically escaped.
 
-| name                 | type       | description                        |
-| -------------------- | ---------- | ---------------------------------- |
-| `db`                 | `Database` | `better-sqlite3` database instance |
-| `tableNames.user`    | `string`   | User table name                    |
-| `tableNames.key`     | `string`   | Key table name                     |
-| `tableNames.session` | `string`   | Session table name                 |
+| name                 | type         | description           |
+| -------------------- | ------------ | --------------------- |
+| `database`           | `D1Database` | Cloudflare D1 binding |
+| `tableNames.user`    | `string`     | User table name       |
+| `tableNames.key`     | `string`     | Key table name        |
+| `tableNames.session` | `string`     | Session table name    |
 
 ## Installation
 
@@ -45,19 +44,19 @@ yarn add @lucia-auth/adapter-sqlite
 
 ```ts
 import { lucia } from "lucia";
-import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
-import sqlite from "better-sqlite3";
+import { d1 } from "@lucia-auth/adapter-sqlite";
 
-const db = sqlite("main.db");
-
-const auth = lucia({
-	adapter: betterSqlite3(db, {
-		user: "user",
-		key: "user_key",
-		session: "user_session"
-	})
-	// ...
-});
+const initializeLucia = (db: D1Database) => {
+	const auth = lucia({
+		adapter: d1(db, {
+			user: "user",
+			key: "user_key",
+			session: "user_session"
+		})
+		// ...
+	});
+	return auth;
+};
 ```
 
 ## SQLite3 schema
