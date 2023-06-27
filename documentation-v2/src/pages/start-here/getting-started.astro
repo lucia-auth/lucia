@@ -1,8 +1,8 @@
 ---
-import { getPage, getPages } from "@content";
+import { getPages } from "@content";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
-import ArticleIcon from "@icons/ArticleIcon.astro";
 import SelectLink from "@components/SelectLink.astro";
 
 const {page, nestedPages} = await getPages("main", "start-here", "getting-started");
