@@ -15,7 +15,7 @@ export const getStaticPaths = async () => {
             const nestedPages = await getPages(...page.pathname.split("/"));
             return {
                 params: {
-                    guidebook_page: `${page.subCollectionId}`
+                    guidebook_page: page.pathnameSegments.slice(1).join("/")
                 },
                 props: {
                     page,
@@ -42,10 +42,7 @@ const { page, nestedPages } = Astro.props;
                             options={nestedPages.map((nestedPage) => {
                                 return {
                                     title: nestedPage.htmlMenuTitle,
-                                    href: nestedPage.pathname.replace(
-                                        "main",
-                                        ""
-                                    )
+                                    href: `/${nestedPage.pathname}`
                                 };
                             })}
                         />

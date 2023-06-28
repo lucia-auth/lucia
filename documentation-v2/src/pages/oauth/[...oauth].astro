@@ -13,7 +13,7 @@ export const getStaticPaths = async () => {
             return subCollection.pages.map((page) => {
                 return {
                     params: {
-                        oauth: [page.subCollectionId, page.pageId].join("/")
+                        oauth: page.pathnameSegments.slice(1).join("/")
                     },
                     props: {
                         subCollection,

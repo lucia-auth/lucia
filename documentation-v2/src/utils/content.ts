@@ -4,10 +4,9 @@ const collectionImports = import.meta.glob("../../content/**");
 
 export type Page = {
 	pathname: string;
+	pathnameSegments: string[];
+	pathnameSegmentOrders: (number | null)[];
 	collectionId: string;
-	subCollectionId: string | null;
-	pageId: string | null;
-	order: number | null;
 	title: string;
 	htmlMenuTitle: string;
 	htmlTitle: string;
@@ -18,6 +17,8 @@ export type Page = {
 
 export type SubCollection = {
 	pathname: string;
+	pathnameSegments: string[];
+
 	collectionId: string;
 	subCollectionId: string | null;
 	order: number | null;
@@ -35,46 +36,53 @@ const removeMarkdownCode = (text: string) => {
 };
 
 const readImportPath = (importPath: string) => {
-	const sanitizedPathname = importPath
+	const filePathnameSegments = importPath
 		.split("/")
 		.filter((segment) => segment !== ".." && segment !== "." && segment)
-		.slice(1)
-		.join("/")
-		.replace(/\.md(?!\.md)/, "")
-		.replace(/\.json(?!\.json)/, "")
-		.replace(/\/index$/, "");
-	const sanitizedPathnameSegments = sanitizedPathname.split("/");
-	const collectionId = sanitizedPathnameSegments.at(0) ?? null;
+		.slice(1);
+	const collectionId = filePathnameSegments.at(0) ?? null;
+
 	if (!collectionId) {
-		throw new Error(`Invalid pathname: ${sanitizedPathnameSegments.join("/")}`);
+		throw new Error(`Invalid pathname: ${filePathnameSegments.join("/")}`);
 	}
 
-	const parsePathnameSegment = (
-		segment: string | null
-	): [null | string, null | number] => {
-		if (!segment) return [null, null];
-		if (segment.split(".").length === 1) {
-			return [segment.split(".")[0], null];
+	const pathnameSegments: string[] = [];
+	const pathnameSegmentOrders: (number | null)[] = [];
+
+	for (const [segmentIndex, segment] of filePathnameSegments.entries()) {
+		const lastSegment = segmentIndex === filePathnameSegments.length - 1;
+		if (lastSegment && segment === "$.json") {
+			continue;
 		}
-		const [orderStr, name] = segment.split(".");
-		return [name, Number(orderStr)];
-	};
-	const [subCollectionId, subCollectionOrder] = parsePathnameSegment(
-		sanitizedPathnameSegments.at(1) ?? null
-	);
-	const [pageId, pageOrder] = parsePathnameSegment(
-		sanitizedPathnameSegments.slice(2).join("/") ?? null
-	);
-	const pathname = [collectionId, subCollectionId, pageId]
-		.filter((val): val is string => !!val)
-		.join("/");
+
+		const getMarkdownFileName = (fileName: string) => {
+			return fileName.replace(/\.md(?!\.md)/, "");
+		};
+
+		const parsedSegment = lastSegment ? getMarkdownFileName(segment) : segment;
+		const parts = parsedSegment.split(".");
+
+		let name: string;
+		if (parts.length === 1) {
+			name = parts[0];
+			pathnameSegmentOrders.push(null);
+		} else {
+			name = parts[1];
+			const order = Number(parts[0]);
+			pathnameSegmentOrders.push(order);
+		}
+
+		if (name !== "index") {
+			pathnameSegments.push(name);
+		}
+	}
+
+	const pathname = pathnameSegments.join("/");
 	return {
 		pathname,
+		pathnameSegments,
 		collectionId,
-		pageId,
-		pageOrder,
-		subCollectionId,
-		subCollectionOrder
+		pathnameSegmentOrders
 	};
 };
 
@@ -93,10 +101,9 @@ const getPagesFromImports = async (
 const transformMarkdownImport = async (
 	importPath: string,
 	resolveImport: () => Promise<any>
-) => {
-	const { pathname, pageOrder, subCollectionId, collectionId, pageId } =
+): Promise<Page> => {
+	const { pathname, pathnameSegments, collectionId, pathnameSegmentOrders } =
 		readImportPath(importPath);
-	const pathnameSegments = pathname.split("/");
 	const markdown: MarkdownInstance<{
 		title: string;
 		menuTitle?: string;
@@ -111,11 +118,10 @@ const transformMarkdownImport = async (
 	);
 	return {
 		pathname,
+		pathnameSegments,
+		pathnameSegmentOrders,
 		description: markdown.frontmatter.description ?? null,
 		collectionId,
-		subCollectionId,
-		pageId,
-		order: pageOrder,
 		title,
 		hidden:
 			pathnameSegments.length > 3 ? true : markdown.frontmatter.hidden ?? false,
@@ -130,33 +136,45 @@ export const getSubCollections = async (
 ): Promise<SubCollection[]> => {
 	const selectedCollectionImports = Object.fromEntries(
 		Object.entries(collectionImports).filter(([importPath]) => {
-			const { pathname } = readImportPath(importPath);
-			return pathname.split("/").at(0) === collectionId;
+			const { pathnameSegments } = readImportPath(importPath);
+			return pathnameSegments.at(0) === collectionId;
 		})
 	);
 	const subCollectionConfigs = await Promise.all(
 		Object.entries(selectedCollectionImports)
 			.filter(([importPath]) => importPath.endsWith(".json"))
-			.map(async ([importPath, importFile]) => {
-				const { pathname, subCollectionOrder, subCollectionId, collectionId } =
-					readImportPath(importPath);
-				const parsedJson = (await importFile()) as {
-					title: string;
-					format?: "code";
-				};
-				const htmlTitle =
-					parsedJson.format === "code"
-						? parseMarkdownCode(parsedJson.title)
-						: parsedJson.title;
-				return {
-					pathname,
-					collectionId,
-					subCollectionId,
-					order: subCollectionOrder,
-					title: parsedJson.title,
-					htmlTitle
-				} satisfies Omit<SubCollection, "pages">;
-			})
+			.map(
+				async ([importPath, importFile]): Promise<
+					Omit<SubCollection, "pages">
+				> => {
+					const { pathnameSegmentOrders, pathname, pathnameSegments } =
+						readImportPath(importPath);
+					const subCollectionId = pathnameSegments.at(1) ?? null;
+
+					if (!subCollectionId) {
+						throw new Error(`Invalid sub-collection: ${pathname}`);
+					}
+
+					const subCollectionOrder = pathnameSegmentOrders.at(2) ?? null;
+					const parsedJson = (await importFile()) as {
+						title: string;
+						format?: "code";
+					};
+					const htmlTitle =
+						parsedJson.format === "code"
+							? parseMarkdownCode(parsedJson.title)
+							: parsedJson.title;
+					return {
+						pathname,
+						pathnameSegments,
+						collectionId,
+						subCollectionId,
+						order: subCollectionOrder,
+						title: parsedJson.title,
+						htmlTitle
+					};
+				}
+			)
 	);
 
 	const pages = await getPagesFromImports(selectedCollectionImports);
@@ -167,9 +185,14 @@ export const getSubCollections = async (
 				...subCollectionConfig,
 				pages: pages
 					.filter((page) => {
-						return page.subCollectionId === subCollectionConfig.subCollectionId;
+						const subCollectionId = page.pathnameSegments.at(1) ?? null;
+						return subCollectionId === subCollectionConfig.subCollectionId;
 					})
-					.sort((a, b) => (a.order ?? -1) - (b.order ?? -1))
+					.sort((a, b) => {
+						const aOrder = a.pathnameSegmentOrders.at(2) ?? -1;
+						const bOrder = b.pathnameSegmentOrders.at(2) ?? -1;
+						return aOrder - bOrder;
+					})
 			};
 		})
 		.sort((a, b) => (a.order ?? -1) - (b.order ?? -1));
@@ -191,11 +214,10 @@ export const getPages = async (...path: string[]) => {
 	const targetPathname = path.join("/");
 	const pagesImportEntries = Object.entries(collectionImports).filter(
 		([importPath]) => {
-			const pagePathname = readImportPath(importPath).pathname;
+			const { pathname, pathnameSegments } = readImportPath(importPath);
 			return (
-				pagePathname !== targetPathname &&
-				pagePathname
-					.split("/")
+				pathname !== targetPathname &&
+				pathnameSegments
 					.slice(0, targetPathname.split("/").length)
 					.join("/") === targetPathname
 			);
