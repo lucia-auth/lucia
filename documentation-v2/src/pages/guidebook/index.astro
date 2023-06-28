@@ -2,21 +2,28 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import GuidebookHeader from "@components/GuidebookHeader.astro";
 import ArticleIcon from "@icons/ArticleIcon.astro";
+
+import { getPages } from "@utils/content";
+
+const allPages = await getPages("guidebook");
+const parentPages = allPages.filter(
+    (page) => page.pathnameSegments.length === 2
+);
 ---
 
 <BaseLayout title="The Lucia Guidebook">
     <GuidebookHeader />
-    <main class="px-4 sm:px-8 md:px-16 bg-zinc-100 pb-24">
+    <main class="px-4 sm:px-8 md:px-16 bg-zinc-100 pb-24 min-h-screen">
         <div class="max-w-4xl mx-auto">
             <div class="pt-32 pb-16 w-full">
-                <div class="mx-auto">
+                <div class="mx-auto max-w-2xl text-center">
                     <h1
-                        class="text-5xl xs:text-7xl lg:text-8xl font-bold w-full text-center"
+                        class="text-5xl xs:text-7xl lg:text-8xl font-bold w-full"
                     >
                         Guidebook
                     </h1>
                     <p
-                        class="text-lg xs:text-xl text-center mt-4 max-w-2xl mx-auto overflow-hidden"
+                        class="text-lg xs:text-xl text-center mt-4 overflow-hidden"
                     >
                         The Guidebook is a collection of tutorials and guides on
                         using Lucia, with resources available for a wide range
@@ -26,28 +33,7 @@ import ArticleIcon from "@icons/ArticleIcon.astro";
             </div>
             <div class="w-full flex flex-col gap-y-6">
                 {
-                    [
-                        {
-                            title: "Sign in with username and password",
-                            description:
-                                "Learn the basics of Lucia by implementing a simple username and password authentication"
-                        },
-                        {
-                            title: "Github OAuth",
-                            description:
-                                "Learn the basics of Lucia and the OAuth integration by implementing Github OAuth."
-                        },
-                        {
-                            title: "Email verification links",
-                            description:
-                                "Learn how to verify emails with verification links."
-                        },
-                        {
-                            title: "One time passwords for verification",
-                            description:
-                                "Learn how to verify emails and phone numbers with one time passwords."
-                        }
-                    ].map(({ title, description }) => {
+                    parentPages.map(({ title, description }) => {
                         return (
                             <article class="group w-full rounded-lg bg-white">
                                 <a
