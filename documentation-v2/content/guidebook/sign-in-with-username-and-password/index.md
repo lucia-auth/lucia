@@ -3,7 +3,7 @@ title: "Sign in with email and password"
 description: "Learn "
 ---
 
-_Before starting, make sure you've [setup Lucia and your database]()._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
 
 This guide will cover how to implement a simple username and password authentication using Lucia. It will have 3 parts:
 
@@ -32,7 +32,7 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`]() middleware. We're also setting [`sessionCookie.expires`]() to false since we can't update the session cookie when validating them.
+Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
 
 ```ts
 // lucia.ts
@@ -50,7 +50,7 @@ export const auth = lucia({
 });
 ```
 
-We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`]() and return the username.
+We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
 
 ```ts
 // lucia.ts
@@ -93,9 +93,9 @@ Create `/signup`. It will have a form with inputs for username and password
 
 This will be handled in a POST endpoint.
 
-Users can be created with [`Auth.createUser()`](). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
+Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`]().
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
 
 ```ts
 import { auth } from "./lucia.js";
@@ -169,7 +169,7 @@ const handlePostRequest = async (request: Request) => {
 
 #### Error handling
 
-Lucia throws 2 types of errors: [`LuciaError`]() and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
+Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
 
 ```ts
 if (
@@ -184,7 +184,7 @@ if (
 
 ### Redirect authenticated users
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance]() with [`Auth.handleRequest()`]() and calling `AuthRequest.validate()`. This method returns a [`Session`]() if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 Since we're using the `web()` middleware, `Auth.handleRequest()` expects the standard `Request`.
 
@@ -225,7 +225,7 @@ Create `/login`. This will have a form with inputs for username and password
 
 This will be handled in a POST endpoint.
 
-The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
+The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -356,7 +356,7 @@ post("/", async (request: Request) => {
 
 Create `/logout` and handle POST requests.
 
-When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
+When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
 
 ```ts
 import { auth } from "./lucia.js";
