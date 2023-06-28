@@ -99,7 +99,7 @@ After successfully creating a user, we'll create a new session with [`Auth.creat
 ```ts
 import { auth } from "./lucia.js";
 
-const handlePostRequest = async (request: Request) => {
+post("/signup", async (request: Request) => {
 	const formData = await request.formData();
 	const username = formData.get("username");
 	const password = formData.get("password");
@@ -140,9 +140,10 @@ const handlePostRequest = async (request: Request) => {
 			attributes: {}
 		});
 		const sessionCookie = auth.createSessionCookie(session);
+		// redirect to profile page
 		return new Response(null, {
 			headers: {
-				Location: "/", // redirect to profile page
+				Location: "/",
 				"Set-Cookie": sessionCookie.serialize() // store session cookie
 			},
 			status: 302
@@ -163,7 +164,7 @@ const handlePostRequest = async (request: Request) => {
 			status: 500
 		});
 	}
-};
+});
 ```
 
 #### Error handling
@@ -190,19 +191,20 @@ Since we're using the `web()` middleware, `Auth.handleRequest()` expects the sta
 ```ts
 import { auth } from "./lucia.js";
 
-const handleGetRequest = async (request: Request) => {
+get("/signup", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (session) {
+		// redirect to profile page
 		return new Response(null, {
 			headers: {
-				Location: "/" // redirect to profile page
+				Location: "/"
 			},
 			status: 302
 		});
 	}
 	return renderPage();
-};
+});
 ```
 
 ## Sign in page
@@ -299,9 +301,10 @@ get("/login", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (session) {
+		// redirect to profile page
 		return new Response(null, {
 			headers: {
-				Location: "/" // redirect to profile page
+				Location: "/"
 			},
 			status: 302
 		});
@@ -333,14 +336,14 @@ The user object is available in `Session.user`, and you'll see that `User.userna
 ```ts
 import { auth } from "./lucia.js";
 
-post("/", async (request: Request) => {
+get("/", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (!session) {
-		// not authenticated
+		// redirect to login page
 		return new Response(null, {
 			headers: {
-				Location: "/login" // redirect to login page
+				Location: "/login"
 			},
 			status: 302
 		});
@@ -362,7 +365,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 import { auth } from "./lucia.js";
 
-const handlePostRequest = async (request: Request) => {
+post("/logout", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	// check if user is authenticated
 	const session = await authRequest.validate();
@@ -382,5 +385,5 @@ const handlePostRequest = async (request: Request) => {
 		},
 		status: 302
 	});
-};
+});
 ```

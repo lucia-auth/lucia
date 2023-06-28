@@ -37,23 +37,7 @@ export {};
 
 ## Configure Lucia
 
-We'll use the [`sveltekit()`](/reference/lucia/middleware#web) middleware.
-
-```ts
-// src/lib/server/lucia.ts
-import { lucia } from "lucia";
-import { sveltekit } from "lucia/middleware";
-import { dev } from "$app/environment";
-
-export const auth = lucia({
-	adapter: ADAPTER,
-	env: dev ? "DEV" : "PROD",
-
-	middleware: sveltekit()
-});
-```
-
-We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
+We want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
 
 ```ts
 // src/lib/server/lucia.ts
@@ -237,6 +221,7 @@ The key we created for the user allows us to get the user via their username, an
 ```ts
 // routes/login/+page.server.ts
 import { auth } from "$lib/server/lucia";
+import { LuciaError } from "lucia";
 import { fail, redirect } from "@sveltejs/kit";
 
 import type { PageServerLoad, Actions } from "./$types";

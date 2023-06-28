@@ -4,7 +4,7 @@ menuTitle: "Astro"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Astro"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/astro) and that you've implement the recommended middleware._
 
 This guide will cover how to implement a simple username and password authentication using Lucia. It will have 3 parts:
 
@@ -16,14 +16,13 @@ This guide will cover how to implement a simple username and password authentica
 
 Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type that's unique.
 
-Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
+Make sure you update `Lucia.DatabaseUserAttributes` in `env.d.ts` whenever you add any new columns to the user table.
 
 ```ts
-// env.d.ts
-
+// src/env.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
+	type Auth = import("./lib/lucia").Auth;
 	type DatabaseUserAttributes = {
 		username: string;
 	};
@@ -33,39 +32,17 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+We want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
 
 ```ts
-// lucia.ts
+// src/lib/lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { astro } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	}
-});
-```
-
-We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
-
-```ts
-// lucia.ts
-import { lucia } from "lucia";
-import { web } from "lucia/middleware";
-
-export const auth = lucia({
-	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
+	env: import.meta.env.DEV ? "DEV" : "PROD",
+	middleware: astro(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -77,9 +54,13 @@ export const auth = lucia({
 
 ## Sign up page
 
-Create `/signup`. It will have a form with inputs for username and password
+Create `pages/signup.astro` and a form with inputs for username and password
 
-```html
+```astro
+---
+// src/pages/signup.astro
+---
+
 <h1>Sign up</h1>
 <form method="post">
 	<label for="username">Username</label>
@@ -92,80 +73,68 @@ Create `/signup`. It will have a form with inputs for username and password
 
 ### Create users
 
-This will be handled in a POST endpoint.
+The form submission can be handled within the same Astro page.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). Since we've setup a handle hook, `AuthRequest` is accessible as `Astro.locals.auth`.
 
-```ts
-import { auth } from "./lucia.js";
+```astro
+---
+// src/pages/signup.astro
+import { auth } from "../lib/lucia";
 
-const handlePostRequest = async (request: Request) => {
-	const formData = await request.formData();
+let errorMessage: string | null = null;
+
+// check for form submissions
+if (Astro.request.method === "POST") {
+	const formData = await Astro.request.request.formData();
 	const username = formData.get("username");
 	const password = formData.get("password");
 	// basic check
-	if (
-		!username ||
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
-		return new Response("Invalid username", {
-			status: 400
-		});
-	}
-	if (
-		!password ||
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
-	}
-	try {
-		const user = await auth.createUser({
-			key: {
-				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
-				password // hashed by Lucia
-			},
-			attributes: {
-				username
-			}
-		});
-		const session = await auth.createSession({
-			userId: user.userId,
-			attributes: {}
-		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
-	} catch (e) {
-		// this part depends on the database you're using
-		// check for unique constraint error in user table
-		if (
-			e instanceof SomeDatabaseError &&
-			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-		) {
-			return new Response("Username already taken", {
-				status: 400
+	const validUsername =
+		typeof username === "string" &&
+		username.length >= 4 &&
+		username.length <= 31;
+	const validPassword =
+		typeof username === "string" &&
+		password.length >= 6 &&
+		password.length <= 255;
+	if (validUsername && validPassword) {
+		try {
+			const user = await auth.createUser({
+				key: {
+					providerId: "username", // auth method
+					providerUserId: username, // unique id when using "username" auth method
+					password // hashed by Lucia
+				},
+				attributes: {
+					username
+				}
 			});
+			const session = await auth.createSession({
+				userId: user.userId,
+				attributes: {}
+			});
+			Astro.locals.auth.setSession(session); // set session cookie
+			return Astro.redirect("/", 302); // redirect to profile page
+		} catch (e) {
+			// this part depends on the database you're using
+			// check for unique constraint error in user table
+			if (
+				e instanceof SomeDatabaseError &&
+				e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
+			) {
+				errorMessage = "Username already taken";
+			} else {
+				errorMessage = "An unknown error occurred";
+			}
 		}
-
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+	} else {
+		errorMessage = "Invalid input";
 	}
-};
+}
+---
 ```
 
 #### Error handling
@@ -185,33 +154,31 @@ if (
 
 ### Redirect authenticated users
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored as `Astro.locals.auth`, and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
-Since we're using the `web()` middleware, `Auth.handleRequest()` expects the standard `Request`.
-
-```ts
+```astro
+---
+// src/pages/signup.astro
 import { auth } from "./lucia.js";
 
-const handleGetRequest = async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
-};
+if (Astro.request.method === "POST") {
+	// ...
+}
+
+const session = await Astro.locals.auth.validate();
+if (session) return Astro.redirect("/", 302);
+---
 ```
 
 ## Sign in page
 
-Create `/login`. This will have a form with inputs for username and password
+Create `src/pages/login.astro` and also add a form with inputs for username and password
 
-```html
+```astro
+---
+// src/pages/login.astro
+---
+
 <h1>Sign in</h1>
 <form method="post">
 	<label for="username">Username</label>
@@ -228,144 +195,114 @@ This will be handled in a POST endpoint.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
-```ts
+```astro
+---
+// src/pages/login.astro
 import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
-post("/login", async (request: Request) => {
-	const formData = await request.formData();
+let errorMessage: string | null = null;
+
+// check for form submissions
+if (Astro.request.method === "POST") {
+	const formData = await Astro.request.request.formData();
 	const username = formData.get("username");
 	const password = formData.get("password");
 	// basic check
-	if (
-		!username ||
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
-		return new Response("Invalid username", {
-			status: 400
-		});
-	}
-	if (
-		!password ||
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
-	}
-	try {
-		// find user by key
-		// and validate password
-		const user = await auth.useKey("username", username, password);
-		const session = await auth.createSession({
-			userId: user.userId,
-			attributes: {}
-		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
-	} catch (e) {
-		if (
-			e instanceof LuciaError &&
-			(e.message === "AUTH_INVALID_KEY_ID" ||
-				e.message === "AUTH_INVALID_PASSWORD")
-		) {
-			throw new Error("Incorrect username of password");
+	const validUsername =
+		typeof username === "string" &&
+		username.length >= 4 &&
+		username.length <= 31;
+	const validPassword =
+		typeof username === "string" &&
+		password.length >= 6 &&
+		password.length <= 255;
+	if (validUsername && validPassword) {
+		try {
+			// find user by key
+			// and validate password
+			const user = await auth.useKey("username", username, password);
+			const session = await auth.createSession({
+				userId: user.userId,
+				attributes: {}
+			});
+			Astro.locals.auth.setSession(session); // set session cookie
+			return Astro.redirect("/", 302); // redirect to profile page
+		} catch (e) {
+			if (
+				e instanceof LuciaError &&
+				(e.message === "AUTH_INVALID_KEY_ID" ||
+					e.message === "AUTH_INVALID_PASSWORD")
+			) {
+				errorMessage = "Incorrect username of password";
+			} else {
+				errorMessage = "An unknown error occurred";
+			}
 		}
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+	} else {
+		errorMessage = "Invalid input";
 	}
-});
+}
+---
 ```
 
 ### Redirect authenticated users
 
 As we did in the sign up page, we want to redirect authenticated users to the profile page.
 
-```ts
+```astro
+---
+// src/pages/login.astro
 import { auth } from "./lucia.js";
 
-get("/login", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
-});
+if (Astro.request.method === "POST") {
+	// ...
+}
+
+const session = await Astro.locals.auth.validate();
+if (session) return Astro.redirect("/", 302);
+---
 ```
 
 ## Profile page
 
-Create `/`. This will show some basic user info and include a logout button.
-
-```html
-<h1>Profile</h1>
-<!-- some template stuff -->
-<p>User id: %%user_id%%</p>
-<p>Username: %%username%%</p>
-<form method="post" action="/logout">
-	<input type="submit" value="Sign out" />
-</form>
-```
-
-### Get authenticated user
+Create `src/pages/index.astro`. This page will show some basic user info and include a logout button.
 
 As mentioned previously, the current session can be accessed with `AuthRequest.validate()`. We should redirect unauthenticated users to the login page.
 
 The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
 
-```ts
+```astro
+---
+// src/pages/index.astro
 import { auth } from "./lucia.js";
 
-post("/", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (!session) {
-		// not authenticated
-		return new Response(null, {
-			headers: {
-				Location: "/login" // redirect to login page
-			},
-			status: 302
-		});
-	}
-	return renderPage({
-		// display dynamic data
-		user_id: session.user.userId,
-		username: session.user.username
-	});
-});
+const session = await Astro.locals.auth.validate();
+if (!session) return Astro.redirect("/login", 302);
+---
+
+<h1>Profile</h1>
+<p>User id: {session.user.userId}</p>
+<p>Username: {session.user.username}</p>
+<form method="post" action="/logout">
+	<input type="submit" value="Sign out" />
+</form>
 ```
 
 ### Sign out users
 
-Create `/logout` and handle POST requests.
+Create `src/pages/logout.ts` and handle POST requests.
 
-When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
+When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be done by passing `null` to `AuthRequest.setSession()`.
 
 ```ts
+// src/pages/logout.ts
 import { auth } from "./lucia.js";
 
-const handlePostRequest = async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	// check if user is authenticated
-	const session = await authRequest.validate();
+import type { APIRoute } from "astro";
+
+export const post: APIRoute = async (context) => {
+	const session = await context.locals.auth.validate();
 	if (!session) {
 		return new Response("Not authenticated", {
 			status: 401
@@ -373,14 +310,8 @@ const handlePostRequest = async (request: Request) => {
 	}
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);
-	// create blank session cookie
-	const sessionCookie = auth.createSessionCookie(null);
-	return new Response(null, {
-		headers: {
-			Location: "/login", // redirect to login page
-			"Set-Cookie": sessionCookie.serialize() // delete session cookie
-		},
-		status: 302
-	});
+	// delete session cookie
+	context.locals.auth.setSession(null)
+	return Astro.redirect("/login", 302)
 };
 ```
