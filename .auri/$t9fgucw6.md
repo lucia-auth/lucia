@@ -1,4 +1,4 @@
 ---
 package: "@lucia-auth/adapter-sqlite" # package name
-type: "" # "major", "minor", "patch"
+type: "minor" # "major", "minor", "patch"
 ---
