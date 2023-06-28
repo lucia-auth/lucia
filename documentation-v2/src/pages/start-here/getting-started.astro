@@ -1,11 +1,13 @@
 ---
-import { getPages } from "@utils/content";
+import { getPage, getPages } from "@utils/content";
 
 import MainLayout from "@layouts/MainLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
 import SelectLink from "@components/SelectLink.astro";
 
-const {page, nestedPages} = await getPages("main", "start-here", "getting-started");
+const pathnameSegments = ["main", "start-here", "getting-started"];
+const page = await getPage(...pathnameSegments);
+const nestedPages = await getPages(...pathnameSegments);
 ---
 
 <MainLayout

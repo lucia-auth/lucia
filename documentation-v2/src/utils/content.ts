@@ -49,7 +49,6 @@ const readImportPath = (importPath: string) => {
 		throw new Error(`Invalid pathname: ${sanitizedPathnameSegments.join("/")}`);
 	}
 
-
 	const parsePathnameSegment = (
 		segment: string | null
 	): [null | string, null | number] => {
@@ -66,11 +65,7 @@ const readImportPath = (importPath: string) => {
 	const [pageId, pageOrder] = parsePathnameSegment(
 		sanitizedPathnameSegments.slice(2).join("/") ?? null
 	);
-	const pathname = [
-		collectionId,
-		subCollectionId,
-		pageId
-	]
+	const pathname = [collectionId, subCollectionId, pageId]
 		.filter((val): val is string => !!val)
 		.join("/");
 	return {
@@ -194,10 +189,11 @@ export const getPage = async (...path: string[]) => {
 
 export const getPages = async (...path: string[]) => {
 	const targetPathname = path.join("/");
-	const targetPagesImportEntries = Object.entries(collectionImports).filter(
+	const pagesImportEntries = Object.entries(collectionImports).filter(
 		([importPath]) => {
 			const pagePathname = readImportPath(importPath).pathname;
 			return (
+				pagePathname !== targetPathname &&
 				pagePathname
 					.split("/")
 					.slice(0, targetPathname.split("/").length)
@@ -205,24 +201,10 @@ export const getPages = async (...path: string[]) => {
 			);
 		}
 	);
-	const targetImportEntry = targetPagesImportEntries.find(([importPath]) => {
-		return readImportPath(importPath).pathname === targetPathname;
-	});
-	if (!targetImportEntry) throw new Error(`Not found: ${targetPathname}`);
-	const nestedPagesImportEntries = targetPagesImportEntries.filter(
-		([importPath]) => {
-			return importPath !== targetImportEntry[0];
-		}
-	);
-	const [targetPageImportPath, resolveTargetImport] = targetImportEntry;
-	const [targetPage, ...targetNestedPages] = await Promise.all([
-		transformMarkdownImport(targetPageImportPath, resolveTargetImport),
-		...nestedPagesImportEntries.map(([importPath, resolveImport]) => {
+	const pages = await Promise.all(
+		pagesImportEntries.map(([importPath, resolveImport]) => {
 			return transformMarkdownImport(importPath, resolveImport);
 		})
-	]);
-	return {
-		page: targetPage,
-		nestedPages: targetNestedPages
-	};
+	);
+	return pages;
 };

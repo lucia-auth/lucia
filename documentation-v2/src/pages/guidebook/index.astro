@@ -7,7 +7,7 @@ import ArticleIcon from "@icons/ArticleIcon.astro";
 <BaseLayout title="The Lucia Guidebook">
     <GuidebookHeader />
     <main class="px-4 sm:px-8 md:px-16 bg-zinc-100 pb-24">
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-4xl mx-auto">
             <div class="pt-32 pb-16 w-full">
                 <div class="mx-auto">
                     <h1
@@ -50,13 +50,16 @@ import ArticleIcon from "@icons/ArticleIcon.astro";
                     ].map(({ title, description }) => {
                         return (
                             <article class="group w-full rounded-lg bg-white">
-                                <a class="xs:px-6 block px-4 py-4" href="/">
+                                <a
+                                    class="xs:px-6 block px-4 py-4"
+                                    href="/guidebook/sign-in-with-username-and-password"
+                                >
                                     <h2 class="text-xl font-semibold">
                                         {title}
                                     </h2>
                                     <p class="mt-1">{description}</p>
                                     <div class="text-main mt-1 flex place-items-center gap-x-0.5">
-                                        <div class="h-5 w-5 fill-current">
+                                        <div class="h-5 w-5 fill-current ">
                                             <ArticleIcon />
                                         </div>
                                         <p class="group-hover:underline">
