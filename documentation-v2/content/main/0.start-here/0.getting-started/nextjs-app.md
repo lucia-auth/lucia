@@ -1,8 +1,8 @@
 ---
 order: 0
-title: "Getting started in Next.js"
-menuTitle: "Next.js"
-description: "Learn how to set up Lucia in your Next.js project"
+title: "Getting started in Next.js App Router"
+menuTitle: "Next.js App router"
+description: "Learn how to set up Lucia in your Next.js App Router project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -17,6 +17,8 @@ yarn add lucia
 
 Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `nextjs()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
+Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to `false`.
+
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
@@ -27,7 +29,7 @@ export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
 	middleware: nextjs(),
 	sessionCookie: {
-		expires: false // only disable it for app dir and projects deployed to Vercel Edge
+		expires: false
 	}
 });
 
@@ -87,6 +89,7 @@ declare namespace Lucia {
 If you're using Node.js version 18 or below, you need to polyfill the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). This is not required if you're using runtimes other than Node.js (Deno, Bun, Cloudflare Workers, etc) or using Node.js v20 and above.
 
 ```ts
+// auth/lucia.ts
 import { lucia } from "lucia";
 import "lucia/polyfill/node";
 
