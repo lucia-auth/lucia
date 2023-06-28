@@ -1,6 +1,6 @@
 ---
 title: "Sign in with email and password"
-description: "Learn "
+description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
@@ -60,7 +60,6 @@ import { web } from "lucia/middleware";
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: "DEV", // "PROD" for production
-
 	middleware: web(),
 	sessionCookie: {
 		expires: false
@@ -208,10 +207,10 @@ const handleGetRequest = async (request: Request) => {
 
 ## Sign in page
 
-Create `/login`. This will have a form with inputs for username and password
+Create `/login`. This will have a form with inputs for username and password.
 
 ```html
-<h1>Sign up</h1>
+<h1>Sign in</h1>
 <form method="post">
 	<label for="username">Username</label>
 	<input name="username" id="username" />
@@ -278,7 +277,9 @@ post("/login", async (request: Request) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
-			throw new Error("Incorrect username of password");
+			return new Response("Incorrect username of password", {
+				status: 400
+			});
 		}
 		return new Response("An unknown error occurred", {
 			status: 500

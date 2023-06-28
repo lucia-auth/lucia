@@ -37,6 +37,7 @@ export type Auth = typeof auth;
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/extending-lucia/database-adapters-api). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
+// src/lib/server/lucia.ts
 import { lucia } from "lucia";
 import { sveltekit } from "lucia/middleware";
 import { dev } from "$app/environment";
@@ -119,6 +120,6 @@ This allows us to validate sessions inside server load functions and endpoints u
 ```ts
 // +page.server.ts
 export const load = async ({ locals }) => {
-	const session = await event.locals.auth.validate();
+	const session = await locals.auth.validate();
 };
 ```

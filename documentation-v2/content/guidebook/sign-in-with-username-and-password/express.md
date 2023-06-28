@@ -1,6 +1,7 @@
 ---
 title: "Sign in with email and password"
-description: "Learn "
+menuTitle: "Express"
+description: "Learn the basic of Lucia by implementing a basic username and password authentication in Express"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
@@ -211,7 +212,7 @@ const handleGetRequest = async (request: Request) => {
 Create `/login`. This will have a form with inputs for username and password
 
 ```html
-<h1>Sign up</h1>
+<h1>Sign in</h1>
 <form method="post">
 	<label for="username">Username</label>
 	<input name="username" id="username" />

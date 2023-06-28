@@ -1,10 +1,10 @@
 ---
-title: "Sign in with email and password using SvelteKit"
+title: "Sign in with email and password in SvelteKit"
 menuTitle: "SvelteKit"
-description: "Learn "
+description: "Learn the basic of Lucia by implementing a basic username and password authentication in SvelteKit"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/sveltekit) and that you've implement the handle hook._
 
 This guide will cover how to implement a simple username and password authentication using Lucia. It will have 3 parts:
 
@@ -16,56 +16,55 @@ This guide will cover how to implement a simple username and password authentica
 
 Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type that's unique.
 
-Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
+Make sure you update `Lucia.DatabaseUserAttributes` in `app.d.ts` whenever you add any new columns to the user table.
 
 ```ts
-// env.d.ts
-
+// src/app.d.ts
 /// <reference types="lucia" />
-declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
-	type DatabaseUserAttributes = {
-		username: string;
-	};
-	type DatabaseSessionAttributes = {};
+declare global {
+	namespace Lucia {
+		type Auth = import("$lib/server/lucia").Auth;
+		type DatabaseUserAttributes = {
+			username: string;
+		};
+		type DatabaseSessionAttributes = {};
+	}
 }
+
+// THIS IS IMPORTANT!!!
+export {};
 ```
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+We'll use the [`sveltekit()`](/reference/lucia/middleware#web) middleware.
 
 ```ts
-// lucia.ts
+// src/lib/server/lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { sveltekit } from "lucia/middleware";
+import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
+	env: dev ? "DEV" : "PROD",
 
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	}
+	middleware: sveltekit()
 });
 ```
 
 We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
 
 ```ts
-// lucia.ts
+// src/lib/server/lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { sveltekit } from "lucia/middleware";
+import { dev } from "$app/environment";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
+	env: dev ? "DEV" : "PROD",
+	middleware: sveltekit(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -77,11 +76,16 @@ export const auth = lucia({
 
 ## Sign up page
 
-Create `/signup`. It will have a form with inputs for username and password
+Create `routes/signup/+page.svelte`. It will have a form with inputs for username and password
 
-```html
+```svelte
+<!-- routes/signup/+page.svelte -->
+<script lang="ts">
+	import { enhance } from "$app/forms";
+</script>
+
 <h1>Sign up</h1>
-<form method="post">
+<form method="post" use:enhance>
 	<label for="username">Username</label>
 	<input name="username" id="username" />
 	<label for="password">Password</label>
@@ -92,78 +96,79 @@ Create `/signup`. It will have a form with inputs for username and password
 
 ### Create users
 
-This will be handled in a POST endpoint.
+Create `routes/signup/+page.server.ts` and define a new form action to handle form submissions.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). Since we've setup a handle hook, `AuthRequest` is accessible as `locals.auth`.
 
 ```ts
-import { auth } from "./lucia.js";
+// routes/signup/+page.server.ts
+import { auth } from "$lib/server/lucia";
+import { fail, redirect } from "@sveltejs/kit";
 
-const handlePostRequest = async (request: Request) => {
-	const formData = await request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
-	// basic check
-	if (
-		!username ||
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
-		return new Response("Invalid username", {
-			status: 400
-		});
-	}
-	if (
-		!password ||
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
-	}
-	try {
-		const user = await auth.createUser({
-			key: {
-				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
-				password // hashed by Lucia
-			},
-			attributes: {
-				username
-			}
-		});
-		const session = await auth.createSession({
-			userId: user.userId,
-			attributes: {}
-		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
-	} catch (e) {
-		// this part depends on the database you're using
-		// check for unique constraint error in user table
+import type { PageServerLoad, Actions } from "./$types";
+
+export const actions: Actions = {
+	default: async ({ request, locals }) => {
+		const formData = await request.formData();
+		const username = formData.get("username");
+		const password = formData.get("password");
+		// basic check
 		if (
-			e instanceof SomeDatabaseError &&
-			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
+			!username ||
+			typeof username !== "string" ||
+			username.length < 4 ||
+			username.length > 31
 		) {
-			return new Response("Username already taken", {
-				status: 400
+			return fail(400, {
+				message: "Invalid username"
 			});
 		}
-
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		if (
+			!password ||
+			typeof password !== "string" ||
+			password.length < 6 ||
+			password.length > 255
+		) {
+			return fail(400, {
+				message: "Invalid password"
+			});
+		}
+		try {
+			const user = await auth.createUser({
+				key: {
+					providerId: "username", // auth method
+					providerUserId: username, // unique id when using "username" auth method
+					password // hashed by Lucia
+				},
+				attributes: {
+					username
+				}
+			});
+			const session = await auth.createSession({
+				userId: user.userId,
+				attributes: {}
+			});
+			locals.auth.setSession(session); // set session cookie
+		} catch (e) {
+			// this part depends on the database you're using
+			// check for unique constraint error in user table
+			if (
+				e instanceof SomeDatabaseError &&
+				e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
+			) {
+				return fail(400, {
+					message: "Username already taken"
+				});
+			}
+			return fail(500, {
+				message: "An unknown error occurred"
+			});
+		}
+		// redirect to
+		// make sure you don't throw inside a try/catch block!
+		throw redirect(302, "/");
 	}
 };
 ```
@@ -185,35 +190,36 @@ if (
 
 ### Redirect authenticated users
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Define a server load function in `/signup`.
 
-Since we're using the `web()` middleware, `Auth.handleRequest()` expects the standard `Request`.
+Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored in `locals.auth`, and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 ```ts
-import { auth } from "./lucia.js";
+// routes/signup/+page.server.ts
+import { auth } from "$lib/server/lucia";
+import { fail, redirect } from "@sveltejs/kit";
 
-const handleGetRequest = async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
+import type { PageServerLoad, Actions } from "./$types";
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.auth.validate();
+	if (session) throw redirect(302, "/");
+	return {};
 };
 ```
 
 ## Sign in page
 
-Create `/login`. This will have a form with inputs for username and password
+Create `routes/login/+page.svelte`. It will also have a form with inputs for username and password.
 
-```html
-<h1>Sign up</h1>
-<form method="post">
+```svelte
+<!-- routes/login/+page.svelte -->
+<script lang="ts">
+	import { enhance } from "$app/forms";
+</script>
+
+<h1>Sign in</h1>
+<form method="post" use:enhance>
 	<label for="username">Username</label>
 	<input name="username" id="username" />
 	<label for="password">Password</label>
@@ -224,68 +230,71 @@ Create `/login`. This will have a form with inputs for username and password
 
 ### Authenticate users
 
-This will be handled in a POST endpoint.
+Create routes/signup/+page.server.ts and define a new form action to handle form submissions.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
 ```ts
-import { auth } from "./lucia.js";
-import { LuciaError } from "lucia";
+// routes/login/+page.server.ts
+import { auth } from "$lib/server/lucia";
+import { fail, redirect } from "@sveltejs/kit";
 
-post("/login", async (request: Request) => {
-	const formData = await request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
-	// basic check
-	if (
-		!username ||
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
-		return new Response("Invalid username", {
-			status: 400
-		});
-	}
-	if (
-		!password ||
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
-	}
-	try {
-		// find user by key
-		// and validate password
-		const user = await auth.useKey("username", username, password);
-		const session = await auth.createSession({
-			userId: user.userId,
-			attributes: {}
-		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
-	} catch (e) {
+import type { PageServerLoad, Actions } from "./$types";
+
+export const actions: Actions = {
+	default: async ({ request, locals }) => {
+		const formData = await request.formData();
+		const username = formData.get("username");
+		const password = formData.get("password");
+		// basic check
 		if (
-			e instanceof LuciaError &&
-			(e.message === "AUTH_INVALID_KEY_ID" ||
-				e.message === "AUTH_INVALID_PASSWORD")
+			!username ||
+			typeof username !== "string" ||
+			username.length < 4 ||
+			username.length > 31
 		) {
-			throw new Error("Incorrect username of password");
+			return fail(400, {
+				message: "Invalid username"
+			});
 		}
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		if (
+			!password ||
+			typeof password !== "string" ||
+			password.length < 6 ||
+			password.length > 255
+		) {
+			return fail(400, {
+				message: "Invalid password"
+			});
+		}
+		try {
+			// find user by key
+			// and validate password
+			const user = await auth.useKey("username", username, password);
+			const session = await auth.createSession({
+				userId: user.userId,
+				attributes: {}
+			});
+			locals.auth.setSession(session); // set session cookie
+		} catch (e) {
+			if (
+				e instanceof LuciaError &&
+				(e.message === "AUTH_INVALID_KEY_ID" ||
+					e.message === "AUTH_INVALID_PASSWORD")
+			) {
+				return fail(400, {
+					message: "Incorrect username of password"
+				});
+			}
+			return fail(500, {
+				message: "An unknown error occurred"
+			});
+		}
+		// redirect to
+		// make sure you don't throw inside a try/catch block!
+		throw redirect(302, "/");
 	}
-});
+};
 ```
 
 ### Redirect authenticated users
@@ -293,94 +302,84 @@ post("/login", async (request: Request) => {
 As we did in the sign up page, we want to redirect authenticated users to the profile page.
 
 ```ts
-import { auth } from "./lucia.js";
+// routes/login/+page.server.ts
+import { auth } from "$lib/server/lucia";
+import { fail, redirect } from "@sveltejs/kit";
 
-get("/login", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
-});
+import type { PageServerLoad, Actions } from "./$types";
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.auth.validate();
+	if (session) throw redirect(302, "/");
+	return {};
+};
 ```
 
 ## Profile page
 
-Create `/`. This will show some basic user info and include a logout button.
+Create `routes/+page.svelte`. This will show some basic user info and include a logout button. Expect TS error for now since we have populated `PageData` yet.
 
-```html
+```svelte
+<script lang="ts">
+	import { enhance } from "$app/forms";
+
+	import type { PageData } from "./$types";
+
+	export let data: PageData;
+</script>
+
 <h1>Profile</h1>
-<!-- some template stuff -->
-<p>User id: %%user_id%%</p>
-<p>Username: %%username%%</p>
-<form method="post" action="/logout">
+<p>User id: {data.userId}</p>
+<p>Username: {data.username}</p>
+<form method="post" action="?/logout" use:enhance>
 	<input type="submit" value="Sign out" />
 </form>
 ```
 
 ### Get authenticated user
 
+Create `routes/+page.server.ts` and define a load function.
+
 As mentioned previously, the current session can be accessed with `AuthRequest.validate()`. We should redirect unauthenticated users to the login page.
 
 The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
 
 ```ts
-import { auth } from "./lucia.js";
+// routes/+page.server.ts
+import { redirect } from "@sveltejs/kit";
 
-post("/", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (!session) {
-		// not authenticated
-		return new Response(null, {
-			headers: {
-				Location: "/login" // redirect to login page
-			},
-			status: 302
-		});
-	}
-	return renderPage({
-		// display dynamic data
-		user_id: session.user.userId,
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.auth.validate();
+	if (!session.user) throw redirect(302, "/login");
+	return {
+		userId: session.user.userId,
 		username: session.user.username
-	});
-});
+	};
+};
 ```
 
 ### Sign out users
 
-Create `/logout` and handle POST requests.
+Define a new server action in `routes/+page.server.ts`.
 
-When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
+When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be done by passing `null` to `AuthRequest.setSession()`.
 
 ```ts
-import { auth } from "./lucia.js";
+// routes/+page.server.ts
+import { auth } from "$lib/server/lucia";
+import { fail, redirect } from "@sveltejs/kit";
 
-const handlePostRequest = async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	// check if user is authenticated
-	const session = await authRequest.validate();
-	if (!session) {
-		return new Response("Not authenticated", {
-			status: 401
-		});
+import type { PageServerLoad, Actions } from "./$types";
+
+export const actions: Actions = {
+	logout: async ({ locals }) => {
+		const session = await locals.auth.validate();
+		if (!session) return fail(401);
+		await auth.invalidateSession(session.sessionId); // invalidate session
+		locals.auth.setSession(null); // remove cookie
+		throw redirect(302, "/login"); // redirect to login page
 	}
-	// make sure to invalidate the current session!
-	await auth.invalidateSession(session.sessionId);
-	// create blank session cookie
-	const sessionCookie = auth.createSessionCookie(null);
-	return new Response(null, {
-		headers: {
-			Location: "/login", // redirect to login page
-			"Set-Cookie": sessionCookie.serialize() // delete session cookie
-		},
-		status: 302
-	});
 };
 ```
