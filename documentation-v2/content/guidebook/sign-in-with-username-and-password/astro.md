@@ -6,7 +6,7 @@ description: "Learn the basic of Lucia by implementing a basic username and pass
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/astro) and that you've implement the recommended middleware._
 
-This guide will cover how to implement a simple username and password authentication using Lucia. It will have 3 parts:
+This guide will cover how to implement a simple username and password authentication using Lucia in Astro. It will have 3 parts:
 
 - A sign up page
 - A sign in page
@@ -146,9 +146,7 @@ if (
 	e instanceof SomeDatabaseError &&
 	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 ) {
-	return new Response("Username already taken", {
-		status: 400
-	});
+	// username already taken
 }
 ```
 

@@ -6,7 +6,7 @@ description: "Learn the basic of Lucia by implementing a basic username and pass
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nextjs-app)._
 
-This guide will cover how to implement a simple username and password authentication using Lucia. It will have 3 parts:
+This guide will cover how to implement a simple username and password authentication using Lucia in Next.js App Router. It will have 3 parts:
 
 - A sign up page
 - A sign in page
@@ -96,6 +96,8 @@ const Form = ({
 	const router = useRouter();
 	return (
 		<form
+			action={action}
+			method="post"
 			onSubmit={async (e) => {
 				e.preventDefault();
 				const formData = new FormData(e.currentTarget);
@@ -147,21 +149,21 @@ export default Page;
 
 ### Create users
 
-Create `app/api/signup/routes.ts` and handle POST requests.
+Create `app/api/signup/route.ts` and handle POST requests.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). [`AuthRequest`]() can be created by calling [`Auth.handleRequest()`]() with `cookies()` and `Request`.
 
 ```ts
-// app/api/signup/routes.ts
+// app/api/signup/route.ts
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
 
-const POST = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
 	const { username, password } = (await request.json()) as Partial<{
 		username: string;
 		password: string;
@@ -256,9 +258,7 @@ if (
 	e instanceof SomeDatabaseError &&
 	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 ) {
-	return new Response("Username already taken", {
-		status: 400
-	});
+	// username already taken
 }
 ```
 
@@ -319,19 +319,19 @@ export default Page;
 
 ### Authenticate users
 
-Create `app/api/login/routes.ts` and handle POST requests.
+Create `app/api/login/route.ts` and handle POST requests.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
 ```ts
-// app/api/login/routes.ts
+// app/api/login/route.ts
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
 
-const POST = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
 	const { username, password } = (await request.json()) as Partial<{
 		username: string;
 		password: string;
@@ -465,23 +465,25 @@ const Page = async () => {
 		</>
 	);
 };
+
+export default Page;
 ```
 
 ### Sign out users
 
-Create `/api/logout/route.ts` and handle POST requests.
+Create `app/api/logout/route.ts` and handle POST requests.
 
 When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
 
 ```ts
-// app/api/logout/routes.ts
+// app/api/logout/route.ts
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
 
-const POST = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
 	const authRequest = await auth.handleRequest({ request, cookies });
 	// check if user is authenticated
 	const session = await authRequest.validate();

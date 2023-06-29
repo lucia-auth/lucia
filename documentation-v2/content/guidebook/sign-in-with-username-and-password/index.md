@@ -176,9 +176,7 @@ if (
 	e instanceof SomeDatabaseError &&
 	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 ) {
-	return new Response("Username already taken", {
-		status: 400
-	});
+	// username already taken
 }
 ```
 
