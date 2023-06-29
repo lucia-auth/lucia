@@ -154,7 +154,7 @@ if (
 
 ### Redirect authenticated users
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored as `Astro.locals.auth`, and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored as `Astro.locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 ```astro
 ---
@@ -248,7 +248,7 @@ if (Astro.request.method === "POST") {
 
 ### Redirect authenticated users
 
-As we did in the sign up page, we want to redirect authenticated users to the profile page.
+As we did in the sign up page, redirect authenticated users to the profile page.
 
 ```astro
 ---
@@ -268,9 +268,7 @@ if (session) return Astro.redirect("/", 302);
 
 Create `src/pages/index.astro`. This page will show some basic user info and include a logout button.
 
-As mentioned previously, the current session can be accessed with `AuthRequest.validate()`. We should redirect unauthenticated users to the login page.
-
-The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
+Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
 
 ```astro
 ---

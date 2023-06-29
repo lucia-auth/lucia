@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password"
+title: "Sign in with email and password in Nuxt"
 menuTitle: "Nuxt"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Nuxt"
 ---
@@ -185,7 +185,7 @@ if (
 
 ### Redirect authenticated users
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 Since we're using the `web()` middleware, `Auth.handleRequest()` expects the standard `Request`.
 
@@ -292,7 +292,7 @@ post("/login", async (request: Request) => {
 
 ### Redirect authenticated users
 
-As we did in the sign up page, we want to redirect authenticated users to the profile page.
+As we did in the sign up page, redirect authenticated users to the profile page.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -328,9 +328,7 @@ Create `/`. This will show some basic user info and include a logout button.
 
 ### Get authenticated user
 
-As mentioned previously, the current session can be accessed with `AuthRequest.validate()`. We should redirect unauthenticated users to the login page.
-
-The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
+Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
 
 ```ts
 import { auth } from "./lucia.js";

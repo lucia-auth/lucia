@@ -176,7 +176,7 @@ if (
 
 Define a server load function in `/signup`.
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored in `locals.auth`, and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored in `locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 ```ts
 // routes/signup/+page.server.ts
@@ -284,7 +284,7 @@ export const actions: Actions = {
 
 ### Redirect authenticated users
 
-As we did in the sign up page, we want to redirect authenticated users to the profile page.
+As we did in the sign up page, redirect authenticated users to the profile page.
 
 ```ts
 // routes/login/+page.server.ts
@@ -325,9 +325,7 @@ Create `routes/+page.svelte`. This will show some basic user info and include a 
 
 Create `routes/+page.server.ts` and define a load function.
 
-As mentioned previously, the current session can be accessed with `AuthRequest.validate()`. We should redirect unauthenticated users to the login page.
-
-The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
+Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
 
 ```ts
 // routes/+page.server.ts

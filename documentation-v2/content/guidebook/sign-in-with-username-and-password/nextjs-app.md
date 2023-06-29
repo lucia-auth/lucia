@@ -1,10 +1,10 @@
 ---
-title: "Sign in with email and password"
+title: "Sign in with email and password in Next.js App Router"
 menuTitle: "Next.js App Router"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Next.js App Router"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nextjs-app)._
 
 This guide will cover how to implement a simple username and password authentication using Lucia. It will have 3 parts:
 
@@ -33,18 +33,18 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
 
 ```ts
-// lucia.ts
+// auth/lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { nextjs } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: nextjs(),
 
-	middleware: web(),
 	sessionCookie: {
 		expires: false
 	}
@@ -54,15 +54,14 @@ export const auth = lucia({
 We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
 
 ```ts
-// lucia.ts
+// auth/lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { nextjs } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: nextjs(),
 	sessionCookie: {
 		expires: false
 	},
@@ -75,36 +74,98 @@ export const auth = lucia({
 });
 ```
 
+## Form component
+
+Since the form will require client side JS, we will extract it into its own client component. We will not be using redirect responses as `fetch()` does not actually redirect the user, nor does the redirect url is exposed in the response object.
+
+```tsx
+// components/form.tsx
+"use client";
+
+import { useRouter } from "next/navigation";
+
+const Form = ({
+	children,
+	action,
+	successRedirect
+}: {
+	children: React.ReactNode;
+	action: string;
+	successRedirect: string;
+}) => {
+	const router = useRouter();
+	return (
+		<form
+			onSubmit={async (e) => {
+				e.preventDefault();
+				const formData = new FormData(e.currentTarget);
+				const response = await fetch(action, {
+					method: "POST",
+					body: JSON.stringify(Object.fromEntries(formData.entries()))
+				});
+
+				if (response.ok) {
+					router.push(successRedirect);
+				}
+			}}
+		>
+			{children}
+		</form>
+	);
+};
+
+export default Form;
+```
+
 ## Sign up page
 
-Create `/signup`. It will have a form with inputs for username and password
+Create `app/signup/page.tsx` and add a form with inputs for username and password. The form should make a POST request to `/api/signup`.
 
-```html
-<h1>Sign up</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
-	<input type="submit" />
-</form>
+```tsx
+// app/signup/page.tsx
+import { auth } from "@/auth/lucia";
+
+import Form from "@/components/form";
+
+const Page = async () => {
+	return (
+		<>
+			<h1>Sign up</h1>
+			<Form action="/api/signup" successRedirect="/">
+				<label for="username">Username</label>
+				<input name="username" id="username" />
+				<label for="password">Password</label>
+				<input type="password" name="password" id="password" />
+				<input type="submit" />
+			</Form>
+		</>
+	);
+};
+
+export default Page;
 ```
 
 ### Create users
 
-This will be handled in a POST endpoint.
+Create `app/api/signup/routes.ts` and handle POST requests.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). [`AuthRequest`]() can be created by calling [`Auth.handleRequest()`]() with `cookies()` and `Request`.
 
 ```ts
-import { auth } from "./lucia.js";
+// app/api/signup/routes.ts
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-const handlePostRequest = async (request: Request) => {
-	const formData = await request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
+import type { NextRequest } from "next/server";
+
+const POST = async (request: NextRequest) => {
+	const { username, password } = (await request.json()) as Partial<{
+		username: string;
+		password: string;
+	}>;
 	// basic check
 	if (
 		!username ||
@@ -112,9 +173,14 @@ const handlePostRequest = async (request: Request) => {
 		username.length < 4 ||
 		username.length > 31
 	) {
-		return new Response("Invalid username", {
-			status: 400
-		});
+		return NextResponse.json(
+			{
+				error: "Invalid username"
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	if (
 		!password ||
@@ -122,9 +188,14 @@ const handlePostRequest = async (request: Request) => {
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
+		return NextResponse.json(
+			{
+				error: "Invalid password"
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	try {
 		const user = await auth.createUser({
@@ -141,14 +212,12 @@ const handlePostRequest = async (request: Request) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
+		const authRequest = auth.handleRequest({
+			request,
+			cookies
 		});
+		authRequest.setSession(session);
+		return new Response(null);
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
@@ -156,14 +225,24 @@ const handlePostRequest = async (request: Request) => {
 			e instanceof SomeDatabaseError &&
 			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 		) {
-			return new Response("Username already taken", {
-				status: 400
-			});
+			return NextResponse.json(
+				{
+					error: "Username already taken"
+				},
+				{
+					status: 400
+				}
+			);
 		}
 
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		return NextResponse.json(
+			{
+				error: "An unknown error occurred"
+			},
+			{
+				status: 500
+			}
+		);
 	}
 };
 ```
@@ -185,57 +264,78 @@ if (
 
 ### Redirect authenticated users
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling `AuthRequest.validate()`. This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
-Since we're using the `web()` middleware, `Auth.handleRequest()` expects the standard `Request`.
+Since `Request` is not available in pages, set it to `null`. This should only be done for GET requests.
 
-```ts
-import { auth } from "./lucia.js";
+```tsx
+// app/signup/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-const handleGetRequest = async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
+import Form from "@/components/form";
+
+const Page = async () => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
 	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
+	if (session) redirect(302, "/");
+	// ...
 };
+
+export default Page;
 ```
 
 ## Sign in page
 
-Create `/login`. This will have a form with inputs for username and password
+Create `app/login/page.tsx` and also add a form with inputs for username and password. The form should make a POST request to `/api/login`.
 
-```html
-<h1>Sign in</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
-	<input type="submit" />
-</form>
+```tsx
+// app/login/page.tsx
+import { auth } from "@/auth/lucia";
+
+import Form from "@/components/form";
+
+const Page = async () => {
+	return (
+		<>
+			<h1>Sign in</h1>
+			<Form action="/api/login" successRedirect="/">
+				<label for="username">Username</label>
+				<input name="username" id="username" />
+				<label for="password">Password</label>
+				<input type="password" name="password" id="password" />
+				<input type="submit" />
+			</Form>
+		</>
+	);
+};
+
+export default Page;
 ```
 
 ### Authenticate users
 
-This will be handled in a POST endpoint.
+Create `app/api/login/routes.ts` and handle POST requests.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
 ```ts
-import { auth } from "./lucia.js";
-import { LuciaError } from "lucia";
+// app/api/login/routes.ts
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-post("/login", async (request: Request) => {
-	const formData = await request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
+import type { NextRequest } from "next/server";
+
+const POST = async (request: NextRequest) => {
+	const { username, password } = (await request.json()) as Partial<{
+		username: string;
+		password: string;
+	}>;
 	// basic check
 	if (
 		!username ||
@@ -243,9 +343,14 @@ post("/login", async (request: Request) => {
 		username.length < 4 ||
 		username.length > 31
 	) {
-		return new Response("Invalid username", {
-			status: 400
-		});
+		return NextResponse.json(
+			{
+				error: "Invalid username"
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	if (
 		!password ||
@@ -253,9 +358,14 @@ post("/login", async (request: Request) => {
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
+		return NextResponse.json(
+			{
+				error: "Invalid password"
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	try {
 		// find user by key
@@ -265,122 +375,130 @@ post("/login", async (request: Request) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
+		const authRequest = auth.handleRequest({
+			request,
+			cookies
 		});
+		authRequest.setSession(session);
+		return new Response(null);
 	} catch (e) {
 		if (
 			e instanceof LuciaError &&
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
-			throw new Error("Incorrect username of password");
+			return NextResponse.json(
+				{
+					error: "Incorrect username of password"
+				},
+				{
+					status: 400
+				}
+			);
 		}
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		return NextResponse.json(
+			{
+				error: "An unknown error occurred"
+			},
+			{
+				status: 500
+			}
+		);
 	}
-});
+};
 ```
 
 ### Redirect authenticated users
 
-As we did in the sign up page, we want to redirect authenticated users to the profile page.
+As we did in the sign up page, redirect authenticated users to the profile page.
 
 ```ts
-import { auth } from "./lucia.js";
+// app/login/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-get("/login", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
+import Form from "@/components/form";
+
+const Page = async () => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
 	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
-});
+	if (session) redirect(302, "/");
+	// ...
+};
+
+export default Page;
 ```
 
 ## Profile page
 
-Create `/`. This will show some basic user info and include a logout button.
+Create `app/page.tsx`. This page will show some basic user info and include a logout button.
 
-```html
-<h1>Profile</h1>
-<!-- some template stuff -->
-<p>User id: %%user_id%%</p>
-<p>Username: %%username%%</p>
-<form method="post" action="/logout">
-	<input type="submit" value="Sign out" />
-</form>
-```
+Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
 
-### Get authenticated user
+```tsx
+// app/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-As mentioned previously, the current session can be accessed with `AuthRequest.validate()`. We should redirect unauthenticated users to the login page.
+import Form from "@/components/form";
 
-The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
-
-```ts
-import { auth } from "./lucia.js";
-
-post("/", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (!session) {
-		// not authenticated
-		return new Response(null, {
-			headers: {
-				Location: "/login" // redirect to login page
-			},
-			status: 302
-		});
-	}
-	return renderPage({
-		// display dynamic data
-		user_id: session.user.userId,
-		username: session.user.username
+const Page = async () => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
 	});
-});
+	const session = await authRequest.validate();
+	if (!session) redirect(302, "/login");
+	return (
+		<>
+			<h1>Profile</h1>
+			<p>User id: {session.user.userId}</p>
+			<p>Username: {session.user.username}</p>
+			<form action="/api/logout" successRedirect="/">
+				<input type="submit" value="Sign out" />
+			</form>
+		</>
+	);
+};
 ```
 
 ### Sign out users
 
-Create `/logout` and handle POST requests.
+Create `/api/logout/route.ts` and handle POST requests.
 
 When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
 
 ```ts
-import { auth } from "./lucia.js";
+// app/api/logout/routes.ts
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-const handlePostRequest = async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
+import type { NextRequest } from "next/server";
+
+const POST = async (request: NextRequest) => {
+	const authRequest = await auth.handleRequest({ request, cookies });
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
-		return new Response("Not authenticated", {
-			status: 401
-		});
+		return NextResponse.json(
+			{
+				error: "Not authenticated"
+			},
+			{
+				status: 401
+			}
+		);
 	}
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);
-	// create blank session cookie
-	const sessionCookie = auth.createSessionCookie(null);
-	return new Response(null, {
-		headers: {
-			Location: "/login", // redirect to login page
-			"Set-Cookie": sessionCookie.serialize() // delete session cookie
-		},
-		status: 302
-	});
+	// delete session cookie
+	context.locals.auth.setSession(null);
+	return new Response(null);
 };
 ```
