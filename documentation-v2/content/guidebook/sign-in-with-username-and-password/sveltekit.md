@@ -100,7 +100,6 @@ export const actions: Actions = {
 		const password = formData.get("password");
 		// basic check
 		if (
-			!username ||
 			typeof username !== "string" ||
 			username.length < 4 ||
 			username.length > 31
@@ -110,7 +109,6 @@ export const actions: Actions = {
 			});
 		}
 		if (
-			!password ||
 			typeof password !== "string" ||
 			password.length < 6 ||
 			password.length > 255
@@ -231,7 +229,6 @@ export const actions: Actions = {
 		const password = formData.get("password");
 		// basic check
 		if (
-			!username ||
 			typeof username !== "string" ||
 			username.length < 4 ||
 			username.length > 31
@@ -241,7 +238,6 @@ export const actions: Actions = {
 			});
 		}
 		if (
-			!password ||
 			typeof password !== "string" ||
 			password.length < 6 ||
 			password.length > 255

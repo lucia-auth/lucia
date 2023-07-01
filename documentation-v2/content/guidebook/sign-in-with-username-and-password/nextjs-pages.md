@@ -83,7 +83,7 @@ const Page = () => {
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/signup", {
 						method: "POST",
-						body: JSON.stringify(Object.fromEntries(formData.entries()))
+						body: formData
 					});
 					if (response.ok) {
 						router.push("/"); // redirect to profile page on success
@@ -119,10 +119,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
-	const { username, password } = req.body;
+	const { username, password } = req.body as {
+		username: unknown;
+		password: unknown;
+	};
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
@@ -132,7 +134,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
@@ -259,7 +260,7 @@ const Page = () => {
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/login", {
 						method: "POST",
-						body: JSON.stringify(Object.fromEntries(formData.entries()))
+						body: formData
 					});
 
 					if (response.ok) {
@@ -294,10 +295,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
-	const { username, password } = req.body;
+	const { username, password } = req.body as {
+		username: unknown;
+		password: unknown;
+	};
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
@@ -307,7 +310,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255

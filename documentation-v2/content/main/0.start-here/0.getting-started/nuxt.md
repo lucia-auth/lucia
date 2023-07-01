@@ -18,7 +18,7 @@ yarn add lucia
 Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own api module (file). Export `auth` and its type as `Auth`. Make sure to pass the `h3()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
 ```ts
-// server/utils/auth.ts
+// server/utils/lucia.ts
 import { lucia } from "lucia";
 import { h3 } from "lucia-auth/middleware";
 
@@ -36,7 +36,7 @@ export type Auth = typeof auth;
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/extending-lucia/database-adapters-api). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
-// server/utils/auth.ts
+// server/utils/lucia.ts
 import { lucia } from "lucia";
 import { h3 } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";

@@ -4,7 +4,7 @@ menuTitle: "Nuxt"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Nuxt"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nuxt) in Nuxt._
 
 This guide will cover how to implement a simple username and password authentication using Lucia in Nuxt. It will have 3 parts:
 
@@ -19,7 +19,7 @@ Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
 ```ts
-// env.d.ts
+// server/env.d.ts
 
 /// <reference types="lucia" />
 declare namespace Lucia {
@@ -33,39 +33,17 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+We want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
 
 ```ts
-// lucia.ts
+// server/utils/lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { h3 } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	}
-});
-```
-
-We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
-
-```ts
-// lucia.ts
-import { lucia } from "lucia";
-import { web } from "lucia/middleware";
-
-export const auth = lucia({
-	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
+	middleware: h3(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -77,53 +55,67 @@ export const auth = lucia({
 
 ## Sign up page
 
-Create `/signup`. It will have a form with inputs for username and password
+Create `pages/signup.vue`. It will have a form with inputs for username and password
 
-```html
-<h1>Sign up</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
-	<input type="submit" />
-</form>
+```vue
+<!-- pages/signup.vue -->
+<script lang="ts" setup>
+const handleSubmit = async (e: Event) => {
+	if (!(e.target instanceof HTMLFormElement)) return;
+	const formData = new FormData(e.target);
+	await $fetch("/api/signup", {
+		method: "POST",
+		body: formData
+	});
+};
+</script>
+
+<template>
+	<h1>Sign up</h1>
+	<form method="post" action="/api/signup" @submit.prevent="handleSubmit">
+		<label for="username">Username</label>
+		<input name="username" id="username" />
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password" />
+		<input type="submit" />
+	</form>
+</template>
 ```
 
 ### Create users
 
-This will be handled in a POST endpoint.
+Create `server/api/signup.post.ts`.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). [`AuthRequest`]() can be created by calling [`Auth.handleRequest()`]() with `H3Event`.
 
 ```ts
-import { auth } from "./lucia.js";
-
-const handlePostRequest = async (request: Request) => {
-	const formData = await request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
+// server/api/signup.post.ts
+export default defineEventHandler(async (event) => {
+	const { username, password } = await readBody<{
+		username: unknown;
+		password: unknown;
+	}>(event);
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
 	) {
-		return new Response("Invalid username", {
-			status: 400
+		throw createError({
+			message: "Invalid username",
+			statusCode: 400
 		});
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return new Response("Invalid password", {
-			status: 400
+		throw createError({
+			message: "Invalid password",
+			statusCode: 400
 		});
 	}
 	try {
@@ -141,14 +133,9 @@ const handlePostRequest = async (request: Request) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
+		const authRequest = auth.handleRequest(event);
+		authRequest.setSession(session);
+		return sendRedirect(event, "/"); // redirect to profile page
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
@@ -156,16 +143,17 @@ const handlePostRequest = async (request: Request) => {
 			e instanceof SomeDatabaseError &&
 			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 		) {
-			return new Response("Username already taken", {
-				status: 400
+			throw createError({
+				message: "Username already taken",
+				statusCode: 400
 			});
 		}
-
-		return new Response("An unknown error occurred", {
-			status: 500
+		throw createError({
+			message: "An unknown error occurred",
+			statusCode: 500
 		});
 	}
-};
+});
 ```
 
 #### Error handling
@@ -181,78 +169,69 @@ if (
 }
 ```
 
-### Redirect authenticated users
-
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
-
-Since we're using the `web()` middleware, `Auth.handleRequest()` expects the standard `Request`.
-
-```ts
-import { auth } from "./lucia.js";
-
-const handleGetRequest = async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
-};
-```
-
 ## Sign in page
 
-Create `/login`. This will have a form with inputs for username and password
+Create `pages/login.vue`. This will have a form with inputs for username and password
 
-```html
-<h1>Sign in</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
-	<input type="submit" />
-</form>
+```vue
+<!-- pages/login.vue -->
+<script lang="ts" setup>
+const handleSubmit = async (e: Event) => {
+	if (!(e.target instanceof HTMLFormElement)) return;
+	const formData = new FormData(e.target);
+	await $fetch("/api/login", {
+		method: "POST",
+		body: formData
+	});
+};
+</script>
+
+<template>
+	<h1>Sign in</h1>
+	<form method="post" action="/api/login" @submit.prevent="handleSubmit">
+		<label for="username">Username</label>
+		<input name="username" id="username" />
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password" />
+		<input type="submit" />
+	</form>
+</template>
 ```
 
 ### Authenticate users
 
-This will be handled in a POST endpoint.
+Create `server/api/login.post.ts`.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
 ```ts
-import { auth } from "./lucia.js";
+// server/api/login.post.ts
 import { LuciaError } from "lucia";
 
-post("/login", async (request: Request) => {
-	const formData = await request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
+export default defineEventHandler(async (event) => {
+	const { username, password } = await readBody<{
+		username: unknown;
+		password: unknown;
+	}>(event);
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
 	) {
-		return new Response("Invalid username", {
-			status: 400
+		throw createError({
+			message: "Invalid username",
+			statusCode: 400
 		});
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return new Response("Invalid password", {
-			status: 400
+		throw createError({
+			message: "Invalid password",
+			statusCode: 400
 		});
 	}
 	try {
@@ -263,65 +242,91 @@ post("/login", async (request: Request) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // redirect to profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
+		const authRequest = auth.handleRequest(event);
+		authRequest.setSession(session);
+		return sendRedirect(event, "/"); // redirect to profile page
 	} catch (e) {
 		if (
 			e instanceof LuciaError &&
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
-			return new Response("Incorrect username of password", {
-				status: 400
+			throw createError({
+				message: "Incorrect username or password",
+				statusCode: 400
 			});
 		}
-		return new Response("An unknown error occurred", {
-			status: 500
+		throw createError({
+			message: "An unknown error occurred",
+			statusCode: 500
 		});
 	}
 });
 ```
 
-### Redirect authenticated users
+## Get authenticated user
 
-As we did in the sign up page, redirect authenticated users to the profile page.
+Create `server/api/user.get.ts`. This endpoint will return the current user. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 ```ts
-import { auth } from "./lucia.js";
+// server/api/user.get.ts
 
-get("/login", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		return new Response(null, {
-			headers: {
-				Location: "/" // redirect to profile page
-			},
-			status: 302
-		});
-	}
-	return renderPage();
+export default defineEventHandler(async (event) => {
+	const authRequest = auth.handleRequest(event);
+	const session = auth.validate();
+	return session?.user ?? null;
 });
+```
+
+For both `pages/signup.vue` and `pages/login.vue`, redirect authenticated users to the profile page.
+
+```vue
+<!-- pages/signup.vue -->
+<!-- pages/login.vue -->
+<script lang="ts" setup>
+const { data, error } = await useFetch("/api/user");
+if (error) throw createError("Failed to fetch data");
+const user = data.value;
+if (user) {
+	await navigateTo("/"); // redirect to profile page
+}
+
+const handleSubmit = async (e: Event) => {
+	// ...
+};
+</script>
 ```
 
 ## Profile page
 
-Create `/`. This will show some basic user info and include a logout button.
+Create `pages/index.vue`. This will show some basic user info and include a logout button.
 
-```html
-<h1>Profile</h1>
-<!-- some template stuff -->
-<p>User id: %%user_id%%</p>
-<p>Username: %%username%%</p>
-<form method="post" action="/logout">
-	<input type="submit" value="Sign out" />
-</form>
+```vue
+<!-- pages/index.vue -->
+<script lang="ts" setup>
+const { data, error } = await useFetch("/api/user");
+if (error) throw createError("Failed to fetch data");
+const user = data.value;
+if (!user) {
+	await navigateTo("/login");
+}
+
+const handleSubmit = async (e: Event) => {
+	if (!(e.target instanceof HTMLFormElement)) return;
+	await $fetch("/api/logout", {
+		method: "POST"
+	});
+};
+</script>
+
+<template>
+	<h1>Profile</h1>
+	<p>User id: {{ user.userId }}</p>
+	<p>Username: {{ user.username }}</p>
+	<form method="post" action="/api/logout" @submit.prevent="handleSubmit">
+		<input type="submit" value="Sign out" />
+	</form>
+</template>
 ```
 
 ### Get authenticated user
@@ -331,7 +336,7 @@ Unauthenticated users should be redirected to the login page. The user object is
 ```ts
 import { auth } from "./lucia.js";
 
-post("/", async (request: Request) => {
+export default defineEventHandler(async (event) => {
 	const authRequest = await auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (!session) {
@@ -353,32 +358,26 @@ post("/", async (request: Request) => {
 
 ### Sign out users
 
-Create `/logout` and handle POST requests.
+Create `server/api/logout.post.ts`.
 
 When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
 
 ```ts
-import { auth } from "./lucia.js";
-
-const handlePostRequest = async (request: Request) => {
+// server/api/logout.post.ts
+export default defineEventHandler(async (event) => {
 	const authRequest = await auth.handleRequest(request);
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
-		return new Response("Not authenticated", {
-			status: 401
+		throw createError({
+			message: "Not authenticated",
+			statusCode: 401
 		});
 	}
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);
 	// create blank session cookie
 	const sessionCookie = auth.createSessionCookie(null);
-	return new Response(null, {
-		headers: {
-			Location: "/login", // redirect to login page
-			"Set-Cookie": sessionCookie.serialize() // delete session cookie
-		},
-		status: 302
-	});
-};
+	return sendRedirect(event, "/login");
+});
 ```

@@ -107,7 +107,6 @@ const handlePostRequest = async (request: Request) => {
 	const password = formData.get("password");
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
@@ -117,7 +116,6 @@ const handlePostRequest = async (request: Request) => {
 		});
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
@@ -236,7 +234,6 @@ post("/login", async (request: Request) => {
 	const password = formData.get("password");
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
@@ -246,7 +243,6 @@ post("/login", async (request: Request) => {
 		});
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255

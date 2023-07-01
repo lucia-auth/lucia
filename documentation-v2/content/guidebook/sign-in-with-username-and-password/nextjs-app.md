@@ -33,7 +33,7 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+Set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
 
 ```ts
 // auth/lucia.ts
@@ -103,7 +103,7 @@ const Form = ({
 				const formData = new FormData(e.currentTarget);
 				const response = await fetch(action, {
 					method: "POST",
-					body: JSON.stringify(Object.fromEntries(formData.entries()))
+					body: formData
 				});
 
 				if (response.ok) {
@@ -164,13 +164,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-	const { username, password } = (await request.json()) as Partial<{
-		username: string;
-		password: string;
-	}>;
+	const formData = await request.formData();
+	const username = formData.get("username");
+	const password = formData.get("password");
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
@@ -185,7 +183,6 @@ export const POST = async (request: NextRequest) => {
 		);
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
@@ -332,13 +329,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-	const { username, password } = (await request.json()) as Partial<{
-		username: string;
-		password: string;
-	}>;
+	const formData = await request.formData();
+	const username = formData.get("username");
+	const password = formData.get("password");
 	// basic check
 	if (
-		!username ||
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
@@ -353,7 +348,6 @@ export const POST = async (request: NextRequest) => {
 		);
 	}
 	if (
-		!password ||
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255

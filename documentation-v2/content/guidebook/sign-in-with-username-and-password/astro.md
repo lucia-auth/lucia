@@ -88,7 +88,7 @@ let errorMessage: string | null = null;
 
 // check for form submissions
 if (Astro.request.method === "POST") {
-	const formData = await Astro.request.request.formData();
+	const formData = await Astro.request.formData();
 	const username = formData.get("username");
 	const password = formData.get("password");
 	// basic check
@@ -203,7 +203,7 @@ let errorMessage: string | null = null;
 
 // check for form submissions
 if (Astro.request.method === "POST") {
-	const formData = await Astro.request.request.formData();
+	const formData = await Astro.request.formData();
 	const username = formData.get("username");
 	const password = formData.get("password");
 	// basic check
@@ -307,7 +307,7 @@ export const post: APIRoute = async (context) => {
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);
 	// delete session cookie
-	context.locals.auth.setSession(null)
-	return Astro.redirect("/login", 302)
+	context.locals.auth.setSession(null);
+	return Astro.redirect("/login", 302);
 };
 ```
