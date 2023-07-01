@@ -164,7 +164,7 @@ if (Astro.request.method === "POST") {
 }
 
 const session = await Astro.locals.auth.validate();
-if (session) return Astro.redirect("/", 302);
+if (session) return Astro.redirect("/", 302); // redirect to profile page
 ---
 ```
 
@@ -258,7 +258,7 @@ if (Astro.request.method === "POST") {
 }
 
 const session = await Astro.locals.auth.validate();
-if (session) return Astro.redirect("/", 302);
+if (session) return Astro.redirect("/", 302); // redirect to profile page
 ---
 ```
 
