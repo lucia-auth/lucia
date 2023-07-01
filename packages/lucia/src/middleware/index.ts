@@ -217,6 +217,11 @@ type NextJsCookie =
 	  }
 	| undefined;
 
+type RequestCookies = {
+	set?: (name: string, value: string, options: CookieAttributes) => void;
+	get: (name: string) => NextJsCookie;
+};
+
 type NextRequest = Request & {
 	cookies: {
 		get: (name: string) => NextJsCookie;
@@ -224,10 +229,7 @@ type NextRequest = Request & {
 };
 
 type NextJsAppServerContext = {
-	cookies: () => {
-		set?: (name: string, value: string, options?: CookieAttributes) => void;
-		get: (name: string) => NextJsCookie;
-	};
+	cookies: () => RequestCookies;
 	request: NextRequest | null;
 };
 
@@ -241,14 +243,13 @@ export const nextjs = (): Middleware<
 > => {
 	return ({ args, cookieName, env }) => {
 		const [serverContext] = args;
+
 		if ("request" in serverContext || "cookies" in serverContext) {
 			const request =
 				"request" in serverContext ? serverContext.request : serverContext;
 
-			const cookieStore:
-				| NextRequest["cookies"]
-				| ReturnType<NextJsAppServerContext["cookies"]> =
-				"request" in serverContext
+			const cookieStore =
+				typeof serverContext.cookies === "function"
 					? serverContext.cookies()
 					: serverContext.cookies;
 
@@ -259,16 +260,21 @@ export const nextjs = (): Middleware<
 					url: request?.url ?? "",
 					method: request?.method ?? "GET",
 					headers: {
-						origin: request?.headers.get("Origin") ?? null,
+						origin: request?.headers?.get("Origin") ?? null,
 						cookie: null,
-						authorization: request?.headers.get("Authorization") ?? null
+						authorization: request?.headers?.get("Authorization") ?? null
 					},
 					storedSessionCookie: sessionCookie
 				},
 				setCookie: (cookie) => {
 					if (!("set" in cookieStore) || !cookieStore.set) return;
 					try {
-						cookieStore.set(cookie.name, cookie.value, cookie.attributes);
+						if (typeof serverContext.cookies === "function") {
+							const cookieSet = serverContext.cookies().set;
+							cookieSet
+								? cookieSet(cookie.name, cookie.value, cookie.attributes)
+								: null;
+						}
 					} catch {
 						// ignore - set() is not available
 					}
