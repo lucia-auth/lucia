@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
 		});
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-		return {}
+		return sendRedirect(event, "/"); // redirect to profile page
 	} catch (e) {
 		if (
 			e instanceof LuciaError &&

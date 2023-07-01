@@ -103,7 +103,8 @@ const Form = ({
 				const formData = new FormData(e.currentTarget);
 				const response = await fetch(action, {
 					method: "POST",
-					body: formData
+					body: formData,
+					redirect: "manual"
 				});
 
 				if (response.ok) {
@@ -216,7 +217,12 @@ export const POST = async (request: NextRequest) => {
 			cookies
 		});
 		authRequest.setSession(session);
-		return new Response(null);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: "/" // redirect to profile page
+			}
+		});
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
@@ -374,7 +380,12 @@ export const POST = async (request: NextRequest) => {
 			cookies
 		});
 		authRequest.setSession(session);
-		return new Response(null);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: "/" // redirect to profile page
+			}
+		});
 	} catch (e) {
 		if (
 			e instanceof LuciaError &&
@@ -495,6 +506,11 @@ export const POST = async (request: NextRequest) => {
 	await auth.invalidateSession(session.sessionId);
 	// delete session cookie
 	context.locals.auth.setSession(null);
-	return new Response(null);
+	return new Response(null, {
+			status: 302,
+			headers: {
+				Location: "/login" // redirect to login page
+			}
+		});
 };
 ```

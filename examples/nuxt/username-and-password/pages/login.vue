@@ -14,7 +14,8 @@ const handleSubmit = async (e: Event) => {
 	try {
 		await $fetch("/api/login", {
 			method: "POST",
-			body: formData
+			body: formData,
+			redirect: "manual"
 		});
 		await navigateTo("/"); // profile page
 	} catch (e) {

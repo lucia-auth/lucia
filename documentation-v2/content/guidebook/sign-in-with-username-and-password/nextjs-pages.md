@@ -83,7 +83,8 @@ const Page = () => {
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/signup", {
 						method: "POST",
-						body: formData
+						body: formData,
+						redirect: "manual"
 					});
 					if (response.ok) {
 						router.push("/"); // redirect to profile page on success
@@ -162,6 +163,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			res
 		});
 		authRequest.setSession(session);
+		return res.redirect(302, "/"); // profile page
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
@@ -260,7 +262,8 @@ const Page = () => {
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/login", {
 						method: "POST",
-						body: formData
+						body: formData,
+						redirect: "manual"
 					});
 
 					if (response.ok) {
@@ -331,6 +334,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			res
 		});
 		authRequest.setSession(session);
+		return res.redirect(302, "/"); // profile page
 	} catch (e) {
 		if (
 			e instanceof LuciaError &&
@@ -424,7 +428,8 @@ const Page = (
 					e.preventDefault();
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/logout", {
-						method: "POST"
+						method: "POST",
+						redirect: "manual"
 					});
 					if (response.ok) {
 						router.push("/login"); // redirect to login page on success
@@ -516,5 +521,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	await auth.invalidateSession(session.sessionId);
 	// delete session cookie
 	context.locals.auth.setSession(null);
+	return res.redirect(302, "/login");
 };
 ```

@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
 		});
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-		return {}
+		return sendRedirect(event, "/login");
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table

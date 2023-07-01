@@ -9,7 +9,8 @@ if (!user) {
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
 	await $fetch("/api/logout", {
-		method: "POST"
+		method: "POST",
+		redirect: "manual"
 	});
 	await navigateTo("/login");
 };
