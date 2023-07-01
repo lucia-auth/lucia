@@ -1,12 +1,12 @@
 ---
-title: "Sign in with email and password Express"
+title: "Sign in with email and password in Express"
 menuTitle: "Express"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Express"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/express)._
 
-This guide will cover how to implement a simple username and password authentication using Lucia in Express. It will have 3 parts:
+This guide will cover how to implement a simple username and password authentication using Lucia. It will have 3 parts:
 
 - A sign up page
 - A sign in page
@@ -33,39 +33,17 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+We want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
 
 ```ts
 // lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { express } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	}
-});
-```
-
-We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
-
-```ts
-// lucia.ts
-import { lucia } from "lucia";
-import { web } from "lucia/middleware";
-
-export const auth = lucia({
-	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: express(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -75,9 +53,19 @@ export const auth = lucia({
 });
 ```
 
+## Configure Express
+
+Since we'll be using `application/x-www-form-urlencoded` to send forms, install `body-parser`.
+
+```ts
+import bodyParser from "body-parser"
+
+app.use(bodyParser.urlencoded({ extended: true }))
+```
+
 ## Sign up page
 
-Create `/signup`. It will have a form with inputs for username and password
+Create `pages/signup.html`. It will have a form with inputs for username and password
 
 ```html
 <h1>Sign up</h1>
@@ -92,16 +80,16 @@ Create `/signup`. It will have a form with inputs for username and password
 
 ### Create users
 
-This will be handled in a POST endpoint.
+This will be handled by POST requests to the path.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). [`AuthRequest`]() can be created by calling [`Auth.handleRequest()`]() with Express' `Request` and `Response`.
 
 ```ts
 import { auth } from "./lucia.js";
 
-const handlePostRequest = async (request: Request) => {
+app.post("/signup", async (req, res) => {
 	const formData = await request.formData();
 	const username = formData.get("username");
 	const password = formData.get("password");
@@ -140,9 +128,10 @@ const handlePostRequest = async (request: Request) => {
 			attributes: {}
 		});
 		const sessionCookie = auth.createSessionCookie(session);
+		// redirect to profile page
 		return new Response(null, {
 			headers: {
-				Location: "/", // redirect to profile page
+				Location: "/",
 				"Set-Cookie": sessionCookie.serialize() // store session cookie
 			},
 			status: 302
@@ -163,7 +152,7 @@ const handlePostRequest = async (request: Request) => {
 			status: 500
 		});
 	}
-};
+});
 ```
 
 #### Error handling
@@ -188,24 +177,25 @@ Since we're using the `web()` middleware, `Auth.handleRequest()` expects the sta
 ```ts
 import { auth } from "./lucia.js";
 
-const handleGetRequest = async (request: Request) => {
+get("/signup", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (session) {
+		// redirect to profile page
 		return new Response(null, {
 			headers: {
-				Location: "/" // redirect to profile page
+				Location: "/"
 			},
 			status: 302
 		});
 	}
 	return renderPage();
-};
+});
 ```
 
 ## Sign in page
 
-Create `/login`. This will have a form with inputs for username and password
+Create `/login`. This will have a form with inputs for username and password.
 
 ```html
 <h1>Sign in</h1>
@@ -220,7 +210,7 @@ Create `/login`. This will have a form with inputs for username and password
 
 ### Authenticate users
 
-This will be handled in a POST endpoint.
+This will be handled in a POST request.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
@@ -273,7 +263,9 @@ post("/login", async (request: Request) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
-			throw new Error("Incorrect username of password");
+			return new Response("Incorrect username of password", {
+				status: 400
+			});
 		}
 		return new Response("An unknown error occurred", {
 			status: 500
@@ -293,9 +285,10 @@ get("/login", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (session) {
+		// redirect to profile page
 		return new Response(null, {
 			headers: {
-				Location: "/" // redirect to profile page
+				Location: "/"
 			},
 			status: 302
 		});
@@ -325,14 +318,14 @@ Unauthenticated users should be redirected to the login page. The user object is
 ```ts
 import { auth } from "./lucia.js";
 
-post("/", async (request: Request) => {
+get("/", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (!session) {
-		// not authenticated
+		// redirect to login page
 		return new Response(null, {
 			headers: {
-				Location: "/login" // redirect to login page
+				Location: "/login"
 			},
 			status: 302
 		});
@@ -354,7 +347,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 import { auth } from "./lucia.js";
 
-const handlePostRequest = async (request: Request) => {
+post("/logout", async (request: Request) => {
 	const authRequest = await auth.handleRequest(request);
 	// check if user is authenticated
 	const session = await authRequest.validate();
@@ -374,5 +367,5 @@ const handlePostRequest = async (request: Request) => {
 		},
 		status: 302
 	});
-};
+});
 ```

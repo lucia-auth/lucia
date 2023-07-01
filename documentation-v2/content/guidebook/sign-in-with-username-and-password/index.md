@@ -90,7 +90,7 @@ Create `/signup`. It will have a form with inputs for username and password
 
 ### Create users
 
-This will be handled in a POST endpoint.
+This will be handled in a POST request.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
@@ -220,7 +220,7 @@ Create `/login`. This will have a form with inputs for username and password.
 
 ### Authenticate users
 
-This will be handled in a POST endpoint.
+This will be handled in a POST request.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
 
