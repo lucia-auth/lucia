@@ -4,7 +4,7 @@ menuTitle: "SvelteKit"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in SvelteKit"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/sveltekit) and that you've implement the handle hook._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/sveltekit) and that you've implement the recommended `handle()` hook._
 
 This guide will cover how to implement a simple username and password authentication using Lucia in SvelteKit. It will have 3 parts:
 

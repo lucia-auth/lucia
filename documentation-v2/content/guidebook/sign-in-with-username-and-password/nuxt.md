@@ -4,7 +4,7 @@ menuTitle: "Nuxt"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Nuxt"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nuxt) in Nuxt._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nuxt)._
 
 This guide will cover how to implement a simple username and password authentication using Lucia in Nuxt. It will have 3 parts:
 
