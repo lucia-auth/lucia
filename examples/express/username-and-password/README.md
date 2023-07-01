@@ -1,6 +1,6 @@
 # Username & password example with Lucia and Express
 
-This example uses TypeScript, SQLite3 with `better-sqlite3`, and `tsx`. 
+This example uses TypeScript, SQLite3 with `better-sqlite3`, and [`tsx`](https://github.com/esbuild-kit/tsx). 
 
 ```bash
 # install dependencies
