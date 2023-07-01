@@ -56,7 +56,6 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	return ({ args }) => {
 		const [request, response] = args;
-
 		const requestContext = {
 			request: {
 				url: `${request.protocol}://${request.hostname}${request.path}`,
