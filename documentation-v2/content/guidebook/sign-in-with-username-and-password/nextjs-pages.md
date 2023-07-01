@@ -504,7 +504,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
-	const authRequest = await auth.handleRequest({ req, res });
+	const authRequest = auth.handleRequest({ req, res });
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {

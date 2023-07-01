@@ -111,7 +111,7 @@ const session = await auth.createSession({
 	userId: user.userId,
 	attributes: {}
 });
-const authRequest = await auth.handleRequest();
+const authRequest = auth.handleRequest();
 authRequest.setSession(session); // store session cookie
 ```
 

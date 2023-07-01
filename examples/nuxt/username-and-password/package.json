@@ -1,0 +1,23 @@
+{
+	"name": "username-and-example",
+	"private": true,
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare",
+		"migrate": "tsx migration/index.ts"
+	},
+	"devDependencies": {
+		"@nuxt/devtools": "latest",
+		"@types/node": "^18",
+		"nuxt": "^3.6.1",
+		"tsx": "^3.12.6"
+	},
+	"dependencies": {
+		"@lucia-auth/adapter-sqlite": "latest",
+		"better-sqlite3": "^8.4.0",
+		"lucia": "latest"
+	}
+}

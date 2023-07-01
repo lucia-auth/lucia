@@ -188,7 +188,7 @@ Since we're using the `web()` middleware, `Auth.handleRequest()` expects the sta
 import { auth } from "./lucia.js";
 
 get("/signup", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
+	const authRequest = auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (session) {
 		// redirect to profile page
@@ -292,7 +292,7 @@ As we did in the sign up page, redirect authenticated users to the profile page.
 import { auth } from "./lucia.js";
 
 get("/login", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
+	const authRequest = auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (session) {
 		// redirect to profile page
@@ -329,7 +329,7 @@ Unauthenticated users should be redirected to the login page. The user object is
 import { auth } from "./lucia.js";
 
 get("/", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
+	const authRequest = auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (!session) {
 		// redirect to login page
@@ -358,7 +358,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 import { auth } from "./lucia.js";
 
 post("/logout", async (request: Request) => {
-	const authRequest = await auth.handleRequest(request);
+	const authRequest = auth.handleRequest(request);
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {

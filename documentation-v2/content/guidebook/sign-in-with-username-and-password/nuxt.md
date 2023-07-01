@@ -273,7 +273,7 @@ Create `server/api/user.get.ts`. This endpoint will return the current user. You
 
 export default defineEventHandler(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = auth.validate();
+	const session = await authRequest.validate();
 	return session?.user ?? null;
 });
 ```
@@ -337,7 +337,7 @@ Unauthenticated users should be redirected to the login page. The user object is
 import { auth } from "./lucia.js";
 
 export default defineEventHandler(async (event) => {
-	const authRequest = await auth.handleRequest(request);
+	const authRequest = auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (!session) {
 		// not authenticated
@@ -365,7 +365,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 // server/api/logout.post.ts
 export default defineEventHandler(async (event) => {
-	const authRequest = await auth.handleRequest(request);
+	const authRequest = auth.handleRequest(event);
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {

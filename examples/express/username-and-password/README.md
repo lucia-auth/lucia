@@ -13,6 +13,14 @@ pnpm migrate
 pnpm dev
 ```
 
+## Runtime
+
+This example is built for Node.js 20. If you're using Node.js 16/18, un-comment the following line in `src/lucia.ts`:
+
+```ts
+// import "lucia/polyfill/node";
+```
+
 ## User schema
 
 | id         | type     | unique |
