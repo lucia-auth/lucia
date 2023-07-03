@@ -1,13 +1,10 @@
 import { LuciaError } from "lucia";
 
 export default defineEventHandler(async (event) => {
-	const multiPartData = await readMultipartFormData(event);
-	const username =
-		multiPartData?.find((data) => data.name === "username")?.data.toString() ??
-		null;
-	const password =
-		multiPartData?.find((data) => data.name === "password")?.data.toString() ??
-		null;
+	const { username, password } = await readBody<{
+		username: unknown;
+		password: unknown;
+	}>(event);
 	// basic check
 	if (
 		typeof username !== "string" ||
@@ -32,9 +29,9 @@ export default defineEventHandler(async (event) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("username", username, password);
+		const key = await auth.useKey("username", username, password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
 		const authRequest = auth.handleRequest(event);

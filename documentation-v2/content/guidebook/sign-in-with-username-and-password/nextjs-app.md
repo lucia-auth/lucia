@@ -507,10 +507,10 @@ export const POST = async (request: NextRequest) => {
 	// delete session cookie
 	context.locals.auth.setSession(null);
 	return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/login" // redirect to login page
-			}
-		});
+		status: 302,
+		headers: {
+			Location: "/login" // redirect to login page
+		}
+	});
 };
 ```

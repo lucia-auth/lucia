@@ -1,13 +1,10 @@
 import { SqliteError } from "better-sqlite3";
 
 export default defineEventHandler(async (event) => {
-	const multiPartData = await readMultipartFormData(event);
-	const username =
-		multiPartData?.find((data) => data.name === "username")?.data.toString() ??
-		null;
-	const password =
-		multiPartData?.find((data) => data.name === "password")?.data.toString() ??
-		null;
+	const { username, password } = await readBody<{
+		username: unknown;
+		password: unknown;
+	}>(event);
 	// basic check
 	if (
 		typeof username !== "string" ||
@@ -46,7 +43,7 @@ export default defineEventHandler(async (event) => {
 		});
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-		return sendRedirect(event, "/login");
+		return sendRedirect(event, "/"); // redirect to profile page
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table

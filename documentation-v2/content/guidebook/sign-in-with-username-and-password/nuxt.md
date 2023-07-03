@@ -276,7 +276,9 @@ export default defineEventHandler(async (event) => {
 });
 ```
 
-## Get authenticated user
+## Managing auth state
+
+### Get authenticated user
 
 Create `server/api/user.get.ts`. This endpoint will return the current user. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
@@ -291,16 +293,89 @@ export default defineEventHandler(async (event) => {
 });
 ```
 
+### Composables
+
+We're going to define a few composables. First `useUser()` will fetch the current user on first initialization, and return either the user or `null` if unauthenticated. We're also going to make a separate `useAuthenticatedUser()`, which will return the user or throw if unauthenticated. This can only be used in protected routes, and allows us to .
+
+Instead of directly setting user when a state changes, we're going to invalidate the data with `invalidateUserState()`. Invalidating it will update the user state on the next `useUser()` or `useAuthenticatedUser()` call, which usually happens on the next navigation.
+
+```ts
+// composables/auth.ts
+import type { User } from "lucia";
+
+export const invalidateUserState = async () => {
+	const userState = useState<"invalid" | "valid">(
+		"user_state",
+		() => "invalid"
+	);
+	userState.value = "invalid";
+};
+
+export const useUser = async () => {
+	const userState = useState<"invalid" | "valid">(
+		"user_state",
+		() => "invalid"
+	);
+	const user = useState<User | null>("user", () => null);
+	if (userState.value === "invalid") {
+		userState.value = "valid";
+		const { data, error } = await useFetch("/api/user");
+		if (error.value) throw createError("Failed to fetch data");
+		user.value = data.value?.user ?? null;
+	}
+	return computed(() => user.value); // readonly
+};
+
+export const useAuthenticatedUser = async () => {
+	const user = unref(await useUser());
+	if (!user) {
+		throw createError(
+			"useAuthenticatedUser() can only be used in protected pages"
+		);
+	}
+	const authenticatedUser = useState("authenticated_user", () => user);
+	return computed(() => authenticatedUser); // readonly
+};
+```
+
+`invalidateUserState()` should be called when the user successfully logs in.
+
+```vue
+<!-- pages/signup.vue -->
+<!-- pages/login.vue -->
+<script lang="ts" setup>
+const handleSubmit = async (e: Event) => {
+	if (!(e.target instanceof HTMLFormElement)) return;
+	const formData = new FormData(e.target);
+	await $fetch();
+	invalidateAuthState();
+	await navigateTo("/"); // profile page
+};
+</script>
+```
+
+### Define middleware
+
+Define an `auth` middleware that redirects unauthenticated users.
+
+```ts
+// middleware/auth.ts
+export default defineNuxtRouteMiddleware(async () => {
+	const user = await useUser();
+	if (!user.value) return navigateTo("/login");
+});
+```
+
+## Redirect authenticated user
+
 For both `pages/signup.vue` and `pages/login.vue`, redirect authenticated users to the profile page.
 
 ```vue
 <!-- pages/signup.vue -->
 <!-- pages/login.vue -->
 <script lang="ts" setup>
-const { data, error } = await useFetch("/api/user");
-if (error.value) throw createError("Failed to fetch data");
-const user = data.value?.user ?? null;
-if (user) {
+const user = await useUser();
+if (user.value) {
 	await navigateTo("/"); // redirect to profile page
 }
 
@@ -314,15 +389,16 @@ const handleSubmit = async (e: Event) => {
 
 Create `pages/index.vue`. This will show some basic user info and include a logout button.
 
+Use the `auth` middleware to redirect unauthenticated users, and `useAuthenticatedUser()` to get a ref that will always be typed as `User` (unlike `useUser()`).
+
 ```vue
 <!-- pages/index.vue -->
 <script lang="ts" setup>
-const { data, error } = await useFetch("/api/user");
-if (error.value) throw createError("Failed to fetch data");
-const user = data.value?.user ?? null;
-if (!user) {
-	await navigateTo("/login");
-}
+definePageMeta({
+	middleware: ["auth"]
+});
+
+const user = await useAuthenticatedUser();
 
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
@@ -331,14 +407,15 @@ const handleSubmit = async (e: Event) => {
 		body: formData,
 		redirect: "manual" // ignore redirect responses
 	});
+	invalidateUserState();
 	await navigateTo("/login");
 };
 </script>
 
 <template>
 	<h1>Profile</h1>
-	<p>User id: {{ user?.userId }}</p>
-	<p>Username: {{ user?.username }}</p>
+	<p>User id: {{ user.userId }}</p>
+	<p>Username: {{ user.username }}</p>
 	<form
 		method="post"
 		action="/api/logout"
@@ -348,33 +425,6 @@ const handleSubmit = async (e: Event) => {
 		<input type="submit" value="Sign out" />
 	</form>
 </template>
-```
-
-### Get authenticated user
-
-Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
-
-```ts
-import { auth } from "./lucia.js";
-
-export default defineEventHandler(async (event) => {
-	const authRequest = auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (!session) {
-		// not authenticated
-		return new Response(null, {
-			headers: {
-				Location: "/login" // redirect to login page
-			},
-			status: 302
-		});
-	}
-	return renderPage({
-		// display dynamic data
-		user_id: session.user.userId,
-		username: session.user.username
-	});
-});
 ```
 
 ### Sign out users

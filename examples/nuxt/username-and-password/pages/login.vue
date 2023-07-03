@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-const { data, error } = await useFetch("/api/user");
-if (error.value) throw createError("Failed to fetch data");
-const user = data.value?.user ?? null;
-if (user) {
+const user = await useUser();
+if (user.value) {
 	await navigateTo("/"); // redirect to profile page
 }
 
@@ -14,9 +12,13 @@ const handleSubmit = async (e: Event) => {
 	try {
 		await $fetch("/api/login", {
 			method: "POST",
-			body: formData,
+			body: {
+				username: formData.get("username"),
+				password: formData.get("password")
+			},
 			redirect: "manual"
 		});
+		invalidateUserState()
 		await navigateTo("/"); // profile page
 	} catch (e) {
 		const { data: error } = e as {
@@ -35,7 +37,6 @@ const handleSubmit = async (e: Event) => {
 		method="post"
 		action="/api/login"
 		@submit.prevent="handleSubmit"
-		enctype="multipart/form-data"
 	>
 		<label for="username">Username</label>
 		<input name="username" id="username" /><br />
