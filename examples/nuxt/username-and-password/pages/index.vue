@@ -11,7 +11,7 @@ const handleLogout = async (e: Event) => {
 		method: "POST",
 		redirect: "manual"
 	});
-	invalidateUserState()
+	invalidateUserState();
 	await navigateTo("/login");
 };
 </script>

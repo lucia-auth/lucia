@@ -17,9 +17,11 @@ const Page = async () => {
 			<h1>Sign up</h1>
 			<Form action="/api/signup" successRedirect="/">
 				<label htmlFor="username">Username</label>
-				<input name="username" id="username" /><br />
+				<input name="username" id="username" />
+				<br />
 				<label htmlFor="password">Password</label>
-				<input type="password" name="password" id="password" /><br />
+				<input type="password" name="password" id="password" />
+				<br />
 				<input type="submit" />
 			</Form>
 			<Link href="/login">Sign in</Link>

@@ -42,9 +42,9 @@ const Page = () => {
 							username: formData.get("username"),
 							password: formData.get("password")
 						}),
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
+						headers: {
+							"Content-Type": "application/json"
+						},
 						redirect: "manual"
 					});
 

@@ -18,7 +18,7 @@ const handleSubmit = async (e: Event) => {
 			},
 			redirect: "manual"
 		});
-		invalidateUserState()
+		invalidateUserState();
 		await navigateTo("/"); // profile page
 	} catch (e) {
 		const { data: error } = e as {
@@ -33,11 +33,7 @@ const handleSubmit = async (e: Event) => {
 
 <template>
 	<h1>Sign in</h1>
-	<form
-		method="post"
-		action="/api/login"
-		@submit.prevent="handleSubmit"
-	>
+	<form method="post" action="/api/login" @submit.prevent="handleSubmit">
 		<label for="username">Username</label>
 		<input name="username" id="username" /><br />
 		<label for="password">Password</label>

@@ -1,23 +1,23 @@
 {
-  "name": "username-and-password",
-  "type": "module",
-  "version": "0.0.1",
-  "scripts": {
-    "migrate": "tsx migration/index.ts",
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "@astrojs/node": "^5.3.0",
-    "@lucia-auth/adapter-sqlite": "latest",
-    "astro": "^2.7.2",
-    "lucia": "latest"
-  },
-  "devDependencies": {
-    "@types/better-sqlite3": "^7.6.3",
-    "tsx": "^3.12.6"
-  }
+	"name": "username-and-password",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"migrate": "tsx migration/index.ts",
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro"
+	},
+	"dependencies": {
+		"@astrojs/node": "^5.3.0",
+		"@lucia-auth/adapter-sqlite": "latest",
+		"astro": "^2.7.2",
+		"lucia": "latest"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.3",
+		"tsx": "^3.12.6"
+	}
 }
