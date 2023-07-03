@@ -63,15 +63,24 @@ Create `pages/signup.astro` and a form with inputs for username and password
 // src/pages/signup.astro
 ---
 
-<h1>Sign up</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" /><br />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" /><br />
-	<input type="submit" />
-</form>
-<a href="/login">Sign in</a>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+	</head>
+	<body>
+		<h1>Sign up</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<a href="/login">Sign in</a>
+	</body>
+</html>
 ```
 
 ### Create users
@@ -100,7 +109,7 @@ if (Astro.request.method === "POST") {
 		username.length >= 4 &&
 		username.length <= 31;
 	const validPassword =
-		typeof username === "string" &&
+		typeof password === "string" &&
 		password.length >= 6 &&
 		password.length <= 255;
 	if (validUsername && validPassword) {
@@ -160,7 +169,7 @@ Authenticated users should be redirected to the profile page whenever they try t
 ```astro
 ---
 // src/pages/signup.astro
-import { auth } from "./lucia.js";
+import { auth } from "../lib/lucia";
 
 if (Astro.request.method === "POST") {
 	// ...
@@ -180,15 +189,24 @@ Create `src/pages/login.astro` and also add a form with inputs for username and 
 // src/pages/login.astro
 ---
 
-<h1>Sign in</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" /><br />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" /><br />
-	<input type="submit" />
-</form>
-<a href="/signup">Create an account</a>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+	</head>
+	<body>
+		<h1>Sign in</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<a href="/signup">Create an account</a>
+	</body>
+</html>
 ```
 
 ### Authenticate users
@@ -200,7 +218,7 @@ The key we created for the user allows us to get the user via their username, an
 ```astro
 ---
 // src/pages/login.astro
-import { auth } from "./lucia.js";
+import { auth } from "../lib/lucia";
 import { LuciaError } from "lucia";
 
 let errorMessage: string | null = null;
@@ -216,7 +234,7 @@ if (Astro.request.method === "POST") {
 		username.length >= 4 &&
 		username.length <= 31;
 	const validPassword =
-		typeof username === "string" &&
+		typeof password === "string" &&
 		password.length >= 6 &&
 		password.length <= 255;
 	if (validUsername && validPassword) {
@@ -255,7 +273,7 @@ As we did in the sign up page, redirect authenticated users to the profile page.
 ```astro
 ---
 // src/pages/login.astro
-import { auth } from "./lucia.js";
+import { auth } from "../lib/lucia";
 
 if (Astro.request.method === "POST") {
 	// ...
@@ -275,18 +293,25 @@ Unauthenticated users should be redirected to the login page. The user object is
 ```astro
 ---
 // src/pages/index.astro
-import { auth } from "./lucia.js";
-
 const session = await Astro.locals.auth.validate();
 if (!session) return Astro.redirect("/login", 302);
 ---
 
-<h1>Profile</h1>
-<p>User id: {session.user.userId}</p>
-<p>Username: {session.user.username}</p>
-<form method="post" action="/logout">
-	<input type="submit" value="Sign out" />
-</form>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+	</head>
+	<body>
+		<h1>Profile</h1>
+		<p>User id: {session.user.userId}</p>
+		<p>Username: {session.user.username}</p>
+		<form method="post" action="/logout">
+			<input type="submit" value="Sign out" />
+		</form>
+	</body>
+</html>
 ```
 
 ### Sign out users
@@ -297,7 +322,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 
 ```ts
 // src/pages/logout.ts
-import { auth } from "./lucia.js";
+import { auth } from "../lib/lucia";
 
 import type { APIRoute } from "astro";
 
@@ -312,6 +337,6 @@ export const post: APIRoute = async (context) => {
 	await auth.invalidateSession(session.sessionId);
 	// delete session cookie
 	context.locals.auth.setSession(null);
-	return Astro.redirect("/login", 302);
+	return context.redirect("/login", 302);
 };
 ```

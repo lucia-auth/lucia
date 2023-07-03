@@ -3,6 +3,6 @@
 </script>
 
 <svelte:head>
-	<title>Username & password with Lucia</title>
+	<title>Username & password auth with Lucia</title>
 </svelte:head>
 <slot />
