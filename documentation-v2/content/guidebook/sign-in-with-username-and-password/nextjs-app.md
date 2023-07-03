@@ -95,7 +95,7 @@ const Form = ({
 }) => {
 	const router = useRouter();
 	return (
-		<form
+		<Form
 			action={action}
 			method="post"
 			onSubmit={async (e) => {
@@ -107,13 +107,13 @@ const Form = ({
 					redirect: "manual"
 				});
 
-				if (response.ok) {
+				if (response.status === 0 || response.ok) {
 					router.push(successRedirect);
 				}
 			}}
 		>
 			{children}
-		</form>
+		</Form>
 	);
 };
 
@@ -126,19 +126,17 @@ Create `app/signup/page.tsx` and add a form with inputs for username and passwor
 
 ```tsx
 // app/signup/page.tsx
-import { auth } from "@/auth/lucia";
-
 import Form from "@/components/form";
-import Link from 'next/link'
+import Link from "next/link";
 
 const Page = async () => {
 	return (
 		<>
 			<h1>Sign up</h1>
 			<Form action="/api/signup" successRedirect="/">
-				<label for="username">Username</label>
+				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
-				<label for="password">Password</label>
+				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</Form>
@@ -287,7 +285,7 @@ const Page = async () => {
 		cookies
 	});
 	const session = await authRequest.validate();
-	if (session) redirect(302, "/");
+	if (session) redirect("/");
 	// ...
 };
 
@@ -300,19 +298,17 @@ Create `app/login/page.tsx` and also add a form with inputs for username and pas
 
 ```tsx
 // app/login/page.tsx
-import { auth } from "@/auth/lucia";
-
 import Form from "@/components/form";
-import Link from 'next/link'
+import Link from "next/link";
 
 const Page = async () => {
 	return (
 		<>
 			<h1>Sign in</h1>
 			<Form action="/api/login" successRedirect="/">
-				<label for="username">Username</label>
+				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
-				<label for="password">Password</label>
+				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</Form>
@@ -335,6 +331,7 @@ The key we created for the user allows us to get the user via their username, an
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { LuciaError } from "lucia";
 
 import type { NextRequest } from "next/server";
 
@@ -345,7 +342,7 @@ export const POST = async (request: NextRequest) => {
 	// basic check
 	if (
 		typeof username !== "string" ||
-		username.length < 4 ||
+		username.length <  ||
 		username.length > 31
 	) {
 		return NextResponse.json(
@@ -359,7 +356,7 @@ export const POST = async (request: NextRequest) => {
 	}
 	if (
 		typeof password !== "string" ||
-		password.length < 6 ||
+		password.length < 1 ||
 		password.length > 255
 	) {
 		return NextResponse.json(
@@ -428,6 +425,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
+import Link from "next/link";
 
 const Page = async () => {
 	const authRequest = auth.handleRequest({
@@ -435,7 +433,7 @@ const Page = async () => {
 		cookies
 	});
 	const session = await authRequest.validate();
-	if (session) redirect(302, "/");
+	if (session) redirect("/");
 	// ...
 };
 
@@ -462,15 +460,15 @@ const Page = async () => {
 		cookies
 	});
 	const session = await authRequest.validate();
-	if (!session) redirect(302, "/login");
+	if (!session) redirect("/login");
 	return (
 		<>
 			<h1>Profile</h1>
 			<p>User id: {session.user.userId}</p>
 			<p>Username: {session.user.username}</p>
-			<form action="/api/logout" successRedirect="/">
+			<Form action="/api/logout" successRedirect="/">
 				<input type="submit" value="Sign out" />
-			</form>
+			</Form>
 		</>
 	);
 };
@@ -509,7 +507,7 @@ export const POST = async (request: NextRequest) => {
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);
 	// delete session cookie
-	context.locals.auth.setSession(null);
+	authRequest.setSession(null);
 	return new Response(null, {
 		status: 302,
 		headers: {

@@ -62,7 +62,7 @@ Create `pages/signup.tsx` and add a form with inputs for username and password. 
 import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
-import Link from 'next/link'
+import Link from "next/link";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
@@ -88,14 +88,14 @@ const Page = () => {
 						body: formData,
 						redirect: "manual"
 					});
-					if (response.ok) {
+					if (response.status === 0 || response.ok) {
 						router.push("/"); // redirect to profile page on success
 					}
 				}}
 			>
-				<label for="username">Username</label>
+				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
-				<label for="password">Password</label>
+				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</form>
@@ -208,6 +208,8 @@ Authenticated users should be redirected to the profile page whenever they try t
 import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
+import Link from "next/link";
+
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 export const getServerSideProps = async (
@@ -244,7 +246,7 @@ Create `pages/login.tsx` and also add a form with inputs for username and passwo
 import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
-import Link from 'next/link'
+import Link from "next/link";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
@@ -271,14 +273,14 @@ const Page = () => {
 						redirect: "manual"
 					});
 
-					if (response.ok) {
+					if (response.status === 0 || response.ok) {
 						router.push("/"); // redirect to profile page on success
 					}
 				}}
 			>
-				<label for="username">Username</label>
+				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
-				<label for="password">Password</label>
+				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</form>
@@ -299,6 +301,7 @@ The key we created for the user allows us to get the user via their username, an
 ```ts
 // pages/api/login.ts
 import { auth } from "../../auth/lucia";
+import { LuciaError } from "lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -311,7 +314,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	// basic check
 	if (
 		typeof username !== "string" ||
-		username.length < 4 ||
+		username.length < 1 ||
 		username.length > 31
 	) {
 		return res.status(400).json({
@@ -320,7 +323,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 	if (
 		typeof password !== "string" ||
-		password.length < 6 ||
+		password.length < 1 ||
 		password.length > 255
 	) {
 		return res.status(400).json({
@@ -365,6 +368,9 @@ As we did in the sign up page, redirect authenticated users to the profile page.
 ```ts
 // pages/login.tsx
 import { auth } from "../auth/lucia";
+
+import Link from "next/link";
+
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 export const getServerSideProps = async (
@@ -437,7 +443,7 @@ const Page = (
 						method: "POST",
 						redirect: "manual"
 					});
-					if (response.ok) {
+					if (response.status === 0 || response.ok) {
 						router.push("/login"); // redirect to login page on success
 					}
 				}}
@@ -526,7 +532,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);
 	// delete session cookie
-	context.locals.auth.setSession(null);
+	authRequest.setSession(null);
 	return res.redirect(302, "/login");
 };
 ```

@@ -65,7 +65,10 @@ const handleSubmit = async (e: Event) => {
 	const formData = new FormData(e.target);
 	await $fetch("/api/signup", {
 		method: "POST",
-		body: formData,
+		body: {
+			username: formData.get("username"),
+			password: formData.get("password")
+		},
 		redirect: "manual" // ignore redirect responses
 	});
 	await navigateTo("/"); // profile page
@@ -74,12 +77,7 @@ const handleSubmit = async (e: Event) => {
 
 <template>
 	<h1>Sign up</h1>
-	<form
-		method="post"
-		action="/api/signup"
-		@submit.prevent="handleSubmit"
-		enctype="multipart/form-data"
-	>
+	<form method="post" action="/api/signup" @submit.prevent="handleSubmit">
 		<label for="username">Username</label>
 		<input name="username" id="username" />
 		<label for="password">Password</label>
@@ -101,13 +99,10 @@ After successfully creating a user, we'll create a new session with [`Auth.creat
 ```ts
 // server/api/signup.post.ts
 export default defineEventHandler(async (event) => {
-	const multiPartData = await readMultipartFormData(event);
-	const username =
-		multiPartData?.find((data) => data.name === "username")?.data.toString() ??
-		null;
-	const password =
-		multiPartData?.find((data) => data.name === "password")?.data.toString() ??
-		null;
+	const { username, password } = await readBody<{
+		username: unknown;
+		password: unknown;
+	}>(event);
 	// basic check
 	if (
 		typeof username !== "string" ||
@@ -192,7 +187,10 @@ const handleSubmit = async (e: Event) => {
 	const formData = new FormData(e.target);
 	await $fetch("/api/login", {
 		method: "POST",
-		body: formData,
+		body: {
+			username: formData.get("username"),
+			password: formData.get("password")
+		},
 		redirect: "manual" // ignore redirect responses
 	});
 	await navigateTo("/"); // profile page
@@ -228,21 +226,26 @@ The key we created for the user allows us to get the user via their username, an
 import { LuciaError } from "lucia";
 
 export default defineEventHandler(async (event) => {
-	const multiPartData = await readMultipartFormData(event);
-	const username =
-		multiPartData?.find((data) => data.name === "username")?.data.toString() ??
-		null;
-	const password =
-		multiPartData?.find((data) => data.name === "password")?.data.toString() ??
-		null;
+	const { username, password } = await readBody<{
+		username: unknown;
+		password: unknown;
+	}>(event);
 	// basic check
-	if (typeof username !== "string" || username.length > 31) {
+	if (
+		typeof username !== "string" ||
+		username.length < 1 ||
+		username.length > 31
+	) {
 		throw createError({
 			message: "Invalid username",
 			statusCode: 400
 		});
 	}
-	if (typeof password !== "string" || password.length > 255) {
+	if (
+		typeof password !== "string" ||
+		password.length < 1 ||
+		password.length > 255
+	) {
 		throw createError({
 			message: "Invalid password",
 			statusCode: 400
@@ -418,12 +421,7 @@ const handleSubmit = async (e: Event) => {
 	<h1>Profile</h1>
 	<p>User id: {{ user.userId }}</p>
 	<p>Username: {{ user.username }}</p>
-	<form
-		method="post"
-		action="/api/logout"
-		@submit.prevent="handleSubmit"
-		enctype="multipart/form-data"
-	>
+	<form method="post" action="/api/logout" @submit.prevent="handleSubmit">
 		<input type="submit" value="Sign out" />
 	</form>
 </template>

@@ -18,7 +18,7 @@ export const actions: Actions = {
 		// basic check
 		if (
 			typeof username !== "string" ||
-			username.length < 4 ||
+			username.length < 1 ||
 			username.length > 31
 		) {
 			return fail(400, {
@@ -27,7 +27,7 @@ export const actions: Actions = {
 		}
 		if (
 			typeof password !== "string" ||
-			password.length < 6 ||
+			password.length < 1 ||
 			password.length > 255
 		) {
 			return fail(400, {

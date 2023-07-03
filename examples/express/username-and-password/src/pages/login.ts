@@ -24,7 +24,11 @@ export const renderLogin = (params: { error?: string; username?: string }) => {
 export const loginAction: Handler = async (req, res) => {
 	const { username, password } = req.body;
 	// basic check
-	if (typeof username !== "string" || username.length > 31) {
+	if (
+		typeof username !== "string" ||
+		password.length < 1 ||
+		username.length > 31
+	) {
 		const html = renderLogin({
 			error: "Invalid username",
 			username: typeof username === "string" ? username : ""
@@ -34,7 +38,11 @@ export const loginAction: Handler = async (req, res) => {
 			.setHeader("Content-Type", "text/html; charset=utf-8")
 			.send(html);
 	}
-	if (typeof password !== "string" || password.length > 255) {
+	if (
+		typeof password !== "string" ||
+		password.length < 1 ||
+		password.length > 255
+	) {
 		const html = renderLogin({
 			error: "Invalid password",
 			username
