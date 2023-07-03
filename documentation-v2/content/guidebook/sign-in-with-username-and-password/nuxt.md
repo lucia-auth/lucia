@@ -86,6 +86,7 @@ const handleSubmit = async (e: Event) => {
 		<input type="password" name="password" id="password" />
 		<input type="submit" />
 	</form>
+	<NuxtLink to="/login">Sign in</NuxtLink>
 </template>
 ```
 
@@ -212,6 +213,7 @@ const handleSubmit = async (e: Event) => {
 		<input type="password" name="password" id="password" />
 		<input type="submit" />
 	</form>
+	<NuxtLink to="/signup">Create an account</NuxtLink>
 </template>
 ```
 

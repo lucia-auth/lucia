@@ -76,6 +76,7 @@ Create `routes/signup/+page.svelte`. It will have a form with inputs for usernam
 	<input type="password" name="password" id="password" />
 	<input type="submit" />
 </form>
+<a href="/login">Sign in</a>
 ```
 
 ### Create users
@@ -206,6 +207,7 @@ Create `routes/login/+page.svelte`. It will also have a form with inputs for use
 	<input type="password" name="password" id="password" />
 	<input type="submit" />
 </form>
+<a href="/signup">Create an account</a>
 ```
 
 ### Authenticate users

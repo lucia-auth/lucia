@@ -62,6 +62,8 @@ Create `pages/signup.tsx` and add a form with inputs for username and password. 
 import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
+import Link from 'next/link'
+
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 export const getServerSideProps = async (
@@ -97,6 +99,7 @@ const Page = () => {
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</form>
+			<Link href="/login">Sign in</Link>
 		</>
 	);
 };
@@ -241,6 +244,8 @@ Create `pages/login.tsx` and also add a form with inputs for username and passwo
 import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
+import Link from 'next/link'
+
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 export const getServerSideProps = async (
@@ -277,6 +282,7 @@ const Page = () => {
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</form>
+			<Link href="/signup">Create an account</Link>
 		</>
 	);
 };

@@ -79,6 +79,7 @@ Create `signup.html` and add a form with inputs for username and password
 	<input type="password" name="password" id="password" />
 	<input type="submit" />
 </form>
+<a href="/login">Sign in</a>
 ```
 
 ### Create users
@@ -193,6 +194,7 @@ Create `login.html` and add a form with inputs for username and password.
 	<input type="password" name="password" id="password" />
 	<input type="submit" />
 </form>
+<a href="/signup">Create an account</a>
 ```
 
 ### Authenticate users

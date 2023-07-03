@@ -129,6 +129,7 @@ Create `app/signup/page.tsx` and add a form with inputs for username and passwor
 import { auth } from "@/auth/lucia";
 
 import Form from "@/components/form";
+import Link from 'next/link'
 
 const Page = async () => {
 	return (
@@ -141,6 +142,7 @@ const Page = async () => {
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</Form>
+			<Link href="/login">Sign in</Link>
 		</>
 	);
 };
@@ -301,6 +303,7 @@ Create `app/login/page.tsx` and also add a form with inputs for username and pas
 import { auth } from "@/auth/lucia";
 
 import Form from "@/components/form";
+import Link from 'next/link'
 
 const Page = async () => {
 	return (
@@ -313,6 +316,7 @@ const Page = async () => {
 				<input type="password" name="password" id="password" />
 				<input type="submit" />
 			</Form>
+			<Link href="/signup">Create an account</Link>
 		</>
 	);
 };
