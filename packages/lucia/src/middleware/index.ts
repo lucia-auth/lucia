@@ -210,26 +210,26 @@ type NextJsPagesServerContext = {
 	res: OutgoingMessage;
 };
 
-type NextJsCookie =
+type NextCookie =
 	| {
 			name: string;
 			value: string;
 	  }
 	| undefined;
 
-type RequestCookies = {
-	set?: (name: string, value: string, options: CookieAttributes) => void;
-	get: (name: string) => NextJsCookie;
+type NextCookiesFunction = () => {
+	set: (name: string, value: string, options: CookieAttributes) => void;
+	get: (name: string) => NextCookie;
 };
 
 type NextRequest = Request & {
 	cookies: {
-		get: (name: string) => NextJsCookie;
+		get: (name: string) => NextCookie;
 	};
 };
 
 type NextJsAppServerContext = {
-	cookies: () => RequestCookies;
+	cookies: NextCookiesFunction;
 	request: NextRequest | null;
 };
 
