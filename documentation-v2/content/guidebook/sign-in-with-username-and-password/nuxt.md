@@ -12,6 +12,16 @@ This guide will cover how to implement a simple username and password authentica
 - A sign in page
 - A profile page with a logout button
 
+### Clone project
+
+You can get started immediately by cloning the Nuxt example from the repository.
+
+```
+npx degit pilcrowonpaper/lucia/examples/nuxt/username-and-password <directory_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/username-and-password).
+
 ## Update your database
 
 Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type that's unique.
