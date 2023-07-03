@@ -9,26 +9,24 @@
 				margin-top: 0.5rem;
 				margin-bottom: 0.5rem;
 			}
-			main {
-				margin: 2rem;
+			body {
+				padding: 2rem;
 			}
 			.error {
 				color: red;
 			}
 		</style>
 	</head>
-	<body class="text-base leading-relaxed text-zinc-700">
-		<main>
-			<h1>Sign in</h1>
-			<form method="post">
-				<label for="username">Username</label>
-				<input name="username" id="username" value="%%username%%" /><br />
-				<label for="password">Password</label>
-				<input type="password" name="password" id="password" /><br />
-				<input type="submit" value="Continue" />
-			</form>
-			<p class="error">%%error%%</p>
-			<a href="/signup">Create an account</a>
-		</main>
+	<body>
+		<h1>Sign in</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" value="%%username%%" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" value="Continue" />
+		</form>
+		<p class="error">%%error%%</p>
+		<a href="/signup">Create an account</a>
 	</body>
 </html>

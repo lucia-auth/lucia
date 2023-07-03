@@ -92,7 +92,7 @@ After successfully creating a user, we'll create a new session with [`Auth.creat
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
 
-import type { PageServerLoad, Actions } from "./$types";
+import type { Actions } from "./$types";
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -222,7 +222,7 @@ import { auth } from "$lib/server/lucia";
 import { LuciaError } from "lucia";
 import { fail, redirect } from "@sveltejs/kit";
 
-import type { PageServerLoad, Actions } from "./$types";
+import type { Actions } from "./$types";
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -294,6 +294,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (session) throw redirect(302, "/");
 	return {};
 };
+
+export const actions: Actions = {
+	// ...
+};
 ```
 
 ## Profile page
@@ -331,7 +335,7 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
-	if (!session.user) throw redirect(302, "/login");
+	if (!session) throw redirect(302, "/login");
 	return {
 		userId: session.user.userId,
 		username: session.user.username
@@ -350,7 +354,11 @@ When logging out users, it's critical that you invalidate the user's session. Th
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
 
-import type { PageServerLoad, Actions } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ locals }) => {
+	// ...
+};
 
 export const actions: Actions = {
 	logout: async ({ locals }) => {
