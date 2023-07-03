@@ -248,12 +248,12 @@ export const nextjs = (): Middleware<
 			const request =
 				"request" in serverContext ? serverContext.request : serverContext;
 
-			const cookieStore =
+			const readonlyCookieStore =
 				typeof serverContext.cookies === "function"
 					? serverContext.cookies()
 					: serverContext.cookies;
 
-			const sessionCookie = cookieStore.get(cookieName)?.value ?? null;
+			const sessionCookie = readonlyCookieStore.get(cookieName)?.value ?? null;
 
 			const requestContext = {
 				request: {
@@ -267,14 +267,11 @@ export const nextjs = (): Middleware<
 					storedSessionCookie: sessionCookie
 				},
 				setCookie: (cookie) => {
-					if (!("set" in cookieStore) || !cookieStore.set) return;
+					if (typeof serverContext.cookies !== "function") return;
+					const cookieStore = serverContext.cookies();
+					if (!cookieStore.set) return;
 					try {
-						if (typeof serverContext.cookies === "function") {
-							const cookieSet = serverContext.cookies().set;
-							cookieSet
-								? cookieSet(cookie.name, cookie.value, cookie.attributes)
-								: null;
-						}
+						cookieStore.set(cookie.name, cookie.value, cookie.attributes);
 					} catch {
 						// ignore - set() is not available
 					}
