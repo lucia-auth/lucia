@@ -49,6 +49,8 @@ export const auth = lucia({
 		expires: false
 	}
 });
+
+export type Auth = typeof auth;
 ```
 
 We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
@@ -72,6 +74,8 @@ export const auth = lucia({
 		};
 	}
 });
+
+export type Auth = typeof auth;
 ```
 
 ## Form component
@@ -136,8 +140,10 @@ const Page = async () => {
 			<Form action="/api/signup" successRedirect="/">
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
+				<br />
 				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
+				<br />
 				<input type="submit" />
 			</Form>
 			<Link href="/login">Sign in</Link>
@@ -308,8 +314,10 @@ const Page = async () => {
 			<Form action="/api/login" successRedirect="/">
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
+				<br />
 				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
+				<br />
 				<input type="submit" />
 			</Form>
 			<Link href="/signup">Create an account</Link>

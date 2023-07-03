@@ -1,5 +1,6 @@
 {
 	"name": "username-and-example",
+	"description": "Username & password example with Lucia and Nuxt",
 	"private": true,
 	"scripts": {
 		"build": "nuxt build",

@@ -51,6 +51,8 @@ export const auth = lucia({
 		};
 	}
 });
+
+export type Auth = typeof auth;
 ```
 
 ## Sign up page
@@ -79,9 +81,9 @@ const handleSubmit = async (e: Event) => {
 	<h1>Sign up</h1>
 	<form method="post" action="/api/signup" @submit.prevent="handleSubmit">
 		<label for="username">Username</label>
-		<input name="username" id="username" />
+		<input name="username" id="username" /><br />
 		<label for="password">Password</label>
-		<input type="password" name="password" id="password" />
+		<input type="password" name="password" id="password" /><br />
 		<input type="submit" />
 	</form>
 	<NuxtLink to="/login">Sign in</NuxtLink>
@@ -206,9 +208,9 @@ const handleSubmit = async (e: Event) => {
 		enctype="multipart/form-data"
 	>
 		<label for="username">Username</label>
-		<input name="username" id="username" />
+		<input name="username" id="username" /><br />
 		<label for="password">Password</label>
-		<input type="password" name="password" id="password" />
+		<input type="password" name="password" id="password" /><br />
 		<input type="submit" />
 	</form>
 	<NuxtLink to="/signup">Create an account</NuxtLink>

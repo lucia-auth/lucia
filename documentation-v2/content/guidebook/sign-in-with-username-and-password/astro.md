@@ -50,6 +50,8 @@ export const auth = lucia({
 		};
 	}
 });
+
+export type Auth = typeof auth;
 ```
 
 ## Sign up page
@@ -64,9 +66,9 @@ Create `pages/signup.astro` and a form with inputs for username and password
 <h1>Sign up</h1>
 <form method="post">
 	<label for="username">Username</label>
-	<input name="username" id="username" />
+	<input name="username" id="username" /><br />
 	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
+	<input type="password" name="password" id="password" /><br />
 	<input type="submit" />
 </form>
 <a href="/login">Sign in</a>
@@ -181,9 +183,9 @@ Create `src/pages/login.astro` and also add a form with inputs for username and 
 <h1>Sign in</h1>
 <form method="post">
 	<label for="username">Username</label>
-	<input name="username" id="username" />
+	<input name="username" id="username" /><br />
 	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
+	<input type="password" name="password" id="password" /><br />
 	<input type="submit" />
 </form>
 <a href="/signup">Create an account</a>

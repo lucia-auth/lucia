@@ -1,4 +1,4 @@
-# Username & password example with Lucia and Next.js App Router
+# Username & password example with Lucia and Next.js Pages Router
 
 This example uses `better-sqlite3`.
 

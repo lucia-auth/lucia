@@ -56,6 +56,8 @@ export const auth = lucia({
 		};
 	}
 });
+
+export type Auth = typeof auth;
 ```
 
 ## Sign up page
@@ -71,9 +73,9 @@ Create `routes/signup/+page.svelte`. It will have a form with inputs for usernam
 <h1>Sign up</h1>
 <form method="post" use:enhance>
 	<label for="username">Username</label>
-	<input name="username" id="username" />
+	<input name="username" id="username" /><br />
 	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
+	<input type="password" name="password" id="password" /><br />
 	<input type="submit" />
 </form>
 <a href="/login">Sign in</a>
@@ -202,9 +204,9 @@ Create `routes/login/+page.svelte`. It will also have a form with inputs for use
 <h1>Sign in</h1>
 <form method="post" use:enhance>
 	<label for="username">Username</label>
-	<input name="username" id="username" />
+	<input name="username" id="username" /><br />
 	<label for="password">Password</label>
-	<input type="password" name="password" id="password" />
+	<input type="password" name="password" id="password" /><br />
 	<input type="submit" />
 </form>
 <a href="/signup">Create an account</a>

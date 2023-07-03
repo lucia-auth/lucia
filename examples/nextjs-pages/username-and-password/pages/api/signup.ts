@@ -1,29 +1,31 @@
+import { auth } from "@/auth/lucia";
 import { SqliteError } from "better-sqlite3";
 
-export default defineEventHandler(async (event) => {
-	const { username, password } = await readBody<{
+import type { NextApiRequest, NextApiResponse } from "next";
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+	if (req.method !== "POST") return res.status(405);
+	const { username, password } = req.body as {
 		username: unknown;
 		password: unknown;
-	}>(event);
+	};
 	// basic check
 	if (
 		typeof username !== "string" ||
-		username.length < 4 ||
+		username.length < 1 ||
 		username.length > 31
 	) {
-		throw createError({
-			message: "Invalid username",
-			statusCode: 400
+		return res.status(400).json({
+			error: "Invalid username"
 		});
 	}
 	if (
 		typeof password !== "string" ||
-		password.length < 6 ||
+		password.length < 1 ||
 		password.length > 255
 	) {
-		throw createError({
-			message: "Invalid password",
-			statusCode: 400
+		return res.status(400).json({
+			error: "Invalid password"
 		});
 	}
 	try {
@@ -41,20 +43,24 @@ export default defineEventHandler(async (event) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest(event);
+		const authRequest = auth.handleRequest({
+			req,
+			res
+		});
 		authRequest.setSession(session);
-		return sendRedirect(event, "/"); // redirect to profile page
+		return res.redirect(302, "/"); // profile page
 	} catch (e) {
 		// check for unique constraint error in user table
 		if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
-			throw createError({
-				message: "Username already taken",
-				statusCode: 400
+			return res.status(400).json({
+				error: "Username already taken"
 			});
 		}
-		throw createError({
-			message: "An unknown error occurred",
-			statusCode: 500
+
+		return res.status(500).json({
+			error: "An unknown error occurred"
 		});
 	}
-});
+};
+
+export default handler;

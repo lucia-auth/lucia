@@ -14,7 +14,11 @@ export const auth = lucia({
 	}),
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
 	middleware: nextjs(),
-	sessionCookie: {
-		expires: false
+    getUserAttributes: (data) => {
+		return {
+			username: data.username
+		};
 	}
 });
+
+export type Auth = typeof auth;

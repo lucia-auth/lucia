@@ -1,5 +1,6 @@
 {
 	"name": "username-and-password",
+	"description": "Username & password example with Lucia and SvelteKit",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {

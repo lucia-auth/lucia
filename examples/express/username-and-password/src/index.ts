@@ -14,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", async (req, res) => {
 	const authRequest = auth.handleRequest(req, res);
 	const session = await authRequest.validate();
-	console.log(session);
 	if (!session) {
 		// redirect to login page
 		return res.status(302).setHeader("Location", "/login").end();

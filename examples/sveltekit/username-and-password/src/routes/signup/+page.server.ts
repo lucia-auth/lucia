@@ -51,7 +51,6 @@ export const actions: Actions = {
 			});
 			locals.auth.setSession(session); // set session cookie
 		} catch (e) {
-			// this part depends on the database you're using
 			// check for unique constraint error in user table
 			if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
 				return fail(400, {

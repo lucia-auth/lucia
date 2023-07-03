@@ -1,6 +1,6 @@
 {
   "name": "username-and-password",
-  "description": "Username & password example with Lucia and Next.js App Router",
+  "description": "Username & password example with Lucia and Next.js Pages Router",
   "version": "0.1.0",
   "private": true,
   "scripts": {

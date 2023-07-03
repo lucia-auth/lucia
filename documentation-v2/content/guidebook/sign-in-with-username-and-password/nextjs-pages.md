@@ -51,6 +51,8 @@ export const auth = lucia({
 		};
 	}
 });
+
+export type Auth = typeof auth;
 ```
 
 ## Sign up page
@@ -59,18 +61,9 @@ Create `pages/signup.tsx` and add a form with inputs for username and password. 
 
 ```tsx
 // pages/signup.tsx
-import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
 import Link from "next/link";
-
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	// TODO
-};
 
 const Page = () => {
 	const router = useRouter();
@@ -85,7 +78,13 @@ const Page = () => {
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/signup", {
 						method: "POST",
-						body: formData,
+						body: JSON.stringify({
+							username: formData.get("username"),
+							password: formData.get("password")
+						}),
+						headers: {
+							"Content-Type": "application/json"
+						},
 						redirect: "manual"
 					});
 					if (response.status === 0 || response.ok) {
@@ -95,8 +94,10 @@ const Page = () => {
 			>
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
+				<br />
 				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
+				<br />
 				<input type="submit" />
 			</form>
 			<Link href="/login">Sign in</Link>
@@ -117,11 +118,11 @@ After successfully creating a user, we'll create a new session with [`Auth.creat
 
 ```ts
 // pages/api/signup.ts
-import { auth } from "../../auth/lucia";
+import { auth } from "@/auth/lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
 	const { username, password } = req.body as {
 		username: unknown;
@@ -184,6 +185,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 	}
 };
+
+export default handler;
 ```
 
 #### Error handling
@@ -205,8 +208,8 @@ Authenticated users should be redirected to the profile page whenever they try t
 
 ```tsx
 // pages/signup.tsx
-import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
+import { auth } from "@/auth/lucia";
 
 import Link from "next/link";
 
@@ -243,18 +246,9 @@ Create `pages/login.tsx` and also add a form with inputs for username and passwo
 
 ```tsx
 // pages/login.tsx
-import { auth } from "../auth/lucia";
 import { useRouter } from "next/router";
 
 import Link from "next/link";
-
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	// TODO
-};
 
 const Page = () => {
 	const router = useRouter();
@@ -269,7 +263,13 @@ const Page = () => {
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/login", {
 						method: "POST",
-						body: formData,
+						body: JSON.stringify({
+							username: formData.get("username"),
+							password: formData.get("password")
+						}),
+						headers: {
+							"Content-Type": "application/json"
+						},
 						redirect: "manual"
 					});
 
@@ -280,8 +280,10 @@ const Page = () => {
 			>
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
+				<br />
 				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
+				<br />
 				<input type="submit" />
 			</form>
 			<Link href="/signup">Create an account</Link>
@@ -300,12 +302,12 @@ The key we created for the user allows us to get the user via their username, an
 
 ```ts
 // pages/api/login.ts
-import { auth } from "../../auth/lucia";
+import { auth } from "@/auth/lucia";
 import { LuciaError } from "lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
 	const { username, password } = req.body as {
 		username: unknown;
@@ -359,6 +361,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 	}
 };
+
+export default handler;
 ```
 
 ### Redirect authenticated users
@@ -367,7 +371,7 @@ As we did in the sign up page, redirect authenticated users to the profile page.
 
 ```ts
 // pages/login.tsx
-import { auth } from "../auth/lucia";
+import { auth } from "@/auth/lucia";
 
 import Link from "next/link";
 
@@ -400,70 +404,13 @@ export default Page;
 
 ## Profile page
 
-Create `pages/index.tsx`. This page will show some basic user info and include a logout button. Expect TS errors for now since we haven't defined `getServerSideProps()` yet.
-
-```tsx
-// pages/index.tsx
-import { auth } from "../auth/lucia";
-import { useRouter } from "next/router";
-
-import type {
-	GetServerSidePropsContext,
-	GetServerSidePropsResult,
-	InferGetServerSidePropsType
-} from "next";
-
-// expect error for now
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<
-	GetServerSidePropsResult<{
-		userId: string;
-		username: string;
-	}>
-> => {
-	// TODO
-};
-
-const Page = (
-	props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
-	return (
-		<>
-			<h1>Profile</h1>
-			<p>User id: {props.userId}</p>
-			<p>Username: {props.username}</p>
-			<form
-				method="post"
-				action="/api/logout"
-				onSubmit={async (e) => {
-					e.preventDefault();
-					const formData = new FormData(e.currentTarget);
-					const response = await fetch("/api/logout", {
-						method: "POST",
-						redirect: "manual"
-					});
-					if (response.status === 0 || response.ok) {
-						router.push("/login"); // redirect to login page on success
-					}
-				}}
-			>
-				<input type="submit" value="Sign out" />
-			</form>
-		</>
-	);
-};
-
-export default Page;
-```
-
-### Get authenticated users
+Create `pages/index.tsx`. This page will show some basic user info and include a logout button.
 
 Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you’ll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
 
 ```tsx
 // pages/index.tsx
-import { auth } from "../auth/lucia";
+import { auth } from "@/auth/lucia";
 import { useRouter } from "next/router";
 
 import type {
@@ -501,7 +448,30 @@ export const getServerSideProps = async (
 const Page = (
 	props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-	// ...
+	const router = useRouter();
+	return (
+		<>
+			<h1>Profile</h1>
+			<p>User id: {props.userId}</p>
+			<p>Username: {props.username}</p>
+			<form
+				method="post"
+				action="/api/logout"
+				onSubmit={async (e) => {
+					e.preventDefault();
+					const response = await fetch("/api/logout", {
+						method: "POST",
+						redirect: "manual"
+					});
+					if (response.status === 0 || response.ok) {
+						router.push("/login"); // redirect to login page on success
+					}
+				}}
+			>
+				<input type="submit" value="Sign out" />
+			</form>
+		</>
+	);
 };
 
 export default Page;
@@ -515,11 +485,11 @@ When logging out users, it's critical that you invalidate the user's session. Th
 
 ```ts
 // pages/api/logout.ts
-import { auth } from "../../auth/lucia";
+import { auth } from "@/auth/lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
 	const authRequest = auth.handleRequest({ req, res });
 	// check if user is authenticated
@@ -535,4 +505,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	authRequest.setSession(null);
 	return res.redirect(302, "/login");
 };
+
+export default handler;
 ```
