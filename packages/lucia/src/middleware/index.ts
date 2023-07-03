@@ -55,20 +55,28 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	return ({ args }) => {
-		const [request, response] = args;
+		const [req, res] = args;
+
+		const getUrl = () => {
+			if (!req.headers.host) return "";
+			const protocol = req.protocol;
+			const host = req.headers.host;
+			const pathname = req.path;
+			return `${protocol}://${host}${pathname}`;
+		};
 
 		const requestContext = {
 			request: {
-				url: `${request.protocol}://${request.hostname}${request.path}`,
-				method: request.method,
+				url: getUrl(),
+				method: req.method,
 				headers: {
-					origin: request.headers.origin ?? null,
-					cookie: request.headers.cookie ?? null,
-					authorization: request.headers.authorization ?? null
+					origin: req.headers.origin ?? null,
+					cookie: req.headers.cookie ?? null,
+					authorization: req.headers.authorization ?? null
 				}
 			},
 			setCookie: (cookie) => {
-				response.cookie(cookie.name, cookie.value, cookie.attributes);
+				res.cookie(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
 
