@@ -1,126 +1,99 @@
-import type { SessionAdapter } from "lucia-auth";
-import { test, end } from "../test.js";
-import { Database, type LuciaQueryHandler } from "../database.js";
-import { expectErrorMessage, isEmptyArray, isNull } from "../validate.js";
+import { start, finish, method, afterEach } from "../test.js";
+import assert from "node:assert/strict";
 
-const INVALID_INPUT = "INVALID_INPUT";
+import type { SessionSchema, SessionAdapter } from "lucia";
+import type { Database } from "../database.js";
 
 export const testSessionAdapter = async (
 	adapter: SessionAdapter,
-	queryHandler: LuciaQueryHandler,
-	endProcess = true
+	database: Database
 ) => {
-	const database = new Database(queryHandler);
-	const clearAll = database.clear;
-	await test("getSession()", "Return the correct session", async () => {
-		const session = database.user().session();
-		await session.commit();
-		const result = await adapter.getSession(session.value.id);
-		session.compare(result);
-		await clearAll();
+	const Session = database.session();
+
+	afterEach(database.clear);
+
+	start();
+
+	await method("getSession()", async (test) => {
+		await test("Returns target session", async () => {
+			const session = database.generateSession(null);
+			await Session.insert(session);
+			const sessionResult = await adapter.getSession(session.id);
+			assert.deepStrictEqual(sessionResult, session);
+		});
+		await test("Returns null if invalid target session id", async () => {
+			const session = await adapter.getSession("*");
+			assert.deepStrictEqual(session, null);
+		});
 	});
-	await test(
-		"getSession()",
-		"Return null if session id is invalid",
-		async () => {
-			const session = await adapter.getSession(INVALID_INPUT);
-			isNull(session);
-			await clearAll();
-		}
-	);
-	await test(
-		"getSessionsByUserId()",
-		"Return the correct session",
-		async () => {
-			const session1 = database.user().session();
-			await session1.commit();
-			const session2 = database.user().session();
-			await session2.commit();
-			const result = await adapter.getSessionsByUserId(session1.value.user_id);
-			session1.find(result);
-			await clearAll();
-		}
-	);
-	await test(
-		"getSessionsByUserId()",
-		"Returns an empty array if no sessions exist",
-		async () => {
-			const result = await adapter.getSessionsByUserId(INVALID_INPUT);
-			isEmptyArray(result);
-			await clearAll();
-		}
-	);
-	await test(
-		"setSession()",
-		"Insert a user's session into session table",
-		async () => {
-			const user = database.user();
-			await user.commit();
-			const session = user.session();
-			await adapter.setSession(session.value);
-			await session.exists();
-			await clearAll();
-		}
-	);
-	await test(
-		"deleteSessionsByUserId()",
-		"Delete a user's session from session table",
-		async () => {
-			const session1 = database.user().session();
-			await session1.commit();
-			const session2 = database.user().session();
-			await session2.commit();
-			await adapter.deleteSessionsByUserId(session1.value.user_id);
-			await session1.notExits();
-			await session2.exists();
-			await clearAll();
-		}
-	);
-	await test(
-		"deleteSession()",
-		"Delete a user's session from session table",
-		async () => {
-			const session1 = database.user().session();
-			await session1.commit();
-			const session2 = database.user().session();
-			await session2.commit();
-			await adapter.deleteSession(session1.value.id);
-			await session1.notExits();
-			await session2.exists();
-			await clearAll();
-		}
-	);
-	await test(
-		"setSession()",
-		"Throw AUTH_INVALID_USER_ID if user id doesn't exist",
-		async () => {
-			const session = database.user().session();
-			await expectErrorMessage(async () => {
-				await adapter.setSession(session.value);
-			}, "AUTH_INVALID_USER_ID");
-			await clearAll();
-		}
-	);
-	await test(
-		"setSession()",
-		"Throw AUTH_DUPLICATE_SESSION_ID if session id is already in use",
-		async () => {
-			const session1 = database.user().session();
-			await session1.commit();
-			const user = database.user();
-			await user.commit();
-			const session2 = user.session();
-			session2.update({
-				id: session1.value.id
+
+	await method("getSessionsByUserId()", async (test) => {
+		await test("Return sessions with target user id", async () => {
+			const user1 = database.generateUser();
+			const user2 = database.generateUser();
+			const session1 = database.generateSession(user1.id);
+			const session2 = database.generateSession(user2.id);
+			await Session.insert(session1);
+			await Session.insert(session2);
+			const result = await adapter.getSessionsByUserId(user1.id);
+			assert.deepStrictEqual(result, [session1]);
+		});
+		await test("Returns an empty array if none matches target", async () => {
+			const result = await adapter.getSessionsByUserId("*");
+			assert.deepStrictEqual(result, []);
+		});
+	});
+
+	await method("setSession()", async (test) => {
+		await test("Inserts session", async () => {
+			const session = database.generateSession(null);
+			await adapter.setSession(session);
+			const storedSession = await Session.get(session.id);
+			assert.deepStrictEqual(storedSession, session);
+		});
+	});
+
+	await method("deleteSession()", async (test) => {
+		await test("Deletes target session", async () => {
+			const user = database.generateUser();
+			const session1 = database.generateSession(user.id);
+			const session2 = database.generateSession(user.id);
+			await Session.insert(session1);
+			await Session.insert(session2);
+			await adapter.deleteSession(session1.id);
+			const storedSessions = await Session.getAll();
+			assert.deepStrictEqual(storedSessions, [session2]);
+		});
+	});
+
+	await method("deleteSessionsByUserId()", async (test) => {
+		await test("Deletes sessions with target user id", async () => {
+			const user1 = database.generateUser();
+			const user2 = database.generateUser();
+			const session1 = database.generateSession(user1.id);
+			const session2 = database.generateSession(user2.id);
+			await Session.insert(session1, session2);
+			await adapter.deleteSessionsByUserId(user1.id);
+			const storedSessions = await Session.getAll();
+			assert.deepStrictEqual(storedSessions, [session2]);
+		});
+	});
+
+	await method("updateSession()", async (test) => {
+		await test("Updates session 'country' field", async () => {
+			const session = database.generateSession(null);
+			await Session.insert(session);
+			await adapter.updateSession(session.id, {
+				country: "YY"
 			});
-			await expectErrorMessage(async () => {
-				await adapter.setSession(session2.value);
-			}, "AUTH_DUPLICATE_SESSION_ID");
-			await clearAll();
-		}
-	);
-	await clearAll();
-	if (endProcess) {
-		end();
-	}
+			const expectedSession = {
+				...session,
+				country: "YY"
+			} satisfies SessionSchema;
+			const storedSession = await Session.get(expectedSession.id);
+			assert.deepStrictEqual(storedSession, expectedSession);
+		});
+	});
+
+	finish();
 };

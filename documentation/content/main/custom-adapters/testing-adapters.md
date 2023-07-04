@@ -86,7 +86,7 @@ Import one of the three testing function and provide both the adapter and query 
 
 ```ts
 import { testAdapter } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 const adapter = adapterKysely()(LuciaError);
 await testAdapter(adapter, queryHandler);

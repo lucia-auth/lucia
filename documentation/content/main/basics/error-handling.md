@@ -9,7 +9,7 @@ Errors are handled by throwing [`LuciaError`](/reference/lucia-auth/luciaerror) 
 Using a try-catch block, the error message can be read like so:
 
 ```ts
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { auth } from "./lucia.js";
 
 try {
