@@ -147,20 +147,11 @@ As a general overview of OAuth, the user is redirected to github.com to be authe
 Create `routes/login/github/+server.ts` and handle GET requests. This will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
 ```ts
+// routes/login/github/+server.ts
 import { dev } from "$app/environment";
 import { githubAuth } from "$lib/server/lucia.js";
 
-export const GET = async ({ cookies, locals }) => {
-	const session = await locals.auth.validate();
-	if (session) {
-		// redirect user if already logged in
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/"
-			}
-		});
-	}
+export const GET = async ({ cookies }) => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 	// store state
 	cookies.set("github_oauth_state", state, {
@@ -187,19 +178,11 @@ When the user authenticates with Github, Github will redirect back the user to y
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). Since we've setup a handle hook, `AuthRequest` is accessible as `locals.auth`.
 
 ```ts
+// routes/login/github/callback/+server.ts
 import { auth, githubAuth } from "$lib/server/lucia.js";
 import { OAuthRequestError } from "@lucia-auth/oauth";
 
 export const GET = async ({ url, cookies, locals }) => {
-	const session = await locals.auth.validate();
-	if (session) {
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/"
-			}
-		});
-	}
 	const storedState = cookies.get("github_oauth_state");
 	const state = url.searchParams.get("state");
 	const code = url.searchParams.get("code");
@@ -276,7 +259,7 @@ const user = await getUser();
 
 Define a server load function in `routes/signup/+page.server.ts`.
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored in `locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign in page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored in `locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 ```ts
 // routes/login/+page.server.ts

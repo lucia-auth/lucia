@@ -93,7 +93,7 @@ yarn add @lucia-auth/oauth
 Import the Github OAuth integration, and initialize it using your credentials.
 
 ```ts
-// src/lib/server/lucia.ts
+// src/lib/lucia.ts
 import { lucia } from "lucia";
 import { astro } from "lucia/middleware";
 
@@ -140,15 +140,10 @@ import { githubAuth } from "../../../lib/lucia";
 
 import type { APIRoute } from "astro";
 
-export const get: APIRoute = async ({ cookies, locals }) => {
-	const session = await locals.auth.validate();
-	if (session) {
-		// already logged in
-		return context.redirect("/", 302); // redirect to profile page
-	}
+export const get: APIRoute = async (context) => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 	// store state
-	cookies.set("github_oauth_state", state, {
+	context.cookies.set("github_oauth_state", state, {
 		httpOnly: true,
 		secure: !import.meta.env.DEV,
 		path: "/",
@@ -174,11 +169,6 @@ import { OAuthRequestError } from "@lucia-auth/oauth";
 import type { APIRoute } from "astro";
 
 export const get: APIRoute = async (context) => {
-	const session = await context.locals.auth.validate();
-	if (session) {
-		// already logged in
-		return context.redirect("/login", 302); // redirect to profile page
-	}
 	const storedState = context.cookies.get("github_oauth_state").value;
 	const state = context.url.searchParams.get("state");
 	const code = context.url.searchParams.get("code");
@@ -248,7 +238,7 @@ const user = await getUser();
 
 ## Redirect authenticated users
 
-Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored as `Astro.locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+Authenticated users should be redirected to the profile page whenever they try to access the sign in page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored as `Astro.locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 ```astro
 ---
