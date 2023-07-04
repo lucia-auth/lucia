@@ -312,73 +312,49 @@ export default defineEventHandler(async (event) => {
 
 ### Composables
 
-We're going to define a few composables. First `useUser()` will fetch the current user on first initialization, and return either the user or `null` if unauthenticated. We're also going to make a separate `useAuthenticatedUser()`, which will return the user or throw if unauthenticated. This can only be used in protected routes, and allows us to .
-
-Instead of directly setting user when a state changes, we're going to invalidate the data with `invalidateUserState()`. Invalidating it will update the user state on the next `useUser()` or `useAuthenticatedUser()` call, which usually happens on the next navigation.
+Define `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the user state. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be defined.
 
 ```ts
 // composables/auth.ts
 import type { User } from "lucia";
 
-export const invalidateUserState = async () => {
-	const userState = useState<"invalid" | "valid">(
-		"user_state",
-		() => "invalid"
-	);
-	userState.value = "invalid";
-};
-
-export const useUser = async () => {
-	const userState = useState<"invalid" | "valid">(
-		"user_state",
-		() => "invalid"
-	);
+export const useUser = () => {
 	const user = useState<User | null>("user", () => null);
-	if (userState.value === "invalid") {
-		userState.value = "valid";
-		const { data, error } = await useFetch("/api/user");
-		if (error.value) throw createError("Failed to fetch data");
-		user.value = data.value?.user ?? null;
-	}
-	return computed(() => user.value); // readonly
+	return user;
 };
 
-export const useAuthenticatedUser = async () => {
-	const user = unref(await useUser());
-	if (!user) {
-		throw createError(
-			"useAuthenticatedUser() can only be used in protected pages"
-		);
-	}
-	const authenticatedUser = useState("authenticated_user", () => user);
-	return computed(() => authenticatedUser); // readonly
+export const useAuthenticatedUser = () => {
+	const user = useUser();
+	return computed(() => {
+		const userValue = unref(user);
+		if (!userValue) {
+			throw createError(
+				"useAuthenticatedUser() can only be used in protected pages"
+			);
+		}
+		return userValue;
+	});
 };
-```
-
-`invalidateUserState()` should be called when the user successfully logs in.
-
-```vue
-<!-- pages/signup.vue -->
-<!-- pages/login.vue -->
-<script lang="ts" setup>
-const handleSubmit = async (e: Event) => {
-	if (!(e.target instanceof HTMLFormElement)) return;
-	const formData = new FormData(e.target);
-	await $fetch();
-	invalidateAuthState();
-	await navigateTo("/"); // profile page
-};
-</script>
 ```
 
 ### Define middleware
 
-Define an `auth` middleware that redirects unauthenticated users.
+Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation. 
 
 ```ts
 // middleware/auth.ts
 export default defineNuxtRouteMiddleware(async () => {
 	const user = await useUser();
+	if (!user.value) return navigateTo("/login");
+});
+```
+
+Next, define a regular `protected` middleware that redirects unauthenticated users to the login page.
+
+```ts
+// middleware/protected.ts
+export default defineNuxtRouteMiddleware(async () => {
+	const user = useUser();
 	if (!user.value) return navigateTo("/login");
 });
 ```
@@ -391,7 +367,7 @@ For both `pages/signup.vue` and `pages/login.vue`, redirect authenticated users 
 <!-- pages/signup.vue -->
 <!-- pages/login.vue -->
 <script lang="ts" setup>
-const user = await useUser();
+const user = useUser();
 if (user.value) {
 	await navigateTo("/"); // redirect to profile page
 }
@@ -406,13 +382,13 @@ const handleSubmit = async (e: Event) => {
 
 Create `pages/index.vue`. This will show some basic user info and include a logout button.
 
-Use the `auth` middleware to redirect unauthenticated users, and `useAuthenticatedUser()` to get a ref that will always be typed as `User` (unlike `useUser()`).
+Use the `protected` middleware to redirect unauthenticated users, and call `useAuthenticatedUser()` to get the authenticated user.
 
 ```vue
 <!-- pages/index.vue -->
 <script lang="ts" setup>
 definePageMeta({
-	middleware: ["auth"]
+	middleware: ["protected"]
 });
 
 const user = await useAuthenticatedUser();
