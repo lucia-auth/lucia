@@ -27,7 +27,7 @@ router.get("/login/github/callback", async (req, res) => {
 	if (session) {
 		return res.status(302).setHeader("Location", "/").end();
 	}
-    const cookies = parseCookie(req.headers.cookie ?? "")
+	const cookies = parseCookie(req.headers.cookie ?? "");
 	const storedState = cookies.github_oauth_state;
 	const state = req.query.state;
 	const code = req.query.code;

@@ -20,8 +20,8 @@ export const auth = lucia({
 	getUserAttributes: (data) => {
 		return {
 			username: data.username
-		}
+		};
 	}
 });
 
-export type Auth = typeof auth
+export type Auth = typeof auth;

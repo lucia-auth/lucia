@@ -25,7 +25,7 @@ type Config = OAuthConfig & {
 
 export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getGithubTokens = async (code: string): Promise<Tokens> => {
-		const requestUrl = new URL("https://github.com/login/oauth/access_token")
+		const requestUrl = new URL("https://github.com/login/oauth/access_token");
 		const request = new Request(requestUrl, {
 			method: "POST",
 			headers: {

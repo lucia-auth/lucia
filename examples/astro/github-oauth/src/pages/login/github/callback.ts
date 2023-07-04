@@ -1,7 +1,7 @@
-import { auth, githubAuth } from '../../../lib/lucia.js';
-import { OAuthRequestError } from '@lucia-auth/oauth';
+import { auth, githubAuth } from "../../../lib/lucia.js";
+import { OAuthRequestError } from "@lucia-auth/oauth";
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from "astro";
 
 export const get: APIRoute = async ({ url, cookies, locals }) => {
 	const session = await locals.auth.validate();
@@ -9,13 +9,13 @@ export const get: APIRoute = async ({ url, cookies, locals }) => {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: '/'
+				Location: "/"
 			}
 		});
 	}
-	const storedState = cookies.get('github_oauth_state').value;
-	const state = url.searchParams.get('state');
-	const code = url.searchParams.get('code');
+	const storedState = cookies.get("github_oauth_state").value;
+	const state = url.searchParams.get("state");
+	const code = url.searchParams.get("code");
 	// validate state
 	if (!storedState || !state || storedState !== state || !code) {
 		return new Response(null, {
@@ -23,7 +23,8 @@ export const get: APIRoute = async ({ url, cookies, locals }) => {
 		});
 	}
 	try {
-		const { existingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
+		const { existingUser, githubUser, createUser } =
+			await githubAuth.validateCallback(code);
 		const getUser = async () => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
@@ -42,7 +43,7 @@ export const get: APIRoute = async ({ url, cookies, locals }) => {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: '/'
+				Location: "/"
 			}
 		});
 	} catch (e) {

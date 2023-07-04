@@ -13,7 +13,6 @@ const handleLogout = async (e: Event) => {
 	});
 	await navigateTo("/login");
 };
-
 </script>
 
 <template>

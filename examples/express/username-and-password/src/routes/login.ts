@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import express from "express"
+import express from "express";
 import url from "url";
-import { LuciaError } from "lucia";;
+import { LuciaError } from "lucia";
 
 import { auth } from "../lucia.js";
 

@@ -4,7 +4,7 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		githubClientId: "",
 		githubClientSecret: ""
-	},
+	}
 	// nitro: {
 	// 	moduleSideEffects: ["lucia/polyfill/node"]
 	// }

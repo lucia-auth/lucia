@@ -9,7 +9,7 @@ const app = express();
 
 app.use(express.urlencoded());
 
-app.use(signupRouter, loginRouter, indexRouter, logoutRouter)
+app.use(signupRouter, loginRouter, indexRouter, logoutRouter);
 
 app.listen("3000", () => {
 	console.log("App running in port 3000");

@@ -8,15 +8,15 @@ export const get: APIRoute = async ({ cookies, locals }) => {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: '/'
+				Location: "/"
 			}
 		});
 	}
 	const [url, state] = await githubAuth.getAuthorizationUrl();
-	cookies.set('github_oauth_state', state, {
+	cookies.set("github_oauth_state", state, {
 		httpOnly: true,
 		secure: !import.meta.env.DEV,
-		path: '/',
+		path: "/",
 		maxAge: 60 * 60
 	});
 	return new Response(null, {
