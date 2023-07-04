@@ -38,7 +38,7 @@ You will need to set up a different adapter for storing users.
 
 ```ts
 // lucia.js
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import redis from "@lucia-auth/adapter-session-redis";
 import prisma from "@lucia-auth/adapter-prisma";
 import { createClient } from "redis";

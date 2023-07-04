@@ -1,10 +1,39 @@
 # @lucia-auth/adapter-mongoose
 
+## 3.0.0-beta.3
+
+### Major changes
+
+- [#788](https://github.com/pilcrowOnPaper/lucia/pull/790) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@2.0.0-beta.3`
+
+## 3.0.0-beta.2
+
+### Patch changes
+
+- [#768](https://github.com/pilcrowOnPaper/lucia/pull/768) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 3.0.0-beta.1
+
+### Patch changes
+
+- [#756](https://github.com/pilcrowOnPaper/lucia/pull/756) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix peer dependency version
+
+## 3.0.0-beta.0
+
+### Major changes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
+
+  - Export adapter as named exports (`mongoose()`)
+
+  - Update adapter params
+
 ## 2.0.0
 
 ### Major changes
 
 - [#529](https://github.com/pilcrowOnPaper/lucia/pull/529) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : [Breaking] Requires `lucia-auth@^1.3.0`
+
   - Update to new specifications
 
 ### Patch changes
@@ -12,7 +41,9 @@
 - [#532](https://github.com/pilcrowOnPaper/lucia/pull/532) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Use projection to fetch data
 
 - [#528](https://github.com/pilcrowOnPaper/lucia/pull/528) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix bugs
+
   - Fix `Adapter.deleteNonPrimaryKey()` deleting non-primary keys
+
   - Fix `Adapter.updateUserAttributes()` returning old data
 
 ## 1.0.0

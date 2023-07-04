@@ -6,7 +6,8 @@ module.exports = {
 		"@typescript-eslint/no-empty-function": "off",
 		"@typescript-eslint/ban-types": "off",
 		"@typescript-eslint/no-empty-interface": "off",
-		"no-async-promise-executor": "off"
+		"no-async-promise-executor": "off",
+		"no-useless-catch": "off"
 	},
 	parser: "@typescript-eslint/parser",
 	extends: [

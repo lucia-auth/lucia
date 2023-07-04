@@ -1,5 +1,31 @@
 # @lucia-auth/adapter-session-redis
 
+## 2.0.0-beta.3
+
+### Major changes
+
+- [#788](https://github.com/pilcrowOnPaper/lucia/pull/790) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@2.0.0-beta.3`
+
+## 2.0.0-beta.2
+
+### Patch changes
+
+- [#768](https://github.com/pilcrowOnPaper/lucia/pull/768) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 2.0.0-beta.1
+
+### Patch changes
+
+- [#756](https://github.com/pilcrowOnPaper/lucia/pull/756) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix peer dependency version
+
+## 2.0.0-beta.0
+
+### Major changes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
+
+  - `redis()` expects az single Redis instance instead of 2
+
 ## 1.0.0
 
 ### Major changes

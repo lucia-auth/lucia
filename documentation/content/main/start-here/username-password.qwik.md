@@ -32,7 +32,7 @@ In `lucia.d.ts`, add `username` in `UserAttributes` since we added `username` co
 
 ```ts
 // src/lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./lib/lucia.js").Auth;
 	type UserAttributes = {
@@ -112,7 +112,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 // create an action to handle the form submission
 export const useSignupAction = routeAction$(
@@ -134,7 +134,7 @@ export const useSignupAction = routeAction$(
 		} catch (error) {
 			// username already used
 			console.error(error);
-			return event.fail(400);
+			return event.fail(400, {});
 		}
 
 		// if all goes well, redirect to home page
@@ -224,7 +224,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
@@ -289,7 +289,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 // create an action to handle the form submission
 export const useLoginAction = routeAction$(
@@ -347,7 +347,7 @@ import {
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 // .... the action hook shown above
 
@@ -391,11 +391,11 @@ import {
 	routeAction$
 } from "@builder.io/qwik-city";
 import { auth } from "~/lib/lucia";
-import type { LuciaError } from "lucia-auth";
+import type { LuciaError } from "lucia";
 
 export const useUserLoader = routeLoader$(async (event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 	if (session) throw event.redirect(302, "/");
 
 	return {};
@@ -457,7 +457,7 @@ import { auth } from "~/lib/lucia";
 
 export const useSignoutAction = routeAction$(async (values, event) => {
 	const authRequest = auth.handleRequest(event);
-	const session = await authRequest.validateUser();
+	const { session } = await authRequest.validateUser();
 
 	if (!session) throw event.redirect(302, "/login");
 

@@ -80,13 +80,13 @@ We recommend [using `handleRequest()` for validating requests](/basics/handle-re
 
 ### Get session from requests
 
-The recommended way to read the session id is by using [`parseRequestHeaders()`](/reference/lucia-auth/auth#parserequestheaders). It takes a [`LuciaRequest`](http://localhost:3000/reference/lucia-auth/types#luciarequest) object, checks for CSRF using the `Origin` header, and returns the session id stored in the cookie. This does not validate the session itself.
+The recommended way to read the session id is by using [`parseRequestHeaders()`](/reference/lucia-auth/auth#parserequestheaders). It takes a [`LuciaRequest`](/reference/lucia-auth/types#luciarequest) object, checks for CSRF using the `Origin` header, and returns the session id stored in the cookie. This does not validate the session itself.
 
 ```ts
 import { auth } from "./lucia.js";
 
 try {
-	const sessionId = auth.validateRequestHeaders(request);
+	const sessionId = auth.parseRequestHeaders(request);
 	const session = await auth.validateSession(sessionId);
 } catch {
 	// invalid request
@@ -96,7 +96,7 @@ try {
 Alternatively, you can read the cookie directly. The cookie name is provided as a `SESSION_COOKIE_NAME` constant. Make sure to implement your own CSRF protection in this case.
 
 ```ts
-import { SESSION_COOKIE_NAME } from "lucia-auth";
+import { SESSION_COOKIE_NAME } from "lucia";
 import { auth } from "./lucia.js";
 
 const sessionId = getCookie(SESSION_COOKIE_NAME);
