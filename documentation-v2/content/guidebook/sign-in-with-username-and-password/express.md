@@ -67,15 +67,14 @@ export type Auth = typeof auth;
 
 ## Configure Express
 
-Since we'll be using `application/x-www-form-urlencoded` to send forms, install `body-parser`.
+Since we'll be using `application/x-www-form-urlencoded`, use the body parser middleware.
 
 ```ts
 import express from "express";
-import bodyParser from "body-parser";
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded());
 ```
 
 ## Sign up page
