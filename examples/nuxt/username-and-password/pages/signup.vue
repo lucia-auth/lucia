@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const user = await useUser();
+const user = useUser();
 if (user.value) {
 	await navigateTo("/"); // redirect to profile page
 }
