@@ -154,7 +154,7 @@ Create route `/login/github` and handle GET requests.
 
 Create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
-You can use [`serializeCookie()`]() provided by Lucia to get the `Set-Cookie` header.
+You can use [`serializeCookie()`](/reference/lucia/utils#serializecookie) provided by Lucia to get the `Set-Cookie` header.
 
 ```ts
 import { serializeCookie } from "lucia/utils";
@@ -182,11 +182,11 @@ get("/login/github", async () => {
 
 Create route `/login/github/callback` and handle GET requests.
 
-When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](). This will return [`GithubUserAuth`]() if the code is valid, or throw an error if not.
+When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
 
-You can use [`parseCookie()`]() provided by Lucia to read the state cookie.
+You can use [`parseCookie()`](/reference/lucia/utils#parsecookie) provided by Lucia to read the state cookie.
 
 ```ts
 import { auth, githubAuth } from "./lucia.js";
@@ -249,9 +249,9 @@ get("/login/github/callback", async (request: Request) => {
 
 #### Authenticate user with Lucia
 
-You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key]() with the Github user id already exists.
+You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
 
-If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
 const { existingUser, githubUser, createUser } =
