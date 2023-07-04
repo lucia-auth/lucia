@@ -9,7 +9,7 @@ pnpm i
 # setup database
 pnpm migrate
 
-# run server + watch for changes
+# run server
 pnpm dev
 ```
 

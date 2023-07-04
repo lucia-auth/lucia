@@ -16,5 +16,12 @@ export const auth = lucia({
 	middleware: nextjs(),
 	sessionCookie: {
 		expires: false
+	},
+	getUserAttributes: (data) => {
+		return {
+			username: data.username
+		}
 	}
 });
+
+export type Auth = typeof auth

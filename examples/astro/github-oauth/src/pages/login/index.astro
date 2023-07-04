@@ -1,0 +1,78 @@
+---
+import "../app.css"
+
+import { auth } from "../../lib/lucia";
+import { LuciaError } from "lucia";
+
+let errorMessage: string | null = null;
+let usernameInput = ""
+
+// check for form submissions
+if (Astro.request.method === "POST") {
+	const formData = await Astro.request.formData();
+	const username = formData.get("username");
+	const password = formData.get("password");
+	// basic check
+    if (typeof username === "string") {
+        usernameInput = username;
+    }
+	const validUsername =
+		typeof username === "string" &&
+		username.length >= 4 &&
+		username.length <= 31;
+	const validPassword =
+		typeof password === "string" &&
+		password.length >= 6 &&
+		password.length <= 255;
+	if (validUsername && validPassword) {
+		try {
+			// find user by key
+			// and validate password
+			const user = await auth.useKey("username", username, password);
+			const session = await auth.createSession({
+				userId: user.userId,
+				attributes: {}
+			});
+			Astro.locals.auth.setSession(session); // set session cookie
+			return Astro.redirect("/", 302); // redirect to profile page
+		} catch (e) {
+			if (
+				e instanceof LuciaError &&
+				(e.message === "AUTH_INVALID_KEY_ID" ||
+					e.message === "AUTH_INVALID_PASSWORD")
+			) {
+				errorMessage = "Incorrect username of password";
+			} else {
+				errorMessage = "An unknown error occurred";
+			}
+		}
+	} else {
+		errorMessage = "Invalid input";
+	}
+}
+
+const session = await Astro.locals.auth.validate();
+if (session) return Astro.redirect("/", 302); // redirect to profile page
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Username & password auth with Lucia</title>
+    </head>
+    <body>
+        <h1>Sign in</h1>
+        <form method="post">
+            <label for="username">Username</label>
+            <input name="username" id="username" value={usernameInput}/><br />
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" /><br />
+            <input type="submit" />
+        </form>
+        <p class="error">{errorMessage}</p>
+        <a href="/signup">Create an account</a>
+    </body>
+</html>

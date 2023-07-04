@@ -72,10 +72,10 @@ const auth = lucia({
 
 ## Set up types
 
-Create a TS declaration file (`env.d.ts`) and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a TS declaration file (`app.d.ts`) and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// env.d.ts
+// app.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./auth/lucia").Auth;

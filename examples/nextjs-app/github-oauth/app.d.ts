@@ -1,8 +1,8 @@
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
+	type Auth = import("@/auth/lucia").Auth;
 	type DatabaseUserAttributes = {
-		username: string;
+		github_username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }

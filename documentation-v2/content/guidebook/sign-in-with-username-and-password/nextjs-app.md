@@ -29,7 +29,7 @@ Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
 ```ts
-// env.d.ts
+// app.d.ts
 
 /// <reference types="lucia" />
 declare namespace Lucia {

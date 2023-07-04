@@ -1,5 +1,6 @@
 {
 	"name": "username-and-password",
+	"description": "Username & password example with Lucia and Astro",
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {

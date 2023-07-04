@@ -1,0 +1,26 @@
+<script lang="ts" setup>
+definePageMeta({
+	middleware: ["auth"]
+});
+
+const user = await useAuthenticatedUser();
+
+const handleLogout = async (e: Event) => {
+	if (!(e.target instanceof HTMLFormElement)) return;
+	await $fetch("/api/logout", {
+		method: "POST",
+		redirect: "manual"
+	});
+	invalidateUserState();
+	await navigateTo("/login");
+};
+</script>
+
+<template>
+	<h1>Profile</h1>
+	<p>User id: {{ user.value.userId }}</p>
+	<p>Username: {{ user.value.username }}</p>
+	<form method="post" action="/api/logout" @submit.prevent="handleLogout">
+		<input type="submit" value="Sign out" />
+	</form>
+</template>

@@ -1,9 +1,9 @@
 import { lucia } from "lucia";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 import { express } from "lucia/middleware";
+import sqlite from "better-sqlite3";
 // import "lucia/polyfill/node";
 
-import sqlite from "better-sqlite3";
 const db = sqlite("main.db");
 
 export const auth = lucia({
@@ -16,7 +16,7 @@ export const auth = lucia({
 	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
 	getUserAttributes: (data) => {
 		return {
-			username: data.username
+			githubUsername: data.github_username
 		};
 	}
 });
