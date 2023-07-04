@@ -39,7 +39,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "2.0.0-beta.3",
+		"lucia": "2.0.0-beta.4",
 		"pg": "^8.0.0"
 	},
 	"peerDependenciesMeta": {
