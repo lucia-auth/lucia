@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-sqlite",
-	"version": "2.0.0-beta.3",
+	"version": "2.0.0-beta.4",
 	"description": "SQLite adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -40,7 +40,7 @@
 	},
 	"peerDependencies": {
 		"better-sqlite3": "^8.0.0",
-		"lucia": "2.0.0-beta.3"
+		"lucia": "2.0.0-beta.4"
 	},
 	"peerDependenciesMeta": {
 		"better-sqlite3": {

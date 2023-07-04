@@ -1,5 +1,13 @@
 # lucia
 
+## 2.0.0-beta.4
+
+### Patch changes
+
+- [#799](https://github.com/pilcrowOnPaper/lucia/pull/799) by [@ernestoresende](https://github.com/ernestoresende) : fix `nextjs` middleware runtime errors on app router
+
+- [#801](https://github.com/pilcrowOnPaper/lucia/pull/801) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `express()` middleware returning broken request url
+
 ## 2.0.0-beta.3
 
 ### Major changes
@@ -17,6 +25,7 @@
 - [#773](https://github.com/pilcrowOnPaper/lucia/pull/773) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Overhaul session renewal
 
   - Remove `Auth.renewSession()`
+
   - Add `sessionCookie.expires` configuration
 
 - [#772](https://github.com/pilcrowOnPaper/lucia/pull/772) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `generateUserId()` configuration
