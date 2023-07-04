@@ -32,7 +32,7 @@ In `server/lucia.d.ts`, add `username` in `UserAttributes` since we added `usern
 
 ```ts
 // server/lucia.d.ts
-/// <reference types="lucia" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import("./utils/auth.js").Auth;
 	type UserAttributes = {
@@ -111,7 +111,7 @@ Users can be created with `createUser()`. This will create a new primary key tha
 ```ts
 // server/api/signup.post.ts
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia";
+import { LuciaError } from "lucia-auth";
 
 export default defineEventHandler(async (event) => {
 	const { username, password } = (await readBody(event)) ?? {};
@@ -224,7 +224,7 @@ We’ll use the key created in the previous section to reference the user and au
 ```ts
 // server/api/login.post.ts
 import { Prisma } from "@prisma/client";
-import { LuciaError } from "lucia";
+import { LuciaError } from "lucia-auth";
 
 export default defineEventHandler(async (event) => {
 	const { username, password } = (await readBody(event)) ?? {};

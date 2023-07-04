@@ -61,7 +61,7 @@ The middleware can be configured with the [`middleware`](/basics/configuration#m
 
 ```ts
 import { sveltekit } from "lucia-auth/middleware";
-import lucia from "lucia";
+import lucia from "lucia-auth";
 
 const auth = lucia({
 	middleware: sveltekit()
@@ -73,13 +73,11 @@ const auth = lucia({
 [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) can be used to get the current session and user.
 
 ```ts
-// +page.server.ts
+// index.astro
 import { auth } from "./lucia.js";
 
-export const load = async (event) => {
-	const authRequest = auth.handleRequest(event);
-	const { user, session } = await authRequest.validateUser();
-};
+const authRequest = auth.handleRequest(Astro);
+const { user, session } = await authRequest.validateUser(Astro);
 ```
 
 #### Examples
@@ -87,15 +85,11 @@ export const load = async (event) => {
 You create a new `AuthRequest` instance, or better yet, put it inside `locals` in the hooks handle.
 
 ```ts
-// hooks.server.ts
-import { auth } from "./lucia.js";
+// +page.server.ts
 
-export const handle = async (event) => {
+export const load = async (event) => {
 	const authRequest = auth.handleRequest(event);
-	event.locals.auth = authRequest;
 	const session = await authRequest.validateUser();
-	// ...
-	return await resolve(event);
 };
 ```
 
@@ -131,7 +125,7 @@ authRequest.setSession(session);
 You can also pass `null` to remove the current session cookie.
 
 ```ts
-authRequest.setSession(null);
+authRequest.setSession(session);
 ```
 
 > (warn) When signing users out, remember to invalidate the current session with [`invalidateSession()`](/reference/lucia-auth/auth#invalidatesession) alongside removing the session cookie!

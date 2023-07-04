@@ -179,7 +179,7 @@ You can generate your own user ids by setting [`generateCustomUserId()`](/basics
 If you need to generate a cryptographically random alphanumeric string, Lucia provides [`generateRandomString()`](/reference/lucia-auth/lucia-auth#generaterandomstring). This function is based on the [`nanoid`](https://github.com/ai/nanoid) package.
 
 ```ts
-import { generateCustomUserId } from "lucia";
+import { generateCustomUserId } from "lucia-auth";
 
 lucia({
 	generateCustomUserId: () => {

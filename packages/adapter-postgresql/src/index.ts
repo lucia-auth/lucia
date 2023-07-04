@@ -1,1 +1,1 @@
-export { pgAdapter as pg } from "./drivers/pg.js";
+export { pgAdapter as pg } from "./pg/index.js";

@@ -1,0 +1,76 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { auth } from "../lib/lucia";
+import { LuciaError } from "lucia-auth";
+
+const authRequest = auth.handleRequest(Astro);
+const { session } = await authRequest.validateUser();
+if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
+
+let errorMessage = "";
+let username: FormDataEntryValue | null = null;
+let password: FormDataEntryValue | null = null;
+if (Astro.request.method === "POST") {
+	const requestOrigin = Astro.request.headers.get("origin");
+	const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+	if (!isValidRequest) {
+		return new Response(null, {
+			status: 403
+		});
+	}
+	const form = await Astro.request.formData();
+	username = form.get("username");
+	password = form.get("password");
+	// check for empty values
+	if (
+		username &&
+		password &&
+		typeof username === "string" &&
+		typeof password === "string"
+	) {
+		try {
+			const key = await auth.useKey("username", username, password);
+			const session = await auth.createSession(key.userId);
+			authRequest.setSession(session);
+			return Astro.redirect("/", 302); // redirect on successful attempt
+		} catch (error) {
+			// username already in use
+			if (
+				error instanceof LuciaError &&
+				(error.message === "AUTH_INVALID_KEY_ID" ||
+					error.message === "AUTH_INVALID_PASSWORD")
+			) {
+				errorMessage = "Incorrect username or password.";
+			} else {
+				errorMessage = "Unknown error occurred";
+			}
+		}
+	} else {
+		Astro.response.status = 400;
+	}
+}
+---
+
+<MainLayout>
+	<h2>Sign in</h2>
+	<a href="/api/oauth?provider=github" class="button">Continue with Github</a>
+	<p class="center">or</p>
+	<form method="post">
+		<label for="username">username</label><br />
+		<input
+			id="username"
+			name="username"
+			value={username?.toString() ?? ""}
+		/><br />
+		<label for="password">password</label><br />
+		<input
+			type="password"
+			id="password"
+			name="password"
+			value={password?.toString() ?? ""}
+		/><br />
+		<input type="submit" value="Continue" class="button" />
+	</form>
+	{errorMessage && <p class="error">{errorMessage}</p>}
+	<a href="/signup" class="link">Create an account</a>
+</MainLayout>

@@ -1,0 +1,95 @@
+---
+// pages/signup.astro
+import { auth } from "../lib/lucia";
+import MainLayout from "../layouts/MainLayout.astro";
+import { Prisma } from "@prisma/client";
+import { LuciaError } from "lucia-auth";
+
+const authRequest = auth.handleRequest(Astro);
+const { session } = await authRequest.validateUser();
+if (session) return Astro.redirect("/", 302); // redirect to profile page if authenticated
+
+let errorMessage = "";
+let username: FormDataEntryValue | null = null;
+let password: FormDataEntryValue | null = null;
+
+if (Astro.request.method === "POST") {
+	const requestOrigin = Astro.request.headers.get("origin");
+	const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+	if (!isValidRequest) {
+		return new Response(null, {
+			status: 403
+		});
+	}
+	const form = await Astro.request.formData();
+	username = form.get("username");
+	password = form.get("password");
+	// check for empty values
+	if (
+		username &&
+		password &&
+		typeof username === "string" &&
+		typeof password === "string"
+	) {
+		try {
+			const user = await auth.createUser({
+				primaryKey: {
+					providerId: "username",
+					providerUserId: username,
+					password
+				},
+				attributes: {
+					username
+				}
+			});
+			const session = await auth.createSession(user.userId);
+			authRequest.setSession(session); // set session cookie
+			return Astro.redirect("/", 302); // redirect on successful attempt
+		} catch (error) {
+			// username already in use
+			if (
+				error instanceof Prisma.PrismaClientKnownRequestError &&
+				error.code === "P2002" &&
+				error.message?.includes("username")
+			) {
+				errorMessage = "Username already in use";
+			} else if (
+				error instanceof LuciaError &&
+				error.message === "AUTH_DUPLICATE_KEY_ID"
+			) {
+				errorMessage = "Username already in use";
+			} else {
+				errorMessage = "Unknown error occured";
+			}
+			Astro.response.status = 400;
+		}
+	} else {
+		errorMessage = "Invalid input";
+		Astro.response.status = 400;
+	}
+}
+---
+
+<MainLayout>
+	<h2>Create an account</h2>
+	<a href="/api/oauth?provider=github" class="button">Continue with Github</a>
+	<p class="center">or</p>
+	<form method="post">
+		<label for="username">username</label><br />
+		<input
+			id="username"
+			name="username"
+			value={username?.toString() ?? ""}
+		/><br />
+		<label for="password">password</label><br />
+		<input
+			type="password"
+			id="password"
+			name="password"
+			value={password?.toString() ?? ""}
+		/><br />
+		<input type="submit" value="Continue" class="button" />
+	</form>
+	{errorMessage && <p class="error">{errorMessage}</p>}
+	<a href="/login" class="link">Sign in</a>
+</MainLayout>

@@ -20,7 +20,10 @@ Requires `lucia-auth@0.11.0`.
 
 ## Testing
 
-```bash
-pnpm test-setup
+```
+pnpm exec prisma migrate dev --name init
+```
+
+```
 pnpm test
 ```

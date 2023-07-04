@@ -1,6 +1,9 @@
-/// <reference types="lucia" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = any;
-	type DatabaseUserAttributes = any;
-	type DatabaseSessionAttributes = any;
+	type UserAttributes = {};
+}
+
+declare namespace App {
+	interface Locals {}
 }

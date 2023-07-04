@@ -35,7 +35,7 @@ The middleware can be configured with the [`middleware`](/basics/configuration#m
 
 ```ts
 import { lucia as luciaMiddleware } from "lucia-auth/middleware";
-import lucia from "lucia";
+import lucia from "lucia-auth";
 
 const auth = lucia({
 	middleware: luciaMiddleware()

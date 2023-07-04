@@ -1,10 +1,4 @@
-export { testAdapter } from "./tests/main.js";
+export { testAdapter } from "./tests/index.js";
 export { testSessionAdapter } from "./tests/session.js";
-export { Database } from "./database.js";
-
-export type {
-	QueryHandler,
-	TableQueryHandler,
-	TestUserSchema,
-	TestSessionSchema
-} from "./database.js";
+export { testUserAdapter } from "./tests/user.js";
+export type { LuciaQueryHandler, TestUserSchema } from "./database.js";

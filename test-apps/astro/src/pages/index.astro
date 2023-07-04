@@ -1,0 +1,16 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { auth } from "../lib/lucia";
+
+const authRequest = auth.handleRequest(Astro);
+const { user } = await authRequest.validateUser();
+if (!user) return Astro.redirect("/login", 302);
+---
+
+<MainLayout>
+	<h2>Your profile</h2>
+	<pre class="code">{JSON.stringify(user!, null, 2)}</pre>
+	<form action="/api/logout" method="post">
+		<input type="submit" class="button" value="Sign out" />
+	</form>
+</MainLayout>

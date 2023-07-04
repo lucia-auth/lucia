@@ -22,7 +22,7 @@ In `src/lucia.d.ts`, add `username` in `UserAttributes` since we added `username
 
 ```ts
 // src/lucia.d.ts
-/// <reference types="lucia" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {

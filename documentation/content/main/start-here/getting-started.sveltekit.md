@@ -83,15 +83,15 @@ In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.
 declare global {
 	namespace App {
 		interface Locals {
-			auth: import("lucia").AuthRequest;
+			auth: import("lucia-auth").AuthRequest;
 		}
 	}
 }
 
-/// <reference types="lucia" />
+/// <reference types="lucia-auth" />
 declare global {
 	namespace Lucia {
-		type Auth = import("$lib/server/lucia").Auth;
+		type Auth = import("$lib/lucia").Auth;
 		type UserAttributes = {};
 	}
 }

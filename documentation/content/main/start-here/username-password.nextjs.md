@@ -32,7 +32,7 @@ In `lucia.d.ts`, add `username` in `UserAttributes` since we added `username` co
 
 ```ts
 // lucia.d.ts
-/// <reference types="lucia" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {
@@ -355,7 +355,7 @@ import type {
 	GetServerSidePropsResult,
 	InferGetServerSidePropsType
 } from "next";
-import type { User } from "lucia";
+import type { User } from "lucia-auth";
 
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext

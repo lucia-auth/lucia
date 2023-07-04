@@ -6,7 +6,7 @@ _order: 2
 These types can be imported from `lucia-auth`:
 
 ```ts
-import type { Adapter } from "lucia";
+import type { Adapter } from "lucia-auth";
 ```
 
 ## `Adapter`
@@ -93,9 +93,9 @@ A namespace.
 
 ```ts
 // lucia.d.ts
-/// <reference types="lucia" />
+/// <reference types="lucia-auth" />
 declare namespace Lucia {
-	type Auth = import("lucia").Auth;
+	type Auth = import("lucia-auth").Auth;
 	type UserAttributes = {};
 }
 ```
@@ -108,7 +108,7 @@ Should be set to [`Auth`](/reference/lucia-auth/auth).
 
 ```ts
 // lucia.ts
-import lucia from "lucia";
+import lucia from "lucia-auth";
 
 const auth = lucia();
 export type Auth = typeof auth;

@@ -1,0 +1,41 @@
+body {
+	@apply mx-auto flex w-full max-w-md flex-col place-items-center  px-4  pt-8;
+}
+h1 {
+	@apply mb-8 w-full text-3xl font-semibold;
+}
+h2 {
+	@apply mb-2 w-full text-2xl font-semibold;
+}
+input:not(.checkbox) {
+	@apply my-1 w-full appearance-none rounded border p-1 outline-none;
+}
+.button,
+button {
+	@apply my-2 block w-full cursor-pointer rounded bg-black py-1 text-center text-white hover:opacity-80;
+}
+.link {
+	@apply mb-1 text-blue-500 hover:underline;
+}
+label {
+	@apply text-sm;
+}
+.github {
+	@apply py-1;
+}
+form {
+	@apply my-2 w-full;
+}
+.error {
+	@apply w-full text-sm text-red-400;
+}
+p {
+	@apply my-1 w-full;
+}
+p.center {
+	@apply w-full text-center;
+}
+pre,
+.code {
+	@apply my-2 w-full overflow-auto rounded-md bg-zinc-900 px-4 py-2 text-gray-200;
+}

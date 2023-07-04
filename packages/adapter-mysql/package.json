@@ -1,45 +1,44 @@
 {
 	"name": "@lucia-auth/adapter-mysql",
-	"version": "2.0.0-beta.4",
+	"version": "1.1.1",
 	"description": "MySQL adapter for Lucia",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"module": "dist/index.js",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"module": "index.js",
 	"type": "module",
 	"files": [
-		"/dist/",
-		"CHANGELOG.md"
+		"**/*"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc",
-		"test.mysql2": "tsx test/mysql2/index.ts",
-		"test.planetscale": "tsx test/planetscale/index.ts",
-		"test-setup.planetscale": "tsx test/planetscale/setup.ts",
-		"test-setup.mysql2": "tsx test/mysql2/setup.ts",
-		"auri.build": "pnpm build"
+		"build": "shx rm -rf ./dist/* && tsc && shx cp ./package.json ./dist && shx cp ./README.md ./dist && shx cp .npmignore dist",
+		"test.mysql2": " tsx test/mysql2/index.ts",
+		"test.planetscale": " tsx test/planetscale/index.ts",
+		"auri.publish": "pnpm build && cd dist && pnpm install --no-frozen-lockfile && pnpm publish --no-git-checks --access public && cd ../"
 	},
 	"keywords": [
 		"lucia",
+		"lucia-auth",
 		"auth",
-		"mysql2",
 		"mysql",
-		"planetscale",
+		"mysql",
 		"authentication",
 		"adapter",
-		"sql"
+		"sql",
+		"kysely",
+		"drizzle"
 	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia",
-		"directory": "packages/adapter-mysql"
+		"directory": "packages/adapter-prisma"
 	},
 	"author": "pilcrowonpaper",
 	"license": "MIT",
 	"exports": {
-		".": "./dist/index.js"
+		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia": "2.0.0-beta.3",
+		"lucia-auth": "^1.4.0",
 		"mysql2": "^3.0.0",
 		"@planetscale/database": "^1.0.0"
 	},
@@ -52,10 +51,10 @@
 		}
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "latest",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@planetscale/database": "^1.7.0",
 		"dotenv": "^16.0.3",
-		"lucia": "latest",
+		"lucia-auth": "workspace:*",
 		"mysql2": "^3.2.3",
 		"tsx": "^3.12.6"
 	}
