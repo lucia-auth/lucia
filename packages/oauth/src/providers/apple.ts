@@ -3,7 +3,7 @@ import * as jose from "jose";
 import { createUrl, handleRequest } from "../request.js";
 import { generateState, connectAuth } from "../core.js";
 
-import type { Auth } from "lucia-auth";
+import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 type AppleConfig = {
