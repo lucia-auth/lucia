@@ -498,13 +498,12 @@ export default Page;
 
 Create `app/api/logout/route.ts` and handle POST requests.
 
-When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
+When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `AuthRequest.setSession()`.
 
 ```ts
 // app/api/logout/route.ts
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
 
@@ -513,14 +512,9 @@ export const POST = async (request: NextRequest) => {
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
-		return NextResponse.json(
-			{
-				error: "Not authenticated"
-			},
-			{
-				status: 401
-			}
-		);
+		return new Response(null, {
+			status: 401
+		});
 	}
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);

@@ -43,6 +43,7 @@ router.get("/login/github/callback", async (req, res) => {
 	try {
 		const { existingUser, githubUser, createUser } =
 			await githubAuth.validateCallback(code);
+
 		const getUser = async () => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
@@ -52,6 +53,7 @@ router.get("/login/github/callback", async (req, res) => {
 			});
 			return user;
 		};
+
 		const user = await getUser();
 		const session = await auth.createSession({
 			userId: user.userId,

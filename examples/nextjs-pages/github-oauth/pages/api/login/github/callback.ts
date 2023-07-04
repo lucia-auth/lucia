@@ -27,6 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		const { existingUser, githubUser, createUser } =
 			await githubAuth.validateCallback(code);
+
 		const getUser = async () => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
@@ -36,6 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 			return user;
 		};
+		
 		const user = await getUser();
 		const session = await auth.createSession({
 			userId: user.userId,

@@ -22,6 +22,7 @@ export const GET = async ({ url, cookies, locals }) => {
 	}
 	try {
 		const { existingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
+
 		const getUser = async () => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
@@ -31,6 +32,7 @@ export const GET = async ({ url, cookies, locals }) => {
 			});
 			return user;
 		};
+
 		const user = await getUser();
 		const session = await auth.createSession({
 			userId: user.userId,
