@@ -1,8 +1,8 @@
 import * as jose from "jose";
 
 import { createUrl, handleRequest } from "../request.js";
-import { generateState, connectAuth } from "../core.js";
-
+import { providerUserAuth } from "../core.js";
+import { generateState } from "../utils.js";
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
 
@@ -53,7 +53,7 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		return jwt;
 	};
 
-	const getTokens = async (code: string) => {
+	const getAppleTokens = async (code: string) => {
 		const requestUrl = createUrl("https://appleid.apple.com/auth/token", {
 			client_id: config.clientId,
 			client_secret: await createSecretId({
@@ -81,7 +81,7 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (idToken: string) => {
+	const getAppleUser = async (idToken: string) => {
 		const decodeIdToken = jose.decodeJwt(idToken) as AppleUser;
 		return {
 			email: decodeIdToken.email,
@@ -103,12 +103,15 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 			return [url, state] as const;
 		},
-
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.idToken);
+			const tokens = await getAppleTokens(code);
+			const providerUser = await getAppleUser(tokens.idToken);
 			const providerUserId = providerUser.sub;
-			const providerAuth = await connectAuth(auth, PROVIDER_ID, providerUserId);
+			const providerAuth = await providerUserAuth(
+				auth,
+				PROVIDER_ID,
+				providerUserId
+			);
 
 			return {
 				...providerAuth,
@@ -116,7 +119,7 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				tokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
+	} as const satisfies OAuthProvider;
 };
 
 export type AppleUser = {
