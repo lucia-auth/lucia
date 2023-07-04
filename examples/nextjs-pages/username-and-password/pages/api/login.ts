@@ -43,6 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		authRequest.setSession(session);
 		return res.redirect(302, "/"); // profile page
 	} catch (e) {
+		console.log(e)
 		if (
 			e instanceof LuciaError &&
 			(e.message === "AUTH_INVALID_KEY_ID" ||
