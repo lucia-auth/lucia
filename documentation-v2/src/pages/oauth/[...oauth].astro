@@ -1,5 +1,6 @@
 ---
-import { getSubCollections } from "@content";
+import { getSubCollections } from "@utils/content";
+
 import OAuthLayout from "@layouts/OAuthLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
 
@@ -12,7 +13,7 @@ export const getStaticPaths = async () => {
             return subCollection.pages.map((page) => {
                 return {
                     params: {
-                        oauth: [page.subCollection, page.pageId].join("/")
+                        oauth: page.pathnameSegments.slice(1).join("/")
                     },
                     props: {
                         subCollection,

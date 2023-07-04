@@ -1,5 +1,5 @@
 ---
-import type { SubCollection } from "@content";
+import type { SubCollection } from "@utils/content";
 
 type Props = {
     collectionId: string;
@@ -61,7 +61,7 @@ type Props = {
                                                         "bg-gray-100": selected
                                                     }
                                                 ]}
-                                                set:html={page.htmlTitle}
+                                                set:html={page.htmlMenuTitle}
                                             />
                                         </li>
                                     );

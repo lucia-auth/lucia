@@ -1,5 +1,6 @@
 ---
-import { getSubCollections } from "@content";
+import { getSubCollections } from "@utils/content";
+
 import ReferenceLayout from "@layouts/ReferenceLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
 
@@ -12,7 +13,7 @@ export const getStaticPaths = async () => {
             return subCollection.pages.map((page) => {
                 return {
                     params: {
-                        reference: [page.subCollection, page.pageId].join("/")
+                        reference: page.pathnameSegments.slice(1).join("/")
                     },
                     props: {
                         subCollection,
@@ -25,12 +26,12 @@ export const getStaticPaths = async () => {
 };
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-const { page } = Astro.props;
+const { page, subCollection } = Astro.props;
 
 const getPageTitle =  () => {
-    if (page.title === "Main") return page.subCollection;
-    if (page.title.startsWith("/")) return `${page.subCollection}${page.title}`;
-    return `${page.subCollection} ${page.title}`;
+    if (page.title === "Main") return subCollection.subCollectionId;
+    if (page.title.startsWith("/")) return `${subCollection.subCollectionId}${page.title}`;
+    return `${subCollection.subCollectionId} ${page.title}`;
 };
 const title = getPageTitle();
 ---
