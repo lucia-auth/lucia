@@ -1,15 +1,15 @@
 ---
-title: "Sign in with email and password in Nuxt"
+title: "Github OAuth in Nuxt"
+description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth in Nuxt"
 menuTitle: "Nuxt"
-description: "Learn the basic of Lucia by implementing a basic username and password authentication in Nuxt"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nuxt)._
 
-This guide will cover how to implement a simple username and password authentication using Lucia in Nuxt. It will have 3 parts:
+This guide will cover how to implement Github OAuth using Lucia in Nuxt. It will have 3 parts:
 
 - A sign up page
-- A sign in page
+- An endpoint to authenticate users with Github
 - A profile page with a logout button
 
 ### Clone project
@@ -17,14 +17,14 @@ This guide will cover how to implement a simple username and password authentica
 You can get started immediately by cloning the Nuxt example from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nuxt/username-and-password <directory_name>
+npx degit pilcrowonpaper/lucia/examples/nuxt/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/github-oauth).
 
 ## Update your database
 
-Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type that's unique.
+Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
@@ -35,7 +35,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new col
 declare namespace Lucia {
 	type Auth = import("./lucia.js").Auth;
 	type DatabaseUserAttributes = {
-		username: string;
+		github_username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }
@@ -43,7 +43,7 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-We'll expose the user's username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
+We'll expose the user's Github username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // server/utils/lucia.ts
@@ -339,7 +339,7 @@ export const useAuthenticatedUser = () => {
 
 ### Define middleware
 
-Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation. 
+Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation.
 
 ```ts
 // middleware/auth.ts

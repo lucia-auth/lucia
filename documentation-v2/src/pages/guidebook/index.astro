@@ -33,12 +33,12 @@ const parentPages = allPages.filter(
             </div>
             <div class="w-full flex flex-col gap-y-6">
                 {
-                    parentPages.map(({ title, description }) => {
+                    parentPages.map(({ title, description, pathname }) => {
                         return (
                             <article class="group w-full rounded-lg bg-white">
                                 <a
                                     class="xs:px-6 block px-4 py-4"
-                                    href="/guidebook/sign-in-with-username-and-password"
+                                    href={pathname}
                                 >
                                     <h2 class="text-xl font-semibold">
                                         {title}

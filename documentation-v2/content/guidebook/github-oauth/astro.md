@@ -1,15 +1,15 @@
 ---
-title: "Sign in with email and password in Astro"
+title: "Github OAuth in Astro"
+description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth in Astro"
 menuTitle: "Astro"
-description: "Learn the basic of Lucia by implementing a basic username and password authentication in Astro"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/astro) and that you've implement the recommended middleware._
 
-This guide will cover how to implement a simple username and password authentication using Lucia in Astro. It will have 3 parts:
+This guide will cover how to implement Github OAuth using Lucia in Astro. It will have 3 parts:
 
 - A sign up page
-- A sign in page
+- An endpoint to authenticate users with Github
 - A profile page with a logout button
 
 ### Clone project
@@ -17,14 +17,14 @@ This guide will cover how to implement a simple username and password authentica
 You can get started immediately by cloning the Astro example from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/astro/username-and-password <directory_name>
+npx degit pilcrowonpaper/lucia/examples/astro/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/astro/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/astro/github-oauth).
 
 ## Update your database
 
-Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type that's unique.
+Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` in `env.d.ts` whenever you add any new columns to the user table.
 
@@ -42,7 +42,7 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-We'll expose the user's username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
+We'll expose the user's Github username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // src/lib/lucia.ts

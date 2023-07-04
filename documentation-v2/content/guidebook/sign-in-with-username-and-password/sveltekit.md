@@ -47,7 +47,7 @@ export {};
 
 ## Configure Lucia
 
-We want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
+We'll expose the user's username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // src/lib/server/lucia.ts
@@ -183,7 +183,7 @@ if (
 
 ### Redirect authenticated users
 
-Define a server load function in `/signup`.
+Define a server load function in `routes/signup/+page.server.ts`.
 
 Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored in `locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
@@ -292,7 +292,7 @@ export const actions: Actions = {
 
 ### Redirect authenticated users
 
-As we did in the sign up page, redirect authenticated users to the profile page.
+As we did in the sign up page, redirect authenticated users to the profile page by defining a server load function in `routes/login/+page.server.ts`.
 
 ```ts
 // routes/login/+page.server.ts

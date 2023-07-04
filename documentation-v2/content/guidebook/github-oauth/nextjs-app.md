@@ -1,15 +1,15 @@
 ---
-title: "Sign in with email and password in Next.js App Router"
+title: "Github OAuth in Next.js App Router"
+description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth in Next.js App Router"
 menuTitle: "Next.js App Router"
-description: "Learn the basic of Lucia by implementing a basic username and password authentication in Next.js App Router"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nextjs-app)._
 
-This guide will cover how to implement a simple username and password authentication using Lucia in Next.js App Router. It will have 3 parts:
+This guide will cover how to implement Github OAuth using Lucia in Next.js App router. It will have 3 parts:
 
 - A sign up page
-- A sign in page
+- An endpoint to authenticate users with Github
 - A profile page with a logout button
 
 ### Clone project
@@ -17,14 +17,14 @@ This guide will cover how to implement a simple username and password authentica
 You can get started immediately by cloning the Next.js example from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-app/username-and-password <directory_name>
+npx degit pilcrowonpaper/lucia/examples/nextjs-app/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/github-oauth).
 
 ## Update your database
 
-Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type that's unique.
+Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
@@ -35,7 +35,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new col
 declare namespace Lucia {
 	type Auth = import("./lucia.js").Auth;
 	type DatabaseUserAttributes = {
-		username: string;
+		github_username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }
@@ -63,7 +63,7 @@ export const auth = lucia({
 export type Auth = typeof auth;
 ```
 
-We'll also expose the user's username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
+We'll also expose the user's Github username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // auth/lucia.ts
