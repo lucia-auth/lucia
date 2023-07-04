@@ -35,7 +35,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "2.0.0-beta.3",
+		"lucia": "2.0.0-beta.4",
 		"redis": "^4.0.0"
 	},
 	"devDependencies": {
