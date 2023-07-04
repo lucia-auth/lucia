@@ -1,5 +1,6 @@
-import type { APIRoute } from "astro";
 import { githubAuth } from "../../../lib/lucia";
+
+import type { APIRoute } from "astro";
 
 export const get: APIRoute = async ({ cookies, locals }) => {
 	const session = await locals.auth.validate();
