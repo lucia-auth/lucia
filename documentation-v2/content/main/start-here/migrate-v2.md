@@ -373,7 +373,6 @@ const { githubUser, githubTokens } = await githubAuth.validateCallback(code);
 
 `LuciaOAuthRequestError` is replaced with [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
 
-
 ### Update `ProviderUserAuth.validateCallback()`
 
 User attributes should be provided as its own property.
