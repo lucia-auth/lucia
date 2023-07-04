@@ -25,19 +25,17 @@ type Config = OAuthConfig & {
 
 export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getGithubTokens = async (code: string): Promise<Tokens> => {
-		const requestUrl = createUrl(
-			"https://github.com/login/oauth/access_token",
-			{
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				code
-			}
-		);
+		const requestUrl = new URL("https://github.com/login/oauth/access_token")
 		const request = new Request(requestUrl, {
 			method: "POST",
 			headers: {
-				"Content-Type": "application/json"
-			}
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: new URLSearchParams({
+				client_id: config.clientId,
+				client_secret: config.clientSecret,
+				code
+			}).toString()
 		});
 		type ResponseBody =
 			| {

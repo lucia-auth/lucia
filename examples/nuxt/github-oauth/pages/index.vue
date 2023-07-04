@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 definePageMeta({
-	middleware: ["auth"]
+	middleware: ["protected"]
 });
 
-const user = await useAuthenticatedUser();
+const user = useAuthenticatedUser();
 
 const handleLogout = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
@@ -11,15 +11,15 @@ const handleLogout = async (e: Event) => {
 		method: "POST",
 		redirect: "manual"
 	});
-	invalidateUserState();
 	await navigateTo("/login");
 };
+
 </script>
 
 <template>
 	<h1>Profile</h1>
-	<p>User id: {{ user.value.userId }}</p>
-	<p>Github username: {{ user.value.githubUsername }}</p>
+	<p>User id: {{ user.userId }}</p>
+	<p>Github username: {{ user.githubUsername }}</p>
 	<form method="post" action="/api/logout" @submit.prevent="handleLogout">
 		<input type="submit" value="Sign out" />
 	</form>
