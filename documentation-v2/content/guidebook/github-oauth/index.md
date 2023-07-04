@@ -14,7 +14,7 @@ This guide will cover how to implement Github OAuth using Lucia. It will have 3 
 
 ## Create an OAuth app
 
-[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
+[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to (make sure to change the port number accordingly):
 
 ```
 http://localhost:3000/login/github/callback
