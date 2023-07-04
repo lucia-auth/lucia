@@ -1,8 +1,4 @@
-import { useRouter } from "next/router";
 import { auth } from "@/auth/lucia";
-import { useState } from "react";
-
-import Link from "next/link";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
