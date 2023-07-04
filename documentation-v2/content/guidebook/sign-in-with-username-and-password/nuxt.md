@@ -339,7 +339,7 @@ export const useAuthenticatedUser = () => {
 
 ### Define middleware
 
-Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation. 
+Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation.
 
 ```ts
 // middleware/auth.ts

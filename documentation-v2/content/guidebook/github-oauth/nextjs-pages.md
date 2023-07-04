@@ -285,7 +285,6 @@ const Page = async () => {
 export default Page;
 ```
 
-
 ## Profile page
 
 Create `pages/index.tsx`. This page will show some basic user info and include a logout button.

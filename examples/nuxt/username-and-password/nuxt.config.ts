@@ -5,7 +5,7 @@ export default defineNuxtConfig({
 		head: {
 			title: "Username & password auth with Lucia"
 		}
-	},
+	}
 	// nitro: {
 	// 	moduleSideEffects: ["lucia/polyfill/node"]
 	// }

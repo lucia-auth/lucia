@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
 			});
 			return user;
 		};
-		
+
 		const user = await getUser();
 		const session = await auth.createSession({
 			userId: user.userId,

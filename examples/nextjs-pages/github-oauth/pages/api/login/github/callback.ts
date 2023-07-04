@@ -37,7 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 			return user;
 		};
-		
+
 		const user = await getUser();
 		const session = await auth.createSession({
 			userId: user.userId,
