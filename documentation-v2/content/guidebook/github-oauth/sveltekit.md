@@ -251,9 +251,14 @@ export const GET = async ({ url, cookies, locals }) => {
 
 #### Authenticate user with Lucia
 
-You can check if the user has already registered with your app by checking [`GithubUserAuth.existingUser`](). Internally, this is done by checking if a [key]() with the Github user id already exists. If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously.
+You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key]() with the Github user id already exists.
+
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
+const { existingUser, githubUser, createUser } =
+	await githubAuth.validateCallback(code);
+
 const getUser = async () => {
 	if (existingUser) return existingUser;
 	const user = await createUser({
@@ -276,7 +281,7 @@ Authenticated users should be redirected to the profile page whenever they try t
 ```ts
 // routes/login/+page.server.ts
 import { auth } from "$lib/server/lucia";
-import  redirect } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 
 import type { PageServerLoad } from "./$types";
 

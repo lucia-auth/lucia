@@ -22,6 +22,22 @@ npx degit pilcrowonpaper/lucia/examples/astro/github-oauth <directory_name>
 
 Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/astro/github-oauth).
 
+## Create an OAuth app
+
+[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
+
+```
+http://localhost:3000/login/github/callback
+```
+
+Copy and paste the client id and client secret into your `.env` file:
+
+```bash
+# .env
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+```
+
 ## Update your database
 
 Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
@@ -64,230 +80,180 @@ export const auth = lucia({
 export type Auth = typeof auth;
 ```
 
-## Sign up page
+## Initialize the OAuth integration
 
-Create `pages/signup.astro` and a form with inputs for username and password
+Install the OAuth integration.
 
-```astro
----
-// src/pages/signup.astro
----
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-	</head>
-	<body>
-		<h1>Sign up</h1>
-		<form method="post">
-			<label for="username">Username</label>
-			<input name="username" id="username" /><br />
-			<label for="password">Password</label>
-			<input type="password" name="password" id="password" /><br />
-			<input type="submit" />
-		</form>
-		<a href="/login">Sign in</a>
-	</body>
-</html>
+```
+npm i @lucia-auth/oauth
+pnpm add @lucia-auth/oauth
+yarn add @lucia-auth/oauth
 ```
 
-### Create users
-
-The form submission can be handled within the same Astro page.
-
-Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
-
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). Since we've setup a handle hook, `AuthRequest` is accessible as `Astro.locals.auth`.
-
-```astro
----
-// src/pages/signup.astro
-import { auth } from "../lib/lucia";
-
-let errorMessage: string | null = null;
-
-// check for form submissions
-if (Astro.request.method === "POST") {
-	const formData = await Astro.request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
-	// basic check
-	const validUsername =
-		typeof username === "string" &&
-		username.length >= 4 &&
-		username.length <= 31;
-	const validPassword =
-		typeof password === "string" &&
-		password.length >= 6 &&
-		password.length <= 255;
-	if (validUsername && validPassword) {
-		try {
-			const user = await auth.createUser({
-				key: {
-					providerId: "username", // auth method
-					providerUserId: username, // unique id when using "username" auth method
-					password // hashed by Lucia
-				},
-				attributes: {
-					username
-				}
-			});
-			const session = await auth.createSession({
-				userId: user.userId,
-				attributes: {}
-			});
-			Astro.locals.auth.setSession(session); // set session cookie
-			return Astro.redirect("/", 302); // redirect to profile page
-		} catch (e) {
-			// this part depends on the database you're using
-			// check for unique constraint error in user table
-			if (
-				e instanceof SomeDatabaseError &&
-				e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-			) {
-				errorMessage = "Username already taken";
-			} else {
-				errorMessage = "An unknown error occurred";
-			}
-		}
-	} else {
-		errorMessage = "Invalid input";
-	}
-}
----
-```
-
-#### Error handling
-
-Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
+Import the Github OAuth integration, and initialize it using your credentials.
 
 ```ts
-if (
-	e instanceof SomeDatabaseError &&
-	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-) {
-	// username already taken
-}
+// src/lib/server/lucia.ts
+import { lucia } from "lucia";
+import { astro } from "lucia/middleware";
+
+import { github } from "@lucia-auth/oauth/providers";
+
+export const auth = lucia({
+	// ...
+});
+
+export const githubAuth = github(auth, {
+	clientId: import.meta.env.GITHUB_CLIENT_ID,
+	clientSecret: import.meta.env.GITHUB_CLIENT_SECRET
+});
+
+export type Auth = typeof auth;
 ```
 
-### Redirect authenticated users
+## Sign in page
+
+Create `pages/login/index.astro`. It will have a "Sign in with Github" button (actually a link).
+
+```astro
+---
+// pages/login/index.astro
+---
+
+<h1>Sign in</h1>
+<a href="/login/github">Sign in with Github</a>
+```
+
+When a user clicks the link, the destination (`/login/github`) will redirect the user to Github to be authenticated.
+
+## Authenticate with Github
+
+As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+
+### Generate authorization url
+
+Create `pages/login/github/index.ts` and handle GET requests. This will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
+
+```ts
+// pages/login/github/index.ts
+import { githubAuth } from "../../../lib/lucia";
+
+import type { APIRoute } from "astro";
+
+export const get: APIRoute = async ({ cookies, locals }) => {
+	const session = await locals.auth.validate();
+	if (session) {
+		// already logged in
+		return context.redirect("/", 302); // redirect to profile page
+	}
+	const [url, state] = await githubAuth.getAuthorizationUrl();
+	// store state
+	cookies.set("github_oauth_state", state, {
+		httpOnly: true,
+		secure: !import.meta.env.DEV,
+		path: "/",
+		maxAge: 60 * 60
+	});
+	return context.redirect(url.toString(), 302);
+};
+```
+
+### Validate callback
+
+Create `pages/login/github/callback.ts` and handle GET requests.
+
+When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](). This will return [`GithubUserAuth`]() if the code is valid, or throw an error if not.
+
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). Since we've setup middleware, `AuthRequest` is accessible as `context.locals.auth`.
+
+```ts
+// pages/login/github/callback.ts
+import { auth, githubAuth } from "../../../lib/lucia.js";
+import { OAuthRequestError } from "@lucia-auth/oauth";
+
+import type { APIRoute } from "astro";
+
+export const get: APIRoute = async (context) => {
+	const session = await context.locals.auth.validate();
+	if (session) {
+		// already logged in
+		return context.redirect("/login", 302); // redirect to profile page
+	}
+	const storedState = context.cookies.get("github_oauth_state").value;
+	const state = context.url.searchParams.get("state");
+	const code = context.url.searchParams.get("code");
+	// validate state
+	if (!storedState || !state || storedState !== state || !code) {
+		return new Response(null, {
+			status: 400
+		});
+	}
+	try {
+		const { existingUser, githubUser, createUser } =
+			await githubAuth.validateCallback(code);
+
+		const getUser = async () => {
+			if (existingUser) return existingUser;
+			const user = await createUser({
+				attributes: {
+					github_username: githubUser.login
+				}
+			});
+			return user;
+		};
+
+		const user = await getUser();
+		const session = await auth.createSession({
+			userId: user.userId,
+			attributes: {}
+		});
+		context.locals.auth.setSession(session);
+		return context.redirect("/login", 302); // redirect to profile page
+	} catch (e) {
+		if (e instanceof OAuthRequestError) {
+			// invalid code
+			return new Response(null, {
+				status: 400
+			});
+		}
+		return new Response(null, {
+			status: 500
+		});
+	}
+};
+```
+
+#### Authenticate user with Lucia
+
+You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key]() with the Github user id already exists.
+
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
+
+```ts
+const { existingUser, githubUser, createUser } =
+	await githubAuth.validateCallback(code);
+
+const getUser = async () => {
+	if (existingUser) return existingUser;
+	const user = await createUser({
+		attributes: {
+			github_username: githubUser.login
+		}
+	});
+	return user;
+};
+
+const user = await getUser();
+```
+
+## Redirect authenticated users
 
 Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored as `Astro.locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 ```astro
 ---
-// src/pages/signup.astro
-import { auth } from "../lib/lucia";
-
-if (Astro.request.method === "POST") {
-	// ...
-}
-
-const session = await Astro.locals.auth.validate();
-if (session) return Astro.redirect("/", 302); // redirect to profile page
----
-```
-
-## Sign in page
-
-Create `src/pages/login.astro` and also add a form with inputs for username and password
-
-```astro
----
-// src/pages/login.astro
----
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-	</head>
-	<body>
-		<h1>Sign in</h1>
-		<form method="post">
-			<label for="username">Username</label>
-			<input name="username" id="username" /><br />
-			<label for="password">Password</label>
-			<input type="password" name="password" id="password" /><br />
-			<input type="submit" />
-		</form>
-		<a href="/signup">Create an account</a>
-	</body>
-</html>
-```
-
-### Authenticate users
-
-This will be handled in a POST endpoint.
-
-The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
-
-```astro
----
 // src/pages/login.astro
 import { auth } from "../lib/lucia";
-import { LuciaError } from "lucia";
-
-let errorMessage: string | null = null;
-
-// check for form submissions
-if (Astro.request.method === "POST") {
-	const formData = await Astro.request.formData();
-	const username = formData.get("username");
-	const password = formData.get("password");
-	// basic check
-	const validUsername =
-		typeof username === "string" &&
-		username.length >= 4 &&
-		username.length <= 31;
-	const validPassword =
-		typeof password === "string" &&
-		password.length >= 6 &&
-		password.length <= 255;
-	if (validUsername && validPassword) {
-		try {
-			// find user by key
-			// and validate password
-			const user = await auth.useKey("username", username, password);
-			const session = await auth.createSession({
-				userId: user.userId,
-				attributes: {}
-			});
-			Astro.locals.auth.setSession(session); // set session cookie
-			return Astro.redirect("/", 302); // redirect to profile page
-		} catch (e) {
-			if (
-				e instanceof LuciaError &&
-				(e.message === "AUTH_INVALID_KEY_ID" ||
-					e.message === "AUTH_INVALID_PASSWORD")
-			) {
-				errorMessage = "Incorrect username of password";
-			} else {
-				errorMessage = "An unknown error occurred";
-			}
-		}
-	} else {
-		errorMessage = "Invalid input";
-	}
-}
----
-```
-
-### Redirect authenticated users
-
-As we did in the sign up page, redirect authenticated users to the profile page.
-
-```astro
----
-// src/pages/login.astro
-import { auth } from "../lib/lucia";
-
-if (Astro.request.method === "POST") {
-	// ...
-}
 
 const session = await Astro.locals.auth.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page
@@ -298,7 +264,7 @@ if (session) return Astro.redirect("/", 302); // redirect to profile page
 
 Create `src/pages/index.astro`. This page will show some basic user info and include a logout button.
 
-Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you'll see that `User.username` exists because we defined it in first step with `getUserAttributes()` configuration.
+Unauthenticated users should be redirected to the login page. The user object is available in `Session.user`, and you'll see that `User.githubUsername` exists because we defined it in first step with `getUserAttributes()` configuration.
 
 ```astro
 ---
@@ -316,7 +282,7 @@ if (!session) return Astro.redirect("/login", 302);
 	<body>
 		<h1>Profile</h1>
 		<p>User id: {session.user.userId}</p>
-		<p>Username: {session.user.username}</p>
+		<p>Github username: {session.user.githubUsername}</p>
 		<form method="post" action="/logout">
 			<input type="submit" value="Sign out" />
 		</form>

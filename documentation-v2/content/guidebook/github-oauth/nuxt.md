@@ -22,6 +22,35 @@ npx degit pilcrowonpaper/lucia/examples/nuxt/github-oauth <directory_name>
 
 Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/github-oauth).
 
+## Create an OAuth app
+
+[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
+
+```
+http://localhost:3000/api/login/github/callback
+```
+
+Copy and paste the client id and client secret into your `.env` file:
+
+```bash
+# .env
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+```
+
+Expose the environment variables by updating your Nuxt config.
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+	// ...
+	runtimeConfig: {
+		githubClientId: "", // keep it empty!
+		githubClientSecret: "" // keep it empty!
+	}
+});
+```
+
 ## Update your database
 
 Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).

@@ -3,19 +3,14 @@ import { OAuthRequestError } from "@lucia-auth/oauth";
 
 import type { APIRoute } from "astro";
 
-export const get: APIRoute = async ({ url, cookies, locals }) => {
-	const session = await locals.auth.validate();
+export const get: APIRoute = async (context) => {
+	const session = await context.locals.auth.validate();
 	if (session) {
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/"
-			}
-		});
+		return context.redirect("/", 302); // redirect to profile page
 	}
-	const storedState = cookies.get("github_oauth_state").value;
-	const state = url.searchParams.get("state");
-	const code = url.searchParams.get("code");
+	const storedState = context.cookies.get("github_oauth_state").value;
+	const state = context.url.searchParams.get("state");
+	const code = context.url.searchParams.get("code");
 	// validate state
 	if (!storedState || !state || storedState !== state || !code) {
 		return new Response(null, {
@@ -41,13 +36,8 @@ export const get: APIRoute = async ({ url, cookies, locals }) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		locals.auth.setSession(session);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/"
-			}
-		});
+		context.locals.auth.setSession(session);
+		return context.redirect("/", 302); // redirect to profile page
 	} catch (e) {
 		if (e instanceof OAuthRequestError) {
 			// invalid code

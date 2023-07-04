@@ -22,6 +22,22 @@ npx degit pilcrowonpaper/lucia/examples/nextjs-app/github-oauth <directory_name>
 
 Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/github-oauth).
 
+## Create an OAuth app
+
+[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
+
+```
+http://localhost:3000/login/github/callback
+```
+
+Copy and paste the client id and client secret into your `.env` file:
+
+```bash
+# .env
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+```
+
 ## Update your database
 
 Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).

@@ -2,27 +2,17 @@ import { githubAuth } from "../../../lib/lucia";
 
 import type { APIRoute } from "astro";
 
-export const get: APIRoute = async ({ cookies, locals }) => {
-	const session = await locals.auth.validate();
+export const get: APIRoute = async (context) => {
+	const session = await context.locals.auth.validate();
 	if (session) {
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/"
-			}
-		});
+		return context.redirect("/", 302); // redirect to profile page
 	}
 	const [url, state] = await githubAuth.getAuthorizationUrl();
-	cookies.set("github_oauth_state", state, {
+	context.cookies.set("github_oauth_state", state, {
 		httpOnly: true,
 		secure: !import.meta.env.DEV,
 		path: "/",
 		maxAge: 60 * 60
 	});
-	return new Response(null, {
-		status: 302,
-		headers: {
-			Location: url.toString()
-		}
-	});
+	return context.redirect(url.toString(), 302);
 };
