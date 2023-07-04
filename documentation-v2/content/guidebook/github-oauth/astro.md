@@ -72,7 +72,7 @@ export const auth = lucia({
 
 	getUserAttributes: (data) => {
 		return {
-			username: data.username
+			githubUsername: data.github_username
 		};
 	}
 });
@@ -248,6 +248,9 @@ import { auth } from "../lib/lucia";
 const session = await Astro.locals.auth.validate();
 if (session) return Astro.redirect("/", 302); // redirect to profile page
 ---
+
+<h1>Sign in</h1>
+<a href="/login/github">Sign in with Github</a>
 ```
 
 ## Profile page

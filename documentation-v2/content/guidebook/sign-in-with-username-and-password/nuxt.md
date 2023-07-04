@@ -312,7 +312,7 @@ export default defineEventHandler(async (event) => {
 
 ### Composables
 
-Define `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the user state. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be defined.
+Create `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the user state. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be always defined (never `null`).
 
 ```ts
 // composables/auth.ts
@@ -400,7 +400,6 @@ const handleSubmit = async (e: Event) => {
 		body: formData,
 		redirect: "manual" // ignore redirect responses
 	});
-	invalidateUserState();
 	await navigateTo("/login");
 };
 </script>

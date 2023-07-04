@@ -96,7 +96,7 @@ export const auth = lucia({
 
 	getUserAttributes: (data) => {
 		return {
-			username: data.username
+			githubUsername: data.github_username
 		};
 	}
 });
@@ -237,6 +237,7 @@ export const GET = async (request: NextRequest) => {
 			userId: user.userId,
 			attributes: {}
 		});
+		const authRequest = auth.handleRequest({ request, cookies });
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,
@@ -256,7 +257,6 @@ export const GET = async (request: NextRequest) => {
 		});
 	}
 };
-
 ```
 
 #### Authenticate user with Lucia
@@ -393,7 +393,6 @@ const Form = ({
 
 export default Form;
 ```
-
 
 ### Sign out users
 

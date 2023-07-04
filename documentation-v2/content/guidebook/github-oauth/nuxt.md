@@ -86,7 +86,7 @@ export const auth = lucia({
 
 	getUserAttributes: (data) => {
 		return {
-			username: data.username
+			githubUsername: data.github_username
 		};
 	}
 });
@@ -94,208 +94,116 @@ export const auth = lucia({
 export type Auth = typeof auth;
 ```
 
-## Sign up page
+## Initialize the OAuth integration
 
-Create `pages/signup.vue`. It will have a form with inputs for username and password
+Install the OAuth integration.
 
-```vue
-<!-- pages/signup.vue -->
-<script lang="ts" setup>
-const handleSubmit = async (e: Event) => {
-	if (!(e.target instanceof HTMLFormElement)) return;
-	const formData = new FormData(e.target);
-	await $fetch("/api/signup", {
-		method: "POST",
-		body: {
-			username: formData.get("username"),
-			password: formData.get("password")
-		},
-		redirect: "manual" // ignore redirect responses
-	});
-	await navigateTo("/"); // profile page
-};
-</script>
-
-<template>
-	<h1>Sign up</h1>
-	<form method="post" action="/api/signup" @submit.prevent="handleSubmit">
-		<label for="username">Username</label>
-		<input name="username" id="username" /><br />
-		<label for="password">Password</label>
-		<input type="password" name="password" id="password" /><br />
-		<input type="submit" />
-	</form>
-	<NuxtLink to="/login">Sign in</NuxtLink>
-</template>
+```
+npm i @lucia-auth/oauth
+pnpm add @lucia-auth/oauth
+yarn add @lucia-auth/oauth
 ```
 
-### Create users
-
-Create `server/api/signup.post.ts`.
-
-Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
-
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). [`AuthRequest`]() can be created by calling [`Auth.handleRequest()`]() with `H3Event`.
+Import the Github OAuth integration, and initialize it using your credentials.
 
 ```ts
-// server/api/signup.post.ts
-export default defineEventHandler(async (event) => {
-	const { username, password } = await readBody<{
-		username: unknown;
-		password: unknown;
-	}>(event);
-	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
-		throw createError({
-			message: "Invalid username",
-			statusCode: 400
-		});
-	}
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
-		throw createError({
-			message: "Invalid password",
-			statusCode: 400
-		});
-	}
-	try {
-		const user = await auth.createUser({
-			key: {
-				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
-				password // hashed by Lucia
-			},
-			attributes: {
-				username
-			}
-		});
-		const session = await auth.createSession({
-			userId: user.userId,
-			attributes: {}
-		});
-		const authRequest = auth.handleRequest(event);
-		authRequest.setSession(session);
-		return sendRedirect(event, "/"); // redirect to profile page
-	} catch (e) {
-		// this part depends on the database you're using
-		// check for unique constraint error in user table
-		if (
-			e instanceof SomeDatabaseError &&
-			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-		) {
-			throw createError({
-				message: "Username already taken",
-				statusCode: 400
-			});
-		}
-		throw createError({
-			message: "An unknown error occurred",
-			statusCode: 500
-		});
-	}
+// server/utils/lucia.ts
+import { lucia } from "lucia";
+import { h3 } from "lucia/middleware";
+
+import { github } from "@lucia-auth/oauth/providers";
+
+export const auth = lucia({
+	// ...
 });
-```
 
-#### Error handling
+const runtimeConfig = useRuntimeConfig();
 
-Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
+export const githubAuth = github(auth, {
+	clientId: runtimeConfig.githubClientId,
+	clientSecret: runtimeConfig.githubClientSecret
+});
 
-```ts
-if (
-	e instanceof SomeDatabaseError &&
-	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-) {
-	// username already taken
-}
+export type Auth = typeof auth;
 ```
 
 ## Sign in page
 
-Create `pages/login.vue`. This will have a form with inputs for username and password
+Create `pages/login.vue`. It will have a "Sign in with Github" button (actually a link).
 
 ```vue
 <!-- pages/login.vue -->
-<script lang="ts" setup>
-const handleSubmit = async (e: Event) => {
-	if (!(e.target instanceof HTMLFormElement)) return;
-	const formData = new FormData(e.target);
-	await $fetch("/api/login", {
-		method: "POST",
-		body: {
-			username: formData.get("username"),
-			password: formData.get("password")
-		},
-		redirect: "manual" // ignore redirect responses
-	});
-	await navigateTo("/"); // profile page
-};
-</script>
-
 <template>
 	<h1>Sign in</h1>
-	<form
-		method="post"
-		action="/api/login"
-		@submit.prevent="handleSubmit"
-		enctype="multipart/form-data"
-	>
-		<label for="username">Username</label>
-		<input name="username" id="username" /><br />
-		<label for="password">Password</label>
-		<input type="password" name="password" id="password" /><br />
-		<input type="submit" />
-	</form>
-	<NuxtLink to="/signup">Create an account</NuxtLink>
+	<a href="/api/login/github">Sign in with Github</a>
 </template>
 ```
 
-### Authenticate users
+When a user clicks the link, the destination (`/api/login/github`) will redirect the user to Github to be authenticated.
 
-Create `server/api/login.post.ts`.
+## Authenticate with Github
 
-The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
+As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+
+### Generate authorization url
+
+Create `server/api/login/github/index.get.ts`. This will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
 ```ts
-// server/api/login.post.ts
-import { LuciaError } from "lucia";
+// server/api/login/github/index.get.ts
+export default defineEventHandler(async (event) => {
+	const [url, state] = await githubAuth.getAuthorizationUrl();
+	setCookie(event, "github_oauth_state", state, {
+		httpOnly: true,
+		secure: !process.dev,
+		path: "/",
+		maxAge: 60 * 60
+	});
+	return sendRedirect(event, url.toString());
+});
+```
+
+### Validate callback
+
+Create `server/api/login/github/callback.get.ts`
+
+When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](). This will return [`GithubUserAuth`]() if the code is valid, or throw an error if not.
+
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). [`AuthRequest`]() can be created by calling [`Auth.handleRequest()`]() with `H3Event`.
+
+```ts
+// server/api/login/github/callback.get.ts
+import { OAuthRequestError } from "@lucia-auth/oauth";
 
 export default defineEventHandler(async (event) => {
-	const { username, password } = await readBody<{
-		username: unknown;
-		password: unknown;
-	}>(event);
-	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 1 ||
-		username.length > 31
-	) {
-		throw createError({
-			message: "Invalid username",
-			statusCode: 400
-		});
-	}
-	if (
-		typeof password !== "string" ||
-		password.length < 1 ||
-		password.length > 255
-	) {
-		throw createError({
-			message: "Invalid password",
-			statusCode: 400
-		});
+	const storedState = getCookie(event, "github_oauth_state");
+	const query = getQuery(event);
+	const state = query.state?.toString();
+	const code = query.code?.toString();
+	// validate state
+	if (!storedState || !state || storedState !== state || !code) {
+		return sendError(
+			event,
+			createError({
+				statusCode: 400
+			})
+		);
 	}
 	try {
-		// find user by key
-		// and validate password
-		const user = await auth.useKey("username", username, password);
+		const { existingUser, githubUser, createUser } =
+			await githubAuth.validateCallback(code);
+
+		const getUser = async () => {
+			if (existingUser) return existingUser;
+			const user = await createUser({
+				attributes: {
+					github_username: githubUser.login
+				}
+			});
+			return user;
+		};
+
+		const user = await getUser();
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
@@ -304,22 +212,46 @@ export default defineEventHandler(async (event) => {
 		authRequest.setSession(session);
 		return sendRedirect(event, "/"); // redirect to profile page
 	} catch (e) {
-		if (
-			e instanceof LuciaError &&
-			(e.message === "AUTH_INVALID_KEY_ID" ||
-				e.message === "AUTH_INVALID_PASSWORD")
-		) {
-			throw createError({
-				message: "Incorrect username or password",
-				statusCode: 400
-			});
+		if (e instanceof OAuthRequestError) {
+			// invalid code
+			return sendError(
+				event,
+				createError({
+					statusCode: 400
+				})
+			);
 		}
-		throw createError({
-			message: "An unknown error occurred",
-			statusCode: 500
-		});
+		return sendError(
+			event,
+			createError({
+				statusCode: 500
+			})
+		);
 	}
 });
+```
+
+#### Authenticate user with Lucia
+
+You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key]() with the Github user id already exists.
+
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
+
+```ts
+const { existingUser, githubUser, createUser } =
+	await githubAuth.validateCallback(code);
+
+const getUser = async () => {
+	if (existingUser) return existingUser;
+	const user = await createUser({
+		attributes: {
+			github_username: githubUser.login
+		}
+	});
+	return user;
+};
+
+const user = await getUser();
 ```
 
 ## Managing auth state
@@ -341,7 +273,7 @@ export default defineEventHandler(async (event) => {
 
 ### Composables
 
-Define `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the user state. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be defined.
+Create `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the user state. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be always defined (never `null`).
 
 ```ts
 // composables/auth.ts
@@ -390,10 +322,9 @@ export default defineNuxtRouteMiddleware(async () => {
 
 ## Redirect authenticated user
 
-For both `pages/signup.vue` and `pages/login.vue`, redirect authenticated users to the profile page.
+Redirect authenticated users to the profile page in `pages/login.vue`.
 
 ```vue
-<!-- pages/signup.vue -->
 <!-- pages/login.vue -->
 <script lang="ts" setup>
 const user = useUser();
@@ -429,7 +360,6 @@ const handleSubmit = async (e: Event) => {
 		body: formData,
 		redirect: "manual" // ignore redirect responses
 	});
-	invalidateUserState();
 	await navigateTo("/login");
 };
 </script>
@@ -437,7 +367,7 @@ const handleSubmit = async (e: Event) => {
 <template>
 	<h1>Profile</h1>
 	<p>User id: {{ user.userId }}</p>
-	<p>Username: {{ user.username }}</p>
+	<p>Github username: {{ user.githubUsername }}</p>
 	<form method="post" action="/api/logout" @submit.prevent="handleSubmit">
 		<input type="submit" value="Sign out" />
 	</form>

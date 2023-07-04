@@ -73,7 +73,7 @@ export const auth = lucia({
 
 	getUserAttributes: (data) => {
 		return {
-			username: data.username
+			githubUsername: data.github_username
 		};
 	}
 });
@@ -123,7 +123,7 @@ const Page = () => {
 	return (
 		<>
 			<h1>Sign in</h1>
-			<a href="/login/github">Sign in with Github</a>
+			<a href="/api/login/github">Sign in with Github</a>
 		</>
 	);
 };
@@ -131,7 +131,7 @@ const Page = () => {
 export default Page;
 ```
 
-When a user clicks the link, the destination (`/login/github`) will redirect the user to Github to be authenticated.
+When a user clicks the link, the destination (`/api/login/github`) will redirect the user to Github to be authenticated.
 
 ## Authenticate with Github
 
@@ -219,7 +219,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 		const authRequest = auth.handleRequest({ req, res });
 		authRequest.setSession(session);
-		return res.status(302).setHeader("Location", "/").end();
+		return res.status(302).setHeader("Location", "/").end(); // redirect to profile page
 	} catch (e) {
 		if (e instanceof OAuthRequestError) {
 			// invalid code
