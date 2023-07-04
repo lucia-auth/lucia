@@ -106,7 +106,7 @@ yarn add @lucia-auth/oauth dotenv
 Import the Github OAuth integration, and initialize it using your credentials.
 
 ```ts
-// src/lib/server/lucia.ts
+// lucia.ts
 import { lucia } from "lucia";
 import { express } from "lucia/middleware";
 
@@ -129,13 +129,13 @@ export type Auth = typeof auth;
 
 ## Sign in page
 
-Create `login.html`. It will have a "Sign in with Github" button (actually a link).
+Create route `/login`. `login.html` will have a "Sign in with Github" button (actually a link).
 
 ```html
+<!-- login.html -->
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
 	</head>
 	<body>
 		<h1>Sign in</h1>
@@ -152,11 +152,13 @@ As a general overview of OAuth, the user is redirected to github.com to be authe
 
 ### Generate authorization url
 
+Create route `/login/github` and handle GET requests.
+
 Create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
 ```ts
 import express from "express";
-import { auth, githubAuth } from "../../lucia.js";
+import { auth, githubAuth } from "./lucia.js";
 
 app.get("/login/github", async (req, res) => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
@@ -172,13 +174,17 @@ app.get("/login/github", async (req, res) => {
 
 ### Validate callback
 
+Create route `/login/github/callback` and handle GET requests.
+
 When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](). This will return [`GithubUserAuth`]() if the code is valid, or throw an error if not.
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](). [`AuthRequest`]() can be created by calling [`Auth.handleRequest()`]() with Express' `Request` and `Response`.
 
+You can use [`parseCookie()`]() provided by Lucia to read the state cookie.
+
 ```ts
 import express from "express";
-import { auth, githubAuth } from "../../lucia.js";
+import { auth, githubAuth } from "./lucia.js";
 import { parseCookie } from "lucia/utils";
 import { OAuthRequestError } from "@lucia-auth/oauth";
 
@@ -251,7 +257,7 @@ const getUser = async () => {
 const user = await getUser();
 ```
 
-### Redirect authenticated users
+## Redirect authenticated users
 
 Authenticated users should be redirected to the profile page whenever they try to access the login page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest), which is stored as `Astro.locals.auth`, and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
@@ -271,16 +277,24 @@ app.get("/login", async (req, res) => {
 
 ## Profile page
 
-Create `index.html`. This will show some basic user info and include a logout button.
+Create route `/`. `index.html` will show some basic user info and include a logout button.
 
 ```html
-<h1>Profile</h1>
-<!-- some template stuff -->
-<p>User id: %%user_id%%</p>
-<p>Github username: %%github_username%%</p>
-<form method="post" action="/logout">
-	<input type="submit" value="Sign out" />
-</form>
+<!-- index.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Profile</h1>
+		<!-- some template stuff -->
+		<p>User id: %%user_id%%</p>
+		<p>Github username: %%github_username%%</p>
+		<form method="post" action="/logout">
+			<input type="submit" value="Sign out" />
+		</form>
+	</body>
+</html>
 ```
 
 ### Get authenticated user
@@ -306,6 +320,8 @@ app.get("/", async (req, res) => {
 ```
 
 ### Sign out users
+
+Create route `/logout` and handle POST requests.
 
 When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
 

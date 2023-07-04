@@ -282,7 +282,7 @@ const getUser = async () => {
 const user = await getUser();
 ```
 
-### Redirect authenticated users
+## Redirect authenticated users
 
 Authenticated users should be redirected to the profile page whenever they try to access the sign in page. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 

@@ -80,18 +80,26 @@ export type Auth = typeof auth;
 
 ## Sign up page
 
-Create `/signup`. It will have a form with inputs for username and password
+Create route `/signup`. `signup.html` will have a form with inputs for username and password
 
 ```html
-<h1>Sign up</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" /><br />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" /><br />
-	<input type="submit" />
-</form>
-<a href="/login">Sign in</a>
+<!-- signup.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Sign up</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<a href="/login">Sign in</a>
+	</body>
+</html>
 ```
 
 ### Create users
@@ -211,18 +219,26 @@ get("/signup", async (request: Request) => {
 
 ## Sign in page
 
-Create `/login`. This will have a form with inputs for username and password.
+Create route `/login`. `login.html` will have a form with inputs for username and password.
 
 ```html
-<h1>Sign in</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" /><br />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" /><br />
-	<input type="submit" />
-</form>
-<a href="/signup">Create an account</a>
+<!-- login.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Sign in</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<a href="/signup">Create an account</a>
+	</body>
+</html>
 ```
 
 ### Authenticate users
@@ -316,16 +332,24 @@ get("/login", async (request: Request) => {
 
 ## Profile page
 
-Create `/`. This will show some basic user info and include a logout button.
+Create route `/`. `index.html` will show some basic user info and include a logout button.
 
 ```html
-<h1>Profile</h1>
-<!-- some template stuff -->
-<p>User id: %%user_id%%</p>
-<p>Username: %%username%%</p>
-<form method="post" action="/logout">
-	<input type="submit" value="Sign out" />
-</form>
+<!-- index.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Profile</h1>
+		<!-- some template stuff -->
+		<p>User id: %%user_id%%</p>
+		<p>Username: %%username%%</p>
+		<form method="post" action="/logout">
+			<input type="submit" value="Sign out" />
+		</form>
+	</body>
+</html>
 ```
 
 ### Get authenticated user

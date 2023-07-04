@@ -79,18 +79,26 @@ app.use(express.urlencoded());
 
 ## Sign up page
 
-Create `signup.html` and add a form with inputs for username and password
+Create `/signup` router. `signup.html` will have a form with inputs for username and password
 
 ```html
-<h1>Sign up</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" /><br />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" /><br />
-	<input type="submit" />
-</form>
-<a href="/login">Sign in</a>
+<!-- signup.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Sign up</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<a href="/login">Sign in</a>
+	</body>
+</html>
 ```
 
 ### Create users
@@ -194,18 +202,26 @@ app.post("/signup", async (req, res) => {
 
 ## Sign in page
 
-Create `login.html` and add a form with inputs for username and password.
+Create route `/login`. `login.html` will have a form with inputs for username and password.
 
 ```html
-<h1>Sign in</h1>
-<form method="post">
-	<label for="username">Username</label>
-	<input name="username" id="username" /><br />
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" /><br />
-	<input type="submit" />
-</form>
-<a href="/signup">Create an account</a>
+<!-- login.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Sign in</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<a href="/signup">Create an account</a>
+	</body>
+</html>
 ```
 
 ### Authenticate users
@@ -288,16 +304,24 @@ app.post("/login", async (req, res) => {
 
 ## Profile page
 
-Create `index.html`. This will show some basic user info and include a logout button.
+Create route `/`. `index.html` will show some basic user info and include a logout button.
 
 ```html
-<h1>Profile</h1>
-<!-- some template stuff -->
-<p>User id: %%user_id%%</p>
-<p>Username: %%username%%</p>
-<form method="post" action="/logout">
-	<input type="submit" value="Sign out" />
-</form>
+<!-- index.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Profile</h1>
+		<!-- some template stuff -->
+		<p>User id: %%user_id%%</p>
+		<p>Username: %%username%%</p>
+		<form method="post" action="/logout">
+			<input type="submit" value="Sign out" />
+		</form>
+	</body>
+</html>
 ```
 
 ### Get authenticated user
@@ -323,6 +347,8 @@ app.get("/", async (req, res) => {
 ```
 
 ### Sign out users
+
+Create route `/logout` and handle POST requests.
 
 When logging out users, it's critical that you invalidate the user's session. This can be achieved with [`Auth.invalidateSession()`](/reference/lucia/interfaces/auth#invalidatesession). You can delete the session cookie by overriding the existing one with a blank cookie that expires immediately. This can be created by passing `null` to `Auth.createSessionCookie()`.
 
