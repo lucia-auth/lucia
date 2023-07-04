@@ -15,16 +15,7 @@ const Page = async () => {
 	return (
 		<>
 			<h1>Sign in</h1>
-			<Form action="/api/login" successRedirect="/">
-				<label htmlFor="username">Username</label>
-				<input name="username" id="username" />
-				<br />
-				<label htmlFor="password">Password</label>
-				<input type="password" name="password" id="password" />
-				<br />
-				<input type="submit" />
-			</Form>
-			<Link href="/signup">Create an account</Link>
+			<a href="/login/github">Sign in with Github</a>
 		</>
 	);
 };

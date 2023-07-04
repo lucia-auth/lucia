@@ -1,9 +1,10 @@
-import { lucia } from "lucia";
-import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
-import { github } from "@lucia-auth/oauth/providers";
-import { express } from "lucia/middleware";
 import sqlite from "better-sqlite3";
 import dotenv from "dotenv"
+import { lucia } from "lucia";
+import { express } from "lucia/middleware";
+import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
+import { github } from "@lucia-auth/oauth/providers";
+
 // import "lucia/polyfill/node";
 
 dotenv.config()

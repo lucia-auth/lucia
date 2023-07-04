@@ -1,27 +1,27 @@
-import { LuciaError } from "lucia";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
+import express from "express"
+import url from "url";
+import { LuciaError } from "lucia";;
 
 import { auth } from "../lucia.js";
 
-import type { Handler } from "express";
+const router = express.Router();
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-export const renderLogin = (params: { error?: string; username?: string }) => {
-	const error = params.error ?? "";
-	const username = params.username ?? "";
-	let html = fs
-		.readFileSync(path.join(__dirname, "login.html"))
-		.toString("utf-8");
-	html = html
-		.replaceAll("%%error%%", error)
-		.replaceAll("%%username%%", username);
-	return html;
-};
+router.get("/login", async (req, res) => {
+	const authRequest = auth.handleRequest(req, res);
+	const session = await authRequest.validate();
+	if (session) {
+		// redirect to profile page
+		return res.status(302).setHeader("Location", "/").end();
+	}
+	const html = renderPage({});
+	return res.setHeader("Content-Type", "text/html; charset=utf-8").send(html);
+});
 
-export const loginAction: Handler = async (req, res) => {
+router.post("/login", async (req, res) => {
 	const { username, password } = req.body;
 	// basic check
 	if (
@@ -29,7 +29,7 @@ export const loginAction: Handler = async (req, res) => {
 		password.length < 1 ||
 		username.length > 31
 	) {
-		const html = renderLogin({
+		const html = renderPage({
 			error: "Invalid username",
 			username: typeof username === "string" ? username : ""
 		});
@@ -43,7 +43,7 @@ export const loginAction: Handler = async (req, res) => {
 		password.length < 1 ||
 		password.length > 255
 	) {
-		const html = renderLogin({
+		const html = renderPage({
 			error: "Invalid password",
 			username
 		});
@@ -71,7 +71,7 @@ export const loginAction: Handler = async (req, res) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
-			const html = renderLogin({
+			const html = renderPage({
 				error: "Incorrect username or password",
 				username
 			});
@@ -81,7 +81,7 @@ export const loginAction: Handler = async (req, res) => {
 				.send(html);
 		}
 
-		const html = renderLogin({
+		const html = renderPage({
 			error: "An unknown error occurred"
 		});
 		return res
@@ -89,4 +89,18 @@ export const loginAction: Handler = async (req, res) => {
 			.setHeader("Content-Type", "text/html; charset=utf-8")
 			.send(html);
 	}
+});
+
+const renderPage = (params: { error?: string; username?: string }) => {
+	const error = params.error ?? "";
+	const username = params.username ?? "";
+	let html = fs
+		.readFileSync(path.join(__dirname, "login.html"))
+		.toString("utf-8");
+	html = html
+		.replaceAll("%%error%%", error)
+		.replaceAll("%%username%%", username);
+	return html;
 };
+
+export default router;

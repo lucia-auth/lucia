@@ -15,7 +15,7 @@ const Page = async () => {
 		<>
 			<h1>Profile</h1>
 			<p>User id: {session.user.userId}</p>
-			<p>Username: {session.user.username}</p>
+			<p>Github username: {session.user.githubUsername}</p>
 			<Form action="/api/logout" successRedirect="/">
 				<input type="submit" value="Sign out" />
 			</Form>

@@ -33,13 +33,5 @@ const handleSubmit = async (e: Event) => {
 
 <template>
 	<h1>Sign in</h1>
-	<form method="post" action="/api/login" @submit.prevent="handleSubmit">
-		<label for="username">Username</label>
-		<input name="username" id="username" /><br />
-		<label for="password">Password</label>
-		<input type="password" name="password" id="password" /><br />
-		<input type="submit" />
-	</form>
-	<p class="error">{{ errorMessage }}</p>
-	<NuxtLink to="/signup">Create an account</NuxtLink>
+	<a href="/login/github">Sign in with Github</a>
 </template>

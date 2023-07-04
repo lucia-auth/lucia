@@ -1,8 +1,9 @@
+import express from "express";
 import { auth } from "../lucia.js";
 
-import type { Handler } from "express";
+const router = express.Router();
 
-export const logoutAction: Handler = async (req, res) => {
+router.post("/logout", async (req, res) => {
 	const authRequest = auth.handleRequest(req, res);
 	const session = await authRequest.validate();
 	if (!session) {
@@ -12,4 +13,6 @@ export const logoutAction: Handler = async (req, res) => {
 	authRequest.setSession(null);
 	// redirect back to login page
 	return res.status(302).setHeader("Location", "/login").end();
-};
+});
+
+export default router;

@@ -3,7 +3,6 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<title>Username & password auth with Lucia</title>
-
 		<style>
 			* {
 				margin-top: 0.5rem;
@@ -18,15 +17,11 @@
 		</style>
 	</head>
 	<body>
-		<h1>Sign up</h1>
-		<form method="post">
-			<label for="username">Username</label>
-			<input name="username" id="username" value="%%username%%" /><br />
-			<label for="password">Password</label>
-			<input type="password" name="password" id="password" /><br />
-			<input type="submit" />
+		<h1>Profile</h1>
+		<p>User id: %%user_id%%</p>
+		<p>Github username: %%github_username%%</p>
+		<form method="post" action="/logout">
+			<input type="submit" value="Sign out" />
 		</form>
-		<p class="error">%%error%%</p>
-		<a href="/login">Sign in</a>
 	</body>
 </html>
