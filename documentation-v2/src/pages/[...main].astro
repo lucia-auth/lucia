@@ -1,5 +1,6 @@
 ---
-import { getSubCollections } from "@content";
+import { getSubCollections } from "@utils/content";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
 
@@ -12,7 +13,7 @@ export const getStaticPaths = async () => {
             return subCollection.pages.map((page) => {
                 return {
                     params: {
-                        main: [page.subCollection, page.pageId].join("/")
+                        main: page.pathnameSegments.slice(1).join("/")
                     },
                     props: {
                         subCollection,

@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-postgresql",
-	"version": "2.0.0-beta.3",
+	"version": "2.0.0-beta.4",
 	"description": "PostgreSQL adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -14,6 +14,8 @@
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test.pg": "tsx test/pg/index.ts",
 		"test-setup.pg": "tsx test/pg/setup.ts",
+		"test.postgres": "tsx test/postgres/index.ts",
+		"test-setup.postgres": "tsx test/postgres/setup.ts",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
@@ -39,7 +41,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "2.0.0-beta.3",
+		"lucia": "2.0.0-beta.4",
 		"pg": "^8.0.0"
 	},
 	"peerDependenciesMeta": {
@@ -55,6 +57,7 @@
 		"tsx": "^3.12.6"
 	},
 	"dependencies": {
-		"pg": "^8.8.0"
+		"pg": "^8.8.0",
+		"postgres": "^3.3.5"
 	}
 }

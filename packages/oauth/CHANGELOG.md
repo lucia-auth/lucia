@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 2.0.0-beta.5
+
+### Patch changes
+
+- [#803](https://github.com/pilcrowOnPaper/lucia/pull/803) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.4
 
 ### Major changes

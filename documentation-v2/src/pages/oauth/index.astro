@@ -1,9 +1,10 @@
 ---
 import OAuthLayout from "@layouts/OAuthLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
-import { getPage } from "@content";
 
-const oauthPage = await getPage("oauth", "index")
+import { getPage } from "@utils/content";
+
+const oauthPage = await getPage("oauth")
 ---
 
 <OAuthLayout title="OAuth integration | Lucia">
