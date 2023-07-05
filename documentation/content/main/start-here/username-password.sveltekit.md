@@ -35,7 +35,7 @@ In `src/app.d.ts`, add `username` in `UserAttributes` since we added a `username
 /// <reference types="lucia" />
 declare global {
 	namespace Lucia {
-		type Auth = import("$lib/lucia").Auth;
+		type Auth = import("$lib/server/lucia").Auth;
 		type UserAttributes = {
 			username: string;
 		};
@@ -49,7 +49,7 @@ Add `transformDatabaseUser()` to your Lucia config to expose the user's id and u
 // lib/server/lucia.ts
 export const auth = lucia({
 	adapter: prisma(client),
-	env: "DEV" // "PROD" if prod,
+	env: "DEV", // "PROD" if prod
 	middleware: sveltekit(),
 	transformDatabaseUser: (userData) => {
 		return {

@@ -1,5 +1,6 @@
 import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { scope, generateState, useAuth } from "../core.js";
+import { providerUserAuth } from "../core.js";
+import { scope, generateState, encodeBase64 } from "../utils.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -11,7 +12,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "reddit";
 
 export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTokens = async (code: string) => {
+	const getRedditTokens = async (code: string) => {
 		const requestUrl = createUrl("https://www.reddit.com/api/v1/access_token", {
 			grant_type: "authorization_code",
 			redirect_uri: config.redirectUri,
@@ -33,7 +34,7 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getProviderUser = async (accessToken: string) => {
+	const getRedditUser = async (accessToken: string) => {
 		const request = new Request("https://oauth.reddit.com/api/v1/me", {
 			headers: authorizationHeaders("bearer", accessToken)
 		});
@@ -56,38 +57,21 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getTokens(code);
-			const providerUser = await getProviderUser(tokens.accessToken);
-			const providerUserId = providerUser.id;
-			const providerAuthHelpers = await useAuth(
+			const redditTokens = await getRedditTokens(code);
+			const redditUser = await getRedditUser(redditTokens.accessToken);
+			const providerUserId = redditUser.id;
+			const redditUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 			return {
-				...providerAuthHelpers,
-				providerUser,
-				tokens
+				...redditUserAuth,
+				redditUser,
+				redditTokens
 			};
 		}
-	} as const satisfies OAuthProvider<_Auth>;
-};
-
-const encodeBase64 = (s: string) => {
-	// ORDER IS IMPORTANT!!
-	// Buffer API EXISTS IN DENO!!
-	if (typeof window !== "undefined" && "Deno" in window) {
-		// deno
-		return btoa(s);
-	}
-	if (typeof Buffer === "function") {
-		// node
-		return Buffer.from(s).toString("base64");
-	}
-
-	// standard API
-	// IGNORE WARNING
-	return btoa(s);
+	} as const satisfies OAuthProvider;
 };
 
 export type RedditUser = {

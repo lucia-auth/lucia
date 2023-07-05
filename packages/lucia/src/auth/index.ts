@@ -60,9 +60,11 @@ const defaultSessionCookieAttributes: SessionCookieAttributes = {
 
 export class Auth<_Configuration extends Configuration = any> {
 	private adapter: Adapter;
-	private generateUserId: () => MaybePromise<string>;
-	private sessionCookieName: string;
-	private sessionCookieAttributes: SessionCookieAttributes;
+	private sessionCookie: {
+		name: string;
+		attributes: SessionCookieAttributes;
+		expires: boolean;
+	};
 	private sessionExpiresIn: {
 		activePeriod: number;
 		idlePeriod: number;
@@ -75,8 +77,8 @@ export class Auth<_Configuration extends Configuration = any> {
 	protected middleware: _Configuration["middleware"] extends Middleware
 		? _Configuration["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
-	private csrfProtectionEnabled: boolean;
-	private requestOrigins: string[];
+	public csrfProtectionEnabled: boolean;
+	private allowedRequestOrigins: string[];
 	private experimental: {
 		debugMode: boolean;
 	};
@@ -104,8 +106,6 @@ export class Auth<_Configuration extends Configuration = any> {
 		} else {
 			this.adapter = config.adapter(LuciaError);
 		}
-		this.generateUserId =
-			config.generateUserId ?? (() => generateRandomString(15));
 		this.env = config.env;
 		this.csrfProtectionEnabled = config.csrfProtection ?? true;
 		this.sessionExpiresIn = {
@@ -128,16 +128,18 @@ export class Auth<_Configuration extends Configuration = any> {
 			const transform = config.getSessionAttributes ?? defaultTransform;
 			return transform(databaseSession);
 		};
-		this.sessionCookieName =
-			config.sessionCookie?.name ?? DEFAULT_SESSION_COOKIE_NAME;
-		this.sessionCookieAttributes =
-			config.sessionCookie?.attributes ?? defaultSessionCookieAttributes;
+		this.sessionCookie = {
+			name: config.sessionCookie?.name ?? DEFAULT_SESSION_COOKIE_NAME,
+			attributes:
+				config.sessionCookie?.attributes ?? defaultSessionCookieAttributes,
+			expires: config.sessionCookie?.expires ?? true
+		};
 		this.passwordHash = {
 			generate: config.passwordHash?.generate ?? generateScryptHash,
 			validate: config.passwordHash?.validate ?? validateScryptHash
 		};
 		this.middleware = config.middleware ?? defaultMiddleware();
-		this.requestOrigins = config.requestOrigins ?? [];
+		this.allowedRequestOrigins = config.allowedRequestOrigins ?? [];
 		this.experimental = {
 			debugMode: config.experimental?.debugMode ?? false
 		};
@@ -167,18 +169,21 @@ export class Auth<_Configuration extends Configuration = any> {
 
 	public transformDatabaseSession = (
 		databaseSession: SessionSchema,
-		user: User
+		context: {
+			user: User;
+			fresh: boolean;
+		}
 	): Session => {
 		const attributes = this.getSessionAttributes(databaseSession);
 		const active = isWithinExpiration(databaseSession.active_expires);
 		return {
 			...attributes,
-			user,
+			user: context.user,
 			sessionId: databaseSession.id,
 			activePeriodExpiresAt: new Date(Number(databaseSession.active_expires)),
 			idlePeriodExpiresAt: new Date(Number(databaseSession.idle_expires)),
 			state: active ? "active" : "idle",
-			fresh: false
+			fresh: context.fresh
 		};
 	};
 
@@ -235,21 +240,19 @@ export class Auth<_Configuration extends Configuration = any> {
 	};
 
 	private validateSessionIdArgument = (sessionId: string) => {
-		if (sessionId.length !== 40) {
-			debug.session.fail("Expected id length to be 40", sessionId);
+		if (!sessionId) {
+			debug.session.fail("Empty session id");
 			throw new LuciaError("AUTH_INVALID_SESSION_ID");
 		}
 	};
 
-	private generateSessionId = (sessionExpiresIn?: {
+	private getNewSessionExpiration = (sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
-	}): readonly [
-		sessionId: string,
-		activePeriodExpiresAt: Date,
-		idlePeriodExpiresAt: Date
-	] => {
-		const sessionId = generateRandomString(40);
+	}): {
+		activePeriodExpiresAt: Date;
+		idlePeriodExpiresAt: Date;
+	} => {
 		const activePeriodExpiresAt = new Date(
 			new Date().getTime() +
 				(sessionExpiresIn?.activePeriod ?? this.sessionExpiresIn.activePeriod)
@@ -258,7 +261,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			activePeriodExpiresAt.getTime() +
 				(sessionExpiresIn?.idlePeriod ?? this.sessionExpiresIn.idlePeriod)
 		);
-		return [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt];
+		return { activePeriodExpiresAt, idlePeriodExpiresAt };
 	};
 
 	public getUser = async (userId: string): Promise<User> => {
@@ -267,7 +270,8 @@ export class Auth<_Configuration extends Configuration = any> {
 		return user;
 	};
 
-	public createUser = async (data: {
+	public createUser = async (options: {
+		userId?: string;
 		key: {
 			providerId: string;
 			providerUserId: string;
@@ -275,18 +279,18 @@ export class Auth<_Configuration extends Configuration = any> {
 		} | null;
 		attributes: Lucia.DatabaseUserAttributes;
 	}): Promise<User> => {
-		const userId = await this.generateUserId();
-		const userAttributes = data.attributes ?? {};
+		const userId = options.userId ?? generateRandomString(15);
+		const userAttributes = options.attributes ?? {};
 		const databaseUser = {
 			...userAttributes,
 			id: userId
 		} satisfies UserSchema;
-		if (data.key === null) {
+		if (options.key === null) {
 			await this.adapter.setUser(databaseUser, null);
 			return this.transformDatabaseUser(databaseUser);
 		}
-		const keyId = `${data.key.providerId}:${data.key.providerUserId}`;
-		const password = data.key.password;
+		const keyId = `${options.key.providerId}:${options.key.providerUserId}`;
+		const password = options.key.password;
 		const hashedPassword = password
 			? await this.passwordHash.generate(password)
 			: null;
@@ -354,7 +358,10 @@ export class Auth<_Configuration extends Configuration = any> {
 		const [databaseSession, databaseUser] =
 			await this.getDatabaseSessionAndUser(sessionId);
 		const user = this.transformDatabaseUser(databaseUser);
-		return this.transformDatabaseSession(databaseSession, user);
+		return this.transformDatabaseSession(databaseSession, {
+			user,
+			fresh: false
+		});
 	};
 
 	public getAllUserSessions = async (userId: string): Promise<Session[]> => {
@@ -367,7 +374,10 @@ export class Auth<_Configuration extends Configuration = any> {
 				return isValidDatabaseSession(databaseSession);
 			})
 			.map((databaseSession) => {
-				return this.transformDatabaseSession(databaseSession, user);
+				return this.transformDatabaseSession(databaseSession, {
+					user,
+					fresh: false
+				});
 			});
 		return validStoredUserSessions;
 	};
@@ -377,51 +387,39 @@ export class Auth<_Configuration extends Configuration = any> {
 		const [databaseSession, databaseUser] =
 			await this.getDatabaseSessionAndUser(sessionId);
 		const user = this.transformDatabaseUser(databaseUser);
-		const session = this.transformDatabaseSession(databaseSession, user);
+		const session = this.transformDatabaseSession(databaseSession, {
+			user,
+			fresh: false
+		});
 		if (session.state === "active") {
 			debug.session.success("Validated session", session.sessionId);
 			return session;
 		}
-		const [newSessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
-			this.generateSessionId();
-		const renewedDatabaseSession = {
-			...databaseSession,
-			id: newSessionId,
+		const { activePeriodExpiresAt, idlePeriodExpiresAt } =
+			this.getNewSessionExpiration();
+		await this.adapter.updateSession(session.sessionId, {
 			active_expires: activePeriodExpiresAt.getTime(),
 			idle_expires: idlePeriodExpiresAt.getTime()
-		} satisfies SessionSchema;
-		await Promise.all([
-			this.adapter.setSession(renewedDatabaseSession),
-			this.adapter.deleteSession(sessionId)
-		]);
-		return this.transformDatabaseSession(renewedDatabaseSession, user);
+		});
+		const renewedDatabaseSession: Session = {
+			...session,
+			idlePeriodExpiresAt,
+			activePeriodExpiresAt,
+			fresh: true
+		};
+		return renewedDatabaseSession;
 	};
 
-	public createSession = async <
-		// for some absurd reasons
-		// this needs to be a generic before doing a conditional check
-		// to work when exported
-		_Attributes extends Lucia.DatabaseSessionAttributes = Lucia.DatabaseSessionAttributes
-	>(
-		...args: _Attributes extends EmptyObject
-			? [
-					userId: string,
-					// options args is optional if no database session attributes are defined
-					options?: {
-						attributes?: Lucia.DatabaseSessionAttributes;
-					}
-			  ]
-			: [
-					userId: string,
-					options: {
-						attributes: Lucia.DatabaseSessionAttributes;
-					}
-			  ]
-	): Promise<Session> => {
-		const [sessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
-			this.generateSessionId();
-		const [userId, options] = args;
-		const attributes = options?.attributes ?? {};
+	public createSession = async (options: {
+		sessionId?: string;
+		userId: string;
+		attributes: Lucia.DatabaseSessionAttributes;
+	}): Promise<Session> => {
+		const { activePeriodExpiresAt, idlePeriodExpiresAt } =
+			this.getNewSessionExpiration();
+		const userId = options.userId;
+		const sessionId = options?.sessionId ?? generateRandomString(40);
+		const attributes = options.attributes;
 		const databaseSession = {
 			...attributes,
 			id: sessionId,
@@ -433,27 +431,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			this.getUser(userId),
 			this.adapter.setSession(databaseSession)
 		]);
-		return this.transformDatabaseSession(databaseSession, user);
-	};
-
-	public renewSession = async (sessionId: string): Promise<Session> => {
-		this.validateSessionIdArgument(sessionId);
-		const [databaseSession, databaseUser] =
-			await this.getDatabaseSessionAndUser(sessionId);
-		const user = this.transformDatabaseUser(databaseUser);
-		const [newSessionId, activePeriodExpiresAt, idlePeriodExpiresAt] =
-			this.generateSessionId();
-		const renewedDatabaseSession = {
-			...databaseSession,
-			id: newSessionId,
-			active_expires: activePeriodExpiresAt.getTime(),
-			idle_expires: idlePeriodExpiresAt.getTime()
-		} satisfies SessionSchema;
-		await Promise.all([
-			this.adapter.setSession(renewedDatabaseSession),
-			this.adapter.deleteSession(sessionId)
-		]);
-		return this.transformDatabaseSession(renewedDatabaseSession, user);
+		return this.transformDatabaseSession(databaseSession, {
+			user,
+			fresh: false
+		});
 	};
 
 	public updateSessionAttributes = async (
@@ -502,10 +483,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			debug.request.fail("Request url unavailable");
 			throw new LuciaError("AUTH_INVALID_REQUEST");
 		}
-		const csrfCheckRequired =
+		if (
 			request.method.toUpperCase() !== "GET" &&
-			request.method.toUpperCase() !== "HEAD";
-		if (this.csrfProtectionEnabled && csrfCheckRequired) {
+			request.method.toUpperCase() !== "HEAD"
+		) {
 			const requestOrigin = request.headers.origin;
 			if (!requestOrigin) {
 				debug.request.fail("No request origin available");
@@ -513,7 +494,9 @@ export class Auth<_Configuration extends Configuration = any> {
 			}
 			try {
 				const url = new URL(request.url);
-				if (![url.origin, ...this.requestOrigins].includes(requestOrigin)) {
+				if (
+					![url.origin, ...this.allowedRequestOrigins].includes(requestOrigin)
+				) {
 					debug.request.fail("Invalid request origin", requestOrigin);
 					throw new LuciaError("AUTH_INVALID_REQUEST");
 				}
@@ -528,12 +511,15 @@ export class Auth<_Configuration extends Configuration = any> {
 		}
 	};
 
-	public readSessionCookie = (request: LuciaRequest): string | null => {
-		if (typeof request.storedSessionCookie === "string") {
-			return request.storedSessionCookie;
+	public readSessionCookie = (
+		cookieHeader: string | null | undefined
+	): string | null => {
+		if (!cookieHeader) {
+			debug.request.info("No session cookie found");
+			return null;
 		}
-		const cookies = parseCookie(request.headers.cookie ?? "");
-		const sessionId = cookies[this.sessionCookieName] ?? null;
+		const cookies = parseCookie(cookieHeader);
+		const sessionId = cookies[this.sessionCookie.name] ?? null;
 		if (sessionId) {
 			debug.request.info("Found session cookie", sessionId);
 		} else {
@@ -542,8 +528,9 @@ export class Auth<_Configuration extends Configuration = any> {
 		return sessionId;
 	};
 
-	public readBearerToken = (request: LuciaRequest): string | null => {
-		const authorizationHeader = request.headers.authorization;
+	public readBearerToken = (
+		authorizationHeader: string | null | undefined
+	): string | null => {
 		if (!authorizationHeader) {
 			debug.request.info("No token found in authorization header");
 			return null;
@@ -574,40 +561,39 @@ export class Auth<_Configuration extends Configuration = any> {
 			middleware({
 				args,
 				env: this.env,
-				cookieName: this.sessionCookieName
+				cookieName: this.sessionCookie.name
 			})
 		);
 	};
 
 	public createSessionCookie = (session: Session | null): Cookie => {
-		return createSessionCookie(session, this.env, {
-			name: this.sessionCookieName,
-			attributes: this.sessionCookieAttributes
+		return createSessionCookie(session, {
+			env: this.env,
+			...this.sessionCookie
 		});
 	};
 
-	public createKey = async (
-		userId: string,
-		keyData: {
-			providerId: string;
-			providerUserId: string;
-			password: string | null;
-		}
-	): Promise<Key> => {
-		const keyId = `${keyData.providerId}:${keyData.providerUserId}`;
+	public createKey = async (options: {
+		userId: string;
+		providerId: string;
+		providerUserId: string;
+		password: string | null;
+	}): Promise<Key> => {
+		const keyId = `${options.providerId}:${options.providerUserId}`;
 		let hashedPassword: string | null = null;
-		if (keyData.password !== null) {
-			hashedPassword = await this.passwordHash.generate(keyData.password);
+		if (options.password !== null) {
+			hashedPassword = await this.passwordHash.generate(options.password);
 		}
+		const userId = options.userId;
 		await this.adapter.setKey({
 			id: keyId,
 			user_id: userId,
 			hashed_password: hashedPassword
 		});
 		return {
-			providerId: keyData.providerId,
-			providerUserId: keyData.providerUserId,
-			passwordDefined: !!keyData.password,
+			providerId: options.providerId,
+			providerUserId: options.providerUserId,
+			passwordDefined: !!options.password,
 			userId
 		} satisfies Key as any;
 	};
@@ -672,7 +658,7 @@ export type Configuration<
 
 	middleware?: Middleware;
 	csrfProtection?: boolean;
-	requestOrigins?: string[];
+	allowedRequestOrigins?: string[];
 	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
@@ -680,9 +666,9 @@ export type Configuration<
 	sessionCookie?: {
 		name?: string;
 		attributes?: SessionCookieAttributes;
+		expires?: boolean;
 	};
 	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
-	generateUserId?: () => MaybePromise<string>;
 	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
 	passwordHash?: {
 		generate: (password: string) => MaybePromise<string>;
@@ -692,5 +678,3 @@ export type Configuration<
 		debugMode?: boolean;
 	};
 };
-
-type EmptyObject = Record<any, never>;

@@ -44,6 +44,7 @@ The state may not be returned depending on the provider, and it may return PKCE 
 ```ts
 // server/api/oauth/index.get.ts
 export default defineEventHandler(async (event) => {
+	// const { provider } = getQuery(event); You can grab the provider like this /api/oauth?provider=github
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 	setCookie(event, "oauth_state", state, {
 		path: "/",
@@ -51,14 +52,14 @@ export default defineEventHandler(async (event) => {
 		httpOnly: true,
 		secure: process.dev ? false : true
 	});
-	return await sendRedirect(event, url.toString(), 302);
+	return sendRedirect(event, url.toString(), 302);
 });
 ```
 
 Alternatively, you can embed the url from `getAuthorizationUrl()` inside an anchor tag.
 
-```svelte
-<a href={providerAuthorizationUrl}>Sign in with provider</a>
+```html
+<a :href="providerAuthorizationUrl">Sign in with provider</a>
 ```
 
 > (red) Keep in mind while sending the result of `getAuthorizationUrl()` to the client is fine, **the provider oauth instance (`providerAuth`) should only be inside a server context**. You will leak your API keys if you import it in the client.
@@ -77,8 +78,8 @@ export default defineEventHandler(async (event) => {
 	const authRequest = auth.handleRequest(event);
 	// get code and state params from url
 	const query = getQuery(event);
-	const code = query.code?.toString() ?? null;
-	const state = query.state?.toString() ?? null;
+	const code = query.code?.toString();
+	const state = query.state?.toString();
 
 	// get stored state from cookies
 	const storedState = getCookie(event, "oauth_state");

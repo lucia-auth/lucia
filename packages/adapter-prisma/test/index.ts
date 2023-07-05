@@ -39,10 +39,7 @@ const queryHandler: QueryHandler = {
 	key: createTableQueryHandler(client.key)
 };
 
-const adapter = prismaAdapter({
-	client,
-	mode: "default"
-})(LuciaError);
+const adapter = prismaAdapter(client)(LuciaError);
 
 await testAdapter(adapter, new Database(queryHandler));
 

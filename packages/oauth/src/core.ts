@@ -1,5 +1,3 @@
-import { generateRandomString } from "lucia/utils";
-
 import type { Auth, Key, LuciaError } from "lucia";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
 
@@ -9,45 +7,35 @@ export type OAuthConfig = {
 	scope?: string[];
 };
 
-export type OAuthProvider<A extends Auth> = {
+export type OAuthProvider = {
 	validateCallback: (
 		code: string,
 		...args: any[]
 	) => Promise<{
-		existingUser: LuciaUser<A> | null;
-		createUser: (
-			attributes: CreateUserAttributesParameter<A>
-		) => Promise<LuciaUser<A>>;
+		existingUser: Record<any, any> | null;
+		createUser: (options: {
+			userId?: string;
+			attributes: Record<string, any>;
+		}) => Promise<Record<any, any>>;
 		createKey: (userId: string) => Promise<Key>;
-		providerUser: Record<string, any>;
-		tokens: {
-			accessToken: string;
-		};
 	}>;
 	getAuthorizationUrl: (
 		redirectUri?: string
 	) => Promise<readonly [URL, ...any[]]>;
 };
 
-export class LuciaOAuthRequestError extends Error {
-	public status;
-	public body;
-	constructor(status: number, body: Record<string, any> | null) {
-		super("REQUEST_FAILED");
-		this.status = status;
-		this.body = body;
+export class OAuthRequestError extends Error {
+	public request: Request;
+	public response: Response;
+	public message = "OAUTH_REQUEST_FAILED" as const;
+	constructor(request: Request, response: Response) {
+		super("OAUTH_REQUEST_FAILED");
+		this.request = request;
+		this.response = response;
 	}
 }
 
-export const generateState = () => {
-	return generateRandomString(43);
-};
-
-export const scope = (base: string[], config: string[] = []) => {
-	return [...base, ...(config ?? [])].join(" ");
-};
-
-export const useAuth = async <_Auth extends Auth>(
+export const providerUserAuth = async <_Auth extends Auth>(
 	auth: _Auth,
 	providerId: string,
 	providerUserId: string
@@ -67,22 +55,24 @@ export const useAuth = async <_Auth extends Auth>(
 	return {
 		existingUser,
 		createKey: async (userId: string) => {
-			return await auth.createKey(userId, {
+			return await auth.createKey({
+				userId,
 				providerId: providerId,
 				providerUserId,
 				password: null
 			});
 		},
-		createUser: async (
-			attributes: CreateUserAttributesParameter<_Auth>
-		): Promise<LuciaUser<_Auth>> => {
+		createUser: async (options: {
+			userId?: string;
+			attributes: CreateUserAttributesParameter<_Auth>;
+		}): Promise<LuciaUser<_Auth>> => {
 			const user = await auth.createUser({
 				key: {
 					providerId: providerId,
 					providerUserId,
 					password: null
 				},
-				attributes
+				...options
 			});
 			return user as LuciaUser<_Auth>;
 		}

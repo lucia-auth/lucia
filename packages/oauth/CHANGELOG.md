@@ -1,5 +1,55 @@
 # @lucia-auth/oauth
 
+## 2.0.0-beta.5
+
+### Patch changes
+
+- [#803](https://github.com/pilcrowOnPaper/lucia/pull/803) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 2.0.0-beta.4
+
+### Major changes
+
+- [#788](https://github.com/pilcrowOnPaper/lucia/pull/790) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@2.0.0-beta.3`
+
+- [#772](https://github.com/pilcrowOnPaper/lucia/pull/772) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `ProviderUserAuth.createUser()` params
+
+## 2.0.0-beta.3
+
+### Major changes
+
+- [#776](https://github.com/pilcrowOnPaper/lucia/pull/776) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Rename `providerUser` property to `<provider_name>User` (`githubUser` etc)
+
+- [#776](https://github.com/pilcrowOnPaper/lucia/pull/776) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Rename `useAuth()` to `providerUserAuth()`
+
+- [#776](https://github.com/pilcrowOnPaper/lucia/pull/776) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Rename `tokens` property to `<provider_name>Tokens` (`githubTokens` etc)
+
+### Minor changes
+
+- [#603](https://github.com/pilcrowOnPaper/lucia/pull/603) by [@msonnberger](https://github.com/msonnberger) : Add Spotify OAuth provider
+
+- [#542](https://github.com/pilcrowOnPaper/lucia/pull/542) by [@gtim](https://github.com/gtim) : Add Lichess OAuth provider
+
+### Patch changes
+
+- [#734](https://github.com/pilcrowOnPaper/lucia/pull/734) by [@KarolusD](https://github.com/KarolusD) : Fix `FacebookUser` type
+
+## 2.0.0-beta.2
+
+### Patch changes
+
+- [#768](https://github.com/pilcrowOnPaper/lucia/pull/768) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 2.0.0-beta.1
+
+### Major changes
+
+- [#759](https://github.com/pilcrowOnPaper/lucia/pull/759) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Replace `LuciaOAuthRequestError` with `OAuthRequestError`
+
+### Patch changes
+
+- [#756](https://github.com/pilcrowOnPaper/lucia/pull/756) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix peer dependency version
+
 ## 2.0.0-beta.0
 
 ### Major changes
@@ -9,8 +59,10 @@
 ### Minor changes
 
 - [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Require `lucia@^2.0.0`
-    - Export `useAuth()`
-    - Remove `provider()`
+
+  - Export `useAuth()`
+
+  - Remove `provider()`
 
 ## 1.2.1
 
