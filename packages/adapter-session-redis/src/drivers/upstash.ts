@@ -21,29 +21,27 @@ export const upstashSessionAdapter = (
 				userId
 			].join(":");
 		};
+		
 		return {
 			getSession: async (sessionId) => {
 				const sessionData = await upstashClient.get(sessionKey(sessionId));
 				if (!sessionData) return null;
-
 				return sessionData as SessionSchema;
 			},
 			getSessionsByUserId: async (userId) => {
 				const sessionIds = await upstashClient.smembers(
 					userSessionsKey(userId)
 				);
-
 				if (sessionIds.length === 0) return [];
-
 				const pipeline = upstashClient.pipeline();
-				sessionIds.forEach((id) => pipeline.get(sessionKey(id)));
+				for (const sessionId of sessionIds) {
+					pipeline.get(sessionKey(sessionId))
+				}
 				const sessions = await pipeline.exec<SessionSchema[]>();
-
 				return sessions;
 			},
 			setSession: async (session) => {
 				const pipeline = upstashClient.pipeline();
-
 				pipeline.sadd(userSessionsKey(session.user_id), session.id);
 				pipeline.set(sessionKey(session.id), JSON.stringify(session), {
 					ex: Math.floor(Number(session.idle_expires) / 1000)
@@ -55,7 +53,6 @@ export const upstashSessionAdapter = (
 					sessionKey(sessionId)
 				);
 				if (!session) return;
-
 				const pipeline = upstashClient.pipeline();
 				pipeline.del(sessionKey(sessionId));
 				pipeline.srem(userSessionsKey(session.user_id), sessionId);
@@ -65,11 +62,11 @@ export const upstashSessionAdapter = (
 				const sessionIds = await upstashClient.smembers(
 					userSessionsKey(userId)
 				);
-
 				const pipeline = upstashClient.pipeline();
-				sessionIds.forEach((sessionId) => pipeline.del(sessionKey(sessionId)));
+				for (const sessionId of sessionIds) {
+					pipeline.del(sessionKey(sessionId))
+				}
 				pipeline.del(userSessionsKey(userId));
-
 				await pipeline.exec();
 			},
 			updateSession: async (sessionId, partialSession) => {
