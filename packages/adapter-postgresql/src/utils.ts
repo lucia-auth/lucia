@@ -1,3 +1,5 @@
+import type { SessionSchema } from "lucia";
+
 const createPreparedStatementHelper = (
 	placeholder: (index: number) => string
 ) => {
@@ -26,4 +28,22 @@ export const getSetArgs = (fields: string[], placeholders: string[]) => {
 	return fields
 		.map((field, i) => [field, placeholders[i]].join(" = "))
 		.join(",");
+};
+
+export type DatabaseSession = Omit<
+	SessionSchema,
+	"active_expires" | "idle_expires"
+> & {
+	active_expires: BigInt;
+	idle_expires: BigInt;
+};
+
+export const transformDatabaseSession = (
+	session: DatabaseSession
+): SessionSchema => {
+	return {
+		...session,
+		active_expires: Number(session.active_expires),
+		idle_expires: Number(session.idle_expires)
+	};
 };

@@ -1,33 +1,33 @@
 import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
 
-import { pool } from "./db.js";
+import { sql } from "./db.js";
 import {
 	escapeName,
 	helper,
+	DatabaseSession,
 	transformDatabaseSession
 } from "../../src/utils.js";
-import { getAll, pgAdapter } from "../../src/drivers/pg.js";
+import { postgresAdapter, getAll } from "../../src/drivers/postgres.js";
 import { ESCAPED_SESSION_TABLE_NAME, TABLE_NAMES } from "../shared.js";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-import type { DatabaseSession } from "../../src/utils.js";
 
 const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	const ESCAPED_TABLE_NAME = escapeName(tableName);
 	return {
 		get: async () => {
-			return await getAll(pool.query(`SELECT * FROM ${ESCAPED_TABLE_NAME}`));
+			return await getAll(sql, `SELECT * FROM ${ESCAPED_TABLE_NAME}`);
 		},
 		insert: async (value: any) => {
 			const [fields, placeholders, args] = helper(value);
-			await pool.query(
+			await sql.unsafe(
 				`INSERT INTO ${ESCAPED_TABLE_NAME} ( ${fields} ) VALUES ( ${placeholders} )`,
 				args
 			);
 		},
 		clear: async () => {
-			await pool.query(`DELETE FROM ${ESCAPED_TABLE_NAME}`);
+			await sql.unsafe(`DELETE FROM ${ESCAPED_TABLE_NAME}`);
 		}
 	};
 };
@@ -37,10 +37,9 @@ const queryHandler: QueryHandler = {
 	session: {
 		...createTableQueryHandler(TABLE_NAMES.session),
 		get: async () => {
-			const result = await getAll(
-				pool.query<DatabaseSession>(
-					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`
-				)
+			const result = await getAll<DatabaseSession>(
+				sql,
+				`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`
 			);
 			return result.map((val) => transformDatabaseSession(val));
 		}
@@ -48,7 +47,7 @@ const queryHandler: QueryHandler = {
 	key: createTableQueryHandler(TABLE_NAMES.key)
 };
 
-const adapter = pgAdapter(pool, TABLE_NAMES)(LuciaError);
+const adapter = postgresAdapter(sql, TABLE_NAMES)(LuciaError);
 
 await testAdapter(adapter, new Database(queryHandler));
 

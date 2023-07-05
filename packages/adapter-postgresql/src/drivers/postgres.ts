@@ -7,36 +7,16 @@ import {
 
 import type { DatabaseSession } from "../utils.js";
 import type { Adapter, InitializeAdapter, UserSchema, KeySchema } from "lucia";
-import type {
-	QueryResult,
-	DatabaseError,
-	Pool,
-	PoolClient,
-	QueryResultRow
-} from "pg";
+import type { Sql, PostgresError, PendingQuery } from "postgres";
 
-export const pgAdapter = (
-	pool: Pool,
+export const postgresAdapter = (
+	sql: Sql,
 	tables: {
 		user: string;
 		session: string;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
-	const transaction = async (
-		execute: (connection: PoolClient) => Promise<any>
-	): Promise<void> => {
-		const connection = await pool.connect();
-		try {
-			await connection.query("BEGIN");
-			await execute(connection);
-			await connection.query("COMMIT");
-		} catch (e) {
-			connection.query("ROLLBACK");
-			throw e;
-		}
-	};
-
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
 	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
@@ -44,37 +24,36 @@ export const pgAdapter = (
 	return (LuciaError) => {
 		return {
 			getUser: async (userId) => {
-				const result = await get<UserSchema>(
-					pool.query(`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = $1`, [
+				return await get<UserSchema>(
+					sql.unsafe(`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = $1`, [
 						userId
 					])
 				);
-				return result;
 			},
 			setUser: async (user, key) => {
 				if (!key) {
 					const [userFields, userValues, userArgs] = helper(user);
-					await pool.query(
+					await sql.unsafe(
 						`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`,
 						userArgs
 					);
 					return;
 				}
 				try {
-					await transaction(async (tx) => {
+					await sql.begin(async (sql) => {
 						const [userFields, userValues, userArgs] = helper(user);
-						await tx.query(
+						await sql.unsafe(
 							`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`,
 							userArgs
 						);
 						const [keyFields, keyValues, keyArgs] = helper(key);
-						await tx.query(
+						await sql.unsafe(
 							`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`,
 							keyArgs
 						);
 					});
 				} catch (e) {
-					const error = e as Partial<DatabaseError>;
+					const error = processException(e);
 					if (error.code === "23505" && error.detail?.includes("Key (id)")) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -82,14 +61,14 @@ export const pgAdapter = (
 				}
 			},
 			deleteUser: async (userId) => {
-				await pool.query(
+				await sql.unsafe(
 					`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = $1`,
 					[userId]
 				);
 			},
 			updateUser: async (userId, partialUser) => {
 				const [fields, values, args] = helper(partialUser);
-				await pool.query(
+				await sql.unsafe(
 					`UPDATE ${ESCAPED_USER_TABLE_NAME} SET ${getSetArgs(
 						fields,
 						values
@@ -100,7 +79,7 @@ export const pgAdapter = (
 
 			getSession: async (sessionId) => {
 				const result = await get<DatabaseSession>(
-					pool.query(
+					sql.unsafe(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 						[sessionId]
 					)
@@ -109,7 +88,7 @@ export const pgAdapter = (
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await getAll<DatabaseSession>(
-					pool.query(
+					sql.unsafe(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 						[userId]
 					)
@@ -119,12 +98,12 @@ export const pgAdapter = (
 			setSession: async (session) => {
 				try {
 					const [fields, values, args] = helper(session);
-					await pool.query(
+					await sql.unsafe(
 						`INSERT INTO ${ESCAPED_SESSION_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`,
 						args
 					);
 				} catch (e) {
-					const error = e as Partial<DatabaseError>;
+					const error = processException(e);
 					if (
 						error.code === "23503" &&
 						error.detail?.includes("Key (user_id)")
@@ -135,20 +114,20 @@ export const pgAdapter = (
 				}
 			},
 			deleteSession: async (sessionId) => {
-				await pool.query(
+				await sql.unsafe(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 					[sessionId]
 				);
 			},
 			deleteSessionsByUserId: async (userId) => {
-				await pool.query(
+				await sql.unsafe(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 					[userId]
 				);
 			},
 			updateSession: async (sessionId, partialSession) => {
 				const [fields, values, args] = helper(partialSession);
-				await pool.query(
+				await sql.unsafe(
 					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
 						fields,
 						values
@@ -158,17 +137,16 @@ export const pgAdapter = (
 			},
 
 			getKey: async (keyId) => {
-				const result = await get(
-					pool.query<KeySchema>(
-						`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = $1`,
-						[keyId]
-					)
+				const result = await get<KeySchema>(
+					sql.unsafe(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = $1`, [
+						keyId
+					])
 				);
 				return result;
 			},
 			getKeysByUserId: async (userId) => {
 				const result = getAll<KeySchema>(
-					pool.query(
+					sql.unsafe(
 						`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = $1`,
 						[userId]
 					)
@@ -178,12 +156,12 @@ export const pgAdapter = (
 			setKey: async (key) => {
 				try {
 					const [fields, values, args] = helper(key);
-					await pool.query(
+					await sql.unsafe(
 						`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`,
 						args
 					);
 				} catch (e) {
-					const error = e as Partial<DatabaseError>;
+					const error = processException(e);
 					if (
 						error.code === "23503" &&
 						error.detail?.includes("Key (user_id)")
@@ -197,20 +175,20 @@ export const pgAdapter = (
 				}
 			},
 			deleteKey: async (keyId) => {
-				await pool.query(
+				await sql.unsafe(
 					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = $1`,
 					[keyId]
 				);
 			},
 			deleteKeysByUserId: async (userId) => {
-				await pool.query(
+				await sql.unsafe(
 					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = $1`,
 					[userId]
 				);
 			},
 			updateKey: async (keyId, partialKey) => {
 				const [fields, values, args] = helper(partialKey);
-				await pool.query(
+				await sql.unsafe(
 					`UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${getSetArgs(
 						fields,
 						values
@@ -220,18 +198,18 @@ export const pgAdapter = (
 			},
 
 			getSessionAndUser: async (sessionId) => {
-				const getSessionPromise = get(
-					pool.query<DatabaseSession>(
+				const getSessionPromise = get<DatabaseSession>(
+					sql.unsafe(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 						[sessionId]
 					)
 				);
-				const getUserFromJoinPromise = get(
-					pool.query<
-						UserSchema & {
-							__session_id: string;
-						}
-					>(
+				const getUserFromJoinPromise = get<
+					UserSchema & {
+						__session_id: string;
+					}
+				>(
+					sql.unsafe(
 						`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = $1`,
 						[sessionId]
 					)
@@ -248,17 +226,19 @@ export const pgAdapter = (
 	};
 };
 
-export const get = async <_Schema extends QueryResultRow>(
-	queryPromise: Promise<QueryResult<_Schema>>
-): Promise<_Schema | null> => {
-	const { rows } = await queryPromise;
-	const result = rows.at(0) ?? null;
-	return result;
-};
+export async function get<_Schema extends {}>(
+	queryPromise: PendingQuery<_Schema[]>
+) {
+	const result = await queryPromise;
+	return result.at(0) ?? null;
+}
 
-export const getAll = async <_Schema extends QueryResultRow>(
-	queryPromise: Promise<QueryResult<_Schema>>
-): Promise<_Schema[]> => {
-	const { rows } = await queryPromise;
-	return rows;
-};
+export async function getAll<_Schema extends {}>(
+	queryPromise: PendingQuery<_Schema[]>
+) {
+	return await queryPromise;
+}
+
+function processException(e: any) {
+	return e as Partial<PostgresError>;
+}
