@@ -1,10 +1,10 @@
 import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
+import { createClient } from "@libsql/client";
 
 import { TABLE_NAMES } from "../db.js";
 import { libsqlAdapter } from "../../src/drivers/libsql.js";
 import { escapeName, helper } from "../../src/utils.js";
-import { createClient } from "@libsql/client";
 
 import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
 
