@@ -4,7 +4,7 @@ title: "Unstorage session adapter"
 description: "Learn how to use Unstorage with Lucia"
 ---
 
-Session adapter for [Redis](https://redis.io) provided by the Redis session adapter package. This only handles sessions, and not users or keys. Supports many key-value databases, including Cloudflare KV, Vercel KV, Azure, GitHub, MongoDB, Planetscale, and Redis.
+Session adapter for [Redis](https://redis.io) provided by the Redis session adapter package. This only handles sessions, and not users or keys. Supports many key-value databases, including Azure, Cloudflare KV, MongoDB, Planetscale, Redis, and Vercel KV, as well as in-memory.
 
 ```ts
 import { unstorage } from "@lucia-auth/adapter-session-unstorage";
