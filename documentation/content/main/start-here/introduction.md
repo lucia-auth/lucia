@@ -81,4 +81,3 @@ Lucia is a sever-side library, so it does not provide any client side helpers.
 - OAuth integration: `@lucia-auth/oauth`
 - Tokens integration: `@lucia-auth/tokens`
 - Redis adapter: `@lucia-auth/adapter-session-redis`
-- Unstorage adapter: `@lucia-auth/adapter-session-unstorage`
