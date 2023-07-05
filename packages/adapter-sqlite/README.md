@@ -59,7 +59,6 @@ Finally, run:
 pnpm test.d1
 ```
 
-
 ### libSQL
 
 ```

@@ -21,7 +21,7 @@ export const upstashSessionAdapter = (
 				userId
 			].join(":");
 		};
-		
+
 		return {
 			getSession: async (sessionId) => {
 				const sessionData = await upstashClient.get(sessionKey(sessionId));
@@ -35,7 +35,7 @@ export const upstashSessionAdapter = (
 				if (sessionIds.length === 0) return [];
 				const pipeline = upstashClient.pipeline();
 				for (const sessionId of sessionIds) {
-					pipeline.get(sessionKey(sessionId))
+					pipeline.get(sessionKey(sessionId));
 				}
 				const sessions = await pipeline.exec<SessionSchema[]>();
 				return sessions;
@@ -64,7 +64,7 @@ export const upstashSessionAdapter = (
 				);
 				const pipeline = upstashClient.pipeline();
 				for (const sessionId of sessionIds) {
-					pipeline.del(sessionKey(sessionId))
+					pipeline.del(sessionKey(sessionId));
 				}
 				pipeline.del(userSessionsKey(userId));
 				await pipeline.exec();
