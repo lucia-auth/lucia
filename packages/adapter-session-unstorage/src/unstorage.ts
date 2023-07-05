@@ -1,97 +1,77 @@
-import type { SessionSchema, SessionAdapter, InitializeAdapter } from "lucia";
-import { type Storage } from "unstorage";
+import { SessionSchema, SessionAdapter, InitializeAdapter } from "lucia";
+import { type Storage, prefixStorage } from "unstorage";
 
 export const DEFAULT_SESSION_PREFIX = "session";
-export const DEFAULT_USER_SESSIONS_PREFIX = "user_sessions";
+export const DEFAULT_USER_SESSION_PREFIX = "user_session";
 
 export const unstorageAdapter = (
-	client: Storage,
+	storage: Storage,
 	prefixes?: {
 		session: string;
 		userSessions: string;
 	}
 ): InitializeAdapter<SessionAdapter> => {
 	return () => {
-		const { session: sessionKeyPrefix, userSessions: userSessionKeyPrefix } =
-			prefixes ?? {
-				session: DEFAULT_SESSION_PREFIX,
-				userSessions: DEFAULT_USER_SESSIONS_PREFIX
-			};
+		const sessionStorage = prefixStorage<SessionSchema>(
+			storage,
+			prefixes?.session ?? DEFAULT_SESSION_PREFIX
+		);
+		const getUserSessionStorage = (userId: string) => {
+			const prefix = [
+				prefixes?.userSessions ?? DEFAULT_USER_SESSION_PREFIX,
+				userId
+			].join(":");
+			return prefixStorage<"">(storage, prefix);
+		};
+
 		return {
 			getSession: async (sessionId) => {
-				const sessionData = await client.getItem(
-					`${sessionKeyPrefix}:${sessionId}`
-				);
-				return sessionData as SessionSchema | null;
+				const sessionResult = (await sessionStorage.getItem(sessionId)) ?? null;
+				return sessionResult;
 			},
 			getSessionsByUserId: async (userId) => {
-				const userKeys = await client.getKeys(
-					`${userSessionKeyPrefix}:${userId}`
+				const userSessionStorage = getUserSessionStorage(userId);
+				const sessionIds = await userSessionStorage.getKeys();
+				const sessionResults = await Promise.all(
+					sessionIds.map((sessionId) => {
+						return sessionStorage.getItem(sessionId);
+					})
 				);
-				const sessionIds = await Promise.all(
-					userKeys.map((id) => client.getItem(id) as Promise<string>)
-				);
-				return Promise.all(
-					sessionIds.map(
-						(id) =>
-							client.getItem(
-								`${sessionKeyPrefix}:${id}`
-							) as Promise<SessionSchema>
-					)
+				return sessionResults.filter(
+					(sessionResult): sessionResult is SessionSchema => !!sessionResult
 				);
 			},
 			setSession: async (session) => {
+				const userSessionStorage = getUserSessionStorage(session.user_id);
 				await Promise.all([
-					client.setItem(
-						`${userSessionKeyPrefix}:${session.user_id}:${
-							session.id
-						}${Date.now()}`,
-						session.id
-					),
-					client.setItem(
-						`${sessionKeyPrefix}:${session.id}`,
-						session,
-						session.idle_expires
-					) //@todo Implement key expiration https://github.com/unjs/unstorage/pull/236
+					userSessionStorage.setItem(session.user_id, ""),
+					sessionStorage.setItem(session.id, session)
 				]);
 			},
 			deleteSession: async (sessionId) => {
-				const sessionData = (await client.getItem(
-					`${sessionKeyPrefix}:${sessionId}`
-				)) as SessionSchema | null;
-				if (!sessionData) return;
+				const sessionResult = (await sessionStorage.getItem(sessionId)) ?? null;
+				if (!sessionResult) return;
+				const sessionUserStorage = getUserSessionStorage(sessionId);
 				await Promise.all([
-					client.removeItem(`${sessionKeyPrefix}:${sessionId}`),
-					client.clear(
-						`${userSessionKeyPrefix}:${sessionData.user_id}:${sessionId}`
-					)
+					sessionStorage.removeItem(sessionId),
+					sessionUserStorage.removeItem(sessionId)
 				]);
 			},
 			deleteSessionsByUserId: async (userId) => {
-				const userKeys = await client.getKeys(
-					`${userSessionKeyPrefix}:${userId}`
-				);
-				const sessionIds = await Promise.all(
-					userKeys.map((id) => client.getItem(id) as Promise<string>)
-				);
+				const userSessionStorage = getUserSessionStorage(userId);
+				const sessionIds = await userSessionStorage.getKeys();
 				await Promise.all([
-					...sessionIds.map((id) =>
-						client.removeItem(`${sessionKeyPrefix}:${id}`)
-					),
-					client.clear(`${userSessionKeyPrefix}:${userId}`)
+					...sessionIds.map((sessionId) => {
+						return sessionStorage.removeItem(sessionId);
+					}),
+					userSessionStorage.clear()
 				]);
 			},
 			updateSession: async (sessionId, partialSession) => {
-				const sessionData = (await client.getItem(
-					`${sessionKeyPrefix}:${sessionId}`
-				)) as SessionSchema | null;
-				if (!sessionData) return;
-				const updatedSession = { ...sessionData, ...partialSession };
-				client.setItem(
-					`${sessionKeyPrefix}:${updatedSession.id}`,
-					updatedSession,
-					updatedSession.idle_expires
-				); //@todo Implement key expiration https://github.com/unjs/unstorage/pull/236
+				const sessionResult = (await sessionStorage.getItem(sessionId)) ?? null;
+				if (!sessionResult) return;
+				const updatedSession = { ...sessionResult, ...partialSession };
+				await sessionStorage.setItem(sessionId, updatedSession);
 			}
 		};
 	};
