@@ -1,8 +1,7 @@
 ---
-order: 0
-title: "postgres"
+title: "`postgres` adapter"
+menuTitle: "`postgres`"
 description: "Learn how to use postgres with Lucia"
-format: "code"
 ---
 
 Adapter for [`postgres`](https://github.com/porsager/postgres) provided by the PostgreSQL adapter package.

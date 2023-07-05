@@ -1,6 +1,6 @@
 ---
-order: 0
-title: "Upstash"
+title: "Upstash adapter"
+menuTitle: "Upstash"
 description: "Learn how to use Upstas Redis with Lucia"
 ---
 
