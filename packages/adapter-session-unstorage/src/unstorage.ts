@@ -1,5 +1,7 @@
-import { SessionSchema, SessionAdapter, InitializeAdapter } from "lucia";
-import { type Storage, prefixStorage } from "unstorage";
+import { prefixStorage } from "unstorage";
+
+import type { SessionSchema, SessionAdapter, InitializeAdapter } from "lucia";
+import type { Storage } from "unstorage";
 
 export const DEFAULT_SESSION_PREFIX = "session";
 export const DEFAULT_USER_SESSION_PREFIX = "user_session";
