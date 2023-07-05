@@ -63,7 +63,7 @@ const auth = lucia({
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
 - [`pg`](/database-adapters/pg): PostgreSQL
-- [`postgres`](https://github.com/porsager/postgres): PostgreSQL
+- [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
 
@@ -71,6 +71,7 @@ const auth = lucia({
 
 - [Cloudflare D1](/database-adapters/cloudflare-d1)
 - [PlanetScale serverless](/database-adapters/planetscale-serverless)
+- [Upstash](/database-adapters/upstash)
 
 ## Set up types
 

@@ -1,12 +1,15 @@
 # `@lucia-auth/adapter-session-redis`
 
-[Redis](https://redis.io) session adapter for Lucia
-
-**[Documentation](https://lucia-auth.com/database/redis)**
+Redis session adapters for Lucia
 
 **[Lucia documentation](https://lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/session-adapter-redis/CHANGELOG.md)**
+
+## Included adapters
+
+- [Redis](https://redis.io) ([Documentation](https://v2.lucia-auth.com/database-adapters/redis))
+- [Upstash](https://upstash.com) ([Documentation](https://v2.lucia-auth.com/database-adapters/upstash))
 
 ## Installation
 
@@ -14,12 +17,20 @@
 npm install @lucia-auth/adapter-session-redis
 ```
 
-`lucia-auth@0.11.x` recommended.
-
 ## Testing
 
-Add a postgresql database url to `.env`.
+### Redis
+
+Add the port of a local Redis DB to `.env`.
 
 ```
-npm run test
+npm run test.redis
+```
+
+### Upstash
+
+Add the `UPSTASH_REDIS_REST_URL` and the `UPSTASH_REDIS_REST_TOKEN` to `.env`.
+
+```
+npm run test.upstash
 ```
