@@ -20,7 +20,7 @@ const authRequest = auth.handleRequest(Astro);
 import { auth } from "./lucia.js";
 
 export const get: APIRoute = async (context) => {
-	const authRequest = auth.handleRequest(apiContext);
+	const authRequest = auth.handleRequest(context);
 };
 ```
 
@@ -45,7 +45,7 @@ The middleware can be configured with the [`middleware`](/basics/configuration#m
 
 ```ts
 import { astro } from "lucia-auth/middleware";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 
 const auth = lucia({
 	middleware: astro()

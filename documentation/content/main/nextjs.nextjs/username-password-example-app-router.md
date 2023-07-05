@@ -31,7 +31,7 @@ In `lucia.d.ts`, add `username` in `UserAttributes` since we added `username` co
 
 ```ts
 // lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("$lib/server/lucia.js").Auth;
 	type UserAttributes = {
@@ -55,7 +55,7 @@ export const auth = lucia({
 		};
 	},
 	sessionExpiresIn: {
-		activePeriod: 60 * 60 * 24 * 30, // 1 month
+		activePeriod: 1000 * 60 * 60 * 24 * 30, // 1 month
 		idlePeriod: 0 // disable session renewal
 	}
 });
@@ -160,7 +160,7 @@ Users can be created with `createUser()`. This will create a new primary key tha
 ```ts
 // app/api/signup/route.ts
 import { auth } from "@/auth/lucia";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 import { Prisma } from "@prisma/client";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -300,7 +300,7 @@ We’ll use the key created in the previous section to reference the user and au
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { LuciaError } from "lucia-auth";
+import { LuciaError } from "lucia";
 
 export const POST = async (request: Request) => {
 	const { username, password } = await request.json();

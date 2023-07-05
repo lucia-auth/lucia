@@ -1,0 +1,63 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import GuidebookHeader from "@components/GuidebookHeader.astro";
+import ArticleIcon from "@icons/ArticleIcon.astro";
+
+import { getPages } from "@utils/content";
+
+const allPages = await getPages("guidebook");
+const parentPages = allPages.filter(
+    (page) => page.pathnameSegments.length === 2
+);
+---
+
+<BaseLayout title="The Lucia Guidebook">
+    <GuidebookHeader />
+    <main class="px-4 sm:px-8 md:px-16 bg-zinc-100 pb-24 min-h-screen">
+        <div class="max-w-4xl mx-auto">
+            <div class="pt-32 pb-16 w-full">
+                <div class="mx-auto max-w-2xl text-center">
+                    <h1
+                        class="text-5xl xs:text-7xl lg:text-8xl font-bold w-full"
+                    >
+                        Guidebook
+                    </h1>
+                    <p
+                        class="text-lg xs:text-xl text-center mt-4 overflow-hidden"
+                    >
+                        The Guidebook is a collection of tutorials and guides on
+                        using Lucia, with resources available for a wide range
+                        of frameworks and runtimes.
+                    </p>
+                </div>
+            </div>
+            <div class="w-full flex flex-col gap-y-6">
+                {
+                    parentPages.map(({ title, description, pathname }) => {
+                        return (
+                            <article class="group w-full rounded-lg bg-white">
+                                <a
+                                    class="xs:px-6 block px-4 py-4"
+                                    href={pathname}
+                                >
+                                    <h2 class="text-xl font-semibold">
+                                        {title}
+                                    </h2>
+                                    <p class="mt-1">{description}</p>
+                                    <div class="text-main mt-1 flex place-items-center gap-x-0.5">
+                                        <div class="h-5 w-5 fill-current ">
+                                            <ArticleIcon />
+                                        </div>
+                                        <p class="group-hover:underline">
+                                            Read
+                                        </p>
+                                    </div>
+                                </a>
+                            </article>
+                        );
+                    })
+                }
+            </div>
+        </div>
+    </main>
+</BaseLayout>

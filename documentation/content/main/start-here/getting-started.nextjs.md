@@ -38,7 +38,7 @@ In `auth/lucia.ts`, import [`lucia`](/reference/lucia-auth/auth) from `lucia-aut
 
 ```ts
 // auth/lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import { nextjs } from "lucia-auth/middleware";
 import prisma from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
@@ -57,13 +57,13 @@ This module and the file that holds it **should NOT be imported from the client*
 
 ### Types
 
-Create `lucia.d.ts`, and inside it configure your types. The path in `import('./auth/lucia.js').Auth;` is where you exported `auth` (`lucia()`).
+Create `lucia.d.ts`, and inside it configure your types. The path in `import('./auth/lucia').Auth;` is where you exported `auth` (`lucia()`).
 
 ```ts
 // lucia.d.ts
-/// <reference types="lucia-auth" />
+/// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./auth/lucia.js").Auth;
+	type Auth = import("./auth/lucia").Auth;
 	type UserAttributes = {};
 }
 ```
@@ -74,7 +74,7 @@ declare namespace Lucia {
 
 ```ts
 // auth/lucia.ts
-import lucia from "lucia-auth";
+import lucia from "lucia";
 import "lucia-auth/polyfill/node";
 
 // ...

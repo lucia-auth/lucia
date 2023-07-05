@@ -12,7 +12,7 @@ The [Next.js middleware](/reference/lucia-auth/middleware#nextjs) is the recomme
 
 ```ts
 // pages/index.tsx
-import { auth } from "./lucia.js";
+import { auth } from "../auth/lucia";
 
 export const getServerSideProps = async (context) => {
 	const authRequest = auth.handleRequest(context);
@@ -21,7 +21,7 @@ export const getServerSideProps = async (context) => {
 
 ```ts
 // pages/index.ts
-import { auth } from "./lucia.js";
+import { auth } from "../../auth/lucia";
 
 export default async (req, res) => {
 	const authRequest = auth.handleRequest({ req, res });
@@ -32,7 +32,7 @@ export default async (req, res) => {
 
 ```ts
 // app/page.tsx
-import { auth } from "auth/lucia.js";
+import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 
 export default () => {
@@ -44,7 +44,7 @@ export default () => {
 
 ```ts
 // app/routes.ts
-import { auth } from "auth/lucia.js";
+import { auth } from "@/auth/lucia";
 
 export const GET = async (request: Request) => {
 	const authRequest = auth.handleRequest({
@@ -75,7 +75,7 @@ The middleware can be configured with the [`middleware`](/basics/configuration#m
 
 ```ts
 import { nextjs } from "lucia-auth/middleware";
-import lucia from "lucia-auth";
+import lucia from "lucia";
 
 const auth = lucia({
 	middleware: nextjs()
@@ -87,11 +87,11 @@ const auth = lucia({
 [`AuthRequest.validateUser()`](/reference/lucia-auth/authrequest#validateuser) can be used to get the current session and user.
 
 ```ts
-// index.astro
-import { auth } from "./lucia.js";
+// index.ts
+import { auth } from "./lucia";
 
-const authRequest = auth.handleRequest(Astro);
-const { user, session } = await authRequest.validateUser(Astro);
+const authRequest = auth.handleRequest({ req, res });
+const { user, session } = await authRequest.validateUser();
 ```
 
 ### Caching
@@ -117,7 +117,7 @@ await Promise.all([authRequest.validateUser(), authRequest.validateUser()]);
 [`AuthRequest.setSession()`](/reference/lucia-auth/authrequest#validateuser) can be used to set a session, and therefore creating a session cookie.
 
 ```ts
-import { auth } from "./lucia.js";
+import { auth } from "./lucia";
 
 const authRequest = auth.handleRequest(req, res);
 authRequest.setSession(session);
