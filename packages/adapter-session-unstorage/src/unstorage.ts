@@ -8,7 +8,7 @@ export const unstorageAdapter = (
 	storage: Storage,
 	prefixes?: {
 		session: string;
-		userSessions: string;
+		userSession: string;
 	}
 ): InitializeAdapter<SessionAdapter> => {
 	return () => {
@@ -18,7 +18,7 @@ export const unstorageAdapter = (
 		);
 		const getUserSessionStorage = (userId: string) => {
 			const prefix = [
-				prefixes?.userSessions ?? DEFAULT_USER_SESSION_PREFIX,
+				prefixes?.userSession ?? DEFAULT_USER_SESSION_PREFIX,
 				userId
 			].join(":");
 			return prefixStorage<"">(storage, prefix);
