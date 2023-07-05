@@ -42,10 +42,14 @@
 	},
 	"peerDependencies": {
 		"lucia": "2.0.0-beta.4",
-		"pg": "^8.0.0"
+		"pg": "^8.8.0",
+		"postgres": "^3.3.0"
 	},
 	"peerDependenciesMeta": {
 		"pg": {
+			"optional": true
+		},
+		"postgres": {
 			"optional": true
 		}
 	},
