@@ -1,15 +1,17 @@
-import type { QueryHandler } from "@lucia-auth/adapter-test";
 import { Database, testSessionAdapter } from "@lucia-auth/adapter-test";
 import { Redis } from "@upstash/redis";
 import dotenv from "dotenv";
-import type { SessionSchema } from "lucia";
 import { LuciaError } from "lucia";
 import { resolve } from "path";
+
 import {
 	DEFAULT_SESSION_PREFIX,
 	DEFAULT_USER_SESSIONS_PREFIX,
 	upstashSessionAdapter
 } from "../src/drivers/upstash";
+
+import type { QueryHandler } from "@lucia-auth/adapter-test";
+import type { SessionSchema } from "lucia";
 
 dotenv.config({
 	path: `${resolve()}/.env`

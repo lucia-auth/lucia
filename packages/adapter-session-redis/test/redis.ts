@@ -2,8 +2,8 @@ import { Database, testSessionAdapter } from "@lucia-auth/adapter-test";
 import dotenv from "dotenv";
 import { LuciaError } from "lucia";
 import { resolve } from "path";
-
 import { createClient } from "redis";
+
 import {
 	DEFAULT_SESSION_PREFIX,
 	DEFAULT_USER_SESSIONS_PREFIX,
