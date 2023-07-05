@@ -11,6 +11,7 @@ PostgreSQL adapter for Lucia
 ## Supported drivers
 
 - [`pg`](https://github.com/brianc/node-postgres)
+- [`postgres`](https://github.com/porsager/postgres)
 
 ## Installation
 
@@ -38,4 +39,10 @@ PSQL_DATABASE_URL="postgresql://localhost/lucia"
 
 ```
 pnpm test.pg
+```
+
+### `postgres`
+
+```
+pnpm test.postgres
 ```

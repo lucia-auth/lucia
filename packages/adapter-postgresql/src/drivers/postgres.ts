@@ -8,7 +8,7 @@ import {
 
 import type { Adapter, InitializeAdapter, UserSchema, KeySchema } from "lucia";
 
-import type { Sql, PostgresError, Row } from "postgres";
+import type { Sql, PostgresError, Row, PendingQuery } from "postgres";
 
 export const postgresAdapter = (
 	sql: Sql,
@@ -26,9 +26,9 @@ export const postgresAdapter = (
 		return {
 			getUser: async (userId) => {
 				return await get<UserSchema>(
-					sql,
-					`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = $1`,
-					[userId]
+					sql.unsafe(`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = $1`, [
+						userId
+					])
 				);
 			},
 			setUser: async (user, key) => {
@@ -80,17 +80,19 @@ export const postgresAdapter = (
 
 			getSession: async (sessionId) => {
 				const result = await get<DatabaseSession>(
-					sql,
-					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
-					[sessionId]
+					sql.unsafe(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
+						[sessionId]
+					)
 				);
 				return result ? transformDatabaseSession(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
 				const result = await getAll<DatabaseSession>(
-					sql,
-					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
-					[userId]
+					sql.unsafe(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
+						[userId]
+					)
 				);
 				return result.map((val) => transformDatabaseSession(val));
 			},
@@ -137,17 +139,18 @@ export const postgresAdapter = (
 
 			getKey: async (keyId) => {
 				const result = await get<KeySchema>(
-					sql,
-					`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = $1`,
-					[keyId]
+					sql.unsafe(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = $1`, [
+						keyId
+					])
 				);
 				return result;
 			},
 			getKeysByUserId: async (userId) => {
 				const result = getAll<KeySchema>(
-					sql,
-					`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = $1`,
-					[userId]
+					sql.unsafe(
+						`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = $1`,
+						[userId]
+					)
 				);
 				return result;
 			},
@@ -197,18 +200,20 @@ export const postgresAdapter = (
 
 			getSessionAndUser: async (sessionId) => {
 				const getSessionPromise = get<DatabaseSession>(
-					sql,
-					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
-					[sessionId]
+					sql.unsafe(
+						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
+						[sessionId]
+					)
 				);
 				const getUserFromJoinPromise = get<
 					UserSchema & {
 						__session_id: string;
 					}
 				>(
-					sql,
-					`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = $1`,
-					[sessionId]
+					sql.unsafe(
+						`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = $1`,
+						[sessionId]
+					)
 				);
 				const [sessionResult, userFromJoinResult] = await Promise.all([
 					getSessionPromise,
@@ -222,17 +227,17 @@ export const postgresAdapter = (
 	};
 };
 
-export async function get<T extends Row>(sql: Sql, query: string, arg?: any[]) {
-	const res = await sql.unsafe<T[]>(query, arg);
-	return res.at(0) ?? null;
+export async function get<_Schema extends {}>(
+	queryPromise: PendingQuery<_Schema[]>
+) {
+	const result = await queryPromise;
+	return result.at(0) ?? null;
 }
 
-export async function getAll<T extends Row>(
-	sql: Sql,
-	query: string,
-	arg?: any[]
+export async function getAll<_Schema extends {}>(
+	queryPromise: PendingQuery<_Schema[]>
 ) {
-	return Array.from(await sql.unsafe<T[]>(query, arg));
+	return await queryPromise;
 }
 
 function processException(e: any) {
