@@ -65,6 +65,7 @@ const auth = lucia({
 
 - [Cloudflare D1](/database-adapters/cloudflare-d1)
 - [PlanetScale serverless](/database-adapters/planetscale-serverless)
+- [Upstash](/database-adapters/upstash)
 
 ## Set up types
 
