@@ -2,13 +2,12 @@ import {
 	helper,
 	getSetArgs,
 	escapeName,
-	transformDatabaseSession,
-	DatabaseSession
+	transformDatabaseSession
 } from "../utils.js";
 
+import type { DatabaseSession } from "../utils.js";
 import type { Adapter, InitializeAdapter, UserSchema, KeySchema } from "lucia";
-
-import type { Sql, PostgresError, Row, PendingQuery } from "postgres";
+import type { Sql, PostgresError, PendingQuery } from "postgres";
 
 export const postgresAdapter = (
 	sql: Sql,

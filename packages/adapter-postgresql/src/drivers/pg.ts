@@ -2,10 +2,10 @@ import {
 	helper,
 	getSetArgs,
 	escapeName,
-	transformDatabaseSession,
-	DatabaseSession
+	transformDatabaseSession
 } from "../utils.js";
 
+import type { DatabaseSession } from "../utils.js";
 import type { Adapter, InitializeAdapter, UserSchema, KeySchema } from "lucia";
 import type {
 	QueryResult,
