@@ -1,6 +1,6 @@
 type Callback = (state: boolean) => any;
 
-const createToggleState = () => {
+export const createToggleState = () => {
 	const callbacks: Callback[] = [];
 	let internal = false;
 	const onToggle = (callback: Callback) => {

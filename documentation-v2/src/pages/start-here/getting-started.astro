@@ -1,54 +1,34 @@
 ---
-import { getPage } from "@content";
+import { getPage, getPages } from "@utils/content";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
+import SelectLink from "@components/SelectLink.astro";
 
-const page = await getPage("main", "start-here", "getting-started");
-
-const frameworks: {
-    id: string,
-    name: string
-}[] = [{
-    name: "Astro",
-    id: "astro"
-}, {
-    name: "Express",
-    id: "express"
-}, {
-    name: "Next.js",
-    id: "nextjs",
-}, {
-    name: "Nuxt",
-    id: "nuxt"
-}, {
-    name: "Remix",
-    id: "remix"
-}, {
-    name: "SvelteKit",
-    id: "sveltekit"
-}]
+const pathnameSegments = ["main", "start-here", "getting-started"];
+const page = await getPage(...pathnameSegments);
+const nestedPages = await getPages(...pathnameSegments);
 ---
 
-<MainLayout title="Getting started | Lucia" description="Learn how to get started with Lucia">
+<MainLayout
+    title="Getting started | Lucia"
+    description="Learn how to get started with Lucia"
+>
     <div class="mt-6 mb-6">
-        <h1 class="text-5xl font-bold" set:html={page.htmlTitle}></h1>
+        <SelectLink
+            title="Select framework"
+            options={nestedPages.map((nestedPage) => {
+                return {
+                    title: nestedPage.htmlMenuTitle,
+                    href: nestedPage.pathname.replace("main", "")
+                };
+            })}
+        />
+        <h1 class="text-5xl font-bold mt-1">Getting started</h1>
     </div>
-    <div class="flex gap-2 mb-12 flex-wrap">
-        {
-            frameworks.map(
-                (framework) => {
-                    return (
-                        <a
-                            class="block rounded border px-2 py-1 text-sm hover:bg-indigo-50"
-                            href={`/start-here/getting-started/${framework.id}`}
-                        >
-                            {framework.name}
-                        </a>
-                    );
-                }
-            )
-        }
-    </div>
+    <p class="text-sm text-zinc-400 mb-2">
+        <i>Guides for specific frameworks and runtimes are also available.</i>
+    </p>
     <MarkdownStyle>
         <page.Content />
     </MarkdownStyle>

@@ -1,3 +1,7 @@
+---
+title: "Introduction"
+---
+
 At its most basic, Lucia lets you create users and validate sessions in a few lines of code. But what makes it truly great is that it also takes care of database queries. Just set up a simple user and session table, and pick one of the many database adapters to start using Lucia. It doesn't try to do everything, and that's what makes it easy to understand and use.
 
 It's also built to support all modern frameworks and runtimes. Of course, they all interact with requests and responses differently, so we provide minimal framework and runtime specific APIs to bridge the gap.

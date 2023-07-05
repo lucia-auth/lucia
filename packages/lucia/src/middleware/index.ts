@@ -55,20 +55,28 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	return ({ args }) => {
-		const [request, response] = args;
+		const [req, res] = args;
+
+		const getUrl = () => {
+			if (!req.headers.host) return "";
+			const protocol = req.protocol;
+			const host = req.headers.host;
+			const pathname = req.path;
+			return `${protocol}://${host}${pathname}`;
+		};
 
 		const requestContext = {
 			request: {
-				url: `${request.protocol}://${request.hostname}${request.path}`,
-				method: request.method,
+				url: getUrl(),
+				method: req.method,
 				headers: {
-					origin: request.headers.origin ?? null,
-					cookie: request.headers.cookie ?? null,
-					authorization: request.headers.authorization ?? null
+					origin: req.headers.origin ?? null,
+					cookie: req.headers.cookie ?? null,
+					authorization: req.headers.authorization ?? null
 				}
 			},
 			setCookie: (cookie) => {
-				response.cookie(cookie.name, cookie.value, cookie.attributes);
+				res.cookie(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
 
@@ -210,24 +218,26 @@ type NextJsPagesServerContext = {
 	res: OutgoingMessage;
 };
 
-type NextJsCookie =
+type NextCookie =
 	| {
 			name: string;
 			value: string;
 	  }
 	| undefined;
 
+type NextCookiesFunction = () => {
+	set: (name: string, value: string, options: CookieAttributes) => void;
+	get: (name: string) => NextCookie;
+};
+
 type NextRequest = Request & {
 	cookies: {
-		get: (name: string) => NextJsCookie;
+		get: (name: string) => NextCookie;
 	};
 };
 
 type NextJsAppServerContext = {
-	cookies: () => {
-		set?: (name: string, value: string, options?: CookieAttributes) => void;
-		get: (name: string) => NextJsCookie;
-	};
+	cookies: NextCookiesFunction;
 	request: NextRequest | null;
 };
 
@@ -241,32 +251,33 @@ export const nextjs = (): Middleware<
 > => {
 	return ({ args, cookieName, env }) => {
 		const [serverContext] = args;
+
 		if ("request" in serverContext || "cookies" in serverContext) {
 			const request =
 				"request" in serverContext ? serverContext.request : serverContext;
 
-			const cookieStore:
-				| NextRequest["cookies"]
-				| ReturnType<NextJsAppServerContext["cookies"]> =
-				"request" in serverContext
+			const readonlyCookieStore =
+				typeof serverContext.cookies === "function"
 					? serverContext.cookies()
 					: serverContext.cookies;
 
-			const sessionCookie = cookieStore.get(cookieName)?.value ?? null;
+			const sessionCookie = readonlyCookieStore.get(cookieName)?.value ?? null;
 
 			const requestContext = {
 				request: {
 					url: request?.url ?? "",
 					method: request?.method ?? "GET",
 					headers: {
-						origin: request?.headers.get("Origin") ?? null,
+						origin: request?.headers?.get("Origin") ?? null,
 						cookie: null,
-						authorization: request?.headers.get("Authorization") ?? null
+						authorization: request?.headers?.get("Authorization") ?? null
 					},
 					storedSessionCookie: sessionCookie
 				},
 				setCookie: (cookie) => {
-					if (!("set" in cookieStore) || !cookieStore.set) return;
+					if (typeof serverContext.cookies !== "function") return;
+					const cookieStore = serverContext.cookies();
+					if (!cookieStore.set) return;
 					try {
 						cookieStore.set(cookie.name, cookie.value, cookie.attributes);
 					} catch {
