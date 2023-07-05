@@ -1,14 +1,14 @@
-import { testSessionAdapter, Database } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia";
+import { Database, testSessionAdapter } from "@lucia-auth/adapter-test";
 import dotenv from "dotenv";
+import { LuciaError } from "lucia";
 import { resolve } from "path";
-
 import { createClient } from "redis";
+
 import {
-	redisSessionAdapter,
 	DEFAULT_SESSION_PREFIX,
-	DEFAULT_USER_SESSIONS_PREFIX
-} from "../src/redis.js";
+	DEFAULT_USER_SESSIONS_PREFIX,
+	redisSessionAdapter
+} from "../src/drivers/redis.js";
 
 import type { QueryHandler } from "@lucia-auth/adapter-test";
 import type { SessionSchema } from "lucia";
@@ -22,6 +22,8 @@ const redisClient = createClient({
 		port: Number(process.env.REDIS_PORT)
 	}
 });
+
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
 
 const sessionKey = (sessionId: string) => {
 	return [DEFAULT_SESSION_PREFIX, sessionId].join(":");

@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-session-redis
 
+## 2.0.0-beta.5
+
+### Minor changes
+
+- [#699](https://github.com/pilcrowOnPaper/lucia/pull/699) by [@schweden1997](https://github.com/schweden1997) : Add Redis adapter for Upstash
+
 ## 2.0.0-beta.4
 
 ### Patch changes

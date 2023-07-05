@@ -1,4 +1,4 @@
-import type { SessionSchema, SessionAdapter, InitializeAdapter } from "lucia";
+import type { InitializeAdapter, SessionAdapter, SessionSchema } from "lucia";
 import type { RedisClientType } from "redis";
 
 export const DEFAULT_SESSION_PREFIX = "session";

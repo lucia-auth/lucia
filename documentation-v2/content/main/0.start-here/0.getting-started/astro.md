@@ -53,9 +53,11 @@ const auth = lucia({
 ### Adapters for database drivers and ORMs
 
 - [`better-sqlite3`](/database-adapters/better-sqlite3): SQLite
+- [libSQL](/database-adapters/libSQL): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
 - [`pg`](/database-adapters/pg): PostgreSQL
+- [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
 - [Unstorage](/database-adapters/unstorage): Azure, Cloudflare KV, Memory, MongoDB, Planetscale, Redis, Vercel KV
@@ -64,6 +66,7 @@ const auth = lucia({
 
 - [Cloudflare D1](/database-adapters/cloudflare-d1)
 - [PlanetScale serverless](/database-adapters/planetscale-serverless)
+- [Upstash](/database-adapters/upstash)
 
 ## Set up types
 
