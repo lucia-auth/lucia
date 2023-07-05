@@ -53,6 +53,7 @@ const auth = lucia({
 ### Adapters for database drivers and ORMs
 
 - [`better-sqlite3`](/database-adapters/better-sqlite3): SQLite
+- [libSQL](/database-adapters/libSQL): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
 - [`pg`](/database-adapters/pg): PostgreSQL
