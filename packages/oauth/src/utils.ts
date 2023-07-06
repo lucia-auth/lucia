@@ -50,6 +50,10 @@ export const decodeBase64 = (data: string) => {
 	return Uint8Array.from(atob(data).split(""), (x) => x.charCodeAt(0));
 };
 
+export const decodeBase64Url = (data: string) => {
+	return decodeBase64(data.replaceAll("-", "+").replaceAll("_", "/"));
+};
+
 export const generateState = () => {
 	return generateRandomString(43);
 };

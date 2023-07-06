@@ -1,11 +1,10 @@
 import { createUrl, handleRequest } from "../request.js";
 import { providerUserAuth } from "../core.js";
 import { generateState, getPKCS8Key } from "../utils.js";
-import { decodeJwt } from "jose";
+import { createES256SignedJWT, validateIdTokenClaims } from "../jwt.js";
 
 import type { Auth } from "lucia";
 import type { OAuthProvider } from "../core.js";
-import { createES256SignedJWT } from "../jwt.js";
 
 type AppleConfig = {
 	teamId: string;
@@ -85,7 +84,10 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	const getAppleUser = async (idToken: string) => {
-		return decodeJwt(idToken) as AppleUser;
+		return validateIdTokenClaims<AppleUser>(idToken, {
+			aud: config.clientId,
+			iss: APPLE_AUD
+		});
 	};
 
 	return {
