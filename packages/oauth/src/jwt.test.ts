@@ -26,7 +26,6 @@ Jg0x4ad/bCs1qaMTLyMtsANR2dgANIfU7lKEeZAxPap8ch+I1LtW2pHH
 
 	const getJoseJwt = async () => {
 		const cert = await importPKCS8(certificate, "ES256");
-
 		const jwt = await new SignJWT(payload)
 			.setProtectedHeader({ alg: "ES256", kid: keyId })
 			.sign(cert);
@@ -36,7 +35,7 @@ Jg0x4ad/bCs1qaMTLyMtsANR2dgANIfU7lKEeZAxPap8ch+I1LtW2pHH
 
 	const getJWT = async () => {
 		const privateKey = getPKCS8Key(certificate);
-		return await createES256SignedJWT(
+		const jwt = await createES256SignedJWT(
 			{
 				alg: "ES256",
 				kid: keyId
@@ -44,6 +43,7 @@ Jg0x4ad/bCs1qaMTLyMtsANR2dgANIfU7lKEeZAxPap8ch+I1LtW2pHH
 			payload,
 			privateKey
 		);
+        return jwt
 	};
 
 	const verifyJWT = async (jwt: string) => {

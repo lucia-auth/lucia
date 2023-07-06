@@ -4,20 +4,38 @@ export type AwaitedReturnType<T extends (...args: any[]) => any> = Awaited<
 	ReturnType<T>
 >;
 
-export const encodeBase64 = (s: string) => {
-	// ORDER IS IMPORTANT!!
-	// Buffer API EXISTS IN DENO!!
-	if (typeof window !== "undefined" && "Deno" in window) {
+const isDeno = () => {
+	return typeof window !== "undefined" && "Deno" in window;
+};
+
+export const encodeBase64 = (
+	data: string | ArrayLike<number> | ArrayBufferLike
+) => {
+	// ORDER IMPORTANT
+	// buffer API exists in deno
+
+	// ignore deprecation for `btoa()`
+	if (isDeno()) {
 		// deno
-		return btoa(s);
+		if (typeof data === "string") return btoa(data);
+		return btoa(String.fromCharCode(...new Uint8Array(data)));
 	}
 	if (typeof Buffer === "function") {
-		// node
-		return Buffer.from(s).toString("base64");
+		// node or bun
+		const bufferData = typeof data === "string" ? data : new Uint8Array(data);
+		return Buffer.from(bufferData).toString("base64");
 	}
+	if (typeof data === "string") return btoa(data);
+	return btoa(String.fromCharCode(...new Uint8Array(data)));
+};
 
-	// standard API - ignore warning
-	return btoa(s);
+export const encodeBase64Url = (
+	data: string | ArrayLike<number> | ArrayBufferLike
+) => {
+	return encodeBase64(data)
+		.replaceAll("=", "")
+		.replaceAll("+", "-")
+		.replaceAll("/", "_");
 };
 
 export const generateState = () => {

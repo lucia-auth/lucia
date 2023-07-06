@@ -1,4 +1,4 @@
-import { encodeBase64 } from "./utils.js";
+import { encodeBase64Url } from "./utils.js";
 
 const encoder = new TextEncoder();
 
@@ -20,15 +20,9 @@ export const createES256SignedJWT = async (
 		true,
 		["sign"]
 	);
-	const base64Header = encodeBase64(JSON.stringify(protectedHeader))
-		.replaceAll("=", "")
-		.replaceAll("+", "-")
-		.replaceAll("/", "_");
-	const base64Payload = encodeBase64(JSON.stringify(payload))
-		.replaceAll("=", "")
-		.replaceAll("+", "-")
-		.replaceAll("/", "_");
-	const signatureBody = [base64Header, base64Payload].join(".");
+	const base64UrlHeader = encodeBase64Url(JSON.stringify(protectedHeader));
+	const base64UrlPayload = encodeBase64Url(JSON.stringify(payload));
+	const signatureBody = [base64UrlHeader, base64UrlPayload].join(".");
 	const signatureBuffer = await crypto.subtle.sign(
 		{
 			name: "ECDSA",
@@ -37,12 +31,7 @@ export const createES256SignedJWT = async (
 		cryptoKey,
 		encoder.encode(signatureBody)
 	);
-	const signature = encodeBase64(
-		String.fromCharCode(...new Uint8Array(signatureBuffer))
-	)
-		.replaceAll("=", "")
-		.replaceAll("+", "-")
-		.replaceAll("/", "_");
+	const signature = encodeBase64Url(signatureBuffer);
 	const jwt = [signatureBody, signature].join(".");
 	return jwt;
 };
