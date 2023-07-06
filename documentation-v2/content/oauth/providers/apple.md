@@ -139,7 +139,7 @@ type Auth0UserAuth = ProviderUserAuth & {
 | [`AppleUser`](#appleuser)                                          |
 | [`AppleTokens`](#appletokens)                                      |
 
-## `AppleTokens`
+### `AppleTokens`
 
 ```ts
 type AppleTokens = {
@@ -150,7 +150,7 @@ type AppleTokens = {
 };
 ```
 
-## `AppleUser`
+### `AppleUser`
 
 ```ts
 type AppleUser = {
