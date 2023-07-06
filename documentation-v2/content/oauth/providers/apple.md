@@ -38,7 +38,7 @@ const apple: (
 		keyId: string;
 		certificate: string;
 	}
-) => OAuthProvider<AppleUser, AppleTokens>;
+) => AppleProvider;
 ```
 
 ##### Parameters
@@ -54,9 +54,9 @@ const apple: (
 
 ##### Returns
 
-| type                                              | description    |
-| ------------------------------------------------- | -------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | Apple provider |
+| type                              | description    |
+| --------------------------------- | -------------- |
+| [`AppleProvider`](#appleprovider) | Apple provider |
 
 ### Import certificate
 
@@ -105,7 +105,7 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<Auth0UserAuth>;
+const validateCallback: (code: string) => Promise<AppleUserAuth>;
 ```
 
 ##### Parameters
@@ -118,7 +118,7 @@ const validateCallback: (code: string) => Promise<Auth0UserAuth>;
 
 | type                              |
 | --------------------------------- |
-| [`Auth0UserAuth`](#auth0userauth) |
+| [`AppleUserAuth`](#appleuserauth) |
 
 ##### Errors
 
