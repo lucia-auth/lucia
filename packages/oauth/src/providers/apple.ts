@@ -1,10 +1,10 @@
-import * as jose from "jose";
-
 import { createUrl, handleRequest } from "../request.js";
 import { providerUserAuth } from "../core.js";
 import { generateState } from "../utils.js";
+import { importPKCS8, SignJWT, decodeJwt } from "jose";
+
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
+import type { OAuthProvider } from "../core.js";
 
 type AppleConfig = {
 	teamId: string;
@@ -14,15 +14,8 @@ type AppleConfig = {
 
 type Config = {
 	redirectUri: string;
-} & Omit<OAuthConfig, "clientSecret"> &
-	AppleConfig;
-
-type AppleTokens = {
-	access_token: string;
-	refresh_token?: string;
-	expires_in: number;
-	id_token: string;
-};
+	clientId: string;
+} & AppleConfig;
 
 const PROVIDER_ID = "apple";
 const APPLE_AUD = "https://appleid.apple.com";
@@ -33,7 +26,9 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		teamId,
 		clientId,
 		keyId
-	}: AppleConfig & Pick<Config, "clientId">) => {
+	}: AppleConfig & {
+		clientId: string;
+	}) => {
 		const ALG = `ES256`;
 		const now = Math.floor(Date.now() / 1000);
 		const payload = {
@@ -44,9 +39,9 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			sub: clientId
 		};
 
-		const cert = await jose.importPKCS8(certificate, ALG);
+		const cert = await importPKCS8(certificate, ALG);
 
-		const jwt = await new jose.SignJWT(payload)
+		const jwt = await new SignJWT(payload)
 			.setProtectedHeader({ alg: ALG, kid: keyId })
 			.sign(cert);
 
@@ -71,7 +66,12 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			method: "POST"
 		});
 
-		const tokens = await handleRequest<AppleTokens>(request);
+		const tokens = await handleRequest<{
+			access_token: string;
+			refresh_token?: string;
+			expires_in: number;
+			id_token: string;
+		}>(request);
 
 		return {
 			accessToken: tokens.access_token,
@@ -82,12 +82,7 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	const getAppleUser = async (idToken: string) => {
-		const decodeIdToken = jose.decodeJwt(idToken) as AppleUser;
-		return {
-			email: decodeIdToken.email,
-			emailVerified: Boolean(decodeIdToken.email_verified),
-			sub: decodeIdToken.sub
-		};
+		return decodeJwt(idToken) as AppleUser;
 	};
 
 	return {
