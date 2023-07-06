@@ -1,9 +1,5 @@
 import { generateRandomString } from "lucia/utils";
 
-export type AwaitedReturnType<T extends (...args: any[]) => any> = Awaited<
-	ReturnType<T>
->;
-
 const isDeno = () => {
 	return typeof window !== "undefined" && "Deno" in window;
 };
