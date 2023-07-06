@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-sqlite
 
+## 2.0.0-beta.5
+
+### Minor changes
+
+- [#680](https://github.com/pilcrowOnPaper/lucia/pull/680) by [@abdel-17](https://github.com/abdel-17) : Add libSQL adapter
+
+## 2.0.0-beta.4
+
+### Patch changes
+
+- [#803](https://github.com/pilcrowOnPaper/lucia/pull/803) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.3
 
 ### Major changes

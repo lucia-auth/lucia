@@ -11,6 +11,7 @@ SQLite adapter for Lucia
 ## Supported drivers
 
 - [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
+- [libSQL](https://github.com/libsql/libsql) (Turso)
 
 ## Installation
 
@@ -56,4 +57,10 @@ Finally, run:
 
 ```
 pnpm test.d1
+```
+
+### libSQL
+
+```
+pnpm test.libsql
 ```

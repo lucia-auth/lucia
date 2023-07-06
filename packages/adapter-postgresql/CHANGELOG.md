@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-postgresql
 
+## 2.0.0-beta.5
+
+### Minor changes
+
+- [#782](https://github.com/pilcrowOnPaper/lucia/pull/782) by [@alexanderguy](https://github.com/alexanderguy) : Add adapter for `porsager/postgres`
+
+## 2.0.0-beta.4
+
+### Patch changes
+
+- [#803](https://github.com/pilcrowOnPaper/lucia/pull/803) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.3
 
 ### Major changes

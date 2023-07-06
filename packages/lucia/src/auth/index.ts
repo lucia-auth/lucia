@@ -10,6 +10,7 @@ import { AuthRequest } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
 import { isWithinExpiration } from "../utils/date.js";
+import { isAllowedUrl } from "../utils/url.js";
 
 import type { Cookie, SessionCookieAttributes } from "./cookie.js";
 import type { UserSchema, SessionSchema } from "./schema.js";
@@ -78,7 +79,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		? _Configuration["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
 	public csrfProtectionEnabled: boolean;
-	private allowedRequestOrigins: string[];
+	private allowedSubdomains: string[] | "*";
 	private experimental: {
 		debugMode: boolean;
 	};
@@ -89,16 +90,19 @@ export class Auth<_Configuration extends Configuration = any> {
 		if ("user" in config.adapter) {
 			let userAdapter = config.adapter.user(LuciaError);
 			let sessionAdapter = config.adapter.session(LuciaError);
+
 			if ("getSessionAndUserBySessionId" in userAdapter) {
 				const { getSessionAndUserBySessionId: _, ...extractedUserAdapter } =
 					userAdapter;
 				userAdapter = extractedUserAdapter;
 			}
+
 			if ("getSessionAndUserBySessionId" in sessionAdapter) {
 				const { getSessionAndUserBySessionId: _, ...extractedSessionAdapter } =
 					sessionAdapter;
 				sessionAdapter = extractedSessionAdapter;
 			}
+
 			this.adapter = {
 				...userAdapter,
 				...sessionAdapter
@@ -107,7 +111,8 @@ export class Auth<_Configuration extends Configuration = any> {
 			this.adapter = config.adapter(LuciaError);
 		}
 		this.env = config.env;
-		this.csrfProtectionEnabled = config.csrfProtection ?? true;
+		this.csrfProtectionEnabled =
+			typeof config.csrfProtection === "boolean" ? config.csrfProtection : true;
 		this.sessionExpiresIn = {
 			activePeriod:
 				config.sessionExpiresIn?.activePeriod ?? 1000 * 60 * 60 * 24,
@@ -139,7 +144,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			validate: config.passwordHash?.validate ?? validateScryptHash
 		};
 		this.middleware = config.middleware ?? defaultMiddleware();
-		this.allowedRequestOrigins = config.allowedRequestOrigins ?? [];
+		this.allowedSubdomains =
+			!config.csrfProtection || typeof config.csrfProtection === "boolean"
+				? []
+				: config.csrfProtection.allowedSubDomains;
 		this.experimental = {
 			debugMode: config.experimental?.debugMode ?? false
 		};
@@ -219,10 +227,12 @@ export class Auth<_Configuration extends Configuration = any> {
 		if (this.adapter.getSessionAndUser) {
 			const [databaseSession, databaseUser] =
 				await this.adapter.getSessionAndUser(sessionId);
+
 			if (!databaseSession) {
 				debug.session.fail("Session not found", sessionId);
 				throw new LuciaError("AUTH_INVALID_SESSION_ID");
 			}
+
 			if (!isValidDatabaseSession(databaseSession)) {
 				debug.session.fail(
 					`Session expired at ${new Date(
@@ -232,6 +242,7 @@ export class Auth<_Configuration extends Configuration = any> {
 				);
 				throw new LuciaError("AUTH_INVALID_SESSION_ID");
 			}
+
 			return [databaseSession, databaseUser];
 		}
 		const databaseSession = await this.getDatabaseSession(sessionId);
@@ -495,9 +506,11 @@ export class Auth<_Configuration extends Configuration = any> {
 			try {
 				const url = new URL(request.url);
 				if (
-					![url.origin, ...this.allowedRequestOrigins].includes(requestOrigin)
+					!isAllowedUrl(requestOrigin, {
+						url,
+						allowedSubdomains: this.allowedSubdomains
+					})
 				) {
-					debug.request.fail("Invalid request origin", requestOrigin);
 					throw new LuciaError("AUTH_INVALID_REQUEST");
 				}
 				debug.request.info("Valid request origin", requestOrigin);
@@ -657,8 +670,12 @@ export type Configuration<
 	env: Env;
 
 	middleware?: Middleware;
-	csrfProtection?: boolean;
-	allowedRequestOrigins?: string[];
+	csrfProtection?:
+		| boolean
+		| {
+				baseDomain: string;
+				allowedSubDomains: string[] | "*";
+		  };
 	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;

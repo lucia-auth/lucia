@@ -1,12 +1,12 @@
-import { helper, getSetArgs, escapeName } from "../utils.js";
+import {
+	helper,
+	getSetArgs,
+	escapeName,
+	transformDatabaseSession
+} from "../utils.js";
 
-import type {
-	Adapter,
-	InitializeAdapter,
-	UserSchema,
-	SessionSchema,
-	KeySchema
-} from "lucia";
+import type { DatabaseSession } from "../utils.js";
+import type { Adapter, InitializeAdapter, UserSchema, KeySchema } from "lucia";
 import type {
 	QueryResult,
 	DatabaseError,
@@ -99,22 +99,22 @@ export const pgAdapter = (
 			},
 
 			getSession: async (sessionId) => {
-				const result = await get<PgSession>(
+				const result = await get<DatabaseSession>(
 					pool.query(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 						[sessionId]
 					)
 				);
-				return result ? transformPgSession(result) : null;
+				return result ? transformDatabaseSession(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
-				const result = await getAll<PgSession>(
+				const result = await getAll<DatabaseSession>(
 					pool.query(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 						[userId]
 					)
 				);
-				return result.map((val) => transformPgSession(val));
+				return result.map((val) => transformDatabaseSession(val));
 			},
 			setSession: async (session) => {
 				try {
@@ -221,7 +221,7 @@ export const pgAdapter = (
 
 			getSessionAndUser: async (sessionId) => {
 				const getSessionPromise = get(
-					pool.query<PgSession>(
+					pool.query<DatabaseSession>(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 						[sessionId]
 					)
@@ -242,7 +242,7 @@ export const pgAdapter = (
 				]);
 				if (!sessionResult || !userFromJoinResult) return [null, null];
 				const { __session_id: _, ...userResult } = userFromJoinResult;
-				return [transformPgSession(sessionResult), userResult];
+				return [transformDatabaseSession(sessionResult), userResult];
 			}
 		};
 	};
@@ -261,20 +261,4 @@ export const getAll = async <_Schema extends QueryResultRow>(
 ): Promise<_Schema[]> => {
 	const { rows } = await queryPromise;
 	return rows;
-};
-
-export type PgSession = Omit<
-	SessionSchema,
-	"active_expires" | "idle_expires"
-> & {
-	active_expires: BigInt;
-	idle_expires: BigInt;
-};
-
-export const transformPgSession = (session: PgSession): SessionSchema => {
-	return {
-		...session,
-		active_expires: Number(session.active_expires),
-		idle_expires: Number(session.idle_expires)
-	};
 };
