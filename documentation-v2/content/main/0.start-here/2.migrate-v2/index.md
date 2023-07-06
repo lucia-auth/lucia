@@ -124,10 +124,12 @@ const auth = lucia({
 	},
 
 	// autoDatabaseCleanup: false, <= removed for now
-	csrfProtection: true, // no change
-	// generateCustomUserId, <= removed
+	csrfProtection: {
+		allowedSubdomains: ["foo"] // allow https://foo.example.com
+	} // can be boolean
+	// generateCustomUserId, <= removed, see `csrfProtection`
 	passwordHash, // previously `hash`
-	allowedRequestOrigins: ["https://foo.example.com"], // previously `origin`
+	// origin, <= removed
 	sessionCookie: {
 		name: "user_session", // session cookie name
 		attributes: {
