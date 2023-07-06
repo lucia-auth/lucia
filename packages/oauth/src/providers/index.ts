@@ -9,3 +9,4 @@ export { linkedin, type LinkedinUser } from "./linkedin.js";
 export { auth0, type Auth0User } from "./auth0.js";
 export { facebook, type FacebookUser } from "./facebook.js";
 export { spotify, type SpotifyUser } from "./spotify.js";
+export { osu, type OsuUser } from "./osu.js";
