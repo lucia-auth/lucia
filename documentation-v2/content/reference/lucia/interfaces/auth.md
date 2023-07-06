@@ -741,7 +741,7 @@ const key = await auth.useKey("github", githubUserId, null);
 
 ## `validateRequestOrigin()`
 
-Used for CSRF protection. Checks if the request origin is trusted for non-GET and non-HEAD requests (e.g. POST, PUT, DELETE), and throws an error if the origin is invalid. Trusted origins include the request url and those defined in [`allowedRequestOrigins`](/basics/configuration#allowedrequestorigins) configuration.
+Used for CSRF protection. Checks if the request origin is trusted for non-GET and non-HEAD requests (e.g. POST, PUT, DELETE), and throws an error if the origin is invalid.  Trusted origins include where the server is hosted and its subdomains defined with [`csrfProtection.allowedSubdomains`](/basics/configuration#csrfprotection) configuration.
 
 ```ts
 const validateRequestOrigin: (request: {
