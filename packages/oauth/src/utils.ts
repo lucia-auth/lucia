@@ -16,8 +16,7 @@ export const encodeBase64 = (s: string) => {
 		return Buffer.from(s).toString("base64");
 	}
 
-	// standard API
-	// IGNORE WARNING
+	// standard API - ignore warning
 	return btoa(s);
 };
 
@@ -27,4 +26,13 @@ export const generateState = () => {
 
 export const scope = (base: string[], config: string[] = []) => {
 	return [...base, ...(config ?? [])].join(" ");
+};
+export const getPKCS8Key = (pkcs8: string) => {
+	return [
+		"\n",
+		pkcs8
+			.replace(/-----BEGIN PRIVATE KEY-----/, "")
+			.replace(/-----END PRIVATE KEY-----/, ""),
+		"\n"
+	].join("");
 };

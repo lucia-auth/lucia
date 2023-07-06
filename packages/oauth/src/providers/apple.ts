@@ -1,10 +1,11 @@
 import { createUrl, handleRequest } from "../request.js";
 import { providerUserAuth } from "../core.js";
-import { generateState } from "../utils.js";
-import { importPKCS8, SignJWT, decodeJwt } from "jose";
+import { generateState, getPKCS8Key } from "../utils.js";
+import { decodeJwt } from "jose";
 
 import type { Auth } from "lucia";
 import type { OAuthProvider } from "../core.js";
+import { createES256SignedJWT } from "../jwt.js";
 
 type AppleConfig = {
 	teamId: string;
@@ -29,7 +30,6 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	}: AppleConfig & {
 		clientId: string;
 	}) => {
-		const ALG = `ES256`;
 		const now = Math.floor(Date.now() / 1000);
 		const payload = {
 			iss: teamId,
@@ -38,12 +38,15 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			aud: APPLE_AUD,
 			sub: clientId
 		};
-
-		const cert = await importPKCS8(certificate, ALG);
-
-		const jwt = await new SignJWT(payload)
-			.setProtectedHeader({ alg: ALG, kid: keyId })
-			.sign(cert);
+		const privateKey = getPKCS8Key(certificate);
+		const jwt = await createES256SignedJWT(
+			{
+				alg: "ES256",
+				kid: keyId
+			},
+			payload,
+			privateKey
+		);
 
 		return jwt;
 	};
