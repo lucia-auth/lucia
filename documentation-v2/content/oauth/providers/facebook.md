@@ -1,5 +1,4 @@
 ---
-order:: 0
 title: "Facebook"
 description: "Learn about using the Facebook provider in Lucia OAuth integration"
 ---

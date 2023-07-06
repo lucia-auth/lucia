@@ -1,5 +1,4 @@
 ---
-order:: 0
 title: "Twitch"
 description: "Learn about using the Twitch provider in Lucia OAuth integration"
 ---

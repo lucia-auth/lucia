@@ -1,5 +1,4 @@
 ---
-order:: 0
 title: "Auth0"
 description: "Learn about using the Auth0 provider in Lucia OAuth integration"
 ---

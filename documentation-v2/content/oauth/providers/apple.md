@@ -1,8 +1,5 @@
 ---
-_order: 0
-
 title: "Apple"
-
 description: "Learn about using the Apple provider in Lucia OAuth integration"
 ---
 
@@ -23,17 +20,13 @@ Provider id is `apple`.
 
 ```ts
 import { apple } from "@lucia-auth/oauth/providers";
-```
-
-### Initialization
-
-```ts
-import { apple } from "@lucia-auth/oauth/providers";
 
 import { auth } from "./lucia.js";
 
 const appleAuth = apple(auth, configs);
 ```
+
+## `apple()`
 
 ```ts
 const apple: (
@@ -48,24 +41,24 @@ const apple: (
 ) => OAuthProvider<AppleUser, AppleTokens>;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                | type                                 | description                                                    | optional |
-| ------------------- | ------------------------------------ | -------------------------------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                 |          |
-| configs.clientId    | `string`                             | Apple service identifier                                       |          |
-| configs.redirectUri | `string`                             | an authorized redirect URI                                     |          |
-| configs.teamId      | `string`                             | Apple teamId                                                   |          |
-| configs.keyId       | `string`                             | Apple private keyId                                            |          |
-| configs.certificate | `string`                             | p8 certificate as string [See how](#how-to-import-certificate) |          |
+| name                | type                                       | description                                                    |
+| ------------------- | ------------------------------------------ | -------------------------------------------------------------- |
+| `auth`              | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                 |
+| configs.clientId    | `string`                                   | Apple service identifier                                       |
+| configs.redirectUri | `string`                                   | an authorized redirect URI                                     |
+| configs.teamId      | `string`                                   | Apple teamId                                                   |
+| configs.keyId       | `string`                                   | Apple private keyId                                            |
+| configs.certificate | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate) |
 
-#### Returns
+##### Returns
 
 | type                                              | description    |
 | ------------------------------------------------- | -------------- |
 | [`OAuthProvider`](/reference/oauth/oauthprovider) | Apple provider |
 
-### How to import certificate
+### Import certificate
 
 ```ts
 import * as fs from "node:fs";
@@ -86,58 +79,65 @@ export const appleAuth = apple(auth, {
 });
 ```
 
-## `AppleProvider`
+## Interfaces
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+### `AppleProvider`
 
-### `getAuthorizationUrl()`
+Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
+
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 ```
 
-#### Parameter
-
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
-
-#### Returns
+##### Returns
 
 | name    | type     | description          |
 | ------- | -------- | -------------------- |
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and returns the session.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
+const validateCallback: (code: string) => Promise<Auth0UserAuth>;
 ```
 
-#### Parameter
+##### Parameters
 
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
-#### Returns
+##### Returns
 
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
+| type                              |
+| --------------------------------- |
+| [`Auth0UserAuth`](#auth0userauth) |
 
-#### Errors
+##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
+
+### `AppleUserAuth`
+
+```ts
+type Auth0UserAuth = ProviderUserAuth & {
+	appleUser: AppleUser;
+	appleTokens: AppleTokens;
+};
+```
+
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`AppleUser`](#appleuser)                                          |
+| [`AppleTokens`](#appletokens)                                      |
 
 ## `AppleTokens`
 
