@@ -1,4 +1,4 @@
-import { encodeBase64Url } from "./utils.js";
+import { decodeBase64, encodeBase64Url } from "./utils.js";
 
 const encoder = new TextEncoder();
 
@@ -12,7 +12,7 @@ export const createES256SignedJWT = async (
 ) => {
 	const cryptoKey = await crypto.subtle.importKey(
 		"pkcs8",
-		Uint8Array.from(atob(privateKey).split(""), (x) => x.charCodeAt(0)),
+		decodeBase64(privateKey),
 		{
 			name: "ECDSA",
 			namedCurve: "P-256"

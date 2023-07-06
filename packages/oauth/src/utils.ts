@@ -34,6 +34,22 @@ export const encodeBase64Url = (
 		.replaceAll("/", "_");
 };
 
+export const decodeBase64 = (data: string) => {
+	// ORDER IMPORTANT
+	// buffer API exists in deno
+
+	// ignore deprecation for `btoa()`
+	if (isDeno()) {
+		// deno
+		return Uint8Array.from(atob(data).split(""), (x) => x.charCodeAt(0));
+	}
+	if (typeof Buffer === "function") {
+		// node or bun
+		return new Uint8Array(Buffer.from(data, "base64"));
+	}
+	return Uint8Array.from(atob(data).split(""), (x) => x.charCodeAt(0));
+};
+
 export const generateState = () => {
 	return generateRandomString(43);
 };
