@@ -99,19 +99,19 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
-			const tokens = await getAppleTokens(code);
-			const providerUser = await getAppleUser(tokens.idToken);
-			const providerUserId = providerUser.sub;
-			const providerAuth = await providerUserAuth(
+			const appleTokens = await getAppleTokens(code);
+			const appleUser = await getAppleUser(appleTokens.idToken);
+			const providerUserId = appleUser.sub;
+			const appleUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
 				providerUserId
 			);
 
 			return {
-				...providerAuth,
-				providerUser,
-				tokens
+				...appleUserAuth,
+				appleUser,
+				appleTokens
 			};
 		}
 	} as const satisfies OAuthProvider;
