@@ -21,7 +21,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 	options?: {
 		modelNames: {
 			user: ExtractModelNames<_PrismaClient>;
-			session: ExtractModelNames<_PrismaClient>;
+			session: ExtractModelNames<_PrismaClient> | null;
 			key: ExtractModelNames<_PrismaClient>;
 		};
 		userRelationKey: string;
@@ -31,15 +31,17 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 		if (!options) {
 			return {
 				User: client["user"] as SmartPrismaModel<UserSchema>,
-				Session: client["session"] as SmartPrismaModel<SessionSchema>,
+				Session: (client["session"] as SmartPrismaModel<SessionSchema>) ?? null,
 				Key: client["key"] as SmartPrismaModel<KeySchema>
 			};
 		}
 		return {
 			User: client[options.modelNames.user] as SmartPrismaModel<UserSchema>,
-			Session: client[
-				options.modelNames.session
-			] as SmartPrismaModel<SessionSchema>,
+			Session: options.modelNames.session
+				? (client[
+						options.modelNames.session
+				  ] as SmartPrismaModel<SessionSchema>)
+				: null,
 			Key: client[options.modelNames.key] as SmartPrismaModel<KeySchema>
 		};
 	};
@@ -94,6 +96,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				});
 			},
 			getSession: async (sessionId) => {
+				if (!Session) {
+					throw new Error("Session table not defined");
+				}
 				const result = await Session.findUnique({
 					where: {
 						id: sessionId
@@ -103,6 +108,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				return transformPrismaSession(result);
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!Session) {
+					throw new Error("Session table not defined");
+				}
 				const sessions = await Session.findMany({
 					where: {
 						user_id: userId
@@ -111,6 +119,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				return sessions.map((session) => transformPrismaSession(session));
 			},
 			setSession: async (session) => {
+				if (!Session) {
+					throw new Error("Session table not defined");
+				}
 				try {
 					await Session.create({
 						data: session
@@ -125,6 +136,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!Session) {
+					throw new Error("Session table not defined");
+				}
 				await Session.delete({
 					where: {
 						id: sessionId
@@ -132,6 +146,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				});
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!Session) {
+					throw new Error("Session table not defined");
+				}
 				await Session.deleteMany({
 					where: {
 						user_id: userId
@@ -139,6 +156,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				});
 			},
 			updateSession: async (userId, partialSession) => {
+				if (!Session) {
+					throw new Error("Session table not defined");
+				}
 				await Session.update({
 					data: partialSession,
 					where: {
@@ -202,6 +222,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 			},
 
 			getSessionAndUser: async (sessionId) => {
+				if (!Session) {
+					throw new Error("Session table not defined");
+				}
 				const result = await Session.findUnique({
 					where: {
 						id: sessionId

@@ -17,12 +17,14 @@ export const planetscaleAdapter = (
 	connection: Connection,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session
+		? escapeName(tables.session)
+		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
@@ -88,6 +90,9 @@ export const planetscaleAdapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await get<PlanetscaleSession>(
 					connection.execute(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
@@ -97,6 +102,9 @@ export const planetscaleAdapter = (
 				return result ? transformPlanetscaleSession(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await getAll<PlanetscaleSession>(
 					connection.execute(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
@@ -106,6 +114,9 @@ export const planetscaleAdapter = (
 				return result.map((val) => transformPlanetscaleSession(val));
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(session);
 				await connection.execute(
 					`INSERT INTO ${ESCAPED_SESSION_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`,
@@ -113,18 +124,27 @@ export const planetscaleAdapter = (
 				);
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await connection.execute(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 					[sessionId]
 				);
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await connection.execute(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
 					[userId]
 				);
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(partialSession);
 				await connection.execute(
 					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
@@ -196,6 +216,9 @@ export const planetscaleAdapter = (
 			},
 
 			getSessionAndUser: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [sessionResult, userFromJoinResult] = await Promise.all([
 					get<PlanetscaleSession>(
 						connection.execute(

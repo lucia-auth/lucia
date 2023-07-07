@@ -20,12 +20,12 @@ export const mysql2Adapter = (
 	db: Pool,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session ? escapeName(tables.session): null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	const transaction = async <
@@ -105,6 +105,9 @@ export const mysql2Adapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined")
+				}
 				const result = await get<SessionSchema>(
 					db.query(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`, [
 						sessionId
@@ -113,6 +116,9 @@ export const mysql2Adapter = (
 				return result;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined")
+				}
 				const result = await getAll<SessionSchema>(
 					db.query(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
@@ -122,6 +128,9 @@ export const mysql2Adapter = (
 				return result;
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined")
+				}
 				try {
 					const [fields, values, args] = helper(session);
 					await db.execute(
@@ -137,18 +146,27 @@ export const mysql2Adapter = (
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined")
+				}
 				await db.execute(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 					[sessionId]
 				);
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined")
+				}
 				await db.execute(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
 					[userId]
 				);
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined")
+				}
 				const [fields, values, args] = helper(partialSession);
 				await db.execute(
 					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
@@ -221,6 +239,9 @@ export const mysql2Adapter = (
 			},
 
 			getSessionAndUser: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined")
+				}
 				const getSessionPromise = get<SessionSchema>(
 					db.query(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`, [
 						sessionId

@@ -13,12 +13,12 @@ export const postgresAdapter = (
 	sql: Sql,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session ? escapeName(tables.session): null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
@@ -78,6 +78,9 @@ export const postgresAdapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await get<DatabaseSession>(
 					sql.unsafe(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
@@ -87,6 +90,9 @@ export const postgresAdapter = (
 				return result ? transformDatabaseSession(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await getAll<DatabaseSession>(
 					sql.unsafe(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
@@ -96,6 +102,9 @@ export const postgresAdapter = (
 				return result.map((val) => transformDatabaseSession(val));
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				try {
 					const [fields, values, args] = helper(session);
 					await sql.unsafe(
@@ -114,18 +123,27 @@ export const postgresAdapter = (
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await sql.unsafe(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 					[sessionId]
 				);
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await sql.unsafe(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 					[userId]
 				);
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(partialSession);
 				await sql.unsafe(
 					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
@@ -198,6 +216,9 @@ export const postgresAdapter = (
 			},
 
 			getSessionAndUser: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const getSessionPromise = get<DatabaseSession>(
 					sql.unsafe(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
