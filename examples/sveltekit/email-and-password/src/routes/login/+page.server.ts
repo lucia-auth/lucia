@@ -6,19 +6,24 @@ import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
-	if (session) throw redirect(302, '/');
+	if (session) {
+		if (!session.user.emailVerified) throw redirect(302, '/email-verification');
+		throw redirect(302, '/');
+	}
 	return {};
 };
+
+const emailRegexp = /^.+@.+$/ // [one or more character]@[one or more character]
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const formData = await request.formData();
-		const username = formData.get('username');
+		const email = formData.get('email');
 		const password = formData.get('password');
 		// basic check
-		if (typeof username !== 'string' || username.length < 1 || username.length > 31) {
+		if (typeof email !== 'string' || !emailRegexp.test(email)) {
 			return fail(400, {
-				message: 'Invalid username'
+				message: 'Invalid email'
 			});
 		}
 		if (typeof password !== 'string' || password.length < 1 || password.length > 255) {
@@ -29,7 +34,7 @@ export const actions: Actions = {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey('username', username, password);
+			const user = await auth.useKey('email', email, password);
 			const session = await auth.createSession({
 				userId: user.userId,
 				attributes: {}
@@ -41,7 +46,7 @@ export const actions: Actions = {
 				(e.message === 'AUTH_INVALID_KEY_ID' || e.message === 'AUTH_INVALID_PASSWORD')
 			) {
 				return fail(400, {
-					message: 'Incorrect username or password'
+					message: 'Incorrect email or password'
 				});
 			}
 			return fail(500, {

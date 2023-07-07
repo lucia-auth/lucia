@@ -50,7 +50,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			return res.status(400).json({
-				error: "Incorrect username of password"
+				error: "Incorrect username or password"
 			});
 		}
 		return res.status(500).json({

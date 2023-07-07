@@ -41,7 +41,7 @@ if (Astro.request.method === "POST") {
 				(e.message === "AUTH_INVALID_KEY_ID" ||
 					e.message === "AUTH_INVALID_PASSWORD")
 			) {
-				errorMessage = "Incorrect username of password";
+				errorMessage = "Incorrect username or password";
 			} else {
 				errorMessage = "An unknown error occurred";
 			}
