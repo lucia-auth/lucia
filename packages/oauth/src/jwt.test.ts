@@ -10,9 +10,10 @@ test("createES256SignedJWT()", async () => {
 	const audience = "https://appleid.apple.com";
 
 	const certificate = `-----BEGIN PRIVATE KEY-----
-MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgmGp6kcu19PgWNuga
-r/CDWncdxmhlxAeo6ERpz2q4pHehRANCAASXR+mBqrjqcaJVzZoVYoWMQGAG8eQY
-Jg0x4ad/bCs1qaMTLyMtsANR2dgANIfU7lKEeZAxPap8ch+I1LtW2pHH
+MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgMKZfBMuF5CyRyXAi
+QaYew+j3U+bQ5oRtqb/3SujLlZGgCgYIKoZIzj0DAQehRANCAAQoYTJsktscfGFw
+Am40TH2648sGmHS5qvti8tvRcXF6v5Gu0fecAPooXDFqn63ZfStZjQm/3cMsPWwD
+Ko3QryFm
 -----END PRIVATE KEY-----`;
 
 	const now = Math.floor(new Date().getTime());
