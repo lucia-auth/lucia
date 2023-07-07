@@ -1,6 +1,6 @@
 ---
 package: "@lucia-auth/oauth" # package name
-type: "patch" # "major", "minor", "patch"
+type: "minor" # "major", "minor", "patch"
 ---
 
 Add osu! OAuth provider
