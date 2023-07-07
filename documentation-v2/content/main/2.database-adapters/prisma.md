@@ -17,7 +17,7 @@ const prisma: (
 		modelNames: {
 			user: string;
 			key: string;
-			session: string;
+			session: string | null;
 		};
 		userRelationKey: string;
 	}
@@ -26,14 +26,14 @@ const prisma: (
 
 ##### Parameters
 
-| name                         | type           | description       | optional |
-| ---------------------------- | -------------- | ----------------- | :------: |
-| `client`                     | `PrismaClient` | The Prisma client |          |
-| `options`                    |                |                   |    ✓     |
-| `options.modelNames.user`    | `string`       |                   |          |
-| `options.modelNames.key`     | `string`       |                   |          |
-| `options.modelNames.session` | `string`       |                   |          |
-| `options.userRelationKey`    | `string`       |                   |          |
+| name                         | type             | description                                          | optional |
+| ---------------------------- | ---------------- | ---------------------------------------------------- | :------: |
+| `client`                     | `PrismaClient`   | The Prisma client                                    |          |
+| `options`                    |                  |                                                      |    ✓     |
+| `options.modelNames.user`    | `string`         |                                                      |          |
+| `options.modelNames.key`     | `string`         |                                                      |          |
+| `options.modelNames.session` | `string \| null` | Can be `null` when using alongside a session adapter |          |
+| `options.userRelationKey`    | `string`         |                                                      |          |
 
 When `options` is undefined, the adapter uses predefined adapter configs, and as such, your Prisma schema must match exactly the one listed below this page. You can still add columns to the user and session table.
 
