@@ -1,5 +1,5 @@
 ---
-package: "@lucia-auth/adapter-postgresql" # package name
+package: "@lucia-auth/adapter-sqlite" # package name
 type: "minor" # "major", "minor", "patch"
 ---
 
