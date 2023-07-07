@@ -13,12 +13,12 @@ export const libsqlAdapter = (
 	db: Client,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session ? escapeName(tables.session): null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
@@ -78,6 +78,9 @@ export const libsqlAdapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await db.execute({
 					sql: `SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 					args: [sessionId]
@@ -86,6 +89,9 @@ export const libsqlAdapter = (
 				return rows.at(0) ?? null;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await db.execute({
 					sql: `SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
 					args: [userId]
@@ -93,6 +99,9 @@ export const libsqlAdapter = (
 				return result.rows as unknown[] as SessionSchema[];
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				try {
 					const [fields, values, args] = helper(session);
 					await db.execute({
@@ -110,18 +119,27 @@ export const libsqlAdapter = (
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await db.execute({
 					sql: `DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 					args: [sessionId]
 				});
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await db.execute({
 					sql: `DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
 					args: [userId]
 				});
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(partialSession);
 				const setArgs = getSetArgs(fields, values);
 				args.push(sessionId);
