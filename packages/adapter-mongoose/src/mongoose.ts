@@ -16,7 +16,7 @@ export const DEFAULT_PROJECTION = {
 
 export const mongooseAdapter = (models: {
 	User: Model<UserDoc>;
-	Session: Model<SessionDoc>;
+	Session: Model<SessionDoc> | null;
 	Key: Model<KeyDoc>;
 }): InitializeAdapter<Adapter> => {
 	const { User, Session, Key } = models;
@@ -61,6 +61,9 @@ export const mongooseAdapter = (models: {
 			},
 
 			getSession: async (sessionId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				const session = await Session.findById(
 					sessionId,
 					DEFAULT_PROJECTION
@@ -69,6 +72,9 @@ export const mongooseAdapter = (models: {
 				return transformSessionDoc(session);
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				const sessions = await Session.find(
 					{
 						user_id: userId
@@ -78,18 +84,30 @@ export const mongooseAdapter = (models: {
 				return sessions.map((val) => transformSessionDoc(val));
 			},
 			setSession: async (session) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				const sessionDoc = new Session(createMongoValues(session));
 				await sessionDoc.save();
 			},
 			deleteSession: async (sessionId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				await Session.findByIdAndDelete(sessionId);
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				await Session.deleteMany({
 					user_id: userId
 				});
 			},
 			updateSession: async (sessionId, partialUser) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				await Session.findByIdAndUpdate(sessionId, partialUser, {
 					new: true,
 					projection: DEFAULT_PROJECTION
