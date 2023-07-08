@@ -19,7 +19,7 @@ export const pgAdapter = (
 	pool: Pool,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
@@ -38,7 +38,7 @@ export const pgAdapter = (
 	};
 
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session ? escapeName(tables.session): null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
@@ -99,6 +99,9 @@ export const pgAdapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await get<DatabaseSession>(
 					pool.query(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
@@ -108,6 +111,9 @@ export const pgAdapter = (
 				return result ? transformDatabaseSession(result) : null;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await getAll<DatabaseSession>(
 					pool.query(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
@@ -117,6 +123,9 @@ export const pgAdapter = (
 				return result.map((val) => transformDatabaseSession(val));
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				try {
 					const [fields, values, args] = helper(session);
 					await pool.query(
@@ -135,18 +144,27 @@ export const pgAdapter = (
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await pool.query(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 					[sessionId]
 				);
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await pool.query(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 					[userId]
 				);
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(partialSession);
 				await pool.query(
 					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
@@ -220,6 +238,9 @@ export const pgAdapter = (
 			},
 
 			getSessionAndUser: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const getSessionPromise = get(
 					pool.query<DatabaseSession>(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,

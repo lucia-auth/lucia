@@ -16,7 +16,7 @@ const mysql2: (
 	tableNames: {
 		user: string;
 		key: string;
-		session: string;
+		session: string | null;
 	}
 ) => InitializeAdapter<Adapter>;
 ```
@@ -25,12 +25,12 @@ const mysql2: (
 
 Table names are automatically escaped.
 
-| name                 | type     | description              |
-| -------------------- | -------- | ------------------------ |
-| `pool`               | `Pool`   | `mysql2` connection pool |
-| `tableNames.user`    | `string` | User table name          |
-| `tableNames.key`     | `string` | Key table name           |
-| `tableNames.session` | `string` | Session table name       |
+| name                 | type             | description                                                               |
+| -------------------- | ---------------- | ------------------------------------------------------------------------- |
+| `pool`               | `Pool`           | `mysql2` connection pool                                                  |
+| `tableNames.user`    | `string`         | User table name                                                           |
+| `tableNames.key`     | `string`         | Key table name                                                            |
+| `tableNames.session` | `string \| null` | Session table name - can be `null` when using alongside a session adapter |
 
 ## Installation
 

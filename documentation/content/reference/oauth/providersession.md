@@ -20,13 +20,13 @@ type ProviderSession = {
 
 Refer to each provider's page for specific type of `providerUser` and `tokens`.
 
-| name                                                                        | type                                                 | description                                       |
-| --------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------- |
-| existingUser                                                                | [`User`](/reference/lucia-auth/types#user)` \| null` | existing user - null if non-existent (= new user) |
-| [createUser](/reference/oauth/providersession#createuser)                   | `Function`                                           |                                                   |
-| [createPersistentKey](/reference/oauth/providersession#createpersistentkey) | `Function`                                           |                                                   |
-| providerUser                                                                | `Record<string, any>`                                | user info from the used provider                  |
-| tokens                                                                      | `Record<string, any>`                                | access tokens (`accessToken`) among other tokens  |
+| name                                                                        | type                                                 | description                                         |
+| --------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------- |
+| existingUser                                                                | [`User`](/reference/lucia-auth/types#user)` \| null` | existing user - `null` if non-existent (= new user) |
+| [createUser](/reference/oauth/providersession#createuser)                   | `Function`                                           |                                                     |
+| [createPersistentKey](/reference/oauth/providersession#createpersistentkey) | `Function`                                           |                                                     |
+| providerUser                                                                | `Record<string, any>`                                | user info from the used provider                    |
+| tokens                                                                      | `Record<string, any>`                                | access tokens (`accessToken`) among other tokens    |
 
 ## `createPersistentKey()`
 
