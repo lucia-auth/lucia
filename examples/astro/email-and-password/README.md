@@ -1,4 +1,4 @@
-# Email & password example with Lucia and SvelteKit
+# Email & password example with Lucia and Astro
 
 This example uses SQLite3 with `better-sqlite3`.
 

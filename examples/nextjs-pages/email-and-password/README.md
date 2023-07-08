@@ -1,6 +1,6 @@
-# Email & password example with Lucia and SvelteKit
+# Email & password example with Lucia and Next.js Pages Router
 
-This example uses SQLite3 with `better-sqlite3`.
+This example uses `better-sqlite3`.
 
 ```bash
 # install dependencies
@@ -9,8 +9,16 @@ pnpm i
 # setup database
 pnpm migrate
 
-# run server
+# run
 pnpm dev
+```
+
+## Runtime
+
+This example is built for Node.js 20. If you're using Node.js 16/18, un-comment the following lines in `auth/lucia.ts`:
+
+```ts
+// import "lucia/polyfill/node";
 ```
 
 ## User schema
