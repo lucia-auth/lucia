@@ -1,5 +1,5 @@
 ---
-order:: 0
+order: 0
 title: "Spotify"
 description: "Learn about using the Spotify provider in Lucia OAuth integration"
 ---
@@ -71,7 +71,7 @@ const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<Auth0UserAuth>;
+const validateCallback: (code: string) => Promise<SpotifyUserAuth>;
 ```
 
 ##### Parameters
@@ -94,8 +94,8 @@ Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#o
 
 ```ts
 type SpotifyUserAuth = ProviderUserAuth & {
-	spotifyUser: Auth0User;
-	spotifyTokens: Auth0Tokens;
+	spotifyUser: SpotifyUser;
+	spotifyTokens: SpotifyTokens;
 };
 ```
 

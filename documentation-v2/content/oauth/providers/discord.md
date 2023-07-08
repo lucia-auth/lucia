@@ -1,5 +1,5 @@
 ---
-order:: 0
+order: 0
 title: "Discord"
 description: "Learn about using the Discord provider in Lucia OAuth integration"
 ---

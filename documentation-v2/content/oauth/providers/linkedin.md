@@ -1,5 +1,5 @@
 ---
-order:: 0
+order: 0
 title: "Linkedin"
 description: "Learn about using the Linkedin provider in Lucia OAuth integration"
 ---

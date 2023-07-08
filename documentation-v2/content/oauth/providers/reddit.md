@@ -1,5 +1,5 @@
 ---
-order:: 0
+order: 0
 title: "Reddit"
 description: "Learn about using the Reddit provider in Lucia OAuth integration"
 ---
