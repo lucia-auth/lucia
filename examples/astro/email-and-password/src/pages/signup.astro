@@ -1,39 +1,38 @@
 ---
 import "../app.css";
+import { isValidEmail, sendEmailVerificationLink } from "../lib/email";
 
 import { auth } from "../lib/lucia";
 import { SqliteError } from "better-sqlite3";
+import { generateEmailVerificationToken } from "../lib/verification-token";
 
-let usernameInput = "";
+let emailInput = "";
 let errorMessage = "";
 
 // check for form submissions
 if (Astro.request.method === "POST") {
     const formData = await Astro.request.formData();
-    const username = formData.get("username");
+    const email = formData.get("email");
     const password = formData.get("password");
-    if (typeof username === "string") {
-        usernameInput = username;
+    if (typeof email === "string") {
+        emailInput = email;
     }
     // basic check
-    const validUsername =
-        typeof username === "string" &&
-        username.length >= 4 &&
-        username.length <= 31;
     const validPassword =
         typeof password === "string" &&
         password.length >= 6 &&
         password.length <= 255;
-    if (validUsername && validPassword) {
+    if (isValidEmail(email) && validPassword) {
         try {
             const user = await auth.createUser({
                 key: {
-                    providerId: "username", // auth method
-                    providerUserId: username, // unique id when using "username" auth method
+                    providerId: "email", // auth method
+                    providerUserId: email, // unique id when using "email" auth method
                     password // hashed by Lucia
                 },
                 attributes: {
-                    username
+                    email,
+                    email_verified: Number(false)
                 }
             });
             const session = await auth.createSession({
@@ -41,7 +40,9 @@ if (Astro.request.method === "POST") {
                 attributes: {}
             });
             Astro.locals.auth.setSession(session); // set session cookie
-            return Astro.redirect("/", 302); // redirect to profile page
+            const token = await generateEmailVerificationToken(user.userId);
+			await sendEmailVerificationLink(token);
+            return Astro.redirect("/email-verification", 302); 
         } catch (e) {
             // this part depends on the database you're using
             // check for unique constraint error in user table
@@ -49,7 +50,7 @@ if (Astro.request.method === "POST") {
                 e instanceof SqliteError &&
                 e.code === "SQLITE_CONSTRAINT_UNIQUE"
             ) {
-                errorMessage = "Username already taken";
+                errorMessage = "Email already taken";
             } else {
                 errorMessage = "An unknown error occurred";
             }
@@ -60,7 +61,12 @@ if (Astro.request.method === "POST") {
 }
 
 const session = await Astro.locals.auth.validate();
-if (session) return Astro.redirect("/", 302); // redirect to profile page
+if (session) {
+	if (!session.user.emailVerified) {
+		return Astro.redirect("/email-verification");
+	}
+	return Astro.redirect("/");
+}
 ---
 
 <html lang="en">
@@ -69,13 +75,13 @@ if (session) return Astro.redirect("/", 302); // redirect to profile page
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width" />
         <meta name="generator" content={Astro.generator} />
-        <title>Username & password auth with Lucia</title>
+        <title>Email & password auth with Lucia</title>
     </head>
     <body>
         <h1>Sign up</h1>
         <form method="post">
-            <label for="username">Username</label>
-            <input name="username" id="username" value={usernameInput}/><br />
+            <label for="email">Email</label>
+            <input name="email" id="email" value={emailInput} /><br />
             <label for="password">Password</label>
             <input type="password" name="password" id="password" /><br />
             <input type="submit" />

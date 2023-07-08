@@ -29,9 +29,9 @@ export const actions: Actions = {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey('username', username, password);
+			const key = await auth.useKey('username', username, password);
 			const session = await auth.createSession({
-				userId: user.userId,
+				userId: key.userId,
 				attributes: {}
 			});
 			locals.auth.setSession(session); // set session cookie

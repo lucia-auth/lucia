@@ -1,10 +1,10 @@
 import { auth } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { SqliteError } from 'better-sqlite3';
+import { generateEmailVerificationToken } from '$lib/server/verification-token';
+import { isValidEmail, sendEmailVerificationLink } from '$lib/server/email';
 
 import type { PageServerLoad, Actions } from './$types';
-import { generateEmailVerificationToken } from '$lib/server/verification-token';
-import { sendEmailVerificationLink } from '$lib/server/email';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth.validate();
@@ -15,15 +15,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {};
 };
 
-const emailRegexp = /^.+@.+$/ // [one or more character]@[one or more character]
-
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const email = formData.get('email');
 		const password = formData.get('password');
 		// basic check
-		if (typeof email !== 'string' || !emailRegexp.test(email)) {
+		if (!isValidEmail(email)) {
 			return fail(400, {
 				message: 'Invalid email'
 			});
@@ -50,10 +48,10 @@ export const actions: Actions = {
 				attributes: {}
 			});
 			locals.auth.setSession(session); // set session cookie
-			const token = await generateEmailVerificationToken(user.userId)
-			await sendEmailVerificationLink(token)
+			const token = await generateEmailVerificationToken(user.userId);
+			await sendEmailVerificationLink(token);
 		} catch (e) {
-			console.log(e)
+			console.log(e);
 			// check for unique constraint error in user table
 			if (e instanceof SqliteError && e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
 				return fail(400, {

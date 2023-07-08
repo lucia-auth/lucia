@@ -1,6 +1,7 @@
 import { auth } from '$lib/server/lucia';
 import { LuciaError } from 'lucia';
 import { fail, redirect } from '@sveltejs/kit';
+import { isValidEmail } from '$lib/server/email';
 
 import type { PageServerLoad, Actions } from './$types';
 
@@ -13,15 +14,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {};
 };
 
-const emailRegexp = /^.+@.+$/ // [one or more character]@[one or more character]
-
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const email = formData.get('email');
 		const password = formData.get('password');
 		// basic check
-		if (typeof email !== 'string' || !emailRegexp.test(email)) {
+		if (!isValidEmail(email)) {
 			return fail(400, {
 				message: 'Invalid email'
 			});
@@ -34,9 +33,9 @@ export const actions: Actions = {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey('email', email, password);
+			const key = await auth.useKey('email', email, password);
 			const session = await auth.createSession({
-				userId: user.userId,
+				userId: key.userId,
 				attributes: {}
 			});
 			locals.auth.setSession(session); // set session cookie
@@ -53,7 +52,7 @@ export const actions: Actions = {
 				message: 'An unknown error occurred'
 			});
 		}
-		// redirect to
+		// redirect to profile page
 		// make sure you don't throw inside a try/catch block!
 		throw redirect(302, '/');
 	}

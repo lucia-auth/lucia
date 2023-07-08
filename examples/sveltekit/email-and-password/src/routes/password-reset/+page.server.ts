@@ -1,28 +1,17 @@
 import { auth } from '$lib/server/lucia';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { generatePasswordResetToken } from '$lib/server/verification-token';
-import { sendPasswordResetLink } from '$lib/server/email';
+import { isValidEmail, sendPasswordResetLink } from '$lib/server/email';
 
-import type { PageServerLoad, Actions } from './$types';
-
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.auth.validate();
-	if (session) {
-		if (!session.user.emailVerified) throw redirect(302, '/email-verification');
-		throw redirect(302, '/');
-	}
-	return {};
-};
-
-const emailRegexp = /^.+@.+$/; // [one or more character]@[one or more character]
+import type { Actions } from './$types';
 
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
 		const email = formData.get('email');
 		// basic check
-		if (typeof email !== 'string' || !emailRegexp.test(email)) {
+		if (!isValidEmail(email)) {
 			return fail(400, {
 				message: 'Invalid email'
 			});

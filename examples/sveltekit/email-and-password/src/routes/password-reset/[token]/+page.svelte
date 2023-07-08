@@ -15,5 +15,3 @@
 {#if form?.message}
 	<p class="error">{form.message}</p>
 {/if}
-
-<a href="/signup">Create an account</a>

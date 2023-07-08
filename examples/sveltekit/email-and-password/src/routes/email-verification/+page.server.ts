@@ -10,10 +10,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (session.user.emailVerified) {
 		throw redirect(302, '/');
 	}
-	return {
-		userId: session.user.userId,
-		email: session.user.email
-	};
+	return {};
 };
 
 export const actions: Actions = {
