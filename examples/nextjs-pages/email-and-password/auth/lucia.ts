@@ -16,7 +16,8 @@ export const auth = lucia({
 	middleware: nextjs(),
 	getUserAttributes: (data) => {
 		return {
-			username: data.username
+			email: data.email,
+			emailVerified: Boolean(data.email_verified)
 		};
 	}
 });
