@@ -1,5 +1,13 @@
 # @lucia-auth/adapter-postgresql
 
+## 2.0.0-beta.6
+
+### Minor changes
+
+- [#815](https://github.com/pilcrowOnPaper/lucia/pull/815) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Make `session` model name params optional for `pg()` and `postgres()`
+
+- [#812](https://github.com/pilcrowOnPaper/lucia/pull/812) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.5
 
 ### Minor changes

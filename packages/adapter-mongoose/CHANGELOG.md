@@ -1,5 +1,13 @@
 # @lucia-auth/adapter-mongoose
 
+## 3.0.0-beta.5
+
+### Minor changes
+
+- [#815](https://github.com/pilcrowOnPaper/lucia/pull/815) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Make `Session` model params optional
+
+- [#812](https://github.com/pilcrowOnPaper/lucia/pull/812) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 3.0.0-beta.4
 
 ### Patch changes

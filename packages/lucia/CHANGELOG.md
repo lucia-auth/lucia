@@ -1,5 +1,15 @@
 # lucia
 
+## 2.0.0-beta.5
+
+### Major changes
+
+- [#812](https://github.com/pilcrowOnPaper/lucia/pull/812) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `allowedRequestOrigins` configuration
+
+### Patch changes
+
+- [#815](https://github.com/pilcrowOnPaper/lucia/pull/815) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `getSessionAndUser()` adapter method getting called when using session adapters
+
 ## 2.0.0-beta.4
 
 ### Patch changes

@@ -1,5 +1,13 @@
 # @lucia-auth/oauth
 
+## 2.0.0-beta.6
+
+### Minor changes
+
+- [#814](https://github.com/pilcrowOnPaper/lucia/pull/814) by [@L-Mario564](https://github.com/L-Mario564) : Add osu! OAuth provider
+
+- [#812](https://github.com/pilcrowOnPaper/lucia/pull/812) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.5
 
 ### Patch changes
