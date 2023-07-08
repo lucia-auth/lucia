@@ -1,5 +1,5 @@
 ---
-order:: 0
+order: 0
 title: "Lichess"
 description: "Learn about using the Lichess provider in Lucia OAuth integration"
 ---
