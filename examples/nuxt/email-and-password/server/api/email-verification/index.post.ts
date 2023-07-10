@@ -3,8 +3,7 @@ export default defineEventHandler(async (event) => {
 	const session = await authRequest.validate();
 	if (!session) {
 		throw createError({
-			status: 401,
-			message: "Unauthorized"
+			status: 401
 		});
 	}
 	if (session.user.emailVerified) {
@@ -16,7 +15,7 @@ export default defineEventHandler(async (event) => {
 	try {
 		const token = await generateEmailVerificationToken(session.user.userId);
 		await sendEmailVerificationLink(token);
-        return {}
+		return {};
 	} catch {
 		throw createError({
 			message: "An unknown error occurred",
