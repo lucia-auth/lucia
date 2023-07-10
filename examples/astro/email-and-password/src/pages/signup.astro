@@ -50,7 +50,7 @@ if (Astro.request.method === "POST") {
                 e instanceof SqliteError &&
                 e.code === "SQLITE_CONSTRAINT_UNIQUE"
             ) {
-                errorMessage = "Email already taken";
+                errorMessage = "Account already exists";
             } else {
                 errorMessage = "An unknown error occurred";
             }

@@ -40,6 +40,8 @@ export default defineEventHandler(async (event) => {
 		});
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
+		const token = await generateEmailVerificationToken(user.userId);
+		await sendEmailVerificationLink(token);
 		return sendRedirect(event, "/email-verification");
 	} catch (e) {
 		// check for unique constraint error in user table

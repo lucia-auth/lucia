@@ -1,5 +1,6 @@
-import { isValidEmail } from "@/auth/email";
+import { isValidEmail, sendEmailVerificationLink } from "@/auth/email";
 import { auth } from "@/auth/lucia";
+import { generateEmailVerificationToken } from "@/auth/verification-token";
 import { SqliteError } from "better-sqlite3";
 
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -46,6 +47,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			res
 		});
 		authRequest.setSession(session);
+		const token = await generateEmailVerificationToken(user.userId);
+		await sendEmailVerificationLink(token);
 		return res.redirect(302, "/email-verification");
 	} catch (e) {
 		// check for unique constraint error in user table
