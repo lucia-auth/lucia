@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-	middleware: ["auth"]
+	middleware: ["protected"]
 });
 
 const user = useAuthenticatedUser();
@@ -11,7 +11,6 @@ const handleLogout = async (e: Event) => {
 		method: "POST",
 		redirect: "manual"
 	});
-	invalidateUserState();
 	await navigateTo("/login");
 };
 </script>

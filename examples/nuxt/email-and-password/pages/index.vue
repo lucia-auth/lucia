@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-	middleware: ["auth"]
+	middleware: ["protected"]
 });
 
 const user = useAuthenticatedUser();
@@ -11,7 +11,6 @@ const handleLogout = async (e: Event) => {
 		method: "POST",
 		redirect: "manual"
 	});
-	invalidateUserState();
 	await navigateTo("/login");
 };
 </script>
@@ -19,7 +18,7 @@ const handleLogout = async (e: Event) => {
 <template>
 	<h1>Profile</h1>
 	<p>User id: {{ user.userId }}</p>
-	<p>Username: {{ user.username }}</p>
+	<p>Email: {{ user.email }}</p>
 	<form method="post" action="/api/logout" @submit.prevent="handleLogout">
 		<input type="submit" value="Sign out" />
 	</form>
