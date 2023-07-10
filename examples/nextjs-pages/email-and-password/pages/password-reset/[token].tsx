@@ -1,38 +1,40 @@
 import { useRouter } from "next/router";
-import { auth } from "@/auth/lucia";
+import { isValidPasswordResetToken } from "@/auth/verification-token";
 import { useState } from "react";
 
-import Link from "next/link";
-
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import type {
+	GetServerSidePropsContext,
+	GetServerSidePropsResult,
+	InferGetServerSidePropsType
+} from "next";
 
 export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context);
-	const session = await authRequest.validate();
-	if (session) {
-		if (!session.user.emailVerified) {
-			return {
-				redirect: {
-					destination: "/email-verification",
-					permanent: false
-				}
-			};
-		}
+	context: GetServerSidePropsContext<{
+		token: string;
+	}>
+): Promise<GetServerSidePropsResult<{
+	token: string
+}>> => {
+	const token = context.params?.token as string;
+	const validToken = await isValidPasswordResetToken(token);
+	if (!validToken) {
 		return {
 			redirect: {
-				destination: "/",
+				destination: "/password-reset",
 				permanent: false
 			}
 		};
 	}
 	return {
-		props: {}
+		props: {
+			token
+		}
 	};
 };
 
-const Page = () => {
+const Page = (
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
 	const router = useRouter();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	return (
@@ -40,15 +42,14 @@ const Page = () => {
 			<h1>Sign in</h1>
 			<form
 				method="post"
-				action="/api/login"
+				action={`/api/password-reset/${props.token}`}
 				onSubmit={async (e) => {
 					e.preventDefault();
 					setErrorMessage(null);
 					const formData = new FormData(e.currentTarget);
-					const response = await fetch("/api/login", {
+					const response = await fetch(`/api/password-reset/${props.token}`, {
 						method: "POST",
 						body: JSON.stringify({
-							email: formData.get("email"),
 							password: formData.get("password")
 						}),
 						headers: {
@@ -67,17 +68,12 @@ const Page = () => {
 					}
 				}}
 			>
-				<label htmlFor="email">Email</label>
-				<input name="email" id="email" />
-				<br />
-				<label htmlFor="password">Password</label>
-				<input type="password" name="password" id="password" />
+				<label htmlFor="password">New Password</label>
+				<input name="password" id="password" />
 				<br />
 				<input type="submit" />
 			</form>
 			{errorMessage && <p className="error">{errorMessage}</p>}
-			<Link href="/password-reset">Reset password</Link>
-			<Link href="/signup">Create an account</Link>
 		</>
 	);
 };

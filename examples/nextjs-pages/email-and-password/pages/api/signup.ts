@@ -1,3 +1,4 @@
+import { isValidEmail } from "@/auth/email";
 import { auth } from "@/auth/lucia";
 import { SqliteError } from "better-sqlite3";
 
@@ -5,18 +6,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
-	const { username, password } = req.body as {
-		username: unknown;
+	const { email, password } = req.body as {
+		email: unknown;
 		password: unknown;
 	};
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 1 ||
-		username.length > 31
-	) {
+	if (!isValidEmail(email)) {
 		return res.status(400).json({
-			error: "Invalid username"
+			error: "Invalid email"
 		});
 	}
 	if (
@@ -31,12 +28,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		const user = await auth.createUser({
 			key: {
-				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
+				providerId: "email", // auth method
+				providerUserId: email, // unique id when using "email" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
-				username
+				email,
+				email_verified: Number(false)
 			}
 		});
 		const session = await auth.createSession({
@@ -48,12 +46,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			res
 		});
 		authRequest.setSession(session);
-		return res.redirect(302, "/"); // profile page
+		return res.redirect(302, "/email-verification");
 	} catch (e) {
 		// check for unique constraint error in user table
 		if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
 			return res.status(400).json({
-				error: "Username already taken"
+				error: "Account already exists"
 			});
 		}
 

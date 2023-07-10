@@ -23,7 +23,7 @@ export const POST = async (
 	) {
 		return new Response(
 			JSON.stringify({
-				error: "Invalid email"
+				error: "Invalid password"
 			}),
 			{
 				status: 400

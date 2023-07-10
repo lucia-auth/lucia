@@ -12,6 +12,14 @@ export const getServerSideProps = async (
 	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate();
 	if (session) {
+		if (!session.user.emailVerified) {
+			return {
+				redirect: {
+					destination: "/email-verification",
+					permanent: false
+				}
+			};
+		}
 		return {
 			redirect: {
 				destination: "/",
@@ -35,11 +43,12 @@ const Page = () => {
 				action="/api/signup"
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setErrorMessage(null);
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/signup", {
 						method: "POST",
 						body: JSON.stringify({
-							username: formData.get("username"),
+							email: formData.get("email"),
 							password: formData.get("password")
 						}),
 						headers: {
@@ -47,7 +56,7 @@ const Page = () => {
 						},
 						redirect: "manual"
 					});
-					if (response.status === 0 || response.ok) {
+					if (response.ok || response.status === 0) {
 						router.push("/"); // redirect to profile page on success
 					} else {
 						const result = (await response.json()) as {
@@ -57,8 +66,8 @@ const Page = () => {
 					}
 				}}
 			>
-				<label htmlFor="username">Username</label>
-				<input name="username" id="username" />
+				<label htmlFor="email">Email</label>
+				<input name="email" id="email" />
 				<br />
 				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />

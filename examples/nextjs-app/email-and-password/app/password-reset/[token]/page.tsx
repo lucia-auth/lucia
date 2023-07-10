@@ -1,10 +1,18 @@
+import { isValidPasswordResetToken } from "@/auth/verification-token";
+import { redirect } from "next/navigation";
+
 import Form from "@/components/form";
 
-const Page = async ({params}: {
-    params: {
-        token: string
-    }
+const Page = async ({
+	params
+}: {
+	params: {
+		token: string;
+	};
 }) => {
+	const { token } = params;
+	const validToken = await isValidPasswordResetToken(token);
+	if (!validToken) redirect("/password-reset");
 	return (
 		<>
 			<h1>Reset password</h1>

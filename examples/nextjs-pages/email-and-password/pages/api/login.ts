@@ -1,3 +1,4 @@
+import { isValidEmail } from "@/auth/email";
 import { auth } from "@/auth/lucia";
 import { LuciaError } from "lucia";
 
@@ -5,18 +6,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") return res.status(405);
-	const { username, password } = req.body as {
-		username: unknown;
+	const { email, password } = req.body as {
+		email: unknown;
 		password: unknown;
 	};
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 1 ||
-		username.length > 31
-	) {
+	if (!isValidEmail(email)) {
 		return res.status(400).json({
-			error: "Invalid username"
+			error: "Invalid email"
 		});
 	}
 	if (
@@ -31,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		// find user by key
 		// and validate password
-		const key = await auth.useKey("username", username, password);
+		const key = await auth.useKey("email", email, password);
 		const session = await auth.createSession({
 			userId: key.userId,
 			attributes: {}
@@ -43,14 +40,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		authRequest.setSession(session);
 		return res.redirect(302, "/"); // profile page
 	} catch (e) {
-		console.log(e);
 		if (
 			e instanceof LuciaError &&
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			return res.status(400).json({
-				error: "Incorrect username or password"
+				error: "Incorrect email or password"
 			});
 		}
 		return res.status(500).json({

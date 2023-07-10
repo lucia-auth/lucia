@@ -7,12 +7,7 @@ import {
 
 import type { PageServerLoad, Actions } from './$types';
 
-export const load: PageServerLoad = async ({ locals, params }) => {
-	const session = await locals.auth.validate();
-	if (session) {
-		if (!session.user.emailVerified) throw redirect(302, '/email-verification');
-		throw redirect(302, '/');
-	}
+export const load: PageServerLoad = async ({ params }) => {
 	const { token } = params;
 	const validToken = await isValidPasswordResetToken(token);
 	if (!validToken) {
@@ -28,7 +23,7 @@ export const actions: Actions = {
 		// basic check
 		if (typeof password !== 'string' || password.length < 6 || password.length > 255) {
 			return fail(400, {
-				message: 'Invalid email'
+				message: 'Invalid password'
 			});
 		}
 		try {

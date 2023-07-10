@@ -12,7 +12,7 @@ export const getServerSideProps = async (
 ): Promise<
 	GetServerSidePropsResult<{
 		userId: string;
-		username: string;
+		email: string;
 	}>
 > => {
 	const authRequest = auth.handleRequest(context);
@@ -25,10 +25,18 @@ export const getServerSideProps = async (
 			}
 		};
 	}
+	if (!session.user.emailVerified) {
+		return {
+			redirect: {
+				destination: "/email-verification",
+				permanent: false
+			}
+		};
+	}
 	return {
 		props: {
 			userId: session.user.userId,
-			username: session.user.username
+			email: session.user.email
 		}
 	};
 };
@@ -41,7 +49,7 @@ const Page = (
 		<>
 			<h1>Profile</h1>
 			<p>User id: {props.userId}</p>
-			<p>Username: {props.username}</p>
+			<p>Email: {props.email}</p>
 			<form
 				method="post"
 				action="/api/logout"
@@ -51,7 +59,7 @@ const Page = (
 						method: "POST",
 						redirect: "manual"
 					});
-					if (response.status === 0 || response.ok) {
+					if (response.ok || response.status === 0) {
 						router.push("/login"); // redirect to login page on success
 					}
 				}}

@@ -9,24 +9,18 @@ export const POST = async (request: NextRequest) => {
 	const session = await authRequest.validate();
 	if (!session) {
 		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/login"
-			}
+			status: 401
 		});
 	}
 	if (session.user.emailVerified) {
 		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/" // redirect to profile page
-			}
+			status: 422
 		});
 	}
 	try {
 		const token = await generateEmailVerificationToken(session.user.userId);
 		await sendEmailVerificationLink(token);
-        return new Response();
+		return new Response();
 	} catch {
 		return new Response(
 			JSON.stringify({

@@ -8,9 +8,9 @@ export default function App({ Component, pageProps }: AppProps) {
 	return (
 		<>
 			<Head>
-				<title>Username & password auth with Lucia</title>
+				<title>Email & password auth with Lucia</title>
 			</Head>
-			<Component {...pageProps} />;
+			<Component {...pageProps} />
 		</>
 	);
 }
