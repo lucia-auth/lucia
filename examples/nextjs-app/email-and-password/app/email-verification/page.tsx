@@ -11,14 +11,14 @@ const Page = async () => {
 	});
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
-	if (!session.user.emailVerified) redirect("/email-verification")
+	if (session.user.emailVerified) redirect("/");
 	return (
 		<>
-			<h1>Profile</h1>
-			<p>User id: {session.user.userId}</p>
-			<p>Email: {session.user.email}</p>
-			<Form action="/api/logout" successRedirect="/">
-				<input type="submit" value="Sign out" />
+			<h1>Email verification</h1>
+			<p>Your email verification link was sent to your inbox (i.e. console).</p>
+			<h2>Resend verification link</h2>
+			<Form action="/api/email-verification" successMessage="Your verification link was resent">
+				<input type="submit" value="Resend" />
 			</Form>
 		</>
 	);

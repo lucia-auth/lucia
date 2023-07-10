@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-	title: "Username and password auth with Lucia"
+	title: "Email and password auth with Lucia"
 };
 
 export default function RootLayout({

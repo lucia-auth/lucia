@@ -2,22 +2,20 @@ import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { SqliteError } from "better-sqlite3";
+import { isValidEmail, sendEmailVerificationLink } from "@/auth/email";
+import { generateEmailVerificationToken } from "@/auth/verification-token";
 
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
 	const formData = await request.formData();
-	const username = formData.get("username");
+	const email = formData.get("email");
 	const password = formData.get("password");
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
+	if (!isValidEmail(email)) {
 		return NextResponse.json(
 			{
-				error: "Invalid username"
+				error: "Invalid email"
 			},
 			{
 				status: 400
@@ -41,12 +39,13 @@ export const POST = async (request: NextRequest) => {
 	try {
 		const user = await auth.createUser({
 			key: {
-				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
+				providerId: "email", // auth method
+				providerUserId: email, // unique id when using "email" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
-				username
+				email,
+				email_verified: Number(false)
 			}
 		});
 		const session = await auth.createSession({
@@ -58,17 +57,19 @@ export const POST = async (request: NextRequest) => {
 			cookies
 		});
 		authRequest.setSession(session);
+		const token = await generateEmailVerificationToken(user.userId);
+		await sendEmailVerificationLink(token);
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: "/" // redirect to profile page
+				Location: "/email-verification"
 			}
 		});
 	} catch (e) {
 		if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
 			return NextResponse.json(
 				{
-					error: "Username already taken"
+					error: "Account already exists"
 				},
 				{
 					status: 400

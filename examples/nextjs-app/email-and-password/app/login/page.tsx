@@ -11,19 +11,23 @@ const Page = async () => {
 		cookies
 	});
 	const session = await authRequest.validate();
-	if (session) redirect("/");
+	if (session) {
+		if (!session.user.emailVerified) redirect("/email-verification");
+		redirect("/");
+	}
 	return (
 		<>
 			<h1>Sign in</h1>
 			<Form action="/api/login" successRedirect="/">
-				<label htmlFor="username">Username</label>
-				<input name="username" id="username" />
+				<label htmlFor="email">Email</label>
+				<input name="email" id="email" />
 				<br />
 				<label htmlFor="password">Password</label>
 				<input type="password" name="password" id="password" />
 				<br />
 				<input type="submit" />
 			</Form>
+			<Link href="/password-reset">Reset password</Link>
 			<Link href="/signup">Create an account</Link>
 		</>
 	);
