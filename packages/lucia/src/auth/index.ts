@@ -92,8 +92,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			let sessionAdapter = config.adapter.session(LuciaError);
 
 			if ("getSessionAndUser" in userAdapter) {
-				const { getSessionAndUser: _, ...extractedUserAdapter } =
-					userAdapter;
+				const { getSessionAndUser: _, ...extractedUserAdapter } = userAdapter;
 				userAdapter = extractedUserAdapter;
 			}
 

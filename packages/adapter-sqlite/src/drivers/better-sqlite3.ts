@@ -34,7 +34,9 @@ export const betterSqlite3Adapter = (
 	};
 
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = tables.session ? escapeName(tables.session): null;
+	const ESCAPED_SESSION_TABLE_NAME = tables.session
+		? escapeName(tables.session)
+		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
