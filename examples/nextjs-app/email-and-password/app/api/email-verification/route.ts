@@ -13,9 +13,14 @@ export const POST = async (request: NextRequest) => {
 		});
 	}
 	if (session.user.emailVerified) {
-		return new Response(null, {
-			status: 422
-		});
+		return new Response(
+			JSON.stringify({
+				error: "Email already verified"
+			}),
+			{
+				status: 422
+			}
+		);
 	}
 	try {
 		const token = await generateEmailVerificationToken(session.user.userId);

@@ -1,18 +1,16 @@
 import { LuciaError } from "lucia";
 
 export default defineEventHandler(async (event) => {
-	const { username, password } = await readBody<{
-		username: unknown;
+	const { email, password } = await readBody<{
+		email: unknown;
 		password: unknown;
 	}>(event);
 	// basic check
 	if (
-		typeof username !== "string" ||
-		username.length < 1 ||
-		username.length > 31
+		!isValidEmail(email)
 	) {
 		throw createError({
-			message: "Invalid username",
+			message: "Invalid email",
 			statusCode: 400
 		});
 	}
@@ -29,7 +27,7 @@ export default defineEventHandler(async (event) => {
 	try {
 		// find user by key
 		// and validate password
-		const key = await auth.useKey("username", username, password);
+		const key = await auth.useKey("email", email, password);
 		const session = await auth.createSession({
 			userId: key.userId,
 			attributes: {}
@@ -44,7 +42,7 @@ export default defineEventHandler(async (event) => {
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			throw createError({
-				message: "Incorrect username or password",
+				message: "Incorrect email or password",
 				statusCode: 400
 			});
 		}

@@ -3,7 +3,7 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 	app: {
 		head: {
-			title: "Username & password auth with Lucia"
+			title: "Email & password auth with Lucia"
 		}
 	}
 	// nitro: {

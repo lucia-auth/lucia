@@ -5,9 +5,13 @@ definePageMeta({
 
 const user = useAuthenticatedUser();
 
+if (!user.value.emailVerified) {
+	await navigateTo("/email-verification")
+}
+
 const handleLogout = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
-	await $fetch("/api/logout", {
+	await $fetch(e.target.action, {
 		method: "POST",
 		redirect: "manual"
 	});

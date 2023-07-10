@@ -1,19 +1,24 @@
 <script lang="ts" setup>
 const user = useUser();
 if (user.value) {
-	await navigateTo("/"); // redirect to profile page
+	if (user.value.emailVerified) {
+		await navigateTo("/email-verification")
+	} else {
+		await navigateTo("/"); // redirect to profile page
+	}
 }
 
 const errorMessage = ref<string | null>(null);
 
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
+	errorMessage.value = null;
 	const formData = new FormData(e.target);
 	try {
-		await $fetch("/api/login", {
+		await $fetch(e.target.action, {
 			method: "POST",
 			body: {
-				username: formData.get("username"),
+				email: formData.get("email"),
 				password: formData.get("password")
 			},
 			redirect: "manual"
@@ -33,12 +38,13 @@ const handleSubmit = async (e: Event) => {
 <template>
 	<h1>Sign in</h1>
 	<form method="post" action="/api/login" @submit.prevent="handleSubmit">
-		<label for="username">Username</label>
-		<input name="username" id="username" /><br />
+		<label for="email">Email</label>
+		<input name="email" id="email" /><br />
 		<label for="password">Password</label>
 		<input type="password" name="password" id="password" /><br />
 		<input type="submit" />
 	</form>
 	<p class="error">{{ errorMessage }}</p>
+	<NuxtLink to="/password-reset">Reset password</NuxtLink>
 	<NuxtLink to="/signup">Create an account</NuxtLink>
 </template>

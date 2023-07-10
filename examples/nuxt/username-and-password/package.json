@@ -1,5 +1,5 @@
 {
-	"name": "username-and-example",
+	"name": "username-and-password",
 	"description": "Username & password example with Lucia and Nuxt",
 	"private": true,
 	"scripts": {

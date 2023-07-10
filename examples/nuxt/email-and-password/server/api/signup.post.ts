@@ -1,18 +1,14 @@
 import { SqliteError } from "better-sqlite3";
 
 export default defineEventHandler(async (event) => {
-	const { username, password } = await readBody<{
-		username: unknown;
+	const { email, password } = await readBody<{
+		email: unknown;
 		password: unknown;
 	}>(event);
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
+	if (!isValidEmail(email)) {
 		throw createError({
-			message: "Invalid username",
+			message: "Invalid email",
 			statusCode: 400
 		});
 	}
@@ -29,12 +25,13 @@ export default defineEventHandler(async (event) => {
 	try {
 		const user = await auth.createUser({
 			key: {
-				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
+				providerId: "email", // auth method
+				providerUserId: email, // unique id when using "email" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
-				username
+				email,
+				email_verified: Number(false)
 			}
 		});
 		const session = await auth.createSession({
@@ -43,12 +40,12 @@ export default defineEventHandler(async (event) => {
 		});
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-		return sendRedirect(event, "/"); // redirect to profile page
+		return sendRedirect(event, "/email-verification");
 	} catch (e) {
 		// check for unique constraint error in user table
 		if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
 			throw createError({
-				message: "Username already taken",
+				message: "Account already exists",
 				statusCode: 400
 			});
 		}
