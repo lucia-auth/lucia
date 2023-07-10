@@ -1,7 +1,7 @@
 import { createUrl, handleRequest } from "../request.js";
 import { providerUserAuth } from "../core.js";
 import { generateState, getPKCS8Key } from "../utils.js";
-import { createES256SignedJWT, validateIdTokenClaims } from "../jwt.js";
+import { createES256SignedJWT, decodeJWT } from "../jwt.js";
 
 import type { Auth } from "lucia";
 import type { OAuthProvider } from "../core.js";
@@ -83,11 +83,13 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getAppleUser = async (idToken: string) => {
-		return validateIdTokenClaims<AppleUser>(idToken, {
-			aud: config.clientId,
-			iss: APPLE_AUD
-		});
+	const getAppleUser = (idToken: string): AppleUser => {
+		const jwtPayload = decodeJWT<AppleUser>(idToken);
+		return {
+			email: jwtPayload.email,
+			email_verified: jwtPayload.email_verified,
+			sub: jwtPayload.sub
+		};
 	};
 
 	return {
@@ -105,7 +107,7 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		},
 		validateCallback: async (code: string) => {
 			const appleTokens = await getAppleTokens(code);
-			const appleUser = await getAppleUser(appleTokens.idToken);
+			const appleUser = getAppleUser(appleTokens.idToken);
 			const providerUserId = appleUser.sub;
 			const appleUserAuth = await providerUserAuth(
 				auth,

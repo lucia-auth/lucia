@@ -47,15 +47,11 @@ export class IdTokenError extends Error {
 const decoder = new TextDecoder();
 
 // does not check for JWT signature
-export const validateIdTokenClaims = async <_Claims extends {}>(
+export const decodeJWT = <_Claims extends {}>(
 	idToken: string,
-	options: {
-		aud: string;
-		iss: string;
-	}
 ) => {
 	const idTokenParts = idToken.split(".");
-	if (idTokenParts.length !== 3) throw new IdTokenError("ID_TOKEN_INVALID_JWT");
+	if (idTokenParts.length !== 3) throw new Error("Invalid id token");
 	const base64UrlPayload = idTokenParts[1];
 	const payload = JSON.parse(
 		decoder.decode(decodeBase64Url(base64UrlPayload))
@@ -64,15 +60,5 @@ export const validateIdTokenClaims = async <_Claims extends {}>(
 		aud: string;
 		exp: number;
 	} & _Claims;
-	if (payload.iss !== options.aud) {
-		throw new IdTokenError("ID_TOKEN_INVALID_CLAIM");
-	}
-	if (payload.aud !== options.iss) {
-		throw new IdTokenError("ID_TOKEN_INVALID_CLAIM");
-	}
-	const now = Math.floor(new Date().getTime() / 1000);
-	if (now > payload.exp) {
-		throw new IdTokenError("ID_TOKEN_INVALID_CLAIM");
-	}
 	return payload;
 };
