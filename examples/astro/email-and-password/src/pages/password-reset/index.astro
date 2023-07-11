@@ -30,12 +30,15 @@ if (Astro.request.method === "POST") {
                 success = true;
             } else {
                 errorMessage = "User does not exist";
+                Astro.response.status = 400
             }
         } catch (e) {
             errorMessage = "An unknown error occurred";
+            Astro.response.status = 500
         }
     } else {
         errorMessage = "Invalid email";
+        Astro.response.status = 400
     }
 }
 ---

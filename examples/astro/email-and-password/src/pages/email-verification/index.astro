@@ -19,6 +19,7 @@ if (Astro.request.method === "POST") {
         success = true;
     } catch {
         errorMessage = "An unknown error occurred";
+        Astro.response.status = 500
     }
 }
 ---

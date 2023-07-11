@@ -38,9 +38,11 @@ if (Astro.request.method === "POST") {
             return Astro.redirect("/")
         } catch (e) {
             errorMessage = "Invalid or expired password reset link";
+            Astro.response.status = 400
         }
     } else {
         errorMessage = "Invalid password";
+        Astro.response.status = 400
     }
 }
 ---
