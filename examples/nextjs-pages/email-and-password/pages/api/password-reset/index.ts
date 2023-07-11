@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const user = auth.transformDatabaseUser(storedUser);
 		const token = await generatePasswordResetToken(user.userId);
 		await sendPasswordResetLink(token);
-		return res.status(200).end();
+		return res.end();
 	} catch (e) {
 		return res.status(500).json({
 			error: "An unknown error occurred"

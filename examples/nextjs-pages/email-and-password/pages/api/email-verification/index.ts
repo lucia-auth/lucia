@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		const token = await generateEmailVerificationToken(session.user.userId);
 		await sendEmailVerificationLink(token);
-		return res.status(200).end();
+		return res.end();
 	} catch {
 		return res.status(500).json({
 			error: "An unknown error occurred"

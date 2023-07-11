@@ -39,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			res
 		});
 		authRequest.setSession(session);
-		return res.status(200).end();
+		return res.end();
 	} catch (e) {
 		return res.status(400).json({
 			error: "Invalid or expired password reset link"
