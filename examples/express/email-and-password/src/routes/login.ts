@@ -5,6 +5,7 @@ import url from "url";
 import { LuciaError } from "lucia";
 
 import { auth } from "../lucia.js";
+import { isValidEmail } from "../email.js";
 
 const router = express.Router();
 
@@ -14,6 +15,9 @@ router.get("/login", async (req, res) => {
 	const authRequest = auth.handleRequest(req, res);
 	const session = await authRequest.validate();
 	if (session) {
+		if (!session.user.emailVerified) {
+			return res.status(302).setHeader("Location", "/email-verification").end();
+		}
 		// redirect to profile page
 		return res.status(302).setHeader("Location", "/").end();
 	}
@@ -22,16 +26,15 @@ router.get("/login", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body as {
+		email: unknown,
+		password: unknown
+	}
 	// basic check
-	if (
-		typeof username !== "string" ||
-		password.length < 1 ||
-		username.length > 31
-	) {
+	if (!isValidEmail(email)) {
 		const html = renderPage({
-			error: "Invalid username",
-			username: typeof username === "string" ? username : ""
+			error: "Invalid email",
+			email: typeof email === "string" ? email : ""
 		});
 		return res
 			.status(400)
@@ -45,7 +48,7 @@ router.post("/login", async (req, res) => {
 	) {
 		const html = renderPage({
 			error: "Invalid password",
-			username
+			email
 		});
 		return res
 			.status(400)
@@ -55,7 +58,7 @@ router.post("/login", async (req, res) => {
 	try {
 		// find user by key
 		// and validate password
-		const key = await auth.useKey("username", username, password);
+		const key = await auth.useKey("email", email, password);
 		const session = await auth.createSession({
 			userId: key.userId,
 			attributes: {}
@@ -72,8 +75,8 @@ router.post("/login", async (req, res) => {
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			const html = renderPage({
-				error: "Incorrect username or password",
-				username
+				error: "Incorrect email or password",
+				email
 			});
 			return res
 				.status(400)
@@ -91,15 +94,13 @@ router.post("/login", async (req, res) => {
 	}
 });
 
-const renderPage = (params: { error?: string; username?: string }) => {
+const renderPage = (params: { error?: string; email?: string }) => {
 	const error = params.error ?? "";
-	const username = params.username ?? "";
+	const email = params.email ?? "";
 	let html = fs
 		.readFileSync(path.join(__dirname, "login.html"))
 		.toString("utf-8");
-	html = html
-		.replaceAll("%%error%%", error)
-		.replaceAll("%%username%%", username);
+	html = html.replaceAll("%%error%%", error).replaceAll("%%email%%", email);
 	return html;
 };
 

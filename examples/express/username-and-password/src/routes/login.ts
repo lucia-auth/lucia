@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
 	// basic check
 	if (
 		typeof username !== "string" ||
-		password.length < 1 ||
+		username.length < 1 ||
 		username.length > 31
 	) {
 		const html = renderPage({

@@ -3,7 +3,6 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<title>Email & password auth with Lucia</title>
-
 		<style>
 			* {
 				margin-top: 0.5rem;
@@ -18,16 +17,12 @@
 		</style>
 	</head>
 	<body>
-		<h1>Sign in</h1>
+		<h1>Reset password</h1>
 		<form method="post">
-			<label for="email">Email</label>
-			<input name="email" id="email" value="%%email%%" /><br />
-			<label for="password">Password</label>
+			<label for="password">New Password</label>
 			<input type="password" name="password" id="password" /><br />
 			<input type="submit" />
 		</form>
 		<p class="error">%%error%%</p>
-		<a href="/password-reset">Reset password</a>
-		<a href="/signup">Create an account</a>
 	</body>
 </html>
