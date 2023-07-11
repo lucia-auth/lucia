@@ -59,7 +59,7 @@ export const POST = async (
 				error: "Invalid or expired password reset link"
 			}),
 			{
-				status: 500
+				status: 400
 			}
 		);
 	}

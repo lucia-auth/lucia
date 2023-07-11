@@ -31,8 +31,8 @@ export default defineEventHandler(async (event) => {
         return {}
 	} catch (e) {
 		throw createError({
-			message: "An unknown error occurred",
-			statusCode: 500
+			message: "Invalid or expired password reset link",
+			statusCode: 400
 		});
 	}
 });
