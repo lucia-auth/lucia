@@ -24,7 +24,7 @@ type Database = {
 type UserTable = {
 	id: string;
 	email: string;
-    email_verified: number
+	email_verified: number;
 };
 
 type SessionTable = {

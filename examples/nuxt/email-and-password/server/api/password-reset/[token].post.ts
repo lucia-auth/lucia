@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 		});
 		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-        return {}
+		return {};
 	} catch (e) {
 		throw createError({
 			message: "Invalid or expired password reset link",

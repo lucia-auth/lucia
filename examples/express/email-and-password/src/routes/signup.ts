@@ -28,9 +28,9 @@ router.get("/signup", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
 	const { email, password } = req.body as {
-		email: unknown,
-		password: unknown
-	}
+		email: unknown;
+		password: unknown;
+	};
 	// basic check
 	if (!isValidEmail(email)) {
 		const html = renderPage({

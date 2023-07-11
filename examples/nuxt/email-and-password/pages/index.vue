@@ -6,7 +6,7 @@ definePageMeta({
 const user = useAuthenticatedUser();
 
 if (!user.value.emailVerified) {
-	await navigateTo("/email-verification")
+	await navigateTo("/email-verification");
 }
 
 const handleLogout = async (e: Event) => {

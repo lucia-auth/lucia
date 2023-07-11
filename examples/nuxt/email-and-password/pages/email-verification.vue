@@ -13,12 +13,12 @@ const successMessage = ref<null | string>(null);
 
 const handleResend = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
-    successMessage.value = null;
+	successMessage.value = null;
 	await $fetch("/api/email-verification", {
 		method: "POST",
 		redirect: "manual"
 	});
-    successMessage.value = "Your verification link was resent"
+	successMessage.value = "Your verification link was resent";
 };
 </script>
 

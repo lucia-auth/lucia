@@ -17,7 +17,10 @@ const Page = async () => {
 			<h1>Email verification</h1>
 			<p>Your email verification link was sent to your inbox (i.e. console).</p>
 			<h2>Resend verification link</h2>
-			<Form action="/api/email-verification" successMessage="Your verification link was resent">
+			<Form
+				action="/api/email-verification"
+				successMessage="Your verification link was resent"
+			>
 				<input type="submit" value="Resend" />
 			</Form>
 		</>

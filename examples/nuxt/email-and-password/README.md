@@ -36,4 +36,3 @@ and in `nuxt.config.ts`:
 | `id`             | `string`                |        |
 | `email`          | `string`                |   ✓    |
 | `email_verified` | `number` (as `boolean`) |   ✓    |
-

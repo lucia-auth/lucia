@@ -11,7 +11,7 @@ const Page = async () => {
 	});
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
-	if (!session.user.emailVerified) redirect("/email-verification")
+	if (!session.user.emailVerified) redirect("/email-verification");
 	return (
 		<>
 			<h1>Profile</h1>

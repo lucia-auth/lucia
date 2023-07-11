@@ -9,7 +9,7 @@ export const sendPasswordResetLink = async (token: string) => {
 };
 
 export const isValidEmail = (maybeEmail: unknown): maybeEmail is string => {
-	if (typeof maybeEmail !== "string") return false;
+	if (typeof maybeEmail !== 'string') return false;
 	const emailRegexp = /^.+@.+$/; // [one or more character]@[one or more character]
 	return emailRegexp.test(maybeEmail);
 };

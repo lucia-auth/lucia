@@ -42,7 +42,7 @@ const Page = () => {
 				action="/api/email-verification"
 				onSubmit={async (e) => {
 					e.preventDefault();
-                    setErrorMessage(null);
+					setErrorMessage(null);
 					setSuccessMessage(null);
 					const response = await fetch("/api/email-verification", {
 						method: "POST"

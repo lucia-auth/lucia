@@ -4,7 +4,10 @@ import express from "express";
 import url from "url";
 
 import { auth } from "../lucia.js";
-import { generateEmailVerificationToken, validateEmailVerificationToken } from "../verification-token.js";
+import {
+	generateEmailVerificationToken,
+	validateEmailVerificationToken
+} from "../verification-token.js";
 import { sendEmailVerificationLink } from "../email.js";
 
 const router = express.Router();
@@ -36,9 +39,7 @@ router.post("/email-verification", async (req, res) => {
 		const html = renderPage({
 			successMessage: "Your verification link was resent"
 		});
-		return res
-			.setHeader("Content-Type", "text/html; charset=utf-8")
-			.send(html);
+		return res.setHeader("Content-Type", "text/html; charset=utf-8").send(html);
 	} catch {
 		const html = renderPage({
 			error: "An unknown error occurred"

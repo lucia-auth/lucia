@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
 		const user = auth.transformDatabaseUser(storedUser);
 		const token = await generatePasswordResetToken(user.userId);
 		await sendPasswordResetLink(token);
-        return {}
+		return {};
 	} catch (e) {
 		throw createError({
 			message: "An unknown error occurred",

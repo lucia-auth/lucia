@@ -25,8 +25,8 @@ router.get("/password-reset/:token", async (req, res) => {
 
 router.post("/password-reset/:token", async (req, res) => {
 	const { password } = req.body as {
-		password: unknown
-	}
+		password: unknown;
+	};
 	if (
 		typeof password !== "string" ||
 		password.length < 6 ||
@@ -59,7 +59,7 @@ router.post("/password-reset/:token", async (req, res) => {
 		authRequest.setSession(session);
 		return res.status(302).setHeader("Location", "/").end();
 	} catch (e) {
-        const html = renderPage({
+		const html = renderPage({
 			error: "Invalid or expired password reset link"
 		});
 		return res

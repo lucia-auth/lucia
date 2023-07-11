@@ -2,7 +2,7 @@
 const user = useUser();
 if (user.value) {
 	if (user.value.emailVerified) {
-		await navigateTo("/email-verification")
+		await navigateTo("/email-verification");
 	} else {
 		await navigateTo("/"); // redirect to profile page
 	}

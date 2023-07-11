@@ -12,9 +12,11 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext<{
 		token: string;
 	}>
-): Promise<GetServerSidePropsResult<{
-	token: string
-}>> => {
+): Promise<
+	GetServerSidePropsResult<{
+		token: string;
+	}>
+> => {
 	const token = context.params?.token as string;
 	const validToken = await isValidPasswordResetToken(token);
 	if (!validToken) {

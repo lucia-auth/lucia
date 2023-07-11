@@ -1,9 +1,9 @@
-import sqlite from 'better-sqlite3';
-import { Kysely, SqliteDialect } from 'kysely';
+import sqlite from "better-sqlite3";
+import { Kysely, SqliteDialect } from "kysely";
 
-import type { ColumnType } from 'kysely';
+import type { ColumnType } from "kysely";
 
-export const sqliteDatabase = sqlite('main.db');
+export const sqliteDatabase = sqlite("main.db");
 
 const dialect = new SqliteDialect({
 	database: sqliteDatabase
@@ -24,7 +24,7 @@ type Database = {
 type UserTable = {
 	id: string;
 	email: string;
-    email_verified: number
+	email_verified: number;
 };
 
 type SessionTable = {
