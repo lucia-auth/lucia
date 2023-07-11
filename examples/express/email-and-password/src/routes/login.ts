@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
 		password: unknown;
 	};
 	// basic check
-	if (!isValidEmail(email)) {
+	if (typeof email !== "string" || email.length < 1 || email.length > 255) {
 		const html = renderPage({
 			error: "Invalid email",
 			email: typeof email === "string" ? email : ""

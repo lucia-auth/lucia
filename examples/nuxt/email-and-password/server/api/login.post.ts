@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 		password: unknown;
 	}>(event);
 	// basic check
-	if (!isValidEmail(email)) {
+	if (typeof email !== "string" || email.length < 1 || email.length > 255) {
 		throw createError({
 			message: "Invalid email",
 			statusCode: 400

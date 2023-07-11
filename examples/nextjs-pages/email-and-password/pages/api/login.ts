@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		password: unknown;
 	};
 	// basic check
-	if (!isValidEmail(email)) {
+	if (typeof email !== "string" || email.length < 1 || email.length > 255) {
 		return res.status(400).json({
 			error: "Invalid email"
 		});

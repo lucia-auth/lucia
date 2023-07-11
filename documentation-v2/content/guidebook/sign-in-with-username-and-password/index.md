@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password"
+title: "Sign in with username and password"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 _order: "0"
 ---

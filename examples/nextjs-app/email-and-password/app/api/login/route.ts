@@ -11,7 +11,7 @@ export const POST = async (request: NextRequest) => {
 	const email = formData.get("email");
 	const password = formData.get("password");
 	// basic check
-	if (!isValidEmail(email)) {
+	if (typeof email !== "string" || email.length < 1 || email.length > 255) {
 		return NextResponse.json(
 			{
 				error: "Invalid email"
