@@ -83,7 +83,7 @@ In `src/app.d.ts`, configure your types. The path in `import('$lib/server/lucia.
 declare global {
 	namespace App {
 		interface Locals {
-			auth: import("lucia").AuthRequest;
+			auth: import("lucia-auth").AuthRequest;
 		}
 	}
 }
