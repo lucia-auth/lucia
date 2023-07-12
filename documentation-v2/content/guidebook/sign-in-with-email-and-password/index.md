@@ -6,7 +6,7 @@ _order: "0"
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
 
-If you're new to Lucia, we recommend starting with [Sign in with username and password]() starter guide as this guide will gloss over basic concepts and APIs. Make sure to implement password resets as well, which is covered in separate guide (see [Password reset]()).
+If you're new to Lucia, we recommend starting with [Sign in with username and password]() starter guide as this guide will gloss over basic concepts and APIs. Make sure to implement password resets as well, which is covered in a separate guide (see [Password reset]()).
 
 This example project will have a few pages:
 
@@ -86,7 +86,7 @@ Create route `/signup`. `signup.html` will have a form with inputs for email and
 
 This will be handled in a POST request.
 
-When creating a user, use `"email"` as the provider id and the user's email as the provider user id. Make sure to set `email_verified` user property to `false`. We'll send a verification link when we create a new user, but we'll come back to that later.
+When creating a user, use `"email"` as the provider id and the user's email as the provider user id. Make sure to set `email_verified` user property to `false`. We'll send a verification link when we create a new user, but we'll come back to that later. Redirect the user to the confirmation page (`/email-verification`).
 
 ```ts
 import { auth } from "./lucia.js";
@@ -389,7 +389,7 @@ const validateEmailVerificationToken = async (token: string) => {
 
 ## Send email verification link
 
-Return back to `/signup` and send the verification link. Redirect the user to the confirmation page (`/email-verification`).
+Return back to `/signup` and send the verification link.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -427,7 +427,7 @@ const sendEmailVerificationLink = async (email, token: string) => {
 
 ## Confirmation page
 
-Create route `/email-verification`. Users who just signed up will be redirected to this page, and will include a form to resend the verification link. Users without a verified email will also be redirected to this page.
+Create route `/email-verification`. Users who just signed up and those without a verified email will be redirected to this page. It will include a form to resend the verification link.
 
 ```html
 <!-- email-verification.html -->
