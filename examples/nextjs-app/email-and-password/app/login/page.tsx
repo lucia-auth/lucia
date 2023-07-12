@@ -18,7 +18,7 @@ const Page = async () => {
 	return (
 		<>
 			<h1>Sign in</h1>
-			<Form action="/api/login" successRedirect="/">
+			<Form action="/api/login">
 				<label htmlFor="email">Email</label>
 				<input name="email" id="email" />
 				<br />

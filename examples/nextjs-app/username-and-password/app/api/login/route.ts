@@ -63,6 +63,8 @@ export const POST = async (request: NextRequest) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+				// or invalid password
 			return NextResponse.json(
 				{
 					error: "Incorrect username or password"

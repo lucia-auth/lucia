@@ -8,7 +8,7 @@ export const POST = async (request: NextRequest) => {
 	const authRequest = auth.handleRequest(request);
 	const session = await authRequest.validate();
 	if (!session) {
-		return new Response(null, {
+		return new Response("Not authenticated", {
 			status: 401
 		});
 	}

@@ -30,7 +30,7 @@ declare global {
 		type Auth = import("$lib/server/lucia").Auth;
 		type DatabaseUserAttributes = {
 			email: string;
-			email_verified: number;
+			email_verified: boolean;
 		};
 		type DatabaseSessionAttributes = Record<string, never>;
 	}
@@ -93,7 +93,6 @@ When creating a user, use `"email"` as the provider id and the user's email as t
 // routes/signup/+page.server.ts
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
-import { isValidEmail } from "$lib/server/email";
 
 import type { Actions } from "./$types";
 
@@ -126,7 +125,7 @@ export const actions: Actions = {
 				},
 				attributes: {
 					email,
-					email_verified: Number(false)
+					email_verified: false // `Number(false)` if stored as an integer
 				}
 			});
 			const session = await auth.createSession({
@@ -179,15 +178,12 @@ const isValidEmail = (maybeEmail: unknown): maybeEmail is string => {
 
 ### Redirect authenticated users
 
-Redirect authenticated users to the profile page if their email is verified, or to the confirmation page if not, by defining a new load function.
+Create `routes/signup/+page.server.ts` and define a load function. Redirect authenticated users to the profile page if their email is verified, or to the confirmation page if not.
 
 ```ts
 // routes/signup/+page.server.ts
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
-import { SqliteError } from "better-sqlite3";
-import { generateEmailVerificationToken } from "$lib/server/token";
-import { isValidEmail, sendEmailVerificationLink } from "$lib/server/email";
 
 import type { PageServerLoad, Actions } from "./$types";
 
@@ -275,6 +271,8 @@ export const actions: Actions = {
 				(e.message === "AUTH_INVALID_KEY_ID" ||
 					e.message === "AUTH_INVALID_PASSWORD")
 			) {
+				// user does not exist
+				// or invalid password
 				return fail(400, {
 					message: "Incorrect email or password"
 				});
@@ -292,12 +290,11 @@ export const actions: Actions = {
 
 ### Redirect authenticated users
 
-Define a load function and redirect users as we did in the sign up page.
+Create `routes/login/+page.server.ts`. Define a load function and implement redirects as we did in the sign up page.
 
 ```ts
 // routes/login/+page.server.ts
 import { auth } from "$lib/server/lucia";
-import { LuciaError } from "lucia";
 import { fail, redirect } from "@sveltejs/kit";
 
 import type { PageServerLoad, Actions } from "./$types";
@@ -316,37 +313,13 @@ export const actions: Actions = {
 };
 ```
 
-### Redirect authenticated users
-
-Implement redirects as we did in the sign up page.
-
-```ts
-import { auth } from "./lucia.js";
-
-get("/login", async (request: Request) => {
-	const authRequest = auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		if (!session.user.emailVerified) {
-			return new Response(null, {
-				status: 302,
-				headers: {
-					Location: "/email-verification"
-				}
-			});
-		}
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/" // profile page
-			}
-		});
-	}
-	return renderPage();
-});
-```
-
 ## Email verification tokens
+
+The token will be sent as part of the verification link.
+
+```
+http://localhost:5173/email-verification/<token>
+```
 
 ### Database
 
@@ -362,7 +335,7 @@ We'll be storing the expiration date as a `bigint` since Lucia uses handles expi
 
 ### Create new tokens
 
-`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
+`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
 
 ```ts
 // lib/server/token.ts
@@ -396,7 +369,9 @@ export const generateEmailVerificationToken = async (userId: string) => {
 
 ### Validate tokens
 
-`validateEmailVerificationToken()` will get the token and delete it if it exists. We recommend handling this in a transaction or a batched query. It will throw if the token is invalid.
+`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
+
+It will throw if the token is invalid.
 
 ```ts
 // lib/server/token.ts
@@ -417,7 +392,7 @@ const validateEmailVerificationToken = async (token: string) => {
 		if (!storedToken) throw new Error("Invalid token");
 		await trx
 			.table("email_verification_token")
-			.where("id", "=", token)
+			.where("user_id", "=", storedToken.user_id)
 			.delete();
 		return storedToken;
 	});
@@ -437,7 +412,6 @@ Return back to `routes/signup/+page.server.ts` and send the verification link.
 // routes/signup/+page.server.ts
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
-import { isValidEmail } from "$lib/server/email";
 import { generateEmailVerificationToken } from "$lib/server/token";
 import { sendEmailVerificationLink } from "$lib/server/email";
 
@@ -465,12 +439,10 @@ export const actions: Actions = {
 };
 ```
 
-The verification link is `http://localhost:<port>/email-verification/<token>`.
-
 ```ts
-// email.ts
+// lib/server/email.ts
 const sendEmailVerificationLink = async (email, token: string) => {
-	const url = `http://localhost:3000/email-verification/${token}`;
+	const url = `http://localhost:5173/email-verification/${token}`;
 	await sendEmail(email, {
 		// ...
 	});
@@ -515,7 +487,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 ### Resend verification link
 
+Define a new form action in `routes/email-verification/+page.server.ts`. Redirect unauthenticated users and those who have already have a verified email. Create a new verification token and send the link to the user's inbox.
+
 ```ts
+// routes/email-verification/+page.server.ts
 import { redirect, fail } from "@sveltejs/kit";
 import { generateEmailVerificationToken } from "$lib/server/token";
 import { sendEmailVerificationLink } from "$lib/server/email";
@@ -550,7 +525,9 @@ export const actions: Actions = {
 
 ## Email verification link
 
-Create `routes/email-verification/[token]/+server.ts`. This route will handle users who clicked the verification link.
+Create `routes/email-verification/[token]/+server.ts`. This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `params`
+
+Make sure to invalidate all sessions of the user.
 
 ```ts
 // routes/email-verification/[token]/+server.ts
@@ -566,7 +543,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 		const user = await auth.getUser(userId);
 		await auth.invalidateAllUserSessions(user.userId);
 		await auth.updateUserAttributes(user.userId, {
-			email_verified: Number(true)
+			email_verified: true // `Number(true)` if stored as an integer
 		});
 		const session = await auth.createSession({
 			userId: user.userId,
@@ -589,7 +566,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 
 ## Protect pages
 
-Define a load function in `+page.server.ts`, and redirect unauthenticated users and those without a verified email.
+Protect normal pages (and form actions) by defining a load function in `+page.server.ts`, and redirecting unauthenticated users and those without a verified email.
 
 ```ts
 // +page.server.ts
@@ -604,5 +581,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw redirect(302, "/email-verification");
 	}
 	// ...
+};
+
+export const actions: Actions = {
+	default: async ({ locals }) => {
+		const session = await locals.auth.validate();
+		if (!session) throw redirect(302, "/login");
+		if (!session.user.emailVerified) {
+			throw redirect(302, "/email-verification");
+		}
+		// ...
+	}
 };
 ```

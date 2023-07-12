@@ -35,6 +35,7 @@ const Page = () => {
 				action="/api/signup"
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setErrorMessage(null);
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/signup", {
 						method: "POST",

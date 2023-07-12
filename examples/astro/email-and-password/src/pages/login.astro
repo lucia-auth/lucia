@@ -38,6 +38,8 @@ if (Astro.request.method === "POST") {
 				(e.message === "AUTH_INVALID_KEY_ID" ||
 					e.message === "AUTH_INVALID_PASSWORD")
 			) {
+				// user does not exist
+				// or invalid password
 				errorMessage = "Incorrect email or password";
 				Astro.response.status = 400
 			} else {

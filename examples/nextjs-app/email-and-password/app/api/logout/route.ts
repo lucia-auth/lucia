@@ -9,14 +9,9 @@ export const POST = async (request: NextRequest) => {
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
-		return NextResponse.json(
-			{
-				error: "Not authenticated"
-			},
-			{
-				status: 401
-			}
-		);
+		return new Response("Not authenticated", {
+			status: 401
+		});
 	}
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);

@@ -6,7 +6,6 @@ import { useState } from "react";
 const Form = ({
 	children,
 	action,
-	successRedirect
 }: {
 	children: React.ReactNode;
 	action: string;

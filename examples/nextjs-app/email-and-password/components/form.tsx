@@ -18,6 +18,8 @@ const Form = (props: {
 				method="post"
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setErrorMessage(null);
+					setSuccessMessage(null);
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch(props.action, {
 						method: "POST",
@@ -36,10 +38,7 @@ const Form = (props: {
 						setErrorMessage(result.error ?? null);
 						return;
 					}
-					const result = (await response.json()) as {
-						error?: string;
-					};
-					setErrorMessage(result.error ?? null);
+					setSuccessMessage(props.successMessage);
 				}}
 			>
 				{props.children}

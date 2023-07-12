@@ -74,6 +74,8 @@ router.post("/login", async (req, res) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+				// or invalid password
 			const html = renderPage({
 				error: "Incorrect email or password",
 				email

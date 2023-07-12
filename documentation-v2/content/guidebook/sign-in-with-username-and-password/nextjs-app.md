@@ -100,7 +100,7 @@ import { useRouter } from "next/navigation";
 
 const Form = ({
 	children,
-	action,
+	action
 }: {
 	children: React.ReactNode;
 	action: string;
@@ -147,7 +147,7 @@ const Page = async () => {
 	return (
 		<>
 			<h1>Sign up</h1>
-			<Form action="/api/signup" successRedirect="/">
+			<Form action="/api/signup">
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
 				<br />
@@ -321,7 +321,7 @@ const Page = async () => {
 	return (
 		<>
 			<h1>Sign in</h1>
-			<Form action="/api/login" successRedirect="/">
+			<Form action="/api/login">
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
 				<br />
@@ -411,6 +411,8 @@ export const POST = async (request: NextRequest) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+				// or invalid password
 			return NextResponse.json(
 				{
 					error: "Incorrect username of password"
@@ -484,7 +486,7 @@ const Page = async () => {
 			<h1>Profile</h1>
 			<p>User id: {session.user.userId}</p>
 			<p>Username: {session.user.username}</p>
-			<Form action="/api/logout" successRedirect="/">
+			<Form action="/api/logout">
 				<input type="submit" value="Sign out" />
 			</Form>
 		</>

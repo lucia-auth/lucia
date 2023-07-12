@@ -48,6 +48,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+				// or invalid password
 			return res.status(400).json({
 				error: "Incorrect username or password"
 			});

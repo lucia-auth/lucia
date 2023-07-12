@@ -295,6 +295,8 @@ post("/login", async (request: Request) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+			// or invalid password
 			return new Response("Incorrect username of password", {
 				status: 400
 			});

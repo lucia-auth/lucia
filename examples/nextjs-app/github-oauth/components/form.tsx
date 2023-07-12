@@ -5,12 +5,10 @@ import { useState } from "react";
 
 const Form = ({
 	children,
-	action,
-	successRedirect
+	action
 }: {
 	children: React.ReactNode;
 	action: string;
-	successRedirect: string;
 }) => {
 	const router = useRouter();
 	const [errorMessage, setErrorMessage] = useState<null | string>(null);
@@ -21,6 +19,7 @@ const Form = ({
 				method="post"
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setErrorMessage(null);
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch(action, {
 						method: "POST",

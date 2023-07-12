@@ -16,7 +16,7 @@ const Page = async ({
 	return (
 		<>
 			<h1>Reset password</h1>
-			<Form action={`/api/password-reset/${params.token}`} successRedirect="/">
+			<Form action={`/api/password-reset/${params.token}`}>
 				<label htmlFor="password">New Password</label>
 				<input name="password" id="password" />
 				<br />
