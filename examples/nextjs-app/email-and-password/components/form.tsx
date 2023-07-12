@@ -6,7 +6,6 @@ import { useState } from "react";
 const Form = (props: {
 	children: React.ReactNode;
 	action: string;
-	successRedirect?: string;
 	successMessage?: string;
 }) => {
 	const router = useRouter();
@@ -25,19 +24,22 @@ const Form = (props: {
 						body: formData,
 						redirect: "manual"
 					});
-					if (response.status === 0 || response.ok) {
-						if (props.successRedirect) {
-							router.push(props.successRedirect);
-						}
-						if (props.successMessage) {
-							setSuccessMessage(props.successMessage);
-						}
-					} else {
+					if (response.status === 0) {
+						// redirected
+						// when using `redirect: "manual"`, response status 0 is returned
+						return router.refresh();
+					}
+					if (!response.ok) {
 						const result = (await response.json()) as {
 							error?: string;
 						};
 						setErrorMessage(result.error ?? null);
+						return;
 					}
+					const result = (await response.json()) as {
+						error?: string;
+					};
+					setErrorMessage(result.error ?? null);
 				}}
 			>
 				{props.children}

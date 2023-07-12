@@ -27,9 +27,12 @@ const Form = ({
 						body: formData,
 						redirect: "manual"
 					});
-					if (response.status === 0 || response.ok) {
-						router.push(successRedirect);
-					} else {
+					if (response.status === 0) {
+						// redirected
+						// when using `redirect: "manual"`, response status 0 is returned
+						return router.refresh();
+					}
+					if (!response.ok) {
 						const result = (await response.json()) as {
 							error?: string;
 						};

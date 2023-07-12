@@ -350,7 +350,7 @@ export default Page;
 
 ### Form component
 
-Since the form will require client side JS, we will extract it into its own client component. We will not be using redirect responses as `fetch()` does not actually redirect the user, nor does the redirect url is exposed in the response object.
+Since the form will require client side JS, we will extract it into its own client component. We need to manually handle redirect responses as the default behavior is to make another request to the redirect location. We're going to use `refresh()` to reload the page (and redirect the user in the server) since we want to re-render the entire page, including `layout.tsx`.
 
 ```tsx
 // components/form.tsx
@@ -361,11 +361,9 @@ import { useRouter } from "next/navigation";
 const Form = ({
 	children,
 	action,
-	successRedirect
 }: {
 	children: React.ReactNode;
 	action: string;
-	successRedirect: string;
 }) => {
 	const router = useRouter();
 	return (
@@ -381,8 +379,10 @@ const Form = ({
 					redirect: "manual"
 				});
 
-				if (response.status === 0 || response.ok) {
-					router.push(successRedirect);
+				if (response.status === 0) {
+					// redirected
+					// when using `redirect: "manual"`, response status 0 is returned
+					return router.refresh();
 				}
 			}}
 		>
