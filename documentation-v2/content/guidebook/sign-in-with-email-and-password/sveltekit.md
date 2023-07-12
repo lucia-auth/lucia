@@ -17,7 +17,9 @@ This example project will have a few pages:
 
 It will also have a route to handle verification links.
 
-## Update your database
+## Database
+
+### Update `user` table
 
 Add a `email` (`string`, unique) and `email_verified` (`boolean`) column to the user table. Keep in mind that some database do not support boolean types (notably SQLite and MySQL), in which case it should be stored as an integer (1 or 0). Lucia _does not_ support default database values.
 
@@ -36,6 +38,18 @@ declare global {
 	}
 }
 ```
+
+### Email verification token
+
+Create a new `email_verification_token` table. This will have 3 fields.
+
+| name      | type                        | primary | references | description                                |
+| --------- | --------------------------- | :-----: | ---------- | ------------------------------------------ |
+| `id`      | `string`                    |         |            | Token to send inside the verification link |
+| `expires` | `bigint` (unsigned 8 bytes) |    ✓    |            | Expiration (in milliseconds)               |
+| `user_id` | `string`                    |         | `user(id)` |                                            |
+
+We'll be storing the expiration date as a `bigint` since Lucia uses handles expiration in milliseconds, but you can of course store it in seconds or the native `timestamp` type. Just make sure to adjust the expiration check accordingly.
 
 ## Configure Lucia
 
@@ -60,6 +74,85 @@ export const auth = lucia({
 });
 
 export type Auth = typeof auth;
+```
+
+## Email verification tokens
+
+The token will be sent as part of the verification link.
+
+```
+http://localhost:5173/email-verification/<token>
+```
+
+### Create new tokens
+
+`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
+
+```ts
+// lib/server/token.ts
+import { generateRandomString, isWithinExpiration } from "lucia/utils";
+
+const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
+
+export const generateEmailVerificationToken = async (userId: string) => {
+	const storedUserTokens = await db
+		.table("email_verification_token")
+		.where("user_id", "=", userId)
+		.getAll();
+	if (storedUserTokens.length > 0) {
+		const reusableStoredToken = storedUserTokens.find((token) => {
+			// check if expiration is within 1 hour
+			// and reuse the token if true
+			return isWithinExpiration(Number(token.expires) - EXPIRES_IN / 2);
+		});
+		if (reusableStoredToken) return reusableStoredToken.id;
+	}
+	const token = generateRandomString(63);
+	await db.table("email_verification_token").insert({
+		id: token,
+		expires: new Date().getTime() + EXPIRES_IN,
+		user_id: userId
+	});
+
+	return token;
+};
+```
+
+### Validate tokens
+
+`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
+
+It will throw if the token is invalid.
+
+```ts
+// lib/server/token.ts
+import { generateRandomString, isWithinExpiration } from "lucia/utils";
+
+const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
+
+export const generateEmailVerificationToken = async (userId: string) => {
+	// ...
+};
+
+const validateEmailVerificationToken = async (token: string) => {
+	const storedToken = await db.transaction(async (trx) => {
+		const storedToken = await trx
+			.table("email_verification_token")
+			.where("id", "=", token)
+			.get();
+		if (!storedToken) throw new Error("Invalid token");
+		await trx
+			.table("email_verification_token")
+			.where("user_id", "=", storedToken.user_id)
+			.delete();
+		return storedToken;
+	});
+	const tokenExpires = Number(storedToken.expires); // bigint => number conversion
+	if (!isWithinExpiration(tokenExpires)) {
+		throw new Error("Expired token");
+	}
+	return storedToken.user_id;
+};
 ```
 
 ## Sign up page
@@ -93,6 +186,8 @@ When creating a user, use `"email"` as the provider id and the user's email as t
 // routes/signup/+page.server.ts
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
+import { generateEmailVerificationToken } from "$lib/server/token";
+import { sendEmailVerificationLink } from "$lib/server/email";
 
 import type { Actions } from "./$types";
 
@@ -134,7 +229,8 @@ export const actions: Actions = {
 			});
 			locals.auth.setSession(session); // set session cookie
 
-			// TODO: send verification link
+			const token = await generateEmailVerificationToken(user.userId);
+			await sendEmailVerificationLink(token);
 		} catch (e) {
 			// this part depends on the database you're using
 			// check for unique constraint error in user table
@@ -153,6 +249,16 @@ export const actions: Actions = {
 		// make sure you don't throw inside a try/catch block!
 		throw redirect(302, "/email-verification");
 	}
+};
+```
+
+```ts
+// lib/server/email.ts
+const sendEmailVerificationLink = async (email, token: string) => {
+	const url = `http://localhost:5173/email-verification/${token}`;
+	await sendEmail(email, {
+		// ...
+	});
 };
 ```
 
@@ -310,142 +416,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	// ...
-};
-```
-
-## Email verification tokens
-
-The token will be sent as part of the verification link.
-
-```
-http://localhost:5173/email-verification/<token>
-```
-
-### Database
-
-Create a new `email_verification_token` table. This will have 3 fields.
-
-| name      | type                        | primary | references | description                                |
-| --------- | --------------------------- | :-----: | ---------- | ------------------------------------------ |
-| `id`      | `string`                    |         |            | Token to send inside the verification link |
-| `expires` | `bigint` (unsigned 8 bytes) |    ✓    |            | Expiration (in milliseconds)               |
-| `user_id` | `string`                    |         | `user(id)` |                                            |
-
-We'll be storing the expiration date as a `bigint` since Lucia uses handles expiration in milliseconds, but you can of course store it in seconds or the native `timestamp` type. Just make sure to adjust the expiration check accordingly.
-
-### Create new tokens
-
-`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
-
-```ts
-// lib/server/token.ts
-import { generateRandomString, isWithinExpiration } from "lucia/utils";
-
-const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
-
-export const generateEmailVerificationToken = async (userId: string) => {
-	const storedUserTokens = await db
-		.table("email_verification_token")
-		.where("user_id", "=", userId)
-		.getAll();
-	if (storedUserTokens.length > 0) {
-		const reusableStoredToken = storedUserTokens.find((token) => {
-			// check if expiration is within 1 hour
-			// and reuse the token if true
-			return isWithinExpiration(Number(token.expires) - EXPIRES_IN / 2);
-		});
-		if (reusableStoredToken) return reusableStoredToken.id;
-	}
-	const token = generateRandomString(63);
-	await db.table("email_verification_token").insert({
-		id: token,
-		expires: new Date().getTime() + EXPIRES_IN,
-		user_id: userId
-	});
-
-	return token;
-};
-```
-
-### Validate tokens
-
-`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
-
-It will throw if the token is invalid.
-
-```ts
-// lib/server/token.ts
-import { generateRandomString, isWithinExpiration } from "lucia/utils";
-
-const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
-
-export const generateEmailVerificationToken = async (userId: string) => {
-	// ...
-};
-
-const validateEmailVerificationToken = async (token: string) => {
-	const storedToken = await db.transaction(async (trx) => {
-		const storedToken = await trx
-			.table("email_verification_token")
-			.where("id", "=", token)
-			.get();
-		if (!storedToken) throw new Error("Invalid token");
-		await trx
-			.table("email_verification_token")
-			.where("user_id", "=", storedToken.user_id)
-			.delete();
-		return storedToken;
-	});
-	const tokenExpires = Number(storedToken.expires); // bigint => number conversion
-	if (!isWithinExpiration(tokenExpires)) {
-		throw new Error("Expired token");
-	}
-	return storedToken.user_id;
-};
-```
-
-## Send email verification link
-
-Return back to `routes/signup/+page.server.ts` and send the verification link.
-
-```ts
-// routes/signup/+page.server.ts
-import { auth } from "$lib/server/lucia";
-import { fail, redirect } from "@sveltejs/kit";
-import { generateEmailVerificationToken } from "$lib/server/token";
-import { sendEmailVerificationLink } from "$lib/server/email";
-
-import type { Actions } from "./$types";
-
-export const actions: Actions = {
-	default: async ({ request, locals }) => {
-		// ...
-		try {
-			// ...
-			const session = await auth.createSession({
-				userId: user.userId,
-				attributes: {}
-			});
-			locals.auth.setSession(session); // set session cookie
-
-			const token = await generateEmailVerificationToken(user.userId);
-			await sendEmailVerificationLink(token);
-		} catch (e) {
-			// ...
-		}
-		// make sure you don't throw inside a try/catch block!
-		throw redirect(302, "/email-verification");
-	}
-};
-```
-
-```ts
-// lib/server/email.ts
-const sendEmailVerificationLink = async (email, token: string) => {
-	const url = `http://localhost:5173/email-verification/${token}`;
-	await sendEmail(email, {
-		// ...
-	});
 };
 ```
 
