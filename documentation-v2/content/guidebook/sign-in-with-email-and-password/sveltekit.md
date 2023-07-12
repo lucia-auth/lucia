@@ -186,7 +186,7 @@ Redirect authenticated users to the profile page if their email is verified, or 
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
 import { SqliteError } from "better-sqlite3";
-import { generateEmailVerificationToken } from "$lib/server/verification-token";
+import { generateEmailVerificationToken } from "$lib/server/token";
 import { isValidEmail, sendEmailVerificationLink } from "$lib/server/email";
 
 import type { PageServerLoad, Actions } from "./$types";
