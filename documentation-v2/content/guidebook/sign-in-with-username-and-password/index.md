@@ -1,7 +1,6 @@
 ---
-title: "Sign in with username and password"
+title: "Sign in with email and password"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
-_order: "0"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._

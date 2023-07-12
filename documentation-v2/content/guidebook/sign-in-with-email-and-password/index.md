@@ -1,7 +1,6 @@
 ---
 title: "Email authentication with verification links"
-description: "Extend Lucia by implementing email and password authentication with email verification"
-_order: "0"
+description: "Extend Lucia by implementing email and password authentication with email verification links"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
@@ -67,7 +66,7 @@ export type Auth = typeof auth;
 
 ## Sign up page
 
-Create route `/signup`. `signup.html` will have a form with inputs for email and password
+Create route `/signup`. `signup.html` will have a form with inputs for email and password.
 
 ```html
 <!-- signup.html -->
@@ -156,7 +155,7 @@ post("/signup", async (request: Request) => {
 });
 ```
 
-### Validating emails
+#### Validating emails
 
 Validating emails are notoriously hard as the RFC defining them is rather complicated. Here, we're checking:
 
@@ -366,6 +365,15 @@ export const generateEmailVerificationToken = async (userId: string) => {
 `validateEmailVerificationToken()` will get the token and delete it if it exists. We recommend handling this in a transaction or a batched query. It will throw if the token is invalid.
 
 ```ts
+// token.ts
+import { generateRandomString, isWithinExpiration } from "lucia/utils";
+
+const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
+
+export const generateEmailVerificationToken = async (userId: string) => {
+	// ...
+};
+
 const validateEmailVerificationToken = async (token: string) => {
 	const storedToken = await db.transaction(async (trx) => {
 		const storedToken = await trx
@@ -393,6 +401,8 @@ Return back to `/signup` and send the verification link.
 
 ```ts
 import { auth } from "./lucia.js";
+import { generateEmailVerificationToken } from "./token.js";
+import { sendEmailVerificationLink } from "./email.js";
 
 post("/signup", async (request: Request) => {
 	// ...
@@ -417,6 +427,7 @@ post("/signup", async (request: Request) => {
 The verification link is `http://localhost:<port>/email-verification/<token>`.
 
 ```ts
+// email.ts
 const sendEmailVerificationLink = async (email, token: string) => {
 	const url = `http://localhost:3000/email-verification/${token}`;
 	await sendEmail(email, {
@@ -473,6 +484,8 @@ Handle POST requests. Check if the user is authenticated and if the user already
 
 ```ts
 import { auth } from "./lucia.js";
+import { generateEmailVerificationToken } from "./token.js";
+import { sendEmailVerificationLink } from "./email.js";
 
 post("/email-verification", async (request: Request) => {
 	const authRequest = auth.handleRequest(request);
@@ -507,10 +520,11 @@ post("/email-verification", async (request: Request) => {
 
 ## Email verification link
 
-Create `/email-verification/<token>`, where `<token>` is a dynamic route params. This route will handle users who clicked the verification link.
+Create route `/email-verification/<token>`, where `<token>` is a dynamic route params. This route will handle users who clicked the verification link.
 
 ```ts
 import { auth } from "./lucia.js";
+import { validateEmailVerificationToken } from "./token.js";
 
 get("/email-verification/:token", async (request: Request) => {
 	const token = getTokenParams(request.url);
@@ -541,7 +555,7 @@ get("/email-verification/:token", async (request: Request) => {
 });
 ```
 
-## Profile page
+## Protect pages
 
 Redirect unauthenticated users and those without a verified email.
 
@@ -570,5 +584,3 @@ get("/", async (request: Request) => {
 	return renderPage();
 });
 ```
-
-See the [Sign in with username and password]() guide on handling sign out.

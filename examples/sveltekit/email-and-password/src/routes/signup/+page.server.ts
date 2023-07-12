@@ -51,7 +51,6 @@ export const actions: Actions = {
 			const token = await generateEmailVerificationToken(user.userId);
 			await sendEmailVerificationLink(token);
 		} catch (e) {
-			console.log(e);
 			// check for unique constraint error in user table
 			if (e instanceof SqliteError && e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
 				return fail(400, {
