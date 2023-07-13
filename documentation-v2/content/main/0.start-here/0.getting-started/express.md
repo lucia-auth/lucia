@@ -110,26 +110,3 @@ Optionally, instead of doing a side-effect import, add the `--experimental-globa
 ```
 node --experimental-global-webcrypto index.js
 ```
-
-## Middleware
-
-This is optional but highly recommended. Create a new middleware that stores [`Auth`](/reference/lucia/interfaces/authrequest) to `res.locals.auth` (or `req.locals`).
-
-```ts
-import express from "express";
-
-const app = express();
-
-app.use((req, res, next) => {
-	res.locals.auth = auth.handleRequest(req, res);
-	return next();
-});
-```
-
-This allows us to validate sessions using a single line of code.
-
-```ts
-app.get("/", async (req, res) => {
-	const session = await res.locals.validate();
-});
-```
