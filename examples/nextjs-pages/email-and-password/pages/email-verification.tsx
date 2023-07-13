@@ -47,14 +47,14 @@ const Page = () => {
 					const response = await fetch("/api/email-verification", {
 						method: "POST"
 					});
-					if (response.ok || response.status === 0) {
-						setSuccessMessage("Your verification link was resent");
-					} else {
+					if (!response.ok) {
 						const result = (await response.json()) as {
 							error?: string;
 						};
 						setErrorMessage(result?.error ?? null);
+						return;
 					}
+					setSuccessMessage("Your verification link was resent");
 				}}
 			>
 				<input type="submit" value="Resend" />

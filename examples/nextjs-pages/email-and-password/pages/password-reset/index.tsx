@@ -25,16 +25,14 @@ const Page = () => {
 							"Content-Type": "application/json"
 						}
 					});
-					if (response.ok || response.status === 0) {
-						setSuccessMessage(
-							"Your password reset link was sent to your inbox"
-						);
-					} else {
+					if (!response.ok) {
 						const result = (await response.json()) as {
 							error?: string;
 						};
 						setErrorMessage(result?.error ?? null);
+						return;
 					}
+					setSuccessMessage("Your password reset link was sent to your inbox");
 				}}
 			>
 				<label htmlFor="email">Email</label>

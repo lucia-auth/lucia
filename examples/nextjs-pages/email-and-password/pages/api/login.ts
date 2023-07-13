@@ -1,4 +1,3 @@
-import { isValidEmail } from "@/auth/email";
 import { auth } from "@/auth/lucia";
 import { LuciaError } from "lucia";
 

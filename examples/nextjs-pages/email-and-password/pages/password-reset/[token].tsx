@@ -60,9 +60,12 @@ const Page = (
 						redirect: "manual"
 					});
 
-					if (response.ok || response.status === 0) {
-						router.push("/"); // redirect to profile page on success
-					} else {
+					if (response.status === 0) {
+						// redirected
+						// when using `redirect: "manual"`, response status 0 is returned
+						return router.push("/");
+					}
+					if (!response.ok) {
 						const result = (await response.json()) as {
 							error?: string;
 						};

@@ -86,7 +86,7 @@ const Page = () => {
 				onSubmit={async (e) => {
 					e.preventDefault();
 					const formData = new FormData(e.currentTarget);
-					const response = await fetch("/api/signup", {
+					const response = await fetch(e.currentTarget.action, {
 						method: "POST",
 						body: JSON.stringify({
 							username: formData.get("username"),
@@ -271,7 +271,7 @@ const Page = () => {
 				onSubmit={async (e) => {
 					e.preventDefault();
 					const formData = new FormData(e.currentTarget);
-					const response = await fetch("/api/login", {
+					const response = await fetch(e.currentTarget.action, {
 						method: "POST",
 						body: JSON.stringify({
 							username: formData.get("username"),
