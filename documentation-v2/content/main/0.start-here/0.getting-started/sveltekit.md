@@ -118,17 +118,4 @@ declare global {
 }
 ```
 
-This allows us to validate sessions inside server load functions and endpoints using a single line of code. More importantly however, it allows us to use the same `AuthRequest` instance across multiple load functions. This means Lucia will only make a database call once, even when `validate()` is called multiple times. See [Handle requests]() page for details.
-
-```ts
-// +layout.server.ts
-export const load = async ({ locals }) => {
-	const session = await locals.auth.validate();
-};
-```
-```ts
-// foo/+page.server.ts
-export const load = async ({ locals }) => {
-	const session = await locals.auth.validate(); // uses result from +layout.server.ts
-};
-```
+This allows us to share and access the same `AuthRequest` instance across multiple load times, which [results in better load times when validating requests]().
