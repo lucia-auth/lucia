@@ -345,7 +345,7 @@ export const POST = async (request: NextRequest) => {
 
 ```ts
 // auth/email.ts
-const sendEmailVerificationLink = async (email, token: string) => {
+export const sendEmailVerificationLink = async (email, token: string) => {
 	const url = `http://localhost:3000/email-verification/${token}`;
 	await sendEmail(email, {
 		// ...

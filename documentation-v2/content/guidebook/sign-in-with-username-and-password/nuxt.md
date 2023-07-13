@@ -314,7 +314,7 @@ export default defineEventHandler(async (event) => {
 
 ### Composables
 
-Create `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the user state. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be always defined (never `null`).
+Create `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the current user. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be always defined (never `null`).
 
 ```ts
 // composables/auth.ts
@@ -346,8 +346,10 @@ Define a global `auth` middleware that gets the current user and populates the u
 ```ts
 // middleware/auth.ts
 export default defineNuxtRouteMiddleware(async () => {
-	const user = await useUser();
-	if (!user.value) return navigateTo("/login");
+	const user = useUser();
+	const { data, error } = await useFetch("/api/user");
+	if (error.value) throw createError("Failed to fetch data");
+	user.value = data.value?.user ?? null;
 });
 ```
 

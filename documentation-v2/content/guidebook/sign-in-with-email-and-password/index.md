@@ -255,7 +255,7 @@ post("/signup", async (request: Request) => {
 
 ```ts
 // email.ts
-const sendEmailVerificationLink = async (email, token: string) => {
+export const sendEmailVerificationLink = async (email, token: string) => {
 	const url = `http://localhost:3000/email-verification/${token}`;
 	await sendEmail(email, {
 		// ...

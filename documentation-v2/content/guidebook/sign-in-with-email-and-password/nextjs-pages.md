@@ -324,7 +324,7 @@ export default handler;
 
 ```ts
 // auth/email.ts
-const sendEmailVerificationLink = async (email, token: string) => {
+export const sendEmailVerificationLink = async (email, token: string) => {
 	const url = `http://localhost:3000/api/email-verification/${token}`;
 	await sendEmail(email, {
 		// ...
@@ -634,12 +634,12 @@ export default handler;
 
 ## Email verification link
 
-Create `pages/email-verification/[token].ts` and handle GET requests. This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `params`.
+Create `pages/api/email-verification/[token].ts` and handle GET requests. This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `req.query`.
 
 Make sure to invalidate all sessions of the user.
 
 ```ts
-// pages/email-verification/[token].ts
+// pages/api/email-verification/[token].ts
 import { auth } from "@/auth/lucia";
 import { validateEmailVerificationToken } from "@/auth/verification-token";
 

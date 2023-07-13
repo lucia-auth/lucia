@@ -15,7 +15,7 @@ const handleSubmit = async (e: Event) => {
 	errorMessage.value = null;
 	const formData = new FormData(e.target);
 	try {
-		await $fetch(e.target.action, {
+		await $fetch("/api/signup", {
 			method: "POST",
 			body: {
 				email: formData.get("email"),

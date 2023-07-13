@@ -8,7 +8,7 @@ const handleSubmit = async (e: Event) => {
 	successMessage.value = null;
 	const formData = new FormData(e.target);
 	try {
-		await $fetch(e.target.action, {
+		await $fetch("/api/password-reset", {
 			method: "POST",
 			body: {
 				email: formData.get("email")

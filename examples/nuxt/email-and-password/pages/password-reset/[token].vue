@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 const errorMessage = ref<string | null>(null);
 
+const route = useRoute();
+const apiRoute = `/api/password-reset/${route.params.token}`;
+
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
 	errorMessage.value = null;
 	const formData = new FormData(e.target);
 	try {
-		await $fetch(e.target.action, {
+		await $fetch(apiRoute, {
 			method: "POST",
 			body: {
 				password: formData.get("password")
@@ -22,10 +25,7 @@ const handleSubmit = async (e: Event) => {
 		};
 		errorMessage.value = error.message;
 	}
-};
-
-const route = useRoute();
-const apiRoute = `/api/password-reset/${route.params.token}`;
+}
 </script>
 
 <template>

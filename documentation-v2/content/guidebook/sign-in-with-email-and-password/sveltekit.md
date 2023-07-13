@@ -254,7 +254,7 @@ export const actions: Actions = {
 
 ```ts
 // lib/server/email.ts
-const sendEmailVerificationLink = async (email, token: string) => {
+export const sendEmailVerificationLink = async (email, token: string) => {
 	const url = `http://localhost:5173/email-verification/${token}`;
 	await sendEmail(email, {
 		// ...

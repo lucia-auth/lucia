@@ -11,7 +11,7 @@ if (!user.value.emailVerified) {
 
 const handleLogout = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
-	await $fetch(e.target.action, {
+	await $fetch("/api/logout", {
 		method: "POST",
 		redirect: "manual"
 	});
