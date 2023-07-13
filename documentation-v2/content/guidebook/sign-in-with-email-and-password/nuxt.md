@@ -555,12 +555,12 @@ export default defineEventHandler(async (event) => {
 
 ## Email verification link
 
-Create `server/api/email-verification/[token].ts This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `event.context.params`.
+Create `server/api/email-verification/[token].get.ts This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `event.context.params`.
 
 Make sure to invalidate all sessions of the user.
 
 ```ts
-// server/api/email-verification/[token].ts
+// server/api/email-verification/[token].get.ts
 export default defineEventHandler(async (event) => {
 	const { token } = event.context.params ?? {
 		token: ""
