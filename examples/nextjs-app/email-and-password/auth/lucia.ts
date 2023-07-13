@@ -2,6 +2,8 @@ import { lucia } from "lucia";
 import { nextjs } from "lucia/middleware";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 import sqlite from "better-sqlite3";
+import { cache } from "react";
+import { cookies } from "next/headers";
 // import "lucia/polyfill/node";
 
 const db = sqlite("main.db");
@@ -26,3 +28,11 @@ export const auth = lucia({
 });
 
 export type Auth = typeof auth;
+
+export const getPageSession = cache(() => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
+	return authRequest.validate();
+});

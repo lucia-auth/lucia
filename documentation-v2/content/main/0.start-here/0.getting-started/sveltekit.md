@@ -91,7 +91,7 @@ export {};
 
 ## Set up hooks
 
-This is optional but highly recommended. Create a new `handle()` hook that stores [`Auth`](/reference/lucia/interfaces/authrequest) to `locals.auth`.
+This is optional but highly recommended. Create a new `handle()` hook that stores [`AuthRequest`](/reference/lucia/interfaces/authrequest) to `locals.auth`.
 
 ```ts
 // src/hooks.server.ts
@@ -118,11 +118,17 @@ declare global {
 }
 ```
 
-This allows us to validate sessions inside server load functions and endpoints using a single line of code.
+This allows us to validate sessions inside server load functions and endpoints using a single line of code. More importantly however, it allows us to use the same `AuthRequest` instance across multiple load functions. This means Lucia will only make a database call once, even when `validate()` is called multiple times. See [Handle requests]() page for details.
 
 ```ts
-// +page.server.ts
+// +layout.server.ts
 export const load = async ({ locals }) => {
 	const session = await locals.auth.validate();
+};
+```
+```ts
+// foo/+page.server.ts
+export const load = async ({ locals }) => {
+	const session = await locals.auth.validate(); // uses result from +layout.server.ts
 };
 ```

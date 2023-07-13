@@ -1,12 +1,11 @@
-import { auth } from "@/auth/lucia";
+import { getPageSession } from "@/auth/lucia";
 import { generateEmailVerificationToken } from "@/auth/verification-token";
 import { sendEmailVerificationLink } from "@/auth/email";
 
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest(request);
-	const session = await authRequest.validate();
+	const session = await getPageSession();
 	if (!session) {
 		return new Response("Not authenticated", {
 			status: 401

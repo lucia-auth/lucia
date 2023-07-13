@@ -286,7 +286,7 @@ const user = await getUser();
 
 Authenticated users should be redirected to the profile page whenever they try to access the sign in page. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
-Since `Request` is not available in pages, set it to `null`. This should only be done for GET requests.
+Since `Request` is not available in pages, set it to `null`. **This should only be done for `page.tsx` and `layout.tsx`**, and `request` should always be defined when using it inside `route.tsx`.
 
 ```tsx
 // app/login/page.tsx
@@ -426,5 +426,27 @@ export const POST = async (request: NextRequest) => {
 			Location: "/login" // redirect to login page
 		}
 	});
+};
+```
+
+## Additional notes
+
+For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
+
+```ts
+export const getPageSession = cache(() => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
+	return authRequest.validate();
+});
+```
+
+This allows you share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
+
+```ts
+const Page = async () => {
+	const session = await getPageSession();
 };
 ```

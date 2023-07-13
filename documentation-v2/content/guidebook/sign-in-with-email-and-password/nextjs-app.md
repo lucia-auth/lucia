@@ -695,3 +695,25 @@ export const POST = async (request: NextRequest) => {
     // ...
 };
 ```
+
+## Additional notes
+
+For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
+
+```ts
+export const getPageSession = cache(() => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
+	return authRequest.validate();
+});
+```
+
+This allows you share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
+
+```ts
+const Page = async () => {
+	const session = await getPageSession();
+};
+```
