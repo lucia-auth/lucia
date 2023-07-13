@@ -29,7 +29,7 @@ Refer to [`LuciaOAuthRequestError`](/reference/oauth/luciaoauthrequesterror).
 
 ## `provider`
 
-Creates a new [`OAuthProvider`](/reference/oauth/oauthprovider). If you're creating your own provider, take a look at [Lucia's repository](https://github.com/pilcrowOnPaper/lucia/tree/main/packages/integration-oauth/src/providers) for examples.
+Creates a new [`OAuthProvider`](/reference/oauth/oauthprovider). If you're creating your own provider, take a look at [Lucia's repository](https://github.com/pilcrowOnPaper/lucia/tree/main/packages/oauth/src/providers) for examples.
 
 ```ts
 const provider = (
