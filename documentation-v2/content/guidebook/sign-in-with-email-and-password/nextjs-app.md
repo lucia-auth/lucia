@@ -292,7 +292,7 @@ export const POST = async (request: NextRequest) => {
 				password // hashed by Lucia
 			},
 			attributes: {
-				email,
+				email: email.toLowerCase(),
 				email_verified: false // `Number(true)` if stored as an integer
 			}
 		});

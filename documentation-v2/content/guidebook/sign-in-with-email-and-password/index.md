@@ -186,7 +186,7 @@ post("/signup", async (request: Request) => {
 				password // hashed by Lucia
 			},
 			attributes: {
-				email,
+				email: email.toLowerCase(),
 				email_verified: false // `Boolean(false)` if stored as an integer
 			}
 		});

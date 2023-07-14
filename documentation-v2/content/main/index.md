@@ -16,7 +16,7 @@ const user = await auth.createUser({
 	},
 	// custom attributes
 	attributes: {
-		email,
+		email: email.toLowerCase(),
 		username
 	}
 });

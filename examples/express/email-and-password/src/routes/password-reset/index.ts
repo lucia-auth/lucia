@@ -43,7 +43,7 @@ router.post("/password-reset", async (req, res) => {
 			.executeTakeFirst();
 		if (!storedUser) {
 			const html = renderPage({
-				email,
+				email: email.toLowerCase(),
 				error: "User does not exist"
 			});
 			return res

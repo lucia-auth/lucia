@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 				password // hashed by Lucia
 			},
 			attributes: {
-				email,
+				email: email.toLowerCase(),
 				email_verified: Number(false)
 			}
 		});

@@ -219,7 +219,7 @@ export const actions: Actions = {
 					password // hashed by Lucia
 				},
 				attributes: {
-					email,
+					email: email.toLowerCase(),
 					email_verified: false // `Number(false)` if stored as an integer
 				}
 			});

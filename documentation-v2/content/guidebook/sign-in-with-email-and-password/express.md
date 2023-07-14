@@ -183,7 +183,7 @@ app.post("/signup", async (req, res) => {
 				password // hashed by Lucia
 			},
 			attributes: {
-				email,
+				email: email.toLowerCase(),
 				email_verified: Number(false)
 			}
 		});
