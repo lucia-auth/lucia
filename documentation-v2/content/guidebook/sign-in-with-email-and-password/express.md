@@ -8,6 +8,16 @@ _Before starting, make sure you've [setup Lucia and your database](/start-here/g
 
 If you're new to Lucia, we recommend starting with [Sign in with username and password]() starter guide as this guide will gloss over basic concepts and APIs. Make sure to implement password resets as well, which is covered in a separate guide (see [Password reset]()).
 
+### Clone project
+
+You can get started immediately by cloning the [Express example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/express/email-and-password) from the repository.
+
+```
+npx degit pilcrowonpaper/lucia/examples/express/email-and-password <directory_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/express/email-and-password).
+
 ## Database
 
 ### Update `user` table

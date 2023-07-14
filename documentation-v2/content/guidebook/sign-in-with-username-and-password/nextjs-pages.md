@@ -14,7 +14,7 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the Next.js example from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/username-and-password) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/nextjs-pages/username-and-password <directory_name>

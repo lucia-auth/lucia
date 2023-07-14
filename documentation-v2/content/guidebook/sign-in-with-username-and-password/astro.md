@@ -14,7 +14,7 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the Astro example from the repository.
+You can get started immediately by cloning the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro/username-and-password) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/astro/username-and-password <directory_name>

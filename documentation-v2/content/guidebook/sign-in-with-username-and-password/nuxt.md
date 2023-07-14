@@ -14,7 +14,7 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the Nuxt example from the repository.
+You can get started immediately by cloning the [Nuxt example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt/username-and-password) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/nuxt/username-and-password <directory_name>

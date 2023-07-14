@@ -17,6 +17,16 @@ This example project will have a few pages:
 
 It will also have a route to handle verification links.
 
+### Clone project
+
+You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password) from the repository.
+
+```
+npx degit pilcrowonpaper/lucia/examples/nextjs-app/email-and-password <directory_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password).
+
 ## Database
 
 ### Update `user` table

@@ -16,7 +16,7 @@ As a general overview of OAuth, the user is redirected to github.com to be authe
 
 ### Clone project
 
-You can get started immediately by cloning the SvelteKit example from the repository.
+You can get started immediately by cloning the [SvelteKit example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit/github-oauth) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/sveltekit/github-oauth <directory_name>

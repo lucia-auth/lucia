@@ -16,7 +16,7 @@ As a general overview of OAuth, the user is redirected to github.com to be authe
 
 ### Clone project
 
-You can get started immediately by cloning the Next.js example from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/github-oauth) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/nextjs-pages/github-oauth <directory_name>

@@ -10,7 +10,7 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the Express example from the repository.
+You can get started immediately by cloning the [Express example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/express/username-and-password) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/express/username-and-password <directory_name>
