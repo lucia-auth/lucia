@@ -33,7 +33,9 @@ const parentPages = allPages.filter(
             </div>
             <div class="w-full flex flex-col gap-y-6">
                 {
-                    parentPages.map(({ title, description, pathname }) => {
+                    parentPages.sort((pageA, pageB) => {
+                        return pageA.title.localeCompare(pageB.title)
+                    }).map(({ title, description, pathname }) => {
                         return (
                             <article class="group w-full rounded-lg bg-white">
                                 <a

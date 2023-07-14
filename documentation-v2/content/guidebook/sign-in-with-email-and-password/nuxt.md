@@ -93,6 +93,8 @@ The token will be sent as part of the verification link.
 http://localhost:3000/api/email-verification/<token>
 ```
 
+When a user clicks the link, we validate of the token stored in the url and set `email_verified` user attributes to `true`.
+
 ### Create new tokens
 
 `generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
@@ -143,7 +145,7 @@ export const generateEmailVerificationToken = async (userId: string) => {
 	// ...
 };
 
-const validateEmailVerificationToken = async (token: string) => {
+export const validateEmailVerificationToken = async (token: string) => {
 	const storedToken = await db.transaction(async (trx) => {
 		const storedToken = await trx
 			.table("email_verification_token")
@@ -563,7 +565,7 @@ export default defineEventHandler(async (event) => {
 });
 ```
 
-## Email verification link
+## Verify email
 
 Create `server/api/email-verification/[token].get.ts This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `event.context.params`.
 

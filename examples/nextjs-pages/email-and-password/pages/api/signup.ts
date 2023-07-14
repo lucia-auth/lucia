@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				password // hashed by Lucia
 			},
 			attributes: {
-				eemail: email.toLowerCase()mail,
+				email: email.toLowerCase(),
 				email_verified: Number(false)
 			}
 		});
