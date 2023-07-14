@@ -12,6 +12,8 @@ This guide will cover how to implement Github OAuth using Lucia in Next.js App r
 - An endpoint to authenticate users with Github
 - A profile page with a logout button
 
+As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+
 ### Clone project
 
 You can get started immediately by cloning the Next.js example from the repository.
@@ -156,11 +158,7 @@ export default Page;
 
 When a user clicks the link, the destination (`/login/github`) will redirect the user to Github to be authenticated.
 
-## Authenticate with Github
-
-As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
-
-### Generate authorization url
+## Generate authorization url
 
 Create `app/login/github/route.ts` and handle GET requests. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
@@ -190,7 +188,7 @@ export const GET = async (request: NextRequest) => {
 };
 ```
 
-### Validate callback
+## Validate callback
 
 Create `app/login/github/callback/route.ts` and handle GET requests.
 
@@ -259,7 +257,7 @@ export const GET = async (request: NextRequest) => {
 };
 ```
 
-#### Authenticate user with Lucia
+### Authenticate user with Lucia
 
 You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
 
