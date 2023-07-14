@@ -7,9 +7,9 @@ description: "Learn how to set up Lucia in your project"
 Install Lucia using your package manager of your choice.
 
 ```
-npm i lucia
-pnpm add lucia
-yarn add lucia
+npm i lucia@beta
+pnpm add lucia@beta
+yarn add lucia@beta
 ```
 
 ## Initialize Lucia

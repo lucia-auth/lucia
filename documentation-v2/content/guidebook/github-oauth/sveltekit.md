@@ -93,9 +93,9 @@ export type Auth = typeof auth;
 Install the OAuth integration.
 
 ```
-npm i @lucia-auth/oauth
-pnpm add @lucia-auth/oauth
-yarn add @lucia-auth/oauth
+npm i @lucia-auth/oauth@beta
+pnpm add @lucia-auth/oauth@beta
+yarn add @lucia-auth/oauth@beta
 ```
 
 Import the Github OAuth integration, and initialize it using your credentials.
