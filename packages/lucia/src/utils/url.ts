@@ -10,8 +10,8 @@ export const isAllowedUrl = (
 		return urlParams.hostname;
 	};
 	const incomingHostname = getHostname(incomingUrl);
-    const appHostname = getHostname(app.url)
-	const appBaseDomain = getBaseDomain(appHostname)
+	const appHostname = getHostname(app.url);
+	const appBaseDomain = getBaseDomain(appHostname);
 	if (incomingHostname === appHostname) return true;
 	if (app.allowedSubdomains === "*") {
 		if (incomingHostname.endsWith(`.${appBaseDomain}`)) return true;
@@ -24,6 +24,6 @@ export const isAllowedUrl = (
 };
 
 const getBaseDomain = (hostname: string) => {
-    if (hostname === "localhost") return "localhost"
-    return hostname.split(".").slice(-2).join(".")
-}
+	if (hostname === "localhost") return "localhost";
+	return hostname.split(".").slice(-2).join(".");
+};

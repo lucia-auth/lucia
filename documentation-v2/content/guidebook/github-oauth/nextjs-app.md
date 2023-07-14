@@ -358,7 +358,7 @@ import { useRouter } from "next/navigation";
 
 const Form = ({
 	children,
-	action,
+	action
 }: {
 	children: React.ReactNode;
 	action: string;

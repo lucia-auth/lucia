@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const Form = ({
 	children,
-	action,
+	action
 }: {
 	children: React.ReactNode;
 	action: string;

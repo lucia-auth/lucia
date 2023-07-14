@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			// user does not exist
-				// or invalid password
+			// or invalid password
 			throw createError({
 				message: "Incorrect email or password",
 				statusCode: 400

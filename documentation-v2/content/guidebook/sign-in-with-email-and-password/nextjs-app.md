@@ -210,7 +210,7 @@ import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-    const authRequest = auth.handleRequest({
+	const authRequest = auth.handleRequest({
 		request: null,
 		cookies
 	});
@@ -387,7 +387,7 @@ import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-    const authRequest = auth.handleRequest({
+	const authRequest = auth.handleRequest({
 		request: null,
 		cookies
 	});

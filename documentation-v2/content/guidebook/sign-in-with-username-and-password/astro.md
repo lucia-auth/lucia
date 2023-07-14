@@ -163,7 +163,7 @@ if (Astro.request.method === "POST") {
 
 Depending on your database, `user123` and `USER123` may be treated as different strings. To avoid 2 users having the same username with different cases, we are going to make the username lowercase before creating a key. This is crucial when setting a user-provided input as a provider user id of a key.
 
-On the other hand, making the username stored as a user attribute lowercase is optional. However, if you need to query users using usernames (e.g. url `/user/user123`), it may be beneficial to require the username to be lowercase, store 2 usernames (lowercase and normal), or set the database to ignore casing when compare strings (e.g. using `LOWER()` in SQL). 
+On the other hand, making the username stored as a user attribute lowercase is optional. However, if you need to query users using usernames (e.g. url `/user/user123`), it may be beneficial to require the username to be lowercase, store 2 usernames (lowercase and normal), or set the database to ignore casing when compare strings (e.g. using `LOWER()` in SQL).
 
 ```ts
 const user = await auth.createUser({
@@ -270,7 +270,11 @@ if (Astro.request.method === "POST") {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey("username", username.toLowerCase(), password);
+			const user = await auth.useKey(
+				"username",
+				username.toLowerCase(),
+				password
+			);
 			const session = await auth.createSession({
 				userId: user.userId,
 				attributes: {}

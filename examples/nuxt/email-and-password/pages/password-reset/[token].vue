@@ -25,7 +25,7 @@ const handleSubmit = async (e: Event) => {
 		};
 		errorMessage.value = error.message;
 	}
-}
+};
 </script>
 
 <template>

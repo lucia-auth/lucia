@@ -152,7 +152,7 @@ const validateEmailVerificationToken = async (token: string) => {
 
 When creating a user, use `"email"` as the provider id and the user's email as the provider user id. Make sure to set `email_verified` user property to `false`. We'll send a verification link when we create a new user, but we'll come back to that later. Redirect the user to the confirmation page (`/email-verification`).
 
-Since emails are not case sensitive, we can make it lowercase before storing. 
+Since emails are not case sensitive, we can make it lowercase before storing.
 
 ```ts
 import { auth } from "./lucia.js";

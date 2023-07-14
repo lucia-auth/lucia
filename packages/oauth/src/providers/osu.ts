@@ -30,7 +30,7 @@ export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
-      token_type: string;
+			token_type: string;
 		}>(request);
 
 		return {

@@ -40,7 +40,7 @@ export const actions: Actions = {
 				e instanceof LuciaError &&
 				(e.message === 'AUTH_INVALID_KEY_ID' || e.message === 'AUTH_INVALID_PASSWORD')
 			) {
-			// user does not exist
+				// user does not exist
 				// or invalid password
 				return fail(400, {
 					message: 'Incorrect username or password'

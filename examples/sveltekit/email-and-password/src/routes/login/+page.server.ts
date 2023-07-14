@@ -19,7 +19,7 @@ export const actions: Actions = {
 		const email = formData.get('email');
 		const password = formData.get('password');
 		// basic check
-		if (typeof email !== "string" || email.length < 1 || email.length > 255) {
+		if (typeof email !== 'string' || email.length < 1 || email.length > 255) {
 			return fail(400, {
 				message: 'Invalid email'
 			});

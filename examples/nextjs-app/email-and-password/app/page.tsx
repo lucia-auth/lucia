@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Form from "@/components/form";
 
 const Page = async () => {
-	const session = await getPageSession()
+	const session = await getPageSession();
 	if (!session) redirect("/login");
 	if (!session.user.emailVerified) redirect("/email-verification");
 	return (

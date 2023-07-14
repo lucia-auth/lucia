@@ -135,8 +135,6 @@ export default Page;
 
 When a user clicks the link, the destination (`/api/login/github`) will redirect the user to Github to be authenticated.
 
-
-
 ## Generate authorization url
 
 Create ` pages/api/login/github.ts` and handle GET requests. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
