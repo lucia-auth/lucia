@@ -60,7 +60,7 @@ router.post("/signup", async (req, res) => {
 		const user = await auth.createUser({
 			key: {
 				providerId: "email", // auth method
-				providerUserId: email, // unique id when using "email" auth method
+				providerUserId: email.toLowerCase(), // unique id when using "email" auth method
 				password // hashed by Lucia
 			},
 			attributes: {

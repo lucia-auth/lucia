@@ -288,7 +288,7 @@ export const POST = async (request: NextRequest) => {
 		const user = await auth.createUser({
 			key: {
 				providerId: "email", // auth method
-				providerUserId: email, // unique id when using "email" auth method
+				providerUserId: email.toLowerCase(), // unique id when using "email" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
@@ -421,7 +421,7 @@ export default Page;
 
 Create `app/api/login/route.ts` and handle POST requests.
 
-Authenticate the user with `"email"` as the provider id and their email as the provider user id.
+Authenticate the user with `"email"` as the provider id and their email as the provider user id. Make sure to make the email lowercase before calling `useKey()`.
 
 ```ts
 // app/api/login/route.ts
@@ -464,7 +464,7 @@ export const POST = async (request: NextRequest) => {
 	try {
 		// find user by key
 		// and validate password
-		const key = await auth.useKey("email", email, password);
+		const key = await auth.useKey("email", email.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: key.userId,
 			attributes: {}

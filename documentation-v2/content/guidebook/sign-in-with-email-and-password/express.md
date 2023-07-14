@@ -152,6 +152,8 @@ const validateEmailVerificationToken = async (token: string) => {
 
 When creating a user, use `"email"` as the provider id and the user's email as the provider user id. Make sure to set `email_verified` user property to `false`. We'll send a verification link when we create a new user, but we'll come back to that later. Redirect the user to the confirmation page (`/email-verification`).
 
+Since emails are not case sensitive, we can make it lowercase before storing. 
+
 ```ts
 import { auth } from "./lucia.js";
 import { isValidEmail, sendEmailVerificationLink } from "./email.js";
@@ -177,7 +179,7 @@ app.post("/signup", async (req, res) => {
 		const user = await auth.createUser({
 			key: {
 				providerId: "email", // auth method
-				providerUserId: email, // unique id when using "email" auth method
+				providerUserId: email.toLowerCase(), // unique id when using "email" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
@@ -242,7 +244,7 @@ const isValidEmail = (maybeEmail: unknown): maybeEmail is string => {
 
 ### Authenticate users
 
-Authenticate the user with `"email"` as the provider id and their email as the provider user id.
+Authenticate the user with `"email"` as the provider id and their email as the provider user id. Make sure to make the email lowercase before calling `useKey()`.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -267,7 +269,7 @@ app.post("/login", async (req, res) => {
 	try {
 		// find user by key
 		// and validate password
-		const key = await auth.useKey("email", email, password);
+		const key = await auth.useKey("email", email.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: key.userId,
 			attributes: {}

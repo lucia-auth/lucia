@@ -32,7 +32,7 @@ export const actions: Actions = {
 		try {
 			// find user by key
 			// and validate password
-			const key = await auth.useKey('email', email, password);
+			const key = await auth.useKey('email', email.toLowerCase(), password);
 			const session = await auth.createSession({
 				userId: key.userId,
 				attributes: {}

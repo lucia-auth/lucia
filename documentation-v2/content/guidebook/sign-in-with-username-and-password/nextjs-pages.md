@@ -161,7 +161,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const user = await auth.createUser({
 			key: {
 				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
+				providerUserId: username.toLowerCase(), // unique id when using "username" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
@@ -197,6 +197,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default handler;
+```
+
+#### Case sensitivity
+
+Depending on your database, `user123` and `USER123` may be treated as different strings. To avoid 2 users having the same username with different cases, we are going to make the username lowercase before creating a key. This is crucial when setting a user-provided input as a provider user id of a key.
+
+On the other hand, making the username stored as a user attribute lowercase is optional. However, if you need to query users using usernames (e.g. url `/user/user123`), it may be beneficial to require the username to be lowercase, store 2 usernames (lowercase and normal), or set the database to ignore casing when compare strings (e.g. using `LOWER()` in SQL). 
+
+```ts
+const user = await auth.createUser({
+	key: {
+		providerId: "username", // auth method
+		providerUserId: username.toLowerCase(), // unique id when using "username" auth method
+		password // hashed by Lucia
+	},
+	attributes: {
+		username
+	}
+});
 ```
 
 #### Error handling
@@ -308,7 +327,7 @@ export default Page;
 
 Create `pages/api/login.ts` and handle POST requests.
 
-The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
+The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error. Make sure to make the username lowercase before calling `useKey()`.
 
 ```ts
 // pages/api/login.ts
@@ -345,7 +364,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("username", username, password);
+		const user = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}

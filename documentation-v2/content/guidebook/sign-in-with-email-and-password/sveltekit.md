@@ -215,7 +215,7 @@ export const actions: Actions = {
 			const user = await auth.createUser({
 				key: {
 					providerId: "email", // auth method
-					providerUserId: email, // unique id when using "email" auth method
+					providerUserId: email.toLowerCase(), // unique id when using "email" auth method
 					password // hashed by Lucia
 				},
 				attributes: {
@@ -332,7 +332,7 @@ Create `routes/login/+page.svelte`. It will have a form with inputs for email an
 
 Create `routes/login/+page.server.ts` and define a new form action.
 
-Authenticate the user with `"email"` as the provider id and their email as the provider user id.
+Authenticate the user with `"email"` as the provider id and their email as the provider user id. Make sure to make the email lowercase before calling `useKey()`.
 
 ```ts
 // routes/login/+page.server.ts
@@ -365,7 +365,7 @@ export const actions: Actions = {
 		try {
 			// find user by key
 			// and validate password
-			const key = await auth.useKey("email", email, password);
+			const key = await auth.useKey("email", email.toLowerCase(), password);
 			const session = await auth.createSession({
 				userId: key.userId,
 				attributes: {}

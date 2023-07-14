@@ -182,7 +182,7 @@ post("/signup", async (request: Request) => {
 		const user = await auth.createUser({
 			key: {
 				providerId: "email", // auth method
-				providerUserId: email, // unique id when using "email" auth method
+				providerUserId: email.toLowerCase(), // unique id when using "email" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
@@ -287,7 +287,7 @@ post("/login", async (request: Request) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("email", email, password);
+		const user = await auth.useKey("email", email.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}

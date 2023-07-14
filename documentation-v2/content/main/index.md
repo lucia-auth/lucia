@@ -11,7 +11,7 @@ const user = await auth.createUser({
 	// user identified using their email
 	key: {
 		providerId: "email",
-		providerUserId: email,
+		providerUserId: email.toLowerCase(),
 		password
 	},
 	// custom attributes

@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
 	try {
 		// find user by key
 		// and validate password
-		const key = await auth.useKey("username", username, password);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: key.userId,
 			attributes: {}
