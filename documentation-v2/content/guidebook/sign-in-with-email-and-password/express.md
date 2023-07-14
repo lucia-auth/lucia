@@ -1,6 +1,7 @@
 ---
-title: "Email authentication with verification links"
-description: "Extend Lucia by implementing email and password authentication with email verification links"
+title: "Email authentication with verification links in Express"
+menuTitle: "Express"
+description: "Extend Lucia by implementing email and password authentication with email verification links in Express"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
@@ -43,20 +44,17 @@ We'll be storing the expiration date as a `bigint` since Lucia uses handles expi
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We'll expose the user's email and verification status to the `User` object returned by Lucia's APIs.
+We'll expose the user's email and verification status to the `User` object returned by Lucia's APIs.
 
 ```ts
 // lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { express } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: "DEV", // "PROD" for production
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
+	middleware: express(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -156,27 +154,24 @@ When creating a user, use `"email"` as the provider id and the user's email as t
 
 ```ts
 import { auth } from "./lucia.js";
+import { isValidEmail, sendEmailVerificationLink } from "./email.js";
 import { generateEmailVerificationToken } from "./token.js";
-import { sendEmailVerificationLink } from "./email.js";
 
-post("/signup", async (request: Request) => {
-	const formData = await request.formData();
-	const email = formData.get("email");
-	const password = formData.get("password");
+app.post("/signup", async (req, res) => {
+	const { email, password } = req.body as {
+		email: unknown;
+		password: unknown;
+	};
 	// basic check
 	if (!isValidEmail(email)) {
-		return new Response("Invalid email", {
-			status: 400
-		});
+		return res.status(400).send("Invalid email");
 	}
 	if (
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
+		return res.status(400).send("Invalid password");
 	}
 	try {
 		const user = await auth.createUser({
@@ -187,25 +182,18 @@ post("/signup", async (request: Request) => {
 			},
 			attributes: {
 				email,
-				email_verified: false // `Boolean(false)` if stored as an integer
+				email_verified: Number(false)
 			}
 		});
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
 		});
-
+		const authRequest = auth.handleRequest(req, res);
+		authRequest.setSession(session);
 		const token = await generateEmailVerificationToken(user.userId);
 		await sendEmailVerificationLink(token);
-
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
+		return res.status(302).setHeader("Location", "/email-verification").end();
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
@@ -213,14 +201,9 @@ post("/signup", async (request: Request) => {
 			e instanceof SomeDatabaseError &&
 			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 		) {
-			return new Response("Account already exists", {
-				status: 400
-			});
+			return res.status(400).send("Account already exists");
 		}
-
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		return res.status(500).send("An unknown error occurred");
 	}
 });
 ```
@@ -265,42 +248,36 @@ Authenticate the user with `"email"` as the provider id and their email as the p
 import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
-post("/login", async (request: Request) => {
-	const formData = await request.formData();
-	const email = formData.get("email");
-	const password = formData.get("password");
+app.post("/login", async (req, res) => {
+	const { email, password } = req.body as {
+		email: unknown;
+		password: unknown;
+	};
 	// basic check
 	if (typeof email !== "string" || email.length < 1 || email.length > 255) {
-		return new Response("Invalid email", {
-			status: 400
-		});
+		return res.status(400).send("Invalid email");
 	}
 	if (
 		typeof password !== "string" ||
 		password.length < 1 ||
 		password.length > 255
 	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
+		return res.status(400).send("Invalid password");
 	}
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("email", email, password);
+		const key = await auth.useKey("email", email, password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			headers: {
-				Location: "/", // profile page
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
+		const authRequest = auth.handleRequest(req, res);
+		authRequest.setSession(session);
+		// redirect to profile page
+		return res.status(302).setHeader("Location", "/").end();
 	} catch (e) {
+		// check for unique constraint error in user table
 		if (
 			e instanceof LuciaError &&
 			(e.message === "AUTH_INVALID_KEY_ID" ||
@@ -308,13 +285,9 @@ post("/login", async (request: Request) => {
 		) {
 			// user does not exist
 			// or invalid password
-			return new Response("Incorrect email of password", {
-				status: 400
-			});
+			return res.status(400).send("Incorrect email or password");
 		}
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		return res.status(500).send("An unknown error occurred");
 	}
 });
 ```
@@ -328,28 +301,20 @@ import { auth } from "@/auth/lucia";
 import { generateEmailVerificationToken } from "./token.js";
 import { sendEmailVerificationLink } from "./email.js";
 
-post("/email-verification", async (request: Request) => {
-	const authRequest = auth.handleRequest(request);
+app.post("/email-verification", async (req, res) => {
+	const authRequest = auth.handleRequest(req, res);
 	const session = await authRequest.validate();
-	if (!session) {
-		return new Response(null, {
-			status: 401
-		});
-	}
+	if (!session) return res.status(401).end();
 	if (session.user.emailVerified) {
 		// email already verified
-		return new Response(null, {
-			status: 422
-		});
+		return res.status(422).end();
 	}
 	try {
 		const token = await generateEmailVerificationToken(session.user.userId);
-		await sendEmailVerificationLink(session.user.email, token);
-		return new Response();
+		await sendEmailVerificationLink(token);
+		return res.end();
 	} catch {
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		return res.status(500).send("An unknown error occurred");
 	}
 });
 ```
@@ -364,31 +329,24 @@ Make sure to invalidate all sessions of the user.
 import { auth } from "./lucia.js";
 import { validateEmailVerificationToken } from "./token.js";
 
-get("/email-verification/[token]", async (request: Request) => {
-	const token = getTokenParams(request.url);
+app.get("/email-verification/:token", async (req, res) => {
+	const { token } = req.params;
 	try {
 		const userId = await validateEmailVerificationToken(token);
 		const user = await auth.getUser(userId);
 		await auth.invalidateAllUserSessions(user.userId);
 		await auth.updateUserAttributes(user.userId, {
-			email_verified: true // `Number(true)` if stored as an integer
+			email_verified: Number(true)
 		});
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/", // profile page
-				"Set-Cookie": sessionCookie.serialize()
-			}
-		});
+		const authRequest = auth.handleRequest(req, res);
+		authRequest.setSession(session);
+		return res.status(302).setHeader("Location", "/").end();
 	} catch {
-		return new Response("Invalid email verification link", {
-			status: 400
-		});
+		return res.status(400).send("Invalid email verification link");
 	}
 });
 ```

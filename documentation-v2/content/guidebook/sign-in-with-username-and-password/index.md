@@ -73,7 +73,7 @@ export const auth = lucia({
 export type Auth = typeof auth;
 ```
 
-## Sign up page
+## Sign up user
 
 ### Create users
 
@@ -171,7 +171,7 @@ if (
 }
 ```
 
-## Sign in page
+## Sign in user
 
 ### Authenticate users
 
