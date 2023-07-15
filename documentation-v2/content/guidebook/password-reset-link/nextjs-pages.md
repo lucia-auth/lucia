@@ -1,7 +1,7 @@
 ---
-title: "Password reset links in Next.js App Router"
-menuTitle: "Next.js App Router"
-description: "Learn how to implement password reset using reset links in Next.js App Router"
+title: "Password reset links in Next.js Pages Router"
+menuTitle: "Next.js Pages Router"
+description: "Learn how to implement password reset using reset links in Next.js Pages Router"
 ---
 
 This guide expects access to the user's verified email. See [Sign in with email and password with verification links]() guide to learn how to verify the user's email, and email and password authentication in general.
@@ -12,9 +12,6 @@ export const auth = lucia({
 	adapter: ADAPTER,
 	env: dev ? "DEV" : "PROD",
 	middleware: nextjs(),
-	sessionCookie: {
-		expires: false
-	},
 
 	getUserAttributes: (data) => {
 		return {
@@ -29,13 +26,13 @@ export type Auth = typeof auth;
 
 ### Clone project
 
-The [email and password Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password) includes password reset.
+The [email and password Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-page/email-and-password) includes password reset.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-app/email-and-password <directory_name>
+npx degit pilcrowonpaper/lucia/examples/nextjs-page/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-page/email-and-password).
 
 ## Database
 
@@ -134,63 +131,38 @@ export const validatePasswordResetToken = async (token: string) => {
 };
 ```
 
-## Form component
-
-Since the form will require client side JS, we will extract it into its own client component. We need to manually handle redirect responses as the default behavior is to make another request to the redirect location. We're going to use `refresh()` to reload the page (and redirect the user in the server) since we want to re-render the entire page, including `layout.tsx`.
-
-```tsx
-// components/form.tsx
-import { useRouter } from "next/navigation";
-
-const Form = (props: { children: React.ReactNode; action: string }) => {
-	const router = useRouter();
-	return (
-		<>
-			<form
-				action={props.action}
-				method="post"
-				onSubmit={async (e) => {
-					e.preventDefault();
-					const formData = new FormData(e.currentTarget);
-					const response = await fetch(props.action, {
-						method: "POST",
-						body: formData,
-						redirect: "manual"
-					});
-					if (response.status === 0) {
-						// redirected
-						// when using `redirect: "manual"`, response status 0 is returned
-						return router.refresh();
-					}
-				}}
-			>
-				{props.children}
-			</form>
-		</>
-	);
-};
-
-export default Form;
-```
-
 ## Send password reset link
 
-Create `app/password-reset/page.tsx` and add a form with an input for the email.
+Create `pages/password-reset/index.tsx` and add a form with an input for the email.
 
 ```tsx
-// app/password-reset/page.tsx
-import Form from "@/components/form";
-
-const Page = async () => {
+// pages/password-reset/index.tsx
+const Page = () => {
 	return (
 		<>
 			<h1>Reset password</h1>
-			<Form action="/api/password-reset">
+			<form
+				method="post"
+				action="/api/password-reset"
+				onSubmit={async (e) => {
+					e.preventDefault();
+					const formData = new FormData(e.currentTarget);
+					const response = await fetch("/api/password-reset", {
+						method: "POST",
+						body: JSON.stringify({
+							email: formData.get("email")
+						}),
+						headers: {
+							"Content-Type": "application/json"
+						}
+					});
+				}}
+			>
 				<label htmlFor="email">Email</label>
 				<input name="email" id="email" />
 				<br />
 				<input type="submit" />
-			</Form>
+			</form>
 		</>
 	);
 };
@@ -198,12 +170,12 @@ const Page = async () => {
 export default Page;
 ```
 
-Create `app/api/password-reset/route.ts` and handle POST requests.
+Create `pages/api/password-reset/index.ts` and handle POST requests.
 
 Lucia allows us to use raw database queries when needed, for example checking the validity of an email. If the email is valid, create a new password reset link and send it to the user's inbox.
 
 ```ts
-// app/api/password-reset/route.ts
+// pages/api/password-reset/index.ts`
 import { auth } from "@/auth/lucia";
 import { sendPasswordResetLink } from "@/auth/email";
 import { generatePasswordResetToken } from "@/auth/verification-token";
@@ -258,28 +230,49 @@ export const POST = async (request: NextRequest) => {
 
 ## Reset password
 
-Create `app/password-reset/[token]/page.tsx` and add a form with an input for the new password.
+Create `pages/password-reset/[token].tsx` and add a form with an input for the new password.
 
 ```tsx
-// app/password-reset/[token]/page.tsx
-import Form from "@/components/form";
+// pages/password-reset/[token].tsx
+import { useRouter } from "next/router";
 
-const Page = async ({
-	params
-}: {
-	params: {
-		token: string;
-	};
-}) => {
+const Page = () => {
+	const router = useRouter();
 	return (
 		<>
-			<h1>Reset password</h1>
-			<Form action={`/api/password-reset/${params.token}`}>
+			<h1>Sign in</h1>
+			<form
+				method="post"
+				action={`/api/password-reset/${router.query.token}`}
+				onSubmit={async (e) => {
+					e.preventDefault();
+					const formData = new FormData(e.currentTarget);
+					const response = await fetch(
+						`/api/password-reset/${router.query.token}`,
+						{
+							method: "POST",
+							body: JSON.stringify({
+								password: formData.get("password")
+							}),
+							headers: {
+								"Content-Type": "application/json"
+							},
+							redirect: "manual"
+						}
+					);
+
+					if (response.status === 0) {
+						// redirected
+						// when using `redirect: "manual"`, response status 0 is returned
+						return router.push("/");
+					}
+				}}
+			>
 				<label htmlFor="password">New Password</label>
 				<input name="password" id="password" />
 				<br />
 				<input type="submit" />
-			</Form>
+			</form>
 		</>
 	);
 };
@@ -287,46 +280,35 @@ const Page = async ({
 export default Page;
 ```
 
-Create `app/api/password-reset/[token]/route.ts` and handle POST requests.
+Create `pages/api/password-reset/[token].ts` and handle POST requests.
 
-Get the token from the url with `params.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
+Get the token from the url with `req.query.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
 
 ```ts
-// app/api/password-reset/[token]/route.ts
+// pages/api/password-reset/[token].ts
 import { auth } from "@/auth/lucia";
 import { validatePasswordResetToken } from "@/auth/verification-token";
 
-import type { NextRequest } from "next/server";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export const POST = async (
-	request: NextRequest,
-	{
-		params
-	}: {
-		params: {
-			token: string;
-		};
-	}
-) => {
-	const formData = await request.formData();
-	const password = formData.get("password");
-	// basic check
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+	if (req.method !== "POST") return res.status(405).end();
+	const { password } = req.body as {
+		password: unknown;
+	};
 	if (
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return new Response(
-			JSON.stringify({
-				error: "Invalid password"
-			}),
-			{
-				status: 400
-			}
-		);
+		return res.status(400).json({
+			error: "Invalid password"
+		});
 	}
 	try {
-		const { token } = params;
+		const { token } = req.query as {
+			token: string;
+		};
 		const userId = await validatePasswordResetToken(token);
 		let user = await auth.getUser(userId);
 		await auth.invalidateAllUserSessions(user.userId);
@@ -340,23 +322,18 @@ export const POST = async (
 			userId: user.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/",
-				"Set-Cookie": sessionCookie.serialize()
-			}
+		const authRequest = auth.handleRequest({
+			req,
+			res
 		});
+		authRequest.setSession(session);
+		return res.end();
 	} catch (e) {
-		return new Response(
-			JSON.stringify({
-				error: "Invalid or expired password reset link"
-			}),
-			{
-				status: 400
-			}
-		);
+		return res.status(400).json({
+			error: "Invalid or expired password reset link"
+		});
 	}
 };
+
+export default handler;
 ```

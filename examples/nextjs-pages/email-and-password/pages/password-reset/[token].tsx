@@ -12,11 +12,7 @@ export const getServerSideProps = async (
 	context: GetServerSidePropsContext<{
 		token: string;
 	}>
-): Promise<
-	GetServerSidePropsResult<{
-		token: string;
-	}>
-> => {
+): Promise<GetServerSidePropsResult<{}>> => {
 	const token = context.params?.token as string;
 	const validToken = await isValidPasswordResetToken(token);
 	if (!validToken) {
@@ -27,16 +23,10 @@ export const getServerSideProps = async (
 			}
 		};
 	}
-	return {
-		props: {
-			token
-		}
-	};
+	return { props: {} };
 };
 
-const Page = (
-	props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
+const Page = () => {
 	const router = useRouter();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	return (
@@ -44,21 +34,24 @@ const Page = (
 			<h1>Sign in</h1>
 			<form
 				method="post"
-				action={`/api/password-reset/${props.token}`}
+				action={`/api/password-reset/${router.query.token}`}
 				onSubmit={async (e) => {
 					e.preventDefault();
 					setErrorMessage(null);
 					const formData = new FormData(e.currentTarget);
-					const response = await fetch(`/api/password-reset/${props.token}`, {
-						method: "POST",
-						body: JSON.stringify({
-							password: formData.get("password")
-						}),
-						headers: {
-							"Content-Type": "application/json"
-						},
-						redirect: "manual"
-					});
+					const response = await fetch(
+						`/api/password-reset/${router.query.token}`,
+						{
+							method: "POST",
+							body: JSON.stringify({
+								password: formData.get("password")
+							}),
+							headers: {
+								"Content-Type": "application/json"
+							},
+							redirect: "manual"
+						}
+					);
 
 					if (response.status === 0) {
 						// redirected
