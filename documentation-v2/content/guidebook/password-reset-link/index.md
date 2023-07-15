@@ -128,8 +128,11 @@ export const validatePasswordResetToken = async (token: string) => {
 Lucia allows us to use raw database queries when needed, for example checking the validity of an email. If the email is valid, create a new password reset link and send it to the user's inbox.
 
 ```ts
+import { generatePasswordResetToken } from "./token.js";
+
 post("/password-reset", async (request: Request) => {
 	const { email } = await request.json();
+	// check email
 	if (!isValidEmail(email)) {
 		return new Response("Invalid email", {
 			status: 400
@@ -159,7 +162,12 @@ post("/password-reset", async (request: Request) => {
 
 ## Reset password
 
+Validate the token with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
+
 ```ts
+import { auth } from "./lucia.js";
+import { validatePasswordResetToken } from "./token.js";
+
 post("/password-reset/[token]", async (request: Request) => {
 	const { password } = await request.json();
 	if (
@@ -169,7 +177,7 @@ post("/password-reset/[token]", async (request: Request) => {
 	) {
 		return new Response("Invalid password", {
 			status: 400
-		})
+		});
 	}
 	try {
 		const { token } = req.params;
@@ -177,27 +185,29 @@ post("/password-reset/[token]", async (request: Request) => {
 		let user = await auth.getUser(userId);
 		await auth.invalidateAllUserSessions(user.userId);
 		await auth.updateKeyPassword("email", user.email, password);
+
 		if (!user.emailVerified) {
 			user = await auth.updateUserAttributes(user.userId, {
 				email_verified: Number(true)
 			});
 		}
+
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest(req, res);
-		authRequest.setSession(session);
+		const sessionCookie = auth.createSessionCookie(session);
 		return new Response(null, {
 			status: 302,
 			headers: {
-				"Location": "/"
+				Location: "/",
+				"Set-Cookie": sessionCookie.serialize()
 			}
-		}) 
+		});
 	} catch (e) {
 		return new Response("Invalid or expired password reset link", {
 			status: 400
-		})
+		});
 	}
 });
 ```
