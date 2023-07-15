@@ -42,7 +42,7 @@ export const POST = async (request: NextRequest) => {
 		const user = await auth.createUser({
 			key: {
 				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
+				providerUserId: username.toLowerCase(), // unique id when using "username" auth method
 				password // hashed by Lucia
 			},
 			attributes: {

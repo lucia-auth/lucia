@@ -8,9 +8,9 @@ description: "Learn how to set up Lucia in your Astro project"
 We recommend using Astro v2.6+. Install Lucia using your package manager of your choice.
 
 ```
-npm i lucia
-pnpm add lucia
-yarn add lucia
+npm i lucia@beta
+pnpm add lucia@beta
+yarn add lucia@beta
 ```
 
 ## Initialize Lucia
@@ -109,8 +109,4 @@ declare namespace App {
 }
 ```
 
-This allows us to validate sessions inside Astro components/pages and API routes with a single line of code.
-
-```ts
-const session = await Astro.locals.auth.validate();
-```
+This allows us to share and access the same `AuthRequest` instance across multiple load times, which [results in better load times when validating requests]().

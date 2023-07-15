@@ -8,9 +8,9 @@ description: "Learn how to set up Lucia in your SvelteKit project"
 Install Lucia using your package manager of your choice.
 
 ```
-npm i lucia
-pnpm add lucia
-yarn add lucia
+npm i lucia@beta
+pnpm add lucia@beta
+yarn add lucia@beta
 ```
 
 ## Initialize Lucia
@@ -91,7 +91,7 @@ export {};
 
 ## Set up hooks
 
-This is optional but highly recommended. Create a new `handle()` hook that stores [`Auth`](/reference/lucia/interfaces/authrequest) to `locals.auth`.
+This is optional but highly recommended. Create a new `handle()` hook that stores [`AuthRequest`](/reference/lucia/interfaces/authrequest) to `locals.auth`.
 
 ```ts
 // src/hooks.server.ts
@@ -118,11 +118,4 @@ declare global {
 }
 ```
 
-This allows us to validate sessions inside server load functions and endpoints using a single line of code.
-
-```ts
-// +page.server.ts
-export const load = async ({ locals }) => {
-	const session = await locals.auth.validate();
-};
-```
+This allows us to share and access the same `AuthRequest` instance across multiple load times, which [results in better load times when validating requests]().

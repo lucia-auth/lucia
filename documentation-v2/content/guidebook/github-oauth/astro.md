@@ -12,9 +12,11 @@ This guide will cover how to implement Github OAuth using Lucia in Astro. It wil
 - An endpoint to authenticate users with Github
 - A profile page with a logout button
 
+As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+
 ### Clone project
 
-You can get started immediately by cloning the Astro example from the repository.
+You can get started immediately by cloning the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro/github-oauth) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/astro/github-oauth <directory_name>
@@ -85,9 +87,9 @@ export type Auth = typeof auth;
 Install the OAuth integration.
 
 ```
-npm i @lucia-auth/oauth
-pnpm add @lucia-auth/oauth
-yarn add @lucia-auth/oauth
+npm i @lucia-auth/oauth@beta
+pnpm add @lucia-auth/oauth@beta
+yarn add @lucia-auth/oauth@beta
 ```
 
 Import the Github OAuth integration, and initialize it using your credentials.
@@ -126,11 +128,7 @@ Create `pages/login/index.astro`. It will have a "Sign in with Github" button (a
 
 When a user clicks the link, the destination (`/login/github`) will redirect the user to Github to be authenticated.
 
-## Authenticate with Github
-
-As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
-
-### Generate authorization url
+## Generate authorization url
 
 Create `pages/login/github/index.ts` and handle GET requests. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
@@ -153,7 +151,7 @@ export const get: APIRoute = async (context) => {
 };
 ```
 
-### Validate callback
+## Validate callback
 
 Create `pages/login/github/callback.ts` and handle GET requests.
 
@@ -213,7 +211,7 @@ export const get: APIRoute = async (context) => {
 };
 ```
 
-#### Authenticate user with Lucia
+### Authenticate user with Lucia
 
 You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
 

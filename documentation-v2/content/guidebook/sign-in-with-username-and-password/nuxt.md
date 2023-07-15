@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password in Nuxt"
+title: "Sign in with username and password in Nuxt"
 menuTitle: "Nuxt"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Nuxt"
 ---
@@ -14,7 +14,7 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the Nuxt example from the repository.
+You can get started immediately by cloning the [Nuxt example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt/username-and-password) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/nuxt/username-and-password <directory_name>
@@ -52,7 +52,7 @@ import { h3 } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
+	env: process.dev ? "DEV" : "PROD",
 	middleware: h3(),
 
 	getUserAttributes: (data) => {
@@ -140,7 +140,7 @@ export default defineEventHandler(async (event) => {
 		const user = await auth.createUser({
 			key: {
 				providerId: "username", // auth method
-				providerUserId: username, // unique id when using "username" auth method
+				providerUserId: username.toLowerCase(), // unique id when using "username" auth method
 				password // hashed by Lucia
 			},
 			attributes: {
@@ -170,6 +170,25 @@ export default defineEventHandler(async (event) => {
 			message: "An unknown error occurred",
 			statusCode: 500
 		});
+	}
+});
+```
+
+#### Case sensitivity
+
+Depending on your database, `user123` and `USER123` may be treated as different strings. To avoid 2 users having the same username with different cases, we are going to make the username lowercase before creating a key. This is crucial when setting a user-provided input as a provider user id of a key.
+
+On the other hand, making the username stored as a user attribute lowercase is optional. However, if you need to query users using usernames (e.g. url `/user/user123`), it may be beneficial to require the username to be lowercase, store 2 usernames (lowercase and normal), or set the database to ignore casing when compare strings (e.g. using `LOWER()` in SQL).
+
+```ts
+const user = await auth.createUser({
+	key: {
+		providerId: "username", // auth method
+		providerUserId: username.toLowerCase(), // unique id when using "username" auth method
+		password // hashed by Lucia
+	},
+	attributes: {
+		username
 	}
 });
 ```
@@ -231,7 +250,7 @@ const handleSubmit = async (e: Event) => {
 
 Create `server/api/login.post.ts`.
 
-The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
+The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error. Make sure to make the username lowercase before calling `useKey()`.
 
 ```ts
 // server/api/login.post.ts
@@ -266,7 +285,11 @@ export default defineEventHandler(async (event) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("username", username, password);
+		const user = await auth.useKey(
+			"username",
+			username.toLowerCase(),
+			password
+		);
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
@@ -280,6 +303,8 @@ export default defineEventHandler(async (event) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+			// or invalid password
 			throw createError({
 				message: "Incorrect username or password",
 				statusCode: 400
@@ -312,7 +337,7 @@ export default defineEventHandler(async (event) => {
 
 ### Composables
 
-Create `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the user state. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be always defined (never `null`).
+Create `useUser()` and `useAuthenticatedUser()` composables. `useUser()` will return the current user. `useAuthenticatedUser()` can only be used inside protected routes, which allows the ref value type to be always defined (never `null`).
 
 ```ts
 // composables/auth.ts
@@ -344,8 +369,10 @@ Define a global `auth` middleware that gets the current user and populates the u
 ```ts
 // middleware/auth.ts
 export default defineNuxtRouteMiddleware(async () => {
-	const user = await useUser();
-	if (!user.value) return navigateTo("/login");
+	const user = useUser();
+	const { data, error } = await useFetch("/api/user");
+	if (error.value) throw createError("Failed to fetch data");
+	user.value = data.value?.user ?? null;
 });
 ```
 

@@ -31,9 +31,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("username", username, password);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
 		const authRequest = auth.handleRequest({
@@ -43,14 +43,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		authRequest.setSession(session);
 		return res.redirect(302, "/"); // profile page
 	} catch (e) {
-		console.log(e);
 		if (
 			e instanceof LuciaError &&
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+			// or invalid password
 			return res.status(400).json({
-				error: "Incorrect username of password"
+				error: "Incorrect username or password"
 			});
 		}
 		return res.status(500).json({

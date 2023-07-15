@@ -4,16 +4,16 @@ title: "/utils"
 format: "code"
 ---
 
-## `generatesRandomString()`
+## `generateRandomString()`
 
 Generates a cryptographically random string. If argument for parameter `alphabet` is not provided, the result with consist of `a-ZA-Z0-9`.
 
 ```ts
-import { generatesRandomString } from "lucia/utils";
+import { generateRandomString } from "lucia/utils";
 ```
 
 ```ts
-const generatesRandomString: (length: number, alphabet?: string) => string;
+const generateRandomString: (length: number, alphabet?: string) => string;
 ```
 
 ##### Parameters

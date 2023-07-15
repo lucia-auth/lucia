@@ -1,21 +1,16 @@
-import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import { getPageSession } from "@/auth/lucia";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
-	const session = await authRequest.validate();
+	const session = await getPageSession();
 	if (session) redirect("/");
 	return (
 		<>
 			<h1>Sign up</h1>
-			<Form action="/api/signup" successRedirect="/">
+			<Form action="/api/signup">
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
 				<br />

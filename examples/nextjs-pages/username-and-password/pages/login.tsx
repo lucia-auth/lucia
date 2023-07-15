@@ -35,6 +35,7 @@ const Page = () => {
 				action="/api/login"
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setErrorMessage(null);
 					const formData = new FormData(e.currentTarget);
 					const response = await fetch("/api/login", {
 						method: "POST",
@@ -48,9 +49,12 @@ const Page = () => {
 						redirect: "manual"
 					});
 
-					if (response.status === 0 || response.ok) {
-						router.push("/"); // redirect to profile page on success
-					} else {
+					if (response.status === 0) {
+						// redirected
+						// when using `redirect: "manual"`, response status 0 is returned
+						return router.push("/");
+					}
+					if (!response.ok) {
 						const result = (await response.json()) as {
 							error?: string;
 						};

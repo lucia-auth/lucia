@@ -35,9 +35,9 @@ Table names are automatically escaped.
 ## Installation
 
 ```
-npm i @lucia-auth/adapter-sqlite
-pnpm add @lucia-auth/adapter-sqlite
-yarn add @lucia-auth/adapter-sqlite
+npm i @lucia-auth/adapter-sqlite@beta
+pnpm add @lucia-auth/adapter-sqlite@beta
+yarn add @lucia-auth/adapter-sqlite@beta
 ```
 
 ## Usage

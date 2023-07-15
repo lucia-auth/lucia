@@ -12,9 +12,11 @@ This guide will cover how to implement Github OAuth using Lucia in Next.js App r
 - An endpoint to authenticate users with Github
 - A profile page with a logout button
 
+As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+
 ### Clone project
 
-You can get started immediately by cloning the Next.js example from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/github-oauth) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/nextjs-app/github-oauth <directory_name>
@@ -109,9 +111,9 @@ export type Auth = typeof auth;
 Install the OAuth integration.
 
 ```
-npm i @lucia-auth/oauth
-pnpm add @lucia-auth/oauth
-yarn add @lucia-auth/oauth
+npm i @lucia-auth/oauth@beta
+pnpm add @lucia-auth/oauth@beta
+yarn add @lucia-auth/oauth@beta
 ```
 
 Import the Github OAuth integration, and initialize it using your credentials.
@@ -156,11 +158,7 @@ export default Page;
 
 When a user clicks the link, the destination (`/login/github`) will redirect the user to Github to be authenticated.
 
-## Authenticate with Github
-
-As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
-
-### Generate authorization url
+## Generate authorization url
 
 Create `app/login/github/route.ts` and handle GET requests. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
@@ -190,7 +188,7 @@ export const GET = async (request: NextRequest) => {
 };
 ```
 
-### Validate callback
+## Validate callback
 
 Create `app/login/github/callback/route.ts` and handle GET requests.
 
@@ -259,7 +257,7 @@ export const GET = async (request: NextRequest) => {
 };
 ```
 
-#### Authenticate user with Lucia
+### Authenticate user with Lucia
 
 You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
 
@@ -286,7 +284,7 @@ const user = await getUser();
 
 Authenticated users should be redirected to the profile page whenever they try to access the sign in page. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
-Since `Request` is not available in pages, set it to `null`. This should only be done for GET requests.
+Since `Request` is not available in pages, set it to `null`. **This should only be done for `page.tsx` and `layout.tsx`**, and `request` should always be defined when using it inside `route.tsx`.
 
 ```tsx
 // app/login/page.tsx
@@ -338,7 +336,7 @@ const Page = async () => {
 			<h1>Profile</h1>
 			<p>User id: {session.user.userId}</p>
 			<p>Username: {session.user.username}</p>
-			<Form action="/api/logout" successRedirect="/">
+			<Form action="/api/logout">
 				<input type="submit" value="Sign out" />
 			</Form>
 		</>
@@ -350,7 +348,7 @@ export default Page;
 
 ### Form component
 
-Since the form will require client side JS, we will extract it into its own client component. We will not be using redirect responses as `fetch()` does not actually redirect the user, nor does the redirect url is exposed in the response object.
+Since the form will require client side JS, we will extract it into its own client component. We need to manually handle redirect responses as the default behavior is to make another request to the redirect location. We're going to use `refresh()` to reload the page (and redirect the user in the server) since we want to re-render the entire page, including `layout.tsx`.
 
 ```tsx
 // components/form.tsx
@@ -360,12 +358,10 @@ import { useRouter } from "next/navigation";
 
 const Form = ({
 	children,
-	action,
-	successRedirect
+	action
 }: {
 	children: React.ReactNode;
 	action: string;
-	successRedirect: string;
 }) => {
 	const router = useRouter();
 	return (
@@ -381,8 +377,10 @@ const Form = ({
 					redirect: "manual"
 				});
 
-				if (response.status === 0 || response.ok) {
-					router.push(successRedirect);
+				if (response.status === 0) {
+					// redirected
+					// when using `redirect: "manual"`, response status 0 is returned
+					return router.refresh();
 				}
 			}}
 		>
@@ -426,5 +424,27 @@ export const POST = async (request: NextRequest) => {
 			Location: "/login" // redirect to login page
 		}
 	});
+};
+```
+
+## Additional notes
+
+For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
+
+```ts
+export const getPageSession = cache(() => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
+	return authRequest.validate();
+});
+```
+
+This allows you share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
+
+```ts
+const Page = async () => {
+	const session = await getPageSession();
 };
 ```

@@ -31,9 +31,9 @@ Table names are automatically escaped.
 ## Installation
 
 ```
-npm i @lucia-auth/adapter-mongoose
-pnpm add @lucia-auth/adapter-mongoose
-yarn add @lucia-auth/adapter-mongoose
+npm i @lucia-auth/adapter-mongoose@beta
+pnpm add @lucia-auth/adapter-mongoose@beta
+yarn add @lucia-auth/adapter-mongoose@beta
 ```
 
 ## Usage

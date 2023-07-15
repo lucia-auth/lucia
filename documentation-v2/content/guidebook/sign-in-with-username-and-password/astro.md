@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password in Astro"
+title: "Sign in with username and password in Astro"
 menuTitle: "Astro"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Astro"
 ---
@@ -14,7 +14,7 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the Astro example from the repository.
+You can get started immediately by cloning the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro/username-and-password) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/astro/username-and-password <directory_name>
@@ -127,7 +127,7 @@ if (Astro.request.method === "POST") {
 			const user = await auth.createUser({
 				key: {
 					providerId: "username", // auth method
-					providerUserId: username, // unique id when using "username" auth method
+					providerUserId: username.toLowerCase(), // unique id when using "username" auth method
 					password // hashed by Lucia
 				},
 				attributes: {
@@ -157,6 +157,25 @@ if (Astro.request.method === "POST") {
 	}
 }
 ---
+```
+
+#### Case sensitivity
+
+Depending on your database, `user123` and `USER123` may be treated as different strings. To avoid 2 users having the same username with different cases, we are going to make the username lowercase before creating a key. This is crucial when setting a user-provided input as a provider user id of a key.
+
+On the other hand, making the username stored as a user attribute lowercase is optional. However, if you need to query users using usernames (e.g. url `/user/user123`), it may be beneficial to require the username to be lowercase, store 2 usernames (lowercase and normal), or set the database to ignore casing when compare strings (e.g. using `LOWER()` in SQL).
+
+```ts
+const user = await auth.createUser({
+	key: {
+		providerId: "username", // auth method
+		providerUserId: username.toLowerCase(), // unique id when using "username" auth method
+		password // hashed by Lucia
+	},
+	attributes: {
+		username
+	}
+});
 ```
 
 #### Error handling
@@ -223,7 +242,7 @@ Create `src/pages/login.astro` and also add a form with inputs for username and 
 
 This will be handled in a POST endpoint.
 
-The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error.
+The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error. Make sure to make the username lowercase before calling `useKey()`.
 
 ```astro
 ---
@@ -251,7 +270,11 @@ if (Astro.request.method === "POST") {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey("username", username, password);
+			const user = await auth.useKey(
+				"username",
+				username.toLowerCase(),
+				password
+			);
 			const session = await auth.createSession({
 				userId: user.userId,
 				attributes: {}
@@ -264,6 +287,8 @@ if (Astro.request.method === "POST") {
 				(e.message === "AUTH_INVALID_KEY_ID" ||
 					e.message === "AUTH_INVALID_PASSWORD")
 			) {
+				// user does not exist
+				// or invalid password
 				errorMessage = "Incorrect username of password";
 			} else {
 				errorMessage = "An unknown error occurred";

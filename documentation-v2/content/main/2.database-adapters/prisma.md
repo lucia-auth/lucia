@@ -46,9 +46,9 @@ user_relation_key User @relation(references: [id], fields: [user_id], onDelete: 
 ## Installation
 
 ```
-npm i @lucia-auth/adapter-prisma
-pnpm add @lucia-auth/adapter-prisma
-yarn add @lucia-auth/adapter-prisma
+npm i @lucia-auth/adapter-prisma@beta
+pnpm add @lucia-auth/adapter-prisma@beta
+yarn add @lucia-auth/adapter-prisma@beta
 ```
 
 ## Usage
