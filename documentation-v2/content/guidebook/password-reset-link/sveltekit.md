@@ -1,6 +1,7 @@
 ---
-title: "Password reset links"
-description: "Learn how to implement password reset using reset links"
+title: "Password reset links in SvelteKit"
+menuTitle: "SvelteKit"
+description: "Learn how to implement password reset using reset links in SvelteKit"
 ---
 
 This guide expects access to the user's verified email. See [Sign in with email and password with verification links]() guide to learn how to verify the user's email, and email and password authentication in general.
@@ -9,11 +10,8 @@ This guide expects access to the user's verified email. See [Sign in with email 
 // lucia.ts
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV",
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
+	env: dev ? "DEV" : "PROD",
+	middleware: sveltekit(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -25,6 +23,16 @@ export const auth = lucia({
 
 export type Auth = typeof auth;
 ```
+
+### Clone project
+
+The [email and password SvelteKit example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit/email-and-password) includes password reset.
+
+```
+npx degit pilcrowonpaper/lucia/examples/sveltekit/email-and-password <directory_name>
+```
+
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/sveltekit/email-and-password).
 
 ## Database
 
@@ -45,7 +53,7 @@ We'll be storing the expiration date as a `bigint` since Lucia uses handles expi
 The token will be sent as part of the reset link.
 
 ```
-http://localhost:<port>/password-reset/<token>
+http://localhost:3000/password-reset/<token>
 ```
 
 When a user clicks the link, we prompt the user to enter their new password. When a user submits that form, we'll validate the token stored in the url and update the password of the user's key.
@@ -55,7 +63,7 @@ When a user clicks the link, we prompt the user to enter their new password. Whe
 `generatePasswordResetToken()` will first check if a reset token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
 
 ```ts
-// token.ts
+// $lib/server/token.ts
 import { generateRandomString, isWithinExpiration } from "lucia/utils";
 
 const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
@@ -93,7 +101,7 @@ export const generatePasswordResetToken = async (userId: string) => {
 It will throw if the token is invalid.
 
 ```ts
-// token.ts
+// $lib/server/token.ts
 import { generateRandomString, isWithinExpiration } from "lucia/utils";
 
 const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
@@ -125,89 +133,137 @@ export const validatePasswordResetToken = async (token: string) => {
 
 ## Send password reset link
 
+Create `routes/password-reset/+page.svelte` and add a form with an input for the email.
+
+```svelte
+<!-- routes/password-reset/+page.svelte -->
+<script lang="ts">
+	import { enhance } from "$app/forms";
+</script>
+
+<h1>Reset password</h1>
+<form method="post" use:enhance>
+	<label for="email">Email</label>
+	<input name="email" id="email" /><br />
+	<input type="submit" />
+</form>
+<a href="/login">Sign in</a>
+```
+
+Create `routes/password-reset/+page.server.ts` and define a new form action.
+
 Lucia allows us to use raw database queries when needed, for example checking the validity of an email. If the email is valid, create a new password reset link and send it to the user's inbox.
 
 ```ts
-import { generatePasswordResetToken } from "./token.js";
+// routes/password-reset/+page.server.ts
+import { auth } from "$lib/server/lucia";
+import { fail } from "@sveltejs/kit";
+import { db } from "$lib/server/db";
+import { generatePasswordResetToken } from "$lib/server/token";
+import { sendPasswordResetLink } from "$lib/server/email";
 
-post("/password-reset", async (request: Request) => {
-	const { email } = await request.json();
-	// check email
-	if (!isValidEmail(email)) {
-		return new Response("Invalid email", {
-			status: 400
-		});
-	}
-	try {
-		// query from user table
-		const storedUser = await db
-			.table("user")
-			.where("email", "=", email.toLowerCase())
-			.get();
-		if (!storedUser) {
-			return new Response("User does not exist", {
-				status: 400
+import type { Actions } from "./$types";
+
+export const actions: Actions = {
+	default: async ({ request }) => {
+		const formData = await request.formData();
+		const email = formData.get("email");
+		// basic check
+		if (!isValidEmail(email)) {
+			return fail(400, {
+				message: "Invalid email"
 			});
 		}
-		const token = await generatePasswordResetToken(storedUser.id);
-		await sendPasswordResetLink(token);
-		return new Response();
-	} catch (e) {
-		return new Response("An unknown error occurred", {
-			status: 500
-		});
+		try {
+			const storedUser = await db
+				.table("user")
+				.where("email", "=", email.toLowerCase())
+				.get();
+			if (!storedUser) {
+				return fail(400, {
+					message: "User does not exist"
+				});
+			}
+			const user = auth.transformDatabaseUser(storedUser);
+			const token = await generatePasswordResetToken(user.userId);
+			await sendPasswordResetLink(token);
+			return {
+				success: true
+			};
+		} catch (e) {
+			return fail(500, {
+				message: "An unknown error occurred"
+			});
+		}
 	}
-});
+};
 ```
 
 ## Reset password
 
-Get the token from the url and validate the token with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
+Create `routes/password-reset/[token]/+page.svelte` and add a form with an input for the new password.
+
+```svelte
+<!-- routes/password-reset/[token]/+page.svelte -->
+<script lang="ts">
+	import { enhance } from "$app/forms";
+</script>
+
+<h1>Reset password</h1>
+<form method="post" use:enhance>
+	<label for="password">New Password</label>
+	<input name="password" id="password" /><br />
+	<input type="submit" />
+</form>
+```
+
+Create `routes/password-reset/[token]/+page.server.ts` and define a new form action.
+
+Get the token from the url with `params.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
 
 ```ts
-import { auth } from "./lucia.js";
-import { validatePasswordResetToken } from "./token.js";
+import { auth } from "$lib/server/lucia";
+import { fail, redirect } from "@sveltejs/kit";
+import { validatePasswordResetToken } from "$lib/server/verification-token";
 
-post("/password-reset/[token]", async (request: Request) => {
-	const { password } = await request.json();
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
-		return new Response("Invalid password", {
-			status: 400
-		});
-	}
-	try {
-		const { token } = req.params;
-		const userId = await validatePasswordResetToken(token);
-		let user = await auth.getUser(userId);
-		await auth.invalidateAllUserSessions(user.userId);
-		await auth.updateKeyPassword("email", user.email, password);
+import type { Actions } from "./$types";
 
-		if (!user.emailVerified) {
-			user = await auth.updateUserAttributes(user.userId, {
-				email_verified: Number(true)
+export const actions: Actions = {
+	default: async ({ request, params, locals }) => {
+		const formData = await request.formData();
+		const password = formData.get("password");
+		// basic check
+		if (
+			typeof password !== "string" ||
+			password.length < 6 ||
+			password.length > 255
+		) {
+			return fail(400, {
+				message: "Invalid password"
 			});
 		}
-
-		const session = await auth.createSession({
-			userId: user.userId,
-			attributes: {}
-		});
-		const sessionCookie = auth.createSessionCookie(session);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/",
-				"Set-Cookie": sessionCookie.serialize()
+		try {
+			const { token } = params;
+			const userId = await validatePasswordResetToken(token);
+			let user = await auth.getUser(userId);
+			await auth.invalidateAllUserSessions(user.userId);
+			await auth.updateKeyPassword("email", user.email, password);
+			if (!user.emailVerified) {
+				user = await auth.updateUserAttributes(user.userId, {
+					email_verified: Number(true)
+				});
 			}
-		});
-	} catch (e) {
-		return new Response("Invalid or expired password reset link", {
-			status: 400
-		});
+			const session = await auth.createSession({
+				userId: user.userId,
+				attributes: {}
+			});
+			locals.auth.setSession(session);
+		} catch (e) {
+			return fail(400, {
+				message: "Invalid or expired password reset link"
+			});
+		}
+		throw redirect(302, "/");
 	}
-});
+};
 ```
