@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password in Next.js Pages Router"
+title: "Sign in with username and password in Next.js Pages Router"
 menuTitle: "Next.js Pages Router"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Next.js Pages Router"
 ---

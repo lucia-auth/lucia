@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password in Express"
+title: "Sign in with username and password in Express"
 menuTitle: "Express"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Express"
 ---
@@ -244,7 +244,7 @@ app.post("/login", async (req, res) => {
 
 ## Get authenticated user
 
-You can validate requests and get the current session/user by either using [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) for session cookies, and [`AuthRequest.validateBearerToken()`]() for session ids sent via the authorization header as a `Bearer` token. Both of these method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
+You can validate requests and get the current session/user by either using [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) for session cookies, and [`AuthRequest.validateBearerToken()`](/reference/lucia/interfaces/authrequest#validatebearertoken) for session ids sent via the authorization header as a `Bearer` token. Both of these method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
 You can see that `User.username` exists because we defined it with `getUserAttributes()` configuration.
 

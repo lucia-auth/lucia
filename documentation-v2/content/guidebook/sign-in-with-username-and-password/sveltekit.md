@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password in SvelteKit"
+title: "Sign in with username and password in SvelteKit"
 menuTitle: "SvelteKit"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in SvelteKit"
 ---

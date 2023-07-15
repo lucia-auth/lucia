@@ -6,7 +6,7 @@ description: "Extend Lucia by implementing email and password authentication wit
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
 
-If you're new to Lucia, we recommend starting with [Sign in with username and password]() starter guide as this guide will gloss over basic concepts and APIs. Make sure to implement password resets as well, which is covered in a separate guide (see [Password reset]()).
+If you're new to Lucia, we recommend starting with [Sign in with username and password](/guidebook/sign-in-with-username-and-password/nuxt) starter guide as this guide will gloss over basic concepts and APIs. Make sure to implement password resets as well, which is covered in a separate guide (see [Password reset links](/guidebook/password-reset-link/nuxt) guide).
 
 This example project will have a few pages:
 
@@ -97,7 +97,7 @@ When a user clicks the link, we validate of the token stored in the url and set 
 
 ### Create new tokens
 
-`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
+`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
 
 ```ts
 // server/utils/token.ts
@@ -131,7 +131,7 @@ export const generateEmailVerificationToken = async (userId: string) => {
 
 ### Validate tokens
 
-`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
+`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](/reference/lucia/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
 
 It will throw if the token is invalid.
 

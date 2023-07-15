@@ -4,7 +4,7 @@ menuTitle: "Next.js Pages Router"
 description: "Learn how to implement password reset using reset links in Next.js Pages Router"
 ---
 
-This guide expects access to the user's verified email. See [Sign in with email and password with verification links]() guide to learn how to verify the user's email, and email and password authentication in general.
+This guide expects access to the user's verified email. See [Sign in with email and password with verification links](/guidebook/sign-in-with-email-and-password/nextjs-pages) guide to learn how to verify the user's email, and email and password authentication in general.
 
 ```ts
 // auth/lucia.ts
@@ -60,7 +60,7 @@ When a user clicks the link, we prompt the user to enter their new password. Whe
 
 ### Create new tokens
 
-`generatePasswordResetToken()` will first check if a reset token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
+`generatePasswordResetToken()` will first check if a reset token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
 
 ```ts
 // auth/token.ts
@@ -96,7 +96,7 @@ export const generatePasswordResetToken = async (userId: string) => {
 
 ### Validate tokens
 
-`validatePasswordResetToken()` will get the token and delete the token. We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
+`validatePasswordResetToken()` will get the token and delete the token. We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](/reference/lucia/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
 
 It will throw if the token is invalid.
 
@@ -282,7 +282,7 @@ export default Page;
 
 Create `pages/api/password-reset/[token].ts` and handle POST requests.
 
-Get the token from the url with `req.query.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
+Get the token from the url with `req.query.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](/reference/lucia/interfaces/auth#updatekeypassword), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`](/reference/lucia/interfaces/auth#invalidateallusersessions) before updating the password.**
 
 ```ts
 // pages/api/password-reset/[token].ts

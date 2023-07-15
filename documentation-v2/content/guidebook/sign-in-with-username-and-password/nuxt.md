@@ -1,5 +1,5 @@
 ---
-title: "Sign in with email and password in Nuxt"
+title: "Sign in with username and password in Nuxt"
 menuTitle: "Nuxt"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication in Nuxt"
 ---
