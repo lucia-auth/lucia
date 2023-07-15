@@ -1,17 +1,17 @@
 ---
-title: "Password reset links in Next.js Pages Router"
-menuTitle: "Next.js Pages Router"
-description: "Learn how to implement password reset using reset links in Next.js Pages Router"
+title: "Password reset links in Nuxt"
+menuTitle: "Nuxt"
+description: "Learn how to implement password reset using reset links in Nuxt"
 ---
 
 This guide expects access to the user's verified email. See [Sign in with email and password with verification links]() guide to learn how to verify the user's email, and email and password authentication in general.
 
 ```ts
-// auth/lucia.ts
+// server/utils/lucia.ts
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: dev ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: h3(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -26,13 +26,13 @@ export type Auth = typeof auth;
 
 ### Clone project
 
-The [email and password Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password) includes password reset.
+The [email and password Nuxt example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt/email-and-password) includes password reset.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-pages/email-and-password <directory_name>
+npx degit pilcrowonpaper/lucia/examples/nuxt/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/email-and-password).
 
 ## Database
 
@@ -63,7 +63,7 @@ When a user clicks the link, we prompt the user to enter their new password. Whe
 `generatePasswordResetToken()` will first check if a reset token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`]() with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
 
 ```ts
-// auth/token.ts
+// server/utils/token.ts
 import { generateRandomString, isWithinExpiration } from "lucia/utils";
 
 const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
@@ -101,7 +101,7 @@ export const generatePasswordResetToken = async (userId: string) => {
 It will throw if the token is invalid.
 
 ```ts
-// auth/token.ts
+// server/utils/token.ts
 import { generateRandomString, isWithinExpiration } from "lucia/utils";
 
 const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
@@ -133,68 +133,51 @@ export const validatePasswordResetToken = async (token: string) => {
 
 ## Send password reset link
 
-Create `pages/password-reset/index.tsx` and add a form with an input for the email.
+Create `pages/password-reset/index.vue` and add a form with an input for the email.
 
-```tsx
-// pages/password-reset/index.tsx
-const Page = () => {
-	return (
-		<>
-			<h1>Reset password</h1>
-			<form
-				method="post"
-				action="/api/password-reset"
-				onSubmit={async (e) => {
-					e.preventDefault();
-					const formData = new FormData(e.currentTarget);
-					const response = await fetch("/api/password-reset", {
-						method: "POST",
-						body: JSON.stringify({
-							email: formData.get("email")
-						}),
-						headers: {
-							"Content-Type": "application/json"
-						}
-					});
-				}}
-			>
-				<label htmlFor="email">Email</label>
-				<input name="email" id="email" />
-				<br />
-				<input type="submit" />
-			</form>
-		</>
-	);
+```vue
+<!-- vue/password-reset/index.vue -->
+<script lang="ts" setup>
+const handleSubmit = async (e: Event) => {
+	if (!(e.target instanceof HTMLFormElement)) return;
+	const formData = new FormData(e.target);
+	await $fetch("/api/password-reset", {
+		method: "POST",
+		body: {
+			email: formData.get("email")
+		},
+		redirect: "manual"
+	});
 };
+</script>
 
-export default Page;
+<template>
+	<h1>Reset password</h1>
+	<form
+		method="post"
+		action="/api/password-reset"
+		@submit.prevent="handleSubmit"
+	>
+		<label for="email">Email</label>
+		<input name="email" id="email" /><br />
+		<input type="submit" />
+	</form>
+</template>
 ```
 
-Create `pages/api/password-reset/index.ts` and handle POST requests.
+Create `server/api/password-reset/index.post.ts`.
 
 Lucia allows us to use raw database queries when needed, for example checking the validity of an email. If the email is valid, create a new password reset link and send it to the user's inbox.
 
 ```ts
-// pages/api/password-reset/index.ts`
-import { auth } from "@/auth/lucia";
-import { sendPasswordResetLink } from "@/auth/email";
-import { generatePasswordResetToken } from "@/auth/verification-token";
-
-import type { NextRequest } from "next/server";
-
-export const POST = async (request: NextRequest) => {
-	const formData = await request.formData();
-	const email = formData.get("email");
+// server/api/password-reset/index.post.ts`
+export default defineEventHandler(async (event) => {
+	const { email } = await readBody<{
+		email: unknown;
+	}>(event);
 	// basic check
 	if (!isValidEmail(email)) {
-		return new Response(
-			JSON.stringify({
-				error: "Invalid email"
-			}),
-			{
-				status: 400
-			}
-		);
+		throw createError({ status: 400, message: "Invalid email" });
 	}
 	try {
 		const storedUser = await db
@@ -202,112 +185,76 @@ export const POST = async (request: NextRequest) => {
 			.where("email", "=", email.toLowerCase())
 			.get();
 		if (!storedUser) {
-			return new Response(
-				JSON.stringify({
-					error: "User does not exist"
-				}),
-				{
-					status: 400
-				}
-			);
+			throw createError({ status: 400, message: "User does not exist" });
 		}
 		const user = auth.transformDatabaseUser(storedUser);
 		const token = await generatePasswordResetToken(user.userId);
 		await sendPasswordResetLink(token);
-		return new Response();
+		return {};
 	} catch (e) {
-		return new Response(
-			JSON.stringify({
-				error: "An unknown error occurred"
-			}),
-			{
-				status: 500
-			}
-		);
+		throw createError({
+			message: "An unknown error occurred",
+			statusCode: 500
+		});
 	}
-};
+});
 ```
 
 ## Reset password
 
-Create `pages/password-reset/[token].tsx` and add a form with an input for the new password.
+Create `pages/password-reset/[token].vue` and add a form with an input for the new password.
 
-```tsx
-// pages/password-reset/[token].tsx
-import { useRouter } from "next/router";
+```vue
+<!-- pages/password-reset/[token].vue -->
+<script lang="ts" setup>
+const route = useRoute();
+const apiRoute = `/api/password-reset/${route.params.token}`;
 
-const Page = () => {
-	const router = useRouter();
-	return (
-		<>
-			<h1>Sign in</h1>
-			<form
-				method="post"
-				action={`/api/password-reset/${router.query.token}`}
-				onSubmit={async (e) => {
-					e.preventDefault();
-					const formData = new FormData(e.currentTarget);
-					const response = await fetch(
-						`/api/password-reset/${router.query.token}`,
-						{
-							method: "POST",
-							body: JSON.stringify({
-								password: formData.get("password")
-							}),
-							headers: {
-								"Content-Type": "application/json"
-							},
-							redirect: "manual"
-						}
-					);
-
-					if (response.status === 0) {
-						// redirected
-						// when using `redirect: "manual"`, response status 0 is returned
-						return router.push("/");
-					}
-				}}
-			>
-				<label htmlFor="password">New Password</label>
-				<input name="password" id="password" />
-				<br />
-				<input type="submit" />
-			</form>
-		</>
-	);
+const handleSubmit = async (e: Event) => {
+	if (!(e.target instanceof HTMLFormElement)) return;
+	const formData = new FormData(e.target);
+	await $fetch(apiRoute, {
+		method: "POST",
+		body: {
+			password: formData.get("password")
+		},
+		redirect: "manual"
+	});
+	await navigateTo("/");
 };
+</script>
 
-export default Page;
+<template>
+	<h1>Reset password</h1>
+	<form method="post" :action="apiRoute" @submit.prevent="handleSubmit">
+		<label htmlFor="password">New Password</label>
+		<input name="password" id="password" />
+		<br />
+		<input type="submit" />
+	</form>
+</template>
 ```
 
-Create `pages/api/password-reset/[token].ts` and handle POST requests.
+Create `server/api/password-reset/[token].post.ts`.
 
-Get the token from the url with `req.query.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
+Get the token from the url with `event.context.params.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
 
 ```ts
-// pages/api/password-reset/[token].ts
-import { auth } from "@/auth/lucia";
-import { validatePasswordResetToken } from "@/auth/verification-token";
-
-import type { NextApiRequest, NextApiResponse } from "next";
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST") return res.status(405).end();
-	const { password } = req.body as {
+// server/api/password-reset/[token].ts
+export default defineEventHandler(async (event) => {
+	const { password } = await readBody<{
 		password: unknown;
-	};
+	}>(event);
 	if (
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return res.status(400).json({
-			error: "Invalid password"
-		});
+		throw createError({ status: 400, message: "Invalid password" });
 	}
 	try {
-		const { token } = req.query as {
-			token: string;
+		const { token } = event.context.params ?? {
+			token: ""
 		};
 		const userId = await validatePasswordResetToken(token);
 		let user = await auth.getUser(userId);
@@ -322,18 +269,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			req,
-			res
-		});
+		const authRequest = auth.handleRequest(event);
 		authRequest.setSession(session);
-		return res.end();
+		return {};
 	} catch (e) {
-		return res.status(400).json({
-			error: "Invalid or expired password reset link"
+		throw createError({
+			message: "Invalid or expired password reset link",
+			statusCode: 400
 		});
 	}
-};
-
-export default handler;
+});
 ```
