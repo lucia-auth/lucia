@@ -1,7 +1,7 @@
 import { auth } from '$lib/server/lucia';
 import { fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { generatePasswordResetToken } from '$lib/server/verification-token';
+import { generatePasswordResetToken } from '$lib/server/token';
 import { isValidEmail, sendPasswordResetLink } from '$lib/server/email';
 
 import type { Actions } from './$types';

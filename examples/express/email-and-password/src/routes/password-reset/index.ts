@@ -5,7 +5,7 @@ import url from "url";
 
 import { auth } from "../../lucia.js";
 import { isValidEmail, sendPasswordResetLink } from "../../email.js";
-import { generatePasswordResetToken } from "../../verification-token.js";
+import { generatePasswordResetToken } from "../../token.js";
 import { db } from "../../db.js";
 
 import tokenRouter from "./:token.js";

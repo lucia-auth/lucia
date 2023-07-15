@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { SqliteError } from "better-sqlite3";
 import { isValidEmail, sendEmailVerificationLink } from "@/auth/email";
-import { generateEmailVerificationToken } from "@/auth/verification-token";
+import { generateEmailVerificationToken } from "@/auth/token";
 
 import type { NextRequest } from "next/server";
 

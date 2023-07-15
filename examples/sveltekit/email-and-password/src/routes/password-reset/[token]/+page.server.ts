@@ -3,7 +3,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import {
 	isValidPasswordResetToken,
 	validatePasswordResetToken
-} from '$lib/server/verification-token';
+} from '$lib/server/token';
 
 import type { PageServerLoad, Actions } from './$types';
 

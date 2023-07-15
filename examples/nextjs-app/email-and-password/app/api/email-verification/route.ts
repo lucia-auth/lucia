@@ -1,5 +1,5 @@
 import { getPageSession } from "@/auth/lucia";
-import { generateEmailVerificationToken } from "@/auth/verification-token";
+import { generateEmailVerificationToken } from "@/auth/token";
 import { sendEmailVerificationLink } from "@/auth/email";
 
 import type { NextRequest } from "next/server";

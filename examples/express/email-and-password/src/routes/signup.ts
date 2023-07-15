@@ -6,7 +6,7 @@ import { SqliteError } from "better-sqlite3";
 
 import { auth } from "../lucia.js";
 import { isValidEmail, sendEmailVerificationLink } from "../email.js";
-import { generateEmailVerificationToken } from "../verification-token.js";
+import { generateEmailVerificationToken } from "../token.js";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 

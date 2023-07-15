@@ -4,7 +4,7 @@ import { isValidEmail, sendEmailVerificationLink } from "../lib/email";
 
 import { auth } from "../lib/lucia";
 import { SqliteError } from "better-sqlite3";
-import { generateEmailVerificationToken } from "../lib/verification-token";
+import { generateEmailVerificationToken } from "../lib/token";
 
 let emailInput = "";
 let errorMessage = "";

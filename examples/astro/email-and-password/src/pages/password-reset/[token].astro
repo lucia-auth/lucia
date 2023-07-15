@@ -2,7 +2,7 @@
 import "../../app.css";
 
 import { auth } from "../../lib/lucia";
-import { validatePasswordResetToken } from "../../lib/verification-token";
+import { validatePasswordResetToken } from "../../lib/token";
 
 let errorMessage = "";
 if (Astro.request.method === "POST") {

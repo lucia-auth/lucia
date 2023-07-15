@@ -7,7 +7,7 @@ import { auth } from "../lucia.js";
 import {
 	generateEmailVerificationToken,
 	validateEmailVerificationToken
-} from "../verification-token.js";
+} from "../token.js";
 import { sendEmailVerificationLink } from "../email.js";
 
 const router = express.Router();

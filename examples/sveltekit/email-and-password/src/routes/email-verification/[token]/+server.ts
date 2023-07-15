@@ -1,5 +1,5 @@
 import { auth } from '$lib/server/lucia';
-import { validateEmailVerificationToken } from '$lib/server/verification-token';
+import { validateEmailVerificationToken } from '$lib/server/token';
 
 import type { RequestHandler } from './$types';
 

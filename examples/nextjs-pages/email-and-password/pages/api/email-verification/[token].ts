@@ -1,5 +1,5 @@
 import { auth } from "@/auth/lucia";
-import { validateEmailVerificationToken } from "@/auth/verification-token";
+import { validateEmailVerificationToken } from "@/auth/token";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 

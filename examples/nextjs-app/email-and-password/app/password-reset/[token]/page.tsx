@@ -1,4 +1,4 @@
-import { isValidPasswordResetToken } from "@/auth/verification-token";
+import { isValidPasswordResetToken } from "@/auth/token";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";

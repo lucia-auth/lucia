@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { isValidPasswordResetToken } from "@/auth/verification-token";
+import { isValidPasswordResetToken } from "@/auth/token";
 import { useState } from "react";
 
 import type {

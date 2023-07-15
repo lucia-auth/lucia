@@ -4,7 +4,7 @@ import "../../app.css";
 import { db } from "../../lib/db";
 import { sendPasswordResetLink, isValidEmail } from "../../lib/email";
 import { auth } from "../../lib/lucia";
-import { generatePasswordResetToken } from "../../lib/verification-token";
+import { generatePasswordResetToken } from "../../lib/token";
 
 let emailInput = "";
 let success = false;

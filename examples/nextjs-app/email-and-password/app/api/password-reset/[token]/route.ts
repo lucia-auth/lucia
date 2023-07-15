@@ -1,5 +1,5 @@
 import { auth } from "@/auth/lucia";
-import { validatePasswordResetToken } from "@/auth/verification-token";
+import { validatePasswordResetToken } from "@/auth/token";
 
 import type { NextRequest } from "next/server";
 

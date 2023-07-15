@@ -1,6 +1,6 @@
 import { isValidEmail, sendEmailVerificationLink } from "@/auth/email";
 import { auth } from "@/auth/lucia";
-import { generateEmailVerificationToken } from "@/auth/verification-token";
+import { generateEmailVerificationToken } from "@/auth/token";
 import { SqliteError } from "better-sqlite3";
 
 import type { NextApiRequest, NextApiResponse } from "next";

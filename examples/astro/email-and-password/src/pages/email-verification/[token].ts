@@ -1,5 +1,5 @@
 import { auth } from "../../lib/lucia";
-import { validateEmailVerificationToken } from "../../lib/verification-token";
+import { validateEmailVerificationToken } from "../../lib/token";
 
 import type { APIRoute } from "astro";
 

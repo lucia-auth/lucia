@@ -7,7 +7,7 @@ import { auth } from "../../lucia.js";
 import {
 	isValidPasswordResetToken,
 	validatePasswordResetToken
-} from "../../verification-token.js";
+} from "../../token.js";
 
 const router = express.Router();
 

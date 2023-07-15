@@ -1,7 +1,7 @@
 import { db } from "@/auth/db";
 import { isValidEmail, sendPasswordResetLink } from "@/auth/email";
 import { auth } from "@/auth/lucia";
-import { generatePasswordResetToken } from "@/auth/verification-token";
+import { generatePasswordResetToken } from "@/auth/token";
 
 import type { NextRequest } from "next/server";
 
