@@ -72,7 +72,7 @@ import { h3 } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	env: process.dev ? "DEV" : "PROD",
 	middleware: h3(),
 	getUserAttributes: (data) => {
 		return {
