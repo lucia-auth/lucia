@@ -53,7 +53,7 @@ We'll be storing the expiration date as a `bigint` since Lucia uses handles expi
 The token will be sent as part of the reset link.
 
 ```
-http://localhost:3000/password-reset/<token>
+http://localhost:5173/password-reset/<token>
 ```
 
 When a user clicks the link, we prompt the user to enter their new password. When a user submits that form, we'll validate the token stored in the url and update the password of the user's key.
@@ -147,7 +147,6 @@ Create `routes/password-reset/+page.svelte` and add a form with an input for the
 	<input name="email" id="email" /><br />
 	<input type="submit" />
 </form>
-<a href="/login">Sign in</a>
 ```
 
 Create `routes/password-reset/+page.server.ts` and define a new form action.
@@ -158,7 +157,6 @@ Lucia allows us to use raw database queries when needed, for example checking th
 // routes/password-reset/+page.server.ts
 import { auth } from "$lib/server/lucia";
 import { fail } from "@sveltejs/kit";
-import { db } from "$lib/server/db";
 import { generatePasswordResetToken } from "$lib/server/token";
 import { sendPasswordResetLink } from "$lib/server/email";
 
@@ -222,6 +220,7 @@ Create `routes/password-reset/[token]/+page.server.ts` and define a new form act
 Get the token from the url with `params.token` and validate it with `validatePasswordResetToken()`. Update the key password with [`Auth.updateKeyPassword()`](), and optionally verify the user's email. **Make sure you invalidate all user sessions with [`Auth.invalidateAllUserSessions()`]() before updating the password.**
 
 ```ts
+// routes/password-reset/[token]/+page.server.ts
 import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
 import { validatePasswordResetToken } from "$lib/server/verification-token";
