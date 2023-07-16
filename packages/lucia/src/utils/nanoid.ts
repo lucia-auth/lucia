@@ -6,7 +6,7 @@ const getRandomValues = (bytes: number) =>
 	crypto.getRandomValues(new Uint8Array(bytes));
 
 const DEFAULT_ALPHABET =
-	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+	"abcdefghijklmnopqrstuvwxyz1234567890";
 
 export const generateRandomString = (
 	size: number,
