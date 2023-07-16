@@ -6,7 +6,7 @@ format: "code"
 
 ## `generateRandomString()`
 
-Generates a cryptographically random string. If argument for parameter `alphabet` is not provided, the result with consist of `a-ZA-Z0-9`.
+Generates a cryptographically random string. If argument for parameter `alphabet` is not provided, the result with consist of `a-z0-9` (lowercase letters, numbers).
 
 ```ts
 import { generateRandomString } from "lucia/utils";
