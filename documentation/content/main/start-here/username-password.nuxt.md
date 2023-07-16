@@ -78,7 +78,7 @@ const handleSubmit = async (e: Event) => {
 		});
 		navigateTo("/");
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 </script>
@@ -194,7 +194,7 @@ const handleSubmit = async (e: Event) => {
 		});
 		navigateTo("/");
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 </script>
@@ -294,11 +294,10 @@ In both the signup and login page, fetch the current user with `useFetch()`, and
 <!-- pages/login.vue -->
 
 <script lang="ts" setup>
-const { data } = await useFetch("/api/user");
-if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (user) {
-	await navigateTo("/");
+const { data, error } = await useFetch("/api/user");
+if (error.value) throw createError("Failed to fetch data");
+if (data?.value?.user) {
+	navigateTo("/");
 }
 // ...
 </script>
@@ -316,19 +315,16 @@ Create `pages/index.vue`. This page will show the user's data. Redirect the user
 <!-- pages/index.vue -->
 
 <script lang="ts" setup>
-const { data } = await useFetch("/api/user");
-if (!data.value) throw createError("Failed to fetch data");
-const user = data.value.user;
-if (!user) await navigateTo("/login");
+const { data, error } = await useFetch("/api/user");
+if (error.value) throw createError(error.value.message);
+if (!data.value?.user) navigateTo("/login");
 
 const handleSubmit = async () => {
 	try {
-		await $fetch("/api/logout", {
-			method: "POST"
-		});
+		await $fetch("/api/logout", { method: "POST" });
 		navigateTo("/login");
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 };
 </script>
@@ -362,4 +358,55 @@ export default defineEventHandler(async (event) => {
 	authRequest.setSession(null); // remove session cookie
 	return null;
 });
+```
+
+### Handle authentication with state and middleware
+
+Using middlewares and composables is a really neat way to avoid duplicating your authorization logic.
+
+Create a `useAuth` composable :
+
+```ts
+// composables/useAuth.ts
+import type { User } from "lucia-auth";
+
+export const useAuth = () => {
+	const { data, execute: fetchUser } = useFetch("/api/user", {
+		immediate: false
+	});
+	return { user: computed(() => data.value?.user), fetchUser };
+};
+```
+
+Create an `auth` middleware :
+
+```ts
+// middlewares/auth.ts
+export default defineNuxtRouteMiddleware(async () => {
+	const { user, fetchUser } = useAuth();
+	await fetchUser();
+	if (!user.value) {
+		// if there's no user found, navigate to the login page.
+		return navigateTo("/login");
+	}
+});
+```
+
+Then in your vue files ...
+
+```vue
+<script lang="ts" setup>
+definePageMeta({ middleware: "auth" });
+const { user } = useAuth(); // Grab the user from your composable ...
+</script>
+
+<template>
+	<h2>Secret page</h2>
+	<p>
+		This page is protected by a nuxt middleware and can only be accessed by
+		authenticated users.
+	</p>
+	<pre class="code">{{ JSON.stringify(user, null, 2) }}</pre>
+	<NuxtLink to="/" class="button">Home</NuxtLink>
+</template>
 ```

@@ -66,6 +66,7 @@ const auth = lucia({
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
+- [Unstorage](/database-adapters/unstorage): Azure, Cloudflare KV, Memory, MongoDB, Planetscale, Redis, Vercel KV
 
 ### Provider specific adapters
 
