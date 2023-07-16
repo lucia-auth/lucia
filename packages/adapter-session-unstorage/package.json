@@ -34,7 +34,7 @@
 		".": "./index.js"
 	},
 	"peerDependencies": {
-		"lucia": "2.0.0-beta.4",
+		"lucia": "2.0.0-beta.6",
 		"unstorage": "^1.6.1"
 	},
 	"devDependencies": {
