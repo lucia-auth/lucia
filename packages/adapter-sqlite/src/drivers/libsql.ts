@@ -7,7 +7,7 @@ import type {
 	UserSchema,
 	KeySchema
 } from "lucia";
-import { Client, LibsqlError } from "@libsql/client";
+import type { Client, LibsqlError } from "@libsql/client";
 
 export const libsqlAdapter = (
 	db: Client,
@@ -51,10 +51,10 @@ export const libsqlAdapter = (
 					};
 					await db.batch("write", [insertUserQuery, insertKeyQuery]);
 				} catch (e) {
+					const error = e as Partial<LibsqlError>;
 					if (
-						e instanceof LibsqlError &&
-						e.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-						e.message?.includes(".id")
+						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
+						error.message?.includes(".id")
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -111,10 +111,8 @@ export const libsqlAdapter = (
 						args
 					});
 				} catch (e) {
-					if (
-						e instanceof LibsqlError &&
-						e.code === "SQLITE_CONSTRAINT_FOREIGNKEY"
-					) {
+					const error = e as Partial<LibsqlError>;
+					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 					throw e;
@@ -174,16 +172,15 @@ export const libsqlAdapter = (
 						args
 					});
 				} catch (e) {
-					if (e instanceof LibsqlError) {
-						if (e.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-							throw new LuciaError("AUTH_INVALID_USER_ID");
-						}
-						if (
-							e.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-							e.message?.includes(".id")
-						) {
-							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-						}
+					const error = e as Partial<LibsqlError>;
+					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					if (
+						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
+						error.message?.includes(".id")
+					) {
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
 					throw e;
 				}
