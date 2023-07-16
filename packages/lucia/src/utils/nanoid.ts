@@ -7,7 +7,7 @@ const getRandomValues = (bytes: number): Uint8Array => {
 };
 
 const DEFAULT_ALPHABET =
-	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+	"abcdefghijklmnopqrstuvwxyz1234567890";
 
 export const generateRandomString = (
 	size: number,
