@@ -1,5 +1,19 @@
 # lucia
 
+## 2.0.0-beta.6
+
+### Major changes
+
+- [#836](https://github.com/pilcrowOnPaper/lucia/pull/836) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : User ids and session ids only consist of lowercase letters and numbers by default
+
+- [#839](https://github.com/pilcrowOnPaper/lucia/pull/839) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : `AuthRequest.validate()` and `Auth.validateBearerToken()` throws database errors
+
+### Minor changes
+
+- [#838](https://github.com/pilcrowOnPaper/lucia/pull/838) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `Auth.transformDatabaseUser()`, `Auth.transformDatabaseKey()`, and `Auth.transformDatabaseSession()`
+
+- [#838](https://github.com/pilcrowOnPaper/lucia/pull/838) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Export `createKeyId()`
+
 ## 2.0.0-beta.5
 
 ### Major changes
