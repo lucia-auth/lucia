@@ -98,11 +98,11 @@ export class AuthRequest<_Auth extends Auth = any> {
 				}
 				return resolve(session);
 			} catch (e) {
-				if (!(e instanceof LuciaError)) {
-					throw e;
+				if (e instanceof LuciaError) {
+					this.setSessionCookie(null);
+					return resolve(null);
 				}
-				this.setSessionCookie(null);
-				return resolve(null);
+				throw e;
 			}
 		});
 
@@ -121,10 +121,10 @@ export class AuthRequest<_Auth extends Auth = any> {
 				if (session.state === "idle") return resolve(null);
 				return resolve(session);
 			} catch (e) {
-				if (!(e instanceof LuciaError)) {
-					throw e;
+				if (e instanceof LuciaError) {
+					return resolve(null);
 				}
-				return resolve(null);
+				throw e;
 			}
 		});
 
