@@ -11,9 +11,10 @@ import { debug } from "../utils/debug.js";
 import { isWithinExpiration } from "../utils/date.js";
 import { isAllowedUrl } from "../utils/url.js";
 import { createAdapter } from "./adapter.js";
+import { createKeyId } from "./database.js";
 
 import type { Cookie, SessionCookieAttributes } from "./cookie.js";
-import type { UserSchema, SessionSchema, KeySchema } from "./schema.js";
+import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
 import {
 	type Adapter,
 	type SessionAdapter,
@@ -295,7 +296,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			await this.adapter.setUser(databaseUser, null);
 			return this.transformDatabaseUser(databaseUser);
 		}
-		const keyId = `${options.key.providerId}:${options.key.providerUserId}`;
+		const keyId = createKeyId(
+			options.key.providerId,
+			options.key.providerUserId
+		);
 		const password = options.key.password;
 		const hashedPassword = password
 			? await this.passwordHash.generate(password)
@@ -327,7 +331,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		providerUserId: string,
 		password: string | null
 	): Promise<Key> => {
-		const keyId = `${providerId}:${providerUserId}`;
+		const keyId = createKeyId(providerId, providerUserId);
 		const databaseKey = await this.adapter.getKey(keyId);
 		if (!databaseKey) {
 			debug.key.fail("Key not found", keyId);
@@ -587,7 +591,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		providerUserId: string;
 		password: string | null;
 	}): Promise<Key> => {
-		const keyId = `${options.providerId}:${options.providerUserId}`;
+		const keyId = createKeyId(options.providerId, options.providerUserId);
 		let hashedPassword: string | null = null;
 		if (options.password !== null) {
 			hashedPassword = await this.passwordHash.generate(options.password);
@@ -610,7 +614,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		providerId: string,
 		providerUserId: string
 	): Promise<void> => {
-		const keyId = `${providerId}:${providerUserId}`;
+		const keyId = createKeyId(providerId, providerUserId);
 		await this.adapter.deleteKey(keyId);
 	};
 
@@ -618,7 +622,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		providerId: string,
 		providerUserId: string
 	): Promise<Key> => {
-		const keyId = `${providerId}:${providerUserId}`;
+		const keyId = createKeyId(providerId, providerUserId);
 		const databaseKey = await this.adapter.getKey(keyId);
 		if (!databaseKey) {
 			throw new LuciaError("AUTH_INVALID_KEY_ID");
@@ -642,7 +646,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		providerUserId: string,
 		password: string | null
 	): Promise<void> => {
-		const keyId = `${providerId}:${providerUserId}`;
+		const keyId = createKeyId(providerId, providerUserId);
 		const hashedPassword =
 			password === null ? null : await this.passwordHash.generate(password);
 		await this.adapter.updateKey(keyId, {
@@ -651,7 +655,6 @@ export class Auth<_Configuration extends Configuration = any> {
 		await this.getKey(providerId, providerUserId);
 	};
 }
-
 type MaybePromise<T> = T | Promise<T>;
 
 export type Configuration<
