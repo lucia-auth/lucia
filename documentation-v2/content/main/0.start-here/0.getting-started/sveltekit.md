@@ -119,4 +119,4 @@ declare global {
 }
 ```
 
-This allows us to share and access the same `AuthRequest` instance across multiple load times, which [results in better load times when validating requests]().
+This allows us to share and access the same `AuthRequest` instance across multiple load times, which [results in better load times when validating requests](/basics/using-cookies#caching).

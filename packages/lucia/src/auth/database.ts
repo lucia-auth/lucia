@@ -14,3 +14,10 @@ export type SessionSchema = {
 	idle_expires: number;
 	user_id: string;
 } & Lucia.DatabaseSessionAttributes;
+
+export const createKeyId = (providerId: string, providerUserId: string) => {
+	if (providerId.includes(":")) {
+		throw new TypeError("Provider id must not include any colons (:)");
+	}
+	return `${providerId}:${providerUserId}`;
+};

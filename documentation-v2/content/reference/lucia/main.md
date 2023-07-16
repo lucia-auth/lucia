@@ -3,6 +3,27 @@ order: 0
 title: "Main"
 ---
 
+## `createKeyId()`
+
+Creates key id ([`KeySchema.id`](/reference/lucia/interfaces#keyschema)).
+
+```ts
+const createKeyId: (providerId: string, providerUserId: string) => string;
+```
+
+##### Parameters
+
+| name             | type     | description          |
+| ---------------- | -------- | -------------------- |
+| `providerId`     | `string` | Key provider id      |
+| `providerUserId` | `string` | Key provider user id |
+
+##### Returns
+
+| type     | description |
+| -------- | ----------- |
+| `string` | Key id      |
+
 ## `DEFAULT_SESSION_COOKIE_NAME`
 
 Default session cookie name.

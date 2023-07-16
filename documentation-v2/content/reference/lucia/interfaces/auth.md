@@ -579,6 +579,106 @@ const sessionId = auth.readSessionCookie(
 );
 ```
 
+## `transformDatabaseKey()`
+
+Transforms key object returned from database query into Lucia's `Key`.
+
+```ts
+const transformDatabaseKey: (databaseKey: KeySchema) => Key;
+```
+
+##### Parameters
+
+| name          | type                                                 | description    |
+| ------------- | ---------------------------------------------------- | -------------- |
+| `databaseKey` | [`KeySchema`](/reference/lucia/interfaces#keyschema) | Raw key object |
+
+##### Returns
+
+| type                                     |
+| ---------------------------------------- |
+| [`Key`](/reference/lucia/interfaces#key) |
+
+#### Example
+
+```ts
+import { createKeyId } from "lucia";
+import { auth } from "./lucia.js";
+
+const databaseKey = await db.getKey(createKeyId(providerId, providerUserId));
+const key = auth.transformDatabaseKey(databaseKey);
+```
+
+## `transformDatabaseSession()`
+
+Transforms session object returned from database query into Lucia's `Session`.
+
+```ts
+const transformDatabaseSession: (
+	databaseSession: SessionSchema,
+	context: {
+		user: User;
+		fresh: boolean;
+	}
+) => Session;
+```
+
+##### Parameters
+
+| name              | type                                                      | description        |
+| ----------------- | --------------------------------------------------------- | ------------------ |
+| `databaseSession` | [`SessionSchema`](/reference/lucia/interfaces#userschema) | Raw session object |
+| `context.user`    | [`User`](/reference/lucia/interfaces#user)                | `Session.user`     |
+| `context.fresh`   | `boolean`                                                 | `Session.fresh`    |
+
+##### Returns
+
+| type                                             |
+| ------------------------------------------------ |
+| [`Session`](/reference/lucia/interfaces#session) |
+
+#### Example
+
+```ts
+import { auth } from "./lucia.js";
+
+const databaseUser = await db.getUser(userId);
+const databaseSession = await db.getSession(sessionId);
+const session = auth.transformDatabaseSession(databaseSession, {
+	user: auth.transformDatabaseUser(databaseUser),
+	fresh: false
+});
+```
+
+## `transformDatabaseUser()`
+
+Transforms user object returned from database query into Lucia's `User`.
+
+```ts
+const transformDatabaseUser: (databaseUser: UserSchema) => User;
+```
+
+##### Parameters
+
+| name           | type                                                   | description     |
+| -------------- | ------------------------------------------------------ | --------------- |
+| `databaseUser` | [`UserSchema`](/reference/lucia/interfaces#userschema) | Raw user object |
+
+##### Returns
+
+| type                                       |
+| ------------------------------------------ |
+| [`User`](/reference/lucia/interfaces#user) |
+
+#### Example
+
+```ts
+import { auth } from "./lucia.js";
+
+const databaseUser = await db.getUser(userId);
+const user = auth.transformDatabaseSession(databaseUser);
+```
+
 ## `updateKeyPassword()`
 
 Updates the password of a key. Pass `null` to parameter `password` to remove the key's password.

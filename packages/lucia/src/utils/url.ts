@@ -4,7 +4,7 @@ export const isAllowedUrl = (
 		url: string | URL;
 		allowedSubdomains: "*" | string[];
 	}
-) => {
+): boolean => {
 	const getHostname = (urlParams: string | URL) => {
 		if (typeof urlParams === "string") return new URL(urlParams).hostname;
 		return urlParams.hostname;
@@ -23,7 +23,7 @@ export const isAllowedUrl = (
 	return allowedHosts.includes(incomingHostname);
 };
 
-const getBaseDomain = (hostname: string) => {
+const getBaseDomain = (hostname: string): string => {
 	if (hostname === "localhost") return "localhost";
 	return hostname.split(".").slice(-2).join(".");
 };

@@ -13,18 +13,24 @@ const PURPLE_CODE = 5;
 const BLUE_CODE = 4;
 
 const globalContext = globalThis as {
-	__lucia_debug_mode?: boolean;
+	[K in typeof DEBUG_GLOBAL]?: boolean;
 };
 
-const format = (text: string, format: string, removeFormat?: string) => {
+globalContext[DEBUG_GLOBAL] = false;
+
+const format = (
+	text: string,
+	format: string,
+	removeFormat?: string
+): string => {
 	return `${format}${text}${removeFormat ? removeFormat : DEFAULT_TEXT_FORMAT}`;
 };
 
-const bgFormat = (text: string, colorCode: number) => {
+const bgFormat = (text: string, colorCode: number): string => {
 	return format(text, `${ESCAPE}[48;5;${colorCode}m`, DEFAULT_FG_BG);
 };
 
-const fgFormat = (text: string, colorCode: number) => {
+const fgFormat = (text: string, colorCode: number): string => {
 	return format(text, `${ESCAPE}[38;5;${colorCode}m`, DEFAULT_FG_BG);
 };
 
@@ -51,16 +57,19 @@ export const fg = {
 	default: (text: string) => format(text, DEFAULT_TEXT_FORMAT)
 } as const;
 
-export const bold = (text: string) =>
-	format(text, `${ESCAPE}[1m`, `${ESCAPE}[22m`);
+export const bold = (text: string): string => {
+	return format(text, `${ESCAPE}[1m`, `${ESCAPE}[22m`);
+};
 
-const dim = (text: string) => format(text, `${ESCAPE}[2m`, `${ESCAPE}[22m`);
+const dim = (text: string): string => {
+	return format(text, `${ESCAPE}[2m`, `${ESCAPE}[22m`);
+};
 
-const isDebugModeEnabled = () => {
+const isDebugModeEnabled = (): boolean => {
 	return Boolean(globalContext[DEBUG_GLOBAL]);
 };
 
-const linebreak = () => console.log("");
+const linebreak = (): void => console.log("");
 
 const createCategory = (name: string, themeTextColor: TextColor) => {
 	const createLogger = (textColor: TextColor = fg.default) => {
@@ -80,11 +89,11 @@ const createCategory = (name: string, themeTextColor: TextColor) => {
 	};
 };
 
-export const enableDebugMode = () => {
+export const enableDebugMode = (): void => {
 	globalContext[DEBUG_GLOBAL] = true;
 };
 
-const disableDebugMode = () => {
+const disableDebugMode = (): void => {
 	globalContext[DEBUG_GLOBAL] = false;
 };
 
@@ -127,7 +136,7 @@ export const debug = {
 
 type TextColor = (typeof fg)[keyof typeof fg];
 
-const log = (type: string, text: string, subtext?: string) => {
+const log = (type: string, text: string, subtext?: string): void => {
 	if (!subtext) {
 		return console.log(
 			`${dim(new Date().toLocaleTimeString())}  ${type} ${text}`

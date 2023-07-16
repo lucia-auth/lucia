@@ -45,17 +45,17 @@ type Cookie = {
 | `attributes` | `CookieAttributes` | Cookie attributes |
 
 ```ts
-type CookieAttributes = {
-	domain?: string | undefined;
-	encode?: (value: string) => string;
-	expires?: Date | undefined;
-	httpOnly?: boolean | undefined;
-	maxAge?: number | undefined;
-	path?: string | undefined;
-	priority?: "low" | "medium" | "high" | undefined;
-	sameSite?: true | false | "lax" | "strict" | "none" | undefined;
-	secure?: boolean | undefined;
-};
+type CookieAttributes = Partial<{
+	domain: string;
+	encode: (value: string) => string;
+	expires: Date;
+	httpOnly: boolean;
+	maxAge: number;
+	path: string;
+	priority: "low" | "medium" | "high";
+	sameSite: true | false | "lax" | "strict" | "none";
+	secure: boolean;
+}>;
 ```
 
 ### `serialize()`

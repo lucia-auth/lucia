@@ -24,15 +24,24 @@ export type Middleware<Args extends any[] = any> = (context: {
 	cookieName: string;
 }) => RequestContext;
 
-export class AuthRequest<A extends Auth = any> {
-	private auth: A;
+export class AuthRequest<_Auth extends Auth = any> {
+	private auth: _Auth;
 	private context: RequestContext;
-	constructor(auth: A, context: RequestContext) {
+	constructor(
+		auth: _Auth,
+		{
+			context,
+			csrfProtectionEnabled
+		}: {
+			context: RequestContext;
+			csrfProtectionEnabled: boolean;
+		}
+	) {
 		debug.request.init(context.request.method, context.request.url);
 		this.auth = auth;
 		this.context = context;
 		try {
-			if (auth.csrfProtectionEnabled) {
+			if (csrfProtectionEnabled) {
 				auth.validateRequestOrigin(context.request);
 			}
 			this.storedSessionId =
