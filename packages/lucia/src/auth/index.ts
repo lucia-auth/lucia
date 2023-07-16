@@ -171,21 +171,23 @@ export class Auth<_Configuration extends Configuration = any> {
 		};
 	};
 
-	public transformDatabaseSession = (options: {
-		session: SessionSchema;
-		user: UserSchema;
-		fresh: boolean;
-	}): Session => {
-		const attributes = this.getSessionAttributes(options.session);
-		const active = isWithinExpiration(options.session.active_expires);
+	public transformDatabaseSession = (
+		databaseSession: SessionSchema,
+		context: {
+			user: User;
+			fresh: boolean;
+		}
+	): Session => {
+		const attributes = this.getSessionAttributes(databaseSession);
+		const active = isWithinExpiration(databaseSession.active_expires);
 		return {
 			...attributes,
-			user: this.transformDatabaseUser(options.user),
-			sessionId: options.session.id,
-			activePeriodExpiresAt: new Date(Number(options.session.active_expires)),
-			idlePeriodExpiresAt: new Date(Number(options.session.idle_expires)),
+			user: context.user,
+			sessionId: databaseSession.id,
+			activePeriodExpiresAt: new Date(Number(databaseSession.active_expires)),
+			idlePeriodExpiresAt: new Date(Number(databaseSession.idle_expires)),
 			state: active ? "active" : "idle",
-			fresh: options.fresh
+			fresh: context.fresh
 		};
 	};
 
