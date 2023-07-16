@@ -17,7 +17,7 @@ const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	const ESCAPED_TABLE_NAME = escapeName(tableName);
 	return {
 		get: async () => {
-			return await getAll(sql, `SELECT * FROM ${ESCAPED_TABLE_NAME}`);
+			return await getAll(sql.unsafe(`SELECT * FROM ${ESCAPED_TABLE_NAME}`));
 		},
 		insert: async (value: any) => {
 			const [fields, placeholders, args] = helper(value);
@@ -38,8 +38,7 @@ const queryHandler: QueryHandler = {
 		...createTableQueryHandler(TABLE_NAMES.session),
 		get: async () => {
 			const result = await getAll<DatabaseSession>(
-				sql,
-				`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`
+				sql.unsafe(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME}`)
 			);
 			return result.map((val) => transformDatabaseSession(val));
 		}
