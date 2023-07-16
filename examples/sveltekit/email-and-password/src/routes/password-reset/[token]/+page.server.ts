@@ -1,9 +1,6 @@
 import { auth } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
-import {
-	isValidPasswordResetToken,
-	validatePasswordResetToken
-} from '$lib/server/token';
+import { isValidPasswordResetToken, validatePasswordResetToken } from '$lib/server/token';
 
 import type { PageServerLoad, Actions } from './$types';
 
