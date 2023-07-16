@@ -46,7 +46,7 @@ import { lucia } from "lucia";
 import { unstorage } from "@lucia-auth/adapter-session-unstorage";
 import { createStorage } from "unstorage";
 
-const storage = createStorage()
+const storage = createStorage();
 
 const auth = lucia({
 	adapter: {
