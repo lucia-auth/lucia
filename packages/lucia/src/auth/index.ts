@@ -5,16 +5,20 @@ import { generateRandomString } from "../utils/nanoid.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { isValidDatabaseSession } from "./session.js";
-import { transformDatabaseKey } from "./key.js";
 import { AuthRequest } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
 import { isWithinExpiration } from "../utils/date.js";
 import { isAllowedUrl } from "../utils/url.js";
+import { createAdapter } from "./adapter.js";
 
 import type { Cookie, SessionCookieAttributes } from "./cookie.js";
-import type { UserSchema, SessionSchema } from "./schema.js";
-import type { Adapter, SessionAdapter, InitializeAdapter } from "./adapter.js";
+import type { UserSchema, SessionSchema, KeySchema } from "./schema.js";
+import {
+	type Adapter,
+	type SessionAdapter,
+	type InitializeAdapter
+} from "./adapter.js";
 import type { Middleware, LuciaRequest } from "./request.js";
 
 export type Session = Readonly<{
@@ -78,7 +82,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	protected middleware: _Configuration["middleware"] extends Middleware
 		? _Configuration["middleware"]
 		: ReturnType<typeof defaultMiddleware>;
-	public csrfProtectionEnabled: boolean;
+	private csrfProtectionEnabled: boolean;
 	private allowedSubdomains: string[] | "*";
 	private experimental: {
 		debugMode: boolean;
@@ -87,28 +91,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	constructor(config: _Configuration) {
 		validateConfiguration(config);
 
-		if ("user" in config.adapter) {
-			let userAdapter = config.adapter.user(LuciaError);
-			let sessionAdapter = config.adapter.session(LuciaError);
-
-			if ("getSessionAndUser" in userAdapter) {
-				const { getSessionAndUser: _, ...extractedUserAdapter } = userAdapter;
-				userAdapter = extractedUserAdapter;
-			}
-
-			if ("getSessionAndUser" in sessionAdapter) {
-				const { getSessionAndUser: _, ...extractedSessionAdapter } =
-					sessionAdapter;
-				sessionAdapter = extractedSessionAdapter;
-			}
-
-			this.adapter = {
-				...userAdapter,
-				...sessionAdapter
-			};
-		} else {
-			this.adapter = config.adapter(LuciaError);
-		}
+		this.adapter = createAdapter(config.adapter);
 		this.env = config.env;
 		this.csrfProtectionEnabled =
 			typeof config.csrfProtection === "boolean" ? config.csrfProtection : true;
@@ -171,6 +154,19 @@ export class Auth<_Configuration extends Configuration = any> {
 		return {
 			...attributes,
 			userId: databaseUser.id
+		};
+	};
+
+	public transformDatabaseKey = (databaseKey: KeySchema): Key => {
+		const [providerId, ...providerUserIdSegments] = databaseKey.id.split(":");
+		const providerUserId = providerUserIdSegments.join(":");
+		const userId = databaseKey.user_id;
+		const isPasswordDefined = !!databaseKey.hashed_password;
+		return {
+			providerId,
+			providerUserId,
+			userId,
+			passwordDefined: isPasswordDefined
 		};
 	};
 
@@ -360,7 +356,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			debug.key.info("No password included in key");
 		}
 		debug.key.success("Validated key", keyId);
-		return transformDatabaseKey(databaseKey);
+		return this.transformDatabaseKey(databaseKey);
 	};
 
 	public getSession = async (sessionId: string): Promise<Session> => {
@@ -568,14 +564,14 @@ export class Auth<_Configuration extends Configuration = any> {
 			: never
 	): AuthRequest<Lucia.Auth> => {
 		const middleware = this.middleware as Middleware;
-		return new AuthRequest(
-			this,
-			middleware({
+		return new AuthRequest(this, {
+			context: middleware({
 				args,
 				env: this.env,
 				cookieName: this.sessionCookie.name
-			})
-		);
+			}),
+			csrfProtectionEnabled: this.csrfProtectionEnabled
+		});
 	};
 
 	public createSessionCookie = (session: Session | null): Cookie => {
@@ -627,7 +623,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		if (!databaseKey) {
 			throw new LuciaError("AUTH_INVALID_KEY_ID");
 		}
-		const key = transformDatabaseKey(databaseKey);
+		const key = this.transformDatabaseKey(databaseKey);
 		return key;
 	};
 
@@ -636,7 +632,9 @@ export class Auth<_Configuration extends Configuration = any> {
 			await this.adapter.getKeysByUserId(userId),
 			this.getUser(userId)
 		]);
-		return databaseKeys.map((databaseKey) => transformDatabaseKey(databaseKey));
+		return databaseKeys.map((databaseKey) =>
+			this.transformDatabaseKey(databaseKey)
+		);
 	};
 
 	public updateKeyPassword = async (

@@ -1,13 +1,17 @@
 import scrypt from "../scrypt/index.js";
 import { generateRandomString } from "./nanoid.js";
 
-export const generateScryptHash = async (s: string) => {
+export const generateScryptHash = async (s: string): Promise<string> => {
 	const salt = generateRandomString(16);
 	const key = await hashWithScrypt(s.normalize("NFKC"), salt);
 	return `s2:${salt}:${key}`;
 };
 
-const hashWithScrypt = async (s: string, salt: string, blockSize = 16) => {
+const hashWithScrypt = async (
+	s: string,
+	salt: string,
+	blockSize = 16
+): Promise<string> => {
 	const keyUint8Array = await scrypt(
 		new TextEncoder().encode(s),
 		new TextEncoder().encode(salt),
@@ -21,7 +25,10 @@ const hashWithScrypt = async (s: string, salt: string, blockSize = 16) => {
 	return convertUint8ArrayToHex(keyUint8Array);
 };
 
-export const validateScryptHash = async (s: string, hash: string) => {
+export const validateScryptHash = async (
+	s: string,
+	hash: string
+): Promise<boolean> => {
 	const arr = hash.split(":");
 	if (arr.length === 2) {
 		const [salt, key] = arr;
@@ -39,7 +46,7 @@ export const validateScryptHash = async (s: string, hash: string) => {
 	return false;
 };
 
-const constantTimeEqual = (a: string, b: string) => {
+const constantTimeEqual = (a: string, b: string): boolean => {
 	if (a.length !== b.length) {
 		return false;
 	}
@@ -53,6 +60,6 @@ const constantTimeEqual = (a: string, b: string) => {
 	return c === 0;
 };
 
-export const convertUint8ArrayToHex = (arr: Uint8Array) => {
+export const convertUint8ArrayToHex = (arr: Uint8Array): string => {
 	return [...arr].map((x) => x.toString(16).padStart(2, "0")).join("");
 };

@@ -19,7 +19,7 @@ export const createSessionCookie = (
 		attributes: SessionCookieAttributes;
 		expires: boolean;
 	}
-) => {
+): Cookie => {
 	const getExpiration = () => {
 		if (session === null) return 0;
 		if (options.expires) {
