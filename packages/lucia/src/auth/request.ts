@@ -2,6 +2,7 @@ import { debug } from "../utils/debug.js";
 
 import type { Auth, Env, Session } from "./index.js";
 import type { Cookie } from "./cookie.js";
+import { LuciaError } from "./error.js";
 
 export type LuciaRequest = {
 	method: string;
@@ -96,7 +97,10 @@ export class AuthRequest<_Auth extends Auth = any> {
 					this.setSessionCookie(session);
 				}
 				return resolve(session);
-			} catch {
+			} catch (e) {
+				if (!(e instanceof LuciaError)) {
+					throw e;
+				}
 				this.setSessionCookie(null);
 				return resolve(null);
 			}
@@ -116,7 +120,10 @@ export class AuthRequest<_Auth extends Auth = any> {
 				const session = await this.auth.getSession(this.bearerToken);
 				if (session.state === "idle") return resolve(null);
 				return resolve(session);
-			} catch {
+			} catch (e) {
+				if (!(e instanceof LuciaError)) {
+					throw e;
+				}
 				return resolve(null);
 			}
 		});
