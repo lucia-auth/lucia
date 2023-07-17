@@ -32,14 +32,14 @@ export const validateScryptHash = async (
 	const arr = hash.split(":");
 	if (arr.length === 2) {
 		const [salt, key] = arr;
-		const targetKey = await hashWithScrypt(s, salt, 8);
+		const targetKey = await hashWithScrypt(s.normalize("NFKC"), salt, 8);
 		const result = constantTimeEqual(targetKey, key);
 		return result;
 	}
 	if (arr.length !== 3) return false;
 	const [version, salt, key] = arr;
 	if (version === "s2") {
-		const targetKey = await hashWithScrypt(s, salt);
+		const targetKey = await hashWithScrypt(s.normalize("NFKC"), salt);
 		const result = constantTimeEqual(targetKey, key);
 		return result;
 	}
