@@ -18,17 +18,14 @@ type ExtractModelNames<_PrismaClient extends PrismaClient> = Exclude<
 
 export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 	client: _PrismaClient,
-	options?: {
-		modelNames: {
-			user: ExtractModelNames<_PrismaClient>;
-			session: ExtractModelNames<_PrismaClient> | null;
-			key: ExtractModelNames<_PrismaClient>;
-		};
-		userRelationKey: string;
+	modelNames?: {
+		user: ExtractModelNames<_PrismaClient>;
+		session: ExtractModelNames<_PrismaClient> | null;
+		key: ExtractModelNames<_PrismaClient>;
 	}
 ): InitializeAdapter<Adapter> => {
 	const getModels = () => {
-		if (!options) {
+		if (!modelNames) {
 			return {
 				User: client["user"] as SmartPrismaModel<UserSchema>,
 				Session: (client["session"] as SmartPrismaModel<SessionSchema>) ?? null,
@@ -36,17 +33,16 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 			};
 		}
 		return {
-			User: client[options.modelNames.user] as SmartPrismaModel<UserSchema>,
-			Session: options.modelNames.session
+			User: client[modelNames.user] as SmartPrismaModel<UserSchema>,
+			Session: modelNames.session
 				? (client[
-						options.modelNames.session
+						modelNames.session
 				  ] as SmartPrismaModel<SessionSchema>)
 				: null,
-			Key: client[options.modelNames.key] as SmartPrismaModel<KeySchema>
+			Key: client[modelNames.key] as SmartPrismaModel<KeySchema>
 		};
 	};
 	const { User, Session, Key } = getModels();
-	const userRelationKey = options?.userRelationKey ?? "user";
 
 	return (LuciaError) => {
 		return {
@@ -219,26 +215,6 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 						id: userId
 					}
 				});
-			},
-
-			getSessionAndUser: async (sessionId) => {
-				if (!Session) {
-					throw new Error("Session table not defined");
-				}
-				const result = await Session.findUnique({
-					where: {
-						id: sessionId
-					},
-					include: {
-						[userRelationKey]: true
-					}
-				});
-				if (!result) return [null, null];
-				const { [userRelationKey]: userResult, ...sessionResult } = result;
-				return [
-					transformPrismaSession(sessionResult as PrismaSession),
-					userResult as UserSchema
-				];
 			}
 		};
 	};
