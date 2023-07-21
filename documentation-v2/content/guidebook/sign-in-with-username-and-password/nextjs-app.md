@@ -379,7 +379,7 @@ export const POST = async (request: NextRequest) => {
 	// basic check
 	if (
 		typeof username !== "string" ||
-		username.length < 4 ||
+		username.length < 1 ||
 		username.length > 31
 	) {
 		return NextResponse.json(
