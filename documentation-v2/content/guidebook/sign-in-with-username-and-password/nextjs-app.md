@@ -379,7 +379,7 @@ export const POST = async (request: NextRequest) => {
 	// basic check
 	if (
 		typeof username !== "string" ||
-		username.length <  ||
+		username.length < 1 ||
 		username.length > 31
 	) {
 		return NextResponse.json(
@@ -430,11 +430,10 @@ export const POST = async (request: NextRequest) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
-			// user does not exist
-				// or invalid password
+			// user does not exist or invalid password
 			return NextResponse.json(
 				{
-					error: "Incorrect username of password"
+					error: "Incorrect username or password"
 				},
 				{
 					status: 400
