@@ -13,35 +13,25 @@ import { prisma } from "@lucia-auth/adapter-prisma";
 ```ts
 const prisma: (
 	client: PrismaClient,
-	options?: {
-		modelNames: {
-			user: string;
-			key: string;
-			session: string | null;
-		};
-		userRelationKey: string;
+	modelNames?: {
+		user: string;
+		key: string;
+		session: string | null;
 	}
 ) => InitializeAdapter<Adapter>;
 ```
 
 ##### Parameters
 
-| name                         | type             | description                                          | optional |
-| ---------------------------- | ---------------- | ---------------------------------------------------- | :------: |
-| `client`                     | `PrismaClient`   | The Prisma client                                    |          |
-| `options`                    |                  |                                                      |    ✓     |
-| `options.modelNames.user`    | `string`         |                                                      |          |
-| `options.modelNames.key`     | `string`         |                                                      |          |
-| `options.modelNames.session` | `string \| null` | Can be `null` when using alongside a session adapter |          |
-| `options.userRelationKey`    | `string`         |                                                      |          |
+| name                 | type             | description                                          | optional |
+| -------------------- | ---------------- | ---------------------------------------------------- | :------: |
+| `client`             | `PrismaClient`   | The Prisma client                                    |          |
+| `modelNames`         |                  |                                                      |    ✓     |
+| `modelNames.user`    | `string`         |                                                      |          |
+| `modelNames.key`     | `string`         |                                                      |          |
+| `modelNames.session` | `string \| null` | Can be `null` when using alongside a session adapter |          |
 
-When `options` is undefined, the adapter uses predefined adapter configs, and as such, your Prisma schema must match exactly the one listed below this page. You can still add columns to the user and session table.
-
-The values for the `modelNames` params of the adapter config is the `camelCase` version of your `PascalCase` model names defined in your schema (sounds confusing but the TS auto-complete should help you). The `userRelationKey` is key that represents foreign key relations (`user_relation_key` in the example):
-
-```prisma
-user_relation_key User @relation(references: [id], fields: [user_id], onDelete: Cascade)
-```
+The values for the `modelNames` params is the `camelCase` version of your `PascalCase` model names defined in your schema (sounds confusing but the TS auto-complete should help you). When it's undefined, the adapter uses predefined model names (see below).
 
 ## Installation
 
@@ -68,12 +58,9 @@ const auth = lucia({
 // default values
 const auth = lucia({
 	adapter: prisma(client, {
-		modelNames: {
-			user: "user",
-			key: "key",
-			session: "session"
-		},
-		userRelationKey: "user"
+		user: "user", // model User {}
+		key: "key", // model Key {}
+		session: "session" // model Session {}
 	})
 	// ...
 });
@@ -81,7 +68,7 @@ const auth = lucia({
 
 ## Prisma schema
 
-You can add additional columns to the user model to store user attributes, and to the session model to store session attributes. **Your schema must exactly match this if you're `options` params is undefined** (you can still add columns for attributes).
+You can add additional columns to the user model to store user attributes, and to the session model to store session attributes. If you change the model names, pass the new names to the adapter config.
 
 ```prisma
 model User {
@@ -96,7 +83,6 @@ model Session {
   user_id        String
   active_expires BigInt
   idle_expires   BigInt
-  // pass this key to `userRelationKey`
   user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
@@ -106,7 +92,6 @@ model Key {
   id              String  @id @unique
   hashed_password String?
   user_id         String
-  // pass this key to `userRelationKey`
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
