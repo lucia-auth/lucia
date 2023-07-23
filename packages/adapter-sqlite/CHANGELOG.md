@@ -1,5 +1,19 @@
 # @lucia-auth/adapter-sqlite
 
+## 2.0.0-beta.8
+
+### Major changes
+
+- [#822](https://github.com/pilcrowOnPaper/lucia/pull/822) by [@abdel-17](https://github.com/abdel-17) : Require `@libsql/client@0.3.0`
+
+### Minor changes
+
+- [#867](https://github.com/pilcrowOnPaper/lucia/pull/867) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+### Patch changes
+
+- [#846](https://github.com/pilcrowOnPaper/lucia/pull/846) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `@libsql/client` import
+
 ## 2.0.0-beta.7
 
 ### Minor changes

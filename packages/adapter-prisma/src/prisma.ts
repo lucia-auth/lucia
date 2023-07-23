@@ -35,9 +35,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 		return {
 			User: client[modelNames.user] as SmartPrismaModel<UserSchema>,
 			Session: modelNames.session
-				? (client[
-						modelNames.session
-				  ] as SmartPrismaModel<SessionSchema>)
+				? (client[modelNames.session] as SmartPrismaModel<SessionSchema>)
 				: null,
 			Key: client[modelNames.key] as SmartPrismaModel<KeySchema>
 		};

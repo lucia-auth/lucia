@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-mongoose
 
+## 3.0.0-beta.7
+
+### Minor changes
+
+- [#867](https://github.com/pilcrowOnPaper/lucia/pull/867) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 3.0.0-beta.6
 
 ### Minor changes

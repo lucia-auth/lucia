@@ -1,5 +1,15 @@
 # @lucia-auth/adapter-prisma
 
+## 3.0.0-beta.8
+
+### Major changes
+
+- [#858](https://github.com/pilcrowOnPaper/lucia/pull/858) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `prisma()` params
+
+### Minor changes
+
+- [#867](https://github.com/pilcrowOnPaper/lucia/pull/867) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 3.0.0-beta.7
 
 ### Minor changes

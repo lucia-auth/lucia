@@ -408,7 +408,11 @@ export const POST = async (request: NextRequest) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("username", username.toLowerCase(), password);
+		const user = await auth.useKey(
+			"username",
+			username.toLowerCase(),
+			password
+		);
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
