@@ -572,7 +572,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			context: middleware({
 				args,
 				env: this.env,
-				cookieName: this.sessionCookie.name
+				sessionCookieName: this.sessionCookie.name
 			}),
 			csrfProtectionEnabled: this.csrfProtectionEnabled
 		});
