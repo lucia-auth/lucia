@@ -15,12 +15,12 @@ type Props = {
 			class="rounded appearance-none flex place-items-center gap-x-0.5 group py-1.5"
 		>
 			<span
-				class="block leading-none text-main group-hover:text-zinc-700 font-medium select-button-text"
+				class="block leading-none text-main group-hover:text-black font-medium select-button-text"
 			>
 				{Astro.props.title}</span
 			>
 			<span
-				class="h-3.5 w-3.5 block fill-current text-zinc-400 group-hover:text-zinc-700"
+				class="h-3.5 w-3.5 block fill-current text-zinc-400 group-hover:text-black"
 			>
 				<ExpandIcon />
 			</span>
@@ -52,6 +52,7 @@ type Props = {
 	import { createToggleState } from "@utils/state";
 
 	const [toggleMenu, onMenuToggle] = createToggleState();
+	
 	class SelectLink extends HTMLElement {
 		constructor() {
 			super();
@@ -70,11 +71,9 @@ type Props = {
 				onMenuToggle((menuOpened) => {
 					if (menuOpened) {
 						buttonTitleSpan.classList.remove("text-main");
-						buttonTitleSpan.classList.add("text-zinc-700");
 
 						selectMenu.classList.remove("hidden");
 					} else {
-						buttonTitleSpan.classList.remove("text-zinc-700");
 						buttonTitleSpan.classList.add("text-main");
 						selectMenu.classList.add("hidden");
 					}

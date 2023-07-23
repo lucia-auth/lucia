@@ -4,12 +4,14 @@ module.exports = {
 	theme: {
 		extend: {
 			screens: {
-				xs: "475px"
+				xs: "475px",
+				"1.5xl":"1400px"
 			},
 			colors: {
 				main: "#5f57ff",
+				"main-pastel": "#a7a6ff",
 				zinc: {
-					80: "#F5F5F6"
+					80: "#f7f7f7"
 				}
 			},
 			fontSize: {
