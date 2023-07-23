@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-prisma
 
+## 3.0.0-beta.7
+
+### Minor changes
+
+- [#842](https://github.com/pilcrowOnPaper/lucia/pull/842) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 3.0.0-beta.6
+
+### Patch changes
+
+- [#823](https://github.com/pilcrowOnPaper/lucia/pull/823) by [@delight](https://github.com/delight) : Adjust peerDependency to solve the unmet peer dependency warning for prisma 5.x
+
 ## 3.0.0-beta.5
 
 ### Minor changes

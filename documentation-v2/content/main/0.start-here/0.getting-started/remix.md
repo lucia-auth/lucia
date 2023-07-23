@@ -8,9 +8,9 @@ description: "Learn how to set up Lucia in your Remix project"
 Install Lucia using your package manager of your choice.
 
 ```
-npm i lucia
-pnpm add lucia
-yarn add lucia
+npm i lucia@beta
+pnpm add lucia@beta
+yarn add lucia@beta
 ```
 
 ## Configure Remix project
@@ -82,6 +82,7 @@ const auth = lucia({
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
+- [Unstorage](/database-adapters/unstorage): Azure, Cloudflare KV, Memory, MongoDB, Planetscale, Redis, Vercel KV
 
 ### Provider specific adapters
 

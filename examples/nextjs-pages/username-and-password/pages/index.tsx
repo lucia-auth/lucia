@@ -51,8 +51,10 @@ const Page = (
 						method: "POST",
 						redirect: "manual"
 					});
-					if (response.status === 0 || response.ok) {
-						router.push("/login"); // redirect to login page on success
+					if (response.status === 0) {
+						// redirected
+						// when using `redirect: "manual"`, response status 0 is returned
+						return router.push("/login");
 					}
 				}}
 			>

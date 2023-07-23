@@ -14,7 +14,7 @@ import type {
 } from "lucia";
 
 export const planetscaleAdapter = (
-	connection: Connection,
+	connection: Pick<Connection, "execute" | "transaction">,
 	tables: {
 		user: string;
 		session: string | null;

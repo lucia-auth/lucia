@@ -1,0 +1,32 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Email & password auth with Lucia</title>
+
+		<style>
+			* {
+				margin-top: 0.5rem;
+				margin-bottom: 0.5rem;
+			}
+			body {
+				padding: 2rem;
+			}
+			.error {
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Sign up</h1>
+		<form method="post">
+			<label for="email">Email</label>
+			<input name="email" id="email" value="%%email%%" /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<p class="error">%%error%%</p>
+		<a href="/login">Sign in</a>
+	</body>
+</html>

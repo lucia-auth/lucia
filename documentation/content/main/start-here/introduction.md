@@ -77,7 +77,7 @@ Lucia is a sever-side library, so it does not provide any client side helpers.
 - MySQL adapters: `@lucia-auth/adapter-mysql`
 - PostgreSQL adapters: `@lucia-auth/adapter-postgresql`
 - Prisma adapter: `@lucia-auth/adapter-prisma`
-- Redis adapter: `@lucia-auth/adapter-session-redis`
 - SQLite adapters: `@lucia-auth/adapter-sqlite`
 - OAuth integration: `@lucia-auth/oauth`
 - Tokens integration: `@lucia-auth/tokens`
+- Redis adapter: `@lucia-auth/adapter-session-redis`

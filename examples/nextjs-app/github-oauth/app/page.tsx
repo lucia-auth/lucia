@@ -1,22 +1,17 @@
-import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import { getPageSession } from "@/auth/lucia";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
-	const session = await authRequest.validate();
+	const session = await getPageSession();
 	if (!session) redirect("/login");
 	return (
 		<>
 			<h1>Profile</h1>
 			<p>User id: {session.user.userId}</p>
 			<p>Github username: {session.user.githubUsername}</p>
-			<Form action="/logout" successRedirect="/">
+			<Form action="/logout">
 				<input type="submit" value="Sign out" />
 			</Form>
 		</>

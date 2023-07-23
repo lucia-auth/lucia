@@ -35,9 +35,9 @@ Table names are automatically escaped.
 ## Installation
 
 ```
-npm i @lucia-auth/adapter-mysql
-pnpm add @lucia-auth/adapter-mysql
-yarn add @lucia-auth/adapter-mysql
+npm i @lucia-auth/adapter-mysql@beta
+pnpm add @lucia-auth/adapter-mysql@beta
+yarn add @lucia-auth/adapter-mysql@beta
 ```
 
 ## Usage

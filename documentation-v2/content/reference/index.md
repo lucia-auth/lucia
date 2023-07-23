@@ -42,3 +42,7 @@ order: -1
 ### `@lucia-auth/adapter-session-redis`
 
 - [`redis()`](/database-adapters/redis)
+
+### `@lucia-auth/adapter-session-unstorage`
+
+- [`redis()`](/database-adapters/unstorage)

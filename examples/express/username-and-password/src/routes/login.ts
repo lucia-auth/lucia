@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
 	// basic check
 	if (
 		typeof username !== "string" ||
-		password.length < 1 ||
+		username.length < 1 ||
 		username.length > 31
 	) {
 		const html = renderPage({
@@ -55,9 +55,9 @@ router.post("/login", async (req, res) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("username", username, password);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
 		const authRequest = auth.handleRequest(req, res);
@@ -71,6 +71,8 @@ router.post("/login", async (req, res) => {
 			(e.message === "AUTH_INVALID_KEY_ID" ||
 				e.message === "AUTH_INVALID_PASSWORD")
 		) {
+			// user does not exist
+			// or invalid password
 			const html = renderPage({
 				error: "Incorrect username or password",
 				username

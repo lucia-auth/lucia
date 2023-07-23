@@ -29,7 +29,7 @@ if (Astro.request.method === "POST") {
             const user = await auth.createUser({
                 key: {
                     providerId: "username", // auth method
-                    providerUserId: username, // unique id when using "username" auth method
+                    providerUserId: username.toLowerCase(), // unique id when using "username" auth method
                     password // hashed by Lucia
                 },
                 attributes: {
@@ -50,12 +50,15 @@ if (Astro.request.method === "POST") {
                 e.code === "SQLITE_CONSTRAINT_UNIQUE"
             ) {
                 errorMessage = "Username already taken";
+                Astro.response.status = 400
             } else {
                 errorMessage = "An unknown error occurred";
+                Astro.response.status = 500
             }
         }
     } else {
         errorMessage = "Invalid input";
+        Astro.response.status = 400
     }
 }
 
