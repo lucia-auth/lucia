@@ -49,7 +49,7 @@ export const libsqlAdapter = (
 						sql: `INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`,
 						args: keyArgs
 					};
-					await db.batch("write", [insertUserQuery, insertKeyQuery]);
+					await db.batch([insertUserQuery, insertKeyQuery], "write");
 				} catch (e) {
 					const error = e as Partial<LibsqlError>;
 					if (
