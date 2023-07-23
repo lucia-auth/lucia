@@ -1,5 +1,21 @@
 # lucia
 
+## 2.0.0-beta.7
+
+### Major changes
+
+- [#866](https://github.com/pilcrowOnPaper/lucia/pull/866) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Rename `cookieName` to `sessionCookieName` in `Middleware`
+
+### Minor changes
+
+- [#864](https://github.com/pilcrowOnPaper/lucia/pull/864) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Export `generateLuciaPasswordHash`, `validateLuciaPasswordHash` from `/utils`
+
+### Patch changes
+
+- [#849](https://github.com/pilcrowOnPaper/lucia/pull/849) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove Node dependent type check
+
+- [#848](https://github.com/pilcrowOnPaper/lucia/pull/848) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Normalize string before comparing when validating hashes
+
 ## 2.0.0-beta.6
 
 ### Major changes

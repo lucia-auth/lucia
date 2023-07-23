@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-session-redis
 
+## 2.0.0-beta.8
+
+### Minor changes
+
+- [#867](https://github.com/pilcrowOnPaper/lucia/pull/867) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.7
 
 ### Minor changes

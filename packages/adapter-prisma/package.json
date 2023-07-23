@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-prisma",
-	"version": "3.0.0-beta.7",
+	"version": "3.0.0-beta.8",
 	"description": "Prisma adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
