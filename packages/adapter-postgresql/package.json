@@ -41,7 +41,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "2.0.0-beta.6",
+		"lucia": "2.0.0-beta.7",
 		"pg": "^8.8.0",
 		"postgres": "^3.3.0"
 	},
