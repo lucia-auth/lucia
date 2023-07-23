@@ -31,7 +31,7 @@
 	},
 	"license": "MIT",
 	"exports": {
-		".": "./index.js"
+		".": "./dist/index.js"
 	},
 	"peerDependencies": {
 		"lucia": "2.0.0-beta.6",
