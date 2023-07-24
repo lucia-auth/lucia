@@ -10,8 +10,7 @@ import { getSubCollections } from "@utils/content";
 const subCollections = await getSubCollections("main");
 
 const code1 = `CREATE TABLE user (
-	id TEXT NOT NULL PRIMARY KEY,
-	username TEXT NOT NULL UNIQUE,
+	id TEXT NOT NULL PRIMARY KEY
 );
 
 CREATE TABLE user_key (
@@ -30,9 +29,10 @@ CREATE TABLE user_session (
 const code2 = `import { lucia } from "lucia";
 import { express } from "lucia/middleware";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
+import { db } from "./db.js";
 
 export const auth = lucia({
-	adapter: betterSqlite3(),
+	adapter: betterSqlite3(db),
 	middleware: express(),
 	env: "DEV"
 });
@@ -47,9 +47,7 @@ const user = await auth.createUser({
 		providerUserId: username,
 		password
 	},
-	attributes: {
-		username
-	}
+	attributes: {}
 });
 const session = await auth.createSession({
 	userId: user.userId,
@@ -117,7 +115,7 @@ const contributors = contributorsResult.map((val) => {
 				href="/start-here/getting-started">Get started</a
 			>
 		</div>
-		<div class="mt-12 bg-main-pastel px-4 sm:px-8 md:px-16 py-12">
+		<div class="mt-12 bg-sky-500 text-white px-4 sm:px-8 md:px-16 py-12">
 			<h2 class="text-3xl font-semibold mx-auto text-center mb-2">
 				Motivation
 			</h2>
@@ -128,21 +126,21 @@ const contributors = contributorsResult.map((val) => {
 				worrying about the small details?
 			</p>
 		</div>
-		<div class="pt-12 pb-8 px-4 sm:px-8 md:px-16 bg-zinc-80">
+		<div class="pt-12 pb-8 px-4 sm:px-8 md:px-16">
 			<h2 class="text-3xl font-semibold mx-auto text-center mb-2">
 				It just works
 			</h2>
-			<p class="mb-12 text-center max-w-2xl mx-auto">
+			<p class="mb-8 text-center max-w-2xl mx-auto">
 				Forget endless configuration and callbacks - just write code.
 			</p>
 			<div
-				class="flex flex-col-reverse xl:flex-row gap-y-8 xl:gap-x-8 mb-8 rounded-lg bg-white py-6 px-8"
+				class="flex flex-col-reverse xl:flex-row gap-y-8 xl:gap-x-8 mb-8 rounded-xl bg-zinc-80 py-6 px-8"
 			>
 				<div class="grow">
 					<Code code={code1} lang="sql" />
 				</div>
 				<div class="w-full xl:w-72 1.5xl:w-96">
-					<h3 class="text-xl font-semibold mb-4">1. Set up your database</h3>
+					<h3 class="text-xl font-semibold mb-2">Set up your database</h3>
 					<p>
 						Create 3 basic, minimum tables for Lucia. You can add columns to the
 						user table to store custom attributes.
@@ -150,32 +148,48 @@ const contributors = contributorsResult.map((val) => {
 				</div>
 			</div>
 			<div
-				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 mb-8 rounded-lg bg-white py-6 px-8"
+				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 mb-8 rounded-xl bg-zinc-80 py-6 px-8"
 			>
 				<div class="grow">
 					<Code code={code2} lang="ts" />
 				</div>
 				<div class="w-full xl:w-72 1.5xl:w-96">
-					<h3 class="text-xl font-semibold mb-4">2. Initialize Lucia</h3>
+					<h3 class="text-xl font-semibold mb-2">Initialize Lucia</h3>
 					<p>
-						Initialize Lucia using one of the many provided database adapters.
-						Use middleware to use Lucia with your framework or runtime of
-						choice.
+						Initialize Lucia using one of the many provided adapters and
+						middleware to use it with your database and framework of choice.
 					</p>
 				</div>
 			</div>
 			<div
-				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 mb-8 rounded-lg bg-white py-6 px-8"
+				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 mb-8 rounded-xl bg-zinc-80 py-6 px-8"
 			>
 				<div class="grow">
 					<Code code={code3} lang="ts" />
 				</div>
 				<div class="w-full xl:w-72 1.5xl:w-96">
-					<h3 class="text-xl font-semibold mb-4">3. Start building</h3>
+					<h3 class="text-xl font-semibold mb-2">Start building</h3>
+					<p>
+						And that's it! Use Lucia's API to handle basic tasks like creating
+						and validating sessions, and you always have the option to fallback
+						to raw database queries when you need more.
+					</p>
 				</div>
 			</div>
 		</div>
-		<div class="pt-12 pb-8 px-4 sm:px-8 md:px-16 bg-red-200">
+		<div class="pt-12 pb-24 px-4 sm:px-8 md:px-16">
+			<h2 class="text-3xl font-semibold mx-auto text-center mb-2">
+				Ready for everything
+			</h2>
+			<p class="mb-8 text-center max-w-2xl mx-auto">
+				Lucia comes with built in support for tons of databases, ORMs, and
+				frameworks. Run it anywhere, including Node.js, Deno, and Bun.
+			</p>
+			<div>
+				<!-- <div class="w-16 h-16 rounded-full bg-blue-400"></div> -->
+			</div>
+		</div>
+		<div class="pt-12 pb-24 px-4 sm:px-8 md:px-16">
 			<h2 class="text-3xl font-semibold mx-auto text-center mb-2">
 				Free and open source
 			</h2>
@@ -183,7 +197,9 @@ const contributors = contributorsResult.map((val) => {
 				Lucia is a free and open source project made possible by our
 				contributors! Thank you to everyone who has helped with the development!
 			</p>
-			<div class="flex w-full flex-wrap gap-2 pb-1 place-content-center">
+			<div
+				class="flex w-full flex-wrap gap-2 pb-1 place-content-center max-w-4xl mx-auto"
+			>
 				{
 					contributors.map((contributor) => {
 						return (
@@ -196,7 +212,7 @@ const contributors = contributorsResult.map((val) => {
 									src={contributor.avatar}
 									height="128"
 									width="128"
-									class="h-8 w-8 rounded-full bg-red-300 object-fill transition duration-100 hover:scale-110"
+									class="h-8 w-8 rounded-full bg-red-400 object-fill transition duration-100 hover:scale-110"
 									alt={contributor.username}
 									loading="lazy"
 								/>
@@ -206,14 +222,16 @@ const contributors = contributorsResult.map((val) => {
 				}
 			</div>
 		</div>
-		<div class="pt-12 pb-16">
-			<p class="text-center">Pro tip: Lucia is pronounced <i>Loo-shya</i></p>
-			<p class="text-center mt-4 text-sm">
-				Created by <a
-					class="text-main hover:underline"
-					href="https://pilcrow.vercel.app">pilcrow</a
-				>
-			</p>
+		<div class="pb-12 px-4 sm:px-8 md:px-16 text-zinc-600 text-sm">
+			<div class="border-t pt-12">
+				<p class="text-center">Tip: Lucia is pronounced <i>Loo-shya</i></p>
+				<p class="text-center mt-4">
+					Created by <a
+						class="text-main hover:underline"
+						href="https://pilcrow.vercel.app">pilcrow</a
+					>
+				</p>
+			</div>
 		</div>
 	</main>
 </BaseLayout>
