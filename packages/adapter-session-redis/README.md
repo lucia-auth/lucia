@@ -9,7 +9,7 @@ Redis session adapters for Lucia v2.
 ## Included adapters
 
 - [Redis](https://redis.io) ([Documentation](https://v2.lucia-auth.com/database-adapters/redis))
-- [Upstash](https://upstash.com) ([Documentation](https://v2.lucia-auth.com/database-adapters/upstash))
+- [Upstash](https://upstash.com) ([Documentation](https://v2.lucia-auth.com/database-adapters/upstash-redis))
 
 ## Installation
 

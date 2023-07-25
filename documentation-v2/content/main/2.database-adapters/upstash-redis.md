@@ -1,7 +1,7 @@
 ---
-title: "Upstash adapter"
-menuTitle: "Upstash"
-description: "Learn how to use Upstas Redis with Lucia"
+title: "Upstash Redis adapter"
+menuTitle: "Upstash Redis"
+description: "Learn how to use Upstash Redis with Lucia"
 ---
 
 Session adapter for [Upstash Redis](https://upstash.com) provided by the Redis session adapter package. This only handles sessions, and not users or keys.

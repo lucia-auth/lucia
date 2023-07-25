@@ -29,6 +29,7 @@ order: -1
 ### `@lucia-auth/adapter-postgresql`
 
 - [`pg()`](/database-adapters/pg)
+- [`postgres()`](/database-adapters/postgres)
 
 ### `@lucia-auth/adapter-prisma`
 
@@ -38,10 +39,12 @@ order: -1
 
 - [`betterSqlite3()`](/database-adapters/better-sqlite3)
 - [`d1()`](/database-adapters/cloudflare-d1)
+- [`libsql()`](/database-adapters/libsql)
 
 ### `@lucia-auth/adapter-session-redis`
 
 - [`redis()`](/database-adapters/redis)
+- [`upstash()`](/database-adapters/upstash-redis)
 
 ### `@lucia-auth/adapter-session-unstorage`
 
