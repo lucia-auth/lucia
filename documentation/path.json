@@ -1,6 +1,0 @@
-{
-	"/start-here/getting-started": {
-		"default": "/shared/start-here/getting-started.md",
-		"sveltekit": "/shared/start-here/getting-started.sveltekit.md"
-	}
-}

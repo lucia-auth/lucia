@@ -1,1 +1,0 @@
-export { generateSearchIndex } from "./generate";

@@ -1,5 +1,5 @@
 ---
-_order: 0
+order: 0
 title: "Patreon"
 description: "Learn about using the Patreon provider in Lucia OAuth integration"
 ---
@@ -8,18 +8,14 @@ OAuth integration for Patreon. Refer to [Patreon OAuth documentation](https://do
 
 ```ts
 import { patreon } from "@lucia-auth/oauth/providers";
-```
-
-The `identity` scope is always included regardless of provided `scope` config.
-
-### Initialization
-
-```ts
-import { patreon } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
 const patreonAuth = patreon(auth, configs);
 ```
+
+The `identity` scope is always included regardless of provided `scope` config.
+
+## `patreon()`
 
 ```ts
 const patreon: (
@@ -31,79 +27,90 @@ const patreon: (
 		scope?: string[];
 		allMemberships?: boolean;
 	}
-) => OAuthProvider<PatreonUser, PatreonTokens>;
+) => PatreonProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                 | type                                 | description                                        | optional |
-| -------------------- | ------------------------------------ | -------------------------------------------------- | :------: |
-| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                     |          |
-| configs.clientId     | `string`                             | Patreon OAuth app client id                        |          |
-| configs.clientSecret | `string`                             | Patreon OAuth app client secret                    |          |
-| configs.redirectUri  | `string`                             | one of the authorized redirect URIs                |          |
-| configs.scope        | `string[]`                           | an array of scopes - `identity` is always included |    ✓     |
+| name                   | type                                       | description                                        | optional |
+| ---------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| `configs.clientId`     | `string`                                   | Patreon OAuth app client id                        |          |
+| `configs.clientSecret` | `string`                                   | Patreon OAuth app client secret                    |          |
+| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs                |          |
+| `configs.scope`        | `string[]`                                 | an array of scopes - `identity` is always included |    ✓     |
 
-#### Returns
+##### Returns
 
-| type                                              | description      |
-| ------------------------------------------------- | ---------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | Patreon provider |
+| type                                  | description      |
+| ------------------------------------- | ---------------- |
+| [`PatreonProvider`](#patreonprovider) | Patreon provider |
 
-## `PatreonProvider`
+## Interfaces
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+### `PatreonProvider`
 
-### `getAuthorizationUrl()`
+Satisfied [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
+
+```ts
+type PatreonProvider = OAuthProvider<PatreonUser, PatreonTokens>;
+```
+
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 ```
 
-#### Parameter
-
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
-
-#### Returns
+##### Returns
 
 | name    | type     | description          |
 | ------- | -------- | -------------------- |
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and returns the session.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
+const validateCallback: (code: string) => Promise<PatreonUserAuth>;
 ```
 
-#### Parameter
+##### Parameters
 
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
-#### Returns
+##### Returns
 
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
+| type                                  |
+| ------------------------------------- |
+| [`PatreonUserAuth`](#patreonuserauth) |
 
-#### Errors
+##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
 
-## `PatreonTokens`
+### `PatreonUserAuth`
+
+```ts
+type PatreonUserAuth = ProviderUserAuth & {
+	patreonUser: PatreonUser;
+	patreonTokens: PatreonTokens;
+};
+```
+
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`PatreonUser`](#patreonuser)                                      |
+| [`PatreonTokens`](#patreontokens)                                  |
+
+### `PatreonTokens`
 
 ```ts
 type PatreonTokens = {
@@ -113,7 +120,7 @@ type PatreonTokens = {
 };
 ```
 
-## `PatreonUser`
+### `PatreonUser`
 
 ```ts
 type PatreonUser = {
