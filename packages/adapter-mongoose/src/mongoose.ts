@@ -83,6 +83,43 @@ export const mongooseAdapter = (models: {
 				).lean();
 				return sessions.map((val) => transformSessionDoc(val));
 			},
+			getSessionAndUserBySessionId: async (sessionId: string) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
+
+				const sessionUser = await Session.aggregate([
+					{ $match: { _id: sessionId } },
+					{
+						$lookup: {
+							from: User.collection.name,
+							localField: "user_id",
+							// Relies on _id being a String, not ObjectId. 
+							// But this assumption is used elsewhere, as well
+							foreignField: "_id",
+							as: "users"
+						}
+					}
+				]).exec();
+
+				// More verbose, if you prefer:
+				// if (
+				//     !sessionUser || 
+				//     !sessionUser[0] ||
+				//     !sessionUser[0].users ||
+				//     !sessionUser[0].users[0]
+				// ) return null
+
+				if (!sessionUser?.[0]?.users?.length) return null;
+
+				const { users, ...session } = sessionUser[0];
+
+
+				return {
+					user: transformUserDoc(users[0]),
+					session: transformSessionDoc(session)
+				};
+			},
 			setSession: async (session) => {
 				if (!Session) {
 					throw new Error("Session model not defined");
