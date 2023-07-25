@@ -72,7 +72,7 @@ router.post("/password-reset/:token", async (req, res) => {
 const renderPage = (params: { error?: string }) => {
 	const error = params.error ?? "";
 	let html = fs
-		.readFileSync(path.join(__dirname, ":token.html"))
+		.readFileSync(path.join(__dirname, "token.html"))
 		.toString("utf-8");
 	html = html.replaceAll("%%error%%", error);
 	return html;
