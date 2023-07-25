@@ -26,7 +26,7 @@ order: -1
 - [`mysql2()`](/database-adapters/mysql2)
 - [`planetscale()`](/database-adapters/planetscale-serverless)
 
-### `@lucia-auth/adapter-postgres`
+### `@lucia-auth/adapter-postgresql`
 
 - [`pg()`](/database-adapters/pg)
 
@@ -45,4 +45,4 @@ order: -1
 
 ### `@lucia-auth/adapter-session-unstorage`
 
-- [`redis()`](/database-adapters/unstorage)
+- [`unstorage()`](/database-adapters/unstorage)
