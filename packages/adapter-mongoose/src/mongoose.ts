@@ -88,7 +88,7 @@ export const mongooseAdapter = (models: {
 					throw new Error("Session model not defined");
 				}
 
-				const sessionUser = await Session.aggregate([
+				const sessionUsers = await Session.aggregate([
 					{ $match: { _id: sessionId } },
 					{
 						$lookup: {
@@ -102,22 +102,16 @@ export const mongooseAdapter = (models: {
 					}
 				]).exec();
 
-				// More verbose, if you prefer:
-				// if (
-				//     !sessionUser || 
-				//     !sessionUser[0] ||
-				//     !sessionUser[0].users ||
-				//     !sessionUser[0].users[0]
-				// ) return null
+				const sessionUser = sessionUsers?.at(0) ?? null;
+				if (!sessionUser) return null
 
-				if (!sessionUser?.[0]?.users?.length) return null;
-
-				const { users, ...session } = sessionUser[0];
-
+				const { users: userDocs, ...sessionDoc } = sessionUser;
+				const userDoc = userDocs?.at(0) ?? null;
+				if (!userDoc) return null;
 
 				return {
-					user: transformUserDoc(users[0]),
-					session: transformSessionDoc(session)
+					user: transformUserDoc(userDoc),
+					session: transformSessionDoc(sessionDoc)
 				};
 			},
 			setSession: async (session) => {
