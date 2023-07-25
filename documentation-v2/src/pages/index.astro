@@ -1,23 +1,267 @@
 ---
-import { getPage } from "@utils/content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Code from "@components/Code.astro";
+import Header from "@components/Header.astro";
+import Menu from "@components/Menu.astro";
+import Next from "@components/icons/Next.astro";
 
-import MainLayout from "../layouts/MainLayout.astro";
-import MarkdownStyle from "@components/MarkdownStyle.astro";
+import { getSubCollections } from "@utils/content";
 
-const markdown = await getPage("main");
+const subCollections = await getSubCollections("main");
+
+const code1 = `CREATE TABLE user (
+	id TEXT NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE user_key (
+    id TEXT NOT NULL PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES user(id),
+    hashed_password TEXT
+);
+
+CREATE TABLE user_session (
+    id TEXT NOT NULL PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES user(id),
+    active_expires INTEGER NOT NULL,
+    idle_expires INTEGER NOT NULL
+);`;
+
+const code2 = `import { lucia } from "lucia";
+import { express } from "lucia/middleware";
+import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
+import { db } from "./db.js";
+
+export const auth = lucia({
+	adapter: betterSqlite3(db),
+	middleware: express(),
+	env: "DEV"
+});
+`;
+
+const code3 = `import { auth } from "./auth.js";
+
+const user = await auth.createUser({
+	// user identified with their username
+	key: {
+		providerId: "username",
+		providerUserId: username,
+		password
+	},
+	attributes: {}
+});
+const session = await auth.createSession({
+	userId: user.userId,
+	attributes: {}
+});
+const sessionCookie = auth.createSessionCookie(session);`;
+
+const contributorsResponse = await fetch(
+	"https://api.github.com/repos/pilcrowonpaper/lucia/contributors?per_page=100",
+	{
+		headers: {
+			Authorization: `Bearer ${import.meta.env.GITHUB_API_KEY}`
+		}
+	}
+);
+
+if (!contributorsResponse.ok) {
+	throw new Error("Failed to fetch data from Github");
+}
+
+const contributorsResult = (await contributorsResponse.json()) as {
+	avatar_url: string;
+	html_url: string;
+	login: string;
+}[];
+
+const contributors = contributorsResult.map((val) => {
+	const url = new URL(val.avatar_url);
+	url.searchParams.set("s", "128"); // set image size to 128 x 128
+	url.searchParams.delete("v");
+	return {
+		avatar: url.href,
+		profileLink: val.html_url,
+		username: val.login
+	};
+});
 ---
 
-<MainLayout
+<BaseLayout
 	title="Lucia"
 	description="Lucia is a simple and flexible auth library for TypeScript"
 >
-	<div class="pt-16 lg:pt-8 pb-12 max-w-2xl">
-		<h1 class="text-7xl font-bold">Lucia</h1>
-		<p class="mb-2 text-2xl mt-2 font-medium">
-			A simple and flexible auth layer between your app and your database.
-		</p>
-	</div>
-	<MarkdownStyle>
-		<markdown.Content />
-	</MarkdownStyle>
-</MainLayout>
+	<Header />
+	<Menu subCollections={subCollections} collectionId="main" />
+	<main class="mt-24 lg:mt-20 lg:ml-72 overflow-hidden">
+		<div
+			class="mx-auto w-fit max-w-4xl pt-16 lg:pt-32 pb-24 px-4 sm:px-8 md:px-16"
+		>
+			<img
+				src="/logo.svg"
+				alt="Lucia logo"
+				width="100"
+				height="100"
+				class="h-16 w-16 mx-auto"
+			/>
+			<p
+				class="text-4xl sm:text-5xl font-semibold text-center mt-4 mx-auto w-fit"
+			>
+				Authentication, simple and clean.
+			</p>
+
+			<p class="mx-auto sm:text-lg w-fit text-center mt-8">
+				<span>Lucia</span> is an auth library for TypeScript that abstracts away
+				the complexity of handling users and sessions. It works alongside your database
+				to provide an API that's easy to use, understand, and extend.
+			</p>
+			<a
+				class="mx-auto text-main hover:underline w-fit mt-8 block sm:text-lg"
+				href="/start-here/getting-started"
+				>Get started<span class="inline-block w-3 ml-0.5 align-middle mb-[1px]"
+					><Next /></span
+				></a
+			>
+		</div>
+		<div class="mt-12 bg-sky-500 text-white px-4 sm:px-8 md:px-16 py-12">
+			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+				Motivation
+			</h2>
+			<p class="text-center max-w-2xl mx-auto">
+				Auth providers are expensive and too rigid. Libraries like Auth.js is
+				too bloated and opinionated. Building your own from scratch is hard and
+				full of footguns. What if you can implement your own auth without
+				worrying about the small details?
+			</p>
+		</div>
+		<div class="pt-12 pb-8 px-4 sm:px-8 md:px-16">
+			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+				It just works
+			</h2>
+			<p class="mb-8 text-center max-w-2xl mx-auto">
+				Forget endless configuration and callbacks - just write code. Works with
+				all major JS runtimes, including Node.js, Deno, Bun, and Cloudflare
+				Workers.
+			</p>
+			<div
+				class="flex flex-col-reverse xl:flex-row gap-y-8 xl:gap-x-8 mb-8 rounded-xl bg-zinc-80 py-6 px-8 relative"
+			>
+				<div class="grow z-20">
+					<Code code={code1} lang="sql" />
+				</div>
+				<div class="w-full xl:w-72 1.5xl:w-96">
+					<h3 class="text-xl font-semibold mb-2">Set up your database</h3>
+					<p>
+						Create 3 basic, minimum tables for Lucia. You can add columns to the
+						user table to store custom attributes.
+					</p>
+				</div>
+				<p
+					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+				>
+					1
+				</p>
+			</div>
+			<div
+				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 mb-8 rounded-xl bg-zinc-80 py-6 px-8 relative"
+			>
+				<div class="grow z-20">
+					<Code code={code2} lang="ts" />
+				</div>
+				<div class="w-full xl:w-72 1.5xl:w-96">
+					<h3 class="text-xl font-semibold mb-2">Initialize Lucia</h3>
+					<p>
+						Initialize Lucia using one of the many provided adapters and
+						middleware to use it with your database and framework of choice.
+					</p>
+				</div>
+				<p
+					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+				>
+					2
+				</p>
+			</div>
+			<div
+				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 rounded-xl bg-zinc-80 py-6 px-8 relative"
+			>
+				<div class="grow z-20">
+					<Code code={code3} lang="ts" />
+				</div>
+				<div class="w-full xl:w-72 1.5xl:w-96">
+					<h3 class="text-xl font-semibold mb-2">Start building</h3>
+					<p>
+						And that's it! Use Lucia's API to handle basic tasks like creating
+						and validating sessions, and you always have the option to fallback
+						to raw database queries when you need more.
+					</p>
+				</div>
+				<p
+					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+				>
+					3
+				</p>
+			</div>
+		</div>
+		<div class="pt-12 pb-12 px-4 sm:px-8 md:px-16">
+			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+				Free and open source
+			</h2>
+			<p class="mb-8 text-center max-w-2xl mx-auto">
+				Lucia is a free and open source project made possible by our
+				contributors! Thank you to everyone who has helped with the development!
+			</p>
+			<div
+				class="flex w-full flex-wrap gap-2 pb-1 place-content-center max-w-4xl mx-auto"
+			>
+				{
+					contributors.map((contributor) => {
+						return (
+							<a
+								href={contributor.profileLink}
+								target="_blank"
+								aria-label={`${contributor.username} Github profile`}
+							>
+								<img
+									src={contributor.avatar}
+									height="128"
+									width="128"
+									class="h-8 w-8 rounded-full border bg-zinc-100 object-fill transition duration-100 hover:scale-110"
+									alt={contributor.username}
+									loading="lazy"
+								/>
+							</a>
+						);
+					})
+				}
+			</div>
+		</div>
+		<div class="pt-16 pb-12 px-4 sm:px-8 md:px-16">
+			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+				Let's get started
+			</h2>
+			<p class="mb-8 text-center max-w-2xl mx-auto">
+				<span class="font-semibold">But a small disclaimer...</span>what makes
+				Lucia great is that it doesn't try to do everything. This means Lucia is
+				intended for a specific audience. If you're looking for something
+				quick and easy, Lucia might not be for you. Experience with backend
+				development is a must too!
+			</p>
+			<p class="mb-8 text-center max-w-2xl mx-auto">
+				Still interested? <a
+					class="text-main hover:underline"
+					href="/start-here/getting-started">Dive right in!</a
+				>
+			</p>
+		</div>
+		<div class="pb-12 px-4 sm:px-8 md:px-16 text-zinc-600 text-sm">
+			<div class="border-t pt-12">
+				<p class="text-center">Tip: Lucia is pronounced <i>loo-shya</i></p>
+				<p class="text-center mt-4">
+					Created by <a
+						class="text-main hover:underline"
+						href="https://pilcrow.vercel.app">pilcrow</a
+					>
+				</p>
+			</div>
+		</div>
+	</main>
+</BaseLayout>

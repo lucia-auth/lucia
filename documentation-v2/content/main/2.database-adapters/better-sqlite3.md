@@ -69,33 +69,33 @@ You can add additional columns to store user attributes.
 
 ```sql
 CREATE TABLE user (
-    id VARCHAR(31) NOT NULL PRIMARY KEY
+    id TEXT NOT NULL PRIMARY KEY
 );
 ```
 
 ### Key table
 
-Make sure to update the foreign key statement if you change the user table name.
+Make sure to update the `REFERENCES` if you change the user table name.
 
 ```sql
 CREATE TABLE user_key (
-    id VARCHAR(255) NOT NULL PRIMARY KEY,
-    user_id VARCHAR(15) NOT NULL,
-    hashed_password VARCHAR(255),
+    id TEXT NOT NULL PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    hashed_password TEXT,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 ```
 
 ### Session table
 
-You can add additional columns to store session attributes. Make sure to update the foreign key statement if you change the user table name.
+You can add additional columns to store session attributes. Make sure to update `REFERENCES` if you change the user table name.
 
 ```sql
 CREATE TABLE user_session (
-    id VARCHAR(127) NOT NULL PRIMARY KEY,
-    user_id VARCHAR(15) NOT NULL,
-    active_expires BIGINT NOT NULL,
-    idle_expires BIGINT NOT NULL,
+    id TEXT NOT NULL PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    active_expires INTEGER NOT NULL,
+    idle_expires INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 ```

@@ -42,7 +42,7 @@ const handleBlockquoteElement = (element: HastElement) => {
 
 	const classNames = [
 		...(element.properties.class?.toString() ?? "").split(" "),
-		"bq-default"
+		"bg-default"
 	];
 	if (firstTextContent.value.startsWith("(warn)")) {
 		classNames.push("bq-warn");
