@@ -1,12 +1,12 @@
-import type { Model } from "mongoose";
 import type {
 	Adapter,
 	InitializeAdapter,
 	KeySchema,
-	UserSchema,
-	SessionSchema
+	SessionSchema,
+	UserSchema
 } from "lucia";
-import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
+import type { Model } from "mongoose";
+import type { KeyDoc, SessionDoc, UserDoc } from "./docs.js";
 
 export const DEFAULT_PROJECTION = {
 	$__: 0,
@@ -97,7 +97,7 @@ export const mongooseAdapter = (models: {
 							// Relies on _id being a String, not ObjectId. 
 							// But this assumption is used elsewhere, as well
 							foreignField: "_id",
-							as: "users"
+							as: "userDocs"
 						}
 					}
 				]).exec();
@@ -105,7 +105,7 @@ export const mongooseAdapter = (models: {
 				const sessionUser = sessionUsers?.at(0) ?? null;
 				if (!sessionUser) return null
 
-				const { users: userDocs, ...sessionDoc } = sessionUser;
+				const { userDocs, ...sessionDoc } = sessionUser;
 				const userDoc = userDocs?.at(0) ?? null;
 				if (!userDoc) return null;
 
