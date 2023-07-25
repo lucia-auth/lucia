@@ -91,9 +91,9 @@ app.use(express.json()); // for application/json
 Install the OAuth integration and `dotenv`.
 
 ```
-npm i @lucia-auth/oauth@beta dotenv
-pnpm add @lucia-auth/oauth@beta dotenv
-yarn add @lucia-auth/oauth@beta dotenv
+npm i @lucia-auth/oauth dotenv
+pnpm add @lucia-auth/oauth dotenv
+yarn add @lucia-auth/oauth dotenv
 ```
 
 Import the Github OAuth integration, and initialize it using your credentials.

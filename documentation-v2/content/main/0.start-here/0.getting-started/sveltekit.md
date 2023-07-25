@@ -8,9 +8,9 @@ description: "Learn how to set up Lucia in your SvelteKit project"
 Install Lucia using your package manager of your choice.
 
 ```
-npm i lucia@beta
-pnpm add lucia@beta
-yarn add lucia@beta
+npm i lucia
+pnpm add lucia
+yarn add lucia
 ```
 
 ## Initialize Lucia

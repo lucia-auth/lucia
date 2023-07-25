@@ -12,9 +12,9 @@ Specifically, it handles 2 parts of the authentication process. First, it genera
 ### Installation
 
 ```
-npm i @lucia-auth/oauth@beta
-pnpm add @lucia-auth/oauth@beta
-yarn add @lucia-auth/oauth@beta
+npm i @lucia-auth/oauth
+pnpm add @lucia-auth/oauth
+yarn add @lucia-auth/oauth
 ```
 
 ### Initialize the provider

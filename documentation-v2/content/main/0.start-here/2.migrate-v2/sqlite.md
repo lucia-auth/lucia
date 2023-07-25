@@ -3,12 +3,12 @@ order: 0
 title: "Update your SQLite database to Lucia v2"
 ---
 
-Install the latest beta of the SQLite adapter package.
+Install the latest version of the SQLite adapter package.
 
 ```
-npm i @lucia-auth/adapter-sqlite@beta
-pnpm add @lucia-auth/adapter-sqlite@beta
-yarn add @lucia-auth/adapter-sqlite@beta
+npm i @lucia-auth/adapter-sqlite@latest
+pnpm add @lucia-auth/adapter-sqlite@latest
+yarn add @lucia-auth/adapter-sqlite@latest
 ```
 
 ## Update database

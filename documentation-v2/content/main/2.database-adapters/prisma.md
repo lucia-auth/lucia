@@ -36,9 +36,9 @@ The values for the `modelNames` params is the `camelCase` version of your `Pasca
 ## Installation
 
 ```
-npm i @lucia-auth/adapter-prisma@beta
-pnpm add @lucia-auth/adapter-prisma@beta
-yarn add @lucia-auth/adapter-prisma@beta
+npm i @lucia-auth/adapter-prisma
+pnpm add @lucia-auth/adapter-prisma
+yarn add @lucia-auth/adapter-prisma
 ```
 
 ## Usage

@@ -3,12 +3,12 @@ order: 0
 title: "Update your PostgreSQL database to Lucia v2"
 ---
 
-Install the latest beta of the PostgreSQL adapter package.
+Install the latest version of the PostgreSQL adapter package.
 
 ```
-npm i @lucia-auth/adapter-postgresql@beta
-pnpm add @lucia-auth/adapter-postgresql@beta
-yarn add @lucia-auth/adapter-postgresql@beta
+npm i @lucia-auth/adapter-postgresql@latest
+pnpm add @lucia-auth/adapter-postgresql@latest
+yarn add @lucia-auth/adapter-postgresql@latest
 ```
 
 ## Update database

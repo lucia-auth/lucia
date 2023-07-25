@@ -3,12 +3,12 @@ order: 0
 title: "Update your Redis instance to Lucia v2"
 ---
 
-Install the latest beta of the Redis adapter.
+Install the latest version of the Redis adapter.
 
 ```
-npm i @lucia-auth/adapter-session-redis@beta
-pnpm add @lucia-auth/adapter-session-redis@beta
-yarn add @lucia-auth/adapter-session-redis@beta
+npm i @lucia-auth/adapter-session-redis@latest
+pnpm add @lucia-auth/adapter-session-redis@latest
+yarn add @lucia-auth/adapter-session-redis@latest
 ```
 
 The Redis adapter now uses a single Redis instance of 2, and as such previous data must be deleted.

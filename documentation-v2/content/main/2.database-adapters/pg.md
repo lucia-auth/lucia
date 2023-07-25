@@ -35,9 +35,9 @@ Table names are automatically escaped.
 ## Installation
 
 ```
-npm i @lucia-auth/adapter-postgresql@beta
-pnpm add @lucia-auth/adapter-postgresql@beta
-yarn add @lucia-auth/adapter-postgresql@beta
+npm i @lucia-auth/adapter-postgresql
+pnpm add @lucia-auth/adapter-postgresql
+yarn add @lucia-auth/adapter-postgresql
 ```
 
 ## Usage

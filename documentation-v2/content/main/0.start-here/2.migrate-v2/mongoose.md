@@ -3,12 +3,12 @@ order: 0
 title: "Update your Mongoose client to Lucia v2"
 ---
 
-Install the latest beta of the Mongoose adapter.
+Install the latest version of the Mongoose adapter.
 
 ```
-npm i @lucia-auth/adapter-mongoose@beta
-pnpm add @lucia-auth/adapter-mongoose@beta
-yarn add @lucia-auth/adapter-mongoose@beta
+npm i @lucia-auth/adapter-mongoose@latest
+pnpm add @lucia-auth/adapter-mongoose@latest
+yarn add @lucia-auth/adapter-mongoose@latest
 ```
 
 ## Remove single use keys

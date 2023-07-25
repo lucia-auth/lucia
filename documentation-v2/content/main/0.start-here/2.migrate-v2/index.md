@@ -1,10 +1,8 @@
 ---
 order: 3
-title: "Migrate to v2 (beta)"
-description: "Learn how to migrate Lucia version 1 to version 2 beta"
+title: "Migrate to v2"
+description: "Learn how to migrate Lucia version 1 to version 2"
 ---
-
-> This is a migration to v2 beta. Please keep in mind that while there won't be any further changes to the database schema, APIs are bound to change before the stable release.
 
 ### Breaking changes
 
@@ -26,20 +24,20 @@ description: "Learn how to migrate Lucia version 1 to version 2 beta"
 
 ## Installation
 
-Remove `lucia-auth` from your package.json. Install the beta version of `lucia`:
+Remove `lucia-auth` from your package.json. Install the new version of `lucia`:
 
 ```
-npm i lucia@beta
-pnpm add lucia@beta
-yarn add lucia@beta
+npm i lucia@latest
+pnpm add lucia@latest
+yarn add lucia@latest
 ```
 
-If you're using the OAuth integration, install the beta version of it as well:
+If you're using the OAuth integration, install the new version of it as well:
 
 ```
-npm i @lucia-auth/oauth@beta
-pnpm add @lucia-auth/oauth@beta
-yarn add @lucia-auth/oauth@beta
+npm i @lucia-auth/oauth@latest
+pnpm add @lucia-auth/oauth@latest
+yarn add @lucia-auth/oauth@latest
 ```
 
 ## Database and adapters

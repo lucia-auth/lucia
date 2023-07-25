@@ -3,12 +3,12 @@ order: 0
 title: "Update your Prisma client to Lucia v2"
 ---
 
-Install the latest beta of the Prisma adapter.
+Install the latest version of the Prisma adapter.
 
 ```
-npm i @lucia-auth/adapter-prisma@beta
-pnpm add @lucia-auth/adapter-prisma@beta
-yarn add @lucia-auth/adapter-prisma@beta
+npm i @lucia-auth/adapter-prisma@latest
+pnpm add @lucia-auth/adapter-prisma@latest
+yarn add @lucia-auth/adapter-prisma@latest
 ```
 
 ## Remove single use keys

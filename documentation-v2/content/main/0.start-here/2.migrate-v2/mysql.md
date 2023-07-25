@@ -3,12 +3,12 @@ order: 0
 title: "Update your MySQL database to Lucia v2"
 ---
 
-Install the latest beta of the MySQL adapter package.
+Install the latest version of the MySQL adapter package.
 
 ```
-npm i @lucia-auth/adapter-mysql@beta
-pnpm add @lucia-auth/adapter-mysql@beta
-yarn add @lucia-auth/adapter-mysql@beta
+npm i @lucia-auth/adapter-mysql@latest
+pnpm add @lucia-auth/adapter-mysql@latest
+yarn add @lucia-auth/adapter-mysql@latest
 ```
 
 ## Update database
