@@ -92,7 +92,16 @@ const contributors = contributorsResult.map((val) => {
 >
 	<Header />
 	<Menu subCollections={subCollections} collectionId="main" />
-	<main class="mt-24 lg:mt-20 lg:ml-72 overflow-hidden">
+	<div class="bg-main lg:ml-72 pt-24 lg:pt-14 pb-2">
+		<a
+			class="mx-auto w-fit text-white text-sm block hover:underline mt-3 sm:mt-1"
+			href="/blog/lucia-2"
+			>Announcing Lucia version 2!<span
+				class="inline-block w-[9px] ml-0.5 align-middle mb-[1px]"><Next /></span
+			></a
+		>
+	</div>
+	<main class="lg:ml-72 overflow-hidden">
 		<div
 			class="mx-auto w-fit max-w-4xl pt-16 lg:pt-32 pb-24 px-4 sm:px-8 md:px-16"
 		>
@@ -118,6 +127,14 @@ const contributors = contributorsResult.map((val) => {
 				class="mx-auto text-main hover:underline w-fit mt-8 block sm:text-lg"
 				href="/start-here/getting-started"
 				>Get started<span class="inline-block w-3 ml-0.5 align-middle mb-[1px]"
+					><Next /></span
+				></a
+			>
+			<a
+				class="mx-auto w-fit text-zinc-400 text-sm block hover:underline mt-4"
+				href="v1.lucia-auth.com"
+				>Go to Lucia v1 docs<span
+					class="inline-block w-[9px] ml-0.5 align-middle mb-[0.5px]"
 					><Next /></span
 				></a
 			>
@@ -241,8 +258,8 @@ const contributors = contributorsResult.map((val) => {
 			<p class="mb-8 text-center max-w-2xl mx-auto">
 				<span class="font-semibold">But a small disclaimer...</span>what makes
 				Lucia great is that it doesn't try to do everything. This means Lucia is
-				intended for a specific audience. If you're looking for something
-				quick and easy, Lucia might not be for you. Experience with backend
+				intended for a specific audience. If you're looking for something quick
+				and easy, Lucia might not be for you. Experience with backend
 				development is a must too!
 			</p>
 			<p class="mb-8 text-center max-w-2xl mx-auto">
