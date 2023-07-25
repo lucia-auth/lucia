@@ -1,6 +1,6 @@
-# `lucia-auth`
+# `lucia`
 
-A simple authentication library for managing users and sessions
+A simple authentication library for managing users and sessions.
 
 **[Documentation](https://lucia-auth.com)**
 
