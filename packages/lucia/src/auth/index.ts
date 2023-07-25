@@ -45,6 +45,13 @@ export type User = {
 	userId: string;
 } & ReturnType<Lucia.Auth["getUserAttributes"]>;
 
+export type Attempt = {
+	providerId: string;
+	providerUserId: string;
+	ipAddress: string;
+	attemptedAt: number;
+};
+
 export const lucia = <_Configuration extends Configuration>(
 	config: _Configuration
 ) => {
@@ -85,6 +92,12 @@ export class Auth<_Configuration extends Configuration = any> {
 		: ReturnType<typeof defaultMiddleware>;
 	private csrfProtectionEnabled: boolean;
 	private allowedSubdomains: string[] | "*";
+	private attempts: {
+		throttleCriteria: "KEY_ONLY" | "KEY_OR_IP";
+		throttleFirstAttempt: number;
+		throttleRatio: number;
+		attemptTtl: number;
+	};
 	private experimental: {
 		debugMode: boolean;
 	};
@@ -133,6 +146,12 @@ export class Auth<_Configuration extends Configuration = any> {
 				: config.csrfProtection.allowedSubDomains;
 		this.experimental = {
 			debugMode: config.experimental?.debugMode ?? false
+		};
+		this.attempts = {
+			throttleCriteria: config.attempts?.throttleCriteria ?? "KEY_OR_IP",
+			throttleFirstAttempt: config.attempts?.throttleFirstAttempt ?? 1,
+			throttleRatio: config.attempts?.throttleRatio ?? 2,
+			attemptTtl: config.attempts?.attemptTtl ?? 60 * 60 * 24 * 30 // = 30 days
 		};
 
 		debug.init(this.experimental.debugMode);
@@ -654,6 +673,63 @@ export class Auth<_Configuration extends Configuration = any> {
 		});
 		await this.getKey(providerId, providerUserId);
 	};
+
+	public getNextAttemptUnixTime = async (
+		providerId: string,
+		providerUserId: string,
+		ipAddress: string
+	): Promise<number> => {
+		let attempts: Attempt[] = [];
+		if (this.attempts.throttleCriteria === "KEY_ONLY") {
+			attempts = await this.adapter.getAttemptsByKey(
+				providerId,
+				providerUserId
+			);
+		} else {
+			attempts = await this.adapter.getAttemptsByKeyOrIp(
+				providerId,
+				providerUserId,
+				ipAddress
+			);
+		}
+
+		const attemptsCount = attempts.length;
+		const latestAttempt = attempts.sort(
+			(a, b) => b.attemptedAt - a.attemptedAt
+		)[0];
+
+		const currentUnixTime = Math.floor(Date.now() / 1000);
+
+		const attemptDelay =
+			this.attempts.throttleFirstAttempt * 2 ** attemptsCount;
+		const nextAttemptUnixTime =
+			(latestAttempt?.attemptedAt || currentUnixTime) + attemptDelay;
+
+		return nextAttemptUnixTime;
+	};
+
+	public checkAttempts = async (
+		providerId: string,
+		providerUserId: string,
+		ipAddress: string
+	): Promise<void> => {
+		const nextAttemptUnixTime = await this.getNextAttemptUnixTime(
+			providerId,
+			providerUserId,
+			ipAddress
+		);
+		const currentUnixTime = Math.floor(Date.now() / 1000);
+		if (nextAttemptUnixTime > currentUnixTime) {
+			throw new LuciaError("AUTH_THROTTLED_ATTEMPT");
+		}
+	};
+
+	public registerAttempt = async(
+		providerId: string,
+		providerUserId: string,
+		ipAddress: string
+	): Promise<void> => {
+		const nextAttemptUnixTime = await this.getNextAttemptUnixTime(
 }
 type MaybePromise<T> = T | Promise<T>;
 
@@ -693,5 +769,11 @@ export type Configuration<
 	};
 	experimental?: {
 		debugMode?: boolean;
+	};
+	attempts?: {
+		throttleCriteria?: "KEY_ONLY" | "KEY_OR_IP";
+		throttleFirstAttempt?: number;
+		throttleRatio?: number;
+		attemptTtl?: number;
 	};
 };
