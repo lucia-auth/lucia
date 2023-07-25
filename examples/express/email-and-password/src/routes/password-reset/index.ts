@@ -8,7 +8,7 @@ import { isValidEmail, sendPasswordResetLink } from "../../email.js";
 import { generatePasswordResetToken } from "../../token.js";
 import { db } from "../../db.js";
 
-import tokenRouter from "./:token.js";
+import tokenRouter from "./token.js";
 
 const router = express.Router();
 
