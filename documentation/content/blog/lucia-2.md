@@ -22,7 +22,7 @@ With Lucia 2.0, we are removing the concept of session renewals entirely. To be 
 The `User` object is now available inside the `Session` object. This means we are removing `AuthRequest.validateSessionUser()` which should be less confusing.
 
 ```ts
-const session = await authRequest.validateSession();
+const session = await authRequest.validate();
 if (session) {
 	const user = session.user;
 }
