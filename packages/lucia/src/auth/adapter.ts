@@ -1,10 +1,15 @@
 import { LuciaError } from "./error.js";
 
 import type { LuciaErrorConstructor } from "../index.js";
-import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
+import type {
+	UserSchema,
+	SessionSchema,
+	KeySchema,
+	AttemptSchema
+} from "./database.js";
 
 export type InitializeAdapter<
-	T extends Adapter | UserAdapter | SessionAdapter
+	T extends Adapter | UserAdapter | SessionAdapter | AttemptAdapter
 > = (E: LuciaErrorConstructor) => T;
 
 export type Adapter = Readonly<
@@ -13,7 +18,8 @@ export type Adapter = Readonly<
 			sessionId: string
 		) => Promise<[SessionSchema, UserSchema] | [null, null]>;
 	} & SessionAdapter &
-		UserAdapter
+		UserAdapter &
+		AttemptAdapter
 >;
 
 export type UserAdapter = Readonly<{
@@ -45,17 +51,28 @@ export type SessionAdapter = Readonly<{
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 }>;
 
+export type AttemptAdapter = Readonly<{
+	setAttempt: (attempt: AttemptSchema) => Promise<void>;
+	getAttemptsByKey: (keyId: string) => Promise<AttemptSchema[]>;
+	getAttemptsByIpAddress: (ipAddress: string) => Promise<AttemptSchema[]>;
+	deleteAttemptsByKey: (keyId: string) => Promise<void>;
+	deleteAttemptsByIpAddress: (ipAddress: string) => Promise<void>;
+	deleteAttemptsBefore: (unixTimeInMs: number) => Promise<void>;
+}>;
+
 export const createAdapter = (
 	adapter:
 		| InitializeAdapter<Adapter>
 		| {
 				user: InitializeAdapter<Adapter>;
 				session: InitializeAdapter<SessionAdapter>;
+				attempt: InitializeAdapter<AttemptAdapter>;
 		  }
 ): Adapter => {
 	if (!("user" in adapter)) return adapter(LuciaError);
 	let userAdapter = adapter.user(LuciaError);
 	let sessionAdapter = adapter.session(LuciaError);
+	const attemptAdapter = adapter.attempt(LuciaError);
 
 	if ("getSessionAndUser" in userAdapter) {
 		const { getSessionAndUser: _, ...extractedUserAdapter } = userAdapter;
@@ -66,8 +83,12 @@ export const createAdapter = (
 		const { getSessionAndUser: _, ...extractedSessionAdapter } = sessionAdapter;
 		sessionAdapter = extractedSessionAdapter;
 	}
+
+	console.log({ attemptAdapter });
+
 	return {
 		...userAdapter,
-		...sessionAdapter
+		...sessionAdapter,
+		...attemptAdapter
 	};
 };

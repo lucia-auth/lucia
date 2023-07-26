@@ -15,6 +15,7 @@ export const d1Adapter = (
 		user: string;
 		session: string | null;
 		key: string;
+		attempt: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
@@ -22,6 +23,7 @@ export const d1Adapter = (
 		? escapeName(tables.session)
 		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
+	const ESCAPED_ATTEMPT_TABLE_NAME = escapeName(tables.attempt);
 
 	return (LuciaError) => {
 		return {
@@ -260,7 +262,17 @@ export const d1Adapter = (
 				if (!sessionResult || !userFromJoinResult) return [null, null];
 				const { __session_id: _, ...userResult } = userFromJoinResult;
 				return [sessionResult, userResult];
-			}
+			},
+			setAttempt: async (attempt) => {},
+			getAttemptsByKey: async (keyId) => {
+				return [];
+			},
+			getAttemptsByIpAddress: async (ipAddress) => {
+				return [];
+			},
+			deleteAttemptsByKey: async (keyId) => {},
+			deleteAttemptsByIpAddress: async (ipAddress) => {},
+			deleteAttemptsBefore: async (unixTimeInMs) => {}
 		};
 	};
 };

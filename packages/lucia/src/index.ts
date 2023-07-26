@@ -21,7 +21,12 @@ export type {
 	UserAdapter,
 	SessionAdapter
 } from "./auth/adapter.js";
-export type { UserSchema, KeySchema, SessionSchema } from "./auth/database.js";
+export type {
+	UserSchema,
+	KeySchema,
+	SessionSchema,
+	AttemptSchema
+} from "./auth/database.js";
 export type {
 	RequestContext,
 	Middleware,

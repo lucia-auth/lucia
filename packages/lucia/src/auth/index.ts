@@ -10,11 +10,16 @@ import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
 import { isWithinExpiration } from "../utils/date.js";
 import { isAllowedUrl } from "../utils/url.js";
-import { createAdapter } from "./adapter.js";
+import { AttemptAdapter, createAdapter } from "./adapter.js";
 import { createKeyId } from "./database.js";
 
 import type { Cookie, SessionCookieAttributes } from "./cookie.js";
-import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
+import type {
+	UserSchema,
+	SessionSchema,
+	KeySchema,
+	AttemptSchema
+} from "./database.js";
 import {
 	type Adapter,
 	type SessionAdapter,
@@ -48,7 +53,7 @@ export type User = {
 export type Attempt = {
 	providerId: string;
 	providerUserId: string;
-	ipAddress: string;
+	ipAddress?: string;
 	attemptedAt: number;
 };
 
@@ -93,10 +98,17 @@ export class Auth<_Configuration extends Configuration = any> {
 	private csrfProtectionEnabled: boolean;
 	private allowedSubdomains: string[] | "*";
 	private attempts: {
-		throttleCriteria: "KEY_ONLY" | "KEY_OR_IP";
-		throttleFirstAttempt: number;
-		throttleRatio: number;
-		attemptTtl: number;
+		criteria: "KEY_ONLY" | "KEY_OR_IP";
+		attemptTtl: number | null;
+		mitigationPolicy: "THROTTLE" | "LIMIT";
+		throttleOptions: {
+			initialDelay: number;
+			delayFactor: number;
+		};
+		limitOptions: {
+			period: number;
+			maxAttempts: number;
+		};
 	};
 	private experimental: {
 		debugMode: boolean;
@@ -148,10 +160,17 @@ export class Auth<_Configuration extends Configuration = any> {
 			debugMode: config.experimental?.debugMode ?? false
 		};
 		this.attempts = {
-			throttleCriteria: config.attempts?.throttleCriteria ?? "KEY_OR_IP",
-			throttleFirstAttempt: config.attempts?.throttleFirstAttempt ?? 1,
-			throttleRatio: config.attempts?.throttleRatio ?? 2,
-			attemptTtl: config.attempts?.attemptTtl ?? 60 * 60 * 24 * 30 // = 30 days
+			criteria: config.attempts?.criteria ?? "KEY_OR_IP",
+			mitigationPolicy: config.attempts?.mitigationPolicy ?? "THROTTLE",
+			attemptTtl: config.attempts?.attemptTtl ?? 60 * 60 * 24 * 30, // = 30 days
+			throttleOptions: {
+				initialDelay: config.attempts?.throttleOptions?.initialDelay ?? 1, // = 1 sec
+				delayFactor: config.attempts?.throttleOptions?.delayFactor ?? 2 // = x2 for each attempt
+			},
+			limitOptions: {
+				period: config.attempts?.limitOptions?.period ?? 60 * 60 * 24, // = 1 day
+				maxAttempts: config.attempts?.limitOptions?.maxAttempts ?? 5 // = 5 attempts max on the period
+			}
 		};
 
 		debug.init(this.experimental.debugMode);
@@ -674,62 +693,126 @@ export class Auth<_Configuration extends Configuration = any> {
 		await this.getKey(providerId, providerUserId);
 	};
 
-	public getNextAttemptUnixTime = async (
+	public getNextAttemptUnixMsTime = async (
 		providerId: string,
 		providerUserId: string,
-		ipAddress: string
+		ipAddress?: string
 	): Promise<number> => {
-		let attempts: Attempt[] = [];
-		if (this.attempts.throttleCriteria === "KEY_ONLY") {
-			attempts = await this.adapter.getAttemptsByKey(
-				providerId,
-				providerUserId
+		const keyId = createKeyId(providerId, providerUserId);
+		const attemptsOnKey = await this.adapter.getAttemptsByKey(keyId);
+
+		let attemptsOnIp: AttemptSchema[] = [];
+		if (ipAddress && this.attempts.criteria === "KEY_OR_IP") {
+			attemptsOnIp = await this.adapter.getAttemptsByIpAddress(ipAddress);
+		}
+		const uniqueAttempts = [...attemptsOnKey, ...attemptsOnIp].reduce<
+			AttemptSchema[]
+		>((acc, attempt) => {
+			const existingAttempt = acc.find(
+				(a: AttemptSchema) =>
+					a.key_id === attempt.key_id &&
+					a.attempt_made_at === attempt.attempt_made_at
 			);
-		} else {
-			attempts = await this.adapter.getAttemptsByKeyOrIp(
-				providerId,
-				providerUserId,
-				ipAddress
-			);
+			if (!existingAttempt) {
+				acc.push(attempt);
+			}
+			return acc;
+		}, []);
+
+		if (uniqueAttempts.length === 0) {
+			return Date.now();
 		}
 
-		const attemptsCount = attempts.length;
-		const latestAttempt = attempts.sort(
-			(a, b) => b.attemptedAt - a.attemptedAt
-		)[0];
+		if (this.attempts.mitigationPolicy === "THROTTLE") {
+			const latestAttempt = uniqueAttempts.sort(
+				(a, b) => b.attempt_made_at - a.attempt_made_at
+			)[0];
+			const attemptDelay =
+				this.attempts.throttleOptions?.initialDelay *
+				1000 *
+				this.attempts.throttleOptions.delayFactor ** uniqueAttempts.length;
+			const nextAttemptUnixMsTime =
+				(latestAttempt?.attempt_made_at || Date.now()) + attemptDelay;
 
-		const currentUnixTime = Math.floor(Date.now() / 1000);
+			return nextAttemptUnixMsTime;
+		}
 
-		const attemptDelay =
-			this.attempts.throttleFirstAttempt * 2 ** attemptsCount;
-		const nextAttemptUnixTime =
-			(latestAttempt?.attemptedAt || currentUnixTime) + attemptDelay;
+		if (this.attempts.mitigationPolicy === "LIMIT") {
+			const attemptsOnPeriod = uniqueAttempts.filter((attempt) => {
+				return (
+					attempt.attempt_made_at >
+					Date.now() - this.attempts.limitOptions.period * 1000
+				);
+			});
+			const latestAttempt = attemptsOnPeriod.sort(
+				(a, b) => b.attempt_made_at - a.attempt_made_at
+			)[0];
+			const nextAttemptUnixMsTime =
+				attemptsOnPeriod.length >= this.attempts.limitOptions.maxAttempts
+					? latestAttempt.attempt_made_at +
+					  this.attempts.limitOptions.period * 1000
+					: Date.now();
+			return nextAttemptUnixMsTime;
+		}
 
-		return nextAttemptUnixTime;
+		throw new Error("Invalid mitigation policy");
 	};
 
 	public checkAttempts = async (
 		providerId: string,
 		providerUserId: string,
-		ipAddress: string
+		ipAddress?: string
 	): Promise<void> => {
-		const nextAttemptUnixTime = await this.getNextAttemptUnixTime(
+		await this.cleanupTtlAttempts();
+		const nextAttemptUnixTime = await this.getNextAttemptUnixMsTime(
 			providerId,
 			providerUserId,
 			ipAddress
 		);
-		const currentUnixTime = Math.floor(Date.now() / 1000);
-		if (nextAttemptUnixTime > currentUnixTime) {
+		const currentMsUnixTime = Date.now();
+		if (nextAttemptUnixTime > currentMsUnixTime) {
 			throw new LuciaError("AUTH_THROTTLED_ATTEMPT");
 		}
 	};
 
-	public registerAttempt = async(
+	public registerAttempt = async (
 		providerId: string,
 		providerUserId: string,
+		ipAddress?: string
+	): Promise<void> => {
+		const attempt: AttemptSchema = {
+			key_id: createKeyId(providerId, providerUserId),
+			ip_address: ipAddress,
+			attempt_made_at: Date.now()
+		};
+		await this.adapter.setAttempt(attempt);
+	};
+
+	public resetAttemptsByKey = async (
+		providerId: string,
+		providerUserId: string
+	): Promise<void> => {
+		const keyId = createKeyId(providerId, providerUserId);
+		await this.adapter.deleteAttemptsByKey(keyId);
+	};
+
+	public resetAttemptsByIpAddress = async (
 		ipAddress: string
 	): Promise<void> => {
-		const nextAttemptUnixTime = await this.getNextAttemptUnixTime(
+		await this.adapter.deleteAttemptsByIpAddress(ipAddress);
+	};
+
+	public cleanupTtlAttempts = async (): Promise<void> => {
+		const ttl = this.attempts.attemptTtl;
+		if (ttl === null) {
+			return;
+		}
+
+		const now = Date.now();
+		const ttlMs = ttl * 1000;
+		const ttlUnixTime = now - ttlMs;
+		await this.adapter.deleteAttemptsBefore(ttlUnixTime);
+	};
 }
 type MaybePromise<T> = T | Promise<T>;
 
@@ -742,6 +825,7 @@ export type Configuration<
 		| {
 				user: InitializeAdapter<Adapter>;
 				session: InitializeAdapter<SessionAdapter>;
+				attempt: InitializeAdapter<AttemptAdapter>;
 		  };
 	env: Env;
 
@@ -771,9 +855,16 @@ export type Configuration<
 		debugMode?: boolean;
 	};
 	attempts?: {
-		throttleCriteria?: "KEY_ONLY" | "KEY_OR_IP";
-		throttleFirstAttempt?: number;
-		throttleRatio?: number;
-		attemptTtl?: number;
+		criteria?: "KEY_ONLY" | "KEY_OR_IP";
+		attemptTtl?: number | null;
+		mitigationPolicy: "THROTTLE" | "LIMIT";
+		throttleOptions?: {
+			initialDelay?: number;
+			delayFactor?: number;
+		};
+		limitOptions?: {
+			period?: number;
+			maxAttempts?: number;
+		};
 	};
 };

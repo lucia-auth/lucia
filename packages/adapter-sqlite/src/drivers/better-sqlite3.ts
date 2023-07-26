@@ -5,7 +5,8 @@ import type {
 	Adapter,
 	InitializeAdapter,
 	UserSchema,
-	KeySchema
+	KeySchema,
+	AttemptSchema
 } from "lucia";
 import type { Database, SqliteError } from "better-sqlite3";
 
@@ -17,6 +18,7 @@ export const betterSqlite3Adapter = (
 		user: string;
 		session: string | null;
 		key: string;
+		attempt: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const transaction = <_Query extends () => any>(query: _Query): void => {
@@ -38,6 +40,7 @@ export const betterSqlite3Adapter = (
 		? escapeName(tables.session)
 		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
+	const ESCAPED_ATTEMPT_TABLE_NAME = escapeName(tables.attempt);
 
 	return (LuciaError) => {
 		return {
@@ -205,6 +208,43 @@ export const betterSqlite3Adapter = (
 						values
 					)} WHERE id = ?`
 				).run(...args, keyId);
+			},
+			setAttempt: async (attempt) => {
+				const [fields, values, args] = helper(attempt);
+				db.prepare(
+					`INSERT INTO ${ESCAPED_ATTEMPT_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`
+				).run(...args);
+			},
+			getAttemptsByKey: async (keyId) => {
+				const result: AttemptSchema[] = db
+					.prepare(
+						`SELECT * FROM ${ESCAPED_ATTEMPT_TABLE_NAME} WHERE key_id = ?`
+					)
+					.all(keyId);
+				return result;
+			},
+			getAttemptsByIpAddress: async (ipAddress) => {
+				const result: AttemptSchema[] = db
+					.prepare(
+						`SELECT * FROM ${ESCAPED_ATTEMPT_TABLE_NAME} WHERE ip_address = ?`
+					)
+					.all(ipAddress);
+				return result;
+			},
+			deleteAttemptsByKey: async (keyId) => {
+				db.prepare(
+					`DELETE FROM ${ESCAPED_ATTEMPT_TABLE_NAME} WHERE key_id = ?`
+				).run(keyId);
+			},
+			deleteAttemptsByIpAddress: async (ipAddress) => {
+				db.prepare(
+					`DELETE FROM ${ESCAPED_ATTEMPT_TABLE_NAME} WHERE ip_address = ?`
+				).run(ipAddress);
+			},
+			deleteAttemptsBefore: async (unixTimeInMs) => {
+				db.prepare(
+					`DELETE FROM ${ESCAPED_ATTEMPT_TABLE_NAME} WHERE attempt_made_at < ?`
+				).run(unixTimeInMs);
 			}
 		};
 	};

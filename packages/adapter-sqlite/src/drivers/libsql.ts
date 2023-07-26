@@ -15,6 +15,7 @@ export const libsqlAdapter = (
 		user: string;
 		session: string | null;
 		key: string;
+		attempt: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
@@ -22,6 +23,7 @@ export const libsqlAdapter = (
 		? escapeName(tables.session)
 		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
+	const ESCAPED_ATTEMPT_TABLE_NAME = escapeName(tables.attempt);
 
 	return (LuciaError) => {
 		return {
@@ -205,7 +207,17 @@ export const libsqlAdapter = (
 					sql: `UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${setArgs} WHERE id = ?`,
 					args
 				});
-			}
+			},
+			setAttempt: async (attempt) => {},
+			getAttemptsByKey: async (keyId) => {
+				return [];
+			},
+			getAttemptsByIpAddress: async (ipAddress) => {
+				return [];
+			},
+			deleteAttemptsByKey: async (keyId) => {},
+			deleteAttemptsByIpAddress: async (ipAddress) => {},
+			deleteAttemptsBefore: async (unixTimeInMs) => {}
 		};
 	};
 };

@@ -15,6 +15,12 @@ export type SessionSchema = {
 	user_id: string;
 } & Lucia.DatabaseSessionAttributes;
 
+export type AttemptSchema = {
+	key_id: string;
+	ip_address?: string;
+	attempt_made_at: number;
+};
+
 export const createKeyId = (providerId: string, providerUserId: string) => {
 	if (providerId.includes(":")) {
 		throw new TypeError("Provider id must not include any colons (:)");
