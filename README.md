@@ -42,7 +42,6 @@ pnpm add lucia-auth
 yarn add lucia-auth
 ```
 
-
 ## Attributions
 
 This project would not have been possible without our contributors, thank you!

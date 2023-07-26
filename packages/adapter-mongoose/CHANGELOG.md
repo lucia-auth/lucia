@@ -1,5 +1,15 @@
 # @lucia-auth/adapter-mongoose
 
+## 3.0.0
+
+### Major changes
+
+- [#885](https://github.com/pilcrowOnPaper/lucia/pull/885) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update version and peer dependency
+
+### Minor changes
+
+- [#875](https://github.com/pilcrowOnPaper/lucia/pull/875) by [@SkepticMystic](https://github.com/SkepticMystic) : Add a `getSessionAndUserBySessionId` method to `mongoose()` adapter, using a lookup (join) instead of two separate db calls.
+
 ## 3.0.0-beta.7
 
 ### Minor changes
