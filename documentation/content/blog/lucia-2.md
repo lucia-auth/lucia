@@ -13,6 +13,10 @@ You might've noticed that we updated our docs (again)! Some key features are sti
 
 Thank you to everyone who has provided us with valuable feedback and helped out with the development!
 
+## New package name
+
+The core library `lucia-auth` has been renamed to `lucia`! All other package names (such as `@lucia-auth/oauth`) remain the same.
+
 ## Revamped sessions
 
 With Lucia 2.0, we are removing the concept of session renewals entirely. To be exact, we'll be extending the expiration of the session instead of replacing it.
