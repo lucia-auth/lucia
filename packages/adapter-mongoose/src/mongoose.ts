@@ -94,7 +94,7 @@ export const mongooseAdapter = (models: {
 						$lookup: {
 							from: User.collection.name,
 							localField: "user_id",
-							// Relies on _id being a String, not ObjectId. 
+							// Relies on _id being a String, not ObjectId.
 							// But this assumption is used elsewhere, as well
 							foreignField: "_id",
 							as: "userDocs"
@@ -103,7 +103,7 @@ export const mongooseAdapter = (models: {
 				]).exec();
 
 				const sessionUser = sessionUsers?.at(0) ?? null;
-				if (!sessionUser) return null
+				if (!sessionUser) return null;
 
 				const { userDocs, ...sessionDoc } = sessionUser;
 				const userDoc = userDocs?.at(0) ?? null;

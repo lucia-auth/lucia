@@ -1,5 +1,15 @@
 # @lucia-auth/oauth
 
+## 2.0.0
+
+### Major changes
+
+- [#885](https://github.com/pilcrowOnPaper/lucia/pull/885) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update version and peer dependency
+
+### Minor changes
+
+- [#869](https://github.com/pilcrowOnPaper/lucia/pull/869) by [@bachiitter](https://github.com/bachiitter) : Add Google OAuth Access type
+
 ## 2.0.0-beta.8
 
 ### Minor changes
