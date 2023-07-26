@@ -3,4 +3,4 @@ package: "@lucia-auth/adapter-session-redis" # package name
 type: "major" # "major", "minor", "patch"
 ---
 
-Update version
+Update version and peer dependency
