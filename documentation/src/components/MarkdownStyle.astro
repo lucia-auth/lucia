@@ -30,7 +30,7 @@
 	:global(#md h2:first-child) {
 		@apply mt-0;
 	}
-	:global(#md :not(h4) + p, #md table, #md ul, #md ol) {
+	:global(#md :not(h4) + p, #md table, #md > ul, #md > ol) {
 		@apply my-4;
 	}
 	:global(#md h4 + p) {
@@ -55,11 +55,14 @@
 	:global(#md a) {
 		@apply text-main cursor-pointer hover:underline;
 	}
-	:global(#md ol) {
+	:global(#md > ol) {
 		@apply mb-6 list-inside list-decimal;
 	}
-	:global(#md ul) {
-		@apply mb-6 list-inside list-disc;
+	:global(#md > ul) {
+		@apply mb-6 list-inside list-disc ;
+	}
+	:global(#md li > ul) {
+		@apply list-inside list-disc ml-8;
 	}
 	:global(#md li) {
 		@apply my-0.5;
