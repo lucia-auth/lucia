@@ -8,9 +8,6 @@ export default () => {
 			"astro:config:setup": ({ updateConfig }) => {
 				updateConfig({
 					markdown: {
-						shikiConfig: {
-							theme: "github-dark"
-						},
 						rehypePlugins: [rehype()]
 					}
 				});

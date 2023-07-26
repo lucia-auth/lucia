@@ -32,7 +32,7 @@ const sessionCookie = auth.createSessionCookie(session);
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
 
-**[CONTRIBUTING.md](https://github.com/pilcrowOnPaper/lucia/blob/main/CONTRIBUTING.md)**
+**[Contributing](https://lucia-auth.com/start-here/contributing)**
 
 ## Installation
 
@@ -41,6 +41,7 @@ npm i lucia-auth
 pnpm add lucia-auth
 yarn add lucia-auth
 ```
+
 
 ## Attributions
 

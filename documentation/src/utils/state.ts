@@ -1,20 +1,20 @@
-const createStore = <V>(initialValue: V) => {
-	let value = initialValue;
-	const subscribers: ((e: V) => void)[] = [];
-	const subscribe = (callback: (e: V) => void) => {
-		subscribers.push(callback);
+type Callback = (state: boolean) => any;
+
+export const createToggleState = () => {
+	const callbacks: Callback[] = [];
+	let internal = false;
+	const onToggle = (callback: Callback) => {
+		callbacks.push(callback);
 	};
-	const set = (newValue: V | ((val: V) => V)) => {
-		if (newValue instanceof Function) {
-			newValue = newValue(value);
-		}
-		value = newValue;
-		for (const subscriber of subscribers) {
-			subscriber(value);
+
+	const toggle = () => {
+		internal = !internal;
+		for (const callback of callbacks) {
+			callback(internal);
 		}
 	};
-	return [subscribe, set] as const;
+	return [toggle, onToggle] as const;
 };
 
-export const [onMenuStateUpdate, setMenuState] = createStore(false);
-export const [onSearchMenuStateUpdate, setSearchMenuState] = createStore(false);
+export const [toggleMenu, onMenuToggle] = createToggleState();
+export const [toggleMore, onMoreToggle] = createToggleState();

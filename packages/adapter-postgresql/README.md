@@ -1,8 +1,8 @@
 # `@lucia-auth/adapter-postgresql`
 
-PostgreSQL adapter for Lucia
+PostgreSQL adapter for Lucia v2.
 
-**[Documentation](https://lucia-auth.com/database/postgresql)**
+**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-postgresql)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
@@ -20,12 +20,6 @@ npm install @lucia-auth/adapter-postgresql
 pnpm add @lucia-auth/adapter-postgresql
 yarn add @lucia-auth/adapter-postgresql
 ```
-
-## Version compatibility
-
-| `@lucia-auth/adapter-postgresql` | `lucia-auth` | `pg`     |
-| -------------------------------- | ------------ | -------- |
-| `^1.0.0`                         | `^1.4.0`     | `^8.0.0` |
 
 ## Testing
 
