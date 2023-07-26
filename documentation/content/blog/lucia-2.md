@@ -7,7 +7,7 @@ We're super excited to announce Lucia 2.0!
 
 This update brings new big features to the library as well as major improvements to our APIs. A big focus for 2.0 was bringing stability, and that included future proofing it. This should mean 2.0 marks the end of our "rapid development" stage.
 
-There is unfortunately a slew of breaking changes, but it shouldn't take more than 20 minutes for most users. At worst, it should only take an hour or so. Please read the [migration guide]() for details. And, if you encounter any issues, feel free to ask them on our Discord server!
+There is unfortunately a slew of breaking changes, but it shouldn't take more than 20 minutes for most users. At worst, it should only take an hour or so. Please read the [migration guide](/start-here/migrate-v2) for details. And, if you encounter any issues, feel free to ask them on our Discord server!
 
 You might've noticed that we updated our docs (again)! Some key features are still missing (namely dark mode and search) but it should be just better all around. We also added the [Guidebook](/guidebook). This is a collection of tutorials and guides on using Lucia, and it should cover the lack of resources compared to other solutions. It's still a work-in-progress and expect more content soon!
 
