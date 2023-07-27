@@ -1,5 +1,5 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
 import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
@@ -14,22 +14,19 @@ const PROVIDER_ID = "google";
 
 export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getGoogleTokens = async (code: string) => {
-		const requestUrl = createUrl("https://oauth2.googleapis.com/token", {
-			client_id: config.clientId,
-			client_secret: config.clientSecret,
-			code,
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri
-		});
-
-		const request = new Request(requestUrl, {
-			method: "POST"
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
-		}>(request);
+		}>(code, "https://oauth2.googleapis.com/token", {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
+
 		return {
 			accessToken: tokens.access_token,
 			refreshToken: tokens.refresh_token ?? null,
@@ -41,7 +38,9 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		const request = new Request(
 			"https://www.googleapis.com/oauth2/v3/userinfo",
 			{
-				headers: authorizationHeaders("bearer", accessToken)
+				headers: {
+					Authorization: authorizationHeader("bearer", accessToken)
+				}
 			}
 		);
 		const googleUser = await handleRequest<GoogleUser>(request);
@@ -88,8 +87,8 @@ export type GoogleUser = {
 	given_name: string;
 	family_name: string;
 	picture: string;
-	locale: string; 
- 	email?: string; 
- 	email_verified?: boolean; 
- 	hd?: string; 
+	locale: string;
+	email?: string;
+	email_verified?: boolean;
+	hd?: string;
 };

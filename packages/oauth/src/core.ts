@@ -1,3 +1,6 @@
+import { authorizationHeader, handleRequest } from "./request.js";
+import { encodeBase64 } from "./utils.js";
+
 import type { Auth, Key, LuciaError } from "lucia";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
 
@@ -77,4 +80,56 @@ export const providerUserAuth = async <_Auth extends Auth>(
 			return user as LuciaUser<_Auth>;
 		}
 	} as const;
+};
+
+export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
+	authorizationCode: string,
+	url: string | URL,
+	options: {
+		clientId: string;
+		redirectUri?: string;
+		codeVerifier?: string;
+		clientPassword?: {
+			clientSecret: string;
+			authenticateWith: "client_secret" | "http_basic_auth";
+		};
+	}
+) => {
+	const body = new URLSearchParams({
+		code: authorizationCode,
+		client_id: options.clientId,
+		grant_type: "authorization_code"
+	});
+	if (options.redirectUri) {
+		body.set("redirect_uri", options.redirectUri);
+	}
+	if (options.codeVerifier) {
+		body.set("code_verifier", options.codeVerifier);
+	}
+	if (
+		options.clientPassword &&
+		options.clientPassword.authenticateWith === "client_secret"
+	) {
+		body.set("client_secret", options.clientPassword.clientSecret);
+	}
+
+	const headers = new Headers({
+		"Content-Type": "application/x-www-form-urlencoded"
+	});
+	if (
+		options.clientPassword &&
+		options.clientPassword.authenticateWith === "http_basic_auth"
+	) {
+		headers.set(
+			"Authorization",
+			encodeBase64(`${options.clientId}:${options.clientPassword.clientSecret}`)
+		);
+	}
+
+	const request = new Request(new URL(url), {
+		method: "POST",
+		headers,
+		body
+	});
+	return await handleRequest<_ResponseBody>(request);
 };

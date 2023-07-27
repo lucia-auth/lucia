@@ -1,5 +1,5 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
 import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
@@ -18,25 +18,19 @@ type Config = OAuthConfig & {
 
 export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getAuth0Tokens = async (code: string) => {
-		const request = new Request(new URL("/oauth/token", config.appDomain), {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: new URLSearchParams({
-				grant_type: "authorization_code",
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				redirect_uri: config.redirectUri,
-				code
-			})
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token: string;
 			id_token: string;
 			token_type: string;
-		}>(request);
+		}>(code, new URL("/oauth/token", config.appDomain), {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -48,12 +42,15 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getAuth0User = async (accessToken: string) => {
 		const request = new Request(new URL("/userinfo", config.appDomain), {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 
 		const auth0Profile = await handleRequest<Auth0Profile>(request);
 
 		const auth0User: Auth0User = {
+			sub: auth0Profile.sub,
 			id: auth0Profile.sub.split("|")[1],
 			nickname: auth0Profile.nickname,
 			name: auth0Profile.name,
@@ -110,6 +107,7 @@ type Auth0Profile = {
 };
 
 export type Auth0User = {
+	sub: string;
 	id: string;
 	nickname: string;
 	name: string;

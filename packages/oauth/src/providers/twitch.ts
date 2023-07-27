@@ -1,5 +1,5 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
 import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
@@ -14,21 +14,18 @@ const PROVIDER_ID = "twitch";
 
 export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getTwitchTokens = async (code: string) => {
-		const requestUrl = createUrl("https://id.twitch.tv/oauth2/token", {
-			client_id: config.clientId,
-			client_secret: config.clientSecret,
-			code,
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri
-		});
-		const request = new Request(requestUrl, {
-			method: "POST"
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token: string;
 			expires_in: number;
-		}>(request);
+		}>(code, "https://id.twitch.tv/oauth2/token", 	{
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -42,7 +39,7 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		const request = new Request("https://api.twitch.tv/helix/users", {
 			headers: {
 				"Client-ID": config.clientId,
-				...authorizationHeaders("bearer", accessToken)
+				Authorization: authorizationHeader("bearer", accessToken)
 			}
 		});
 		const twitchUsersResponse = await handleRequest<{

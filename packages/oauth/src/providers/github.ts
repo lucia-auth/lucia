@@ -1,5 +1,5 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
 import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
@@ -25,20 +25,6 @@ type Config = OAuthConfig & {
 
 export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getGithubTokens = async (code: string): Promise<Tokens> => {
-		const requestUrl = createUrl(
-			"https://github.com/login/oauth/access_token",
-			{
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				code
-			}
-		);
-		const request = new Request(requestUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			}
-		});
 		type ResponseBody =
 			| {
 					access_token: string;
@@ -49,15 +35,19 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 					expires_in: number;
 					refresh_token_expires_in: number;
 			  };
-		const tokens = await handleRequest<ResponseBody>(request);
-		if ("expires_in" in tokens) {
-			return {
-				accessToken: tokens.access_token,
-				refreshToken: tokens.refresh_token,
-				accessTokenExpiresIn: tokens.expires_in,
-				refreshTokenExpiresIn: tokens.refresh_token_expires_in
-			};
-		}
+
+		const tokens = await validateOAuth2AuthorizationCode<ResponseBody>(
+			code,
+			"https://github.com/login/oauth/access_token",
+			{
+				clientId: config.clientId,
+				clientPassword: {
+					clientSecret: config.clientSecret,
+					authenticateWith: "client_secret"
+				}
+			}
+		);
+
 		return {
 			accessToken: tokens.access_token,
 			accessTokenExpiresIn: null
@@ -66,7 +56,9 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getGithubUser = async (accessToken: string) => {
 		const request = new Request("https://api.github.com/user", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 		const githubUser = await handleRequest<GithubUser>(request);
 		return githubUser;

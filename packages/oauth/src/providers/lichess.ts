@@ -1,12 +1,12 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
 import { scope, generateState, encodeBase64 } from "../utils.js";
 import { generateRandomString } from "lucia/utils";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = Omit<OAuthConfig, "clientSecret"> & {
 	redirectUri: string;
 };
 
@@ -35,24 +35,14 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	const getLichessTokens = async (code: string, codeVerifier: string) => {
-		// Not using createUrl since we need to POST
-		const request = new Request("https://lichess.org/api/token", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: new URLSearchParams({
-				client_id: config.clientId,
-				grant_type: "authorization_code",
-				redirect_uri: config.redirectUri,
-				code_verifier: codeVerifier,
-				code
-			}).toString()
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
-		}>(request);
+		}>(code, "https://lichess.org/api/token", {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			codeVerifier
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -62,7 +52,9 @@ export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getLichessUser = async (accessToken: string) => {
 		const request = new Request("https://lichess.org/api/account", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 		const lichessUser = await handleRequest<LichessUser>(request);
 		return lichessUser;

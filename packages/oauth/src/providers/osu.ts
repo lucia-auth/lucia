@@ -1,5 +1,5 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
 import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
@@ -13,25 +13,19 @@ const PROVIDER_ID = "osu";
 
 export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getOsuTokens = async (code: string) => {
-		const request = new Request("https://osu.ppy.sh/oauth/token", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: new URLSearchParams({
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				grant_type: "authorization_code",
-				redirect_uri: config.redirectUri,
-				code
-			}).toString()
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
 			token_type: string;
-		}>(request);
+		}>(code, "https://osu.ppy.sh/oauth/token", 	{
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -42,7 +36,9 @@ export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getOsuUser = async (accessToken: string) => {
 		const request = new Request("https://osu.ppy.sh/api/v2/me/osu", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 		const osuUser = await handleRequest<OsuUser>(request);
 		return osuUser;

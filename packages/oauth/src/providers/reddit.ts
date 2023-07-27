@@ -1,5 +1,5 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
 import { scope, generateState, encodeBase64 } from "../utils.js";
 
 import type { Auth } from "lucia";
@@ -13,21 +13,16 @@ const PROVIDER_ID = "reddit";
 
 export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getRedditTokens = async (code: string) => {
-		const requestUrl = createUrl("https://www.reddit.com/api/v1/access_token", {
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri,
-			code
-		});
-		const request = new Request(requestUrl, {
-			method: "POST",
-			headers: authorizationHeaders(
-				"basic",
-				encodeBase64(config.clientId + ":" + config.clientSecret)
-			)
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
-		}>(request);
+		}>(code, "https://www.reddit.com/api/v1/access_token", {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "http_basic_auth"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token
@@ -36,7 +31,9 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getRedditUser = async (accessToken: string) => {
 		const request = new Request("https://oauth.reddit.com/api/v1/me", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 		const redditUser = await handleRequest<RedditUser>(request);
 
