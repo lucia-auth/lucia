@@ -10,7 +10,7 @@ Working with Lucia looks something like this. In the code below, you're creating
 
 ```ts
 const user = await auth.createUser({
-	primaryKey: {
+	key: {
 		providerId: "email",
 		providerUserId: email,
 		password
@@ -37,9 +37,9 @@ const sessionCookie = auth.createSessionCookie(session);
 ## Installation
 
 ```
-npm i lucia-auth
-pnpm add lucia-auth
-yarn add lucia-auth
+npm i lucia
+pnpm add lucia
+yarn add lucia
 ```
 
 ## Attributions
