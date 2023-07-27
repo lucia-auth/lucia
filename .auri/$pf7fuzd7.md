@@ -3,4 +3,4 @@ package: "@lucia-auth/oauth" # package name
 type: "patch" # "major", "minor", "patch"
 ---
 
-Fix `GoogleUser`
+Fix type `GoogleUser`
