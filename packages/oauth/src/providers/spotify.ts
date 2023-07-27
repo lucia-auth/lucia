@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
-import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
-import { scope, generateState, encodeBase64 } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -50,18 +53,17 @@ export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-
-			const url = createUrl("https://accounts.spotify.com/authorize", {
-				client_id: config.clientId,
-				response_type: "code",
-				redirect_uri: config.redirectUri,
-				scope: scope([], config.scope),
-				state,
-				show_dialog: config.showDialog.toString()
-			});
-
-			return [url, state] as const;
+			return await createOAuth2AuthorizationUrl(
+				"https://accounts.spotify.com/authorize",
+				{
+					clientId: config.clientId,
+					redirectUri: config.redirectUri,
+					scope: config.scope ?? [],
+					searchParams: {
+						show_dialog: config.showDialog.toString()
+					}
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const spotifyTokens = await getSpotifyTokens(code);

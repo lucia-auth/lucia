@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
-import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -63,22 +66,21 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl(
-				new URL("/authorize", config.appDomain).toString(),
+			const scopeConfig = config.scope ?? [];
+			return await createOAuth2AuthorizationUrl(
+				new URL("/authorize", config.appDomain),
 				{
-					client_id: config.clientId,
-					response_type: "code",
-					redirect_uri: config.redirectUri,
-					scope: scope(["openid", "profile"], config.scope),
-					state,
-					...(config.connection && { connection: config.connection }),
-					...(config.organization && { organization: config.organization }),
-					...(config.invitation && { invitation: config.invitation }),
-					...(config.loginHint && { login_hint: config.loginHint })
+					clientId: config.clientId,
+					redirectUri: config.redirectUri,
+					scope: ["openid", "profile", ...scopeConfig],
+					searchParams: {
+						connection: config.connection,
+						organization: config.organization,
+						invitation: config.invitation,
+						login_hint: config.loginHint
+					}
 				}
 			);
-			return [url, state] as const;
 		},
 		validateCallback: async (code: string) => {
 			const auth0Tokens = await getAuth0Tokens(code);

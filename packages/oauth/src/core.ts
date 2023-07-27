@@ -1,5 +1,11 @@
-import { authorizationHeader, handleRequest } from "./request.js";
-import { encodeBase64 } from "./utils.js";
+import { createUrl, handleRequest } from "./request.js";
+import {
+	encodeBase64,
+	generateState,
+	encodeBase64Url,
+	generatePKCECodeChallenge
+} from "./utils.js";
+import { generateRandomString } from "lucia/utils";
 
 import type { Auth, Key, LuciaError } from "lucia";
 import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
@@ -38,11 +44,20 @@ export class OAuthRequestError extends Error {
 	}
 }
 
+export type ProviderUserAuth<_Auth extends Auth> = {
+	existingUser: LuciaUser<_Auth> | null;
+	createKey: (userId: string) => Promise<Key>;
+	createUser: (options: {
+		userId?: string;
+		attributes: CreateUserAttributesParameter<_Auth>;
+	}) => Promise<LuciaUser<_Auth>>;
+};
+
 export const providerUserAuth = async <_Auth extends Auth>(
 	auth: _Auth,
 	providerId: string,
 	providerUserId: string
-) => {
+): Promise<ProviderUserAuth<_Auth>> => {
 	const getExistingUser = async () => {
 		try {
 			const key = await auth.useKey(providerId, providerUserId, null);
@@ -82,6 +97,60 @@ export const providerUserAuth = async <_Auth extends Auth>(
 	} as const;
 };
 
+export const createOAuth2AuthorizationUrl = async (
+	url: string | URL,
+	options: {
+		clientId: string;
+		scope: string[];
+		state?: string | null;
+		redirectUri?: string;
+		searchParams?: Record<string, string | undefined>;
+	}
+): Promise<readonly [url: URL, state: string]> => {
+	const searchParams = options.searchParams ?? {};
+	const state = generateState();
+	const authorizationUrl = createUrl(url, {
+		response_type: "code",
+		client_id: options.clientId,
+		scope: options.scope.join(" "),
+		state: options.state ?? generateState(),
+		redirect_url: options.redirectUri,
+		...searchParams
+	});
+	return [authorizationUrl, state] as const;
+};
+
+export const createOAuth2AuthorizationUrlWithPKCE = async (
+	url: string | URL,
+	options: {
+		clientId: string;
+		scope: string[];
+		codeChallengeMethod: "S256";
+		state?: string | null;
+		redirectUri?: string;
+		searchParams?: Record<string, string | undefined>;
+	}
+): Promise<readonly [url: URL, state: string, codeVerifier: string]> => {
+	const searchParams = options.searchParams ?? {};
+	const codeVerifier = generateRandomString(
+		96,
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~"
+	);
+	const codeChallenge = await generatePKCECodeChallenge("S256", codeVerifier);
+	const state = generateState();
+	const authorizationUrl = createUrl(url, {
+		response_type: "code",
+		client_id: options.clientId,
+		scope: options.scope.join(" "),
+		state: options.state ?? generateState(),
+		redirect_url: options.redirectUri,
+		code_challenge_method: "S256",
+		code_challenge: encodeBase64Url(codeChallenge),
+		...searchParams
+	});
+	return [authorizationUrl, state, codeVerifier] as const;
+};
+
 export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
 	authorizationCode: string,
 	url: string | URL,
@@ -94,7 +163,7 @@ export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
 			authenticateWith: "client_secret" | "http_basic_auth";
 		};
 	}
-) => {
+): Promise<_ResponseBody> => {
 	const body = new URLSearchParams({
 		code: authorizationCode,
 		client_id: options.clientId,

@@ -1,6 +1,9 @@
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
 import { createUrl, handleRequest, authorizationHeader } from "../request.js";
-import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
-import { scope, generateState } from "../utils.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -18,7 +21,7 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
-		}>(code, "https://www.patreon.com/api/oauth2/token", 	{
+		}>(code, "https://www.patreon.com/api/oauth2/token", {
 			clientId: config.clientId,
 			redirectUri: config.redirectUri,
 			clientPassword: {
@@ -56,15 +59,15 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://www.patreon.com/oauth2/authorize", {
-				client_id: config.clientId,
-				redirect_uri: config.redirectUri,
-				scope: scope(["identity"], config.scope),
-				response_type: "code",
-				state
-			});
-			return [url, state] as const;
+			const scopeConfig = config.scope ?? [];
+			return await createOAuth2AuthorizationUrl(
+				"https://www.patreon.com/oauth2/authorize",
+				{
+					clientId: config.clientId,
+					redirectUri: config.redirectUri,
+					scope: ["identity", ...scopeConfig]
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const patreonTokens = await getPatreonTokens(code);

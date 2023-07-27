@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
-import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -66,16 +69,14 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://github.com/login/oauth/authorize", {
-				client_id: config.clientId,
-				scope: scope([], config.scope),
-				state
-			});
-			if (config.redirectUri) {
-				url.searchParams.set("redirect_uri", config.redirectUri);
-			}
-			return [url, state] as const;
+			return await createOAuth2AuthorizationUrl(
+				"https://github.com/login/oauth/authorize",
+				{
+					clientId: config.clientId,
+					scope: config.scope ?? [],
+					redirectUri: config.redirectUri
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const githubTokens = await getGithubTokens(code);

@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
-import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -49,19 +52,21 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
-				client_id: config.clientId,
-				redirect_uri: config.redirectUri,
-				scope: scope(
-					["https://www.googleapis.com/auth/userinfo.profile"],
-					config.scope
-				),
-				response_type: "code",
-				access_type: config.accessType ?? "online",
-				state
-			});
-			return [url, state] as const;
+			const scopeConfig = config.scope ?? [];
+			return await createOAuth2AuthorizationUrl(
+				"https://accounts.google.com/o/oauth2/v2/auth",
+				{
+					clientId: config.clientId,
+					redirectUri: config.redirectUri,
+					scope: [
+						"https://www.googleapis.com/auth/userinfo.profile",
+						...scopeConfig
+					],
+					searchParams: {
+						access_type: config.accessType ?? "online"
+					}
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const googleTokens = await getGoogleTokens(code);

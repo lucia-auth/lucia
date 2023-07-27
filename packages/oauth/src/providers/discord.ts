@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
-import { providerUserAuth, validateOAuth2AuthorizationCode } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -46,15 +49,15 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://discord.com/oauth2/authorize", {
-				response_type: "code",
-				client_id: config.clientId,
-				scope: scope(["identify"], config.scope),
-				redirect_uri: config.redirectUri,
-				state
-			});
-			return [url, state];
+			const scopeConfig = config.scope ?? [];
+			return await createOAuth2AuthorizationUrl(
+				"https://discord.com/oauth2/authorize",
+				{
+					clientId: config.clientId,
+					scope: ["identify", ...scopeConfig],
+					redirectUri: config.redirectUri
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const discordTokens = await getDiscordTokens(code);
