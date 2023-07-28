@@ -102,7 +102,7 @@ export const createOAuth2AuthorizationUrl = async (
 	options: {
 		clientId: string;
 		scope: string[];
-		state?: string | null;
+		state?: string;
 		redirectUri?: string;
 		searchParams?: Record<string, string | undefined>;
 	}
@@ -126,7 +126,7 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		clientId: string;
 		scope: string[];
 		codeChallengeMethod: "S256";
-		state?: string | null;
+		state?: string;
 		redirectUri?: string;
 		searchParams?: Record<string, string | undefined>;
 	}
