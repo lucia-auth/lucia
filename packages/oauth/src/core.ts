@@ -106,7 +106,7 @@ export const createOAuth2AuthorizationUrl = async (
 		redirectUri?: string;
 		searchParams?: Record<string, string | undefined>;
 	}
-): Promise<readonly [url: URL, state: string]> => {
+): Promise<readonly [authorizationUrl: URL, state: string]> => {
 	const searchParams = options.searchParams ?? {};
 	const state = generateState();
 	const authorizationUrl = createUrl(url, {
@@ -130,7 +130,9 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		redirectUri?: string;
 		searchParams?: Record<string, string | undefined>;
 	}
-): Promise<readonly [url: URL, state: string, codeVerifier: string]> => {
+): Promise<
+	readonly [authorizationUrl: URL, state: string, codeVerifier: string]
+> => {
 	const searchParams = options.searchParams ?? {};
 	const codeVerifier = generateRandomString(
 		96,
