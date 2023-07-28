@@ -44,7 +44,7 @@ export class OAuthRequestError extends Error {
 	}
 }
 
-export type ProviderUserAuth<_Auth extends Auth> = {
+type ProviderUserAuth<_Auth extends Auth> = {
 	existingUser: LuciaUser<_Auth> | null;
 	createKey: (userId: string) => Promise<Key>;
 	createUser: (options: {
