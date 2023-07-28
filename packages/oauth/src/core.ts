@@ -113,7 +113,7 @@ export const createOAuth2AuthorizationUrl = async (
 		response_type: "code",
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
-		state: options.state ?? generateState(),
+		state: options.state ?? state,
 		redirect_url: options.redirectUri,
 		...searchParams
 	});
@@ -142,7 +142,7 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		response_type: "code",
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
-		state: options.state ?? generateState(),
+		state: options.state ?? state,
 		redirect_url: options.redirectUri,
 		code_challenge_method: "S256",
 		code_challenge: encodeBase64Url(codeChallenge),
