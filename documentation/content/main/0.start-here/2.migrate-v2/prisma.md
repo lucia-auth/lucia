@@ -61,15 +61,12 @@ const client = new PrismaClient();
 // default values
 const auth = lucia({
 	adapter: prisma(client, {
-		modelNames: {
-			user: "authUser",
-			key: "authKey",
-			session: "authSession"
-		},
-		userRelationKey: "auth_user"
+		user: "authUser",
+		key: "authKey",
+		session: "authSession"
 	})
 	// ...
 });
 ```
 
-You can now the models as well. Without the second `options` params, the adapter expects the [default schema](/database-adapters/prisma#prisma-schema), which is different from the one required in v1.
+You can now rename the models as well. Without the second `options` params, the adapter expects the [default schema](/database-adapters/prisma#prisma-schema), which is different from the one required in v1.
