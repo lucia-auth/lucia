@@ -88,8 +88,8 @@ export type GoogleUser = {
 	given_name: string;
 	family_name: string;
 	picture: string;
-	locale: string; 
- 	email?: string; 
- 	email_verified?: boolean; 
- 	hd?: string; 
+	locale: string;
+	email?: string;
+	email_verified?: boolean;
+	hd?: string;
 };
