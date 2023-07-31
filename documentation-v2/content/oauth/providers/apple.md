@@ -62,13 +62,14 @@ const apple: (
 
 ```ts
 import * as fs from "node:fs";
+import path from "node:path";
 
 const certificatePath = path.join(
 	process.cwd(),
 	process.env.APPLE_CERT_PATH ?? ""
 );
 
-const certificate = fs.readFileSync(certPath, "utf-8");
+const certificate = fs.readFileSync(certificatePath, "utf-8");
 
 export const appleAuth = apple(auth, {
 	teamId: process.env.APPLE_TEAM_ID ?? "",
