@@ -1,12 +1,12 @@
-import type { Model } from "mongoose";
 import type {
 	Adapter,
 	InitializeAdapter,
 	KeySchema,
-	UserSchema,
-	SessionSchema
+	SessionSchema,
+	UserSchema
 } from "lucia";
-import type { UserDoc, SessionDoc, KeyDoc } from "./docs.js";
+import type { Model } from "mongoose";
+import type { KeyDoc, SessionDoc, UserDoc } from "./docs.js";
 
 export const DEFAULT_PROJECTION = {
 	$__: 0,
@@ -16,7 +16,7 @@ export const DEFAULT_PROJECTION = {
 
 export const mongooseAdapter = (models: {
 	User: Model<UserDoc>;
-	Session: Model<SessionDoc>;
+	Session: Model<SessionDoc> | null;
 	Key: Model<KeyDoc>;
 }): InitializeAdapter<Adapter> => {
 	const { User, Session, Key } = models;
@@ -61,6 +61,9 @@ export const mongooseAdapter = (models: {
 			},
 
 			getSession: async (sessionId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				const session = await Session.findById(
 					sessionId,
 					DEFAULT_PROJECTION
@@ -69,6 +72,9 @@ export const mongooseAdapter = (models: {
 				return transformSessionDoc(session);
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				const sessions = await Session.find(
 					{
 						user_id: userId
@@ -77,19 +83,62 @@ export const mongooseAdapter = (models: {
 				).lean();
 				return sessions.map((val) => transformSessionDoc(val));
 			},
+			getSessionAndUserBySessionId: async (sessionId: string) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
+
+				const sessionUsers = await Session.aggregate([
+					{ $match: { _id: sessionId } },
+					{
+						$lookup: {
+							from: User.collection.name,
+							localField: "user_id",
+							// Relies on _id being a String, not ObjectId.
+							// But this assumption is used elsewhere, as well
+							foreignField: "_id",
+							as: "userDocs"
+						}
+					}
+				]).exec();
+
+				const sessionUser = sessionUsers?.at(0) ?? null;
+				if (!sessionUser) return null;
+
+				const { userDocs, ...sessionDoc } = sessionUser;
+				const userDoc = userDocs?.at(0) ?? null;
+				if (!userDoc) return null;
+
+				return {
+					user: transformUserDoc(userDoc),
+					session: transformSessionDoc(sessionDoc)
+				};
+			},
 			setSession: async (session) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				const sessionDoc = new Session(createMongoValues(session));
 				await sessionDoc.save();
 			},
 			deleteSession: async (sessionId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				await Session.findByIdAndDelete(sessionId);
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				await Session.deleteMany({
 					user_id: userId
 				});
 			},
 			updateSession: async (sessionId, partialUser) => {
+				if (!Session) {
+					throw new Error("Session model not defined");
+				}
 				await Session.findByIdAndUpdate(sessionId, partialUser, {
 					new: true,
 					projection: DEFAULT_PROJECTION

@@ -15,7 +15,7 @@ export const betterSqlite3Adapter = (
 	db: Database,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
@@ -34,7 +34,9 @@ export const betterSqlite3Adapter = (
 	};
 
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session
+		? escapeName(tables.session)
+		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
@@ -88,12 +90,18 @@ export const betterSqlite3Adapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result: SessionSchema | undefined = db
 					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.get(sessionId);
 				return result ?? null;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result: SessionSchema[] = db
 					.prepare(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
@@ -102,6 +110,9 @@ export const betterSqlite3Adapter = (
 				return result;
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				try {
 					const [fields, values, args] = helper(session);
 					db.prepare(
@@ -116,16 +127,25 @@ export const betterSqlite3Adapter = (
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				db.prepare(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`
 				).run(sessionId);
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				db.prepare(
 					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
 				).run(userId);
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(partialSession);
 				db.prepare(
 					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(

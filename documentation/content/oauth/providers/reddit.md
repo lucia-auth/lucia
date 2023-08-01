@@ -1,5 +1,5 @@
 ---
-_order: 0
+order: 0
 title: "Reddit"
 description: "Learn about using the Reddit provider in Lucia OAuth integration"
 ---
@@ -8,16 +8,12 @@ OAuth integration for Reddit. Refer to [Reddit OAuth documentation archive](http
 
 ```ts
 import { reddit } from "@lucia-auth/oauth/providers";
-```
-
-### Initialization
-
-```ts
-import { reddit } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
 const redditAuth = reddit(auth, configs);
 ```
+
+## `reddit()`
 
 ```ts
 const reddit: (
@@ -28,79 +24,90 @@ const reddit: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider<RedditUser, RedditTokens>;
+) => RedditProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                 | type                                 | description                                       | optional |
-| -------------------- | ------------------------------------ | ------------------------------------------------- | :------: |
-| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                    |          |
-| configs.clientId     | `string`                             | Reddit OAuth app client id                        |          |
-| configs.clientSecret | `string`                             | Reddit OAuth app client secret                    |          |
-| configs.redirectUri  | `string`                             | Reddit OAuth app redirect Uri                     |          |
-| configs.scope        | `string[]`                           | an array of scopes (`identiy` is always selected) |    ✓     |
+| name                   | type                                       | description                                       | optional |
+| ---------------------- | ------------------------------------------ | ------------------------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                    |          |
+| `configs.clientId`     | `string`                                   | Reddit OAuth app client id                        |          |
+| `configs.clientSecret` | `string`                                   | Reddit OAuth app client secret                    |          |
+| `configs.redirectUri`  | `string`                                   | Reddit OAuth app redirect Uri                     |          |
+| `configs.scope`        | `string[]`                                 | an array of scopes (`identiy` is always selected) |    ✓     |
 
-#### Returns
+##### Returns
 
-| type                                              | description     |
-| ------------------------------------------------- | --------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | Reddit provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`RedditProvider`](#redditprovider) | Reddit provider |
 
-## `RedditProvider`
+## Interfaces
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+### `RedditProvider`
 
-### `getAuthorizationUrl()`
+Satisfied [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
+
+```ts
+type RedditProvider = OAuthProvider<Reddit, RedditTokens>;
+```
+
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 ```
 
-#### Parameter
-
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
-
-#### Returns
+##### Returns
 
 | name    | type     | description          |
 | ------- | -------- | -------------------- |
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and returns the session.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
+const validateCallback: (code: string) => Promise<RedditUserAuth>;
 ```
 
-#### Parameter
+##### Parameters
 
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
-#### Returns
+##### Returns
 
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
+| type                                |
+| ----------------------------------- |
+| [`RedditUserAuth`](#reddituserauth) |
 
-#### Errors
+##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
 
-## `RedditTokens`
+### `RedditUserAuth`
+
+```ts
+type RedditUserAuth = ProviderUserAuth & {
+	redditUser: RedditUser;
+	redditTokens: RedditTokens;
+};
+```
+
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`RedditUser`](#reddituser)                                        |
+| [`RedditTokens`](#reddittokens)                                    |
+
+### `RedditTokens`
 
 ```ts
 type RedditTokens = {
@@ -108,7 +115,7 @@ type RedditTokens = {
 };
 ```
 
-## `RedditUser`
+### `RedditUser`
 
 ```ts
 type RedditUser = {

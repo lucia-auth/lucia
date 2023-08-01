@@ -7,18 +7,20 @@ import type {
 	UserSchema,
 	KeySchema
 } from "lucia";
-import { Client, LibsqlError } from "@libsql/client";
+import type { Client, LibsqlError } from "@libsql/client";
 
 export const libsqlAdapter = (
 	db: Client,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session
+		? escapeName(tables.session)
+		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
@@ -47,12 +49,12 @@ export const libsqlAdapter = (
 						sql: `INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`,
 						args: keyArgs
 					};
-					await db.batch("write", [insertUserQuery, insertKeyQuery]);
+					await db.batch([insertUserQuery, insertKeyQuery], "write");
 				} catch (e) {
+					const error = e as Partial<LibsqlError>;
 					if (
-						e instanceof LibsqlError &&
-						e.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-						e.message?.includes(".id")
+						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
+						error.message?.includes(".id")
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -78,6 +80,9 @@ export const libsqlAdapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await db.execute({
 					sql: `SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 					args: [sessionId]
@@ -86,6 +91,9 @@ export const libsqlAdapter = (
 				return rows.at(0) ?? null;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const result = await db.execute({
 					sql: `SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
 					args: [userId]
@@ -93,6 +101,9 @@ export const libsqlAdapter = (
 				return result.rows as unknown[] as SessionSchema[];
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				try {
 					const [fields, values, args] = helper(session);
 					await db.execute({
@@ -100,28 +111,35 @@ export const libsqlAdapter = (
 						args
 					});
 				} catch (e) {
-					if (
-						e instanceof LibsqlError &&
-						e.code === "SQLITE_CONSTRAINT_FOREIGNKEY"
-					) {
+					const error = e as Partial<LibsqlError>;
+					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 					throw e;
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await db.execute({
 					sql: `DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 					args: [sessionId]
 				});
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await db.execute({
 					sql: `DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
 					args: [userId]
 				});
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(partialSession);
 				const setArgs = getSetArgs(fields, values);
 				args.push(sessionId);
@@ -154,16 +172,15 @@ export const libsqlAdapter = (
 						args
 					});
 				} catch (e) {
-					if (e instanceof LibsqlError) {
-						if (e.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-							throw new LuciaError("AUTH_INVALID_USER_ID");
-						}
-						if (
-							e.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-							e.message?.includes(".id")
-						) {
-							throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-						}
+					const error = e as Partial<LibsqlError>;
+					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
+					if (
+						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
+						error.message?.includes(".id")
+					) {
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
 					throw e;
 				}

@@ -8,7 +8,6 @@ env:
   AURI_GITHUB_TOKEN: ${{secrets.AURI_GITHUB_TOKEN}}
   NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
   VERCEL_DEPLOY_HOOK: ${{secrets.VERCEL_DEPLOY_HOOK}}
-  V2_VERCEL_DEPLOY_HOOK: ${{secrets.V2_VERCEL_DEPLOY_HOOK}}
 
 jobs:
   auri:

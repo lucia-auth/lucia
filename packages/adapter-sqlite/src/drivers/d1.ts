@@ -13,12 +13,14 @@ export const d1Adapter = (
 	db: D1Database,
 	tables: {
 		user: string;
-		session: string;
+		session: string | null;
 		key: string;
 	}
 ): InitializeAdapter<Adapter> => {
 	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = escapeName(tables.session);
+	const ESCAPED_SESSION_TABLE_NAME = tables.session
+		? escapeName(tables.session)
+		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	return (LuciaError) => {
@@ -82,6 +84,9 @@ export const d1Adapter = (
 			},
 
 			getSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const session = await db
 					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.bind(sessionId)
@@ -89,6 +94,9 @@ export const d1Adapter = (
 				return session;
 			},
 			getSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const { results: sessionResults } = await db
 					.prepare(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
@@ -98,6 +106,9 @@ export const d1Adapter = (
 				return sessionResults ?? [];
 			},
 			setSession: async (session) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				try {
 					const [fields, values, args] = helper(session);
 					await db
@@ -117,12 +128,18 @@ export const d1Adapter = (
 				}
 			},
 			deleteSession: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await db
 					.prepare(`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.bind(sessionId)
 					.run();
 			},
 			deleteSessionsByUserId: async (userId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				await db
 					.prepare(
 						`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
@@ -131,6 +148,9 @@ export const d1Adapter = (
 					.run();
 			},
 			updateSession: async (sessionId, partialSession) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const [fields, values, args] = helper(partialSession);
 				await db
 					.prepare(
@@ -208,6 +228,9 @@ export const d1Adapter = (
 			},
 
 			getSessionAndUser: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
 				const getSessionStatement = db
 					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
 					.bind(sessionId);

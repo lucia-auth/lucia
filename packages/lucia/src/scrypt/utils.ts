@@ -3,19 +3,10 @@ export const u32 = (arr: Uint8Array) =>
 
 export const nextTick = async () => {};
 
-const isPlainObject = (obj: any): obj is Record<any, any> => {
-	return (
-		Object.prototype.toString.call(obj) === "[object Object]" &&
-		obj.constructor === Object
-	);
-};
-
 export function checkOpts<T1 extends {}, T2 extends {}>(
 	defaults: T1,
 	opts?: T2
 ): T1 & T2 {
-	if (opts !== undefined && (typeof opts !== "object" || !isPlainObject(opts)))
-		throw new TypeError("Options should be object or undefined");
 	const merged = Object.assign(defaults, opts);
 	return merged as T1 & T2;
 }

@@ -1,5 +1,7 @@
+import { LuciaError } from "./error.js";
+
 import type { LuciaErrorConstructor } from "../index.js";
-import type { UserSchema, SessionSchema, KeySchema } from "./schema.js";
+import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
 
 export type InitializeAdapter<
 	T extends Adapter | UserAdapter | SessionAdapter
@@ -42,3 +44,30 @@ export type SessionAdapter = Readonly<{
 	deleteSession: (sessionId: string) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 }>;
+
+export const createAdapter = (
+	adapter:
+		| InitializeAdapter<Adapter>
+		| {
+				user: InitializeAdapter<Adapter>;
+				session: InitializeAdapter<SessionAdapter>;
+		  }
+): Adapter => {
+	if (!("user" in adapter)) return adapter(LuciaError);
+	let userAdapter = adapter.user(LuciaError);
+	let sessionAdapter = adapter.session(LuciaError);
+
+	if ("getSessionAndUser" in userAdapter) {
+		const { getSessionAndUser: _, ...extractedUserAdapter } = userAdapter;
+		userAdapter = extractedUserAdapter;
+	}
+
+	if ("getSessionAndUser" in sessionAdapter) {
+		const { getSessionAndUser: _, ...extractedSessionAdapter } = sessionAdapter;
+		sessionAdapter = extractedSessionAdapter;
+	}
+	return {
+		...userAdapter,
+		...sessionAdapter
+	};
+};

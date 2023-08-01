@@ -1,5 +1,39 @@
 # @lucia-auth/adapter-sqlite
 
+## 2.0.0
+
+### Major changes
+
+- [#885](https://github.com/pilcrowOnPaper/lucia/pull/885) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update version and peer dependency
+
+## 2.0.0-beta.8
+
+### Major changes
+
+- [#822](https://github.com/pilcrowOnPaper/lucia/pull/822) by [@abdel-17](https://github.com/abdel-17) : Require `@libsql/client@0.3.0`
+
+### Minor changes
+
+- [#867](https://github.com/pilcrowOnPaper/lucia/pull/867) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+### Patch changes
+
+- [#846](https://github.com/pilcrowOnPaper/lucia/pull/846) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `@libsql/client` import
+
+## 2.0.0-beta.7
+
+### Minor changes
+
+- [#842](https://github.com/pilcrowOnPaper/lucia/pull/842) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
+## 2.0.0-beta.6
+
+### Minor changes
+
+- [#815](https://github.com/pilcrowOnPaper/lucia/pull/815) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Make `session` model name params optional for `betterSqlite3()`, `d1()`, `libsql()`
+
+- [#812](https://github.com/pilcrowOnPaper/lucia/pull/812) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependency
+
 ## 2.0.0-beta.5
 
 ### Minor changes

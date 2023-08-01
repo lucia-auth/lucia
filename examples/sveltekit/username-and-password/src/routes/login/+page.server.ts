@@ -29,9 +29,9 @@ export const actions: Actions = {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey('username', username, password);
+			const key = await auth.useKey('username', username.toLowerCase(), password);
 			const session = await auth.createSession({
-				userId: user.userId,
+				userId: key.userId,
 				attributes: {}
 			});
 			locals.auth.setSession(session); // set session cookie
@@ -40,8 +40,10 @@ export const actions: Actions = {
 				e instanceof LuciaError &&
 				(e.message === 'AUTH_INVALID_KEY_ID' || e.message === 'AUTH_INVALID_PASSWORD')
 			) {
+				// user does not exist
+				// or invalid password
 				return fail(400, {
-					message: 'Incorrect username of password'
+					message: 'Incorrect username or password'
 				});
 			}
 			return fail(500, {

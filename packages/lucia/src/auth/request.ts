@@ -2,6 +2,7 @@ import { debug } from "../utils/debug.js";
 
 import type { Auth, Env, Session } from "./index.js";
 import type { Cookie } from "./cookie.js";
+import { LuciaError } from "./error.js";
 
 export type LuciaRequest = {
 	method: string;
@@ -21,18 +22,27 @@ export type RequestContext = {
 export type Middleware<Args extends any[] = any> = (context: {
 	args: Args;
 	env: Env;
-	cookieName: string;
+	sessionCookieName: string;
 }) => RequestContext;
 
-export class AuthRequest<A extends Auth = any> {
-	private auth: A;
+export class AuthRequest<_Auth extends Auth = any> {
+	private auth: _Auth;
 	private context: RequestContext;
-	constructor(auth: A, context: RequestContext) {
+	constructor(
+		auth: _Auth,
+		{
+			context,
+			csrfProtectionEnabled
+		}: {
+			context: RequestContext;
+			csrfProtectionEnabled: boolean;
+		}
+	) {
 		debug.request.init(context.request.method, context.request.url);
 		this.auth = auth;
 		this.context = context;
 		try {
-			if (auth.csrfProtectionEnabled) {
+			if (csrfProtectionEnabled) {
 				auth.validateRequestOrigin(context.request);
 			}
 			this.storedSessionId =
@@ -87,9 +97,12 @@ export class AuthRequest<A extends Auth = any> {
 					this.setSessionCookie(session);
 				}
 				return resolve(session);
-			} catch {
-				this.setSessionCookie(null);
-				return resolve(null);
+			} catch (e) {
+				if (e instanceof LuciaError) {
+					this.setSessionCookie(null);
+					return resolve(null);
+				}
+				throw e;
 			}
 		});
 
@@ -107,8 +120,11 @@ export class AuthRequest<A extends Auth = any> {
 				const session = await this.auth.getSession(this.bearerToken);
 				if (session.state === "idle") return resolve(null);
 				return resolve(session);
-			} catch {
-				return resolve(null);
+			} catch (e) {
+				if (e instanceof LuciaError) {
+					return resolve(null);
+				}
+				throw e;
 			}
 		});
 

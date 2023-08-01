@@ -1,8 +1,8 @@
 # `@lucia-auth/adapter-sqlite`
 
-SQLite adapter for Lucia
+SQLite adapter for Lucia v2.
 
-**[Documentation](https://lucia-auth.com/database/sqlite)**
+**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-prisma)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
@@ -20,12 +20,6 @@ npm install @lucia-auth/adapter-sqlite
 pnpm add @lucia-auth/adapter-sqlite
 yarn add @lucia-auth/adapter-sqlite
 ```
-
-## Version compatibility
-
-| `@lucia-auth/adapter-sqlite` | `lucia-auth` | `better-sqlite3` |
-| ---------------------------- | ------------ | ---------------- |
-| `^1.0.0`                     | `^1.4.0`     | `^8.0.0`         |
 
 ## Testing
 

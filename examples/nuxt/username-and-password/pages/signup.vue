@@ -18,7 +18,6 @@ const handleSubmit = async (e: Event) => {
 			},
 			redirect: "manual"
 		});
-		invalidateUserState();
 		await navigateTo("/"); // profile page
 	} catch (e) {
 		const { data: error } = e as {

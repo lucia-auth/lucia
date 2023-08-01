@@ -1,5 +1,5 @@
 ---
-_order: 0
+order:: 0
 title: "Twitch"
 description: "Learn about using the Twitch provider in Lucia OAuth integration"
 ---
@@ -8,16 +8,12 @@ OAuth integration for Twitch. Refer to [Twitch OAuth documentation](https://dev.
 
 ```ts
 import { twitch } from "@lucia-auth/oauth/providers";
-```
-
-### Initialization
-
-```ts
-import { twitch } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
 const twitchAuth = twitch(auth, configs);
 ```
+
+## `twitch()`
 
 ```ts
 const twitch: (
@@ -29,80 +25,91 @@ const twitch: (
 		forceVerify?: boolean;
 		scope?: string[];
 	}
-) => OAuthProvider<TwitchUser, TwitchTokens>;
+) => TwitchProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                 | type                                 | description                                                          | optional |
-| -------------------- | ------------------------------------ | -------------------------------------------------------------------- | :------: |
-| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                       |          |
-| configs.clientId     | `string`                             | Twitch OAuth app client id                                           |          |
-| configs.clientSecret | `string`                             | Twitch OAuth app client secret                                       |          |
-| configs.redirectUri  | `string`                             | one of the authorized redirect URIs                                  |          |
-| configs.forceVerify  | `boolean`                            | forces the user to re-authorize your app’s access to their resources |    ✓     |
-| configs.scope        | `string[]`                           | an array of scopes                                                   |    ✓     |
+| name                   | type                                       | description                                                          | optional |
+| ---------------------- | ------------------------------------------ | -------------------------------------------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                       |          |
+| `configs.clientId`     | `string`                                   | Twitch OAuth app client id                                           |          |
+| `configs.clientSecret` | `string`                                   | Twitch OAuth app client secret                                       |          |
+| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs                                  |          |
+| `configs.forceVerify`  | `boolean`                                  | forces the user to re-authorize your app’s access to their resources |    ✓     |
+| `configs.scope`        | `string[]`                                 | an array of scopes                                                   |    ✓     |
 
-#### Returns
+##### Returns
 
-| type                                              | description     |
-| ------------------------------------------------- | --------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | Twitch provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`TwitchProvider`](#twitchprovider) | Twitch provider |
 
-## `TwitchProvider`
+## Interfaces
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+### `TwitchProvider`
 
-### `getAuthorizationUrl()`
+Satisfied [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
+
+```ts
+type TwitchProvider = OAuthProvider<TwitchUser, TwitchTokens>;
+```
+
+#### `getAuthorizationUrl()`
 
 Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
 ```
 
-#### Parameter
-
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
-
-#### Returns
+##### Returns
 
 | name    | type     | description          |
 | ------- | -------- | -------------------- |
 | `url`   | `URL`    | authorize url        |
 | `state` | `string` | state parameter used |
 
-### `validateCallback()`
+#### `validateCallback()`
 
-Validates the callback and returns the session.
+Validates the callback code.
 
 ```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
+const validateCallback: (code: string) => Promise<TwitchUserAuth>;
 ```
 
-#### Parameter
+##### Parameters
 
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
+| name   | type     | description                          |
+| ------ | -------- | ------------------------------------ |
+| `code` | `string` | The authorization code from callback |
 
-#### Returns
+##### Returns
 
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
+| type                                |
+| ----------------------------------- |
+| [`TwitchUserAuth`](#twitchuserauth) |
 
-#### Errors
+##### Errors
 
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
+Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
 
-## `TwitchTokens`
+### `TwitchUserAuth`
+
+```ts
+type TwitchUserAuth = ProviderUserAuth & {
+	twitchUser: TwitchUser;
+	twitchTokens: TwitchTokens;
+};
+```
+
+| type                                                               |
+| ------------------------------------------------------------------ |
+| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
+| [`TwitchUser`](#twitchuser)                                        |
+| [`TwitchTokens`](#twitchtokens)                                    |
+
+### `TwitchTokens`
 
 ```ts
 type TwitchTokens = {
@@ -112,7 +119,7 @@ type TwitchTokens = {
 };
 ```
 
-## `TwitchUser`
+### `TwitchUser`
 
 ```ts
 type TwitchUser = {

@@ -4,14 +4,11 @@
 		"baseUrl": ".",
 		"paths": {
 			"@layouts/*": ["src/layouts/*"],
-			"@utils/*": ["src/utils/*"],
+			"@content": ["src/content/index.ts"],
 			"@components/*": ["src/components/*"],
-			"@cela/*": ["integrations/cela/*"],
-			"@search/*": ["search/*"],
-			"@server/*": ["src/server/*"],
-			"@markdown/*": ["integrations/markdown/*"]
-		},
-		"jsx": "preserve",
-		"jsxImportSource": "solid-js"
+			"@icons/*": ["src/icons/*"],
+			"@utils/*": ["src/utils/*"],
+			"@cela/*": ["integrations/cela/*"]
+		}
 	}
 }
