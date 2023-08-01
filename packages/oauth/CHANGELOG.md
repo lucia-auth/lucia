@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 2.0.1
+
+### Patch changes
+
+- [#894](https://github.com/pilcrowOnPaper/lucia/pull/894) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix type `GoogleUser`
+
 ## 2.0.0
 
 ### Major changes
