@@ -17,7 +17,7 @@ const Page = async () => {
 		<>
 			<h1>Profile</h1>
 			<p>User id: {session.user.userId}</p>
-			<p>AppleId email: {session.user.email}</p>
+			<p>Apple ID email: {session.user.email}</p>
 			<Form action="/logout" successRedirect="/">
 				<input type="submit" value="Sign out" />
 			</Form>
