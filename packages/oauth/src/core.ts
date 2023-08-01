@@ -3,7 +3,8 @@ import {
 	encodeBase64,
 	generateState,
 	encodeBase64Url,
-	generatePKCECodeChallenge
+	generatePKCECodeChallenge,
+	decodeBase64Url
 } from "./utils.js";
 import { generateRandomString } from "lucia/utils";
 
@@ -196,4 +197,29 @@ export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
 		body
 	});
 	return await handleRequest<_ResponseBody>(request);
+};
+
+export class IdTokenError extends Error {
+	public message: "ID_TOKEN_INVALID_JWT";
+	constructor(message: IdTokenError["message"]) {
+		super(message);
+		this.message = message;
+	}
+}
+
+const decoder = new TextDecoder();
+
+// does not verify id tokens
+export const decodeIdToken = <_Claims extends {}>(idToken: string) => {
+	const idTokenParts = idToken.split(".");
+	if (idTokenParts.length !== 3) throw new IdTokenError("ID_TOKEN_INVALID_JWT");
+	const base64UrlPayload = idTokenParts[1];
+	const payload = JSON.parse(
+		decoder.decode(decodeBase64Url(base64UrlPayload))
+	) as {
+		iss: string;
+		aud: string;
+		exp: number;
+	} & _Claims;
+	return payload;
 };

@@ -1,3 +1,6 @@
+export { apple } from "./apple.js";
+export type { AppleUser } from "./apple.js";
+
 export { auth0 } from "./auth0.js";
 export type { Auth0User } from "./auth0.js";
 
