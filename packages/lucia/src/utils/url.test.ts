@@ -95,6 +95,12 @@ test("isAllowedUrl() returns expected result", async () => {
 			allowedSubdomains: ["bar"]
 		})
 	).toBe(false);
+	expect(
+		isAllowedUrl("http://example.com/foo", {
+			url: "http://api.example.com",
+			allowedSubdomains: [null]
+		})
+	).toBe(true);
 
 	expect(
 		isAllowedUrl("http://localhost:3000", {
