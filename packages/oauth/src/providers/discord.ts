@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -13,24 +16,18 @@ const PROVIDER_ID = "discord";
 
 export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getDiscordTokens = async (code: string) => {
-		const request = new Request("https://discord.com/api/oauth2/token", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: new URLSearchParams({
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				grant_type: "authorization_code",
-				redirect_uri: config.redirectUri,
-				code
-			}).toString()
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
-		}>(request);
+		}>(code, "https://discord.com/api/oauth2/token", {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -42,7 +39,9 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getDiscordUser = async (accessToken: string) => {
 		// do not use oauth/users/@me because it ignores intents, use oauth/users/@me instead
 		const request = new Request("https://discord.com/api/users/@me", {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 		const discordUser = await handleRequest<DiscordUser>(request);
 		return discordUser;
@@ -50,15 +49,15 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://discord.com/oauth2/authorize", {
-				response_type: "code",
-				client_id: config.clientId,
-				scope: scope(["identify"], config.scope),
-				redirect_uri: config.redirectUri,
-				state
-			});
-			return [url, state];
+			const scopeConfig = config.scope ?? [];
+			return await createOAuth2AuthorizationUrl(
+				"https://discord.com/oauth2/authorize",
+				{
+					clientId: config.clientId,
+					scope: ["identify", ...scopeConfig],
+					redirectUri: config.redirectUri
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const discordTokens = await getDiscordTokens(code);

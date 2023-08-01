@@ -51,7 +51,7 @@ APPLE_CLIENT_ID=""
 
 ## User schema
 
-| id                | type     | unique |
-| ----------------- | -------- | :----: |
-| `id`              | `string` |        |
-| `email`           | `string` |        |
+| id      | type     | unique |
+| ------- | -------- | :----: |
+| `id`    | `string` |        |
+| `email` | `string` |        |

@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -13,29 +16,20 @@ type Config = OAuthConfig & {
 
 export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getLinkedinTokens = async (code: string) => {
-		const requestUrl = createUrl(
-			"https://www.linkedin.com/oauth/v2/accessToken",
-			{
-				grant_type: "authorization_code",
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				redirect_uri: config.redirectUri,
-				code
-			}
-		);
-		const request = new Request(requestUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			}
-		});
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
 			refresh_token_expires_in: number;
 			scope: string;
-		}>(request);
+		}>(code, "https://www.linkedin.com/oauth/v2/accessToken", {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -72,7 +66,9 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		});
 
 		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 
 		return handleRequest<LinkedinProfileResponse>(request);
@@ -80,15 +76,15 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://www.linkedin.com/oauth/v2/authorization", {
-				client_id: config.clientId,
-				response_type: "code",
-				redirect_uri: config.redirectUri,
-				scope: scope(["r_liteprofile"], config.scope),
-				state
-			});
-			return [url, state] as const;
+			const scopeConfig = config.scope ?? [];
+			return await createOAuth2AuthorizationUrl(
+				"https://www.linkedin.com/oauth/v2/authorization",
+				{
+					clientId: config.clientId,
+					redirectUri: config.redirectUri,
+					scope: ["r_liteprofile", ...scopeConfig]
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const linkedinTokens = await getLinkedinTokens(code);

@@ -1,6 +1,9 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode
+} from "../core.js";
+import { createUrl, handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -13,21 +16,18 @@ const PROVIDER_ID = "facebook";
 
 export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getFacebookTokens = async (code: string) => {
-		const requestUrl = createUrl(
-			"https://graph.facebook.com/v16.0/oauth/access_token",
-			{
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				redirect_uri: config.redirectUri,
-				code
-			}
-		);
-		const request = new Request(requestUrl);
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
-		}>(request);
+		}>(code, "https://graph.facebook.com/v16.0/oauth/access_token", {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret: config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -42,7 +42,9 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			fields: ["id", "name", "picture"].join(",")
 		});
 		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
 		});
 		const facebookUser = await handleRequest<FacebookUser>(request);
 		return facebookUser;
@@ -50,14 +52,14 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	return {
 		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
-				client_id: config.clientId,
-				scope: scope([], config.scope),
-				redirect_uri: config.redirectUri,
-				state
-			});
-			return [url, state] as const;
+			return await createOAuth2AuthorizationUrl(
+				"https://www.facebook.com/v16.0/dialog/oauth",
+				{
+					clientId: config.clientId,
+					scope: config.scope ?? [],
+					redirectUri: config.redirectUri
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const tokens = await getFacebookTokens(code);

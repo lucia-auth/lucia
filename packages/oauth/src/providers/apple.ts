@@ -1,7 +1,11 @@
-import { createUrl, handleRequest } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { generateState, getPKCS8Key } from "../utils.js";
-import { createES256SignedJWT, decodeJWT } from "../jwt.js";
+import {
+	createOAuth2AuthorizationUrl,
+	providerUserAuth,
+	validateOAuth2AuthorizationCode,
+	decodeIdToken
+} from "../core.js";
+import { getPKCS8Key } from "../utils.js";
+import { createES256SignedJWT } from "../jwt.js";
 
 import type { Auth } from "lucia";
 import type { OAuthProvider } from "../core.js";
@@ -51,29 +55,25 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	const getAppleTokens = async (code: string) => {
-		const requestUrl = createUrl("https://appleid.apple.com/auth/token", {
-			client_id: config.clientId,
-			client_secret: await createSecretId({
-				certificate: config.certificate,
-				teamId: config.teamId,
-				clientId: config.clientId,
-				keyId: config.keyId
-			}),
-			code,
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri
+		const clientSecret = await createSecretId({
+			certificate: config.certificate,
+			teamId: config.teamId,
+			clientId: config.clientId,
+			keyId: config.keyId
 		});
-
-		const request = new Request(requestUrl, {
-			method: "POST"
-		});
-
-		const tokens = await handleRequest<{
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
 			id_token: string;
-		}>(request);
+		}>(code, "https://appleid.apple.com/auth/token", {
+			clientId: config.clientId,
+			redirectUri: config.redirectUri,
+			clientPassword: {
+				clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -84,7 +84,7 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	const getAppleUser = (idToken: string): AppleUser => {
-		const jwtPayload = decodeJWT<AppleUser>(idToken);
+		const jwtPayload = decodeIdToken<AppleUser>(idToken);
 		return {
 			email: jwtPayload.email,
 			email_verified: jwtPayload.email_verified,
@@ -93,17 +93,18 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	};
 
 	return {
-		getAuthorizationUrl: async (redirectUri?: string) => {
-			const state = generateState();
-			const url = createUrl("https://appleid.apple.com/auth/authorize", {
-				client_id: config.clientId,
-				redirect_uri: redirectUri ?? config.redirectUri,
-				response_type: "code",
-				response_mode: "query",
-				state
-			});
-
-			return [url, state] as const;
+		getAuthorizationUrl: async () => {
+			return await createOAuth2AuthorizationUrl(
+				"https://appleid.apple.com/auth/authorize",
+				{
+					clientId: config.clientId,
+					redirectUri: config.redirectUri,
+					scope: [],
+					searchParams: {
+						response_mode: "query"
+					}
+				}
+			);
 		},
 		validateCallback: async (code: string) => {
 			const appleTokens = await getAppleTokens(code);

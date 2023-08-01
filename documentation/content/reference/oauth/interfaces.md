@@ -3,6 +3,16 @@ order: 3
 title: "Interfaces"
 ---
 
+## `IdTokenError`
+
+Extends standard `Error`.
+
+```ts
+type IdTokenError = Error & {
+	message: "INVALID_ID_TOKEN";
+};
+```
+
 ## `OAuthProvider`
 
 See each provider's page.
