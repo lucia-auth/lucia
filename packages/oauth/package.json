@@ -12,7 +12,8 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"auri.build": "pnpm build"
+		"auri.build": "pnpm build",
+		"test": "vitest run"
 	},
 	"keywords": [
 		"lucia",
@@ -40,7 +41,9 @@
 		}
 	},
 	"devDependencies": {
-		"lucia": "latest"
+		"lucia": "latest",
+		"vitest": "^0.33.0",
+		"jose": "^4.14.4"
 	},
 	"peerDependencies": {
 		"lucia": "^2.0.0"
