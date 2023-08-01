@@ -2,11 +2,11 @@
 title: "Overview"
 ---
 
-Lucia provides an external, server-side library that makes implementing authentication flow with OAuth easy.
+Lucia provides an external, server-side library that makes implementing authentication flow with OAuth and Open ID Connect easy.
 
 It mainly handles 2 parts of the authentication process. First, it generates an authorization URL for your users to be redirected to. Once the user authenticates with the provider, they will be redirected back to your application with a code. You can then pass this code to the integration to be validated.
 
-We support a handful of popular providers out of the box (full list below), but we also provide helpers that support most OAuth 2.0 implementations.
+We support a handful of popular providers out of the box (full list below), but we also provide helpers that support most OAuth 2.0 and Open ID Connect implementations.
 
 ```
 npm i @lucia-auth/oauth
