@@ -4,6 +4,10 @@ title: "/providers"
 format: "code"
 ---
 
+## `apple()`
+
+See [Apple](/oauth/providers/apple) provider.
+
 ## `auth0()`
 
 See [Auth0](/oauth/providers/auth0) provider.
@@ -28,9 +32,9 @@ See [Google](/oauth/providers/google) provider.
 
 See [Lichess](/oauth/providers/lichess) provider.
 
-## `linkedin()`
+## `osu()`
 
-See [Linkedin](/oauth/providers/linkedin) provider.
+See [osu!](/oauth/providers/osu) provider.
 
 ## `patreon()`
 

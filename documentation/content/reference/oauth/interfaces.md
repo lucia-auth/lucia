@@ -3,12 +3,12 @@ order: 3
 title: "Interfaces"
 ---
 
-## `__experimental_IdTokenError`
+## `IdTokenError`
 
 Extends standard `Error`.
 
 ```ts
-type __experimental_IdTokenError = Error & {
+type IdTokenError = Error & {
 	message: "INVALID_ID_TOKEN";
 };
 ```

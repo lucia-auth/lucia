@@ -3,14 +3,18 @@ order: 0
 title: "Main"
 ---
 
-## `__experimental_createOAuth2AuthorizationUrl()`
+## `createOAuth2AuthorizationUrl()`
 
-**This API is experimental and is subject to breaking changes!**
+**This API is experimental and is subject to breaking changes.**
 
-Creates a new authorization url for OAuth 2.0 authorization code grant with a state. Use [`createOAuth2AuthorizationUrlWithPKCE()`](/reference/oauth/main#__experimental_createoauth2authorizationurlwithpkce) for creating urls with PKCE code challenge.
+Creates a new authorization url for OAuth 2.0 authorization code grant with a state. Use [`createOAuth2AuthorizationUrlWithPKCE()`](/reference/oauth/main#createoauth2authorizationurlwithpkce) for creating urls with PKCE code challenge.
 
 ```ts
-const __experimental_createOAuth2AuthorizationUrl: (
+import { __experimental_createOAuth2AuthorizationUrl } from "@lucia-auth/oauth";
+```
+
+```ts
+const createOAuth2AuthorizationUrl: (
 	url: string | URL,
 	options: {
 		clientId: string;
@@ -40,14 +44,18 @@ const __experimental_createOAuth2AuthorizationUrl: (
 | `authorizationUrl` | `URL`    | Authorization url           |
 | `state`            | `string` | Generated or provided state |
 
-## `__experimental_createOAuth2AuthorizationUrlWithPKCE()`
+## `createOAuth2AuthorizationUrlWithPKCE()`
 
-**This API is experimental and is subject to breaking changes!**
+**This API is experimental and is subject to breaking changes.**
 
 Creates a new authorization url for OAuth 2.0 authorization code grant with a state and PKCE code challenge.
 
 ```ts
-const __experimental_createOAuth2AuthorizationUrlWithPKCE: (
+import { __experimental_createOAuth2AuthorizationUrlWithPKCE } from "@lucia-auth/oauth";
+```
+
+```ts
+const createOAuth2AuthorizationUrlWithPKCE: (
 	url: string | URL,
 	options: {
 		clientId: string;
@@ -82,9 +90,15 @@ const __experimental_createOAuth2AuthorizationUrlWithPKCE: (
 | `state`            | `string` | Generated or provided state |
 | `codeVerifier`     | `string` | Generated code verifier     |
 
-## `__experimental_decodeIdToken()`
+## `decodeIdToken()`
 
-Decodes the OpenID Connect id token and returns the claims. **Does NOT validate the JWT**. Throws [`IdTokenError`](/reference/oauth/interfaces#__experimental_idtokenerror) if provided id token is invalid or malformed.
+**This API is experimental and is subject to breaking changes.**
+
+Decodes the OpenID Connect Id Token and returns the claims. **Does NOT validate the JWT**. Throws [`IdTokenError`](/reference/oauth/interfaces#idtokenerror) if provided id token is invalid or malformed.
+
+```ts
+import { __experimental_decodeIdToken } from "@lucia-auth/oauth";
+```
 
 ```ts
 const decodeIdToken: <_Claims extends {}>(
@@ -112,13 +126,9 @@ const decodeIdToken: <_Claims extends {}>(
 
 JWT payload.
 
-##### Generics
+## `IdTokenError`
 
-| name | extends | description |
-
-## `__experimental_IdTokenError`
-
-See [`IdTokenError`](/reference/oauth/interfaces#__experimental_idtokenerror).
+See [`IdTokenError`](/reference/oauth/interfaces#idtokenerror).
 
 ## `OAuthRequestError`
 
@@ -150,14 +160,18 @@ const providerUserAuth: (
 | ------------------------------------------------------------------ |
 | [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
 
-## `__experimental_validateOAuth2AuthorizationCode()`
+## `validateOAuth2AuthorizationCode()`
 
-Validates OAuth 2.0 authorization code.
+**This API is experimental and is subject to breaking changes.**
+
+Validates OAuth 2.0 authorization code with the provided url. Returns the response JSON body of 
 
 ```ts
-const __experimental_validateOAuth2AuthorizationCode: <
-	_ResponseBody extends {}
->(
+import { __experimental_createOAuth2AuthorizationUrl } from "@lucia-auth/oauth";
+```
+
+```ts
+const validateOAuth2AuthorizationCode: <_ResponseBody extends {}>(
 	authorizationCode: string,
 	url: string | URL,
 	options: {
