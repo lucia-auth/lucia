@@ -9,7 +9,7 @@ Extends standard `Error`.
 
 ```ts
 type __experimental_IdTokenError = Error & {
-	message: INVALID_ID_TOKEN;
+	message: "INVALID_ID_TOKEN";
 };
 ```
 

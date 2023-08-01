@@ -7,7 +7,7 @@ title: "Main"
 
 **This API is experimental and is subject to breaking changes!**
 
-Creates a new authorization url for OAuth 2.0 authorization code grant with a state. This returns a promise to be consistent with `createOAuth2AuthorizationUrlWithPKCE()`.
+Creates a new authorization url for OAuth 2.0 authorization code grant with a state. Use [`createOAuth2AuthorizationUrlWithPKCE()`](/reference/oauth/main#__experimental_createoauth2authorizationurlwithpkce) for creating urls with PKCE code challenge.
 
 ```ts
 const __experimental_createOAuth2AuthorizationUrl: (
