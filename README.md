@@ -2,7 +2,7 @@
 
 Lucia is a simple and flexible user and session management library that provides an
 abstraction layer between your app and your database. It's bare-bones by design, keeping
-everything easy to use and understand. Get started by reading the [introduction page](https://lucia-auth.com/start-here/introduction).
+everything easy to use and understand.
 
 ### Code sample
 
@@ -10,17 +10,19 @@ Working with Lucia looks something like this. In the code below, you're creating
 
 ```ts
 const user = await auth.createUser({
-	primaryKey: {
+	key: {
 		providerId: "email",
 		providerUserId: email,
 		password
 	},
 	attributes: {
-		email,
-		username
+		email
 	}
 });
-const session = await auth.createSession(user.userId);
+const session = await auth.createSession({
+	userId: user.userId,
+	attributes: {}
+});
 const sessionCookie = auth.createSessionCookie(session);
 ```
 
@@ -37,9 +39,9 @@ const sessionCookie = auth.createSessionCookie(session);
 ## Installation
 
 ```
-npm i lucia-auth
-pnpm add lucia-auth
-yarn add lucia-auth
+npm i lucia
+pnpm add lucia
+yarn add lucia
 ```
 
 ## Attributions
