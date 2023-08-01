@@ -8,7 +8,7 @@ import {
 import { generateRandomString } from "lucia/utils";
 
 import type { Auth, Key, LuciaError } from "lucia";
-import type { CreateUserAttributesParameter, LuciaUser } from "./lucia.js";
+import type { LuciaDatabaseUserAttributes, LuciaUser } from "./lucia.js";
 
 export type OAuthConfig = {
 	clientId: string;
@@ -16,18 +16,11 @@ export type OAuthConfig = {
 	scope?: string[];
 };
 
-export type OAuthProvider = {
+export type OAuthProvider<_Auth extends Auth = Auth> = {
 	validateCallback: (
 		code: string,
 		...args: any[]
-	) => Promise<{
-		existingUser: Record<any, any> | null;
-		createUser: (options: {
-			userId?: string;
-			attributes: Record<string, any>;
-		}) => Promise<Record<any, any>>;
-		createKey: (userId: string) => Promise<Key>;
-	}>;
+	) => Promise<ProviderUserAuth<_Auth>>;
 	getAuthorizationUrl: (
 		redirectUri?: string
 	) => Promise<readonly [URL, ...any[]]>;
@@ -49,7 +42,7 @@ type ProviderUserAuth<_Auth extends Auth> = {
 	createKey: (userId: string) => Promise<Key>;
 	createUser: (options: {
 		userId?: string;
-		attributes: CreateUserAttributesParameter<_Auth>;
+		attributes: LuciaDatabaseUserAttributes<_Auth>;
 	}) => Promise<LuciaUser<_Auth>>;
 };
 
@@ -82,7 +75,7 @@ export const providerUserAuth = async <_Auth extends Auth>(
 		},
 		createUser: async (options: {
 			userId?: string;
-			attributes: CreateUserAttributesParameter<_Auth>;
+			attributes: LuciaDatabaseUserAttributes<_Auth>;
 		}): Promise<LuciaUser<_Auth>> => {
 			const user = await auth.createUser({
 				key: {
