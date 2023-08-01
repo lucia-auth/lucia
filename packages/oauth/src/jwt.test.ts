@@ -44,7 +44,7 @@ Ko3QryFm
 			payload,
 			privateKey
 		);
-        return jwt
+		return jwt;
 	};
 
 	const verifyJWT = async (jwt: string) => {
