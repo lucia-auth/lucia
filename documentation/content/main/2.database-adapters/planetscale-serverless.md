@@ -73,7 +73,7 @@ You can add additional columns to store user attributes.
 
 ```sql
 CREATE TABLE auth_user (
-    id VARCHAR(31) NOT NULL PRIMARY KEY,
+    id VARCHAR(15) NOT NULL PRIMARY KEY,
 );
 ```
 
