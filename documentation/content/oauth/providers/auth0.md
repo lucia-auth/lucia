@@ -113,10 +113,6 @@ type Auth0UserAuth = ProviderUserAuth & {
 | [`Auth0User`](#auth0user)                                          |
 | [`Auth0Tokens`](#auth0tokens)                                      |
 
-```ts
-import type { Auth0Tokens, Auth0User } from "@lucia-auth/oauth/providers";
-```
-
 ### `Auth0Tokens`
 
 ```ts

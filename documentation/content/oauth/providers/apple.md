@@ -1,9 +1,10 @@
 ---
+order: 0
 title: "Apple"
 description: "Learn about using the Apple provider in Lucia OAuth integration"
 ---
 
-**Before starting make sure you have an paid apple dev account**
+**Before starting make sure you have an paid apple dev account.**
 
 OAuth integration for Apple. Refer to Apple Docs:
 
@@ -20,8 +21,7 @@ Provider id is `apple`.
 
 ```ts
 import { apple } from "@lucia-auth/oauth/providers";
-
-import { auth } from "./lucia.js";
+import { auth } from "./auth.js";
 
 const appleAuth = apple(auth, configs);
 ```
@@ -31,7 +31,7 @@ const appleAuth = apple(auth, configs);
 ```ts
 const apple: (
 	auth: Auth,
-	configs: {
+	config: {
 		clientId: string;
 		redirectUri: string;
 		teamId: string;
@@ -43,14 +43,14 @@ const apple: (
 
 ##### Parameters
 
-| name                | type                                       | description                                                    |
-| ------------------- | ------------------------------------------ | -------------------------------------------------------------- |
-| `auth`              | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                 |
-| configs.clientId    | `string`                                   | Apple service identifier                                       |
-| configs.redirectUri | `string`                                   | an authorized redirect URI                                     |
-| configs.teamId      | `string`                                   | Apple teamId                                                   |
-| configs.keyId       | `string`                                   | Apple private keyId                                            |
-| configs.certificate | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate) |
+| name               | type                                       | description                                                    |
+| ------------------ | ------------------------------------------ | -------------------------------------------------------------- |
+| `auth`             | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                 |
+| config.clientId    | `string`                                   | Apple service identifier                                       |
+| config.redirectUri | `string`                                   | an authorized redirect URI                                     |
+| config.teamId      | `string`                                   | Apple teamId                                                   |
+| config.keyId       | `string`                                   | Apple private keyId                                            |
+| config.certificate | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate) |
 
 ##### Returns
 
@@ -60,9 +60,11 @@ const apple: (
 
 ### Import certificate
 
+Example using Node.js:
+
 ```ts
-import * as fs from "node:fs";
-import path from "node:path";
+import fs from "fs";
+import path from "path";
 
 const certificatePath = path.join(
 	process.cwd(),
@@ -144,10 +146,10 @@ type Auth0UserAuth = ProviderUserAuth & {
 
 ```ts
 type AppleTokens = {
-	access_token: string;
-	refresh_token?: string;
-	expires_in: number;
-	id_token: string;
+	accessToken: string;
+	refreshToken: string | null;
+	accessTokenExpiresIn: number;
+	idToken: string;
 };
 ```
 
