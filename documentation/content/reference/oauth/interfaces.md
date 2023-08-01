@@ -3,6 +3,17 @@ order: 3
 title: "Interfaces"
 ---
 
+## `__experimental_IdTokenError`
+
+Extends standard `Error`.
+
+```ts
+type __experimental_IdTokenError = Error & {
+	request: Request;
+	response: Response;
+};
+```
+
 ## `OAuthProvider`
 
 See each provider's page.

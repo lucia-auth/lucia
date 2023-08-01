@@ -200,7 +200,7 @@ export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
 };
 
 export class IdTokenError extends Error {
-	public message: "ID_TOKEN_INVALID_JWT";
+	public message: "INVALID_ID_TOKEN";
 	constructor(message: IdTokenError["message"]) {
 		super(message);
 		this.message = message;
@@ -210,16 +210,25 @@ export class IdTokenError extends Error {
 const decoder = new TextDecoder();
 
 // does not verify id tokens
-export const decodeIdToken = <_Claims extends {}>(idToken: string) => {
+export const decodeIdToken = <_Claims extends {}>(
+	idToken: string
+): {
+	iss: string;
+	aud: string;
+	exp: number;
+} & _Claims => {
 	const idTokenParts = idToken.split(".");
-	if (idTokenParts.length !== 3) throw new IdTokenError("ID_TOKEN_INVALID_JWT");
+	if (idTokenParts.length !== 3) throw new IdTokenError("INVALID_ID_TOKEN");
 	const base64UrlPayload = idTokenParts[1];
-	const payload = JSON.parse(
+	const payload: unknown = JSON.parse(
 		decoder.decode(decodeBase64Url(base64UrlPayload))
-	) as {
+	);
+	if (!payload || typeof payload !== "object") {
+		throw new IdTokenError("INVALID_ID_TOKEN");
+	}
+	return payload as {
 		iss: string;
 		aud: string;
 		exp: number;
 	} & _Claims;
-	return payload;
 };
