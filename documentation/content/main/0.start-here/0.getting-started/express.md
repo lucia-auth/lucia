@@ -15,13 +15,51 @@ yarn add lucia
 
 ### ESM
 
-Lucia is an ESM only package. Make sure your package type is `module` and use ESM imports instead of CJS `require()`.
+Lucia can only be used in ESM projects. Configure your `package.json` and `tsconfig.json` accordingly.
 
 ```json
 // package.json
 {
 	"type": "module"
+	// ...
 }
+```
+
+```json
+{
+	"compilerOptions": {
+		"module": "ESNext", // "ES2022" etc
+		"moduleResolution": "NodeNext" // "Node", "Node16"
+		// ...
+	}
+	// ...
+}
+```
+
+Using ESM also requires you to adjust your start scripts.
+
+#### Node.js (`ts-node`)
+
+Requires [`ts-node`](https://github.com/TypeStrong/ts-node).
+
+```
+node --loader ts-node/esm index.ts
+```
+
+#### `nodemon`
+
+Requires [`ts-node`](https://github.com/TypeStrong/ts-node).
+
+```
+nodemon --watch '**/*.ts' --exec 'node --loader ts-node/esm' index.ts
+```
+
+#### `tsx`
+
+[`tsx`](https://github.com/esbuild-kit/tsx) supports ESM out of the box.
+
+```
+tsx index.ts
 ```
 
 ## Initialize Lucia
