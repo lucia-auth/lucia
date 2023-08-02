@@ -1,5 +1,5 @@
 ---
-title: "Account linking with OAuth"
+title: "OAuth account linking"
 description: "Learn how to link multiple providers to a single user"
 ---
 
