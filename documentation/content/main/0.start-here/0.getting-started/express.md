@@ -26,6 +26,7 @@ Lucia can only be used in ESM projects. Configure your `package.json` and `tscon
 ```
 
 ```json
+// tsconfig.json
 {
 	"compilerOptions": {
 		"module": "ESNext", // "ES2022" etc
