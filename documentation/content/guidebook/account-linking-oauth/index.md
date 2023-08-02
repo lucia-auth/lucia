@@ -1,9 +1,9 @@
 ---
-title: "Account linking"
-description: "Learn how to link multiple authentication methods to a single user"
+title: "Account linking with OAuth"
+description: "Learn how to link multiple providers to a single user"
 ---
 
-When providing more than one sign in options, you may want to link multiple methods to a single user. This allows the user to sign in with any of the provided options and be logged in as the same application user. One way of achieving this is to automatically link social accounts with the same email.
+When providing more than one ways to sign in, you may want to link multiple providers to a single user. This allows the user to sign in with any of the provided options and be logged in as the same application user. One way of achieving this is to automatically link accounts with the same email.
 
 > (red) **Make sure your OAuth provider has verified the user's email.**
 
