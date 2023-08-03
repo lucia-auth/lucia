@@ -30,7 +30,7 @@ export type Auth = typeof auth;
 
 ### Middleware
 
-[Middleware](/basics/handle-requests) allows Lucia to read the request and response since these are different across frameworks and runtime. See [a full list of middleware](/basics/handle-requests#list-of-middleware-and-examples).
+[Middleware](/basics/handle-requests) allows Lucia to read the request and response since these are different across frameworks and runtime. See [a full list of middleware](/basics/handle-requests#list-of-middleware).
 
 #### Node.js
 
