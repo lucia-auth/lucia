@@ -171,11 +171,11 @@ type Session = {
 
 | name                    | type                                       | description                                                                                    |
 | ----------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| `activePeriodExpiresAt` | `Date`                                     | Time of the [active period](/start-here/concepts#session-states-and-session-resets) expiration |
-| `idlePeriodExpiresAt`   | `Date`                                     | Time of the [idle period](/start-here/concepts#session-states-and-session-resets) expiration   |
+| `activePeriodExpiresAt` | `Date`                                     | Time of the [active period](/start-here/concepts#session-states-and-session-reset) expiration |
+| `idlePeriodExpiresAt`   | `Date`                                     | Time of the [idle period](/start-here/concepts#session-states-and-session-reset) expiration   |
 | `fresh`                 | `boolean`                                  | `true` if the session was newly created or reset                                               |
 | `sessionId`             | `string`                                   | Session id                                                                                     |
-| `state`                 | `"active" \| "idle"`                       | [Session state](/start-here/concepts#session-states-and-session-resets)                        |
+| `state`                 | `"active" \| "idle"`                       | [Session state](/start-here/concepts#session-states-and-session-reset)                        |
 | `user`                  | [`User`](/reference/lucia/interfaces#user) | User of the session                                                                            |
 
 ## `SessionAdapter`
