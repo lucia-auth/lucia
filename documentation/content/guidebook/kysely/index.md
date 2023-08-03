@@ -3,7 +3,7 @@ title: "Using Kysely"
 description: "Learn how to use Kysely with Lucia"
 ---
 
-[Kysely]() is a type-safe and autocompletion-friendly TypeScript SQL query builder. It uses dialects to support multiple databases, similar to Lucia's adapter. All 3 dialects built-in dialects (MySQL via `mysql2`, PostgreSQL via `pg`, and SQLite via `better-sqlite3`) are supported in Lucia.
+[Kysely]() is a type-safe and autocompletion-friendly TypeScript SQL query builder. While Lucia doesn't provide an adapter for Kysely itself, it does provide adapters for all database drivers supported by Kysely out of the box.
 
 See the next section for setting up the dialects, and make sure to change the table names in type `Database` to match your database.
 
@@ -56,10 +56,12 @@ Create a new `Pool` from `mysql/promise` and use it to initialize both Kysely an
 import { createPool } from "mysql2/promise";
 import { Kysely, MysqlDialect } from "kysely";
 
-export const pool = createPool(/* ... */);
+export const pool = createPool({
+	// ...
+});
 
 const dialect = new MysqlDialect({
-	pool: pool.pool // IMPORTANT NOT TO PASS `pool`
+	pool: pool.pool // IMPORTANT NOT TO JUST PASS `pool`
 });
 
 export const db = new Kysely<Database>({
@@ -87,12 +89,16 @@ Install `pg` and follow the [adapter documentation](/database-adapters/pg) to se
 npm install pg
 ```
 
+Create a new `Pool` and use it to initialize both Kysely and Lucia.
+
 ```ts
 // db.ts
 import { Pool } from "pg";
 import { Kysely, PostgresDialect } from "kysely";
 
-export const pool = new Pool(/* ... */);
+export const pool = new Pool({
+	// ...
+});
 
 const dialect = new PostgresDialect({
 	pool
@@ -122,6 +128,8 @@ Install `better-sqlite3` and follow the [adapter documentation](/database-adapte
 ```
 npm install better-sqlite3
 ```
+
+Create a new `Database` and use it to initialize both Kysely and Lucia.
 
 ```ts
 // db.ts
