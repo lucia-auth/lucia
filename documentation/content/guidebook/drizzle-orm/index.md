@@ -3,7 +3,7 @@ title: "Using Drizzle ORM"
 description: "Learn how to use Drizzle ORM with Lucia"
 ---
 
-Drizzle ORM is a TypeScript ORM for SQL databases designed with maximum type safety in mind. While Lucia doesn't provide an adapter for Drizzle itself, it does provide adapters for most database drivers supported by Drizzle.
+[Drizzle ORM](https://github.com/drizzle-team/drizzle-orm) is a TypeScript ORM for SQL databases designed with maximum type safety in mind. While Lucia doesn't provide an adapter for Drizzle itself, it does provide adapters for most database drivers supported by Drizzle.
 
 ## MySQL
 

@@ -3,7 +3,7 @@ title: "Using Kysely"
 description: "Learn how to use Kysely with Lucia"
 ---
 
-[Kysely]() is a type-safe and autocompletion-friendly TypeScript SQL query builder. While Lucia doesn't provide an adapter for Kysely itself, it does provide adapters for all database drivers supported by Kysely out of the box.
+[Kysely](https://github.com/kysely-org/kysely) is a type-safe and autocompletion-friendly TypeScript SQL query builder. While Lucia doesn't provide an adapter for Kysely itself, it does provide adapters for all database drivers supported by Kysely out of the box.
 
 See the next section for setting up the dialects, and make sure to change the table names in type `Database` to match your database.
 
