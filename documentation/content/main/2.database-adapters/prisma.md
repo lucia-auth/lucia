@@ -75,7 +75,7 @@ model User {
   id           String    @id @unique
 
   auth_session Session[]
-  auth_key     Key[]
+  key          Key[]
 }
 
 model Session {
