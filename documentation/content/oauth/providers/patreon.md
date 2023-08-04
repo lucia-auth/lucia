@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Patreon"
 description: "Learn about using the Patreon provider in Lucia OAuth integration"
 ---

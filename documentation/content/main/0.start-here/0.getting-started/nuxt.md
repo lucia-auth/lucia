@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Getting started in Nuxt"
 menuTitle: "Nuxt"
 description: "Learn how to set up Lucia in your Nuxt project"

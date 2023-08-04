@@ -1,6 +1,5 @@
 ---
 title: "Reference overview"
-order: -1
 ---
 
 ## `lucia`

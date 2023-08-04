@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Getting started in SvelteKit"
 menuTitle: "SvelteKit"
 description: "Learn how to set up Lucia in your SvelteKit project"

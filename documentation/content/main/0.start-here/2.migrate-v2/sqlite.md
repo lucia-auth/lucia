@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Update your SQLite database to Lucia v2"
 ---
 

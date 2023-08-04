@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Getting started in Express"
 menuTitle: "Express"
 description: "Learn how to set up Lucia in your Express project"
