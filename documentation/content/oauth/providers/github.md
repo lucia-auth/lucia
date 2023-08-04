@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Github"
 description: "Learn about using the Github provider in Lucia OAuth integration"
 ---

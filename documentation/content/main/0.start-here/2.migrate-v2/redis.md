@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Update your Redis instance to Lucia v2"
 ---
 

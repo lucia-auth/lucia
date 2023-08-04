@@ -1,7 +1,6 @@
 ---
 title: "Github OAuth"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
-_order: "1"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._

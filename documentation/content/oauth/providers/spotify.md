@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Spotify"
 description: "Learn about using the Spotify provider in Lucia OAuth integration"
 ---

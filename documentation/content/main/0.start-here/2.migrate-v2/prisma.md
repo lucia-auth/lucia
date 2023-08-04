@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Update your Prisma client to Lucia v2"
 ---
 

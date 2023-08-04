@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Getting started in Next.js Pages Router"
 menuTitle: "Next.js Pages Router"
 description: "Learn how to set up Lucia in your Next.js Pages Router project"

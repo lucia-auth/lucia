@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Apple"
 description: "Learn about using the Apple provider in Lucia OAuth integration"
 ---

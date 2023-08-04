@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "osu!"
 description: "Learn about using the osu! provider in Lucia OAuth integration"
 ---

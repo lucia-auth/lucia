@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Google"
 description: "Learn about using the Google provider in Lucia OAuth integration"
 ---

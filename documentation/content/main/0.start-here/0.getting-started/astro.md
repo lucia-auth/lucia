@@ -1,5 +1,4 @@
 ---
-order: 0
 title: "Getting started in Astro"
 menuTitle: "Astro"
 description: "Learn how to set up Lucia in your Astro project"
