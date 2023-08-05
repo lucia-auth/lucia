@@ -44,6 +44,11 @@ export const generateOgImages = async () => {
 		})
 	);
 	const image = await createImage(pages[10].title, pages[10].description);
+	await fs.mkdir(path.join(process.cwd(), "dist", "og"));
+	await fs.mkdir(path.join(process.cwd(), "dist", "og", "basics"));
+	await fs.mkdir(
+		path.join(process.cwd(), "dist", "og", "basics", "using-bearer-tokens")
+	);
 	await fs.writeFile(
 		path.join(distDirPathname, "og", pages[10].url.replace(".html", ".jpeg")),
 		image
