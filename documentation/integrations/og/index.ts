@@ -1,15 +1,16 @@
 import fs from "fs/promises";
 import path from "path";
-import { createCanvas, registerFont, loadImage } from "canvas";
+import InitCanvasKit from "canvaskit-wasm";
 
 import type { AstroIntegration } from "astro";
-import type { CanvasRenderingContext2D } from "canvas";
 
 export default () => {
 	const integration: AstroIntegration = {
 		name: "lucia:markdown",
 		hooks: {
-			"astro:build:done": async () => {}
+			"astro:build:done": async () => {
+				await generateOgImages();
+			}
 		}
 	};
 	return integration;
@@ -75,49 +76,63 @@ const createImage = async (
 	title: string,
 	description: string
 ): Promise<Buffer> => {
-	registerFont(path.join(process.cwd(), "integrations/og/inter-semibold.ttf"), {
-		family: "Inter"
-	});
-	registerFont(path.join(process.cwd(), "integrations/og/inter-medium.ttf"), {
-		family: "Inter"
-	});
+	const CanvasKit = await InitCanvasKit();
+	// registerFont(path.join(process.cwd(), "integrations/og/inter-semibold.ttf"), {
+	// 	family: "Inter"
+	// });
+	// registerFont(path.join(process.cwd(), "integrations/og/inter-medium.ttf"), {
+	// 	family: "Inter"
+	// });
+	const semiboldInterFontFile = await fs.readFile(
+		path.join(process.cwd(), "integrations/og/inter-semibold.ttf")
+	);
+	const mediumInterFontFile = await fs.readFile(
+		path.join(process.cwd(), "integrations/og/inter-medium.ttf")
+	);
 
-	const canvas = createCanvas(1200, 630);
+	const canvas = CanvasKit.MakeCanvas(1200, 630);
+	canvas.loadFont(semiboldInterFontFile, {
+		family: "Inter",
+		style: "normal",
+		weight: "600"
+	});
+	canvas.loadFont(mediumInterFontFile, {
+		family: "Inter",
+		style: "normal",
+		weight: "500"
+	});
 
 	const maxLineWidth = 1000;
 	const canvasContext = canvas.getContext("2d");
+	if (!canvasContext) throw new Error();
 
 	canvasContext.fillStyle = "white";
-	canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+	canvasContext.fillRect(0, 0, 1200, 630);
 
 	canvasContext.font = "600 72px Inter";
 	canvasContext.fillStyle = "black";
 	const wrappedTitle = wrapCanvasText(canvasContext, title, maxLineWidth);
 	canvasContext.fillText(wrappedTitle, 100, 250);
 
-	const titleTextBoxMetrics = canvasContext.measureText(wrappedTitle);
-	const titleTextBoxHeight =
-		titleTextBoxMetrics.actualBoundingBoxAscent +
-		titleTextBoxMetrics.actualBoundingBoxDescent;
-
 	canvasContext.font = "500 36px Inter";
+	canvasContext.fillStyle = "black";
 	const wrappedDescription = wrapCanvasText(
 		canvasContext,
 		description,
 		maxLineWidth
 	);
-	canvasContext.fillText(wrappedDescription, 100, 250 + titleTextBoxHeight);
+	canvasContext.fillText(wrappedDescription, 100, 250 + 72);
 
-	const logoSvg = await loadImage(path.join("public", "logo.svg"));
-	logoSvg.width = 40;
-	logoSvg.height = 40;
-	canvasContext.drawImage(logoSvg, 104, 500);
+	// const logoFile = await fs.readFile(path.join("public", "logo.svg"))
+	// const img = new Image()
+	// img.src = "data:image/svg+xml;base64,"
+	// canvasContext.drawImage(logoSvg.encodeToBytes(), 104, 500);
 
 	canvasContext.font = "600 40px Inter";
 	canvasContext.fillStyle = "#5f57ff";
 	canvasContext.fillText("Lucia", 144, 535);
 
-	return canvas.toBuffer("image/jpeg");
+	return Buffer.from(canvas.toDataURL("jpeg").split(",")[1], "base64");
 };
 
 const wrapCanvasText = (
