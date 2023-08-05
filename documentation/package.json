@@ -24,6 +24,7 @@
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {
-		"@types/hast": "^2.3.4"
+		"@types/hast": "^2.3.4",
+		"canvas": "^2.11.2"
 	}
 }
