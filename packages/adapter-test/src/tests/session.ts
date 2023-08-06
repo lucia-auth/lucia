@@ -64,6 +64,11 @@ export const testSessionAdapter = async (
 			const storedSessions = await Session.getAll();
 			assert.deepStrictEqual(storedSessions, [session2]);
 		});
+		await test("Does not throw on invalid session id", async () => {
+			const user = database.generateUser();
+			const session = database.generateSession(user.id);
+			await adapter.deleteSession(session.id);
+		});
 	});
 
 	await method("deleteSessionsByUserId()", async (test) => {
@@ -76,6 +81,10 @@ export const testSessionAdapter = async (
 			await adapter.deleteSessionsByUserId(user1.id);
 			const storedSessions = await Session.getAll();
 			assert.deepStrictEqual(storedSessions, [session2]);
+		});
+		await test("Does not throw on invalid user id", async () => {
+			const user = database.generateUser();
+			await adapter.deleteSessionsByUserId(user.id);
 		});
 	});
 
