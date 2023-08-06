@@ -1,6 +1,6 @@
 import { defineConfig } from "astro/config";
 import markdown from "./integrations/markdown";
-import og from "./integrations/og"
+import og from "./integrations/og";
 
 import tailwind from "@astrojs/tailwind";
 

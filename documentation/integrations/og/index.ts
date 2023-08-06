@@ -10,9 +10,7 @@ export default () => {
 	const integration: AstroIntegration = {
 		name: "lucia:markdown",
 		hooks: {
-			"astro:build:done": async () => {
-				await generateOgImages();
-			}
+			"astro:build:done": generateOgImages
 		}
 	};
 	return integration;
@@ -37,20 +35,18 @@ export const generateOgImages = async () => {
 	for (const htmlPathname of htmlPathnames) {
 		const file = await fs.readFile(htmlPathname);
 		const htmlContent = file.toString("utf-8");
-		const titleMatches = htmlContent.match(/<title>([\S\s]*?)<\/title>/);
+		const titleMatches = htmlContent.match(
+			/og:title"\s*?content="([\s\S]*?)"\s*>/
+		);
 		const title = titleMatches?.at(1)?.replace(" | Lucia", "");
 		if (!title) throw new Error("Page does not have a title");
 		const descriptionMatches = htmlContent.match(
 			/og:description"\s*?content="([\s\S]*?)"\s*>/
 		);
 		const description = descriptionMatches?.at(1) || null;
-		let url = htmlPathname
+		const url = htmlPathname
 			.replace(distDirPathname, "")
 			.replace("/index.html", "");
-		if (url === "") {
-			url = "/index";
-		}
-		console.log(url);
 		pages.push({
 			title,
 			pathname: htmlPathname,
@@ -65,12 +61,11 @@ export const generateOgImages = async () => {
 			"og",
 			page.url + ".jpg"
 		);
-		console.log(imagePathname);
-
 		const image = await createImage(page.title, page.description);
 		await fs.mkdir(path.dirname(imagePathname), {
 			recursive: true
 		});
+		console.log(`Generated image: ${page.url}`);
 		await fs.writeFile(imagePathname, image);
 	}
 };
@@ -118,7 +113,6 @@ const createImage = async (
 	title: string,
 	description: string | null
 ): Promise<Buffer> => {
-	console.log(!!CanvasKit, !!semiboldInterFontFile, !!mediumInterFontFile);
 	if (!CanvasKit) {
 		CanvasKit = await InitCanvasKit();
 	}
@@ -157,14 +151,29 @@ const createImage = async (
 	canvasContext.fillStyle = "white";
 	canvasContext.fillRect(0, 0, WIDTH * SCALE, 630 * SCALE);
 
-	canvasContext.font = `600 ${72 * SCALE}px Inter`;
+	let titleFontSize = 72;
+	canvasContext.font = `600 ${titleFontSize * SCALE}px Inter`;
 	canvasContext.fillStyle = "black";
-	const wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
+
+	const titleTextWidth = canvasContext.measureText(title).width;
+	let wrappedTitleLines: string[];
+    let titleY = 250
+	if (titleTextWidth < maxLineWidth * 2) {
+		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
+	} else {
+		titleFontSize = 60;
+		canvasContext.font = `600 ${titleFontSize * SCALE}px Inter`;
+		canvasContext.fillStyle = "black";
+		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
+	}
+    if (wrappedTitleLines.length > 2) {
+        titleY = 150
+    }
 	for (const [lineNum, line] of wrappedTitleLines.entries()) {
 		canvasContext.fillText(
 			line,
 			100 * SCALE,
-			(250 + (72 + 8) * lineNum) * SCALE
+			(titleY + (titleFontSize + 8) * lineNum) * SCALE
 		);
 	}
 
@@ -180,9 +189,9 @@ const createImage = async (
 			canvasContext.fillText(
 				line,
 				100 * SCALE,
-				(250 +
-					72 * wrappedTitleLines.length +
-					(36 + 4) * lineNum +
+				(titleY +
+					(36 + 8) * lineNum +
+					titleFontSize * wrappedTitleLines.length +
 					(wrappedTitleLines.length - 1) * 8) *
 					SCALE
 			);

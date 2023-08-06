@@ -4,7 +4,7 @@ menuTitle: "Express"
 description: "Learn how to implement password reset using reset links in Express"
 ---
 
-This guide expects access to the user's verified email. See [Sign in with email and password with verification links](/guidebook/sign-in-with-email-and-password/express) guide to learn how to verify the user's email, and email and password authentication in general.
+This guide expects access to the user's verified email. See [Sign in with email and password with verification links](/guidebook/email-verification-links/express) guide to learn how to verify the user's email, and email and password authentication in general.
 
 ```ts
 // lucia.ts
