@@ -111,7 +111,7 @@ const ogHtml = `<div
 	style="display: flex; flex-direction: column; position: relative; padding-right: 100px; padding-left:100px; background-color: white; height: 100%; width: 100%;"
 >
 	<div style="font-size: $4px;margin-top: $5px; display: flex; font-family: Inter; font-weight: 600;">$1</div>
-	<div style="font-size: 32px; display: flex; font-family: Inter; font-weight: 500; margin-top: 8px;">$2</div>
+	<div style="font-size: 32px; display: flex; font-family: Inter; font-weight: 500; margin-top: 16px;">$2</div>
 	<div style="position: absolute; bottom:100px; display: flex; margin-left: 100px;">
 		<img src="$3" height="40" width="40" style="display: flex;"/>
 		<div style="display: flex; font-size:36px; color:#5f57ff; font-family: Inter; font-weight: 600;">Lucia</div>
@@ -130,8 +130,8 @@ const createImage = async (
 				"$3",
 				`data:image/svg+xml;base64,${logoBuffer.toString("base64")}`
 			)
-			.replace("$4", title.length > 40 ? "60" : "72")
-			.replace("$5", title.length > 40 ? "150" : "200")
+			.replace("$4", title.length > 48 ? "60" : "72")
+			.replace("$5", title.length > 48 ? "100" : "150")
 	);
 	const svg = await satori(markup as any, {
 		width: 1200,
