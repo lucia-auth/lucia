@@ -8,7 +8,7 @@ const { title, description } = Astro.props;
 
 const origin = import.meta.env.DEV
 	? Astro.url.origin
-	: "https://v2.lucia-auth.com";
+	: "https://" + import.meta.env.VERCEL_URL;
 
 const pathname = Astro.url.pathname;
 
