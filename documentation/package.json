@@ -25,7 +25,7 @@
 	},
 	"devDependencies": {
 		"@types/hast": "^2.3.4",
-		"canvaskit-wasm": "^0.38.2",
-		"sharp": "^0.32.4"
+		"satori": "^0.10.2",
+		"satori-html": "^0.3.2"
 	}
 }
