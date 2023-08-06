@@ -122,6 +122,11 @@ const createImage = async (
 	title: string,
 	description: string | null
 ): Promise<string> => {
+	const getMarginTop = () => {
+		if (title.length > 48) return "100";
+		if (title.length > 24) return "150";
+		return "200";
+	};
 	const markup = html(
 		ogHtml
 			.replace("$1", title)
@@ -131,7 +136,7 @@ const createImage = async (
 				`data:image/svg+xml;base64,${logoBuffer.toString("base64")}`
 			)
 			.replace("$4", title.length > 48 ? "60" : "72")
-			.replace("$5", title.length > 48 ? "100" : "150")
+			.replace("$5", getMarginTop())
 	);
 	const svg = await satori(markup as any, {
 		width: 1200,
