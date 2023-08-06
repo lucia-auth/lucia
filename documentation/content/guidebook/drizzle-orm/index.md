@@ -264,9 +264,7 @@ export const user = sqliteTable("user", {
 
 export const session = sqliteTable("user_session", {
   id: text("id").primaryKey(),
-  userId: text("user_id", {
-    length: 15,
-  })
+  userId: text("user_id")
     .notNull()
     .references(() => user.id),
   activeExpires: blob("active_expires", {
@@ -279,14 +277,10 @@ export const session = sqliteTable("user_session", {
 
 export const key = sqliteTable("user_key", {
   id: text("id").primaryKey(),
-  userId: text("user_id", {
-    length: 15,
-  })
+  userId: text("user_id")
     .notNull()
     .references(() => user.id),
-  hashedPassword: text("hashed_password", {
-    length: 255,
-  }),
+  hashedPassword: text("hashed_password"),
 });
 ```
 
