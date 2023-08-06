@@ -157,7 +157,7 @@ const createImage = async (
 
 	const titleTextWidth = canvasContext.measureText(title).width;
 	let wrappedTitleLines: string[];
-    let titleY = 250
+	let titleY = 250;
 	if (titleTextWidth < maxLineWidth * 2) {
 		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
 	} else {
@@ -166,9 +166,9 @@ const createImage = async (
 		canvasContext.fillStyle = "black";
 		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
 	}
-    if (wrappedTitleLines.length > 2) {
-        titleY = 200
-    }
+	if (wrappedTitleLines.length > 2) {
+		titleY = 200;
+	}
 	for (const [lineNum, line] of wrappedTitleLines.entries()) {
 		canvasContext.fillText(
 			line,
