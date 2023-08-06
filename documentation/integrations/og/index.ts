@@ -8,7 +8,7 @@ import type { CanvasKit } from "canvaskit-wasm";
 
 export default () => {
 	const integration: AstroIntegration = {
-		name: "lucia:markdown",
+		name: "lucia:og",
 		hooks: {
 			"astro:build:done": generateOgImages
 		}
