@@ -4,5 +4,10 @@
 			"source": "/guidebook/sign-in-with-email-and-password/:path*",
 			"destination": "/guidebook/email-verification-links/:path*"
 		}
-	]
+	],
+	"git": {
+		"deploymentEnabled": {
+			"main": false
+		}
+	}
 }
