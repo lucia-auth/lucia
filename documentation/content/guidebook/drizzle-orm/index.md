@@ -255,44 +255,32 @@ Make sure to change the table names accordingly.
 
 ```ts
 // schema.js
-import { pgTable, bigint, varchar, boolean } from "drizzle-orm/pg-core";
+import { sqliteTable, text, blob } from "drizzle-orm/sqlite-core";
 
-export const user = pgTable("user", {
-	id: varchar("id", {
-		length: 15 // change this when using custom user ids
-	}).primaryKey()
-	// other user attributes
+export const user = sqliteTable("user", {
+  id: text("id").primaryKey(),
+  // other user attributes
 });
 
-export const session = pgTable("user_session", {
-	id: varchar("id", {
-		length: 128
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
-		.notNull()
-		.references(() => user.id),
-	activeExpires: bigint("active_expires", {
-		mode: "number"
-	}).notNull(),
-	idleExpires: bigint("idle_expires", {
-		mode: "number"
-	}).notNull()
+export const session = sqliteTable("user_session", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  activeExpires: blob("active_expires", {
+    mode: "bigint",
+  }).notNull(),
+  idleExpires: blob("idle_expires", {
+    mode: "bigint",
+  }).notNull(),
 });
 
-export const key = pgTable("user_key", {
-	id: varchar("id", {
-		length: 255
-	}).primaryKey(),
-	userId: varchar("user_id", {
-		length: 15
-	})
-		.notNull()
-		.references(() => user.id),
-	hashedPassword: varchar("hashed_password", {
-		length: 255
-	})
+export const key = sqliteTable("user_key", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  hashedPassword: text("hashed_password"),
 });
 ```
 
