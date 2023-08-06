@@ -15,7 +15,7 @@ const pathname = Astro.url.pathname;
 const ogUrl =
 	pathname === "/"
 		? new URL("/og/index.jpg", origin)
-		: new URL("/og/" + pathname.replace(/\/$/, "") + ".jpg", origin);
+		: new URL("/og/" + pathname.replace(/\/$/, "") + ".svg", origin);
 ---
 
 <html lang="en">

@@ -1,10 +1,9 @@
 import fs from "fs/promises";
 import path from "path";
-import InitCanvasKit from "canvaskit-wasm";
-import sharp from "sharp";
+import satori from "satori";
+import { html } from "satori-html";
 
 import type { AstroIntegration } from "astro";
-import type { CanvasKit } from "canvaskit-wasm";
 
 export default () => {
 	const integration: AstroIntegration = {
@@ -59,7 +58,7 @@ export const generateOgImages = async () => {
 			process.cwd(),
 			"dist",
 			"og",
-			page.url + ".jpg"
+			page.url + ".svg"
 		);
 		const image = await createImage(page.title, page.description);
 		await fs.mkdir(path.dirname(imagePathname), {
@@ -98,147 +97,62 @@ const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
 	return filePaths;
 };
 
-const SCALE = 2;
-const PADDING = 100;
-const WIDTH = 1200;
-const HEIGHT = 630;
-const MAIN_COLOR = "#5f57ff";
+const logoBuffer = await fs.readFile(
+	path.join(process.cwd(), "integrations/og/logo.svg")
+);
+const semiboldInterFontFile = await fs.readFile(
+	path.join(process.cwd(), "integrations/og/inter-semibold.ttf")
+);
+const mediumInterFontFile = await fs.readFile(
+	path.join(process.cwd(), "integrations/og/inter-medium.ttf")
+);
 
-let CanvasKit: CanvasKit;
-let semiboldInterFontFile: Buffer;
-let mediumInterFontFile: Buffer;
-let logoBuffer: Buffer;
+const ogHtml = `<div
+	style="display: flex; flex-direction: column; position: relative; padding-right: 100px; padding-left:100px; background-color: white; height: 100%; width: 100%;"
+>
+	<div style="font-size: $4px;margin-top: $5px; display: flex; font-family: Inter; font-weight: 600;">$1</div>
+	<div style="font-size: 32px; display: flex; font-family: Inter; font-weight: 500; margin-top: 16px;">$2</div>
+	<div style="position: absolute; bottom:100px; display: flex; margin-left: 100px;">
+		<img src="$3" height="40" width="40" style="display: flex;"/>
+		<div style="display: flex; font-size:36px; color:#5f57ff; font-family: Inter; font-weight: 600;">Lucia</div>
+	</div>
+</div>`;
 
 const createImage = async (
 	title: string,
 	description: string | null
-): Promise<Buffer> => {
-	if (!CanvasKit) {
-		CanvasKit = await InitCanvasKit();
-	}
-	if (!semiboldInterFontFile) {
-		semiboldInterFontFile = await fs.readFile(
-			path.join(process.cwd(), "integrations/og/inter-semibold.ttf")
-		);
-	}
-	if (!mediumInterFontFile) {
-		mediumInterFontFile = await fs.readFile(
-			path.join(process.cwd(), "integrations/og/inter-medium.ttf")
-		);
-	}
-	if (!logoBuffer) {
-		logoBuffer = await fs.readFile(
-			path.join(process.cwd(), "integrations/og/logo.png")
-		);
-	}
-
-	const canvas = CanvasKit.MakeCanvas(WIDTH * SCALE, HEIGHT * SCALE);
-	canvas.loadFont(semiboldInterFontFile, {
-		family: "Inter",
-		style: "normal",
-		weight: "600"
-	});
-	canvas.loadFont(mediumInterFontFile, {
-		family: "Inter",
-		style: "normal",
-		weight: "500"
-	});
-
-	const maxLineWidth = (WIDTH - PADDING * 2) * SCALE;
-	const canvasContext = canvas.getContext("2d");
-	if (!canvasContext) throw new Error();
-
-	canvasContext.fillStyle = "white";
-	canvasContext.fillRect(0, 0, WIDTH * SCALE, 630 * SCALE);
-
-	let titleFontSize = 72;
-	canvasContext.font = `600 ${titleFontSize * SCALE}px Inter`;
-	canvasContext.fillStyle = "black";
-
-	const titleTextWidth = canvasContext.measureText(title).width;
-	let wrappedTitleLines: string[];
-	let titleY = 250;
-	if (titleTextWidth < maxLineWidth * 2) {
-		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
-	} else {
-		titleFontSize = 60;
-		canvasContext.font = `600 ${titleFontSize * SCALE}px Inter`;
-		canvasContext.fillStyle = "black";
-		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
-	}
-	if (wrappedTitleLines.length > 2) {
-		titleY = 200;
-	}
-	for (const [lineNum, line] of wrappedTitleLines.entries()) {
-		canvasContext.fillText(
-			line,
-			100 * SCALE,
-			(titleY + (titleFontSize + 8) * lineNum) * SCALE
-		);
-	}
-
-	if (description) {
-		canvasContext.font = `500 ${36 * SCALE}px Inter`;
-		canvasContext.fillStyle = "black";
-		const wrappedDescription = wrapCanvasText(
-			canvasContext,
-			description,
-			maxLineWidth
-		);
-		for (const [lineNum, line] of wrappedDescription.entries()) {
-			canvasContext.fillText(
-				line,
-				100 * SCALE,
-				(titleY +
-					(36 + 8) * lineNum +
-					titleFontSize * wrappedTitleLines.length +
-					(wrappedTitleLines.length - 1) * 8) *
-					SCALE
-			);
-		}
-	}
-
-	const img = canvas.decodeImage(logoBuffer);
-	if (!img) throw new Error("Failed to decode logo image");
-	canvasContext.drawImage(
-		img as any, // broken types
-		104 * SCALE,
-		500 * SCALE,
-		40 * SCALE,
-		40 * SCALE
+): Promise<string> => {
+	const getMarginTop = () => {
+		if (title.length > 48) return "100";
+		if (title.length > 24) return "150";
+		return "200";
+	};
+	const markup = html(
+		ogHtml
+			.replace("$1", title)
+			.replace("$2", description ?? "")
+			.replace(
+				"$3",
+				`data:image/svg+xml;base64,${logoBuffer.toString("base64")}`
+			)
+			.replace("$4", title.length > 48 ? "60" : "72")
+			.replace("$5", getMarginTop())
 	);
-	canvasContext.font = `600 ${40 * SCALE}px Inter`;
-	canvasContext.fillStyle = MAIN_COLOR;
-	canvasContext.fillText("Lucia", 144 * SCALE, 535 * SCALE);
-
-	return sharp(Buffer.from(canvas.toDataURL("jpeg").split(",")[1], "base64"))
-		.resize(WIDTH, HEIGHT)
-		.toBuffer();
-};
-
-const wrapCanvasText = (
-	canvasContext: CanvasRenderingContext2D,
-	title: string,
-	maxLineWidth: number
-): string[] => {
-	let currentLineTextWidth = 0;
-	let currentLineText = "";
-	const lines: string[] = [];
-	const spaceTextWidth = canvasContext.measureText(" ").width;
-	for (const word of title.split(" ")) {
-		const wordTextWidth = canvasContext.measureText(word).width;
-		if (wordTextWidth + currentLineTextWidth < maxLineWidth) {
-			currentLineText = currentLineText + word + " ";
-			currentLineTextWidth =
-				currentLineTextWidth + wordTextWidth + spaceTextWidth;
-		} else {
-			lines.push(currentLineText);
-			currentLineText = word + " ";
-			currentLineTextWidth = wordTextWidth + spaceTextWidth;
-		}
-	}
-	if (currentLineText) {
-		lines.push(currentLineText);
-	}
-	return lines;
+	const svg = await satori(markup as any, {
+		width: 1200,
+		height: 630,
+		fonts: [
+			{
+				name: "Inter",
+				data: semiboldInterFontFile,
+				weight: 600
+			},
+			{
+				name: "Inter",
+				data: mediumInterFontFile,
+				weight: 500
+			}
+		]
+	});
+	return svg;
 };
