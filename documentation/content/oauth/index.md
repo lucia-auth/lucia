@@ -1,5 +1,5 @@
 ---
-title: "OAuth integration Overview"
+title: "OAuth integration"
 description: "Learn about the OAuth integration for Lucia"
 ---
 
