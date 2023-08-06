@@ -1,7 +1,7 @@
 ---
 title: "Sign in with username and password in Nuxt"
 menuTitle: "Nuxt"
-description: "Learn the basic of Lucia by implementing a basic username and password authentication in Nuxt"
+description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nuxt)._

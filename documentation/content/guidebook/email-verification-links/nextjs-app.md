@@ -1,12 +1,12 @@
 ---
-title: "Email authentication with verification links in Next.js Pages Router"
-menuTitle: "Next.js Pages Router"
-description: "Extend Lucia by implementing email and password authentication with email verification links in Next.js Pages Router"
+title: "Email authentication with verification links in Next.js App Router"
+menuTitle: "Next.js App Router"
+description: "Extend Lucia by implementing email and password authentication with email verification links"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
 
-If you're new to Lucia, we recommend starting with [Sign in with username and password](/guidebook/sign-in-with-username-and-password/nextjs-pages) starter guide as this guide will gloss over basic concepts and APIs. Make sure to implement password resets as well, which is covered in a separate guide (see [Password reset links](/guidebook/password-reset-link/nextjs-pages) guide).
+If you're new to Lucia, we recommend starting with [Sign in with username and password](/guidebook/sign-in-with-username-and-password/nextjs-app) starter guide as this guide will gloss over basic concepts and APIs. Make sure to implement password resets as well, which is covered in a separate guide (see [Password reset links](/guidebook/password-reset-link/nextjs-app) guide).
 
 This example project will have a few pages:
 
@@ -19,13 +19,13 @@ It will also have a route to handle verification links.
 
 ### Clone project
 
-You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password) from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-pages/email-and-password <directory_name>
+npx degit pilcrowonpaper/lucia/examples/nextjs-app/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password).
 
 ## Database
 
@@ -74,6 +74,9 @@ export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
 	middleware: nextjs(),
+	sessionCookie: {
+		expires: false
+	},
 	getUserAttributes: (data) => {
 		return {
 			email: data.email,
@@ -90,7 +93,7 @@ export type Auth = typeof auth;
 The token will be sent as part of the verification link.
 
 ```
-http://localhost:3000/api/email-verification/<token>
+http://localhost:3000/email-verification/<token>
 ```
 
 When a user clicks the link, we validate of the token stored in the url and set `email_verified` user attributes to `true`.
@@ -166,76 +169,72 @@ export const validateEmailVerificationToken = async (token: string) => {
 };
 ```
 
-## Sign up page
+## Form component
 
-Create `pages/signup.tsx`. It will have a form with inputs for email and password. We need to manually handle redirect responses as the default behavior is to make another request to the redirect location.
-
-Redirect authenticated users to the profile page if their email is verified, or to the confirmation page if not.
+Since the form will require client side JS, we will extract it into its own client component. We need to manually handle redirect responses as the default behavior is to make another request to the redirect location. We're going to use `refresh()` to reload the page (and redirect the user in the server) since we want to re-render the entire page, including `layout.tsx`.
 
 ```tsx
-// pages/signup.tsx
-import { useRouter } from "next/router";
-import { auth } from "@/auth/lucia";
+// components/form.tsx
+import { useRouter } from "next/navigation";
 
-import Link from "next/link";
-
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context);
-	const session = await authRequest.validate();
-	if (session) {
-		if (!session.user.emailVerified) {
-			return {
-				redirect: {
-					destination: "/email-verification",
-					permanent: false
-				}
-			};
-		}
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false
-			}
-		};
-	}
-	return {
-		props: {}
-	};
-};
-
-const Page = () => {
+const Form = (props: { children: React.ReactNode; action: string }) => {
 	const router = useRouter();
 	return (
 		<>
-			<h1>Sign up</h1>
 			<form
+				action={props.action}
 				method="post"
-				action="/api/signup"
 				onSubmit={async (e) => {
 					e.preventDefault();
 					const formData = new FormData(e.currentTarget);
-					const response = await fetch("/api/signup", {
+					const response = await fetch(props.action, {
 						method: "POST",
-						body: JSON.stringify({
-							email: formData.get("email"),
-							password: formData.get("password")
-						}),
-						headers: {
-							"Content-Type": "application/json"
-						},
+						body: formData,
 						redirect: "manual"
 					});
 					if (response.status === 0) {
 						// redirected
 						// when using `redirect: "manual"`, response status 0 is returned
-						return router.push("/");
+						return router.refresh();
 					}
 				}}
 			>
+				{props.children}
+			</form>
+		</>
+	);
+};
+
+export default Form;
+```
+
+## Sign up page
+
+Create `app/signup/page.tsx`. It will have a form with inputs for email and password. Redirect authenticated users to the profile page if their email is verified, or to the confirmation page if not.
+
+```tsx
+// app/signup/page.tsx
+import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+import Form from "@/components/form";
+import Link from "next/link";
+
+const Page = async () => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
+	const session = await authRequest.validate();
+	if (session) {
+		if (!session.user.emailVerified) redirect("/email-verification");
+		redirect("/");
+	}
+	return (
+		<>
+			<h1>Sign up</h1>
+			<Form action="/api/signup">
 				<label htmlFor="email">Email</label>
 				<input name="email" id="email" />
 				<br />
@@ -243,7 +242,7 @@ const Page = () => {
 				<input type="password" name="password" id="password" />
 				<br />
 				<input type="submit" />
-			</form>
+			</Form>
 			<Link href="/login">Sign in</Link>
 		</>
 	);
@@ -254,38 +253,48 @@ export default Page;
 
 ### Create users
 
-Create `pages/api/signup.ts` and handle POST requests.
+Create `app/api/signup/route.ts` and handle POST requests.
 
 When creating a user, use `"email"` as the provider id and the user's email as the provider user id. Make sure to set `email_verified` user property to `false`. After creating a user, send the email verification link to the user's inbox. Redirect the user to the confirmation page (`/email-verification`).
 
 ```ts
-// pages/api/signup.ts
-import { isValidEmail, sendEmailVerificationLink } from "@/auth/email";
+// app/api/signup/route.ts
 import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { generateEmailVerificationToken } from "@/auth/token";
+import { sendEmailVerificationLink } from "@/auth/email";
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextRequest } from "next/server";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST") return res.status(405);
-	const { email, password } = req.body as {
-		email: unknown;
-		password: unknown;
-	};
+export const POST = async (request: NextRequest) => {
+	const formData = await request.formData();
+	const email = formData.get("email");
+	const password = formData.get("password");
 	// basic check
 	if (!isValidEmail(email)) {
-		return res.status(400).json({
-			error: "Invalid email"
-		});
+		return NextResponse.json(
+			{
+				error: "Invalid email"
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	if (
 		typeof password !== "string" ||
-		password.length < 1 ||
+		password.length < 6 ||
 		password.length > 255
 	) {
-		return res.status(400).json({
-			error: "Invalid password"
-		});
+		return NextResponse.json(
+			{
+				error: "Invalid password"
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	try {
 		const user = await auth.createUser({
@@ -296,7 +305,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			},
 			attributes: {
 				email: email.toLowerCase(),
-				email_verified: Number(false)
+				email_verified: false // `Number(true)` if stored as an integer
 			}
 		});
 		const session = await auth.createSession({
@@ -304,15 +313,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			attributes: {}
 		});
 		const authRequest = auth.handleRequest({
-			req,
-			res
+			request,
+			cookies
 		});
 		authRequest.setSession(session);
 
 		const token = await generateEmailVerificationToken(user.userId);
 		await sendEmailVerificationLink(token);
 
-		return res.redirect(302, "/email-verification");
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: "/email-verification"
+			}
+		});
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
@@ -320,24 +334,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			e instanceof SomeDatabaseError &&
 			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 		) {
-			return res.status(400).json({
-				error: "Account already exists"
-			});
+			return NextResponse.json(
+				{
+					error: "Account already exists"
+				},
+				{
+					status: 400
+				}
+			);
 		}
-
-		return res.status(500).json({
-			error: "An unknown error occurred"
-		});
+		return NextResponse.json(
+			{
+				error: "An unknown error occurred"
+			},
+			{
+				status: 500
+			}
+		);
 	}
 };
-
-export default handler;
 ```
 
 ```ts
 // auth/email.ts
 export const sendEmailVerificationLink = async (email, token: string) => {
-	const url = `http://localhost:3000/api/email-verification/${token}`;
+	const url = `http://localhost:3000/email-verification/${token}`;
 	await sendEmail(email, {
 		// ...
 	});
@@ -366,74 +387,31 @@ const isValidEmail = (maybeEmail: unknown): maybeEmail is string => {
 
 ## Sign in page
 
-Create `pages/login.tsx`. It will have a form with inputs for email and password. Implement redirects as we did in the sign up page.
+Create `app/login/page.tsx`. It will have a form with inputs for email and password. Implement redirects as we did in the sign up page.
 
 ```tsx
-// pages/login.tsx
-import { useRouter } from "next/router";
+// app/login/page.tsx
 import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
+import Form from "@/components/form";
 import Link from "next/link";
 
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context);
+const Page = async () => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
 	const session = await authRequest.validate();
 	if (session) {
-		if (!session.user.emailVerified) {
-			return {
-				redirect: {
-					destination: "/email-verification",
-					permanent: false
-				}
-			};
-		}
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false
-			}
-		};
+		if (!session.user.emailVerified) redirect("/email-verification");
+		redirect("/");
 	}
-	return {
-		props: {}
-	};
-};
-
-const Page = () => {
-	const router = useRouter();
 	return (
 		<>
 			<h1>Sign in</h1>
-			<form
-				method="post"
-				action="/api/login"
-				onSubmit={async (e) => {
-					e.preventDefault();
-					setErrorMessage(null);
-					const formData = new FormData(e.currentTarget);
-					const response = await fetch("/api/login", {
-						method: "POST",
-						body: JSON.stringify({
-							email: formData.get("email"),
-							password: formData.get("password")
-						}),
-						headers: {
-							"Content-Type": "application/json"
-						},
-						redirect: "manual"
-					});
-
-					if (response.status === 0) {
-						// redirected
-						// when using `redirect: "manual"`, response status 0 is returned
-						return router.push("/");
-					}
-				}}
-			>
+			<Form action="/api/login">
 				<label htmlFor="email">Email</label>
 				<input name="email" id="email" />
 				<br />
@@ -441,7 +419,8 @@ const Page = () => {
 				<input type="password" name="password" id="password" />
 				<br />
 				<input type="submit" />
-			</form>
+			</Form>
+			<Link href="/password-reset">Reset password</Link>
 			<Link href="/signup">Create an account</Link>
 		</>
 	);
@@ -452,12 +431,12 @@ export default Page;
 
 ### Authenticate users
 
-Create `pages/api/login.ts` and handle POST requests.
+Create `app/api/login/route.ts` and handle POST requests.
 
 Authenticate the user with `"email"` as the provider id and their email as the provider user id. Make sure to make the email lowercase before calling `useKey()`.
 
 ```ts
-// pages/api/login.ts
+// app/api/login/route.ts
 import { auth } from "@/auth/lucia";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -544,60 +523,36 @@ export const POST = async (request: NextRequest) => {
 
 ## Confirmation page
 
-Create `pages/email-verification.tsx`. Users who just signed up and those without a verified email will be redirected to this page. It will include a form to resend the verification link.
+Create `app/email-verification/page.tsx`. Users who just signed up and those without a verified email will be redirected to this page. It will include a form to resend the verification link.
 
 This page should only accessible to users whose email is not verified.
 
 ```tsx
-// pages/email-verification.tsx
 import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import Form from "@/components/form";
 
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{}>> => {
-	const authRequest = auth.handleRequest(context);
+const Page = async () => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
 	const session = await authRequest.validate();
-	if (!session) {
-		return {
-			redirect: {
-				destination: "/login",
-				permanent: false
-			}
-		};
-	}
-	if (session.user.emailVerified) {
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false
-			}
-		};
-	}
-	return {
-		props: {}
-	};
-};
-
-const Page = () => {
+	if (!session) redirect("/login");
+	if (session.user.emailVerified) redirect("/");
 	return (
 		<>
 			<h1>Email verification</h1>
 			<p>Your email verification link was sent to your inbox (i.e. console).</p>
 			<h2>Resend verification link</h2>
-			<form
-				method="post"
+			<Form
 				action="/api/email-verification"
-				onSubmit={async (e) => {
-					e.preventDefault();
-					await fetch("/api/email-verification", {
-						method: "POST"
-					});
-				}}
+				successMessage="Your verification link was resent"
 			>
 				<input type="submit" value="Resend" />
-			</form>
+			</Form>
 		</>
 	);
 };
@@ -607,84 +562,100 @@ export default Page;
 
 ### Resend verification link
 
-Create `pages/api/email-verification/index.ts` and handle POST requests. Create a new verification token and send the link to the user's inbox.
+Create `app/api/email-verification/route.ts` and handle POST requests. Create a new verification token and send the link to the user's inbox.
 
 ```ts
-// pages/api/email-verification/index.ts
+// app/api/email-verification/route.ts
 import { auth } from "@/auth/lucia";
-import { generateEmailVerificationToken } from "@/auth/verification-token";
+import { generateEmailVerificationToken } from "@/auth/token";
 import { sendEmailVerificationLink } from "@/auth/email";
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextRequest } from "next/server";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "POST") return res.status(405).end();
-	const authRequest = auth.handleRequest({
-		req,
-		res
-	});
+export const POST = async (request: NextRequest) => {
+	const authRequest = auth.handleRequest(request);
 	const session = await authRequest.validate();
-	if (!session) return res.status(401).end();
-	if (session.user.emailVerified) {
-		return res.status(422).json({
-			error: "Email already verified"
+	if (!session) {
+		return new Response(null, {
+			status: 401
 		});
+	}
+	if (session.user.emailVerified) {
+		return new Response(
+			JSON.stringify({
+				error: "Email already verified"
+			}),
+			{
+				status: 422
+			}
+		);
 	}
 	try {
 		const token = await generateEmailVerificationToken(session.user.userId);
 		await sendEmailVerificationLink(token);
-		return res.end();
+		return new Response();
 	} catch {
-		return res.status(500).json({
-			error: "An unknown error occurred"
-		});
+		return new Response(
+			JSON.stringify({
+				error: "An unknown error occurred"
+			}),
+			{
+				status: 500
+			}
+		);
 	}
 };
-
-export default handler;
 ```
 
 ## Verify email
 
-Create `pages/api/email-verification/[token].ts` and handle GET requests. This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `req.query`.
+Create `app/email-verification/[token]/route.ts` and handle GET requests. This route will validate the token stored in url and verify the user's email. The token can be accessed from the url with `params`.
 
 Make sure to invalidate all sessions of the user.
 
 ```ts
-// pages/api/email-verification/[token].ts
+// app/email-verification/[token]/route.ts
 import { auth } from "@/auth/lucia";
-import { validateEmailVerificationToken } from "@/auth/verification-token";
+import { validateEmailVerificationToken } from "@/auth/token";
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextRequest } from "next/server";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "GET") return res.status(405).end();
-	const { token } = req.query as {
-		token: string;
-	};
+export const GET = async (
+	_: NextRequest,
+	{
+		params
+	}: {
+		params: {
+			token: string;
+		};
+	}
+) => {
+	const { token } = params;
 	try {
 		const userId = await validateEmailVerificationToken(token);
 		const user = await auth.getUser(userId);
 		await auth.invalidateAllUserSessions(user.userId);
 		await auth.updateUserAttributes(user.userId, {
-			email_verified: Number(true)
+			email_verified: true // `Number(true)` if stored as an integer
 		});
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			req,
-			res
+		const sessionCookie = auth.createSessionCookie(session);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: "/",
+				"Set-Cookie": sessionCookie.serialize()
+			}
 		});
-		authRequest.setSession(session);
-		return res.status(302).setHeader("Location", "/").end();
 	} catch {
-		return res.status(400).send("Invalid email verification link");
+		return new Response("Invalid email verification link", {
+			status: 400
+		});
 	}
 };
-
-export default handler;
 ```
 
 ## Protect pages
@@ -692,61 +663,69 @@ export default handler;
 Protect all other pages and API routes by redirecting unauthenticated users and those without a verified email.
 
 ```tsx
+// page.tsx
 import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import type {
-	GetServerSidePropsContext,
-	GetServerSidePropsResult,
-	InferGetServerSidePropsType
-} from "next";
-
-export const getServerSideProps = async (
-	context: GetServerSidePropsContext
-): Promise<
-	GetServerSidePropsResult<{
-		userId: string;
-		email: string;
-	}>
-> => {
-	const authRequest = auth.handleRequest(context);
+const Page = async () => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
 	const session = await authRequest.validate();
-	if (!session) {
-		return {
-			redirect: {
-				destination: "/login",
-				permanent: false
-			}
-		};
-	}
-	if (!session.user.emailVerified) {
-		return {
-			redirect: {
-				destination: "/email-verification",
-				permanent: false
-			}
-		};
-	}
-	// ...
+	if (!session) redirect("/login");
+	if (!session.user.emailVerified) redirect("/email-verification");
+	return (
+		// ...
+	);
 };
+
+export default Page;
 ```
 
 ```ts
+// route.ts
 import { auth } from "@/auth/lucia";
+import { cookies } from "next/headers";
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextRequest } from "next/server";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-	const authRequest = auth.handleRequest({
-		req,
-		res
-	});
+export const POST = async (request: NextRequest) => {
+	const authRequest = auth.handleRequest({ request, cookies });
+	// check if user is authenticated
 	const session = await authRequest.validate();
-	if (!session) return res.status(401).end();
-	if (!session.user.emailVerified) {
-		return res.status(403).end();
+	if (!session) {
+		return new Response(null, {
+            status: 401
+        })
+    if (!session.user.emailVerified) {
+		return new Response(null, {
+            status: 403
+        })
 	}
-	// ...
+    // ...
 };
+```
 
-export default handler;
+## Additional notes
+
+For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
+
+```ts
+export const getPageSession = cache(() => {
+	const authRequest = auth.handleRequest({
+		request: null,
+		cookies
+	});
+	return authRequest.validate();
+});
+```
+
+This allows you share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
+
+```ts
+const Page = async () => {
+	const session = await getPageSession();
+};
 ```

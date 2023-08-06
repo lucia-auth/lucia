@@ -1,7 +1,7 @@
 ---
 title: "Email authentication with verification links in Express"
 menuTitle: "Express"
-description: "Extend Lucia by implementing email and password authentication with email verification links in Express"
+description: "Extend Lucia by implementing email and password authentication with email verification links"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._

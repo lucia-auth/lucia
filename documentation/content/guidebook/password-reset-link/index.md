@@ -3,7 +3,7 @@ title: "Password reset links"
 description: "Learn how to implement password reset using reset links"
 ---
 
-This guide expects access to the user's verified email. See [Sign in with email and password with verification links](/guidebook/sign-in-with-email-and-password) guide to learn how to verify the user's email, and email and password authentication in general.
+This guide expects access to the user's verified email. See [Sign in with email and password with verification links](/guidebook/email-verification-links) guide to learn how to verify the user's email, and email and password authentication in general.
 
 ```ts
 // lucia.ts

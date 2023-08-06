@@ -211,6 +211,13 @@ export const getPage = async (...path: string[]) => {
 };
 
 export const getPages = async (...path: string[]) => {
+	if (path.length === 0) {
+		return await Promise.all(
+			Object.entries(collectionImports).map(([importPath, resolveImport]) => {
+				return transformMarkdownImport(importPath, resolveImport);
+			})
+		);
+	}
 	const targetPathname = path.join("/");
 	const pagesImportEntries = Object.entries(collectionImports).filter(
 		([importPath]) => {

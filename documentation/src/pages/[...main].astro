@@ -29,7 +29,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { page } = Astro.props;
 ---
 
-<MainLayout title={`${page.title} | Lucia`} description={page.description}>
+<MainLayout title={page.title} description={page.description}>
     <div class="mt-6 mb-8">
         <h1 class="text-5xl font-bold" set:html={page.htmlTitle}></h1>
     </div>

@@ -1,6 +1,6 @@
 ---
 title: "Github OAuth in Astro"
-description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth in Astro"
+description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
 menuTitle: "Astro"
 ---
 

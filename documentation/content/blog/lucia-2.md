@@ -55,7 +55,7 @@ This was one of the biggest regret with v1, especially single use keys. It was c
 
 ### Token integration deprecated
 
-This might be the biggest change for v2. Please see the [Email authentication with verification links](/guidebook/sign-in-with-email-and-password) for a guide on replacing verification tokens.
+This might be the biggest change for v2. Please see the [Email authentication with verification links](/guidebook/email-verification-links) for a guide on replacing verification tokens.
 
 ## Custom database table names
 
