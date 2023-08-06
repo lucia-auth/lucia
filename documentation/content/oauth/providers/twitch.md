@@ -1,7 +1,6 @@
 ---
-order:: 0
 title: "Twitch"
-description: "Learn about using the Twitch provider in Lucia OAuth integration"
+description: "Learn how to use the Twitch OAuth provider"
 ---
 
 OAuth integration for Twitch. Refer to [Twitch OAuth documentation](https://dev.twitch.tv/docs/authentication) for getting the required credentials. Provider id is `twitch`.

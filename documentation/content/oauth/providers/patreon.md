@@ -1,6 +1,6 @@
 ---
 title: "Patreon"
-description: "Learn about using the Patreon provider in Lucia OAuth integration"
+description: "Learn how to use the Patreon OAuth provider"
 ---
 
 OAuth integration for Patreon. Refer to [Patreon OAuth documentation](https://docs.patreon.com/#clients-and-api-keys) for getting the required credentials. Provider id is `patreon`.

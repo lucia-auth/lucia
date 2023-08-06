@@ -1,6 +1,6 @@
 ---
 title: "Facebook"
-description: "Learn about using the Facebook provider in Lucia OAuth integration"
+description: "Learn how to use the Facebook OAuth provider"
 ---
 
 OAuth integration for Facebook. Refer to step 1 of [Facebook Login documentation](https://developers.facebook.com/docs/facebook-login/web) for getting the required credentials. Provider id is `facebook`.

@@ -1,5 +1,6 @@
 ---
-title: "Overview"
+title: "OAuth integration"
+description: "Learn about the OAuth integration for Lucia"
 ---
 
 Lucia provides an external, server-side library that makes implementing authentication flow with OAuth and Open ID Connect easy.
