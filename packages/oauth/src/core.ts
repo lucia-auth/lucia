@@ -108,7 +108,7 @@ export const createOAuth2AuthorizationUrl = async (
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
 		state: options.state ?? state,
-		redirect_url: options.redirectUri,
+		redirect_uri: options.redirectUri,
 		...searchParams
 	});
 	return [authorizationUrl, state] as const;
