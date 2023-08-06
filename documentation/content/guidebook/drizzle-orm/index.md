@@ -258,16 +258,12 @@ Make sure to change the table names accordingly.
 import { sqliteTable, text, blob } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
-  id: text("id", {
-    length: 15, // change this when using custom user ids
-  }).primaryKey(),
+  id: text("id").primaryKey(),
   // other user attributes
 });
 
 export const session = sqliteTable("user_session", {
-  id: text("id", {
-    length: 128,
-  }).primaryKey(),
+  id: text("id").primaryKey(),
   userId: text("user_id", {
     length: 15,
   })
@@ -282,9 +278,7 @@ export const session = sqliteTable("user_session", {
 });
 
 export const key = sqliteTable("user_key", {
-  id: text("id", {
-    length: 255,
-  }).primaryKey(),
+  id: text("id").primaryKey(),
   userId: text("user_id", {
     length: 15,
   })
