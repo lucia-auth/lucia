@@ -159,8 +159,14 @@ const createImage = async (
 
 	canvasContext.font = `600 ${72 * SCALE}px Inter`;
 	canvasContext.fillStyle = "black";
-	const wrappedTitle = wrapCanvasText(canvasContext, title, maxLineWidth);
-	canvasContext.fillText(wrappedTitle, 100 * SCALE, 250 * SCALE);
+	const wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
+	for (const [lineNum, line] of wrappedTitleLines.entries()) {
+		canvasContext.fillText(
+			line,
+			100 * SCALE,
+			(250 + (72 + 8) * lineNum) * SCALE
+		);
+	}
 
 	if (description) {
 		canvasContext.font = `500 ${36 * SCALE}px Inter`;
@@ -170,7 +176,17 @@ const createImage = async (
 			description,
 			maxLineWidth
 		);
-		canvasContext.fillText(wrappedDescription, 100 * SCALE, (250 + 72) * SCALE);
+		for (const [lineNum, line] of wrappedDescription.entries()) {
+			canvasContext.fillText(
+				line,
+				100 * SCALE,
+				(250 +
+					72 * wrappedTitleLines.length +
+					(36 + 4) * lineNum +
+					(wrappedTitleLines.length - 1) * 8) *
+					SCALE
+			);
+		}
 	}
 
 	const img = canvas.decodeImage(logoBuffer);
@@ -195,19 +211,25 @@ const wrapCanvasText = (
 	canvasContext: CanvasRenderingContext2D,
 	title: string,
 	maxLineWidth: number
-) => {
+): string[] => {
 	let currentLineTextWidth = 0;
-	let wrappedTitle = "";
+	let currentLineText = "";
+	const lines: string[] = [];
 	const spaceTextWidth = canvasContext.measureText(" ").width;
 	for (const word of title.split(" ")) {
-		const textWidth = canvasContext.measureText(word).width;
-		if (textWidth + currentLineTextWidth < maxLineWidth) {
-			wrappedTitle = wrappedTitle + word + " ";
-			currentLineTextWidth = textWidth + currentLineTextWidth + spaceTextWidth;
+		const wordTextWidth = canvasContext.measureText(word).width;
+		if (wordTextWidth + currentLineTextWidth < maxLineWidth) {
+			currentLineText = currentLineText + word + " ";
+			currentLineTextWidth =
+				currentLineTextWidth + wordTextWidth + spaceTextWidth;
 		} else {
-			wrappedTitle = wrappedTitle + "\n" + word + " ";
-			currentLineTextWidth = textWidth + spaceTextWidth;
+			lines.push(currentLineText);
+			currentLineText = word + " ";
+			currentLineTextWidth = wordTextWidth + spaceTextWidth;
 		}
 	}
-	return wrappedTitle;
+	if (currentLineText) {
+		lines.push(currentLineText);
+	}
+	return lines;
 };
