@@ -1,6 +1,6 @@
 ---
 title: "Lichess"
-description: "Learn about using the Lichess provider in Lucia OAuth integration"
+description: "Learn how to use the Lichess OAuth provider"
 ---
 
 OAuth integration for Lichess. Provider id is `lichess`.

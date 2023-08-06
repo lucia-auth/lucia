@@ -1,6 +1,6 @@
 ---
 title: "osu!"
-description: "Learn about using the osu! provider in Lucia OAuth integration"
+description: "Learn how to use the osu! OAuth provider"
 ---
 
 OAuth integration for osu!. Refer to [osu! OAuth documentation](https://osu.ppy.sh/docs/index.html#authentication) for getting the required credentials. Provider id is `osu`.

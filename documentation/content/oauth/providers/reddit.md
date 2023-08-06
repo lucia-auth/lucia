@@ -1,6 +1,6 @@
 ---
 title: "Reddit"
-description: "Learn about using the Reddit provider in Lucia OAuth integration"
+description: "Learn how to use the Reddit OAuth provider"
 ---
 
 OAuth integration for Reddit. Refer to [Reddit OAuth documentation archive](https://github.com/reddit-archive/reddit/wiki/OAuth2) for getting the required credentials. Provider id is `reddit`.

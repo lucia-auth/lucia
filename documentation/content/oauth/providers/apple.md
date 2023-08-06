@@ -1,6 +1,6 @@
 ---
 title: "Apple"
-description: "Learn about using the Apple provider in Lucia OAuth integration"
+description: "Learn how to use the Apple OAuth provider"
 ---
 
 **Before starting make sure you have an paid apple dev account.**

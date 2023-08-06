@@ -1,6 +1,6 @@
 ---
 title: "Spotify"
-description: "Learn about using the Spotify provider in Lucia OAuth integration"
+description: "Learn how to use the Spotify OAuth provider"
 ---
 
 OAuth integration for Spotify. Refer to [Spotify OAuth documentation](https://developer.spotify.com/documentation/web-api/concepts/apps) for getting the required credentials. Provider id is `spotify`.

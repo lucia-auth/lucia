@@ -1,6 +1,6 @@
 ---
 title: "Discord"
-description: "Learn about using the Discord provider in Lucia OAuth integration"
+description: "Learn how to use the Discord OAuth provider"
 ---
 
 OAuth integration for Discord. Refer to [Discord API documentation](https://discord.com/developers/docs/getting-started) for getting the required credentials. Provider id is `discord`.
