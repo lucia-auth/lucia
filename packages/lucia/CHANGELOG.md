@@ -1,5 +1,11 @@
 # lucia
 
+## 2.1.0
+
+### Minor changes
+
+- [#911](https://github.com/pilcrowOnPaper/lucia/pull/911) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Allow `null` in `csrfProtection.allowedSubdomains` configuration array
+
 ## 2.0.0
 
 ### Major changes
