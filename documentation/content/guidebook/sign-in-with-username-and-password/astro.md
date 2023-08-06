@@ -1,7 +1,7 @@
 ---
 title: "Sign in with username and password in Astro"
 menuTitle: "Astro"
-description: "Learn the basic of Lucia by implementing a basic username and password authentication in Astro"
+description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/astro) and that you've implement the recommended middleware._

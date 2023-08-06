@@ -1,7 +1,7 @@
 ---
 title: "Email authentication with verification links in Nuxt"
 menuTitle: "Nuxt"
-description: "Extend Lucia by implementing email and password authentication with email verification links in Nuxt"
+description: "Extend Lucia by implementing email and password authentication with email verification links"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._

@@ -1,7 +1,7 @@
 ---
 title: "Password reset links in Nuxt"
 menuTitle: "Nuxt"
-description: "Learn how to implement password reset using reset links in Nuxt"
+description: "Learn how to implement password reset using reset links"
 ---
 
 This guide expects access to the user's verified email. See [Sign in with email and password with verification links](/guidebook/email-verification-links/nuxt) guide to learn how to verify the user's email, and email and password authentication in general.
