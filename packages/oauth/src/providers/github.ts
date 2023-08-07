@@ -64,6 +64,23 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			}
 		});
 		const githubUser = await handleRequest<GithubUser>(request);
+
+		if (!githubUser.email) {
+			const request = new Request("https://api.github.com/user/emails", {
+				headers: {
+					Authorization: authorizationHeader("bearer", accessToken)
+				}
+			});
+
+			const emails = await handleRequest<GithubEmail[]>(request);
+
+			const primaryEmail = emails.find((email) => email.primary);
+
+			if (primaryEmail) {
+				githubUser.email = primaryEmail.email;
+			}
+		}
+
 		return githubUser;
 	};
 
@@ -137,6 +154,13 @@ type PublicGithubUser = {
 		collaborators: number;
 	};
 	suspended_at?: string | null;
+};
+
+type GithubEmail = {
+	email: string;
+	primary: boolean;
+	verified: boolean;
+	visibility: "public" | "private";
 };
 
 type PrivateGithubUser = PublicGithubUser & {
