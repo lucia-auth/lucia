@@ -1,4 +1,4 @@
-import { auth } from "../auth/lucia";
+import { auth } from "~/auth/lucia";
 import {
 	ServerError,
 	createServerAction$,

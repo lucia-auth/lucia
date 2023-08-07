@@ -1,5 +1,5 @@
 import { Show } from "solid-js";
-import { auth } from "../auth/lucia";
+import { auth } from "~/auth/lucia";
 import { A } from "solid-start";
 import { ServerError } from "solid-start/server";
 import { SqliteError } from "better-sqlite3";
