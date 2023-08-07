@@ -4,7 +4,7 @@ import { getPages } from "@utils/content";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import SelectLink from "@components/SelectLink.astro";
-import GuidebookHeader from "@components/GuidebookHeader.astro";
+import Header from "@components/Header.astro";
 
 import type { InferGetStaticPropsType } from "astro";
 
@@ -31,7 +31,7 @@ const { page, nestedPages } = Astro.props;
 ---
 
 <BaseLayout title={page.title} description={page.description}>
-    <GuidebookHeader />
+    <Header />
     <main class="mt-24 lg:mt-20 pb-20 px-4 sm:px-8 md:px-16 overflow-hidden">
         <div class="mx-auto max-w-4xl w-full">
             <div class="mt-6 mb-8">
