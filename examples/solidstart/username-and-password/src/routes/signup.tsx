@@ -22,7 +22,7 @@ export const routeData = () => {
 
 const Page = () => {
 	const [enrolling, { Form }] = createServerAction$(
-		async (formData: FormData, event) => {
+		async (formData: FormData) => {
 			const username = formData.get("username");
 			const password = formData.get("password");
 			if (
