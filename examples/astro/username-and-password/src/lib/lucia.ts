@@ -2,6 +2,7 @@ import { lucia } from "lucia";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 import { astro } from "lucia/middleware";
 import sqlite from "better-sqlite3";
+// import "lucia/polyfill/node";
 
 const db = sqlite("main.db");
 
