@@ -37,6 +37,8 @@ Make sure to add your adapter package as well.
 
 Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own api module (file). Export `auth` and its type as `Auth`. Make sure to pass the `web()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
+Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to `false`.
+
 ```ts
 // auth/lucia.server.ts
 import { lucia } from "lucia";
@@ -45,7 +47,10 @@ import { web } from "lucia-auth/middleware";
 // expect error
 export const auth = lucia({
 	env: process.dev ? "DEV" : "PROD",
-	middleware: web()
+	middleware: web(),
+	sessionCookie: {
+		expires: false
+	}
 });
 
 export type Auth = typeof auth;
@@ -67,6 +72,10 @@ const client = new PrismaClient();
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
 	middleware: web(),
+	sessionCookie: {
+		expires: false
+	},
+
 	adapter: prisma(client)
 });
 ```

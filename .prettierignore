@@ -8,13 +8,15 @@ node_modules
 !.env.example
 /.vscode
 /.auri/*.md
-/test-apps/*/.svelte-kit
-/test-apps/*/.next
-/test-apps/*/.nuxt
-/examples/*/.svelte-kit
-/examples/*/.next
-/examples/*/.nuxt
-/packages/*/dist
+/test-apps/**/.svelte-kit
+/test-apps/**/.next
+/test-apps/**/.nuxt
+/examples/**/.svelte-kit
+/examples/**/.next
+/examples/**/.nuxt
+/examples/**/.solid
+/packages/**/dist
+/documentation/dist
 
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml

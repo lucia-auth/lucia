@@ -1,7 +1,7 @@
 ---
-title: "Getting started in Next.js App Router"
-menuTitle: "Next.js App router"
-description: "Learn how to set up Lucia in your Next.js App Router project"
+title: "Getting started in SolidStart"
+menuTitle: "SolidStart"
+description: "Learn how to set up Lucia in your SolidStart project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -14,19 +14,19 @@ yarn add lucia
 
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `nextjs()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
+Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `web()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
 Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to `false`.
 
 ```ts
-// auth/lucia.ts
+// src/auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { web } from "lucia/middleware";
 
 // expect error
 export const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: nextjs(),
+	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
+	middleware: web(),
 	sessionCookie: {
 		expires: false
 	}
@@ -40,17 +40,16 @@ export type Auth = typeof auth;
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/extending-lucia/database-adapters-api). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
-// auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { web } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
 
 const auth = lucia({
-	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: nextjs(),
+	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
+	middleware: web(),
 	sessionCookie: {
 		expires: false
 	},
@@ -84,10 +83,10 @@ const auth = lucia({
 
 ## Set up types
 
-Create a TS declaration file (`app.d.ts`) and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+In your `src/app.d.ts` file, declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// app.d.ts
+// src/app.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./auth/lucia").Auth;
@@ -101,7 +100,7 @@ declare namespace Lucia {
 If you're using Node.js version 18 or below, you need to polyfill the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). This is not required if you're using runtimes other than Node.js (Deno, Bun, Cloudflare Workers, etc) or using Node.js v20 and above.
 
 ```ts
-// auth/lucia.ts
+// src/auth/lucia.ts
 import { lucia } from "lucia";
 import "lucia/polyfill/node";
 
@@ -117,8 +116,9 @@ Optionally, instead of doing a side-effect import, add the `--experimental-globa
 {
 	// ...
 	"scripts": {
-		"dev": "NODE_OPTIONS=--experimental-global-webcrypto next dev",
-		"start": "NODE_OPTIONS=--experimental-global-webcrypto next start"
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto solid-start dev",
+		"build": "NODE_OPTIONS=--experimental-global-webcrypto solid-start build",
+		"start": "NODE_OPTIONS=--experimental-global-webcrypto solid-start start"
 		// ...
 	}
 	// ...

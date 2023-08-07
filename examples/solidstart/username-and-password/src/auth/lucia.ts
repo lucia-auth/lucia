@@ -1,8 +1,8 @@
 import { lucia } from "lucia";
+import { web } from "lucia/middleware";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
-import { astro } from "lucia/middleware";
 import sqlite from "better-sqlite3";
-// import "lucia/polyfill/node";
+import "lucia/polyfill/node";
 
 const db = sqlite("main.db");
 
@@ -12,8 +12,11 @@ export const auth = lucia({
 		session: "user_session",
 		key: "user_key"
 	}),
-	middleware: astro(),
-	env: import.meta.env.DEV ? "DEV" : "PROD",
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: web(),
+	sessionCookie: {
+		expires: false
+	},
 	getUserAttributes: (data) => {
 		return {
 			username: data.username
