@@ -1,5 +1,4 @@
 import { auth } from "~/auth/lucia";
-import { A } from "solid-start";
 import {
 	createServerData$,
 	redirect

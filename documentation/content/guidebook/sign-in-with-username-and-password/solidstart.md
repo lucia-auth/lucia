@@ -109,7 +109,7 @@ After successfully creating a user, we'll create a new session with [`Auth.creat
 ```ts
 // src/routes/signup.tsx
 import { A } from "solid-start";
-import { auth } from "../auth/lucia";
+import { auth } from "~/auth/lucia";
 import { createServerAction$, ServerError } from "solid-start/server";
 
 const Page = () => {
@@ -215,7 +215,7 @@ Make sure to do the check inside `createServerData$()`.
 ```tsx
 // src/routes/signup.tsx
 import { A } from "solid-start";
-import { auth } from "../auth/lucia";
+import { auth } from "~/auth/lucia";
 import {
 	createServerAction$,
 	createServerData$,
@@ -280,7 +280,7 @@ The key we created for the user allows us to get the user via their username, an
 ```tsx
 // src/routes/login.tsx
 import { A } from "solid-start";
-import { auth } from "../auth/lucia";
+import { auth } from "~/auth/lucia";
 import { ServerError, createServerAction$ } from "solid-start/server";
 import { LuciaError } from "lucia";
 
@@ -352,7 +352,7 @@ As we did in the sign up page, redirect authenticated users to the profile page.
 ```ts
 // src/routes/login.tsx
 import { A } from "solid-start";
-import { auth } from "../auth/lucia";
+import { auth } from "~/auth/lucia";
 import {
 	createServerAction$,
 	createServerData$,
