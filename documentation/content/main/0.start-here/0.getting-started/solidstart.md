@@ -16,6 +16,8 @@ yarn add lucia
 
 Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `web()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
+Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to `false`.
+
 ```ts
 // src/auth/lucia.ts
 import { lucia } from "lucia";
@@ -24,7 +26,10 @@ import { web } from "lucia/middleware";
 // expect error
 export const auth = lucia({
 	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
-	middleware: web()
+	middleware: web(),
+	sessionCookie: {
+		expires: false
+	}
 });
 
 export type Auth = typeof auth;
@@ -45,6 +50,10 @@ const client = new PrismaClient();
 const auth = lucia({
 	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
 	middleware: web(),
+	sessionCookie: {
+		expires: false
+	},
+
 	adapter: prisma(client)
 });
 ```

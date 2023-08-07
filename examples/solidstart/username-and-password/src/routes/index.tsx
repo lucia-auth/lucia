@@ -42,16 +42,8 @@ const Page = () => {
 	return (
 		<>
 			<h1>Profile</h1>
-			<Show when={user()}>
-				{(user) => {
-					return (
-						<>
-							<p>User id: {user().userId}</p>
-							<p>Username: {user().username}</p>
-						</>
-					);
-				}}
-			</Show>
+			<p>User id: {user()?.userId}</p>
+			<p>Username: {user()?.username}</p>
 			<Form>
 				<button>Sign out</button>
 			</Form>
