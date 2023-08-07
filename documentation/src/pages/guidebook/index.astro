@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
-import GuidebookHeader from "@components/GuidebookHeader.astro";
+import Header from "@components/Header.astro";
 import ArticleIcon from "@icons/ArticleIcon.astro";
 
 import { getPages } from "@utils/content";
@@ -12,8 +12,8 @@ const parentPages = allPages.filter(
 ---
 
 <BaseLayout title="The Lucia Guidebook">
-    <GuidebookHeader />
-    <main class="px-4 sm:px-8 md:px-16 bg-zinc-100 pb-24 min-h-screen">
+    <Header />
+    <main class="px-4 sm:px-8 md:px-16 pb-24 min-h-screen">
         <div class="max-w-4xl mx-auto">
             <div class="pt-32 pb-16 w-full">
                 <div class="mx-auto max-w-2xl text-center">
@@ -31,22 +31,22 @@ const parentPages = allPages.filter(
                     </p>
                 </div>
             </div>
-            <div class="w-full flex flex-col gap-y-6">
+            <div class="w-full flex flex-col">
                 {
                     parentPages.sort((pageA, pageB) => {
                         return pageA.title.localeCompare(pageB.title)
                     }).map(({ title, description, pathname }) => {
                         return (
-                            <article class="group w-full rounded-lg bg-white">
+                            <article class="group w-full bg-white border-b">
                                 <a
-                                    class="xs:px-6 block px-4 py-4"
+                                    class=" block py-4"
                                     href={pathname}
                                 >
                                     <h2 class="text-xl font-semibold">
                                         {title}
                                     </h2>
-                                    <p class="mt-1">{description}</p>
-                                    <div class="text-main mt-1 flex place-items-center gap-x-0.5">
+                                    <p>{description}</p>
+                                    <div class="text-main mt-0.5 flex place-items-center gap-x-0.5">
                                         <div class="h-5 w-5 fill-current ">
                                             <ArticleIcon />
                                         </div>
