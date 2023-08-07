@@ -52,7 +52,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` in `env.d.ts` whenever you a
 declare namespace Lucia {
 	type Auth = import("./lib/lucia").Auth;
 	type DatabaseUserAttributes = {
-		username: string;
+		github_username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }
