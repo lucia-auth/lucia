@@ -1,5 +1,5 @@
-import { Show, createEffect } from "solid-js";
-import { createRouteData, useRouteData } from "solid-start";
+import { Show } from "solid-js";
+import { useRouteData } from "solid-start";
 import {
 	ServerError,
 	createServerAction$,
