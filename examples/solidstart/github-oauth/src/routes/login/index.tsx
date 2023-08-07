@@ -1,8 +1,5 @@
 import { auth } from "~/auth/lucia";
-import {
-	createServerData$,
-	redirect
-} from "solid-start/server";
+import { createServerData$, redirect } from "solid-start/server";
 
 export const routeData = () => {
 	return createServerData$(async (_, event) => {
