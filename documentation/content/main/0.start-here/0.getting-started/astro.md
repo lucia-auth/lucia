@@ -67,6 +67,11 @@ const auth = lucia({
 - [PlanetScale serverless](/database-adapters/planetscale-serverless)
 - [Upstash Redis](/database-adapters/upstash-redis)
 
+### Using query builders
+
+- [Drizzle ORM](/guidebook/drizzle-orm)
+- [Kysely](/guidebook/kysely)
+
 ## Set up types
 
 In your `src/app.d.ts` file, declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
@@ -110,3 +115,9 @@ declare namespace App {
 ```
 
 This allows us to share and access the same `AuthRequest` instance across multiple load times, which [results in better load times when validating requests](/basics/using-cookies#caching).
+
+## Next steps
+
+You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/start-here/starter-guides) page or the [examples in the repository](https://github.com/pilcrowOnPaper/lucia/tree/main/examples).
+
+Remember to check out the [Guidebook](/guidebook) for tutorials and guides!
