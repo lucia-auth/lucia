@@ -39,9 +39,10 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
+		"@upstash/redis": "^1.20.0",
+		"ioredis": "^5.0.0",
 		"lucia": "^2.0.0",
-		"redis": "^4.0.0",
-		"@upstash/redis": "^1.20.0"
+		"redis": "^4.0.0"
 	},
 	"peerDependenciesMeta": {
 		"redis": {
@@ -49,12 +50,16 @@
 		},
 		"@upstash/redis": {
 			"optional": true
+		},
+		"ioredis": {
+			"optional": true
 		}
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@upstash/redis": "^1.21.0",
 		"dotenv": "^16.0.3",
+		"ioredis": "^5.3.2",
 		"lucia": "workspace:*",
 		"redis": "^4.3.1",
 		"tsx": "^3.12.6"
