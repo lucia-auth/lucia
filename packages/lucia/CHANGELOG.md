@@ -1,5 +1,11 @@
 # lucia
 
+## 2.2.0
+
+### Minor changes
+
+- [#944](https://github.com/pilcrowOnPaper/lucia/pull/944) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `hono()` middleware
+
 ## 2.1.0
 
 ### Minor changes

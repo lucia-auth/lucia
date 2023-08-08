@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 2.1.1
+
+### Patch changes
+
+- [#948](https://github.com/pilcrowOnPaper/lucia/pull/948) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `createOAuth2AuthorizationUrl()` and `createOAuth2AuthorizationUrlWithPKCE()` incorrectly setting `redirect_uri` field to `redirect_url`.
+
 ## 2.1.0
 
 ### Minor changes
@@ -7,9 +13,13 @@
 - [#910](https://github.com/pilcrowOnPaper/lucia/pull/910) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add experimental OAuth helpers:
 
   - `createOAuth2AuthorizationUrl()`
+
   - `createOAuth2AuthorizationUrlWithPKCE()`
+
   - `validateOAuth2AuthorizationCode()`
+
   - `decodeIdToken()`
+
   - `IdTokenError`
 
 - [#657](https://github.com/pilcrowOnPaper/lucia/pull/657) by [@luccasr73](https://github.com/luccasr73) : Add Apple provider
