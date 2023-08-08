@@ -24,7 +24,7 @@ import { hono } from "lucia/middleware";
 // expect error
 export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: express()
+	middleware: hono()
 });
 
 export type Auth = typeof auth;
