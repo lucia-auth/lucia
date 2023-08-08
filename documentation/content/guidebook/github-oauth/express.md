@@ -156,7 +156,6 @@ After successfully creating a user, we'll create a new session with [`Auth.creat
 You can use [`parseCookie()`](/reference/lucia/utils#parsecookie) provided by Lucia to read the state cookie.
 
 ```ts
-import express from "express";
 import { auth, githubAuth } from "./lucia.js";
 import { parseCookie } from "lucia/utils";
 import { OAuthRequestError } from "@lucia-auth/oauth";
