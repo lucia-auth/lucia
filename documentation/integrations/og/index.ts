@@ -27,6 +27,8 @@ type Page = {
 	url: string;
 };
 
+clearAllCache();
+
 const distDirPathname = path.join(process.cwd(), "dist");
 
 export const generateOgImages = async () => {
@@ -74,11 +76,10 @@ export const generateOgImages = async () => {
 	}
 };
 
-const ignoreHtmlPathnames = ["404.html", "index.html"].map((filename) =>
-	path.join(distDirPathname, filename)
-);
-
 const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
+	const ignoreHtmlPathnames = ["404.html", "index.html"].map((filename) =>
+		path.join(distDirPathname, filename)
+	);
 	const contentNames = await fs.readdir(pathname);
 	const filePaths: string[] = [];
 	const readChildDirectoryPromises: Promise<string[]>[] = [];
@@ -102,8 +103,6 @@ const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
 	return filePaths;
 };
 
-clearAllCache();
-
 GlobalFonts.registerFromPath("integrations/og/inter-semibold.ttf", "Inter");
 GlobalFonts.registerFromPath("integrations/og/inter-medium.ttf", "Inter");
 
@@ -120,7 +119,7 @@ const createImage = async (
 	const canvas = createCanvas(1200, 630);
 
 	const canvasContext = canvas.getContext("2d");
-	
+
 	canvasContext.fillStyle = "white";
 	canvasContext.fillRect(0, 0, 1200, 630);
 
@@ -168,7 +167,7 @@ const createImage = async (
 	canvasContext.drawImage(logoImage, 103, 500);
 	canvasContext.font = `500 ${40}px Inter`;
 	canvasContext.fillStyle = "#5f57ff";
-	canvasContext.fillText("Lucia", 140, 532);
+	canvasContext.fillText("Lucia", 138, 532);
 
 	return await canvas.encode("jpeg");
 };
