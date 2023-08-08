@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
-		return res.status(401).send("Not authenticated");
+		return res.status(401).send("Unauthorized");
 	}
 	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);

@@ -8,7 +8,7 @@ router.post("/logout", async (req, res) => {
 	const authRequest = auth.handleRequest(req, res);
 	const session = await authRequest.validate();
 	if (!session) {
-		return res.status(401).send("Not authenticated");
+		return res.status(401).send("Unauthorized");
 	}
 	await auth.invalidateSession(session.sessionId);
 	authRequest.setSession(null);

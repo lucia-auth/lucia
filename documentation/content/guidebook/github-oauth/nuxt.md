@@ -386,7 +386,7 @@ export default defineEventHandler(async (event) => {
 	const session = await authRequest.validate();
 	if (!session) {
 		throw createError({
-			message: "Not authenticated",
+			message: "Unauthorized",
 			statusCode: 401
 		});
 	}

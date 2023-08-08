@@ -289,7 +289,7 @@ post("/logout", async (request: Request) => {
 	// check if user is authenticated
 	const session = await authRequest.validate(); // or `authRequest.validateBearerToken()`
 	if (!session) {
-		return new Response("Not authenticated", {
+		return new Response("Unauthorized", {
 			status: 401
 		});
 	}
