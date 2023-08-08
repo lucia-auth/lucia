@@ -24,6 +24,7 @@
 		"tailwindcss": "^3.0.24"
 	},
 	"devDependencies": {
+		"@napi-rs/canvas": "^0.1.42",
 		"@types/hast": "^2.3.4",
 		"canvaskit-wasm": "^0.38.2",
 		"sharp": "^0.32.4"

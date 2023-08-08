@@ -1,10 +1,14 @@
 import fs from "fs/promises";
 import path from "path";
-import InitCanvasKit from "canvaskit-wasm";
-import sharp from "sharp";
+import {
+	createCanvas,
+	GlobalFonts,
+	loadImage,
+	clearAllCache
+} from "@napi-rs/canvas";
 
 import type { AstroIntegration } from "astro";
-import type { CanvasKit } from "canvaskit-wasm";
+import type { SKRSContext2D } from "@napi-rs/canvas";
 
 export default () => {
 	const integration: AstroIntegration = {
@@ -22,6 +26,8 @@ type Page = {
 	description: string | null;
 	url: string;
 };
+
+clearAllCache();
 
 const distDirPathname = path.join(process.cwd(), "dist");
 
@@ -70,11 +76,10 @@ export const generateOgImages = async () => {
 	}
 };
 
-const ignoreHtmlPathnames = ["404.html", "index.html"].map((filename) =>
-	path.join(distDirPathname, filename)
-);
-
 const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
+	const ignoreHtmlPathnames = ["404.html", "index.html"].map((filename) =>
+		path.join(distDirPathname, filename)
+	);
 	const contentNames = await fs.readdir(pathname);
 	const filePaths: string[] = [];
 	const readChildDirectoryPromises: Promise<string[]>[] = [];
@@ -98,88 +103,50 @@ const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
 	return filePaths;
 };
 
-const SCALE = 2;
-const PADDING = 100;
-const WIDTH = 1200;
-const HEIGHT = 630;
-const MAIN_COLOR = "#5f57ff";
+GlobalFonts.registerFromPath("integrations/og/inter-semibold.ttf", "Inter");
+GlobalFonts.registerFromPath("integrations/og/inter-medium.ttf", "Inter");
 
-let CanvasKit: CanvasKit;
-let semiboldInterFontFile: Buffer;
-let mediumInterFontFile: Buffer;
-let logoBuffer: Buffer;
+const logo = await fs.readFile(
+	path.join(process.cwd(), "integrations/og/logo.png")
+);
+
+const logoImage = await loadImage(logo);
 
 const createImage = async (
 	title: string,
 	description: string | null
 ): Promise<Buffer> => {
-	if (!CanvasKit) {
-		CanvasKit = await InitCanvasKit();
-	}
-	if (!semiboldInterFontFile) {
-		semiboldInterFontFile = await fs.readFile(
-			path.join(process.cwd(), "integrations/og/inter-semibold.ttf")
-		);
-	}
-	if (!mediumInterFontFile) {
-		mediumInterFontFile = await fs.readFile(
-			path.join(process.cwd(), "integrations/og/inter-medium.ttf")
-		);
-	}
-	if (!logoBuffer) {
-		logoBuffer = await fs.readFile(
-			path.join(process.cwd(), "integrations/og/logo.png")
-		);
-	}
+	const canvas = createCanvas(1200, 630);
 
-	const canvas = CanvasKit.MakeCanvas(WIDTH * SCALE, HEIGHT * SCALE);
-	canvas.loadFont(semiboldInterFontFile, {
-		family: "Inter",
-		style: "normal",
-		weight: "600"
-	});
-	canvas.loadFont(mediumInterFontFile, {
-		family: "Inter",
-		style: "normal",
-		weight: "500"
-	});
-
-	const maxLineWidth = (WIDTH - PADDING * 2) * SCALE;
 	const canvasContext = canvas.getContext("2d");
-	if (!canvasContext) throw new Error();
 
 	canvasContext.fillStyle = "white";
-	canvasContext.fillRect(0, 0, WIDTH * SCALE, 630 * SCALE);
+	canvasContext.fillRect(0, 0, 1200, 630);
 
 	let titleFontSize = 72;
-	canvasContext.font = `600 ${titleFontSize * SCALE}px Inter`;
+	canvasContext.font = `600 ${titleFontSize}px Inter`;
 	canvasContext.fillStyle = "black";
 
 	const titleTextWidth = canvasContext.measureText(title).width;
+	const maxLineWidth = 1000;
 	let wrappedTitleLines: string[];
-    let titleY = 250
+	let titleY = 250;
 	if (titleTextWidth < maxLineWidth * 2) {
 		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
 	} else {
 		titleFontSize = 60;
-		canvasContext.font = `600 ${titleFontSize * SCALE}px Inter`;
-		canvasContext.fillStyle = "black";
+		canvasContext.font = `600 ${titleFontSize}px Inter`;
 		wrappedTitleLines = wrapCanvasText(canvasContext, title, maxLineWidth);
 	}
-    if (wrappedTitleLines.length > 2) {
-        titleY = 200
-    }
+	if (wrappedTitleLines.length > 2) {
+		titleY = 200;
+	}
 	for (const [lineNum, line] of wrappedTitleLines.entries()) {
-		canvasContext.fillText(
-			line,
-			100 * SCALE,
-			(titleY + (titleFontSize + 8) * lineNum) * SCALE
-		);
+		canvasContext.fillText(line, 100, titleY + (titleFontSize + 8) * lineNum);
 	}
 
 	if (description) {
-		canvasContext.font = `500 ${36 * SCALE}px Inter`;
-		canvasContext.fillStyle = "black";
+		canvasContext.font = `500 ${36}px Inter`;
 		const wrappedDescription = wrapCanvasText(
 			canvasContext,
 			description,
@@ -188,36 +155,25 @@ const createImage = async (
 		for (const [lineNum, line] of wrappedDescription.entries()) {
 			canvasContext.fillText(
 				line,
-				100 * SCALE,
-				(titleY +
+				100,
+				titleY +
 					(36 + 8) * lineNum +
 					titleFontSize * wrappedTitleLines.length +
-					(wrappedTitleLines.length - 1) * 8) *
-					SCALE
+					(wrappedTitleLines.length - 1) * 8
 			);
 		}
 	}
 
-	const img = canvas.decodeImage(logoBuffer);
-	if (!img) throw new Error("Failed to decode logo image");
-	canvasContext.drawImage(
-		img as any, // broken types
-		104 * SCALE,
-		500 * SCALE,
-		40 * SCALE,
-		40 * SCALE
-	);
-	canvasContext.font = `600 ${40 * SCALE}px Inter`;
-	canvasContext.fillStyle = MAIN_COLOR;
-	canvasContext.fillText("Lucia", 144 * SCALE, 535 * SCALE);
+	canvasContext.drawImage(logoImage, 103, 500);
+	canvasContext.font = `500 ${40}px Inter`;
+	canvasContext.fillStyle = "#5f57ff";
+	canvasContext.fillText("Lucia", 138, 532);
 
-	return sharp(Buffer.from(canvas.toDataURL("jpeg").split(",")[1], "base64"))
-		.resize(WIDTH, HEIGHT)
-		.toBuffer();
+	return await canvas.encode("jpeg");
 };
 
 const wrapCanvasText = (
-	canvasContext: CanvasRenderingContext2D,
+	canvasContext: SKRSContext2D,
 	title: string,
 	maxLineWidth: number
 ): string[] => {
