@@ -344,3 +344,34 @@ export const h3 = (): Middleware<[H3Event]> => {
 		});
 	};
 };
+
+type HonoContext = {
+	req: {
+		url: string;
+		method: string;
+		headers: Headers;
+	};
+	header: (name: string, value: string) => void;
+};
+
+export const hono = (): Middleware<[HonoContext]> => {
+	return ({ args }) => {
+		const [context] = args;
+		const requestContext = {
+			request: {
+				url: context.req.url,
+				method: context.req.method,
+				headers: {
+					origin: context.req.headers.get("Origin"),
+					cookie: context.req.headers.get("Cookie"),
+					authorization: context.req.headers.get("Authorization")
+				}
+			},
+			setCookie: (cookie: Cookie) => {
+				context.header("Set-Cookie", cookie.serialize());
+			}
+		} as const satisfies RequestContext;
+
+		return requestContext;
+	};
+};

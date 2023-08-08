@@ -125,7 +125,6 @@ export type Auth = typeof auth;
 Create a new Github authorization url, where the user should be redirected to. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
 ```ts
-import express from "express";
 import { auth, githubAuth } from "./lucia.js";
 
 app.get("/login/github", async (req, res) => {

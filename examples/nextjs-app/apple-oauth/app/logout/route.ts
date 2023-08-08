@@ -11,7 +11,7 @@ export const POST = async (request: NextRequest) => {
 	if (!session) {
 		return NextResponse.json(
 			{
-				error: "Not authenticated"
+				error: "Unauthorized"
 			},
 			{
 				status: 401

@@ -4,7 +4,7 @@ menuTitle: "SolidStart"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/SolidStart)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/solidstart)._
 
 This guide will cover how to implement a simple username and password authentication using Lucia in SolidStart. It will have 3 parts:
 
@@ -442,7 +442,7 @@ const Page = () => {
 		const authRequest = auth.handleRequest(event.request);
 		const session = await authRequest.validate();
 		if (!session) {
-			throw new ServerError("Not authenticated", {
+			throw new ServerError("Unauthorized", {
 				status: 401
 			});
 		}

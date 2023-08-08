@@ -1,11 +1,12 @@
 ---
-title: "Github OAuth"
+title: "Github OAuth in Hono"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
+menuTitle: "Hono"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/hono)._
 
-This guide will cover how to implement Github OAuth using Lucia with session cookies. As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+This guide will cover how to implement Github OAuth using Lucia in Hono with session cookies. As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
 
 ## Create an OAuth app
 
@@ -40,40 +41,17 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+We'll expose the user's Github username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { hono } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	}
-});
-
-export type Auth = typeof auth;
-```
-
-We also want to expose the user's username to the `User` object returned by Lucia's APIs. We'll define [`getUserAttributes`](/basics/configuration#getuserattributes) and return the username.
-
-```ts
-// lucia.ts
-import { lucia } from "lucia";
-import { web } from "lucia/middleware";
-
-export const auth = lucia({
-	adapter: ADAPTER,
-	env: "DEV", // "PROD" for production
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
+	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
+	middleware: hono(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -90,9 +68,9 @@ export type Auth = typeof auth;
 Install the OAuth integration and `dotenv`.
 
 ```
-npm i @lucia-auth/oauth
-pnpm add @lucia-auth/oauth
-yarn add @lucia-auth/oauth
+npm i @lucia-auth/oauth dotenv
+pnpm add @lucia-auth/oauth dotenv
+yarn add @lucia-auth/oauth dotenv
 ```
 
 Import the Github OAuth integration, and initialize it using your credentials.
@@ -100,17 +78,20 @@ Import the Github OAuth integration, and initialize it using your credentials.
 ```ts
 // lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { hono } from "lucia/middleware";
 
 import { github } from "@lucia-auth/oauth/providers";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const auth = lucia({
 	// ...
 });
 
 export const githubAuth = github(auth, {
-	clientId: GITHUB_CLIENT_ID, // env var
-	clientSecret: GITHUB_CLIENT_SECRET // env var
+	clientId: process.env.GITHUB_CLIENT_ID ?? "",
+	clientSecret: process.env.GITHUB_CLIENT_SECRET ?? ""
 });
 
 export type Auth = typeof auth;
@@ -120,27 +101,19 @@ export type Auth = typeof auth;
 
 Create a new Github authorization url, where the user should be redirected to. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
-You can use [`serializeCookie()`](/reference/lucia/utils#serializecookie) provided by Lucia to get the `Set-Cookie` header.
-
 ```ts
-import { serializeCookie } from "lucia/utils";
+import { setCookie } from "hono/cookie";
 import { auth, githubAuth } from "./lucia.js";
 
-get("/login/github", async () => {
+app.get("/login/github", async (context) => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
-	const stateCookie = serializeCookie("github_oauth_state", state, {
+	setCookie(context, "github_oauth_state", state, {
 		httpOnly: true,
-		secure: false, // `true` for production
+		secure: process.env.NODE_ENV === "production",
 		path: "/",
 		maxAge: 60 * 60
 	});
-	return new Response(null, {
-		status: 302,
-		headers: {
-			Location: url.toString(),
-			"Set-Cookie": stateCookie
-		}
-	});
+	return context.redirect(url.toString());
 });
 ```
 
@@ -156,7 +129,7 @@ Create your OAuth callback route that you defined when registering an OAuth app 
 
 When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with Hono request `Context`.
 
 You can use [`parseCookie()`](/reference/lucia/utils#parsecookie) provided by Lucia to read the state cookie.
 
@@ -164,18 +137,19 @@ You can use [`parseCookie()`](/reference/lucia/utils#parsecookie) provided by Lu
 import { auth, githubAuth } from "./lucia.js";
 import { parseCookie } from "lucia/utils";
 import { OAuthRequestError } from "@lucia-auth/oauth";
+import { getCookie } from "hono/cookie";
 
-get("/login/github/callback", async (request: Request) => {
-	const cookies = parseCookie(request.headers.get("Cookie") ?? "");
-	const storedState = cookies.github_oauth_state;
-	const url = new URL(request.url);
-	const state = url.searchParams.get("state");
-	const code = url.searchParams.get("code");
+app.get("/login/github/callback", async (context) => {
+	const storedState = getCookie(context, "github_oauth_state");
+	const { code, state } = context.req.query();
 	// validate state
-	if (!storedState || !state || storedState !== state || !code) {
-		return new Response(null, {
-			status: 400
-		});
+	if (
+		!storedState ||
+		!state ||
+		storedState !== state ||
+		typeof code !== "string"
+	) {
+		return context.text("Bad request", 400);
 	}
 	try {
 		const { existingUser, githubUser, createUser } =
@@ -196,25 +170,15 @@ get("/login/github/callback", async (request: Request) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const sessionCookie = auth.createSessionCookie(session);
-		// redirect to profile page
-		return new Response(null, {
-			headers: {
-				Location: "/",
-				"Set-Cookie": sessionCookie.serialize() // store session cookie
-			},
-			status: 302
-		});
+		const authRequest = auth.handleRequest(context);
+		authRequest.setSession(session);
+		return context.redirect("/");
 	} catch (e) {
 		if (e instanceof OAuthRequestError) {
 			// invalid code
-			return new Response(null, {
-				status: 400
-			});
+			return context.text("Bad request", 400);
 		}
-		return new Response(null, {
-			status: 500
-		});
+		return context.text("An unknown error occurred", 500);
 	}
 });
 ```
@@ -242,31 +206,6 @@ const getUser = async () => {
 const user = await getUser();
 ```
 
-## Redirect authenticated users
-
-Authenticated users should be redirected to the profile page whenever they try to access the sign in page. You can validate requests by creating a new [`AuthRequest` instance](/reference/lucia/interfaces/authrequest) with [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) and calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
-
-Since we're using the `web()` middleware, `Auth.handleRequest()` expects the standard `Request`.
-
-```ts
-import { auth } from "./lucia.js";
-
-get("/signup", async (request: Request) => {
-	const authRequest = auth.handleRequest(request);
-	const session = await authRequest.validate();
-	if (session) {
-		// redirect to profile page
-		return new Response(null, {
-			headers: {
-				Location: "/"
-			},
-			status: 302
-		});
-	}
-	return renderPage();
-});
-```
-
 ## Get authenticated user
 
 You can validate requests and get the current session/user by using [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). It returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
@@ -274,10 +213,8 @@ You can validate requests and get the current session/user by using [`AuthReques
 You can see that `User.username` exists because we defined it with `getUserAttributes()` configuration.
 
 ```ts
-import { auth } from "./lucia.js";
-
-get("/", async (request: Request) => {
-	const authRequest = auth.handleRequest(request);
+get("/user", async (context) => {
+	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate();
 	if (session) {
 		const user = session.user;
@@ -295,25 +232,15 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 import { auth } from "./lucia.js";
 
-post("/logout", async (request: Request) => {
-	const authRequest = auth.handleRequest(request);
-	// check if user is authenticated
+app.post("/logout", async (context) => {
+	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate();
 	if (!session) {
-		return new Response("Unauthorized", {
-			status: 401
-		});
+		return context.text("Unauthorized", 401);
 	}
-	// make sure to invalidate the current session!
 	await auth.invalidateSession(session.sessionId);
-	// create blank session cookie
-	const sessionCookie = auth.createSessionCookie(null);
-	return new Response(null, {
-		headers: {
-			Location: "/login", // redirect to login page
-			"Set-Cookie": sessionCookie.serialize() // delete session cookie
-		},
-		status: 302
-	});
+	authRequest.setSession(null);
+	// redirect back to login page
+	return context.redirect("/login");
 });
 ```

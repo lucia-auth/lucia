@@ -24,7 +24,7 @@ const Page = () => {
 		const authRequest = auth.handleRequest(event.request);
 		const session = await authRequest.validate();
 		if (!session) {
-			throw new ServerError("Not authenticated", {
+			throw new ServerError("Unauthorized", {
 				status: 401
 			});
 		}

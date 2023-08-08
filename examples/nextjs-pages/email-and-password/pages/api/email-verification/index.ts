@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		res
 	});
 	const session = await authRequest.validate();
-	if (!session) return res.status(401).send("Not authenticated");
+	if (!session) return res.status(401).send("Unauthorized");
 	if (session.user.emailVerified) {
 		return res.status(422).json({
 			error: "Email already verified"

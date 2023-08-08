@@ -1,22 +1,12 @@
 ---
-title: "Sign in with username and password in Express"
-menuTitle: "Express"
+title: "Sign in with username and password in Hono"
+menuTitle: "Hono"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/express)._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/hono)._
 
 This guide will cover how to implement a simple username and password authentication using Lucia.
-
-### Clone project
-
-You can get started immediately by cloning the [Express example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/express/username-and-password) from the repository.
-
-```
-npx degit pilcrowonpaper/lucia/examples/express/username-and-password <directory_name>
-```
-
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/express/username-and-password).
 
 ## Update your database
 
@@ -44,12 +34,12 @@ We'll expose the user's username to the `User` object by defining [`getUserAttri
 ```ts
 // lucia.ts
 import { lucia } from "lucia";
-import { express } from "lucia/middleware";
+import { hono } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: express(),
+	middleware: hono(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -59,19 +49,6 @@ export const auth = lucia({
 });
 
 export type Auth = typeof auth;
-```
-
-## Configure Express
-
-Set up the body parser middleware.
-
-```ts
-import express from "express";
-
-const app = express();
-
-app.use(express.urlencoded()); // for application/x-www-form-urlencoded (forms)
-app.use(express.json()); // for application/json
 ```
 
 ## Sign up user
@@ -89,22 +66,22 @@ app.get("/signup", async () => {
 	return renderPage("signup.html"); // example
 });
 
-app.post("/signup", async (req, res) => {
-	const { username, password } = req.body;
+app.post("/signup", async (context) => {
+	const { username, password } = await context.req.parseBody();
 	// basic check
 	if (
 		typeof username !== "string" ||
 		username.length < 4 ||
 		username.length > 31
 	) {
-		return res.status(400).send("Invalid username");
+		return context.text("Invalid username", 400);
 	}
 	if (
 		typeof password !== "string" ||
 		password.length < 6 ||
 		password.length > 255
 	) {
-		return res.status(400).send("Invalid password");
+		return context.text("Invalid password", 400);
 	}
 	try {
 		const user = await auth.createUser({
@@ -121,10 +98,10 @@ app.post("/signup", async (req, res) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest(req, res);
+		const authRequest = auth.handleRequest(context);
 		authRequest.setSession(session);
 		// redirect to profile page
-		return res.status(302).setHeader("Location", "/").end();
+		return context.redirect("/login");
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
@@ -132,10 +109,9 @@ app.post("/signup", async (req, res) => {
 			e instanceof SomeDatabaseError &&
 			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
 		) {
-			return res.status(400).send("Username already taken");
+			return context.text("Username already taken", 400);
 		}
-
-		return res.status(500).send("An unknown error occurred");
+		return context.text("An unknown error occurred", 500);
 	}
 });
 ```
@@ -161,7 +137,7 @@ const user = await auth.createUser({
 
 #### Store session
 
-Cookies can be stored with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). A new [`AuthRequest`](/reference/lucia/interfaces/authrequest) instance can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with Express' `Request` and `Response`.
+Cookies can be stored with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). A new [`AuthRequest`](/reference/lucia/interfaces/authrequest) instance can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with Hono request `Context`.
 
 Alternatively, you can return the session in the response and store it locally in the device for single page and native applications.
 
@@ -188,26 +164,26 @@ The key we created for the user allows us to get the user via their username, an
 import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
-app.get("/login", async (req, res) => {
+app.get("/login", async () => {
 	return renderPage("login.html"); // example
 });
 
-app.post("/login", async (req, res) => {
-	const { username, password } = req.body;
+app.post("/login", async (context) => {
+	const { username, password } = await context.req.parseBody();
 	// basic check
 	if (
 		typeof username !== "string" ||
 		username.length < 1 ||
 		username.length > 31
 	) {
-		return res.status(400).send("Invalid username");
+		return context.text("Invalid username", 400);
 	}
 	if (
 		typeof password !== "string" ||
 		password.length < 1 ||
 		password.length > 255
 	) {
-		return res.status(400).send("Invalid password");
+		return context.text("Invalid password", 400);
 	}
 	try {
 		// find user by key
@@ -221,10 +197,10 @@ app.post("/login", async (req, res) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest(req, res);
+		const authRequest = auth.handleRequest(context);
 		authRequest.setSession(session);
 		// redirect to profile page
-		return res.status(302).setHeader("Location", "/").end();
+		return context.redirect("/login");
 	} catch (e) {
 		// check for unique constraint error in user table
 		if (
@@ -234,10 +210,10 @@ app.post("/login", async (req, res) => {
 		) {
 			// user does not exist
 			// or invalid password
-			return res.status(400).send("Incorrect username or password");
+			return context.text("Incorrect username or password", 400);
 		}
 
-		return res.status(500).send("An unknown error occurred");
+		return context.text("An unknown error occurred", 500);
 	}
 });
 ```
@@ -249,8 +225,8 @@ You can validate requests and get the current session/user by either using [`Aut
 You can see that `User.username` exists because we defined it with `getUserAttributes()` configuration.
 
 ```ts
-get("/user", async (req, res) => {
-	const authRequest = auth.handleRequest(req, res);
+get("/user", async (context) => {
+	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate(); // or `authRequest.validateBearerToken()`
 	if (session) {
 		const user = session.user;
@@ -268,17 +244,17 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 import { auth } from "./lucia.js";
 
-app.post("/logout", async (req, res) => {
-	const authRequest = auth.handleRequest(req, res);
+app.post("/logout", async (context) => {
+	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate(); // or `authRequest.validateBearerToken()`
 	if (!session) {
-		return res.sendStatus(401);
+		return context.text("Unauthorized", 401);
 	}
 	await auth.invalidateSession(session.sessionId);
 
 	authRequest.setSession(null); // for session cookie
 
 	// redirect back to login page
-	return res.status(302).setHeader("Location", "/login").end();
+	return context.redirect("/login");
 });
 ```

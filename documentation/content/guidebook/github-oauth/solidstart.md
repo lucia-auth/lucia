@@ -4,7 +4,7 @@ description: "Learn the basic of Lucia and the OAuth integration by implementing
 menuTitle: "SolidStart"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/astro) and that you've implement the recommended middleware._
+_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/solidstart) and that you've implement the recommended middleware._
 
 This guide will cover how to implement Github OAuth using Lucia in SolidStart. It will have 3 parts:
 
@@ -16,7 +16,7 @@ As a general overview of OAuth, the user is redirected to github.com to be authe
 
 ### Clone project
 
-You can get started immediately by cloning the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/solidstart/github-oauth) from the repository.
+You can get started immediately by cloning the [SolidStart example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/solidstart/github-oauth) from the repository.
 
 ```
 npx degit pilcrowonpaper/lucia/examples/solidstart/github-oauth <directory_name>
@@ -359,7 +359,7 @@ const Page = () => {
 		const authRequest = auth.handleRequest(event.request);
 		const session = await authRequest.validate();
 		if (!session) {
-			throw new ServerError("Not authenticated", {
+			throw new ServerError("Unauthorized", {
 				status: 401
 			});
 		}
