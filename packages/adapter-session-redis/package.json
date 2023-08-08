@@ -13,7 +13,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test": "pnpm test.redis && pnpm test.upstash",
+		"test": "pnpm test.redis && pnpm test.upstash && pnpm test.ioredis",
 		"test.redis": "tsx test/redis.ts",
 		"test.upstash": "tsx test/upstash.ts",
 		"test.ioredis": "tsx test/ioredis.ts",
