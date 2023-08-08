@@ -108,7 +108,7 @@ export const createOAuth2AuthorizationUrl = async (
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
 		state: options.state ?? state,
-		redirect_url: options.redirectUri,
+		redirect_uri: options.redirectUri,
 		...searchParams
 	});
 	return [authorizationUrl, state] as const;
@@ -139,7 +139,7 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
 		state: options.state ?? state,
-		redirect_url: options.redirectUri,
+		redirect_uri: options.redirectUri,
 		code_challenge_method: "S256",
 		code_challenge: encodeBase64Url(codeChallenge),
 		...searchParams
