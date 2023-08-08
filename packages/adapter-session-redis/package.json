@@ -16,6 +16,7 @@
 		"test": "pnpm test.redis && pnpm test.upstash",
 		"test.redis": "tsx test/redis.ts",
 		"test.upstash": "tsx test/upstash.ts",
+		"test.ioredis": "tsx test/ioredis.ts",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
