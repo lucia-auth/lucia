@@ -1,4 +1,4 @@
-# Username & password example with Lucia and Next.js Pages Router
+# Github OAuth example with Lucia and Next.js Pages Router
 
 This example uses `better-sqlite3`.
 
@@ -9,10 +9,7 @@ pnpm i
 # setup .env
 pnpm setup-env
 
-# setup database
-pnpm migrate
-
-# run
+# run dev server
 pnpm dev
 ```
 

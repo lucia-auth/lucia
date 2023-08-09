@@ -2,12 +2,16 @@ import { lucia } from "lucia";
 import { nextjs } from "lucia/middleware";
 import { apple } from "@lucia-auth/oauth/providers";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
-import sqlite from "better-sqlite3";
-import path from "path";
-import { readFileSync } from "fs";
 // import "lucia/polyfill/node";
 
-const db = sqlite("main.db");
+import sqlite from "better-sqlite3";
+import fs from "fs";
+
+import path from "path";
+import { readFileSync } from "fs";
+
+const db = sqlite(":memory:");
+db.exec(fs.readFileSync("schema.sql", "utf8"));
 
 export const auth = lucia({
 	adapter: betterSqlite3(db, {

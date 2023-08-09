@@ -1,9 +1,11 @@
 import sqlite from 'better-sqlite3';
+import fs from 'fs';
 import { Kysely, SqliteDialect } from 'kysely';
 
 import type { ColumnType } from 'kysely';
 
-export const sqliteDatabase = sqlite('main.db');
+export const sqliteDatabase = sqlite(':memory:');
+sqliteDatabase.exec(fs.readFileSync('schema.sql', 'utf8'));
 
 const dialect = new SqliteDialect({
 	database: sqliteDatabase

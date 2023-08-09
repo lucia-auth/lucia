@@ -1,4 +1,4 @@
-# Username & password example with Lucia and SolidStart
+# Github OAuth example with Lucia and SolidStart
 
 This example uses `better-sqlite3`.
 
@@ -6,10 +6,7 @@ This example uses `better-sqlite3`.
 # install dependencies
 pnpm i
 
-# setup database
-pnpm migrate
-
-# run
+# run dev server
 pnpm dev
 ```
 

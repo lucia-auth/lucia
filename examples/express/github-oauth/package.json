@@ -5,7 +5,6 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"migrate": "tsx migration/index.ts",
 		"setup-env": "cp .env.example .env",
 		"dev": "tsx watch src",
 		"build": "tsc"
@@ -18,7 +17,6 @@
 		"@types/body-parser": "^1.19.2",
 		"@types/express": "^4.17.17",
 		"@types/node": "^20",
-		"tsx": "^3.12.6",
 		"typescript": "^5.1.6"
 	},
 	"dependencies": {

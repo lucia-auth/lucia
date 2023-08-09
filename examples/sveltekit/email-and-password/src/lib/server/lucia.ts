@@ -2,6 +2,7 @@ import { lucia } from 'lucia';
 import { betterSqlite3 } from '@lucia-auth/adapter-sqlite';
 import { sveltekit } from 'lucia/middleware';
 import { dev } from '$app/environment';
+
 import { sqliteDatabase } from './db';
 
 export const auth = lucia({

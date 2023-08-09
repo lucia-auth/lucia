@@ -2,7 +2,6 @@
 	"name": "username-and-password",
 	"description": "Username & password example with Lucia and SolidStart",
 	"scripts": {
-		"migrate": "tsx migration/index.ts",
 		"dev": "solid-start dev",
 		"build": "solid-start build",
 		"start": "solid-start start"
@@ -13,7 +12,6 @@
 		"esbuild": "^0.14.54",
 		"postcss": "^8.4.21",
 		"solid-start-node": "^0.2.19",
-		"tsx": "^3.12.6",
 		"typescript": "^4.9.4",
 		"vite": "^4.4.6"
 	},
