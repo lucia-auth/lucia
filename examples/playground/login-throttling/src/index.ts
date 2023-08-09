@@ -36,14 +36,14 @@ app.post("/", async (c) => {
 			400
 		);
 	}
-	const timeoutSeconds = storedThrottling
-		? storedThrottling.timeoutSeconds * 2
-		: 1;
-	usernameThrottling.set(username, {
-		timeoutUntil: Date.now() + timeoutSeconds * 1000,
-		timeoutSeconds
-	});
 	if (password === "invalid") {
+		const timeoutSeconds = storedThrottling
+			? storedThrottling.timeoutSeconds * 2
+			: 1;
+		usernameThrottling.set(username, {
+			timeoutUntil: Date.now() + timeoutSeconds * 1000,
+			timeoutSeconds
+		});
 		return c.json(
 			`Invalid credentials - timed out for ${timeoutSeconds} seconds`,
 			400
