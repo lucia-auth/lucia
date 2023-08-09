@@ -1,13 +1,12 @@
-import sqlite from "better-sqlite3";
 import { lucia } from "lucia";
 import { express } from "lucia/middleware";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 // import "lucia/polyfill/node";
 
-const db = sqlite("main.db");
+import { sqliteDatabase } from "./db.js";
 
 export const auth = lucia({
-	adapter: betterSqlite3(db, {
+	adapter: betterSqlite3(sqliteDatabase, {
 		user: "user",
 		session: "user_session",
 		key: "user_key"

@@ -6,10 +6,7 @@ This example uses TypeScript, SQLite3 with `better-sqlite3`, and [`tsx`](https:/
 # install dependencies
 pnpm i
 
-# setup database
-pnpm migrate
-
-# run server + watch for changes
+# run dev server + watch for changes
 pnpm dev
 ```
 

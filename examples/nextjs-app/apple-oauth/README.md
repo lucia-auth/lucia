@@ -9,10 +9,7 @@ pnpm i
 # setup .env
 pnpm setup-env
 
-# setup database
-pnpm migrate
-
-# run
+# run dev server
 pnpm dev
 ```
 

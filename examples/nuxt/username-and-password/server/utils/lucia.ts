@@ -4,7 +4,10 @@ import { h3 } from "lucia/middleware";
 // import "lucia/polyfill/node";
 
 import sqlite from "better-sqlite3";
-const db = sqlite("main.db");
+import fs from "fs";
+
+const db = sqlite(":memory:");
+db.exec(fs.readFileSync("schema.sql", "utf8"));
 
 export const auth = lucia({
 	adapter: betterSqlite3(db, {

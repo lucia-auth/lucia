@@ -6,10 +6,7 @@ This example uses `better-sqlite3`.
 # install dependencies
 pnpm i
 
-# setup database
-pnpm migrate
-
-# run
+# run dev server
 pnpm dev
 ```
 

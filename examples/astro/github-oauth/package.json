@@ -4,7 +4,6 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"migrate": "tsx migration/index.ts",
 		"setup-env": "cp .env.example .env",
 		"dev": "astro dev",
 		"start": "astro dev",
@@ -20,7 +19,6 @@
 		"lucia": "latest"
 	},
 	"devDependencies": {
-		"@types/better-sqlite3": "^7.6.3",
-		"tsx": "^3.12.6"
+		"@types/better-sqlite3": "^7.6.3"
 	}
 }
