@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import os from "os";
 import {
 	createCanvas,
 	GlobalFonts,
@@ -60,21 +61,34 @@ export const generateOgImages = async () => {
 			url
 		});
 	}
-	for (const page of pages) {
-		const imagePathname = path.join(
-			process.cwd(),
-			"dist",
-			"og",
-			page.url + ".jpg"
-		);
-		const image = await createImage(page.title, page.description);
-		await fs.mkdir(path.dirname(imagePathname), {
-			recursive: true
-		});
-		console.log(`Generated image: ${page.url}`);
-		await fs.writeFile(imagePathname, image);
+	const concurrency = os.cpus().length
+	console.log(`Generating ${pages.length} images with ${concurrency} concurrency`);
+	const groups = groupByN(pages, concurrency);
+	for (const group of groups) {
+		await Promise.all(group.map(async page => {
+			const imagePathname = path.join(
+				process.cwd(),
+				"dist",
+				"og",
+				page.url + ".jpg"
+			);
+			const image = await createImage(page.title, page.description);
+			await fs.mkdir(path.dirname(imagePathname), {
+				recursive: true
+			});
+			console.log(`Generated image: ${page.url}`);
+			await fs.writeFile(imagePathname, image);
+		}));	
 	}
 };
+
+function groupByN<T>(arr: T[], n: number): T[][] {
+	const result: T[][] = [];
+	for (let i = 0; i < arr.length; i += n) {
+		result.push(arr.slice(i, i + n));
+	}
+	return result;
+}
 
 const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
 	const ignoreHtmlPathnames = ["404.html", "index.html"].map((filename) =>
