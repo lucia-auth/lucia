@@ -1,6 +1,5 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-
 import fs from "fs/promises";
 
 const app = new Hono();
@@ -14,7 +13,7 @@ const usernameThrottling = new Map<
 >();
 
 app.get("/", async (c) => {
-	const html = await fs.readFile("src/pages/index.html");
+	const html = await fs.readFile("src/index.html");
 	return c.html(html.toString());
 });
 
