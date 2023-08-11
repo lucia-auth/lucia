@@ -9,10 +9,10 @@ One simple approach is to use exponential backoff to increase the timeout on eve
 
 ## Basic example
 
-The following example stores the attempts in memory. The timeout doubles on every failed login attempt until the user is successfully authenticated. A [demo](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/other/login-throttling) is available in the repository.
+The following example stores the attempts in memory. You can of course use a regular database but running it in within a transaction is recommended. The timeout doubles on every failed login attempt until the user is successfully authenticated. A [demo](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/other/login-throttling) is available in the repository.
 
 ```ts
-const usernameThrottling = new Map<
+const loginTimeout = new Map<
 	string,
 	{
 		timeoutUntil: number;
@@ -22,27 +22,29 @@ const usernameThrottling = new Map<
 ```
 
 ```ts
-const storedThrottling = usernameThrottling.get(username);
-const timeoutUntil = storedThrottling?.timeoutUntil ?? 0;
+// for traditional databases - START TRANSACTION
+const storedTimeout = loginTimeout.get(username);
+const timeoutUntil = storedTimeout?.timeoutUntil ?? 0;
 if (Date.now() < timeoutUntil) {
 	// 429 too many requests
 	throw new Error();
 }
-const validPassword = validatePassword(username, password);
-if (!validPassword) {
-	// increase timeout
-	const timeoutSeconds = storedThrottling
-		? storedThrottling.timeoutSeconds * 2
-		: 1;
-	usernameThrottling.set(username, {
-		timeoutUntil: Date.now() + timeoutSeconds * 1000,
-		timeoutSeconds
-	});
+// increase timeout
+const timeoutSeconds = storedTimeout ? storedTimeout.timeoutSeconds * 2 : 1;
+loginTimeout.set(username, {
+	timeoutUntil: Date.now() + timeoutSeconds * 1000,
+	timeoutSeconds
+});
+// for traditional databases - END TRANSACTION
+
+try {
+	await auth.validateKeyPassword("username", username, password);
+	loginTimeout.delete(username);
+	// success!
+} catch {
 	// invalid username or password
 	throw new Error();
 }
-usernameThrottling.delete(username);
-// success!
 ```
 
 ## Prevent DOS with device cookies
@@ -52,7 +54,7 @@ One issue with the basic example above is that a valid user may be locked out if
 The following example stores the attempts and valid device cookies in memory. When a user is authenticated, a new device cookie is created. This cookie allows the user to bypass the throttling for the first 5 login attempts if they sign out. A [demo](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/other/login-throtting-device-cookie) is available in the repository.
 
 ```ts
-const usernameThrottling = new Map<
+const loginTimeout = new Map<
 	string,
 	{
 		timeoutUntil: number;
@@ -82,32 +84,23 @@ if (!validDeviceCookie) {
 		maxAge: 0,
 		httpOnly: true
 	});
-	const storedThrottling = usernameThrottling.get(username) ?? null;
-	const timeoutUntil = storedThrottling?.timeoutUntil ?? 0;
+	const storedTimeout = loginTimeout.get(username) ?? null;
+	const timeoutUntil = storedTimeout?.timeoutUntil ?? 0;
 	if (Date.now() < timeoutUntil) {
 		// 429 too many requests
 		throw new Error();
 	}
-	const validPassword = validatePassword(username, password);
-	if (!validPassword) {
-		const timeoutSeconds = storedThrottling
-			? storedThrottling.timeoutSeconds * 2
-			: 1;
-		usernameThrottling.set(username, {
-			timeoutUntil: Date.now() + timeoutSeconds * 1000,
-			timeoutSeconds
-		});
-		// invalid username or password
-		throw new Error();
-	}
-	usernameThrottling.delete(username);
+	const timeoutSeconds = storedTimeout ? storedTimeout.timeoutSeconds * 2 : 1;
+	loginTimeout.set(username, {
+		timeoutUntil: Date.now() + timeoutSeconds * 1000,
+		timeoutSeconds
+	});
+	await auth.validateKeyPassword("username", username, password);
+	loginTimeout.delete(username);
 } else {
-	const validPassword = validatePassword(username, password);
-	if (!validPassword) {
-		// invalid username or password
-		throw new Error();
-	}
+	await auth.validateKeyPassword("username", username, password);
 }
+
 const newDeviceCookieId = generateRandomString(40);
 deviceCookie.set(newDeviceCookieId, {
 	username,
