@@ -10,13 +10,17 @@ When providing more than one ways to sign in, you may want to link multiple prov
 Here's a basic OAuth implementation using the official integration.
 
 ```ts
-const { existingUser, createUser, providerUser } = validateCallback(code);
+const { existingUser, createUser, providerUser } =
+	providerAuth.validateCallback(code);
 
 const getUser = async () => {
 	if (existingUser) return existingUser;
+	if (!providerUser.email_verified) {
+		throw new Error("Email not verified");
+	}
 	return await createUser({
 		attributes: {
-			email: providerUser.email
+			email: await getGithubUserEmail(githubUser)
 		}
 	});
 };
@@ -36,7 +40,7 @@ It's important to note `existingUser` is defined if a user linked to the provide
 import { auth } from "./lucia.js";
 
 const { existingUser, createUser, providerUser, createKey } =
-	validateCallback(code);
+	providerAuth.validateCallback(code);
 
 const getUser = async () => {
 	if (existingUser) return existingUser;
@@ -46,11 +50,11 @@ const getUser = async () => {
 	const existingDatabaseUserWithEmail = await db.getUserByEmail(
 		providerUser.email
 	);
-	if (existingUserWithEmail) {
+	if (existingDatabaseUserWithEmail) {
 		// transform `UserSchema` to `User`
 		const user = auth.transformDatabaseUser(existingDatabaseUserWithEmail);
 		await createKey(user.userId);
-		return auth.transformDatabaseUser(existingUserWithEmail);
+		return user;
 	}
 	return await createUser({
 		attributes: {
@@ -58,4 +62,8 @@ const getUser = async () => {
 		}
 	});
 };
+
+const user = await getUser();
+
+// create session and sign in
 ```
