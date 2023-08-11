@@ -12,6 +12,9 @@ import type {
 	Response as ExpressResponse
 } from "express";
 
+import "@fastify/cookie";
+import { FastifyReply, FastifyRequest } from "fastify";
+
 const getIncomingMessageUrl = (incomingMessage: IncomingMessage, env: Env) => {
 	if (!incomingMessage.headers.host) return "";
 	const protocol = env === "DEV" ? "http:" : "https:";
@@ -62,6 +65,49 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 			const protocol = req.protocol;
 			const host = req.headers.host;
 			const pathname = req.path;
+			return `${protocol}://${host}${pathname}`;
+		};
+
+		const requestContext = {
+			request: {
+				url: getUrl(),
+				method: req.method,
+				headers: {
+					origin: req.headers.origin ?? null,
+					cookie: req.headers.cookie ?? null,
+					authorization: req.headers.authorization ?? null
+				}
+			},
+			setCookie: (cookie) => {
+				res.cookie(cookie.name, cookie.value, cookie.attributes);
+			}
+		} as const satisfies RequestContext;
+
+		return requestContext;
+	};
+};
+
+/**
+ * You need to register `setCookie` from:
+ *
+ * ```
+ * import cookie from '@fastify/cookie';
+ *
+ * await fastify.register(cookie, {
+ *  secret: 'my-secret', // for cookies signature
+ *  parseOptions: {}, // options for parsing cookies
+ * });
+ * ```
+ */
+export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
+	return ({ args }) => {
+		const [req, res] = args;
+
+		const getUrl = () => {
+			if (!req.headers.host) return "";
+			const protocol = req.protocol;
+			const host = req.headers.host;
+			const pathname = req.url;
 			return `${protocol}://${host}${pathname}`;
 		};
 
