@@ -86,18 +86,6 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	};
 };
 
-/**
- * You need to register `setCookie` from:
- *
- * ```
- * import cookie from '@fastify/cookie';
- *
- * await fastify.register(cookie, {
- *  secret: 'my-secret', // for cookies signature
- *  parseOptions: {}, // options for parsing cookies
- * });
- * ```
- */
 export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
 	return ({ args }) => {
 		const [req, res] = args;
