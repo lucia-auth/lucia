@@ -6,7 +6,7 @@ import fs from "fs/promises";
 
 const app = new Hono();
 
-const usernameThrottling = new Map<
+const loginTimeout = new Map<
 	string,
 	{
 		timeoutUntil: number;
@@ -47,8 +47,8 @@ app.post("/", async (c) => {
 			maxAge: 0,
 			httpOnly: true
 		});
-		const storedThrottling = usernameThrottling.get(username) ?? null;
-		const timeoutUntil = storedThrottling?.timeoutUntil ?? 0;
+		const storedTimeout = loginTimeout.get(username) ?? null;
+		const timeoutUntil = storedTimeout?.timeoutUntil ?? 0;
 		if (Date.now() < timeoutUntil) {
 			return c.text(
 				`Too many requests - wait ${Math.floor(
@@ -57,20 +57,18 @@ app.post("/", async (c) => {
 				400
 			);
 		}
+		const timeoutSeconds = storedTimeout ? storedTimeout.timeoutSeconds * 2 : 1;
+		loginTimeout.set(username, {
+			timeoutUntil: Date.now() + timeoutSeconds * 1000,
+			timeoutSeconds
+		});
 		if (password === "invalid") {
-			const timeoutSeconds = storedThrottling
-				? storedThrottling.timeoutSeconds * 2
-				: 1;
-			usernameThrottling.set(username, {
-				timeoutUntil: Date.now() + timeoutSeconds * 1000,
-				timeoutSeconds
-			});
 			return c.json(
 				`Invalid credentials - timed out for ${timeoutSeconds} seconds`,
 				400
 			);
 		}
-		usernameThrottling.delete(username);
+		loginTimeout.delete(username);
 	} else {
 		if (password === "invalid") {
 			return c.json(`Invalid credentials`, 400);
