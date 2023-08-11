@@ -634,7 +634,6 @@ export class Auth<_Configuration extends Configuration = any> {
 	public getAllUserKeys = async (userId: string): Promise<Key[]> => {
 		const [databaseKeys] = await Promise.all([
 			await this.adapter.getKeysByUserId(userId),
-			this.getUser(userId)
 		]);
 		return databaseKeys.map((databaseKey) =>
 			this.transformDatabaseKey(databaseKey)
