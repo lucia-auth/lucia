@@ -12,8 +12,7 @@ import type {
 	Response as ExpressResponse
 } from "express";
 
-import "@fastify/cookie";
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 const getIncomingMessageUrl = (incomingMessage: IncomingMessage, env: Env) => {
 	if (!incomingMessage.headers.host) return "";
@@ -122,7 +121,7 @@ export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
 				}
 			},
 			setCookie: (cookie) => {
-				res.cookie(cookie.name, cookie.value, cookie.attributes);
+				res.header("Set-Cookie", [cookie.serialize()]);
 			}
 		} as const satisfies RequestContext;
 
