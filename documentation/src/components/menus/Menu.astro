@@ -14,6 +14,11 @@ type Props = {
 const comparePathname = (path1: string, path2: string) => {
 	return path1 === path2 || path1 === path2 + "/" || path1 + "/" === path2;
 };
+
+const parseMarkdownCode = (text: string) => {
+	return text.replace("`", "<code>").replace("`", "</code>");
+};
+
 ---
 
 <div
@@ -23,7 +28,7 @@ const comparePathname = (path1: string, path2: string) => {
 	<input type="hidden" value={Astro.props.id} id="menu-id" />
 	{Astro.props.title && <p class=" ml-8 font-semibold">{Astro.props.title}</p>}
 	<div
-		class="overflow-auto h-full overscroll-contain pt-2 text-sm"
+		class="overflow-auto h-full overscroll-contain pt-2 text-sm pb-8"
 		id="content-nav"
 	>
 		{
@@ -40,7 +45,7 @@ const comparePathname = (path1: string, path2: string) => {
 									"bg-gray-100": selected
 								}
 							]}
-							set:html={title}
+							set:html={parseMarkdownCode(title)}
 						/>
 					);
 				}
@@ -63,7 +68,7 @@ const comparePathname = (path1: string, path2: string) => {
 													"bg-gray-100": selected
 												}
 											]}
-											set:html={title}
+											set:html={parseMarkdownCode(title)}
 										/>
 									</li>
 								);
