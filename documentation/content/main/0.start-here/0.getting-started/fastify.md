@@ -1,7 +1,7 @@
 ---
-title: "Getting started in Remix"
-menuTitle: "Remix"
-description: "Learn how to set up Lucia in your Remix project"
+title: "Getting started in Fastify"
+menuTitle: "Fastify"
+description: "Learn how to set up Lucia in your Fastify project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -12,45 +12,43 @@ pnpm add lucia
 yarn add lucia
 ```
 
-## Configure Remix project
+### ESM
 
-Lucia is an ESM package and you must define all modules in `serverDependenciesToBundle`:
+Lucia can only be used in ESM projects. Configure your `package.json` and `tsconfig.json` accordingly.
 
-```ts
-// remix.config.js
-
-/** @type {import('@remix-run/dev').AppConfig} */
-module.exports = {
+```json
+// package.json
+{
+	"type": "module"
 	// ...
-	serverDependenciesToBundle: [
-		"lucia",
-		"lucia/middleware",
-		"lucia/polyfill/node",
-		"@lucia-auth/adapter-prisma" // adapter you're using
-	]
-};
+}
 ```
 
-Make sure to add your adapter package as well.
+```json
+// tsconfig.json
+{
+	"compilerOptions": {
+		"module": "ESNext", // "ES2022" etc
+		"moduleResolution": "NodeNext" // "Node", "Node16"
+		// ...
+	}
+	// ...
+}
+```
 
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it in its own api module (file). Export `auth` and its type as `Auth`. Make sure to pass the `web()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
-
-Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to `false`.
+Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it. Export `auth` and its type as `Auth`. Make sure to pass the `fastify()` middleware We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that later.
 
 ```ts
-// auth/lucia.server.ts
+// lucia.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { fastify } from "lucia/middleware";
 
 // expect error
 export const auth = lucia({
-	env: process.dev ? "DEV" : "PROD",
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	}
+	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: fastify()
 });
 
 export type Auth = typeof auth;
@@ -61,9 +59,8 @@ export type Auth = typeof auth;
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/extending-lucia/database-adapters-api). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
-// auth/lucia.server.ts
 import { lucia } from "lucia";
-import { web } from "lucia/middleware";
+import { fastify } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -71,11 +68,7 @@ const client = new PrismaClient();
 
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	},
-
+	middleware: fastify(),
 	adapter: prisma(client)
 });
 ```
@@ -105,13 +98,13 @@ const auth = lucia({
 
 ## Set up types
 
-Create a TS declaration file (`app.d.ts`) and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a `.d.ts` file and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
 // app.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./auth/lucia.server.js").Auth;
+	type Auth = import("./lucia.js").Auth;
 	type DatabaseUserAttributes = {};
 	type DatabaseSessionAttributes = {};
 }
@@ -119,7 +112,7 @@ declare namespace Lucia {
 
 ## Polyfill
 
-If you're using Node.js version 18 or below, you need to polyfill the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). This is not required if you're using runtimes other than Node.js (Deno, Bun, Cloudflare Workers, etc) or using Node.js v20 and above.
+If you're using Node.js version 18 or below, you need to polyfill the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API).
 
 ```ts
 import { lucia } from "lucia";
@@ -130,16 +123,13 @@ export const auth = lucia({
 });
 ```
 
-Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `next`.
+Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `fastify`.
 
 ```json
-// package.json
 {
-	// ...
 	"scripts": {
-		"dev": "NODE_OPTIONS=--experimental-global-webcrypto remix dev",
-		"start": "NODE_OPTIONS=--experimental-global-webcrypto remix start",
-		"start": "NODE_OPTIONS=--experimental-global-webcrypto remix-serve build"
+		"start": "NODE_OPTIONS=--experimental-global-webcrypto fastify start -l info app.js",
+		"dev": "NODE_OPTIONS=--experimental-global-webcrypto npm run build && fastify start -w -l info -P app.js"
 		// ...
 	}
 	// ...

@@ -19,7 +19,7 @@ Import [`lucia()`](/reference/lucia/main#lucia) from `lucia` and initialize it i
 ```ts
 // server/utils/lucia.ts
 import { lucia } from "lucia";
-import { h3 } from "lucia-auth/middleware";
+import { h3 } from "lucia/middleware";
 
 // expect error
 export const auth = lucia({
