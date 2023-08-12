@@ -42,7 +42,7 @@ Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) 
 ```ts
 // auth/lucia.server.ts
 import { lucia } from "lucia";
-import { web } from "lucia-auth/middleware";
+import { web } from "lucia/middleware";
 
 // expect error
 export const auth = lucia({
