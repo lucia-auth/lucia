@@ -1,0 +1,29 @@
+---
+import Menu from "./Menu.astro";
+---
+
+<Menu
+	id="reference"
+	title="Reference"
+	content={[
+		["Overview", "/reference"],
+		{
+			title: "lucia",
+			pages: [
+				["Interfaces", "/reference/lucia/interfaces"],
+				["Main", "/reference/lucia/module/main"],
+				["`/middleware`", "/reference/lucia/module/middleware"],
+				["`/polyfill/node`", "/reference/lucia/module/polyfill/node"],
+				["`/utils`", "/reference/lucia/module/utils"]
+			]
+		},
+		{
+			title: "`@lucia-auth/oauth`",
+			pages: [
+				["Interfaces", "/reference/oauth/interfaces"],
+				["Main", "/reference/oauth/module/main"],
+				["`/providers`", "/reference/oauth/module/providers"]
+			]
+		}
+	]}
+/>

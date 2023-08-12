@@ -2,7 +2,7 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Code from "@components/Code.astro";
 import Header from "@components/Header.astro";
-import Menu from "@components/Menu.astro";
+import Menu from "@components/menus/MainMenu.astro";
 import Next from "@components/icons/Next.astro";
 
 import { getSubCollections } from "@utils/content";
@@ -91,7 +91,7 @@ const contributors = contributorsResult.map((val) => {
 	description="Lucia is a simple and flexible auth library for TypeScript"
 >
 	<Header />
-	<Menu subCollections={subCollections} collectionId="main" />
+	<Menu />
 	<div class="bg-main lg:ml-72 pt-24 lg:pt-14 pb-2">
 		<a
 			class="mx-auto w-fit text-white text-sm block hover:underline mt-3 sm:mt-1"

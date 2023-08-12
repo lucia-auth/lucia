@@ -1,0 +1,50 @@
+---
+import Menu from "./Menu.astro";
+---
+
+<Menu
+	id="main"
+	content={[
+		["Getting started", "/getting-started"],
+		["Starter guides", "/starter-guides"],
+		["Migrate to v2", "/migrate/v2"],
+		{
+			title: "Basics",
+			pages: [
+				["Database", "/basics/database"],
+				["Users", "/basics/users"],
+				["Sessions", "/basics/sessions"],
+				["Error handling", "/basics/error-handling"],
+				["Using cookies", "/basics/using-cookies"],
+				["Using bearer tokens", "/basics/using-bearer-tokens"],
+				["Fallback to database queries", "/basics/fallback-database-queries"]
+			]
+		},
+		{
+			title: "Database adapters",
+			pages: [
+				["`better-sqlite3`", "/database-adapters/better-sqlite3"],
+				["Cloudflare D1", "/database-adapters/cloudflare-d1"],
+				["`ioredis`", "/database-adapters/ioredis"],
+				["libSQL", "/database-adapters/libsql"],
+				["Mongoose", "/database-adapters/mongoose"],
+				["`mysql2`", "/database-adapters/mysql2"],
+				["`pg`", "/database-adapters/pg"],
+				["PlanetScale serverless", "/database-adapters/planetscale-serverless"],
+				["postgres", "/database-adapters/postgres"],
+				["Prisma", "/database-adapters/prisma"],
+				["Redis", "/database-adapters/redis"],
+				["Unstorage", "/database-adapters/unstorage"],
+				["Upstash Redis", "/database-adapters/upstash-redis"]
+			]
+		},
+		{
+			title: "Additional resources",
+			pages: [
+				["Contributing", "/contributing"],
+				["Database adapters API", "/api/database-adapters"],
+				["Middleware API", "/api/middleware"]
+			]
+		}
+	]}
+/>
