@@ -2,7 +2,6 @@ import { createUrl, handleRequest } from "./request.js";
 import {
 	encodeBase64,
 	generateState,
-	encodeBase64Url,
 	generatePKCECodeChallenge,
 	decodeBase64Url
 } from "./utils.js";
@@ -141,7 +140,7 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		state: options.state ?? state,
 		redirect_uri: options.redirectUri,
 		code_challenge_method: "S256",
-		code_challenge: encodeBase64Url(codeChallenge),
+		code_challenge: codeChallenge,
 		...searchParams
 	});
 	return [authorizationUrl, state, codeVerifier] as const;

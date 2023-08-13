@@ -82,8 +82,7 @@ export const generatePKCECodeChallenge = async (
 			"SHA-256",
 			verifierBuffer
 		);
-		const challengeArray = Array.from(new Uint8Array(challengeBuffer));
-		return String.fromCharCode(...challengeArray);
+		return encodeBase64Url(challengeBuffer);
 	}
 	throw new TypeError("Invalid PKCE code challenge method");
 };
