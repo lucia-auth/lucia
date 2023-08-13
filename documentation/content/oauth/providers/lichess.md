@@ -27,12 +27,12 @@ const lichess: (
 
 ##### Parameter
 
-| name               | type                                 | description                             | optional |
-| ------------------ | ------------------------------------ | --------------------------------------- | :------: |
-| auth               | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                          |          |
-| config.clientId    | `string`                             | client id - choose any unique client id |          |
-| config.redirectUri | `string`                             | redirect URI                            |          |
-| config.scope       | `string[]`                           | an array of scopes                      |    ✓     |
+| name               | type                                       | description                             | optional |
+| ------------------ | ------------------------------------------ | --------------------------------------- | :------: |
+| auth               | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                          |          |
+| config.clientId    | `string`                                   | client id - choose any unique client id |          |
+| config.redirectUri | `string`                                   | redirect URI                            |          |
+| config.scope       | `string[]`                                 | an array of scopes                      |    ✓     |
 
 ##### Returns
 
