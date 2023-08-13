@@ -122,6 +122,7 @@ type DiscordUser = {
 	username: string;
 	discriminator: string;
 	avatar: string;
+	global_name?: string;
 	bot?: boolean;
 	system?: boolean;
 	mfa_enabled?: boolean;

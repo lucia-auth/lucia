@@ -82,6 +82,7 @@ export type DiscordUser = {
 	username: string;
 	discriminator: string;
 	avatar: string;
+	global_name?: string;
 	bot?: boolean;
 	system?: boolean;
 	mfa_enabled?: boolean;
@@ -93,4 +94,5 @@ export type DiscordUser = {
 	premium_type?: number;
 	public_flags?: number;
 	locale?: string;
+
 };
