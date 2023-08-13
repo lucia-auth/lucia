@@ -19,19 +19,20 @@ const parseMarkdownCode = (text: string) => {
 ---
 
 <div
-	class="h-screen fixed left-0 top-0 border-r hidden lg:block lg:w-72 bg-white pt-24 lg:pt-16 w-full z-20"
+	class="fixed left-0 top-0 z-20 hidden h-screen w-full border-r bg-white pt-24 lg:block lg:w-72 lg:pt-16"
 	id="menu"
 >
 	<input type="hidden" value={Astro.props.id} id="menu-id" />
 	{Astro.props.title && <p class=" ml-8 font-semibold">{Astro.props.title}</p>}
 	<div
-		class="overflow-auto h-full overscroll-contain pt-2 text-sm pb-12 flex flex-col gap-y-4"
+		class="flex h-full flex-col gap-y-4 overflow-auto overscroll-contain pb-12 pt-2 text-sm"
 		id="content-nav"
 	>
 		{
 			Astro.props.content.map((content) => {
 				if (Array.isArray(content)) {
-					return 	<ul >
+					return (
+						<ul>
 							{content.map((item) => {
 								const [title, href] = item;
 								const selected = comparePathname(Astro.url.pathname, href);
@@ -51,11 +52,14 @@ const parseMarkdownCode = (text: string) => {
 								);
 							})}
 						</ul>
+					);
 				}
 				return (
 					<div class="mt-2">
-						<p class="ml-8 text-sm font-medium text-zinc-400" set:html={parseMarkdownCode(content.title)}></p>
-						</p>
+						<p
+							class="ml-8 text-sm font-medium text-zinc-400"
+							set:html={parseMarkdownCode(content.title)}
+						/>
 						<ul class="mt-0.5">
 							{content.pages.map((page) => {
 								const [title, href] = page;
@@ -84,30 +88,30 @@ const parseMarkdownCode = (text: string) => {
 </div>
 
 <script is:inline>
-const contentNavigationElement = document.getElementById("content-nav");
-const collectionIdElement = document.getElementById("menu-id");
-if (
-	contentNavigationElement instanceof HTMLDivElement &&
-	collectionIdElement instanceof HTMLInputElement
-) {
-	const collectionId = collectionIdElement.value;
-	const storedScrollPosition = sessionStorage.getItem("scroll_position");
-	if (storedScrollPosition !== null) {
-		const [prevCollectionId, prevScrollPosition] =
-			storedScrollPosition.split(":");
-		if (prevCollectionId === collectionId) {
-			contentNavigationElement.scrollTop = Number(prevScrollPosition);
+	const contentNavigationElement = document.getElementById("content-nav");
+	const collectionIdElement = document.getElementById("menu-id");
+	if (
+		contentNavigationElement instanceof HTMLDivElement &&
+		collectionIdElement instanceof HTMLInputElement
+	) {
+		const collectionId = collectionIdElement.value;
+		const storedScrollPosition = sessionStorage.getItem("scroll_position");
+		if (storedScrollPosition !== null) {
+			const [prevCollectionId, prevScrollPosition] =
+				storedScrollPosition.split(":");
+			if (prevCollectionId === collectionId) {
+				contentNavigationElement.scrollTop = Number(prevScrollPosition);
+			}
 		}
+		contentNavigationElement.addEventListener("click", () => {
+			sessionStorage.setItem(
+				`scroll_position`,
+				`${collectionId}:${contentNavigationElement.scrollTop.toString()}`
+			);
+		});
 	}
-	contentNavigationElement.addEventListener("click", () => {
-		sessionStorage.setItem(
-			`scroll_position`,
-			`${collectionId}:${contentNavigationElement.scrollTop.toString()}`
-		);
-	});
-}
 </script>
-		
+
 <script>
 	import { onMenuToggle, setElementVisibility } from "@utils/state";
 
@@ -118,4 +122,3 @@ if (
 		});
 	}
 </script>
-	

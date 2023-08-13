@@ -62,121 +62,121 @@ const contributors = await getGithubContributors();
 >
 	<Header />
 	<Menu />
-	<div class="bg-main lg:ml-72 pt-24 lg:pt-14 pb-2">
+	<div class="bg-main pb-2 pt-24 lg:ml-72 lg:pt-14">
 		<a
-			class="mx-auto w-fit text-white text-sm block hover:underline mt-3 sm:mt-1"
+			class="mx-auto mt-3 block w-fit text-sm text-white hover:underline sm:mt-1"
 			href="/blog/lucia-2"
 			>Announcing Lucia version 2!<span
-				class="inline-block w-[9px] ml-0.5 align-middle mb-[1px]"><Next /></span
+				class="mb-[1px] ml-0.5 inline-block w-[9px] align-middle"><Next /></span
 			></a
 		>
 	</div>
-	<main class="lg:ml-72 overflow-hidden">
+	<main class="overflow-hidden lg:ml-72">
 		<div
-			class="mx-auto w-fit max-w-4xl pt-16 lg:pt-32 pb-24 px-4 sm:px-8 md:px-16"
+			class="mx-auto w-fit max-w-4xl px-4 pb-24 pt-16 sm:px-8 md:px-16 lg:pt-32"
 		>
 			<img
 				src="/logo.svg"
 				alt="Lucia logo"
 				width="100"
 				height="100"
-				class="h-16 w-16 mx-auto"
+				class="mx-auto h-16 w-16"
 			/>
 			<p
-				class="text-4xl sm:text-5xl font-semibold text-center mt-4 mx-auto w-fit"
+				class="mx-auto mt-4 w-fit text-center text-4xl font-semibold sm:text-5xl"
 			>
 				Authentication, simple and clean.
 			</p>
 
-			<p class="mx-auto sm:text-lg w-fit text-center mt-8">
+			<p class="mx-auto mt-8 w-fit text-center sm:text-lg">
 				<span>Lucia</span> is an auth library for TypeScript that abstracts away
 				the complexity of handling users and sessions. It works alongside your database
 				to provide an API that's easy to use, understand, and extend.
 			</p>
 			<a
-				class="mx-auto text-main hover:underline w-fit mt-8 block sm:text-lg"
+				class="text-main mx-auto mt-8 block w-fit hover:underline sm:text-lg"
 				href="/getting-started"
-				>Get started<span class="inline-block w-3 ml-0.5 align-middle mb-[1px]"
+				>Get started<span class="mb-[1px] ml-0.5 inline-block w-3 align-middle"
 					><Next /></span
 				></a
 			>
 			<a
-				class="mx-auto w-fit text-zinc-400 text-sm block hover:underline mt-4"
+				class="mx-auto mt-4 block w-fit text-sm text-zinc-400 hover:underline"
 				href="https://v1.lucia-auth.com"
 				>Go to Lucia v1 docs<span
-					class="inline-block w-[9px] ml-0.5 align-middle mb-[0.5px]"
+					class="mb-[0.5px] ml-0.5 inline-block w-[9px] align-middle"
 					><Next /></span
 				></a
 			>
 		</div>
-		<div class="mt-12 bg-sky-500 text-white px-4 sm:px-8 md:px-16 py-12">
-			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+		<div class="mt-12 bg-sky-500 px-4 py-12 text-white sm:px-8 md:px-16">
+			<h2 class="mx-auto mb-4 text-center text-3xl font-semibold sm:text-4xl">
 				Motivation
 			</h2>
-			<p class="text-center max-w-2xl mx-auto">
+			<p class="mx-auto max-w-2xl text-center">
 				Auth providers are expensive and too rigid. Libraries like Auth.js are
 				too bloated and opinionated. Building your own from scratch is hard and
 				full of pitfalls. What if you can implement your own auth without
 				worrying about the small details?
 			</p>
 		</div>
-		<div class="pt-12 pb-8 px-4 sm:px-8 md:px-16">
-			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+		<div class="px-4 pb-8 pt-12 sm:px-8 md:px-16">
+			<h2 class="mx-auto mb-4 text-center text-3xl font-semibold sm:text-4xl">
 				It just works
 			</h2>
-			<p class="mb-8 text-center max-w-2xl mx-auto">
+			<p class="mx-auto mb-8 max-w-2xl text-center">
 				Forget endless configuration and callbacks - just write code. Works with
 				all major JS runtimes, including Node.js, Deno, Bun, and Cloudflare
 				Workers.
 			</p>
 			<div
-				class="flex flex-col-reverse xl:flex-row gap-y-8 xl:gap-x-8 mb-8 rounded-xl bg-zinc-80 py-6 px-8 relative"
+				class="bg-zinc-80 relative mb-8 flex flex-col-reverse gap-y-8 rounded-xl px-8 py-6 xl:flex-row xl:gap-x-8"
 			>
-				<div class="grow z-10">
+				<div class="z-10 grow">
 					<Code code={code1} lang="sql" />
 				</div>
-				<div class="w-full xl:w-72 1.5xl:w-96">
-					<h3 class="text-xl font-semibold mb-2">Set up your database</h3>
+				<div class="1.5xl:w-96 w-full xl:w-72">
+					<h3 class="mb-2 text-xl font-semibold">Set up your database</h3>
 					<p>
 						Create 3 basic, minimum tables for Lucia. You can add columns to the
 						user table to store custom attributes.
 					</p>
 				</div>
 				<p
-					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+					class="absolute bottom-0 right-0 mb-6 mr-8 text-8xl font-bold text-zinc-200"
 					role="presentation"
 				>
 					1
 				</p>
 			</div>
 			<div
-				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 mb-8 rounded-xl bg-zinc-80 py-6 px-8 relative"
+				class="bg-zinc-80 relative mb-8 flex flex-col-reverse gap-x-8 gap-y-8 rounded-xl px-8 py-6 xl:flex-row"
 			>
-				<div class="grow z-10">
+				<div class="z-10 grow">
 					<Code code={code2} lang="ts" />
 				</div>
-				<div class="w-full xl:w-72 1.5xl:w-96">
-					<h3 class="text-xl font-semibold mb-2">Initialize Lucia</h3>
+				<div class="1.5xl:w-96 w-full xl:w-72">
+					<h3 class="mb-2 text-xl font-semibold">Initialize Lucia</h3>
 					<p>
 						Initialize Lucia using one of the many provided adapters and
 						middleware to use it with your database and framework of choice.
 					</p>
 				</div>
 				<p
-					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+					class="absolute bottom-0 right-0 mb-6 mr-8 text-8xl font-bold text-zinc-200"
 					role="presentation"
 				>
 					2
 				</p>
 			</div>
 			<div
-				class="flex flex-col-reverse xl:flex-row gap-y-8 gap-x-8 rounded-xl bg-zinc-80 py-6 px-8 relative"
+				class="bg-zinc-80 relative flex flex-col-reverse gap-x-8 gap-y-8 rounded-xl px-8 py-6 xl:flex-row"
 			>
-				<div class="grow z-10">
+				<div class="z-10 grow">
 					<Code code={code3} lang="ts" />
 				</div>
-				<div class="w-full xl:w-72 1.5xl:w-96">
-					<h3 class="text-xl font-semibold mb-2">Start building</h3>
+				<div class="1.5xl:w-96 w-full xl:w-72">
+					<h3 class="mb-2 text-xl font-semibold">Start building</h3>
 					<p>
 						And that's it! Use Lucia's API to handle basic tasks like creating
 						and validating sessions, and you always have the option to fallback
@@ -184,23 +184,23 @@ const contributors = await getGithubContributors();
 					</p>
 				</div>
 				<p
-					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+					class="absolute bottom-0 right-0 mb-6 mr-8 text-8xl font-bold text-zinc-200"
 					role="presentation"
 				>
 					3
 				</p>
 			</div>
 		</div>
-		<div class="pt-12 pb-12 px-4 sm:px-8 md:px-16">
-			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+		<div class="px-4 pb-12 pt-12 sm:px-8 md:px-16">
+			<h2 class="mx-auto mb-4 text-center text-3xl font-semibold sm:text-4xl">
 				Free and open source
 			</h2>
-			<p class="mb-8 text-center max-w-2xl mx-auto">
+			<p class="mx-auto mb-8 max-w-2xl text-center">
 				Lucia is a free and open source project made possible by our
 				contributors! Thank you to everyone who has helped with the development!
 			</p>
 			<div
-				class="flex w-full flex-wrap gap-2 pb-1 place-content-center max-w-4xl mx-auto"
+				class="mx-auto flex w-full max-w-4xl flex-wrap place-content-center gap-2 pb-1"
 			>
 				{
 					contributors.map((contributor) => {
@@ -224,28 +224,28 @@ const contributors = await getGithubContributors();
 				}
 			</div>
 		</div>
-		<div class="pt-16 pb-12 px-4 sm:px-8 md:px-16">
-			<h2 class="text-3xl sm:text-4xl font-semibold mx-auto text-center mb-4">
+		<div class="px-4 pb-12 pt-16 sm:px-8 md:px-16">
+			<h2 class="mx-auto mb-4 text-center text-3xl font-semibold sm:text-4xl">
 				Let's get started
 			</h2>
-			<p class="mb-8 text-center max-w-2xl mx-auto">
+			<p class="mx-auto mb-8 max-w-2xl text-center">
 				<span class="font-semibold">But a small disclaimer...</span>what makes
 				Lucia great is that it doesn't try to do everything. This means Lucia is
 				intended for a specific audience. If you're looking for something quick
 				and easy, Lucia might not be for you. Experience with backend
 				development is a must too!
 			</p>
-			<p class="mb-8 text-center max-w-2xl mx-auto">
+			<p class="mx-auto mb-8 max-w-2xl text-center">
 				Still interested? <a
 					class="text-main hover:underline"
 					href="/getting-started">Dive right in!</a
 				>
 			</p>
 		</div>
-		<div class="pb-12 px-4 sm:px-8 md:px-16 text-zinc-600 text-sm">
+		<div class="px-4 pb-12 text-sm text-zinc-600 sm:px-8 md:px-16">
 			<div class="border-t pt-12">
 				<p class="text-center">Tip: Lucia is pronounced <i>loo-shya</i></p>
-				<p class="text-center mt-4">
+				<p class="mt-4 text-center">
 					Created by <a
 						class="text-main hover:underline"
 						href="https://pilcrow.vercel.app">pilcrow</a

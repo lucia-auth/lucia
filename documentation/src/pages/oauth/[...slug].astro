@@ -28,7 +28,7 @@ const { page } = Astro.props;
 ---
 
 <OAuthLayout title={page.title} description={page.description}>
-	<div class="mt-6 mb-8">
+	<div class="mb-8 mt-6">
 		{
 			page.versions.length > 0 && (
 				<SelectLink
@@ -43,7 +43,7 @@ const { page } = Astro.props;
 			)
 		}
 		<h1
-			class="text-4xl font-semibold break-words mt-1"
+			class="mt-1 break-words text-4xl font-semibold"
 			set:html={page.htmlTitle}
 		/>
 	</div>

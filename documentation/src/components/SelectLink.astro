@@ -12,21 +12,21 @@ type Props = {
 <select-link>
 	<div class="text-sm">
 		<button
-			class="rounded appearance-none flex place-items-center gap-x-0.5 group py-1.5"
+			class="group flex appearance-none place-items-center gap-x-0.5 rounded py-1.5"
 		>
 			<span
-				class="block leading-none text-main group-hover:text-black font-medium select-button-text"
+				class="text-main select-button-text block font-medium leading-none group-hover:text-black"
 			>
 				{Astro.props.title}
 			</span>
 			<span
-				class="h-3.5 w-3.5 block fill-current text-zinc-400 group-hover:text-black"
+				class="block h-3.5 w-3.5 fill-current text-zinc-400 group-hover:text-black"
 			>
 				<ExpandIcon />
 			</span>
 		</button>
 		<div
-			class="select-menu hidden rounded-md shadow w-fit py-1.5 bg-white border absolute mt-1"
+			class="select-menu absolute mt-1 hidden w-fit rounded-md border bg-white py-1.5 shadow"
 		>
 			<ul class="list-none">
 				{
