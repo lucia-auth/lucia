@@ -3,7 +3,7 @@ title: "Github OAuth"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started)._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started)._
 
 This guide will cover how to implement Github OAuth using Lucia with session cookies. As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
 
@@ -40,7 +40,7 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
+Since we're dealing with the standard `Request` and `Response`, we'll use the [`web()`](/reference/lucia/modules/middleware#web) middleware. We're also setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false since we can't update the session cookie when validating them.
 
 ```ts
 // lucia.ts
@@ -120,7 +120,7 @@ export type Auth = typeof auth;
 
 Create a new Github authorization url, where the user should be redirected to. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
-You can use [`serializeCookie()`](/reference/lucia/utils#serializecookie) provided by Lucia to get the `Set-Cookie` header.
+You can use [`serializeCookie()`](/reference/lucia/modules/utils#serializecookie) provided by Lucia to get the `Set-Cookie` header.
 
 ```ts
 import { serializeCookie } from "lucia/utils";
@@ -158,7 +158,7 @@ When the user authenticates with Github, Github will redirect back the user to y
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession). This session should be stored as a cookie, which can be created with [`Auth.createSessionCookie()`](/reference/lucia/interfaces/auth#createsessioncookie).
 
-You can use [`parseCookie()`](/reference/lucia/utils#parsecookie) provided by Lucia to read the state cookie.
+You can use [`parseCookie()`](/reference/lucia/modules/utils#parsecookie) provided by Lucia to read the state cookie.
 
 ```ts
 import { auth, githubAuth } from "./lucia.js";

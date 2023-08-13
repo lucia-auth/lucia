@@ -15,7 +15,7 @@ pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth
 ```
 
-Get started with [supported providers](/oauth/basics/using-supported-providers) or [OAuth helpers (experimental)](/oauth/basics/oauth-helpers).
+Get started with [built-in providers](/oauth/basics/built-in-providers) or [OAuth helpers (experimental)](/oauth/basics/oauth-helpers).
 
 ## Step-by-step guides
 
@@ -29,7 +29,7 @@ We also have framework specific guides.
 - [Nuxt](/guidebook/github-oauth/nuxt)
 - [SvelteKit](/guidebook/github-oauth/sveltekit)
 
-## Supported providers
+## Built-in providers
 
 - Apple
 - Auth0

@@ -61,24 +61,28 @@ export const generateOgImages = async () => {
 			url
 		});
 	}
-	const concurrency = os.cpus().length
-	console.log(`Generating ${pages.length} images with ${concurrency} concurrency`);
+	const concurrency = os.cpus().length;
+	console.log(
+		`Generating ${pages.length} images with ${concurrency} concurrency`
+	);
 	const groups = groupByN(pages, concurrency);
 	for (const group of groups) {
-		await Promise.all(group.map(async page => {
-			const imagePathname = path.join(
-				process.cwd(),
-				"dist",
-				"og",
-				page.url + ".jpg"
-			);
-			const image = await createImage(page.title, page.description);
-			await fs.mkdir(path.dirname(imagePathname), {
-				recursive: true
-			});
-			console.log(`Generated image: ${page.url}`);
-			await fs.writeFile(imagePathname, image);
-		}));	
+		await Promise.all(
+			group.map(async (page) => {
+				const imagePathname = path.join(
+					process.cwd(),
+					"dist",
+					"og",
+					page.url + ".jpg"
+				);
+				const image = await createImage(page.title, page.description);
+				await fs.mkdir(path.dirname(imagePathname), {
+					recursive: true
+				});
+				console.log(`Generated image: ${page.url}`);
+				await fs.writeFile(imagePathname, image);
+			})
+		);
 	}
 };
 

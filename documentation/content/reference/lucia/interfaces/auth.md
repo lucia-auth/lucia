@@ -354,7 +354,7 @@ const getKey: (providerId: string, providerUserId: string) => Promise<Key>;
 
 | type                                     |
 | ---------------------------------------- |
-| [`Key`](/reference/lucia-auth/types#key) |
+| [`Key`](/reference/lucia/interfaces#key) |
 
 ##### Errors
 
@@ -388,7 +388,7 @@ const getSessionUser: (sessionId: string) => Promise<Session>;
 
 | type                                             |
 | ------------------------------------------------ |
-| [`Session`](/reference/lucia-auth/types#session) |
+| [`Session`](/reference/lucia/interfaces#session) |
 
 ##### Errors
 
@@ -460,9 +460,9 @@ const handleRequest: (...args: any[]) => AuthRequest;
 
 ##### Returns
 
-| type                                               |
-| -------------------------------------------------- |
-| [`AuthRequest`](/reference/lucia-auth/authrequest) |
+| type                                                     |
+| -------------------------------------------------------- |
+| [`AuthRequest`](/reference/lucia/interfaces/authrequest) |
 
 ## `invalidateAllUserSessions()`
 
@@ -894,7 +894,7 @@ const validateSession: (sessionId: string) => Promise<Session>;
 
 | type                                             | description           |
 | ------------------------------------------------ | --------------------- |
-| [`Session`](/reference/lucia-auth/types#session) | The validated session |
+| [`Session`](/reference/lucia/interfaces#session) | The validated session |
 
 ##### Errors
 

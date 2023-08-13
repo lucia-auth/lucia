@@ -1,0 +1,36 @@
+---
+import Menu from "./Menu.astro";
+---
+
+<Menu
+	id="oauth"
+	title="OAuth"
+	content={[
+		[["Overview", "/oauth"]],
+		{
+			title: "Basics",
+			pages: [
+				["Built-in providers", "/oauth/basics/built-in-providers"],
+				["OAuth helpers", "/oauth/basics/oauth-helpers"]
+			]
+		},
+		{
+			title: "Providers",
+			pages: [
+				["Apple", "/oauth/providers/apple"],
+				["Auth0", "/oauth/providers/auth0"],
+				["Discord", "/oauth/providers/discord"],
+				["Facebook", "/oauth/providers/facebook"],
+				["Github", "/oauth/providers/github"],
+				["Google", "/oauth/providers/google"],
+				["Lichess", "/oauth/providers/lichess"],
+				["LinkedIn", "/oauth/providers/linkedin"],
+				["osu!", "/oauth/providers/osu"],
+				["Patreon", "/oauth/providers/patreon"],
+				["Reddit", "/oauth/providers/reddit"],
+				["Spotify", "/oauth/providers/spotify"],
+				["Twitch", "/oauth/providers/twitch"]
+			]
+		}
+	]}
+/>
