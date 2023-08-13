@@ -4,7 +4,7 @@ description: "Learn the basic of Lucia and the OAuth integration by implementing
 menuTitle: "Next.js App Router"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nextjs-app)._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started/nextjs-app)._
 
 This guide will cover how to implement Github OAuth using Lucia in Next.js App router. It will have 3 parts:
 

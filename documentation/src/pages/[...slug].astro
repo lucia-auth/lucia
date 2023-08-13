@@ -1,0 +1,55 @@
+---
+import { getPages } from "@utils/content";
+
+import MainLayout from "@layouts/MainLayout.astro";
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+import SelectLink from "@components/SelectLink.astro";
+
+import type { InferGetStaticPropsType } from "astro";
+
+export const getStaticPaths = async () => {
+	const pages = await getPages("main");
+	return pages.map((page) => {
+		return {
+			params: {
+				slug: page.href.replace("/", "")
+			},
+			props: {
+				page
+			}
+		};
+	});
+};
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props;
+---
+
+<MainLayout title={page.title} description={page.description}>
+	<div class="mt-6 mb-8">
+		<h1 class="text-4xl font-semibold break-words" set:html={page.htmlTitle} />
+	</div>
+	{
+		page.childPages.length > 0 && (
+			<>
+				<div class="mb-6 mt-6">
+					<SelectLink
+						title="Select framework"
+						options={page.childPages.map((childPage) => {
+							return {
+								title: childPage.htmlTitle,
+								href: childPage.href
+							};
+						})}
+					/>
+				</div>
+				<p class="mb-2 text-sm text-zinc-400">
+					<i>Guides for specific frameworks and runtimes are also available.</i>
+				</p>
+			</>
+		)
+	}
+	<MarkdownStyle>
+		<page.Content />
+	</MarkdownStyle>
+</MainLayout>

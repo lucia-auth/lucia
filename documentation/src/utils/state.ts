@@ -3,7 +3,7 @@ type Callback = (state: boolean) => any;
 export const createToggleState = () => {
 	const callbacks: Callback[] = [];
 	let internal = false;
-	
+
 	const onToggle = (callback: Callback) => {
 		callbacks.push(callback);
 	};

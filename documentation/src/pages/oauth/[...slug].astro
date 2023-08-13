@@ -1,0 +1,36 @@
+---
+import { getPages } from "@utils/content";
+
+import OAuthLayout from "@layouts/OAuthLayout.astro";
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+
+import type { InferGetStaticPropsType } from "astro";
+
+export const getStaticPaths = async () => {
+	const pages = await getPages("oauth");
+	return pages.map((page) => {
+		const slug =
+			page.href === "/oauth" ? undefined : page.href.replace("/oauth/", "");
+		return {
+			params: {
+				slug
+			},
+			props: {
+				page
+			}
+		};
+	});
+};
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props;
+---
+
+<OAuthLayout title={page.title} description={page.description}>
+	<div class="mt-6 mb-8">
+		<h1 class="text-4xl font-semibold break-words" set:html={page.htmlTitle} />
+	</div>
+	<MarkdownStyle>
+		<page.Content />
+	</MarkdownStyle>
+</OAuthLayout>

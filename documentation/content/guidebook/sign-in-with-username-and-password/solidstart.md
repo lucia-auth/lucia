@@ -4,7 +4,7 @@ menuTitle: "SolidStart"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/solidstart)._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started/solidstart)._
 
 This guide will cover how to implement a simple username and password authentication using Lucia in SolidStart. It will have 3 parts:
 
@@ -195,7 +195,7 @@ const user = await auth.createUser({
 
 #### Error handling
 
-Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
+Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/modules/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
 
 ```ts
 if (

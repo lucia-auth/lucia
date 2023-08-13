@@ -1,0 +1,63 @@
+---
+import { getPages } from "@utils/content";
+
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import SelectLink from "@components/SelectLink.astro";
+import Header from "@components/Header.astro";
+
+import type { InferGetStaticPropsType } from "astro";
+
+export const getStaticPaths = async () => {
+	const pages = await getPages("guidebook");
+	return pages.map((page) => {
+		return {
+			params: {
+				guidebook: page.href.replace("/guidebook/", "")
+			},
+			props: {
+				page
+			}
+		};
+	});
+};
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+	<Header />
+	<main class="mt-24 lg:mt-20 pb-20 px-4 sm:px-8 md:px-16 overflow-hidden">
+		<div class="mx-auto max-w-4xl w-full">
+			<div class="mt-6 mb-8">
+				<!-- {
+					nestedPages.length > 0 && (
+						<SelectLink
+							title="Select framework"
+							options={nestedPages.map((nestedPage) => {
+								return {
+									title: nestedPage.htmlMenuTitle,
+									href: `/${nestedPage.pathname}`
+								};
+							})}
+						/>
+					)
+				} -->
+				<h1 class="text-4xl font-semibold" set:html={page.htmlTitle} />
+			</div>
+			<!-- {
+				nestedPages.length > 0 && (
+					<p class="mb-4 text-sm text-zinc-400">
+						<i>
+							Guides for specific frameworks and runtimes are also available.
+						</i>
+					</p>
+				)
+			} -->
+			<MarkdownStyle>
+				<page.Content />
+			</MarkdownStyle>
+		</div>
+	</main>
+</BaseLayout>

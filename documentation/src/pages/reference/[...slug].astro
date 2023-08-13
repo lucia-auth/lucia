@@ -1,0 +1,47 @@
+---
+import { getPages } from "@utils/content";
+
+import ReferenceLayout from "@layouts/ReferenceLayout.astro";
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+
+import type { InferGetStaticPropsType } from "astro";
+
+export const getStaticPaths = async () => {
+	const pages = await getPages("reference");
+	return pages.map((page) => {
+		const slug =
+			page.href === "/reference"
+				? undefined
+				: page.href.replace("/reference/", "");
+		return {
+			params: {
+				slug
+			},
+			props: {
+				page
+			}
+		};
+	});
+};
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props;
+---
+
+<ReferenceLayout title={page.title} description={page.description}>
+	<div class="mt-6 mb-8">
+		<h1
+			class="text-4xl font-semibold break-words"
+			set:html={page.htmlTitle}
+		/>
+	</div>
+	<MarkdownStyle>
+		<page.Content />
+	</MarkdownStyle>
+</ReferenceLayout>
+
+<style>
+	h1 code {
+		@apply text-red-400;
+	}
+</style>

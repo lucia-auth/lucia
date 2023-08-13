@@ -4,15 +4,15 @@ title: "Reference overview"
 
 ## `lucia`
 
-- [`lucia`](/reference/lucia/main)
-- [`lucia/middleware`](/reference/lucia/middleware)
-- [`lucia/polyfill/node`](/reference/lucia/polyfill/node)
-- [`lucia/utils`](/reference/lucia/utils)
+- [`lucia`](/reference/lucia/modules/main)
+- [`lucia/middleware`](/reference/lucia/modules/middleware)
+- [`lucia/polyfill/node`](/reference/lucia/modules/polyfill/node)
+- [`lucia/utils`](/reference/lucia/modules/utils)
 
 ## `@lucia-auth/oauth`
 
-- [`@lucia-auth/oauth`](/reference/oauth/main)
-- [`@lucia-auth/oauth/providers`](/reference/oauth/providers)
+- [`@lucia-auth/oauth`](/reference/oauth/modules/main)
+- [`@lucia-auth/oauth/providers`](/reference/oauth/modules/providers)
 
 ## Adapters
 

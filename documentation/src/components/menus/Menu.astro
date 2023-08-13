@@ -48,8 +48,8 @@ const parseMarkdownCode = (text: string) => {
 				}
 				return (
 					<div class="mt-6">
-						<p class="ml-8 text-sm font-medium text-zinc-400">
-							{content.title}
+						<p class="ml-8 text-sm font-medium text-zinc-400" set:html={parseMarkdownCode(content.title)}>
+						
 						</p>
 						<ul class="mt-0.5">
 							{content.pages.map((page) => {

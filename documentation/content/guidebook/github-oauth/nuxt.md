@@ -4,7 +4,7 @@ description: "Learn the basic of Lucia and the OAuth integration by implementing
 menuTitle: "Nuxt"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/nuxt)._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started/nuxt)._
 
 This guide will cover how to implement Github OAuth using Lucia in Nuxt. It will have 3 parts:
 

@@ -4,7 +4,7 @@ description: "Learn the basic of Lucia and the OAuth integration by implementing
 menuTitle: "Hono"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/start-here/getting-started/hono)._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started/hono)._
 
 This guide will cover how to implement Github OAuth using Lucia in Hono with session cookies. As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
 
@@ -131,7 +131,7 @@ When the user authenticates with Github, Github will redirect back the user to y
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with Hono request `Context`.
 
-You can use [`parseCookie()`](/reference/lucia/utils#parsecookie) provided by Lucia to read the state cookie.
+You can use [`parseCookie()`](/reference/lucia/modules/utils#parsecookie) provided by Lucia to read the state cookie.
 
 ```ts
 import { auth, githubAuth } from "./lucia.js";

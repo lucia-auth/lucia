@@ -5,9 +5,7 @@ import Header from "@components/Header.astro";
 import Menu from "@components/menus/MainMenu.astro";
 import Next from "@components/icons/Next.astro";
 
-import { getSubCollections } from "@utils/content";
-
-const subCollections = await getSubCollections("main");
+import { getGithubContributors } from "@utils/github";
 
 const code1 = `CREATE TABLE user (
 	id TEXT NOT NULL PRIMARY KEY
@@ -55,35 +53,7 @@ const session = await auth.createSession({
 });
 const sessionCookie = auth.createSessionCookie(session);`;
 
-const contributorsResponse = await fetch(
-	"https://api.github.com/repos/pilcrowonpaper/lucia/contributors?per_page=100",
-	{
-		headers: {
-			Authorization: `Bearer ${import.meta.env.GITHUB_API_KEY}`
-		}
-	}
-);
-
-if (!contributorsResponse.ok) {
-	throw new Error("Failed to fetch data from Github");
-}
-
-const contributorsResult = (await contributorsResponse.json()) as {
-	avatar_url: string;
-	html_url: string;
-	login: string;
-}[];
-
-const contributors = contributorsResult.map((val) => {
-	const url = new URL(val.avatar_url);
-	url.searchParams.set("s", "128"); // set image size to 128 x 128
-	url.searchParams.delete("v");
-	return {
-		avatar: url.href,
-		profileLink: val.html_url,
-		username: val.login
-	};
-});
+const contributors = await getGithubContributors();
 ---
 
 <BaseLayout
@@ -125,7 +95,7 @@ const contributors = contributorsResult.map((val) => {
 			</p>
 			<a
 				class="mx-auto text-main hover:underline w-fit mt-8 block sm:text-lg"
-				href="/start-here/getting-started"
+				href="/getting-started"
 				>Get started<span class="inline-block w-3 ml-0.5 align-middle mb-[1px]"
 					><Next /></span
 				></a
@@ -174,6 +144,7 @@ const contributors = contributorsResult.map((val) => {
 				</div>
 				<p
 					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+					role="presentation"
 				>
 					1
 				</p>
@@ -193,6 +164,7 @@ const contributors = contributorsResult.map((val) => {
 				</div>
 				<p
 					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+					role="presentation"
 				>
 					2
 				</p>
@@ -213,6 +185,7 @@ const contributors = contributorsResult.map((val) => {
 				</div>
 				<p
 					class="text-8xl mb-6 mr-8 text-zinc-200 font-bold absolute bottom-0 right-0"
+					role="presentation"
 				>
 					3
 				</p>
@@ -265,7 +238,7 @@ const contributors = contributorsResult.map((val) => {
 			<p class="mb-8 text-center max-w-2xl mx-auto">
 				Still interested? <a
 					class="text-main hover:underline"
-					href="/start-here/getting-started">Dive right in!</a
+					href="/getting-started">Dive right in!</a
 				>
 			</p>
 		</div>
