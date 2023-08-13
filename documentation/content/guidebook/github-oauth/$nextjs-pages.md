@@ -1,7 +1,6 @@
 ---
 title: "Github OAuth in Next.js Pages Router"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
-nested_title: "Next.js Pages Router"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/getting-started/nextjs-pages)._

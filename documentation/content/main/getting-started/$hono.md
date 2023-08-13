@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Hono"
-nested_title: "Hono"
 description: "Learn how to set up Lucia in your Hono project"
 ---
 

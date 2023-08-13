@@ -1,5 +1,4 @@
 ---
-nested_title: "Cloudflare D1"
 title: "Cloudflare D1 adapter"
 description: "Learn how to use Cloudflare D1 with Lucia"
 ---

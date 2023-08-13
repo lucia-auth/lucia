@@ -1,6 +1,5 @@
 ---
 title: "Sign in with username and password in Express"
-nested_title: "Express"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 

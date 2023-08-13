@@ -1,6 +1,5 @@
 ---
 title: "Getting started in SvelteKit"
-nested_title: "SvelteKit"
 description: "Learn how to set up Lucia in your SvelteKit project"
 ---
 

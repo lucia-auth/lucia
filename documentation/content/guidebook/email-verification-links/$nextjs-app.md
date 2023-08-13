@@ -1,6 +1,5 @@
 ---
 title: "Email authentication with verification links in Next.js App Router"
-nested_title: "Next.js App Router"
 description: "Extend Lucia by implementing email and password authentication with email verification links"
 ---
 

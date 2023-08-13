@@ -1,6 +1,5 @@
 ---
 title: "Sign in with username and password in Nuxt"
-nested_title: "Nuxt"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 

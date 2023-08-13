@@ -1,6 +1,5 @@
 ---
 title: "Password reset links in Nuxt"
-nested_title: "Nuxt"
 description: "Learn how to implement password reset using reset links"
 ---
 

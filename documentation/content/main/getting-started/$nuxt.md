@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Nuxt"
-nested_title: "Nuxt"
 description: "Learn how to set up Lucia in your Nuxt project"
 ---
 

@@ -1,5 +1,4 @@
 ---
-nested_title: "Redis"
 title: "Redis session adapter"
 description: "Learn how to use Redis with Lucia"
 ---

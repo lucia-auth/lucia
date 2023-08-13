@@ -1,6 +1,5 @@
 ---
 title: "Sign in with username and password in SolidStart"
-nested_title: "SolidStart"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: "Upstash Redis adapter"
-nested_title: "Upstash Redis"
 description: "Learn how to use Upstash Redis with Lucia"
 ---
 

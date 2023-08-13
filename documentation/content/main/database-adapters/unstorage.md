@@ -1,5 +1,4 @@
 ---
-nested_title: "Unstorage"
 title: "Unstorage session adapter"
 description: "Learn how to use Unstorage with Lucia"
 ---

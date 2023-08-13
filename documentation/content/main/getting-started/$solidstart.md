@@ -1,6 +1,5 @@
 ---
 title: "Getting started in SolidStart"
-nested_title: "SolidStart"
 description: "Learn how to set up Lucia in your SolidStart project"
 ---
 

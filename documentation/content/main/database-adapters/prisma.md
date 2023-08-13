@@ -1,5 +1,4 @@
 ---
-nested_title: "Prisma"
 title: "Prisma adapter"
 description: "Learn how to use Prisma with Lucia"
 ---

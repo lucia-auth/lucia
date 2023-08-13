@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Astro"
-nested_title: "Astro"
 description: "Learn how to set up Lucia in your Astro project"
 ---
 

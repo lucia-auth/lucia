@@ -1,7 +1,6 @@
 ---
 title: "Github OAuth in Hono"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
-nested_title: "Hono"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/getting-started/hono)._

@@ -1,5 +1,4 @@
 ---
-nested_title: "libSQL"
 title: "libSQL adapter"
 description: "Learn how to use libSQL with Lucia"
 ---

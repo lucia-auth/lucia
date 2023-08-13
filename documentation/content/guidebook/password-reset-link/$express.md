@@ -1,6 +1,5 @@
 ---
 title: "Password reset links in Express"
-nested_title: "Express"
 description: "Learn how to implement password reset using reset links"
 ---
 

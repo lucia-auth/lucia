@@ -1,6 +1,5 @@
 ---
 title: "Password reset links in SvelteKit"
-nested_title: "SvelteKit"
 description: "Learn how to implement password reset using reset links"
 ---
 

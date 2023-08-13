@@ -1,7 +1,6 @@
 ---
 title: "Github OAuth in SolidStart"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
-nested_title: "SolidStart"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/getting-started/solidstart) and that you've implement the recommended middleware._

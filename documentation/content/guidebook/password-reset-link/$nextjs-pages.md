@@ -1,6 +1,5 @@
 ---
 title: "Password reset links in Next.js Pages Router"
-nested_title: "Next.js Pages Router"
 description: "Learn how to implement password reset using reset links"
 ---
 

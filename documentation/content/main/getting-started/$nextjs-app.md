@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Next.js App Router"
-nested_title: "Next.js App router"
 description: "Learn how to set up Lucia in your Next.js App Router project"
 ---
 

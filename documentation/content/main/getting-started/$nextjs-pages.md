@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Next.js Pages Router"
-nested_title: "Next.js Pages Router"
 description: "Learn how to set up Lucia in your Next.js Pages Router project"
 ---
 

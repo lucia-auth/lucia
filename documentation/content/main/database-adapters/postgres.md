@@ -1,6 +1,5 @@
 ---
 title: "`postgres` adapter"
-nested_title: "`postgres`"
 description: "Learn how to use postgres with Lucia"
 ---
 

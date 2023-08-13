@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Fastify"
-nested_title: "Fastify"
 description: "Learn how to set up Lucia in your Fastify project"
 ---
 

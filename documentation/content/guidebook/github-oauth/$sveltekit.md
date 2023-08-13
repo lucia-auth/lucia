@@ -1,7 +1,6 @@
 ---
 title: "Github OAuth in SvelteKit"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
-nested_title: "SvelteKit"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/getting-started/sveltekit) and that you've implement the recommended `handle()` hook._

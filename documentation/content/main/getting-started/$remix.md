@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Remix"
-nested_title: "Remix"
 description: "Learn how to set up Lucia in your Remix project"
 ---
 

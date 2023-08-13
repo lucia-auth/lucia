@@ -1,6 +1,5 @@
 ---
 title: "Sign in with username and password in Next.js App Router"
-nested_title: "Next.js App Router"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 

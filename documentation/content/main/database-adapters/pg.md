@@ -1,5 +1,4 @@
 ---
-nested_title: "`pg`"
 title: "`pg` adapter"
 description: "Learn how to use pg with Lucia"
 ---

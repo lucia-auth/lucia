@@ -1,6 +1,5 @@
 ---
 title: "Email authentication with verification links in SvelteKit"
-nested_title: "SvelteKit"
 description: "Extend Lucia by implementing email and password authentication with email verification links"
 ---
 

@@ -8,7 +8,6 @@ const markdownImports = Object.entries(
 			title: string;
 			description?: string;
 			hidden?: boolean;
-			nested_title?: string;
 		}>
 	>("../../content/**/*.md")
 ).map(([importPath, resolve]) => {

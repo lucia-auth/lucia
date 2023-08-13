@@ -1,6 +1,5 @@
 ---
 title: "Getting started in Express"
-nested_title: "Express"
 description: "Learn how to set up Lucia in your Express project"
 ---
 

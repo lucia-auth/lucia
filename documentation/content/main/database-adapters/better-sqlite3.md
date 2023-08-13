@@ -1,5 +1,4 @@
 ---
-nested_title: "`better-sqlite3`"
 title: "`better-sqlite3` adapter"
 description: "Learn how to use better-sqlite3 with Lucia"
 ---
