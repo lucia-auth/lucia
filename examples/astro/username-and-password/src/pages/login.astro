@@ -1,11 +1,11 @@
 ---
-import "../app.css"
+import "../app.css";
 
 import { auth } from "../lib/lucia";
 import { LuciaError } from "lucia";
 
 let errorMessage: string | null = null;
-let usernameInput = ""
+let usernameInput = "";
 
 // check for form submissions
 if (Astro.request.method === "POST") {
@@ -13,9 +13,9 @@ if (Astro.request.method === "POST") {
 	const username = formData.get("username");
 	const password = formData.get("password");
 	// basic check
-    if (typeof username === "string") {
-        usernameInput = username;
-    }
+	if (typeof username === "string") {
+		usernameInput = username;
+	}
 	const validUsername =
 		typeof username === "string" &&
 		username.length >= 4 &&
@@ -28,7 +28,11 @@ if (Astro.request.method === "POST") {
 		try {
 			// find user by key
 			// and validate password
-			const key = await auth.useKey("username", username.toLowerCase(), password);
+			const key = await auth.useKey(
+				"username",
+				username.toLowerCase(),
+				password
+			);
 			const session = await auth.createSession({
 				userId: key.userId,
 				attributes: {}
@@ -41,18 +45,18 @@ if (Astro.request.method === "POST") {
 				(e.message === "AUTH_INVALID_KEY_ID" ||
 					e.message === "AUTH_INVALID_PASSWORD")
 			) {
-			// user does not exist
+				// user does not exist
 				// or invalid password
 				errorMessage = "Incorrect username or password";
-				Astro.response.status = 400
+				Astro.response.status = 400;
 			} else {
 				errorMessage = "An unknown error occurred";
-				Astro.response.status = 500
+				Astro.response.status = 500;
 			}
 		}
 	} else {
 		errorMessage = "Invalid input";
-		Astro.response.status = 400
+		Astro.response.status = 400;
 	}
 }
 
@@ -61,23 +65,23 @@ if (session) return Astro.redirect("/", 302); // redirect to profile page
 ---
 
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <meta name="viewport" content="width=device-width" />
-        <meta name="generator" content={Astro.generator} />
-        <title>Username & password auth with Lucia</title>
-    </head>
-    <body>
-        <h1>Sign in</h1>
-        <form method="post">
-            <label for="username">Username</label>
-            <input name="username" id="username" value={usernameInput}/><br />
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" /><br />
-            <input type="submit" />
-        </form>
-        <p class="error">{errorMessage}</p>
-        <a href="/signup">Create an account</a>
-    </body>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Username & password auth with Lucia</title>
+	</head>
+	<body>
+		<h1>Sign in</h1>
+		<form method="post">
+			<label for="username">Username</label>
+			<input name="username" id="username" value={usernameInput} /><br />
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" /><br />
+			<input type="submit" />
+		</form>
+		<p class="error">{errorMessage}</p>
+		<a href="/signup">Create an account</a>
+	</body>
 </html>

@@ -1,5 +1,11 @@
 # lucia
 
+## 2.3.0
+
+### Minor changes
+
+- [#958](https://github.com/pilcrowOnPaper/lucia/pull/958) by [@aust1nz](https://github.com/aust1nz) : Add `fastify()` middleware
+
 ## 2.2.0
 
 ### Minor changes
