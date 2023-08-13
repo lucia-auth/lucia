@@ -1,4 +1,6 @@
 ---
+import { comparePathname } from "@utils/url";
+
 type Page = [title: string, href: string];
 type Section = {
 	title: string;
@@ -11,14 +13,9 @@ type Props = {
 	title?: string;
 };
 
-const comparePathname = (path1: string, path2: string) => {
-	return path1 === path2 || path1 === path2 + "/" || path1 + "/" === path2;
-};
-
 const parseMarkdownCode = (text: string) => {
 	return text.replace("`", "<code>").replace("`", "</code>");
 };
-
 ---
 
 <div
@@ -107,16 +104,12 @@ if (
 </script>
 
 <script>
-	import { onMenuToggle } from "@utils/state";
+	import { onMenuToggle, setElementVisibility } from "@utils/state";
 
 	const menuDiv = document.getElementById("menu");
 	if (menuDiv instanceof HTMLDivElement) {
 		onMenuToggle((menuOpened) => {
-			if (menuOpened) {
-				menuDiv.classList.remove("hidden");
-			} else {
-				menuDiv.classList.add("hidden");
-			}
+			setElementVisibility(menuDiv, menuOpened);
 		});
 	}
 </script>

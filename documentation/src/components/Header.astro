@@ -4,8 +4,12 @@ import GithubIcon from "@icons/GithubIcon.astro";
 import MenuIcon from "@icons/MenuIcon.astro";
 import MoreIcon from "@icons/MoreIcon.astro";
 
-const blogPage =
-	Astro.url.pathname === "/blog" || Astro.url.pathname.startsWith("/blog/");
+import { comparePathname } from "@utils/url";
+
+const blogPage = comparePathname(Astro.url.pathname, "/blog");
+const guidebook = comparePathname(Astro.url.pathname, "/guidebook");
+
+const menuButtonVisible = !blogPage && !guidebook;
 ---
 
 <header class="w-full fixed top-0 bg-white z-30">
@@ -95,7 +99,7 @@ const blogPage =
 		</div>
 	</div>
 	{
-		!blogPage && (
+		menuButtonVisible && (
 			<div class="border-b px-4 py-1.5 sm:px-8 lg:hidden">
 				<button class="block rounded p-1 hover:bg-indigo-50" id="menu-button">
 					<div class="h-5 w-5 fill-current">
@@ -107,24 +111,24 @@ const blogPage =
 	}
 </header>
 <script>
-	import { onMoreToggle, toggleMore, toggleMenu } from "@utils/state";
+	import { toggleMenu, setElementVisibility } from "@utils/state";
+
 	const menuButton = document.getElementById("menu-button");
 	const moreButton = document.getElementById("more-button");
+
 	if (menuButton instanceof HTMLButtonElement) {
 		menuButton.addEventListener("click", toggleMenu);
 	}
-	if (moreButton instanceof HTMLButtonElement) {
-		moreButton.addEventListener("click", toggleMore);
-	}
 
 	const moreDropdownDiv = document.getElementById("more-dropdown");
-	if (moreDropdownDiv instanceof HTMLDivElement) {
-		onMoreToggle((dropdownOpened) => {
-			if (dropdownOpened) {
-				moreDropdownDiv.classList.remove("hidden");
-			} else {
-				moreDropdownDiv.classList.add("hidden");
-			}
+	if (
+		moreButton instanceof HTMLButtonElement &&
+		moreDropdownDiv instanceof HTMLDivElement
+	) {
+		let moreDropdownVisible = false;
+		moreButton.addEventListener("click", () => {
+			moreDropdownVisible = !moreDropdownVisible;
+			setElementVisibility(moreDropdownDiv, moreDropdownVisible);
 		});
 	}
 </script>
