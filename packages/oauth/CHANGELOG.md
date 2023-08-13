@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 2.1.2
+
+### Patch changes
+
+- [#968](https://github.com/pilcrowOnPaper/lucia/pull/968) by [@KazuumiN](https://github.com/KazuumiN) : Fixes `generatePKCECodeChallenge()` to correctly apply SHA-256 and Base64Url encoding as per PKCE specification.
+
 ## 2.1.1
 
 ### Patch changes

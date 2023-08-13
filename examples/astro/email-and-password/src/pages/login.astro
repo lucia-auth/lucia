@@ -41,15 +41,15 @@ if (Astro.request.method === "POST") {
 				// user does not exist
 				// or invalid password
 				errorMessage = "Incorrect email or password";
-				Astro.response.status = 400
+				Astro.response.status = 400;
 			} else {
 				errorMessage = "An unknown error occurred";
-				Astro.response.status = 500
+				Astro.response.status = 500;
 			}
 		}
 	} else {
 		errorMessage = "Invalid input";
-		Astro.response.status = 400
+		Astro.response.status = 400;
 	}
 }
 
