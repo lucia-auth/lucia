@@ -3,7 +3,7 @@ import ExpandIcon from "@icons/ExpandIcon.astro";
 type Props = {
 	title: string;
 	options: {
-		title: string;
+		htmlTitle: string;
 		href: string;
 	}[];
 };
@@ -17,8 +17,8 @@ type Props = {
 			<span
 				class="block leading-none text-main group-hover:text-black font-medium select-button-text"
 			>
-				{Astro.props.title}</span
-			>
+				{Astro.props.title}
+			</span>
 			<span
 				class="h-3.5 w-3.5 block fill-current text-zinc-400 group-hover:text-black"
 			>
@@ -30,12 +30,14 @@ type Props = {
 		>
 			<ul class="list-none">
 				{
-					Astro.props.options.map(({ title, href }) => {
+					Astro.props.options.map((option) => {
 						return (
 							<li class=" ">
-								<a href={href} class="block px-4 py-1  hover:bg-indigo-50">
-									{title}
-								</a>
+								<a
+									href={option.href}
+									class="block px-4 py-1  hover:bg-indigo-50"
+									set:html={option.htmlTitle}
+								/>
 							</li>
 						);
 					})
@@ -46,7 +48,11 @@ type Props = {
 </select-link>
 
 <script>
-	import { createToggleState, onMenuToggle, setElementVisibility } from "@utils/state";
+	import {
+		createToggleState,
+		onMenuToggle,
+		setElementVisibility
+	} from "@utils/state";
 
 	const [toggleDropdown, onDropdownToggle] = createToggleState();
 
@@ -64,7 +70,7 @@ type Props = {
 				buttonTitleSpan instanceof HTMLSpanElement
 			) {
 				button.addEventListener("click", toggleDropdown);
-				onMenuToggle((dropdownVisible) => {
+				onDropdownToggle((dropdownVisible) => {
 					setElementVisibility(selectMenu, dropdownVisible);
 					if (dropdownVisible) {
 						buttonTitleSpan.classList.remove("text-main");

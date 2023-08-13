@@ -9,7 +9,7 @@ type Section = {
 
 type Props = {
 	id: string;
-	content: (Section | Page)[];
+	content: (Section | Page[])[];
 	title?: string;
 };
 
@@ -25,31 +25,36 @@ const parseMarkdownCode = (text: string) => {
 	<input type="hidden" value={Astro.props.id} id="menu-id" />
 	{Astro.props.title && <p class=" ml-8 font-semibold">{Astro.props.title}</p>}
 	<div
-		class="overflow-auto h-full overscroll-contain pt-2 text-sm pb-8"
+		class="overflow-auto h-full overscroll-contain pt-2 text-sm pb-12 flex flex-col gap-y-4"
 		id="content-nav"
 	>
 		{
 			Astro.props.content.map((content) => {
 				if (Array.isArray(content)) {
-					const [title, href] = content;
-					const selected = comparePathname(Astro.url.pathname, href);
-					return (
-						<a
-							href={href}
-							class:list={[
-								"w-full py-1 pl-8 hover:bg-indigo-50 block",
-								{
-									"bg-gray-100": selected
-								}
-							]}
-							set:html={parseMarkdownCode(title)}
-						/>
-					);
+					return 	<ul >
+							{content.map((item) => {
+								const [title, href] = item;
+								const selected = comparePathname(Astro.url.pathname, href);
+								return (
+									<li>
+										<a
+											href={href}
+											class:list={[
+												"w-full py-1 pl-8 hover:bg-indigo-50 block",
+												{
+													"bg-gray-100": selected
+												}
+											]}
+											set:html={parseMarkdownCode(title)}
+										/>
+									</li>
+								);
+							})}
+						</ul>
 				}
 				return (
-					<div class="mt-6">
-						<p class="ml-8 text-sm font-medium text-zinc-400" set:html={parseMarkdownCode(content.title)}>
-						
+					<div class="mt-2">
+						<p class="ml-8 text-sm font-medium text-zinc-400" set:html={parseMarkdownCode(content.title)}></p>
 						</p>
 						<ul class="mt-0.5">
 							{content.pages.map((page) => {
@@ -102,7 +107,7 @@ if (
 	});
 }
 </script>
-
+		
 <script>
 	import { onMenuToggle, setElementVisibility } from "@utils/state";
 
@@ -113,3 +118,4 @@ if (
 		});
 	}
 </script>
+	

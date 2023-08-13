@@ -168,9 +168,9 @@ const middleware: Middleware;
 
 Lucia middleware for [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest). [Learn more about middleware](/basics/handle-requests).
 
-| type                                                       | default value                                          |
-| ---------------------------------------------------------- | ------------------------------------------------------ |
-| [`Middleware`](/extending-lucia/middleware-api#middleware) | [`lucia()`](/reference/lucia/modules/middleware#lucia) |
+| type                                             | default value                                          |
+| ------------------------------------------------ | ------------------------------------------------------ |
+| [`Middleware`](/reference/middleware#middleware) | [`lucia()`](/reference/lucia/modules/middleware#lucia) |
 
 ### `passwordHash`
 

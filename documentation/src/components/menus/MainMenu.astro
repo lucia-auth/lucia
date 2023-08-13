@@ -5,9 +5,12 @@ import Menu from "./Menu.astro";
 <Menu
 	id="main"
 	content={[
-		["Getting started", "/getting-started"],
-		["Starter guides", "/starter-guides"],
-		["Migrate to v2", "/migrate/v2"],
+		[
+			["Getting started", "/getting-started"],
+			["Starter guides", "/starter-guides"],
+			["Migrate to v2", "/migrate/v2"],
+			["Contributing", "/contributing"]
+		],
 		{
 			title: "Basics",
 			pages: [
@@ -36,14 +39,6 @@ import Menu from "./Menu.astro";
 				["Redis", "/database-adapters/redis"],
 				["Unstorage", "/database-adapters/unstorage"],
 				["Upstash Redis", "/database-adapters/upstash-redis"]
-			]
-		},
-		{
-			title: "Additional resources",
-			pages: [
-				["Contributing", "/contributing"],
-				["Database adapters API", "/api/database-adapters"],
-				["Middleware API", "/api/middleware"]
 			]
 		}
 	]}

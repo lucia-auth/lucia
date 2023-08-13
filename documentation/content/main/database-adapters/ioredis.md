@@ -1,5 +1,5 @@
 ---
-menuTitle: "`ioredis`"
+nested_title: "`ioredis`"
 title: "`ioredis` session adapter"
 description: "Learn how to use `ioredis` with Lucia"
 ---

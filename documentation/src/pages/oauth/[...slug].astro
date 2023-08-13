@@ -3,6 +3,7 @@ import { getPages } from "@utils/content";
 
 import OAuthLayout from "@layouts/OAuthLayout.astro";
 import MarkdownStyle from "@components/MarkdownStyle.astro";
+import SelectLink from "@components/SelectLink.astro";
 
 import type { InferGetStaticPropsType } from "astro";
 
@@ -28,8 +29,34 @@ const { page } = Astro.props;
 
 <OAuthLayout title={page.title} description={page.description}>
 	<div class="mt-6 mb-8">
-		<h1 class="text-4xl font-semibold break-words" set:html={page.htmlTitle} />
+		{
+			page.versions.length > 0 && (
+				<SelectLink
+					title="Select framework"
+					options={page.versions.map((version) => {
+						return {
+							htmlTitle: version.name,
+							href: version.href
+						};
+					})}
+				/>
+			)
+		}
+		<h1
+			class="text-4xl font-semibold break-words mt-1"
+			set:html={page.htmlTitle}
+		/>
 	</div>
+	{
+		page.versions.length > 0 && (
+			<p class="mb-8 text-sm text-zinc-400">
+				<i>
+					Framework and runtime specific versions of this guide are also
+					available.
+				</i>
+			</p>
+		)
+	}
 	<MarkdownStyle>
 		<page.Content />
 	</MarkdownStyle>

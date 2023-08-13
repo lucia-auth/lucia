@@ -7,7 +7,7 @@ import { getPages } from "@utils/content";
 
 const allPages = await getPages("guidebook");
 const parentPages = allPages.filter(
-	(page) => page.pathname.split("/").length === 2
+	(page) => page.frameworkId === null
 );
 ---
 

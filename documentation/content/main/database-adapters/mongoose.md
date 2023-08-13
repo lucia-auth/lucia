@@ -1,5 +1,5 @@
 ---
-menuTitle: "Mongoose"
+nested_title: "Mongoose"
 title: "Mongoose adapter"
 description: "Learn how to use Mongoose with Lucia"
 ---

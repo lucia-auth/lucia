@@ -1,5 +1,5 @@
 ---
-menuTitle: "PlanetScale serverless"
+nested_title: "PlanetScale serverless"
 title: "PlanetScale serverless adapter"
 description: "Learn how to use the PlanetScale serverless driver with Lucia"
 ---

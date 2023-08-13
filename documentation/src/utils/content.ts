@@ -1,11 +1,14 @@
 import type { MarkdownInstance } from "astro";
 
+type FrameworkId = keyof typeof frameworkNameDictionary;
+
 const markdownImports = Object.entries(
 	import.meta.glob<
 		MarkdownInstance<{
 			title: string;
 			description?: string;
 			hidden?: boolean;
+			nested_title?: string;
 		}>
 	>("../../content/**/*.md")
 ).map(([importPath, resolve]) => {
@@ -18,9 +21,9 @@ const markdownImports = Object.entries(
 	] as const;
 });
 
-type ChildPage = {
-	htmlTitle: string;
+type FrameworkVersion = {
 	href: string;
+	name: string;
 };
 
 export type Page = {
@@ -31,7 +34,8 @@ export type Page = {
 	htmlTitle: string;
 	hidden: boolean;
 	description: string | null;
-	childPages: ChildPage[];
+	versions: FrameworkVersion[];
+	frameworkId: FrameworkId | null;
 	Content: MarkdownInstance<any>["Content"];
 };
 
@@ -51,7 +55,7 @@ export const getPages = async (collectionId: string): Promise<Page[]> => {
 	const targetImports = markdownImports.filter(([pathname]) => {
 		return pathname.startsWith(collectionId + "/") || pathname === collectionId;
 	});
-	return await Promise.all(
+	const pages = await Promise.all(
 		targetImports.map(async ([pathname, resolve]): Promise<Page> => {
 			const resolvedFile = await resolve();
 			return {
@@ -62,16 +66,62 @@ export const getPages = async (collectionId: string): Promise<Page[]> => {
 				htmlTitle: parseMarkdownCode(resolvedFile.frontmatter.title),
 				description: resolvedFile.frontmatter.description ?? null,
 				hidden: Boolean(resolvedFile.frontmatter.hidden),
-				childPages: [],
+				versions: [],
+				frameworkId: getFrameworkIdFromContentPathname(pathname),
 				Content: resolvedFile.Content
 			};
 		})
 	);
+	for (const page of pages) {
+		page.versions = pages
+			.filter((maybeNestedPage) => {
+				return maybeNestedPage.pathname.startsWith(page.pathname + "/$");
+			})
+			.map((page): FrameworkVersion => {
+				if (!page.frameworkId) throw new Error("Version not defined");
+				return {
+					name: frameworkNameDictionary[page.frameworkId],
+					href: page.href
+				};
+			});
+	}
+	return pages;
 };
 
-const getHrefFromContentPathname = (pathname: string) => {
+const getHrefFromContentPathname = (pathname: string): string => {
 	if (pathname.startsWith("main/")) {
-		return pathname.replace("main/", "/");
+		return pathname.replace("main/", "/").replace("$", "");
 	}
-	return "/" + pathname;
+	return "/" + pathname.replace("$", "");
 };
+
+const getFrameworkIdFromContentPathname = (
+	pathname: string
+): FrameworkId | null => {
+	const lastPathnameSegment = pathname.split("/").at(-1) ?? null;
+	if (!lastPathnameSegment) return null;
+	if (!lastPathnameSegment.startsWith("$")) return null;
+	const version = lastPathnameSegment.replace("$", "");
+	if (!isValidFrameworkVersion(version)) return null;
+	return version;
+};
+
+const isValidFrameworkVersion = (
+	maybeFrameworkVersion: string
+): maybeFrameworkVersion is keyof typeof frameworkNameDictionary => {
+	return maybeFrameworkVersion in frameworkNameDictionary;
+};
+
+const frameworkNameDictionary = {
+	astro: "Astro",
+	express: "Express",
+	fastify: "Fastify",
+	hono: "Hono",
+	"nextjs-app": "Next.js App Router",
+	"nextjs-pages": "Next.js Pages Router",
+	nuxt: "Nuxt",
+	qwik: "Qwik",
+	remix: "Remix",
+	solidstart: "SolidStart",
+	sveltekit: "SvelteKit"
+} as const;

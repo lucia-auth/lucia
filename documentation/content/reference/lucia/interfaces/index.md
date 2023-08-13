@@ -10,7 +10,7 @@ import type { Adapter } from "lucia";
 
 ## `Adapter`
 
-See [Database adapter API](/extending-lucia/database-adapters-api#adapter).
+See [Database adapter API](/reference/database-adapter#adapter).
 
 ## `Auth`
 
@@ -145,11 +145,11 @@ Optional property `storedSessionCookie` is for frameworks with APIs to directly 
 
 ## `Middleware`
 
-See [Middleware API](/extending-lucia/middleware-api#middleware).
+See [Middleware API](/reference/middleware#middleware).
 
 ## `RequestContext`
 
-See [Middleware API](/extending-lucia/middleware-api#requestcontext).
+See [Middleware API](/reference/middleware#requestcontext).
 
 ## `Session`
 
@@ -179,7 +179,7 @@ type Session = {
 
 ## `SessionAdapter`
 
-See [Database adapter API](/extending-lucia/database-adapters-api#sessionadapter).
+See [Database adapter API](/reference/database-adapter#sessionadapter).
 
 ## `SessionSchema`
 
@@ -210,7 +210,7 @@ type User = {
 
 ## `UserAdapter`
 
-See [Database adapter API](/extending-lucia/database-adapters-api#useradapter).
+See [Database adapter API](/reference/database-adapter#useradapter).
 
 ## `UserSchema`
 

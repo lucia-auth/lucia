@@ -47,7 +47,7 @@ auth.handleRequest(new Request());
 
 ### Lucia (default)
 
-The default middleware is the Lucia middleware. `Auth.handleRequest()` accepts [`RequestContext`](/extending-lucia/middleware-api#requestcontext).
+The default middleware is the Lucia middleware. `Auth.handleRequest()` accepts [`RequestContext`](/reference/middleware#requestcontext).
 
 ```ts
 import { lucia } from "lucia/middleware";
