@@ -42,16 +42,13 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 	const getLinkedinUser = async (accessToken: string) => {
 		const linkedinUserProfile = await getProfile(accessToken);
-		const displayImageElement = linkedinUserProfile.profilePicture[
-			"displayImage~"
-		]?.elements
-			?.slice(-1)
-			?.pop();
 		const linkedinUser: LinkedinUser = {
-			id: linkedinUserProfile.id,
-			firstName: linkedinUserProfile.localizedFirstName,
-			lastName: linkedinUserProfile.localizedLastName,
-			profilePicture: displayImageElement?.identifiers?.pop()?.identifier
+			id: linkedinUserProfile.sub,
+			firstName: linkedinUserProfile.given_name,
+			lastName: linkedinUserProfile.family_name,
+			email: linkedinUserProfile.email,
+			emailVerified: linkedinUserProfile.email_verified,
+			profilePicture: linkedinUserProfile.picture
 		};
 
 		return linkedinUser;
@@ -60,12 +57,7 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	const getProfile = async (
 		accessToken: string
 	): Promise<LinkedinProfileResponse> => {
-		const requestUrl = createUrl("https://api.linkedin.com/v2/me", {
-			projection:
-				"(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))"
-		});
-
-		const request = new Request(requestUrl, {
+		const request = new Request("https://api.linkedin.com/v2/userinfo", {
 			headers: {
 				Authorization: authorizationHeader("bearer", accessToken)
 			}
@@ -82,7 +74,7 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				{
 					clientId: config.clientId,
 					redirectUri: config.redirectUri,
-					scope: ["r_liteprofile", ...scopeConfig]
+					scope: scopeConfig
 				}
 			);
 		},
@@ -104,24 +96,26 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	} as const satisfies OAuthProvider;
 };
 
+type Locale = {
+	country: string;
+	language: string;
+}
 type LinkedinProfileResponse = {
-	id: string;
-	localizedFirstName: string;
-	localizedLastName: string;
-	profilePicture: {
-		"displayImage~"?: {
-			elements?: Array<{
-				identifiers?: Array<{
-					identifier?: string;
-				}>;
-			}>;
-		};
-	};
+	sub: string;
+	name: string;
+	email: string;
+	email_verified: boolean;
+	family_name: string;
+	family_name: string;
+	locale: Locale,
+	picture: string | null;
 };
 
 export type LinkedinUser = {
 	id: string;
 	firstName: string;
 	lastName: string;
+	email: string;
+	emailVerified: boolean;
 	profilePicture?: string;
 };
