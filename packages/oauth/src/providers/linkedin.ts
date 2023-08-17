@@ -117,5 +117,5 @@ export type LinkedinUser = {
 	lastName: string;
 	email: string;
 	emailVerified: boolean;
-	profilePicture?: string;
+	profilePicture: string;
 };
