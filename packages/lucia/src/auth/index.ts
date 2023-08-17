@@ -344,9 +344,6 @@ export class Auth<_Configuration extends Configuration = any> {
 				debug.key.fail("Key password not provided", keyId);
 				throw new LuciaError("AUTH_INVALID_PASSWORD");
 			}
-			if (hashedPassword.startsWith("$2a")) {
-				throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-			}
 			const validPassword = await this.passwordHash.validate(
 				password,
 				hashedPassword
