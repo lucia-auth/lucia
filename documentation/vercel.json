@@ -1,13 +1,73 @@
 {
-	"redirects": [
-		{
-			"source": "/guidebook/sign-in-with-email-and-password/:path*",
-			"destination": "/guidebook/email-verification-links/:path*"
-		}
-	],
 	"git": {
 		"deploymentEnabled": {
 			"main": false
 		}
-	}
+	},
+	"redirects": [
+		{
+			"source": "/guidebook/sign-in-with-email-and-password/:path*",
+			"destination": "/guidebook/email-verification-links/:path*"
+		},
+		{
+			"source": "/start-here/getting-started/:path*",
+			"destination": "/start-here/:path*"
+		},
+		{
+			"source": "/start-here/migrate-v2/:path*",
+			"destination": "/migrate/v2/:path*"
+		},
+		{
+			"source": "/start-here/starter-guides/:path*",
+			"destination": "/starter-guides/:path*"
+		},
+		{
+			"source": "/start-here/contributing",
+			"destination": "/contributing"
+		},
+		{
+			"source": "/extending-lucia/database-adapters-api",
+			"destination": "/reference/database-adapter"
+		},
+		{
+			"source": "/extending-lucia/middleware-api",
+			"destination": "/reference/middleware"
+		},
+		{
+			"source": "/reference/lucia/main",
+			"destination": "/reference/lucia/modules/main"
+		},
+		{
+			"source": "/reference/lucia/polyfill/node",
+			"destination": "/reference/lucia/modules/polyfill/node"
+		},
+		{
+			"source": "/reference/lucia/middleware",
+			"destination": "/reference/lucia/modules/middleware"
+		},
+		{
+			"source": "/reference/lucia/utils",
+			"destination": "/reference/lucia/modules/utils"
+		},
+		{
+			"source": "/reference/oauth/main",
+			"destination": "/reference/oauth/modules/main"
+		},
+		{
+			"source": "/reference/oauth/providers",
+			"destination": "/reference/oauth/modules/providers"
+		},
+		{
+			"source": "/oauth/basics/using-supported-providers",
+			"destination": "/oauth/basics/built-in-providers"
+		},
+		{
+			"source": "/discord",
+			"destination": "https://discord.gg/PwrK3kpVR3"
+		},
+		{
+			"source": "/github",
+			"destination": "https://github.com/pilcrowOnPaper/lucia"
+		}
+	]
 }
