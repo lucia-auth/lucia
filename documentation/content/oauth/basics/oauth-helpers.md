@@ -1,11 +1,9 @@
 ---
-title: "OAuth helpers (experimental)"
+title: "OAuth helpers"
 description: "Learn how to use the built-in OAuth helpers"
 ---
 
 The OAuth integration provides helpers for implementing OAuth 2.0 authentication flow, including Open ID Connect. This page uses Github OAuth as an example but make sure to follow the provider's documentation.
-
-A lot of APIs are still experimental and subject to breaking changes.
 
 ## Create authorization URL
 
@@ -14,10 +12,10 @@ You can create a new authorization url with a state with [`createOAuth2Authoriza
 The state should be stored as a http-only cookie.
 
 ```ts
-import { __experimental_createAuthorizationUrl } from "@lucia-auth/oauth";
+import { createAuthorizationUrl } from "@lucia-auth/oauth";
 
 // get url to redirect the user to, with the state
-const [url, state] = await __experimental_createAuthorizationUrl(
+const [url, state] = await createAuthorizationUrl(
 	"https://github.com/login/oauth/authorize",
 	{
 		clientId,
@@ -43,9 +41,9 @@ If your provider requires you to generate a PKCE code challenge, you can use [`c
 The code verifier should also be stored in a http-only cookie.
 
 ```ts
-import { __experimental_createOAuth2AuthorizationUrlWithPKCE } from "@lucia-auth/oauth";
+import { createOAuth2AuthorizationUrlWithPKCE } from "@lucia-auth/oauth";
 
-const [url, state] = await __experimental_createOAuth2AuthorizationUrlWithPKCE(
+const [url, state] = await createOAuth2AuthorizationUrlWithPKCE(
 	url,
 	{
 		clientId,
@@ -88,14 +86,14 @@ if (!state || !storedState || state !== storedState) throw new Error(); // inval
 Extract the authorization code from the query string and verify it using [`validateOAuth2AuthorizationCode()`](/reference/oauth/modules/main#validateoauth2authorizationcode). This sends a request to the provided url and returns the JSON-parsed response body, which includes the access token. You can define the return type by passing a generic. This will throw a [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror) if the request fails.
 
 ```ts
-import { __experimental_validateOAuth2AuthorizationCode } from "@lucia-auth/oauth";
+import { validateOAuth2AuthorizationCode } from "@lucia-auth/oauth";
 
 type AuthorizationResult = {
 	access_token: string;
 };
 
 const tokens =
-	await __experimental_validateOAuth2AuthorizationCode<AuthorizationResult>(
+	await validateOAuth2AuthorizationCode<AuthorizationResult>(
 		code,
 		"https://github.com/login/oauth/access_token",
 		{
@@ -157,13 +155,13 @@ const tokens = await validateOAuth2AuthorizationCode<Result>(code, url, {
 If you're using Open ID Connect, you can decode the ID Token with [`decodeIdToken()`](/reference/oauth/modules/main#decodeidtoken). **This does NOT validate the ID token**. though decoding should be enough. This also takes a generic for the ID Token claims.
 
 ```ts
-import { __experimental_decodeIdToken } from "@lucia-auth/oauth";
+import { decodeIdToken } from "@lucia-auth/oauth";
 
 type Claims = {
 	email: string;
 };
 
-const user = __experimental_decodeIdToken<Claims>(idToken);
+const user = decodeIdToken<Claims>(idToken);
 const email = user.email;
 ```
 

@@ -4,13 +4,7 @@ title: "`@lucia-auth/oauth`"
 
 ## `createOAuth2AuthorizationUrl()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Creates a new authorization url for OAuth 2.0 authorization code grant with a state. Use [`createOAuth2AuthorizationUrlWithPKCE()`](/reference/oauth/modules/main#createoauth2authorizationurlwithpkce) for creating urls with PKCE code challenge.
-
-```ts
-import { __experimental_createOAuth2AuthorizationUrl } from "@lucia-auth/oauth";
-```
 
 ```ts
 const createOAuth2AuthorizationUrl: (
@@ -45,13 +39,7 @@ const createOAuth2AuthorizationUrl: (
 
 ## `createOAuth2AuthorizationUrlWithPKCE()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Creates a new authorization url for OAuth 2.0 authorization code grant with a state and PKCE code challenge.
-
-```ts
-import { __experimental_createOAuth2AuthorizationUrlWithPKCE } from "@lucia-auth/oauth";
-```
 
 ```ts
 const createOAuth2AuthorizationUrlWithPKCE: (
@@ -91,13 +79,7 @@ const createOAuth2AuthorizationUrlWithPKCE: (
 
 ## `decodeIdToken()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Decodes the OpenID Connect Id Token and returns the claims. **Does NOT validate the JWT**. Throws `SyntaxError` if provided id token is invalid or malformed.
-
-```ts
-import { __experimental_decodeIdToken } from "@lucia-auth/oauth";
-```
 
 ```ts
 const decodeIdToken: <_Claims extends {}>(
@@ -157,13 +139,7 @@ const providerUserAuth: (
 
 ## `validateOAuth2AuthorizationCode()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Validates OAuth 2.0 authorization code by sending a request to the provided url. Returns the JSON-parsed response body.
-
-```ts
-import { __experimental_createOAuth2AuthorizationUrl } from "@lucia-auth/oauth";
-```
 
 ```ts
 const validateOAuth2AuthorizationCode: <_ResponseBody extends {}>(
