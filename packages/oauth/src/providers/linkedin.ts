@@ -74,7 +74,7 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				{
 					clientId: config.clientId,
 					redirectUri: config.redirectUri,
-					scope: scopeConfig
+					scope: ["profile", ...scopeConfig]
 				}
 			);
 		},
