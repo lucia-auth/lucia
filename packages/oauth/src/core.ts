@@ -198,14 +198,6 @@ export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
 	return await handleRequest<_ResponseBody>(request);
 };
 
-export class IdTokenError extends Error {
-	public message: "INVALID_ID_TOKEN";
-	constructor(message: IdTokenError["message"]) {
-		super(message);
-		this.message = message;
-	}
-}
-
 const decoder = new TextDecoder();
 
 // does not verify id tokens
@@ -217,13 +209,13 @@ export const decodeIdToken = <_Claims extends {}>(
 	exp: number;
 } & _Claims => {
 	const idTokenParts = idToken.split(".");
-	if (idTokenParts.length !== 3) throw new IdTokenError("INVALID_ID_TOKEN");
+	if (idTokenParts.length !== 3) throw new SyntaxError("Invalid ID Token");
 	const base64UrlPayload = idTokenParts[1];
 	const payload: unknown = JSON.parse(
 		decoder.decode(decodeBase64Url(base64UrlPayload))
 	);
 	if (!payload || typeof payload !== "object") {
-		throw new IdTokenError("INVALID_ID_TOKEN");
+		throw new SyntaxError("Invalid ID Token");
 	}
 	return payload as {
 		iss: string;
