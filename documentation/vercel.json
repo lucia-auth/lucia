@@ -11,7 +11,7 @@
 		},
 		{
 			"source": "/start-here/getting-started/:path*",
-			"destination": "/start-here/:path*"
+			"destination": "/getting-started/:path*"
 		},
 		{
 			"source": "/start-here/migrate-v2/:path*",
