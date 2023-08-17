@@ -673,7 +673,6 @@ export type Configuration<
 	csrfProtection?:
 		| boolean
 		| {
-				baseDomain: string;
 				allowedSubDomains: string[] | "*";
 		  };
 	sessionExpiresIn?: {
