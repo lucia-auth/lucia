@@ -218,6 +218,36 @@ export const qwik = (): Middleware<[QwikRequestEvent]> => {
 	};
 };
 
+type ElysiaContext = {
+	request: Request
+	set: {
+		headers: Record<string, string>
+		status?: number | undefined
+		redirect?: string | undefined
+	}
+}
+export const elysia = (): Middleware<[ElysiaContext]> => {
+	return ({ args }) => {
+		const [{ request, set }] = args
+		const requestContext = {
+			request: {
+				url: request.url,
+				method: request.method,
+				headers: {
+					origin: request.headers.get('Origin'),
+					cookie: request.headers.get('Cookie'),
+					authorization: request.headers.get('Authorization'),
+				},
+			},
+			setCookie: (cookie: Cookie) => {
+				set.headers['Set-Cookie'] = set.headers['Set-Cookie'] ? `${set.headers['Set-Cookie']} ${cookie.serialize()}` : cookie.serialize()
+			},
+		} as const satisfies RequestContext
+
+		return requestContext
+	}
+}
+
 export const lucia = (): Middleware<[RequestContext]> => {
 	return ({ args }) => args[0];
 };

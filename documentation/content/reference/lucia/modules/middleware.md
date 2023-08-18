@@ -306,3 +306,32 @@ auth.handleRequest(requestEvent as RequestEventAction);
 | name           | type                                                                                                                                                                      |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `requestEvent` | [`RequestEventLoader`](https://qwik.builder.io/docs/route-loader/#requestevent)`\|`[`RequestEventAction`](https://qwik.builder.io/docs/action/#http-request-and-response) |
+
+
+## `elysia()`
+
+Middleware for Elysia.
+
+```ts
+const elysia: () => Middleware;
+```
+
+#### Usage
+
+```ts
+import { elysia } from "lucia/middleware";
+
+const auth = lucia({
+	middleware: elysia()
+	// ...
+});
+```
+
+```ts
+auth.handleRequest({request, set} as {request: Request, set: Set});
+```
+
+| name      | type                                                                  |
+|-----------|-----------------------------------------------------------------------|
+| `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) |
+| `set`     | [`Set`](https://elysiajs.com/concept/handler.html)  |

@@ -40,6 +40,7 @@ auth.handleRequest(new Request());
 - [Next.js](#nextjs)
 - [Node.js](#nodejs)
 - [Qwik](#qwik)
+- [Elysia](#elysia)
 - [SvelteKit](#sveltekit)
 - [Web standard](#web-standard)
   - [Remix](#remix)
@@ -216,6 +217,19 @@ import { qwik } from "lucia/middleware";
 ```ts
 auth.handleRequest(requestEvent as RequestEventLoader);
 auth.handleRequest(requestEvent as RequestEventAction);
+```
+
+### Elysia
+
+```ts
+import { elysia } from "lucia/middleware";
+```
+
+```ts
+const app = new Elysia()
+app.get('/', async ({ request, set }) => {
+  const authReq = auth.handleRequest({ request, set });
+})
 ```
 
 ### SvelteKit
