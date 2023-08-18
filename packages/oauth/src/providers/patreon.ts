@@ -88,10 +88,10 @@ const getPatreonUser = async (accessToken: string): Promise<PatreonUser> => {
 };
 
 type PatreonTokens = {
-	accessToken: string,
-	refreshToken: string | null,
-	accessTokenExpiresIn: number
-}
+	accessToken: string;
+	refreshToken: string | null;
+	accessTokenExpiresIn: number;
+};
 
 export type PatreonUser = {
 	id: string;
