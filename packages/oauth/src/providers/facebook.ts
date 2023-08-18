@@ -15,7 +15,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "facebook";
 
 export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getFacebookTokens = async (code: string) => {
+	const getFacebookTokens = async (code: string): Promise<FacebookTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -34,20 +34,6 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refreshToken: tokens.refresh_token,
 			accessTokenExpiresIn: tokens.expires_in
 		};
-	};
-
-	const getFacebookUser = async (accessToken: string) => {
-		const requestUrl = createUrl("https://graph.facebook.com/me", {
-			access_token: accessToken,
-			fields: ["id", "name", "picture"].join(",")
-		});
-		const request = new Request(requestUrl, {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		const facebookUser = await handleRequest<FacebookUser>(request);
-		return facebookUser;
 	};
 
 	return {
@@ -77,6 +63,26 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getFacebookUser = async (accessToken: string): Promise<FacebookUser> => {
+	const requestUrl = createUrl("https://graph.facebook.com/me", {
+		access_token: accessToken,
+		fields: ["id", "name", "picture"].join(",")
+	});
+	const request = new Request(requestUrl, {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const facebookUser = await handleRequest<FacebookUser>(request);
+	return facebookUser;
+};
+
+type FacebookTokens = {
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type FacebookUser = {

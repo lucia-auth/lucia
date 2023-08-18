@@ -16,7 +16,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "patreon";
 
 export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getPatreonTokens = async (code: string) => {
+	const getPatreonTokens = async (code: string): Promise<PatreonTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
@@ -35,26 +35,6 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refreshToken: tokens.refresh_token ?? null,
 			accessTokenExpiresIn: tokens.expires_in
 		};
-	};
-
-	const getPatreonUser = async (accessToken: string) => {
-		const requestUrl = createUrl(
-			"https://www.patreon.com/api/oauth2/v2/identity",
-			{
-				"fields[user]":
-					"about,email,full_name,hide_pledges,image_url,is_email_verified,url"
-			}
-		);
-		const request = new Request(requestUrl, {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		const { data: patreonUser } = await handleRequest<{
-			data: PatreonUser;
-		}>(request);
-
-		return patreonUser;
 	};
 
 	return {
@@ -85,6 +65,32 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getPatreonUser = async (accessToken: string): Promise<PatreonUser> => {
+	const requestUrl = createUrl(
+		"https://www.patreon.com/api/oauth2/v2/identity",
+		{
+			"fields[user]":
+				"about,email,full_name,hide_pledges,image_url,is_email_verified,url"
+		}
+	);
+	const request = new Request(requestUrl, {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const { data: patreonUser } = await handleRequest<{
+		data: PatreonUser;
+	}>(request);
+
+	return patreonUser;
+};
+
+type PatreonTokens = {
+	accessToken: string;
+	refreshToken: string | null;
+	accessTokenExpiresIn: number;
 };
 
 export type PatreonUser = {

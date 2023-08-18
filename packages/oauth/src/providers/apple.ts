@@ -25,36 +25,7 @@ const PROVIDER_ID = "apple";
 const APPLE_AUD = "https://appleid.apple.com";
 
 export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const createSecretId = async ({
-		certificate,
-		teamId,
-		clientId,
-		keyId
-	}: AppleConfig & {
-		clientId: string;
-	}) => {
-		const now = Math.floor(Date.now() / 1000);
-		const payload = {
-			iss: teamId,
-			iat: now,
-			exp: now + 60 * 3,
-			aud: APPLE_AUD,
-			sub: clientId
-		};
-		const privateKey = getPKCS8Key(certificate);
-		const jwt = await createES256SignedJWT(
-			{
-				alg: "ES256",
-				kid: keyId
-			},
-			payload,
-			privateKey
-		);
-
-		return jwt;
-	};
-
-	const getAppleTokens = async (code: string) => {
+	const getAppleTokens = async (code: string): Promise<AppleTokens> => {
 		const clientSecret = await createSecretId({
 			certificate: config.certificate,
 			teamId: config.teamId,
@@ -80,15 +51,6 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refreshToken: tokens.refresh_token ?? null,
 			accessTokenExpiresIn: tokens.expires_in,
 			idToken: tokens.id_token
-		};
-	};
-
-	const getAppleUser = (idToken: string): AppleUser => {
-		const jwtPayload = decodeIdToken<AppleUser>(idToken);
-		return {
-			email: jwtPayload.email,
-			email_verified: jwtPayload.email_verified,
-			sub: jwtPayload.sub
 		};
 	};
 
@@ -123,6 +85,47 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const createSecretId = async (
+	config: AppleConfig & {
+		clientId: string;
+	}
+): Promise<string> => {
+	const now = Math.floor(Date.now() / 1000);
+	const payload = {
+		iss: config.teamId,
+		iat: now,
+		exp: now + 60 * 3,
+		aud: APPLE_AUD,
+		sub: config.clientId
+	};
+	const privateKey = getPKCS8Key(config.certificate);
+	const jwt = await createES256SignedJWT(
+		{
+			alg: "ES256",
+			kid: config.keyId
+		},
+		payload,
+		privateKey
+	);
+	return jwt;
+};
+
+const getAppleUser = (idToken: string): AppleUser => {
+	const jwtPayload = decodeIdToken<AppleUser>(idToken);
+	return {
+		email: jwtPayload.email,
+		email_verified: jwtPayload.email_verified,
+		sub: jwtPayload.sub
+	};
+};
+
+type AppleTokens = {
+	accessToken: string;
+	refreshToken: string | null;
+	accessTokenExpiresIn: number;
+	idToken: string;
 };
 
 export type AppleUser = {

@@ -15,7 +15,7 @@ type Config = OAuthConfig & {
 };
 
 export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getLinkedinTokens = async (code: string) => {
+	const getLinkedinTokens = async (code: string): Promise<LinkedInTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -38,40 +38,6 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refreshTokenExpiresIn: tokens.refresh_token_expires_in,
 			scope: tokens.scope
 		};
-	};
-
-	const getLinkedinUser = async (accessToken: string) => {
-		const linkedinUserProfile = await getProfile(accessToken);
-		const displayImageElement = linkedinUserProfile.profilePicture[
-			"displayImage~"
-		]?.elements
-			?.slice(-1)
-			?.pop();
-		const linkedinUser: LinkedinUser = {
-			id: linkedinUserProfile.id,
-			firstName: linkedinUserProfile.localizedFirstName,
-			lastName: linkedinUserProfile.localizedLastName,
-			profilePicture: displayImageElement?.identifiers?.pop()?.identifier
-		};
-
-		return linkedinUser;
-	};
-
-	const getProfile = async (
-		accessToken: string
-	): Promise<LinkedinProfileResponse> => {
-		const requestUrl = createUrl("https://api.linkedin.com/v2/me", {
-			projection:
-				"(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))"
-		});
-
-		const request = new Request(requestUrl, {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-
-		return handleRequest<LinkedinProfileResponse>(request);
 	};
 
 	return {
@@ -104,6 +70,40 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	} as const satisfies OAuthProvider;
 };
 
+const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
+	const linkedinUserProfile = await getProfile(accessToken);
+	const displayImageElement = linkedinUserProfile.profilePicture[
+		"displayImage~"
+	]?.elements
+		?.slice(-1)
+		?.pop();
+	const linkedinUser: LinkedinUser = {
+		id: linkedinUserProfile.id,
+		firstName: linkedinUserProfile.localizedFirstName,
+		lastName: linkedinUserProfile.localizedLastName,
+		profilePicture: displayImageElement?.identifiers?.pop()?.identifier
+	};
+
+	return linkedinUser;
+};
+
+const getProfile = async (
+	accessToken: string
+): Promise<LinkedinProfileResponse> => {
+	const requestUrl = createUrl("https://api.linkedin.com/v2/me", {
+		projection:
+			"(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))"
+	});
+
+	const request = new Request(requestUrl, {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+
+	return handleRequest<LinkedinProfileResponse>(request);
+};
+
 type LinkedinProfileResponse = {
 	id: string;
 	localizedFirstName: string;
@@ -117,6 +117,14 @@ type LinkedinProfileResponse = {
 			}>;
 		};
 	};
+};
+
+type LinkedInTokens = {
+	accessToken: string;
+	accessTokenExpiresIn: number;
+	refreshToken: string;
+	refreshTokenExpiresIn: number;
+	scope: string;
 };
 
 export type LinkedinUser = {

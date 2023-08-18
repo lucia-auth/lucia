@@ -43,27 +43,6 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getAuth0User = async (accessToken: string) => {
-		const request = new Request(new URL("/userinfo", config.appDomain), {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-
-		const auth0Profile = await handleRequest<Auth0Profile>(request);
-
-		const auth0User: Auth0User = {
-			sub: auth0Profile.sub,
-			id: auth0Profile.sub.split("|")[1],
-			nickname: auth0Profile.nickname,
-			name: auth0Profile.name,
-			picture: auth0Profile.picture,
-			updated_at: auth0Profile.updated_at
-		};
-
-		return auth0User;
-	};
-
 	return {
 		getAuthorizationUrl: async () => {
 			const scopeConfig = config.scope ?? [];
@@ -84,7 +63,10 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		},
 		validateCallback: async (code: string) => {
 			const auth0Tokens = await getAuth0Tokens(code);
-			const auth0User = await getAuth0User(auth0Tokens.accessToken);
+			const auth0User = await getAuth0User(
+				config.appDomain,
+				auth0Tokens.accessToken
+			);
 			const providerUserId = auth0User.id;
 			const auth0UserAuth = await providerUserAuth(
 				auth,
@@ -98,6 +80,27 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getAuth0User = async (appDomain: string, accessToken: string) => {
+	const request = new Request(new URL("/userinfo", appDomain), {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+
+	const auth0Profile = await handleRequest<Auth0Profile>(request);
+
+	const auth0User: Auth0User = {
+		sub: auth0Profile.sub,
+		id: auth0Profile.sub.split("|")[1],
+		nickname: auth0Profile.nickname,
+		name: auth0Profile.name,
+		picture: auth0Profile.picture,
+		updated_at: auth0Profile.updated_at
+	};
+
+	return auth0User;
 };
 
 type Auth0Profile = {

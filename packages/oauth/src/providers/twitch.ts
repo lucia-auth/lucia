@@ -16,7 +16,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "twitch";
 
 export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTwitchTokens = async (code: string) => {
+	const getTwitchTokens = async (code: string): Promise<TwitchTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token: string;
@@ -37,20 +37,6 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getTwitchUser = async (accessToken: string) => {
-		// https://dev.twitch.tv/docs/api/reference/#get-users
-		const request = new Request("https://api.twitch.tv/helix/users", {
-			headers: {
-				"Client-ID": config.clientId,
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		const twitchUsersResponse = await handleRequest<{
-			data: TwitchUser[];
-		}>(request);
-		return twitchUsersResponse.data[0];
-	};
-
 	return {
 		getAuthorizationUrl: async () => {
 			const forceVerify = config.forceVerify ?? false;
@@ -68,7 +54,10 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		},
 		validateCallback: async (code: string) => {
 			const twitchTokens = await getTwitchTokens(code);
-			const twitchUser = await getTwitchUser(twitchTokens.accessToken);
+			const twitchUser = await getTwitchUser(
+				config.clientId,
+				twitchTokens.accessToken
+			);
 			const providerUserId = twitchUser.id;
 			const twitchUserAuth = await providerUserAuth(
 				auth,
@@ -82,6 +71,29 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getTwitchUser = async (
+	clientId: string,
+	accessToken: string
+): Promise<TwitchUser> => {
+	// https://dev.twitch.tv/docs/api/reference/#get-users
+	const request = new Request("https://api.twitch.tv/helix/users", {
+		headers: {
+			"Client-ID": clientId,
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const twitchUsersResponse = await handleRequest<{
+		data: TwitchUser[];
+	}>(request);
+	return twitchUsersResponse.data[0];
+};
+
+type TwitchTokens = {
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type TwitchUser = {
