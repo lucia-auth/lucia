@@ -36,3 +36,6 @@ export type { SpotifyUser } from "./spotify.js";
 
 export { twitch } from "./twitch.js";
 export type { TwitchUser } from "./twitch.js";
+
+export { twitter } from "./twitter.js";
+export type { TwitterUser } from "./twitter.js";

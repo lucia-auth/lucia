@@ -16,7 +16,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "google";
 
 export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getGoogleTokens = async (code: string) => {
+	const getGoogleTokens = async (code: string): Promise<GoogleTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
@@ -35,19 +35,6 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refreshToken: tokens.refresh_token ?? null,
 			accessTokenExpiresIn: tokens.expires_in
 		};
-	};
-
-	const getGoogleUser = async (accessToken: string) => {
-		const request = new Request(
-			"https://www.googleapis.com/oauth2/v3/userinfo",
-			{
-				headers: {
-					Authorization: authorizationHeader("bearer", accessToken)
-				}
-			}
-		);
-		const googleUser = await handleRequest<GoogleUser>(request);
-		return googleUser;
 	};
 
 	return {
@@ -84,6 +71,22 @@ export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getGoogleUser = async (accessToken: string): Promise<GoogleUser> => {
+	const request = new Request("https://www.googleapis.com/oauth2/v3/userinfo", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const googleUser = await handleRequest<GoogleUser>(request);
+	return googleUser;
+};
+
+type GoogleTokens = {
+	accessToken: string;
+	refreshToken: string | null;
+	accessTokenExpiresIn: number;
 };
 
 export type GoogleUser = {

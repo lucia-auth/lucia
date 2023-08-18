@@ -15,7 +15,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "osu";
 
 export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getOsuTokens = async (code: string) => {
+	const getOsuTokens = async (code: string): Promise<OsuTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -35,16 +35,6 @@ export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refreshToken: tokens.refresh_token,
 			accessTokenExpiresIn: tokens.expires_in
 		};
-	};
-
-	const getOsuUser = async (accessToken: string) => {
-		const request = new Request("https://osu.ppy.sh/api/v2/me/osu", {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		const osuUser = await handleRequest<OsuUser>(request);
-		return osuUser;
 	};
 
 	return {
@@ -77,32 +67,20 @@ export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	} as const satisfies OAuthProvider;
 };
 
-type OsuGameMode = "fruits" | "mania" | "osu" | "taiko";
+const getOsuUser = async (accessToken: string): Promise<OsuUser> => {
+	const request = new Request("https://osu.ppy.sh/api/v2/me/osu", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const osuUser = await handleRequest<OsuUser>(request);
+	return osuUser;
+};
 
-type OsuUserStatistics = {
-	grade_counts: {
-		a: number;
-		s: number;
-		sh: number;
-		ss: number;
-		ssh: number;
-	};
-	hit_accuracy: number;
-	is_ranked: boolean;
-	level: {
-		current: number;
-		progress: number;
-	};
-	maximum_combo: number;
-	play_count: number;
-	play_time: number;
-	pp: number;
-	global_rank: number;
-	ranked_score: number;
-	replays_watched_by_others: number;
-	total_hits: number;
-	total_score: number;
-	country_rank: number;
+type OsuTokens = {
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type OsuUser = {
@@ -227,3 +205,31 @@ export type OsuUser = {
 		achievement_id: number;
 	}[];
 };
+
+type OsuUserStatistics = {
+	grade_counts: {
+		a: number;
+		s: number;
+		sh: number;
+		ss: number;
+		ssh: number;
+	};
+	hit_accuracy: number;
+	is_ranked: boolean;
+	level: {
+		current: number;
+		progress: number;
+	};
+	maximum_combo: number;
+	play_count: number;
+	play_time: number;
+	pp: number;
+	global_rank: number;
+	ranked_score: number;
+	replays_watched_by_others: number;
+	total_hits: number;
+	total_score: number;
+	country_rank: number;
+};
+
+type OsuGameMode = "fruits" | "mania" | "osu" | "taiko";

@@ -15,7 +15,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "discord";
 
 export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getDiscordTokens = async (code: string) => {
+	const getDiscordTokens = async (code: string): Promise<DiscordTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -34,17 +34,6 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refreshToken: tokens.refresh_token,
 			accessTokenExpiresIn: tokens.expires_in
 		};
-	};
-
-	const getDiscordUser = async (accessToken: string) => {
-		// do not use oauth/users/@me because it ignores intents, use oauth/users/@me instead
-		const request = new Request("https://discord.com/api/users/@me", {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		const discordUser = await handleRequest<DiscordUser>(request);
-		return discordUser;
 	};
 
 	return {
@@ -75,6 +64,23 @@ export const discord = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getDiscordUser = async (accessToken: string): Promise<DiscordUser> => {
+	// do not use oauth/users/@me because it ignores intents, use oauth/users/@me instead
+	const request = new Request("https://discord.com/api/users/@me", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const discordUser = await handleRequest<DiscordUser>(request);
+	return discordUser;
+};
+
+type DiscordTokens = {
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type DiscordUser = {

@@ -15,7 +15,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "reddit";
 
 export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getRedditTokens = async (code: string) => {
+	const getRedditTokens = async (code: string): Promise<RedditTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 		}>(code, "https://www.reddit.com/api/v1/access_token", {
@@ -30,17 +30,6 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		return {
 			accessToken: tokens.access_token
 		};
-	};
-
-	const getRedditUser = async (accessToken: string) => {
-		const request = new Request("https://oauth.reddit.com/api/v1/me", {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		const redditUser = await handleRequest<RedditUser>(request);
-
-		return redditUser;
 	};
 
 	return {
@@ -73,6 +62,20 @@ export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getRedditUser = async (accessToken: string): Promise<RedditUser> => {
+	const request = new Request("https://oauth.reddit.com/api/v1/me", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const redditUser = await handleRequest<RedditUser>(request);
+	return redditUser;
+};
+
+type RedditTokens = {
+	accessToken: string;
 };
 
 export type RedditUser = {
