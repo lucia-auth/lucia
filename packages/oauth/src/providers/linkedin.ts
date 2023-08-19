@@ -3,7 +3,7 @@ import {
 	providerUserAuth,
 	validateOAuth2AuthorizationCode
 } from "../core.js";
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+import { handleRequest, authorizationHeader } from "../request.js";
 
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
@@ -40,32 +40,6 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		};
 	};
 
-	const getLinkedinUser = async (accessToken: string) => {
-		const linkedinUserProfile = await getProfile(accessToken);
-		const linkedinUser: LinkedinUser = {
-			id: linkedinUserProfile.sub,
-			firstName: linkedinUserProfile.given_name,
-			lastName: linkedinUserProfile.family_name,
-			email: linkedinUserProfile.email,
-			emailVerified: linkedinUserProfile.email_verified,
-			profilePicture: linkedinUserProfile.picture
-		};
-
-		return linkedinUser;
-	};
-
-	const getProfile = async (
-		accessToken: string
-	): Promise<LinkedinProfileResponse> => {
-		const request = new Request("https://api.linkedin.com/v2/userinfo", {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-
-		return handleRequest<LinkedinProfileResponse>(request);
-	};
-
 	return {
 		getAuthorizationUrl: async () => {
 			const scopeConfig = config.scope ?? [];
@@ -81,7 +55,7 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		validateCallback: async (code: string) => {
 			const linkedinTokens = await getLinkedinTokens(code);
 			const linkedinUser = await getLinkedinUser(linkedinTokens.accessToken);
-			const providerUserId = linkedinUser.id;
+			const providerUserId = linkedinUser.sub;
 			const linkedinUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
@@ -96,26 +70,26 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	} as const satisfies OAuthProvider;
 };
 
-type Locale = {
-	country: string;
-	language: string;
-}
-type LinkedinProfileResponse = {
+const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
+	const request = new Request("https://api.linkedin.com/v2/userinfo", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+
+	return handleRequest<LinkedinUser>(request);
+};
+
+type LinkedinUser = {
 	sub: string;
 	name: string;
 	email: string;
 	email_verified: boolean;
+	given_name: string;
 	family_name: string;
-	family_name: string;
-	locale: Locale,
-	picture: string | null;
-};
-
-export type LinkedinUser = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	emailVerified: boolean;
-	profilePicture: string;
+	locale: {
+		country: string;
+		language: string;
+	};
+	picture: string;
 };
