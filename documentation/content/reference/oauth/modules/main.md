@@ -93,7 +93,7 @@ const createOAuth2AuthorizationUrlWithPKCE: (
 
 **This API is experimental and is subject to breaking changes.**
 
-Decodes the OpenID Connect Id Token and returns the claims. **Does NOT validate the JWT**. Throws [`IdTokenError`](/reference/oauth/interfaces#idtokenerror) if provided id token is invalid or malformed.
+Decodes the OpenID Connect Id Token and returns the claims. **Does NOT validate the JWT**. Throws `SyntaxError` if provided id token is invalid or malformed.
 
 ```ts
 import { __experimental_decodeIdToken } from "@lucia-auth/oauth";
@@ -124,10 +124,6 @@ const decodeIdToken: <_Claims extends {}>(
 ##### Returns
 
 JWT payload.
-
-## `IdTokenError`
-
-See [`IdTokenError`](/reference/oauth/interfaces#idtokenerror).
 
 ## `OAuthRequestError`
 

@@ -1,3 +1,4 @@
+import { LuciaError } from "../auth/error.js";
 import scrypt from "../scrypt/index.js";
 import { generateRandomString } from "./nanoid.js";
 
@@ -29,6 +30,12 @@ export const validateScryptHash = async (
 	s: string,
 	hash: string
 ): Promise<boolean> => {
+	// detect bcrypt hash
+	// lucia used bcrypt in one of the beta versions
+	// TODO: remove in v3
+	if (hash.startsWith("$2a")) {
+		throw new LuciaError("AUTH_OUTDATED_PASSWORD");
+	}
 	const arr = hash.split(":");
 	if (arr.length === 2) {
 		const [salt, key] = arr;

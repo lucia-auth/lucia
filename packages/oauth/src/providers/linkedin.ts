@@ -15,7 +15,7 @@ type Config = OAuthConfig & {
 };
 
 export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getLinkedinTokens = async (code: string) => {
+	const getLinkedinTokens = async (code: string): Promise<LinkedInTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -72,11 +72,15 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
 	const request = new Request("https://api.linkedin.com/v2/userinfo", {
-		headers: {
-			Authorization: authorizationHeader("bearer", accessToken)
-		}
-	});
 	return handleRequest<LinkedinUser>(request);
+};
+
+type LinkedInTokens = {
+	accessToken: string;
+	accessTokenExpiresIn: number;
+	refreshToken: string;
+	refreshTokenExpiresIn: number;
+	scope: string;
 };
 
 type LinkedinUser = {

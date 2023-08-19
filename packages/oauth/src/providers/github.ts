@@ -10,61 +10,38 @@ import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 const PROVIDER_ID = "github";
 
-type Tokens =
-	| {
-			accessToken: string;
-			accessTokenExpiresIn: null;
-	  }
-	| {
-			accessToken: string;
-			accessTokenExpiresIn: number;
-			refreshToken: string;
-			refreshTokenExpiresIn: number;
-	  };
-
 type Config = OAuthConfig & {
 	redirectUri?: string;
 };
 
 export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getGithubTokens = async (code: string): Promise<Tokens> => {
-		type ResponseBody =
-			| {
-					access_token: string;
-			  }
-			| {
-					access_token: string;
-					refresh_token: string;
-					expires_in: number;
-					refresh_token_expires_in: number;
-			  };
-
-		const tokens = await validateOAuth2AuthorizationCode<ResponseBody>(
-			code,
-			"https://github.com/login/oauth/access_token",
-			{
-				clientId: config.clientId,
-				clientPassword: {
-					clientSecret: config.clientSecret,
-					authenticateWith: "client_secret"
+	const getGithubTokens = async (code: string): Promise<GithubTokens> => {
+		const tokens =
+			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
+				code,
+				"https://github.com/login/oauth/access_token",
+				{
+					clientId: config.clientId,
+					clientPassword: {
+						clientSecret: config.clientSecret,
+						authenticateWith: "client_secret"
+					}
 				}
-			}
-		);
+			);
+
+		if ("refresh_token" in tokens) {
+			return {
+				accessToken: tokens.access_token,
+				accessTokenExpiresIn: tokens.expires_in,
+				refreshToken: tokens.refresh_token,
+				refreshTokenExpiresIn: tokens.refresh_token_expires_in
+			};
+		}
 
 		return {
 			accessToken: tokens.access_token,
 			accessTokenExpiresIn: null
 		};
-	};
-
-	const getGithubUser = async (accessToken: string) => {
-		const request = new Request("https://api.github.com/user", {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		const githubUser = await handleRequest<GithubUser>(request);
-		return githubUser;
 	};
 
 	return {
@@ -95,6 +72,41 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		}
 	} as const satisfies OAuthProvider;
 };
+
+const getGithubUser = async (accessToken: string): Promise<GithubUser> => {
+	const request = new Request("https://api.github.com/user", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const githubUser = await handleRequest<GithubUser>(request);
+	return githubUser;
+};
+
+type AccessTokenResponseBody =
+	| {
+			access_token: string;
+	  }
+	| {
+			access_token: string;
+			refresh_token: string;
+			expires_in: number;
+			refresh_token_expires_in: number;
+	  };
+
+type GithubTokens =
+	| {
+			accessToken: string;
+			accessTokenExpiresIn: null;
+	  }
+	| {
+			accessToken: string;
+			accessTokenExpiresIn: number;
+			refreshToken: string;
+			refreshTokenExpiresIn: number;
+	  };
+
+export type GithubUser = PublicGithubUser | PrivateGithubUser;
 
 type PublicGithubUser = {
 	avatar_url: string;
@@ -150,5 +162,3 @@ type PrivateGithubUser = PublicGithubUser & {
 	business_plus?: boolean;
 	ldap_dn?: string;
 };
-
-export type GithubUser = PublicGithubUser | PrivateGithubUser;

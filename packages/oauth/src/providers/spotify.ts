@@ -16,7 +16,7 @@ type Config = OAuthConfig & {
 const PROVIDER_ID = "spotify";
 
 export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getSpotifyTokens = async (code: string) => {
+	const getSpotifyTokens = async (code: string): Promise<SpotifyTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			token_type: string;
@@ -39,16 +39,6 @@ export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in,
 			refreshToken: tokens.refresh_token
 		};
-	};
-
-	const getSpotifyUser = async (accessToken: string) => {
-		// https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
-		const request = new Request("https://api.spotify.com/v1/me", {
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
-		});
-		return handleRequest<SpotifyUser>(request);
 	};
 
 	return {
@@ -81,6 +71,24 @@ export const spotify = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			};
 		}
 	} as const satisfies OAuthProvider;
+};
+
+const getSpotifyUser = async (accessToken: string): Promise<SpotifyUser> => {
+	// https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
+	const request = new Request("https://api.spotify.com/v1/me", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	return handleRequest<SpotifyUser>(request);
+};
+
+type SpotifyTokens = {
+	accessToken: string;
+	tokenType: string;
+	scope: string;
+	accessTokenExpiresIn: number;
+	refreshToken: string;
 };
 
 export type SpotifyUser = {
