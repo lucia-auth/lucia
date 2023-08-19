@@ -19,7 +19,6 @@ export const twitter = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		code: string,
 		codeVerifier: string
 	): Promise<TwitterTokens> => {
-		const currTimeInSeconds = Math.floor(Date.now() / 1000);
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
@@ -35,7 +34,6 @@ export const twitter = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 		return {
 			accessToken: tokens.access_token,
-			accessTokenExpiresIn: currTimeInSeconds + 60 * 60 * 2 - 60, // 119 minutes
 			refreshToken: tokens.refresh_token ?? null
 		};
 	};
@@ -87,7 +85,6 @@ const getTwitterUser = async (accessToken: string): Promise<TwitterUser> => {
 
 type TwitterTokens = {
 	accessToken: string;
-	accessTokenExpiresIn: number;
 	refreshToken: string | null;
 };
 
