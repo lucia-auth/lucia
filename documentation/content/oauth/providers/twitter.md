@@ -113,8 +113,7 @@ type TwitterUserAuth = ProviderUserAuth & {
 ```ts
 type TwitterTokens = {
 	accessToken: string;
-	accessTokenExpiresIn: string;
-	refreshToken: string;
+	refreshToken: string | null;
 };
 ```
 
