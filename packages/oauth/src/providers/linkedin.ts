@@ -1,21 +1,58 @@
 import {
+	OAuth2Provider,
 	createOAuth2AuthorizationUrl,
-	providerUserAuth,
 	validateOAuth2AuthorizationCode
-} from "../core.js";
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader, createUrl } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 const PROVIDER_ID = "linkedin";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
 	redirectUri: string;
 };
 
-export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getLinkedinTokens = async (code: string): Promise<LinkedInTokens> => {
+export const linkedin = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+	return new LinkedinAuth(auth, config);
+};
+
+export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+	LinkedinUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async () => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			"https://www.linkedin.com/oauth/v2/authorization",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: ["r_liteprofile", ...scopeConfig]
+			}
+		);
+	};
+
+	public validateCallback = async (code: string) => {
+		const linkedinTokens = await this.validateAuthorizationCode(code);
+		const linkedinUser = await getLinkedinUser(linkedinTokens.accessToken);
+		return new LinkedinUserAuth(this.auth, linkedinUser, linkedinTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<LinkedinTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -23,10 +60,10 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			refresh_token_expires_in: number;
 			scope: string;
 		}>(code, "https://www.linkedin.com/oauth/v2/accessToken", {
-			clientId: config.clientId,
-			redirectUri: config.redirectUri,
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
 			clientPassword: {
-				clientSecret: config.clientSecret,
+				clientSecret: this.config.clientSecret,
 				authenticateWith: "client_secret"
 			}
 		});
@@ -39,36 +76,23 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			scope: tokens.scope
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			const scopeConfig = config.scope ?? [];
-			return await createOAuth2AuthorizationUrl(
-				"https://www.linkedin.com/oauth/v2/authorization",
-				{
-					clientId: config.clientId,
-					redirectUri: config.redirectUri,
-					scope: ["r_liteprofile", ...scopeConfig]
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const linkedinTokens = await getLinkedinTokens(code);
-			const linkedinUser = await getLinkedinUser(linkedinTokens.accessToken);
-			const providerUserId = linkedinUser.id;
-			const linkedinUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...linkedinUserAuth,
-				linkedinUser,
-				linkedinTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export class  LinkedinUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+	public linkedinTokens: LinkedinTokens;
+	public linkedinUser: LinkedinUser;
+
+	constructor(
+		auth: _Auth,
+		linkedinUser: LinkedinUser,
+		linkedinTokens: LinkedinTokens
+	) {
+		super(auth, PROVIDER_ID, linkedinUser.id);
+
+		this.linkedinTokens = linkedinTokens;
+		this.linkedinUser = linkedinUser;
+	}
+}
 
 const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
 	const linkedinUserProfile = await getProfile(accessToken);
@@ -94,14 +118,20 @@ const getProfile = async (
 		projection:
 			"(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))"
 	});
-
 	const request = new Request(requestUrl, {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
 	});
-
 	return handleRequest<LinkedinProfileResponse>(request);
+};
+
+export type LinkedinTokens = {
+	accessToken: string;
+	accessTokenExpiresIn: number;
+	refreshToken: string;
+	refreshTokenExpiresIn: number;
+	scope: string;
 };
 
 type LinkedinProfileResponse = {
@@ -117,14 +147,6 @@ type LinkedinProfileResponse = {
 			}>;
 		};
 	};
-};
-
-type LinkedInTokens = {
-	accessToken: string;
-	accessTokenExpiresIn: number;
-	refreshToken: string;
-	refreshTokenExpiresIn: number;
-	scope: string;
 };
 
 export type LinkedinUser = {

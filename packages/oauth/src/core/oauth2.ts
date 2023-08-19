@@ -1,94 +1,48 @@
-import { createUrl, handleRequest } from "./request.js";
-import {
-	encodeBase64,
-	generateState,
-	generatePKCECodeChallenge,
-	decodeBase64Url
-} from "./utils.js";
+import { createUrl, handleRequest } from "../utils/request.js";
+import { encodeBase64, encodeBase64Url } from "../utils/encode.js";
 import { generateRandomString } from "lucia/utils";
 
-import type { Auth, Key, LuciaError } from "lucia";
-import type { LuciaDatabaseUserAttributes, LuciaUser } from "./lucia.js";
+import type { Auth } from "lucia";
+import type { ProviderUserAuth } from "./provider.js";
 
-export type OAuthConfig = {
-	clientId: string;
-	clientSecret: string;
-	scope?: string[];
-};
+export abstract class OAuth2Provider<
+	_ProviderUserAuth extends ProviderUserAuth<Auth> = ProviderUserAuth<Auth>,
+	_Auth = _ProviderUserAuth extends ProviderUserAuth<infer _Auth>
+		? _Auth
+		: never
+> {
+	protected auth: _Auth;
 
-export type OAuthProvider<_Auth extends Auth = Auth> = {
-	validateCallback: (
-		code: string,
-		...args: any[]
-	) => Promise<ProviderUserAuth<_Auth>>;
-	getAuthorizationUrl: (
-		redirectUri?: string
-	) => Promise<readonly [URL, ...any[]]>;
-};
-
-export class OAuthRequestError extends Error {
-	public request: Request;
-	public response: Response;
-	public message = "OAUTH_REQUEST_FAILED" as const;
-	constructor(request: Request, response: Response) {
-		super("OAUTH_REQUEST_FAILED");
-		this.request = request;
-		this.response = response;
+	constructor(auth: _Auth) {
+		this.auth = auth;
 	}
+
+	abstract validateCallback: (code: string) => Promise<_ProviderUserAuth>;
+	abstract getAuthorizationUrl: () => Promise<
+		readonly [url: URL, state: string | null]
+	>;
 }
 
-type ProviderUserAuth<_Auth extends Auth> = {
-	existingUser: LuciaUser<_Auth> | null;
-	createKey: (userId: string) => Promise<Key>;
-	createUser: (options: {
-		userId?: string;
-		attributes: LuciaDatabaseUserAttributes<_Auth>;
-	}) => Promise<LuciaUser<_Auth>>;
-};
+export abstract class OAuth2ProviderWithPKCE<
+	_ProviderUserAuth extends ProviderUserAuth<Auth> = ProviderUserAuth<Auth>,
+	_Auth = _ProviderUserAuth extends ProviderUserAuth<infer _Auth>
+		? _Auth
+		: never
+> {
+	protected auth: _Auth;
 
-export const providerUserAuth = async <_Auth extends Auth>(
-	auth: _Auth,
-	providerId: string,
-	providerUserId: string
-): Promise<ProviderUserAuth<_Auth>> => {
-	const getExistingUser = async () => {
-		try {
-			const key = await auth.useKey(providerId, providerUserId, null);
-			const user = await auth.getUser(key.userId);
-			return user as LuciaUser<_Auth>;
-		} catch (e) {
-			const error = e as Partial<LuciaError>;
-			if (error?.message !== "AUTH_INVALID_KEY_ID") throw e;
-			return null;
-		}
-	};
-	const existingUser = await getExistingUser();
-	return {
-		existingUser,
-		createKey: async (userId: string) => {
-			return await auth.createKey({
-				userId,
-				providerId: providerId,
-				providerUserId,
-				password: null
-			});
-		},
-		createUser: async (options: {
-			userId?: string;
-			attributes: LuciaDatabaseUserAttributes<_Auth>;
-		}): Promise<LuciaUser<_Auth>> => {
-			const user = await auth.createUser({
-				key: {
-					providerId: providerId,
-					providerUserId,
-					password: null
-				},
-				...options
-			});
-			return user as LuciaUser<_Auth>;
-		}
-	} as const;
-};
+	constructor(auth: _Auth) {
+		this.auth = auth;
+	}
+
+	abstract validateCallback: (
+		code: string,
+		codeVerifier: string
+	) => Promise<_ProviderUserAuth>;
+	abstract getAuthorizationUrl: () => Promise<
+		readonly [url: URL, codeVerifier: string, state: string | null]
+	>;
+}
 
 export const createOAuth2AuthorizationUrl = async (
 	url: string | URL,
@@ -197,29 +151,22 @@ export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
 	});
 	return await handleRequest<_ResponseBody>(request);
 };
+export const generateState = () => {
+	return generateRandomString(43);
+};
 
-const decoder = new TextDecoder();
-
-// does not verify id tokens
-export const decodeIdToken = <_Claims extends {}>(
-	idToken: string
-): {
-	iss: string;
-	aud: string;
-	exp: number;
-} & _Claims => {
-	const idTokenParts = idToken.split(".");
-	if (idTokenParts.length !== 3) throw new SyntaxError("Invalid ID Token");
-	const base64UrlPayload = idTokenParts[1];
-	const payload: unknown = JSON.parse(
-		decoder.decode(decodeBase64Url(base64UrlPayload))
-	);
-	if (!payload || typeof payload !== "object") {
-		throw new SyntaxError("Invalid ID Token");
+// Generates code_challenge from code_verifier, as specified in RFC 7636.
+export const generatePKCECodeChallenge = async (
+	method: "S256",
+	verifier: string
+) => {
+	if (method === "S256") {
+		const verifierBuffer = new TextEncoder().encode(verifier);
+		const challengeBuffer = await crypto.subtle.digest(
+			"SHA-256",
+			verifierBuffer
+		);
+		return encodeBase64Url(challengeBuffer);
 	}
-	return payload as {
-		iss: string;
-		aud: string;
-		exp: number;
-	} & _Claims;
+	throw new TypeError("Invalid PKCE code challenge method");
 };

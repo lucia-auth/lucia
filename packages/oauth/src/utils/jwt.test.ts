@@ -2,7 +2,7 @@ import { importPKCS8 } from "jose";
 import { test, expect } from "vitest";
 import { SignJWT, jwtVerify } from "jose";
 import { createES256SignedJWT } from "./jwt.js";
-import { getPKCS8Key } from "./utils.js";
+import { getPKCS8Key } from "../utils/crypto.js";
 
 test("createES256SignedJWT()", async () => {
 	const keyId = "KEY_ID";
