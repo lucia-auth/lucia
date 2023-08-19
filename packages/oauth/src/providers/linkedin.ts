@@ -72,6 +72,10 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 
 const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
 	const request = new Request("https://api.linkedin.com/v2/userinfo", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
 	return handleRequest<LinkedinUser>(request);
 };
 
