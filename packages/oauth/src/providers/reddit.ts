@@ -17,7 +17,10 @@ type Config = {
 
 const PROVIDER_ID = "reddit";
 
-export const reddit = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const reddit = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): RedditAuth<_Auth> => {
 	return new RedditAuth(auth, config);
 };
 
@@ -32,7 +35,9 @@ export class RedditAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		return await createOAuth2AuthorizationUrl(
 			"https://www.reddit.com/api/v1/authorize",
 			{
@@ -46,7 +51,9 @@ export class RedditAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		);
 	};
 
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<RedditUserAuth<_Auth>> => {
 		const redditTokens = await this.validateAuthorizationCode(code);
 		const redditUser = await getRedditUser(redditTokens.accessToken);
 		return new RedditUserAuth(this.auth, redditUser, redditTokens);
@@ -72,7 +79,9 @@ export class RedditAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class  RedditUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class RedditUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public redditTokens: RedditTokens;
 	public redditUser: RedditUser;
 

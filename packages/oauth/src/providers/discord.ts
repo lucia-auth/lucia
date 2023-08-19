@@ -17,7 +17,10 @@ type Config = {
 
 const PROVIDER_ID = "discord";
 
-export const discord = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const discord = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): DiscordAuth<_Auth> => {
 	return new DiscordAuth(auth, config);
 };
 
@@ -32,7 +35,9 @@ export class DiscordAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
 			"https://discord.com/oauth2/authorize",
@@ -43,7 +48,9 @@ export class DiscordAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 			}
 		);
 	};
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<DiscordUserAuth<_Auth>> => {
 		const discordTokens = await this.validateAuthorizationCode(code);
 		const discordUser = await getDiscordUser(discordTokens.accessToken);
 		return new DiscordUserAuth(this.auth, discordUser, discordTokens);
@@ -73,7 +80,9 @@ export class DiscordAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class DiscordUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class DiscordUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public discordTokens: DiscordTokens;
 	public discordUser: DiscordUser;
 

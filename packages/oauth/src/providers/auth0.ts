@@ -22,7 +22,10 @@ type Config = {
 	loginHint?: string;
 };
 
-export const auth0 = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const auth0 = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): Auth0Auth<_Auth> => {
 	return new Auth0Auth(auth, config);
 };
 
@@ -36,7 +39,9 @@ export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
 			new URL("/authorize", this.config.appDomain),
@@ -53,7 +58,9 @@ export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2Provider<
 			}
 		);
 	};
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<Auth0UserAuth<_Auth>> => {
 		const auth0Tokens = await this.validateAuthorizationCode(code);
 		const auth0User = await getAuth0User(
 			this.config.appDomain,
@@ -88,7 +95,9 @@ export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class Auth0UserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class Auth0UserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public auth0Tokens: Auth0Tokens;
 	public auth0User: Auth0User;
 

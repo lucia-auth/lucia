@@ -4,7 +4,11 @@ import {
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
-import { handleRequest, authorizationHeader, createUrl } from "../utils/request.js";
+import {
+	handleRequest,
+	authorizationHeader,
+	createUrl
+} from "../utils/request.js";
 
 import type { Auth } from "lucia";
 
@@ -17,7 +21,10 @@ type Config = {
 	redirectUri: string;
 };
 
-export const linkedin = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const linkedin = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): LinkedinAuth<_Auth> => {
 	return new LinkedinAuth(auth, config);
 };
 
@@ -32,7 +39,9 @@ export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
 			"https://www.linkedin.com/oauth/v2/authorization",
@@ -44,7 +53,9 @@ export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		);
 	};
 
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<LinkedinUserAuth<_Auth>> => {
 		const linkedinTokens = await this.validateAuthorizationCode(code);
 		const linkedinUser = await getLinkedinUser(linkedinTokens.accessToken);
 		return new LinkedinUserAuth(this.auth, linkedinUser, linkedinTokens);
@@ -78,7 +89,9 @@ export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class  LinkedinUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class LinkedinUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public linkedinTokens: LinkedinTokens;
 	public linkedinUser: LinkedinUser;
 

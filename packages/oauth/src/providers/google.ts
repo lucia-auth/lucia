@@ -35,7 +35,9 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 
 		this.config = config;
 	}
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
 			"https://accounts.google.com/o/oauth2/v2/auth",
@@ -52,10 +54,11 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 			}
 		);
 	};
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<GoogleUserAuth<_Auth>> => {
 		const googleTokens = await this.validateAuthorizationCode(code);
 		const googleUser = await getGoogleUser(googleTokens.accessToken);
-		const providerUserId = googleUser.sub;
 		return new GoogleUserAuth(this.auth, googleUser, googleTokens);
 	};
 
@@ -83,7 +86,9 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class GoogleUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class GoogleUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public googleTokens: GoogleTokens;
 	public googleUser: GoogleUser;
 

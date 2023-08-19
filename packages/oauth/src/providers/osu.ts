@@ -9,28 +9,35 @@ import { handleRequest, authorizationHeader } from "../utils/request.js";
 import type { Auth } from "lucia";
 
 type Config = {
-	clientId: string
-	clientSecret: string
-	scope?: string[]
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
 	redirectUri: string;
 };
 
 const PROVIDER_ID = "osu";
 
-export const osu = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
-	return new OsuAuth(auth, config)
+export const osu = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): OsuAuth<_Auth> => {
+	return new OsuAuth(auth, config);
 };
 
-export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2Provider<OsuUserAuth<_Auth>> {
-	private config: Config
+export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+	OsuUserAuth<_Auth>
+> {
+	private config: Config;
 
 	constructor(auth: _Auth, config: Config) {
-		super(auth)
+		super(auth);
 
-		this.config = config
+		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
 			"https://osu.ppy.sh/oauth/authorize",
@@ -40,15 +47,19 @@ export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2Provider<OsuUserAu
 				redirectUri: this.config.redirectUri
 			}
 		);
-	}
+	};
 
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<OsuUserAuth<_Auth>> => {
 		const osuTokens = await this.validateAuthorizationCode(code);
 		const osuUser = await getOsuUser(osuTokens.accessToken);
-		return new OsuUserAuth(this.auth, osuUser, osuTokens)
-	}
+		return new OsuUserAuth(this.auth, osuUser, osuTokens);
+	};
 
-	private validateAuthorizationCode = async (code: string): Promise<OsuTokens> => {
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<OsuTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -71,15 +82,17 @@ export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2Provider<OsuUserAu
 	};
 }
 
-export class  OsuUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
-	public osuTokens: OsuTokens
-	public osuUser: OsuUser
+export class OsuUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public osuTokens: OsuTokens;
+	public osuUser: OsuUser;
 
 	constructor(auth: _Auth, osuUser: OsuUser, osuTokens: OsuTokens) {
-		super(auth, PROVIDER_ID, osuUser.id.toString())
+		super(auth, PROVIDER_ID, osuUser.id.toString());
 
-		this.osuTokens = osuTokens
-		this.osuUser = osuUser
+		this.osuTokens = osuTokens;
+		this.osuUser = osuUser;
 	}
 }
 

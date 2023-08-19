@@ -17,13 +17,16 @@ type Config = {
 
 const PROVIDER_ID = "twitter";
 
-export const twitter = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const twitter = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): TwitterAuth<_Auth> => {
 	return new TwitterAuth(auth, config);
 };
 
-export class TwitterAuth<_Auth extends Auth = Auth> extends OAuth2ProviderWithPKCE<
-	TwitterUserAuth<_Auth>
-> {
+export class TwitterAuth<
+	_Auth extends Auth = Auth
+> extends OAuth2ProviderWithPKCE<TwitterUserAuth<_Auth>> {
 	private config: Config;
 
 	constructor(auth: _Auth, config: Config) {
@@ -31,7 +34,9 @@ export class TwitterAuth<_Auth extends Auth = Auth> extends OAuth2ProviderWithPK
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, codeVerifier: string, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		const [url, state, codeVerifier] =
 			await createOAuth2AuthorizationUrlWithPKCE(
@@ -45,7 +50,10 @@ export class TwitterAuth<_Auth extends Auth = Auth> extends OAuth2ProviderWithPK
 			);
 		return [url, codeVerifier, state] as const;
 	};
-	public validateCallback = async (code: string, code_verifier: string) => {
+	public validateCallback = async (
+		code: string,
+		code_verifier: string
+	): Promise<TwitterUserAuth<_Auth>> => {
 		const twitterTokens = await this.validateAuthorizationCode(
 			code,
 			code_verifier
@@ -78,7 +86,9 @@ export class TwitterAuth<_Auth extends Auth = Auth> extends OAuth2ProviderWithPK
 	};
 }
 
-export class  TwitterUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class TwitterUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public twitterTokens: TwitterTokens;
 	public twitterUser: TwitterUser;
 

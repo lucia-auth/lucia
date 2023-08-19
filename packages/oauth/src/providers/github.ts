@@ -17,7 +17,10 @@ type Config = {
 
 const PROVIDER_ID = "github";
 
-export const github = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const github = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): GithubAuth<_Auth> => {
 	return new GithubAuth(auth, config);
 };
 

@@ -19,7 +19,7 @@ const PROVIDER_ID = "lichess";
 export const lichess = <_Auth extends Auth = Auth>(
 	auth: _Auth,
 	config: Config
-) => {
+): LichessAuth<_Auth> => {
 	return new LichessAuth(auth, config);
 };
 
@@ -34,7 +34,9 @@ export class LichessAuth<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, codeVerifier: string, state: string]
+	> => {
 		return await createOAuth2AuthorizationUrlWithPKCE(
 			"https://lichess.org/oauth",
 			{
@@ -46,7 +48,10 @@ export class LichessAuth<
 		);
 	};
 
-	public validateCallback = async (code: string, code_verifier: string) => {
+	public validateCallback = async (
+		code: string,
+		code_verifier: string
+	): Promise<LichessUserAuth<_Auth>> => {
 		const lichessTokens = await this.validateAuthorizationCode(
 			code,
 			code_verifier

@@ -22,7 +22,10 @@ type Config = {
 
 const PROVIDER_ID = "patreon";
 
-export const patreon = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const patreon = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): PatreonAuth<_Auth> => {
 	return new PatreonAuth(auth, config);
 };
 
@@ -37,7 +40,9 @@ export class PatreonAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
 			"https://www.patreon.com/oauth2/authorize",
@@ -49,7 +54,9 @@ export class PatreonAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		);
 	};
 
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<PatreonUserAuth<_Auth>> => {
 		const patreonTokens = await this.validateAuthorizationCode(code);
 		const patreonUser = await getPatreonUser(patreonTokens.accessToken);
 		return new PatreonUserAuth(this.auth, patreonUser, patreonTokens);
@@ -79,7 +86,9 @@ export class PatreonAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class  PatreonUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class PatreonUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public patreonTokens: PatreonTokens;
 	public patreonUser: PatreonUser;
 

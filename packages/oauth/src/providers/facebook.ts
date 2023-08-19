@@ -21,7 +21,10 @@ type Config = {
 
 const PROVIDER_ID = "facebook";
 
-export const facebook = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const facebook = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): FacebookAuth<_Auth> => {
 	return new FacebookAuth(auth, config);
 };
 
@@ -36,7 +39,9 @@ export class FacebookAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		return await createOAuth2AuthorizationUrl(
 			"https://www.facebook.com/v16.0/dialog/oauth",
 			{
@@ -47,7 +52,9 @@ export class FacebookAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		);
 	};
 
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<FacebookUserAuth<_Auth>> => {
 		const facebookTokens = await this.validateAuthorizationCode(code);
 		const facebookUser = await getFacebookUser(facebookTokens.accessToken);
 		return new FacebookUserAuth(this.auth, facebookUser, facebookTokens);
@@ -77,7 +84,9 @@ export class FacebookAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class FacebookUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class FacebookUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public facebookTokens: FacebookTokens;
 	public facebookUser: FacebookUser;
 

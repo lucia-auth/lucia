@@ -21,7 +21,10 @@ type Config = {
 const PROVIDER_ID = "apple";
 const APPLE_AUD = "https://appleid.apple.com";
 
-export const apple = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const apple = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): AppleAuth<_Auth> => {
 	return new AppleAuth(auth, config);
 };
 
@@ -35,7 +38,9 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		return await createOAuth2AuthorizationUrl(
 			"https://appleid.apple.com/auth/authorize",
 			{
@@ -48,7 +53,9 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 			}
 		);
 	};
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<AppleUserAuth<_Auth>> => {
 		const appleTokens = await this.validateAuthorizationCode(code);
 		const appleUser = getAppleUser(appleTokens.idToken);
 		return new AppleUserAuth(this.auth, appleUser, appleTokens);
@@ -87,7 +94,9 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class AppleUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class AppleUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public appleTokens: AppleTokens;
 	public appleUser: AppleUser;
 

@@ -18,7 +18,10 @@ type Config = {
 
 const PROVIDER_ID = "spotify";
 
-export const spotify = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
+export const spotify = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): SpotifyAuth<_Auth> => {
 	return new SpotifyAuth(auth, config);
 };
 
@@ -33,7 +36,9 @@ export class SpotifyAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		return await createOAuth2AuthorizationUrl(
 			"https://accounts.spotify.com/authorize",
 			{
@@ -46,7 +51,9 @@ export class SpotifyAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 			}
 		);
 	};
-	public validateCallback = async (code: string) => {
+	public validateCallback = async (
+		code: string
+	): Promise<SpotifyUserAuth<_Auth>> => {
 		const spotifyTokens = await this.validateAuthorizationCode(code);
 		const spotifyUser = await getSpotifyUser(spotifyTokens.accessToken);
 		return new SpotifyUserAuth(this.auth, spotifyUser, spotifyTokens);
@@ -80,7 +87,9 @@ export class SpotifyAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
 	};
 }
 
-export class  SpotifyUserAuth<_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
+export class SpotifyUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
 	public spotifyTokens: SpotifyTokens;
 	public spotifyUser: SpotifyUser;
 

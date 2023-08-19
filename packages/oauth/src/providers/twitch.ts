@@ -9,29 +9,36 @@ import { handleRequest, authorizationHeader } from "../utils/request.js";
 import type { Auth } from "lucia";
 
 type Config = {
-	clientId: string
-	clientSecret: string
-	scope?: string[]
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
 	redirectUri: string;
 	forceVerify?: boolean;
 };
 
 const PROVIDER_ID = "twitch";
 
-export const twitch = <_Auth extends Auth = Auth>(auth: _Auth, config: Config) => {
-	return new TwitchAuth(auth, config)
+export const twitch = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): TwitchAuth<_Auth> => {
+	return new TwitchAuth(auth, config);
 };
 
-export class TwitchAuth <_Auth extends Auth = Auth> extends OAuth2Provider<TwitchUserAuth<_Auth>> {
-	private config: Config
+export class TwitchAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+	TwitchUserAuth<_Auth>
+> {
+	private config: Config;
 
 	constructor(auth: _Auth, config: Config) {
-		super(auth)
-		
-		this.config = config
+		super(auth);
+
+		this.config = config;
 	}
 
-	public getAuthorizationUrl = async () => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const forceVerify = this.config.forceVerify ?? false;
 		return await createOAuth2AuthorizationUrl(
 			"https://id.twitch.tv/oauth2/authorize",
@@ -44,18 +51,22 @@ export class TwitchAuth <_Auth extends Auth = Auth> extends OAuth2Provider<Twitc
 				}
 			}
 		);
-	}
-	
-	public validateCallback = async (code: string) => {
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<TwitchUserAuth<_Auth>> => {
 		const twitchTokens = await this.validateAuthorizationCode(code);
 		const twitchUser = await getTwitchUser(
 			this.config.clientId,
 			twitchTokens.accessToken
 		);
-		return new TwitchUserAuth(this.auth, twitchUser, twitchTokens)
-	}
+		return new TwitchUserAuth(this.auth, twitchUser, twitchTokens);
+	};
 
-	private validateAuthorizationCode = async (code: string): Promise<TwitchTokens> => {
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<TwitchTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token: string;
@@ -74,18 +85,20 @@ export class TwitchAuth <_Auth extends Auth = Auth> extends OAuth2Provider<Twitc
 			refreshToken: tokens.refresh_token,
 			accessTokenExpiresIn: tokens.expires_in
 		};
-	}
+	};
 }
 
-export class  TwitchUserAuth <_Auth extends Auth = Auth> extends ProviderUserAuth<_Auth> {
-	public twitchTokens: TwitchTokens
-	public twitchUser: TwitchUser
+export class TwitchUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public twitchTokens: TwitchTokens;
+	public twitchUser: TwitchUser;
 
-	constructor (auth: _Auth, twitchUser: TwitchUser, twitchTokens: TwitchTokens) {
-		super(auth, PROVIDER_ID, twitchUser.id)
+	constructor(auth: _Auth, twitchUser: TwitchUser, twitchTokens: TwitchTokens) {
+		super(auth, PROVIDER_ID, twitchUser.id);
 
-		this.twitchTokens = twitchTokens
-		this.twitchUser = twitchUser
+		this.twitchTokens = twitchTokens;
+		this.twitchUser = twitchUser;
 	}
 }
 
