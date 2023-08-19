@@ -76,7 +76,6 @@ const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
 	});
-
 	return handleRequest<LinkedinUser>(request);
 };
 

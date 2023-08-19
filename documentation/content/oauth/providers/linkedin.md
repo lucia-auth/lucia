@@ -122,9 +122,16 @@ type LinkedinTokens = {
 
 ```ts
 type LinkedinUser = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	profilePicture?: string;
+	sub: string;
+	name: string;
+	email: string;
+	email_verified: boolean;
+	given_name: string;
+	family_name: string;
+	locale: {
+		country: string;
+		language: string;
+	};
+	picture: string;
 };
 ```
