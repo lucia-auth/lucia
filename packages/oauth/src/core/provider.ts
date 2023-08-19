@@ -27,6 +27,7 @@ export class ProviderUserAuth<_Auth extends Auth = Auth> {
 			return null;
 		}
 	};
+
 	public createKey = async (userId: string): Promise<Key> => {
 		return await this.auth.createKey({
 			userId,
@@ -35,6 +36,7 @@ export class ProviderUserAuth<_Auth extends Auth = Auth> {
 			password: null
 		});
 	};
+
 	public createUser = async (options: {
 		userId?: string;
 		attributes: LuciaDatabaseUserAttributes<_Auth>;
