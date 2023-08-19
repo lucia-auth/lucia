@@ -71,6 +71,8 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2002" && error.message?.includes("`id`"))
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					if (error.code === "P2002")
+						throw new LuciaError("AUTH_UNIQUE_CONSTRAINT_VIOLATION");
 					throw error;
 				}
 			},
@@ -206,6 +208,9 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					}
 					if (error.code === "P2002" && error.message?.includes("`id`")) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					}
+					if (error.code === "P2002") {
+						throw new LuciaError("AUTH_UNIQUE_CONSTRAINT_VIOLATION");
 					}
 					throw error;
 				}
