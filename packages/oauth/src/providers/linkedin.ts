@@ -79,7 +79,7 @@ const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
 	return handleRequest<LinkedinUser>(request);
 };
 
-export type LinkedinTokens = {
+type LinkedinTokens = {
 	accessToken: string;
 	accessTokenExpiresIn: number;
 	refreshToken: string;
@@ -87,7 +87,7 @@ export type LinkedinTokens = {
 	scope: string;
 };
 
-type LinkedinUser = {
+export type LinkedinUser = {
 	sub: string;
 	name: string;
 	email: string;
