@@ -4,11 +4,7 @@ import {
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
-import {
-	handleRequest,
-	authorizationHeader,
-	createUrl
-} from "../utils/request.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
 
@@ -48,7 +44,7 @@ export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: ["r_liteprofile", ...scopeConfig]
+				scope: ["profile", ...scopeConfig]
 			}
 		);
 	};
@@ -100,7 +96,7 @@ export class LinkedinUserAuth<
 		linkedinUser: LinkedinUser,
 		linkedinTokens: LinkedinTokens
 	) {
-		super(auth, PROVIDER_ID, linkedinUser.id);
+		super(auth, PROVIDER_ID, linkedinUser.sub);
 
 		this.linkedinTokens = linkedinTokens;
 		this.linkedinUser = linkedinUser;
@@ -108,38 +104,15 @@ export class LinkedinUserAuth<
 }
 
 const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
-	const linkedinUserProfile = await getProfile(accessToken);
-	const displayImageElement = linkedinUserProfile.profilePicture[
-		"displayImage~"
-	]?.elements
-		?.slice(-1)
-		?.pop();
-	const linkedinUser: LinkedinUser = {
-		id: linkedinUserProfile.id,
-		firstName: linkedinUserProfile.localizedFirstName,
-		lastName: linkedinUserProfile.localizedLastName,
-		profilePicture: displayImageElement?.identifiers?.pop()?.identifier
-	};
-
-	return linkedinUser;
-};
-
-const getProfile = async (
-	accessToken: string
-): Promise<LinkedinProfileResponse> => {
-	const requestUrl = createUrl("https://api.linkedin.com/v2/me", {
-		projection:
-			"(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))"
-	});
-	const request = new Request(requestUrl, {
+	const request = new Request("https://api.linkedin.com/v2/userinfo", {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
 	});
-	return handleRequest<LinkedinProfileResponse>(request);
+	return handleRequest<LinkedinUser>(request);
 };
 
-export type LinkedinTokens = {
+type LinkedinTokens = {
 	accessToken: string;
 	accessTokenExpiresIn: number;
 	refreshToken: string;
@@ -147,24 +120,16 @@ export type LinkedinTokens = {
 	scope: string;
 };
 
-type LinkedinProfileResponse = {
-	id: string;
-	localizedFirstName: string;
-	localizedLastName: string;
-	profilePicture: {
-		"displayImage~"?: {
-			elements?: Array<{
-				identifiers?: Array<{
-					identifier?: string;
-				}>;
-			}>;
-		};
+type LinkedinUser = {
+	sub: string;
+	name: string;
+	email: string;
+	email_verified: boolean;
+	given_name: string;
+	family_name: string;
+	locale: {
+		country: string;
+		language: string;
 	};
-};
-
-export type LinkedinUser = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	profilePicture?: string;
+	picture: string;
 };
