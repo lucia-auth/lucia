@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -25,7 +25,7 @@ export const spotify = <_Auth extends Auth = Auth>(
 	return new SpotifyAuth(auth, config);
 };
 
-export class SpotifyAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class SpotifyAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	SpotifyUserAuth<_Auth>
 > {
 	private config: Config;

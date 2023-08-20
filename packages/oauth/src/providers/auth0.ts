@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -29,7 +29,7 @@ export const auth0 = <_Auth extends Auth = Auth>(
 	return new Auth0Auth(auth, config);
 };
 
-export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	Auth0UserAuth<_Auth>
 > {
 	private config: Config;

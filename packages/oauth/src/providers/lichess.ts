@@ -1,5 +1,5 @@
 import {
-	OAuth2ProviderWithPKCE,
+	OAuth2ProviderAuthWithPKCE,
 	createOAuth2AuthorizationUrlWithPKCE,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -25,7 +25,7 @@ export const lichess = <_Auth extends Auth = Auth>(
 
 export class LichessAuth<
 	_Auth extends Auth = Auth
-> extends OAuth2ProviderWithPKCE<LichessUserAuth<_Auth>> {
+> extends OAuth2ProviderAuthWithPKCE<LichessUserAuth<_Auth>> {
 	private config: Config;
 
 	constructor(auth: _Auth, config: Config) {

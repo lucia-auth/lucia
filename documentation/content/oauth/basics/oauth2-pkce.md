@@ -3,11 +3,13 @@ title: "OAuth 2.0 with PKCE"
 description: "Learn how to implement OAuth 2.0 with PKCE"
 ---
 
-For OAuth 2.0 providers without PKCE, see [OAuth 2.0](). This page will use Twitter OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
+This page covers OAuth 2.0 authorization code grant type. For OAuth 2.0 providers with PKCE, see [OAuth 2.0 with PKCE](/oauth/baiscs/oauth2).
+
+Examples shown here  uses Twitter OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
 
 ## Built-in providers
 
-Initialize the handler using the Lucia `Auth` instance and provider-specific config. This creates a new [`OAuth2ProviderWithPKCE`]() extended instance (e.g. `TwitterProvider`).
+Initialize the handler using the Lucia `Auth` instance and provider-specific config. This creates a new [`OAuth2ProviderAuthWithPKCE`](/reference/oauth/interfaces/oauth2providerauthwithpkce) extended instance (e.g. `TwitterAuth`).
 
 ```ts
 import { lucia } from "lucia";
@@ -74,7 +76,7 @@ try {
 
 ## OAuth helpers
 
-If your provider isn't support by the integration, you can use the included OAuth helpers. The basic process is basically the same except for `OAuth2Provider.getAuthorizationUrl()` and `OAuth2Provider.validateCallback()`.
+If your provider isn't support by the integration, you can use the included OAuth helpers. The basic process is basically the same except for `OAuth2ProviderAuth.getAuthorizationUrl()` and `OAuth2ProviderAuth.validateCallback()`.
 
 ## Create authorization URL
 

@@ -1,6 +1,5 @@
 ---
-title: "Auth"
-format: "code"
+title: "`Auth`"
 ---
 
 ## `createKey()`

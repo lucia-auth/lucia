@@ -3,7 +3,7 @@ title: "Handle users with Lucia"
 description: "Learn how to use the built-in OAuth 2.0 providers"
 ---
 
-After authenticating the user with OAuth, you can get an existing or create a new Lucia user using [`ProviderUserAuth`](). If you're using one of the built in providers, [`OAuth2Provider.validateCallback()`]() and [`OAuth2ProviderWithPKCE.validateCallback()`]() will return a provider-extended instance of it.
+After authenticating the user with OAuth, you can get an existing or create a new Lucia user using [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth). If you're using one of the built in providers, [`OAuth2ProviderAuth.validateCallback()`](reference/oauth/interfaces/oauth2providerauth#validatecallback) and [`OAuth2ProviderAuthWithPKCE.validateCallback()`](reference/oauth/interfaces/oauth2providerauthwithpkce#validatecallback) will return a provider-extended instance of it.
 
 ```ts
 import { github } from "@lucia-auth/oauth/providers";
@@ -12,7 +12,7 @@ const githubAuth = github();
 const githubUserAuth = githubAuth.validateCallback();
 ```
 
-Alternatively, if you're using one of the OAuth helpers, you can use [`providerUserAuth()`]() to manually create a new instance of it. It takes your Lucia `Auth` instance, the provider id (e.g. `"github"`), and the provider user id (e.g. Github user id).
+Alternatively, if you're using one of the OAuth helpers, you can use [`providerUserAuth()`](/reference/oauth/modules/main#provideruserauth) to manually create a new instance of it. It takes your Lucia `Auth` instance, the provider id (e.g. `"github"`), and the provider user id (e.g. Github user id).
 
 ```ts
 const githubUserAuth = providerUserAuth(auth, "github", githubUserId);
@@ -61,7 +61,7 @@ See [OAuth account linking](/guidebook/oauth-account-linking) guide for details.
 
 ## Extension
 
-If you're using one of the built in providers, `OAuth2Provider.validateCallback()` and `OAuth2ProviderWithPKCE.validateCallback()` will return a provider-extended instance of `ProviderUserAuth`. This means in addition to the methods of `ProviderUserAuth`, it includes a few other properties and methods. While this isn't strictly standardized, all providers include the provider user (e.g. github user) and an access token (refresh token if available).
+If you're using one of the built in providers, `OAuth2ProviderAuth.validateCallback()` and `OAuth2ProviderAuthWithPKCE.validateCallback()` will return a provider-extended instance of `ProviderUserAuth`. This means in addition to the methods of `ProviderUserAuth`, it includes a few other properties and methods. While this isn't strictly standardized, all providers include the provider user (e.g. github user) and an access token (refresh token if available).
 
 ### Get provider user
 

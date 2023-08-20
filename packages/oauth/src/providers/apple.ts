@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -28,7 +28,7 @@ export const apple = <_Auth extends Auth = Auth>(
 	return new AppleAuth(auth, config);
 };
 
-export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	AppleUserAuth<_Auth>
 > {
 	private config: Config;

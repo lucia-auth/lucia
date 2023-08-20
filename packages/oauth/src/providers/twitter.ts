@@ -1,5 +1,5 @@
 import {
-	OAuth2ProviderWithPKCE,
+	OAuth2ProviderAuthWithPKCE,
 	createOAuth2AuthorizationUrlWithPKCE,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -26,7 +26,7 @@ export const twitter = <_Auth extends Auth = Auth>(
 
 export class TwitterAuth<
 	_Auth extends Auth = Auth
-> extends OAuth2ProviderWithPKCE<TwitterUserAuth<_Auth>> {
+> extends OAuth2ProviderAuthWithPKCE<TwitterUserAuth<_Auth>> {
 	private config: Config;
 
 	constructor(auth: _Auth, config: Config) {

@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -24,7 +24,7 @@ export const osu = <_Auth extends Auth = Auth>(
 	return new OsuAuth(auth, config);
 };
 
-export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	OsuUserAuth<_Auth>
 > {
 	private config: Config;

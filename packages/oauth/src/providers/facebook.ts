@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -28,7 +28,7 @@ export const facebook = <_Auth extends Auth = Auth>(
 	return new FacebookAuth(auth, config);
 };
 
-export class FacebookAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class FacebookAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	FacebookUserAuth<_Auth>
 > {
 	private config: Config;

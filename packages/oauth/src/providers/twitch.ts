@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -25,7 +25,7 @@ export const twitch = <_Auth extends Auth = Auth>(
 	return new TwitchAuth(auth, config);
 };
 
-export class TwitchAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class TwitchAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	TwitchUserAuth<_Auth>
 > {
 	private config: Config;

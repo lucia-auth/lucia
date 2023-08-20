@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -28,7 +28,7 @@ export const linkedin = <_Auth extends Auth = Auth>(
 	return new LinkedinAuth(auth, config);
 };
 
-export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	LinkedinUserAuth<_Auth>
 > {
 	private config: Config;

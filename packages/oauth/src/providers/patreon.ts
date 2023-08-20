@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -29,7 +29,7 @@ export const patreon = <_Auth extends Auth = Auth>(
 	return new PatreonAuth(auth, config);
 };
 
-export class PatreonAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class PatreonAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	PatreonUserAuth<_Auth>
 > {
 	private config: Config;

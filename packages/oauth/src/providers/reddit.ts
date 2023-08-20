@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -24,7 +24,7 @@ export const reddit = <_Auth extends Auth = Auth>(
 	return new RedditAuth(auth, config);
 };
 
-export class RedditAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class RedditAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	RedditUserAuth<_Auth>
 > {
 	private config: Config;

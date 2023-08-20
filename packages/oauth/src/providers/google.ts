@@ -1,5 +1,5 @@
 import {
-	OAuth2Provider,
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
@@ -25,7 +25,7 @@ export const google = <_Auth extends Auth = Auth>(
 	return new GoogleAuth(auth, config);
 };
 
-export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2Provider<
+export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	GoogleUserAuth<_Auth>
 > {
 	private config: Config;

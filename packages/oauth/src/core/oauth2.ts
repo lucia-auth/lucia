@@ -2,11 +2,10 @@ import { createUrl, handleRequest } from "../utils/request.js";
 import { encodeBase64, encodeBase64Url } from "../utils/encode.js";
 import { generateRandomString } from "lucia/utils";
 
-import type { Auth } from "lucia";
 import type { ProviderUserAuth } from "./provider.js";
 
-export abstract class OAuth2Provider<
-	_ProviderUserAuth extends ProviderUserAuth<Auth> = ProviderUserAuth<Auth>,
+export abstract class OAuth2ProviderAuth<
+	_ProviderUserAuth extends ProviderUserAuth = ProviderUserAuth,
 	_Auth = _ProviderUserAuth extends ProviderUserAuth<infer _Auth>
 		? _Auth
 		: never
@@ -23,8 +22,8 @@ export abstract class OAuth2Provider<
 	>;
 }
 
-export abstract class OAuth2ProviderWithPKCE<
-	_ProviderUserAuth extends ProviderUserAuth<Auth> = ProviderUserAuth<Auth>,
+export abstract class OAuth2ProviderAuthWithPKCE<
+	_ProviderUserAuth extends ProviderUserAuth = ProviderUserAuth,
 	_Auth = _ProviderUserAuth extends ProviderUserAuth<infer _Auth>
 		? _Auth
 		: never
