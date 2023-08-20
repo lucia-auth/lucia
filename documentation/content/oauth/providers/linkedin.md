@@ -44,67 +44,27 @@ const linkedin: (
 
 ## Interfaces
 
-### `LinkedinProvider`
+### `LinkedinAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-```ts
-type LinkedinProvider = OAuthProvider<LinkedinUser, LinkedinTokens>;
-```
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<LinkedinAuth<_Auth>>
+interface LinkedinAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<LinkedinUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<LinkedinUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                                    |
 | --------------------------------------- |
 | [`LinkedinUserAuth`](#linkedinuserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `LinkedinUserAuth`
-
-```ts
-type LinkedinUserAuth = ProviderUserAuth & {
-	linkedinUser: LinkedinUser;
-	linkedinTokens: LinkedinTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`LinkedinUser`](#linkedinuser)                                    |
-| [`LinkedinTokens`](#linkedintokens)                                |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `LinkedinTokens`
 
@@ -114,7 +74,6 @@ type LinkedinTokens = {
 	accessTokenExpiresIn: number;
 	refreshToken: string;
 	refreshTokenExpiresIn: number;
-	scope: string;
 };
 ```
 
@@ -122,9 +81,38 @@ type LinkedinTokens = {
 
 ```ts
 type LinkedinUser = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	profilePicture?: string;
+	sub: string;
+	name: string;
+	email: string;
+	email_verified: boolean;
+	given_name: string;
+	family_name: string;
+	locale: {
+		country: string;
+		language: string;
+	};
+	picture: string;
 };
 ```
+
+### `LinkedinUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	linkedinUser: LinkedinUser;
+	linkedinTokens: LinkedinTokens;
+}
+```
+
+| properties       | type                                | description       |
+| ---------------- | ----------------------------------- | ----------------- |
+| `linkedinUser`   | [`LinkedinUser`](#linkedinuser)     | Linkedin user     |
+| `linkedinTokens` | [`LinkedinTokens`](#linkedintokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

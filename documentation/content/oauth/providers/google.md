@@ -46,67 +46,27 @@ const google: (
 
 ## Interfaces
 
-### `GoogleProvider`
+### `GoogleAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-```ts
-type GoogleProvider = OAuthProvider<GoogleUser, GoogleTokens>;
-```
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<GoogleAuth<_Auth>>
+interface GoogleAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<GoogleUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<GoogleUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                                |
 | ----------------------------------- |
 | [`GoogleUserAuth`](#googleuserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `GoogleUserAuth`
-
-```ts
-type GoogleUserAuth = ProviderUserAuth & {
-	googleUser: GoogleUser;
-	googleTokens: GoogleTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`GoogleUser`](#googleuser)                                        |
-| [`GoogleTokens`](#googletokens)                                    |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `GoogleTokens`
 
@@ -114,7 +74,7 @@ type GoogleUserAuth = ProviderUserAuth & {
 type GoogleTokens = {
 	accessToken: string;
 	refreshToken: string | null;
-	accessTokenExpiresIn: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
@@ -133,3 +93,25 @@ type GoogleUser = {
 	hd?: string;
 };
 ```
+
+### `GoogleUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	googleUser: GoogleUser;
+	googleTokens: GoogleTokens;
+}
+```
+
+| properties     | type                            | description       |
+| -------------- | ------------------------------- | ----------------- |
+| `googleUser`   | [`GoogleUser`](#googleuser)     | Google user       |
+| `googleTokens` | [`GoogleTokens`](#googletokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

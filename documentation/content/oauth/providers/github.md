@@ -44,63 +44,27 @@ const github: (
 
 ## Interfaces
 
-### `GithubProvider`
+### `GithubAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<GithubAuth<_Auth>>
+interface GithubAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<GithubUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<GithubUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                                |
 | ----------------------------------- |
 | [`GithubUserAuth`](#githubuserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `GithubUserAuth`
-
-```ts
-type GithubUserAuth = ProviderUserAuth & {
-	githubUser: GithubUser;
-	githubTokens: GithubTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`GithubUser`](#githubuser)                                        |
-| [`GithubTokens`](#githubtokens)                                    |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `GithubTokens`
 
@@ -122,9 +86,7 @@ type GithubTokens =
 
 ```ts
 type GithubUser = PublicGithubUser | PrivateGithubUser;
-```
 
-```ts
 type PublicGithubUser = {
 	avatar_url: string;
 	bio: string | null;
@@ -180,3 +142,25 @@ type PrivateGithubUser = PublicGithubUser & {
 	ldap_dn?: string;
 };
 ```
+
+### `GithubUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	githubUser: GithubUser;
+	githubTokens: GithubTokens;
+}
+```
+
+| properties     | type                            | description       |
+| -------------- | ------------------------------- | ----------------- |
+| `githubUser`   | [`GithubUser`](#githubuser)     | Github user       |
+| `githubTokens` | [`GithubTokens`](#githubtokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

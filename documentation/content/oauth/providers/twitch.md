@@ -46,67 +46,27 @@ const twitch: (
 
 ## Interfaces
 
-### `TwitchProvider`
+### `TwitchAuth`
 
-Satisfied [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-```ts
-type TwitchProvider = OAuthProvider<TwitchUser, TwitchTokens>;
-```
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<TwitchAuth<_Auth>>
+interface TwitchAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<TwitchUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<TwitchUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                                |
 | ----------------------------------- |
 | [`TwitchUserAuth`](#twitchuserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `TwitchUserAuth`
-
-```ts
-type TwitchUserAuth = ProviderUserAuth & {
-	twitchUser: TwitchUser;
-	twitchTokens: TwitchTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`TwitchUser`](#twitchuser)                                        |
-| [`TwitchTokens`](#twitchtokens)                                    |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `TwitchTokens`
 
@@ -114,7 +74,7 @@ type TwitchUserAuth = ProviderUserAuth & {
 type TwitchTokens = {
 	accessToken: string;
 	refreshToken: string;
-	accessTokenExpiresIn: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
@@ -122,8 +82,8 @@ type TwitchTokens = {
 
 ```ts
 type TwitchUser = {
-	id: string; // user id
-	login: string; // username
+	id: string;
+	login: string;
 	display_name: string;
 	type: "" | "admin" | "staff" | "global_mod";
 	broadcaster_type: "" | "affiliate" | "partner";
@@ -131,7 +91,29 @@ type TwitchUser = {
 	profile_image_url: string;
 	offline_image_url: string;
 	view_count: number;
-	email: string;
+	email?: string;
 	created_at: string;
 };
 ```
+
+### `TwitchUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	twitchUser: TwitchUser;
+	twitchTokens: TwitchTokens;
+}
+```
+
+| properties     | type                            | description       |
+| -------------- | ------------------------------- | ----------------- |
+| `twitchUser`   | [`TwitchUser`](#twitchuser)     | Twitch user       |
+| `twitchTokens` | [`TwitchTokens`](#twitchtokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |
