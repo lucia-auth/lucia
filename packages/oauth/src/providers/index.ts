@@ -4,6 +4,9 @@ export type { AppleUser } from "./apple.js";
 export { auth0 } from "./auth0.js";
 export type { Auth0User } from "./auth0.js";
 
+export { kinde } from "./kinde.js";
+export type { KindeUser } from "./kinde.js";
+
 export { discord } from "./discord.js";
 export type { DiscordUser } from "./discord.js";
 
