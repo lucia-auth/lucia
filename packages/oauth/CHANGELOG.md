@@ -1,5 +1,20 @@
 # @lucia-auth/oauth
 
+## 2.2.0
+
+### Minor changes
+
+- [#990](https://github.com/pilcrowOnPaper/lucia/pull/990) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `twitter()` provider (OAuth 2.0 with PKCE)
+
+- [#983](https://github.com/pilcrowOnPaper/lucia/pull/983) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : `decodeIdToken()` throws `SyntaxError`
+  - Remove `IdTokenError`
+
+### Patch changes
+
+- [#990](https://github.com/pilcrowOnPaper/lucia/pull/990) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `GithubUserAuth.githubTokens` not including refresh token
+
+- [#973](https://github.com/pilcrowOnPaper/lucia/pull/973) by [@anhtuank7c](https://github.com/anhtuank7c) : Fix `linkedin()` to use latest LinkedIn OAuth implementation
+
 ## 2.1.2
 
 ### Patch changes
