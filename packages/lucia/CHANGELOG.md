@@ -1,5 +1,17 @@
 # lucia
 
+## 2.4.0
+
+### Minor changes
+
+- [#986](https://github.com/pilcrowOnPaper/lucia/pull/986) by [@KazuumiN](https://github.com/KazuumiN) : Fixed `updateKeyPassword()` to return a `Promise<Key>`
+
+### Patch changes
+
+- [#980](https://github.com/pilcrowOnPaper/lucia/pull/980) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unused and undocumented `csrfProtection.baseDomain` configuration
+
+- [#985](https://github.com/pilcrowOnPaper/lucia/pull/985) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix Lucia throwing `AUTH_OUTDATED_PASSWORD` when using Bcrypt
+
 ## 2.3.0
 
 ### Minor changes
