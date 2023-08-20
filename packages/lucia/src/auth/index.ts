@@ -642,14 +642,14 @@ export class Auth<_Configuration extends Configuration = any> {
 		providerId: string,
 		providerUserId: string,
 		password: string | null
-	): Promise<void> => {
+	): Promise<Key> => {
 		const keyId = createKeyId(providerId, providerUserId);
 		const hashedPassword =
 			password === null ? null : await this.passwordHash.generate(password);
 		await this.adapter.updateKey(keyId, {
 			hashed_password: hashedPassword
 		});
-		await this.getKey(providerId, providerUserId);
+		return await this.getKey(providerId, providerUserId);
 	};
 }
 type MaybePromise<T> = T | Promise<T>;
