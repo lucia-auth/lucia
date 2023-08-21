@@ -52,12 +52,12 @@ export const createOAuth2AuthorizationUrl = async (
 		redirectUri?: string;
 	}
 ): Promise<readonly [authorizationUrl: URL, state: string]> => {
-	const state = generateState();
+	const state = options.state ?? generateState();
 	const authorizationUrl = createUrl(url, {
 		response_type: "code",
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
-		state: options.state ?? state,
+		state,
 		redirect_uri: options.redirectUri
 	});
 	return [authorizationUrl, state] as const;
@@ -80,12 +80,12 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~"
 	);
 	const codeChallenge = await generatePKCECodeChallenge("S256", codeVerifier);
-	const state = generateState();
+	const state = options.state ?? generateState();
 	const authorizationUrl = createUrl(url, {
 		response_type: "code",
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
-		state: options.state ?? state,
+		state,
 		redirect_uri: options.redirectUri,
 		code_challenge_method: "S256",
 		code_challenge: codeChallenge
