@@ -13,7 +13,6 @@ const createOAuth2AuthorizationUrl: (
 	options: {
 		clientId: string;
 		scope: string[];
-		state?: string;
 		redirectUri?: string;
 	}
 ) => Promise<readonly [authorizationUrl: URL, state: string]>;
@@ -26,15 +25,14 @@ const createOAuth2AuthorizationUrl: (
 | `url`              | `string \| URL` | Authorization url base       |
 | `options.clientId` | `string`        | `client_id`                  |
 | `options.scope`    | `string[]`      | A list of values for `scope` |
-| `state`            | `string`        | Custom state                 |
 | `redirectUri`      | `string`        | `redirect_uri`               |
 
 ##### Returns
 
-| name               | type     | description                 |
-| ------------------ | -------- | --------------------------- |
-| `authorizationUrl` | `URL`    | Authorization url           |
-| `state`            | `string` | Generated or provided state |
+| name               | type     | description       |
+| ------------------ | -------- | ----------------- |
+| `authorizationUrl` | `URL`    | Authorization url |
+| `state`            | `string` | Generated state   |
 
 ## `createOAuth2AuthorizationUrlWithPKCE()`
 
@@ -47,7 +45,6 @@ const createOAuth2AuthorizationUrlWithPKCE: (
 		clientId: string;
 		scope: string[];
 		codeChallengeMethod: "S256";
-		state?: string;
 		redirectUri?: string;
 	}
 ) => Promise<
@@ -63,16 +60,15 @@ const createOAuth2AuthorizationUrlWithPKCE: (
 | `options.clientId`            | `string`        | `client_id`                  |
 | `options.scope`               | `string[]`      | A list of values for `scope` |
 | `options.codeChallengeMethod` | `"S256"`        | Code challenge method        |
-| `state`                       | `string`        | Custom state                 |
 | `redirectUri`                 | `string`        | `redirect_uri`               |
 
 ##### Returns
 
-| name               | type     | description                 |
-| ------------------ | -------- | --------------------------- |
-| `authorizationUrl` | `URL`    | Authorization url           |
-| `codeVerifier`     | `string` | Generated code verifier     |
-| `state`            | `string` | Generated or provided state |
+| name               | type     | description             |
+| ------------------ | -------- | ----------------------- |
+| `authorizationUrl` | `URL`    | Authorization url       |
+| `codeVerifier`     | `string` | Generated code verifier |
+| `state`            | `string` | Generated state         |
 
 ## `decodeIdToken()`
 
