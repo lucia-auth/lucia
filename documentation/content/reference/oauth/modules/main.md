@@ -15,21 +15,19 @@ const createOAuth2AuthorizationUrl: (
 		scope: string[];
 		state?: string;
 		redirectUri?: string;
-		searchParams?: Record<string, string | undefined>;
 	}
 ) => Promise<readonly [authorizationUrl: URL, state: string]>;
 ```
 
 ##### Parameters
 
-| name               | type                                  | description                                    |
-| ------------------ | ------------------------------------- | ---------------------------------------------- |
-| `url`              | `string \| URL`                       | Authorization url base                         |
-| `options.clientId` | `string`                              | `client_id`                                    |
-| `options.scope`    | `string[]`                            | A list of values for `scope`                   |
-| `state`            | `string`                              | Custom state                                   |
-| `redirectUri`      | `string`                              | `redirect_uri`                                 |
-| `searchParams`     | `Record<string, string \| undefined>` | Any additional search params to add to the url |
+| name               | type            | description                  |
+| ------------------ | --------------- | ---------------------------- |
+| `url`              | `string \| URL` | Authorization url base       |
+| `options.clientId` | `string`        | `client_id`                  |
+| `options.scope`    | `string[]`      | A list of values for `scope` |
+| `state`            | `string`        | Custom state                 |
+| `redirectUri`      | `string`        | `redirect_uri`               |
 
 ##### Returns
 
@@ -51,32 +49,30 @@ const createOAuth2AuthorizationUrlWithPKCE: (
 		codeChallengeMethod: "S256";
 		state?: string;
 		redirectUri?: string;
-		searchParams?: Record<string, string | undefined>;
 	}
 ) => Promise<
-	readonly [authorizationUrl: URL, state: string, codeVerifier: string]
+	readonly [authorizationUrl: URL, codeVerifier: string, state: string]
 >;
 ```
 
 ##### Parameters
 
-| name                          | type                                  | description                                    |
-| ----------------------------- | ------------------------------------- | ---------------------------------------------- |
-| `url`                         | `string \| URL`                       | Authorization url base                         |
-| `options.clientId`            | `string`                              | `client_id`                                    |
-| `options.scope`               | `string[]`                            | A list of values for `scope`                   |
-| `options.codeChallengeMethod` | `"S256"`                              | Code challenge method                          |
-| `state`                       | `string`                              | Custom state                                   |
-| `redirectUri`                 | `string`                              | `redirect_uri`                                 |
-| `searchParams`                | `Record<string, string \| undefined>` | Any additional search params to add to the url |
+| name                          | type            | description                  |
+| ----------------------------- | --------------- | ---------------------------- |
+| `url`                         | `string \| URL` | Authorization url base       |
+| `options.clientId`            | `string`        | `client_id`                  |
+| `options.scope`               | `string[]`      | A list of values for `scope` |
+| `options.codeChallengeMethod` | `"S256"`        | Code challenge method        |
+| `state`                       | `string`        | Custom state                 |
+| `redirectUri`                 | `string`        | `redirect_uri`               |
 
 ##### Returns
 
 | name               | type     | description                 |
 | ------------------ | -------- | --------------------------- |
 | `authorizationUrl` | `URL`    | Authorization url           |
-| `state`            | `string` | Generated or provided state |
 | `codeVerifier`     | `string` | Generated code verifier     |
+| `state`            | `string` | Generated or provided state |
 
 ## `decodeIdToken()`
 

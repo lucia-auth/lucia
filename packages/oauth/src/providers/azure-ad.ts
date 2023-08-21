@@ -40,7 +40,7 @@ export class AzureADAuth<
 		readonly [url: URL, codeVerifier: string, state: string]
 	> => {
 		const scopeConfig = this.config.scope ?? [];
-		const [url, state, codeVerifier] =
+		const [url, codeVerifier, state] =
 			await createOAuth2AuthorizationUrlWithPKCE(
 				`https://login.microsoftonline.com/${this.config.tenant}/oauth2/v2.0/authorize`,
 				{

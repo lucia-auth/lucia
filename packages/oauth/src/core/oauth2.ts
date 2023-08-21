@@ -73,7 +73,7 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		redirectUri?: string;
 	}
 ): Promise<
-	readonly [authorizationUrl: URL, state: string, codeVerifier: string]
+	readonly [authorizationUrl: URL, codeVerifier: string, state: string]
 > => {
 	const codeVerifier = generateRandomString(
 		96,
@@ -90,7 +90,7 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		code_challenge_method: "S256",
 		code_challenge: codeChallenge
 	});
-	return [authorizationUrl, state, codeVerifier] as const;
+	return [authorizationUrl, codeVerifier, state] as const;
 };
 
 export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(

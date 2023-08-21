@@ -38,19 +38,17 @@ export class TwitterAuth<
 		readonly [url: URL, codeVerifier: string, state: string]
 	> => {
 		const scopeConfig = this.config.scope ?? [];
-		const [url, state, codeVerifier] =
-			await createOAuth2AuthorizationUrlWithPKCE(
-				"https://twitter.com/i/oauth2/authorize",
-				{
-					clientId: this.config.clientId,
-					codeChallengeMethod: "S256",
-					scope: ["tweet.read", "users.read", ...scopeConfig],
-					redirectUri: this.config.redirectUri
-				}
-			);
-		return [url, codeVerifier, state] as const;
+		return await createOAuth2AuthorizationUrlWithPKCE(
+			"https://twitter.com/i/oauth2/authorize",
+			{
+				clientId: this.config.clientId,
+				codeChallengeMethod: "S256",
+				scope: ["tweet.read", "users.read", ...scopeConfig],
+				redirectUri: this.config.redirectUri
+			}
+		);
 	};
-	
+
 	public validateCallback = async (
 		code: string,
 		code_verifier: string
