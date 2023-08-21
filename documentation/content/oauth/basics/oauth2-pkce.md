@@ -5,7 +5,7 @@ description: "Learn how to implement OAuth 2.0 with PKCE"
 
 This page covers OAuth 2.0 authorization code grant type. For OAuth 2.0 providers with PKCE, see [OAuth 2.0 with PKCE](/oauth/baiscs/oauth2).
 
-Examples shown here  uses Twitter OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
+Examples shown here uses Twitter OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
 
 ## Built-in providers
 
@@ -43,6 +43,12 @@ setCookie("twitter_oauth_state", state, {
 
 // redirect to authorization url
 redirect(url);
+```
+
+You can set additional query params to the authorization url can be done by using `URL.searchParams.set()` on the returned `URL` instance.
+
+```ts
+url.searchParams.set("response_mode", "query");
 ```
 
 ### Validate callback
@@ -100,15 +106,10 @@ const [url, codeVerifier, state] = await createAuthorizationUrlWithPKCE(
 
 ### Additional configuration
 
-You can provide your own state, and the `searchParams` option allows you to set any arbitrary query strings.
+You can set additional query params to the authorization url can be done by using `URL.searchParams.set()` on the returned `URL` instance.
 
 ```ts
-await createAuthorizationUrlWithPKCE(url, {
-	// ...
-	searchParams: {
-		response_mode: "query" // set /?response_mode=query
-	}
-});
+url.searchParams.set("response_mode", "query");
 ```
 
 ## Validate authorization code

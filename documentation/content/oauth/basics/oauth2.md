@@ -40,6 +40,12 @@ setCookie("github_oauth_state", state, {
 redirect(url);
 ```
 
+You can set additional query params to the authorization url can be done by using `URL.searchParams.set()` on the returned `URL` instance.
+
+```ts
+url.searchParams.set("response_mode", "query");
+```
+
 ### Validate callback
 
 Upon authentication, the provider will redirect the user back to your application. The url includes a code, and a state if the provider supports it. If a state is used, make sure to check if the state in the query params is the same as the one stored as a cookie.
@@ -91,15 +97,10 @@ const [url, state] = await createAuthorizationUrl(
 
 ### Additional configuration
 
-You can provide your own state, and the `searchParams` option allows you to set any arbitrary query strings.
+You can set additional query params to the authorization url can be done by using `URL.searchParams.set()` on the returned `URL` instance.
 
 ```ts
-await createOAuth2AuthorizationUrl("https://appleid.apple.com/auth/authorize", {
-	// ...
-	searchParams: {
-		response_mode: "query" // set /?response_mode=query
-	}
-});
+url.searchParams.set("response_mode", "query");
 ```
 
 ## Validate authorization code
