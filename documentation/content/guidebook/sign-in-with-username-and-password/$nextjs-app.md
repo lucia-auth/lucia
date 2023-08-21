@@ -106,7 +106,7 @@ const Form = ({
 }) => {
 	const router = useRouter();
 	return (
-		<Form
+		<form
 			action={action}
 			method="post"
 			onSubmit={async (e) => {
@@ -126,7 +126,7 @@ const Form = ({
 			}}
 		>
 			{children}
-		</Form>
+		</form>
 	);
 };
 
