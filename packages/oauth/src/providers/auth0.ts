@@ -16,10 +16,6 @@ type Config = {
 	appDomain: string;
 	redirectUri: string;
 	scope?: string[];
-	connection?: string;
-	organization?: string;
-	invitation?: string;
-	loginHint?: string;
 };
 
 export const auth0 = <_Auth extends Auth = Auth>(
@@ -48,16 +44,11 @@ export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: ["openid", "profile", ...scopeConfig],
-				searchParams: {
-					connection: this.config.connection,
-					organization: this.config.organization,
-					invitation: this.config.invitation,
-					login_hint: this.config.loginHint
-				}
+				scope: ["openid", "profile", ...scopeConfig]
 			}
 		);
 	};
+	
 	public validateCallback = async (
 		code: string
 	): Promise<Auth0UserAuth<_Auth>> => {

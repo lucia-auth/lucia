@@ -41,18 +41,18 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
-		return await createOAuth2AuthorizationUrl(
+		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://appleid.apple.com/auth/authorize",
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: [],
-				searchParams: {
-					response_mode: "query"
-				}
+				scope: []
 			}
 		);
+		url.searchParams.set("response_mode", "query");
+		return [url, state];
 	};
+	
 	public validateCallback = async (
 		code: string
 	): Promise<AppleUserAuth<_Auth>> => {

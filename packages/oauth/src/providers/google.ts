@@ -11,8 +11,8 @@ import type { Auth } from "lucia";
 type Config = {
 	clientId: string;
 	clientSecret: string;
-	scope?: string[];
 	redirectUri: string;
+	scope?: string[];
 	accessType?: "online" | "offline";
 };
 
@@ -35,6 +35,7 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 
 		this.config = config;
 	}
+
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
@@ -47,13 +48,11 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 				scope: [
 					"https://www.googleapis.com/auth/userinfo.profile",
 					...scopeConfig
-				],
-				searchParams: {
-					access_type: this.config.accessType ?? "online"
-				}
+				]
 			}
 		);
 	};
+
 	public validateCallback = async (
 		code: string
 	): Promise<GoogleUserAuth<_Auth>> => {

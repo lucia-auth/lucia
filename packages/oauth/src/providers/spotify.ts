@@ -11,9 +11,8 @@ import type { Auth } from "lucia";
 type Config = {
 	clientId: string;
 	clientSecret: string;
-	scope?: string[];
 	redirectUri: string;
-	showDialog: boolean;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "spotify";
@@ -44,13 +43,11 @@ export class SpotifyAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: this.config.scope ?? [],
-				searchParams: {
-					show_dialog: this.config.showDialog.toString()
-				}
+				scope: this.config.scope ?? []
 			}
 		);
 	};
+	
 	public validateCallback = async (
 		code: string
 	): Promise<SpotifyUserAuth<_Auth>> => {

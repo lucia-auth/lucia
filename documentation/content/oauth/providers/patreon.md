@@ -24,7 +24,6 @@ const patreon: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
-		allMemberships?: boolean;
 	}
 ) => PatreonProvider;
 ```

@@ -21,7 +21,6 @@ const twitch: (
 		clientId: string;
 		clientSecret: string;
 		redirectUri: string;
-		forceVerify?: boolean;
 		scope?: string[];
 	}
 ) => TwitchProvider;
@@ -29,14 +28,13 @@ const twitch: (
 
 ##### Parameters
 
-| name                   | type                                       | description                                                          | optional |
-| ---------------------- | ------------------------------------------ | -------------------------------------------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                       |          |
-| `configs.clientId`     | `string`                                   | Twitch OAuth app client id                                           |          |
-| `configs.clientSecret` | `string`                                   | Twitch OAuth app client secret                                       |          |
-| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs                                  |          |
-| `configs.forceVerify`  | `boolean`                                  | forces the user to re-authorize your app’s access to their resources |    ✓     |
-| `configs.scope`        | `string[]`                                 | an array of scopes                                                   |    ✓     |
+| name                   | type                                       | description                         | optional |
+| ---------------------- | ------------------------------------------ | ----------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                      |          |
+| `configs.clientId`     | `string`                                   | Twitch OAuth app client id          |          |
+| `configs.clientSecret` | `string`                                   | Twitch OAuth app client secret      |          |
+| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs |          |
+| `configs.scope`        | `string[]`                                 | an array of scopes                  |    ✓     |
 
 ##### Returns
 

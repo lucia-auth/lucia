@@ -50,6 +50,7 @@ export class TwitterAuth<
 			);
 		return [url, codeVerifier, state] as const;
 	};
+	
 	public validateCallback = async (
 		code: string,
 		code_verifier: string

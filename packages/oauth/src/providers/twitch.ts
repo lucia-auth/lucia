@@ -13,7 +13,6 @@ type Config = {
 	clientSecret: string;
 	scope?: string[];
 	redirectUri: string;
-	forceVerify?: boolean;
 };
 
 const PROVIDER_ID = "twitch";
@@ -39,16 +38,12 @@ export class TwitchAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
-		const forceVerify = this.config.forceVerify ?? false;
 		return await createOAuth2AuthorizationUrl(
 			"https://id.twitch.tv/oauth2/authorize",
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: this.config.scope ?? [],
-				searchParams: {
-					force_verify: forceVerify.toString()
-				}
+				scope: this.config.scope ?? []
 			}
 		);
 	};

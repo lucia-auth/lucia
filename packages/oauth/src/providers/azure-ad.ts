@@ -47,13 +47,11 @@ export class AzureADAuth<
 					clientId: this.config.clientId,
 					codeChallengeMethod: "S256",
 					scope: ["openid", "profile", ...scopeConfig],
-					redirectUri: this.config.redirectUri,
-					searchParams: {
-						nonce: generateRandomString(32)
-					}
+					redirectUri: this.config.redirectUri
 				}
 			);
-		return [url, codeVerifier, state] as const;
+		url.searchParams.set("nonce", generateRandomString(32));
+		return [url, codeVerifier, state];
 	};
 
 	public validateCallback = async (

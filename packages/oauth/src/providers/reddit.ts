@@ -11,8 +11,9 @@ import type { Auth } from "lucia";
 type Config = {
 	clientId: string;
 	clientSecret: string;
-	scope?: string[];
 	redirectUri: string;
+	scope?: string[];
+	tokenDuration: "permanent" | "temporary";
 };
 
 const PROVIDER_ID = "reddit";
@@ -38,17 +39,17 @@ export class RedditAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
-		return await createOAuth2AuthorizationUrl(
+		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://www.reddit.com/api/v1/authorize",
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: this.config.scope ?? [],
-				searchParams: {
-					duration: "permanent"
-				}
+				scope: this.config.scope ?? []
 			}
 		);
+		const tokenDuration = this.config.tokenDuration ?? "permanent";
+		url.searchParams.set("duration", tokenDuration);
+		return [url, state];
 	};
 
 	public validateCallback = async (

@@ -11,8 +11,8 @@ import type { Auth } from "lucia";
 type Config = {
 	clientId: string;
 	clientSecret: string;
-	scope?: string[];
 	redirectUri: string;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "osu";

@@ -13,8 +13,8 @@ const PROVIDER_ID = "linkedin";
 type Config = {
 	clientId: string;
 	clientSecret: string;
-	scope?: string[];
 	redirectUri: string;
+	scope?: string[];
 };
 
 export const linkedin = <_Auth extends Auth = Auth>(

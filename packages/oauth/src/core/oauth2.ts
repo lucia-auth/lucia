@@ -50,18 +50,15 @@ export const createOAuth2AuthorizationUrl = async (
 		scope: string[];
 		state?: string;
 		redirectUri?: string;
-		searchParams?: Record<string, string | undefined>;
 	}
 ): Promise<readonly [authorizationUrl: URL, state: string]> => {
-	const searchParams = options.searchParams ?? {};
 	const state = generateState();
 	const authorizationUrl = createUrl(url, {
 		response_type: "code",
 		client_id: options.clientId,
 		scope: options.scope.join(" "),
 		state: options.state ?? state,
-		redirect_uri: options.redirectUri,
-		...searchParams
+		redirect_uri: options.redirectUri
 	});
 	return [authorizationUrl, state] as const;
 };
@@ -74,12 +71,10 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		codeChallengeMethod: "S256";
 		state?: string;
 		redirectUri?: string;
-		searchParams?: Record<string, string | undefined>;
 	}
 ): Promise<
 	readonly [authorizationUrl: URL, state: string, codeVerifier: string]
 > => {
-	const searchParams = options.searchParams ?? {};
 	const codeVerifier = generateRandomString(
 		96,
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~"
@@ -93,8 +88,7 @@ export const createOAuth2AuthorizationUrlWithPKCE = async (
 		state: options.state ?? state,
 		redirect_uri: options.redirectUri,
 		code_challenge_method: "S256",
-		code_challenge: codeChallenge,
-		...searchParams
+		code_challenge: codeChallenge
 	});
 	return [authorizationUrl, state, codeVerifier] as const;
 };

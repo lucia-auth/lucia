@@ -14,6 +14,8 @@ const redditAuth = reddit(auth, configs);
 
 ## `reddit()`
 
+Scope `identity` is always selected.
+
 ```ts
 const reddit: (
 	auth: Auth,
@@ -22,19 +24,21 @@ const reddit: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
+		tokenDuration?: "permanent" | "temporary";
 	}
 ) => RedditProvider;
 ```
 
 ##### Parameters
 
-| name                   | type                                       | description                                       | optional |
-| ---------------------- | ------------------------------------------ | ------------------------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                    |          |
-| `configs.clientId`     | `string`                                   | Reddit OAuth app client id                        |          |
-| `configs.clientSecret` | `string`                                   | Reddit OAuth app client secret                    |          |
-| `configs.redirectUri`  | `string`                                   | Reddit OAuth app redirect Uri                     |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes (`identiy` is always selected) |    ✓     |
+| name                    | type                                       | description                    | optional | default       |
+| ----------------------- | ------------------------------------------ | ------------------------------ | :------: | ------------- |
+| `auth`                  | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |               |
+| `configs.clientId`      | `string`                                   | Reddit OAuth app client id     |          |               |
+| `configs.clientSecret`  | `string`                                   | Reddit OAuth app client secret |          |               |
+| `configs.redirectUri`   | `string`                                   | Reddit OAuth app redirect Uri  |          |               |
+| `configs.scope`         | `string[]`                                 | an array of scopes             |    ✓     |               |
+| `configs.tokenDuration` | `"permanent" \| "temporary"`               | access token duration          |    ✓     | `"permanent"` |
 
 ##### Returns
 

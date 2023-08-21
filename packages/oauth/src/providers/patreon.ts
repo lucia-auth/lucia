@@ -15,9 +15,8 @@ import type { Auth } from "lucia";
 type Config = {
 	clientId: string;
 	clientSecret: string;
-	scope?: string[];
 	redirectUri: string;
-	allMemberships?: boolean;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "patreon";
