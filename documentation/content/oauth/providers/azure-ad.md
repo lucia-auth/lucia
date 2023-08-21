@@ -14,7 +14,7 @@ const AzureADAuth = azureAD(auth, config);
 
 ## `azureAd()`
 
-The `oidc` and `profile` scope is always included.
+The `oidc` and `profile` scope are always included.
 
 ```ts
 const azureAd: (
