@@ -14,6 +14,14 @@ export type {
 	Auth0UserAuth
 } from "./auth0.js";
 
+export { azureAD } from "./azure-ad.js";
+export type {
+	AzureADAuth,
+	AzureADTokens,
+	AzureADUser,
+	AzureADUserAuth
+} from "./azure-ad.js";
+
 export { discord } from "./discord.js";
 export type {
 	DiscordAuth,
