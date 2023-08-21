@@ -33,6 +33,7 @@ We also have framework specific guides.
 
 - Apple
 - Auth0
+- Azure Active Directory
 - Discord
 - Facebook
 - Github
@@ -44,3 +45,4 @@ We also have framework specific guides.
 - Reddit
 - Spotify
 - Twitch
+- Twitter
