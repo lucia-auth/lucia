@@ -88,11 +88,11 @@ type AzureADTokens = {
 ```ts
 type AzureADUser = {
 	sub: string;
-	roles: string[];
-	oid: string;
 	name: string;
-	preferred_username: string;
-	email?: string; // require `email` scope
+	family_name: string;
+	given_name: string;
+	picture: string;
+	email?: string; // requires `email` scope
 };
 ```
 
