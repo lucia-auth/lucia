@@ -86,6 +86,14 @@ export type {
 	LichessUserAuth
 } from "./lichess.js";
 
+export { line } from "./line.js";
+export type {
+	LineAuth,
+	LineTokens,
+	LineUser,
+	LineUserAuth
+} from "./line.js";
+
 export { linkedin } from "./linkedin.js";
 export type {
 	LinkedinAuth,
