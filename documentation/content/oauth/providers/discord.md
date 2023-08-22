@@ -85,6 +85,7 @@ type DiscordUser = {
 	id: string;
 	username: string;
 	discriminator: string;
+	global_name?: string;
 	avatar: string;
 	bot?: boolean;
 	system?: boolean;
@@ -97,6 +98,7 @@ type DiscordUser = {
 	premium_type?: number;
 	public_flags?: number;
 	locale?: string;
+	avatar_decoration? :string;
 };
 ```
 
