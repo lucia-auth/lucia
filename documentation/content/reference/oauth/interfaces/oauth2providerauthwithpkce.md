@@ -3,7 +3,9 @@ title: "`OAuth2ProviderAuthWithPKCE`"
 ---
 
 ```ts
-interface OAuth2ProviderAuthWithPKCE<_ProviderUserAuth extends ProviderUserAuth> {
+interface OAuth2ProviderAuthWithPKCE<
+	_ProviderUserAuth extends ProviderUserAuth
+> {
 	getAuthorizationUrl: () => Promise<
 		readonly [url: URL, codeVerifier: string, state: string | null]
 	>;
@@ -11,7 +13,7 @@ interface OAuth2ProviderAuthWithPKCE<_ProviderUserAuth extends ProviderUserAuth>
 		code: string,
 		codeVerifier: string
 	) => Promise<_ProviderUserAuth>;
-};
+}
 ```
 
 ##### Generics

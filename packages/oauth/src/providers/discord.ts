@@ -48,7 +48,7 @@ export class DiscordAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			}
 		);
 	};
-	
+
 	public validateCallback = async (
 		code: string
 	): Promise<DiscordUserAuth<_Auth>> => {

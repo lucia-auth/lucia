@@ -52,7 +52,7 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		url.searchParams.set("response_mode", "query");
 		return [url, state];
 	};
-	
+
 	public validateCallback = async (
 		code: string
 	): Promise<AppleUserAuth<_Auth>> => {

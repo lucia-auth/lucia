@@ -46,6 +46,10 @@ See [Patreon](/oauth/providers/patreon) provider.
 
 See [Reddit](/oauth/providers/reddit) provider.
 
+## `salesforce()`
+
+See [Salesforce](/oauth/providers/salesforce) provider.
+
 ## `slack()`
 
 See [Slack](/oauth/providers/slack) provider.

@@ -3,4 +3,4 @@ package: "@lucia-auth/oauth" # package name
 type: "minor" # "major", "minor", "patch"
 ---
 
-Add Slack provider
+Add Salesforce provider

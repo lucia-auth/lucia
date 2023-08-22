@@ -48,7 +48,7 @@ export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			}
 		);
 	};
-	
+
 	public validateCallback = async (
 		code: string
 	): Promise<Auth0UserAuth<_Auth>> => {

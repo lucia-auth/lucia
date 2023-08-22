@@ -43,6 +43,7 @@ We also have framework specific guides.
 - osu!
 - Patreon
 - Reddit
+- Salesforce
 - Slack
 - Spotify
 - Twitch
