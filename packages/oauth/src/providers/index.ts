@@ -30,6 +30,9 @@ export type {
 	AzureADUserAuth
 } from "./azure-ad.js";
 
+export { box } from "./box.js";
+export type { BoxAuth, BoxTokens, BoxUser, BoxUserAuth } from "./box.js";
+
 export { discord } from "./discord.js";
 export type {
 	DiscordAuth,
