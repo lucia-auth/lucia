@@ -13,6 +13,7 @@ type Config = {
 	clientSecret: string;
 	redirectUri: string;
 	scope?: string[];
+	tokenAccessType?: "online" | "offline";
 };
 
 const PROVIDER_ID = "dropbox";
@@ -39,7 +40,7 @@ export class DropboxAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		readonly [url: URL, state: string]
 	> => {
 		const scopeConfig = this.config.scope ?? [];
-		return await createOAuth2AuthorizationUrl(
+		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://www.dropbox.com/oauth2/authorize",
 			{
 				clientId: this.config.clientId,
@@ -47,6 +48,9 @@ export class DropboxAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 				scope: ["account_info.read", ...scopeConfig]
 			}
 		);
+		const tokenAccessType = this.config.tokenAccessType ?? "online";
+		url.searchParams.set("token_access_type", tokenAccessType);
+		return [url, state];
 	};
 
 	public validateCallback = async (

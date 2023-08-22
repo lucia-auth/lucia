@@ -1,9 +1,9 @@
 ---
-title: "Linkedin"
+title: "LinkedIn"
 description: "Learn how to use the LinkedIn OAuth provider"
 ---
 
-OAuth integration for Linkedin. Refer to [Linkedin OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
+OAuth integration for LinkedIn. Refer to [Linkedin OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
 
 ```ts
 import { linkedin } from "@lucia-auth/oauth/providers";
@@ -28,13 +28,15 @@ const linkedin: (
 
 ##### Parameters
 
-| name                  | type                                       | description                                             | optional |
-| --------------------- | ------------------------------------------ | ------------------------------------------------------- | :------: |
-| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                          |          |
-| `config.clientId`     | `string`                                   | Linkedin OAuth app client id                            |          |
-| `config.clientSecret` | `string`                                   | Linkedin OAuth app client secret                        |          |
-| `config.redirectUri`  | `string`                                   | Linkedin OAuth app redirect uri                         |          |
-| `config.scope`        | `string[]`                                 | an array of scopes - `r_liteprofile` is always included |    ✓     |
+Scope `r_liteprofile` is always included.
+
+| name                  | type                                       | description                      | optional |
+| --------------------- | ------------------------------------------ | -------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                   |          |
+| `config.clientId`     | `string`                                   | LinkedIn OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | LinkedIn OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | LinkedIn OAuth app redirect uri  |          |
+| `config.scope`        | `string[]`                                 | an array of scopes               |    ✓     |
 
 ##### Returns
 

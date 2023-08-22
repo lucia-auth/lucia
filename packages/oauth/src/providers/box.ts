@@ -81,7 +81,7 @@ export class BoxUserAuth<
 	public boxUser: BoxUser;
 
 	constructor(auth: _Auth, boxUser: BoxUser, boxTokens: BoxTokens) {
-		super(auth, PROVIDER_ID, boxUser.id.toString());
+		super(auth, PROVIDER_ID, boxUser.id);
 
 		this.boxTokens = boxTokens;
 		this.boxUser = boxUser;
