@@ -54,6 +54,14 @@ export type {
 	GithubUserAuth
 } from "./github.js";
 
+export { gitlab } from "./gitlab.js";
+export type {
+	GitlabAuth,
+	GitlabTokens,
+	GitlabUser,
+	GitlabUserAuth
+} from "./gitlab.js";
+
 export { google } from "./google.js";
 export type {
 	GoogleAuth,
