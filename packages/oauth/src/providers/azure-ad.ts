@@ -4,7 +4,6 @@ import {
 	createOAuth2AuthorizationUrlWithPKCE,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
-import { decodeIdToken } from "../core/oidc.js";
 import { ProviderUserAuth } from "../core/provider.js";
 
 import type { Auth } from "lucia";
