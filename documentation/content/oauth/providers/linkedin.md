@@ -103,15 +103,15 @@ Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
 interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
-	linkedinUser: LinkedInUser;
-	linkedinTokens: LinkedInTokens;
+	linkedInUser: LinkedInUser;
+	linkedInTokens: LinkedInTokens;
 }
 ```
 
 | properties       | type                                | description       |
 | ---------------- | ----------------------------------- | ----------------- |
-| `linkedinUser`   | [`LinkedInUser`](#linkedinuser)     | LinkedIn user     |
-| `linkedinTokens` | [`LinkedInTokens`](#linkedintokens) | Access tokens etc |
+| `linkedInUser`   | [`LinkedInUser`](#linkedinuser)     | LinkedIn user     |
+| `linkedInTokens` | [`LinkedInTokens`](#linkedintokens) | Access tokens etc |
 
 ##### Generics
 

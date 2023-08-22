@@ -52,9 +52,9 @@ export class LinkedInAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public validateCallback = async (
 		code: string
 	): Promise<LinkedInUserAuth<_Auth>> => {
-		const linkedinTokens = await this.validateAuthorizationCode(code);
-		const linkedinUser = await getLinkedInUser(linkedinTokens.accessToken);
-		return new LinkedInUserAuth(this.auth, linkedinUser, linkedinTokens);
+		const linkedInTokens = await this.validateAuthorizationCode(code);
+		const linkedInUser = await getLinkedInUser(linkedInTokens.accessToken);
+		return new LinkedInUserAuth(this.auth, linkedInUser, linkedInTokens);
 	};
 
 	private validateAuthorizationCode = async (
