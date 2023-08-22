@@ -89,6 +89,14 @@ export type {
 	RedditUserAuth
 } from "./reddit.js";
 
+export { salesforce } from "./salesforce.js";
+export type {
+	SalesforceAuth,
+	SalesforceTokens,
+	SalesforceUser,
+	SalesforceUserAuth
+} from "./salesforce.js";
+
 export { slack } from "./slack.js";
 export type {
 	SlackAuth,
