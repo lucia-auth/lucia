@@ -6,6 +6,14 @@ export type {
 	AppleUserAuth
 } from "./apple.js";
 
+export { atlassian } from "./atlassian.js";
+export type {
+	AtlassianAuth,
+	AtlassianTokens,
+	AtlassianUser,
+	AtlassianUserAuth
+} from "./atlassian.js";
+
 export { auth0 } from "./auth0.js";
 export type {
 	Auth0Auth,
