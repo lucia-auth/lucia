@@ -100,12 +100,12 @@ export type {
 export { line } from "./line.js";
 export type { LineAuth, LineTokens, LineUser, LineUserAuth } from "./line.js";
 
-export { linkedin } from "./linkedin.js";
+export { linkedIn } from "./linkedin.js";
 export type {
-	LinkedinAuth,
-	LinkedinTokens,
-	LinkedinUser,
-	LinkedinUserAuth
+	LinkedInAuth,
+	LinkedInTokens,
+	LinkedInUser,
+	LinkedInUserAuth
 } from "./linkedin.js";
 
 export { osu } from "./osu.js";

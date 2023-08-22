@@ -17,15 +17,15 @@ type Config = {
 	scope?: string[];
 };
 
-export const linkedin = <_Auth extends Auth = Auth>(
+export const linkedIn = <_Auth extends Auth = Auth>(
 	auth: _Auth,
 	config: Config
-): LinkedinAuth<_Auth> => {
-	return new LinkedinAuth(auth, config);
+): LinkedInAuth<_Auth> => {
+	return new LinkedInAuth(auth, config);
 };
 
-export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
-	LinkedinUserAuth<_Auth>
+export class LinkedInAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	LinkedInUserAuth<_Auth>
 > {
 	private config: Config;
 
@@ -51,15 +51,15 @@ export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 
 	public validateCallback = async (
 		code: string
-	): Promise<LinkedinUserAuth<_Auth>> => {
-		const linkedinTokens = await this.validateAuthorizationCode(code);
-		const linkedinUser = await getLinkedinUser(linkedinTokens.accessToken);
-		return new LinkedinUserAuth(this.auth, linkedinUser, linkedinTokens);
+	): Promise<LinkedInUserAuth<_Auth>> => {
+		const linkedInTokens = await this.validateAuthorizationCode(code);
+		const linkedInUser = await getLinkedInUser(linkedInTokens.accessToken);
+		return new LinkedInUserAuth(this.auth, linkedInUser, linkedInTokens);
 	};
 
 	private validateAuthorizationCode = async (
 		code: string
-	): Promise<LinkedinTokens> => {
+	): Promise<LinkedInTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
@@ -85,34 +85,34 @@ export class LinkedinAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	};
 }
 
-export class LinkedinUserAuth<
+export class LinkedInUserAuth<
 	_Auth extends Auth = Auth
 > extends ProviderUserAuth<_Auth> {
-	public linkedinTokens: LinkedinTokens;
-	public linkedinUser: LinkedinUser;
+	public linkedInTokens: LinkedInTokens;
+	public linkedInUser: LinkedInUser;
 
 	constructor(
 		auth: _Auth,
-		linkedinUser: LinkedinUser,
-		linkedinTokens: LinkedinTokens
+		linkedInUser: LinkedInUser,
+		linkedInTokens: LinkedInTokens
 	) {
-		super(auth, PROVIDER_ID, linkedinUser.sub);
+		super(auth, PROVIDER_ID, linkedInUser.sub);
 
-		this.linkedinTokens = linkedinTokens;
-		this.linkedinUser = linkedinUser;
+		this.linkedInTokens = linkedInTokens;
+		this.linkedInUser = linkedInUser;
 	}
 }
 
-const getLinkedinUser = async (accessToken: string): Promise<LinkedinUser> => {
+const getLinkedInUser = async (accessToken: string): Promise<LinkedInUser> => {
 	const request = new Request("https://api.linkedin.com/v2/userinfo", {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
 	});
-	return handleRequest<LinkedinUser>(request);
+	return handleRequest<LinkedInUser>(request);
 };
 
-export type LinkedinTokens = {
+export type LinkedInTokens = {
 	accessToken: string;
 	accessTokenExpiresIn: number;
 	refreshToken: string;
@@ -120,7 +120,7 @@ export type LinkedinTokens = {
 	scope: string;
 };
 
-export type LinkedinUser = {
+export type LinkedInUser = {
 	sub: string;
 	name: string;
 	email: string;

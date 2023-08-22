@@ -58,7 +58,7 @@ See [Lichess](/oauth/providers/lichess) provider.
 
 See [Line](/oauth/providers/line) provider.
 
-## `linkedin()`
+## `linkedIn()`
 
 See [LinkedIn](/oauth/providers/linkedin) provider.
 
