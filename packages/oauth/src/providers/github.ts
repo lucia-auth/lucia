@@ -52,12 +52,7 @@ export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		code: string
 	): Promise<GithubUserAuth<_Auth>> => {
 		const githubTokens = await this.validateAuthorizationCode(code);
-		const githubUserRequest = new Request("https://api.github.com/user", {
-			headers: {
-				Authorization: authorizationHeader("bearer", githubTokens.accessToken)
-			}
-		});
-		const githubUser = await handleRequest<GithubUser>(githubUserRequest);
+		const githubUser = await getGithubUser(githubTokens.accessToken);
 		return new GithubUserAuth(this.auth, githubUser, githubTokens);
 	};
 
@@ -90,6 +85,15 @@ export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		};
 	};
 }
+
+const getGithubUser = async (accessToken: string): Promise<GithubUser> => {
+	const githubUserRequest = new Request("https://api.github.com/user", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	return await handleRequest<GithubUser>(githubUserRequest);
+};
 
 export class GithubUserAuth<
 	_Auth extends Auth

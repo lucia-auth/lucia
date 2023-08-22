@@ -8,6 +8,7 @@ import { decodeIdToken } from "../core/oidc.js";
 import { ProviderUserAuth } from "../core/provider.js";
 
 import type { Auth } from "lucia";
+import { authorizationHeader, handleRequest } from "../utils/request.js";
 
 type Config = {
 	clientId: string;
@@ -62,7 +63,7 @@ export class AzureADAuth<
 			code,
 			code_verifier
 		);
-		const azureADUser = decodeIdToken<AzureADUser>(azureADTokens.idToken);
+		const azureADUser = await getAzureADUser(azureADTokens.accessToken);
 		return new AzureADUserAuth(this.auth, azureADUser, azureADTokens);
 	};
 
@@ -96,6 +97,18 @@ export class AzureADAuth<
 		};
 	};
 }
+
+const getAzureADUser = async (accessToken: string): Promise<AzureADUser> => {
+	const azureADUserRequest = new Request(
+		"https://graph.microsoft.com/oidc/userinfo",
+		{
+			headers: {
+				Authorization: authorizationHeader("bearer", accessToken)
+			}
+		}
+	);
+	return await handleRequest(azureADUserRequest);
+};
 
 export class AzureADUserAuth<
 	_Auth extends Auth = Auth
