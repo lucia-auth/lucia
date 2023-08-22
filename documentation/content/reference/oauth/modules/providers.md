@@ -46,6 +46,10 @@ See [Patreon](/oauth/providers/patreon) provider.
 
 See [Reddit](/oauth/providers/reddit) provider.
 
+## `slack()`
+
+See [Slack](/oauth/providers/slack) provider.
+
 ## `spotify()`
 
 See [Spotify](/oauth/providers/spotify) provider.

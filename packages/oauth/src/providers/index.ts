@@ -89,6 +89,14 @@ export type {
 	RedditUserAuth
 } from "./reddit.js";
 
+export { slack } from "./slack.js";
+export type {
+	SlackAuth,
+	SlackTokens,
+	SlackUser,
+	SlackUserAuth
+} from "./slack.js";
+
 export { spotify } from "./spotify.js";
 export type {
 	SpotifyAuth,
