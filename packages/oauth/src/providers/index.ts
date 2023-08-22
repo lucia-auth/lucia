@@ -38,6 +38,14 @@ export type {
 	DiscordUserAuth
 } from "./discord.js";
 
+export { dropbox } from "./dropbox.js";
+export type {
+	DropboxAuth,
+	DropboxTokens,
+	DropboxUser,
+	DropboxUserAuth
+} from "./dropbox.js";
+
 export { facebook } from "./facebook.js";
 export type {
 	FacebookAuth,

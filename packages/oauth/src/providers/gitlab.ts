@@ -95,7 +95,7 @@ export class GitlabUserAuth<
 }
 
 const getGitlabUser = async (accessToken: string): Promise<GitlabUser> => {
-	const request = new Request("https://api.gitlab.com/me", {
+	const request = new Request("https://gitlab.com/api/v4/user", {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
