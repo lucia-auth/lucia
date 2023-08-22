@@ -30,6 +30,14 @@ export type {
 	AzureADUserAuth
 } from "./azure-ad.js";
 
+export { bitbucket } from "./bitbucket.js";
+export type {
+	BitbucketAuth,
+	BitbucketTokens,
+	BitbucketUser,
+	BitbucketUserAuth
+} from "./bitbucket.js";
+
 export { box } from "./box.js";
 export type { BoxAuth, BoxTokens, BoxUser, BoxUserAuth } from "./box.js";
 
@@ -90,12 +98,7 @@ export type {
 } from "./lichess.js";
 
 export { line } from "./line.js";
-export type {
-	LineAuth,
-	LineTokens,
-	LineUser,
-	LineUserAuth
-} from "./line.js";
+export type { LineAuth, LineTokens, LineUser, LineUserAuth } from "./line.js";
 
 export { linkedin } from "./linkedin.js";
 export type {
