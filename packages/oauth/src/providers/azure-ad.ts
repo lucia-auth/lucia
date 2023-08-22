@@ -50,7 +50,7 @@ export class AzureADAuth<
 					redirectUri: this.config.redirectUri
 				}
 			);
-		url.searchParams.set("nonce", generateRandomString(32));
+		url.searchParams.set("nonce", generateRandomString(40));
 		return [url, codeVerifier, state];
 	};
 
