@@ -1,4 +1,8 @@
-import { createUrl, handleRequest } from "../utils/request.js";
+import {
+	authorizationHeader,
+	createUrl,
+	handleRequest
+} from "../utils/request.js";
 import { encodeBase64, encodeBase64Url } from "../utils/encode.js";
 import { generateRandomString } from "lucia/utils";
 
@@ -131,7 +135,12 @@ export const validateOAuth2AuthorizationCode = async <_ResponseBody extends {}>(
 	) {
 		headers.set(
 			"Authorization",
-			encodeBase64(`${options.clientId}:${options.clientPassword.clientSecret}`)
+			authorizationHeader(
+				"basic",
+				encodeBase64(
+					`${options.clientId}:${options.clientPassword.clientSecret}`
+				)
+			)
 		);
 	}
 
