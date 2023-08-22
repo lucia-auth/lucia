@@ -1,5 +1,5 @@
 ---
-package: "@lucia-auth/oauth”
+package: "@lucia-auth/oauth"
 type: "patch"
 ---
 
