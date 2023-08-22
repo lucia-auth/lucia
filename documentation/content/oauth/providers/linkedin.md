@@ -3,19 +3,19 @@ title: "LinkedIn"
 description: "Learn how to use the LinkedIn OAuth provider"
 ---
 
-OAuth integration for LinkedIn. Refer to [Linkedin OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
+OAuth integration for LinkedIn. Refer to [LinkedIn OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
 
 ```ts
-import { linkedin } from "@lucia-auth/oauth/providers";
+import { linkedIn } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
-const linkedinAuth = linkedin(auth, config);
+const linkedInAuth = linkedIn(auth, config);
 ```
 
-## `linkedin()`
+## `linkedIn()`
 
 ```ts
-const linkedin: (
+const linkedIn: (
 	auth: Auth,
 	config: {
 		clientId: string;
@@ -23,7 +23,7 @@ const linkedin: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => LinkedinProvider;
+) => LinkedInProvider;
 ```
 
 ##### Parameters
@@ -42,25 +42,25 @@ Scope `r_liteprofile` is always included.
 
 | type                                    | description       |
 | --------------------------------------- | ----------------- |
-| [`LinkedinProvider`](#linkedinprovider) | Linkedin provider |
+| [`LinkedInProvider`](#linkedinprovider) | LinkedIn provider |
 
 ## Interfaces
 
-### `LinkedinAuth`
+### `LinkedInAuth`
 
 See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-// implements OAuth2ProviderAuth<LinkedinAuth<_Auth>>
-interface LinkedinAuth<_Auth extends Auth> {
+// implements OAuth2ProviderAuth<LinkedInAuth<_Auth>>
+interface LinkedInAuth<_Auth extends Auth> {
 	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
-	validateCallback: (code: string) => Promise<LinkedinUserAuth<_Auth>>;
+	validateCallback: (code: string) => Promise<LinkedInUserAuth<_Auth>>;
 }
 ```
 
 | type                                    |
 | --------------------------------------- |
-| [`LinkedinUserAuth`](#linkedinuserauth) |
+| [`LinkedInUserAuth`](#linkedinuserauth) |
 
 ##### Generics
 
@@ -68,10 +68,10 @@ interface LinkedinAuth<_Auth extends Auth> {
 | ------- | ---------- | ------- |
 | `_Auth` | [`Auth`]() | `Auth`  |
 
-### `LinkedinTokens`
+### `LinkedInTokens`
 
 ```ts
-type LinkedinTokens = {
+type LinkedInTokens = {
 	accessToken: string;
 	accessTokenExpiresIn: number;
 	refreshToken: string;
@@ -79,10 +79,10 @@ type LinkedinTokens = {
 };
 ```
 
-### `LinkedinUser`
+### `LinkedInUser`
 
 ```ts
-type LinkedinUser = {
+type LinkedInUser = {
 	sub: string;
 	name: string;
 	email: string;
@@ -97,21 +97,21 @@ type LinkedinUser = {
 };
 ```
 
-### `LinkedinUserAuth`
+### `LinkedInUserAuth`
 
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
 interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
-	linkedinUser: LinkedinUser;
-	linkedinTokens: LinkedinTokens;
+	linkedinUser: LinkedInUser;
+	linkedinTokens: LinkedInTokens;
 }
 ```
 
 | properties       | type                                | description       |
 | ---------------- | ----------------------------------- | ----------------- |
-| `linkedinUser`   | [`LinkedinUser`](#linkedinuser)     | Linkedin user     |
-| `linkedinTokens` | [`LinkedinTokens`](#linkedintokens) | Access tokens etc |
+| `linkedinUser`   | [`LinkedInUser`](#linkedinuser)     | LinkedIn user     |
+| `linkedinTokens` | [`LinkedInTokens`](#linkedintokens) | Access tokens etc |
 
 ##### Generics
 

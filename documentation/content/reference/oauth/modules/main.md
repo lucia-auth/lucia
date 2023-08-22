@@ -5,7 +5,6 @@ title: "`@lucia-auth/oauth`"
 ## `createOAuth2AuthorizationUrl()`
 
 Creates a new authorization url for OAuth 2.0 authorization code grant with a state. Use [`createOAuth2AuthorizationUrlWithPKCE()`](/reference/oauth/modules/main#createoauth2authorizationurlwithpkce) for creating urls with PKCE code challenge.
-`
 
 ```ts
 const createOAuth2AuthorizationUrl: (
