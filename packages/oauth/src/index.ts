@@ -1,11 +1,11 @@
 export {
-	OAuthRequestError,
-	providerUserAuth,
-	validateOAuth2AuthorizationCode as __experimental_validateOAuth2AuthorizationCode,
-	createOAuth2AuthorizationUrl as __experimental_createOAuth2AuthorizationUrl,
-	createOAuth2AuthorizationUrlWithPKCE as __experimental_createOAuth2AuthorizationUrlWithPKCE,
-	decodeIdToken as __experimental_decodeIdToken
-} from "./core.js";
-export { generateState } from "./utils.js";
+	createOAuth2AuthorizationUrl,
+	createOAuth2AuthorizationUrlWithPKCE,
+	validateOAuth2AuthorizationCode,
+} from "./core/oauth2.js";
+export { decodeIdToken } from "./core/oidc.js";
+export { providerUserAuth } from "./core/provider.js";
+export { OAuthRequestError } from "./core/request.js";
 
-export type { OAuthProvider } from "./core.js";
+export type { ProviderUserAuth } from "./core/provider.js";
+export type { OAuth2ProviderAuth, OAuth2ProviderAuthWithPKCE } from "./core/oauth2.js";

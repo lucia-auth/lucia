@@ -10,6 +10,10 @@ See [Apple](/oauth/providers/apple) provider.
 
 See [Auth0](/oauth/providers/auth0) provider.
 
+## `azureAD()`
+
+See [Azure Active Directory](/oauth/providers/azure-ad) provider.
+
 ## `discord()`
 
 See [Discord](/oauth/providers/discord) provider.
@@ -49,3 +53,7 @@ See [Spotify](/oauth/providers/spotify) provider.
 ## `twitch()`
 
 See [Twitch](/oauth/providers/twitch) provider.
+
+## `twitter()`
+
+See [Twitter](/oauth/providers/twitter) provider.

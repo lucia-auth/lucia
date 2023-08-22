@@ -1,30 +1,77 @@
 import {
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
-	providerUserAuth,
 	validateOAuth2AuthorizationCode
-} from "../core.js";
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import {
+	handleRequest,
+	authorizationHeader,
+	createUrl
+} from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "facebook";
 
-export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getFacebookTokens = async (code: string): Promise<FacebookTokens> => {
+export const facebook = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): FacebookAuth<_Auth> => {
+	return new FacebookAuth(auth, config);
+};
+
+export class FacebookAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	FacebookUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		return await createOAuth2AuthorizationUrl(
+			"https://www.facebook.com/v16.0/dialog/oauth",
+			{
+				clientId: this.config.clientId,
+				scope: this.config.scope ?? [],
+				redirectUri: this.config.redirectUri
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<FacebookUserAuth<_Auth>> => {
+		const facebookTokens = await this.validateAuthorizationCode(code);
+		const facebookUser = await getFacebookUser(facebookTokens.accessToken);
+		return new FacebookUserAuth(this.auth, facebookUser, facebookTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<FacebookTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
 		}>(code, "https://graph.facebook.com/v16.0/oauth/access_token", {
-			clientId: config.clientId,
-			redirectUri: config.redirectUri,
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
 			clientPassword: {
-				clientSecret: config.clientSecret,
+				clientSecret: this.config.clientSecret,
 				authenticateWith: "client_secret"
 			}
 		});
@@ -35,35 +82,25 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			return await createOAuth2AuthorizationUrl(
-				"https://www.facebook.com/v16.0/dialog/oauth",
-				{
-					clientId: config.clientId,
-					scope: config.scope ?? [],
-					redirectUri: config.redirectUri
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const tokens = await getFacebookTokens(code);
-			const facebookUser = await getFacebookUser(tokens.accessToken);
-			const providerUserId = facebookUser.id;
-			const facebookUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...facebookUserAuth,
-				facebookUser,
-				tokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export class FacebookUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public facebookTokens: FacebookTokens;
+	public facebookUser: FacebookUser;
+
+	constructor(
+		auth: _Auth,
+		facebookUser: FacebookUser,
+		facebookTokens: FacebookTokens
+	) {
+		super(auth, PROVIDER_ID, facebookUser.id);
+
+		this.facebookTokens = facebookTokens;
+		this.facebookUser = facebookUser;
+	}
+}
 
 const getFacebookUser = async (accessToken: string): Promise<FacebookUser> => {
 	const requestUrl = createUrl("https://graph.facebook.com/me", {
@@ -79,7 +116,7 @@ const getFacebookUser = async (accessToken: string): Promise<FacebookUser> => {
 	return facebookUser;
 };
 
-type FacebookTokens = {
+export type FacebookTokens = {
 	accessToken: string;
 	refreshToken: string;
 	accessTokenExpiresIn: number;

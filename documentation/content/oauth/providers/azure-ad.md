@@ -1,29 +1,32 @@
 ---
-title: "Twitter"
-description: "Learn how to use the Twitter OAuth provider"
+title: "Azure Active Directory"
+description: "Learn how to use the Azure Active Directory OAuth provider"
 ---
 
-OAuth integration for Twitter OAuth 2.0 with PKCE. The access token can only be used for Twitter API v2. Provider id is `twitter`.
+OAuth integration for Azure Active Directory with PKCE. Provider id is `azure_ad`.
 
 ```ts
-import { twitter } from "@lucia-auth/oauth/providers";
+import { azureAD } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
-const twitterAuth = twitter(auth, config);
+const AzureADAuth = azureAD(auth, config);
 ```
 
-## `twitter()`
+## `azureAd()`
+
+The `oidc` and `profile` scope are always included.
 
 ```ts
-const twitter: (
+const azureAd: (
 	auth: Auth,
 	config: {
 		clientId: string;
 		clientSecret: string;
+		tenant: string;
 		redirectUri: string;
 		scope?: string[];
 	}
-) => TwitterProvider;
+) => AzureADProvider;
 ```
 
 ##### Parameter
@@ -32,7 +35,8 @@ const twitter: (
 | --------------------- | ------------------------------------------ | ------------------ | :------: |
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance     |          |
 | `config.clientId`     | `string`                                   | client id          |          |
-| `config.clientSecret` | `string`                                   | client id          |          |
+| `config.clientSecret` | `string`                                   | client secret      |          |
+| `config.tenant`       | `string`                                   | tenant identifier  |          |
 | `config.redirectUri`  | `string`                                   | redirect URI       |          |
 | `config.scope`        | `string[]`                                 | an array of scopes |    ✓     |
 
@@ -40,27 +44,27 @@ const twitter: (
 
 | type                                  | description      |
 | ------------------------------------- | ---------------- |
-| [`TwitterProvider`](#twitterprovider) | Twitter provider |
+| [`AzureADProvider`](#azureadprovider) | AzureAD provider |
 
 ## Interfaces
 
-### `TwitterAuth`
+### `AzureADAuth`
 
 See [`OAuth2ProviderAuthWithPKCE`](/reference/oauth/interfaces/oauth2providerauthwithpkce).
 
 ```ts
-// implements OAuth2ProviderAuthWithPKCE<TwitterAuth<_Auth>>
-interface TwitterAuth<_Auth extends Auth> {
+// implements OAuth2ProviderAuthWithPKCE<AzureADAuth<_Auth>>
+interface AzureADAuth<_Auth extends Auth> {
 	getAuthorizationUrl: () => Promise<
 		readonly [url: URL, codeVerifier: string, state: string]
 	>;
-	validateCallback: (code: string) => Promise<TwitterUserAuth<_Auth>>;
+	validateCallback: (code: string) => Promise<AzureADUserAuth<_Auth>>;
 }
 ```
 
 | type                                  |
 | ------------------------------------- |
-| [`TwitterUserAuth`](#twitteruserauth) |
+| [`AzureADUserAuth`](#azureaduserauth) |
 
 ##### Generics
 
@@ -68,40 +72,45 @@ interface TwitterAuth<_Auth extends Auth> {
 | ------- | ---------- | ------- |
 | `_Auth` | [`Auth`]() | `Auth`  |
 
-### `TwitterTokens`
+### `AzureADTokens`
 
 ```ts
-type TwitterTokens = {
+type AzureADTokens = {
+	idToken: string;
 	accessToken: string;
+	accessTokenExpiresIn: number;
 	refreshToken: string | null;
 };
 ```
 
-### `TwitterUser`
+### `AzureADUser`
 
 ```ts
-type TwitterUser = {
-	id: string;
+type AzureADUser = {
+	sub: string;
+	roles: string[];
+	oid: string;
 	name: string;
-	username: string;
+	preferred_username: string;
+	email?: string; // require `email` scope
 };
 ```
 
-### `TwitterUserAuth`
+### `AzureADUserAuth`
 
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
 interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
-	twitterUser: TwitterUser;
-	twitterTokens: TwitterTokens;
+	azureADUser: AzureADUser;
+	azureADTokens: AzureADTokens;
 }
 ```
 
 | properties      | type                              | description       |
 | --------------- | --------------------------------- | ----------------- |
-| `twitterUser`   | [`TwitterUser`](#twitteruser)     | Twitter user      |
-| `twitterTokens` | [`TwitterTokens`](#twittertokens) | Access tokens etc |
+| `azureADUser`   | [`AzureADUser`](#azureaduser)     | AzureAD user      |
+| `azureADTokens` | [`AzureADTokens`](#azureadtokens) | Access tokens etc |
 
 ##### Generics
 

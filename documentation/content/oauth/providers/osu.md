@@ -44,76 +44,35 @@ const osu: (
 
 ## Interfaces
 
-### `OsuProvider`
+### `OsuAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<OsuAuth<_Auth>>
+interface OsuAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<OsuUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<OsuUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                          |
 | ----------------------------- |
 | [`OsuUserAuth`](#osuuserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `OsuUserAuth`
-
-```ts
-type OsuUserAuth = ProviderUserAuth & {
-	osuUser: OsuUser;
-	osuTokens: OsuTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`OsuUser`](#osuuser)                                              |
-| [`OsuTokens`](#osutokens)                                          |
-
-```ts
-import type { OsuTokens, OsuUser } from "@lucia-auth/oauth/providers";
-```
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `OsuTokens`
 
 ```ts
 type OsuTokens = {
-	access_token: string;
-	expires_in: number;
-	refresh_token: string;
-	token_type: string;
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
@@ -242,17 +201,7 @@ type OsuUser = {
 		achievement_id: number;
 	}[];
 };
-```
 
-### `OsuGameMode`
-
-```ts
-type OsuGameMode = "fruits" | "mania" | "osu" | "taiko";
-```
-
-### `OsuUserStatistics`
-
-```ts
 type OsuUserStatistics = {
 	grade_counts: {
 		a: number;
@@ -278,4 +227,28 @@ type OsuUserStatistics = {
 	total_score: number;
 	country_rank: number;
 };
+
+type OsuGameMode = "fruits" | "mania" | "osu" | "taiko";
 ```
+
+### `OsuUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	osuUser: OsuUser;
+	osuTokens: OsuTokens;
+}
+```
+
+| properties  | type                      | description       |
+| ----------- | ------------------------- | ----------------- |
+| `osuUser`   | [`OsuUser`](#osuuser)     | Osu user          |
+| `osuTokens` | [`OsuTokens`](#osutokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

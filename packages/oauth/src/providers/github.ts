@@ -1,34 +1,81 @@
 import {
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
-	providerUserAuth,
 	validateOAuth2AuthorizationCode
-} from "../core.js";
-import { handleRequest, authorizationHeader } from "../request.js";
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-const PROVIDER_ID = "github";
-
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
 	redirectUri?: string;
 };
 
-export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getGithubTokens = async (code: string): Promise<GithubTokens> => {
+const PROVIDER_ID = "github";
+
+export const github = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): GithubAuth<_Auth> => {
+	return new GithubAuth(auth, config);
+};
+
+export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	GithubUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		return await createOAuth2AuthorizationUrl(
+			"https://github.com/login/oauth/authorize",
+			{
+				clientId: this.config.clientId,
+				scope: this.config.scope ?? [],
+				redirectUri: this.config.redirectUri
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<GithubUserAuth<_Auth>> => {
+		const githubTokens = await this.validateAuthorizationCode(code);
+		const githubUserRequest = new Request("https://api.github.com/user", {
+			headers: {
+				Authorization: authorizationHeader("bearer", githubTokens.accessToken)
+			}
+		});
+		const githubUser = await handleRequest<GithubUser>(githubUserRequest);
+		return new GithubUserAuth(this.auth, githubUser, githubTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<GithubTokens> => {
 		const tokens =
 			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 				code,
 				"https://github.com/login/oauth/access_token",
 				{
-					clientId: config.clientId,
+					clientId: this.config.clientId,
 					clientPassword: {
-						clientSecret: config.clientSecret,
+						clientSecret: this.config.clientSecret,
 						authenticateWith: "client_secret"
 					}
 				}
 			);
-
 		if ("refresh_token" in tokens) {
 			return {
 				accessToken: tokens.access_token,
@@ -37,51 +84,26 @@ export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 				refreshTokenExpiresIn: tokens.refresh_token_expires_in
 			};
 		}
-
 		return {
 			accessToken: tokens.access_token,
 			accessTokenExpiresIn: null
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			return await createOAuth2AuthorizationUrl(
-				"https://github.com/login/oauth/authorize",
-				{
-					clientId: config.clientId,
-					scope: config.scope ?? [],
-					redirectUri: config.redirectUri
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const githubTokens = await getGithubTokens(code);
-			const githubUser = await getGithubUser(githubTokens.accessToken);
-			const providerUserId = githubUser.id.toString();
-			const githubUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...githubUserAuth,
-				githubUser,
-				githubTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export class GithubUserAuth<
+	_Auth extends Auth
+> extends ProviderUserAuth<_Auth> {
+	public githubTokens: GithubTokens;
+	public githubUser: GithubUser;
 
-const getGithubUser = async (accessToken: string): Promise<GithubUser> => {
-	const request = new Request("https://api.github.com/user", {
-		headers: {
-			Authorization: authorizationHeader("bearer", accessToken)
-		}
-	});
-	const githubUser = await handleRequest<GithubUser>(request);
-	return githubUser;
-};
+	constructor(auth: _Auth, githubUser: GithubUser, githubTokens: GithubTokens) {
+		super(auth, PROVIDER_ID, githubUser.id.toString());
+
+		this.githubTokens = githubTokens;
+		this.githubUser = githubUser;
+	}
+}
 
 type AccessTokenResponseBody =
 	| {
@@ -94,7 +116,7 @@ type AccessTokenResponseBody =
 			refresh_token_expires_in: number;
 	  };
 
-type GithubTokens =
+export type GithubTokens =
 	| {
 			accessToken: string;
 			accessTokenExpiresIn: null;

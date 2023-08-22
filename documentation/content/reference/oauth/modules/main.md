@@ -4,13 +4,8 @@ title: "`@lucia-auth/oauth`"
 
 ## `createOAuth2AuthorizationUrl()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Creates a new authorization url for OAuth 2.0 authorization code grant with a state. Use [`createOAuth2AuthorizationUrlWithPKCE()`](/reference/oauth/modules/main#createoauth2authorizationurlwithpkce) for creating urls with PKCE code challenge.
-
-```ts
-import { __experimental_createOAuth2AuthorizationUrl } from "@lucia-auth/oauth";
-```
+`
 
 ```ts
 const createOAuth2AuthorizationUrl: (
@@ -18,40 +13,30 @@ const createOAuth2AuthorizationUrl: (
 	options: {
 		clientId: string;
 		scope: string[];
-		state?: string;
 		redirectUri?: string;
-		searchParams?: Record<string, string | undefined>;
 	}
 ) => Promise<readonly [authorizationUrl: URL, state: string]>;
 ```
 
 ##### Parameters
 
-| name               | type                                  | description                                    |
-| ------------------ | ------------------------------------- | ---------------------------------------------- |
-| `url`              | `string \| URL`                       | Authorization url base                         |
-| `options.clientId` | `string`                              | `client_id`                                    |
-| `options.scope`    | `string[]`                            | A list of values for `scope`                   |
-| `state`            | `string`                              | Custom state                                   |
-| `redirectUri`      | `string`                              | `redirect_uri`                                 |
-| `searchParams`     | `Record<string, string \| undefined>` | Any additional search params to add to the url |
+| name               | type            | description                  |
+| ------------------ | --------------- | ---------------------------- |
+| `url`              | `string \| URL` | Authorization url base       |
+| `options.clientId` | `string`        | `client_id`                  |
+| `options.scope`    | `string[]`      | A list of values for `scope` |
+| `redirectUri`      | `string`        | `redirect_uri`               |
 
 ##### Returns
 
-| name               | type     | description                 |
-| ------------------ | -------- | --------------------------- |
-| `authorizationUrl` | `URL`    | Authorization url           |
-| `state`            | `string` | Generated or provided state |
+| name               | type     | description       |
+| ------------------ | -------- | ----------------- |
+| `authorizationUrl` | `URL`    | Authorization url |
+| `state`            | `string` | Generated state   |
 
 ## `createOAuth2AuthorizationUrlWithPKCE()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Creates a new authorization url for OAuth 2.0 authorization code grant with a state and PKCE code challenge.
-
-```ts
-import { __experimental_createOAuth2AuthorizationUrlWithPKCE } from "@lucia-auth/oauth";
-```
 
 ```ts
 const createOAuth2AuthorizationUrlWithPKCE: (
@@ -60,44 +45,34 @@ const createOAuth2AuthorizationUrlWithPKCE: (
 		clientId: string;
 		scope: string[];
 		codeChallengeMethod: "S256";
-		state?: string;
 		redirectUri?: string;
-		searchParams?: Record<string, string | undefined>;
 	}
 ) => Promise<
-	readonly [authorizationUrl: URL, state: string, codeVerifier: string]
+	readonly [authorizationUrl: URL, codeVerifier: string, state: string]
 >;
 ```
 
 ##### Parameters
 
-| name                          | type                                  | description                                    |
-| ----------------------------- | ------------------------------------- | ---------------------------------------------- |
-| `url`                         | `string \| URL`                       | Authorization url base                         |
-| `options.clientId`            | `string`                              | `client_id`                                    |
-| `options.scope`               | `string[]`                            | A list of values for `scope`                   |
-| `options.codeChallengeMethod` | `"S256"`                              | Code challenge method                          |
-| `state`                       | `string`                              | Custom state                                   |
-| `redirectUri`                 | `string`                              | `redirect_uri`                                 |
-| `searchParams`                | `Record<string, string \| undefined>` | Any additional search params to add to the url |
+| name                          | type            | description                  |
+| ----------------------------- | --------------- | ---------------------------- |
+| `url`                         | `string \| URL` | Authorization url base       |
+| `options.clientId`            | `string`        | `client_id`                  |
+| `options.scope`               | `string[]`      | A list of values for `scope` |
+| `options.codeChallengeMethod` | `"S256"`        | Code challenge method        |
+| `redirectUri`                 | `string`        | `redirect_uri`               |
 
 ##### Returns
 
-| name               | type     | description                 |
-| ------------------ | -------- | --------------------------- |
-| `authorizationUrl` | `URL`    | Authorization url           |
-| `state`            | `string` | Generated or provided state |
-| `codeVerifier`     | `string` | Generated code verifier     |
+| name               | type     | description             |
+| ------------------ | -------- | ----------------------- |
+| `authorizationUrl` | `URL`    | Authorization url       |
+| `codeVerifier`     | `string` | Generated code verifier |
+| `state`            | `string` | Generated state         |
 
 ## `decodeIdToken()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Decodes the OpenID Connect Id Token and returns the claims. **Does NOT validate the JWT**. Throws `SyntaxError` if provided id token is invalid or malformed.
-
-```ts
-import { __experimental_decodeIdToken } from "@lucia-auth/oauth";
-```
 
 ```ts
 const decodeIdToken: <_Claims extends {}>(
@@ -127,11 +102,11 @@ JWT payload.
 
 ## `OAuthRequestError`
 
-See [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
+`class`. See [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
 
 ## `providerUserAuth()`
 
-Creates a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth).
+Creates a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) instance.
 
 ```ts
 const providerUserAuth: (
@@ -157,13 +132,7 @@ const providerUserAuth: (
 
 ## `validateOAuth2AuthorizationCode()`
 
-**This API is experimental and is subject to breaking changes.**
-
 Validates OAuth 2.0 authorization code by sending a request to the provided url. Returns the JSON-parsed response body.
-
-```ts
-import { __experimental_createOAuth2AuthorizationUrl } from "@lucia-auth/oauth";
-```
 
 ```ts
 const validateOAuth2AuthorizationCode: <_ResponseBody extends {}>(

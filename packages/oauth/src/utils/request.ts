@@ -1,4 +1,4 @@
-import { OAuthRequestError } from "./core.js";
+import { OAuthRequestError } from "../core/request.js";
 
 export const handleRequest = async <_ResponseBody extends {}>(
 	request: Request

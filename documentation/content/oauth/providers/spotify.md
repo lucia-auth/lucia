@@ -22,21 +22,19 @@ const spotify: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
-		showDialog?: boolean;
 	}
 ) => SpotifyProvider;
 ```
 
 ##### Parameters
 
-| name                   | type                                       | description                                   | optional |
-| ---------------------- | ------------------------------------------ | --------------------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                |          |
-| `configs.clientId`     | `string`                                   | Spotify OAuth app client id                   |          |
-| `configs.clientSecret` | `string`                                   | Spotify OAuth app client secret               |          |
-| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs           |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                            |    ✓     |
-| `configs.showDialog`   | `boolean`                                  | force the user to approve the app every time. |    ✓     |
+| name                   | type                                       | description                         | optional |
+| ---------------------- | ------------------------------------------ | ----------------------------------- | :------: |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                      |          |
+| `configs.clientId`     | `string`                                   | Spotify OAuth app client id         |          |
+| `configs.clientSecret` | `string`                                   | Spotify OAuth app client secret     |          |
+| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs |          |
+| `configs.scope`        | `string[]`                                 | an array of scopes                  |    ✓     |
 
 ##### Returns
 
@@ -46,77 +44,37 @@ const spotify: (
 
 ## Interfaces
 
-### `SpotifyProvider`
+### `SpotifyAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<SpotifyAuth<_Auth>>
+interface SpotifyAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<SpotifyUserAuth<_Auth>>;
+}
 ```
 
-##### Returns
+| type                                |
+| ----------------------------------- |
+| [`SpotifyUserAuth`](#appleuserauth) |
 
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
+##### Generics
 
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<SpotifyUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
-
-| type                                  |
-| ------------------------------------- |
-| [`SpotifyUserAuth`](#spotifyuserauth) |
-
-##### Errors
-
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `SpotifyUserAuth`
-
-```ts
-type SpotifyUserAuth = ProviderUserAuth & {
-	spotifyUser: SpotifyUser;
-	spotifyTokens: SpotifyTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`SpotifyUser`](#spotifyuser)                                      |
-| [`SpotifyTokens`](#spotifytokens)                                  |
-
-```ts
-import type { SpotifyTokens, SpotifyUser } from "@lucia-auth/oauth/providers";
-```
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `SpotifyTokens`
 
 ```ts
 type SpotifyTokens = {
 	accessToken: string;
-	refreshToken: string;
-	accessTokenExpiresIn: number;
-	scope: string;
 	tokenType: string;
+	scope: string;
+	accessTokenExpiresIn: number;
+	refreshToken: string;
 };
 ```
 
@@ -152,3 +110,25 @@ type SpotifyUser = {
 	uri: string;
 };
 ```
+
+### `SpotifyUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	appleUser: SpotifyUser;
+	appleTokens: SpotifyTokens;
+}
+```
+
+| properties    | type                            | description       |
+| ------------- | ------------------------------- | ----------------- |
+| `appleUser`   | [`SpotifyUser`](#appleuser)     | Spotify user      |
+| `appleTokens` | [`SpotifyTokens`](#appletokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

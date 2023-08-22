@@ -1,4 +1,4 @@
-import { decodeBase64, encodeBase64Url } from "./utils.js";
+import { decodeBase64, encodeBase64Url } from "../utils/encode.js";
 
 const encoder = new TextEncoder();
 

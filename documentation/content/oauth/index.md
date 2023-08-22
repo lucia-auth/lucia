@@ -15,7 +15,7 @@ pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth
 ```
 
-Get started with [built-in providers](/oauth/basics/built-in-providers) or [OAuth helpers (experimental)](/oauth/basics/oauth-helpers).
+Get started with [OAuth 2.0 authorization code grant type](/oauth/basics/oauth2) or [OAuth 2.0 with PKCE](/oauth2/oauth2-pkce).
 
 ## Step-by-step guides
 
@@ -33,6 +33,7 @@ We also have framework specific guides.
 
 - Apple
 - Auth0
+- Azure Active Directory
 - Discord
 - Facebook
 - Github
@@ -44,3 +45,4 @@ We also have framework specific guides.
 - Reddit
 - Spotify
 - Twitch
+- Twitter

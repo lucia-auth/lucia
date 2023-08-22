@@ -1,45 +1,84 @@
 import {
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
-	providerUserAuth,
-	validateOAuth2AuthorizationCode,
-	decodeIdToken
-} from "../core.js";
-import { getPKCS8Key } from "../utils.js";
-import { createES256SignedJWT } from "../jwt.js";
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { decodeIdToken } from "../core/oidc.js";
+import { getPKCS8Key } from "../utils/crypto.js";
+import { createES256SignedJWT } from "../utils/jwt.js";
 
 import type { Auth } from "lucia";
-import type { OAuthProvider } from "../core.js";
 
-type AppleConfig = {
+type Config = {
+	redirectUri: string;
+	clientId: string;
 	teamId: string;
 	keyId: string;
 	certificate: string;
 };
 
-type Config = {
-	redirectUri: string;
-	clientId: string;
-} & AppleConfig;
-
 const PROVIDER_ID = "apple";
 const APPLE_AUD = "https://appleid.apple.com";
 
-export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getAppleTokens = async (code: string): Promise<AppleTokens> => {
+export const apple = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): AppleAuth<_Auth> => {
+	return new AppleAuth(auth, config);
+};
+
+export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	AppleUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const [url, state] = await createOAuth2AuthorizationUrl(
+			"https://appleid.apple.com/auth/authorize",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: []
+			}
+		);
+		url.searchParams.set("response_mode", "query");
+		return [url, state];
+	};
+	
+	public validateCallback = async (
+		code: string
+	): Promise<AppleUserAuth<_Auth>> => {
+		const appleTokens = await this.validateAuthorizationCode(code);
+		const appleUser = getAppleUser(appleTokens.idToken);
+		return new AppleUserAuth(this.auth, appleUser, appleTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<AppleTokens> => {
 		const clientSecret = await createSecretId({
-			certificate: config.certificate,
-			teamId: config.teamId,
-			clientId: config.clientId,
-			keyId: config.keyId
+			certificate: this.config.certificate,
+			teamId: this.config.teamId,
+			clientId: this.config.clientId,
+			keyId: this.config.keyId
 		});
+
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
 			id_token: string;
 		}>(code, "https://appleid.apple.com/auth/token", {
-			clientId: config.clientId,
-			redirectUri: config.redirectUri,
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
 			clientPassword: {
 				clientSecret,
 				authenticateWith: "client_secret"
@@ -53,45 +92,27 @@ export const apple = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			idToken: tokens.id_token
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			return await createOAuth2AuthorizationUrl(
-				"https://appleid.apple.com/auth/authorize",
-				{
-					clientId: config.clientId,
-					redirectUri: config.redirectUri,
-					scope: [],
-					searchParams: {
-						response_mode: "query"
-					}
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const appleTokens = await getAppleTokens(code);
-			const appleUser = getAppleUser(appleTokens.idToken);
-			const providerUserId = appleUser.sub;
-			const appleUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
+export class AppleUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public appleTokens: AppleTokens;
+	public appleUser: AppleUser;
 
-			return {
-				...appleUserAuth,
-				appleUser,
-				appleTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
-
-const createSecretId = async (
-	config: AppleConfig & {
-		clientId: string;
+	constructor(auth: _Auth, appleUser: AppleUser, appleTokens: AppleTokens) {
+		super(auth, PROVIDER_ID, appleUser.sub);
+		this.appleTokens = appleTokens;
+		this.appleUser = appleUser;
 	}
-): Promise<string> => {
+}
+
+const createSecretId = async (config: {
+	certificate: string;
+	teamId: string;
+	clientId: string;
+	keyId: string;
+}): Promise<string> => {
 	const now = Math.floor(Date.now() / 1000);
 	const payload = {
 		iss: config.teamId,
@@ -121,7 +142,7 @@ const getAppleUser = (idToken: string): AppleUser => {
 	};
 };
 
-type AppleTokens = {
+export type AppleTokens = {
 	accessToken: string;
 	refreshToken: string | null;
 	accessTokenExpiresIn: number;

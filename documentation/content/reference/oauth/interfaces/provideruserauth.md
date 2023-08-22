@@ -1,50 +1,17 @@
 ---
-title: "Interfaces"
+title: "`ProviderUserAuth`"
 ---
 
-## `OAuthProvider`
-
-See each provider's page.
-
 ```ts
-type OAuthProvider = {
-	getAuthorizationUrl: () => Promise<[URL, ...any[]]>;
-	validateCallback: (
-		code: string,
-		...optionalArgs: any[]
-	) => Promise<ProviderUserAuth>;
-};
-```
-
-## `OAuthRequestError`
-
-Extends standard `Error`.
-
-```ts
-type OAuthRequestError = Error & {
-	request: Request;
-	response: Response;
-};
-```
-
-## `ProviderUserAuth`
-
-```ts
-type ProviderUserAuth = {
-	existingUser: User | null;
+interface ProviderUserAuth {
 	createKey: (userId: string) => Promise<Key>;
 	createUser: (options: {
 		userId?: string;
 		attributes: Lucia.DatabaseUserAttributes;
 	}) => Promise<User>;
-};
+	getExistingUser: () => Promise<User | null>;
+}
 ```
-
-### Properties
-
-| name           | type                                                 | description                                       |
-| -------------- | ---------------------------------------------------- | ------------------------------------------------- |
-| `existingUser` | [`User`](/reference/lucia/interfaces#user)` \| null` | User linked to the provider account, if it exists |
 
 ### `createKey()`
 
@@ -90,19 +57,12 @@ const createUser: (options: {
 | ------------------------------------------ | ----------- |
 | [`User`](/reference/lucia/interfaces#user) | A new user  |
 
-#### Example
+## `getExistingUser()`
 
-```ts
-createUser({
-	attributes: {
-		username: githubUsername
-	}
-});
-```
+Returns a user linked to the provider account, if it exists.
 
-```ts
-createUser({
-	userId: generateCustomUserId(),
-	attributes: {}
-});
-```
+##### Returns
+
+| type                                                |
+| --------------------------------------------------- |
+| [`User`](/reference/lucia/interfaces#user)`\| null` |

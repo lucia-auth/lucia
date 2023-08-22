@@ -32,7 +32,7 @@ const user = await getUser();
 
 Instead of creating a new user, we can check if a user with the email already exists, and if so, link the authentication method to that user by creating a new key.
 
-It's important to note `existingUser` is defined if a user linked to the provider's user id (e.g. Github user id) exists. It is _not_ based on the email. As such, you will have to query the user table to find if a user with the email already exists. If it does, use [`ProviderUserAuth.createKey()`]() to link the method to the user. You can use [`transformDatabaseUser()`]() to get Lucia's `User` object from the database result.
+It's important to note `existingUser` is defined if a user linked to the provider's user id (e.g. Github user id) exists. It is _not_ based on the email. As such, you will have to query the user table to find if a user with the email already exists. If it does, use [`ProviderUserAuth.createKey()`](/reference/oauth/interfaces/provideruserauth#createkey) to link the method to the user. You can use [`transformDatabaseUser()`](/reference/lucia/interfaces/auth#transformdatabaseuser) to get Lucia's `User` object from the database result.
 
 **It's crucial to ensure that the email has been verified.**
 
