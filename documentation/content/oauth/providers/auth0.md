@@ -29,14 +29,16 @@ const auth0: (
 
 ##### Parameters
 
-| name                  | type                                       | description                                                    | optional |
-| --------------------- | ------------------------------------------ | -------------------------------------------------------------- | :------: |
-| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                 |          |
-| `config.appDomain`    | `string`                                   | Auth0 OAuth app domain                                         |          |
-| `config.clientId`     | `string`                                   | Auth0 OAuth app client id                                      |          |
-| `config.clientSecret` | `string`                                   | Auth0 OAuth app client secret                                  |          |
-| `config.redirectUri`  | `string`                                   | Auth0 OAuth app redirect uri                                   |          |
-| `config.scope`        | `string[]`                                 | an array of scopes - `openid` and `profile` is always included |    ✓     |
+Scopes `openid` and `profile` are always included
+
+| name                  | type                                       | description                   | optional |
+| --------------------- | ------------------------------------------ | ----------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                |          |
+| `config.appDomain`    | `string`                                   | Auth0 OAuth app domain        |          |
+| `config.clientId`     | `string`                                   | Auth0 OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | Auth0 OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | Auth0 OAuth app redirect uri  |          |
+| `config.scope`        | `string[]`                                 | an array of scopes            |    ✓     |
 
 ##### Returns
 

@@ -32,14 +32,20 @@ We also have framework specific guides.
 ## Built-in providers
 
 - Apple
+- Atlassian
 - Auth0
 - Azure Active Directory
+- Bitbucket
+- Box
 - Discord
+- Dropbox
 - Facebook
 - Github
+- Gitlab
 - Google
 - Lichess
-- Linkedin
+- Line
+- LinkedIn
 - osu!
 - Patreon
 - Reddit
