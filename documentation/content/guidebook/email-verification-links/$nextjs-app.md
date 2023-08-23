@@ -173,6 +173,7 @@ export const validateEmailVerificationToken = async (token: string) => {
 Since the form will require client side JS, we will extract it into its own client component. We need to manually handle redirect responses as the default behavior is to make another request to the redirect location. We're going to use `refresh()` to reload the page (and redirect the user in the server) since we want to re-render the entire page, including `layout.tsx`.
 
 ```tsx
+'use client'
 // components/form.tsx
 import { useRouter } from "next/navigation";
 
