@@ -13,7 +13,7 @@ An alternative way to verify emails is to use one-time passwords. These are gene
 | ------- | -------- | :----: | ---------- | ------------------------------------- |
 | id      | any      |   ✓    |            | PRIMARY KEY                           |
 | user_id | `string` |   ✓    | `user(id)` | User id                               |
-| code    | `string  |        |            | Verification code                     |
+| code    | `string`  |        |            | Verification code                     |
 | expires | `bigint` |        |            | `int4` and `timestamp` type works too |
 
 ## Generate and send verification code
