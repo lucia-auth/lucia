@@ -3,7 +3,7 @@ title: "Github OAuth in Astro"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/getting-started/astro) and that you've implement the recommended middleware._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started/astro) and that you've implement the [recommended middleware](/getting-started/astro#set-up-middleware)._
 
 This guide will cover how to implement Github OAuth using Lucia in Astro. It will have 3 parts:
 
