@@ -21,9 +21,10 @@ export const GET = async ({ url, cookies, locals }) => {
 		});
 	}
 	try {
-		const { existingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
+		const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 
 		const getUser = async () => {
+			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
