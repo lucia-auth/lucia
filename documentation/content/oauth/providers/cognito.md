@@ -1,6 +1,6 @@
 ---
 title: "Cognito"
-description: "Learn about using the AWS Cognito provider in Lucia OAuth integration"
+description: "Learn about using the AWS Cognito provider"
 ---
 
 OAuth integration for AWS Cognito's hosted UI. Refer to the Cognito docs:
@@ -52,64 +52,29 @@ const cognito: (
 
 ## Interfaces
 
-### `CognitoProvider`
+### `CognitoAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<CognitoAuth<_Auth>>
+interface CognitoAuth<_Auth extends Auth> {
+	getAuthorizationUrl: (
+		identityProvider?: string
+	) => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<CognitoAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<CognitoUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                                  |
 | ------------------------------------- |
 | [`CognitoUserAuth`](#cognitouserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-ID token decoding errors are thrown as [`IdTokenError`](/reference/oauth/interfaces#idtokenerror).
-
-### `CognitoUserAuth`
-
-```ts
-type CognitoUserAuth = ProviderUserAuth & {
-	cognitoUser: CognitoUser;
-	cognitoTokens: CognitoTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`CognitoUser`](#cognitouser)                                      |
-| [`CognitoTokens`](#cognitotokens)                                  |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `CognitoTokens`
 
@@ -128,26 +93,50 @@ type CognitoTokens = {
 ```ts
 type CognitoUser = {
 	sub: string;
-	cognitoUsername: string;
-	cognitoGroups: string[];
-	address?: string;
+	"cognito:username": string;
+	"cognito:groups": string[];
+	address?: {
+		formatted?: string;
+	};
 	birthdate?: string;
 	email?: string;
-	emailVerified?: boolean;
-	familyName?: string;
+	email_verified?: boolean;
+	family_name?: string;
 	gender?: string;
-	givenName?: string;
+	given_name?: string;
 	locale?: string;
-	middleName?: string;
+	middle_name?: string;
 	name?: string;
 	nickname?: string;
+	phone_number?: string;
+	phone_number_verified?: boolean;
 	picture?: string;
-	preferredUsername?: string;
+	preferred_username?: string;
 	profile?: string;
 	website?: string;
-	zoneInfo?: string;
-	phoneNumber?: string;
-	phoneNumberVerified?: boolean;
-	updatedAt?: number;
+	zoneinfo?: string;
+	updated_at?: number;
 };
 ```
+
+### `CognitoUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface CognitoUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	cognitoUser: CognitoUser;
+	cognitoTokens: CognitoTokens;
+}
+```
+
+| properties      | type                              | description       |
+| --------------- | --------------------------------- | ----------------- |
+| `cognitoUser`   | [`CognitoUser`](#cognitouser)     | Cognito user      |
+| `cognitoTokens` | [`CognitoTokens`](#cognitotokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |
