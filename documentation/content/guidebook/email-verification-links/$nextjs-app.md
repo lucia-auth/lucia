@@ -174,7 +174,7 @@ Since the form will require client side JS, we will extract it into its own clie
 
 ```tsx
 // components/form.tsx
-'use client';
+"use client";
 import { useRouter } from "next/navigation";
 
 const Form = (props: { children: React.ReactNode; action: string }) => {
