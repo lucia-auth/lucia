@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-postgresql
 
+## 2.0.1
+
+### Patch changes
+
+- [#1031](https://github.com/pilcrowOnPaper/lucia/pull/1031) by [@kosei28](https://github.com/kosei28) : Fix release of connection for transaction in pg
+
 ## 2.0.0
 
 ### Major changes
