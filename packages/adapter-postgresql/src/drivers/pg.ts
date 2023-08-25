@@ -34,6 +34,8 @@ export const pgAdapter = (
 		} catch (e) {
 			connection.query("ROLLBACK");
 			throw e;
+		} finally {
+			connection.release();
 		}
 	};
 
