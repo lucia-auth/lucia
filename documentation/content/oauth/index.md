@@ -15,7 +15,7 @@ pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth
 ```
 
-Get started with [OAuth 2.0 authorization code grant type](/oauth/basics/oauth2) or [OAuth 2.0 with PKCE](/oauth2/oauth2-pkce).
+Get started with [OAuth 2.0 authorization code grant type](/oauth/basics/oauth2) or [OAuth 2.0 with PKCE](/oauth/basics/oauth2-pkce).
 
 ## Step-by-step guides
 
