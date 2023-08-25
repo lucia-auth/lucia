@@ -1,36 +1,83 @@
 import {
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
-	decodeIdToken,
-	providerUserAuth,
 	validateOAuth2AuthorizationCode
-} from "../core.js";
+} from "../core/oauth2.js";
+import { decodeIdToken } from "../core/oidc.js";
+import { ProviderUserAuth } from "../core/provider.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	hostedUiDomain: string;
 	redirectUri: string;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "cognito";
 
-export const cognito = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getCognitoTokens = async (code: string): Promise<CognitoTokens> => {
-		const tokens =
-			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
-				code,
-				new URL("/oauth2/token", config.hostedUiDomain),
-				{
-					clientId: config.clientId,
-					redirectUri: config.redirectUri,
-					clientPassword: {
-						clientSecret: config.clientSecret,
-						authenticateWith: "client_secret"
-					}
-				}
-			);
+export const cognito = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): CognitoAuth<_Auth> => {
+	return new CognitoAuth(auth, config);
+};
 
+export class CognitoAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	CognitoUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (
+		identityProvider?: string
+	): Promise<readonly [url: URL, state: string]> => {
+		const scopeConfig = this.config.scope ?? [];
+		const url = identityProvider
+			? `/oauth2/authorize?identity_provider=${identityProvider}`
+			: "/oauth2/authorize";
+		return await createOAuth2AuthorizationUrl(
+			new URL(url, this.config.hostedUiDomain),
+			{
+				clientId: this.config.clientId,
+				scope: ["openid", ...scopeConfig],
+				redirectUri: this.config.redirectUri
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<CognitoUserAuth<_Auth>> => {
+		const cognitoTokens = await this.validateAuthorizationCode(code);
+		const cognitoUser = getCognitoUser(cognitoTokens.idToken);
+		return new CognitoUserAuth(this.auth, cognitoUser, cognitoTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<CognitoTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
+			access_token: string;
+			refresh_token: string;
+			id_token: string;
+			expires_in: number;
+			token_type: string;
+		}>(code, new URL("/oauth2/token", this.config.hostedUiDomain), {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				authenticateWith: "client_secret",
+				clientSecret: this.config.clientSecret
+			}
+		});
 		return {
 			accessToken: tokens.access_token,
 			refreshToken: tokens.refresh_token,
@@ -39,51 +86,28 @@ export const cognito = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			tokenType: tokens.token_type
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async (identityProvider?: string) => {
-			const scopeConfig = config.scope ?? [];
-			return await createOAuth2AuthorizationUrl(
-				new URL("/oauth2/authorize", config.hostedUiDomain),
-				{
-					clientId: config.clientId,
-					scope: ["openid", ...scopeConfig],
-					redirectUri: config.redirectUri,
-					searchParams: {
-						identity_provider: identityProvider ?? ""
-					}
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const cognitoTokens = await getCognitoTokens(code);
-			const cognitoUser = getCognitoUser(cognitoTokens.idToken);
-			const providerUserId = cognitoUser["cognito:username"];
-			const cognitoUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...cognitoUserAuth,
-				cognitoUser,
-				cognitoTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export class CognitoUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public cognitoTokens: CognitoTokens;
+	public cognitoUser: CognitoUser;
+
+	constructor(
+		auth: _Auth,
+		cognitoUser: CognitoUser,
+		cognitoTokens: CognitoTokens
+	) {
+		super(auth, PROVIDER_ID, cognitoUser["cognito:username"]);
+		this.cognitoTokens = cognitoTokens;
+		this.cognitoUser = cognitoUser;
+	}
+}
 
 const getCognitoUser = (idToken: string): CognitoUser => {
 	const cognitoUser = decodeIdToken<CognitoUser>(idToken);
 	return cognitoUser;
-};
-
-type AccessTokenResponseBody = {
-	access_token: string;
-	refresh_token: string;
-	id_token: string;
-	expires_in: number;
-	token_type: string;
 };
 
 export type CognitoTokens = {
