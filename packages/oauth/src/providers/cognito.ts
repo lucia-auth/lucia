@@ -8,27 +8,28 @@ import {
 import type { Auth } from "lucia";
 import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-const PROVIDER_ID = "cognito";
-
 type Config = OAuthConfig & {
 	hostedUiDomain: string;
 	redirectUri: string;
 };
 
+const PROVIDER_ID = "cognito";
+
 export const cognito = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getCognitoTokens = async (code: string) => {
-		const tokens = await validateOAuth2AuthorizationCode<CognitoTokens>(
-			code,
-			new URL("/oauth2/token", config.hostedUiDomain),
-			{
-				clientId: config.clientId,
-				redirectUri: config.redirectUri,
-				clientPassword: {
-					clientSecret: config.clientSecret,
-					authenticateWith: "client_secret"
+	const getCognitoTokens = async (code: string): Promise<CognitoTokens> => {
+		const tokens =
+			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
+				code,
+				new URL("/oauth2/token", config.hostedUiDomain),
+				{
+					clientId: config.clientId,
+					redirectUri: config.redirectUri,
+					clientPassword: {
+						clientSecret: config.clientSecret,
+						authenticateWith: "client_secret"
+					}
 				}
-			}
-		);
+			);
 
 		return {
 			accessToken: tokens.access_token,
@@ -36,34 +37,6 @@ export const cognito = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			idToken: tokens.id_token,
 			accessTokenExpiresIn: tokens.expires_in,
 			tokenType: tokens.token_type
-		};
-	};
-
-	const getCognitoUser = (idToken: string): CognitoUser => {
-		const jwtPayload = decodeIdToken<IdTokenPayload>(idToken);
-		return {
-			sub: jwtPayload.sub,
-			cognitoUsername: jwtPayload["cognito:username"],
-			cognitoGroups: jwtPayload["cognito:groups"],
-			address: jwtPayload.address?.formatted,
-			birthdate: jwtPayload.birthdate,
-			email: jwtPayload.email,
-			emailVerified: jwtPayload.email_verified,
-			familyName: jwtPayload.family_name,
-			gender: jwtPayload.gender,
-			givenName: jwtPayload.given_name,
-			locale: jwtPayload.locale,
-			middleName: jwtPayload.middle_name,
-			name: jwtPayload.name,
-			nickname: jwtPayload.nickname,
-			picture: jwtPayload.picture,
-			preferredUsername: jwtPayload.preferred_username,
-			profile: jwtPayload.profile,
-			website: jwtPayload.website,
-			zoneInfo: jwtPayload.zoneinfo,
-			phoneNumber: jwtPayload.phone_number,
-			phoneNumberVerified: jwtPayload.phone_number_verified,
-			updatedAt: jwtPayload.updated_at
 		};
 	};
 
@@ -85,7 +58,7 @@ export const cognito = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 		validateCallback: async (code: string) => {
 			const cognitoTokens = await getCognitoTokens(code);
 			const cognitoUser = getCognitoUser(cognitoTokens.idToken);
-			const providerUserId = cognitoUser.cognitoUsername;
+			const providerUserId = cognitoUser["cognito:username"];
 			const cognitoUserAuth = await providerUserAuth(
 				auth,
 				PROVIDER_ID,
@@ -100,7 +73,28 @@ export const cognito = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 	} as const satisfies OAuthProvider;
 };
 
-type IdTokenPayload = {
+const getCognitoUser = (idToken: string): CognitoUser => {
+	const cognitoUser = decodeIdToken<CognitoUser>(idToken);
+	return cognitoUser;
+};
+
+type AccessTokenResponseBody = {
+	access_token: string;
+	refresh_token: string;
+	id_token: string;
+	expires_in: number;
+	token_type: string;
+};
+
+export type CognitoTokens = {
+	accessToken: string;
+	refreshToken: string;
+	idToken: string;
+	accessTokenExpiresIn: number;
+	tokenType: string;
+};
+
+export type CognitoUser = {
 	sub: string;
 	"cognito:username": string;
 	"cognito:groups": string[];
@@ -125,37 +119,4 @@ type IdTokenPayload = {
 	website?: string;
 	zoneinfo?: string;
 	updated_at?: number;
-};
-
-export type CognitoTokens = {
-	access_token: string;
-	refresh_token: string;
-	id_token: string;
-	expires_in: number;
-	token_type: string;
-};
-
-export type CognitoUser = {
-	sub: string;
-	cognitoUsername: string;
-	cognitoGroups: string[];
-	address?: string;
-	birthdate?: string;
-	email?: string;
-	emailVerified?: boolean;
-	familyName?: string;
-	gender?: string;
-	givenName?: string;
-	locale?: string;
-	middleName?: string;
-	name?: string;
-	nickname?: string;
-	picture?: string;
-	preferredUsername?: string;
-	profile?: string;
-	website?: string;
-	zoneInfo?: string;
-	phoneNumber?: string;
-	phoneNumberVerified?: boolean;
-	updatedAt?: number;
 };
