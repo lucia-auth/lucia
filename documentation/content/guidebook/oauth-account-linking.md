@@ -10,10 +10,11 @@ When providing more than one ways to sign in, you may want to link multiple prov
 Here's a basic OAuth implementation using the official integration.
 
 ```ts
-const { existingUser, createUser, providerUser } =
+const { getExistingUser, createUser, providerUser } =
 	providerAuth.validateCallback(code);
 
 const getUser = async () => {
+	const existingUser = await getExistingUser();
 	if (existingUser) return existingUser;
 	if (!providerUser.email_verified) {
 		throw new Error("Email not verified");
@@ -39,10 +40,11 @@ It's important to note `existingUser` is defined if a user linked to the provide
 ```ts
 import { auth } from "./lucia.js";
 
-const { existingUser, createUser, providerUser, createKey } =
+const { getExistingUser, createUser, providerUser, createKey } =
 	providerAuth.validateCallback(code);
 
 const getUser = async () => {
+	const existingUser = await getExistingUser();
 	if (existingUser) return existingUser;
 	if (!providerUser.email_verified) {
 		throw new Error("Email not verified");

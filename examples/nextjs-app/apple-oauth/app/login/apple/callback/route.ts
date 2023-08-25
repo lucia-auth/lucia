@@ -27,10 +27,11 @@ export const GET = async (request: NextRequest) => {
 		});
 	}
 	try {
-		const { existingUser, appleUser, createUser } =
+		const { getExistingUser, appleUser, createUser } =
 			await appleAuth.validateCallback(code);
 
 		const getUser = async () => {
+			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {

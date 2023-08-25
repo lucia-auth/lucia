@@ -98,7 +98,7 @@ type DiscordUser = {
 	premium_type?: number;
 	public_flags?: number;
 	locale?: string;
-	avatar_decoration? :string;
+	avatar_decoration?: string;
 };
 ```
 

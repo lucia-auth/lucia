@@ -203,10 +203,11 @@ export const GET = async (event: APIEvent) => {
 		});
 	}
 	try {
-		const { existingUser, githubUser, createUser } =
+		const { getExistingUser, githubUser, createUser } =
 			await githubAuth.validateCallback(code);
 
 		const getUser = async () => {
+			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
@@ -250,10 +251,11 @@ You can check if the user has already registered with your app by checking `Gith
 If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
-const { existingUser, githubUser, createUser } =
+const { getExistingUser, githubUser, createUser } =
 	await githubAuth.validateCallback(code);
 
 const getUser = async () => {
+	const existingUser = await getExistingUser();
 	if (existingUser) return existingUser;
 	const user = await createUser({
 		attributes: {
