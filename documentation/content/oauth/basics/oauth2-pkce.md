@@ -3,7 +3,7 @@ title: "OAuth 2.0 with PKCE"
 description: "Learn how to implement OAuth 2.0 with PKCE"
 ---
 
-This page covers OAuth 2.0 authorization code grant type. For OAuth 2.0 providers with PKCE, see [OAuth 2.0 with PKCE](/oauth/baiscs/oauth2).
+This page covers OAuth 2.0 authorization code grant type with PKCE. For OAuth 2.0 providers without PKCE, see [OAuth 2.0 without PKCE](/oauth/basics/oauth2).
 
 Examples shown here uses Twitter OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
 
