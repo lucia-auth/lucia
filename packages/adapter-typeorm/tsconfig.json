@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+    "esModuleInterop": true,
+		"allowJs": true,
+		"checkJs": true,
+		"noImplicitAny": true,
+		"module": "es2022",
+		"moduleResolution": "nodenext",
+		"target": "es2022",
+		"allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+		"declaration": true,
+		"outDir": "./dist",
+		"strict": true
+	},
+	"include": ["src", "typeorm"],
+	"exclude": ["node_modules/", "**/__tests__/*"]
+}

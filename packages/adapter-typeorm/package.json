@@ -1,0 +1,56 @@
+{
+	"name": "@lucia-auth/adapter-typeorm",
+	"version": "1.0.0",
+	"description": "TypeORM adapter for Lucia",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
+	"type": "module",
+	"files": [
+		"/dist/",
+		"CHANGELOG.md"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc",
+		"test": "tsx test/index.ts",
+		"db:migrate": " NODE_OPTIONS='-r dotenv/config' dotenv_config_path='.env' npx typeorm-ts-node-esm migration:run --dataSource ./test/db.ts",
+		"test-setup": "pnpm build && pnpm run db:migrate"
+	},
+	"keywords": [
+		"lucia",
+		"typeorm",
+		"lucia",
+		"auth",
+		"postgres",
+		"mysql",
+		"sqlite",
+		"authentication",
+		"adapter",
+		"sql",
+		"postgresql"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/adapter-typeorm"
+	},
+	"author": "hisamafahri",
+	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"peerDependencies": {
+		"lucia": "^2.0.0"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "latest",
+		"class-transformer": "^0.5.1",
+		"dotenv": "^16.0.3",
+		"lucia": "latest",
+		"reflect-metadata": "^0.1.13",
+		"ts-node": "^10.9.1",
+		"tsx": "^3.12.6",
+		"typeorm": "^0.3.17",
+		"typescript": "4.9.5"
+	}
+}
