@@ -4,9 +4,6 @@ import "reflect-metadata";
 import {
 	Entity,
 	Column,
-	OneToMany,
-	JoinColumn,
-	ManyToOne,
 	Index,
 	PrimaryColumn
 } from "typeorm";
@@ -25,14 +22,6 @@ export class User extends BaseEntity {
 
 	@Column({ name: "username", type: "varchar", length: "256", unique: true })
 	username: string;
-
-	@OneToMany(() => Session, (session) => session.user)
-	@JoinColumn({ referencedColumnName: "id" })
-	authSessions?: Session[];
-
-	@OneToMany(() => Key, (key) => key.user)
-	@JoinColumn({ referencedColumnName: "id" })
-	authKeys?: Key[];
 }
 
 @Entity({ name: "session" })
@@ -42,20 +31,16 @@ export class Session extends BaseEntity {
 
 	@Column({ name: "user_id", type: "text" })
 	@Index()
-	userId: string;
+	user_id: string;
 
 	@Column({ name: "active_expires", type: "bigint" })
-	activeExpires: number;
+	active_expires: number;
 
 	@Column({ name: "idle_expires", type: "bigint" })
-	idleExpires: number;
+	idle_expires: number;
 
 	@Column({ name: "country", type: "varchar", length: "256" })
 	country: string;
-
-	@ManyToOne(() => User, (user) => user.authSessions)
-	@JoinColumn({ name: "user_id", referencedColumnName: "id" })
-	user: User;
 }
 
 @Entity({ name: "key" })
@@ -65,12 +50,8 @@ export class Key extends BaseEntity {
 
 	@Column({ name: "user_id", type: "text" })
 	@Index()
-	userId: string;
+	user_id: string;
 
 	@Column({ name: "hashed_password", type: "text", nullable: true })
-	hashedPassword: string | null;
-
-	@ManyToOne(() => User, (user) => user.authKeys)
-	@JoinColumn({ name: "user_id", referencedColumnName: "id" })
-	user: User;
+	hashed_password: string | null;
 }

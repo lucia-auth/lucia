@@ -34,37 +34,31 @@ export const typeormAdapter = (
 					const createdUser = await repository.user.save(entity);
 					return transformTypeORMUser(createdUser);
 				}
+
+				const queryRunner = dataSource.createQueryRunner();
+				await queryRunner.connect();
+
 				try {
-					await dataSource.manager.transaction(
-						async (transactionalEntityManager) => {
-							const userEntity = transactionalEntityManager
-								.getRepository(User)
-								.create(user);
-							const keyEntity = transactionalEntityManager
-								.getRepository(Key)
-								.create(key);
-							await transactionalEntityManager.save([userEntity, keyEntity]);
-							const createdUser = await repository.user.findOneOrFail({
-								where: {
-									id: user.id
-								}
-							});
+					await queryRunner.startTransaction();
+					const userEntity = queryRunner.manager
+						.getRepository(User)
+						.create(user);
+					const keyEntity = queryRunner.manager.getRepository(Key).create(key);
+					const createdUser = await queryRunner.manager
+						.getRepository(User)
+						.save(userEntity);
+					await queryRunner.manager.getRepository(Key).save(keyEntity);
 
-							console.log("?????", createdUser);
+					await queryRunner.commitTransaction();
 
-							delete createdUser?.authKeys;
-							delete createdUser?.authSessions;
-
-							return createdUser.toJSON();
-						}
-					);
+					return transformTypeORMUser(createdUser);
 				} catch (e) {
-					// TODO: Handle error
-					const error = e;
-					// const error = e as Partial<PossiblePrismaError>;
-					// if (error.code === "P2002" && error.message?.includes("`id`"))
-					// 	throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					throw error;
+					await queryRunner.rollbackTransaction();
+					// if (e.code === "P2002" && error.message?.includes("`id`"))
+					throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					// throw error;
+				} finally {
+					await queryRunner.release();
 				}
 			},
 			deleteUser: async (userId) => {
@@ -96,7 +90,9 @@ export const typeormAdapter = (
 				if (!repository.session) {
 					throw new Error("Session table not defined");
 				}
-				const sessions = await repository.session.find({ where: { userId } });
+				const sessions = await repository.session.find({
+					where: { user_id: userId }
+				});
 				return sessions.map((session) => transformTypeORMSession(session));
 			},
 			setSession: async (session) => {
@@ -138,7 +134,7 @@ export const typeormAdapter = (
 					throw new Error("Session table not defined");
 				}
 				await repository.session.delete({
-					userId
+					user_id: userId
 				});
 			},
 			updateSession: async (userId, partialSession) => {
@@ -160,7 +156,7 @@ export const typeormAdapter = (
 			getKeysByUserId: async (userId) => {
 				const key = await repository.key.find({
 					where: {
-						userId
+						user_id: userId
 					}
 				});
 				return key.map((item) => transformTypeORMKey(item));
@@ -198,7 +194,7 @@ export const typeormAdapter = (
 			},
 			deleteKeysByUserId: async (userId) => {
 				await repository.key.delete({
-					userId
+					user_id: userId
 				});
 			},
 			updateKey: async (userId, partialKey) => {
@@ -216,46 +212,27 @@ export const transformTypeORMUser = (
 	}
 
 	if (Array.isArray(userData)) {
-		const users = userData.map((item) => item.toJSON());
-
-		users.forEach((item) =>
-			Object.keys(item).forEach((key) => {
-				if ((item as any)[key] === undefined) {
-					delete (item as any)[key];
-				}
-			})
-		);
-		return users;
+		return userData.map((item) => item.toJSON());
 	}
 
-	const user = userData.toJSON();
-
-	Object.keys(user).forEach((key) => {
-		if ((user as any)[key] === undefined) {
-			delete (user as any)[key];
-		}
-	});
-
-	return user;
+	return userData.toJSON();
 };
 
 export const transformTypeORMSession = (
 	sessionData: Session
 ): SessionSchema => {
-	const { activeExpires, idleExpires, userId, ...data } = sessionData;
+	const { active_expires, idle_expires, ...data } = sessionData;
 	return {
 		...data,
-		active_expires: Number(activeExpires),
-		idle_expires: Number(idleExpires),
-		user_id: userId
+		active_expires: Number(active_expires),
+		idle_expires: Number(idle_expires)
 	};
 };
 
 export const transformTypeORMKey = (keyData: Key): KeySchema => {
-	const { hashedPassword, userId, ...data } = keyData;
-	return {
-		...data,
-		hashed_password: hashedPassword,
-		user_id: userId
-	};
+	if (!keyData) {
+		return keyData;
+	}
+
+	return keyData.toJSON() as KeySchema;
 };
