@@ -8,7 +8,7 @@ export const get: APIRoute = async (context) => {
 	if (session) {
 		return context.redirect("/", 302); // redirect to profile page
 	}
-	const storedState = context.cookies.get("github_oauth_state").value;
+	const storedState = context.cookies.get("github_oauth_state")?.value;
 	const state = context.url.searchParams.get("state");
 	const code = context.url.searchParams.get("code");
 	// validate state
