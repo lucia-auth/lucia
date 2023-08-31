@@ -6,9 +6,16 @@ description: "Learn how to use `@vercel/postgres` with Lucia"
 `@vercel/postgres` can be used as a drop-in replacement for [`pg`](https://github.com/brianc/node-postgres). This means that it can be used with Lucia using the [`pg` adapter](/database-adapters/pg). Make sure to pass `db`, which is the equivalent to `Pool` in `pg`, since the adapter needs to have access to transactions.
 
 ```ts
+import { lucia } from "lucia";
+import { pg } from "@lucia-auth/adapter-postgres";
 import { db } from "@vercel/postgres";
 
-export const auth = lucia({});
+export const auth = lucia({
+	adapter: pg(db, {
+		// table names
+	})
+	// ...
+});
 ```
 
 ## Errors
