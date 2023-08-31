@@ -7,7 +7,7 @@ description: "Learn how to use `@vercel/postgres` with Lucia"
 
 ```ts
 import { lucia } from "lucia";
-import { pg } from "@lucia-auth/adapter-postgres";
+import { pg } from "@lucia-auth/adapter-postgresql";
 import { db } from "@vercel/postgres";
 
 export const auth = lucia({
