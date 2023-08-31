@@ -288,7 +288,7 @@ if (Astro.request.method === "POST") {
 			) {
 				// user does not exist
 				// or invalid password
-				errorMessage = "Incorrect username of password";
+				errorMessage = "Incorrect username or password";
 			} else {
 				errorMessage = "An unknown error occurred";
 			}

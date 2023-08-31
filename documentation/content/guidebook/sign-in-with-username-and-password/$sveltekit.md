@@ -300,7 +300,7 @@ export const actions: Actions = {
 				// user does not exist
 				// or invalid password
 				return fail(400, {
-					message: "Incorrect username of password"
+					message: "Incorrect username or password"
 				});
 			}
 			return fail(500, {

@@ -387,7 +387,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			// user does not exist
 			// or invalid password
 			return res.status(400).json({
-				error: "Incorrect username of password"
+				error: "Incorrect username or password"
 			});
 		}
 		return res.status(500).json({
