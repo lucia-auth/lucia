@@ -269,7 +269,7 @@ if (Astro.request.method === "POST") {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey(
+			const key = await auth.useKey(
 				"username",
 				username.toLowerCase(),
 				password
