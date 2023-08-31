@@ -245,7 +245,7 @@ post("/login", async (request: Request) => {
 		) {
 			// user does not exist
 			// or invalid password
-			return new Response("Incorrect username of password", {
+			return new Response("Incorrect username or password", {
 				status: 400
 			});
 		}
