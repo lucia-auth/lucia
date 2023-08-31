@@ -117,8 +117,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 		this.validatePromise = new Promise(async (resolve) => {
 			if (!this.bearerToken) return resolve(null);
 			try {
-				const session = await this.auth.getSession(this.bearerToken);
-				if (session.state === "idle") return resolve(null);
+				const session = await this.auth.validateSession(this.bearerToken);
 				return resolve(session);
 			} catch (e) {
 				if (e instanceof LuciaError) {
