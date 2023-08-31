@@ -76,7 +76,7 @@ const auth = lucia({
 In your `src/app.d.ts` file, declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// src/app.d.ts
+// src/env.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./lib/lucia").Auth;
@@ -104,7 +104,12 @@ export const onRequest: MiddlewareResponseHandler = async (context, next) => {
 Make sure to type `Locals` as well:
 
 ```ts
-// src/app.d.ts
+// src/env.d.ts
+/// <reference types="lucia" />
+declare namespace Lucia {
+	// ...
+}
+
 /// <reference types="astro/client" />
 declare namespace App {
 	interface Locals {

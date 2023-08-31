@@ -16,6 +16,7 @@
 		"@lucia-auth/adapter-sqlite": "latest",
 		"@lucia-auth/oauth": "latest",
 		"astro": "^3.0.0",
+		"better-sqlite3": "^8.4.0",
 		"lucia": "latest"
 	},
 	"devDependencies": {
