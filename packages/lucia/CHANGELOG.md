@@ -1,5 +1,11 @@
 # lucia
 
+## 2.4.1
+
+### Patch changes
+
+- [#1041](https://github.com/pilcrowOnPaper/lucia/pull/1041) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Support Astro v3
+
 ## 2.4.0
 
 ### Minor changes
