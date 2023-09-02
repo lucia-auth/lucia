@@ -1,12 +1,12 @@
 import type {
 	Root,
 	RootContent,
-	Element as HastElementInstance,
+	Element as HastElementInterface,
 	ElementContent as HastElementContent,
-	Text as HastTextNode
+	Text as HastTextNodeInterface
 } from "hast";
 
-class HastElement implements HastElementInstance {
+class HastElement implements HastElementInterface {
 	public readonly type = "element";
 	public children;
 	public tagName;
@@ -26,6 +26,36 @@ class HastElement implements HastElementInstance {
 		this.properties = options.properties;
 	}
 }
+
+class HastTextNode implements HastTextNodeInterface {
+	public readonly type = "text";
+	public value: string;
+	constructor(value: string) {
+		this.value = value;
+	}
+}
+
+const handleHeadings = (element: HastElement) => {
+	const headingTags = ["h1", "h2", "h3", "h4", "h5"];
+	if (!headingTags.includes(element.tagName)) return;
+	const headingId = element.properties?.id
+	if (!headingId) return
+	if (!element.properties) {
+		element.properties = {};
+	}
+	element.properties.id = headingId;
+	element.properties.class = "relative block flex group"
+	element.children.push(
+		new HastElement("a", {
+			properties: {
+				href: `#${headingId}`,
+				class: "w-4 -ml-5 pl-0.5 sm:pl-0 sm:-ml-6 absolute block group-hover:!text-main !text-zinc-200 shrink-0",
+				"aria-label": "Permalink"
+			},
+			children: [new HastTextNode("#")]
+		})
+	);
+};
 
 const handleBlockquoteElement = (element: HastElement) => {
 	if (element.tagName !== "blockquote") return;
@@ -80,6 +110,7 @@ const parseContent = (content: Root | RootContent) => {
 	}
 	if (content.type === "element") {
 		handleBlockquoteElement(content);
+		handleHeadings(content);
 	}
 	for (const children of content.children) {
 		parseContent(children);
