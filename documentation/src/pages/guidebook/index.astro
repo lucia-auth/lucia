@@ -33,8 +33,8 @@ const parentPages = allPages.filter((page) => page.frameworkId === null);
 							return (
 								<article class="group w-full border-b bg-white">
 									<a class=" block py-4" href={pathname}>
-										<h2 class="text-xl font-semibold" set:html={htmlTitle}></h2>
-										<p set:html={htmlDescription}></p>
+										<h2 class="text-xl font-semibold" set:html={htmlTitle} />
+										<p set:html={htmlDescription} />
 										<div class="text-main mt-0.5 flex place-items-center gap-x-0.5">
 											<div class="h-5 w-5 fill-current ">
 												<ArticleIcon />

@@ -38,18 +38,19 @@ class HastTextNode implements HastTextNodeInterface {
 const handleHeadings = (element: HastElement) => {
 	const headingTags = ["h1", "h2", "h3", "h4", "h5"];
 	if (!headingTags.includes(element.tagName)) return;
-	const headingId = element.properties?.id
-	if (!headingId) return
+	const headingId = element.properties?.id;
+	if (!headingId) return;
 	if (!element.properties) {
 		element.properties = {};
 	}
 	element.properties.id = headingId;
-	element.properties.class = "relative block flex group"
+	element.properties.class = "relative block flex group";
 	element.children.push(
 		new HastElement("a", {
 			properties: {
 				href: `#${headingId}`,
-				class: "w-4 -ml-5 pl-0.5 sm:pl-0 sm:-ml-6 absolute block group-hover:!text-main !text-zinc-200 shrink-0",
+				class:
+					"w-4 -ml-5 pl-0.5 sm:pl-0 sm:-ml-6 absolute block group-hover:!text-main !text-zinc-200 shrink-0",
 				"aria-label": "Permalink"
 			},
 			children: [new HastTextNode("#")]

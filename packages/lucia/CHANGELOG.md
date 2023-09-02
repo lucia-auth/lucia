@@ -1,5 +1,11 @@
 # lucia
 
+## 2.4.2
+
+### Patch changes
+
+- [#1046](https://github.com/pilcrowOnPaper/lucia/pull/1046) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `AuthRequest.validateBearerToken()` returning `null` when session is idle
+
 ## 2.4.1
 
 ### Patch changes
