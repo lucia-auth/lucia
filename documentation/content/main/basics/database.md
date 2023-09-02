@@ -26,8 +26,8 @@ We currently provide the following adapters:
 SDKs such as `@vercel/postgres` and `@neonserverless/database` provide drop-in replacements for existing drivers. You can also use query builders like Drizzle ORM and Kysely since they rely on underlying drivers that we provide adapters for. Refer to these guides:
 
 - [Using `@vercel/postgres`](/guidebook/vercel-postgres)
-- [Using Drizzle ORM](/guidebook/vercel-postgres)
-- [Using Kysely](/guidebook/vercel-postgres)
+- [Using Drizzle ORM](/guidebook/drizzle-orm)
+- [Using Kysely](/guidebook/kysely)
 
 ## Database model
 
