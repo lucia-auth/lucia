@@ -363,11 +363,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		// find user by key
 		// and validate password
-		const key = await auth.useKey(
-			"username",
-			username.toLowerCase(),
-			password
-		);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
