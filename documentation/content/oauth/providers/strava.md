@@ -5,8 +5,6 @@ description: "Learn how to use the Strava OAuth provider"
 
 OAuth integration for Strava. Refer to [How To Create An Application](https://developers.strava.com/docs/getting-started/#account) for getting the required credentials. Provider id is `strava`.
 
-Note that as part of the payload of authenticating with Strava, a relatively rich User ('`athlete`') object is returned. This is used to populate the Strava id of the key, and can be used to populate many other fields at point of user creation without necessitating a second API call.
-
 ```ts
 import { strava } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
