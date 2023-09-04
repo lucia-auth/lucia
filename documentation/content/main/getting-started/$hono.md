@@ -20,7 +20,7 @@ Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initial
 import { lucia } from "lucia";
 import { hono } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
 	middleware: hono()

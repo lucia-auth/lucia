@@ -22,7 +22,7 @@ Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) 
 import { lucia } from "lucia";
 import { web } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
 	middleware: web(),

@@ -19,7 +19,7 @@ Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initial
 // lucia.ts
 import { lucia } from "lucia";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: "DEV" // "PROD" if deployed to HTTPS
 });

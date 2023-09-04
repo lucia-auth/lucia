@@ -20,7 +20,7 @@ Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initial
 import { lucia } from "lucia";
 import { astro } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: import.meta.env.DEV ? "DEV" : "PROD",
 	middleware: astro()
