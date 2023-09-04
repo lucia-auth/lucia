@@ -86,10 +86,24 @@ type Auth0Tokens = {
 ```ts
 type Auth0User = {
 	id: string;
-	nickname: string;
+	sub: string;
 	name: string;
 	picture: string;
+	locale: string;
 	updated_at: string;
+	given_name?: string;
+	family_name?: string;
+	middle_name?: string;
+	nickname?: string;
+	preferred_username?: string;
+	profile?: string;
+	email?: string;
+	email_verified?: boolean;
+	gender?: string;
+	birthdate?: string;
+	zoneinfo?: string;
+	phone_number?: string;
+	phone_number_verified?: boolean;
 };
 ```
 
