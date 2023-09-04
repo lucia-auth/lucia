@@ -222,7 +222,9 @@ export const qwik = (): Middleware<[QwikRequestEvent]> => {
 type ElysiaContext = {
 	request: Request;
 	set: {
-		headers: Record<string, string>;
+		headers: Record<string, string> & {
+			["Set-Cookie"]?: string | string[];
+		};
 		status?: number | undefined;
 		redirect?: string | undefined;
 	};
@@ -242,13 +244,12 @@ export const elysia = (): Middleware<[ElysiaContext]> => {
 				}
 			},
 			setCookie: (cookie: Cookie) => {
-				const setCookieHeader = set.headers["Set-Cookie"] as string | string[];
+				const setCookieHeader = set.headers["Set-Cookie"] ?? [];
 				const setCookieHeaders: string[] = Array.isArray(setCookieHeader)
 					? setCookieHeader
 					: [setCookieHeader];
 				setCookieHeaders.push(cookie.serialize());
-				// `Set-Cookie` can accept `string[]` but is typed as `string` only
-				set.headers["Set-Cookie"] = setCookieHeaders as any;
+				set.headers["Set-Cookie"] = setCookieHeaders;
 			}
 		} as const satisfies RequestContext;
 
