@@ -52,5 +52,6 @@ We also have framework specific guides.
 - Salesforce
 - Slack
 - Spotify
+- Strava
 - Twitch
 - Twitter
