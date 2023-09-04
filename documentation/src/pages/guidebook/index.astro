@@ -11,7 +11,7 @@ const parentPages = allPages.filter((page) => page.frameworkId === null);
 
 <BaseLayout title="The Lucia Guidebook">
 	<Header />
-	<main class="min-h-screen px-4 pb-24 sm:px-8 md:px-16">
+	<main class="min-h-screen px-6 pb-24 sm:px-8 md:px-16">
 		<div class="mx-auto max-w-4xl">
 			<div class="w-full pb-16 pt-32">
 				<div class="mx-auto max-w-2xl text-center">
@@ -29,12 +29,12 @@ const parentPages = allPages.filter((page) => page.frameworkId === null);
 						.sort((pageA, pageB) => {
 							return pageA.title.localeCompare(pageB.title);
 						})
-						.map(({ title, description, pathname }) => {
+						.map(({ htmlTitle, htmlDescription, pathname }) => {
 							return (
 								<article class="group w-full border-b bg-white">
 									<a class=" block py-4" href={pathname}>
-										<h2 class="text-xl font-semibold">{title}</h2>
-										<p>{description}</p>
+										<h2 class="text-xl font-semibold" set:html={htmlTitle} />
+										<p set:html={htmlDescription} />
 										<div class="text-main mt-0.5 flex place-items-center gap-x-0.5">
 											<div class="h-5 w-5 fill-current ">
 												<ArticleIcon />

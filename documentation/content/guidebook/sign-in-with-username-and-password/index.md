@@ -220,11 +220,7 @@ post("/login", async (request: Request) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey(
-			"username",
-			username.toLowerCase(),
-			password
-		);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
@@ -245,7 +241,7 @@ post("/login", async (request: Request) => {
 		) {
 			// user does not exist
 			// or invalid password
-			return new Response("Incorrect username of password", {
+			return new Response("Incorrect username or password", {
 				status: 400
 			});
 		}

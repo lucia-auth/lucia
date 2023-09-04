@@ -3,7 +3,7 @@ title: "Github"
 description: "Learn how to use the Github OAuth provider"
 ---
 
-OAuth integration for Github. Refer to [Github OAuth documentation](https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps) for getting the required credentials. Provider id is `github`.
+OAuth integration for Github. Refer to [Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) for getting the required credentials. Provider id is `github`.
 
 ```ts
 import { github } from "@lucia-auth/oauth/providers";

@@ -22,7 +22,7 @@ Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) 
 import { lucia } from "lucia";
 import { web } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
 	middleware: web(),
@@ -63,7 +63,7 @@ const auth = lucia({
 - [libSQL](/database-adapters/libsql): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
-- [`pg`](/database-adapters/pg): PostgreSQL
+- [`pg`](/database-adapters/pg): PostgreSQL (including `@neondatabase/serverless`, `@vercel/postgres`)
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis

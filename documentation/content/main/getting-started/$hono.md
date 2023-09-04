@@ -20,7 +20,7 @@ Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initial
 import { lucia } from "lucia";
 import { hono } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
 	middleware: hono()
@@ -54,7 +54,7 @@ const auth = lucia({
 - [libSQL](/database-adapters/libsql): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
-- [`pg`](/database-adapters/pg): PostgreSQL
+- [`pg`](/database-adapters/pg): PostgreSQL (including `@neondatabase/serverless`, `@vercel/postgres`)
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis

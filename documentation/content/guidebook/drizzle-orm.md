@@ -11,7 +11,7 @@ Make sure to change the table names accordingly.
 
 ```ts
 // schema.js
-import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
+import { mysqlTable, bigint, varchar } from "drizzle-orm/mysql-core";
 
 export const user = mysqlTable("auth_user", {
 	id: varchar("id", {
@@ -142,7 +142,7 @@ Make sure to change the table names accordingly.
 
 ```ts
 // schema.js
-import { pgTable, bigint, varchar, boolean } from "drizzle-orm/pg-core";
+import { pgTable, bigint, varchar } from "drizzle-orm/pg-core";
 
 export const user = pgTable("auth_user", {
 	id: varchar("id", {

@@ -20,7 +20,7 @@ Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initial
 import { lucia } from "lucia";
 import { astro } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: import.meta.env.DEV ? "DEV" : "PROD",
 	middleware: astro()
@@ -54,7 +54,7 @@ const auth = lucia({
 - [libSQL](/database-adapters/libsql): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
-- [`pg`](/database-adapters/pg): PostgreSQL
+- [`pg`](/database-adapters/pg): PostgreSQL (including `@neondatabase/serverless`, `@vercel/postgres`)
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
@@ -76,7 +76,7 @@ const auth = lucia({
 In your `src/app.d.ts` file, declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// src/app.d.ts
+// src/env.d.ts
 /// <reference types="lucia" />
 declare namespace Lucia {
 	type Auth = import("./lib/lucia").Auth;
@@ -104,7 +104,12 @@ export const onRequest: MiddlewareResponseHandler = async (context, next) => {
 Make sure to type `Locals` as well:
 
 ```ts
-// src/app.d.ts
+// src/env.d.ts
+/// <reference types="lucia" />
+declare namespace Lucia {
+	// ...
+}
+
 /// <reference types="astro/client" />
 declare namespace App {
 	interface Locals {

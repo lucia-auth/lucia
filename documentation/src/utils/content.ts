@@ -32,6 +32,7 @@ export type Page = {
 	title: string;
 	htmlTitle: string;
 	hidden: boolean;
+	htmlDescription: string | null;
 	description: string | null;
 	versions: FrameworkVersion[];
 	frameworkId: FrameworkId | null;
@@ -57,13 +58,17 @@ export const getPages = async (collectionId: string): Promise<Page[]> => {
 	const pages = await Promise.all(
 		targetImports.map(async ([pathname, resolve]): Promise<Page> => {
 			const resolvedFile = await resolve();
+			const rawDescription = resolvedFile.frontmatter.description ?? null;
 			return {
 				pathname,
 				href: getHrefFromContentPathname(pathname),
 				collectionId,
 				title: removeMarkdownCode(resolvedFile.frontmatter.title),
 				htmlTitle: parseMarkdownCode(resolvedFile.frontmatter.title),
-				description: resolvedFile.frontmatter.description ?? null,
+				description: rawDescription ? removeMarkdownCode(rawDescription) : null,
+				htmlDescription: rawDescription
+					? parseMarkdownCode(rawDescription)
+					: null,
 				hidden: Boolean(resolvedFile.frontmatter.hidden),
 				versions: [],
 				frameworkId: getFrameworkIdFromContentPathname(pathname),
@@ -113,6 +118,7 @@ const isValidFrameworkVersion = (
 
 const frameworkNameDictionary = {
 	astro: "Astro",
+	elysia: "Elysia",
 	express: "Express",
 	fastify: "Fastify",
 	hono: "Hono",
