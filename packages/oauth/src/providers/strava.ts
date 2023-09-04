@@ -41,7 +41,7 @@ export class StravaAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			"https://www.strava.com/oauth/authorize",
 			{
 				clientId: this.config.clientId,
-				scope: this.config.scope ?? ['read'],
+				scope: this.config.scope ?? ["read"],
 				redirectUri: this.config.redirectUri
 			}
 		);
@@ -50,14 +50,16 @@ export class StravaAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public validateCallback = async (
 		code: string
 	): Promise<StravaUserAuth<_Auth>> => {
-		const [stravaUser, stravaTokens] = await this.validateAuthorizationCode(code);
+		const [stravaUser, stravaTokens] = await this.validateAuthorizationCode(
+			code
+		);
 		return new StravaUserAuth(this.auth, stravaUser, stravaTokens);
 	};
 
 	private validateAuthorizationCode = async (
 		code: string
 	): Promise<[StravaUser, StravaTokens]> => {
-		const {athlete:user, ...tokens} =
+		const { athlete: user, ...tokens } =
 			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 				code,
 				"https://www.strava.com/oauth/token",
@@ -70,19 +72,21 @@ export class StravaAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 				}
 			);
 		if ("refresh_token" in tokens) {
-			return [user,
-        {
-          accessToken: tokens.access_token,
-          accessTokenExpiresIn: tokens.expires_in,
-          refreshToken: tokens.refresh_token,
-        }
+			return [
+				user,
+				{
+					accessToken: tokens.access_token,
+					accessTokenExpiresIn: tokens.expires_in,
+					refreshToken: tokens.refresh_token
+				}
 			];
 		}
-		return [user,
-      {
-        accessToken: tokens.access_token,
-      }
-    ]
+		return [
+			user,
+			{
+				accessToken: tokens.access_token
+			}
+		];
 	};
 }
 
@@ -103,42 +107,42 @@ export class StravaUserAuth<
 type AccessTokenResponseBody =
 	| {
 			access_token: string;
-      athlete: StravaUser;
+			athlete: StravaUser;
 	  }
 	| {
 			access_token: string;
 			refresh_token: string;
 			expires_in: number;
 			expires_at: number;
-      athlete: StravaUser
+			athlete: StravaUser;
 	  };
 
 export type StravaTokens =
-  | {
-    accessToken: string;
-  }
 	| {
-    accessToken: string;
-    refreshToken: string;
-    accessTokenExpiresIn: number;
-  };
+			accessToken: string;
+	  }
+	| {
+			accessToken: string;
+			refreshToken: string;
+			accessTokenExpiresIn: number;
+	  };
 
 export type StravaUser = {
-  id: number;
-  username: string;
-  resource_state: number;
-  firstname: string;
-  lastname: string;
-  bio: string;
-  city: string;
-  country: string;
-  sex: string;
-  premium: boolean;
-  summit: boolean;
-  created_at: string;
-  updated_at: string;
-  badge_type_id: number;
-  weight: number;
-  profile_medium: string;
-  profile: string;
+	id: number;
+	username: string;
+	resource_state: number;
+	firstname: string;
+	lastname: string;
+	bio: string;
+	city: string;
+	country: string;
+	sex: string;
+	premium: boolean;
+	summit: boolean;
+	created_at: string;
+	updated_at: string;
+	badge_type_id: number;
+	weight: number;
+	profile_medium: string;
+	profile: string;
 };
