@@ -30,7 +30,7 @@ Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pil
 
 ### Update `user` table
 
-Add a `email` (`string`, unique) and `email_verified` (`boolean`) column to the user table. Keep in mind that some database do not support boolean types (notably SQLite and MySQL), in which case it should be stored as an integer (1 or 0). Lucia _does not_ support default database values.
+Add an `email` (`string`, unique) and `email_verified` (`boolean`) column to the user table. Keep in mind that some database do not support boolean types (notably SQLite and MySQL), in which case it should be stored as an integer (1 or 0). Lucia _does not_ support default database values.
 
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
@@ -95,11 +95,11 @@ The token will be sent as part of the verification link.
 http://localhost:3000/email-verification/<token>
 ```
 
-When a user clicks the link, we validate of the token stored in the url and set `email_verified` user attributes to `true`.
+When a user clicks the link, we validate the token stored in the url and set `email_verified` user attributes to `true`.
 
 ### Create new tokens
 
-`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/modules/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
+`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/modules/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommended minimum is 40).
 
 ```ts
 // auth/token.ts
@@ -133,7 +133,7 @@ export const generateEmailVerificationToken = async (userId: string) => {
 
 ### Validate tokens
 
-`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](/reference/lucia/modules/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
+`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It then checks the expiration with [`isWithinExpiration()`](/reference/lucia/modules/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
 
 It will throw if the token is invalid.
 
@@ -367,7 +367,7 @@ export const sendEmailVerificationLink = async (email, token: string) => {
 
 #### Validating emails
 
-Validating emails are notoriously hard as the RFC defining them is rather complicated. Here, we're checking:
+Validating emails is notoriously hard as the RFC defining them is rather complicated. Here, we're checking:
 
 - There's one `@`
 - There's at least a single character before `@`
@@ -525,7 +525,7 @@ export const POST = async (request: NextRequest) => {
 
 Create `app/email-verification/page.tsx`. Users who just signed up and those without a verified email will be redirected to this page. It will include a form to resend the verification link.
 
-This page should only accessible to users whose email is not verified.
+This page should only be accessible to users whose email is not verified.
 
 ```tsx
 import { auth } from "@/auth/lucia";
@@ -722,7 +722,7 @@ export const getPageSession = cache(() => {
 });
 ```
 
-This allows you share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
+This allows you to share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
 
 ```ts
 const Page = async () => {
