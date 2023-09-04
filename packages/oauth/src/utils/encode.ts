@@ -1,5 +1,3 @@
-import { generateRandomString } from "lucia/utils";
-
 const isDeno = () => {
 	return typeof window !== "undefined" && "Deno" in window;
 };
@@ -52,37 +50,4 @@ export const decodeBase64 = (data: string) => {
 
 export const decodeBase64Url = (data: string) => {
 	return decodeBase64(data.replaceAll("-", "+").replaceAll("_", "/"));
-};
-
-export const generateState = () => {
-	return generateRandomString(43);
-};
-
-export const scope = (base: string[], config: string[] = []) => {
-	return [...base, ...(config ?? [])].join(" ");
-};
-export const getPKCS8Key = (pkcs8: string) => {
-	return [
-		"\n",
-		pkcs8
-			.replace(/-----BEGIN PRIVATE KEY-----/, "")
-			.replace(/-----END PRIVATE KEY-----/, ""),
-		"\n"
-	].join("");
-};
-
-// Generates code_challenge from code_verifier, as specified in RFC 7636.
-export const generatePKCECodeChallenge = async (
-	method: "S256",
-	verifier: string
-) => {
-	if (method === "S256") {
-		const verifierBuffer = new TextEncoder().encode(verifier);
-		const challengeBuffer = await crypto.subtle.digest(
-			"SHA-256",
-			verifierBuffer
-		);
-		return encodeBase64Url(challengeBuffer);
-	}
-	throw new TypeError("Invalid PKCE code challenge method");
 };

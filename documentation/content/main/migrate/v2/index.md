@@ -113,7 +113,7 @@ const auth = lucia({
 	middleware: framework(), // no change
 
 	// previously `transformDatabaseUser`
-	getUserAttributes = (data) => {
+	getUserAttributes: (data) => {
 		return {
 			// IMPORTANT!!!!
 			// `userId` included by default!!

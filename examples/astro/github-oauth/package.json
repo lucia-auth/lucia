@@ -15,7 +15,8 @@
 		"@astrojs/node": "^5.3.0",
 		"@lucia-auth/adapter-sqlite": "latest",
 		"@lucia-auth/oauth": "latest",
-		"astro": "^2.7.2",
+		"astro": "^3.0.0",
+		"better-sqlite3": "^8.4.0",
 		"lucia": "latest"
 	},
 	"devDependencies": {

@@ -27,12 +27,12 @@ const lichess: (
 
 ##### Parameter
 
-| name               | type                                       | description                             | optional |
-| ------------------ | ------------------------------------------ | --------------------------------------- | :------: |
-| auth               | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                          |          |
-| config.clientId    | `string`                                   | client id - choose any unique client id |          |
-| config.redirectUri | `string`                                   | redirect URI                            |          |
-| config.scope       | `string[]`                                 | an array of scopes                      |    ✓     |
+| name                 | type                                       | description                             | optional |
+| -------------------- | ------------------------------------------ | --------------------------------------- | :------: |
+| `auth`               | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                          |          |
+| `config.clientId`    | `string`                                   | client id - choose any unique client id |          |
+| `config.redirectUri` | `string`                                   | redirect URI                            |          |
+| `config.scope`       | `string[]`                                 | an array of scopes                      |    ✓     |
 
 ##### Returns
 
@@ -42,81 +42,40 @@ const lichess: (
 
 ## Interfaces
 
-### `LichessProvider`
+### `LichessAuth`
 
-Satisfies [`LichessProvider`](/reference/oauth/oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection, a state and PKCE code verifier. The state and code verifier should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuthWithPKCE`](/reference/oauth/interfaces/oauth2providerauthwithpkce).
 
 ```ts
-const getAuthorizationUrl: () => Promise<
-	[url: URL, state: string, codeVerifier: string]
->;
+// implements OAuth2ProviderAuthWithPKCE<LichessAuth<_Auth>>
+interface LichessAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<
+		readonly [url: URL, codeVerifier: string, state: string]
+	>;
+	validateCallback: (code: string) => Promise<LichessUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name           | type     | description          |
-| -------------- | -------- | -------------------- |
-| `url`          | `URL`    | authorization url    |
-| `state`        | `string` | state parameter used |
-| `codeVerifier` | `string` | PKCE code verifier   |
-
-#### `validateCallback()`
-
-Validates the callback code. Requires the PKCE code verifier generated with `getAuthorizationUrl()`.
-
-```ts
-const validateCallback: (
-	code: string,
-	codeVerifier: string
-) => Promise<ProviderSession>;
-```
-
-##### Parameter
-
-| name           | type     | description                                               |
-| -------------- | -------- | --------------------------------------------------------- |
-| `code`         | `string` | authorization code from callback                          |
-| `codeVerifier` | `string` | PKCE code verifier generated with `getAuthorizationUrl()` |
-
-##### Returns
 
 | type                                  |
 | ------------------------------------- |
 | [`LichessUserAuth`](#lichessuserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `LichessUserAuth`
-
-```ts
-type LichessUserAuth = ProviderUserAuth & {
-	lichessUser: LichessUser;
-	lichessTokens: LichessTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`LichessUser`](#lichessuser)                                      |
-| [`LichessTokens`](#lichesstokens)                                  |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `LichessTokens`
 
 ```ts
 type LichessTokens = {
 	accessToken: string;
-	accessTokenExpiresIn: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
-## `LichessUser`
+### `LichessUser`
 
 ```ts
 type LichessUser = {
@@ -124,3 +83,25 @@ type LichessUser = {
 	username: string;
 };
 ```
+
+### `LichessUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	lichessUser: LichessUser;
+	lichessTokens: LichessTokens;
+}
+```
+
+| properties      | type                              | description       |
+| --------------- | --------------------------------- | ----------------- |
+| `lichessUser`   | [`LichessUser`](#lichessuser)     | Lichess user      |
+| `lichessTokens` | [`LichessTokens`](#lichesstokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

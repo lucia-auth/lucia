@@ -1,31 +1,76 @@
 import {
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
-	providerUserAuth,
 	validateOAuth2AuthorizationCode
-} from "../core.js";
-import { handleRequest, authorizationHeader } from "../request.js";
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
 	redirectUri: string;
-	forceVerify?: boolean;
 };
 
 const PROVIDER_ID = "twitch";
 
-export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTwitchTokens = async (code: string): Promise<TwitchTokens> => {
+export const twitch = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): TwitchAuth<_Auth> => {
+	return new TwitchAuth(auth, config);
+};
+
+export class TwitchAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	TwitchUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		return await createOAuth2AuthorizationUrl(
+			"https://id.twitch.tv/oauth2/authorize",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: this.config.scope ?? []
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<TwitchUserAuth<_Auth>> => {
+		const twitchTokens = await this.validateAuthorizationCode(code);
+		const twitchUser = await getTwitchUser(
+			this.config.clientId,
+			twitchTokens.accessToken
+		);
+		return new TwitchUserAuth(this.auth, twitchUser, twitchTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<TwitchTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token: string;
 			expires_in: number;
 		}>(code, "https://id.twitch.tv/oauth2/token", {
-			clientId: config.clientId,
-			redirectUri: config.redirectUri,
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
 			clientPassword: {
-				clientSecret: config.clientSecret,
+				clientSecret: this.config.clientSecret,
 				authenticateWith: "client_secret"
 			}
 		});
@@ -36,42 +81,21 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			const forceVerify = config.forceVerify ?? false;
-			return await createOAuth2AuthorizationUrl(
-				"https://id.twitch.tv/oauth2/authorize",
-				{
-					clientId: config.clientId,
-					redirectUri: config.redirectUri,
-					scope: config.scope ?? [],
-					searchParams: {
-						force_verify: forceVerify.toString()
-					}
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const twitchTokens = await getTwitchTokens(code);
-			const twitchUser = await getTwitchUser(
-				config.clientId,
-				twitchTokens.accessToken
-			);
-			const providerUserId = twitchUser.id;
-			const twitchUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...twitchUserAuth,
-				twitchUser,
-				twitchTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export class TwitchUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public twitchTokens: TwitchTokens;
+	public twitchUser: TwitchUser;
+
+	constructor(auth: _Auth, twitchUser: TwitchUser, twitchTokens: TwitchTokens) {
+		super(auth, PROVIDER_ID, twitchUser.id);
+
+		this.twitchTokens = twitchTokens;
+		this.twitchUser = twitchUser;
+	}
+}
 
 const getTwitchUser = async (
 	clientId: string,
@@ -90,7 +114,7 @@ const getTwitchUser = async (
 	return twitchUsersResponse.data[0];
 };
 
-type TwitchTokens = {
+export type TwitchTokens = {
 	accessToken: string;
 	refreshToken: string;
 	accessTokenExpiresIn: number;

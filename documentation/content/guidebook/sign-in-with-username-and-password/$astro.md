@@ -3,7 +3,7 @@ title: "Sign in with username and password in Astro"
 description: "Learn the basic of Lucia by implementing a basic username and password authentication"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/getting-started/astro) and that you've implement the recommended middleware._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started/astro) and that you've implement the [recommended middleware](/getting-started/astro#set-up-middleware)._
 
 This guide will cover how to implement a simple username and password authentication using Lucia in Astro. It will have 3 parts:
 
@@ -269,7 +269,7 @@ if (Astro.request.method === "POST") {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey(
+			const key = await auth.useKey(
 				"username",
 				username.toLowerCase(),
 				password
@@ -288,7 +288,7 @@ if (Astro.request.method === "POST") {
 			) {
 				// user does not exist
 				// or invalid password
-				errorMessage = "Incorrect username of password";
+				errorMessage = "Incorrect username or password";
 			} else {
 				errorMessage = "An unknown error occurred";
 			}

@@ -28,12 +28,13 @@ const twitter: (
 
 ##### Parameter
 
-| name               | type                                       | description                             | optional |
-| ------------------ | ------------------------------------------ | --------------------------------------- | :------: |
-| auth               | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                          |          |
-| config.clientId    | `string`                                   | client id - choose any unique client id |          |
-| config.redirectUri | `string`                                   | redirect URI                            |          |
-| config.scope       | `string[]`                                 | an array of scopes                      |    ✓     |
+| name                  | type                                       | description        | optional |
+| --------------------- | ------------------------------------------ | ------------------ | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance     |          |
+| `config.clientId`     | `string`                                   | client id          |          |
+| `config.clientSecret` | `string`                                   | client id          |          |
+| `config.redirectUri`  | `string`                                   | redirect URI       |          |
+| `config.scope`        | `string[]`                                 | an array of scopes |    ✓     |
 
 ##### Returns
 
@@ -43,82 +44,40 @@ const twitter: (
 
 ## Interfaces
 
-### `TwitterProvider`
+### `TwitterAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection, a state and PKCE code verifier. The state and code verifier should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuthWithPKCE`](/reference/oauth/interfaces/oauth2providerauthwithpkce).
 
 ```ts
-const getAuthorizationUrl: () => Promise<
-	[url: URL, codeVerifier: string, state: string]
->;
+// implements OAuth2ProviderAuthWithPKCE<TwitterAuth<_Auth>>
+interface TwitterAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<
+		readonly [url: URL, codeVerifier: string, state: string]
+	>;
+	validateCallback: (code: string) => Promise<TwitterUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name           | type     | description          |
-| -------------- | -------- | -------------------- |
-| `url`          | `URL`    | authorization url    |
-| `codeVerifier` | `string` | PKCE code verifier   |
-| `state`        | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code. Requires the PKCE code verifier generated with `getAuthorizationUrl()`.
-
-```ts
-const validateCallback: (
-	code: string,
-	codeVerifier: string
-) => Promise<ProviderSession>;
-```
-
-##### Parameter
-
-| name           | type     | description                                               |
-| -------------- | -------- | --------------------------------------------------------- |
-| `code`         | `string` | authorization code from callback                          |
-| `codeVerifier` | `string` | PKCE code verifier generated with `getAuthorizationUrl()` |
-
-##### Returns
 
 | type                                  |
 | ------------------------------------- |
 | [`TwitterUserAuth`](#twitteruserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `TwitterUserAuth`
-
-```ts
-type TwitterUserAuth = ProviderUserAuth & {
-	twitterUser: TwitterUser;
-	twitterTokens: TwitterTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`twitterUser`](#twitteruser)                                      |
-| [`twitterTokens`](#twittertokens)                                  |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `TwitterTokens`
 
 ```ts
 type TwitterTokens = {
 	accessToken: string;
-	accessTokenExpiresIn: string;
-	refreshToken: string;
+	refreshToken: string | null;
 };
 ```
 
-## `TwitterUser`
+### `TwitterUser`
 
 ```ts
 type TwitterUser = {
@@ -127,3 +86,25 @@ type TwitterUser = {
 	username: string;
 };
 ```
+
+### `TwitterUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	twitterUser: TwitterUser;
+	twitterTokens: TwitterTokens;
+}
+```
+
+| properties      | type                              | description       |
+| --------------- | --------------------------------- | ----------------- |
+| `twitterUser`   | [`TwitterUser`](#twitteruser)     | Twitter user      |
+| `twitterTokens` | [`TwitterTokens`](#twittertokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

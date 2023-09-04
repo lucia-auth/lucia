@@ -106,7 +106,7 @@ const Form = ({
 }) => {
 	const router = useRouter();
 	return (
-		<Form
+		<form
 			action={action}
 			method="post"
 			onSubmit={async (e) => {
@@ -126,7 +126,7 @@ const Form = ({
 			}}
 		>
 			{children}
-		</Form>
+		</form>
 	);
 };
 
@@ -407,11 +407,7 @@ export const POST = async (request: NextRequest) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey(
-			"username",
-			username.toLowerCase(),
-			password
-		);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}

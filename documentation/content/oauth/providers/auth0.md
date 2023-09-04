@@ -23,28 +23,22 @@ const auth0: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
-		connection?: string;
-		organization?: string;
-		invitation?: string;
-		loginHint?: string;
 	}
 ) => Auth0Provider;
 ```
 
 ##### Parameters
 
-| name                  | type                                       | description                                                     | optional |
-| --------------------- | ------------------------------------------ | --------------------------------------------------------------- | :------: |
-| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                  |          |
-| `config.appDomain`    | `string`                                   | Auth0 OAuth app domain                                          |          |
-| `config.clientId`     | `string`                                   | Auth0 OAuth app client id                                       |          |
-| `config.clientSecret` | `string`                                   | Auth0 OAuth app client secret                                   |          |
-| `config.redirectUri`  | `string`                                   | Auth0 OAuth app redirect uri                                    |          |
-| `config.scope`        | `string[]`                                 | an array of scopes - `openid` and `profile` is always included  |    ✓     |
-| `config.connection`   | `string[]`                                 | Forces the user to sign in with a specific connection           |    ✓     |
-| `config.organization` | `string[]`                                 | ID of the organization to use when authenticating a user        |    ✓     |
-| `config.invitation`   | `string[]`                                 | Ticket ID of the organization invitation                        |    ✓     |
-| `config.loginHint`    | `string[]`                                 | Populates the username/email field for the login or signup page |    ✓     |
+Scopes `openid` and `profile` are always included
+
+| name                  | type                                       | description                   | optional |
+| --------------------- | ------------------------------------------ | ----------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                |          |
+| `config.appDomain`    | `string`                                   | Auth0 OAuth app domain        |          |
+| `config.clientId`     | `string`                                   | Auth0 OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | Auth0 OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | Auth0 OAuth app redirect uri  |          |
+| `config.scope`        | `string[]`                                 | an array of scopes            |    ✓     |
 
 ##### Returns
 
@@ -54,63 +48,27 @@ const auth0: (
 
 ## Interfaces
 
-### `Auth0Provider`
+### `Auth0Auth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<Auth0Auth<_Auth>>
+interface Auth0Auth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<Auth0UserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<Auth0UserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                              |
 | --------------------------------- |
 | [`Auth0UserAuth`](#auth0userauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `Auth0UserAuth`
-
-```ts
-type Auth0UserAuth = ProviderUserAuth & {
-	auth0User: Auth0User;
-	auth0Tokens: Auth0Tokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`Auth0User`](#auth0user)                                          |
-| [`Auth0Tokens`](#auth0tokens)                                      |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `Auth0Tokens`
 
@@ -134,3 +92,25 @@ type Auth0User = {
 	updated_at: string;
 };
 ```
+
+### `Auth0UserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	auth0User: Auth0User;
+	auth0Tokens: Auth0Tokens;
+}
+```
+
+| properties    | type                          | description       |
+| ------------- | ----------------------------- | ----------------- |
+| `auth0User`   | [`Auth0User`](#auth0user)     | Auth0 user        |
+| `auth0Tokens` | [`Auth0Tokens`](#auth0tokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

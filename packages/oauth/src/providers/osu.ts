@@ -1,31 +1,75 @@
 import {
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
-	providerUserAuth,
 	validateOAuth2AuthorizationCode
-} from "../core.js";
-import { handleRequest, authorizationHeader } from "../request.js";
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "osu";
 
-export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getOsuTokens = async (code: string): Promise<OsuTokens> => {
+export const osu = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): OsuAuth<_Auth> => {
+	return new OsuAuth(auth, config);
+};
+
+export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	OsuUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			"https://osu.ppy.sh/oauth/authorize",
+			{
+				clientId: this.config.clientId,
+				scope: ["identify", ...scopeConfig],
+				redirectUri: this.config.redirectUri
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<OsuUserAuth<_Auth>> => {
+		const osuTokens = await this.validateAuthorizationCode(code);
+		const osuUser = await getOsuUser(osuTokens.accessToken);
+		return new OsuUserAuth(this.auth, osuUser, osuTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<OsuTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
 			token_type: string;
 		}>(code, "https://osu.ppy.sh/oauth/token", {
-			clientId: config.clientId,
-			redirectUri: config.redirectUri,
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
 			clientPassword: {
-				clientSecret: config.clientSecret,
+				clientSecret: this.config.clientSecret,
 				authenticateWith: "client_secret"
 			}
 		});
@@ -36,36 +80,21 @@ export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			const scopeConfig = config.scope ?? [];
-			return await createOAuth2AuthorizationUrl(
-				"https://osu.ppy.sh/oauth/authorize",
-				{
-					clientId: config.clientId,
-					scope: ["identify", ...scopeConfig],
-					redirectUri: config.redirectUri
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const osuTokens = await getOsuTokens(code);
-			const osuUser = await getOsuUser(osuTokens.accessToken);
-			const providerUserId = osuUser.id.toString();
-			const osuUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...osuUserAuth,
-				osuUser,
-				osuTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export class OsuUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public osuTokens: OsuTokens;
+	public osuUser: OsuUser;
+
+	constructor(auth: _Auth, osuUser: OsuUser, osuTokens: OsuTokens) {
+		super(auth, PROVIDER_ID, osuUser.id.toString());
+
+		this.osuTokens = osuTokens;
+		this.osuUser = osuUser;
+	}
+}
 
 const getOsuUser = async (accessToken: string): Promise<OsuUser> => {
 	const request = new Request("https://osu.ppy.sh/api/v2/me/osu", {
@@ -77,7 +106,7 @@ const getOsuUser = async (accessToken: string): Promise<OsuUser> => {
 	return osuUser;
 };
 
-type OsuTokens = {
+export type OsuTokens = {
 	accessToken: string;
 	refreshToken: string;
 	accessTokenExpiresIn: number;

@@ -1,31 +1,78 @@
 import {
+	OAuth2ProviderAuth,
 	createOAuth2AuthorizationUrl,
-	providerUserAuth,
 	validateOAuth2AuthorizationCode
-} from "../core.js";
-import { createUrl, handleRequest, authorizationHeader } from "../request.js";
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import {
+	handleRequest,
+	authorizationHeader,
+	createUrl
+} from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
-	allMemberships?: boolean;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "patreon";
 
-export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getPatreonTokens = async (code: string): Promise<PatreonTokens> => {
+export const patreon = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): PatreonAuth<_Auth> => {
+	return new PatreonAuth(auth, config);
+};
+
+export class PatreonAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	PatreonUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			"https://www.patreon.com/oauth2/authorize",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: ["identity", ...scopeConfig]
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<PatreonUserAuth<_Auth>> => {
+		const patreonTokens = await this.validateAuthorizationCode(code);
+		const patreonUser = await getPatreonUser(patreonTokens.accessToken);
+		return new PatreonUserAuth(this.auth, patreonUser, patreonTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<PatreonTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
 		}>(code, "https://www.patreon.com/api/oauth2/token", {
-			clientId: config.clientId,
-			redirectUri: config.redirectUri,
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
 			clientPassword: {
-				clientSecret: config.clientSecret,
+				clientSecret: this.config.clientSecret,
 				authenticateWith: "client_secret"
 			}
 		});
@@ -36,36 +83,24 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			const scopeConfig = config.scope ?? [];
-			return await createOAuth2AuthorizationUrl(
-				"https://www.patreon.com/oauth2/authorize",
-				{
-					clientId: config.clientId,
-					redirectUri: config.redirectUri,
-					scope: ["identity", ...scopeConfig]
-				}
-			);
-		},
-		validateCallback: async (code: string) => {
-			const patreonTokens = await getPatreonTokens(code);
-			const patreonUser = await getPatreonUser(patreonTokens.accessToken);
-			const providerUserId = patreonUser.id;
-			const patreonUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...patreonUserAuth,
-				patreonUser,
-				patreonTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export class PatreonUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public patreonTokens: PatreonTokens;
+	public patreonUser: PatreonUser;
+
+	constructor(
+		auth: _Auth,
+		patreonUser: PatreonUser,
+		patreonTokens: PatreonTokens
+	) {
+		super(auth, PROVIDER_ID, patreonUser.id);
+		this.patreonTokens = patreonTokens;
+		this.patreonUser = patreonUser;
+	}
+}
 
 const getPatreonUser = async (accessToken: string): Promise<PatreonUser> => {
 	const requestUrl = createUrl(
@@ -87,7 +122,7 @@ const getPatreonUser = async (accessToken: string): Promise<PatreonUser> => {
 	return patreonUser;
 };
 
-type PatreonTokens = {
+export type PatreonTokens = {
 	accessToken: string;
 	refreshToken: string | null;
 	accessTokenExpiresIn: number;

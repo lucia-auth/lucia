@@ -216,10 +216,11 @@ export const GET = async (request: NextRequest) => {
 		});
 	}
 	try {
-		const { existingUser, githubUser, createUser } =
+		const { getExistingUser, githubUser, createUser } =
 			await githubAuth.validateCallback(code);
 
 		const getUser = async () => {
+			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
@@ -258,15 +259,16 @@ export const GET = async (request: NextRequest) => {
 
 ### Authenticate user with Lucia
 
-You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
+You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
 
 If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
-const { existingUser, githubUser, createUser } =
+const { getExistingUser, githubUser, createUser } =
 	await githubAuth.validateCallback(code);
 
 const getUser = async () => {
+	const existingUser = await getExistingUser();
 	if (existingUser) return existingUser;
 	const user = await createUser({
 		attributes: {
@@ -364,7 +366,7 @@ const Form = ({
 }) => {
 	const router = useRouter();
 	return (
-		<Form
+		<form
 			action={action}
 			method="post"
 			onSubmit={async (e) => {
@@ -384,7 +386,7 @@ const Form = ({
 			}}
 		>
 			{children}
-		</Form>
+		</form>
 	);
 };
 

@@ -31,7 +31,7 @@ authRequest.setSession(null); // delete session cookie
 
 ## `validate()`
 
-Validates the session cookie using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession). It returns the validated if the cookie is valid, or `null` if not. Additionally, when a session is reset, a new session cookie is set.
+Validates the session cookie using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession). This resets the session if its idle, and returns the validated session if the cookie is valid, or `null` if not, Additionally, when a session is reset, a new session cookie is set.
 
 By default, this method will also return `null` if the request is from an untrusted origin.
 
@@ -60,7 +60,7 @@ if (session) {
 
 ## `validateBearerToken()`
 
-Validates the session cookie using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession). It returns the validated if the cookie is valid, or `null` if not.
+Validates the session cookie using [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession. This resets the session if its idle, and returns the validated session if the token is valid, or `null` if not,
 
 ```ts
 const validateBearerToken: () => Promise<Session | null>;
@@ -68,10 +68,10 @@ const validateBearerToken: () => Promise<Session | null>;
 
 ##### Returns
 
-| type                                             | description                       |
-| ------------------------------------------------ | --------------------------------- |
-| [`Session`](/reference/lucia/interfaces#session) | The validated session             |
-| `null`                                           | The session is invalid or expired |
+| type                                             | description            |
+| ------------------------------------------------ | ---------------------- |
+| [`Session`](/reference/lucia/interfaces#session) | The validated session  |
+| `null`                                           | The session is invalid |
 
 #### Example
 

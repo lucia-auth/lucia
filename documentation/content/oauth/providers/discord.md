@@ -46,63 +46,27 @@ const discord: (
 
 ## Interfaces
 
-### `DiscordProvider`
+### `DiscordAuth`
 
-Satisfies [`OAuthProvider`](/reference/oauth/interfaces#oauthprovider).
-
-#### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: () => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<DiscordAuth<_Auth>>
+interface DiscordAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<DiscordUserAuth<_Auth>>;
+}
 ```
-
-##### Returns
-
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-#### `validateCallback()`
-
-Validates the callback code.
-
-```ts
-const validateCallback: (code: string) => Promise<DiscordUserAuth>;
-```
-
-##### Parameters
-
-| name   | type     | description                          |
-| ------ | -------- | ------------------------------------ |
-| `code` | `string` | The authorization code from callback |
-
-##### Returns
 
 | type                                  |
 | ------------------------------------- |
 | [`DiscordUserAuth`](#discorduserauth) |
 
-##### Errors
+##### Generics
 
-Request errors are thrown as [`OAuthRequestError`](/reference/oauth/interfaces#oauthrequesterror).
-
-### `DiscordUserAuth`
-
-```ts
-type DiscordUserAuth = ProviderUserAuth & {
-	discordUser: DiscordUser;
-	discordTokens: DiscordTokens;
-};
-```
-
-| type                                                               |
-| ------------------------------------------------------------------ |
-| [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) |
-| [`DiscordUser`](#discorduser)                                      |
-| [`DiscordTokens`](#discordtokens)                                  |
+| name    | extends    | default |
+| ------- | ---------- | ------- |
+| `_Auth` | [`Auth`]() | `Auth`  |
 
 ### `DiscordTokens`
 
@@ -110,7 +74,7 @@ type DiscordUserAuth = ProviderUserAuth & {
 type DiscordTokens = {
 	accessToken: string;
 	refreshToken: string;
-	accessTokenExpiresIn: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
@@ -121,6 +85,7 @@ type DiscordUser = {
 	id: string;
 	username: string;
 	discriminator: string;
+	global_name?: string;
 	avatar: string;
 	bot?: boolean;
 	system?: boolean;
@@ -133,5 +98,28 @@ type DiscordUser = {
 	premium_type?: number;
 	public_flags?: number;
 	locale?: string;
+	avatar_decoration?: string;
 };
 ```
+
+### `DiscordUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	discordUser: DiscordUser;
+	discordTokens: DiscordTokens;
+}
+```
+
+| properties      | type                              | description       |
+| --------------- | --------------------------------- | ----------------- |
+| `discordUser`   | [`DiscordUser`](#discorduser)     | Discord user      |
+| `discordTokens` | [`DiscordTokens`](#discordtokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends    |
+| ------- | ---------- |
+| `_Auth` | [`Auth`]() |

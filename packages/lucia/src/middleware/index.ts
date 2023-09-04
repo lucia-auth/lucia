@@ -153,9 +153,11 @@ type AstroAPIContext = {
 	request: Request;
 	cookies: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
-		get: (name: string) => {
-			value: string | undefined;
-		};
+		get: (name: string) =>
+			| {
+					value: string | undefined;
+			  }
+			| undefined;
 	};
 };
 
@@ -173,7 +175,7 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 					authorization: context.request.headers.get("Authorization")
 				},
 				storedSessionCookie:
-					context.cookies.get(sessionCookieName).value || null
+					context.cookies.get(sessionCookieName)?.value || null
 			},
 			setCookie: (cookie) => {
 				context.cookies.set(cookie.name, cookie.value, cookie.attributes);

@@ -13,7 +13,7 @@ Some methods shown in this page is included in [`AuthRequest`](/reference/lucia/
 
 ## Validate bearer tokens
 
-You can use [`AuthRequest.validateBearerToken()`](/reference/lucia/interfaces/authrequest#validatebearertoken) to validate the bearer token. Since [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession) is used, idle sessions will be reset. It returns a session if the session is active, or `null` if the session is invalid.
+You can use [`AuthRequest.validateBearerToken()`](/reference/lucia/interfaces/authrequest#validatebearertoken) to validate the bearer token. Since [`Auth.validateSession()`](/reference/lucia/interfaces/auth#validatesession) is used, idle sessions will be reset. It returns the validated session or `null` if the session is invalid.
 
 ```ts
 const authRequest = auth.handleRequest();

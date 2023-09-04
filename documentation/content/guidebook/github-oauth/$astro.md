@@ -3,7 +3,7 @@ title: "Github OAuth in Astro"
 description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
 ---
 
-_Before starting, make sure you've [setup Lucia and your database](/getting-started/astro) and that you've implement the recommended middleware._
+_Before starting, make sure you've [setup Lucia and your database](/getting-started/astro) and that you've implement the [recommended middleware](/getting-started/astro#set-up-middleware)._
 
 This guide will cover how to implement Github OAuth using Lucia in Astro. It will have 3 parts:
 
@@ -176,10 +176,11 @@ export const get: APIRoute = async (context) => {
 		});
 	}
 	try {
-		const { existingUser, githubUser, createUser } =
+		const { getExistingUser, githubUser, createUser } =
 			await githubAuth.validateCallback(code);
 
 		const getUser = async () => {
+			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
@@ -212,15 +213,16 @@ export const get: APIRoute = async (context) => {
 
 ### Authenticate user with Lucia
 
-You can check if the user has already registered with your app by checking `GithubUserAuth.existingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
+You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
 
 If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
-const { existingUser, githubUser, createUser } =
+const { getExistingUser, githubUser, createUser } =
 	await githubAuth.validateCallback(code);
 
 const getUser = async () => {
+	const existingUser = await getExistingUser();
 	if (existingUser) return existingUser;
 	const user = await createUser({
 		attributes: {

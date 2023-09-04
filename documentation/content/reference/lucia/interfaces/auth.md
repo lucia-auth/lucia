@@ -1,6 +1,5 @@
 ---
-title: "Auth"
-format: "code"
+title: "`Auth`"
 ---
 
 ## `createKey()`
@@ -687,7 +686,7 @@ const updateKeyPassword: (
 	providerId: string,
 	providerUserId: string,
 	password: string | null
-) => Promise<void>;
+) => Promise<Key>;
 ```
 
 ##### Parameters
@@ -697,6 +696,12 @@ const updateKeyPassword: (
 | `providerId`     | `string`         | The provider id of the target key      |
 | `providerUserId` | `string`         | The provider user id of the target key |
 | `password`       | `string \| null` | A new password                         |
+
+##### Returns
+
+| type                                     | description |
+| ---------------------------------------- | ----------- |
+| [`Key`](/reference/lucia/interfaces#key) | updated key |
 
 ##### Errors
 
