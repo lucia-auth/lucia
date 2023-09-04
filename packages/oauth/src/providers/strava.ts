@@ -50,15 +50,14 @@ export class StravaAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public validateCallback = async (
 		code: string
 	): Promise<StravaUserAuth<_Auth>> => {
-		const stravaTokens = await this.validateAuthorizationCode(code);
-		const stravaUser = stravaTokens.user;
+		const [stravaUser, stravaTokens] = await this.validateAuthorizationCode(code);
 		return new StravaUserAuth(this.auth, stravaUser, stravaTokens);
 	};
 
 	private validateAuthorizationCode = async (
 		code: string
-	): Promise<StravaTokens> => {
-		const tokens =
+	): Promise<[StravaUser, StravaTokens]> => {
+		const {athlete:user, ...tokens} =
 			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 				code,
 				"https://www.strava.com/oauth/token",
@@ -71,17 +70,19 @@ export class StravaAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 				}
 			);
 		if ("refresh_token" in tokens) {
-			return {
-				accessToken: tokens.access_token,
-				accessTokenExpiresIn: tokens.expires_in,
-				refreshToken: tokens.refresh_token,
-        user: tokens.athlete
-			};
+			return [user,
+        {
+          accessToken: tokens.access_token,
+          accessTokenExpiresIn: tokens.expires_in,
+          refreshToken: tokens.refresh_token,
+        }
+			];
 		}
-		return {
-			accessToken: tokens.access_token,
-      user: tokens.athlete
-		};
+		return [user,
+      {
+        accessToken: tokens.access_token,
+      }
+    ]
 	};
 }
 
@@ -102,7 +103,7 @@ export class StravaUserAuth<
 type AccessTokenResponseBody =
 	| {
 			access_token: string;
-      athlete: StravaUser
+      athlete: StravaUser;
 	  }
 	| {
 			access_token: string;
@@ -115,13 +116,11 @@ type AccessTokenResponseBody =
 export type StravaTokens =
   | {
     accessToken: string;
-    user: StravaUser;
   }
 	| {
     accessToken: string;
     refreshToken: string;
     accessTokenExpiresIn: number;
-    user: StravaUser;
   };
 
 export type StravaUser = {
