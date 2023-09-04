@@ -82,10 +82,13 @@ type FacebookTokens = {
 
 ### `FacebookUser`
 
+`email` is only included if `email` scope if provided.
+
 ```ts
 type FacebookUser = {
 	id: string;
 	name: string;
+	email?: string;
 	picture: {
 		data: {
 			height: number;
