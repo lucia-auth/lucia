@@ -41,6 +41,14 @@ export type {
 export { box } from "./box.js";
 export type { BoxAuth, BoxTokens, BoxUser, BoxUserAuth } from "./box.js";
 
+export { cognito } from "./cognito.js";
+export type {
+	CognitoAuth,
+	CognitoTokens,
+	CognitoUser,
+	CognitoUserAuth
+} from "./cognito.js";
+
 export { discord } from "./discord.js";
 export type {
 	DiscordAuth,
