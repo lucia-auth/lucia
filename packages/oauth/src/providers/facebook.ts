@@ -105,7 +105,7 @@ export class FacebookUserAuth<
 const getFacebookUser = async (accessToken: string): Promise<FacebookUser> => {
 	const requestUrl = createUrl("https://graph.facebook.com/me", {
 		access_token: accessToken,
-		fields: ["id", "name", "picture"].join(",")
+		fields: ["id", "name", "picture", "email"].join(",")
 	});
 	const request = new Request(requestUrl, {
 		headers: {
@@ -125,6 +125,7 @@ export type FacebookTokens = {
 export type FacebookUser = {
 	id: string;
 	name: string;
+	email?: string;
 	picture: {
 		data: {
 			height: number;
