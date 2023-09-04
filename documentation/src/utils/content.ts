@@ -118,6 +118,7 @@ const isValidFrameworkVersion = (
 
 const frameworkNameDictionary = {
 	astro: "Astro",
+	elysia: "Elysia",
 	express: "Express",
 	fastify: "Fastify",
 	hono: "Hono",

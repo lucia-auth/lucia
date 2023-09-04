@@ -1,6 +1,6 @@
 ---
-title: "Getting started in SvelteKit"
-description: "Learn how to set up Lucia in your SvelteKit project"
+title: "Getting started in Elysia"
+description: "Learn how to set up Lucia in your Elysia project"
 ---
 
 Install Lucia using your package manager of your choice.
@@ -13,18 +13,17 @@ yarn add lucia
 
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `sveltekit()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
+Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initialize it. Export `auth` and its type as `Auth`. Make sure to pass the `elysia()` middleware We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that later.
 
 ```ts
-// src/lib/server/lucia.ts
+// lucia.ts
 import { lucia } from "lucia";
-import { sveltekit } from "lucia/middleware";
-import { dev } from "$app/environment";
+import { elysia } from "lucia/middleware";
 
 // expect error (see next section)
 export const auth = lucia({
-	env: dev ? "DEV" : "PROD",
-	middleware: sveltekit()
+	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: elysia()
 });
 
 export type Auth = typeof auth;
@@ -35,18 +34,16 @@ export type Auth = typeof auth;
 Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/reference/database-adapter). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
 
 ```ts
-// src/lib/server/lucia.ts
 import { lucia } from "lucia";
-import { sveltekit } from "lucia/middleware";
-import { dev } from "$app/environment";
+import { elysia } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
 
-export const auth = lucia({
-	env: dev ? "DEV" : "PROD",
-	middleware: sveltekit(),
+const auth = lucia({
+	env: "DEV", // "PROD" if deployed to HTTPS
+	middleware: elysia(),
 	adapter: prisma(client)
 });
 ```
@@ -76,53 +73,17 @@ export const auth = lucia({
 
 ## Set up types
 
-In your `src/app.d.ts` file, declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a `.d.ts` file and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
-// src/app.d.ts
+// app.d.ts
 /// <reference types="lucia" />
-declare global {
-	namespace Lucia {
-		type Auth = import("$lib/server/lucia").Auth;
-		type DatabaseUserAttributes = {};
-		type DatabaseSessionAttributes = {};
-	}
-}
-
-// THIS IS IMPORTANT!!!
-export {};
-```
-
-## Set up hooks
-
-This is optional but highly recommended. Create a new `handle()` hook that stores [`AuthRequest`](/reference/lucia/interfaces/authrequest) to `locals.auth`.
-
-```ts
-// src/hooks.server.ts
-import { auth } from "$lib/server/lucia";
-import type { Handle } from "@sveltejs/kit";
-
-export const handle: Handle = async ({ event, resolve }) => {
-	// we can pass `event` because we used the SvelteKit middleware
-	event.locals.auth = auth.handleRequest(event);
-	return await resolve(event);
-};
-```
-
-Make sure to type `Locals` as well:
-
-```ts
-// src/app.d.ts
-declare global {
-	namespace App {
-		interface Locals {
-			auth: import("lucia").AuthRequest;
-		}
-	}
+declare namespace Lucia {
+	type Auth = import("./lucia.js").Auth;
+	type DatabaseUserAttributes = {};
+	type DatabaseSessionAttributes = {};
 }
 ```
-
-This allows us to share and access the same `AuthRequest` instance across multiple load times, which [results in better load times when validating requests](/basics/using-cookies#caching).
 
 ## Next steps
 
