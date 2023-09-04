@@ -5,7 +5,7 @@ description: "Prevent password brute force attacks with login throttling"
 
 When implementing password based authentication, a common attack is a brute force attack. While the complexity of the password is likely going to be the most important factor, you can implement login throttling to limit the number of login attempts an attacker can make.
 
-One simple approach is to use exponential backoff to increase the timeout on every unsuccessful login attempt. Since determining the exact origin of an attack is hard, throttling should be done a per-username/account basis. However, an attacker may try to use a common password across multiple accounts. As such, throttling based on IP addresses should be also be considered.
+One simple approach is to use exponential backoff to increase the timeout on every unsuccessful login attempt. Since determining the exact origin of an attack is hard, throttling should be done on a per-username/account basis. However, an attacker may try to use a common password across multiple accounts. As such, throttling based on IP addresses should also be considered.
 
 ## Basic example
 
