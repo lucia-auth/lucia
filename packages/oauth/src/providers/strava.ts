@@ -58,7 +58,7 @@ export class StravaAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 
 	private validateAuthorizationCode = async (
 		code: string
-	): Promise<[StravaUser, StravaTokens]> => {
+	): Promise<[stravaUser: StravaUser, stravaTokens: StravaTokens]> => {
 		const { athlete: user, ...tokens } =
 			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 				code,
