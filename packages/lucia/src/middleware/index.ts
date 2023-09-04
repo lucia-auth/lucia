@@ -11,9 +11,7 @@ import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
 } from "express";
-
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { serialize } from "node:v8";
 
 const getIncomingMessageUrl = (incomingMessage: IncomingMessage, env: Env) => {
 	if (!incomingMessage.headers.host) return "";
@@ -229,6 +227,7 @@ type ElysiaContext = {
 		redirect?: string | undefined;
 	};
 };
+
 export const elysia = (): Middleware<[ElysiaContext]> => {
 	return ({ args }) => {
 		const [{ request, set }] = args;

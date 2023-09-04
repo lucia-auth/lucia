@@ -307,7 +307,6 @@ auth.handleRequest(requestEvent as RequestEventAction);
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `requestEvent` | [`RequestEventLoader`](https://qwik.builder.io/docs/route-loader/#requestevent)`\|`[`RequestEventAction`](https://qwik.builder.io/docs/action/#http-request-and-response) |
 
-
 ## `elysia()`
 
 Middleware for Elysia.
@@ -328,10 +327,10 @@ const auth = lucia({
 ```
 
 ```ts
-auth.handleRequest({request, set} as {request: Request, set: Set});
+auth.handleRequest({ request, set } as { request: Request; set: Set });
 ```
 
 | name      | type                                                                  |
-|-----------|-----------------------------------------------------------------------|
+| --------- | --------------------------------------------------------------------- |
 | `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) |
-| `set`     | [`Set`](https://elysiajs.com/concept/handler.html)  |
+| `set`     | [`Set`](https://elysiajs.com/concept/handler.html)                    |

@@ -226,10 +226,10 @@ import { elysia } from "lucia/middleware";
 ```
 
 ```ts
-const app = new Elysia()
-app.get('/', async ({ request, set }) => {
-  const authReq = auth.handleRequest({ request, set });
-})
+const app = new Elysia();
+app.get("/", async ({ request, set }) => {
+	const authReq = auth.handleRequest({ request, set });
+});
 ```
 
 ### SvelteKit
