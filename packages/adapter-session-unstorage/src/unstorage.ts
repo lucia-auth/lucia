@@ -40,7 +40,11 @@ export const unstorageAdapter = (
 					})
 				);
 				return sessionResults.filter(
-					(sessionResult): sessionResult is SessionSchema => !!sessionResult
+					(
+						sessionResult
+					): sessionResult is NonNullable<typeof sessionResult> => {
+						return sessionResult !== null;
+					}
 				);
 			},
 			setSession: async (session) => {
