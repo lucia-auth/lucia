@@ -35,7 +35,7 @@ export const ioredisSessionAdapter = (
 					sessionIds.map((sessionId) => client.get(sessionKey(sessionId)))
 				);
 				const sessions = sessionData
-					.filter((val): val is string => val !== null)
+					.filter((val): val is NonNullable<typeof val> => val !== null)
 					.map((val) => JSON.parse(val) as SessionSchema);
 				return sessions;
 			},

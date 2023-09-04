@@ -37,8 +37,14 @@ export const upstashSessionAdapter = (
 				for (const sessionId of sessionIds) {
 					pipeline.get(sessionKey(sessionId));
 				}
-				const sessions = await pipeline.exec<SessionSchema[]>();
-				return sessions;
+				const maybeSessions = await pipeline.exec<
+					Array<SessionSchema | null>
+				>();
+				return maybeSessions.filter(
+					(maybeSession): maybeSession is NonNullable<typeof maybeSession> => {
+						return maybeSession !== null;
+					}
+				);
 			},
 			setSession: async (session) => {
 				const pipeline = upstashClient.pipeline();
