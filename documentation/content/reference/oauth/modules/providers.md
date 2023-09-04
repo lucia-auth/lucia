@@ -86,6 +86,10 @@ See [Slack](/oauth/providers/slack) provider.
 
 See [Spotify](/oauth/providers/spotify) provider.
 
+## `strava()`
+
+See [Strava](/oauth/providers/strava) provider.
+
 ## `twitch()`
 
 See [Twitch](/oauth/providers/twitch) provider.

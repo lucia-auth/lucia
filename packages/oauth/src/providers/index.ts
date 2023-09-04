@@ -159,6 +159,14 @@ export type {
 	SpotifyUserAuth
 } from "./spotify.js";
 
+export { strava } from "./strava.js";
+export type {
+	StravaAuth,
+	StravaTokens,
+	StravaUser,
+	StravaUserAuth
+} from "./strava.js";
+
 export { twitch } from "./twitch.js";
 export type {
 	TwitchAuth,
