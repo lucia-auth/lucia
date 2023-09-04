@@ -18,7 +18,7 @@ An alternative way to verify emails is to use one-time passwords. These are gene
 
 ## Generate and send verification code
 
-The verification code should only be only be valid for a short span of time (3~5 minutes). The recommended length is 8 and hashing it is optional in this case.
+The verification code should only be valid for a short span of time (3~5 minutes). The recommended length is 8 and hashing it is optional in this case.
 
 ```ts
 import { generateRandomString } from "lucia/utils";
