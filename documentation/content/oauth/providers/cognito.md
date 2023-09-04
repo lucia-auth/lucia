@@ -1,5 +1,5 @@
 ---
-title: "Cognito"
+title: "AWS Cognito"
 description: "Learn about using the AWS Cognito provider"
 ---
 
@@ -28,7 +28,7 @@ const cognito: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
-		hostedUiDomain: string;
+		userPoolDomain: string;
 	}
 ) => CognitoProvider;
 ```
@@ -42,7 +42,7 @@ const cognito: (
 | `config.clientSecret`   | `string`                                   | Cognito app client secret                        |          |
 | `configs.redirectUri`   | `string`                                   | an authorized redirect URI                       |          |
 | `config.scope`          | `string[]`                                 | an array of scopes - `openid` is always included |    ✓     |
-| `config.hostedUiDomain` | `string`                                   | AWS Cognito's hosted UI domain                   |          |
+| `config.userPoolDomain` | `string`                                   | AWS Cognito's user pool domain                   |          |
 
 ##### Returns
 
@@ -59,9 +59,7 @@ See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 ```ts
 // implements OAuth2ProviderAuth<CognitoAuth<_Auth>>
 interface CognitoAuth<_Auth extends Auth> {
-	getAuthorizationUrl: (
-		identityProvider?: string
-	) => Promise<readonly [url: URL, state: string]>;
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
 	validateCallback: (code: string) => Promise<CognitoAuth<_Auth>>;
 }
 ```
@@ -72,9 +70,9 @@ interface CognitoAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `CognitoTokens`
 
@@ -137,6 +135,6 @@ interface CognitoUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

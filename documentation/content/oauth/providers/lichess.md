@@ -62,9 +62,9 @@ interface LichessAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `LichessTokens`
 
@@ -102,6 +102,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

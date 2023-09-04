@@ -11,7 +11,7 @@ import type { Auth } from "lucia";
 type Config = {
 	clientId: string;
 	clientSecret: string;
-	hostedUiDomain: string;
+	userPoolDomain: string;
 	redirectUri: string;
 	scope?: string[];
 };
@@ -40,11 +40,8 @@ export class CognitoAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		identityProvider?: string
 	): Promise<readonly [url: URL, state: string]> => {
 		const scopeConfig = this.config.scope ?? [];
-		const url = identityProvider
-			? `/oauth2/authorize?identity_provider=${identityProvider}`
-			: "/oauth2/authorize";
 		return await createOAuth2AuthorizationUrl(
-			new URL(url, this.config.hostedUiDomain),
+			new URL("/oauth2/authorize", this.config.userPoolDomain),
 			{
 				clientId: this.config.clientId,
 				scope: ["openid", ...scopeConfig],
@@ -70,7 +67,7 @@ export class CognitoAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			id_token: string;
 			expires_in: number;
 			token_type: string;
-		}>(code, new URL("/oauth2/token", this.config.hostedUiDomain), {
+		}>(code, new URL("/oauth2/token", this.config.userPoolDomain), {
 			clientId: this.config.clientId,
 			redirectUri: this.config.redirectUri,
 			clientPassword: {
