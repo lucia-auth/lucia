@@ -6,7 +6,7 @@ everything easy to use and understand.
 
 ### Code sample
 
-Working with Lucia looks something like this. In the code below, you're creating a new user with a email/password method, creating a new session, and creating a cookie that you can set it to the user.
+Working with Lucia looks something like this. In the code below, you're creating a new user with an email/password method, creating a new session, and creating a cookie that you can set to the user.
 
 ```ts
 const user = await auth.createUser({
