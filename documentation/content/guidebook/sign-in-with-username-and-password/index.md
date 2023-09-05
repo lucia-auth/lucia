@@ -222,7 +222,7 @@ post("/login", async (request: Request) => {
 		// and validate password
 		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
 		const sessionCookie = auth.createSessionCookie(session);
