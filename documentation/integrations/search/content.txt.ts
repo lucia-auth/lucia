@@ -8,7 +8,6 @@ export const GET: APIRoute = async () => {
 	return new Response(
 		pages
 			.filter((page) => {
-				console.log(page.pathname)
 				return page.frameworkId === null && page.collectionId !== "blog" && !blacklist.includes(page.pathname);
 			})
 			.map((page) => {

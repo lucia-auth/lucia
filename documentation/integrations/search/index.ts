@@ -9,8 +9,8 @@ export default () => {
 			"astro:config:setup": ({ injectRoute }) => {
 				const currentDir = path.dirname(import.meta.url.replace("file://", ""));
 				injectRoute({
-					entryPoint: path.join(currentDir, "content.ts"),
-					pattern: "/content"
+					entryPoint: path.join(currentDir, "content.txt.ts"),
+					pattern: "/content.txt"
 				});
 			}
 		}
