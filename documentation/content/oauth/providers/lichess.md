@@ -1,5 +1,5 @@
 ---
-title: "Lichess"
+title: "Lichess OAuth provider"
 description: "Learn how to use the Lichess OAuth provider"
 ---
 

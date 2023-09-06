@@ -1,5 +1,5 @@
 ---
-title: "Bitbucket"
+title: "Bitbucket OAuth provider"
 description: "Learn how to use the Bitbucket OAuth provider"
 ---
 

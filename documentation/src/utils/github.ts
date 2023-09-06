@@ -1,10 +1,13 @@
-export const getGithubContributors = async (): Promise<
-	{
-		avatar: string;
-		profileLink: string;
-		username: string;
-	}[]
-> => {
+type Contributor = {
+	avatar: string;
+	profileLink: string;
+	username: string;
+};
+
+let contributors: Contributor[];
+
+export const getGithubContributors = async (): Promise<Contributor[]> => {
+	if (contributors) return contributors;
 	const contributorsResponse = await fetch(
 		"https://api.github.com/repos/pilcrowonpaper/lucia/contributors?per_page=100",
 		{
@@ -24,7 +27,7 @@ export const getGithubContributors = async (): Promise<
 		login: string;
 	}[];
 
-	return contributorsResult.map((val) => {
+	contributors = contributorsResult.map((val) => {
 		const url = new URL(val.avatar_url);
 		url.searchParams.set("s", "128"); // set image size to 128 x 128
 		url.searchParams.delete("v");
@@ -34,4 +37,5 @@ export const getGithubContributors = async (): Promise<
 			username: val.login
 		};
 	});
+	return contributors;
 };

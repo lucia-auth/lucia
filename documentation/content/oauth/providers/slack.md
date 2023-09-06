@@ -1,5 +1,5 @@
 ---
-title: "Slack"
+title: "Slack OAuth provider"
 description: "Learn how to use the Salck OAuth provider"
 ---
 

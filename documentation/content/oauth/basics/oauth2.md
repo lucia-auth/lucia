@@ -50,7 +50,7 @@ url.searchParams.set("response_mode", "query");
 
 Upon authentication, the provider will redirect the user back to your application. The url includes a code, and a state if the provider supports it. If a state is used, make sure to check if the state in the query params is the same as the one stored as a cookie.
 
-Validate the code using `validateCallback()`. If the code is valid, this will return a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) among provider specific items (such as provider user data and access tokens). See [Handle users with Lucia](/oauth/basics/handle-users) for how to use it.
+Validate the code using `validateCallback()`. If the code is valid, this will return a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) among provider specific items (such as provider user data and access tokens). See [Handle users with OAuth](/oauth/basics/handle-users) for how to use it.
 
 ```ts
 import { auth, githubAuth } from "$lib/lucia.js";

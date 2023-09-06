@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
-import Code from "@components/Code.astro";
+import CodeBlock from "@components/CodeBlock.astro";
 import Header from "@components/Header.astro";
 import Menu from "@components/menus/MainMenu.astro";
-import Next from "@components/icons/Next.astro";
+import Next from "@icons/Next.astro";
 
 import { getGithubContributors } from "@utils/github";
+import DiscordIcon from "@icons/DiscordIcon.astro";
+import GithubIcon from "@icons/GithubIcon.astro";
 
 const code1 = `CREATE TABLE user (
 	id TEXT NOT NULL PRIMARY KEY
@@ -64,7 +66,7 @@ const contributors = await getGithubContributors();
 	<Menu />
 	<div class="bg-main pb-2 pt-24 lg:ml-72 lg:pt-14">
 		<a
-			class="mx-auto mt-3 block w-fit text-sm text-white hover:underline sm:mt-1"
+			class="mx-auto mt-3 block w-fit text-sm text-white hover:underline sm:mt-2"
 			href="/blog/lucia-2"
 			>Announcing Lucia version 2!<span
 				class="mb-[1px] ml-0.5 inline-block w-[9px] align-middle"><Next /></span
@@ -100,14 +102,6 @@ const contributors = await getGithubContributors();
 					><Next /></span
 				></a
 			>
-			<a
-				class="mx-auto mt-4 block w-fit text-sm text-zinc-400 hover:underline"
-				href="https://v1.lucia-auth.com"
-				>Go to Lucia v1 docs<span
-					class="mb-[0.5px] ml-0.5 inline-block w-[9px] align-middle"
-					><Next /></span
-				></a
-			>
 		</div>
 		<div class="mt-12 bg-sky-500 px-6 py-12 text-white sm:px-8 md:px-16">
 			<h2 class="mx-auto mb-4 text-center text-3xl font-semibold sm:text-4xl">
@@ -133,7 +127,7 @@ const contributors = await getGithubContributors();
 				class="bg-zinc-80 relative mb-8 flex flex-col-reverse gap-y-8 rounded-xl px-8 py-6 xl:flex-row xl:gap-x-8"
 			>
 				<div class="z-10 grow">
-					<Code code={code1} lang="sql" />
+					<CodeBlock code={code1} lang="sql" />
 				</div>
 				<div class="1.5xl:w-96 w-full xl:w-72">
 					<h3 class="mb-2 text-xl font-semibold">Set up your database</h3>
@@ -153,7 +147,7 @@ const contributors = await getGithubContributors();
 				class="bg-zinc-80 relative mb-8 flex flex-col-reverse gap-x-8 gap-y-8 rounded-xl px-8 py-6 xl:flex-row"
 			>
 				<div class="z-10 grow">
-					<Code code={code2} lang="ts" />
+					<CodeBlock code={code2} lang="ts" />
 				</div>
 				<div class="1.5xl:w-96 w-full xl:w-72">
 					<h3 class="mb-2 text-xl font-semibold">Initialize Lucia</h3>
@@ -173,7 +167,7 @@ const contributors = await getGithubContributors();
 				class="bg-zinc-80 relative flex flex-col-reverse gap-x-8 gap-y-8 rounded-xl px-8 py-6 xl:flex-row"
 			>
 				<div class="z-10 grow">
-					<Code code={code3} lang="ts" />
+					<CodeBlock code={code3} lang="ts" />
 				</div>
 				<div class="1.5xl:w-96 w-full xl:w-72">
 					<h3 class="mb-2 text-xl font-semibold">Start building</h3>
@@ -245,12 +239,20 @@ const contributors = await getGithubContributors();
 		<div class="6 pb-12 text-sm text-zinc-600 sm:px-8 md:px-16">
 			<div class="border-t pt-12">
 				<p class="text-center">Tip: Lucia is pronounced <i>loo-shya</i></p>
-				<p class="mt-4 text-center">
-					Created by <a
-						class="text-main hover:underline"
-						href="https://pilcrow.vercel.app">pilcrow</a
+				<div class="flex place-items-center place-content-center gap-6 mt-4">
+					<a
+						href="/discord"
+						class="w-5 fill-current text-zinc-500 hover:text-zinc-700"
 					>
-				</p>
+						<DiscordIcon />
+					</a>
+					<a
+						href="/github"
+						class="w-5 fill-current text-zinc-500 hover:text-zinc-700"
+					>
+						<GithubIcon />
+					</a>
+				</div>
 			</div>
 		</div>
 	</main>

@@ -1,5 +1,5 @@
 ---
-title: "Azure Active Directory"
+title: "Azure Active Directory OAuth provider"
 description: "Learn how to use the Azure Active Directory OAuth provider"
 ---
 

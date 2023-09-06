@@ -1,22 +1,22 @@
-import type { MarkdownInstance } from "astro";
+import type { MarkdownHeading, MarkdownInstance } from "astro";
 
 type FrameworkId = keyof typeof frameworkNameDictionary;
 
+type MarkdownFile = MarkdownInstance<{
+	title: string;
+	description?: string;
+	hidden?: boolean;
+}>;
+
 const markdownImports = Object.entries(
-	import.meta.glob<
-		MarkdownInstance<{
-			title: string;
-			description?: string;
-			hidden?: boolean;
-		}>
-	>("../../content/**/*.md")
+	import.meta.glob<MarkdownFile>("../../content/**/*.md")
 ).map(([importPath, resolve]) => {
 	return [
 		importPath
 			.replace("../../content/", "")
 			.replace(".md", "")
 			.replace("/index", ""),
-		resolve
+		resolve as () => Promise<MarkdownFile>
 	] as const;
 });
 
@@ -37,6 +37,7 @@ export type Page = {
 	versions: FrameworkVersion[];
 	frameworkId: FrameworkId | null;
 	Content: MarkdownInstance<any>["Content"];
+	headings: MarkdownHeading[];
 };
 
 const parseMarkdownCode = (text: string) => {
@@ -51,8 +52,9 @@ const removeMarkdownCode = (text: string) => {
 	return text.replaceAll("`", "");
 };
 
-export const getPages = async (collectionId: string): Promise<Page[]> => {
+export const getPages = async (collectionId?: string): Promise<Page[]> => {
 	const targetImports = markdownImports.filter(([pathname]) => {
+		if (collectionId === undefined) return true;
 		return pathname.startsWith(collectionId + "/") || pathname === collectionId;
 	});
 	const pages = await Promise.all(
@@ -62,7 +64,7 @@ export const getPages = async (collectionId: string): Promise<Page[]> => {
 			return {
 				pathname,
 				href: getHrefFromContentPathname(pathname),
-				collectionId,
+				collectionId: pathname.split("/")[0],
 				title: removeMarkdownCode(resolvedFile.frontmatter.title),
 				htmlTitle: parseMarkdownCode(resolvedFile.frontmatter.title),
 				description: rawDescription ? removeMarkdownCode(rawDescription) : null,
@@ -72,7 +74,8 @@ export const getPages = async (collectionId: string): Promise<Page[]> => {
 				hidden: Boolean(resolvedFile.frontmatter.hidden),
 				versions: [],
 				frameworkId: getFrameworkIdFromContentPathname(pathname),
-				Content: resolvedFile.Content
+				Content: resolvedFile.Content,
+				headings: resolvedFile.getHeadings()
 			};
 		})
 	);

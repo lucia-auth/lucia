@@ -1,5 +1,5 @@
 ---
-title: "Twitch"
+title: "Twitch OAuth provider"
 description: "Learn how to use the Twitch OAuth provider"
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Twitter"
+title: "Twitter OAuth provider"
 description: "Learn how to use the Twitter OAuth provider"
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Apple"
+title: "Apple OAuth provider"
 description: "Learn how to use the Apple OAuth provider"
 ---
 

@@ -11,7 +11,7 @@ Middleware for Astro 1.x and 2.x.
 const astro: Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 auth.handleRequest(context as APIContext);
@@ -38,7 +38,7 @@ Middleware for Express 4.x and 5.x.
 const express: () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { express } from "lucia/middleware";
@@ -66,7 +66,7 @@ Middleware for Fastify.
 const fastify = () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { fastify } from "lucia/middleware";
@@ -121,7 +121,7 @@ The default middleware.
 const lucia: () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { lucia as luciaMiddleware } from "lucia/middleware";
@@ -148,7 +148,7 @@ Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. 
 const nextjs: () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { nextjs } from "lucia/middleware";
@@ -204,7 +204,7 @@ Middleware for Node.js.
 const node = () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { node } from "lucia/middleware";
@@ -232,7 +232,7 @@ Middleware for SvelteKit 1.x.
 const sveltekit: () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { sveltekit } from "lucia/middleware";
@@ -259,7 +259,7 @@ Middleware for web standard request. **[`AuthRequest.setSession()`](/reference/l
 const web: () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { web } from "lucia/middleware";
@@ -287,7 +287,7 @@ Middleware for Qwik City.
 const qwik: () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { qwik } from "lucia/middleware";
@@ -315,7 +315,7 @@ Middleware for Elysia.
 const elysia: () => Middleware;
 ```
 
-#### Usage
+##### Usage
 
 ```ts
 import { elysia } from "lucia/middleware";

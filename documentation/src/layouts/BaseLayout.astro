@@ -27,6 +27,8 @@ const ogUrl =
 		<title>{title} · Lucia</title>
 		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
 
+		<meta property="build_id" content={import.meta.env.BUILD_ID} />
+
 		<!-- OpenGraph tags -->
 		<meta property="og:title" content={title} />
 		<meta property="og:url" content={`${origin}${Astro.url.pathname}`} />
@@ -78,3 +80,15 @@ const ogUrl =
 		</style>
 	</body>
 </html>
+
+<script>
+	import { onSearchVisibilityUpdate } from "@utils/state";
+
+	onSearchVisibilityUpdate((visible) => {
+		if (visible) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+	});
+</script>

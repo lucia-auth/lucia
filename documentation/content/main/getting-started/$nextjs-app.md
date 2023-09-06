@@ -83,7 +83,7 @@ const auth = lucia({
 
 ## Set up types
 
-Create a TS declaration file (`app.d.ts`) and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a TS declaration file (`app.d.ts`) in your project root and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
 // app.d.ts
@@ -128,4 +128,4 @@ Optionally, instead of doing a side-effect import, add the `--experimental-globa
 
 You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/pilcrowOnPaper/lucia/tree/main/examples).
 
-Remember to check out the [Guidebook](/guidebook) for tutorials and guides!
+Remember to check out the [Guidebook](/guidebook) for tutorials and guides! If you have any questions, join our [Discord server](/discord)!

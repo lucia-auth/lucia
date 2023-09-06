@@ -1,5 +1,5 @@
 ---
-title: "Patreon"
+title: "Patreon OAuth provider"
 description: "Learn how to use the Patreon OAuth provider"
 ---
 

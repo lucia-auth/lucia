@@ -1,5 +1,5 @@
 ---
-title: "Discord"
+title: "Discord OAuth provider"
 description: "Learn how to use the Discord OAuth provider"
 ---
 

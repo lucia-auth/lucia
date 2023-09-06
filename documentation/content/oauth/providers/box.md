@@ -1,5 +1,5 @@
 ---
-title: "Box"
+title: "Box OAuth provider"
 description: "Learn how to use the Box OAuth provider"
 ---
 

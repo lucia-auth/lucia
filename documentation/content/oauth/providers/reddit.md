@@ -1,5 +1,5 @@
 ---
-title: "Reddit"
+title: "Reddit OAuth provider"
 description: "Learn how to use the Reddit OAuth provider"
 ---
 

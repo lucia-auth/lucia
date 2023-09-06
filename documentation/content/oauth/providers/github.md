@@ -1,5 +1,5 @@
 ---
-title: "Github"
+title: "Github OAuth provider"
 description: "Learn how to use the Github OAuth provider"
 ---
 

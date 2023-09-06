@@ -113,7 +113,8 @@ const parseMarkdownCode = (text: string) => {
 </script>
 
 <script>
-	import { onMenuToggle, setElementVisibility } from "@utils/state";
+	import { onMenuToggle } from "@utils/state";
+	import { setElementVisibility } from "@utils/dom";
 
 	const menuDiv = document.getElementById("menu");
 	if (menuDiv instanceof HTMLDivElement) {

@@ -1,5 +1,5 @@
 ---
-title: "Salesforce"
+title: "Salesforce OAuth provider"
 description: "Learn how to use the Salesforce OAuth provider"
 ---
 

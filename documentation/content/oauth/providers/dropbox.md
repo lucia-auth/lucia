@@ -1,5 +1,5 @@
 ---
-title: "Dropbox"
+title: "Dropbox OAuth provider"
 description: "Learn how to use the Dropbox OAuth provider"
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Facebook"
+title: "Facebook OAuth provider"
 description: "Learn how to use the Facebook OAuth provider"
 ---
 
