@@ -183,6 +183,8 @@ import SearchIcon from "@icons/Search.astro";
 
 	document.addEventListener("keydown", (e) => {
 		if (e.key !== "Escape") return;
+		// delete all children
+		searchResultUList.replaceChildren();
 		searchVisibility(false);
 	});
 
