@@ -7,6 +7,7 @@ export default () => {
 		name: "lucia:search",
 		hooks: {
 			"astro:config:setup": ({ injectRoute }) => {
+				process.env.BUILD_ID = Date.now().toString();
 				const currentDir = path.dirname(import.meta.url.replace("file://", ""));
 				injectRoute({
 					entryPoint: path.join(currentDir, "content.txt.ts"),
