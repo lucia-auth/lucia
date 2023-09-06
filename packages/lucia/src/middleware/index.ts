@@ -325,9 +325,12 @@ export const nextjs = (): Middleware<
 	return ({ args, sessionCookieName, env }) => {
 		const [serverContext] = args;
 
-		if ("request" in serverContext || "cookies" in serverContext) {
+		if ("cookies" in serverContext) {
+			// for some reason `"request" in NextRequest` returns true???
 			const request =
-				"request" in serverContext ? serverContext.request : serverContext;
+				typeof serverContext.cookies === "function"
+					? (serverContext as NextJsAppServerContext).request
+					: (serverContext as NextRequest);
 
 			const readonlyCookieStore =
 				typeof serverContext.cookies === "function"
@@ -336,7 +339,6 @@ export const nextjs = (): Middleware<
 
 			const sessionCookie =
 				readonlyCookieStore.get(sessionCookieName)?.value ?? null;
-
 			const requestContext = {
 				request: {
 					url: request?.url ?? "",
@@ -359,7 +361,6 @@ export const nextjs = (): Middleware<
 					}
 				}
 			} as const satisfies RequestContext;
-
 			return requestContext;
 		}
 
