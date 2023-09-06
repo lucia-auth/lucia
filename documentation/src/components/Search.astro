@@ -1,0 +1,187 @@
+---
+import SearchIcon from "@icons/Search.astro";
+---
+
+<div
+	class="h-screen w-screen fixed top-0 backdrop-blur-md z-30 bg-opacity-5 bg-black hidden overflow-auto"
+	id="search-backdrop"
+>
+</div>
+<div
+	class="pt-32 lg:pt-20 bg-white pb-6 fixed top-0 z-30 w-full hidden px-8"
+	id="search-area"
+>
+	<div class="mx-auto max-w-2xl">
+		<div class="flex place-items-center gap-x-4">
+			<div class="w-5 fill-current text-zinc-500 block">
+				<SearchIcon />
+			</div>
+			<input
+				id="search-bar"
+				class="w-full text-2xl placeholder:font-medium font-medium placeholder:text-zinc-500 outline-none"
+				placeholder="Search"
+				spellcheck="false"
+			/>
+		</div>
+		<ul id="search-result" class="mt-4 max-h-80 overflow-auto h-full"></ul>
+	</div>
+</div>
+
+<script>
+	import {
+		onSearchVisibilityUpdate,
+		searchVisibility,
+		setElementVisibility
+	} from "@utils/state";
+
+	type HeadingItem = {
+		title: string;
+	};
+	type ContentItem = {
+		title: string;
+		description: string | null;
+		href: string;
+		headings: HeadingItem[];
+	};
+
+	const searchBackdropDiv = document.getElementById("search-backdrop");
+	const searchAreaDiv = document.getElementById("search-area");
+	const searchBarInput = document.getElementById("search-bar");
+	const searchResultUList = document.getElementById("search-result");
+	if (!(searchBackdropDiv instanceof HTMLDivElement)) throw new Error();
+	if (!(searchAreaDiv instanceof HTMLDivElement)) throw new Error();
+	if (!(searchBarInput instanceof HTMLInputElement)) throw new Error();
+	if (!(searchResultUList instanceof HTMLUListElement)) throw new Error();
+
+	onSearchVisibilityUpdate(async (incomingVisible) => {
+		setElementVisibility(searchBackdropDiv, incomingVisible);
+		setElementVisibility(searchAreaDiv, incomingVisible);
+		if (incomingVisible === true) {
+			searchBarInput.focus();
+		} else {
+			searchBarInput.blur();
+			searchBarInput.value = "";
+		}
+	});
+
+	const promise = new Promise<ContentItem[]>(async (resolve, reject) => {
+		try {
+			const response = await fetch("/content");
+			if (!response.ok) {
+				throw new Error(`Server returned status ${response.status}`);
+			}
+			const rawResult = await response.text();
+			const rawItems = rawResult.split("|");
+			const result: ContentItem[] = [];
+			for (let index = 0; index < rawItems.length; index += 4) {
+				const [title, href, description, rawHeadings] = rawItems.slice(
+					index,
+					index + 4
+				);
+				let headings: HeadingItem[] = [];
+				if (rawHeadings) {
+					headings = rawHeadings.split("\\").map((rawHeadingItem) => {
+						return {
+							title: rawHeadingItem
+						};
+					});
+				}
+				result.push({
+					title,
+					href,
+					description: description || null,
+					headings
+				});
+			}
+			return resolve(result);
+		} catch (e) {
+			return reject(e);
+		}
+	});
+	searchBarInput.addEventListener("input", async (e) => {
+		const pages = await promise;
+		const target = e.target;
+		if (!(target instanceof HTMLInputElement)) {
+			throw new Error("Missing event target");
+		}
+		const keywords = target.value.split(" ").filter((val) => Boolean(val));
+		const matchedPages: ContentItem[] = [];
+
+		for (const page of pages) {
+			const matchedHeadings = page.headings.filter((heading) => {
+				return match(heading.title, keywords);
+			});
+			if (
+				match(page.title, keywords) ||
+				match(page.description ?? "", keywords) ||
+				matchedHeadings.length > 0
+			) {
+				matchedPages.push({
+					title: page.title,
+					description: page.description,
+					href: page.href,
+					headings: matchedHeadings
+				});
+			}
+		}
+
+		// delete all children
+		searchResultUList.replaceChildren();
+
+		for (const matchedPage of matchedPages) {
+			const parentLI = document.createElement("li");
+			const parentAnchor = document.createElement("a");
+			parentAnchor.text = matchedPage.title;
+			parentAnchor.href = matchedPage.href;
+			parentAnchor.classList.add(
+				"hover:bg-indigo-50",
+				"block",
+				"px-2",
+				"rounded-sm"
+			);
+			parentLI.append(parentAnchor);
+			searchResultUList.append(parentLI);
+			if (matchedPage.headings.length < 1) continue;
+			const parentUList = document.createElement("ul");
+			parentLI.append(parentUList);
+			parentUList.classList.add("pl-6", "mb-0.5");
+			for (const matchedHeading of matchedPage.headings) {
+				const childAnchor = document.createElement("a");
+				childAnchor.text = matchedHeading.title;
+				childAnchor.href = matchedPage.href + "#";
+				childAnchor.classList.add(
+					"hover:bg-indigo-50",
+					"block",
+					"px-2",
+					"rounded-sm"
+				);
+				const childLI = document.createElement("li");
+				childLI.append(childAnchor);
+				parentUList.append(childLI);
+			}
+		}
+	});
+
+	searchBackdropDiv.addEventListener("click", (e) => {
+		e.stopPropagation();
+		searchVisibility(false);
+	});
+	document.addEventListener("keyup", (e) => {
+		// using keyup instead of keydown to prevent "/" getting typed when search bar appears
+		if (e.key !== "/") return;
+		searchVisibility(true);
+	});
+	document.addEventListener("keydown", (e) => {
+		if (e.key !== "Escape") return;
+		searchVisibility(false);
+	});
+
+	const match = (target: string, keywords: string[]): boolean => {
+		if (keywords.length < 1) return false;
+		for (const keyword of keywords) {
+			if (target.toLowerCase().includes(keyword.toLowerCase())) continue;
+			return false;
+		}
+		return true;
+	};
+</script>

@@ -3,8 +3,10 @@ import DiscordIcon from "@icons/DiscordIcon.astro";
 import GithubIcon from "@icons/GithubIcon.astro";
 import MenuIcon from "@icons/MenuIcon.astro";
 import MoreIcon from "@icons/MoreIcon.astro";
+import SearchIcon from "../icons/Search.astro";
 
 import { comparePathname } from "@utils/url";
+import Search from "./Search.astro";
 
 const blogPage = comparePathname(Astro.url.pathname, "/blog");
 const guidebook = comparePathname(Astro.url.pathname, "/guidebook");
@@ -12,11 +14,12 @@ const guidebook = comparePathname(Astro.url.pathname, "/guidebook");
 const menuButtonVisible = !blogPage && !guidebook;
 ---
 
+<Search />
 <header class="fixed top-0 z-30 w-full bg-white">
 	<div
 		class="flex place-content-between place-items-center gap-x-16 border-b px-6 pb-3 pt-4 sm:px-8"
 	>
-		<div class="flex place-items-center gap-x-8 text-sm">
+		<div class="flex place-items-center gap-x-4 text-sm">
 			<a class="pointer-events-auto flex place-items-end" href="/">
 				<img
 					src="/logo.svg"
@@ -27,50 +30,43 @@ const menuButtonVisible = !blogPage && !guidebook;
 				/>
 				<p class="text-lg font-semibold leading-none text-zinc-700">Lucia</p>
 			</a>
-			<a
-				href="/getting-started"
-				class="hidden hover:text-zinc-500 sm:inline-block">Documentation</a
-			>
-			<a href="/reference" class="hidden hover:text-zinc-500 sm:inline-block"
-				>Reference</a
-			>
-			<a href="/guidebook" class="hidden hover:text-zinc-500 sm:inline-block"
-				>Guidebook</a
-			>
-			<a href="/oauth" class="hidden hover:text-zinc-500 sm:inline-block"
-				>OAuth</a
-			>
 		</div>
-		<div class="hidden place-items-center gap-x-4 sm:flex">
-			<a
-				href="/discord"
-				class="w-5 fill-current text-zinc-500 hover:text-zinc-700"
-				href="/"
-			>
-				<DiscordIcon />
-			</a>
-			<a
-				href="/github"
-				class="w-5 fill-current text-zinc-500 hover:text-zinc-700"
-				href="/"
-			>
-				<GithubIcon />
-			</a>
-		</div>
-		<div class="sm:hidden">
-			<button class="block rounded p-1 hover:bg-indigo-50" id="more-button">
+		<div class="flex gap-x-2 sm:gap-x-6 place-items-center">
+			<div class="hidden sm:flex gap-x-6 text-sm place-items-center">
+				<a
+					href="/getting-started"
+					class="hidden hover:text-zinc-500 sm:inline-block">Documentation</a
+				>
+				<a href="/reference" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Reference</a
+				>
+				<a href="/guidebook" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Guidebook</a
+				>
+				<a href="/discord" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Discord</a
+				>
+				<a href="/discord" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Github</a
+				>
+			</div>
+			<button class="block rounded p-1 hover:bg-indigo-50" id="search-button">
 				<div class="h-5 w-5 fill-current">
-					<MoreIcon />
+					<SearchIcon />
 				</div>
 			</button>
-			<div
-				class="absolute right-0 mr-4 mt-1 hidden w-48 divide-y rounded border bg-white py-2 text-sm shadow sm:hidden"
-				id="more-dropdown"
-			>
-				<div class="pb-1.5">
-					<a
-						href="/getting-started"
-						class="block px-4 py-1.5 hover:bg-indigo-50">Documentation</a
+			<div class="sm:hidden">
+				<button class="block rounded p-1 hover:bg-indigo-50" id="more-button">
+					<div class="h-5 w-5 fill-current">
+						<MoreIcon />
+					</div>
+				</button>
+				<div
+					class="absolute right-0 mr-4 mt-1 hidden w-48 rounded bg-white py-2 text-sm shadow sm:hidden"
+					id="more-dropdown"
+				>
+					<a href="/getting-started" class="block px-4 py-1.5 hover:bg-indigo-50"
+						>Documentation</a
 					>
 					<a href="/reference" class="block px-4 py-1.5 hover:bg-indigo-50"
 						>Reference</a
@@ -78,22 +74,11 @@ const menuButtonVisible = !blogPage && !guidebook;
 					<a href="/guidebook" class="block px-4 py-1.5 hover:bg-indigo-50"
 						>Guidebook</a
 					>
-					<a href="/oauth" class="block px-4 py-1.5 hover:bg-indigo-50">OAuth</a
+					<a href="/discord" class="block px-4 py-1.5 hover:bg-indigo-50"
+						>Discord</a
 					>
-				</div>
-				<div class="pt-1.5">
-					<a
-						href="https://github.com/pilcrowOnPaper/lucia"
-						class="block px-4 py-1.5 hover:bg-indigo-50"
-						><span class="mr-1 inline-block w-4 fill-current align-middle">
-							<GithubIcon />
-						</span><span class="inline-block align-middle">Github</span>
-					</a>
-					<a class="block px-4 py-1.5 hover:bg-indigo-50"
-						><span class="mr-1 inline-block w-4 fill-current align-middle">
-							<DiscordIcon />
-						</span><span class="inline-block align-middle">Discord</span>
-					</a>
+					<a href="/github" class="block px-4 py-1.5 hover:bg-indigo-50">Github</a
+					>
 				</div>
 			</div>
 		</div>
@@ -111,24 +96,30 @@ const menuButtonVisible = !blogPage && !guidebook;
 	}
 </header>
 <script>
-	import { toggleMenu, setElementVisibility } from "@utils/state";
+	import {
+		toggleMenu,
+		setElementVisibility,
+		searchVisibility
+	} from "@utils/state";
 
 	const menuButton = document.getElementById("menu-button");
 	const moreButton = document.getElementById("more-button");
-
-	if (menuButton instanceof HTMLButtonElement) {
-		menuButton.addEventListener("click", toggleMenu);
-	}
-
 	const moreDropdownDiv = document.getElementById("more-dropdown");
-	if (
-		moreButton instanceof HTMLButtonElement &&
-		moreDropdownDiv instanceof HTMLDivElement
-	) {
-		let moreDropdownVisible = false;
-		moreButton.addEventListener("click", () => {
-			moreDropdownVisible = !moreDropdownVisible;
-			setElementVisibility(moreDropdownDiv, moreDropdownVisible);
-		});
-	}
+	const searchButton = document.getElementById("search-button");
+
+	if (!(menuButton instanceof HTMLButtonElement)) throw new Error();
+	if (!(moreButton instanceof HTMLButtonElement)) throw new Error();
+	if (!(moreDropdownDiv instanceof HTMLDivElement)) throw new Error();
+	if (!(searchButton instanceof HTMLButtonElement)) throw new Error();
+
+	menuButton.addEventListener("click", toggleMenu);
+	searchButton.addEventListener("click", () => {
+		searchVisibility(!searchVisibility());
+	});
+
+	let moreDropdownVisible = false;
+	moreButton.addEventListener("click", () => {
+		moreDropdownVisible = !moreDropdownVisible;
+		setElementVisibility(moreDropdownDiv, moreDropdownVisible);
+	});
 </script>

@@ -124,7 +124,7 @@ const getSessionAttributes: (
 | ------------------ |
 | `Record<any, any>` |
 
-#### Default
+##### Default
 
 ```ts
 const getSessionAttributes = () => {
@@ -152,7 +152,7 @@ const getUserAttributes: (databaseUser: UserSchema) => Record<any, any>;
 | ------------------ |
 | `Record<any, any>` |
 
-#### Default
+##### Default
 
 ```ts
 const getUserAttributes = () => {

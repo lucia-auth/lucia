@@ -78,3 +78,15 @@ const ogUrl =
 		</style>
 	</body>
 </html>
+
+<script>
+	import { onSearchVisibilityUpdate } from "@utils/state";
+
+	onSearchVisibilityUpdate((visible) => {
+		if (visible) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+	});
+</script>

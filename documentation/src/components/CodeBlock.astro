@@ -1,9 +1,11 @@
 ---
 import { Code } from "astro/components";
 
+import type { Lang, ILanguageRegistration } from "shiki";
+
 type Props = {
 	code: string;
-	lang: string;
+	lang: Lang | ILanguageRegistration;
 };
 ---
 

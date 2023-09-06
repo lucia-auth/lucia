@@ -1,6 +1,6 @@
 ---
-title: "Handle users with Lucia"
-description: "Learn how to use the built-in OAuth 2.0 providers"
+title: "Handle users with OAuth"
+description: "Learn how to use handle users with OAuth"
 ---
 
 After authenticating the user with OAuth, you can get an existing or create a new Lucia user using [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth). If you're using one of the built in providers, [`OAuth2ProviderAuth.validateCallback()`](reference/oauth/interfaces/oauth2providerauth#validatecallback) and [`OAuth2ProviderAuthWithPKCE.validateCallback()`](reference/oauth/interfaces/oauth2providerauthwithpkce#validatecallback) will return a provider-extended instance of it.
