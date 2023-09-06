@@ -28,6 +28,7 @@ import SearchIcon from "@icons/Search.astro";
 </div>
 
 <script>
+	import { getBuildId } from "@utils/build";
 	import {
 		onSearchVisibilityUpdate,
 		searchVisibility,
@@ -66,7 +67,7 @@ import SearchIcon from "@icons/Search.astro";
 
 	const promise = new Promise<ContentItem[]>(async (resolve, reject) => {
 		try {
-			const response = await fetch(`/content.txt?${import.meta.env.BUILD_ID}`);
+			const response = await fetch(`/content.txt?${getBuildId()}`);
 			if (!response.ok) {
 				throw new Error(`Server returned status ${response.status}`);
 			}
