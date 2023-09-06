@@ -1,5 +1,5 @@
 ---
-title: "AWS Cognito"
+title: "AWS Cognito OAuth provider"
 description: "Learn about using the AWS Cognito provider"
 ---
 

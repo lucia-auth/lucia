@@ -1,5 +1,5 @@
 ---
-title: "Auth0"
+title: "Auth0 OAuth provider"
 description: "Learn how to use the Auth0 OAuth provider"
 ---
 

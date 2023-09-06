@@ -1,5 +1,5 @@
 ---
-title: "LinkedIn"
+title: "LinkedIn OAuth provider"
 description: "Learn how to use the LinkedIn OAuth provider"
 ---
 

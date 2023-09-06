@@ -1,5 +1,5 @@
 ---
-title: "Gitlab"
+title: "Gitlab OAuth provider"
 description: "Learn how to use the Gitlab OAuth provider"
 ---
 

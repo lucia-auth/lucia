@@ -1,5 +1,5 @@
 ---
-title: "Google"
+title: "Google OAuth provider"
 description: "Learn how to use the Google OAuth provider"
 ---
 

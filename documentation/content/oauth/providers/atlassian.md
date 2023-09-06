@@ -1,5 +1,5 @@
 ---
-title: "Atlassian"
+title: "Atlassian OAuth provider"
 description: "Learn how to use the Atlassian OAuth provider"
 ---
 

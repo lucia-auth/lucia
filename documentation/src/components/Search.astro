@@ -28,6 +28,7 @@ import SearchIcon from "@icons/Search.astro";
 </div>
 
 <script>
+	import { getBuildId } from "@utils/build";
 	import {
 		onSearchVisibilityUpdate,
 		searchVisibility,
@@ -65,8 +66,16 @@ import SearchIcon from "@icons/Search.astro";
 	});
 
 	const getRawContent = async (): Promise<string> => {
-		const storedContent = localStorage.getItem("search:content");
-		if (storedContent !== null) return storedContent;
+		const buildId = getBuildId();
+		const cacheKey = localStorage.getItem("search:cache_key");
+		if (buildId === cacheKey) {
+			const storedContent = localStorage.getItem("search:content");
+			if (storedContent !== null) return storedContent;
+			localStorage.removeItem("search:cache_key");
+		} else {
+			localStorage.setItem("search:cache_key", buildId);
+			localStorage.removeItem("search:content");
+		}
 		const response = await fetch("/content.txt");
 		if (!response.ok) {
 			throw new Error(`Server returned status ${response.status}`);

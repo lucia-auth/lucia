@@ -1,5 +1,5 @@
 ---
-title: "Line"
+title: "Line OAuth provider"
 description: "Learn how to use the Line OAuth provider"
 ---
 

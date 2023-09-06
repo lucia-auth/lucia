@@ -1,5 +1,5 @@
 ---
-title: "osu!"
+title: "osu! OAuth provider"
 description: "Learn how to use the osu! OAuth provider"
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Spotify"
+title: "Spotify OAuth provider"
 description: "Learn how to use the Spotify OAuth provider"
 ---
 

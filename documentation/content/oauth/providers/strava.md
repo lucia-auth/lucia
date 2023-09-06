@@ -1,5 +1,5 @@
 ---
-title: "Strava"
+title: "Strava OAuth provider"
 description: "Learn how to use the Strava OAuth provider"
 ---
 
