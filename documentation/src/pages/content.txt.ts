@@ -9,7 +9,7 @@ export const GET: APIRoute = async () => {
 	return new Response(
 		pages
 			.filter((page) => {
-				return page.frameworkId === null && page.collectionId !== "blog" && !blacklist.includes(page.pathname);
+				return page.frameworkId === null && page.collectionId !== "blog" && !page.pathname.startsWith("main/migrate/");
 			})
 			.map((page) => {
 				let encodedHeadings = "";

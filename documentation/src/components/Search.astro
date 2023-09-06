@@ -28,23 +28,12 @@ import SearchIcon from "@icons/Search.astro";
 </div>
 
 <script>
-	import { getBuildId } from "@utils/build";
+	import { queryContent } from "@utils/search";
 	import {
 		onSearchVisibilityUpdate,
 		searchVisibility,
 		setElementVisibility
 	} from "@utils/state";
-
-	type HeadingItem = {
-		title: string;
-		hash: string;
-	};
-	type ContentItem = {
-		title: string;
-		description: string | null;
-		href: string;
-		headings: HeadingItem[];
-	};
 
 	const searchBackdropDiv = document.getElementById("search-backdrop");
 	const searchAreaDiv = document.getElementById("search-area");
@@ -66,86 +55,12 @@ import SearchIcon from "@icons/Search.astro";
 		}
 	});
 
-	const getRawContent = async (): Promise<string> => {
-		const buildId = getBuildId();
-		const cacheKey = localStorage.getItem("search:cache_key");
-		if (buildId === cacheKey) {
-			const storedContent = localStorage.getItem("search:content");
-			if (storedContent !== null) return storedContent;
-			localStorage.removeItem("search:cache_key");
-		} else {
-			localStorage.setItem("search:cache_key", buildId);
-			localStorage.removeItem("search:content");
-		}
-		const response = await fetch("/content.txt");
-		if (!response.ok) {
-			throw new Error(`Server returned status ${response.status}`);
-		}
-		const result = await response.text();
-		localStorage.setItem("search:content", result);
-		return result;
-	};
-
-	const promise = new Promise<ContentItem[]>(async (resolve, reject) => {
-		try {
-			const rawContent = await getRawContent();
-			const rawItems = rawContent.split("|");
-			const result: ContentItem[] = [];
-			for (let index = 0; index < rawItems.length; index += 4) {
-				const [title, href, description, rawHeadings] = rawItems.slice(
-					index,
-					index + 4
-				);
-				let headings: HeadingItem[] = [];
-				if (rawHeadings) {
-					headings = rawHeadings.split("\\").map((rawHeadingItem) => {
-						const [headingHash, ...headingTitleSections] =
-							rawHeadingItem.split(":");
-						return {
-							title: headingTitleSections.join(":"),
-							hash: headingHash
-						};
-					});
-				}
-				result.push({
-					title,
-					href,
-					description: description || null,
-					headings
-				});
-			}
-			return resolve(result);
-		} catch (e) {
-			return reject(e);
-		}
-	});
 	searchBarInput.addEventListener("input", async (e) => {
-		const pages = await promise;
 		const target = e.target;
 		if (!(target instanceof HTMLInputElement)) {
 			throw new Error("Missing event target");
 		}
-		const keywords = target.value.split(" ").filter((val) => Boolean(val));
-		const matchedPages: ContentItem[] = [];
-
-		for (const page of pages) {
-			const matchedHeadings = page.headings.filter((heading) => {
-				return match(heading.title, keywords);
-			});
-			if (
-				match(page.title, keywords) ||
-				match(page.description ?? "", keywords) ||
-				matchedHeadings.length > 0
-			) {
-				matchedPages.push({
-					title: page.title,
-					description: page.description,
-					href: page.href,
-					headings: matchedHeadings
-				});
-			}
-		}
-
+		const matchedPages = await queryContent(target.value);
 		// delete all children
 		searchResultUList.replaceChildren();
 
