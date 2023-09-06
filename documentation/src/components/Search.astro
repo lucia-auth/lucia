@@ -37,6 +37,7 @@ import SearchIcon from "@icons/Search.astro";
 
 	type HeadingItem = {
 		title: string;
+		hash: string;
 	};
 	type ContentItem = {
 		title: string;
@@ -98,8 +99,11 @@ import SearchIcon from "@icons/Search.astro";
 				let headings: HeadingItem[] = [];
 				if (rawHeadings) {
 					headings = rawHeadings.split("\\").map((rawHeadingItem) => {
+						const [headingHash, ...headingTitleSections] =
+							rawHeadingItem.split(":");
 						return {
-							title: rawHeadingItem
+							title: headingTitleSections.join(":"),
+							hash: headingHash
 						};
 					});
 				}
@@ -165,7 +169,7 @@ import SearchIcon from "@icons/Search.astro";
 			for (const matchedHeading of matchedPage.headings) {
 				const childAnchor = document.createElement("a");
 				childAnchor.text = matchedHeading.title;
-				childAnchor.href = matchedPage.href + "#";
+				childAnchor.href = matchedPage.href + "#" + matchedHeading.hash;
 				childAnchor.classList.add(
 					"hover:bg-indigo-50",
 					"block",

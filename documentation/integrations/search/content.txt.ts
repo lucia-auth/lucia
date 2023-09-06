@@ -15,7 +15,7 @@ export const GET: APIRoute = async () => {
 				if (page.versions.length === 0 && page.collectionId !== "guidebook") {
 					encodedHeadings = page.headings
 						.filter((heading) => heading.depth < 5)
-						.map((headings) => headings.text)
+						.map((headings) => [headings.slug,headings.text].join(":"))
 						.join("\\");
 				}
 				return [page.title, page.href, page.description ?? "", encodedHeadings];
