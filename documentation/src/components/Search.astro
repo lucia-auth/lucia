@@ -115,13 +115,4 @@ import SearchIcon from "@icons/Search.astro";
 		searchResultUList.replaceChildren();
 		searchVisibility(false);
 	});
-
-	const match = (target: string, keywords: string[]): boolean => {
-		if (keywords.length < 1) return false;
-		for (const keyword of keywords) {
-			if (target.toLowerCase().includes(keyword.toLowerCase())) continue;
-			return false;
-		}
-		return true;
-	};
 </script>
