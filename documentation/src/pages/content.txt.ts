@@ -1,4 +1,5 @@
 import { getPages } from "@utils/content";
+
 import type { APIRoute } from "astro";
 
 const blacklist: string[] = ["main/migrate/v2"]
@@ -14,7 +15,7 @@ export const GET: APIRoute = async () => {
 				let encodedHeadings = "";
 				if (page.versions.length === 0 && page.collectionId !== "guidebook") {
 					encodedHeadings = page.headings
-						.filter((heading) => heading.depth < 5)
+						.filter((heading) => heading.depth < 4)
 						.map((headings) => [headings.slug,headings.text].join(":"))
 						.join("\\");
 				}
