@@ -28,7 +28,6 @@ import SearchIcon from "@icons/Search.astro";
 </div>
 
 <script>
-	import { getBuildId } from "@utils/build";
 	import {
 		onSearchVisibilityUpdate,
 		searchVisibility,
@@ -65,14 +64,22 @@ import SearchIcon from "@icons/Search.astro";
 		}
 	});
 
+	const getRawContent = async (): Promise<string> => {
+		const storedContent = localStorage.getItem("search:content");
+		if (storedContent !== null) return storedContent;
+		const response = await fetch("/content.txt");
+		if (!response.ok) {
+			throw new Error(`Server returned status ${response.status}`);
+		}
+		const result = await response.text();
+		localStorage.setItem("search:content", result);
+		return result;
+	};
+
 	const promise = new Promise<ContentItem[]>(async (resolve, reject) => {
 		try {
-			const response = await fetch(`/content.txt?${getBuildId()}`);
-			if (!response.ok) {
-				throw new Error(`Server returned status ${response.status}`);
-			}
-			const rawResult = await response.text();
-			const rawItems = rawResult.split("|");
+			const rawContent = await getRawContent();
+			const rawItems = rawContent.split("|");
 			const result: ContentItem[] = [];
 			for (let index = 0; index < rawItems.length; index += 4) {
 				const [title, href, description, rawHeadings] = rawItems.slice(
