@@ -48,9 +48,10 @@ type Props = {
 </select-link>
 
 <script>
-	import { createToggleState, setElementVisibility } from "@utils/state";
+	import { createToggleState } from "@utils/state";
+	import { setElementVisibility } from "@utils/dom";
 
-	const [toggleDropdown, onDropdownToggle] = createToggleState();
+	const [dropdownVisible, onDropdownToggle] = createToggleState();
 
 	class SelectLink extends HTMLElement {
 		constructor() {
@@ -65,7 +66,7 @@ type Props = {
 				selectMenu instanceof HTMLDivElement &&
 				buttonTitleSpan instanceof HTMLSpanElement
 			) {
-				button.addEventListener("click", toggleDropdown);
+				button.addEventListener("click", dropdownVisible.toggle);
 				onDropdownToggle((dropdownVisible) => {
 					setElementVisibility(selectMenu, dropdownVisible);
 					if (dropdownVisible) {

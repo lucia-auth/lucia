@@ -8,7 +8,7 @@ import SearchIcon from "@icons/Search.astro";
 >
 </div>
 <div
-	class="pt-32 lg:pt-20 bg-white pb-6 fixed top-0 z-30 w-full hidden px-8"
+	class="pt-20 bg-white pb-6 fixed top-0 z-30 w-full hidden px-8"
 	id="search-area"
 >
 	<div class="mx-auto max-w-2xl">
@@ -28,12 +28,9 @@ import SearchIcon from "@icons/Search.astro";
 </div>
 
 <script>
+	import { setElementVisibility } from "@utils/dom";
 	import { queryContent } from "@utils/search";
-	import {
-		onSearchVisibilityUpdate,
-		searchVisibility,
-		setElementVisibility
-	} from "@utils/state";
+	import { onSearchVisibilityUpdate, searchVisible } from "@utils/state";
 
 	const searchBackdropDiv = document.getElementById("search-backdrop");
 	const searchAreaDiv = document.getElementById("search-area");
@@ -100,19 +97,19 @@ import SearchIcon from "@icons/Search.astro";
 
 	searchBackdropDiv.addEventListener("click", (e) => {
 		e.stopPropagation();
-		searchVisibility(false);
+		searchVisible.set(false);
 	});
 
 	document.addEventListener("keyup", (e) => {
 		// using keyup instead of keydown to prevent "/" getting typed when search bar appears
 		if (e.key !== "/") return;
-		searchVisibility(true);
+		searchVisible.set(true);
 	});
 
 	document.addEventListener("keydown", (e) => {
 		if (e.key !== "Escape") return;
 		// delete all children
 		searchResultUList.replaceChildren();
-		searchVisibility(false);
+		searchVisible.set(false);
 	});
 </script>
