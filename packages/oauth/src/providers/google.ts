@@ -1,83 +1,118 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
+	scope?: string[];
+	accessType?: "online" | "offline";
 };
 
 const PROVIDER_ID = "google";
 
-export const google = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getGoogleTokens = async (code: string) => {
-		const requestUrl = createUrl("https://oauth2.googleapis.com/token", {
-			client_id: config.clientId,
-			client_secret: config.clientSecret,
-			code,
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri
-		});
+export const google = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): GoogleAuth<_Auth> => {
+	return new GoogleAuth(auth, config);
+};
 
-		const request = new Request(requestUrl, {
-			method: "POST"
-		});
-		const tokens = await handleRequest<{
+export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	GoogleUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			"https://accounts.google.com/o/oauth2/v2/auth",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: [
+					"https://www.googleapis.com/auth/userinfo.profile",
+					...scopeConfig
+				]
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<GoogleUserAuth<_Auth>> => {
+		const googleTokens = await this.validateAuthorizationCode(code);
+		const googleUser = await getGoogleUser(googleTokens.accessToken);
+		return new GoogleUserAuth(this.auth, googleUser, googleTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<GoogleTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
-		}>(request);
+		}>(code, "https://oauth2.googleapis.com/token", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
+
 		return {
 			accessToken: tokens.access_token,
 			refreshToken: tokens.refresh_token ?? null,
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	const getGoogleUser = async (accessToken: string) => {
-		const request = new Request(
-			"https://www.googleapis.com/oauth2/v3/userinfo",
-			{
-				headers: authorizationHeaders("bearer", accessToken)
-			}
-		);
-		const googleUser = await handleRequest<GoogleUser>(request);
-		return googleUser;
-	};
+export class GoogleUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public googleTokens: GoogleTokens;
+	public googleUser: GoogleUser;
 
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://accounts.google.com/o/oauth2/v2/auth", {
-				client_id: config.clientId,
-				redirect_uri: config.redirectUri,
-				scope: scope(
-					["https://www.googleapis.com/auth/userinfo.profile"],
-					config.scope
-				),
-				response_type: "code",
-				state
-			});
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const googleTokens = await getGoogleTokens(code);
-			const googleUser = await getGoogleUser(googleTokens.accessToken);
-			const providerUserId = googleUser.sub;
-			const googleUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...googleUserAuth,
-				googleUser,
-				googleTokens
-			};
+	constructor(auth: _Auth, googleUser: GoogleUser, googleTokens: GoogleTokens) {
+		super(auth, PROVIDER_ID, googleUser.sub);
+
+		this.googleTokens = googleTokens;
+		this.googleUser = googleUser;
+	}
+}
+
+const getGoogleUser = async (accessToken: string): Promise<GoogleUser> => {
+	const request = new Request("https://www.googleapis.com/oauth2/v3/userinfo", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	} as const satisfies OAuthProvider;
+	});
+	const googleUser = await handleRequest<GoogleUser>(request);
+	return googleUser;
+};
+
+export type GoogleTokens = {
+	accessToken: string;
+	refreshToken: string | null;
+	accessTokenExpiresIn: number;
 };
 
 export type GoogleUser = {
@@ -86,8 +121,8 @@ export type GoogleUser = {
 	given_name: string;
 	family_name: string;
 	picture: string;
-	email: string;
-	email_verified: boolean;
 	locale: string;
-	hd: string;
+	email?: string;
+	email_verified?: boolean;
+	hd?: string;
 };

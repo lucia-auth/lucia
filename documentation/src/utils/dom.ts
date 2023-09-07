@@ -1,13 +1,10 @@
-export const addClassName = (element: HTMLElement, ...classNames: string[]) => {
-	element.className = [...element.classList.values(), ...classNames].join(" ");
-};
-
-export const removeClassName = (
+export const setElementVisibility = (
 	element: HTMLElement,
-	...className: string[]
+	visible: boolean
 ) => {
-	element.className = element.className
-		.split(" ")
-		.filter((item) => !className.includes(item))
-		.join(" ");
+	if (visible) {
+		element.classList.remove("hidden");
+	} else {
+		element.classList.add("hidden");
+	}
 };

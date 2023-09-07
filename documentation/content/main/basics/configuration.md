@@ -1,284 +1,269 @@
 ---
-_order: 7
 title: "Configuration"
 description: "Learn how to configure Lucia"
 ---
 
-Configuration for [`lucia()`](/reference/lucia-auth/lucia-auth#lucia).
+This page describes all the configuration available for [`lucia()`](/reference/lucia/modules/main#lucia). `MaybePromise` indicates the function can synchronous or asynchronous.
 
 ```ts
 type Configuration = {
 	// required
 	adapter:
-		| (luciaError: typeof LuciaError) => Adapter
+		| InitializeAdapter<Adapter>
 		| {
-				user:(luciaError: typeof LuciaError) => UserAdapter
-				session: (luciaError: typeof LuciaError) => SessionAdapter
+				user: InitializeAdapter<Adapter>;
+				session: InitializeAdapter<SessionAdapter>;
 		  };
-	env: Env;
+	env: "DEV" | "PROD";
 
 	// optional
-	autoDatabaseCleanup?: boolean;
-	csrfProtection?: boolean;
-	generateCustomUserId?: () => MaybePromise<string>;
-	hash?: {
-		generate: (s: string) => MaybePromise<string>;
-		validate: (s: string, hash: string) => MaybePromise<boolean>;
+	csrfProtection?:
+		| boolean
+		| {
+				allowedSubdomains: "*" | string[];
+		  };
+	getSessionAttributes?: (databaseSession: SessionSchema) => Record<any, any>;
+	getUserAttributes?: (databaseUser: UserSchema) => Record<any, any>;
+	middleware?: Middleware<any>;
+	passwordHash?: {
+		generate: (password: string) => MaybePromise<string>;
+		validate: (
+			password: string,
+			hashedPassword: string
+		) => MaybePromise<boolean>;
 	};
-	middleware: Middleware;
-	origin: string[];
-	sessionCookie?: CookieOption;
+	sessionCookie?: {
+		name?: string;
+		attributes?: SessionCookieAttributes;
+		expires?: boolean;
+	};
 	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
-	transformDatabaseUser?: (databaseUser: Required<UserSchema>) => Record<any, any>;
 
+	// experimental
 	experimental?: {
-		debugMode?: boolean
-	}
+		debugMode?: boolean;
+	};
 };
-```
-
-`MaybePromise` indicates it can be either a normal value or a promise:
-
-```ts
-type MaybePromise<T> = T | Promise<T>;
 ```
 
 ## Required
 
 ### `adapter`
 
-An adapter for your database. If you're using a single database:
+An adapter (specifically a function that initializes it) for your database. You can use a different adapter for your sessions (session adapters).
 
 ```ts
-const adapter: (luciaError: typeof LuciaError) => Adapter;
+const adapter: InitializeAdapter<Adapter>;
 ```
-
-| type                                             |
-| ------------------------------------------------ |
-| [`LuciaError`](/reference/lucia-auth/luciaerror) |
-| [`Adapter`](/reference/lucia-auth/types#adapter) |
-
-or, it can take a different adapter for each table. A normal `Adapter` can be used for both `adapter.user` and `adapter.session`
-
-#### `session` (required)
-
-An adapter for the database that stores sessions.
 
 ```ts
-const adapter: (luciaError: typeof LuciaError) => SessionAdapter;
+const adapter: {
+	user: InitializeAdapter<Adapter>;
+	session: InitializeAdapter<SessionAdapter>;
+};
 ```
 
-| type                                                           |
-| -------------------------------------------------------------- |
-| [`LuciaError`](/reference/lucia-auth/luciaerror)               |
-| [`SessionAdapter`](/reference/lucia-auth/types#sessionadapter) |
-
-#### `user` (required)
-
-An adapter for the database that stores users. Can be a normal `Adapter` function.
-
-```ts
-const adapter: (luciaError: typeof LuciaError) => UserAdapter;
-```
-
-| type                                                     |
-| -------------------------------------------------------- |
-| [`LuciaError`](/reference/lucia-auth/luciaerror)         |
-| [`UserAdapter`](/reference/lucia-auth/types#useradapter) |
+| type                                | description                         |
+| ----------------------------------- | ----------------------------------- |
+| `InitializeAdapter<Adapter>`        | Initialize adapter function         |
+| `InitializeAdapter<SessionAdapter>` | Initialize session adapter function |
 
 ### `env`
 
-Tells Lucia if the app is running on HTTP or HTTPS.
+Provides Lucia with the current server context.
 
-| type              | description                                                |
-| ----------------- | ---------------------------------------------------------- |
-| `"DEV" \| "PROD"` | `"DEV"` if the app is hosted on HTTP, `"PROD"` if on HTTPS |
+| value    | description                               |
+| -------- | ----------------------------------------- |
+| `"DEV"`  | The server is running on HTTP (localhost) |
+| `"PROD"` | The server is running on HTTPS            |
 
 ## Optional
 
-### `autoDatabaseCleanup`
-
-Will remove [dead sessions](/start-here/concepts#session-states) from the database when certain methods are called.
-
-| type      | default |
-| --------- | ------- |
-| `boolean` | `true`  |
-
-Specifically, it removes the target session from the database if its dead on:
-
-- `getSession()`
-- `getSessionUser()`
-- `validateSessionUser()`
-- `validateSession()`
-
-and deletes the target user's dead sessions from the database on:
-
-- `updateUserProviderId()`
-- `updateUserAttributes()`
-- `createSession()`.
-
 ### `csrfProtection`
 
-Checks if the request is from a trusted origin (where the app is hosted) in [`validateRequestHeaders()`](/reference/lucia-auth/auth#validaterequestheaders). If you set this to `false`, make sure to add your own CSRF protection.
-
-| type      | default |
-| --------- | ------- |
-| `boolean` | `true`  |
-
-### `generateCustomUserId()`
-
-A function that generates a random user id.
+`true` by default. When set to `true`, [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) checks if the incoming request is from a trusted origin, which by default only includes where the server is hosted. You can define trusted subdomains by adding them to `csrfProtection.allowedSubdomains`. If your app is hosted on `https://foo.example.com`, adding `"bar"` will allow `https://bar.example.com`. You can add `null` in the array to allow urls without a subdomain.
 
 ```ts
-const generateCustomUserId: () => MaybePromise<string>;
+const csrfProtection = boolean | {
+	allowedSubdomains: "*" | (string | null)[]
+}
 ```
+
+| value    | description                         |
+| -------- | ----------------------------------- |
+| `true`   | CSRF protection enabled             |
+| `false`  | CSRF protection disabled            |
+| `object` | CSRF protection enabled - see below |
+
+| name                | type              | description                                                                          |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------------ |
+| `allowedSubdomains` | `"*" \| string[]` | List of allowed subdomains (not full urls/origins) - set to `*` allow all subdomains |
+
+### `getSessionAttributes()`
+
+Generates session attributes for the user. The returned properties will be included in [`Session`](/reference/lucia/interfaces#session) as is.
+
+```ts
+const getSessionAttributes: (
+	databaseSession: SessionSchema
+) => Record<any, any>;
+```
+
+##### Parameters
+
+| name              | type                                                         | description                    |
+| ----------------- | ------------------------------------------------------------ | ------------------------------ |
+| `databaseSession` | [`SessionSchema`](/reference/lucia/interfaces#sessionschema) | Session stored in the database |
 
 ##### Returns
 
-| type     | description |
-| -------- | ----------- |
-| `string` | a user id   |
+| type               |
+| ------------------ |
+| `Record<any, any>` |
 
-### `hash`
-
-#### `generate()` (required)
-
-Generates a password-safe hash. Uses `scrypt` based on [noble-hashes](https://github.com/paulmillr/noble-hashes) by default.
+##### Default
 
 ```ts
-const generate: (s: string) => MaybePromise<string>;
+const getSessionAttributes = () => {
+	return {};
+};
 ```
 
-> (warn) Make sure the algorithm used is safe for hashing passwords, such as `bcrypt`, `scrypt`, `argon2`, `PBKDF2` - algorithms such as `md5` and `SHA-1` are **NOT** suitable for hashing passwords.
+### `getUserAttributes()`
 
-##### Parameter
+Generates user attributes for the user. The returned properties will be included in [`User`](/reference/lucia/interfaces#user) as is.
 
-| name | type     | description        |
-| ---- | -------- | ------------------ |
-| s    | `string` | the string to hash |
+```ts
+const getUserAttributes: (databaseUser: UserSchema) => Record<any, any>;
+```
+
+##### Parameters
+
+| name           | type                                                   | description                 |
+| -------------- | ------------------------------------------------------ | --------------------------- |
+| `databaseUser` | [`UserSchema`](/reference/lucia/interfaces#userschema) | User stored in the database |
 
 ##### Returns
 
-| type     | description                                    |
-| -------- | ---------------------------------------------- |
-| `string` | the hashed string - can be a promise if needed |
+| type               |
+| ------------------ |
+| `Record<any, any>` |
 
-#### `validate()` (required)
-
-Validates a string against a hash generated using [`hash.generate()`](/basics/configuration#generate-required).
+##### Default
 
 ```ts
-const validate: (s: string, hash: string) => MaybePromise<boolean>;
+const getUserAttributes = () => {
+	return {};
+};
 ```
-
-##### Parameter
-
-| name | type     | description                         |
-| ---- | -------- | ----------------------------------- |
-| s    | `string` | the string to validate              |
-| hash | `string` | hash to validate the string against |
-
-##### Returns
-
-| type      | description                                                     |
-| --------- | --------------------------------------------------------------- |
-| `boolean` | `true` if valid, `false` otherwise - can be a promise if needed |
 
 ### `middleware`
-
-[Middleware](basics/handle-requests#middleware).
 
 ```ts
 const middleware: Middleware;
 ```
 
-| type                                                   |
-| ------------------------------------------------------ |
-| [`Middleware`](/reference/lucia-auth/types#middleware) |
+Lucia middleware for [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest). [Learn more about middleware](/basics/handle-requests).
 
-### `origin`
+| type                                             | default value                                          |
+| ------------------------------------------------ | ------------------------------------------------------ |
+| [`Middleware`](/reference/middleware#middleware) | [`lucia()`](/reference/lucia/modules/middleware#lucia) |
 
-A list of valid url origin when checking for CSRF.
+### `passwordHash`
+
+By default, passwords are hashed using Scrypt.
 
 ```ts
-const origin: string[];
+const passwordHash: {
+	generate: (password: string) => MaybePromise<string>;
+	validate: (password: string, hashedPassword: string) => MaybePromise<boolean>;
+};
 ```
+
+#### `passwordHash.generate()`
+
+Generates a hash for a password synchronously or asynchronously.
+
+##### Parameters
+
+| name       | type     | description          |
+| ---------- | -------- | -------------------- |
+| `password` | `string` | The password to hash |
+
+##### Returns
+
+| type     | description         |
+| -------- | ------------------- |
+| `string` | The hashed password |
+
+#### `passwordHash.validate()`
+
+Validates a hash generated using `passwordHash.generate()` synchronously or asynchronously.
+
+##### Parameters
+
+| name           | type     | description                                        |
+| -------------- | -------- | -------------------------------------------------- |
+| `password`     | `string` | The password to validate                           |
+| {passwordHash} | `string` | The password hash to validate the password against |
+
+##### Returns
+
+| value   | description                       |
+| ------- | --------------------------------- |
+| `true`  | Argument of `password` is valid   |
+| `false` | Argument of `password` is invalid |
 
 ### `sessionCookie`
 
-A list of cookie options for setting session cookie(s). Beware that setting the domain without a domain without a subdomain will make the cookie available to **_all_** subdomains, which is a major security issue. Some options (`httpOnly`, `secure`, `expires`) cannot be configured due to security concerns.
-
-| type           | default                            |
-| -------------- | ---------------------------------- |
-| `CookieOption` | `[{ sameSite: "lax", path: "/" }]` |
-
 ```ts
-type CookieOption = {
-	sameSite?: "strict" | "lax";
-	path?: string;
-	domain?: string;
+const sessionCookie: {
+	name?: string;
+	attributes?: SessionCookieAttributes;
+	expires: boolean;
+};
+
+type SessionCookieAttributes = {
+	sameSite?: "lax" | "strict"; // default: "lax"
+	path?: string; // default "/""
+	domain?: string; // default: undefined
 };
 ```
+
+| property    | type                      | optional | description                                                  |
+| ----------- | ------------------------- | :------: | ------------------------------------------------------------ |
+| `name`      | `string`                  |    ✓     | Session cookie name                                          |
+| `attributes | `SessionCookieAttributes` |    ✓     | Session cookie attributes                                    |
+| `expires`   | `boolean`                 |    ✓     | Toggle if session cookie expires or not - enabled by default |
 
 ### `sessionExpiresIn`
 
-#### `activePeriod`
-
-The time in milliseconds the [active period](/basics/sessions#session-states) lasts for - or the time since session creation that it can be used.
-
-| type     | default                          |
-| -------- | -------------------------------- |
-| `number` | `1000 * 60 * 60 * 24` (24 hours) |
-
-#### `idlePeriod`
-
-The time in milliseconds the [idle period](/basics/sessions#session-states) lasts for - or the time since active period expiration that it can be renewed.
-
-| type     | default                              |
-| -------- | ------------------------------------ |
-| `number` | `1000 * 60 * 60 * 24 * 14` (2 weeks) |
-
-### `transformDatabaseUser()`
-
-This will be called to transform the raw data from `user` table to an object that will be mapped to [`User`](/reference/lucia-auth/types#user).
-
 ```ts
-const transformDatabaseUser: (
-	databaseUser: Required<UserSchema>
-) => Record<any, any>;
-```
-
-#### Parameter
-
-| name         | type                                                                 | description                 |
-| ------------ | -------------------------------------------------------------------- | --------------------------- |
-| databaseUser | `Required<`[`UserSchema`](/reference/lucia-auth/types#userschema)`>` | the user data from database |
-
-#### Returns
-
-| type               | description                               |
-| ------------------ | ----------------------------------------- |
-| `Record<any, any>` | an object that will be mapped to [`User`] |
-
-#### Default
-
-```ts
-const transformDatabaseUser = async () => {
-	userId: string;
+const sessionExpiresIn: {
+	activePeriod: number;
+	idlePeriod: number;
 };
 ```
 
+The active period is the span of time sessions are valid for, while the idle period is span of time since the end of the active period that sessions could be reset (extend expiration).
+
+| property       | type     | description                                                                             | default              |
+| -------------- | -------- | --------------------------------------------------------------------------------------- | -------------------- |
+| `activePeriod` | `number` | The [active period](/basics/sessions#session-states-and-session-reset) in milliseconds. | 86400000 (1 day)     |
+| `idlePeriod    | `number` | The [idle period](/basics/sessions#session-states-and-session-reset) in milliseconds    | 1209600000 (2 weeks) |
+
 ## Experimental
 
-You can enable experimental feature with the `experimental` config. Please keep in mind that features marked as experimental are not stable and may change or be deleted anytime.
+Experimental configurations are available in `experimental`.
 
-### `experimental.debugMode`
+### `debugMode`
 
-When enabled, Lucia logs relevant events to the console.
+Disabled by default. When debug mode is enabled, Lucia will log key events to the console.
 
-```ts
-const debugMode: boolean;
-```
+| value   | description         |
+| ------- | ------------------- |
+| `true`  | Debug mode enabled  |
+| `false` | Debug mode disabled |

@@ -1,12 +1,12 @@
 import type {
 	Root,
 	RootContent,
-	Element as HastElementInstance,
+	Element as HastElementInterface,
 	ElementContent as HastElementContent,
-	Text as HastTextNode
+	Text as HastTextNodeInterface
 } from "hast";
 
-class HastElement implements HastElementInstance {
+class HastElement implements HastElementInterface {
 	public readonly type = "element";
 	public children;
 	public tagName;
@@ -27,7 +27,38 @@ class HastElement implements HastElementInstance {
 	}
 }
 
-const handleBlockquoteElement = async (element: HastElement) => {
+class HastTextNode implements HastTextNodeInterface {
+	public readonly type = "text";
+	public value: string;
+	constructor(value: string) {
+		this.value = value;
+	}
+}
+
+const handleHeadings = (element: HastElement) => {
+	const headingTags = ["h1", "h2", "h3", "h4", "h5"];
+	if (!headingTags.includes(element.tagName)) return;
+	const headingId = element.properties?.id;
+	if (!headingId) return;
+	if (!element.properties) {
+		element.properties = {};
+	}
+	element.properties.id = headingId;
+	element.properties.class = "relative block flex group";
+	element.children.push(
+		new HastElement("a", {
+			properties: {
+				href: `#${headingId}`,
+				class:
+					"w-4 -ml-5 pl-0.5 sm:pl-0 sm:-ml-6 absolute block group-hover:!text-main !text-zinc-200 shrink-0",
+				"aria-label": "Permalink"
+			},
+			children: [new HastTextNode("#")]
+		})
+	);
+};
+
+const handleBlockquoteElement = (element: HastElement) => {
 	if (element.tagName !== "blockquote") return;
 	const pElement = element.children.find((child) => {
 		if (child.type !== "element") return false;
@@ -42,7 +73,7 @@ const handleBlockquoteElement = async (element: HastElement) => {
 
 	const classNames = [
 		...(element.properties.class?.toString() ?? "").split(" "),
-		"bq-default"
+		"bg-default"
 	];
 	if (firstTextContent.value.startsWith("(warn)")) {
 		classNames.push("bq-warn");
@@ -55,7 +86,7 @@ const handleBlockquoteElement = async (element: HastElement) => {
 	element.properties.class = classNames.join(" ");
 };
 
-const wrapTableElement = async (content: Root) => {
+const wrapTableElement = (content: Root) => {
 	const tableChildren = content.children
 		.map((child, i) => {
 			return [child, i] as const;
@@ -73,19 +104,22 @@ const wrapTableElement = async (content: Root) => {
 	}
 };
 
-const parseContent = async (content: Root | RootContent) => {
+const parseContent = (content: Root | RootContent) => {
 	if (content.type !== "element" && content.type !== "root") return;
 	if (content.type === "root") {
 		wrapTableElement(content);
 	}
 	if (content.type === "element") {
 		handleBlockquoteElement(content);
+		handleHeadings(content);
 	}
-	await Promise.all(content.children.map((children) => parseContent(children)));
+	for (const children of content.children) {
+		parseContent(children);
+	}
 };
 
-const rehypePlugin = async (root: Root) => {
-	await parseContent(root);
+const rehypePlugin = (root: Root) => {
+	parseContent(root);
 };
 
 export default () => {

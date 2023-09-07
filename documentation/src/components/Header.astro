@@ -1,57 +1,133 @@
 ---
-import ThemeButton from "@components/ThemeButton";
-import Search from "@components/icons/Search.astro";
+import MenuIcon from "@icons/MenuIcon.astro";
+import MoreIcon from "@icons/MoreIcon.astro";
+import SearchIcon from "../icons/Search.astro";
+import Search from "./Search.astro";
 
-const themeCookie = Astro.cookies.get("theme");
-let theme = themeCookie.value ?? "light";
-if (theme !== "light" && theme !== "dark") {
-	theme = "light";
-}
+import { comparePathname } from "@utils/url";
 
-type Props = {
-	includeSearch?: boolean;
-};
+const blogPage = comparePathname(Astro.url.pathname, "/blog");
+const guidebook = comparePathname(Astro.url.pathname, "/guidebook");
+
+const menuButtonVisible = !blogPage && !guidebook;
 ---
 
-<div
-	class="pointer-events-none fixed left-0 z-40 w-full bg-white dark:bg-zinc-900 dark:text-zinc-200 xl:bg-transparent dark:xl:bg-transparent"
->
+<Search />
+<header class="fixed top-0 z-30 w-full bg-white">
 	<div
-		class="flex place-content-between place-items-center px-4 pb-2 pt-3 sm:px-8"
+		class="flex place-content-between place-items-center gap-x-16 border-b px-6 pb-3 pt-4 sm:px-8"
 	>
-		<div class="flex place-items-center gap-x-4">
-			<a class="pointer-events-auto flex place-items-center" href="/">
+		<div class="flex place-items-center gap-x-4 text-sm">
+			<a class="pointer-events-auto flex place-items-end" href="/">
 				<img
 					src="/logo.svg"
 					alt="Lucia logo"
 					width="100"
 					height="100"
-					class="h-6 w-6"
+					class="h-5 w-5"
 				/>
-				<p class="text-2xl font-semibold">Lucia</p>
+				<p class="text-lg font-semibold leading-none text-zinc-700">Lucia</p>
 			</a>
 		</div>
-		<div
-			class="pointer-events-auto flex place-items-center divide-zinc-200 dark:divide-zinc-700 sm:divide-x"
-		>
-			<div class="flex place-items-center gap-x-4 pl-4">
-				{
-					Astro.props.includeSearch && (
-						<a
-							class="block rounded p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-							id="search-button"
-							href="/search"
-						>
-							<div class="h-5 w-5">
-								<Search />
-							</div>
-						</a>
-					)
-				}
-
-				<ThemeButton client:load initialTheme={theme} />
+		<div class="flex gap-x-2 sm:gap-x-6 place-items-center">
+			<div class="hidden sm:flex gap-x-6 text-sm place-items-center">
+				<a
+					href="/getting-started"
+					class="hidden hover:text-zinc-500 sm:inline-block">Documentation</a
+				>
+				<a href="/reference" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Reference</a
+				>
+				<a href="/guidebook" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Guidebook</a
+				>
+				<a href="/discord" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Discord</a
+				>
+				<a href="/github" class="hidden hover:text-zinc-500 sm:inline-block"
+					>Github</a
+				>
+			</div>
+			<button class="block rounded p-1 hover:bg-indigo-50" id="search-button">
+				<div class="h-5 w-5 fill-current">
+					<SearchIcon />
+				</div>
+			</button>
+			<div class="sm:hidden">
+				<button class="block rounded p-1 hover:bg-indigo-50" id="more-button">
+					<div class="h-5 w-5 fill-current">
+						<MoreIcon />
+					</div>
+				</button>
+				<div
+					class="absolute right-0 mr-4 mt-1 hidden w-48 rounded bg-white py-2 text-sm shadow sm:hidden"
+					id="more-dropdown"
+				>
+					<a
+						href="/getting-started"
+						class="block px-4 py-1.5 hover:bg-indigo-50">Documentation</a
+					>
+					<a href="/reference" class="block px-4 py-1.5 hover:bg-indigo-50"
+						>Reference</a
+					>
+					<a href="/guidebook" class="block px-4 py-1.5 hover:bg-indigo-50"
+						>Guidebook</a
+					>
+					<a href="/discord" class="block px-4 py-1.5 hover:bg-indigo-50"
+						>Discord</a
+					>
+					<a href="/github" class="block px-4 py-1.5 hover:bg-indigo-50"
+						>Github</a
+					>
+				</div>
 			</div>
 		</div>
 	</div>
-	<slot />
-</div>
+	{
+		menuButtonVisible && (
+			<div class="border-b px-6 py-1.5 sm:px-8 lg:hidden" id="secondary-header">
+				<button class="block rounded p-1 hover:bg-indigo-50" id="menu-button">
+					<div class="h-5 w-5 fill-current">
+						<MenuIcon />
+					</div>
+				</button>
+			</div>
+		)
+	}
+</header>
+<script>
+	import {
+		menuVisible,
+		searchVisible,
+		onSearchVisibilityUpdate
+	} from "@utils/state";
+	import { setElementVisibility } from "@utils/dom";
+
+	const menuButton = document.getElementById("menu-button");
+	const moreButton = document.getElementById("more-button");
+	const moreDropdownDiv = document.getElementById("more-dropdown");
+	const searchButton = document.getElementById("search-button");
+	const secondaryHeaderDiv = document.getElementById("secondary-header");
+
+	if (!(menuButton instanceof HTMLButtonElement)) throw new Error();
+	if (!(moreButton instanceof HTMLButtonElement)) throw new Error();
+	if (!(moreDropdownDiv instanceof HTMLDivElement)) throw new Error();
+	if (!(searchButton instanceof HTMLButtonElement)) throw new Error();
+
+	menuButton.addEventListener("click", menuVisible.toggle);
+	searchButton.addEventListener("click", () => {
+		searchVisible.set(!searchVisible.value());
+	});
+
+	let moreDropdownVisible = false;
+	moreButton.addEventListener("click", () => {
+		moreDropdownVisible = !moreDropdownVisible;
+		setElementVisibility(moreDropdownDiv, moreDropdownVisible);
+	});
+
+	if (secondaryHeaderDiv instanceof HTMLDivElement) {
+		onSearchVisibilityUpdate((visible) => {
+			setElementVisibility(secondaryHeaderDiv, !visible);
+		});
+	}
+</script>

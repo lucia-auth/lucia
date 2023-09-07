@@ -1,21 +1,14 @@
 ---
-export const prerender = true;
-
-import Layout from "@components/Layout.astro";
+import Header from "@components/Header.astro";
+import Layout from "@layouts/BaseLayout.astro";
 ---
 
-<Layout
-	meta={{
-		title: "404 Not found",
-		description: null
-	}}
->
-	<div
-		class="w-scree text-zinc-shadow flex h-screen place-content-center place-items-center bg-white"
-	>
+<Layout title="404 Not found">
+	<Header />
+	<div class="flex h-screen place-content-center place-items-center">
 		<div>
 			<p class="text-zinc-150 text-9xl font-bold">404</p>
-			<h1 class="font-medium text-xl">Not found</h1>
+			<h1 class="text-xl font-medium">Not found</h1>
 			<a href="/" class="text-main hover:underline">Return to main page</a>
 		</div>
 	</div>

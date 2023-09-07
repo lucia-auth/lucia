@@ -87,6 +87,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const storedUsers = await User.getAll();
 			assert.deepStrictEqual(storedUsers, [user1]);
 		});
+		await test("Does not throw on invalid user id", async () => {
+			const user = database.generateUser();
+			await adapter.deleteUser(user.id);
+		});
 	});
 
 	await method("updateUser()", async (test) => {
@@ -202,6 +206,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const storedKeys = await Key.getAll();
 			assert.deepStrictEqual(storedKeys, [key2]);
 		});
+		await test("Does not throw on invalid user id", async () => {
+			const user = database.generateUser();
+			await adapter.deleteKeysByUserId(user.id);
+		});
 	});
 
 	await method("deleteKey()", async (test) => {
@@ -215,6 +223,11 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			await adapter.deleteKey(key1.id);
 			const storedKeys = await Key.getAll();
 			assert.deepStrictEqual(storedKeys, [key2]);
+		});
+		await test("Does not throw on invalid key id", async () => {
+			const user = database.generateUser();
+			const key = database.generateKey(user.id);
+			await adapter.deleteKey(key.id);
 		});
 	});
 
@@ -285,6 +298,11 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const storedSessions = await Session.getAll();
 			assert.deepStrictEqual(storedSessions, [session2]);
 		});
+		await test("Does not throw on invalid session id", async () => {
+			const user = database.generateUser();
+			const session = database.generateSession(user.id);
+			await adapter.deleteSession(session.id);
+		});
 	});
 
 	await method("deleteSessionsByUserId()", async (test) => {
@@ -298,6 +316,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			await adapter.deleteSessionsByUserId(user1.id);
 			const storedSessions = await Session.getAll();
 			assert.deepStrictEqual(storedSessions, [session2]);
+		});
+		await test("Does not throw on invalid user id", async () => {
+			const user = database.generateUser();
+			await adapter.deleteSessionsByUserId(user.id);
 		});
 	});
 

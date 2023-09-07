@@ -1,18 +1,9 @@
 ---
-_order: 0
-title: "Facebook"
-description: "Learn about using the Facebook provider in Lucia OAuth integration"
+title: "Facebook OAuth provider"
+description: "Learn how to use the Facebook OAuth provider"
 ---
 
 OAuth integration for Facebook. Refer to step 1 of [Facebook Login documentation](https://developers.facebook.com/docs/facebook-login/web) for getting the required credentials. Provider id is `facebook`.
-
-```ts
-import { facebook } from "@lucia-auth/oauth/providers";
-```
-
-The `identity` scope is always included regardless of provided `scope` config.
-
-### Initialization
 
 ```ts
 import { facebook } from "@lucia-auth/oauth/providers";
@@ -20,6 +11,10 @@ import { auth } from "./lucia.js";
 
 const facebookAuth = facebook(auth, config);
 ```
+
+The `identity` scope is always included regardless of provided `scope` config.
+
+## `facebook()`
 
 ```ts
 const facebook: (
@@ -30,94 +25,99 @@ const facebook: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider<FacebookUser, FacebookTokens>;
+) => FacebookProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                | type                                 | description                                        | optional |
-| ------------------- | ------------------------------------ | -------------------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                     |          |
-| config.clientId     | `string`                             | Facebook OAuth app client id                       |          |
-| config.clientSecret | `string`                             | Facebook OAuth app client secret                   |          |
-| configs.redirectUri | `string`                             | an authorized redirect URI                         |          |
-| config.scope        | `string[]`                           | an array of scopes - `identity` is always included |    ✓     |
+Scope `identity` is always included.
 
-#### Returns
+| name                  | type                                       | description                      | optional |
+| --------------------- | ------------------------------------------ | -------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                   |          |
+| `config.clientId`     | `string`                                   | Facebook OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | Facebook OAuth app client secret |          |
+| `configs.redirectUri` | `string`                                   | an authorized redirect URI       |          |
+| `config.scope`        | `string[]`                                 | an array of scopes               |    ✓     |
 
-| type                                              | description       |
-| ------------------------------------------------- | ----------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | Facebook provider |
+##### Returns
 
-## `FacebookProvider`
+| type                                    | description       |
+| --------------------------------------- | ----------------- |
+| [`FacebookProvider`](#facebookprovider) | Facebook provider |
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+## Interfaces
 
-### `getAuthorizationUrl()`
+### `FacebookAuth`
 
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<FacebookAuth<_Auth>>
+interface FacebookAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<FacebookUserAuth<_Auth>>;
+}
 ```
 
-#### Parameter
+| type                                    |
+| --------------------------------------- |
+| [`FacebookUserAuth`](#facebookuserauth) |
 
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
+##### Generics
 
-#### Returns
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-### `validateCallback()`
-
-Validates the callback and returns the session.
-
-```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
-```
-
-#### Parameter
-
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
-
-#### Returns
-
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
-
-#### Errors
-
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
-
-## `FacebookTokens`
+### `FacebookTokens`
 
 ```ts
 type FacebookTokens = {
 	accessToken: string;
 	refreshToken: string;
-	accessTokenExpiresIn: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
-## `FacebookUser`
+### `FacebookUser`
+
+`email` is only included if `email` scope if provided.
 
 ```ts
 type FacebookUser = {
 	id: string;
 	name: string;
-	picture: string;
+	email?: string;
+	picture: {
+		data: {
+			height: number;
+			is_silhouette: boolean;
+			url: string;
+			width: number;
+		};
+	};
 };
 ```
+
+### `FacebookUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	facebookUser: FacebookUser;
+	facebookTokens: FacebookTokens;
+}
+```
+
+| properties       | type                                | description       |
+| ---------------- | ----------------------------------- | ----------------- |
+| `facebookUser`   | [`FacebookUser`](#facebookuser)     | Facebook user     |
+| `facebookTokens` | [`FacebookTokens`](#facebooktokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

@@ -1,37 +1,78 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "osu";
 
-export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getOsuTokens = async (code: string) => {
-		const request = new Request("https://osu.ppy.sh/oauth/token", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: new URLSearchParams({
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				grant_type: "authorization_code",
-				redirect_uri: config.redirectUri,
-				code
-			}).toString()
-		});
-		const tokens = await handleRequest<{
+export const osu = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): OsuAuth<_Auth> => {
+	return new OsuAuth(auth, config);
+};
+
+export class OsuAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	OsuUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			"https://osu.ppy.sh/oauth/authorize",
+			{
+				clientId: this.config.clientId,
+				scope: ["identify", ...scopeConfig],
+				redirectUri: this.config.redirectUri
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<OsuUserAuth<_Auth>> => {
+		const osuTokens = await this.validateAuthorizationCode(code);
+		const osuUser = await getOsuUser(osuTokens.accessToken);
+		return new OsuUserAuth(this.auth, osuUser, osuTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<OsuTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
 			token_type: string;
-		}>(request);
+		}>(code, "https://osu.ppy.sh/oauth/token", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -39,71 +80,36 @@ export const osu = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	const getOsuUser = async (accessToken: string) => {
-		const request = new Request("https://osu.ppy.sh/api/v2/me/osu", {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
-		const osuUser = await handleRequest<OsuUser>(request);
-		return osuUser;
-	};
+export class OsuUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public osuTokens: OsuTokens;
+	public osuUser: OsuUser;
 
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://osu.ppy.sh/oauth/authorize", {
-				response_type: "code",
-				client_id: config.clientId,
-				scope: scope(["identify"], config.scope),
-				redirect_uri: config.redirectUri,
-				state
-			});
-			return [url, state];
-		},
-		validateCallback: async (code: string) => {
-			const osuTokens = await getOsuTokens(code);
-			const osuUser = await getOsuUser(osuTokens.accessToken);
-			const providerUserId = osuUser.id.toString();
-			const osuUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...osuUserAuth,
-				osuUser,
-				osuTokens
-			};
+	constructor(auth: _Auth, osuUser: OsuUser, osuTokens: OsuTokens) {
+		super(auth, PROVIDER_ID, osuUser.id.toString());
+
+		this.osuTokens = osuTokens;
+		this.osuUser = osuUser;
+	}
+}
+
+const getOsuUser = async (accessToken: string): Promise<OsuUser> => {
+	const request = new Request("https://osu.ppy.sh/api/v2/me/osu", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	} as const satisfies OAuthProvider;
+	});
+	const osuUser = await handleRequest<OsuUser>(request);
+	return osuUser;
 };
 
-type OsuGameMode = "fruits" | "mania" | "osu" | "taiko";
-
-type OsuUserStatistics = {
-	grade_counts: {
-		a: number;
-		s: number;
-		sh: number;
-		ss: number;
-		ssh: number;
-	};
-	hit_accuracy: number;
-	is_ranked: boolean;
-	level: {
-		current: number;
-		progress: number;
-	};
-	maximum_combo: number;
-	play_count: number;
-	play_time: number;
-	pp: number;
-	global_rank: number;
-	ranked_score: number;
-	replays_watched_by_others: number;
-	total_hits: number;
-	total_score: number;
-	country_rank: number;
+export type OsuTokens = {
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type OsuUser = {
@@ -228,3 +234,31 @@ export type OsuUser = {
 		achievement_id: number;
 	}[];
 };
+
+type OsuUserStatistics = {
+	grade_counts: {
+		a: number;
+		s: number;
+		sh: number;
+		ss: number;
+		ssh: number;
+	};
+	hit_accuracy: number;
+	is_ranked: boolean;
+	level: {
+		current: number;
+		progress: number;
+	};
+	maximum_combo: number;
+	play_count: number;
+	play_time: number;
+	pp: number;
+	global_rank: number;
+	ranked_score: number;
+	replays_watched_by_others: number;
+	total_hits: number;
+	total_score: number;
+	country_rank: number;
+};
+
+type OsuGameMode = "fruits" | "mania" | "osu" | "taiko";

@@ -1,77 +1,111 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState, encodeBase64 } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
+	scope?: string[];
+	tokenDuration: "permanent" | "temporary";
 };
 
 const PROVIDER_ID = "reddit";
 
-export const reddit = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getRedditTokens = async (code: string) => {
-		const requestUrl = createUrl("https://www.reddit.com/api/v1/access_token", {
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri,
-			code
-		});
-		const request = new Request(requestUrl, {
-			method: "POST",
-			headers: authorizationHeaders(
-				"basic",
-				encodeBase64(config.clientId + ":" + config.clientSecret)
-			)
-		});
-		const tokens = await handleRequest<{
+export const reddit = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): RedditAuth<_Auth> => {
+	return new RedditAuth(auth, config);
+};
+
+export class RedditAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	RedditUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const [url, state] = await createOAuth2AuthorizationUrl(
+			"https://www.reddit.com/api/v1/authorize",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: this.config.scope ?? []
+			}
+		);
+		const tokenDuration = this.config.tokenDuration ?? "permanent";
+		url.searchParams.set("duration", tokenDuration);
+		return [url, state];
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<RedditUserAuth<_Auth>> => {
+		const redditTokens = await this.validateAuthorizationCode(code);
+		const redditUser = await getRedditUser(redditTokens.accessToken);
+		return new RedditUserAuth(this.auth, redditUser, redditTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<RedditTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
-		}>(request);
+		}>(code, "https://www.reddit.com/api/v1/access_token", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "http_basic_auth"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token
 		};
 	};
+}
 
-	const getRedditUser = async (accessToken: string) => {
-		const request = new Request("https://oauth.reddit.com/api/v1/me", {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
-		const redditUser = await handleRequest<RedditUser>(request);
+export class RedditUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public redditTokens: RedditTokens;
+	public redditUser: RedditUser;
 
-		return redditUser;
-	};
+	constructor(auth: _Auth, redditUser: RedditUser, redditTokens: RedditTokens) {
+		super(auth, PROVIDER_ID, redditUser.id);
 
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://www.reddit.com/api/v1/authorize", {
-				client_id: config.clientId,
-				response_type: "code",
-				redirect_uri: config.redirectUri,
-				duration: "permanent",
-				scope: scope([], config.scope),
-				state
-			});
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const redditTokens = await getRedditTokens(code);
-			const redditUser = await getRedditUser(redditTokens.accessToken);
-			const providerUserId = redditUser.id;
-			const redditUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...redditUserAuth,
-				redditUser,
-				redditTokens
-			};
+		this.redditTokens = redditTokens;
+		this.redditUser = redditUser;
+	}
+}
+
+const getRedditUser = async (accessToken: string): Promise<RedditUser> => {
+	const request = new Request("https://oauth.reddit.com/api/v1/me", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	} as const satisfies OAuthProvider;
+	});
+	const redditUser = await handleRequest<RedditUser>(request);
+	return redditUser;
+};
+
+export type RedditTokens = {
+	accessToken: string;
 };
 
 export type RedditUser = {

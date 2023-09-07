@@ -1,41 +1,79 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 const PROVIDER_ID = "linkedin";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
+	scope?: string[];
 };
 
-export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getLinkedinTokens = async (code: string) => {
-		const requestUrl = createUrl(
-			"https://www.linkedin.com/oauth/v2/accessToken",
+export const linkedIn = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): LinkedInAuth<_Auth> => {
+	return new LinkedInAuth(auth, config);
+};
+
+export class LinkedInAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	LinkedInUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			"https://www.linkedin.com/oauth/v2/authorization",
 			{
-				grant_type: "authorization_code",
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				redirect_uri: config.redirectUri,
-				code
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: ["profile", ...scopeConfig]
 			}
 		);
-		const request = new Request(requestUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			}
-		});
-		const tokens = await handleRequest<{
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<LinkedInUserAuth<_Auth>> => {
+		const linkedInTokens = await this.validateAuthorizationCode(code);
+		const linkedInUser = await getLinkedInUser(linkedInTokens.accessToken);
+		return new LinkedInUserAuth(this.auth, linkedInUser, linkedInTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<LinkedInTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
 			refresh_token_expires_in: number;
 			scope: string;
-		}>(request);
+		}>(code, "https://www.linkedin.com/oauth/v2/accessToken", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -45,87 +83,53 @@ export const linkedin = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			scope: tokens.scope
 		};
 	};
+}
 
-	const getLinkedinUser = async (accessToken: string) => {
-		const linkedinUserProfile = await getProfile(accessToken);
-		const displayImageElement = linkedinUserProfile.profilePicture[
-			"displayImage~"
-		]?.elements
-			?.slice(-1)
-			?.pop();
-		const linkedinUser: LinkedinUser = {
-			id: linkedinUserProfile.id,
-			firstName: linkedinUserProfile.localizedFirstName,
-			lastName: linkedinUserProfile.localizedLastName,
-			profilePicture: displayImageElement?.identifiers?.pop()?.identifier
-		};
+export class LinkedInUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public linkedInTokens: LinkedInTokens;
+	public linkedInUser: LinkedInUser;
 
-		return linkedinUser;
-	};
+	constructor(
+		auth: _Auth,
+		linkedInUser: LinkedInUser,
+		linkedInTokens: LinkedInTokens
+	) {
+		super(auth, PROVIDER_ID, linkedInUser.sub);
 
-	const getProfile = async (
-		accessToken: string
-	): Promise<LinkedinProfileResponse> => {
-		const requestUrl = createUrl("https://api.linkedin.com/v2/me", {
-			projection:
-				"(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))"
-		});
+		this.linkedInTokens = linkedInTokens;
+		this.linkedInUser = linkedInUser;
+	}
+}
 
-		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
-
-		return handleRequest<LinkedinProfileResponse>(request);
-	};
-
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://www.linkedin.com/oauth/v2/authorization", {
-				client_id: config.clientId,
-				response_type: "code",
-				redirect_uri: config.redirectUri,
-				scope: scope(["r_liteprofile"], config.scope),
-				state
-			});
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const linkedinTokens = await getLinkedinTokens(code);
-			const linkedinUser = await getLinkedinUser(linkedinTokens.accessToken);
-			const providerUserId = linkedinUser.id;
-			const linkedinUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...linkedinUserAuth,
-				linkedinUser,
-				linkedinTokens
-			};
+const getLinkedInUser = async (accessToken: string): Promise<LinkedInUser> => {
+	const request = new Request("https://api.linkedin.com/v2/userinfo", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	} as const satisfies OAuthProvider;
+	});
+	return handleRequest<LinkedInUser>(request);
 };
 
-type LinkedinProfileResponse = {
-	id: string;
-	localizedFirstName: string;
-	localizedLastName: string;
-	profilePicture: {
-		"displayImage~"?: {
-			elements?: Array<{
-				identifiers?: Array<{
-					identifier?: string;
-				}>;
-			}>;
-		};
+export type LinkedInTokens = {
+	accessToken: string;
+	accessTokenExpiresIn: number;
+	refreshToken: string;
+	refreshTokenExpiresIn: number;
+	scope: string;
+};
+
+export type LinkedInUser = {
+	sub: string;
+	name: string;
+	email: string;
+	email_verified: boolean;
+	given_name: string;
+	family_name: string;
+	locale: {
+		country: string;
+		language: string;
 	};
-};
-
-export type LinkedinUser = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	profilePicture?: string;
+	picture: string;
 };

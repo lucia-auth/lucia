@@ -3,10 +3,13 @@ import { betterSqlite3 } from '@lucia-auth/adapter-sqlite';
 import { sveltekit } from 'lucia/middleware';
 import { github } from '@lucia-auth/oauth/providers';
 import { dev } from '$app/environment';
-import sqlite from 'better-sqlite3';
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '$env/static/private';
 
-const db = sqlite('main.db');
+import sqlite from 'better-sqlite3';
+import fs from 'fs';
+
+const db = sqlite(':memory:');
+db.exec(fs.readFileSync('schema.sql', 'utf8'));
 
 export const auth = lucia({
 	adapter: betterSqlite3(db, {

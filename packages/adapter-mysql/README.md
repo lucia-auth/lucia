@@ -1,8 +1,8 @@
 # `@lucia-auth/adapter-mysql`
 
-MySQL adapter for Lucia
+MySQL adapter for Lucia v2.
 
-**[Documentation](https://lucia-auth.com/database/mysql)**
+**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-mysql)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
@@ -19,12 +19,6 @@ npm install @lucia-auth/adapter-postgresql
 pnpm add @lucia-auth/adapter-postgresql
 yarn add @lucia-auth/adapter-postgresql
 ```
-
-## Version compatibility
-
-| `@lucia-auth/adapter-mysql` | `lucia-auth` | `mysql2` |
-| --------------------------- | ------------ | -------- |
-| `^1.0.0`                    | `^1.4.0`     | `^2.0.0` |
 
 ## Testing
 

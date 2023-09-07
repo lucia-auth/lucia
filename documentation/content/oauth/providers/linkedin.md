@@ -1,26 +1,21 @@
 ---
-_order: 0
-title: "LinkedIn"
-description: "Learn about using the LinkedIn provider in Lucia OAuth integration"
+title: "LinkedIn OAuth provider"
+description: "Learn how to use the LinkedIn OAuth provider"
 ---
 
 OAuth integration for LinkedIn. Refer to [LinkedIn OAuth documentation](https:/.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?tabs=HTTPS1) for getting the required credentials. Provider id is `linkedin`.
 
 ```ts
-import { linkedin } from "@lucia-auth/oauth/providers";
-```
-
-### Initialization
-
-```ts
-import { linkedin } from "@lucia-auth/oauth/providers";
+import { linkedIn } from "@lucia-auth/oauth/providers";
 import { auth } from "./lucia.js";
 
-const linkedinAuth = linkedin(auth, config);
+const linkedInAuth = linkedIn(auth, config);
 ```
 
+## `linkedIn()`
+
 ```ts
-const linkedin: (
+const linkedIn: (
 	auth: Auth,
 	config: {
 		clientId: string;
@@ -28,79 +23,52 @@ const linkedin: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider<LinkedInUser, LinkedInTokens>;
+) => LinkedInProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                | type                                 | description                                             | optional |
-| ------------------- | ------------------------------------ | ------------------------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                          |          |
-| config.clientId     | `string`                             | LinkedIn OAuth app client id                            |          |
-| config.clientSecret | `string`                             | LinkedIn OAuth app client secret                        |          |
-| config.redirectUri  | `string`                             | LinkedIn OAuth app redirect uri                         |          |
-| config.scope        | `string[]`                           | an array of scopes - `r_liteprofile` is always included |    ✓     |
+Scope `r_liteprofile` is always included.
 
-#### Returns
+| name                  | type                                       | description                      | optional |
+| --------------------- | ------------------------------------------ | -------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                   |          |
+| `config.clientId`     | `string`                                   | LinkedIn OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | LinkedIn OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | LinkedIn OAuth app redirect uri  |          |
+| `config.scope`        | `string[]`                                 | an array of scopes               |    ✓     |
 
-| type                                              | description       |
-| ------------------------------------------------- | ----------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | LinkedIn provider |
+##### Returns
 
-## `LinkedInProvider`
+| type                                    | description       |
+| --------------------------------------- | ----------------- |
+| [`LinkedInProvider`](#linkedinprovider) | LinkedIn provider |
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+## Interfaces
 
-### `getAuthorizationUrl()`
+### `LinkedInAuth`
 
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<LinkedInAuth<_Auth>>
+interface LinkedInAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<LinkedInUserAuth<_Auth>>;
+}
 ```
 
-#### Parameter
+| type                                    |
+| --------------------------------------- |
+| [`LinkedInUserAuth`](#linkedinuserauth) |
 
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
+##### Generics
 
-#### Returns
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-### `validateCallback()`
-
-Validates the callback and returns the session.
-
-```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
-```
-
-#### Parameter
-
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
-
-#### Returns
-
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
-
-#### Errors
-
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
-
-## `LinkedInTokens`
+### `LinkedInTokens`
 
 ```ts
 type LinkedInTokens = {
@@ -108,17 +76,45 @@ type LinkedInTokens = {
 	accessTokenExpiresIn: number;
 	refreshToken: string;
 	refreshTokenExpiresIn: number;
-	scope: string;
 };
 ```
 
-## `LinkedInUser`
+### `LinkedInUser`
 
 ```ts
 type LinkedInUser = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	profilePicture?: string;
+	sub: string;
+	name: string;
+	email: string;
+	email_verified: boolean;
+	given_name: string;
+	family_name: string;
+	locale: {
+		country: string;
+		language: string;
+	};
+	picture: string;
 };
 ```
+
+### `LinkedInUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	linkedInUser: LinkedInUser;
+	linkedInTokens: LinkedInTokens;
+}
+```
+
+| properties       | type                                | description       |
+| ---------------- | ----------------------------------- | ----------------- |
+| `linkedInUser`   | [`LinkedInUser`](#linkedinuser)     | LinkedIn user     |
+| `linkedInTokens` | [`LinkedInTokens`](#linkedintokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

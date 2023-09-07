@@ -1,8 +1,8 @@
 # Tests for Lucia adapters
 
-Testing module for Lucia database adapters.
+Testing module for Lucia v2 database adapters.
 
-**[Documentation](https://lucia-auth.com/adapters/testing-adapters)**
+**[Documentation](https://lucia-auth.com/extending-lucia/database-adapters-api)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 

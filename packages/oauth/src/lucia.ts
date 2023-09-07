@@ -1,8 +1,17 @@
 import type { Auth } from "lucia";
-import type { AwaitedReturnType } from "./utils.js";
 
-export type LuciaUser<A extends Auth> = AwaitedReturnType<A["getUser"]>;
+/*
+'lucia' exports `User` and `GlobalDatabaseUserAttributes`
+but these will use the user's .d.ts file
 
-export type CreateUserAttributesParameter<A extends Auth> = Parameters<
-	A["createUser"]
+if you try to test that with the monorepo it works fine
+but will not work when published and installed
+*/
+
+export type LuciaUser<_Auth extends Auth> = ReturnType<
+	_Auth["transformDatabaseUser"]
+>;
+
+export type LuciaDatabaseUserAttributes<_Auth extends Auth> = Parameters<
+	_Auth["createUser"]
 >[0]["attributes"];

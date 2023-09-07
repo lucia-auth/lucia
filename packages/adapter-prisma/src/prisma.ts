@@ -75,11 +75,20 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				}
 			},
 			deleteUser: async (userId) => {
-				await User.deleteMany({
-					where: {
-						id: userId
+				try {
+					await User.delete({
+						where: {
+							id: userId
+						}
+					});
+				} catch (e) {
+					const error = e as Partial<PossiblePrismaError>;
+					if (error.code === "P2025") {
+						// user does not exist
+						return;
 					}
-				});
+					throw e;
+				}
 			},
 			updateUser: async (userId, partialUser) => {
 				await User.update({
@@ -133,11 +142,20 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				if (!Session) {
 					throw new Error("Session table not defined");
 				}
-				await Session.delete({
-					where: {
-						id: sessionId
+				try {
+					await Session.delete({
+						where: {
+							id: sessionId
+						}
+					});
+				} catch (e) {
+					const error = e as Partial<PossiblePrismaError>;
+					if (error.code === "P2025") {
+						// session does not exist
+						return;
 					}
-				});
+					throw e;
+				}
 			},
 			deleteSessionsByUserId: async (userId) => {
 				if (!Session) {
@@ -193,11 +211,20 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				}
 			},
 			deleteKey: async (keyId) => {
-				await Key.delete({
-					where: {
-						id: keyId
+				try {
+					await Key.delete({
+						where: {
+							id: keyId
+						}
+					});
+				} catch (e) {
+					const error = e as Partial<PossiblePrismaError>;
+					if (error.code === "P2025") {
+						// key does not exist
+						return;
 					}
-				});
+					throw e;
+				}
 			},
 			deleteKeysByUserId: async (userId) => {
 				await Key.deleteMany({

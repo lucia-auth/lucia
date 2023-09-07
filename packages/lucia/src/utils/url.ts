@@ -2,7 +2,7 @@ export const isAllowedUrl = (
 	incomingUrl: string | URL,
 	app: {
 		url: string | URL;
-		allowedSubdomains: "*" | string[];
+		allowedSubdomains: "*" | (string | null)[];
 	}
 ): boolean => {
 	const getHostname = (urlParams: string | URL) => {
@@ -18,6 +18,7 @@ export const isAllowedUrl = (
 		return false;
 	}
 	const allowedHosts = app.allowedSubdomains.map((subdomain) => {
+		if (subdomain === null) return appBaseDomain;
 		return [subdomain, appBaseDomain].join(".");
 	});
 	return allowedHosts.includes(incomingHostname);

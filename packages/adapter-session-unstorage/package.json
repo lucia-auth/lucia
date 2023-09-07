@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-session-unstorage",
-	"version": "2.0.0-beta.1",
+	"version": "2.0.0",
 	"description": "Unstorage session adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -34,7 +34,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "2.0.0-beta.7",
+		"lucia": "^2.0.0",
 		"unstorage": "^1.6.1"
 	},
 	"devDependencies": {

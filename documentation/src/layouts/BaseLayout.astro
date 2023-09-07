@@ -1,0 +1,94 @@
+---
+type Props = {
+	title: string;
+	description?: string | null;
+};
+
+const { title, description } = Astro.props;
+
+const origin = import.meta.env.DEV
+	? Astro.url.origin
+	: "https://" + import.meta.env.VERCEL_URL;
+
+const pathname = Astro.url.pathname;
+
+const ogUrl =
+	pathname === "/"
+		? new URL("/og/index.jpg", origin)
+		: new URL("/og/" + pathname.replace(/\/$/, "") + ".jpg", origin);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} · Lucia</title>
+		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+
+		<meta property="build_id" content={import.meta.env.BUILD_ID} />
+
+		<!-- OpenGraph tags -->
+		<meta property="og:title" content={title} />
+		<meta property="og:url" content={`${origin}${Astro.url.pathname}`} />
+		<meta property="og:locale" content="en" />
+		<meta property="og:image" content={ogUrl} />
+		<meta property="og:image:alt" content="" />
+		<meta
+			name="description"
+			property="og:description"
+			content={description ?? ""}
+		/>
+		<meta property="og:site_name" content="Lucia" />
+
+		<!-- For Discord and Twitter thumbnail -->
+		<meta name="twitter:card" content="summary_large_image" />
+
+		<!-- For Discord sidebar -->
+		<meta name="theme-color" content="#5f57ff" />
+		<title>
+			{title}
+		</title>
+		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
+	</head>
+	<body class="text-base leading-relaxed">
+		<slot />
+		<style>
+			/* adjust font size for code block */
+			:global(.text-sm code) {
+				@apply text-code-sm;
+			}
+			:global(.text-lg code) {
+				@apply text-code-lg;
+			}
+			:global(.text-xl code) {
+				@apply text-code-xl;
+			}
+			:global(.text-2xl code) {
+				@apply text-code-2xl;
+			}
+			:global(.text-3xl code) {
+				@apply text-code-3xl;
+			}
+			:global(.text-4xl code) {
+				@apply text-code-4xl;
+			}
+			:global(.text-5xl code) {
+				@apply text-code-5xl;
+			}
+		</style>
+	</body>
+</html>
+
+<script>
+	import { onSearchVisibilityUpdate } from "@utils/state";
+
+	onSearchVisibilityUpdate((visible) => {
+		if (visible) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+	});
+</script>

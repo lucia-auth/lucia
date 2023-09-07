@@ -1,5 +1,7 @@
 # build output
 dist/
+# generated types
+.astro/
 
 # dependencies
 node_modules/
@@ -17,15 +19,3 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
-
-# project
-.vscode/
-public/.siena
-
-.cela_generated
-.github.json
-.search.json
-
-.vercel
-
-

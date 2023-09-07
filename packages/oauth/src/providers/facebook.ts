@@ -1,33 +1,80 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import {
+	handleRequest,
+	authorizationHeader,
+	createUrl
+} from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "facebook";
 
-export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getFacebookTokens = async (code: string) => {
-		const requestUrl = createUrl(
-			"https://graph.facebook.com/v16.0/oauth/access_token",
+export const facebook = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): FacebookAuth<_Auth> => {
+	return new FacebookAuth(auth, config);
+};
+
+export class FacebookAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	FacebookUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		return await createOAuth2AuthorizationUrl(
+			"https://www.facebook.com/v16.0/dialog/oauth",
 			{
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				redirect_uri: config.redirectUri,
-				code
+				clientId: this.config.clientId,
+				scope: this.config.scope ?? [],
+				redirectUri: this.config.redirectUri
 			}
 		);
-		const request = new Request(requestUrl);
-		const tokens = await handleRequest<{
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<FacebookUserAuth<_Auth>> => {
+		const facebookTokens = await this.validateAuthorizationCode(code);
+		const facebookUser = await getFacebookUser(facebookTokens.accessToken);
+		return new FacebookUserAuth(this.auth, facebookUser, facebookTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<FacebookTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
-		}>(request);
+		}>(code, "https://graph.facebook.com/v16.0/oauth/access_token", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -35,51 +82,50 @@ export const facebook = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	const getFacebookUser = async (accessToken: string) => {
-		const requestUrl = createUrl("https://graph.facebook.com/me", {
-			access_token: accessToken,
-			fields: ["id", "name", "picture"].join(",")
-		});
-		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
-		const facebookUser = await handleRequest<FacebookUser>(request);
-		return facebookUser;
-	};
+export class FacebookUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public facebookTokens: FacebookTokens;
+	public facebookUser: FacebookUser;
 
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://www.facebook.com/v16.0/dialog/oauth", {
-				client_id: config.clientId,
-				scope: scope([], config.scope),
-				redirect_uri: config.redirectUri,
-				state
-			});
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const tokens = await getFacebookTokens(code);
-			const facebookUser = await getFacebookUser(tokens.accessToken);
-			const providerUserId = facebookUser.id;
-			const facebookUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...facebookUserAuth,
-				facebookUser,
-				tokens
-			};
+	constructor(
+		auth: _Auth,
+		facebookUser: FacebookUser,
+		facebookTokens: FacebookTokens
+	) {
+		super(auth, PROVIDER_ID, facebookUser.id);
+
+		this.facebookTokens = facebookTokens;
+		this.facebookUser = facebookUser;
+	}
+}
+
+const getFacebookUser = async (accessToken: string): Promise<FacebookUser> => {
+	const requestUrl = createUrl("https://graph.facebook.com/me", {
+		access_token: accessToken,
+		fields: ["id", "name", "picture", "email"].join(",")
+	});
+	const request = new Request(requestUrl, {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	} as const satisfies OAuthProvider;
+	});
+	const facebookUser = await handleRequest<FacebookUser>(request);
+	return facebookUser;
+};
+
+export type FacebookTokens = {
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type FacebookUser = {
 	id: string;
 	name: string;
+	email?: string;
 	picture: {
 		data: {
 			height: number;

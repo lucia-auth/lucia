@@ -1,5 +1,111 @@
 # @lucia-auth/oauth
 
+## 3.0.0
+
+### Major changes
+
+- [#993](https://github.com/pilcrowOnPaper/lucia/pull/993) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `generateState()` export
+
+- [#993](https://github.com/pilcrowOnPaper/lucia/pull/993) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Replace `OAuthProvider` with `OAuth2ProviderAuth` and `OAuth2ProviderAuthWithPKCE`
+
+- [#993](https://github.com/pilcrowOnPaper/lucia/pull/993) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Replace `GithubProvider` with `GithubAuth` etc
+
+- [#1022](https://github.com/pilcrowOnPaper/lucia/pull/1022) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Rename `linkedin()`, type `LinkedinUser`, and type `LinkedinTokens` to `linkedIn()`, `LinkedInUser`, and `LinkedInTokens`
+
+- [#1024](https://github.com/pilcrowOnPaper/lucia/pull/1024) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `auth0()`, `patreon()`, `reddit()`, `spotify()`, `twitch()` params
+
+### Minor changes
+
+- [#1011](https://github.com/pilcrowOnPaper/lucia/pull/1011) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Salesforce provider
+
+- [#993](https://github.com/pilcrowOnPaper/lucia/pull/993) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Experimental API `createOAuth2AuthorizationUrl()`, `createOAuth2AuthorizationUrlWithPKCE()`, `validateOAuth2AuthorizationCode()`, and `decodeIdToken()` are now stable
+
+- [#993](https://github.com/pilcrowOnPaper/lucia/pull/993) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `createOAuth2AuthorizationUrlWithPKCE()` return type
+
+- [#1016](https://github.com/pilcrowOnPaper/lucia/pull/1016) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Box provider
+
+- [#1005](https://github.com/pilcrowOnPaper/lucia/pull/1005) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Azure Active Directory provider
+
+- [#1012](https://github.com/pilcrowOnPaper/lucia/pull/1012) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Atlassian provider
+
+- [#1015](https://github.com/pilcrowOnPaper/lucia/pull/1015) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Line provider
+
+- [#1013](https://github.com/pilcrowOnPaper/lucia/pull/1013) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Gitlab provider
+
+- [#1017](https://github.com/pilcrowOnPaper/lucia/pull/1017) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Bitbucket provider
+
+- [#993](https://github.com/pilcrowOnPaper/lucia/pull/993) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `options.searchParams` and `options.state` from `createOAuth2AuthorizationUrl()` and `createOAuth2AuthorizationUrlWithPKCE()` params
+
+- [#1011](https://github.com/pilcrowOnPaper/lucia/pull/1011) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Slack provider
+
+### Patch changes
+
+- [#1024](https://github.com/pilcrowOnPaper/lucia/pull/1024) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `global_name` and `avatar_decoration` fields in `DiscordUser` type
+
+- [#1023](https://github.com/pilcrowOnPaper/lucia/pull/1023) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `validateOAuth2AuthorizationCode()` sending malformed basic auth headers
+
+## 2.2.0
+
+### Minor changes
+
+- [#990](https://github.com/pilcrowOnPaper/lucia/pull/990) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `twitter()` provider (OAuth 2.0 with PKCE)
+
+- [#983](https://github.com/pilcrowOnPaper/lucia/pull/983) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : `decodeIdToken()` throws `SyntaxError`
+
+  - Remove `IdTokenError`
+
+### Patch changes
+
+- [#990](https://github.com/pilcrowOnPaper/lucia/pull/990) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `GithubUserAuth.githubTokens` not including refresh token
+
+- [#973](https://github.com/pilcrowOnPaper/lucia/pull/973) by [@anhtuank7c](https://github.com/anhtuank7c) : Fix `linkedin()` to use latest LinkedIn OAuth implementation
+
+## 2.1.2
+
+### Patch changes
+
+- [#968](https://github.com/pilcrowOnPaper/lucia/pull/968) by [@KazuumiN](https://github.com/KazuumiN) : Fixes `generatePKCECodeChallenge()` to correctly apply SHA-256 and Base64Url encoding as per PKCE specification.
+
+## 2.1.1
+
+### Patch changes
+
+- [#948](https://github.com/pilcrowOnPaper/lucia/pull/948) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `createOAuth2AuthorizationUrl()` and `createOAuth2AuthorizationUrlWithPKCE()` incorrectly setting `redirect_uri` field to `redirect_url`.
+
+## 2.1.0
+
+### Minor changes
+
+- [#910](https://github.com/pilcrowOnPaper/lucia/pull/910) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add experimental OAuth helpers:
+
+  - `createOAuth2AuthorizationUrl()`
+
+  - `createOAuth2AuthorizationUrlWithPKCE()`
+
+  - `validateOAuth2AuthorizationCode()`
+
+  - `decodeIdToken()`
+
+  - `IdTokenError`
+
+- [#657](https://github.com/pilcrowOnPaper/lucia/pull/657) by [@luccasr73](https://github.com/luccasr73) : Add Apple provider
+
+## 2.0.1
+
+### Patch changes
+
+- [#894](https://github.com/pilcrowOnPaper/lucia/pull/894) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix type `GoogleUser`
+
+## 2.0.0
+
+### Major changes
+
+- [#885](https://github.com/pilcrowOnPaper/lucia/pull/885) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update version and peer dependency
+
+### Minor changes
+
+- [#869](https://github.com/pilcrowOnPaper/lucia/pull/869) by [@bachiitter](https://github.com/bachiitter) : Add Google OAuth Access type
+
 ## 2.0.0-beta.8
 
 ### Minor changes

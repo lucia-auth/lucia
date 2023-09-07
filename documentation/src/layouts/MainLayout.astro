@@ -1,0 +1,27 @@
+---
+import Header from "@components/Header.astro";
+import BaseLayout from "./BaseLayout.astro";
+import Menu from "@components/menus/MainMenu.astro";
+
+type Props = {
+	title: string;
+	description?: string | null;
+};
+
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<Header />
+	<Menu />
+	<main
+		class="mt-24 overflow-hidden px-6 pb-20 sm:px-8 md:px-16 lg:ml-72 lg:mt-20"
+	>
+		<slot />
+	</main>
+</BaseLayout>
+<style>
+	:global(html) {
+		@apply scroll-p-20;
+	}
+</style>

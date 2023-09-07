@@ -1,21 +1,17 @@
 ---
-_order: 4
 title: "Error handling"
-description: "Learn how to handle errors thrown by Lucia"
+description: "Learn about error handling in Lucia"
 ---
 
-Errors are handled by throwing [`LuciaError`](/reference/lucia-auth/luciaerror) inside Lucia. All error messages are listed in the reference.
+Errors in Lucia are thrown as [`LuciaError`](/reference/lucia/modules/main#luciaerror), which extends the standard `Error`. See the API reference for a full list of errors. Alternatively, the API reference for each API methods list possible errors it could throw.
 
 Using a try-catch block, the error message can be read like so:
 
 ```ts
 import { LuciaError } from "lucia";
-import { auth } from "./lucia.js";
 
 try {
-	await auth.createUser({
-		// ...
-	});
+	// some action
 } catch (e) {
 	if (e instanceof LuciaError) {
 		const message = e.message;
@@ -23,30 +19,18 @@ try {
 }
 ```
 
-However, as Lucia uses external database adapters, it cannot catch every single database error and it does not expect the adapters to do so. This means that errors that are expected (known errors - listed below) are caught and thrown using `LuciaError`, while unexpected errors, including ones related to user attributes, are handled by re-throwing the database error. This means that errors like user attributes violating foreign or unique constraints and connection errors must be handled by the user.
-
-For example, you may have a `username` unique column inside the `user` table. If you're using Prisma and try to create a user with an existing username using `createUser()`, it will throw a Prisma error and not a `LuciaError`. This can be handled outside of Lucia or by providing an error handler to your database adapter.
+However, Lucia is made to be used with any databases and heavily relies on adapters. As each database handles errors in different ways, Lucia does not expect adapters to handle every single database errors. Errors such as connection errors, and most notably, user and session attributes violating some database rule (e.g. unique constraint), are handled by re-throwing the database error thrown by the adapter. For example, if you're using the Prisma adapter, Lucia will throw both `LuciaError` and Prisma errors.
 
 ```ts
 import { auth } from "./lucia.js";
 
 try {
 	await auth.createUser({
-		// ...
+		attributes: {
+			uniqueField: valueThatAlreadyExists
+		}
 	});
 } catch (e) {
-	if (e instanceof Prisma.PrismaKnownClientError) {
-		// check error code
-	}
+	// violates unique constraint!
 }
 ```
-
-## Known errors
-
-Known errors for databases related actions are:
-
-- Duplicate key on user and key creation (`AUTH_DUPLICATE_KEY_ID`)
-- Invalid user id (`AUTH_INVALID_USER_ID`)
-- Invalid keys (`AUTH_INVALID_KEY_ID`)
-- Expired keys (`AUTH_EXPIRED_KEY`)
-- Duplicate session id on session creation and renewal (`AUTH_DUPLICATE_SESSION_ID`)

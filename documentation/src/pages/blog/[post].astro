@@ -1,0 +1,40 @@
+---
+import { getPages } from "@utils/content";
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import MarkdownStyle from "@components/MarkdownStyle.astro";
+import Header from "@components/Header.astro";
+
+import type { InferGetStaticPropsType } from "astro";
+
+export const getStaticPaths = async () => {
+	const pages = await getPages("blog");
+	return pages.map((page) => {
+		return {
+			params: {
+				post: page.href.replace("/blog/", "")
+			},
+			props: {
+				page
+			}
+		};
+	});
+};
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+	<Header />
+	<main class="mt-24 overflow-hidden px-6 pb-20 sm:px-8 md:px-16 lg:mt-20">
+		<div class="mx-auto w-full max-w-4xl">
+			<div class="mb-8 mt-6">
+				<h1 class="text-4xl font-semibold" set:html={page.htmlTitle} />
+			</div>
+			<MarkdownStyle>
+				<page.Content />
+			</MarkdownStyle>
+		</div>
+	</main>
+</BaseLayout>

@@ -1,42 +1,81 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
 const PROVIDER_ID = "auth0";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	appDomain: string;
 	redirectUri: string;
-	connection?: string;
-	organization?: string;
-	invitation?: string;
-	loginHint?: string;
+	scope?: string[];
 };
 
-export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getAuth0Tokens = async (code: string) => {
-		const request = new Request(new URL("/oauth/token", config.appDomain), {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: new URLSearchParams({
-				grant_type: "authorization_code",
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				redirect_uri: config.redirectUri,
-				code
-			})
-		});
-		const tokens = await handleRequest<{
+export const auth0 = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): Auth0Auth<_Auth> => {
+	return new Auth0Auth(auth, config);
+};
+
+export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	Auth0UserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			new URL("/authorize", this.config.appDomain),
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: ["openid", "profile", ...scopeConfig]
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<Auth0UserAuth<_Auth>> => {
+		const auth0Tokens = await this.validateAuthorizationCode(code);
+		const auth0User = await getAuth0User(
+			this.config.appDomain,
+			auth0Tokens.accessToken
+		);
+		return new Auth0UserAuth(this.auth, auth0User, auth0Tokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<Auth0Tokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token: string;
 			id_token: string;
 			token_type: string;
-		}>(request);
+		}>(code, new URL("/oauth/token", this.config.appDomain), {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -45,74 +84,81 @@ export const auth0 = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			tokenType: tokens.token_type
 		};
 	};
+}
 
-	const getAuth0User = async (accessToken: string) => {
-		const request = new Request(new URL("/userinfo", config.appDomain), {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
+export class Auth0UserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public auth0Tokens: Auth0Tokens;
+	public auth0User: Auth0User;
 
-		const auth0Profile = await handleRequest<Auth0Profile>(request);
+	constructor(auth: _Auth, auth0User: Auth0User, auth0Tokens: Auth0Tokens) {
+		super(auth, PROVIDER_ID, auth0User.id);
+		this.auth0Tokens = auth0Tokens;
+		this.auth0User = auth0User;
+	}
+}
 
-		const auth0User: Auth0User = {
-			id: auth0Profile.sub.split("|")[1],
-			nickname: auth0Profile.nickname,
-			name: auth0Profile.name,
-			picture: auth0Profile.picture,
-			updated_at: auth0Profile.updated_at
-		};
-
-		return auth0User;
-	};
-
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl(
-				new URL("/authorize", config.appDomain).toString(),
-				{
-					client_id: config.clientId,
-					response_type: "code",
-					redirect_uri: config.redirectUri,
-					scope: scope(["openid", "profile"], config.scope),
-					state,
-					...(config.connection && { connection: config.connection }),
-					...(config.organization && { organization: config.organization }),
-					...(config.invitation && { invitation: config.invitation }),
-					...(config.loginHint && { login_hint: config.loginHint })
-				}
-			);
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const auth0Tokens = await getAuth0Tokens(code);
-			const auth0User = await getAuth0User(auth0Tokens.accessToken);
-			const providerUserId = auth0User.id;
-			const auth0UserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...auth0UserAuth,
-				auth0User,
-				auth0Tokens
-			};
+const getAuth0User = async (appDomain: string, accessToken: string) => {
+	const request = new Request(new URL("/userinfo", appDomain), {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	} as const satisfies OAuthProvider;
+	});
+	const auth0Profile = await handleRequest<Auth0UserInfoResult>(request);
+	const auth0User: Auth0User = {
+		id: auth0Profile.sub.split("|")[1],
+		...auth0Profile
+	};
+	return auth0User;
 };
 
-type Auth0Profile = {
+export type Auth0Tokens = {
+	accessToken: string;
+	refreshToken: string;
+	idToken: string;
+	tokenType: string;
+};
+
+type Auth0UserInfoResult = {
 	sub: string;
-	nickname: string;
 	name: string;
 	picture: string;
+	locale: string;
 	updated_at: string;
+	given_name?: string;
+	family_name?: string;
+	middle_name?: string;
+	nickname?: string;
+	preferred_username?: string;
+	profile?: string;
+	email?: string;
+	email_verified?: boolean;
+	gender?: string;
+	birthdate?: string;
+	zoneinfo?: string;
+	phone_number?: string;
+	phone_number_verified?: boolean;
 };
 
 export type Auth0User = {
 	id: string;
-	nickname: string;
+	sub: string;
 	name: string;
 	picture: string;
+	locale: string;
 	updated_at: string;
+	given_name?: string;
+	family_name?: string;
+	middle_name?: string;
+	nickname?: string;
+	preferred_username?: string;
+	profile?: string;
+	email?: string;
+	email_verified?: boolean;
+	gender?: string;
+	birthdate?: string;
+	zoneinfo?: string;
+	phone_number?: string;
+	phone_number_verified?: boolean;
 };

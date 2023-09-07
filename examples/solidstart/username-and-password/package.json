@@ -1,0 +1,28 @@
+{
+	"name": "username-and-password",
+	"description": "Username & password example with Lucia and SolidStart",
+	"scripts": {
+		"dev": "solid-start dev",
+		"build": "solid-start build",
+		"start": "solid-start start"
+	},
+	"type": "module",
+	"devDependencies": {
+		"@types/node": "^18.11.18",
+		"esbuild": "^0.14.54",
+		"postcss": "^8.4.21",
+		"solid-start-node": "^0.2.19",
+		"typescript": "^4.9.4",
+		"vite": "^4.4.6"
+	},
+	"dependencies": {
+		"@lucia-auth/adapter-sqlite": "latest",
+		"@solidjs/meta": "^0.28.2",
+		"@solidjs/router": "^0.8.2",
+		"better-sqlite3": "^8.4.0",
+		"lucia": "latest",
+		"solid-js": "^1.7.8",
+		"solid-start": "^0.2.30",
+		"undici": "^5.15.1"
+	}
+}

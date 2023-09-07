@@ -1,8 +1,8 @@
 # `@lucia-auth/adapter-mongoose`
 
-[Mongoose](https://mongoosejs.com) ([MongoDB](https://www.mongodb.com)) adapter for Lucia
+[Mongoose](https://mongoosejs.com) (MongoDB) adapter for Lucia v2.
 
-**[Documentation](https://lucia-auth.com/database/mongoose)**
+**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-mongoose)**
 
 **[Lucia documentation](https://lucia-auth.com)**
 
@@ -16,12 +16,10 @@ pnpm install @lucia-auth/adapter-mongoose
 yarn add @lucia-auth/adapter-mongoose
 ```
 
-Requires `lucia-auth@0.11.0`.
-
 ## Testing
 
 Add MongoDB url to `MONGODB_URL` env var.
 
 ```
-npm run test
+pnpm test
 ```

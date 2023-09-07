@@ -11,6 +11,7 @@ import type {
 	Request as ExpressRequest,
 	Response as ExpressResponse
 } from "express";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 const getIncomingMessageUrl = (incomingMessage: IncomingMessage, env: Env) => {
 	if (!incomingMessage.headers.host) return "";
@@ -84,6 +85,37 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	};
 };
 
+export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
+	return ({ args }) => {
+		const [req, res] = args;
+
+		const getUrl = () => {
+			if (!req.headers.host) return "";
+			const protocol = req.protocol;
+			const host = req.headers.host;
+			const pathname = req.url;
+			return `${protocol}://${host}${pathname}`;
+		};
+
+		const requestContext = {
+			request: {
+				url: getUrl(),
+				method: req.method,
+				headers: {
+					origin: req.headers.origin ?? null,
+					cookie: req.headers.cookie ?? null,
+					authorization: req.headers.authorization ?? null
+				}
+			},
+			setCookie: (cookie) => {
+				res.header("Set-Cookie", [cookie.serialize()]);
+			}
+		} as const satisfies RequestContext;
+
+		return requestContext;
+	};
+};
+
 type SvelteKitRequestEvent = {
 	request: Request;
 	cookies: {
@@ -120,9 +152,11 @@ type AstroAPIContext = {
 	request: Request;
 	cookies: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
-		get: (name: string) => {
-			value: string | undefined;
-		};
+		get: (name: string) =>
+			| {
+					value: string | undefined;
+			  }
+			| undefined;
 	};
 };
 
@@ -140,7 +174,7 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 					authorization: context.request.headers.get("Authorization")
 				},
 				storedSessionCookie:
-					context.cookies.get(sessionCookieName).value || null
+					context.cookies.get(sessionCookieName)?.value || null
 			},
 			setCookie: (cookie) => {
 				context.cookies.set(cookie.name, cookie.value, cookie.attributes);
@@ -178,6 +212,44 @@ export const qwik = (): Middleware<[QwikRequestEvent]> => {
 			},
 			setCookie: (cookie) => {
 				event.cookie.set(cookie.name, cookie.value, cookie.attributes);
+			}
+		} as const satisfies RequestContext;
+
+		return requestContext;
+	};
+};
+
+type ElysiaContext = {
+	request: Request;
+	set: {
+		headers: Record<string, string> & {
+			["Set-Cookie"]?: string | string[];
+		};
+		status?: number | undefined;
+		redirect?: string | undefined;
+	};
+};
+
+export const elysia = (): Middleware<[ElysiaContext]> => {
+	return ({ args }) => {
+		const [{ request, set }] = args;
+		const requestContext = {
+			request: {
+				url: request.url,
+				method: request.method,
+				headers: {
+					origin: request.headers.get("Origin"),
+					cookie: request.headers.get("Cookie"),
+					authorization: request.headers.get("Authorization")
+				}
+			},
+			setCookie: (cookie: Cookie) => {
+				const setCookieHeader = set.headers["Set-Cookie"] ?? [];
+				const setCookieHeaders: string[] = Array.isArray(setCookieHeader)
+					? setCookieHeader
+					: [setCookieHeader];
+				setCookieHeaders.push(cookie.serialize());
+				set.headers["Set-Cookie"] = setCookieHeaders;
 			}
 		} as const satisfies RequestContext;
 
@@ -253,9 +325,12 @@ export const nextjs = (): Middleware<
 	return ({ args, sessionCookieName, env }) => {
 		const [serverContext] = args;
 
-		if ("request" in serverContext || "cookies" in serverContext) {
+		if ("cookies" in serverContext) {
+			// for some reason `"request" in NextRequest` returns true???
 			const request =
-				"request" in serverContext ? serverContext.request : serverContext;
+				typeof serverContext.cookies === "function"
+					? (serverContext as NextJsAppServerContext).request
+					: (serverContext as NextRequest);
 
 			const readonlyCookieStore =
 				typeof serverContext.cookies === "function"
@@ -264,7 +339,6 @@ export const nextjs = (): Middleware<
 
 			const sessionCookie =
 				readonlyCookieStore.get(sessionCookieName)?.value ?? null;
-
 			const requestContext = {
 				request: {
 					url: request?.url ?? "",
@@ -287,7 +361,6 @@ export const nextjs = (): Middleware<
 					}
 				}
 			} as const satisfies RequestContext;
-
 			return requestContext;
 		}
 
@@ -342,5 +415,36 @@ export const h3 = (): Middleware<[H3Event]> => {
 			sessionCookieName,
 			env
 		});
+	};
+};
+
+type HonoContext = {
+	req: {
+		url: string;
+		method: string;
+		headers: Headers;
+	};
+	header: (name: string, value: string) => void;
+};
+
+export const hono = (): Middleware<[HonoContext]> => {
+	return ({ args }) => {
+		const [context] = args;
+		const requestContext = {
+			request: {
+				url: context.req.url,
+				method: context.req.method,
+				headers: {
+					origin: context.req.headers.get("Origin"),
+					cookie: context.req.headers.get("Cookie"),
+					authorization: context.req.headers.get("Authorization")
+				}
+			},
+			setCookie: (cookie: Cookie) => {
+				context.header("Set-Cookie", cookie.serialize());
+			}
+		} as const satisfies RequestContext;
+
+		return requestContext;
 	};
 };

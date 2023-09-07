@@ -344,9 +344,6 @@ export class Auth<_Configuration extends Configuration = any> {
 				debug.key.fail("Key password not provided", keyId);
 				throw new LuciaError("AUTH_INVALID_PASSWORD");
 			}
-			if (hashedPassword.startsWith("$2a")) {
-				throw new LuciaError("AUTH_OUTDATED_PASSWORD");
-			}
 			const validPassword = await this.passwordHash.validate(
 				password,
 				hashedPassword
@@ -645,14 +642,14 @@ export class Auth<_Configuration extends Configuration = any> {
 		providerId: string,
 		providerUserId: string,
 		password: string | null
-	): Promise<void> => {
+	): Promise<Key> => {
 		const keyId = createKeyId(providerId, providerUserId);
 		const hashedPassword =
 			password === null ? null : await this.passwordHash.generate(password);
 		await this.adapter.updateKey(keyId, {
 			hashed_password: hashedPassword
 		});
-		await this.getKey(providerId, providerUserId);
+		return await this.getKey(providerId, providerUserId);
 	};
 }
 type MaybePromise<T> = T | Promise<T>;
@@ -673,7 +670,6 @@ export type Configuration<
 	csrfProtection?:
 		| boolean
 		| {
-				baseDomain: string;
 				allowedSubDomains: string[] | "*";
 		  };
 	sessionExpiresIn?: {

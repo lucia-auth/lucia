@@ -1,18 +1,9 @@
 ---
-_order: 0
-title: "Discord"
-description: "Learn about using the Discord provider in Lucia OAuth integration"
+title: "Discord OAuth provider"
+description: "Learn how to use the Discord OAuth provider"
 ---
 
 OAuth integration for Discord. Refer to [Discord API documentation](https://discord.com/developers/docs/getting-started) for getting the required credentials. Provider id is `discord`.
-
-```ts
-import { discord } from "@lucia-auth/oauth/providers";
-```
-
-The `identify` scope is always included regardless of provided `scope` config.
-
-### Initialization
 
 ```ts
 import { discord } from "@lucia-auth/oauth/providers";
@@ -20,6 +11,10 @@ import { auth } from "./lucia.js";
 
 const discordAuth = discord(auth, config);
 ```
+
+The `identify` scope is always included regardless of provided `scope` config.
+
+## `discord()`
 
 ```ts
 const discord: (
@@ -30,95 +25,67 @@ const discord: (
 		redirectUri: string;
 		scope?: string[];
 	}
-) => OAuthProvider<DiscordUser, DiscordTokens>;
+) => DiscordProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                | type                                 | description                                        | optional |
-| ------------------- | ------------------------------------ | -------------------------------------------------- | :------: |
-| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                     |          |
-| config.clientId     | `string`                             | Discord OAuth app client id                        |          |
-| config.clientSecret | `string`                             | Discord OAuth app client secret                    |          |
-| configs.redirectUri | `string`                             | an authorized redirect URI                         |          |
-| config.scope        | `string[]`                           | an array of scopes - `identify` is always included |    ✓     |
+| name                  | type                                       | description                                        | optional |
+| --------------------- | ------------------------------------------ | -------------------------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
+| `config.clientId`     | `string`                                   | Discord OAuth app client id                        |          |
+| `config.clientSecret` | `string`                                   | Discord OAuth app client secret                    |          |
+| `configs.redirectUri` | `string`                                   | an authorized redirect URI                         |          |
+| `config.scope`        | `string[]`                                 | an array of scopes - `identify` is always included |    ✓     |
 
-#### Returns
+##### Returns
 
-| type                                              | description      |
-| ------------------------------------------------- | ---------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | Discord provider |
+| type                                  | description      |
+| ------------------------------------- | ---------------- |
+| [`DiscordProvider`](#discordprovider) | Discord provider |
 
-## `DiscordProvider`
+## Interfaces
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+### `DiscordAuth`
 
-### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<DiscordAuth<_Auth>>
+interface DiscordAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<DiscordUserAuth<_Auth>>;
+}
 ```
 
-#### Parameter
+| type                                  |
+| ------------------------------------- |
+| [`DiscordUserAuth`](#discorduserauth) |
 
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
+##### Generics
 
-#### Returns
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-### `validateCallback()`
-
-Validates the callback and returns the session.
-
-```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
-```
-
-#### Parameter
-
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
-
-#### Returns
-
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
-
-#### Errors
-
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
-
-## `DiscordTokens`
+### `DiscordTokens`
 
 ```ts
 type DiscordTokens = {
 	accessToken: string;
 	refreshToken: string;
-	accessTokenExpiresIn: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
-## `DiscordUser`
+### `DiscordUser`
 
 ```ts
 type DiscordUser = {
 	id: string;
 	username: string;
 	discriminator: string;
+	global_name?: string;
 	avatar: string;
 	bot?: boolean;
 	system?: boolean;
@@ -131,5 +98,28 @@ type DiscordUser = {
 	premium_type?: number;
 	public_flags?: number;
 	locale?: string;
+	avatar_decoration?: string;
 };
 ```
+
+### `DiscordUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	discordUser: DiscordUser;
+	discordTokens: DiscordTokens;
+}
+```
+
+| properties      | type                              | description       |
+| --------------- | --------------------------------- | ----------------- |
+| `discordUser`   | [`DiscordUser`](#discorduser)     | Discord user      |
+| `discordTokens` | [`DiscordTokens`](#discordtokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

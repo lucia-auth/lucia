@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-test
 
+## 4.1.0
+
+### Minor changes
+
+- [#928](https://github.com/pilcrowOnPaper/lucia/pull/928) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Check for delete operation errors
+
+## 4.0.0
+
+### Major changes
+
+- [#885](https://github.com/pilcrowOnPaper/lucia/pull/885) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update version and peer dependency
+
 ## 4.0.0-beta.7
 
 ### Minor changes

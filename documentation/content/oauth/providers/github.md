@@ -1,16 +1,9 @@
 ---
-_order: 0
-title: "Github"
-description: "Learn about using the Github provider in Lucia OAuth integration"
+title: "Github OAuth provider"
+description: "Learn how to use the Github OAuth provider"
 ---
 
-OAuth integration for Github. Refer to [Github OAuth documentation](https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps) for getting the required credentials. Provider id is `github`.
-
-```ts
-import { github } from "@lucia-auth/oauth/providers";
-```
-
-### Initialization
+OAuth integration for Github. Refer to [Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) for getting the required credentials. Provider id is `github`.
 
 ```ts
 import { github } from "@lucia-auth/oauth/providers";
@@ -18,6 +11,8 @@ import { auth } from "./lucia.js";
 
 const githubAuth = github(auth, config);
 ```
+
+## `github()`
 
 ```ts
 const github: (
@@ -31,76 +26,47 @@ const github: (
 ) => GithubProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                | type                                 | description                    | optional |
-| ------------------- | ------------------------------------ | ------------------------------ | :------: |
-| auth                | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                 |          |
-| config.clientId     | `string`                             | Github OAuth app client id     |          |
-| config.clientSecret | `string`                             | Github OAuth app client secret |          |
-| config.scope        | `string[]`                           | an array of scopes             |    ✓     |
-| configs.redirectUri | `string`                             | an authorized redirect URI     |    ✓     |
+| name                  | type                                       | description                    | optional |
+| --------------------- | ------------------------------------------ | ------------------------------ | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
+| `config.clientId`     | `string`                                   | Github OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | Github OAuth app client secret |          |
+| `config.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
+| `configs.redirectUri` | `string`                                   | an authorized redirect URI     |    ✓     |
 
-#### Returns
+##### Returns
 
-| type                                                       | description     |
-| ---------------------------------------------------------- | --------------- |
-| [`GithubProvider`](/oauth/providers/github#githubprovider) | Github provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`GithubProvider`](#githubprovider) | Github provider |
 
-## `GithubProvider`
+## Interfaces
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+### `GithubAuth`
 
-### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<GithubAuth<_Auth>>
+interface GithubAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<GithubUserAuth<_Auth>>;
+}
 ```
 
-#### Parameter
+| type                                |
+| ----------------------------------- |
+| [`GithubUserAuth`](#githubuserauth) |
 
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
+##### Generics
 
-#### Returns
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-### `validateCallback()`
-
-Validates the callback and returns the session.
-
-```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
-```
-
-#### Parameter
-
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
-
-#### Returns
-
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
-
-#### Errors
-
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
-
-## `GithubTokens`
+### `GithubTokens`
 
 ```ts
 type GithubTokens =
@@ -116,53 +82,85 @@ type GithubTokens =
 	  };
 ```
 
-## `GithubUser`
+### `GithubUser`
 
 ```ts
-type GithubUser = {
-	login: string; // username
-	id: number; // user id
-	node_id: string;
+type GithubUser = PublicGithubUser | PrivateGithubUser;
+
+type PublicGithubUser = {
 	avatar_url: string;
-	gravatar_id: string;
-	url: string;
-	html_url: string;
+	bio: string | null;
+	blog: string | null;
+	company: string | null;
+	created_at: string;
+	email: string | null;
+	events_url: string;
+	followers: number;
 	followers_url: string;
+	following: number;
 	following_url: string;
 	gists_url: string;
+	gravatar_id: string | null;
+	hireable: boolean | null;
+	html_url: string;
+	id: number;
+	location: string | null;
+	login: string;
+	name: string | null;
+	node_id: string;
+	organizations_url: string;
+	public_gists: number;
+	public_repos: number;
+	received_events_url: string;
+	repos_url: string;
+	site_admin: boolean;
 	starred_url: string;
 	subscriptions_url: string;
-	organizations_url: string;
-	repos_url: string;
-	events_url: string;
-	received_events_url: string;
 	type: string;
-	site_admin: boolean;
-	name: string;
-	company: string;
-	blog: string;
-	location: string;
-	email: string;
-	hireable: boolean;
-	bio: string;
-	twitter_username: string;
-	public_repos: number;
-	public_gists: number;
-	followers: number;
-	following: number;
-	created_at: string;
 	updated_at: string;
-	private_gists?: number;
-	total_private_repos?: number;
-	owned_private_repos?: number;
-	disk_usage?: number;
-	collaborators?: number;
-	two_factor_authentication?: boolean;
+	url: string;
+
+	twitter_username?: string | null;
 	plan?: {
 		name: string;
 		space: number;
 		private_repos: number;
 		collaborators: number;
 	};
+	suspended_at?: string | null;
+};
+
+type PrivateGithubUser = PublicGithubUser & {
+	collaborators: number;
+	disk_usage: number;
+	owned_private_repos: number;
+	private_gists: number;
+	total_private_repos: number;
+	two_factor_authentication: boolean;
+
+	business_plus?: boolean;
+	ldap_dn?: string;
 };
 ```
+
+### `GithubUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	githubUser: GithubUser;
+	githubTokens: GithubTokens;
+}
+```
+
+| properties     | type                            | description       |
+| -------------- | ------------------------------- | ----------------- |
+| `githubUser`   | [`GithubUser`](#githubuser)     | Github user       |
+| `githubTokens` | [`GithubTokens`](#githubtokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

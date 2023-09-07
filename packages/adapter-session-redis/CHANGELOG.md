@@ -1,5 +1,17 @@
 # @lucia-auth/adapter-session-redis
 
+## 2.1.0
+
+### Minor changes
+
+- [#950](https://github.com/pilcrowOnPaper/lucia/pull/950) by [@klapacz](https://github.com/klapacz) : Add adapter for `ioredis`
+
+## 2.0.0
+
+### Major changes
+
+- [#885](https://github.com/pilcrowOnPaper/lucia/pull/885) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update version and peer dependency
+
 ## 2.0.0-beta.8
 
 ### Minor changes

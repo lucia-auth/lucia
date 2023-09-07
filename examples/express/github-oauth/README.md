@@ -1,4 +1,4 @@
-# Username & password example with Lucia and Express
+# Github OAuth example with Lucia and Express
 
 This example uses TypeScript, SQLite3 with `better-sqlite3`, and [`tsx`](https://github.com/esbuild-kit/tsx).
 
@@ -9,10 +9,7 @@ pnpm i
 # setup .env
 pnpm setup-env
 
-# setup database
-pnpm migrate
-
-# run server + watch for changes
+# run dev server + watch for changes
 pnpm dev
 ```
 

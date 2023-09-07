@@ -7,7 +7,7 @@ import type { NextRequest } from "next/server";
 export const POST = async (request: NextRequest) => {
 	const session = await getPageSession();
 	if (!session) {
-		return new Response("Not authenticated", {
+		return new Response("Unauthorized", {
 			status: 401
 		});
 	}

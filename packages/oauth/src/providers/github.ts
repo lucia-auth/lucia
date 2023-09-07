@@ -1,13 +1,126 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
+
+type Config = {
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
+	redirectUri?: string;
+};
 
 const PROVIDER_ID = "github";
 
-type Tokens =
+export const github = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): GithubAuth<_Auth> => {
+	return new GithubAuth(auth, config);
+};
+
+export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	GithubUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		return await createOAuth2AuthorizationUrl(
+			"https://github.com/login/oauth/authorize",
+			{
+				clientId: this.config.clientId,
+				scope: this.config.scope ?? [],
+				redirectUri: this.config.redirectUri
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<GithubUserAuth<_Auth>> => {
+		const githubTokens = await this.validateAuthorizationCode(code);
+		const githubUser = await getGithubUser(githubTokens.accessToken);
+		return new GithubUserAuth(this.auth, githubUser, githubTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<GithubTokens> => {
+		const tokens =
+			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
+				code,
+				"https://github.com/login/oauth/access_token",
+				{
+					clientId: this.config.clientId,
+					clientPassword: {
+						clientSecret: this.config.clientSecret,
+						authenticateWith: "client_secret"
+					}
+				}
+			);
+		if ("refresh_token" in tokens) {
+			return {
+				accessToken: tokens.access_token,
+				accessTokenExpiresIn: tokens.expires_in,
+				refreshToken: tokens.refresh_token,
+				refreshTokenExpiresIn: tokens.refresh_token_expires_in
+			};
+		}
+		return {
+			accessToken: tokens.access_token,
+			accessTokenExpiresIn: null
+		};
+	};
+}
+
+const getGithubUser = async (accessToken: string): Promise<GithubUser> => {
+	const githubUserRequest = new Request("https://api.github.com/user", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	return await handleRequest<GithubUser>(githubUserRequest);
+};
+
+export class GithubUserAuth<
+	_Auth extends Auth
+> extends ProviderUserAuth<_Auth> {
+	public githubTokens: GithubTokens;
+	public githubUser: GithubUser;
+
+	constructor(auth: _Auth, githubUser: GithubUser, githubTokens: GithubTokens) {
+		super(auth, PROVIDER_ID, githubUser.id.toString());
+
+		this.githubTokens = githubTokens;
+		this.githubUser = githubUser;
+	}
+}
+
+type AccessTokenResponseBody =
+	| {
+			access_token: string;
+	  }
+	| {
+			access_token: string;
+			refresh_token: string;
+			expires_in: number;
+			refresh_token_expires_in: number;
+	  };
+
+export type GithubTokens =
 	| {
 			accessToken: string;
 			accessTokenExpiresIn: null;
@@ -19,89 +132,7 @@ type Tokens =
 			refreshTokenExpiresIn: number;
 	  };
 
-type Config = OAuthConfig & {
-	redirectUri?: string;
-};
-
-export const github = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getGithubTokens = async (code: string): Promise<Tokens> => {
-		const requestUrl = createUrl(
-			"https://github.com/login/oauth/access_token",
-			{
-				client_id: config.clientId,
-				client_secret: config.clientSecret,
-				code
-			}
-		);
-		const request = new Request(requestUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			}
-		});
-		type ResponseBody =
-			| {
-					access_token: string;
-			  }
-			| {
-					access_token: string;
-					refresh_token: string;
-					expires_in: number;
-					refresh_token_expires_in: number;
-			  };
-		const tokens = await handleRequest<ResponseBody>(request);
-		if ("expires_in" in tokens) {
-			return {
-				accessToken: tokens.access_token,
-				refreshToken: tokens.refresh_token,
-				accessTokenExpiresIn: tokens.expires_in,
-				refreshTokenExpiresIn: tokens.refresh_token_expires_in
-			};
-		}
-		return {
-			accessToken: tokens.access_token,
-			accessTokenExpiresIn: null
-		};
-	};
-
-	const getGithubUser = async (accessToken: string) => {
-		const request = new Request("https://api.github.com/user", {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
-		const githubUser = await handleRequest<GithubUser>(request);
-		return githubUser;
-	};
-
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://github.com/login/oauth/authorize", {
-				client_id: config.clientId,
-				scope: scope([], config.scope),
-				state
-			});
-			if (config.redirectUri) {
-				url.searchParams.set("redirect_uri", config.redirectUri);
-			}
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const githubTokens = await getGithubTokens(code);
-			const githubUser = await getGithubUser(githubTokens.accessToken);
-			const providerUserId = githubUser.id.toString();
-			const githubUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...githubUserAuth,
-				githubUser,
-				githubTokens
-			};
-		}
-	} as const satisfies OAuthProvider;
-};
+export type GithubUser = PublicGithubUser | PrivateGithubUser;
 
 type PublicGithubUser = {
 	avatar_url: string;
@@ -157,5 +188,3 @@ type PrivateGithubUser = PublicGithubUser & {
 	business_plus?: boolean;
 	ldap_dn?: string;
 };
-
-export type GithubUser = PublicGithubUser | PrivateGithubUser;

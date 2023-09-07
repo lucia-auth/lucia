@@ -4,7 +4,6 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"migrate": "tsx migration/index.ts",
 		"dev": "astro dev",
 		"start": "astro dev",
 		"build": "astro build",
@@ -14,12 +13,12 @@
 	"dependencies": {
 		"@astrojs/node": "^5.3.0",
 		"@lucia-auth/adapter-sqlite": "latest",
-		"astro": "^2.7.2",
+		"astro": "^3.0.0",
+		"better-sqlite3": "^8.4.0",
 		"kysely": "^0.25.0",
 		"lucia": "latest"
 	},
 	"devDependencies": {
-		"@types/better-sqlite3": "^7.6.3",
-		"tsx": "^3.12.6"
+		"@types/better-sqlite3": "^7.6.3"
 	}
 }

@@ -1,16 +1,9 @@
 ---
-_order: 0
-title: "Google"
-description: "Learn about using the Google provider in Lucia OAuth integration"
+title: "Google OAuth provider"
+description: "Learn how to use the Google OAuth provider"
 ---
 
 OAuth integration for Google. Refer to [Google OAuth documentation](https://developers.google.com/identity/protocols/oauth2/web-server#httprests) for getting the required credentials. Provider id is `google`.
-
-```ts
-import { google } from "@lucia-auth/oauth/providers";
-```
-
-### Initialization
 
 ```ts
 import { google } from "@lucia-auth/oauth/providers";
@@ -18,6 +11,8 @@ import { auth } from "./lucia.js";
 
 const googleAuth = google(auth, configs);
 ```
+
+## `google()`
 
 ```ts
 const google: (
@@ -29,90 +24,61 @@ const google: (
 		scope?: string[];
 		accessType?: "online" | "offline";
 	}
-) => OAuthProvider<GoogleUser, GoogleTokens>;
+) => GoogleProvider;
 ```
 
-#### Parameter
+##### Parameters
 
-| name                 | type                                 | description                                                                     | optional | default  |
-| -------------------- | ------------------------------------ | ------------------------------------------------------------------------------- | :------: | :------: |
-| auth                 | [`Auth`](/reference/lucia-auth/auth) | Lucia instance                                                                  |          |          |
-| configs.clientId     | `string`                             | Google OAuth app client id                                                      |          |          |
-| configs.clientSecret | `string`                             | Google OAuth app client secret                                                  |          |          |
-| configs.redirectUri  | `string`                             | an authorized redirect URI                                                      |          |          |
-| configs.scope        | `string[]`                           | an array of scopes                                                              |    ✓     |          |
-| configs.accessType   | `"online" \| "offline"`              | Google OAuth Access type ("online" (default) or "offline" (gets refresh_token)) |    ✓     | "online" |
+| name                   | type                                       | description                              | optional | default    |
+| ---------------------- | ------------------------------------------ | ---------------------------------------- | :------: | ---------- |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                           |          |            |
+| `configs.clientId`     | `string`                                   | Google OAuth app client id               |          |            |
+| `configs.clientSecret` | `string`                                   | Google OAuth app client secret           |          |            |
+| `configs.redirectUri`  | `string`                                   | an authorized redirect URI               |          |            |
+| `configs.scope`        | `string[]`                                 | an array of scopes                       |    ✓     |            |
+| `configs.accessType`   | `"online" \| "offline"`                    | set to `"offline"` to get refresh tokens |    ✓     | `"online"` |
 
-#### Returns
+##### Returns
 
-| type                                              | description     |
-| ------------------------------------------------- | --------------- |
-| [`OAuthProvider`](/reference/oauth/oauthprovider) | Google provider |
+| type                                | description     |
+| ----------------------------------- | --------------- |
+| [`GoogleProvider`](#googleprovider) | Google provider |
 
-## `GoogleProvider`
+## Interfaces
 
-Satisfies [`OAuthProvider`](/reference/oauth/oauthprovider).
+### `GoogleAuth`
 
-### `getAuthorizationUrl()`
-
-Returns the authorization url for user redirection and a state for storage. The state should be stored in a cookie and validated on callback.
+See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 ```ts
-const getAuthorizationUrl: (
-	redirectUri?: string
-) => Promise<[url: URL, state: string]>;
+// implements OAuth2ProviderAuth<GoogleAuth<_Auth>>
+interface GoogleAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
+	validateCallback: (code: string) => Promise<GoogleUserAuth<_Auth>>;
+}
 ```
 
-#### Parameter
+| type                                |
+| ----------------------------------- |
+| [`GoogleUserAuth`](#googleuserauth) |
 
-| name        | type     | description                | optional |
-| ----------- | -------- | -------------------------- | :------: |
-| redirectUri | `string` | an authorized redirect URI |    ✓     |
+##### Generics
 
-#### Returns
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
-| name    | type     | description          |
-| ------- | -------- | -------------------- |
-| `url`   | `URL`    | authorize url        |
-| `state` | `string` | state parameter used |
-
-### `validateCallback()`
-
-Validates the callback and returns the session.
-
-```ts
-const validateCallback: (code: string) => Promise<ProviderSession>;
-```
-
-#### Parameter
-
-| name | type     | description                      |
-| ---- | -------- | -------------------------------- |
-| code | `string` | authorization code from callback |
-
-#### Returns
-
-| type                                                  | description       |
-| ----------------------------------------------------- | ----------------- |
-| [`ProviderSession`](/reference/oauth/providersession) | the oauth session |
-
-#### Errors
-
-| name           | description                          |
-| -------------- | ------------------------------------ |
-| FAILED_REQUEST | invalid code, network error, unknown |
-
-## `GoogleTokens`
+### `GoogleTokens`
 
 ```ts
 type GoogleTokens = {
 	accessToken: string;
 	refreshToken: string | null;
-	accessTokenExpiresIn: string;
+	accessTokenExpiresIn: number;
 };
 ```
 
-## `GoogleUser`
+### `GoogleUser`
 
 ```ts
 type GoogleUser = {
@@ -121,9 +87,31 @@ type GoogleUser = {
 	given_name: string;
 	family_name: string;
 	picture: string;
-	email: string;
-	email_verified: boolean;
 	locale: string;
-	hd: string;
+	email?: string;
+	email_verified?: boolean;
+	hd?: string;
 };
 ```
+
+### `GoogleUserAuth`
+
+Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
+
+```ts
+interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	googleUser: GoogleUser;
+	googleTokens: GoogleTokens;
+}
+```
+
+| properties     | type                            | description       |
+| -------------- | ------------------------------- | ----------------- |
+| `googleUser`   | [`GoogleUser`](#googleuser)     | Google user       |
+| `googleTokens` | [`GoogleTokens`](#googletokens) | Access tokens etc |
+
+##### Generics
+
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

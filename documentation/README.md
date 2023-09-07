@@ -1,6 +1,6 @@
-# Lucia Documentation
+# Lucia v2 Documentation
 
-Documentation for Lucia: https://lucia-auth.com.
+Documentation for Lucia v2 **WORK IN PROGRESS**
 
 ## Development
 
@@ -8,12 +8,6 @@ Documentation for Lucia: https://lucia-auth.com.
 
 ```
 pnpm i
-```
-
-### Generate content
-
-```
-pnpm generate
 ```
 
 ### Run server

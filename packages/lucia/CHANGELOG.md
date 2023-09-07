@@ -1,5 +1,53 @@
 # lucia
 
+## 2.4.2
+
+### Patch changes
+
+- [#1046](https://github.com/pilcrowOnPaper/lucia/pull/1046) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `AuthRequest.validateBearerToken()` returning `null` when session is idle
+
+## 2.4.1
+
+### Patch changes
+
+- [#1041](https://github.com/pilcrowOnPaper/lucia/pull/1041) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Support Astro v3
+
+## 2.4.0
+
+### Minor changes
+
+- [#986](https://github.com/pilcrowOnPaper/lucia/pull/986) by [@KazuumiN](https://github.com/KazuumiN) : Fixed `updateKeyPassword()` to return a `Promise<Key>`
+
+### Patch changes
+
+- [#980](https://github.com/pilcrowOnPaper/lucia/pull/980) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unused and undocumented `csrfProtection.baseDomain` configuration
+
+- [#985](https://github.com/pilcrowOnPaper/lucia/pull/985) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix Lucia throwing `AUTH_OUTDATED_PASSWORD` when using Bcrypt
+
+## 2.3.0
+
+### Minor changes
+
+- [#958](https://github.com/pilcrowOnPaper/lucia/pull/958) by [@aust1nz](https://github.com/aust1nz) : Add `fastify()` middleware
+
+## 2.2.0
+
+### Minor changes
+
+- [#944](https://github.com/pilcrowOnPaper/lucia/pull/944) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `hono()` middleware
+
+## 2.1.0
+
+### Minor changes
+
+- [#911](https://github.com/pilcrowOnPaper/lucia/pull/911) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Allow `null` in `csrfProtection.allowedSubdomains` configuration array
+
+## 2.0.0
+
+### Major changes
+
+- [#884](https://github.com/pilcrowOnPaper/lucia/pull/884) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update version
+
 ## 2.0.0-beta.7
 
 ### Major changes
@@ -87,3 +135,159 @@
 - [#739](https://github.com/pilcrowOnPaper/lucia/pull/739) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `AuthRequest.renewBearerToken()`
 
 - [#752](https://github.com/pilcrowOnPaper/lucia/pull/752) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Export `parseCookie()` from `/utils`
+
+### 2.0.0-beta.1
+
+#### Patch changes
+
+- [#735](https://github.com/pilcrowOnPaper/lucia/pull/735) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Session.fresh` fixed to `false`
+
+### 2.0.0-beta.0
+
+#### Major changes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update configuration
+
+  - Remove `autoDatabaseCleanup`
+
+  - Remove `transformDatabaseUser()` (see `transformUserAttributes()`)
+
+  - Replace `generateCustomUserId()` with `generateUserId()`
+
+  - Replace `hash` with `passwordHash`
+
+  - Replace `origin` with `requestOrigins`
+
+  - Replace `sessionCookie` with `sessionCookie.attributes`
+
+  - Add `sessionCookie.name` for setting session cookie name
+
+  - Add `transformUserAttributes()` for defining user attributes (**`userId` is automatically included**)
+
+  - Add `transformSessionAttributes()` for defining session attributes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `Auth` methods:
+
+  - Remove `getSessionUser()`
+
+  - Remove `validateSessionUser()`
+
+  - Remove `parseRequestHeaders()`
+
+  - Add `readSessionCookie()`
+
+  - Add `validateRequestOrigin()`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove primary keys
+
+  - Remove `Key.primary`
+
+  - Rename `Auth.createUser()` params `options.primaryKey` to `options.key`
+
+  - Remove column `key(primary_key)`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove single use keys
+
+  - **Lucia v2 no longer supports `@lucia-auth/tokens`**
+
+  - Remove `Session.type`
+
+  - Update `Auth.createKey()` params
+
+  - Remove column `key(expires)`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `Session`
+
+  - Remove `Session.userId`
+
+  - Add `Session.user`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `AuthRequest.validateUser()`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Introduce custom session attributes
+
+  - Update `Auth.createSession()` params
+
+  - Update behavior of `Auth.renewSession()` to include attributes of old session to renewed session automatically
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Overhaul adapter API
+
+  - Remove `UserAdapter.updateUserAttributes()`
+
+  - Remove `UserAdapter.deleteNonPrimaryKey()`
+
+  - Remove `UserAdapter.updateKeyPassword()`
+
+  - Remove `Adapter?.getSessionAndUserBySessionId()`
+
+  - Update `UserAdapter.setUser()` params
+
+  - Remove `UserAdapter.getKey()` params `shouldDataBeDeleted()`
+
+  - Add `UserAdapter.updateUser()`
+
+  - Add `UserAdapter.deleteKey()`
+
+  - Add `UserAdapter.updateKey()`
+
+  - Add `SessionAdapter.updateSession()`
+
+  - Add `Adapter.getSessionAndUser()`
+
+  - Rename type `AdapterFunction` to `InitializeAdapter`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update adapter specifications
+
+  - Insert and update methods do not return anything
+
+  - Insert and update methods for sessions and keys may optionally throw a Lucia error on invalid user id
+
+  - Insert methods do not throw Lucia errors on duplicate session and user ids
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove errors:
+
+  - `AUTH_DUPLICATE_SESSION_ID`
+
+  - `AUTO_USER_ID_GENERATION_NOT_SUPPORTED`
+
+  - `AUTH_EXPIRED_KEY`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove auto database clean up functionality
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `Middleware` takes a new `Context` params
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update exports:
+
+  - **Replace default export with named `lucia()`**
+
+  - Removed `generateRandomString()`
+
+  - Removed `serializeCookie()`
+
+  - Removed `Cookie`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Rename `SESSION_COOKIE_NAME` to `DEFAULT_SESSION_COOKIE_NAME`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : **NPM package `lucia-auth` is renamed to `lucia`**
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `RequestContext`:
+
+  - Add `RequestContext.headers.authorization`
+
+  - Add optional `RequestContext.storedSessionCookie`
+
+#### Minor changes
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Support bearer tokens
+
+  - Add `Auth.readBearerToken()`
+
+  - Add `AuthRequest.validateBearerToken()`
+
+- [#682](https://github.com/pilcrowOnPaper/lucia/pull/682) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : New `lucia/utils` export:
+
+  - `generateRandomString()`
+
+  - `serializeCookie()`
+
+  - `isWithinExpiration()`

@@ -1,5 +1,6 @@
-import type { AstroIntegration } from "astro";
 import rehype from "./rehype";
+
+import type { AstroIntegration } from "astro";
 
 export default () => {
 	const integration: AstroIntegration = {
@@ -8,9 +9,6 @@ export default () => {
 			"astro:config:setup": ({ updateConfig }) => {
 				updateConfig({
 					markdown: {
-						shikiConfig: {
-							theme: "github-dark"
-						},
 						rehypePlugins: [rehype()]
 					}
 				});

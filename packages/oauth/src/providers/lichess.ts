@@ -1,112 +1,119 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState, encodeBase64 } from "../utils.js";
-import { generateRandomString } from "lucia/utils";
+import {
+	OAuth2ProviderAuthWithPKCE,
+	createOAuth2AuthorizationUrlWithPKCE,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
 	redirectUri: string;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "lichess";
 
-export const lichess = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getAuthorizationUrl = async () => {
-		const state = generateState();
-		// PKCE code verifier length and alphabet defined in RFC 7636 section 4.1
-		const codeVerifier = generateRandomString(
-			96,
-			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~"
+export const lichess = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): LichessAuth<_Auth> => {
+	return new LichessAuth(auth, config);
+};
+
+export class LichessAuth<
+	_Auth extends Auth = Auth
+> extends OAuth2ProviderAuthWithPKCE<LichessUserAuth<_Auth>> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, codeVerifier: string, state: string]
+	> => {
+		return await createOAuth2AuthorizationUrlWithPKCE(
+			"https://lichess.org/oauth",
+			{
+				clientId: this.config.clientId,
+				codeChallengeMethod: "S256",
+				scope: this.config.scope ?? [],
+				redirectUri: this.config.redirectUri
+			}
 		);
-		const url = createUrl("https://lichess.org/oauth", {
-			response_type: "code",
-			client_id: config.clientId,
-			code_challenge_method: "S256",
-			code_challenge: pkceBase64urlEncode(
-				await pkceCodeChallenge(codeVerifier)
-			),
-			scope: scope([], config.scope),
-			redirect_uri: config.redirectUri,
-			state
-		});
-		return [url, state, codeVerifier] as const;
 	};
 
-	const getLichessTokens = async (code: string, codeVerifier: string) => {
-		// Not using createUrl since we need to POST
-		const request = new Request("https://lichess.org/api/token", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
-			},
-			body: new URLSearchParams({
-				client_id: config.clientId,
-				grant_type: "authorization_code",
-				redirect_uri: config.redirectUri,
-				code_verifier: codeVerifier,
-				code
-			}).toString()
-		});
-		const tokens = await handleRequest<{
+	public validateCallback = async (
+		code: string,
+		code_verifier: string
+	): Promise<LichessUserAuth<_Auth>> => {
+		const lichessTokens = await this.validateAuthorizationCode(
+			code,
+			code_verifier
+		);
+		const lichessUser = await getLichessUser(lichessTokens.accessToken);
+		return new LichessUserAuth(this.auth, lichessUser, lichessTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string,
+		codeVerifier: string
+	): Promise<LichessTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			expires_in: number;
-		}>(request);
+		}>(code, "https://lichess.org/api/token", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			codeVerifier
+		});
 
 		return {
 			accessToken: tokens.access_token,
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	const getLichessUser = async (accessToken: string) => {
-		const request = new Request("https://lichess.org/api/account", {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
-		const lichessUser = await handleRequest<LichessUser>(request);
-		return lichessUser;
-	};
+const getLichessUser = async (accessToken: string): Promise<LichessUser> => {
+	const request = new Request("https://lichess.org/api/account", {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const lichessUser = await handleRequest<LichessUser>(request);
+	return lichessUser;
+};
 
-	const validateCallback = async (code: string, code_verifier: string) => {
-		const lichessTokens = await getLichessTokens(code, code_verifier);
-		const lichessUser = await getLichessUser(lichessTokens.accessToken);
-		const providerUserId = lichessUser.id;
-		const lichessUserAuth = await providerUserAuth(
-			auth,
-			PROVIDER_ID,
-			providerUserId
-		);
-		return {
-			...lichessUserAuth,
-			lichessUser,
-			lichessTokens
-		};
-	};
+export class LichessUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public lichessTokens: LichessTokens;
+	public lichessUser: LichessUser;
 
-	return {
-		getAuthorizationUrl,
-		validateCallback
-	} as const satisfies OAuthProvider;
+	constructor(
+		auth: _Auth,
+		lichessUser: LichessUser,
+		lichessTokens: LichessTokens
+	) {
+		super(auth, PROVIDER_ID, lichessUser.id);
+
+		this.lichessTokens = lichessTokens;
+		this.lichessUser = lichessUser;
+	}
+}
+
+export type LichessTokens = {
+	accessToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type LichessUser = {
 	id: string;
 	username: string;
-};
-
-// Base64url-encode as specified in RFC 7636 (OAuth PKCE).
-const pkceBase64urlEncode = (arg: string) => {
-	return encodeBase64(arg)
-		.split("=")[0]
-		.replace(/\+/g, "-")
-		.replace(/\//g, "_");
-};
-
-// Generates code_challenge from code_verifier, as specified in RFC 7636.
-const pkceCodeChallenge = async (verifier: string) => {
-	const verifierBuffer = new TextEncoder().encode(verifier);
-	const challengeBuffer = await crypto.subtle.digest("SHA-256", verifierBuffer);
-	const challengeArray = Array.from(new Uint8Array(challengeBuffer));
-	return String.fromCharCode(...challengeArray);
 };

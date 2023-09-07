@@ -1,34 +1,79 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
+	scope?: string[];
 	redirectUri: string;
-	forceVerify?: boolean;
 };
 
 const PROVIDER_ID = "twitch";
 
-export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getTwitchTokens = async (code: string) => {
-		const requestUrl = createUrl("https://id.twitch.tv/oauth2/token", {
-			client_id: config.clientId,
-			client_secret: config.clientSecret,
-			code,
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri
-		});
-		const request = new Request(requestUrl, {
-			method: "POST"
-		});
-		const tokens = await handleRequest<{
+export const twitch = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): TwitchAuth<_Auth> => {
+	return new TwitchAuth(auth, config);
+};
+
+export class TwitchAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	TwitchUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		return await createOAuth2AuthorizationUrl(
+			"https://id.twitch.tv/oauth2/authorize",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: this.config.scope ?? []
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<TwitchUserAuth<_Auth>> => {
+		const twitchTokens = await this.validateAuthorizationCode(code);
+		const twitchUser = await getTwitchUser(
+			this.config.clientId,
+			twitchTokens.accessToken
+		);
+		return new TwitchUserAuth(this.auth, twitchUser, twitchTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<TwitchTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token: string;
 			expires_in: number;
-		}>(request);
+		}>(code, "https://id.twitch.tv/oauth2/token", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -36,51 +81,43 @@ export const twitch = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	const getTwitchUser = async (accessToken: string) => {
-		// https://dev.twitch.tv/docs/api/reference/#get-users
-		const request = new Request("https://api.twitch.tv/helix/users", {
-			headers: {
-				"Client-ID": config.clientId,
-				...authorizationHeaders("bearer", accessToken)
-			}
-		});
-		const twitchUsersResponse = await handleRequest<{
-			data: TwitchUser[];
-		}>(request);
-		return twitchUsersResponse.data[0];
-	};
+export class TwitchUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public twitchTokens: TwitchTokens;
+	public twitchUser: TwitchUser;
 
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const forceVerify = config.forceVerify ?? false;
-			const url = createUrl("https://id.twitch.tv/oauth2/authorize", {
-				client_id: config.clientId,
-				redirect_uri: config.redirectUri,
-				scope: scope([], config.scope),
-				response_type: "code",
-				force_verify: forceVerify.toString(),
-				state
-			});
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const twitchTokens = await getTwitchTokens(code);
-			const twitchUser = await getTwitchUser(twitchTokens.accessToken);
-			const providerUserId = twitchUser.id;
-			const twitchUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...twitchUserAuth,
-				twitchUser,
-				twitchTokens
-			};
+	constructor(auth: _Auth, twitchUser: TwitchUser, twitchTokens: TwitchTokens) {
+		super(auth, PROVIDER_ID, twitchUser.id);
+
+		this.twitchTokens = twitchTokens;
+		this.twitchUser = twitchUser;
+	}
+}
+
+const getTwitchUser = async (
+	clientId: string,
+	accessToken: string
+): Promise<TwitchUser> => {
+	// https://dev.twitch.tv/docs/api/reference/#get-users
+	const request = new Request("https://api.twitch.tv/helix/users", {
+		headers: {
+			"Client-ID": clientId,
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	} as const satisfies OAuthProvider;
+	});
+	const twitchUsersResponse = await handleRequest<{
+		data: TwitchUser[];
+	}>(request);
+	return twitchUsersResponse.data[0];
+};
+
+export type TwitchTokens = {
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresIn: number;
 };
 
 export type TwitchUser = {

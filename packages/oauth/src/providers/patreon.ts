@@ -1,35 +1,81 @@
-import { createUrl, handleRequest, authorizationHeaders } from "../request.js";
-import { providerUserAuth } from "../core.js";
-import { scope, generateState } from "../utils.js";
+import {
+	OAuth2ProviderAuth,
+	createOAuth2AuthorizationUrl,
+	validateOAuth2AuthorizationCode
+} from "../core/oauth2.js";
+import { ProviderUserAuth } from "../core/provider.js";
+import {
+	handleRequest,
+	authorizationHeader,
+	createUrl
+} from "../utils/request.js";
 
 import type { Auth } from "lucia";
-import type { OAuthConfig, OAuthProvider } from "../core.js";
 
-type Config = OAuthConfig & {
+type Config = {
+	clientId: string;
+	clientSecret: string;
 	redirectUri: string;
-	allMemberships?: boolean;
+	scope?: string[];
 };
 
 const PROVIDER_ID = "patreon";
 
-export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
-	const getPatreonTokens = async (code: string) => {
-		const requestUrl = createUrl("https://www.patreon.com/api/oauth2/token", {
-			client_id: config.clientId,
-			client_secret: config.clientSecret,
-			code,
-			grant_type: "authorization_code",
-			redirect_uri: config.redirectUri
-		});
+export const patreon = <_Auth extends Auth = Auth>(
+	auth: _Auth,
+	config: Config
+): PatreonAuth<_Auth> => {
+	return new PatreonAuth(auth, config);
+};
 
-		const request = new Request(requestUrl, {
-			method: "POST"
-		});
-		const tokens = await handleRequest<{
+export class PatreonAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
+	PatreonUserAuth<_Auth>
+> {
+	private config: Config;
+
+	constructor(auth: _Auth, config: Config) {
+		super(auth);
+
+		this.config = config;
+	}
+
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
+		const scopeConfig = this.config.scope ?? [];
+		return await createOAuth2AuthorizationUrl(
+			"https://www.patreon.com/oauth2/authorize",
+			{
+				clientId: this.config.clientId,
+				redirectUri: this.config.redirectUri,
+				scope: ["identity", ...scopeConfig]
+			}
+		);
+	};
+
+	public validateCallback = async (
+		code: string
+	): Promise<PatreonUserAuth<_Auth>> => {
+		const patreonTokens = await this.validateAuthorizationCode(code);
+		const patreonUser = await getPatreonUser(patreonTokens.accessToken);
+		return new PatreonUserAuth(this.auth, patreonUser, patreonTokens);
+	};
+
+	private validateAuthorizationCode = async (
+		code: string
+	): Promise<PatreonTokens> => {
+		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
-		}>(request);
+		}>(code, "https://www.patreon.com/api/oauth2/token", {
+			clientId: this.config.clientId,
+			redirectUri: this.config.redirectUri,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
+			}
+		});
 
 		return {
 			accessToken: tokens.access_token,
@@ -37,53 +83,49 @@ export const patreon = <_Auth extends Auth>(auth: _Auth, config: Config) => {
 			accessTokenExpiresIn: tokens.expires_in
 		};
 	};
+}
 
-	const getPatreonUser = async (accessToken: string) => {
-		const requestUrl = createUrl(
-			"https://www.patreon.com/api/oauth2/v2/identity",
-			{
-				"fields[user]":
-					"about,email,full_name,hide_pledges,image_url,is_email_verified,url"
-			}
-		);
-		const request = new Request(requestUrl, {
-			headers: authorizationHeaders("bearer", accessToken)
-		});
-		const { data: patreonUser } = await handleRequest<{
-			data: PatreonUser;
-		}>(request);
+export class PatreonUserAuth<
+	_Auth extends Auth = Auth
+> extends ProviderUserAuth<_Auth> {
+	public patreonTokens: PatreonTokens;
+	public patreonUser: PatreonUser;
 
-		return patreonUser;
-	};
+	constructor(
+		auth: _Auth,
+		patreonUser: PatreonUser,
+		patreonTokens: PatreonTokens
+	) {
+		super(auth, PROVIDER_ID, patreonUser.id);
+		this.patreonTokens = patreonTokens;
+		this.patreonUser = patreonUser;
+	}
+}
 
-	return {
-		getAuthorizationUrl: async () => {
-			const state = generateState();
-			const url = createUrl("https://www.patreon.com/oauth2/authorize", {
-				client_id: config.clientId,
-				redirect_uri: config.redirectUri,
-				scope: scope(["identity"], config.scope),
-				response_type: "code",
-				state
-			});
-			return [url, state] as const;
-		},
-		validateCallback: async (code: string) => {
-			const patreonTokens = await getPatreonTokens(code);
-			const patreonUser = await getPatreonUser(patreonTokens.accessToken);
-			const providerUserId = patreonUser.id;
-			const patreonUserAuth = await providerUserAuth(
-				auth,
-				PROVIDER_ID,
-				providerUserId
-			);
-			return {
-				...patreonUserAuth,
-				patreonUser,
-				patreonTokens
-			};
+const getPatreonUser = async (accessToken: string): Promise<PatreonUser> => {
+	const requestUrl = createUrl(
+		"https://www.patreon.com/api/oauth2/v2/identity",
+		{
+			"fields[user]":
+				"about,email,full_name,hide_pledges,image_url,is_email_verified,url"
 		}
-	} as const satisfies OAuthProvider;
+	);
+	const request = new Request(requestUrl, {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
+		}
+	});
+	const { data: patreonUser } = await handleRequest<{
+		data: PatreonUser;
+	}>(request);
+
+	return patreonUser;
+};
+
+export type PatreonTokens = {
+	accessToken: string;
+	refreshToken: string | null;
+	accessTokenExpiresIn: number;
 };
 
 export type PatreonUser = {
