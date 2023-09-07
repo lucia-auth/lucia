@@ -10,11 +10,13 @@ export const queryContent = async (
 		const matchedHeadings = page.headings.filter((heading) => {
 			return match(heading.title, keywords);
 		});
+		const pageTitleMatched = match(page.title + (page.description ?? ""), keywords)
 		if (
-			match(page.title + (page.description ?? ""), keywords) ||
+			pageTitleMatched ||
 			matchedHeadings.length > 0
 		) {
 			matchedPages.push({
+				priority: pageTitleMatched ? 1: 0,
 				title: page.title,
 				description: page.description,
 				href: page.href,
@@ -22,7 +24,7 @@ export const queryContent = async (
 			});
 		}
 	}
-	return matchedPages;
+	return matchedPages.sort((a, b) => b.priority - a.priority);
 };
 
 const getRawContent = async (): Promise<string> => {
@@ -67,6 +69,7 @@ const promise = new Promise<QueryResultPage[]>(async (resolve, reject) => {
 				});
 			}
 			result.push({
+				priority: 0,
 				title,
 				href,
 				description: description || null,
@@ -93,6 +96,7 @@ type QueryResultHeading = {
 	hash: string;
 };
 type QueryResultPage = {
+	priority: number
 	title: string;
 	description: string | null;
 	href: string;
