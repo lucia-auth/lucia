@@ -1,5 +1,15 @@
 # lucia
 
+## 2.5.0
+
+### Minor changes
+
+- [#992](https://github.com/pilcrowOnPaper/lucia/pull/992) by [@Tirke](https://github.com/Tirke) : Add `elysia()` middleware
+
+### Patch changes
+
+- [#1079](https://github.com/pilcrowOnPaper/lucia/pull/1079) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.handleRequest()` causing error in middleware when `nextjs()` was used
+
 ## 2.4.2
 
 ### Patch changes

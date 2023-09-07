@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-session-redis
 
+## 2.1.1
+
+### Patch changes
+
+- [#1069](https://github.com/pilcrowOnPaper/lucia/pull/1069) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix Upstash adapter `getSessionsByUserId()`
+
 ## 2.1.0
 
 ### Minor changes
