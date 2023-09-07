@@ -123,7 +123,7 @@ const auth = lucia({
 
 ## Set up types
 
-Create a `.d.ts` file in your project root and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`. 
+Create a `.d.ts` file in your project root and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
 // app.d.ts

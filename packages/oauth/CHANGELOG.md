@@ -1,5 +1,21 @@
 # @lucia-auth/oauth
 
+## 3.1.0
+
+### Minor changes
+
+- [#988](https://github.com/pilcrowOnPaper/lucia/pull/988) by [@tmadge](https://github.com/tmadge) : Add AWS Cognito provider
+
+- [#1072](https://github.com/pilcrowOnPaper/lucia/pull/1072) by [@infovore](https://github.com/infovore) : Add Strava provider
+
+- [#1068](https://github.com/pilcrowOnPaper/lucia/pull/1068) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `email` field `FacebookUser`
+
+### Patch changes
+
+- [#1070](https://github.com/pilcrowOnPaper/lucia/pull/1070) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `Auth0User`
+
+- [#1065](https://github.com/pilcrowOnPaper/lucia/pull/1065) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove test files from release
+
 ## 3.0.0
 
 ### Major changes

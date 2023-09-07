@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 import markdown from "./integrations/markdown";
 import og from "./integrations/og";
-import search from "./integrations/search"
+import search from "./integrations/search";
 import tailwind from "@astrojs/tailwind";
 
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
