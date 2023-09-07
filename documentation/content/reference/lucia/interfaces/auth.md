@@ -301,7 +301,7 @@ const keys = await auth.getAllUserKeys(userId);
 Validate the user id and get all valid sessions of a user. Includes active and idle sessions, but not dead sessions.
 
 ```ts
-const getAllUserKeys: (userId: string) => Promise<Session[]>;
+const getAllUserSessions: (userId: string) => Promise<Session[]>;
 ```
 
 ##### Parameters
