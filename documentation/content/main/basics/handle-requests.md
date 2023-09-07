@@ -27,20 +27,21 @@ lucia({
 });
 
 // `Auth.handleRequest()` now accepts `Request`
-auth.handleRequest(new Request());
+const authRequest = auth.handleRequest(new Request());
 ```
 
 ## List of middleware
 
 - [Astro](#astro)
+- [Elysia](#elysia)
 - [Express](#express)
 - [Fastify](#fastify)
 - [H3](#h3)
   - [Nuxt](#nuxt)
+- [Hono](#hono)
 - [Next.js](#nextjs)
 - [Node.js](#nodejs)
 - [Qwik](#qwik)
-- [Elysia](#elysia)
 - [SvelteKit](#sveltekit)
 - [Web standard](#web-standard)
   - [Remix](#remix)
@@ -60,20 +61,34 @@ import { lucia } from "lucia/middleware";
 import { astro } from "lucia/middleware";
 ```
 
-```ts
+```astro
+---
 // .astro component
-auth.handleRequest(Astro);
+const authRequest = auth.handleRequest(Astro);
+---
 ```
 
 ```ts
 // API routes and middleware
 export const get = async (context) => {
-	auth.handleRequest(context);
+	const authRequest = auth.handleRequest(context);
 	// ...
 };
 ```
 
 We recommend storing `AuthRequest` in `locals`.
+
+### Elysia
+
+```ts
+import { elysia } from "lucia/middleware";
+```
+
+```ts
+new Elysia().get("/", async (context) => {
+	const authRequest = auth.handleRequest(context);
+});
+```
 
 ### Express
 
@@ -110,8 +125,20 @@ import { h3 } from "lucia/middleware";
 ```ts
 // api routes (server/api/index.ts)
 export default defineEventHandler(async (event) => {
-	auth.handleRequest(event);
+	const authRequest = auth.handleRequest(event);
 	// ...
+});
+```
+
+### Hono
+
+```ts
+import { hono } from "lucia/middleware";
+```
+
+```ts
+app.get("/", async (context) => {
+	const authRequest = auth.handleRequest(context);
 });
 ```
 
@@ -126,15 +153,14 @@ import { nextjs } from "lucia/middleware";
 ```ts
 // pages/index.tsx
 export const getServerSideProps = async (context) => {
-	auth.handleRequest(context);
+	const authRequest = auth.handleRequest(context);
 };
 ```
 
 ```ts
 // pages/index.ts
 export default async (req: IncomingMessage, res: OutgoingMessage) => {
-	auth.handleRequest({ req, res });
-	// ...
+	const authRequest = auth.handleRequest({ req, res });
 };
 ```
 
@@ -162,7 +188,7 @@ We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncook
 import { cookies } from "next/headers";
 
 export default () => {
-	auth.handleRequest({
+	const authRequest = auth.handleRequest({
 		request: null,
 		cookies
 	});
@@ -173,7 +199,7 @@ export default () => {
 ```ts
 // app/routes.ts
 export const GET = async (request: NextRequest) => {
-	auth.handleRequest({
+	const authRequest = auth.handleRequest({
 		request,
 		cookies
 	});
@@ -187,7 +213,7 @@ export const GET = async (request: NextRequest) => {
 // middleware.ts
 export const middleware = async (request: NextRequest) => {
 	// `AuthRequest.setSession()` is not supported when only `NextRequest` is passed
-	auth.handleRequest(request);
+	const authRequest = auth.handleRequest(request);
 	// ...
 	const session = await auth.createSession({
 		// ...
@@ -205,7 +231,7 @@ import { node } from "lucia/middleware";
 ```
 
 ```ts
-auth.handleRequest(incomingMessage, outgoingMessage);
+const authRequest = auth.handleRequest(incomingMessage, outgoingMessage);
 ```
 
 ### Qwik
@@ -215,21 +241,8 @@ import { qwik } from "lucia/middleware";
 ```
 
 ```ts
-auth.handleRequest(requestEvent as RequestEventLoader);
-auth.handleRequest(requestEvent as RequestEventAction);
-```
-
-### Elysia
-
-```ts
-import { elysia } from "lucia/middleware";
-```
-
-```ts
-const app = new Elysia();
-app.get("/", async ({ request, set }) => {
-	const authReq = auth.handleRequest({ request, set });
-});
+const authRequest = auth.handleRequest(requestEvent as RequestEventLoader);
+const authRequest = auth.handleRequest(requestEvent as RequestEventAction);
 ```
 
 ### SvelteKit
@@ -241,13 +254,13 @@ import { sveltekit } from "lucia/middleware";
 ```ts
 // +page.server.ts
 export const load = async (event) => {
-	auth.handleRequest(event);
+	const authRequest = auth.handleRequest(event);
 	// ...
 };
 
 export const actions = {
 	default: async (event) => {
-		auth.handleRequest(event);
+		const authRequest = auth.handleRequest(event);
 		// ...
 	}
 };
@@ -268,7 +281,7 @@ export const handle = async ({ event, resolve }) => {
 ```ts
 import { web } from "lucia/middleware";
 
-auth.handleRequest(request as Request);
+const authRequest = auth.handleRequest(request as Request);
 ```
 
 ```ts

@@ -5,7 +5,7 @@ format: "code"
 
 ## `astro()`
 
-Middleware for Astro 1.x and 2.x.
+Middleware for Astro 1.x, 2.x, and 3.x.
 
 ```ts
 const astro: Middleware;
@@ -27,6 +27,30 @@ import { astro } from "lucia/middleware";
 const auth = lucia({
 	middleware: astro()
 	// ...
+});
+```
+
+## `elysia()`
+
+Middleware for Elysia.
+
+```ts
+const elysia: Middleware;
+```
+
+##### Usage
+
+```ts
+auth.handleRequest(context as Context);
+```
+
+| name      | type                                                           |
+| --------- | -------------------------------------------------------------- |
+| `context` | [`Context`](https://elysiajs.com/concept/handler.html#context) |
+
+```ts
+new Elysia().get("/", (context) => {
+	auth.handleRequest(context);
 });
 ```
 
@@ -112,6 +136,30 @@ auth.handleRequest(event as H3Event);
 | name    | type                                                  |
 | ------- | ----------------------------------------------------- |
 | `event` | [`H3Event`](https://www.jsdocs.io/package/h3#H3Event) |
+
+## `hono()`
+
+Middleware for Hono.
+
+```ts
+const hono: Middleware;
+```
+
+##### Usage
+
+```ts
+auth.handleRequest(context as Context);
+```
+
+| name      | type                                      |
+| --------- | ----------------------------------------- |
+| `context` | [`Context`](https://hono.dev/api/context) |
+
+```ts
+app.get("/", (context) => {
+	auth.handleRequest(context);
+});
+```
 
 ## `lucia()`
 
