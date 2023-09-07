@@ -11,8 +11,7 @@ export const queryContent = async (
 			return match(heading.title, keywords);
 		});
 		if (
-			match(page.title, keywords) ||
-			match(page.description ?? "", keywords) ||
+			match(page.title + (page.description ?? ""), keywords) ||
 			matchedHeadings.length > 0
 		) {
 			matchedPages.push({
