@@ -111,7 +111,7 @@ export type StravaUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface StravaUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	stravaUser: StravaUser;
 	stravaTokens: StravaTokens;
 }

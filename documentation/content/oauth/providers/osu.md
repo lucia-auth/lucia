@@ -236,7 +236,7 @@ type OsuGameMode = "fruits" | "mania" | "osu" | "taiko";
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface OsuUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	osuUser: OsuUser;
 	osuTokens: OsuTokens;
 }

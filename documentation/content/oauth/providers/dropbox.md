@@ -124,7 +124,7 @@ type BaseDropboxUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface DropboxUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	dropboxUser: DropboxUser;
 	dropboxTokens: DropboxTokens;
 }

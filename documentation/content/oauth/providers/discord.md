@@ -107,7 +107,7 @@ type DiscordUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface DiscordUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	discordUser: DiscordUser;
 	discordTokens: DiscordTokens;
 }

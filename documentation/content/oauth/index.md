@@ -37,6 +37,7 @@ We also have framework specific guides.
 - Azure Active Directory
 - Bitbucket
 - Box
+- Cognito
 - Discord
 - Dropbox
 - Facebook

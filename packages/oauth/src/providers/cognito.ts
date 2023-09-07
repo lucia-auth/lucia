@@ -36,9 +36,9 @@ export class CognitoAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		this.config = config;
 	}
 
-	public getAuthorizationUrl = async (
-		identityProvider?: string
-	): Promise<readonly [url: URL, state: string]> => {
+	public getAuthorizationUrl = async (): Promise<
+		readonly [url: URL, state: string]
+	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
 			new URL("/oauth2/authorize", this.config.userPoolDomain),

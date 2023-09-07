@@ -131,7 +131,7 @@ type AppleUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface AppleUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	appleUser: AppleUser;
 	appleTokens: AppleTokens;
 }

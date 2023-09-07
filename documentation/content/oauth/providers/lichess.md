@@ -89,7 +89,7 @@ type LichessUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface LichessUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	lichessUser: LichessUser;
 	lichessTokens: LichessTokens;
 }
