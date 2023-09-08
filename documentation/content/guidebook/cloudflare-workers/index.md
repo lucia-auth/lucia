@@ -40,6 +40,7 @@ import { PrismaClient } from "@prisma/client/edge";
 You can follow the Schema from [D1 Database Adapter Schema](/database-adapters/cloudflare-d1#sqlite3-schema):
 
 ```sql
+-- schema.sql
 CREATE TABLE user (
     id VARCHAR(15) NOT NULL PRIMARY KEY
     -- Add additional fields here
@@ -78,6 +79,7 @@ You can follow the [Sign in with Username and Password](/guidebook/sign-in-with-
 In your `lucia.ts`, we pass in env as as a parameter to our `auth` function, as this has to be initialized with each request:
 
 ```ts
+// lucia.ts
 import { lucia } from "lucia";
 import { web } from "lucia/middleware";
 import { d1 } from "@lucia-auth/adapter-sqlite";
@@ -103,6 +105,7 @@ export type Auth = typeof auth;
 Create your `index.ts`, this will be your entrypoint:
 
 ```ts
+// index.ts
 import { router } from "./handler";
 
 export default {
@@ -113,6 +116,7 @@ export default {
 Then, `handler.ts`, this will handle your routes:
 
 ```ts
+// handler.ts
 import { Router } from "itty-router";
 // import seperate routes here..
 
@@ -131,7 +135,7 @@ You can export your own functions from seperate files and import them into `hand
 ## Creating Authorized Routes
 
 ```ts
-// routes/authorized-route.ts
+// ./routes/authorized-route.ts
 import { auth } from "./lucia.ts";
 
 export const authorizedRoute = async (

@@ -36,6 +36,7 @@ If you are using [`adapter-prisma`](/database-adapters/prisma) within your worke
 Create your drizzle schema in a `schema.ts` file in your worker:
 
 ```ts
+// schema.ts
 import { tableNames } from "./db.ts";
 import {
     sqliteTable,
@@ -78,6 +79,7 @@ You can initialize a local D1 database for testing with `wrangler d1 execute --l
 To start the worker locally, run `[npx] wrangler dev --local --persist`.
 
 ```ts
+// db.ts
 import { drizzle as DrizzleORM } from "drizzle-orm/d1";
 import { createClient } from "@libsql/client/web"
 import { schema } from "./schema.ts";
@@ -145,6 +147,7 @@ Within your hono routes, you're able to call lucia like so, with your bindings t
 You can follow the [Sign in With Username and Password](/guidebook/sign-in-with-username-and-password#hono) guide for Hono, modify it to pass `c.env` to the `auth` function.
 
 ```ts
+// index.ts
 import { Hono } from 'hono'
 import { auth } from './lucia.ts'
 import { D1Database } from "@cloudflare/workers-types";
