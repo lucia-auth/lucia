@@ -148,7 +148,7 @@ type PrivateGithubUser = PublicGithubUser & {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface GithubUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	githubUser: GithubUser;
 	githubTokens: GithubTokens;
 }

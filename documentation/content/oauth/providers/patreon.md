@@ -103,7 +103,7 @@ type PatreonUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface PatreonUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	patreonUser: PatreonUser;
 	patreonTokens: PatreonTokens;
 }

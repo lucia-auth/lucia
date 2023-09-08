@@ -105,7 +105,7 @@ type FacebookUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface FacebookUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	facebookUser: FacebookUser;
 	facebookTokens: FacebookTokens;
 }

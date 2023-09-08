@@ -101,7 +101,7 @@ type AzureADUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface AzureADUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	azureADUser: AzureADUser;
 	azureADTokens: AzureADTokens;
 }

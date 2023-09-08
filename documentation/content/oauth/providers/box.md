@@ -128,7 +128,7 @@ type BoxUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface BoxUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	boxUser: BoxUser;
 	boxTokens: BoxTokens;
 }

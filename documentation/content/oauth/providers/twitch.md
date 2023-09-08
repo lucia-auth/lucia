@@ -99,7 +99,7 @@ type TwitchUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface TwitchUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	twitchUser: TwitchUser;
 	twitchTokens: TwitchTokens;
 }

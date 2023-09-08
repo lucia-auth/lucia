@@ -116,7 +116,7 @@ type SlackUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface SlackUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	slackUser: SlackUser;
 	slackTokens: SlackTokens;
 }
