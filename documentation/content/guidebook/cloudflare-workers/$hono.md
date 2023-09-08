@@ -157,7 +157,7 @@ const app = new Hono<{ Bindings: Bindings }>()
 
 app.get('/', (c) => {
     c.status(200)
-    return c.json({ message: 'This route is a public route!' })
+    return c.json({ message: 'This route is a public route' })
 })
 
 app.get('/private', (c) => {
@@ -165,11 +165,11 @@ app.get('/private', (c) => {
 
     if (!session) {
         c.status(401)
-        return c.json({ message: 'You are not logged in!' })
+        return c.json({ message: 'You are not logged in' })
     }
 
     c.status(200)
-    return c.json({ message: 'You are logged in and then view this route!', session })
+    return c.json({ message: 'You are logged in and can view this route', session })
 })
 ```
 

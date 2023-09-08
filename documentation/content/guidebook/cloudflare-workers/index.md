@@ -29,7 +29,7 @@ npm install lucia && npm install @lucia-auth/adapter-sqlite
 
 ## Using Prisma on The Edge
 
-If you are using [`adapter-prisma`](/database-adapters/prisma) within your worker, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`.
+If you are using [`adapter-prisma`](/database-adapters/prisma) within your worker instead of drizzle, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`.
 
 ```ts
 import { PrismaClient } from "@prisma/client/edge";
