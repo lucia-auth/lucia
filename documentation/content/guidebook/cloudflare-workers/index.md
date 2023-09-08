@@ -31,10 +31,6 @@ npm install lucia && npm install @lucia-auth/adapter-sqlite
 
 If you are using [`adapter-prisma`](/database-adapters/prisma) within your worker instead of drizzle, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`.
 
-```ts
-import { PrismaClient } from "@prisma/client/edge";
-```
-
 ## D1 Schema
 
 You can follow the Schema from [D1 Database Adapter Schema](/database-adapters/cloudflare-d1#sqlite3-schema):
