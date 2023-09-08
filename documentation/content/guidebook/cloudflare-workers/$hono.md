@@ -3,9 +3,9 @@ title: "Using Lucia with Cloudflare Workers on Hono"
 description: "Learn how to use Lucia within Cloudflare Workers using Hono, Drizzle ORM and D1."
 ---
 
-[Cloudflare Workers](https://workers.cloudflare.com/) is a serverless platform that allows you to run code on Cloudflare's edge networks, reducing latency and increasing performance. If you are new to Cloudflare Workers, you can learn more about them in the [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/get-started/guide/).
+[Cloudflare Workers](https://workers.cloudflare.com/) is a serverless platform that allows you to run code on Cloudflare's edge network, reducing latency for your users. If you are new to Cloudflare Workers, you can learn more about them in the [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/get-started/guide/).
 
-Lucia offers middleware for [Hono](https://hono.dev/), a framework for Cloudflare Workers. This guide will walk you through using Lucia with Cloudflare Workers on Hono. Using [Drizzle ORM](https://orm.drizzle.team/) and [Cloudflare D1](https://developers.cloudflare.com/d1/) as our database driver.
+Lucia offers middleware for [Hono](https://hono.dev/), a framework which supports Cloudflare Workers. This guide will walk you through using Lucia with Cloudflare Workers on Hono. Using [Drizzle ORM](https://orm.drizzle.team/) and [Cloudflare D1](https://developers.cloudflare.com/d1/) as our database driver.
 
 ## Hashing Considerations
 
@@ -29,7 +29,7 @@ npm install lucia && npm install @lucia-auth/adapter-sqlite
 
 ## Using Prisma on The Edge
 
-If you are using `adapter-prisma` within your worker, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`:
+If you are using [`adapter-prisma`](/database-adapters/prisma) within your worker, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`.
 
 ## Drizzle Schema
 
@@ -74,6 +74,9 @@ export const key = sqliteTable("user_key", {
 Create a `db.ts` file in your worker containing the following; modify it as needed to suit your specific database setup.
 This creates a wrapper for both Drizzle ORM and D1 itself, allowing you to use both when required.
 
+You can initialize a local D1 database for testing with `wrangler d1 execute --local --file=./path/to/schema.sql`.
+To start the worker locally, run `[npx] wrangler dev --local --persist`.
+
 ```ts
 import { drizzle as DrizzleORM } from "drizzle-orm/d1";
 import { createClient } from "@libsql/client/web"
@@ -87,9 +90,9 @@ export const tableNames = {
 };
 
 export const dbClient = (env: Env) => {
-    const D1Database = env.D1Database;
+    const D1Database = env.database;
 
-    const drizzle = DrizzleORM(D1Database, {
+    const drizzle = DrizzleORM(database, {
         schema,
         // ...
     });
@@ -99,6 +102,15 @@ export const dbClient = (env: Env) => {
         drizzle,
     };
 };
+```
+
+Set your binding to your D1 database in your `wrangler.toml` file, to get types for D1, install `@cloudflare/workers-types`.
+
+```toml
+[[ d1_databases ]]
+binding = "database"
+database_name = "database_name"
+database_id = "database_id"
 ```
 
 ## Lucia Configuration
@@ -138,7 +150,7 @@ import { auth } from './lucia.ts'
 import { D1Database } from "@cloudflare/workers-types";
 
 type Bindings = {    
-    D1Database: D1Database
+    database: D1Database
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -163,7 +175,7 @@ app.get('/private', (c) => {
 
 ## Session Attributes
 
-If you want to add session attributes for additional security based off the [Improving Session Security](/guidebook/improving-session-security) guide, such as Country, User Agent or IP, you can fetch the `cf-ipcountry` header for IP, `user-agent` for User Agent, `x-forwarded-for` or `x-real-ip` for IP. Hashing is strongly reccomended to further prevent session hijacking and user security.
+If you want to add session attributes for additional security based off the [Improving Session Security](/guidebook/improve-session-security) guide, such as Country, User Agent or IP, you can fetch the `cf-ipcountry` header for IP, `user-agent` for User Agent, `x-forwarded-for` or `x-real-ip` for IP. Hashing is strongly reccomended to further prevent session hijacking and user security.
 
 ```ts
 const newSession = await auth(c.env).createSession({
@@ -178,7 +190,7 @@ const newSession = await auth(c.env).createSession({
 
 ## Deploying
 
-To deploy your worker, you can use the [Cloudflare Wrangler CLI](https://developers.cloudflare.com/workers/cli-wrangler).
+To deploy your worker, you can use the [Wrangler CLI](https://developers.cloudflare.com/workers/cli-wrangler).
 
 ```bash
 wrangler publish
