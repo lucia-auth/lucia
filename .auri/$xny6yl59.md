@@ -1,6 +1,6 @@
 ---
 package: "@lucia-auth/oauth"
-type: "minor"
+type: "patch"
 ---
 
 * Cleanup unused identityProvider var in the Cognito provider
