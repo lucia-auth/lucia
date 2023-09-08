@@ -7,7 +7,6 @@ description: "Learn how to use Lucia within Cloudflare Workers using Hono, Drizz
 
 Lucia offers middleware for [Hono](https://hono.dev/), a framework for Cloudflare Workers. This guide will walk you through using Lucia with Cloudflare Workers on Hono. Using [Drizzle ORM](https://orm.drizzle.team/) and [Cloudflare D1](https://developers.cloudflare.com/d1/) as our database driver.
 
-
 ## Hashing Considerations
 
 Please note that hashing will not work on Free Bundled Workers; **the allocated 10ms CPU time is not sufficient for this**. Consider using unbound workers or paid bundled workers for hashing operations.
@@ -28,6 +27,8 @@ Install Lucia and the database adapter for your chosen database (in this case, S
 npm install lucia && npm install @lucia-auth/adapter-sqlite
 ```
 
+## Using Prisma on The Edge
+
 If you are using `adapter-prisma` within your worker, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`:
 
 ## Drizzle Schema
@@ -37,34 +38,34 @@ Create your drizzle schema in a `schema.ts` file in your worker:
 ```ts
 import { tableNames } from "./db.ts";
 import {
-	sqliteTable,
-	text,
-	integer,
-	uniqueIndex,
+    sqliteTable,
+    text,
+    integer,
+    uniqueIndex,
 } from "drizzle-orm/sqlite-core"
 
 export const user = sqliteTable("user", {
-	id: text("id").primaryKey()
+    id: text("id").primaryKey()
 });
 
 export const session = sqliteTable("user_session", {
-	id: text("id").primaryKey(),
-	userId: text("user_id")
-		.notNull()
-		.references(() => users.id, {
-			onUpdate: "cascade",
-			onDelete: "cascade",
-		}),
-	activeExpires: integer("active_expires").notNull(),
-	idleExpires: integer("idle_expires").notNull(),
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, {
+            onUpdate: "cascade",
+            onDelete: "cascade",    
+    }),
+    activeExpires: integer("active_expires").notNull(),
+    idleExpires: integer("idle_expires").notNull(),
 });
 
 export const key = sqliteTable("user_key", {
-	id: text("id").primaryKey(),
-	userId: text("user_id")
-		.notNull()
-		.references(() => user.id),
-	hashedPassword: text("hashed_password")
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id),
+    hashedPassword: text("hashed_password")
 });
 ```
 
@@ -179,7 +180,7 @@ const newSession = await auth(c.env).createSession({
 
 To deploy your worker, you can use the [Cloudflare Wrangler CLI](https://developers.cloudflare.com/workers/cli-wrangler).
 
-```
+```bash
 wrangler publish
 ```
 

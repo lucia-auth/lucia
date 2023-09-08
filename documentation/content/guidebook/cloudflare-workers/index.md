@@ -29,7 +29,9 @@ Install Lucia and the database adapter for your chosen database (in this case, S
 npm install lucia && npm install @lucia-auth/adapter-sqlite
 ```
 
-If you are using `adapter-prisma` within your worker instead of D1, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`:
+## Using Prisma on The Edge
+
+If you are using `adapter-prisma` within your worker, you'll have to import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`:
 
 ```ts
 import { PrismaClient } from "@prisma/client/edge";
@@ -73,16 +75,16 @@ import { web } from "lucia/middleware";
 import { d1 } from "@lucia-auth/adapter-sqlite";
 
 export const auth = (env: Env) => lucia({
-	adapter: d1(env.database, {
+    adapter: d1(env.database, {
         user: "user",
         key: "user_key",
         session: "user_session"
     }),
-	env: "DEV", // or PROD for production
-	middleware: web(),
-	sessionCookie: {
-		expires: false
-	}
+    env: "DEV", // or PROD for production
+    middleware: web(),
+    sessionCookie: {
+        expires: false
+    }
 });
 
 export type Auth = typeof auth;
@@ -150,6 +152,6 @@ If you want to add session attributes for additional security based off the [Imp
 
 To deploy your worker, you can use the [Cloudflare Wrangler CLI](https://developers.cloudflare.com/workers/cli-wrangler).
 
-```
+```bash
 wrangler publish
 ```
