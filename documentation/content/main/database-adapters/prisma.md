@@ -65,6 +65,14 @@ const auth = lucia({
 });
 ```
 
+### In non-Node.js environment
+
+To use Prisma in an environment that doesn't support Node.js (including Deno, Cloudflare Workers, Vercel Edge), import `PrismaClient` from `@prisma/client/edge` instead of `@prisma/client`.
+
+```ts
+import { PrismaClient } from "@prisma/client/edge";
+```
+
 ## Prisma schema
 
 You can add additional columns to the user model to store user attributes, and to the session model to store session attributes. If you change the model names, pass the new names to the adapter config.

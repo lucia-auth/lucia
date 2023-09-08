@@ -70,7 +70,10 @@ if (!session || !isWithinExpiration(session.absoluteExpiration.getTime())) {
 
 ## Detect stolen sessions
 
-There are few ways to detect if a session cookie is being used by a different device/person. All these approaches are imperfect in some way but provide a good layer of security.
+There are few ways to detect if a session cookie is being used by a different device/person. All these approaches are imperfect in some way but provide a good layer of security. See each hosting provider's documentation on custom headers:
+
+- [Cloudflare](https://developers.cloudflare.com/fundamentals/reference/http-request-headers)
+- [Vercel](https://vercel.com/docs/edge-network/headers)
 
 ### IP addresses
 

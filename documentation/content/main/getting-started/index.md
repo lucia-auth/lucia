@@ -140,3 +140,9 @@ node --experimental-global-webcrypto index.js
 You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/pilcrowOnPaper/lucia/tree/main/examples).
 
 Remember to check out the [Guidebook](/guidebook) for tutorials and guides! If you have any questions, join our [Discord server](/discord)!
+
+## Limitations
+
+### Cloudflare
+
+Please note that password hashing will not work on Free Bundled Workers; **the allocated 10ms CPU time is not sufficient for this**. Consider using unbound workers or paid bundled workers for hashing operations. This is not an issue when using OAuth.

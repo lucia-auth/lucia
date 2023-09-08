@@ -41,11 +41,13 @@ yarn add @lucia-auth/adapter-sqlite
 
 ## Usage
 
+Since the D1 bindings are only available in runtime, you'll need to create a new `Auth` instance on every request. Make sure to update your `Auth` type.
+
 ```ts
 import { lucia } from "lucia";
 import { d1 } from "@lucia-auth/adapter-sqlite";
 
-const initializeLucia = (db: D1Database) => {
+export const initializeLucia = (db: D1Database) => {
 	const auth = lucia({
 		adapter: d1(db, {
 			user: "user",
@@ -55,6 +57,23 @@ const initializeLucia = (db: D1Database) => {
 		// ...
 	});
 	return auth;
+};
+
+export type Auth = ReturnType<typeof initializeLucia>;
+```
+
+Please see the [documentation for Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/) for accessing Cloudflare binding in your framework.
+
+```ts
+type Env = {
+	DB: D1Database; // install `@cloudflare/workers-types`
+};
+
+export default {
+	fetch: async (request: Request, env: Env) => {
+		const auth = initializeLucia(env.DB);
+		// ...
+	}
 };
 ```
 
