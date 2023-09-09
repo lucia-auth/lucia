@@ -11,12 +11,12 @@ if (!session) return Astro.redirect("/login", 302);
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Github OAuth with Lucia</title>
+		<title>GitHub OAuth with Lucia</title>
 	</head>
 	<body>
 		<h1>Profile</h1>
 		<p>User id: {session.user.userId}</p>
-		<p>Github username: {session.user.githubUsername}</p>
+		<p>GitHub username: {session.user.githubUsername}</p>
 		<form method="post" action="/logout">
 			<input type="submit" value="Sign out" />
 		</form>

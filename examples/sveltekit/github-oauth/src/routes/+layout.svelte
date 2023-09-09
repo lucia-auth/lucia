@@ -3,6 +3,6 @@
 </script>
 
 <svelte:head>
-	<title>Github OAuth with Lucia</title>
+	<title>GitHub OAuth with Lucia</title>
 </svelte:head>
 <slot />

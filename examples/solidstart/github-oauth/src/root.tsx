@@ -17,7 +17,7 @@ export default function Root() {
 	return (
 		<Html lang="en">
 			<Head>
-				<Title>Github OAuth with Lucia</Title>
+				<Title>GitHub OAuth with Lucia</Title>
 				<Meta charset="utf-8" />
 				<Meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>

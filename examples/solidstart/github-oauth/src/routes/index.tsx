@@ -42,7 +42,7 @@ const Page = () => {
 		<>
 			<h1>Profile</h1>
 			<p>User id: {user()?.userId}</p>
-			<p>Github username: {user()?.githubUsername}</p>
+			<p>GitHub username: {user()?.githubUsername}</p>
 			<Form>
 				<button>Sign out</button>
 			</Form>

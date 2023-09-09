@@ -18,7 +18,7 @@ export const getGithubContributors = async (): Promise<Contributor[]> => {
 	);
 
 	if (!contributorsResponse.ok) {
-		throw new Error("Failed to fetch data from Github");
+		throw new Error("Failed to fetch data from GitHub");
 	}
 
 	const contributorsResult = (await contributorsResponse.json()) as {

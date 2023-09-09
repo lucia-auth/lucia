@@ -41,7 +41,7 @@ We also have framework specific guides.
 - Discord
 - Dropbox
 - Facebook
-- Github
+- GitHub
 - Gitlab
 - Google
 - Lichess

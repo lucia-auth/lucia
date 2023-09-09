@@ -5,7 +5,7 @@ description: "Learn how to implement OAuth 2.0"
 
 This page covers OAuth 2.0 authorization code grant type. For OAuth 2.0 providers with PKCE, see [OAuth 2.0 with PKCE](/oauth/basics/oauth2-pkce).
 
-Examples shown here uses Github OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
+Examples shown here uses GitHub OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
 
 ## Built-in providers
 

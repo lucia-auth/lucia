@@ -1,11 +1,11 @@
 ---
-title: "Github OAuth in Express"
-description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
+title: "GitHub OAuth in Express"
+description: "Learn the basic of Lucia and the OAuth integration by implementing GitHub OAuth"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/getting-started/express)._
 
-This guide will cover how to implement Github OAuth using Lucia in Express with session cookies. As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+This guide will cover how to implement GitHub OAuth using Lucia in Express with session cookies. As a general overview of OAuth, the user is redirected to github.com to be authenticated, and GitHub redirects the user back to your application with a code that can be validated and used to get the user's identity.
 
 ### Clone project
 
@@ -19,7 +19,7 @@ Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pil
 
 ## Create an OAuth app
 
-[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri, for example `http://localhost:3000/login/github/callback`.
+[Create a GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri, for example `http://localhost:3000/login/github/callback`.
 
 Copy and paste the client id and client secret into your `.env` file:
 
@@ -50,7 +50,7 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-We'll expose the user's Github username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
+We'll expose the user's GitHub username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // lucia.ts
@@ -95,7 +95,7 @@ pnpm add @lucia-auth/oauth dotenv
 yarn add @lucia-auth/oauth dotenv
 ```
 
-Import the Github OAuth integration, and initialize it using your credentials.
+Import the GitHub OAuth integration, and initialize it using your credentials.
 
 ```ts
 // lucia.ts
@@ -121,7 +121,7 @@ export type Auth = typeof auth;
 
 ## Generate authorization url
 
-Create a new Github authorization url, where the user should be redirected to. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
+Create a new GitHub authorization url, where the user should be redirected to. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
 ```ts
 import { auth, githubAuth } from "./lucia.js";
@@ -138,17 +138,17 @@ app.get("/login/github", async (req, res) => {
 });
 ```
 
-For example, the user should be redirected to `/login/github` when they click "Sign in with Github."
+For example, the user should be redirected to `/login/github` when they click "Sign in with GitHub."
 
 ```html
-<a href="/login/github">Sign in with Github</a>
+<a href="/login/github">Sign in with GitHub</a>
 ```
 
 ## Validate callback
 
-Create your OAuth callback route that you defined when registering an OAuth app with Github, and handle GET requests.
+Create your OAuth callback route that you defined when registering an OAuth app with GitHub, and handle GET requests.
 
-When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
+When the user authenticates with GitHub, GitHub will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with Express' `Request` and `Response`.
 
@@ -208,9 +208,9 @@ app.get("/login/github/callback", async (req, res) => {
 
 ### Authenticate user with Lucia
 
-You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
+You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the GitHub user id already exists.
 
-If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the GitHub user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
 const { getExistingUser, githubUser, createUser } =

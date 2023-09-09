@@ -40,7 +40,7 @@ See [Facebook](/oauth/providers/facebook) provider.
 
 ## `github()`
 
-See [Github](/oauth/providers/github) provider.
+See [GitHub](/oauth/providers/github) provider.
 
 ## `gitlab()`
 

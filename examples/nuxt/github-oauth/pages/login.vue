@@ -7,5 +7,5 @@ if (user.value) {
 
 <template>
 	<h1>Sign in</h1>
-	<a href="/api/login/github">Sign in with Github</a>
+	<a href="/api/login/github">Sign in with GitHub</a>
 </template>

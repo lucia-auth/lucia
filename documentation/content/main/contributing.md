@@ -39,7 +39,7 @@ This is also another great way to contribute to the library. The example should 
 
 ## Source code
 
-For anything bigger than a bug fix, please open a new feature request or a RFC in the discussions tab on Github first. We appreciate your enthusiasm but we don't want to close it immediately and waste hours of your time!
+For anything bigger than a bug fix, please open a new feature request or a RFC in the discussions tab on GitHub first. We appreciate your enthusiasm but we don't want to close it immediately and waste hours of your time!
 
 Please make the pull request as small as possible, and break them into smaller ones if possible.
 
@@ -73,11 +73,11 @@ If you've added multiple changes and cannot break it into smaller PRs, create mu
 
 ### OAuth provider
 
-We are generally lenient on what providers we accept. However, please open a new feature request or start a new discussion on Discord or Github if you're unsure (e.g. worried if the provider is too niche).
+We are generally lenient on what providers we accept. However, please open a new feature request or start a new discussion on Discord or GitHub if you're unsure (e.g. worried if the provider is too niche).
 
 ### Database adapters
 
-Please open a new feature request or start a new discussion on Discord or Github before creating an official adapter. Adapters must be tested with the testing package and must pass all tests for it to be accepted.
+Please open a new feature request or start a new discussion on Discord or GitHub before creating an official adapter. Adapters must be tested with the testing package and must pass all tests for it to be accepted.
 
 Keep in mind that it may be more appropriate to provide the adapter from an existing adapter package instead of creating a new one.
 

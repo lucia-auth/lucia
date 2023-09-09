@@ -8,7 +8,7 @@ export default function App({ Component, pageProps }: AppProps) {
 	return (
 		<>
 			<Head>
-				<title>Github OAuth with Lucia</title>
+				<title>GitHub OAuth with Lucia</title>
 			</Head>
 			<Component {...pageProps} />;
 		</>

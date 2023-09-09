@@ -1,6 +1,6 @@
 {
 	"name": "github-oauth",
-	"description": "Github OAuth example with Lucia and SvelteKit",
+	"description": "GitHub OAuth example with Lucia and SvelteKit",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {

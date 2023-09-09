@@ -1,4 +1,4 @@
-# Github OAuth example with Lucia and SvelteKit
+# GitHub OAuth example with Lucia and SvelteKit
 
 This example uses SQLite3 with `better-sqlite3`.
 
@@ -13,9 +13,9 @@ pnpm setup-env
 pnpm dev
 ```
 
-## Setup Github OAuth
+## Setup GitHub OAuth
 
-[Create a new Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). The redirect uri should be set to `localhost:5173/login/github/callback`. Copy and paste the client id and secret into `.env`.
+[Create a new GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). The redirect uri should be set to `localhost:5173/login/github/callback`. Copy and paste the client id and secret into `.env`.
 
 ```bash
 GITHUB_CLIENT_ID=""
