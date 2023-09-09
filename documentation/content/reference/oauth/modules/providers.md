@@ -44,7 +44,7 @@ See [Github](/oauth/providers/github) provider.
 
 ## `gitlab()`
 
-See [Gitlab](/oauth/providers/gitlab) provider.
+See [GitLab](/oauth/providers/gitlab) provider.
 
 ## `google()`
 

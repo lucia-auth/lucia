@@ -46,7 +46,7 @@
 
 - [#1015](https://github.com/pilcrowOnPaper/lucia/pull/1015) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Line provider
 
-- [#1013](https://github.com/pilcrowOnPaper/lucia/pull/1013) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Gitlab provider
+- [#1013](https://github.com/pilcrowOnPaper/lucia/pull/1013) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add GitLab provider
 
 - [#1017](https://github.com/pilcrowOnPaper/lucia/pull/1017) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Bitbucket provider
 
