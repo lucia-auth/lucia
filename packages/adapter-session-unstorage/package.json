@@ -35,7 +35,7 @@
 	},
 	"peerDependencies": {
 		"lucia": "^2.0.0",
-		"unstorage": "^1.6.1"
+		"unstorage": "^1.9.0"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "latest",
