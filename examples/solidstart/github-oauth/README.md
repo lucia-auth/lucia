@@ -1,4 +1,4 @@
-# Github OAuth example with Lucia and SolidStart
+# GitHub OAuth example with Lucia and SolidStart
 
 This example uses `better-sqlite3`.
 

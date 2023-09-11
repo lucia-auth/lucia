@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-	title: "Github OAuth with Lucia"
+	title: "GitHub OAuth with Lucia"
 };
 
 export default function RootLayout({

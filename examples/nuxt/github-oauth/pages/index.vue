@@ -18,7 +18,7 @@ const handleLogout = async (e: Event) => {
 <template>
 	<h1>Profile</h1>
 	<p>User id: {{ user.userId }}</p>
-	<p>Github username: {{ user.githubUsername }}</p>
+	<p>GitHub username: {{ user.githubUsername }}</p>
 	<form method="post" action="/api/logout" @submit.prevent="handleLogout">
 		<input type="submit" value="Sign out" />
 	</form>

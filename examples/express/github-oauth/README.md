@@ -1,4 +1,4 @@
-# Github OAuth example with Lucia and Express
+# GitHub OAuth example with Lucia and Express
 
 This example uses TypeScript, SQLite3 with `better-sqlite3`, and [`tsx`](https://github.com/esbuild-kit/tsx).
 
@@ -21,9 +21,9 @@ This example is built for Node.js 20. If you're using Node.js 16/18, un-comment 
 // import "lucia/polyfill/node";
 ```
 
-## Setup Github OAuth
+## Setup GitHub OAuth
 
-[Create a new Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). The redirect uri should be set to `localhost:5173/login/github/callback`. Copy and paste the client id and secret into `.env`.
+[Create a new GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). The redirect uri should be set to `localhost:5173/login/github/callback`. Copy and paste the client id and secret into `.env`.
 
 ```bash
 GITHUB_CLIENT_ID=""

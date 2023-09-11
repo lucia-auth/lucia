@@ -41,7 +41,7 @@ const Page = (
 		<>
 			<h1>Profile</h1>
 			<p>User id: {props.userId}</p>
-			<p>Github username:: {props.githubUsername}</p>
+			<p>GitHub username:: {props.githubUsername}</p>
 			<form
 				method="post"
 				action="/api/logout"

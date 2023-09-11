@@ -1,7 +1,7 @@
 {
 	"name": "github-oauth",
 	"version": "1.0.0",
-	"description": "Github OAuth example with Lucia and Express",
+	"description": "GitHub OAuth example with Lucia and Express",
 	"main": "index.js",
 	"type": "module",
 	"scripts": {

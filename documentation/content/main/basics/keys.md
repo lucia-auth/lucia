@@ -3,7 +3,7 @@ title: "Keys"
 description: "Learn about keys in Lucia"
 ---
 
-Keys represent the relationship between a user and a reference to that user. While the user id is the primary way of identifying a user, there are other ways your app may reference a user during the authentication step such as by their username, email, or Github user id. These identifiers, be it from a user input or an external source, are provided by a _provider_, identified by a _provider id_. The unique id for that user within the provider is the _provider user id_. The unique combination of the provider id and provider user id makes up a key.
+Keys represent the relationship between a user and a reference to that user. While the user id is the primary way of identifying a user, there are other ways your app may reference a user during the authentication step such as by their username, email, or GitHub user id. These identifiers, be it from a user input or an external source, are provided by a _provider_, identified by a _provider id_. The unique id for that user within the provider is the _provider user id_. The unique combination of the provider id and provider user id makes up a key.
 
 A user can have any number of keys, allowing for multiple ways of referencing and authenticating users without cramming your user table. Keys can also optionally hold a password, which is useful for implementing a password based authentication. If provided, passwords are automatically hashed by Lucia before storage.
 
@@ -31,7 +31,7 @@ const user = await auth.getUser(key.userId);
 
 #### OAuth
 
-Below, you're referencing a user where they're identified with their Github user id when using "github" provider.
+Below, you're referencing a user where they're identified with their GitHub user id when using "github" provider.
 
 ```ts
 import { auth } from "./lucia.js";

@@ -3,7 +3,7 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 	app: {
 		head: {
-			title: "Github OAuth with Lucia"
+			title: "GitHub OAuth with Lucia"
 		}
 	},
 	runtimeConfig: {
