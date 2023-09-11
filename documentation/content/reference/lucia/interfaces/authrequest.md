@@ -3,8 +3,6 @@ title: "AuthRequest"
 format: "code"
 ---
 
-On initialization, it will check the request origin with [`Auth.validateRequestOrigin()`](/reference/lucia/interfaces/auth#validaterequestorigin). If the request is from an untrusted origin, it will ignore all cookies sent with the request. This can be disabled with [`csrfProtection`](/basics/configuration#csrfprotection) configuration.
-
 ## `setSession()`
 
 Sets a session cookie. Providing `null` will create a blank session cookie that will delete the current one.
