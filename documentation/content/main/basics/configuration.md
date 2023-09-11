@@ -88,7 +88,9 @@ Provides Lucia with the current server context.
 
 ```ts
 const csrfProtection = boolean | {
-	allowedSubdomains: "*" | (string | null)[]
+	allowedSubdomains?: "*" | (string | null)[]
+	host?: string,
+	hostHeader?: string
 }
 ```
 
@@ -98,9 +100,11 @@ const csrfProtection = boolean | {
 | `false`  | CSRF protection disabled            |
 | `object` | CSRF protection enabled - see below |
 
-| name                | type              | description                                                                          |
-| ------------------- | ----------------- | ------------------------------------------------------------------------------------ |
-| `allowedSubdomains` | `"*" \| string[]` | List of allowed subdomains (not full urls/origins) - set to `*` allow all subdomains |
+| name                | type              | description                                                                          | default  |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------------ | -------- |
+| `allowedSubdomains` | `"*" \| string[]` | List of allowed subdomains (not full urls/origins) - set to `*` allow all subdomains |          |
+| `host`              | `string`          | The host of the server - this will be always used when defined                       |          |
+| `hostHeader`        | `string`          | The header Lucia will use to define the host                                         | `"Host"` |
 
 ### `getSessionAttributes()`
 
