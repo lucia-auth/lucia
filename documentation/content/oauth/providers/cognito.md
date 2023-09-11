@@ -1,9 +1,9 @@
 ---
-title: "AWS Cognito OAuth provider"
-description: "Learn about using the AWS Cognito provider"
+title: "Amazon Cognito OAuth provider"
+description: "Learn about using the Amazon Cognito provider"
 ---
 
-OAuth integration for AWS Cognito's hosted UI. Refer to the Cognito docs:
+OAuth integration for Amazon Cognito's hosted UI. Refer to the Cognito docs:
 
 - [Amazon Cognito hosted UI](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-app-integration.html)
 - [Authorization endpoint documentation](https://docs.aws.amazon.com/cognito/latest/developerguide/authorization-endpoint.html)
@@ -42,7 +42,7 @@ const cognito: (
 | `config.clientSecret`   | `string`                                   | Cognito app client secret                        |          |
 | `configs.redirectUri`   | `string`                                   | an authorized redirect URI                       |          |
 | `config.scope`          | `string[]`                                 | an array of scopes - `openid` is always included |    ✓     |
-| `config.userPoolDomain` | `string`                                   | AWS Cognito's user pool domain                   |          |
+| `config.userPoolDomain` | `string`                                   | Amazon Cognito's user pool domain                |          |
 
 ##### Returns
 
