@@ -165,6 +165,10 @@ const isValidRequestOrigin = (
 	request: LuciaRequest,
 	config: CSRFProtectionConfiguration
 ): boolean => {
+	const whitelist = ["GET", "HEAD", "OPTIONS", "TRACE"];
+	if (whitelist.some((val) => val === request.method.toUpperCase())) {
+		return true;
+	}
 	const requestOrigin = request.headers.get("Origin");
 	if (!requestOrigin) return false;
 	if (!requestOrigin) {
