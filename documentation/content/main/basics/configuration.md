@@ -84,7 +84,9 @@ Provides Lucia with the current server context.
 
 ### `csrfProtection`
 
-`true` by default. When set to `true`, [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) checks if the incoming request is from a trusted origin, which by default only includes where the server is hosted. You can define trusted subdomains by adding them to `csrfProtection.allowedSubdomains`. If your app is hosted on `https://foo.example.com`, adding `"bar"` will allow `https://bar.example.com`. You can add `null` in the array to allow urls without a subdomain.
+`true` by default. When set to `true`, [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) checks if the request is same-origin using the `Origin` header. You can define trusted subdomains by adding them to `csrfProtection.allowedSubdomains`. If your app is hosted on `https://foo.example.com`, adding `"bar"` will allow `https://bar.example.com`. You can add `null` in the array to allow urls without a subdomain.
+
+CSRF protection is applied to all requests except for GET, OPTIONS, HEAD, and TRACE request.
 
 ```ts
 const csrfProtection = boolean | {
