@@ -18,8 +18,6 @@ import type {
 } from "express";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-
-
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return ({ args }) => {
 		const [incomingMessage, outgoingMessage] = args;
@@ -254,11 +252,10 @@ export const nextjs = (): Middleware<
 			const sessionCookie =
 				readonlyCookieStore.get(sessionCookieName)?.value ?? null;
 			const requestContext = {
-				request:
-					request ??
-					new Request("", {
-						method: "GET"
-					}),
+				request: request ?? {
+					method: "GET",
+					headers: new Headers()
+				},
 				sessionCookie,
 				setCookie: (cookie) => {
 					if (typeof serverContext.cookies !== "function") return;
