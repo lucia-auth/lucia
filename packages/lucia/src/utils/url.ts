@@ -1,30 +1,33 @@
-export const isAllowedUrl = (
-	incomingUrl: string | URL,
-	app: {
-		url: string | URL;
-		allowedSubdomains: "*" | (string | null)[];
-	}
+export const isAllowedOrigin = (
+	origin: string,
+	host: string,
+	allowedSubdomains: "*" | (string | null)[]
 ): boolean => {
-	const getHostname = (urlParams: string | URL) => {
-		if (typeof urlParams === "string") return new URL(urlParams).hostname;
-		return urlParams.hostname;
-	};
-	const incomingHostname = getHostname(incomingUrl);
-	const appHostname = getHostname(app.url);
-	const appBaseDomain = getBaseDomain(appHostname);
-	if (incomingHostname === appHostname) return true;
-	if (app.allowedSubdomains === "*") {
-		if (incomingHostname.endsWith(`.${appBaseDomain}`)) return true;
+	const originHost = new URL(origin).host;
+	const baseDomain = getBaseDomain(host);
+	if (host.length < 1 || origin.length < 1) return false;
+	if (originHost === host) return true;
+	if (allowedSubdomains === "*") {
+		if (originHost.endsWith(`.${baseDomain}`)) return true;
 		return false;
 	}
-	const allowedHosts = app.allowedSubdomains.map((subdomain) => {
-		if (subdomain === null) return appBaseDomain;
-		return [subdomain, appBaseDomain].join(".");
-	});
-	return allowedHosts.includes(incomingHostname);
+	for (const subdomain of allowedSubdomains) {
+		const allowedHostPermutation =
+			subdomain === null ? baseDomain : [subdomain, baseDomain].join(".");
+		if (allowedHostPermutation === originHost) return true;
+	}
+	return false;
 };
 
-const getBaseDomain = (hostname: string): string => {
-	if (hostname === "localhost") return "localhost";
-	return hostname.split(".").slice(-2).join(".");
+const getBaseDomain = (host: string): string => {
+	if (host.startsWith("localhost:")) return host;
+	return host.split(".").slice(-2).join(".");
+};
+
+export const safeParseUrl = (url: string): URL | null => {
+	try {
+		return new URL(url);
+	} catch {
+		return null;
+	}
 };
