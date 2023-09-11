@@ -10,12 +10,18 @@ import { createES256SignedJWT } from "../utils/jwt.js";
 
 import type { Auth } from "lucia";
 
+enum scope {
+	name = "name",
+	email = "email"
+}
+
 type Config = {
 	redirectUri: string;
 	clientId: string;
 	teamId: string;
 	keyId: string;
 	certificate: string;
+	scope: scope[];
 };
 
 const PROVIDER_ID = "apple";
@@ -41,12 +47,13 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
+		const scopeConfig = this.config.scope ?? [];
 		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://appleid.apple.com/auth/authorize",
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: []
+				scope: scopeConfig
 			}
 		);
 		url.searchParams.set("response_mode", "query");
@@ -137,8 +144,11 @@ const getAppleUser = (idToken: string): AppleUser => {
 	const jwtPayload = decodeIdToken<AppleUser>(idToken);
 	return {
 		email: jwtPayload.email,
-		email_verified: jwtPayload.email_verified,
-		sub: jwtPayload.sub
+		sub: jwtPayload.sub,
+		name: {
+			firstName: jwtPayload.name.firstName,
+			lastName: jwtPayload.name.lastName
+		}
 	};
 };
 
@@ -149,8 +159,11 @@ export type AppleTokens = {
 	idToken: string;
 };
 
-export type AppleUser = {
-	email: string;
-	email_verified: boolean;
-	sub: string;
+export type AppleUser = { 
+	name: { 
+		firstName: string, 
+		lastName: string 
+	}, 
+	email: string, 
+	sub: string 
 };
