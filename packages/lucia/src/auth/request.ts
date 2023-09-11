@@ -176,7 +176,7 @@ const isValidRequestOrigin = (
 		return false;
 	}
 	let host: string | null = null;
-	if (config.host !== null) {
+	if (config.host !== undefined) {
 		host = config.host ?? null;
 	} else if (request.url !== null && request.url !== undefined) {
 		host = safeParseUrl(request.url)?.host ?? null;
