@@ -1,6 +1,6 @@
 import { LuciaError } from "./error.js";
 
-import type { LuciaErrorConstructor } from "../index.js";
+import type { LuciaErrorConstructor } from "./error.js";
 import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
 
 export type InitializeAdapter<

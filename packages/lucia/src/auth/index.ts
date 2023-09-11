@@ -460,6 +460,9 @@ export class Auth<_Configuration extends Configuration = any> {
 		);
 	};
 
+	/**
+	 * @deprecated To be removed in v3
+	 */
 	public validateRequestOrigin = (request: {
 		url: string | null;
 		method: string | null;
