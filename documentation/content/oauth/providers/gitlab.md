@@ -1,9 +1,9 @@
 ---
-title: "Gitlab OAuth provider"
-description: "Learn how to use the Gitlab OAuth provider"
+title: "GitLab OAuth provider"
+description: "Learn how to use the GitLab OAuth provider"
 ---
 
-OAuth integration for Gitlab. Provider id is `gitlab`.
+OAuth integration for GitLab. Provider id is `gitlab`.
 
 ```ts
 import { gitlab } from "@lucia-auth/oauth/providers";
@@ -33,8 +33,8 @@ const gitlab: (
 | name                   | type                                       | description                    | optional |
 | ---------------------- | ------------------------------------------ | ------------------------------ | :------: |
 | `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
-| `configs.clientId`     | `string`                                   | Gitlab OAuth app client id     |          |
-| `configs.clientSecret` | `string`                                   | Gitlab OAuth app client secret |          |
+| `configs.clientId`     | `string`                                   | GitLab OAuth app client id     |          |
+| `configs.clientSecret` | `string`                                   | GitLab OAuth app client secret |          |
 | `configs.redirectUri`  | `string`                                   | an authorized redirect URI     |          |
 | `configs.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
 
@@ -42,7 +42,7 @@ const gitlab: (
 
 | type                                | description     |
 | ----------------------------------- | --------------- |
-| [`GitlabProvider`](#gitlabprovider) | Gitlab provider |
+| [`GitlabProvider`](#gitlabprovider) | GitLab provider |
 
 ## Interfaces
 
@@ -135,7 +135,7 @@ interface GitlabUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 | properties     | type                            | description       |
 | -------------- | ------------------------------- | ----------------- |
-| `gitlabUser`   | [`GitlabUser`](#gitlabuser)     | Gitlab user       |
+| `gitlabUser`   | [`GitlabUser`](#gitlabuser)     | GitLab user       |
 | `gitlabTokens` | [`GitlabTokens`](#gitlabtokens) | Access tokens etc |
 
 ##### Generics

@@ -42,7 +42,7 @@ We also have framework specific guides.
 - Dropbox
 - Facebook
 - Github
-- Gitlab
+- GitLab
 - Google
 - Lichess
 - Line
