@@ -144,8 +144,10 @@ app.get("/", async (context) => {
 
 ### Next.js
 
+`nextjs_v3()` will replace `nextjs()` in v3. While `nextjs()` isn't deprecated, we recommend considering it as a legacy API.
+
 ```ts
-import { nextjs } from "lucia/middleware";
+import { nextjs_v3 } from "lucia/middleware";
 ```
 
 #### Pages router
@@ -181,28 +183,28 @@ export default async (request: NextRequest) => {
 
 #### App router
 
-We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false` when using this middleware. `request` should only be set to `null` when handling GET requests (e.g. inside `page.tsx`).
+We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false` when using this middleware.
 
 ```ts
 // app/page.tsx
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 export default () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
+
+	const experimentalFormActions = async () => {
+		const authRequest = auth.handleRequest("POST", context);
+	};
 	// ...
 };
 ```
 
 ```ts
 // app/routes.ts
-export const GET = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest({
-		request,
-		cookies
-	});
+import * as context from "next/headers";
+
+export const POST = async (request: NextRequest) => {
+	const authRequest = auth.handleRequest(request.method, context);
 	// ...
 };
 ```

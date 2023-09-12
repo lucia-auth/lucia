@@ -65,12 +65,12 @@ We'll expose the user's GitHub username to the `User` object by defining [`getUs
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_v3 } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_v3(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -267,10 +267,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) redirect("/");
 	return (

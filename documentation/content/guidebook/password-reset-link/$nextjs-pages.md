@@ -10,7 +10,7 @@ This guide expects access to the user's verified email. See [Sign in with email 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: dev ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_v3(),
 
 	getUserAttributes: (data) => {
 		return {
