@@ -144,11 +144,8 @@ const getAppleUser = (idToken: string): AppleUser => {
 	const jwtPayload = decodeIdToken<AppleUser>(idToken);
 	return {
 		email: jwtPayload.email,
-		sub: jwtPayload.sub,
-		name: {
-			firstName: jwtPayload.name.firstName,
-			lastName: jwtPayload.name.lastName
-		}
+		email_verified: jwtPayload.email_verified,
+		sub: jwtPayload.sub
 	};
 };
 
@@ -159,11 +156,8 @@ export type AppleTokens = {
 	idToken: string;
 };
 
-export type AppleUser = { 
-	name: { 
-		firstName: string, 
-		lastName: string 
-	}, 
-	email: string, 
-	sub: string 
+export type AppleUser = {
+	email: string,
+	email_verified: boolean,
+	sub: string
 };
