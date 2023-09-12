@@ -845,6 +845,8 @@ const key = await auth.useKey("github", githubUserId, null);
 
 ## `validateRequestOrigin()`
 
+**Deprecated: To be removed in v3.**
+
 Used for CSRF protection. Checks if the request origin is trusted for non-GET and non-HEAD requests (e.g. POST, PUT, DELETE), and throws an error if the origin is invalid. Trusted origins include where the server is hosted and its subdomains defined with [`csrfProtection.allowedSubdomains`](/basics/configuration#csrfprotection) configuration.
 
 ```ts

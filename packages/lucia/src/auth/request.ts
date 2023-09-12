@@ -1,20 +1,19 @@
 import { debug } from "../utils/debug.js";
 
+import { LuciaError } from "./error.js";
+import { createHeadersFromObject } from "../utils/request.js";
+import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
+
 import type { Auth, Env, Session } from "./index.js";
 import type { Cookie } from "./cookie.js";
-import { LuciaError } from "./error.js";
 
 export type LuciaRequest = {
 	method: string;
-	url: string;
-	headers: {
-		origin: string | null;
-		cookie: string | null;
-		authorization: string | null;
-	};
-	storedSessionCookie?: string | null;
+	url?: string;
+	headers: Headers;
 };
 export type RequestContext = {
+	sessionCookie?: string | null;
 	request: LuciaRequest;
 	setCookie: (cookie: Cookie) => void;
 };
@@ -23,36 +22,67 @@ export type Middleware<Args extends any[] = any> = (context: {
 	args: Args;
 	env: Env;
 	sessionCookieName: string;
-}) => RequestContext;
+}) => MiddlewareRequestContext;
+
+type MiddlewareRequestContext = Omit<RequestContext, "request"> & {
+	sessionCookie?: string | null;
+	request: {
+		method: string;
+		url?: string;
+		headers:
+			| Headers
+			| {
+					origin: string | null;
+					cookie: string | null;
+					authorization: string | null;
+			  }; // remove regular object: v3
+		storedSessionCookie?: string | null; // remove: v3
+	};
+	setCookie: (cookie: Cookie) => void;
+};
+
+export type CSRFProtectionConfiguration = {
+	host?: string;
+	hostHeader?: string;
+	allowedSubDomains?: string[] | "*";
+};
 
 export class AuthRequest<_Auth extends Auth = any> {
 	private auth: _Auth;
-	private context: RequestContext;
+	private requestContext: RequestContext;
+
 	constructor(
 		auth: _Auth,
-		{
-			context,
-			csrfProtectionEnabled
-		}: {
-			context: RequestContext;
-			csrfProtectionEnabled: boolean;
+		config: {
+			requestContext: RequestContext;
+			csrfProtection: boolean | CSRFProtectionConfiguration;
 		}
 	) {
-		debug.request.init(context.request.method, context.request.url);
+		debug.request.init(
+			config.requestContext.request.method,
+			config.requestContext.request.url ?? "(url unknown)"
+		);
 		this.auth = auth;
-		this.context = context;
-		try {
-			if (csrfProtectionEnabled) {
-				auth.validateRequestOrigin(context.request);
-			}
+		this.requestContext = config.requestContext;
+
+		const csrfProtectionConfig =
+			typeof config.csrfProtection === "object" ? config.csrfProtection : {};
+		const csrfProtectionEnabled = config.csrfProtection !== false;
+
+		if (
+			!csrfProtectionEnabled ||
+			isValidRequestOrigin(this.requestContext.request, csrfProtectionConfig)
+		) {
 			this.storedSessionId =
-				context.request.storedSessionCookie ??
-				auth.readSessionCookie(context.request.headers.cookie);
-		} catch (e) {
+				this.requestContext.sessionCookie ??
+				auth.readSessionCookie(
+					this.requestContext.request.headers.get("Cookie")
+				);
+		} else {
 			this.storedSessionId = null;
 		}
 		this.bearerToken = auth.readBearerToken(
-			context.request.headers.authorization
+			this.requestContext.request.headers.get("Authorization")
 		);
 	}
 
@@ -73,7 +103,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 		if (this.storedSessionId === sessionId) return;
 		this.storedSessionId = sessionId;
 		try {
-			this.context.setCookie(this.auth.createSessionCookie(session));
+			this.requestContext.setCookie(this.auth.createSessionCookie(session));
 			if (session) {
 				debug.request.notice("Session cookie stored", session.sessionId);
 			} else {
@@ -130,3 +160,55 @@ export class AuthRequest<_Auth extends Auth = any> {
 		return await this.validatePromise;
 	};
 }
+
+const isValidRequestOrigin = (
+	request: LuciaRequest,
+	config: CSRFProtectionConfiguration
+): boolean => {
+	const whitelist = ["GET", "HEAD", "OPTIONS", "TRACE"];
+	if (whitelist.some((val) => val === request.method.toUpperCase())) {
+		return true;
+	}
+	const requestOrigin = request.headers.get("Origin");
+	if (!requestOrigin) return false;
+	if (!requestOrigin) {
+		debug.request.fail("No request origin available");
+		return false;
+	}
+	let host: string | null = null;
+	if (config.host !== undefined) {
+		host = config.host ?? null;
+	} else if (request.url !== null && request.url !== undefined) {
+		host = safeParseUrl(request.url)?.host ?? null;
+	} else {
+		host = request.headers.get(config.hostHeader ?? "Host");
+	}
+	if (
+		host !== null &&
+		isAllowedOrigin(requestOrigin, host, config.allowedSubDomains ?? [])
+	) {
+		debug.request.info("Valid request origin", requestOrigin);
+		return true;
+	}
+	debug.request.info("Invalid request origin", requestOrigin);
+	return false;
+};
+
+export const transformRequestContext = ({
+	request,
+	setCookie,
+	sessionCookie
+}: MiddlewareRequestContext): RequestContext => {
+	return {
+		request: {
+			url: request.url,
+			method: request.method,
+			headers:
+				"authorization" in request.headers
+					? createHeadersFromObject(request.headers)
+					: request.headers
+		},
+		setCookie,
+		sessionCookie: sessionCookie ?? request.storedSessionCookie
+	};
+};

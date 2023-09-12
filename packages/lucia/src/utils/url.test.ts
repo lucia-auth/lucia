@@ -1,173 +1,91 @@
 import { test, expect } from "vitest";
-import { isAllowedUrl } from "./url.js";
+import { isAllowedOrigin } from "./url.js";
 
-test("isAllowedUrl() returns expected result", async () => {
-	expect(
-		isAllowedUrl("http://example.com", {
-			url: "http://example.com",
-			allowedSubdomains: []
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://foo.example.com", {
-			url: "http://foo.example.com",
-			allowedSubdomains: []
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://not-allowed.com", {
-			url: "http://example.com",
-			allowedSubdomains: []
-		})
-	).toBe(false);
-	expect(
-		isAllowedUrl("http://localhost:3000", {
-			url: "http://example.com",
-			allowedSubdomains: []
-		})
-	).toBe(false);
-	expect(
-		isAllowedUrl("http://example.", {
-			url: "http://example.com",
-			allowedSubdomains: []
-		})
-	).toBe(false);
+test("isAllowedOrigin() returns expected result", async () => {
+	expect(isAllowedOrigin("http://example.com", "example.com", [])).toBe(true);
+	expect(isAllowedOrigin("http://foo.example.com", "foo.example.com", [])).toBe(
+		true
+	);
+	expect(isAllowedOrigin("http://not-allowed.com", "example.com", [])).toBe(
+		false
+	);
+	expect(isAllowedOrigin("http://localhost:3000", "example.com", [])).toBe(
+		false
+	);
+	expect(isAllowedOrigin("http://example.", "example.com", [])).toBe(false);
 
+	expect(isAllowedOrigin("http://example.com/foo", "example.com", "*")).toBe(
+		true
+	);
+	expect(isAllowedOrigin("http://foo.example.com", "example.com", "*")).toBe(
+		true
+	);
 	expect(
-		isAllowedUrl("http://example.com/foo", {
-			url: "http://example.com/foo/bar",
-			allowedSubdomains: "*"
-		})
+		isAllowedOrigin("http://foo.example.com", "bar.example.com", "*")
 	).toBe(true);
 	expect(
-		isAllowedUrl("http://foo.example.com", {
-			url: "http://example.com",
-			allowedSubdomains: "*"
-		})
+		isAllowedOrigin("http://foo.bar.example.com", "example.com", "*")
 	).toBe(true);
 	expect(
-		isAllowedUrl("http://foo.example.com", {
-			url: "http://bar.example.com",
-			allowedSubdomains: "*"
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://foo.bar.example.com", {
-			url: "http://example.com",
-			allowedSubdomains: "*"
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://foo.bar.example.com", {
-			url: "http://foo.example.com",
-			allowedSubdomains: "*"
-		})
+		isAllowedOrigin("http://foo.bar.example.com", "foo.example.com", "*")
 	).toBe(true);
 
 	expect(
-		isAllowedUrl("http://foo.example.com", {
-			url: "http://example.com",
-			allowedSubdomains: ["foo"]
-		})
+		isAllowedOrigin("http://foo.example.com", "example.com", ["foo"])
 	).toBe(true);
+	expect(isAllowedOrigin("http://foo.example.com", "example.com", [])).toBe(
+		false
+	);
 	expect(
-		isAllowedUrl("http://foo.example.com", {
-			url: "http://example.com",
-			allowedSubdomains: []
-		})
-	).toBe(false);
-	expect(
-		isAllowedUrl("http://foo.not-allowed.com", {
-			url: "http://example.com",
-			allowedSubdomains: ["foo"]
-		})
+		isAllowedOrigin("http://foo.not-allowed.com", "example.com", ["foo"])
 	).toBe(false);
 
 	expect(
-		isAllowedUrl("http://foo.bar.example.com", {
-			url: "http://example.com",
-			allowedSubdomains: ["foo.bar"]
-		})
+		isAllowedOrigin("http://foo.bar.example.com", "example.com", ["foo.bar"])
 	).toBe(true);
 	expect(
-		isAllowedUrl("http://foo.bar.example.com", {
-			url: "http://example.com",
-			allowedSubdomains: ["bar"]
-		})
+		isAllowedOrigin("http://foo.bar.example.com", "example.com", ["bar"])
 	).toBe(false);
-	expect(
-		isAllowedUrl("http://example.com/foo", {
-			url: "http://api.example.com",
-			allowedSubdomains: [null]
-		})
-	).toBe(true);
+	expect(isAllowedOrigin("http://example.com/foo", "example.com", [null])).toBe(
+		true
+	);
 
+	expect(isAllowedOrigin("http://localhost:3000", "localhost:3000", [])).toBe(
+		true
+	);
 	expect(
-		isAllowedUrl("http://localhost:3000", {
-			url: "http://localhost:3000",
-			allowedSubdomains: []
-		})
+		isAllowedOrigin("http://foo.localhost:3000", "localhost:3000", "*")
 	).toBe(true);
 	expect(
-		isAllowedUrl("http://foo.localhost:3000", {
-			url: "http://localhost:3000",
-			allowedSubdomains: "*"
-		})
+		isAllowedOrigin("http://foo.localhost:3000", "localhost:3000", ["foo"])
 	).toBe(true);
 	expect(
-		isAllowedUrl("http://foo.localhost:3000", {
-			url: "http://localhost:3000",
-			allowedSubdomains: ["foo"]
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://bar.localhost:3000", {
-			url: "http://localhost:3000",
-			allowedSubdomains: ["foo"]
-		})
+		isAllowedOrigin("http://bar.localhost:3000", "localhost:3000", ["foo"])
 	).toBe(false);
 
-	expect(
-		isAllowedUrl("http://example.", {
-			url: "http://example.",
-			allowedSubdomains: []
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://foo.example.", {
-			url: "http://example.",
-			allowedSubdomains: "*"
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://foo.example.", {
-			url: "http://example.",
-			allowedSubdomains: ["foo"]
-		})
-	).toBe(true);
-	expect(
-		isAllowedUrl("http://bar.example.", {
-			url: "http://example.",
-			allowedSubdomains: ["foo"]
-		})
-	).toBe(false);
+	expect(isAllowedOrigin("http://example.", "example.", [])).toBe(true);
+	expect(isAllowedOrigin("http://foo.example.", "example.", "*")).toBe(true);
+	expect(isAllowedOrigin("http://foo.example.", "example.", ["foo"])).toBe(
+		true
+	);
+	expect(isAllowedOrigin("http://bar.example.", "example.", ["foo"])).toBe(
+		false
+	);
+
+	expect(isAllowedOrigin("http://example.com.com", "example.com", [])).toBe(
+		false
+	);
+	expect(isAllowedOrigin("http://example.com.com", "example.com", "*")).toBe(
+		false
+	);
+	expect(isAllowedOrigin("http://localhost.com", "localhost:3000", "*")).toBe(
+		false
+	);
 
 	expect(
-		isAllowedUrl("http://example.com.com", {
-			url: "http://example.com",
-			allowedSubdomains: []
-		})
-	).toBe(false);
+		isAllowedOrigin("http://foo.example.com", "example.com", ["foo", "bar"])
+	).toBe(true);
 	expect(
-		isAllowedUrl("http://example.com.com", {
-			url: "http://example.com",
-			allowedSubdomains: "*"
-		})
-	).toBe(false);
-	expect(
-		isAllowedUrl("http://localhost.com", {
-			url: "http://localhost:3000",
-			allowedSubdomains: "*"
-		})
-	).toBe(false);
+		isAllowedOrigin("http://example.com", "example.com", [null, "bar"])
+	).toBe(true);
 });

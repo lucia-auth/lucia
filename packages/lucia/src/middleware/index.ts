@@ -1,6 +1,11 @@
+import { createHeadersFromObject } from "../utils/request.js";
+
 import type { CookieAttributes } from "../utils/cookie.js";
-import type { LuciaRequest } from "../auth/request.js";
-import type { Cookie, Env, Middleware, RequestContext } from "../index.js";
+import type {
+	LuciaRequest,
+	Middleware,
+	RequestContext
+} from "../auth/request.js";
 
 import type {
 	IncomingMessage,
@@ -13,27 +18,13 @@ import type {
 } from "express";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-const getIncomingMessageUrl = (incomingMessage: IncomingMessage, env: Env) => {
-	if (!incomingMessage.headers.host) return "";
-	const protocol = env === "DEV" ? "http:" : "https:";
-	const host = incomingMessage.headers.host;
-	const pathname = incomingMessage.url ?? "";
-	return `${protocol}//${host}${pathname}`;
-};
-
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
-	return ({ args, env }) => {
+	return ({ args }) => {
 		const [incomingMessage, outgoingMessage] = args;
-
 		const requestContext = {
 			request: {
-				url: getIncomingMessageUrl(incomingMessage, env),
 				method: incomingMessage.method ?? "",
-				headers: {
-					origin: incomingMessage.headers.origin ?? null,
-					cookie: incomingMessage.headers.cookie ?? null,
-					authorization: incomingMessage.headers.authorization ?? null
-				}
+				headers: createHeadersFromObject(incomingMessage.headers)
 			},
 			setCookie: (cookie) => {
 				const setCookieHeaderValues =
@@ -57,30 +48,15 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	return ({ args }) => {
 		const [req, res] = args;
-
-		const getUrl = () => {
-			if (!req.headers.host) return "";
-			const protocol = req.protocol;
-			const host = req.headers.host;
-			const pathname = req.path;
-			return `${protocol}://${host}${pathname}`;
-		};
-
 		const requestContext = {
 			request: {
-				url: getUrl(),
 				method: req.method,
-				headers: {
-					origin: req.headers.origin ?? null,
-					cookie: req.headers.cookie ?? null,
-					authorization: req.headers.authorization ?? null
-				}
+				headers: createHeadersFromObject(req.headers)
 			},
 			setCookie: (cookie) => {
 				res.cookie(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
-
 		return requestContext;
 	};
 };
@@ -88,30 +64,15 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
 	return ({ args }) => {
 		const [req, res] = args;
-
-		const getUrl = () => {
-			if (!req.headers.host) return "";
-			const protocol = req.protocol;
-			const host = req.headers.host;
-			const pathname = req.url;
-			return `${protocol}://${host}${pathname}`;
-		};
-
 		const requestContext = {
 			request: {
-				url: getUrl(),
 				method: req.method,
-				headers: {
-					origin: req.headers.origin ?? null,
-					cookie: req.headers.cookie ?? null,
-					authorization: req.headers.authorization ?? null
-				}
+				headers: createHeadersFromObject(req.headers)
 			},
 			setCookie: (cookie) => {
 				res.header("Set-Cookie", [cookie.serialize()]);
 			}
 		} as const satisfies RequestContext;
-
 		return requestContext;
 	};
 };
@@ -127,18 +88,9 @@ type SvelteKitRequestEvent = {
 export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 	return ({ args, sessionCookieName }) => {
 		const [event] = args;
-
 		const requestContext = {
-			request: {
-				url: event.request.url,
-				method: event.request.method,
-				headers: {
-					origin: event.request.headers.get("Origin"),
-					cookie: event.request.headers.get("Cookie"),
-					authorization: event.request.headers.get("Authorization")
-				},
-				storedSessionCookie: event.cookies.get(sessionCookieName) ?? null
-			},
+			request: event.request,
+			sessionCookie: event.cookies.get(sessionCookieName) ?? null,
 			setCookie: (cookie) => {
 				event.cookies.set(cookie.name, cookie.value, cookie.attributes);
 			}
@@ -163,19 +115,9 @@ type AstroAPIContext = {
 export const astro = (): Middleware<[AstroAPIContext]> => {
 	return ({ args, sessionCookieName }) => {
 		const [context] = args;
-
 		const requestContext = {
-			request: {
-				url: context.request.url,
-				method: context.request.method,
-				headers: {
-					origin: context.request.headers.get("Origin"),
-					cookie: context.request.headers.get("Cookie"),
-					authorization: context.request.headers.get("Authorization")
-				},
-				storedSessionCookie:
-					context.cookies.get(sessionCookieName)?.value || null
-			},
+			request: context.request,
+			sessionCookie: context.cookies.get(sessionCookieName)?.value || null,
 			setCookie: (cookie) => {
 				context.cookies.set(cookie.name, cookie.value, cookie.attributes);
 			}
@@ -198,23 +140,13 @@ type QwikRequestEvent = {
 export const qwik = (): Middleware<[QwikRequestEvent]> => {
 	return ({ args, sessionCookieName }) => {
 		const [event] = args;
-
 		const requestContext = {
-			request: {
-				url: event.request.url.toString(),
-				method: event.request.method,
-				headers: {
-					origin: event.request.headers.get("Origin"),
-					cookie: event.request.headers.get("Cookie"),
-					authorization: event.request.headers.get("Authorization")
-				},
-				storedSessionCookie: event.cookie.get(sessionCookieName)?.value ?? null
-			},
+			request: event.request,
+			sessionCookie: event.cookie.get(sessionCookieName)?.value ?? null,
 			setCookie: (cookie) => {
 				event.cookie.set(cookie.name, cookie.value, cookie.attributes);
 			}
 		} as const satisfies RequestContext;
-
 		return requestContext;
 	};
 };
@@ -233,17 +165,9 @@ type ElysiaContext = {
 export const elysia = (): Middleware<[ElysiaContext]> => {
 	return ({ args }) => {
 		const [{ request, set }] = args;
-		const requestContext = {
-			request: {
-				url: request.url,
-				method: request.method,
-				headers: {
-					origin: request.headers.get("Origin"),
-					cookie: request.headers.get("Cookie"),
-					authorization: request.headers.get("Authorization")
-				}
-			},
-			setCookie: (cookie: Cookie) => {
+		return {
+			request,
+			setCookie: (cookie) => {
 				const setCookieHeader = set.headers["Set-Cookie"] ?? [];
 				const setCookieHeaders: string[] = Array.isArray(setCookieHeader)
 					? setCookieHeader
@@ -251,9 +175,7 @@ export const elysia = (): Middleware<[ElysiaContext]> => {
 				setCookieHeaders.push(cookie.serialize());
 				set.headers["Set-Cookie"] = setCookieHeaders;
 			}
-		} as const satisfies RequestContext;
-
-		return requestContext;
+		};
 	};
 };
 
@@ -264,24 +186,14 @@ export const lucia = (): Middleware<[RequestContext]> => {
 export const web = (): Middleware<[Request]> => {
 	return ({ args }) => {
 		const [request] = args;
-
 		const requestContext = {
-			request: {
-				url: request.url,
-				method: request.method,
-				headers: {
-					origin: request.headers.get("Origin"),
-					cookie: request.headers.get("Cookie"),
-					authorization: request.headers.get("Authorization")
-				}
-			},
+			request,
 			setCookie: () => {
 				throw new Error(
 					"Cookies cannot be set when using the `web()` middleware"
 				);
 			}
 		} as const satisfies RequestContext;
-
 		return requestContext;
 	};
 };
@@ -340,16 +252,11 @@ export const nextjs = (): Middleware<
 			const sessionCookie =
 				readonlyCookieStore.get(sessionCookieName)?.value ?? null;
 			const requestContext = {
-				request: {
-					url: request?.url ?? "",
-					method: request?.method ?? "GET",
-					headers: {
-						origin: request?.headers?.get("Origin") ?? null,
-						cookie: null,
-						authorization: request?.headers?.get("Authorization") ?? null
-					},
-					storedSessionCookie: sessionCookie
+				request: request ?? {
+					method: "GET",
+					headers: new Headers()
 				},
+				sessionCookie,
 				setCookie: (cookie) => {
 					if (typeof serverContext.cookies !== "function") return;
 					const cookieStore = serverContext.cookies();
@@ -368,18 +275,13 @@ export const nextjs = (): Middleware<
 		const res = "res" in serverContext ? serverContext.res : null;
 
 		const request = {
-			url: getIncomingMessageUrl(req, env),
 			method: req.method ?? "",
-			headers: {
-				origin: req.headers.origin ?? null,
-				cookie: req.headers.cookie ?? null,
-				authorization: req.headers.authorization ?? null
-			}
+			headers: createHeadersFromObject(req.headers)
 		} satisfies LuciaRequest;
 
-		const requestContext = {
+		return {
 			request,
-			setCookie: (cookie: Cookie) => {
+			setCookie: (cookie) => {
 				if (!res) return;
 				const setCookieHeaderValues =
 					res
@@ -392,9 +294,7 @@ export const nextjs = (): Middleware<
 					...setCookieHeaderValues
 				]);
 			}
-		} as const satisfies RequestContext;
-
-		return requestContext;
+		};
 	};
 };
 
@@ -430,21 +330,11 @@ type HonoContext = {
 export const hono = (): Middleware<[HonoContext]> => {
 	return ({ args }) => {
 		const [context] = args;
-		const requestContext = {
-			request: {
-				url: context.req.url,
-				method: context.req.method,
-				headers: {
-					origin: context.req.headers.get("Origin"),
-					cookie: context.req.headers.get("Cookie"),
-					authorization: context.req.headers.get("Authorization")
-				}
-			},
-			setCookie: (cookie: Cookie) => {
+		return {
+			request: context.req,
+			setCookie: (cookie) => {
 				context.header("Set-Cookie", cookie.serialize());
 			}
-		} as const satisfies RequestContext;
-
-		return requestContext;
+		};
 	};
 };

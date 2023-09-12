@@ -5,22 +5,18 @@ import { generateRandomString } from "../utils/nanoid.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { isValidDatabaseSession } from "./session.js";
-import { AuthRequest } from "./request.js";
+import { AuthRequest, transformRequestContext } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
 import { isWithinExpiration } from "../utils/date.js";
-import { isAllowedUrl } from "../utils/url.js";
 import { createAdapter } from "./adapter.js";
 import { createKeyId } from "./database.js";
+import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
 
-import type { Cookie, SessionCookieAttributes } from "./cookie.js";
+import type { Cookie, SessionCookieConfiguration } from "./cookie.js";
 import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
-import {
-	type Adapter,
-	type SessionAdapter,
-	type InitializeAdapter
-} from "./adapter.js";
-import type { Middleware, LuciaRequest } from "./request.js";
+import type { Adapter, SessionAdapter, InitializeAdapter } from "./adapter.js";
+import type { CSRFProtectionConfiguration, Middleware } from "./request.js";
 
 export type Session = Readonly<{
 	user: User;
@@ -59,32 +55,26 @@ const validateConfiguration = (config: Configuration) => {
 	}
 };
 
-const defaultSessionCookieAttributes: SessionCookieAttributes = {
-	sameSite: "lax",
-	path: "/"
-};
-
 export class Auth<_Configuration extends Configuration = any> {
 	private adapter: Adapter;
-	private sessionCookie: {
-		name: string;
-		attributes: SessionCookieAttributes;
-		expires: boolean;
-	};
+	private sessionCookieConfig: SessionCookieConfiguration;
 	private sessionExpiresIn: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
+	private csrfProtection: CSRFProtectionConfiguration | boolean;
 	private env: Env;
 	private passwordHash: {
 		generate: (s: string) => MaybePromise<string>;
 		validate: (s: string, hash: string) => MaybePromise<boolean>;
+	} = {
+		generate: generateScryptHash,
+		validate: validateScryptHash
 	};
 	protected middleware: _Configuration["middleware"] extends Middleware
 		? _Configuration["middleware"]
-		: ReturnType<typeof defaultMiddleware>;
-	private csrfProtectionEnabled: boolean;
-	private allowedSubdomains: string[] | "*";
+		: ReturnType<typeof defaultMiddleware> = defaultMiddleware();
+
 	private experimental: {
 		debugMode: boolean;
 	};
@@ -94,14 +84,13 @@ export class Auth<_Configuration extends Configuration = any> {
 
 		this.adapter = createAdapter(config.adapter);
 		this.env = config.env;
-		this.csrfProtectionEnabled =
-			typeof config.csrfProtection === "boolean" ? config.csrfProtection : true;
 		this.sessionExpiresIn = {
 			activePeriod:
 				config.sessionExpiresIn?.activePeriod ?? 1000 * 60 * 60 * 24,
 			idlePeriod:
 				config.sessionExpiresIn?.idlePeriod ?? 1000 * 60 * 60 * 24 * 14
 		};
+
 		this.getUserAttributes = (databaseUser) => {
 			const defaultTransform = () => {
 				return {} as any;
@@ -116,21 +105,14 @@ export class Auth<_Configuration extends Configuration = any> {
 			const transform = config.getSessionAttributes ?? defaultTransform;
 			return transform(databaseSession);
 		};
-		this.sessionCookie = {
-			name: config.sessionCookie?.name ?? DEFAULT_SESSION_COOKIE_NAME,
-			attributes:
-				config.sessionCookie?.attributes ?? defaultSessionCookieAttributes,
-			expires: config.sessionCookie?.expires ?? true
-		};
-		this.passwordHash = {
-			generate: config.passwordHash?.generate ?? generateScryptHash,
-			validate: config.passwordHash?.validate ?? validateScryptHash
-		};
-		this.middleware = config.middleware ?? defaultMiddleware();
-		this.allowedSubdomains =
-			!config.csrfProtection || typeof config.csrfProtection === "boolean"
-				? []
-				: config.csrfProtection.allowedSubDomains;
+		this.csrfProtection = config.csrfProtection ?? true;
+		this.sessionCookieConfig = config.sessionCookie ?? {};
+		if (config.passwordHash) {
+			this.passwordHash = config.passwordHash;
+		}
+		if (config.middleware) {
+			this.middleware = config.middleware;
+		}
 		this.experimental = {
 			debugMode: config.experimental?.debugMode ?? false
 		};
@@ -477,11 +459,16 @@ export class Auth<_Configuration extends Configuration = any> {
 		);
 	};
 
-	public validateRequestOrigin = (
-		request: Omit<LuciaRequest, "headers"> & {
-			headers: Pick<LuciaRequest["headers"], "origin">;
-		}
-	): void => {
+	/**
+	 * @deprecated To be removed in v3
+	 */
+	public validateRequestOrigin = (request: {
+		url: string | null;
+		method: string | null;
+		headers: {
+			origin: string | null;
+		};
+	}): void => {
 		if (request.method === null) {
 			debug.request.fail("Request method unavailable");
 			throw new LuciaError("AUTH_INVALID_REQUEST");
@@ -500,12 +487,14 @@ export class Auth<_Configuration extends Configuration = any> {
 				throw new LuciaError("AUTH_INVALID_REQUEST");
 			}
 			try {
-				const url = new URL(request.url);
+				const url = safeParseUrl(request.url);
+				const allowedSubDomains =
+					typeof this.csrfProtection === "object"
+						? this.csrfProtection.allowedSubDomains ?? []
+						: [];
 				if (
-					!isAllowedUrl(requestOrigin, {
-						url,
-						allowedSubdomains: this.allowedSubdomains
-					})
+					url === null ||
+					!isAllowedOrigin(requestOrigin, url.origin, allowedSubDomains)
 				) {
 					throw new LuciaError("AUTH_INVALID_REQUEST");
 				}
@@ -528,7 +517,9 @@ export class Auth<_Configuration extends Configuration = any> {
 			return null;
 		}
 		const cookies = parseCookie(cookieHeader);
-		const sessionId = cookies[this.sessionCookie.name] ?? null;
+		const sessionCookieName =
+			this.sessionCookieConfig.name ?? DEFAULT_SESSION_COOKIE_NAME;
+		const sessionId = cookies[sessionCookieName] ?? null;
 		if (sessionId) {
 			debug.request.info("Found session cookie", sessionId);
 		} else {
@@ -565,20 +556,24 @@ export class Auth<_Configuration extends Configuration = any> {
 			: never
 	): AuthRequest<Lucia.Auth> => {
 		const middleware = this.middleware as Middleware;
+		const sessionCookieName =
+			this.sessionCookieConfig.name ?? DEFAULT_SESSION_COOKIE_NAME;
 		return new AuthRequest(this, {
-			context: middleware({
-				args,
-				env: this.env,
-				sessionCookieName: this.sessionCookie.name
-			}),
-			csrfProtectionEnabled: this.csrfProtectionEnabled
+			csrfProtection: this.csrfProtection,
+			requestContext: transformRequestContext(
+				middleware({
+					args,
+					env: this.env,
+					sessionCookieName: sessionCookieName
+				})
+			)
 		});
 	};
 
 	public createSessionCookie = (session: Session | null): Cookie => {
 		return createSessionCookie(session, {
 			env: this.env,
-			...this.sessionCookie
+			cookie: this.sessionCookieConfig
 		});
 	};
 
@@ -652,6 +647,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		return await this.getKey(providerId, providerUserId);
 	};
 }
+
 type MaybePromise<T> = T | Promise<T>;
 
 export type Configuration<
@@ -670,17 +666,15 @@ export type Configuration<
 	csrfProtection?:
 		| boolean
 		| {
-				allowedSubDomains: string[] | "*";
+				host?: string;
+				hostHeader?: string;
+				allowedSubDomains?: string[] | "*";
 		  };
 	sessionExpiresIn?: {
 		activePeriod: number;
 		idlePeriod: number;
 	};
-	sessionCookie?: {
-		name?: string;
-		attributes?: SessionCookieAttributes;
-		expires?: boolean;
-	};
+	sessionCookie?: SessionCookieConfiguration;
 	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
 	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
 	passwordHash?: {
