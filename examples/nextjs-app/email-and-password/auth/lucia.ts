@@ -1,8 +1,8 @@
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_v3 } from "lucia/middleware";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 import { cache } from "react";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 // import "lucia/polyfill/node";
 
 import { sqliteDatabase } from "./db";
@@ -14,7 +14,7 @@ export const auth = lucia({
 		key: "user_key"
 	}),
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_v3(),
 	sessionCookie: {
 		expires: false
 	},
@@ -29,9 +29,6 @@ export const auth = lucia({
 export type Auth = typeof auth;
 
 export const getPageSession = cache(() => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	return authRequest.validate();
 });

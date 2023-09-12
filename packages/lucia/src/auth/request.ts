@@ -10,7 +10,7 @@ import type { Cookie } from "./cookie.js";
 export type LuciaRequest = {
 	method: string;
 	url?: string;
-	headers: Headers;
+	headers: Pick<Headers, "get">;
 };
 export type RequestContext = {
 	sessionCookie?: string | null;
@@ -30,7 +30,7 @@ type MiddlewareRequestContext = Omit<RequestContext, "request"> & {
 		method: string;
 		url?: string;
 		headers:
-			| Headers
+			| Pick<Headers, "get">
 			| {
 					origin: string | null;
 					cookie: string | null;
@@ -98,19 +98,24 @@ export class AuthRequest<_Auth extends Auth = any> {
 		this.setSessionCookie(session);
 	};
 
+	private maybeSetSession = (session: Session | null) => {
+		try {
+			this.setSession(session);
+		} catch {
+			// ignore error
+			// some middleware throw error
+		}
+	};
+
 	private setSessionCookie = (session: Session | null) => {
 		const sessionId = session?.sessionId ?? null;
 		if (this.storedSessionId === sessionId) return;
 		this.storedSessionId = sessionId;
-		try {
-			this.requestContext.setCookie(this.auth.createSessionCookie(session));
-			if (session) {
-				debug.request.notice("Session cookie stored", session.sessionId);
-			} else {
-				debug.request.notice("Session cookie deleted");
-			}
-		} catch (e) {
-			// ignore
+		this.requestContext.setCookie(this.auth.createSessionCookie(session));
+		if (session) {
+			debug.request.notice("Session cookie stored", session.sessionId);
+		} else {
+			debug.request.notice("Session cookie deleted");
 		}
 	};
 
@@ -124,12 +129,15 @@ export class AuthRequest<_Auth extends Auth = any> {
 			try {
 				const session = await this.auth.validateSession(this.storedSessionId);
 				if (session.fresh) {
-					this.setSessionCookie(session);
+					this.maybeSetSession(session);
 				}
 				return resolve(session);
 			} catch (e) {
-				if (e instanceof LuciaError) {
-					this.setSessionCookie(null);
+				if (
+					e instanceof LuciaError &&
+					e.message === "AUTH_INVALID_SESSION_ID"
+				) {
+					this.maybeSetSession(null);
 					return resolve(null);
 				}
 				throw e;

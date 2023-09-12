@@ -1,5 +1,5 @@
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_v3 } from "lucia/middleware";
 import { apple } from "@lucia-auth/oauth/providers";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 // import "lucia/polyfill/node";
@@ -20,7 +20,7 @@ export const auth = lucia({
 		key: "user_key"
 	}),
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_v3(),
 	sessionCookie: {
 		expires: false
 	},

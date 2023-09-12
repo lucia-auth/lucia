@@ -1,5 +1,5 @@
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { SqliteError } from "better-sqlite3";
 import { isValidEmail, sendEmailVerificationLink } from "@/auth/email";
@@ -52,10 +52,7 @@ export const POST = async (request: NextRequest) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 		const token = await generateEmailVerificationToken(user.userId);
 		await sendEmailVerificationLink(token);

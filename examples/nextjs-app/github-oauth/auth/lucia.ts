@@ -1,11 +1,11 @@
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_v3 } from "lucia/middleware";
 import { github } from "@lucia-auth/oauth/providers";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 // import "lucia/polyfill/node";
 
 import { cache } from "react";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 import sqlite from "better-sqlite3";
 import fs from "fs";
@@ -20,7 +20,7 @@ export const auth = lucia({
 		key: "user_key"
 	}),
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_v3(),
 	sessionCookie: {
 		expires: false
 	},
@@ -39,9 +39,6 @@ export const githubAuth = github(auth, {
 export type Auth = typeof auth;
 
 export const getPageSession = cache(() => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	return authRequest.validate();
 });
