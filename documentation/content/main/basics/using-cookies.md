@@ -17,7 +17,7 @@ Lucia offers built-in CSRF protection when validating session cookies by checkin
 
 ### Cookie expiration
 
-By default, session cookies are set to expire when the session expires. This behavior may not be preferable if you cannot always set cookies after validating sessions, as the session may be reset (expiration extended) and the cookie will expire before the sessions itself. You can set the session cookies to last indefinitely by setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false`. Enabling this will not change the session expiration, but rather only the cookie.
+By default, session cookies are set to expire when the session expires. This behavior may not be preferable if you cannot always set cookies after extending sessions expiration. You can set the session cookies to last indefinitely by setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false`. Enabling this will not change the session expiration, but rather only the cookie.
 
 ## Validate session cookies
 
