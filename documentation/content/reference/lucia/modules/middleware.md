@@ -441,10 +441,9 @@ const auth = lucia({
 ```
 
 ```ts
-auth.handleRequest({ request, set } as { request: Request; set: Set });
+auth.handleRequest(context as Context);
 ```
 
-| name      | type                                                                  |
-| --------- | --------------------------------------------------------------------- |
-| `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) |
-| `set`     | [`Set`](https://elysiajs.com/concept/handler.html)                    |
+| name      | type                                                           |
+| --------- | -------------------------------------------------------------- |
+| `context` | [`Context`](https://elysiajs.com/concept/handler.html#context) |
