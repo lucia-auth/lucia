@@ -121,10 +121,6 @@ type AppleTokens = {
 ```ts
 type AppleUser = {
 	email: string;
-	name: {
-		firstName: string;
-		lastName: string;
-	};
 	sub: string;
 };
 ```
