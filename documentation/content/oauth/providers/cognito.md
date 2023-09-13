@@ -40,7 +40,7 @@ const cognito: (
 | `auth`                  | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                   |          |
 | `config.clientId`       | `string`                                   | Cognito app client id                            |          |
 | `config.clientSecret`   | `string`                                   | Cognito app client secret                        |          |
-| `configs.redirectUri`   | `string`                                   | an authorized redirect URI                       |          |
+| `config.redirectUri`   | `string`                                   | an authorized redirect URI                       |          |
 | `config.scope`          | `string[]`                                 | an array of scopes - `openid` is always included |    ✓     |
 | `config.userPoolDomain` | `string`                                   | Amazon Cognito's user pool domain                |          |
 

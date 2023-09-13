@@ -33,10 +33,10 @@ const gitlab: (
 | name                   | type                                       | description                    | optional |
 | ---------------------- | ------------------------------------------ | ------------------------------ | :------: |
 | `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
-| `configs.clientId`     | `string`                                   | GitLab OAuth app client id     |          |
-| `configs.clientSecret` | `string`                                   | GitLab OAuth app client secret |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI     |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
+| `config.clientId`     | `string`                                   | GitLab OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | GitLab OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI     |          |
+| `config.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
 
 ##### Returns
 

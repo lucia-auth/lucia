@@ -36,20 +36,22 @@ const apple: (
 		teamId: string;
 		keyId: string;
 		certificate: string;
+		scope: string[];
 	}
 ) => AppleProvider;
 ```
 
 ##### Parameters
 
-| name               | type                                       | description                                                    |
-| ------------------ | ------------------------------------------ | -------------------------------------------------------------- |
-| `auth`             | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                 |
-| config.clientId    | `string`                                   | Apple service identifier                                       |
-| config.redirectUri | `string`                                   | an authorized redirect URI                                     |
-| config.teamId      | `string`                                   | Apple teamId                                                   |
-| config.keyId       | `string`                                   | Apple private keyId                                            |
-| config.certificate | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate) |
+| name                 | type                                       | description                                                    | optional |
+| -------------------- | ------------------------------------------ | -------------------------------------------------------------- | :------: |
+| `auth`               | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                 |          |
+| `config.clientId`    | `string`                                   | Apple service identifier                                       |          |
+| `config.redirectUri` | `string`                                   | an authorized redirect URI                                     |          |
+| `config.teamId`      | `string`                                   | Apple teamId                                                   |          |
+| `config.keyId `      | `string`                                   | Apple private keyId                                            |          |
+| `config.certificate` | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate) |          |
+| `config.scope`      | `string[]`                                 | an array of scopes                                             |    ✓     |
 
 ##### Returns
 
@@ -120,8 +122,12 @@ type AppleTokens = {
 
 ```ts
 type AppleUser = {
-	email: string;
-	email_verified: boolean;
+	email?: string;
+	email_verified?: boolean;
+	name?: {
+		firstName: string;
+		lastName: string;
+	};
 	sub: string;
 };
 ```

@@ -34,7 +34,7 @@ const github: (
 | `config.clientId`     | `string`                                   | GitHub OAuth app client id     |          |
 | `config.clientSecret` | `string`                                   | GitHub OAuth app client secret |          |
 | `config.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
-| `configs.redirectUri` | `string`                                   | an authorized redirect URI     |    ✓     |
+| `config.redirectUri` | `string`                                   | an authorized redirect URI     |    ✓     |
 
 ##### Returns
 

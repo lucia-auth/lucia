@@ -35,7 +35,7 @@ const discord: (
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
 | `config.clientId`     | `string`                                   | Discord OAuth app client id                        |          |
 | `config.clientSecret` | `string`                                   | Discord OAuth app client secret                    |          |
-| `configs.redirectUri` | `string`                                   | an authorized redirect URI                         |          |
+| `config.redirectUri` | `string`                                   | an authorized redirect URI                         |          |
 | `config.scope`        | `string[]`                                 | an array of scopes - `identify` is always included |    ✓     |
 
 ##### Returns

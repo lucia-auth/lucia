@@ -36,6 +36,7 @@ export const GET = async (request: NextRequest) => {
 		const getUser = async () => {
 			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;
+			if (!appleUser.email) throw new Error("Email expected");
 			const user = await createUser({
 				attributes: {
 					email: appleUser.email
