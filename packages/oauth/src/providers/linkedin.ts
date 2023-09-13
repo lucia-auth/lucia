@@ -44,7 +44,7 @@ export class LinkedInAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: ["profile", ...scopeConfig]
+				scope: ["profile", "openid", ...scopeConfig]
 			}
 		);
 	};
