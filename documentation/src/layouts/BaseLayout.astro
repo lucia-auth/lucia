@@ -16,16 +16,20 @@ const ogUrl =
 	pathname === "/"
 		? new URL("/og/index.jpg", origin)
 		: new URL("/og/" + pathname.replace(/\/$/, "") + ".jpg", origin);
+
+const pageTitle = title === "Lucia" ? "Lucia" : `${title} · Lucia`;
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+
+		<link rel="icon" type="image/svg+xml" href="/logo.svg" />
+		<link rel="mask-icon" href="/logo.svg" color="#5f57ff">
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title} · Lucia</title>
-		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+		<title>{pageTitle}</title>
 
 		<meta property="build_id" content={import.meta.env.BUILD_ID} />
 
@@ -47,10 +51,6 @@ const ogUrl =
 
 		<!-- For Discord sidebar -->
 		<meta name="theme-color" content="#5f57ff" />
-		<title>
-			{title}
-		</title>
-		<link rel="icon" href="/logo.svg" sizes="any" type="image/svg+xml" />
 	</head>
 	<body class="text-base leading-relaxed">
 		<slot />
