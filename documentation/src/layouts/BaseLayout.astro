@@ -17,7 +17,7 @@ const ogUrl =
 		? new URL("/og/index.jpg", origin)
 		: new URL("/og/" + pathname.replace(/\/$/, "") + ".jpg", origin);
 
-const pageTitle = title === "Lucia" ? "Lucia" : `{title} · Lucia`;
+const pageTitle = title === "Lucia" ? "Lucia" : `${title} · Lucia`;
 ---
 
 <html lang="en">
