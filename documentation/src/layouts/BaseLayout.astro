@@ -23,11 +23,12 @@ const pageTitle = title === "Lucia" ? "Lucia" : `${title} · Lucia`;
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
+		
 		<link rel="icon" type="image/svg+xml" href="/logo.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
-		<link href="/logo.svg" rel="preload" as="image" type="image/svg+xml" />
 
 		<meta property="build_id" content={import.meta.env.BUILD_ID} />
 
