@@ -67,12 +67,12 @@ We'll expose the user's email and verification status to the `User` object retur
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 	sessionCookie: {
 		expires: false
 	},
@@ -215,17 +215,14 @@ Create `app/signup/page.tsx`. It will have a form with inputs for email and pass
 ```tsx
 // app/signup/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) {
 		if (!session.user.emailVerified) redirect("/email-verification");
@@ -260,7 +257,7 @@ When creating a user, use `"email"` as the provider id and the user's email as t
 ```ts
 // app/api/signup/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { generateEmailVerificationToken } from "@/auth/token";
 import { sendEmailVerificationLink } from "@/auth/email";
@@ -312,10 +309,7 @@ export const POST = async (request: NextRequest) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 
 		const token = await generateEmailVerificationToken(user.userId);
@@ -392,17 +386,14 @@ Create `app/login/page.tsx`. It will have a form with inputs for email and passw
 ```tsx
 // app/login/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+		const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) {
 		if (!session.user.emailVerified) redirect("/email-verification");
@@ -438,7 +429,7 @@ Authenticate the user with `"email"` as the provider id and their email as the p
 ```ts
 // app/api/login/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { LuciaError } from "lucia";
 
@@ -481,10 +472,7 @@ export const POST = async (request: NextRequest) => {
 			userId: key.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,
@@ -529,16 +517,13 @@ This page should only be accessible to users whose email is not verified.
 
 ```tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
 	if (session.user.emailVerified) redirect("/");
@@ -665,14 +650,11 @@ Protect all other pages and API routes by redirecting unauthenticated users and 
 ```tsx
 // page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
 	if (!session.user.emailVerified) redirect("/email-verification");
@@ -687,12 +669,12 @@ export default Page;
 ```ts
 // route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest({ request, cookies });
+		const authRequest = auth.handleRequest(request.method, context);
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
@@ -705,27 +687,5 @@ export const POST = async (request: NextRequest) => {
         })
 	}
     // ...
-};
-```
-
-## Additional notes
-
-For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
-
-```ts
-export const getPageSession = cache(() => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
-	return authRequest.validate();
-});
-```
-
-This allows you to share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
-
-```ts
-const Page = async () => {
-	const session = await getPageSession();
 };
 ```

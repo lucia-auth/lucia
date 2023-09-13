@@ -65,12 +65,12 @@ Set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false sinc
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 
 	sessionCookie: {
 		expires: false
@@ -85,12 +85,12 @@ We'll also expose the user's GitHub username to the `User` object by defining [`
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 	sessionCookie: {
 		expires: false
 	},
@@ -164,15 +164,14 @@ Create `app/login/github/route.ts` and handle GET requests. [`GithubProvider.get
 ```ts
 // app/login/github/route.ts
 import { auth, githubAuth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 export const GET = async (request: NextRequest) => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
-	const cookieStore = cookies();
 	// store state
-	cookieStore.set("github_oauth_state", state, {
+	cookies().set("github_oauth_state", state, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		path: "/",
@@ -193,19 +192,18 @@ Create `app/login/github/callback/route.ts` and handle GET requests.
 
 When the user authenticates with GitHub, GitHub will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with `cookies()` and `Request`.
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with the request method, `cookies()`, and `headers().
 
 ```ts
 // app/login/github/callback/route.ts
 import { auth, githubAuth } from "@/auth/lucia";
 import { OAuthRequestError } from "@lucia-auth/oauth";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 export const GET = async (request: NextRequest) => {
-	const cookieStore = cookies();
-	const storedState = cookieStore.get("github_oauth_state")?.value;
+	const storedState = cookies().get("github_oauth_state")?.value;
 	const url = new URL(request.url);
 	const state = url.searchParams.get("state");
 	const code = url.searchParams.get("code");
@@ -235,7 +233,10 @@ export const GET = async (request: NextRequest) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({ request, cookies });
+		const authRequest = auth.handleRequest(request.method, {
+			cookies,
+			headers
+		});
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,
@@ -285,19 +286,16 @@ const user = await getUser();
 
 Authenticated users should be redirected to the profile page whenever they try to access the sign in page. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
-Since `Request` is not available in pages, set it to `null`. **This should only be done for `page.tsx` and `layout.tsx`**, and `request` should always be defined when using it inside `route.tsx`.
+For `Auth.handleRequest()`, pass `"GET"` as the request method.
 
 ```tsx
 // app/login/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) redirect("/");
 	return (
@@ -320,16 +318,13 @@ Unauthenticated users should be redirected to the login page. The user object is
 ```tsx
 // app/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form"; // expect error - see next section
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
 	return (
@@ -402,12 +397,12 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 // app/api/logout/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest({ request, cookies });
+		const authRequest = auth.handleRequest(request.method, context);
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
@@ -430,14 +425,11 @@ export const POST = async (request: NextRequest) => {
 
 ## Additional notes
 
-For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
+For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request.
 
 ```ts
 export const getPageSession = cache(() => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	return authRequest.validate();
 });
 ```

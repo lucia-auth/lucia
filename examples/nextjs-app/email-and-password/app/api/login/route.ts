@@ -1,5 +1,5 @@
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { LuciaError } from "lucia";
 import { isValidEmail } from "@/auth/email";
@@ -11,7 +11,7 @@ export const POST = async (request: NextRequest) => {
 	const email = formData.get("email");
 	const password = formData.get("password");
 	// basic check
-	if (typeof email !== "string" || email.length < 1 || email.length > 255) {
+	if (!isValidEmail(email)) {
 		return NextResponse.json(
 			{
 				error: "Invalid email"
@@ -43,10 +43,7 @@ export const POST = async (request: NextRequest) => {
 			userId: key.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,

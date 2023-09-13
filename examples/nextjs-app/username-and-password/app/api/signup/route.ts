@@ -1,5 +1,5 @@
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { SqliteError } from "better-sqlite3";
 
@@ -53,10 +53,7 @@ export const POST = async (request: NextRequest) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,

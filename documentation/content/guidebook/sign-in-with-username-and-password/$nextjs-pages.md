@@ -47,12 +47,12 @@ We'll expose the user's username to the `User` object by defining [`getUserAttri
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 
 	getUserAttributes: (data) => {
 		return {

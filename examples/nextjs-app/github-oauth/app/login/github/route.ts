@@ -1,10 +1,10 @@
 import { auth, githubAuth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 export const GET = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest({ request, cookies });
+	const authRequest = auth.handleRequest(request.method, context);
 	const session = await authRequest.validate();
 	if (session) {
 		return new Response(null, {
