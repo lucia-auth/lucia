@@ -9,7 +9,7 @@ We'll be using bearer tokens instead of cookies to validate users. For the most 
 
 One option is to use a deep-links, but getting that to work in a dev environment is tricky and isn't officially supported in Tauri. Another option is to open the Github authorization url in a webview window, which would allow us to intercept navigation and read urls (where we can store the session id). However, since a webview window is in its own isolated context, the user would have to enter their Github username/password every time.
 
-The strategy we'll be using is to create a super basic local server in the background. After creating a session, the server can redirect the user to the localhost server with the session id, which can then be trivially passed to our main application.
+The strategy we'll be using is to create a super basic local server in the background. After creating a session, the server can redirect the user to the localhost server with the session token.
 
 ### Clone project
 
