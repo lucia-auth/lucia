@@ -3,4 +3,4 @@ package: "@lucia-auth/oauth"
 type: "patch"
 ---
 
-Cleanup unused identityProvider var in the Cognito provider
+Remove unused `identityProvider` params from `CognitoAuth.getAuthorizationUrl()`
