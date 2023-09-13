@@ -319,7 +319,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			throw new LuciaError("AUTH_INVALID_KEY_ID");
 		}
 		const hashedPassword = databaseKey.hashed_password;
-		if (hashedPassword) {
+		if (hashedPassword !== null) {
 			debug.key.info("Key includes password");
 			if (!password) {
 				debug.key.fail("Key password not provided", keyId);
