@@ -62,7 +62,7 @@ app.get("/login/github/callback", async (c) => {
 			attributes: {}
 		});
 		return c.redirect(
-			`http://localhost:${redirectPort}?session=${session.sessionId}`
+			`http://localhost:${redirectPort}?session_token=${session.sessionId}`
 		);
 	} catch (e) {
 		console.log(e);

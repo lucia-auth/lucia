@@ -25,7 +25,7 @@ async fn authenticate(app_handle: AppHandle) -> Result<String, String> {
     let url = buf.split_ascii_whitespace().nth(1).unwrap();
     let (_, query) = url.split_once('?').unwrap_or_default();
     for query_pair in query.split('&') {
-        if let Some(("session", value)) = query_pair.split_once('=') {
+        if let Some(("session_token", value)) = query_pair.split_once('=') {
             writer
                 .try_write(
                     b"HTTP/1.1 200 OK\r\n\r\nSuccessfully logged in. You can now close this tab.",
