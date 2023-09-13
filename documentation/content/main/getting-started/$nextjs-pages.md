@@ -13,7 +13,7 @@ yarn add lucia
 
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. **Make sure to pass the `nextjs_future()` middleware, and NOT `nextjs()`**. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
+Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. **Make sure to pass the `nextjs_future()` middleware, and NOT `nextjs()` (will be removed in the future)**. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
 If you're deploying your project the edge runtime, set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to `false`.
 
