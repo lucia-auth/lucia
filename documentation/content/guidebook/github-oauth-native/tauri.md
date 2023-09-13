@@ -5,7 +5,7 @@ description: "Learn how to implement Github OAuth in Tauri desktop applications"
 
 _These guides are not beginner friendly and do not cover the basics of Lucia. We recommend reading the [Github OAuth](http://localhost:3000/guidebook/github-oauth) guide for regular websites first._
 
-We'll be using bearer tokens instead of cookies to validate users. For the most part, authenticating the user is identical to regular web applications. The user is redirected to Github, then back to your application with a `code`, the server exchanges that `code` for an access token, and create a user/session based on it. The hard part is sending the session id (ie. bearer token) from the server back to our application.
+We'll be using bearer tokens instead of cookies to validate users. For the most part, authenticating the user is identical to regular web applications. The user is redirected to Github, then back to your server with a `code`, which is then exchanged for an access token, and a new user/session is created. The hard part is sending the session token (ie. session id) from the server back to our application.
 
 One option is to use a deep-links, but getting that to work in a dev environment is tricky and isn't officially supported in Tauri. Another option is to open the Github authorization url in a webview window, which would allow us to intercept navigation and read urls (where we can store the session id). However, since a webview window is in its own isolated context, the user would have to enter their Github username/password every time.
 
