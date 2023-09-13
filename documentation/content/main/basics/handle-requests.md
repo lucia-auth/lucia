@@ -144,10 +144,10 @@ app.get("/", async (context) => {
 
 ### Next.js
 
-`nextjs_v3()` will replace `nextjs()` in v3. While `nextjs()` isn't deprecated, we recommend considering it as a legacy API.
+`nextjs_future()` will replace `nextjs()` in the next next major release. While `nextjs()` isn't deprecated, we recommend considering it as a legacy API.
 
 ```ts
-import { nextjs_v3 } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 ```
 
 #### Pages router

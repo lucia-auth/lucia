@@ -47,12 +47,12 @@ Set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false sinc
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs_v3 } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs_v3(),
+	middleware: nextjs_future(),
 
 	sessionCookie: {
 		expires: false
@@ -67,12 +67,12 @@ We'll also expose the user's username to the `User` object by defining [`getUser
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs_v3 } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs_v3(),
+	middleware: nextjs_future(),
 	sessionCookie: {
 		expires: false
 	},

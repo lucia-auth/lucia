@@ -302,7 +302,7 @@ type NextJsAppServerContext_V3 = {
 	cookies: NextCookiesFunction;
 };
 
-export const nextjs_v3 = (): Middleware<
+export const nextjs_future = (): Middleware<
 	| [NextJsPagesServerContext]
 	| [NextRequest]
 	| [requestMethod: string, context: NextJsAppServerContext_V3]

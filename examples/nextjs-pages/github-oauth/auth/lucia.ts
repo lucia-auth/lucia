@@ -1,5 +1,5 @@
 import { lucia } from "lucia";
-import { nextjs_v3 } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 import { github } from "@lucia-auth/oauth/providers";
 import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
 // import "lucia/polyfill/node";
@@ -17,7 +17,7 @@ export const auth = lucia({
 		key: "user_key"
 	}),
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs_v3(),
+	middleware: nextjs_future(),
 	getUserAttributes: (data) => {
 		return {
 			githubUsername: data.github_username

@@ -190,7 +190,7 @@ auth.handleRequest(requestContext as RequestContext);
 
 ## `nextjs()`
 
-**While this is not deprecated, it will be replaced with [`nextjs_v3()`]() in Lucia v3**.
+**While this is not deprecated, it will be replaced with [`nextjs_future()`]() in the next major release**.
 
 Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled** when:
 
@@ -248,7 +248,7 @@ authRequest.setSession(); // error!
 | --------- | --------------------------------------------------------------------------------- |
 | `request` | [`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request) |
 
-## `nextjs_v3()`
+## `nextjs_future()`
 
 A newer version of `nextjs()` middleware for Lucia v3. We recommend using this middleware for future proofing your codebase.
 
@@ -258,7 +258,7 @@ Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. 
 - Used inside `getServerSideProps()` in Edge runtime
 
 ```ts
-const nextjs_v3: () => Middleware;
+const nextjs_future: () => Middleware;
 ```
 
 ##### Usage

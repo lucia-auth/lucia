@@ -74,7 +74,7 @@ authRequest.setSession(session);
 authRequest.setSession(null); // delete session cookie
 ```
 
-This is disabled and will throw an error when using [`web()`](/reference/lucia/modules/middleware#web) and some configuration of [`nextjs_v3()`](/reference/lucia/modules/middleware#nextjs) middleware. If you're using them, set session cookies manually as described below.
+This is disabled and will throw an error when using [`web()`](/reference/lucia/modules/middleware#web) and some configuration of [`nextjs_future()`](/reference/lucia/modules/middleware#nextjs) middleware. If you're using them, set session cookies manually as described below.
 
 ### Create session cookies
 
