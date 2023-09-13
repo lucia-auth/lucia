@@ -28,7 +28,7 @@ const linkedIn: (
 
 ##### Parameters
 
-Scope `r_liteprofile` is always included.
+Scope `profile` and `openid` are always included.
 
 | name                  | type                                       | description                      | optional |
 | --------------------- | ------------------------------------------ | -------------------------------- | :------: |
