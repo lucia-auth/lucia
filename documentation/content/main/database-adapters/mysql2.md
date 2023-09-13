@@ -62,7 +62,7 @@ const auth = lucia({
 
 ## MySQL schema
 
-You can choose any table names, just make sure to define them in the adapter argument.
+You can choose any table names, just make sure to define them in the adapter argument. **The `id` columns are not UUID types with the default configuration.**
 
 ### User table
 

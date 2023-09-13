@@ -33,6 +33,8 @@ SDKs such as `@vercel/postgres` and `@neonserverless/database` provide drop-in r
 
 Lucia requires 3 tables to work, which are then connected to Lucia via a database adapter. This is only the basic model and the specifics depend on the adapter.
 
+**The `id` columns are not UUID types with the default configuration.**
+
 ### User table
 
 | name | type     | primary key | description |
