@@ -10,18 +10,13 @@ import { createES256SignedJWT } from "../utils/jwt.js";
 
 import type { Auth } from "lucia";
 
-enum scope {
-	name = "name",
-	email = "email"
-}
-
 type Config = {
 	redirectUri: string;
 	clientId: string;
 	teamId: string;
 	keyId: string;
 	certificate: string;
-	scope: scope[];
+	scope: string[];
 };
 
 const PROVIDER_ID = "apple";
@@ -47,7 +42,7 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
-		const scopeConfig = this.config.scope ?? ['email'];
+		const scopeConfig = this.config.scope ?? ["email"];
 		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://appleid.apple.com/auth/authorize",
 			{
@@ -63,26 +58,36 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public validateCallback = async (
 		code: string
 	): Promise<AppleUserAuth<_Auth>> => {
-		const appleTokens = await this.validateAuthorizationCode(code);
-		const appleUser = getAppleUser(appleTokens.idToken);
+		const [appleTokens, userJSON] = await this.validateAuthorizationCode(code);
+		const idTokenPayload = decodeIdToken<{
+			sub: string;
+			email?: string;
+			email_verified?: boolean;
+		}>(appleTokens.idToken);
+		const appleUser: AppleUser = {
+			sub: idTokenPayload.sub,
+			email: idTokenPayload.email,
+			email_verified: idTokenPayload.email_verified,
+			name: userJSON.name
+		};
 		return new AppleUserAuth(this.auth, appleUser, appleTokens);
 	};
 
 	private validateAuthorizationCode = async (
 		code: string
-	): Promise<AppleTokens> => {
+	): Promise<[tokens: AppleTokens, userJSON: AppleUserJSON]> => {
 		const clientSecret = await createSecretId({
 			certificate: this.config.certificate,
 			teamId: this.config.teamId,
 			clientId: this.config.clientId,
 			keyId: this.config.keyId
 		});
-
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
 			expires_in: number;
 			id_token: string;
+			user: AppleUserJSON;
 		}>(code, "https://appleid.apple.com/auth/token", {
 			clientId: this.config.clientId,
 			redirectUri: this.config.redirectUri,
@@ -92,12 +97,15 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			}
 		});
 
-		return {
-			accessToken: tokens.access_token,
-			refreshToken: tokens.refresh_token ?? null,
-			accessTokenExpiresIn: tokens.expires_in,
-			idToken: tokens.id_token
-		};
+		return [
+			{
+				accessToken: tokens.access_token,
+				refreshToken: tokens.refresh_token ?? null,
+				accessTokenExpiresIn: tokens.expires_in,
+				idToken: tokens.id_token
+			},
+			tokens.user
+		];
 	};
 }
 
@@ -140,12 +148,10 @@ const createSecretId = async (config: {
 	return jwt;
 };
 
-const getAppleUser = (idToken: string): AppleUser => {
-	const jwtPayload = decodeIdToken<AppleUser>(idToken);
-	return {
-		email: jwtPayload.email,
-		email_verified: jwtPayload.email_verified,
-		sub: jwtPayload.sub
+type AppleUserJSON = {
+	name?: {
+		firstName: string;
+		lastName: string;
 	};
 };
 
@@ -157,7 +163,11 @@ export type AppleTokens = {
 };
 
 export type AppleUser = {
-	email: string,
-	email_verified: boolean,
-	sub: string
+	email?: string;
+	email_verified?: boolean;
+	name?: {
+		firstName: string;
+		lastName: string;
+	};
+	sub: string;
 };

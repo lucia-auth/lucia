@@ -33,10 +33,10 @@ const slack: (
 | name                   | type                                       | description                                | optional |
 | ---------------------- | ------------------------------------------ | ------------------------------------------ | :------: |
 | `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                             |          |
-| `configs.clientId`     | `string`                                   | Slack OAuth app client id                  |          |
-| `configs.clientSecret` | `string`                                   | Slack OAuth app client secret              |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI (must be HTTPS) |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                         |    ✓     |
+| `config.clientId`     | `string`                                   | Slack OAuth app client id                  |          |
+| `config.clientSecret` | `string`                                   | Slack OAuth app client secret              |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI (must be HTTPS) |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                         |    ✓     |
 
 ##### Returns
 

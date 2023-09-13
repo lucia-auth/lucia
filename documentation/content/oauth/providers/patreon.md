@@ -35,10 +35,10 @@ Scope `identity` is always included.
 | name                   | type                                       | description                         | optional |
 | ---------------------- | ------------------------------------------ | ----------------------------------- | :------: |
 | `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                      |          |
-| `configs.clientId`     | `string`                                   | Patreon OAuth app client id         |          |
-| `configs.clientSecret` | `string`                                   | Patreon OAuth app client secret     |          |
-| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                  |    ✓     |
+| `config.clientId`     | `string`                                   | Patreon OAuth app client id         |          |
+| `config.clientSecret` | `string`                                   | Patreon OAuth app client secret     |          |
+| `config.redirectUri`  | `string`                                   | one of the authorized redirect URIs |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                  |    ✓     |
 
 ##### Returns
 
