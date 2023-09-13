@@ -3,7 +3,7 @@ title: "Github OAuth in Tauri"
 description: "Learn how to implement Github OAuth in Tauri desktop applications"
 ---
 
-_These guides are not beginner friendly and do not cover the basics of Lucia. We recommend reading the [Github OAuth](http://localhost:3000/guidebook/github-oauth) guide for regular websites first._
+> These guides are not beginner friendly and do not cover the basics of Lucia. We recommend reading the [Github OAuth](http://localhost:3000/guidebook/github-oauth) guide for regular websites first.
 
 We'll be using bearer tokens instead of cookies to validate users. For the most part, authenticating the user is identical to regular web applications. The user is redirected to Github, then back to your server with a `code`, which is then exchanged for an access token, and a new user/session is created. The hard part is sending the session token (ie. session id) from the server back to our application.
 
@@ -76,13 +76,13 @@ app.get("/login/github", async (c) => {
 	const [authorizationUrl, state] = await githubAuth.getAuthorizationUrl();
 	setCookie(c, "github_oauth_state", state, {
 		path: "/",
-		maxAge: 60 * 10,
+		maxAge: 60 * 10, // 10 min
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production"
 	});
 	setCookie(c, "redirect_port", port, {
 		path: "/",
-		maxAge: 60 * 10,
+		maxAge: 60 * 10, // 10 min
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production"
 	});
@@ -98,7 +98,7 @@ app.get("/login/github/callback", async (c) => {
 	if (!state || !storedState || state !== storedState) {
 		return c.newResponse(null, 400);
 	}
-	const redirectPort = getCookie(c, "redirect_port");
+	const redirectPort = getCookie(c, "redirect_port"); // get port we set in /login/github
 	if (!redirectPort) return c.newResponse(null, 400);
 	try {
 		const { getExistingUser, githubUser, createUser } =
@@ -312,7 +312,6 @@ A standard request message looks like this:
 ```
 GET /path?key=value HTTP/1.1
 Host: localhost:3000
-User-Agent: lucia
 
-<h1>body</h1>
+some body text
 ```
