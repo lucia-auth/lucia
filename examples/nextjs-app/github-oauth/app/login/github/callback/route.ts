@@ -35,7 +35,7 @@ export const GET = async (request: NextRequest) => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
-					github_username: githubUser.login
+					username: githubUser.login
 				}
 			});
 			return user;

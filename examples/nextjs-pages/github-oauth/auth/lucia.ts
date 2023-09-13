@@ -20,7 +20,7 @@ export const auth = lucia({
 	middleware: nextjs(),
 	getUserAttributes: (data) => {
 		return {
-			githubUsername: data.github_username
+			githubUsername: data.username
 		};
 	}
 });

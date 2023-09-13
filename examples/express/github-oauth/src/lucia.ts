@@ -23,7 +23,7 @@ export const auth = lucia({
 	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
 	getUserAttributes: (data) => {
 		return {
-			githubUsername: data.github_username
+			githubUsername: data.username
 		};
 	}
 });

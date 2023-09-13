@@ -2,7 +2,7 @@
 declare namespace Lucia {
 	type Auth = import("./lucia.js").Auth;
 	type DatabaseUserAttributes = {
-		github_username: string;
+		username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }
