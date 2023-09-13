@@ -283,9 +283,8 @@ export class Auth<_Configuration extends Configuration = any> {
 			options.key.providerUserId
 		);
 		const password = options.key.password;
-		const hashedPassword = password
-			? await this.passwordHash.generate(password)
-			: null;
+		const hashedPassword =
+			password === null ? null : await this.passwordHash.generate(password);
 		await this.adapter.setUser(databaseUser, {
 			id: keyId,
 			user_id: userId,
@@ -320,7 +319,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			throw new LuciaError("AUTH_INVALID_KEY_ID");
 		}
 		const hashedPassword = databaseKey.hashed_password;
-		if (hashedPassword) {
+		if (hashedPassword !== null) {
 			debug.key.info("Key includes password");
 			if (!password) {
 				debug.key.fail("Key password not provided", keyId);
@@ -336,6 +335,10 @@ export class Auth<_Configuration extends Configuration = any> {
 			}
 			debug.key.notice("Validated key password");
 		} else {
+			if (password !== null) {
+				debug.key.fail("Incorrect key password", password);
+				throw new LuciaError("AUTH_INVALID_PASSWORD");
+			}
 			debug.key.info("No password included in key");
 		}
 		debug.key.success("Validated key", keyId);
@@ -460,7 +463,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	};
 
 	/**
-	 * @deprecated To be removed in v3
+	 * @deprecated To be removed in next major release
 	 */
 	public validateRequestOrigin = (request: {
 		url: string | null;
