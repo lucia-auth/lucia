@@ -42,7 +42,7 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
-		const scopeConfig = this.config.scope ?? ["email"];
+		const scopeConfig = this.config.scope ?? [];
 		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://appleid.apple.com/auth/authorize",
 			{
