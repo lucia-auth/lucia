@@ -1,6 +1,6 @@
 CREATE TABLE user (
     id VARCHAR(15) PRIMARY KEY,
-    github_username VARCHAR(31) NOT NULL
+    username VARCHAR(31) NOT NULL
 );
 CREATE TABLE user_key (
     id VARCHAR(255) PRIMARY KEY,

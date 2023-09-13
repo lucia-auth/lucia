@@ -9,7 +9,7 @@ declare namespace App {
 declare namespace Lucia {
 	type Auth = import("./lib/lucia").Auth;
 	type DatabaseUserAttributes = {
-		github_username: string;
+		username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }

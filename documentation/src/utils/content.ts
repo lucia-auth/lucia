@@ -121,6 +121,7 @@ const isValidFrameworkVersion = (
 
 const frameworkNameDictionary = {
 	astro: "Astro",
+	electron: "Electron",
 	elysia: "Elysia",
 	express: "Express",
 	fastify: "Fastify",
@@ -129,7 +130,9 @@ const frameworkNameDictionary = {
 	"nextjs-pages": "Next.js Pages Router",
 	nuxt: "Nuxt",
 	qwik: "Qwik",
+	"react-native": "React Native",
 	remix: "Remix",
 	solidstart: "SolidStart",
-	sveltekit: "SvelteKit"
+	sveltekit: "SvelteKit",
+	tauri: "Tauri"
 } as const;

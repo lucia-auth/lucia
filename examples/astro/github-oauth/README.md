@@ -27,4 +27,4 @@ GITHUB_CLIENT_SECRET=""
 | id                | type     | unique |
 | ----------------- | -------- | :----: |
 | `id`              | `string` |        |
-| `github_username` | `string` |        |
+| `username` | `string` |        |

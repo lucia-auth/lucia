@@ -49,7 +49,7 @@ router.get("/login/github/callback", async (req, res) => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
-					github_username: githubUser.login
+					username: githubUser.login
 				}
 			});
 			return user;

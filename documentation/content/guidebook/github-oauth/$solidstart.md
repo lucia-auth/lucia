@@ -41,7 +41,7 @@ GITHUB_CLIENT_SECRET="..."
 
 ## Update your database
 
-Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
+Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` in `app.d.ts` whenever you add any new columns to the user table.
 
@@ -51,7 +51,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` in `app.d.ts` whenever you a
 declare namespace Lucia {
 	type Auth = import("./lib/lucia").Auth;
 	type DatabaseUserAttributes = {
-		github_username: string;
+		username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }
@@ -76,7 +76,7 @@ export const auth = lucia({
 
 	getUserAttributes: (data) => {
 		return {
-			githubUsername: data.github_username
+			githubUsername: data.username
 		};
 	}
 });
@@ -211,7 +211,7 @@ export const GET = async (event: APIEvent) => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
-					github_username: githubUser.login
+					username: githubUser.login
 				}
 			});
 			return user;
@@ -248,7 +248,7 @@ export const GET = async (event: APIEvent) => {
 
 You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the GitHub user id already exists.
 
-If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the GitHub user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously. You can access the GitHub user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
 const { getExistingUser, githubUser, createUser } =
@@ -259,7 +259,7 @@ const getUser = async () => {
 	if (existingUser) return existingUser;
 	const user = await createUser({
 		attributes: {
-			github_username: githubUser.login
+			username: githubUser.login
 		}
 	});
 	return user;

@@ -31,7 +31,7 @@ const renderPage = (params: { userId: string; githubUsername: string }) => {
 		.toString("utf-8");
 	html = html
 		.replaceAll("%%user_id%%", userId)
-		.replaceAll("%%github_username%%", githubUsername);
+		.replaceAll("%%username%%", githubUsername);
 	return html;
 };
 
