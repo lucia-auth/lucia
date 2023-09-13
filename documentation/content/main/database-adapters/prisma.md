@@ -77,6 +77,8 @@ import { PrismaClient } from "@prisma/client/edge";
 
 You can add additional columns to the user model to store user attributes, and to the session model to store session attributes. If you change the model names, pass the new names to the adapter config.
 
+**The `id` fields are not UUID types with the default configuration.**
+
 ```prisma
 model User {
   id           String    @id @unique
