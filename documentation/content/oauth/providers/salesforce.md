@@ -30,9 +30,9 @@ const salesforce: (
 
 ##### Parameters
 
-| name                   | type                                       | description                        | optional |
-| ---------------------- | ------------------------------------------ | ---------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                     |          |
+| name                  | type                                       | description                        | optional |
+| --------------------- | ------------------------------------------ | ---------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                     |          |
 | `config.clientId`     | `string`                                   | Salesforce OAuth app client id     |          |
 | `config.clientSecret` | `string`                                   | Salesforce OAuth app client secret |          |
 | `config.redirectUri`  | `string`                                   | an authorized redirect URI         |          |

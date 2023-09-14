@@ -30,9 +30,9 @@ const atlassian: (
 
 ##### Parameters
 
-| name                   | type                                       | description                       | optional |
-| ---------------------- | ------------------------------------------ | --------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |          |
+| name                  | type                                       | description                       | optional |
+| --------------------- | ------------------------------------------ | --------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |          |
 | `config.clientId`     | `string`                                   | Atlassian OAuth app client id     |          |
 | `config.clientSecret` | `string`                                   | Atlassian OAuth app client secret |          |
 | `config.redirectUri`  | `string`                                   | an authorized redirect URI        |          |

@@ -37,7 +37,7 @@ GITHUB_CLIENT_SECRET=""
 
 ## User schema
 
-| id                | type     | unique |
-| ----------------- | -------- | :----: |
-| `id`              | `string` |        |
+| id         | type     | unique |
+| ---------- | -------- | :----: |
+| `id`       | `string` |        |
 | `username` | `string` |        |

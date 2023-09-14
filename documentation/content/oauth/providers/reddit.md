@@ -31,9 +31,9 @@ const reddit: (
 
 ##### Parameters
 
-| name                    | type                                       | description                    | optional | default       |
-| ----------------------- | ------------------------------------------ | ------------------------------ | :------: | ------------- |
-| `auth`                  | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |               |
+| name                   | type                                       | description                    | optional | default       |
+| ---------------------- | ------------------------------------------ | ------------------------------ | :------: | ------------- |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |               |
 | `config.clientId`      | `string`                                   | Reddit OAuth app client id     |          |               |
 | `config.clientSecret`  | `string`                                   | Reddit OAuth app client secret |          |               |
 | `config.redirectUri`   | `string`                                   | Reddit OAuth app redirect Uri  |          |               |

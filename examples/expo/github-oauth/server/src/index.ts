@@ -51,7 +51,7 @@ app.get("/login/github/callback", async (c) => {
 			attributes: {}
 		});
 		return c.redirect(
-			// change this part before starting your server 
+			// change this part before starting your server
 			`exp://192.168.2.100:8081/login?session_token=${session.sessionId}`
 		);
 	} catch (e) {

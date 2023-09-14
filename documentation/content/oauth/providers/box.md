@@ -27,9 +27,9 @@ const box: (
 
 ##### Parameters
 
-| name                   | type                                       | description                 |
-| ---------------------- | ------------------------------------------ | --------------------------- |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance              |
+| name                  | type                                       | description                 |
+| --------------------- | ------------------------------------------ | --------------------------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance              |
 | `config.clientId`     | `string`                                   | Box OAuth app client id     |
 | `config.clientSecret` | `string`                                   | Box OAuth app client secret |
 | `config.redirectUri`  | `string`                                   | an authorized redirect URI  |

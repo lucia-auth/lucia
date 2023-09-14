@@ -29,9 +29,9 @@ const google: (
 
 ##### Parameters
 
-| name                   | type                                       | description                              | optional | default    |
-| ---------------------- | ------------------------------------------ | ---------------------------------------- | :------: | ---------- |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                           |          |            |
+| name                  | type                                       | description                              | optional | default    |
+| --------------------- | ------------------------------------------ | ---------------------------------------- | :------: | ---------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                           |          |            |
 | `config.clientId`     | `string`                                   | Google OAuth app client id               |          |            |
 | `config.clientSecret` | `string`                                   | Google OAuth app client secret           |          |            |
 | `config.redirectUri`  | `string`                                   | an authorized redirect URI               |          |            |

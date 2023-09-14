@@ -32,7 +32,7 @@ export default function App() {
 		});
 		if (!response.ok) return;
 		await SecureStore.deleteItemAsync("session_token");
-    setCurrentUser(null);
+		setCurrentUser(null);
 	};
 
 	useEffect(() => {

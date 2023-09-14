@@ -12,5 +12,5 @@ export const createHeadersFromObject = (
 			}
 		}
 	}
-    return headers
+	return headers;
 };
