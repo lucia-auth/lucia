@@ -36,22 +36,24 @@ const apple: (
 		teamId: string;
 		keyId: string;
 		certificate: string;
-		scope: string[];
+		scope?: string[];
+		responseMode?: "query" | "form_post";
 	}
 ) => AppleProvider;
 ```
 
 ##### Parameters
 
-| name                 | type                                       | description                                                    | optional |
-| -------------------- | ------------------------------------------ | -------------------------------------------------------------- | :------: |
-| `auth`               | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                 |          |
-| `config.clientId`    | `string`                                   | Apple service identifier                                       |          |
-| `config.redirectUri` | `string`                                   | an authorized redirect URI                                     |          |
-| `config.teamId`      | `string`                                   | Apple teamId                                                   |          |
-| `config.keyId `      | `string`                                   | Apple private keyId                                            |          |
-| `config.certificate` | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate) |          |
-| `config.scope`      | `string[]`                                 | an array of scopes                                             |    ✓     |
+| name                  | type                                       | description                                                           | default   |
+| --------------------- | ------------------------------------------ | --------------------------------------------------------------------- | --------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                        |           |
+| `config.clientId`     | `string`                                   | Apple service identifier                                              |           |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI                                            |           |
+| `config.teamId`       | `string`                                   | Apple teamId                                                          |           |
+| `config.keyId `       | `string`                                   | Apple private keyId                                                   |           |
+| `config.certificate`  | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate)        |           |
+| `config.scope`        | `string[]`                                 | an array of scopes                                                    | `[]`      |
+| `config.responseMode` | `"query" \| "form_post"`                   | OIDC response mode - **must be `"form_post"` when requesting scopes** | `"query"` |
 
 ##### Returns
 
@@ -81,6 +83,33 @@ export const appleAuth = apple(auth, {
 	redirectUri: process.env.APPLE_REDIRECT_URI ?? "",
 	clientId: process.env.APPLE_CLIENT_ID ?? ""
 });
+```
+
+## Requesting scopes
+
+When requesting scopes (`email` and `name`), the `options.responseMode` must be set to `"form_post"`. Unlike the default `"query"` response mode, \*\*Apple will send an `application/x-www-form-urlencoded` POST request. You can retrieve the code by parsing the search queries or the form data.
+
+```ts
+post("/login/apple/callback", async (request) => {
+	const url = new URL(request.url)
+	const code = url.searchParams.get("code");
+	if (!isValidState(request, code)) {
+		// ...
+	}
+	const appleUserAuth = await
+	// ...
+})
+```
+
+Apple will also include a `user` field **only in the first response**, where you can access the user's name.
+
+```ts
+const url = new URL(request.url);
+const userJSON = url.searchParams.get("user");
+if (userJSON) {
+	const user = JSON.parse(userJSON);
+	const { firstName, lastName, email } = user;
+}
 ```
 
 ## Interfaces
@@ -124,10 +153,6 @@ type AppleTokens = {
 type AppleUser = {
 	email?: string;
 	email_verified?: boolean;
-	name?: {
-		firstName: string;
-		lastName: string;
-	};
 	sub: string;
 };
 ```
