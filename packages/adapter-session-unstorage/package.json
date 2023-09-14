@@ -38,8 +38,12 @@
 		"unstorage": "^1.9.0"
 	},
 	"devDependencies": {
+		"@azure/keyvault-secrets": "^4.7.0",
 		"@lucia-auth/adapter-test": "latest",
-		"tsx": "^3.12.6",
-		"lucia": "latest"
+		"lucia": "latest",
+		"tsx": "^3.12.6"
+	},
+	"dependencies": {
+		"unstorage": "^1.9.0"
 	}
 }
