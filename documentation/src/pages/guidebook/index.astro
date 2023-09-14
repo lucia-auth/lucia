@@ -6,7 +6,9 @@ import ArticleIcon from "@icons/ArticleIcon.astro";
 import { getPages } from "@utils/content";
 
 const allPages = await getPages("guidebook");
-const parentPages = allPages.filter((page) => page.frameworkId === null);
+const parentPages = allPages.filter(
+	(page) => page.pathname.split("/").length === 2
+);
 ---
 
 <BaseLayout title="The Lucia Guidebook">
