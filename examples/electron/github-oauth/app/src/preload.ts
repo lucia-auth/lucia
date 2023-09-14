@@ -13,7 +13,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 	};
 
 	loginButton.addEventListener("click", async () => {
-		ipcRenderer.invoke("auth:signInWithGithub");
+		await ipcRenderer.invoke("auth:signInWithGithub");
 	});
 
 	logoutButton.addEventListener("click", async () => {

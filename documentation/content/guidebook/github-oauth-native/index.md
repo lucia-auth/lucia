@@ -5,5 +5,6 @@ description: "Learn how to implement Github OAuth in desktop and mobile applicat
 
 These guides are not beginner friendly and do not cover the basics of Lucia. We recommend reading the [Github OAuth]() guide for regular websites first. In addition, Lucia is a library to be used in a server environment, and as such all these guides will require a TypeScript server.
 
+- [Electron](/guidebook/github-oauth-native/electron)
 - [Tauri](/guidebook/github-oauth-native/tauri)
 - (more in progress)

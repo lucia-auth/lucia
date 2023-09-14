@@ -109,6 +109,8 @@ const handleDeepLinkCallback = (url: string) => {
 	mainWindow.webContents.send("auth-state-update", sessionToken);
 };
 
-// const gotTheLock = app.requestSingleInstanceLock();
-
-main();
+if (app.requestSingleInstanceLock()) {
+	main();
+} else {
+	app.quit();
+}
