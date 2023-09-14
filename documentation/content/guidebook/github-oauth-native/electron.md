@@ -7,7 +7,7 @@ description: "Learn how to implement Github OAuth in Electron desktop applicatio
 
 We'll be using bearer tokens instead of cookies to validate users. For the most part, authenticating the user is identical to regular web applications. The user is redirected to Github, then back to your server with a `code`, which is then exchanged for an access token, and a new user/session is created.
 
-To send the session token (ie. session id) from the server back to our application, we'll be using deeplinks which allow us to open applications using a url.
+To send the session token (ie. session id) from the server back to our application, we'll be using deep-links which allow us to open applications using a url.
 
 ### Clone project
 
@@ -130,7 +130,7 @@ serve(app);
 
 This example uses [Electron Forge](https://www.electronforge.io), which currently is the recommended way to package Electron apps.
 
-### Setup deep link
+### Setup deep linking
 
 In `forge.config.ts`, update `packagerConfig.protocols` and `mimeType` for `MakerDeb`. This guide uses `electron-app` as an example.
 
@@ -218,7 +218,7 @@ ipcMain.handle("auth:signOut", async (e, sessionToken: string) => {
 
 ### Setup login callback
 
-Listen for the deep link callback, parse the url, and send the token to the renderer with the `auth-state-update` event (`preload.ts`).
+Listen for the deep-link callback, parse the url, and send the token to the renderer with the `auth-state-update` event (`preload.ts`).
 
 ```ts
 // src/main.ts
