@@ -4,7 +4,6 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"setup-env": "cp .env.example .env",
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",

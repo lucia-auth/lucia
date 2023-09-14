@@ -4,7 +4,6 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"setup-env": "cp .env.example .env",
 		"dev": "astro dev",
 		"start": "astro dev",
 		"build": "astro build",

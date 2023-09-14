@@ -1,17 +1,17 @@
-# GitHub OAuth example with Lucia and Tauri
+# GitHub OAuth example with Lucia and Electron
 
-This example has 2 parts: the Tauri application and the TS server with Lucia. Uses SQLite3 with `better-sqlite3` as the database.
+This example has 2 parts: the Electron application and the TS server with Lucia. Uses SQLite3 with `better-sqlite3` as the database.
 
 ## App
 
-Inside `app` directory.
+Inside `app` directory. **Electron Forge does not support PNPM.**
 
 ```bash
 # install dependencies
-pnpm i
+npm i
 
 # run dev server
-pnpm tauri dev
+npm run start
 ```
 
 ## Server
@@ -22,7 +22,7 @@ Inside `server` directory. Make sure to setup your `.env` file.
 # install dependencies
 pnpm i
 
-# run dev server on port 3000
+# run server on port 3000
 pnpm start
 ```
 

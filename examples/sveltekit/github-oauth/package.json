@@ -4,7 +4,6 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"setup-env": "cp .env.example .env",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",

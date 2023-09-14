@@ -1,13 +1,10 @@
 # GitHub OAuth example with Lucia and Astro
 
-This example uses SQLite3 with `better-sqlite3`.
+This example uses SQLite3 with `better-sqlite3`. Make sure to setup your `.env` file.
 
 ```bash
 # install dependencies
 pnpm i
-
-# setup .env
-pnpm setup-env
 
 # run dev server
 pnpm dev
