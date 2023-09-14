@@ -30,9 +30,9 @@ const gitlab: (
 
 ##### Parameters
 
-| name                   | type                                       | description                    | optional |
-| ---------------------- | ------------------------------------------ | ------------------------------ | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
+| name                  | type                                       | description                    | optional |
+| --------------------- | ------------------------------------------ | ------------------------------ | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
 | `config.clientId`     | `string`                                   | GitLab OAuth app client id     |          |
 | `config.clientSecret` | `string`                                   | GitLab OAuth app client secret |          |
 | `config.redirectUri`  | `string`                                   | an authorized redirect URI     |          |

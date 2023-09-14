@@ -1,6 +1,6 @@
 import { auth, appleAuth } from "@/auth/lucia";
 import { OAuthRequestError } from "@lucia-auth/oauth";
-import {cookies, headers} from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import type { NextRequest } from "next/server";
 

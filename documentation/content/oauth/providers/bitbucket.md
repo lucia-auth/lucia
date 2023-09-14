@@ -31,9 +31,9 @@ const bitbucket: (
 
 ##### Parameters
 
-| name                   | type                                       | description                       |
-| ---------------------- | ------------------------------------------ | --------------------------------- |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |
+| name                  | type                                       | description                       |
+| --------------------- | ------------------------------------------ | --------------------------------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |
 | `config.clientId`     | `string`                                   | Bitbucket OAuth app client id     |
 | `config.clientSecret` | `string`                                   | Bitbucket OAuth app client secret |
 | `config.redirectUri`  | `string`                                   | an authorized redirect URI        |

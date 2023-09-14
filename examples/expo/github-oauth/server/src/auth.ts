@@ -22,11 +22,11 @@ export const auth = lucia({
 		key: "user_key"
 	}),
 	middleware: hono(),
-    getUserAttributes: (data) => {
-        return {
-            username: data.username
-        }
-    }
+	getUserAttributes: (data) => {
+		return {
+			username: data.username
+		};
+	}
 });
 
 export type Auth = typeof auth;

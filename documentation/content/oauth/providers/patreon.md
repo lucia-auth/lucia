@@ -32,9 +32,9 @@ const patreon: (
 
 Scope `identity` is always included.
 
-| name                   | type                                       | description                         | optional |
-| ---------------------- | ------------------------------------------ | ----------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                      |          |
+| name                  | type                                       | description                         | optional |
+| --------------------- | ------------------------------------------ | ----------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                      |          |
 | `config.clientId`     | `string`                                   | Patreon OAuth app client id         |          |
 | `config.clientSecret` | `string`                                   | Patreon OAuth app client secret     |          |
 | `config.redirectUri`  | `string`                                   | one of the authorized redirect URIs |          |

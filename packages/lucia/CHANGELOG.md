@@ -1,5 +1,23 @@
 # lucia
 
+## 2.6.0
+
+### Minor changes
+
+- [#1113](https://github.com/pilcrowOnPaper/lucia/pull/1113) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `options.responseMode` params to `apple()`
+
+- [#1100](https://github.com/pilcrowOnPaper/lucia/pull/1100) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `nextjs_future()` middleware
+
+- [#1099](https://github.com/pilcrowOnPaper/lucia/pull/1099) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Mark `Auth.validateRequestOrigin()` as deprecated
+
+- [#1099](https://github.com/pilcrowOnPaper/lucia/pull/1099) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Replace type `RequestContext` with `MiddlewareRequestContext` for type `Middleware`
+
+### Patch changes
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.useKey()` accepting any password if the key password was set to `null`
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.createUser()` setting key password to `null` if `key.password` was an empty string
+
 ## 2.5.0
 
 ### Minor changes

@@ -1,5 +1,19 @@
 # @lucia-auth/oauth
 
+## 3.2.0
+
+### Minor changes
+
+- [#1098](https://github.com/pilcrowOnPaper/lucia/pull/1098) by [@OmerSabic](https://github.com/OmerSabic) : Update `AppleUser`
+
+- [#1098](https://github.com/pilcrowOnPaper/lucia/pull/1098) by [@OmerSabic](https://github.com/OmerSabic) : Add `scope` params to `apple()`
+
+### Patch changes
+
+- [#1106](https://github.com/pilcrowOnPaper/lucia/pull/1106) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `linkedin()` provider missing default `openid` scope
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unused `identityProvider` params from `CognitoAuth.getAuthorizationUrl()`
+
 ## 3.1.0
 
 ### Minor changes

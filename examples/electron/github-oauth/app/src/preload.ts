@@ -33,7 +33,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 			}
 			localStorage.setItem("session_token", sessionToken);
 			const user = await getUser(sessionToken);
-            console.log(user)
+			console.log(user);
 			if (!user) {
 				localStorage.removeItem("session_token");
 			}
