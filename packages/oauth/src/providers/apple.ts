@@ -16,7 +16,8 @@ type Config = {
 	teamId: string;
 	keyId: string;
 	certificate: string;
-	scope: string[];
+	responseMode?: "query" | "form_post";
+	scope?: string[];
 };
 
 const PROVIDER_ID = "apple";
@@ -51,14 +52,14 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 				scope: scopeConfig
 			}
 		);
-		url.searchParams.set("response_mode", "query");
+		url.searchParams.set("response_mode", this.config.responseMode ?? "query");
 		return [url, state];
 	};
 
 	public validateCallback = async (
 		code: string
 	): Promise<AppleUserAuth<_Auth>> => {
-		const [appleTokens, userJSON] = await this.validateAuthorizationCode(code);
+		const appleTokens = await this.validateAuthorizationCode(code);
 		const idTokenPayload = decodeIdToken<{
 			sub: string;
 			email?: string;
@@ -67,15 +68,14 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		const appleUser: AppleUser = {
 			sub: idTokenPayload.sub,
 			email: idTokenPayload.email,
-			email_verified: idTokenPayload.email_verified,
-			name: userJSON.name
+			email_verified: idTokenPayload.email_verified
 		};
 		return new AppleUserAuth(this.auth, appleUser, appleTokens);
 	};
 
 	private validateAuthorizationCode = async (
 		code: string
-	): Promise<[tokens: AppleTokens, userJSON: AppleUserJSON]> => {
+	): Promise<AppleTokens> => {
 		const clientSecret = await createSecretId({
 			certificate: this.config.certificate,
 			teamId: this.config.teamId,
@@ -87,7 +87,6 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			refresh_token?: string;
 			expires_in: number;
 			id_token: string;
-			user: AppleUserJSON;
 		}>(code, "https://appleid.apple.com/auth/token", {
 			clientId: this.config.clientId,
 			redirectUri: this.config.redirectUri,
@@ -97,15 +96,12 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			}
 		});
 
-		return [
-			{
-				accessToken: tokens.access_token,
-				refreshToken: tokens.refresh_token ?? null,
-				accessTokenExpiresIn: tokens.expires_in,
-				idToken: tokens.id_token
-			},
-			tokens.user
-		];
+		return {
+			accessToken: tokens.access_token,
+			refreshToken: tokens.refresh_token ?? null,
+			accessTokenExpiresIn: tokens.expires_in,
+			idToken: tokens.id_token
+		};
 	};
 }
 
@@ -148,13 +144,6 @@ const createSecretId = async (config: {
 	return jwt;
 };
 
-type AppleUserJSON = {
-	name?: {
-		firstName: string;
-		lastName: string;
-	};
-};
-
 export type AppleTokens = {
 	accessToken: string;
 	refreshToken: string | null;
@@ -165,9 +154,5 @@ export type AppleTokens = {
 export type AppleUser = {
 	email?: string;
 	email_verified?: boolean;
-	name?: {
-		firstName: string;
-		lastName: string;
-	};
 	sub: string;
 };
