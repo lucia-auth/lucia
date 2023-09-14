@@ -42,7 +42,6 @@ const getUser = async (sessionToken: string): Promise<User | null> => {
 		responseType: ResponseType.JSON
 	});
 	if (!response.ok) {
-		localStorage.removeItem("session_token");
 		return null;
 	}
 	return response.data;

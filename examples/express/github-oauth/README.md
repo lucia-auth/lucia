@@ -1,13 +1,10 @@
 # GitHub OAuth example with Lucia and Express
 
-This example uses TypeScript, SQLite3 with `better-sqlite3`, and [`tsx`](https://github.com/esbuild-kit/tsx).
+This example uses TypeScript, SQLite3 with `better-sqlite3`, and [`tsx`](https://github.com/esbuild-kit/tsx). Make sure to setup your `.env` file.
 
 ```bash
 # install dependencies
 pnpm i
-
-# setup .env
-pnpm setup-env
 
 # run dev server + watch for changes
 pnpm dev

@@ -1,13 +1,10 @@
 # Apple OAuth example with Lucia and Next.js App Router
 
-This example uses `better-sqlite3`.
+This example uses `better-sqlite3`. Make sure to setup your `.env` file.
 
 ```bash
 # install dependencies
 pnpm i
-
-# setup .env
-pnpm setup-env
 
 # run dev server
 pnpm dev

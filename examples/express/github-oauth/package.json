@@ -5,7 +5,6 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"setup-env": "cp .env.example .env",
 		"dev": "tsx watch src",
 		"build": "tsc"
 	},
