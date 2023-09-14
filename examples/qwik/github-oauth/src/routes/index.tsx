@@ -33,7 +33,7 @@ export default component$(() => {
 		<>
 			<h1>Profile</h1>
 			<p>User id: {user.value.userId}</p>
-			<p>GitHub username: {user.value.githubUsername}</p>
+			<p>GitHub username: {user.value.username}</p>
 			<Form action={signout}>
 				<button>Sign out</button>
 			</Form>

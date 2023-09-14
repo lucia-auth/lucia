@@ -22,8 +22,8 @@ export const useSignUpAction = routeAction$(
 				userId: user.userId,
 				attributes: {}
 			});
-			const { name, value, attributes } = auth.createSessionCookie(session);
-			event.cookie.set(name, value, attributes);
+			const authRequest = auth.handleRequest(event);
+			authRequest.setSession(session);
 			throw event.redirect(302, "/");
 		} catch (e) {
 			if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
