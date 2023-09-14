@@ -44,16 +44,16 @@ const apple: (
 
 ##### Parameters
 
-| name                  | type                                       | description                                                         | default   |
-| --------------------- | ------------------------------------------ | ------------------------------------------------------------------- | --------- |
-| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                      |           |
-| `config.clientId`     | `string`                                   | Apple service identifier                                            |           |
-| `config.redirectUri`  | `string`                                   | an authorized redirect URI                                          |           |
-| `config.teamId`       | `string`                                   | Apple teamId                                                        |           |
-| `config.keyId `       | `string`                                   | Apple private keyId                                                 |           |
-| `config.certificate`  | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate)      |           |
-| `config.scope`        | `string[]`                                 | an array of scopes                                                  | `[]`      |
-| `config.responseMode` | `"query" \| "form_post"`                   | OIDC response mode - **must be `form_post` when requesting scopes** | `"query"` |
+| name                  | type                                       | description                                                           | default   |
+| --------------------- | ------------------------------------------ | --------------------------------------------------------------------- | --------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                                        |           |
+| `config.clientId`     | `string`                                   | Apple service identifier                                              |           |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI                                            |           |
+| `config.teamId`       | `string`                                   | Apple teamId                                                          |           |
+| `config.keyId `       | `string`                                   | Apple private keyId                                                   |           |
+| `config.certificate`  | `string`                                   | p8 certificate as string [See how](#how-to-import-certificate)        |           |
+| `config.scope`        | `string[]`                                 | an array of scopes                                                    | `[]`      |
+| `config.responseMode` | `"query" \| "form_post"`                   | OIDC response mode - **must be `"form_post"` when requesting scopes** | `"query"` |
 
 ##### Returns
 
