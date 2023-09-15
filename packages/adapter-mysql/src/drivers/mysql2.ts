@@ -53,7 +53,6 @@ export const mysql2Adapter = (
 				(connection as PoolConnection).release();
 			}
 		}
-		}
 	};
 	return (LuciaError) => {
 		return {
