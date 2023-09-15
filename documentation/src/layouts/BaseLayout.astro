@@ -8,7 +8,7 @@ const { title, description } = Astro.props;
 
 const origin = import.meta.env.DEV
 	? Astro.url.origin
-	: "https://" + import.meta.env.VERCEL_URL;
+	: import.meta.env.CF_PAGES_URL;
 
 const pathname = Astro.url.pathname;
 
@@ -17,6 +17,7 @@ const ogUrl =
 		? new URL("/og/index.jpg", origin)
 		: new URL("/og/" + pathname.replace(/\/$/, "") + ".jpg", origin);
 
+console.log(import.meta.env.CF_PAGES_URL);
 const pageTitle = title === "Lucia" ? "Lucia" : `${title} · Lucia`;
 ---
 

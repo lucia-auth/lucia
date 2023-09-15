@@ -14,5 +14,9 @@ export default defineConfig({
 		shikiConfig: {
 			theme: "min-light"
 		}
+	},
+	redirects: {
+		"/github": "https://github.com/lucia-auth/lucia",
+		"/discord": "https://discord.gg/PwrK3kpVR3"
 	}
 });

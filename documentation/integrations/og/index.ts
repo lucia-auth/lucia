@@ -40,13 +40,14 @@ export const generateOgImages = async () => {
 	const htmlPathnames = await readHtmlDirectory(distDirPathname);
 	const pages: Page[] = [];
 	for (const htmlPathname of htmlPathnames) {
+		console.log(htmlPathname)
 		const file = await fs.readFile(htmlPathname);
 		const htmlContent = file.toString("utf-8");
 		const titleMatches = htmlContent.match(
 			/og:title"\s*?content="([\s\S]*?)"\s*>/
 		);
-		const title = titleMatches?.at(1)?.replace(" | Lucia", "");
-		if (!title) throw new Error("Page does not have a title");
+		const title = titleMatches?.at(1)?.replace("  Lucia", "");
+		if (!title) continue
 		const descriptionMatches = htmlContent.match(
 			/og:description"\s*?content="([\s\S]*?)"\s*>/
 		);
@@ -54,6 +55,7 @@ export const generateOgImages = async () => {
 		const url = htmlPathname
 			.replace(distDirPathname, "")
 			.replace("/index.html", "");
+		console.log(url)
 		pages.push({
 			title,
 			pathname: htmlPathname,
