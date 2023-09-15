@@ -15,7 +15,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"auri.deploy": "curl -X POST $VERCEL_DEPLOY_HOOK"
+		"auri.deploy": "curl -X POST $CF_DEPLOY_HOOK"
 	},
 	"dependencies": {
 		"@astrojs/tailwind": "^5.0.0",
