@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"url": "https://github.com/lucia-auth/lucia",
 		"directory": "documentation"
 	},
 	"author": "pilcrowOnPaper",
@@ -15,7 +15,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"auri.deploy": "curl -X POST $VERCEL_DEPLOY_HOOK"
+		"auri.deploy": "curl -X POST $CF_DEPLOY_HOOK"
 	},
 	"dependencies": {
 		"@astrojs/tailwind": "^5.0.0",

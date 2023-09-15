@@ -13,13 +13,13 @@ The strategy we'll be using is to create a super basic local server in the backg
 
 ### Clone project
 
-You can get started immediately by cloning the [example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/tauri/github-oauth) from the repository.
+You can get started immediately by cloning the [example](https://github.com/lucia-auth/lucia/tree/main/examples/tauri/github-oauth) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/tauri/github-oauth <directory_name>
+npx degit lucia-auth/lucia/examples/tauri/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/tauri/github-oauth).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/tauri/github-oauth).
 
 ## Server
 

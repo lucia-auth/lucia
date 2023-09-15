@@ -15,13 +15,13 @@ As a general overview of OAuth, the user is redirected to github.com to be authe
 
 ### Clone project
 
-You can get started immediately by cloning the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro/github-oauth) from the repository.
+You can get started immediately by cloning the [Astro example](https://github.com/lucia-auth/lucia/tree/main/examples/astro/github-oauth) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/astro/github-oauth <directory_name>
+npx degit lucia-auth/lucia/examples/astro/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/astro/github-oauth).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/astro/github-oauth).
 
 ## Create an OAuth app
 

@@ -28,13 +28,13 @@ export type Auth = typeof auth;
 
 ### Clone project
 
-The [email and password Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password) includes password reset.
+The [email and password Next.js example](https://github.com/lucia-auth/lucia/tree/main/examples/nextjs-app/email-and-password) includes password reset.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-app/email-and-password <directory_name>
+npx degit lucia-auth/lucia/examples/nextjs-app/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/nextjs-app/email-and-password).
 
 ## Database
 

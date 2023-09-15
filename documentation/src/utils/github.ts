@@ -9,7 +9,7 @@ let contributors: Contributor[];
 export const getGithubContributors = async (): Promise<Contributor[]> => {
 	if (contributors) return contributors;
 	const contributorsResponse = await fetch(
-		"https://api.github.com/repos/pilcrowonpaper/lucia/contributors?per_page=100",
+		"https://api.github.com/repos/lucia-auth/lucia/contributors?per_page=100",
 		{
 			headers: {
 				Authorization: `Bearer ${import.meta.env.GITHUB_API_KEY}`
