@@ -16,10 +16,8 @@ This repository requires Node.js version 20 and the latest version of [pnpm](htt
 After forking the project, set up your local fork by running the following command in the root:
 
 ```
-pnpm ready
+pnpm i
 ```
-
-You may need to reset your IDE afterwards.
 
 ## Documentation
 
