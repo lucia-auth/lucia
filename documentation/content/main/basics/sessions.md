@@ -227,7 +227,7 @@ try {
 
 ## Delete dead user sessions
 
-You can delete dead user sessions with [`Auth.createUser()`](/reference/lucia/interfaces/auth#deletedeadusersesions) to cleanup your database. It may be useful to call this whenever a user signs in or signs out. This will succeed regardless of the validity of the user id.
+You can delete dead user sessions with [`Auth.deleteDeadUserSessions()`](/reference/lucia/interfaces/auth#deletedeadusersessions) to cleanup your database. It may be useful to call this whenever a user signs in or signs out. This will succeed regardless of the validity of the user id.
 
 ```ts
 import { auth } from "./lucia.js";
