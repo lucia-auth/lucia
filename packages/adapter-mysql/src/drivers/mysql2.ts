@@ -13,11 +13,12 @@ import type {
 	RowDataPacket,
 	OkPacket,
 	ResultSetHeader,
-	PoolConnection
+	PoolConnection,
+	Connection
 } from "mysql2/promise";
 
 export const mysql2Adapter = (
-	db: Pool,
+	db: Pool | Connection,
 	tables: {
 		user: string;
 		session: string | null;
@@ -31,11 +32,14 @@ export const mysql2Adapter = (
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
 
 	const transaction = async <
-		_Execute extends (connection: PoolConnection) => Promise<void>
+		_Execute extends (connection: Connection | PoolConnection) => Promise<void>
 	>(
 		execute: _Execute
 	) => {
-		const connection = await db.getConnection();
+		const isPool = (db: any) => typeof db["getConnection"] === "function";
+		const connection: Pool | Connection = isPool(db)
+			? await (db as Pool).getConnection()
+			: (db as Connection);
 		try {
 			await connection.beginTransaction();
 			await execute(connection);
@@ -44,6 +48,12 @@ export const mysql2Adapter = (
 		} catch (e) {
 			await connection.rollback();
 			throw e;
+		} finally {
+			const isPoolConnection = (connection: any) =>
+				typeof connection["release"] === "function";
+			if (isPoolConnection(connection)) {
+				(connection as PoolConnection).release();
+			}
 		}
 	};
 	return (LuciaError) => {
