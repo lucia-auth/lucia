@@ -31,10 +31,10 @@ const parentPages = allPages.filter(
 						.sort((pageA, pageB) => {
 							return pageA.title.localeCompare(pageB.title);
 						})
-						.map(({ htmlTitle, htmlDescription, pathname }) => {
+						.map(({ htmlTitle, htmlDescription, href }) => {
 							return (
 								<article class="group w-full border-b bg-white">
-									<a class=" block py-4" href={pathname}>
+									<a class=" block py-4" href={href}>
 										<h2 class="text-xl font-semibold" set:html={htmlTitle} />
 										<p set:html={htmlDescription} />
 										<div class="text-main mt-0.5 flex place-items-center gap-x-0.5">
