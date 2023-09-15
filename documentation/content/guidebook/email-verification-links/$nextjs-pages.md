@@ -18,13 +18,13 @@ It will also have a route to handle verification links.
 
 ### Clone project
 
-You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/lucia/tree/main/examples/nextjs-pages/email-and-password) from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/email-and-password) from the repository.
 
 ```
-npx degit lucia-auth/lucia/examples/nextjs-pages/email-and-password <directory_name>
+npx degit lucia-auth/examples/nextjs-pages/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/nextjs-pages/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/email-and-password).
 
 ## Database
 

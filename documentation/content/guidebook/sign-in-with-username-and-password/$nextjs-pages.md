@@ -13,13 +13,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/lucia/tree/main/examples/nextjs-pages/username-and-password) from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/username-and-password) from the repository.
 
 ```
-npx degit lucia-auth/lucia/examples/nextjs-pages/username-and-password <directory_name>
+npx degit lucia-auth/examples/nextjs-pages/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/nextjs-pages/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/username-and-password).
 
 ## Update your database
 
