@@ -9,13 +9,13 @@ If you're new to Lucia, we recommend starting with [Sign in with username and pa
 
 ### Clone project
 
-You can get started immediately by cloning the [Express example](https://github.com/lucia-auth/lucia/tree/main/examples/express/email-and-password) from the repository.
+You can get started immediately by cloning the [Express example](https://github.com/lucia-auth/examples/tree/main/express/email-and-password) from the repository.
 
 ```
-npx degit lucia-auth/lucia/examples/express/email-and-password <directory_name>
+npx degit lucia-auth/examples/express/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/express/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/express/email-and-password).
 
 ## Database
 

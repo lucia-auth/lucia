@@ -3,7 +3,6 @@
 	"version": "1.0.0",
 	"description": "Authentication, simple and clean",
 	"scripts": {
-		"ready": "pnpm i && cd packages/lucia && pnpm build && cd ../adapter-test && pnpm build && cd ../oauth && pnpm build && cd ../adapter-sqlite && pnpm build && cd ../../",
 		"publish-setup": "pnpm i --no-frozen-lockfile && cd packages/lucia && pnpm build && cd ../adapter-test && pnpm build && cd ../../",
 		"format": "pnpm exec prettier --write . --plugin=prettier-plugin-astro",
 		"format:docs": "pnpm exec prettier --write documentation --plugin=prettier-plugin-astro",

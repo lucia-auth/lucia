@@ -32,9 +32,11 @@ const sessionCookie = auth.createSessionCookie(session);
 
 **[Join the Discord server!](https://discord.gg/PwrK3kpVR3)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
+**[Examples](https://github.com/lucia-auth/examples)**
 
 **[Contributing](https://lucia-auth.com/start-here/contributing)**
+
+**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
 
 ## Installation
 

@@ -15,13 +15,13 @@ As a general overview of OAuth, the user is redirected to github.com to be authe
 
 ### Clone project
 
-You can get started immediately by cloning the [SvelteKit example](https://github.com/lucia-auth/lucia/tree/main/examples/sveltekit/github-oauth) from the repository.
+You can get started immediately by cloning the [SvelteKit example](https://github.com/lucia-auth/examples/tree/main/sveltekit/github-oauth) from the repository.
 
 ```
-npx degit lucia-auth/lucia/examples/sveltekit/github-oauth <directory_name>
+npx degit lucia-auth/examples/sveltekit/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/sveltekit/github-oauth).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/sveltekit/github-oauth).
 
 ## Create an OAuth app
 

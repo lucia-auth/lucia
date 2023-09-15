@@ -6,9 +6,14 @@ type Props = {
 
 const { title, description } = Astro.props;
 
-const origin = import.meta.env.DEV
-	? Astro.url.origin
-	: import.meta.env.CF_PAGES_URL;
+let origin: string;
+if (import.meta.env.CF_PAGES_BRANCH === "main") {
+	origin = "https://lucia-auth.com";
+} else if (import.meta.env.DEV) {
+	origin = Astro.url.origin;
+} else {
+	origin = import.meta.env.CF_PAGES_URL;
+}
 
 const pathname = Astro.url.pathname;
 
