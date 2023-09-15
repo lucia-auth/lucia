@@ -36,10 +36,9 @@ export const mysql2Adapter = (
 	>(
 		execute: _Execute
 	) => {
-		const isPool = (db: any): db is Pool => typeof db["getConnection"] === "function";
-		const connection = isPool(db)
-			? await db.getConnection()
-			: db;
+		const isPool = (db: any): db is Pool =>
+			typeof db["getConnection"] === "function";
+		const connection = isPool(db) ? await db.getConnection() : db;
 		try {
 			await connection.beginTransaction();
 			await execute(connection);
