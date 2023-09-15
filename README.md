@@ -34,7 +34,7 @@ const sessionCookie = auth.createSessionCookie(session);
 
 **[Examples](https://github.com/lucia-auth/examples)**
 
-**[Contributing](https://lucia-auth.com/start-here/contributing)**
+**[Contributing](https://lucia-auth.com/contributing/)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
 
