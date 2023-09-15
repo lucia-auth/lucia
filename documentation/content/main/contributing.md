@@ -33,7 +33,7 @@ Please open a feature request for anything related to the website's functionalit
 
 ### Examples
 
-This is also another great way to contribute to the library. The example should follow existing ones as close as possible.
+This is also another great way to contribute to the library. The example should follow existing ones as close as possible. You can find them at [`lucia-auth/examples`](https://github.com/lucia-auth/examples).
 
 ## Source code
 
