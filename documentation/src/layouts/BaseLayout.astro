@@ -17,7 +17,6 @@ const ogUrl =
 		? new URL("/og/index.jpg", origin)
 		: new URL("/og/" + pathname.replace(/\/$/, "") + ".jpg", origin);
 
-console.log(import.meta.env.CF_PAGES_URL);
 const pageTitle = title === "Lucia" ? "Lucia" : `${title} · Lucia`;
 ---
 
