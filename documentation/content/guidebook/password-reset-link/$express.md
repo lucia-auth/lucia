@@ -25,13 +25,13 @@ export type Auth = typeof auth;
 
 ### Clone project
 
-The [email and password Express example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/express/email-and-password) includes password reset.
+The [email and password Express example](https://github.com/lucia-auth/lucia/tree/main/examples/express/email-and-password) includes password reset.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/express/email-and-password <directory_name>
+npx degit lucia-auth/lucia/examples/express/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/express/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/express/email-and-password).
 
 ## Database
 

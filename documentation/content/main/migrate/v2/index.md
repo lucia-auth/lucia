@@ -6,7 +6,7 @@ description: "Learn how to migrate Lucia version 1 to version 2"
 ### Breaking changes
 
 - **`lucia-auth` is published under `lucia`** (all other packages remain the same)
-- **`@lucia-auth/tokens` is not compatible with version 2** (See [Implementing 2FA without the tokens integration (v1/v2)](https://github.com/pilcrowOnPaper/lucia/discussions/728))
+- **`@lucia-auth/tokens` is not compatible with version 2** (See [Implementing 2FA without the tokens integration (v1/v2)](https://github.com/lucia-auth/lucia/discussions/728))
 - **Removed single use and primary keys**
 - **Update `nextjs()` and `web()` middleware**
 - **`generateRandomString()` (user and session ids) only uses lowercase letters and numbers by default (no uppercase)**

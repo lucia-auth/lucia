@@ -9,13 +9,13 @@ This guide will cover how to implement GitHub OAuth using Lucia in Express with 
 
 ### Clone project
 
-You can get started immediately by cloning the [Express example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/express/github-oauth) from the repository.
+You can get started immediately by cloning the [Express example](https://github.com/lucia-auth/lucia/tree/main/examples/express/github-oauth) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/express/github-oauth <directory_name>
+npx degit lucia-auth/lucia/examples/express/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/express/github-oauth).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/lucia/tree/main/examples/express/github-oauth).
 
 ## Create an OAuth app
 
