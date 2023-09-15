@@ -3,7 +3,7 @@ title: "Github OAuth in Electron"
 description: "Learn how to implement Github OAuth in Electron desktop applications"
 ---
 
-> These guides are not beginner friendly and do not cover the basics of Lucia. We recommend reading the [Github OAuth](http://localhost:3000/guidebook/github-oauth) guide for regular websites first.
+> These guides are not beginner friendly and do not cover the basics of Lucia. We recommend reading the [Github OAuth](/guidebook/github-oauth) guide for regular websites first.
 
 We'll be using bearer tokens instead of cookies to validate users. For the most part, authenticating the user is identical to regular web applications. The user is redirected to Github, then back to your server with a `code`, which is then exchanged for an access token, and a new user/session is created.
 
