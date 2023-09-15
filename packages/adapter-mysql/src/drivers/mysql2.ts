@@ -36,10 +36,10 @@ export const mysql2Adapter = (
 	>(
 		execute: _Execute
 	) => {
-		const isPool = (db: any) => typeof db["getConnection"] === "function";
-		const connection: Pool | Connection = isPool(db)
-			? await (db as Pool).getConnection()
-			: (db as Connection);
+		const isPool = (db: any): db is Pool => typeof db["getConnection"] === "function";
+		const connection = isPool(db)
+			? await db.getConnection()
+			: db;
 		try {
 			await connection.beginTransaction();
 			await execute(connection);
@@ -49,11 +49,10 @@ export const mysql2Adapter = (
 			await connection.rollback();
 			throw e;
 		} finally {
-			const isPoolConnection = (connection: any) =>
-				typeof connection["release"] === "function";
-			if (isPoolConnection(connection)) {
+			if (isPool(db)) {
 				(connection as PoolConnection).release();
 			}
+		}
 		}
 	};
 	return (LuciaError) => {
