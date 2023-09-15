@@ -56,8 +56,6 @@ const session = await auth.createSession({
 const sessionCookie = auth.createSessionCookie(session);`;
 
 const contributors = await getGithubContributors();
-
-console.log(import.meta.env.CF_PAGES_BRANCH)
 ---
 
 <BaseLayout
