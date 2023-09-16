@@ -30,29 +30,6 @@ export const mysql2Adapter = (
 		? escapeName(tables.session)
 		: null;
 	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
-
-	const transaction = async <
-		_Execute extends (connection: Connection | PoolConnection) => Promise<void>
-	>(
-		execute: _Execute
-	) => {
-		const isPool = (db: any): db is Pool =>
-			typeof db["getConnection"] === "function";
-		const connection = isPool(db) ? await db.getConnection() : db;
-		try {
-			await connection.beginTransaction();
-			await execute(connection);
-			await connection.commit();
-			return;
-		} catch (e) {
-			await connection.rollback();
-			throw e;
-		} finally {
-			if (isPool(db)) {
-				(connection as PoolConnection).release();
-			}
-		}
-	};
 	return (LuciaError) => {
 		return {
 			getUser: async (userId) => {
@@ -73,7 +50,7 @@ export const mysql2Adapter = (
 					return;
 				}
 				try {
-					await transaction(async (connection) => {
+					await transaction(db, async (connection) => {
 						const [userFields, userValues, userArgs] = helper(user);
 						await connection.execute(
 							`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`,
@@ -325,4 +302,38 @@ export const getAll = async <Schema>(
 	if (!Array.isArray(rows)) return [];
 	if (!isPacketArray(rows)) return [];
 	return rows as any;
+};
+
+const transaction = async <
+	_Execute extends (connection: Connection | PoolConnection) => Promise<void>
+>(
+	db: Pool | Connection,
+	execute: _Execute
+) => {
+	if (isPool(db)) {
+		const connection = await db.getConnection();
+		try {
+			await connection.beginTransaction();
+			await execute(connection);
+			await connection.commit();
+			connection.release();
+		} catch (e) {
+			await connection.rollback();
+			connection.release();
+			throw e;
+		}
+	} else {
+		try {
+			await db.beginTransaction();
+			await execute(db);
+			await db.commit();
+		} catch (e) {
+			await db.rollback();
+			throw e;
+		}
+	}
+};
+
+const isPool = (db: Pool | Connection): db is Pool => {
+	return "getConnection" in db;
 };
