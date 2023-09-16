@@ -29,9 +29,3 @@ jobs:
         run: pnpm exec auri publish
       - name: prepare
         run: pnpm exec auri prepare
-
-  publish-preview:
-    runs-on: ubuntu-latest
-    steps:
-      - name: publish preview
-        run: curl ${{env.VERCEL_PREVIEW_DEPLOY_HOOK}}
