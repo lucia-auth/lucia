@@ -86,7 +86,7 @@ export const auth = lucia({
 });
 ```
 
-### `@planetscale/serverless`
+### `@planetscale/database`
 
 Remove all `references()` from the schema since Planetscale does not support foreign keys from `key` and `session`. For example:
 
@@ -102,10 +102,10 @@ export const key = mysqlTable("user_key", {
 });
 ```
 
-Install `@planetscale/serverless` and follow the [adapter documentation](/database-adapters/planetscale-serverless) to setup your database.
+Install `@planetscale/database` and follow the [adapter documentation](/database-adapters/planetscale-serverless) to setup your database.
 
 ```
-npm install @planetscale/serverless
+npm install @planetscale/database
 ```
 
 Create a new connection and use it to initialize both Drizzle and Lucia.
