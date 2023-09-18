@@ -140,7 +140,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 					this.maybeSetSession(null);
 					return resolve(null);
 				}
-				reject(e);
+				return reject(e);
 			}
 		});
 
@@ -161,7 +161,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 				if (e instanceof LuciaError) {
 					return resolve(null);
 				}
-				reject(e);
+				return reject(e);
 			}
 		});
 
