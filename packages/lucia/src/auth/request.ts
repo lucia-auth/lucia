@@ -124,7 +124,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 			debug.request.info("Using cached result for session validation");
 			return this.validatePromise;
 		}
-		this.validatePromise = new Promise(async (resolve) => {
+		this.validatePromise = new Promise(async (resolve, reject) => {
 			if (!this.storedSessionId) return resolve(null);
 			try {
 				const session = await this.auth.validateSession(this.storedSessionId);
@@ -140,7 +140,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 					this.maybeSetSession(null);
 					return resolve(null);
 				}
-				throw e;
+				return reject(e);
 			}
 		});
 
@@ -152,7 +152,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 			debug.request.info("Using cached result for bearer token validation");
 			return this.validatePromise;
 		}
-		this.validatePromise = new Promise(async (resolve) => {
+		this.validatePromise = new Promise(async (resolve, reject) => {
 			if (!this.bearerToken) return resolve(null);
 			try {
 				const session = await this.auth.validateSession(this.bearerToken);
@@ -161,7 +161,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 				if (e instanceof LuciaError) {
 					return resolve(null);
 				}
-				throw e;
+				return reject(e);
 			}
 		});
 
