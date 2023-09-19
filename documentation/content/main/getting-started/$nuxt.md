@@ -110,7 +110,7 @@ export default defineNuxtConfig({
 });
 ```
 
-Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `next`.
+Optionally, instead of doing a side-effect import, add the `--experimental-global-webcrypto` flag when running `nuxt`.
 
 ```json
 // package.json
