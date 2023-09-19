@@ -234,7 +234,7 @@ import postgres from "postgres";
 
 export const queryClient = postgres(/* ... */);
 
-export const db: PostgresJsDatabase = drizzle(pool);
+export const db: PostgresJsDatabase = drizzle(queryClient);
 ```
 
 ```ts
