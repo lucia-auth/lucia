@@ -5,7 +5,7 @@ import { createHeadersFromObject } from "../utils/request.js";
 import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
 
 import type { Auth, Env, Session } from "./index.js";
-import { type Cookie, type SessionCookieOptions } from "./cookie.js";
+import type { Cookie, SessionCookieOptions } from "./cookie.js";
 
 export type LuciaRequest = {
 	method: string;
