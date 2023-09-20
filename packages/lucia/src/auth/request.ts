@@ -5,7 +5,7 @@ import { createHeadersFromObject } from "../utils/request.js";
 import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
 
 import type { Auth, Env, Session } from "./index.js";
-import type { Cookie } from "./cookie.js";
+import { type Cookie, type SessionCookieOptions } from "./cookie.js";
 
 export type LuciaRequest = {
 	method: string;
@@ -91,11 +91,14 @@ export class AuthRequest<_Auth extends Auth = any> {
 	private storedSessionId: string | null;
 	private bearerToken: string | null;
 
-	public setSession = (session: Session | null) => {
+	public setSession = (
+		session: Session | null,
+		options?: SessionCookieOptions
+	) => {
 		const sessionId = session?.sessionId ?? null;
 		if (this.storedSessionId === sessionId) return;
 		this.validatePromise = null;
-		this.setSessionCookie(session);
+		this.setSessionCookie(session, options ?? { browserSessionOnly: false });
 	};
 
 	private maybeSetSession = (session: Session | null) => {
@@ -107,11 +110,16 @@ export class AuthRequest<_Auth extends Auth = any> {
 		}
 	};
 
-	private setSessionCookie = (session: Session | null) => {
+	private setSessionCookie = (
+		session: Session | null,
+		options: SessionCookieOptions
+	) => {
 		const sessionId = session?.sessionId ?? null;
 		if (this.storedSessionId === sessionId) return;
 		this.storedSessionId = sessionId;
-		this.requestContext.setCookie(this.auth.createSessionCookie(session));
+		this.requestContext.setCookie(
+			this.auth.createSessionCookie(session, options)
+		);
 		if (session) {
 			debug.request.notice("Session cookie stored", session.sessionId);
 		} else {

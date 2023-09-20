@@ -17,6 +17,10 @@ export type SessionCookieConfiguration = {
 	expires?: boolean;
 };
 
+export type SessionCookieOptions = {
+	browserSessionOnly: boolean;
+};
+
 const defaultSessionCookieAttributes: SessionCookieAttributes = {
 	sameSite: "lax",
 	path: "/"
@@ -24,7 +28,10 @@ const defaultSessionCookieAttributes: SessionCookieAttributes = {
 
 export const createSessionCookie = (
 	session: Session | null,
-	options: { env: Env; cookie: SessionCookieConfiguration }
+	options: {
+		env: Env;
+		cookie: SessionCookieConfiguration;
+	} & SessionCookieOptions
 ): Cookie => {
 	let expires: number;
 	if (session === null) {
@@ -40,7 +47,7 @@ export const createSessionCookie = (
 		{
 			...(options.cookie.attributes ?? defaultSessionCookieAttributes),
 			httpOnly: true,
-			expires: new Date(expires),
+			...(options.browserSessionOnly && { expires: new Date(expires) }),
 			secure: options.env === "PROD"
 		}
 	);

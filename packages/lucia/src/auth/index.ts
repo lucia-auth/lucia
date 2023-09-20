@@ -13,7 +13,11 @@ import { createAdapter } from "./adapter.js";
 import { createKeyId } from "./database.js";
 import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
 
-import type { Cookie, SessionCookieConfiguration } from "./cookie.js";
+import type {
+	Cookie,
+	SessionCookieConfiguration,
+	SessionCookieOptions
+} from "./cookie.js";
 import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
 import type { Adapter, SessionAdapter, InitializeAdapter } from "./adapter.js";
 import type { CSRFProtectionConfiguration, Middleware } from "./request.js";
@@ -573,8 +577,12 @@ export class Auth<_Configuration extends Configuration = any> {
 		});
 	};
 
-	public createSessionCookie = (session: Session | null): Cookie => {
+	public createSessionCookie = (
+		session: Session | null,
+		options: SessionCookieOptions
+	): Cookie => {
 		return createSessionCookie(session, {
+			...options,
 			env: this.env,
 			cookie: this.sessionCookieConfig
 		});
