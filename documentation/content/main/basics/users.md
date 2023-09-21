@@ -60,7 +60,7 @@ try {
 		} // expects `Lucia.DatabaseUserAttributes`
 	});
 } catch (e) {
-	if (e instanceof LuciaError && e.message === `DUPLICATE_KEY_ID`) {
+	if (e instanceof LuciaError && e.message === `AUTH_DUPLICATE_KEY_ID`) {
 		// key already exists
 	}
 	// provided user attributes violates database rules (e.g. unique constraint)

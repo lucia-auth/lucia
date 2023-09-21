@@ -42,7 +42,7 @@ const key = await auth.useKey("github", githubUser.userId);
 
 ## Create keys
 
-Keys can be created with [`Auth.createKey()`](/reference/lucia/interfaces/auth#createkey). This returns the newly created key, or throws `DUPLICATE_KEY_ID` if the key already exists.
+Keys can be created with [`Auth.createKey()`](/reference/lucia/interfaces/auth#createkey). This returns the newly created key, or throws `AUTH_DUPLICATE_KEY_ID` if the key already exists.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -56,7 +56,7 @@ try {
 		password: "123456"
 	});
 } catch (e) {
-	if (e instanceof LuciaError && e.message === "DUPLICATE_KEY_ID") {
+	if (e instanceof LuciaError && e.message === "AUTH_DUPLICATE_KEY_ID") {
 		// key already exists
 	}
 	// unexpected database errors
@@ -78,7 +78,7 @@ const key = await auth.createKey({
 
 In most cases, you want to create a key whenever you create (i.e. register) a new user. [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser) includes a parameter to define a key. `null` can be passed to `key` if you don't need to create a key. This preferable to using `Auth.createUser()` and `Auth.createKey()` consecutively as the user will not be created when the key already exists.
 
-Similar to `Auth.createKey()`, it will throw `DUPLICATE_KEY_ID` if the key already exists.
+Similar to `Auth.createKey()`, it will throw `AUTH_DUPLICATE_KEY_ID` if the key already exists.
 
 ```ts
 import { auth } from "./lucia.js";
@@ -94,7 +94,7 @@ try {
 		// ...
 	});
 } catch (e) {
-	if (e instanceof LuciaError && e.message === "DUPLICATE_KEY_ID") {
+	if (e instanceof LuciaError && e.message === "AUTH_DUPLICATE_KEY_ID") {
 		// key already exists
 	}
 	// provided user attributes violates database rules (e.g. unique constraint)
