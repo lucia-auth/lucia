@@ -51,9 +51,9 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 				]
 			}
 		);
-                const accessType = this.config.accessType ?? "online"; // ( default ) online
+		const accessType = this.config.accessType ?? "online"; // ( default ) online
 		url.searchParams.set("access_type", accessType);
- 		return [url, state];
+		return [url, state];
 	};
 
 	public validateCallback = async (
