@@ -1,7 +1,7 @@
 import { createHeadersFromObject } from "../utils/request.js";
-import { HTTPStatusName } from "../utils/status.js";
 
 import type { CookieAttributes } from "../utils/cookie.js";
+import type{ HTTPStatusName } from "../utils/status.js";
 import type {
 	LuciaRequest,
 	Middleware,
