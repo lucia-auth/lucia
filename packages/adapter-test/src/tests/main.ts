@@ -47,7 +47,7 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			assert.deepStrictEqual(storedUser, user);
 			assert.deepStrictEqual(storedKey, key);
 		});
-		await test("Throws DUPLICATE_KEY_ID on duplicate key id", async () => {
+		await test("Throws AUTH_DUPLICATE_KEY_ID on duplicate key id", async () => {
 			const user1 = database.generateUser();
 			const key1 = database.generateKey(user1.id);
 			await User.insert(user1);
