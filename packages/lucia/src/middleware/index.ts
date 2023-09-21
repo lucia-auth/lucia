@@ -1,7 +1,6 @@
 import { createHeadersFromObject } from "../utils/request.js";
 
 import type { CookieAttributes } from "../utils/cookie.js";
-import type{ HTTPStatusName } from "../utils/status.js";
 import type {
 	LuciaRequest,
 	Middleware,
@@ -158,8 +157,6 @@ type ElysiaContext = {
 		headers: Record<string, string> & {
 			["Set-Cookie"]?: string | string[];
 		};
-		status?: number | HTTPStatusName;
-		redirect?: string | undefined;
 	};
 };
 
