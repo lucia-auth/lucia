@@ -1,4 +1,5 @@
 import { createHeadersFromObject } from "../utils/request.js";
+import { HTTPStatusName } from "../utils/status.js";
 
 import type { CookieAttributes } from "../utils/cookie.js";
 import type {
@@ -157,7 +158,7 @@ type ElysiaContext = {
 		headers: Record<string, string> & {
 			["Set-Cookie"]?: string | string[];
 		};
-		status?: number | undefined;
+		status?: number | HTTPStatusName;
 		redirect?: string | undefined;
 	};
 };
