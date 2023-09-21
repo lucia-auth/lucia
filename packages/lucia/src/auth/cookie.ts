@@ -6,7 +6,7 @@ import type { CookieAttributes } from "../utils/cookie.js";
 export const DEFAULT_SESSION_COOKIE_NAME = "auth_session";
 
 type SessionCookieAttributes = {
-	sameSite?: "strict" | "lax";
+	sameSite?: "Strict" | "Lax" | "None";
 	path?: string;
 	domain?: string;
 };
@@ -18,7 +18,7 @@ export type SessionCookieConfiguration = {
 };
 
 const defaultSessionCookieAttributes: SessionCookieAttributes = {
-	sameSite: "lax",
+	sameSite: "Lax",
 	path: "/"
 };
 
