@@ -157,8 +157,6 @@ type ElysiaContext = {
 		headers: Record<string, string> & {
 			["Set-Cookie"]?: string | string[];
 		};
-		status?: number | undefined;
-		redirect?: string | undefined;
 	};
 };
 
