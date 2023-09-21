@@ -45,7 +45,7 @@ export type CookieAttributes = Partial<{
 	maxAge: number;
 	path: string;
 	priority: "low" | "medium" | "high";
-	sameSite: true | false | "lax" | "strict" | "none";
+	sameSite: "Lax" | "Strict" | "None";
 	secure: boolean;
 }>;
 
