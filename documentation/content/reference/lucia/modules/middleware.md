@@ -190,7 +190,7 @@ auth.handleRequest(requestContext as RequestContext);
 
 ## `nextjs()`
 
-**While this is not deprecated, it will be replaced with [`nextjs_future()`]() in the next major release**.
+**While this is not deprecated, it will be replaced with [`nextjs_future()`](#nextjs_future) in the next major release**.
 
 Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled** when:
 

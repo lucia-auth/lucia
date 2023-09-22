@@ -62,6 +62,20 @@ await Promise([
 ]);
 ```
 
+### Invalidation
+
+After updating user attributes, for example, call [`AuthRequest.invalidate()`](/reference/lucia/interfaces/authrequest#invalidate) to invalidate internal cache so the next time you call `AuthRequest.validate()`, it returns the latest user data.
+
+```ts
+await auth.updateUserAttributes(userId, {
+	username: newUsername
+});
+authRequest.invalidate();
+
+// returns latest user data
+const session = await authRequest.validate()
+```
+
 ## Set session cookies
 
 You can set session cookies by passing `Session` to [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). You can pass `null` to
