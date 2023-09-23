@@ -33,6 +33,7 @@ title: "Reference overview"
 ### `@lucia-auth/adapter-prisma`
 
 - [`prisma()`](/database-adapters/prisma)
+- [`prisma_legacy()`](/database-adapters/prisma#legacy-adapter)
 
 ### `@lucia-auth/adapter-sqlite`
 

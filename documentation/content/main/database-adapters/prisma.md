@@ -83,7 +83,62 @@ You can add additional columns to the user model to store user attributes, and t
 model User {
   id           String    @id @unique
 
-  auth_session Session[]
+  session      Session[]
+  key          Key[]
+}
+
+model Session {
+  id            String @id @unique
+  userId        String
+  activeExpires BigInt
+  idleExpires   BigInt
+  user          User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model Key {
+  id             String  @id @unique
+  hashedPassword String?
+  userId         String
+  user           User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([user_id])
+}
+```
+
+## Legacy adapter
+
+With `@lucia-auth/adapter-prisma@4.0`, columns are `camelCase`. To continue using the old schema (`snake_case`), use `prisma_legacy()` adapter.
+
+```ts
+import { lucia } from "lucia";
+import { prisma_legacy } from "@lucia-auth/adapter-prisma";
+import { PrismaClient } from "@prisma/client";
+
+const client = new PrismaClient();
+
+const auth = lucia({
+	adapter: prisma(client)
+	// ...
+});
+
+// default values
+const auth = lucia({
+	adapter: prisma_legacy(client, {
+		user: "user", // model User {}
+		key: "key", // model Key {}
+		session: "session" // model Session {}
+	})
+	// ...
+});
+```
+
+```prisma
+model User {
+  id           String    @id @unique
+
+  session      Session[]
   key          Key[]
 }
 
