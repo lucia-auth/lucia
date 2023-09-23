@@ -4,3 +4,4 @@
 .env
 *.tgz
 *.tgz
+test/prisma/prisma.db

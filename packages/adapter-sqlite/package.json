@@ -13,9 +13,11 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"auri.build": "pnpm build",
+		"test-setup.prisma": "prisma db push --schema=test/prisma/schema.prisma",
 		"test.better-sqlite3": "tsx test/better-sqlite3/index.ts",
 		"test.d1": "tsx test/d1/index.ts",
-		"test.libsql": "tsx test/libsql/index.ts"
+		"test.libsql": "tsx test/libsql/index.ts",
+		"test.prisma": "tsx test/prisma/index.ts"
 	},
 	"keywords": [
 		"lucia",
@@ -56,11 +58,13 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230518.0",
 		"@libsql/client": "^0.3.0",
-		"@lucia-auth/adapter-test": "latest",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@miniflare/d1": "^2.14.0",
+		"@prisma/client": "^5.0.0",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.4.0",
-		"lucia": "latest",
+		"lucia": "workspace:*",
+		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"
 	}
 }

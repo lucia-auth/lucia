@@ -147,11 +147,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 		});
 		await test("Optionally throws AUTH_INVALID_USER_ID on invalid user id", async () => {
 			const key = database.generateKey(null);
-			try {
+			assert.rejects(async () => {
 				await adapter.setKey(key);
-			} catch (e) {
-				assert.deepStrictEqual(e, new LuciaError("AUTH_INVALID_USER_ID"));
-			}
+				throw new LuciaError("AUTH_INVALID_USER_ID")
+			}, new LuciaError("AUTH_INVALID_USER_ID"))
 		});
 	});
 
@@ -238,7 +237,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			await User.insert(user);
 			await Session.insert(session);
 			const sessionResult = await adapter.getSession(session.id);
-			assert.deepStrictEqual(sessionResult, session);
+			assert.deepStrictEqual(
+				transformBigIntSessionValues(sessionResult),
+				transformBigIntSessionValues(session)
+			);
 		});
 		await test("Returns null if invalid target session id", async () => {
 			const session = await adapter.getSession("*");
@@ -255,7 +257,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			await User.insert(user1, user2);
 			await Session.insert(session1, session2);
 			const result = await adapter.getSessionsByUserId(user1.id);
-			assert.deepStrictEqual(result, [session1]);
+			assert.deepStrictEqual(
+				result.map((val) => transformBigIntSessionValues(val)),
+				[transformBigIntSessionValues(session1)]
+			);
 		});
 		await test("Returns an empty array if none matches target", async () => {
 			const user = database.generateUser();
@@ -274,15 +279,17 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const session = database.generateSession(user.id);
 			await adapter.setSession(session);
 			const storedSession = await Session.get(session.id);
-			assert.deepStrictEqual(storedSession, session);
+			assert.deepStrictEqual(
+				transformBigIntSessionValues(storedSession),
+				transformBigIntSessionValues(session)
+			);
 		});
 		await test("Optionally throws AUTH_INVALID_USER_ID on invalid user id", async () => {
 			const session = database.generateSession(null);
-			try {
+			assert.rejects(async () => {
 				await adapter.setSession(session);
-			} catch (e) {
-				assert.deepStrictEqual(e, new LuciaError("AUTH_INVALID_USER_ID"));
-			}
+				throw new LuciaError("AUTH_INVALID_USER_ID")
+			}, new LuciaError("AUTH_INVALID_USER_ID"))
 		});
 	});
 
@@ -296,7 +303,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			await Session.insert(session2);
 			await adapter.deleteSession(session1.id);
 			const storedSessions = await Session.getAll();
-			assert.deepStrictEqual(storedSessions, [session2]);
+			assert.deepStrictEqual(
+				storedSessions.map((val) => transformBigIntSessionValues(val)),
+				[transformBigIntSessionValues(session2)]
+			);
 		});
 		await test("Does not throw on invalid session id", async () => {
 			const user = database.generateUser();
@@ -315,7 +325,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			await Session.insert(session1, session2);
 			await adapter.deleteSessionsByUserId(user1.id);
 			const storedSessions = await Session.getAll();
-			assert.deepStrictEqual(storedSessions, [session2]);
+			assert.deepStrictEqual(
+				storedSessions.map((val) => transformBigIntSessionValues(val)),
+				[transformBigIntSessionValues(session2)]
+			);
 		});
 		await test("Does not throw on invalid user id", async () => {
 			const user = database.generateUser();
@@ -337,7 +350,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 				country: "YY"
 			} satisfies SessionSchema;
 			const storedSession = await Session.get(expectedSession.id);
-			assert.deepStrictEqual(storedSession, expectedSession);
+			assert.deepStrictEqual(
+				transformBigIntSessionValues(storedSession),
+				transformBigIntSessionValues(expectedSession)
+			);
 		});
 	});
 
@@ -352,7 +368,10 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const [sessionResult, userResult] = await adapter.getSessionAndUser(
 				session.id
 			);
-			assert.deepStrictEqual(sessionResult, session);
+			assert.deepStrictEqual(
+				transformBigIntSessionValues(sessionResult),
+				transformBigIntSessionValues(session)
+			);
 			assert.deepStrictEqual(userResult, user);
 		});
 
@@ -365,4 +384,13 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 	});
 
 	finish();
+};
+
+const transformBigIntSessionValues = (
+	session: SessionSchema | null
+): SessionSchema | null => {
+	if (session === null) return null;
+	session.active_expires = Number(session.active_expires);
+	session.idle_expires = Number(session.idle_expires);
+	return session;
 };

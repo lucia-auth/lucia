@@ -3,7 +3,7 @@ import sqlite from "better-sqlite3";
 export const db = sqlite("test/main.db");
 
 export const TABLE_NAMES = {
-	user: "test_user",
+	user: "user",
 	session: "user_session",
 	key: "user_key"
 };

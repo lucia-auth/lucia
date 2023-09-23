@@ -19,7 +19,10 @@ export const testSessionAdapter = async (
 			const session = database.generateSession(null);
 			await Session.insert(session);
 			const sessionResult = await adapter.getSession(session.id);
-			assert.deepStrictEqual(sessionResult, session);
+			assert.deepStrictEqual(
+				transformBigIntSessionValues(sessionResult),
+				transformBigIntSessionValues(session)
+			);
 		});
 		await test("Returns null if invalid target session id", async () => {
 			const session = await adapter.getSession("*");
@@ -36,7 +39,10 @@ export const testSessionAdapter = async (
 			await Session.insert(session1);
 			await Session.insert(session2);
 			const result = await adapter.getSessionsByUserId(user1.id);
-			assert.deepStrictEqual(result, [session1]);
+			assert.deepStrictEqual(
+				result.map((val) => transformBigIntSessionValues(val)),
+				[transformBigIntSessionValues(session1)]
+			);
 		});
 		await test("Returns an empty array if none matches target", async () => {
 			const result = await adapter.getSessionsByUserId("*");
@@ -49,7 +55,10 @@ export const testSessionAdapter = async (
 			const session = database.generateSession(null);
 			await adapter.setSession(session);
 			const storedSession = await Session.get(session.id);
-			assert.deepStrictEqual(storedSession, session);
+			assert.deepStrictEqual(
+				transformBigIntSessionValues(storedSession),
+				transformBigIntSessionValues(session)
+			);
 		});
 	});
 
@@ -62,7 +71,10 @@ export const testSessionAdapter = async (
 			await Session.insert(session2);
 			await adapter.deleteSession(session1.id);
 			const storedSessions = await Session.getAll();
-			assert.deepStrictEqual(storedSessions, [session2]);
+			assert.deepStrictEqual(
+				storedSessions.map((val) => transformBigIntSessionValues(val)),
+				[transformBigIntSessionValues(session2)]
+			);
 		});
 		await test("Does not throw on invalid session id", async () => {
 			const user = database.generateUser();
@@ -80,7 +92,10 @@ export const testSessionAdapter = async (
 			await Session.insert(session1, session2);
 			await adapter.deleteSessionsByUserId(user1.id);
 			const storedSessions = await Session.getAll();
-			assert.deepStrictEqual(storedSessions, [session2]);
+			assert.deepStrictEqual(
+				storedSessions.map((val) => transformBigIntSessionValues(val)),
+				[transformBigIntSessionValues(session2)]
+			);
 		});
 		await test("Does not throw on invalid user id", async () => {
 			const user = database.generateUser();
@@ -100,9 +115,21 @@ export const testSessionAdapter = async (
 				country: "YY"
 			} satisfies SessionSchema;
 			const storedSession = await Session.get(expectedSession.id);
-			assert.deepStrictEqual(storedSession, expectedSession);
+			assert.deepStrictEqual(
+				transformBigIntSessionValues(storedSession),
+				transformBigIntSessionValues(expectedSession)
+			);
 		});
 	});
 
 	finish();
+};
+
+const transformBigIntSessionValues = (
+	session: SessionSchema | null
+): SessionSchema | null => {
+	if (session === null) return null;
+	session.active_expires = Number(session.active_expires);
+	session.idle_expires = Number(session.idle_expires);
+	return session;
 };

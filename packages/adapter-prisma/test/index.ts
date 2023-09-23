@@ -9,6 +9,8 @@ import type { SmartPrismaModel } from "../src/prisma.js";
 
 const client = new PrismaClient();
 
+client.$executeRawUnsafe
+
 const createTableQueryHandler = (model: any): TableQueryHandler => {
 	const Model = model as SmartPrismaModel;
 	return {
