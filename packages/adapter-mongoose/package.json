@@ -40,10 +40,10 @@
 		"mongoose": "6.x - 7.x"
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "latest",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"dotenv": "^16.0.3",
 		"tsx": "^3.12.6",
 		"mongoose": "^6.6.1",
-		"lucia": "latest"
+		"lucia": "workspace:*"
 	}
 }

@@ -39,8 +39,8 @@
 	},
 	"devDependencies": {
 		"@azure/keyvault-secrets": "^4.7.0",
-		"@lucia-auth/adapter-test": "latest",
-		"lucia": "latest",
+		"@lucia-auth/adapter-test": "workspace:*",
+		"lucia": "workspace:*",
 		"tsx": "^3.12.6"
 	},
 	"dependencies": {

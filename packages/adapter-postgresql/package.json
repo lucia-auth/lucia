@@ -54,10 +54,10 @@
 		}
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "latest",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@types/pg": "^8.6.5",
 		"dotenv": "^16.0.3",
-		"lucia": "latest",
+		"lucia": "workspace:*",
 		"tsx": "^3.12.6"
 	},
 	"dependencies": {

@@ -52,10 +52,10 @@
 		}
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "latest",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@planetscale/database": "^1.8.0",
 		"dotenv": "^16.0.3",
-		"lucia": "latest",
+		"lucia": "workspace:*",
 		"mysql2": "^3.2.3",
 		"tsx": "^3.12.6"
 	}

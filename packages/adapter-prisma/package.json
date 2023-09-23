@@ -44,8 +44,8 @@
 		"lucia": "^2.0.0"
 	},
 	"devDependencies": {
-		"lucia": "latest",
-		"@lucia-auth/adapter-test": "latest",
+		"lucia": "workspace:*",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@prisma/client": "^5.0.0",
 		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"
