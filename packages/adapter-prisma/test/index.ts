@@ -2,41 +2,60 @@ import { testAdapter, Database } from "@lucia-auth/adapter-test";
 import { LuciaError } from "lucia";
 import { PrismaClient } from "@prisma/client";
 
-import { prismaAdapter, transformPrismaSession } from "../src/prisma.js";
+import {
+	prismaAdapter,
+	transformLuciaKey,
+	transformLuciaSession,
+	transformPrismaKey,
+	transformPrismaSession
+} from "../src/prisma.js";
 
-import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-import type { SmartPrismaModel } from "../src/prisma.js";
+import type { QueryHandler } from "@lucia-auth/adapter-test";
 
 const client = new PrismaClient();
 
-const createTableQueryHandler = (model: any): TableQueryHandler => {
-	const Model = model as SmartPrismaModel;
-	return {
+const queryHandler: QueryHandler = {
+	user: {
 		get: async () => {
-			return await Model.findMany();
+			return await client.user.findMany();
 		},
 		insert: async (value: any) => {
-			await Model.create({
+			await client.user.create({
 				data: value
 			});
 		},
 		clear: async () => {
-			await Model.deleteMany();
-		}
-	};
-};
-
-const queryHandler: QueryHandler = {
-	user: createTableQueryHandler(client.user),
-	session: {
-		...createTableQueryHandler(client.session),
-		get: async () => {
-			const Session = client.session as any as SmartPrismaModel;
-			const result = await Session.findMany();
-			return result.map((val) => transformPrismaSession(val));
+			await client.user.deleteMany();
 		}
 	},
-	key: createTableQueryHandler(client.key)
+	session: {
+		get: async () => {
+			const result = await client.session.findMany();
+			return result.map((val) => transformPrismaSession(val));
+		},
+		insert: async (value: any) => {
+			await client.session.create({
+				data: transformLuciaSession(value)
+			});
+		},
+		clear: async () => {
+			await client.session.deleteMany();
+		}
+	},
+	key: {
+		get: async () => {
+			const result = await client.key.findMany();
+			return result.map((val) => transformPrismaKey(val));
+		},
+		insert: async (value: any) => {
+			await client.key.create({
+				data: transformLuciaKey(value)
+			});
+		},
+		clear: async () => {
+			await client.key.deleteMany();
+		}
+	}
 };
 
 const adapter = prismaAdapter(client)(LuciaError);

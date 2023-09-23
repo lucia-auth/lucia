@@ -16,19 +16,6 @@ type ExtractModelNames<_PrismaClient extends PrismaClient> = Exclude<
 	`$${string}`
 >;
 
-type PrismaSessionSchema = {
-	id: string;
-	userId: string;
-	activeExpires: bigint | number;
-	idleExpires: bigint | number;
-};
-
-type PrismaKeySchema = {
-	id: string;
-	userId: string;
-	hashedPassword: string | null;
-};
-
 export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 	client: _PrismaClient,
 	modelNames?: {
@@ -41,17 +28,16 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 		if (!modelNames) {
 			return {
 				User: client["user"] as TypedPrismaModel<UserSchema>,
-				Session:
-					(client["session"] as TypedPrismaModel<PrismaSessionSchema>) ?? null,
-				Key: client["key"] as TypedPrismaModel<PrismaKeySchema>
+				Session: (client["session"] as TypedPrismaModel<SessionSchema>) ?? null,
+				Key: client["key"] as TypedPrismaModel<KeySchema>
 			};
 		}
 		return {
 			User: client[modelNames.user] as TypedPrismaModel<UserSchema>,
 			Session: modelNames.session
-				? (client[modelNames.session] as TypedPrismaModel<PrismaSessionSchema>)
+				? (client[modelNames.session] as TypedPrismaModel<SessionSchema>)
 				: null,
-			Key: client[modelNames.key] as TypedPrismaModel<PrismaKeySchema>
+			Key: client[modelNames.key] as TypedPrismaModel<KeySchema>
 		};
 	};
 	const { User, Session, Key } = getModels();
@@ -78,7 +64,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 							data: user
 						}),
 						Key.create({
-							data: transformLuciaKey(key)
+							data: key
 						})
 					]);
 				} catch (e) {
@@ -130,7 +116,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				}
 				const sessions = await Session.findMany({
 					where: {
-						userId: userId
+						user_id: userId
 					}
 				});
 				return sessions.map((session) => transformPrismaSession(session));
@@ -141,7 +127,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				}
 				try {
 					await Session.create({
-						data: transformLuciaSession(session)
+						data: session
 					});
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
@@ -177,7 +163,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 				}
 				await Session.deleteMany({
 					where: {
-						userId: userId
+						user_id: userId
 					}
 				});
 			},
@@ -194,27 +180,24 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 			},
 
 			getKey: async (keyId) => {
-				const result = await Key.findUnique({
+				return await Key.findUnique({
 					where: {
 						id: keyId
 					}
 				});
-				if (!result) return null;
-				return transformPrismaKey(result);
 			},
 			getKeysByUserId: async (userId) => {
-				const result = await Key.findMany({
+				return await Key.findMany({
 					where: {
-						userId: userId
+						user_id: userId
 					}
 				});
-				return result.map((val) => transformPrismaKey(val));
 			},
 
 			setKey: async (key) => {
 				try {
 					await Key.create({
-						data: transformLuciaKey(key)
+						data: key
 					});
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
@@ -246,17 +229,13 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 			deleteKeysByUserId: async (userId) => {
 				await Key.deleteMany({
 					where: {
-						userId: userId
+						user_id: userId
 					}
 				});
 			},
 			updateKey: async (userId, partialKey) => {
 				await Key.update({
-					data: {
-						id: partialKey.id,
-						userId: partialKey.user_id,
-						hashedPassword: partialKey.hashed_password
-					},
+					data: partialKey,
 					where: {
 						id: userId
 					}
@@ -266,52 +245,28 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 	};
 };
 
-export const transformLuciaSession = (
-	session: SessionSchema
-): PrismaSessionSchema => {
-	const {
-		active_expires: activeExpires,
-		idle_expires: idleExpires,
-		user_id: userId,
-		...data
-	} = session;
-	return {
-		...data,
-		userId,
-		activeExpires,
-		idleExpires
-	};
-};
-
-export const transformLuciaKey = (key: KeySchema): PrismaKeySchema => {
-	return {
-		id: key.id,
-		userId: key.user_id,
-		hashedPassword: key.hashed_password
-	};
-};
 export const transformPrismaSession = (
-	sessionData: PrismaSessionSchema
+	sessionData: PrismaSession
 ): SessionSchema => {
-	const { activeExpires, idleExpires, userId, ...data } = sessionData;
+	const { active_expires, idle_expires: idleExpires, ...data } = sessionData;
 	return {
 		...data,
-		user_id: userId,
-		active_expires: Number(activeExpires),
+		active_expires: Number(active_expires),
 		idle_expires: Number(idleExpires)
 	};
 };
 
-export const transformPrismaKey = (keyData: PrismaKeySchema): KeySchema => {
-	return {
-		id: keyData.id,
-		user_id: keyData.userId,
-		hashed_password: keyData.hashedPassword
-	};
-};
 type PrismaClient = {
 	$transaction: (...args: any) => any;
 } & { [K: string]: any };
+
+export type PrismaSession = Omit<
+	SessionSchema,
+	"active_expires" | "idle_expires"
+> & {
+	active_expires: BigInt | number;
+	idle_expires: BigInt | number;
+};
 
 export type TypedPrismaModel<_Schema = any> = {
 	findUnique: <_Included = {}>(options: {
