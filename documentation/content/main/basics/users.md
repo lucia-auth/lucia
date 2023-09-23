@@ -151,8 +151,9 @@ await auth.updateUserAttributes(userId, {
 authRequest.invalidate();
 
 // returns latest user data
-const session = await authRequest.validate()
+const session = await authRequest.validate();
 ```
+
 ## Delete users
 
 You can delete users with [`Auth.deleteUser()`](/reference/lucia/interfaces/auth#deleteuser). All sessions and keys of the user will be deleted as well. This method will succeed regardless of the validity of the user id.
