@@ -1,7 +1,7 @@
 import type { Adapter, InitializeAdapter, SessionAdapter, UserAdapter } from "../index.js";
 
 export const joinAdapters = (
-  baseAdapter: InitializeAdapter<Adapter>,
+  baseAdapter: InitializeAdapter<Adapter | SessionAdapter | UserAdapter>,
   ...adapters: Array<
     | Partial<Adapter>
     | InitializeAdapter<Adapter |SessionAdapter | UserAdapter>
