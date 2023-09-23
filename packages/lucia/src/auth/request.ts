@@ -71,7 +71,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 
 		if (
 			!csrfProtectionEnabled ||
-			isValidRequestOrigin(this.requestContext.request, csrfProtectionConfig)
+			this.isValidRequestOrigin(csrfProtectionConfig)
 		) {
 			this.storedSessionId =
 				this.requestContext.sessionCookie ??
@@ -172,40 +172,41 @@ export class AuthRequest<_Auth extends Auth = any> {
 		this.validatePromise = null;
 		this.validateBearerTokenPromise = null;
 	}
-}
 
-const isValidRequestOrigin = (
-	request: LuciaRequest,
-	config: CSRFProtectionConfiguration
-): boolean => {
-	const whitelist = ["GET", "HEAD", "OPTIONS", "TRACE"];
-	if (whitelist.some((val) => val === request.method.toUpperCase())) {
-		return true;
-	}
-	const requestOrigin = request.headers.get("Origin");
-	if (!requestOrigin) return false;
-	if (!requestOrigin) {
-		debug.request.fail("No request origin available");
+	private isValidRequestOrigin = (
+		config: CSRFProtectionConfiguration
+	): boolean => {
+		const request = this.requestContext.request;
+		const whitelist = ["GET", "HEAD", "OPTIONS", "TRACE"];
+		if (whitelist.some((val) => val === request.method.toUpperCase())) {
+			return true;
+		}
+		const requestOrigin = request.headers.get("Origin");
+		if (!requestOrigin) return false;
+		if (!requestOrigin) {
+			debug.request.fail("No request origin available");
+			return false;
+		}
+		let host: string | null = null;
+		if (config.host !== undefined) {
+			host = config.host ?? null;
+		} else if (request.url !== null && request.url !== undefined) {
+			host = safeParseUrl(request.url)?.host ?? null;
+		} else {
+			host = request.headers.get(config.hostHeader ?? "Host");
+		}
+		debug.request.info("Host", host ?? "(Host unknown)")
+		if (
+			host !== null &&
+			isAllowedOrigin(requestOrigin, host, config.allowedSubDomains ?? [])
+		) {
+			debug.request.info("Valid request origin", requestOrigin);
+			return true;
+		}
+		debug.request.info("Invalid request origin", requestOrigin);
 		return false;
-	}
-	let host: string | null = null;
-	if (config.host !== undefined) {
-		host = config.host ?? null;
-	} else if (request.url !== null && request.url !== undefined) {
-		host = safeParseUrl(request.url)?.host ?? null;
-	} else {
-		host = request.headers.get(config.hostHeader ?? "Host");
-	}
-	if (
-		host !== null &&
-		isAllowedOrigin(requestOrigin, host, config.allowedSubDomains ?? [])
-	) {
-		debug.request.info("Valid request origin", requestOrigin);
-		return true;
-	}
-	debug.request.info("Invalid request origin", requestOrigin);
-	return false;
-};
+	};
+}
 
 export const transformRequestContext = ({
 	request,
