@@ -1,5 +1,19 @@
 # lucia
 
+## 2.7.0
+
+### Minor changes
+
+- [#1081](https://github.com/lucia-auth/lucia/pull/1081) by [@SkepticMystic](https://github.com/SkepticMystic) : Add experimental `joinAdapters()`
+
+- [#1148](https://github.com/lucia-auth/lucia/pull/1148) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `AuthRequest.invalidate()`
+
+### Patch changes
+
+- [#1134](https://github.com/lucia-auth/lucia/pull/1134) by [@giacomoferretti](https://github.com/giacomoferretti) : Fix unhandled rejection error when using `AuthRequest.validate()` and `AuthRequest.validateBearerToken()`
+
+- [#1144](https://github.com/lucia-auth/lucia/pull/1144) by [@MrNiceRicee](https://github.com/MrNiceRicee) : Update `elysia()` middleware types
+
 ## 2.6.0
 
 ### Minor changes

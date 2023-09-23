@@ -73,7 +73,7 @@ await auth.updateUserAttributes(userId, {
 authRequest.invalidate();
 
 // returns latest user data
-const session = await authRequest.validate()
+const session = await authRequest.validate();
 ```
 
 ## Set session cookies

@@ -195,7 +195,7 @@ export class AuthRequest<_Auth extends Auth = any> {
 		} else {
 			host = request.headers.get(config.hostHeader ?? "Host");
 		}
-		debug.request.info("Host", host ?? "(Host unknown)")
+		debug.request.info("Host", host ?? "(Host unknown)");
 		if (
 			host !== null &&
 			isAllowedOrigin(requestOrigin, host, config.allowedSubDomains ?? [])
