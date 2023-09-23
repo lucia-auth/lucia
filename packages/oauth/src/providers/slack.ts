@@ -44,7 +44,7 @@ export class SlackAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			"https://slack.com/openid/connect/authorize",
 			{
 				clientId: this.config.clientId,
-				scope: ["oidc", "profile", ...scopeConfig],
+				scope: ["openid", "profile", ...scopeConfig],
 				redirectUri: this.config.redirectUri
 			}
 		);
@@ -79,7 +79,8 @@ export class SlackAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			clientPassword: {
 				clientSecret: this.config.clientSecret,
 				authenticateWith: "client_secret"
-			}
+			},
+			redirectUri: this.config.redirectUri
 		});
 		return {
 			accessToken: tokens.access_token,
