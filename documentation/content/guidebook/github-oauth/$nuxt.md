@@ -35,8 +35,8 @@ Copy and paste the client id and client secret into your `.env` file:
 
 ```bash
 # .env
-GITHUB_CLIENT_ID="..."
-GITHUB_CLIENT_SECRET="..."
+NUXT_GITHUB_CLIENT_ID="..."
+NUXT_GITHUB_CLIENT_SECRET="..."
 ```
 
 Expose the environment variables by updating your Nuxt config.
@@ -46,10 +46,11 @@ Expose the environment variables by updating your Nuxt config.
 export default defineNuxtConfig({
 	// ...
 	runtimeConfig: {
-		githubClientId: process.env.GITHUB_CLIENT_ID,
-		githubClientSecret: process.env.GITHUB_CLIENT_SECRET
+		// keep these empty!
+		githubClientId: "",
+		githubClientSecret: ""
 	}
-	// When using node <= 18 we need to uncomment the following section in order to polyfill the Web Crypto API.
+	// When using node < 20 we need to uncomment the following section in order to polyfill the Web Crypto API.
 	// nitro: {
 	//   moduleSideEffects: ["lucia/polyfill/node"]
 	// },
@@ -83,7 +84,7 @@ We'll expose the user's GitHub username to the `User` object by defining [`getUs
 // server/utils/lucia.ts
 import { lucia } from "lucia";
 import { h3 } from "lucia/middleware";
-// When using node <= 18 uncomment the following line.
+// When using node < 20 uncomment the following line.
 // import 'lucia/polyfill/node'
 
 export const auth = lucia({
@@ -312,9 +313,7 @@ Define a global `auth` middleware that gets the current user and populates the u
 export default defineNuxtRouteMiddleware(async () => {
 	const user = useUser();
 	const { data, error } = await useFetch("/api/user");
-
 	if (error.value) throw createError("Failed to fetch data");
-
 	user.value = data.value?.user ?? null;
 });
 ```
@@ -360,7 +359,7 @@ definePageMeta({
 	middleware: ["protected"]
 });
 
-const user = await useAuthenticatedUser();
+const user = useAuthenticatedUser();
 
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
