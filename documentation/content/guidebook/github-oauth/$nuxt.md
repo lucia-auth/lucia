@@ -35,8 +35,8 @@ Copy and paste the client id and client secret into your `.env` file:
 
 ```bash
 # .env
-GITHUB_CLIENT_ID="..."
-GITHUB_CLIENT_SECRET="..."
+NUXT_GITHUB_CLIENT_ID="..."
+NUXT_GITHUB_CLIENT_SECRET="..."
 ```
 
 Expose the environment variables by updating your Nuxt config.
@@ -46,9 +46,14 @@ Expose the environment variables by updating your Nuxt config.
 export default defineNuxtConfig({
 	// ...
 	runtimeConfig: {
-		githubClientId: "", // keep it empty!
-		githubClientSecret: "" // keep it empty!
+		// keep these empty!
+		githubClientId: "",
+		githubClientSecret: ""
 	}
+	// When using node < 20 we need to uncomment the following section in order to polyfill the Web Crypto API.
+	// nitro: {
+	//   moduleSideEffects: ["lucia/polyfill/node"]
+	// },
 });
 ```
 
@@ -63,7 +68,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new col
 
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
+	type Auth = import("./utils/lucia").Auth;
 	type DatabaseUserAttributes = {
 		username: string;
 	};
@@ -79,6 +84,8 @@ We'll expose the user's GitHub username to the `User` object by defining [`getUs
 // server/utils/lucia.ts
 import { lucia } from "lucia";
 import { h3 } from "lucia/middleware";
+// When using node < 20 uncomment the following line.
+// import 'lucia/polyfill/node'
 
 export const auth = lucia({
 	adapter: ADAPTER,
@@ -302,10 +309,12 @@ export const useAuthenticatedUser = () => {
 Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation.
 
 ```ts
-// middleware/auth.ts
+// middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async () => {
-	const user = await useUser();
-	if (!user.value) return navigateTo("/login");
+	const user = useUser();
+	const { data, error } = await useFetch("/api/user");
+	if (error.value) throw createError("Failed to fetch data");
+	user.value = data.value?.user ?? null;
 });
 ```
 
@@ -350,7 +359,7 @@ definePageMeta({
 	middleware: ["protected"]
 });
 
-const user = await useAuthenticatedUser();
+const user = useAuthenticatedUser();
 
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
