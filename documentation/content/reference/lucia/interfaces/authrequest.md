@@ -3,6 +3,14 @@ title: "AuthRequest"
 format: "code"
 ---
 
+## `invalidate()`
+
+Invalidates the internal cache for [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) and [`AuthRequest.validateBearerToken()`](/reference/lucia/interfaces/authrequest#validatebearertoken).
+
+```ts
+const invalidate: () => void
+```
+
 ## `setSession()`
 
 Sets a session cookie. Providing `null` will create a blank session cookie that will delete the current one.

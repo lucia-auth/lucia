@@ -142,6 +142,17 @@ const session = await auth.createSession({
 // store new session
 ```
 
+If you're using `AuthRequest` to validate sessions, [use `AuthRequest.invalidate()`](/basics/using-cookies#invalidation) to get the latest user data when you next call `AuthRequest.validate()` and `AuthRequest.validateBearerToken()`.
+
+```ts
+await auth.updateUserAttributes(userId, {
+	username: newUsername
+});
+authRequest.invalidate();
+
+// returns latest user data
+const session = await authRequest.validate()
+```
 ## Delete users
 
 You can delete users with [`Auth.deleteUser()`](/reference/lucia/interfaces/auth#deleteuser). All sessions and keys of the user will be deleted as well. This method will succeed regardless of the validity of the user id.

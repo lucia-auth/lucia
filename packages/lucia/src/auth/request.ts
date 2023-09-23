@@ -167,6 +167,11 @@ export class AuthRequest<_Auth extends Auth = any> {
 
 		return await this.validatePromise;
 	};
+
+	public invalidate(): void {
+		this.validatePromise = null;
+		this.validateBearerTokenPromise = null;
+	}
 }
 
 const isValidRequestOrigin = (
