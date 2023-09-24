@@ -93,25 +93,25 @@ export const planetscaleAdapter = (
 				if (!ESCAPED_SESSION_TABLE_NAME) {
 					throw new Error("Session table not defined");
 				}
-				const result = await get<PlanetscaleSession>(
+				const result = await get<SessionSchema>(
 					connection.execute(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 						[sessionId]
 					)
 				);
-				return result ? transformPlanetscaleSession(result) : null;
+				return result
 			},
 			getSessionsByUserId: async (userId) => {
 				if (!ESCAPED_SESSION_TABLE_NAME) {
 					throw new Error("Session table not defined");
 				}
-				const result = await getAll<PlanetscaleSession>(
+				const result = await getAll<SessionSchema>(
 					connection.execute(
 						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
 						[userId]
 					)
 				);
-				return result.map((val) => transformPlanetscaleSession(val));
+				return result
 			},
 			setSession: async (session) => {
 				if (!ESCAPED_SESSION_TABLE_NAME) {
@@ -220,7 +220,7 @@ export const planetscaleAdapter = (
 					throw new Error("Session table not defined");
 				}
 				const [sessionResult, userFromJoinResult] = await Promise.all([
-					get<PlanetscaleSession>(
+					get<SessionSchema>(
 						connection.execute(
 							`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
 							[sessionId]
@@ -239,7 +239,7 @@ export const planetscaleAdapter = (
 				]);
 				if (!sessionResult || !userFromJoinResult) return [null, null];
 				const { __session_id: _, ...userResult } = userFromJoinResult;
-				return [transformPlanetscaleSession(sessionResult), userResult];
+				return [sessionResult, userResult];
 			}
 		};
 	};
@@ -258,22 +258,4 @@ export const getAll = async <Schema>(
 ): Promise<Schema[]> => {
 	const { rows } = await queryPromise;
 	return rows as any;
-};
-
-export type PlanetscaleSession = Omit<
-	SessionSchema,
-	"active_expires" | "idle_expires"
-> & {
-	active_expires: BigInt;
-	idle_expires: BigInt;
-};
-
-export const transformPlanetscaleSession = (
-	session: PlanetscaleSession
-): SessionSchema => {
-	return {
-		...session,
-		active_expires: Number(session.active_expires),
-		idle_expires: Number(session.idle_expires)
-	};
 };

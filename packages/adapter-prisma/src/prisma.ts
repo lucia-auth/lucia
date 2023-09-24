@@ -245,17 +245,6 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 	};
 };
 
-export const transformPrismaSession = (
-	sessionData: PrismaSession
-): SessionSchema => {
-	const { active_expires, idle_expires: idleExpires, ...data } = sessionData;
-	return {
-		...data,
-		active_expires: Number(active_expires),
-		idle_expires: Number(idleExpires)
-	};
-};
-
 type PrismaClient = {
 	$transaction: (...args: any) => any;
 } & { [K: string]: any };
