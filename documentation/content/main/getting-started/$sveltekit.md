@@ -32,14 +32,14 @@ export type Auth = typeof auth;
 
 ## Setup your database
 
-Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/reference/database-adapter). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter.
+Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/reference/database-adapter). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter for SQLite.
 
 ```ts
 // src/lib/server/lucia.ts
 import { lucia } from "lucia";
 import { sveltekit } from "lucia/middleware";
 import { dev } from "$app/environment";
-import { prisma } from "@lucia-auth/adapter-prisma";
+import { prisma } from "@lucia-auth/adapter-sqlite";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();

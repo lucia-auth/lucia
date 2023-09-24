@@ -52,7 +52,7 @@ model AuthKey {
 
 ```ts
 import { lucia } from "lucia";
-import { prisma } from "@lucia-auth/adapter-prisma";
+import { prisma } from "@lucia-auth/adapter-sqlite";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
