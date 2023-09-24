@@ -24,13 +24,17 @@ title: "Reference overview"
 
 - [`mysql2()`](/database-adapters/mysql2)
 - [`planetscale()`](/database-adapters/planetscale-serverless)
+- [`prisma()`](/database-adapters/prisma)
 
 ### `@lucia-auth/adapter-postgresql`
 
 - [`pg()`](/database-adapters/pg)
 - [`postgres()`](/database-adapters/postgres)
+- [`prisma()`](/database-adapters/prisma)
 
 ### `@lucia-auth/adapter-prisma`
+
+**legacy**, to be deprecated.
 
 - [`prisma()`](/database-adapters/prisma)
 
@@ -39,6 +43,7 @@ title: "Reference overview"
 - [`betterSqlite3()`](/database-adapters/better-sqlite3)
 - [`d1()`](/database-adapters/cloudflare-d1)
 - [`libsql()`](/database-adapters/libsql)
+- [`prisma()`](/database-adapters/prisma)
 
 ### `@lucia-auth/adapter-session-redis`
 

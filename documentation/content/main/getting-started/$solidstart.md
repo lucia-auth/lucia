@@ -65,7 +65,7 @@ const auth = lucia({
 - [`mysql2`](/database-adapters/mysql2): MySQL
 - [`pg`](/database-adapters/pg): PostgreSQL (including `@neondatabase/serverless`, `@vercel/postgres`)
 - [`postgres`](/database-adapters/postgres): PostgreSQL
-- [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
+- [Prisma](/database-adapters/prisma): MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
 - [Unstorage](/database-adapters/unstorage): Azure, Cloudflare KV, Memory, MongoDB, Planetscale, Redis, Vercel KV
 

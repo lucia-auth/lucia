@@ -56,7 +56,7 @@ const auth = lucia({
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
 - [`postgres`](/database-adapters/postgres): PostgreSQL
-- [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
+- [Prisma](/database-adapters/prisma): MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
 - [Unstorage](/database-adapters/unstorage): Azure, Cloudflare KV, Memory, MongoDB, Planetscale, Redis, Vercel KV
 

@@ -27,6 +27,7 @@ model Session {
   country       String @map("country")
   user          User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 
+  @@index([userId])
   @@map("user_session")
 }
 
