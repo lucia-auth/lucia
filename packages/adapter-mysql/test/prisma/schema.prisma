@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "file:./prisma.db"
+}
+
+model User {
+  id       String    @id @unique @map("id")
+  username String    @unique @map("username")
+  session  Session[]
+  key      Key[]
+
+  @@map("user")
+}
+
+model Session {
+  id            String @id @unique @map("id")
+  userId        String @map("user_id")
+  activeExpires BigInt @map("active_expires")
+  idleExpires   BigInt @map("idle_expires")
+  country       String @map("country")
+  user          User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@map("user_session")
+}
+
+model Key {
+  id             String  @id @unique @map("id")
+  hashedPassword String? @map("hashed_password")
+  userId         String  @map("user_id")
+  user           User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_key")
+}

@@ -63,6 +63,7 @@ export const prismaAdapter = <
 						)
 					]);
 				} catch (e) {
+
 					const error = e as Partial<PrismaError>;
 					if (error.meta?.code === "2067" && error.meta.message?.endsWith(".id")) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");

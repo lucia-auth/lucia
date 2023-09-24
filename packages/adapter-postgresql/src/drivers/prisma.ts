@@ -9,11 +9,11 @@ import type {
 } from "lucia";
 
 type PrismaError = {
-    meta: {
+	meta: {
 		code: string;
 		message: string;
 	};
-}
+};
 
 export const prismaAdapter = <
 	_AdapterParameterPrismaClient extends AdapterParameterPrismaClient
@@ -36,7 +36,7 @@ export const prismaAdapter = <
 		return {
 			getUser: async (userId) => {
 				const result = await prismaClient.$queryRawUnsafe<UserSchema>(
-					`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`,
+					`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = $1`,
 					userId
 				);
 				return result.at(0) ?? null;
@@ -64,7 +64,10 @@ export const prismaAdapter = <
 					]);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-					if (error.meta?.code === "2067" && error.meta.message?.endsWith(".id")) {
+					if (
+						error.meta?.code === "23505" &&
+						error.meta.message?.includes("Key (id)")
+					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
 					throw error;
@@ -72,7 +75,7 @@ export const prismaAdapter = <
 			},
 			deleteUser: async (userId) => {
 				await prismaClient.$executeRawUnsafe(
-					`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`,
+					`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = $1`,
 					userId
 				);
 			},
@@ -82,7 +85,7 @@ export const prismaAdapter = <
 					`UPDATE ${ESCAPED_USER_TABLE_NAME} SET ${getSetArgs(
 						fields,
 						values
-					)} WHERE id = ?`,
+					)} WHERE id = $${fields.length + 1}`,
 					...args,
 					userId
 				);
@@ -93,7 +96,7 @@ export const prismaAdapter = <
 					throw new Error("Session table not defined");
 				}
 				const result = await prismaClient.$queryRawUnsafe<SessionSchema>(
-					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
+					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 					sessionId
 				);
 				return result.at(0) ?? null;
@@ -103,7 +106,7 @@ export const prismaAdapter = <
 					throw new Error("Session table not defined");
 				}
 				const result = await prismaClient.$queryRawUnsafe<SessionSchema>(
-					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
+					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 					userId
 				);
 				return result;
@@ -120,10 +123,12 @@ export const prismaAdapter = <
 					);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-					if (error.meta?.code === "787") {
+					if (
+						error.meta?.code === "23503" &&
+						error.meta.message.includes("Key (user_id)")
+					) {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
-
 					throw error;
 				}
 			},
@@ -132,7 +137,7 @@ export const prismaAdapter = <
 					throw new Error("Session table not defined");
 				}
 				await prismaClient.$executeRawUnsafe(
-					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
 					sessionId
 				);
 			},
@@ -141,7 +146,7 @@ export const prismaAdapter = <
 					throw new Error("Session table not defined");
 				}
 				await prismaClient.$executeRawUnsafe(
-					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`,
+					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = $1`,
 					userId
 				);
 			},
@@ -154,7 +159,7 @@ export const prismaAdapter = <
 					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
 						fields,
 						values
-					)} WHERE id = ?`,
+					)} WHERE id = $${fields.length + 1}`,
 					...args,
 					sessionId
 				);
@@ -162,14 +167,14 @@ export const prismaAdapter = <
 
 			getKey: async (keyId) => {
 				const result = await prismaClient.$queryRawUnsafe<KeySchema>(
-					`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`,
+					`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = $1`,
 					keyId
 				);
 				return result.at(0) ?? null;
 			},
 			getKeysByUserId: async (userId) => {
 				const result = await prismaClient.$queryRawUnsafe<KeySchema>(
-					`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`,
+					`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = $1`,
 					userId
 				);
 				return result;
@@ -183,18 +188,15 @@ export const prismaAdapter = <
 					);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-                    if (error.meta?.code === "787") {
+					if (
+						error.meta?.code === "23503" &&
+						error.meta.message.includes("Key (user_id)")
+					) {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 					if (
-						error.meta?.code === "2067" &&
-						error.meta.message?.endsWith(".id")
-					) {
-						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					}
-                    if (
-						error.meta?.code === "1555" &&
-						error.meta.message?.endsWith(".id")
+						error.meta?.code === "23505" &&
+						error.meta.message.includes("Key (id)")
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -203,13 +205,13 @@ export const prismaAdapter = <
 			},
 			deleteKey: async (keyId) => {
 				await prismaClient.$executeRawUnsafe(
-					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`,
+					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = $1`,
 					keyId
 				);
 			},
 			deleteKeysByUserId: async (userId) => {
 				await prismaClient.$executeRawUnsafe(
-					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`,
+					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = $1`,
 					userId
 				);
 			},
@@ -219,7 +221,7 @@ export const prismaAdapter = <
 					`UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${getSetArgs(
 						fields,
 						values
-					)} WHERE id = ?`,
+					)} WHERE id = $${fields.length + 1}`,
 					...args,
 					keyId
 				);
