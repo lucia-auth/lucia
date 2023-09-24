@@ -54,7 +54,7 @@ const auth = lucia({
 });
 ```
 
-### Adapters for database drivers and ORMs
+### Adapters for database drivers
 
 - [`better-sqlite3`](/database-adapters/better-sqlite3): SQLite
 - [libSQL](/database-adapters/libsql): libSQL (Turso)
