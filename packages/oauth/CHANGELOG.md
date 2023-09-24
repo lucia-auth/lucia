@@ -1,5 +1,17 @@
 # @lucia-auth/oauth
 
+## 3.3.0
+
+### Minor changes
+
+- [#1147](https://github.com/lucia-auth/lucia/pull/1147) by [@ollema](https://github.com/ollema) : Fix `slack()` provider
+
+### Patch changes
+
+- [#1141](https://github.com/lucia-auth/lucia/pull/1141) by [@q1b](https://github.com/q1b) : Fix `config.accessType` in `google()` provider
+
+- [#1132](https://github.com/lucia-auth/lucia/pull/1132) by [@KazuumiN](https://github.com/KazuumiN) : Fix link at `getLineUser()`
+
 ## 3.2.0
 
 ### Minor changes

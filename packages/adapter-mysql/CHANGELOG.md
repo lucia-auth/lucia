@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-mysql
 
+## 2.1.0
+
+### Minor changes
+
+- [#1126](https://github.com/lucia-auth/lucia/pull/1126) by [@jonathanharg](https://github.com/jonathanharg) : Added support for client Connection and fixed a bug in Pool connections.
+
 ## 2.0.0
 
 ### Major changes

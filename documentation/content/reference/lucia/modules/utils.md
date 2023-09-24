@@ -28,10 +28,6 @@ const generateLuciaPasswordHash: (password: string) => Promise<string>;
 Generates a cryptographically random string. If argument for parameter `alphabet` is not provided, the result with consist of `a-z0-9` (lowercase letters, numbers).
 
 ```ts
-import { generateRandomString } from "lucia/utils";
-```
-
-```ts
 const generateRandomString: (length: number, alphabet?: string) => string;
 ```
 
@@ -53,10 +49,6 @@ const generateRandomString: (length: number, alphabet?: string) => string;
 Checks with the current time is within the expiration time (in milliseconds UNIX time) provided.
 
 ```ts
-import { isWithinExpiration } from "lucia/utils";
-```
-
-```ts
 const isWithinExpiration: (expiration: number) => boolean;
 ```
 
@@ -72,6 +64,54 @@ const isWithinExpiration: (expiration: number) => boolean;
 | ------- | -------------------- |
 | `true`  | Is within expiration |
 | `false` | Is expired           |
+
+## `joinAdapters()`
+
+**This is an experimental API and can change or be removed.**
+
+Joins multiple adapters into a single adapter, allowing you to override specific methods.
+
+```ts
+import { __experimental_joinAdapters } from "lucia/utils";
+```
+
+```ts
+const joinAdapters: (
+	baseAdapter: InitializeAdapter<Adapter | SessionAdapter | UserAdapter>,
+	...adapters: Array<
+		Partial<Adapter> | InitializeAdapter<Adapter | SessionAdapter | UserAdapter>
+	>
+) => Adapter;
+```
+
+##### Parameters
+
+| name          | type                |
+| ------------- | ------------------- |
+| `baseAdapter` | `InitializeAdapter` |
+| `adapters`    | array               |
+
+##### Returns
+
+| type      |
+| --------- |
+| `Adapter` |
+
+##### Usage
+
+```ts
+import { lucia } from "lucia";
+import { __experimental_joinAdapters as joinAdapters } from "lucia/utils";
+import { betterSqlite3 } from "@lucia-auth/adapter-sqlite";
+
+export const auth = lucia({
+	adapter: joinAdapters(betterSqlite3(), {
+		getUser: async (userId) => {
+			// ...
+		}
+	})
+});
+```
 
 ## `parseCookie()`
 
