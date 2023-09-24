@@ -32,6 +32,7 @@ MYSQL2_PASSWORD=""
 ### `mysql2`
 
 ```
+pnpm test-setup.planetscale
 pnpm test.mysql2
 ```
 
@@ -48,5 +49,21 @@ PLANETSCALE_PASSWORD=""
 Run:
 
 ```
+pnpm test-setup.planetscale 
 pnpm test.planetscale
+```
+
+### `prisma`
+
+Set up env var:
+
+```bash
+PRISMA_DATABASE_URL=""
+```
+
+Run:
+
+```
+pnpm test-setup.prisma 
+pnpm test.prisma
 ```

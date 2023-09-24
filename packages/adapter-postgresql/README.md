@@ -31,12 +31,22 @@ PSQL_DATABASE_URL="postgresql://localhost/test"
 
 ### `pg`
 
-```bash
+```
+pnpm test-setup.pg
 pnpm test.pg
 ```
 
 ### `postgres`
 
-```bash
+```
+pnpm test-setup.postgres 
 pnpm test.postgres
+```
+
+
+### `prisma`
+
+```
+pnpm test-setup.prisma
+pnpm test.prisma
 ```

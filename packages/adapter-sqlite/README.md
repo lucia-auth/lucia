@@ -58,3 +58,12 @@ pnpm test.d1
 ```
 pnpm test.libsql
 ```
+
+### `prisma`
+
+Run:
+
+```
+pnpm test-setup.prisma 
+pnpm test.prisma
+```
