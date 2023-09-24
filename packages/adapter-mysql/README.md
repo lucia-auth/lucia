@@ -49,7 +49,7 @@ PLANETSCALE_PASSWORD=""
 Run:
 
 ```
-pnpm test-setup.planetscale 
+pnpm test-setup.planetscale
 pnpm test.planetscale
 ```
 
@@ -64,6 +64,6 @@ PRISMA_DATABASE_URL=""
 Run:
 
 ```
-pnpm test-setup.prisma 
+pnpm test-setup.prisma
 pnpm test.prisma
 ```

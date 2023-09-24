@@ -64,6 +64,6 @@ pnpm test.libsql
 Run:
 
 ```
-pnpm test-setup.prisma 
+pnpm test-setup.prisma
 pnpm test.prisma
 ```

@@ -39,10 +39,9 @@ pnpm test.pg
 ### `postgres`
 
 ```
-pnpm test-setup.postgres 
+pnpm test-setup.postgres
 pnpm test.postgres
 ```
-
 
 ### `prisma`
 

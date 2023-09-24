@@ -62,5 +62,5 @@ await auth.updateUserAttributes(userId, {
 authRequest.invalidate();
 
 // returns latest user data
-const session = await authRequest.validateBearerToken()
+const session = await authRequest.validateBearerToken();
 ```

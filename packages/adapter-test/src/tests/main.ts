@@ -149,8 +149,8 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const key = database.generateKey(null);
 			assert.rejects(async () => {
 				await adapter.setKey(key);
-				throw new LuciaError("AUTH_INVALID_USER_ID")
-			}, new LuciaError("AUTH_INVALID_USER_ID"))
+				throw new LuciaError("AUTH_INVALID_USER_ID");
+			}, new LuciaError("AUTH_INVALID_USER_ID"));
 		});
 	});
 
@@ -288,8 +288,8 @@ export const testAdapter = async (adapter: Adapter, database: Database) => {
 			const session = database.generateSession(null);
 			assert.rejects(async () => {
 				await adapter.setSession(session);
-				throw new LuciaError("AUTH_INVALID_USER_ID")
-			}, new LuciaError("AUTH_INVALID_USER_ID"))
+				throw new LuciaError("AUTH_INVALID_USER_ID");
+			}, new LuciaError("AUTH_INVALID_USER_ID"));
 		});
 	});
 

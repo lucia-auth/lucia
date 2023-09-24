@@ -9,11 +9,11 @@ import type {
 } from "lucia";
 
 type PrismaError = {
-    meta: {
+	meta: {
 		code: string;
 		message: string;
 	};
-}
+};
 
 export const prismaAdapter = <
 	_AdapterParameterPrismaClient extends AdapterParameterPrismaClient
@@ -64,7 +64,10 @@ export const prismaAdapter = <
 					]);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-					if (error.meta?.code === "2067" && error.meta.message?.endsWith(".id")) {
+					if (
+						error.meta?.code === "2067" &&
+						error.meta.message?.endsWith(".id")
+					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
 					throw error;
@@ -183,7 +186,7 @@ export const prismaAdapter = <
 					);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-                    if (error.meta?.code === "787") {
+					if (error.meta?.code === "787") {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 					if (
@@ -192,7 +195,7 @@ export const prismaAdapter = <
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
-                    if (
+					if (
 						error.meta?.code === "1555" &&
 						error.meta.message?.endsWith(".id")
 					) {

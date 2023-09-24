@@ -14,13 +14,16 @@ const createTableQueryHandler = (tableName: string): TableQueryHandler => {
 	const ESCAPED_TABLE_NAME = escapeName(tableName);
 	return {
 		get: async () => {
-			return await client.$queryRawUnsafe(`SELECT * FROM ${ESCAPED_TABLE_NAME}`)
+			return await client.$queryRawUnsafe(
+				`SELECT * FROM ${ESCAPED_TABLE_NAME}`
+			);
 		},
 		insert: async (value: any) => {
 			const [fields, placeholders, args] = helper(value);
 			await client.$executeRawUnsafe(
-				`INSERT INTO ${ESCAPED_TABLE_NAME} ( ${fields} ) VALUES ( ${placeholders} )`
-			, ...args)
+				`INSERT INTO ${ESCAPED_TABLE_NAME} ( ${fields} ) VALUES ( ${placeholders} )`,
+				...args
+			);
 		},
 		clear: async () => {
 			await client.$executeRawUnsafe(`DELETE FROM ${ESCAPED_TABLE_NAME}`);
@@ -33,7 +36,6 @@ const queryHandler: QueryHandler = {
 	session: createTableQueryHandler(TABLE_NAMES.session),
 	key: createTableQueryHandler(TABLE_NAMES.key)
 };
-
 
 const adapter = prismaAdapter(client, TABLE_NAMES)(LuciaError);
 
