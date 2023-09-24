@@ -9,11 +9,11 @@ import type {
 } from "lucia";
 
 type PrismaError = {
-    meta: {
+	meta: {
 		code: string;
 		message: string;
 	};
-}
+};
 
 export const prismaAdapter = <
 	_AdapterParameterPrismaClient extends AdapterParameterPrismaClient
@@ -63,9 +63,11 @@ export const prismaAdapter = <
 						)
 					]);
 				} catch (e) {
-
 					const error = e as Partial<PrismaError>;
-					if (error.meta?.code === "2067" && error.meta.message?.endsWith(".id")) {
+					if (
+						error.meta?.code === "1062" &&
+						error.meta.message?.includes("'user_key.PRIMARY'")
+					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
 					throw error;
@@ -121,10 +123,9 @@ export const prismaAdapter = <
 					);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-					if (error.meta?.code === "787") {
+					if (error.meta?.code === "1452") {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
-
 					throw error;
 				}
 			},
@@ -184,18 +185,12 @@ export const prismaAdapter = <
 					);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-                    if (error.meta?.code === "787") {
+					if (error.meta?.code === "1452") {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 					if (
-						error.meta?.code === "2067" &&
-						error.meta.message?.endsWith(".id")
-					) {
-						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					}
-                    if (
-						error.meta?.code === "1555" &&
-						error.meta.message?.endsWith(".id")
+						error.meta?.code === "1062" &&
+						error.meta.message?.includes("'user_key.PRIMARY'")
 					) {
 						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
 					}
@@ -224,6 +219,33 @@ export const prismaAdapter = <
 					...args,
 					keyId
 				);
+			},
+
+			getSessionAndUser: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
+				const getSessionPromise = prismaClient.$queryRawUnsafe<SessionSchema>(
+					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`,
+					sessionId
+				);
+				const getUserFromJoinPromise = prismaClient.$queryRawUnsafe<
+					UserSchema & {
+						__session_id: string;
+					}
+				>(
+					`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = ?`,
+					sessionId
+				);
+				const [sessionResults, userFromJoinResults] = await Promise.all([
+					getSessionPromise,
+					getUserFromJoinPromise
+				]);
+				const sessionResult = sessionResults.at(0) ?? null;
+				const userFromJoinResult = userFromJoinResults.at(0) ?? null;
+				if (!sessionResult || !userFromJoinResult) return [null, null];
+				const { __session_id: _, ...userResult } = userFromJoinResult;
+				return [sessionResult, userResult];
 			}
 		};
 	};

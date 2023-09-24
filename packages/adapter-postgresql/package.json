@@ -55,9 +55,11 @@
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
+		"@prisma/client": "^5.0.0",
 		"@types/pg": "^8.6.5",
 		"dotenv": "^16.0.3",
 		"lucia": "workspace:*",
+		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"
 	},
 	"dependencies": {

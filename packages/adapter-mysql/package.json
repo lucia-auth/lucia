@@ -14,8 +14,10 @@
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test.mysql2": "tsx test/mysql2/index.ts",
 		"test.planetscale": "tsx test/planetscale/index.ts",
+		"test.prisma": "tsx test/prisma/index.ts",
 		"test-setup.planetscale": "tsx test/planetscale/setup.ts",
 		"test-setup.mysql2": "tsx test/mysql2/setup.ts",
+		"test-setup.prisma": "prisma db push --schema=test/prisma/schema.prisma",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
@@ -39,9 +41,9 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
+		"@planetscale/database": "^1.0.0",
 		"lucia": "^2.0.0",
-		"mysql2": "^3.0.0",
-		"@planetscale/database": "^1.0.0"
+		"mysql2": "^3.0.0"
 	},
 	"peerDependenciesMeta": {
 		"mysql2": {
@@ -54,9 +56,11 @@
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@planetscale/database": "^1.8.0",
+		"@prisma/client": "^5.0.0",
 		"dotenv": "^16.0.3",
 		"lucia": "workspace:*",
 		"mysql2": "^3.2.3",
+		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"
 	}
 }
