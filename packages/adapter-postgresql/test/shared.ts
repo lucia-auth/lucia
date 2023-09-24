@@ -1,7 +1,7 @@
 import { escapeName } from "../src/utils.js";
 
 export const TABLE_NAMES = {
-	user: "test_user",
+	user: "user",
 	session: "user_session",
 	key: "user_key"
 };

@@ -123,10 +123,7 @@ export const prismaAdapter = <
 					);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-					if (
-						error.meta?.code === "23503" &&
-						error.meta.message.includes("Key (user_id)")
-					) {
+					if (error.meta?.code === "23503") {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 					throw error;
@@ -188,10 +185,7 @@ export const prismaAdapter = <
 					);
 				} catch (e) {
 					const error = e as Partial<PrismaError>;
-					if (
-						error.meta?.code === "23503" &&
-						error.meta.message.includes("Key (user_id)")
-					) {
+					if (error.meta?.code === "23503") {
 						throw new LuciaError("AUTH_INVALID_USER_ID");
 					}
 					if (
@@ -225,6 +219,33 @@ export const prismaAdapter = <
 					...args,
 					keyId
 				);
+			},
+
+			getSessionAndUser: async (sessionId) => {
+				if (!ESCAPED_SESSION_TABLE_NAME) {
+					throw new Error("Session table not defined");
+				}
+				const getSessionPromise = prismaClient.$queryRawUnsafe<SessionSchema>(
+					`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = $1`,
+					sessionId
+				);
+				const getUserFromJoinPromise = prismaClient.$queryRawUnsafe<
+					UserSchema & {
+						__session_id: string;
+					}
+				>(
+					`SELECT ${ESCAPED_USER_TABLE_NAME}.*, ${ESCAPED_SESSION_TABLE_NAME}.id as __session_id FROM ${ESCAPED_SESSION_TABLE_NAME} INNER JOIN ${ESCAPED_USER_TABLE_NAME} ON ${ESCAPED_USER_TABLE_NAME}.id = ${ESCAPED_SESSION_TABLE_NAME}.user_id WHERE ${ESCAPED_SESSION_TABLE_NAME}.id = $1`,
+					sessionId
+				);
+				const [sessionResults, userFromJoinResults] = await Promise.all([
+					getSessionPromise,
+					getUserFromJoinPromise
+				]);
+				const sessionResult = sessionResults.at(0) ?? null;
+				const userFromJoinResult = userFromJoinResults.at(0) ?? null;
+				if (!sessionResult || !userFromJoinResult) return [null, null];
+				const { __session_id: _, ...userResult } = userFromJoinResult;
+				return [sessionResult, userResult];
 			}
 		};
 	};

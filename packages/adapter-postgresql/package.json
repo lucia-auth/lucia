@@ -13,9 +13,11 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test.pg": "tsx test/pg/index.ts",
-		"test-setup.pg": "tsx test/pg/setup.ts",
 		"test.postgres": "tsx test/postgres/index.ts",
+		"test.prisma": "tsx test/prisma/index.ts",
+		"test-setup.pg": "tsx test/pg/setup.ts",
 		"test-setup.postgres": "tsx test/postgres/setup.ts",
+		"test-setup.prisma": "prisma db push --schema=test/prisma/schema.prisma",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [

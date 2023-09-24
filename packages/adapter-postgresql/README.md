@@ -26,17 +26,17 @@ yarn add @lucia-auth/adapter-postgresql
 Set PostgreSQL database connection url in `.env`:
 
 ```bash
-PSQL_DATABASE_URL="postgresql://localhost/lucia"
+PSQL_DATABASE_URL="postgresql://localhost/test"
 ```
 
 ### `pg`
 
-```
+```bash
 pnpm test.pg
 ```
 
 ### `postgres`
 
-```
+```bash
 pnpm test.postgres
 ```
