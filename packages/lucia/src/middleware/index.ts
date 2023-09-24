@@ -17,6 +17,7 @@ import type {
 	Response as ExpressResponse
 } from "express";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { H3Event, getCookie, getRequestURL, setCookie } from 'h3'
 
 export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 	return ({ args }) => {
@@ -360,25 +361,22 @@ export const nextjs_future = (): Middleware<
 	};
 };
 
-type H3Event = {
-	node: {
-		req: IncomingMessage;
-		res: ServerResponse;
-	};
-};
-
-export const h3 = (): Middleware<[H3Event]> => {
-	const nodeMiddleware = node();
-
-	return ({ args, sessionCookieName, env }) => {
-		const [context] = args;
-		return nodeMiddleware({
-			args: [context.node.req, context.node.res],
-			sessionCookieName,
-			env
-		});
-	};
-};
+export function h3(): Middleware<[H3Event]> {
+  return ({ args, sessionCookieName }) => {
+    const [event] = args
+    return {
+      request: {
+        url: getRequestURL(event).toString(),
+        headers: event.headers,
+        method: event.method,
+      },
+      sessionCookie: getCookie(event, sessionCookieName),
+      setCookie: (cookie) => {
+        setCookie(event, cookie.name, cookie.value, cookie.attributes)
+      },
+    }
+  }
+}
 
 type HonoContext = {
 	req: {
