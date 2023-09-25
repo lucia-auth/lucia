@@ -2,9 +2,9 @@ import { test, expect } from "vitest";
 import {
 	convertUint8ArrayToHex,
 	generateScryptHash,
-	validateScryptHash
+	validateScryptHash,
+	generateRandomString
 } from "./crypto.js";
-import { generateRandomString } from "./nanoid.js";
 
 test("convertUint8ArrayToHex() output matches Buffer.toString()", async () => {
 	const testUint8Array = crypto.getRandomValues(new Uint8Array(16));
