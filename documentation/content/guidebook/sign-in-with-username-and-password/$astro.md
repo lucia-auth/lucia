@@ -275,7 +275,7 @@ if (Astro.request.method === "POST") {
 				password
 			);
 			const session = await auth.createSession({
-				userId: user.userId,
+				userId: key.userId,
 				attributes: {}
 			});
 			Astro.locals.auth.setSession(session); // set session cookie
