@@ -63,7 +63,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					const { user_id: _, ...keyData } = key;
 					await User.create({
 						data: {
-							key: { create: [keyData] },
+							keys: { create: [keyData] },
 							...user
 						}
 					});
