@@ -8,7 +8,10 @@
 		"format:docs": "pnpm exec prettier --write documentation --plugin=prettier-plugin-astro",
 		"preinstall": "npx only-allow pnpm",
 		"auri.format": "pnpm format",
-		"auri.publish_setup": "pnpm publish-setup"
+		"auri.publish_setup": "pnpm publish-setup",
+		"build": "pnpm -r --parallel --filter='./packages/**' run build",
+		"dev": "pnpm -r --parallel --filter='./packages/**' run build --watch",
+		"test:adapter:prisma": "pnpm -C packages/adapter-prisma run test"
 	},
 	"repository": {
 		"type": "git",

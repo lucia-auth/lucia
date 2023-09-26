@@ -12,8 +12,8 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test": "tsx test/index.ts",
-		"test-setup": "prisma db push",
+		"test": "pnpm test-setup && tsx test/index.ts",
+		"test-setup": "prisma generate && prisma db push",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
@@ -44,8 +44,8 @@
 		"lucia": "^2.0.0"
 	},
 	"devDependencies": {
-		"lucia": "latest",
-		"@lucia-auth/adapter-test": "latest",
+		"lucia": "workspace:*",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@prisma/client": "^5.0.0",
 		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"

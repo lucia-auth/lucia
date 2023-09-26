@@ -59,12 +59,14 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					return;
 				}
 				try {
-					User.create({
+					// Userid is taken care of by prisma automatically
+					const { user_id: _, ...keyData } = key;
+					await User.create({
 						data: {
-							key: { create: [key] }
+							key: { create: [keyData] },
 							...user
 						}
-					}),
+					});
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2002" && error.message?.includes("`id`"))
