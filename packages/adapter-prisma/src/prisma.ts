@@ -59,14 +59,12 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					return;
 				}
 				try {
-					await client.$transaction([
-						User.create({
-							data: user
-						}),
-						Key.create({
-							data: key
-						})
-					]);
+					User.create({
+						data: {
+							key: { create: [key] }
+							...user
+						}
+					}),
 				} catch (e) {
 					const error = e as Partial<PossiblePrismaError>;
 					if (error.code === "P2002" && error.message?.includes("`id`"))
