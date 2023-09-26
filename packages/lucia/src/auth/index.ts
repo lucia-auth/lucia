@@ -17,6 +17,12 @@ import type { Cookie, SessionCookieConfiguration } from "./cookie.js";
 import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
 import type { Adapter, SessionAdapter, InitializeAdapter } from "./adapter.js";
 import type { CSRFProtectionConfiguration, Middleware } from "./request.js";
+import type {
+	DatabaseSessionAttributes,
+	DatabaseUserAttributes,
+	RegisteredAuth
+} from "../index.js";
+
 
 export type Session = Readonly<{
 	user: User;
@@ -25,8 +31,7 @@ export type Session = Readonly<{
 	idlePeriodExpiresAt: Date;
 	state: "idle" | "active";
 	fresh: boolean;
-}> &
-	ReturnType<Lucia.Auth["getSessionAttributes"]>;
+}> & ReturnType<RegisteredAuth["getSessionAttributes"]>;
 
 export type Key = Readonly<{
 	userId: string;
@@ -39,11 +44,11 @@ export type Env = "DEV" | "PROD";
 
 export type User = {
 	userId: string;
-} & ReturnType<Lucia.Auth["getUserAttributes"]>;
+} & ReturnType<RegisteredAuth["getUserAttributes"]>;
 
 export const lucia = <_Configuration extends Configuration>(
 	config: _Configuration
-) => {
+): Auth<_Configuration> => {
 	return new Auth(config);
 };
 
@@ -55,7 +60,7 @@ const validateConfiguration = (config: Configuration) => {
 	}
 };
 
-export class Auth<_Configuration extends Configuration = any> {
+export class Auth<_Configuration extends Configuration = Configuration> {
 	private adapter: Adapter;
 	private sessionCookieConfig: SessionCookieConfiguration;
 	private sessionExpiresIn: {
@@ -266,7 +271,7 @@ export class Auth<_Configuration extends Configuration = any> {
 			providerUserId: string;
 			password: string | null;
 		} | null;
-		attributes: Lucia.DatabaseUserAttributes;
+		attributes: DatabaseUserAttributes;
 	}): Promise<User> => {
 		const userId = options.userId ?? generateRandomString(15);
 		const userAttributes = options.attributes ?? {};
@@ -295,7 +300,7 @@ export class Auth<_Configuration extends Configuration = any> {
 
 	public updateUserAttributes = async (
 		userId: string,
-		attributes: Partial<Lucia.DatabaseUserAttributes>
+		attributes: Partial<DatabaseUserAttributes>
 	): Promise<User> => {
 		await this.adapter.updateUser(userId, attributes);
 		return await this.getUser(userId);
@@ -405,7 +410,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	public createSession = async (options: {
 		sessionId?: string;
 		userId: string;
-		attributes: Lucia.DatabaseSessionAttributes;
+		attributes: DatabaseSessionAttributes;
 	}): Promise<Session> => {
 		const { activePeriodExpiresAt, idlePeriodExpiresAt } =
 			this.getNewSessionExpiration();
@@ -431,7 +436,7 @@ export class Auth<_Configuration extends Configuration = any> {
 
 	public updateSessionAttributes = async (
 		sessionId: string,
-		attributes: Partial<Lucia.DatabaseSessionAttributes>
+		attributes: Partial<DatabaseSessionAttributes>
 	): Promise<Session> => {
 		this.validateSessionIdArgument(sessionId);
 		await this.adapter.updateSession(sessionId, attributes);
@@ -557,7 +562,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		...args: Auth<_Configuration>["middleware"] extends Middleware<infer Args>
 			? Args
 			: never
-	): AuthRequest<Lucia.Auth> => {
+	): AuthRequest<typeof this> => {
 		const middleware = this.middleware as Middleware;
 		const sessionCookieName =
 			this.sessionCookieConfig.name ?? DEFAULT_SESSION_COOKIE_NAME;

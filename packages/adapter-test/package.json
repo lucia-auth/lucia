@@ -34,7 +34,7 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^10.0.1",
-		"lucia": "latest"
+		"lucia": "workspace:*"
 	},
 	"peerDependencies": {
 		"lucia": "^2.0.0"

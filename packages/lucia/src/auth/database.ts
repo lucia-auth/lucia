@@ -1,3 +1,5 @@
+import type { DatabaseSessionAttributes, DatabaseUserAttributes, Register } from "../index.js";
+
 export type KeySchema = {
 	id: string;
 	hashed_password: string | null;
@@ -6,14 +8,14 @@ export type KeySchema = {
 
 export type UserSchema = {
 	id: string;
-} & Lucia.DatabaseUserAttributes;
+} & DatabaseUserAttributes
 
 export type SessionSchema = {
 	id: string;
 	active_expires: number;
 	idle_expires: number;
 	user_id: string;
-} & Lucia.DatabaseSessionAttributes;
+} & DatabaseSessionAttributes
 
 export const createKeyId = (providerId: string, providerUserId: string) => {
 	if (providerId.includes(":")) {

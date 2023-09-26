@@ -8,3 +8,14 @@ export type {
 	TestUserSchema,
 	TestSessionSchema
 } from "./database.js";
+
+declare module "lucia" {
+	interface Register {
+		DatabaseUserAttributes: {
+			username: string;
+		};
+		DatabaseSessionAttributes: {
+			country: string;
+		};
+	}
+}

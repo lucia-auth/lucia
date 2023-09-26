@@ -1,11 +1,9 @@
+import { Auth } from "./auth/index.js";
+
 export { lucia } from "./auth/index.js";
 export { DEFAULT_SESSION_COOKIE_NAME } from "./auth/cookie.js";
 export { LuciaError } from "./auth/error.js";
 export { createKeyId } from "./auth/database.js";
-
-export type GlobalAuth = Lucia.Auth;
-export type GlobalDatabaseUserAttributes = Lucia.DatabaseUserAttributes;
-export type GlobalDatabaseSessionAttributes = Lucia.DatabaseSessionAttributes;
 
 export type {
 	User,
@@ -29,3 +27,23 @@ export type {
 } from "./auth/request.js";
 export type { Cookie } from "./auth/cookie.js";
 export type { LuciaErrorConstructor } from "./auth/error.js";
+
+export interface Register {}
+
+export type RegisteredAuth = Register extends {
+	Auth: Auth;
+}
+	? Register["Auth"]
+	: Auth;
+
+export type DatabaseUserAttributes = Register extends {
+	DatabaseUserAttributes: {};
+}
+	? Register["DatabaseUserAttributes"]
+	: {};
+
+export type DatabaseSessionAttributes = Register extends {
+	DatabaseSessionAttributes: {};
+}
+	? Register["DatabaseSessionAttributes"]
+	: {};
