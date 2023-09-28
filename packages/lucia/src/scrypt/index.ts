@@ -10,7 +10,7 @@ const XorAndSalsa = (
 	ii: number,
 	out: Uint32Array,
 	oi: number
-) => {
+): void => {
 	const y00 = prev[pi++] ^ input[ii++],
 		y01 = prev[pi++] ^ input[ii++];
 	const y02 = prev[pi++] ^ input[ii++],
@@ -101,7 +101,7 @@ const BlockMix = (
 	out: Uint32Array,
 	oi: number,
 	r: number
-) => {
+): void => {
 	let head = oi + 0;
 	let tail = oi + 16 * r;
 	for (let i = 0; i < 16; i++) out[tail + i] = input[ii + (2 * r - 1) * 16 + i];
@@ -194,7 +194,7 @@ export default async (
 	password: Uint8Array,
 	salt: Uint8Array,
 	opts: ScryptOpts
-) => {
+): Promise<Uint8Array> => {
 	const { N, r, p, dkLen, blockSize32, V, B32, B, tmp, blockMixCb, asyncTick } =
 		await scryptInit(password, salt, opts);
 	for (let pi = 0; pi < p; pi++) {
