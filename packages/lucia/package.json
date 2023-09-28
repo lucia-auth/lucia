@@ -12,7 +12,7 @@
 		"CHANGELOG.md"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc",
+		"build": "shx rm -rf ./dist/* && tsc && cp ./src/scrypt/MODULE_LICENSE ./dist/scrypt/MODULE_LICENSE",
 		"auri.build": "pnpm build",
 		"test": "vitest run",
 		"test.debug": "vitest run src/utils/debug.test.ts"
