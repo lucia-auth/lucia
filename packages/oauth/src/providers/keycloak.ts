@@ -9,13 +9,12 @@ import { handleRequest, authorizationHeader } from "../utils/request.js";
 import type { Auth } from "lucia";
 
 type Config = {
+  domain: string;
+  realm: string;
   clientId: string;
   clientSecret: string;
   scope?: string[];
   redirectUri?: string;
-  authEndpoint: string;
-  tokenEndpoint: string;
-  userinfoEndpoint: string;
 };
 
 const PROVIDER_ID = "keycloak";
@@ -43,7 +42,7 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 	> => {
     const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrlWithPKCE(
-			this.config.authEndpoint,
+			`https://${ this.config.domain }/realms/${ this.config.realm }/protocol/openid-connect/auth`,
 			{
         clientId: this.config.clientId,
         scope: ["profile", "openid", ...scopeConfig],
@@ -58,7 +57,7 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
     code_verifier: string
 	): Promise<KeycloakUserAuth<_Auth>> => {
 		const keycloakTokens = await this.validateAuthorizationCode(code, code_verifier);
-		const keycloakUser = await getKeycloakUser(this.config.userinfoEndpoint, keycloakTokens.accessToken);
+		const keycloakUser = await getKeycloakUser(this.config.domain, this.config.realm, keycloakTokens.accessToken);
 		const keycloakRoles = getKeycloakRoles(keycloakTokens.accessToken)
 		return new KeycloakUserAuth(this.auth, keycloakUser, keycloakTokens, keycloakRoles);
 	};
@@ -69,7 +68,7 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 	): Promise<KeycloakTokens> => {
 		const tokens = await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 			code,
-			this.config.tokenEndpoint,
+			`https://${ this.config.domain }/realms/${ this.config.realm }/protocol/openid-connect/token`,
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
@@ -80,7 +79,7 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 				}
 			}
 		);
-		const tokenDecoded =  decodeIdToken<Claims>(tokens.access_token)
+		const tokenDecoded = decodeIdToken<Claims>(tokens.access_token)
 
 		if ("refresh_token" in tokens) {
 			return {
@@ -105,8 +104,8 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 	};
 }
 
-const getKeycloakUser = async (userinfoEndpoint: string, accessToken: string): Promise<KeycloakUser> => {
-	const keycloakUserRequest = new Request(userinfoEndpoint, {
+const getKeycloakUser = async (domain: string, realm: string, accessToken: string): Promise<KeycloakUser> => {
+	const keycloakUserRequest = new Request(`https://${ domain }/realms/${ realm }/protocol/openid-connect/userinfo`, {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
@@ -115,7 +114,7 @@ const getKeycloakUser = async (userinfoEndpoint: string, accessToken: string): P
 };
 
 const getKeycloakRoles = (accessToken: string): KeycloakRole[] => {
-	const tokenDecoded: Claims =  decodeIdToken<Claims>(accessToken)
+	const tokenDecoded: Claims = decodeIdToken<Claims>(accessToken)
 	const keycloakRoles: KeycloakRole[] = []
 
 	if (tokenDecoded.hasOwnProperty('realm_access')) {
