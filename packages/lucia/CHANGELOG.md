@@ -1,5 +1,11 @@
 # lucia
 
+## 2.7.1
+
+### Patch changes
+
+- [#1171](https://github.com/lucia-auth/lucia/pull/1171) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add proper attributes for `@noble/hashes`
+
 ## 2.7.0
 
 ### Minor changes
