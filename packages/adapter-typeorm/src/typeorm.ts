@@ -5,8 +5,9 @@ import type {
 	SessionSchema,
 	UserSchema
 } from "lucia";
-import { DataSource } from "typeorm";
+import { DataSource, QueryFailedError } from "typeorm";
 import { Key, Session, User } from "../typeorm/schema.js";
+import { error } from "console";
 
 export const typeormAdapter = (
 	dataSource: DataSource
@@ -35,6 +36,11 @@ export const typeormAdapter = (
 					return transformTypeORMUser(createdUser);
 				}
 
+				const existingKey = await repository.key.findOneBy({ id: key.id });
+				if (existingKey) {
+					throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+				}
+
 				const queryRunner = dataSource.createQueryRunner();
 				await queryRunner.connect();
 
@@ -54,9 +60,7 @@ export const typeormAdapter = (
 					return transformTypeORMUser(createdUser);
 				} catch (e) {
 					await queryRunner.rollbackTransaction();
-					// if (e.code === "P2002" && error.message?.includes("`id`"))
 					throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					// throw error;
 				} finally {
 					await queryRunner.release();
 				}
@@ -65,11 +69,6 @@ export const typeormAdapter = (
 				try {
 					await repository.user.delete({ id: userId });
 				} catch (e) {
-					// const error = e as Partial<PossiblePrismaError>;
-					// if (error.code === "P2025") {
-					// 	// user does not exist
-					// 	return;
-					// }
 					throw e;
 				}
 			},
@@ -103,11 +102,9 @@ export const typeormAdapter = (
 					const entity = repository.session.create(session);
 					await repository.session.save(entity);
 				} catch (e) {
-					const error = e;
-					// const error = e as Partial<PossiblePrismaError>;
-					// if (error.code === "P2003") {
-					// 	throw new LuciaError("AUTH_INVALID_USER_ID");
-					// }
+					if (e instanceof QueryFailedError) {
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+					}
 
 					throw error;
 				}
@@ -121,11 +118,6 @@ export const typeormAdapter = (
 						id: sessionId
 					});
 				} catch (e) {
-					// const error = e as Partial<PossiblePrismaError>;
-					// if (error.code === "P2025") {
-					// 	// session does not exist
-					// 	return;
-					// }
 					throw e;
 				}
 			},
@@ -164,18 +156,16 @@ export const typeormAdapter = (
 
 			setKey: async (key) => {
 				try {
-					const entity = repository.key.create(key);
-					await repository.key.save(entity);
+					const existingKey = await repository.key.findOneBy({ id: key.id });
+					if (existingKey) {
+						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
+					}
+					await repository.key.save(key);
 				} catch (e) {
-					const error = e;
-					// const error = e as Partial<PossiblePrismaError>;
-					// if (error.code === "P2003") {
-					// 	throw new LuciaError("AUTH_INVALID_USER_ID");
-					// }
-					// if (error.code === "P2002" && error.message?.includes("`id`")) {
-					// 	throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					// }
-					throw error;
+					if (e instanceof QueryFailedError)
+						throw new LuciaError("AUTH_INVALID_USER_ID");
+
+					throw e;
 				}
 			},
 			deleteKey: async (keyId) => {
@@ -184,11 +174,6 @@ export const typeormAdapter = (
 						id: keyId
 					});
 				} catch (e) {
-					// const error = e as Partial<PossiblePrismaError>;
-					// if (error.code === "P2025") {
-					// 	// key does not exist
-					// 	return;
-					// }
 					throw e;
 				}
 			},
