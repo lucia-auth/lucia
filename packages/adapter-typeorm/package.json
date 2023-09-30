@@ -34,7 +34,7 @@
 		"url": "https://github.com/pilcrowOnPaper/lucia",
 		"directory": "packages/adapter-typeorm"
 	},
-	"author": "hisamafahri",
+  "author": "hisamafahri",
 	"license": "MIT",
 	"exports": {
 		".": "./dist/index.js"
@@ -45,12 +45,12 @@
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "latest",
 		"class-transformer": "^0.5.1",
-		"dotenv": "^16.0.3",
-		"lucia": "latest",
+		"dotenv": "^16.3.1",
+		"lucia": "workspace:^",
 		"reflect-metadata": "^0.1.13",
 		"ts-node": "^10.9.1",
-		"tsx": "^3.12.6",
+		"tsx": "^3.13.0",
 		"typeorm": "^0.3.17",
-		"typescript": "4.9.5"
+    "typescript": "^4.9.5"
 	}
 }

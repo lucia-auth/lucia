@@ -1,16 +1,16 @@
 {
 	"compilerOptions": {
-    "esModuleInterop": true,
+		"esModuleInterop": true,
 		"allowJs": true,
 		"checkJs": true,
 		"noImplicitAny": true,
-		"module": "es2022",
+		"module": "NodeNext",
 		"moduleResolution": "nodenext",
 		"target": "es2022",
 		"allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
+		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-    "strictPropertyInitialization": false,
+		"strictPropertyInitialization": false,
 		"declaration": true,
 		"outDir": "./dist",
 		"strict": true
