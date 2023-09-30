@@ -9,19 +9,19 @@ If you're new to Lucia, we recommend starting with [Sign in with username and pa
 
 ### Clone project
 
-You can get started immediately by cloning the [Express example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/express/email-and-password) from the repository.
+You can get started immediately by cloning the [Express example](https://github.com/lucia-auth/examples/tree/main/express/email-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/express/email-and-password <directory_name>
+npx degit lucia-auth/examples/express/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/express/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/express/email-and-password).
 
 ## Database
 
 ### Update `user` table
 
-Add a `email` (`string`, unique) and `email_verified` (`boolean`) column to the user table. Keep in mind that some database do not support boolean types (notably SQLite and MySQL), in which case it should be stored as an integer (1 or 0). Lucia _does not_ support default database values.
+Add an `email` (`string`, unique) and `email_verified` (`boolean`) column to the user table. Keep in mind that some database do not support boolean types (notably SQLite and MySQL), in which case it should be stored as an integer (1 or 0). Lucia _does not_ support default database values.
 
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
@@ -88,7 +88,7 @@ When a user clicks the link, we validate of the token stored in the url and set 
 
 ### Create new tokens
 
-`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/modules/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
+`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/modules/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommended minimum is 40).
 
 ```ts
 // token.ts
@@ -122,7 +122,7 @@ export const generateEmailVerificationToken = async (userId: string) => {
 
 ### Validate tokens
 
-`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](/reference/lucia/modules/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
+`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It then checks the expiration with [`isWithinExpiration()`](/reference/lucia/modules/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
 
 It will throw if the token is invalid.
 
@@ -233,7 +233,7 @@ export const sendEmailVerificationLink = async (email, token: string) => {
 
 #### Validating emails
 
-Validating emails are notoriously hard as the RFC defining them is rather complicated. Here, we're checking:
+Validating emails is notoriously hard as the RFC defining them is rather complicated. Here, we're checking:
 
 - There's one `@`
 - There's at least a single character before `@`
@@ -307,7 +307,7 @@ app.post("/login", async (req, res) => {
 
 ## Resend verification link
 
-Redirect unauthenticated users and those who have already have a verified email. Create a new verification token and send the link to the user's inbox.
+Redirect unauthenticated users and those who already have a verified email. Create a new verification token and send the link to the user's inbox.
 
 ```ts
 import { auth } from "@/auth/lucia";

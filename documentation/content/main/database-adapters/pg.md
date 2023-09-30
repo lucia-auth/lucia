@@ -3,7 +3,7 @@ title: "`pg` adapter"
 description: "Learn how to use pg with Lucia"
 ---
 
-Adapter for [`pg`](https://github.com/brianc/node-postgres) provided by the PostgreSQL adapter package.
+Adapter for [`pg`](https://github.com/brianc/node-postgres) provided by the PostgreSQL adapter package. This adapter can be used for `@vercel/postgres` and `@neondatabase/serverless` as well. See guide [Using `@vercel/postgres`](/guidebook/vercel-postgres).
 
 ```ts
 import { pg } from "@lucia-auth/adapter-postgresql";
@@ -62,7 +62,7 @@ const auth = lucia({
 
 ## PostgreSQL schema
 
-You can choose any table names, just make sure to define them in the adapter argument.
+You can choose any table names, just make sure to define them in the adapter argument. **The `id` columns are not UUID types with the default configuration.**
 
 ### User table
 

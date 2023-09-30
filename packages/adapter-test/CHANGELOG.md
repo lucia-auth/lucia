@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-test
 
+## 4.1.1
+
+### Patch changes
+
+- [#1136](https://github.com/lucia-auth/lucia/pull/1136) by [@Sajarin-M](https://github.com/Sajarin-M) : Fix `DUPLICATE_KEY_ID` to `AUTH_DUPLICATE_KEY_ID` in test name
+
 ## 4.1.0
 
 ### Minor changes

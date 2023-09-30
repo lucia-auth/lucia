@@ -35,7 +35,7 @@ type Cookie = {
 };
 ```
 
-### Properties
+##### Properties
 
 | property     | type               | description       |
 | ------------ | ------------------ | ----------------- |
@@ -88,7 +88,7 @@ type Key = {
 };
 ```
 
-### Properties
+##### Properties
 
 | name              | type      | description                |
 | ----------------- | --------- | -------------------------- |
@@ -130,7 +130,7 @@ type LuciaRequest = {
 };
 ```
 
-### Properties
+##### Properties
 
 Optional property `storedSessionCookie` is for frameworks with APIs to directly read and set cookies.
 
@@ -164,7 +164,7 @@ type Session = {
 } & ReturnType<_Configuration["getSessionAttributes"]>;
 ```
 
-### Properties
+##### Properties
 
 `ReturnType<_Configuration["getSessionAttributes"]>` represents the return type of [`getSessionAttributes()`](/basics/configuration#getsessionattributes) configuration.
 
@@ -200,7 +200,7 @@ type User = {
 } & ReturnType<_Configuration["getUserAttributes"]>;
 ```
 
-### Properties
+##### Properties
 
 `ReturnType<_Configuration["getUserAttributes"]>` represents the return type of [`getUserAttributes()`](/basics/configuration#getuserattributes) configuration.
 

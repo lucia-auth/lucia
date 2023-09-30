@@ -16,6 +16,8 @@ type Config = {
 	teamId: string;
 	keyId: string;
 	certificate: string;
+	responseMode?: "query" | "form_post";
+	scope?: string[];
 };
 
 const PROVIDER_ID = "apple";
@@ -41,15 +43,16 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
+		const scopeConfig = this.config.scope ?? [];
 		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://appleid.apple.com/auth/authorize",
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
-				scope: []
+				scope: scopeConfig
 			}
 		);
-		url.searchParams.set("response_mode", "query");
+		url.searchParams.set("response_mode", this.config.responseMode ?? "query");
 		return [url, state];
 	};
 
@@ -57,7 +60,16 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		code: string
 	): Promise<AppleUserAuth<_Auth>> => {
 		const appleTokens = await this.validateAuthorizationCode(code);
-		const appleUser = getAppleUser(appleTokens.idToken);
+		const idTokenPayload = decodeIdToken<{
+			sub: string;
+			email?: string;
+			email_verified?: boolean;
+		}>(appleTokens.idToken);
+		const appleUser: AppleUser = {
+			sub: idTokenPayload.sub,
+			email: idTokenPayload.email,
+			email_verified: idTokenPayload.email_verified
+		};
 		return new AppleUserAuth(this.auth, appleUser, appleTokens);
 	};
 
@@ -70,7 +82,6 @@ export class AppleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			clientId: this.config.clientId,
 			keyId: this.config.keyId
 		});
-
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
@@ -133,15 +144,6 @@ const createSecretId = async (config: {
 	return jwt;
 };
 
-const getAppleUser = (idToken: string): AppleUser => {
-	const jwtPayload = decodeIdToken<AppleUser>(idToken);
-	return {
-		email: jwtPayload.email,
-		email_verified: jwtPayload.email_verified,
-		sub: jwtPayload.sub
-	};
-};
-
 export type AppleTokens = {
 	accessToken: string;
 	refreshToken: string | null;
@@ -150,7 +152,7 @@ export type AppleTokens = {
 };
 
 export type AppleUser = {
-	email: string;
-	email_verified: boolean;
+	email?: string;
+	email_verified?: boolean;
 	sub: string;
 };

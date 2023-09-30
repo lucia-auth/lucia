@@ -1,5 +1,5 @@
 ---
-title: "Line"
+title: "Line OAuth provider"
 description: "Learn how to use the Line OAuth provider"
 ---
 
@@ -30,13 +30,13 @@ const line: (
 
 ##### Parameters
 
-| name                   | type                                       | description                  | optional |
-| ---------------------- | ------------------------------------------ | ---------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance               |          |
-| `configs.clientId`     | `string`                                   | Line OAuth app client id     |          |
-| `configs.clientSecret` | `string`                                   | Line OAuth app client secret |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI   |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes           |    ✓     |
+| name                  | type                                       | description                  | optional |
+| --------------------- | ------------------------------------------ | ---------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance               |          |
+| `config.clientId`     | `string`                                   | Line OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | Line OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI   |          |
+| `config.scope`        | `string[]`                                 | an array of scopes           |    ✓     |
 
 ##### Returns
 
@@ -64,9 +64,9 @@ interface LineAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `LineTokens`
 
@@ -98,7 +98,7 @@ type LineUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface LineUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	lineUser: LineUser;
 	lineTokens: LineTokens;
 }
@@ -111,6 +111,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

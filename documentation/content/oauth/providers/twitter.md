@@ -1,5 +1,5 @@
 ---
-title: "Twitter"
+title: "Twitter OAuth provider"
 description: "Learn how to use the Twitter OAuth provider"
 ---
 
@@ -64,9 +64,9 @@ interface TwitterAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `TwitterTokens`
 
@@ -92,7 +92,7 @@ type TwitterUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface TwitterUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	twitterUser: TwitterUser;
 	twitterTokens: TwitterTokens;
 }
@@ -105,6 +105,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

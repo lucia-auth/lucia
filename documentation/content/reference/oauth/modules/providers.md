@@ -40,11 +40,11 @@ See [Facebook](/oauth/providers/facebook) provider.
 
 ## `github()`
 
-See [Github](/oauth/providers/github) provider.
+See [GitHub](/oauth/providers/github) provider.
 
 ## `gitlab()`
 
-See [Gitlab](/oauth/providers/gitlab) provider.
+See [GitLab](/oauth/providers/gitlab) provider.
 
 ## `google()`
 
@@ -85,6 +85,10 @@ See [Slack](/oauth/providers/slack) provider.
 ## `spotify()`
 
 See [Spotify](/oauth/providers/spotify) provider.
+
+## `strava()`
+
+See [Strava](/oauth/providers/strava) provider.
 
 ## `twitch()`
 

@@ -1,5 +1,5 @@
 ---
-title: "Auth0"
+title: "Auth0 OAuth provider"
 description: "Learn how to use the Auth0 OAuth provider"
 ---
 
@@ -66,9 +66,9 @@ interface Auth0Auth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `Auth0Tokens`
 
@@ -86,10 +86,24 @@ type Auth0Tokens = {
 ```ts
 type Auth0User = {
 	id: string;
-	nickname: string;
+	sub: string;
 	name: string;
 	picture: string;
+	locale: string;
 	updated_at: string;
+	given_name?: string;
+	family_name?: string;
+	middle_name?: string;
+	nickname?: string;
+	preferred_username?: string;
+	profile?: string;
+	email?: string;
+	email_verified?: boolean;
+	gender?: string;
+	birthdate?: string;
+	zoneinfo?: string;
+	phone_number?: string;
+	phone_number_verified?: boolean;
 };
 ```
 
@@ -111,6 +125,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

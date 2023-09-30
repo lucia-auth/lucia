@@ -18,9 +18,9 @@ Learn everything you need to know about Lucia with a basic username and password
 - [SolidStart](/guidebook/sign-in-with-username-and-password/solidstart)
 - [SvelteKit](/guidebook/sign-in-with-username-and-password/sveltekit)
 
-## Github OAuth
+## GitHub OAuth
 
-Learn how to implement OAuth by using Github as an example.
+Learn how to implement OAuth with Lucia and the [OAuth integration](/oauth).
 
 - [No framework](/guidebook/github-oauth)
 - [Astro](/guidebook/github-oauth/astro)

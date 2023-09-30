@@ -1,5 +1,5 @@
 ---
-title: "Slack"
+title: "Slack OAuth provider"
 description: "Learn how to use the Salck OAuth provider"
 ---
 
@@ -30,13 +30,13 @@ const slack: (
 
 ##### Parameters
 
-| name                   | type                                       | description                                | optional |
-| ---------------------- | ------------------------------------------ | ------------------------------------------ | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                             |          |
-| `configs.clientId`     | `string`                                   | Slack OAuth app client id                  |          |
-| `configs.clientSecret` | `string`                                   | Slack OAuth app client secret              |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI (must be HTTPS) |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                         |    ✓     |
+| name                  | type                                       | description                                | optional |
+| --------------------- | ------------------------------------------ | ------------------------------------------ | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                             |          |
+| `config.clientId`     | `string`                                   | Slack OAuth app client id                  |          |
+| `config.clientSecret` | `string`                                   | Slack OAuth app client secret              |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI (must be HTTPS) |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                         |    ✓     |
 
 ##### Returns
 
@@ -64,9 +64,9 @@ interface SlackAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `SlackTokens`
 
@@ -116,7 +116,7 @@ type SlackUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface SlackUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	slackUser: SlackUser;
 	slackTokens: SlackTokens;
 }
@@ -129,6 +129,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

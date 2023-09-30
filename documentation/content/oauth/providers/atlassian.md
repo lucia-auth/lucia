@@ -1,5 +1,5 @@
 ---
-title: "Atlassian"
+title: "Atlassian OAuth provider"
 description: "Learn how to use the Atlassian OAuth provider"
 ---
 
@@ -30,13 +30,13 @@ const atlassian: (
 
 ##### Parameters
 
-| name                   | type                                       | description                       | optional |
-| ---------------------- | ------------------------------------------ | --------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |          |
-| `configs.clientId`     | `string`                                   | Atlassian OAuth app client id     |          |
-| `configs.clientSecret` | `string`                                   | Atlassian OAuth app client secret |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI        |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                |    ✓     |
+| name                  | type                                       | description                       | optional |
+| --------------------- | ------------------------------------------ | --------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |          |
+| `config.clientId`     | `string`                                   | Atlassian OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | Atlassian OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI        |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                |    ✓     |
 
 ##### Returns
 
@@ -64,9 +64,9 @@ interface AtlassianAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `AtlassianTokens`
 
@@ -102,7 +102,8 @@ type AtlassianUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface AtlassianUserAuth<_Auth extends Auth>
+	extends ProviderUserAuth<_Auth> {
 	atlassianUser: AtlassianUser;
 	atlassianTokens: AtlassianTokens;
 }
@@ -115,6 +116,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

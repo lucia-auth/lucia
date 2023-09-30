@@ -18,19 +18,19 @@ It will also have a route to handle verification links.
 
 ### Clone project
 
-You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password) from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/examples/tree/main/nextjs-app/email-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-app/email-and-password <directory_name>
+npx degit lucia-auth/examples/nextjs-app/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-app/email-and-password).
 
 ## Database
 
 ### Update `user` table
 
-Add a `email` (`string`, unique) and `email_verified` (`boolean`) column to the user table. Keep in mind that some database do not support boolean types (notably SQLite and MySQL), in which case it should be stored as an integer (1 or 0). Lucia _does not_ support default database values.
+Add an `email` (`string`, unique) and `email_verified` (`boolean`) column to the user table. Keep in mind that some database do not support boolean types (notably SQLite and MySQL), in which case it should be stored as an integer (1 or 0). Lucia _does not_ support default database values.
 
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
@@ -67,12 +67,12 @@ We'll expose the user's email and verification status to the `User` object retur
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 	sessionCookie: {
 		expires: false
 	},
@@ -95,11 +95,11 @@ The token will be sent as part of the verification link.
 http://localhost:3000/email-verification/<token>
 ```
 
-When a user clicks the link, we validate of the token stored in the url and set `email_verified` user attributes to `true`.
+When a user clicks the link, we validate the token stored in the url and set `email_verified` user attributes to `true`.
 
 ### Create new tokens
 
-`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/modules/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommend minimum is 40).
+`generateEmailVerificationToken()` will first check if a verification token already exists for the user. If it does, it will re-use the token if the expiration is over 1 hour away (half the expiration of 2 hours). If not, it will create a new token using [`generateRandomString()`](/reference/lucia/modules/utils#generaterandomstring) with a length of 63. The length is arbitrary, and anything around or longer than 64 characters should be sufficient (recommended minimum is 40).
 
 ```ts
 // auth/token.ts
@@ -133,7 +133,7 @@ export const generateEmailVerificationToken = async (userId: string) => {
 
 ### Validate tokens
 
-`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It thens check the expiration with [`isWithinExpiration()`](/reference/lucia/modules/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
+`validateEmailVerificationToken()` will get the token and delete all tokens belonging to the user (which includes the used token). We recommend handling this in a transaction or a batched query. It then checks the expiration with [`isWithinExpiration()`](/reference/lucia/modules/utils#iswithinexpiration), provided by Lucia, which checks if the current time is within the provided expiration time (in milliseconds).
 
 It will throw if the token is invalid.
 
@@ -215,17 +215,14 @@ Create `app/signup/page.tsx`. It will have a form with inputs for email and pass
 ```tsx
 // app/signup/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) {
 		if (!session.user.emailVerified) redirect("/email-verification");
@@ -260,7 +257,7 @@ When creating a user, use `"email"` as the provider id and the user's email as t
 ```ts
 // app/api/signup/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { generateEmailVerificationToken } from "@/auth/token";
 import { sendEmailVerificationLink } from "@/auth/email";
@@ -312,10 +309,7 @@ export const POST = async (request: NextRequest) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 
 		const token = await generateEmailVerificationToken(user.userId);
@@ -367,7 +361,7 @@ export const sendEmailVerificationLink = async (email, token: string) => {
 
 #### Validating emails
 
-Validating emails are notoriously hard as the RFC defining them is rather complicated. Here, we're checking:
+Validating emails is notoriously hard as the RFC defining them is rather complicated. Here, we're checking:
 
 - There's one `@`
 - There's at least a single character before `@`
@@ -392,17 +386,14 @@ Create `app/login/page.tsx`. It will have a form with inputs for email and passw
 ```tsx
 // app/login/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) {
 		if (!session.user.emailVerified) redirect("/email-verification");
@@ -438,7 +429,7 @@ Authenticate the user with `"email"` as the provider id and their email as the p
 ```ts
 // app/api/login/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { LuciaError } from "lucia";
 
@@ -481,10 +472,7 @@ export const POST = async (request: NextRequest) => {
 			userId: key.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,
@@ -525,20 +513,17 @@ export const POST = async (request: NextRequest) => {
 
 Create `app/email-verification/page.tsx`. Users who just signed up and those without a verified email will be redirected to this page. It will include a form to resend the verification link.
 
-This page should only accessible to users whose email is not verified.
+This page should only be accessible to users whose email is not verified.
 
 ```tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
 	if (session.user.emailVerified) redirect("/");
@@ -665,14 +650,11 @@ Protect all other pages and API routes by redirecting unauthenticated users and 
 ```tsx
 // page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
 	if (!session.user.emailVerified) redirect("/email-verification");
@@ -687,12 +669,12 @@ export default Page;
 ```ts
 // route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest({ request, cookies });
+		const authRequest = auth.handleRequest(request.method, context);
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
@@ -705,27 +687,5 @@ export const POST = async (request: NextRequest) => {
         })
 	}
     // ...
-};
-```
-
-## Additional notes
-
-For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
-
-```ts
-export const getPageSession = cache(() => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
-	return authRequest.validate();
-});
-```
-
-This allows you share the session across pages and layouts, making it possible to validate the request in multiple layouts and page files without making unnecessary database calls.
-
-```ts
-const Page = async () => {
-	const session = await getPageSession();
 };
 ```

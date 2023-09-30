@@ -22,7 +22,7 @@ Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) 
 import { lucia } from "lucia";
 import { web } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: process.env.NODE_ENV === "production" ? "PROD" : "DEV",
 	middleware: web(),
@@ -63,7 +63,7 @@ const auth = lucia({
 - [libSQL](/database-adapters/libsql): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
-- [`pg`](/database-adapters/pg): PostgreSQL
+- [`pg`](/database-adapters/pg): PostgreSQL (including `@neondatabase/serverless`, `@vercel/postgres`)
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
@@ -126,6 +126,6 @@ Optionally, instead of doing a side-effect import, add the `--experimental-globa
 
 ## Next steps
 
-You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/pilcrowOnPaper/lucia/tree/main/examples).
+You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/lucia-auth/lucia/tree/main/examples).
 
-Remember to check out the [Guidebook](/guidebook) for tutorials and guides!
+Remember to check out the [Guidebook](/guidebook) for tutorials and guides! If you have any questions, join our [Discord server](/discord)!

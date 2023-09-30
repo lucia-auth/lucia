@@ -37,11 +37,12 @@ We also have framework specific guides.
 - Azure Active Directory
 - Bitbucket
 - Box
+- Amazon Cognito
 - Discord
 - Dropbox
 - Facebook
-- Github
-- Gitlab
+- GitHub
+- GitLab
 - Google
 - Lichess
 - Line
@@ -52,5 +53,6 @@ We also have framework specific guides.
 - Salesforce
 - Slack
 - Spotify
+- Strava
 - Twitch
 - Twitter

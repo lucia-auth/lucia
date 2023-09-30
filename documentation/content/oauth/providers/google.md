@@ -1,5 +1,5 @@
 ---
-title: "Google"
+title: "Google OAuth provider"
 description: "Learn how to use the Google OAuth provider"
 ---
 
@@ -29,14 +29,14 @@ const google: (
 
 ##### Parameters
 
-| name                   | type                                       | description                              | optional | default    |
-| ---------------------- | ------------------------------------------ | ---------------------------------------- | :------: | ---------- |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                           |          |            |
-| `configs.clientId`     | `string`                                   | Google OAuth app client id               |          |            |
-| `configs.clientSecret` | `string`                                   | Google OAuth app client secret           |          |            |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI               |          |            |
-| `configs.scope`        | `string[]`                                 | an array of scopes                       |    ✓     |            |
-| `configs.accessType`   | `"online" \| "offline"`                    | set to `"offline"` to get refresh tokens |    ✓     | `"online"` |
+| name                  | type                                       | description                              | optional | default    |
+| --------------------- | ------------------------------------------ | ---------------------------------------- | :------: | ---------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                           |          |            |
+| `config.clientId`     | `string`                                   | Google OAuth app client id               |          |            |
+| `config.clientSecret` | `string`                                   | Google OAuth app client secret           |          |            |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI               |          |            |
+| `config.scope`        | `string[]`                                 | an array of scopes                       |    ✓     |            |
+| `config.accessType`   | `"online" \| "offline"`                    | set to `"offline"` to get refresh tokens |    ✓     | `"online"` |
 
 ##### Returns
 
@@ -64,9 +64,9 @@ interface GoogleAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `GoogleTokens`
 
@@ -99,7 +99,7 @@ type GoogleUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface GoogleUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	googleUser: GoogleUser;
 	googleTokens: GoogleTokens;
 }
@@ -112,6 +112,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

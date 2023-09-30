@@ -13,13 +13,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/username-and-password) from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/username-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-pages/username-and-password <directory_name>
+npx degit lucia-auth/examples/nextjs-pages/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/username-and-password).
 
 ## Update your database
 
@@ -47,12 +47,12 @@ We'll expose the user's username to the `User` object by defining [`getUserAttri
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -363,13 +363,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey(
-			"username",
-			username.toLowerCase(),
-			password
-		);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
 		const authRequest = auth.handleRequest({
@@ -387,7 +383,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			// user does not exist
 			// or invalid password
 			return res.status(400).json({
-				error: "Incorrect username of password"
+				error: "Incorrect username or password"
 			});
 		}
 		return res.status(500).json({

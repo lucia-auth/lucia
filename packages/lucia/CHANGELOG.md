@@ -1,5 +1,59 @@
 # lucia
 
+## 2.7.0
+
+### Minor changes
+
+- [#1081](https://github.com/lucia-auth/lucia/pull/1081) by [@SkepticMystic](https://github.com/SkepticMystic) : Add experimental `joinAdapters()`
+
+- [#1148](https://github.com/lucia-auth/lucia/pull/1148) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `AuthRequest.invalidate()`
+
+### Patch changes
+
+- [#1134](https://github.com/lucia-auth/lucia/pull/1134) by [@giacomoferretti](https://github.com/giacomoferretti) : Fix unhandled rejection error when using `AuthRequest.validate()` and `AuthRequest.validateBearerToken()`
+
+- [#1144](https://github.com/lucia-auth/lucia/pull/1144) by [@MrNiceRicee](https://github.com/MrNiceRicee) : Update `elysia()` middleware types
+
+## 2.6.0
+
+### Minor changes
+
+- [#1113](https://github.com/pilcrowOnPaper/lucia/pull/1113) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `options.responseMode` params to `apple()`
+
+- [#1100](https://github.com/pilcrowOnPaper/lucia/pull/1100) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `nextjs_future()` middleware
+
+- [#1099](https://github.com/pilcrowOnPaper/lucia/pull/1099) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Mark `Auth.validateRequestOrigin()` as deprecated
+
+- [#1099](https://github.com/pilcrowOnPaper/lucia/pull/1099) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Replace type `RequestContext` with `MiddlewareRequestContext` for type `Middleware`
+
+### Patch changes
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.useKey()` accepting any password if the key password was set to `null`
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.createUser()` setting key password to `null` if `key.password` was an empty string
+
+## 2.5.0
+
+### Minor changes
+
+- [#992](https://github.com/pilcrowOnPaper/lucia/pull/992) by [@Tirke](https://github.com/Tirke) : Add `elysia()` middleware
+
+### Patch changes
+
+- [#1079](https://github.com/pilcrowOnPaper/lucia/pull/1079) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.handleRequest()` causing error in middleware when `nextjs()` was used
+
+## 2.4.2
+
+### Patch changes
+
+- [#1046](https://github.com/pilcrowOnPaper/lucia/pull/1046) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `AuthRequest.validateBearerToken()` returning `null` when session is idle
+
+## 2.4.1
+
+### Patch changes
+
+- [#1041](https://github.com/pilcrowOnPaper/lucia/pull/1041) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Support Astro v3
+
 ## 2.4.0
 
 ### Minor changes

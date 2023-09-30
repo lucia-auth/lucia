@@ -105,14 +105,10 @@ const getAuth0User = async (appDomain: string, accessToken: string) => {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
 	});
-	const auth0Profile = await handleRequest<Auth0Profile>(request);
+	const auth0Profile = await handleRequest<Auth0UserInfoResult>(request);
 	const auth0User: Auth0User = {
-		sub: auth0Profile.sub,
 		id: auth0Profile.sub.split("|")[1],
-		nickname: auth0Profile.nickname,
-		name: auth0Profile.name,
-		picture: auth0Profile.picture,
-		updated_at: auth0Profile.updated_at
+		...auth0Profile
 	};
 	return auth0User;
 };
@@ -124,19 +120,45 @@ export type Auth0Tokens = {
 	tokenType: string;
 };
 
-type Auth0Profile = {
+type Auth0UserInfoResult = {
 	sub: string;
-	nickname: string;
 	name: string;
 	picture: string;
+	locale: string;
 	updated_at: string;
+	given_name?: string;
+	family_name?: string;
+	middle_name?: string;
+	nickname?: string;
+	preferred_username?: string;
+	profile?: string;
+	email?: string;
+	email_verified?: boolean;
+	gender?: string;
+	birthdate?: string;
+	zoneinfo?: string;
+	phone_number?: string;
+	phone_number_verified?: boolean;
 };
 
 export type Auth0User = {
-	sub: string;
 	id: string;
-	nickname: string;
+	sub: string;
 	name: string;
 	picture: string;
+	locale: string;
 	updated_at: string;
+	given_name?: string;
+	family_name?: string;
+	middle_name?: string;
+	nickname?: string;
+	preferred_username?: string;
+	profile?: string;
+	email?: string;
+	email_verified?: boolean;
+	gender?: string;
+	birthdate?: string;
+	zoneinfo?: string;
+	phone_number?: string;
+	phone_number_verified?: boolean;
 };

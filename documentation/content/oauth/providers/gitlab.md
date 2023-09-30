@@ -1,9 +1,9 @@
 ---
-title: "Gitlab"
-description: "Learn how to use the Gitlab OAuth provider"
+title: "GitLab OAuth provider"
+description: "Learn how to use the GitLab OAuth provider"
 ---
 
-OAuth integration for Gitlab. Provider id is `gitlab`.
+OAuth integration for GitLab. Provider id is `gitlab`.
 
 ```ts
 import { gitlab } from "@lucia-auth/oauth/providers";
@@ -30,19 +30,19 @@ const gitlab: (
 
 ##### Parameters
 
-| name                   | type                                       | description                    | optional |
-| ---------------------- | ------------------------------------------ | ------------------------------ | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
-| `configs.clientId`     | `string`                                   | Gitlab OAuth app client id     |          |
-| `configs.clientSecret` | `string`                                   | Gitlab OAuth app client secret |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI     |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
+| name                  | type                                       | description                    | optional |
+| --------------------- | ------------------------------------------ | ------------------------------ | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
+| `config.clientId`     | `string`                                   | GitLab OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | GitLab OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI     |          |
+| `config.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
 
 ##### Returns
 
 | type                                | description     |
 | ----------------------------------- | --------------- |
-| [`GitlabProvider`](#gitlabprovider) | Gitlab provider |
+| [`GitlabProvider`](#gitlabprovider) | GitLab provider |
 
 ## Interfaces
 
@@ -64,9 +64,9 @@ interface GitlabAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `GitlabTokens`
 
@@ -127,7 +127,7 @@ type GitlabUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface GitlabUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	gitlabUser: GitlabUser;
 	gitlabTokens: GitlabTokens;
 }
@@ -135,11 +135,11 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 | properties     | type                            | description       |
 | -------------- | ------------------------------- | ----------------- |
-| `gitlabUser`   | [`GitlabUser`](#gitlabuser)     | Gitlab user       |
+| `gitlabUser`   | [`GitlabUser`](#gitlabuser)     | GitLab user       |
 | `gitlabTokens` | [`GitlabTokens`](#gitlabtokens) | Access tokens etc |
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

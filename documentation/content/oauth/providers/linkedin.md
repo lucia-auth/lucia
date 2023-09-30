@@ -1,5 +1,5 @@
 ---
-title: "LinkedIn"
+title: "LinkedIn OAuth provider"
 description: "Learn how to use the LinkedIn OAuth provider"
 ---
 
@@ -28,7 +28,7 @@ const linkedIn: (
 
 ##### Parameters
 
-Scope `r_liteprofile` is always included.
+Scope `profile` and `openid` are always included.
 
 | name                  | type                                       | description                      | optional |
 | --------------------- | ------------------------------------------ | -------------------------------- | :------: |
@@ -64,9 +64,9 @@ interface LinkedInAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `LinkedInTokens`
 
@@ -102,7 +102,7 @@ type LinkedInUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface LinkedInUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	linkedInUser: LinkedInUser;
 	linkedInTokens: LinkedInTokens;
 }
@@ -115,6 +115,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

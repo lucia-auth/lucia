@@ -19,7 +19,7 @@ Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initial
 // lucia.ts
 import { lucia } from "lucia";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: "DEV" // "PROD" if deployed to HTTPS
 });
@@ -85,7 +85,7 @@ const auth = lucia({
 - [libSQL](/database-adapters/libsql): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
-- [`pg`](/database-adapters/pg): PostgreSQL
+- [`pg`](/database-adapters/pg): PostgreSQL (including `@neondatabase/serverless`, `@vercel/postgres`)
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
@@ -104,7 +104,7 @@ const auth = lucia({
 
 ## Set up types
 
-Create a `.d.ts` file and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a `.d.ts` file in your project root and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
 // app.d.ts
@@ -137,6 +137,12 @@ node --experimental-global-webcrypto index.js
 
 ## Next steps
 
-You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/pilcrowOnPaper/lucia/tree/main/examples).
+You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/lucia-auth/lucia/tree/main/examples).
 
-Remember to check out the [Guidebook](/guidebook) for tutorials and guides!
+Remember to check out the [Guidebook](/guidebook) for tutorials and guides! If you have any questions, join our [Discord server](/discord)!
+
+## Limitations
+
+### Cloudflare
+
+Please note that password hashing will not work on Free Bundled Workers; **the allocated 10ms CPU time is not sufficient for this**. Consider using unbound workers or paid bundled workers for hashing operations. This is not an issue when using OAuth.

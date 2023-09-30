@@ -40,14 +40,20 @@ export const unstorageAdapter = (
 					})
 				);
 				return sessionResults.filter(
-					(sessionResult): sessionResult is SessionSchema => !!sessionResult
+					(
+						sessionResult
+					): sessionResult is NonNullable<typeof sessionResult> => {
+						return sessionResult !== null;
+					}
 				);
 			},
 			setSession: async (session) => {
 				const userSessionStorage = getUserSessionStorage(session.user_id);
 				await Promise.all([
 					userSessionStorage.setItem(session.user_id, ""),
-					sessionStorage.setItem(session.id, session)
+					sessionStorage.setItem(session.id, session, {
+						ttl: Math.floor(Number(session.idle_expires) / 1000)
+					})
 				]);
 			},
 			deleteSession: async (sessionId) => {
@@ -73,7 +79,9 @@ export const unstorageAdapter = (
 				const sessionResult = (await sessionStorage.getItem(sessionId)) ?? null;
 				if (!sessionResult) return;
 				const updatedSession = { ...sessionResult, ...partialSession };
-				await sessionStorage.setItem(sessionId, updatedSession);
+				await sessionStorage.setItem(sessionId, updatedSession, {
+					ttl: Math.floor(Number(partialSession.idle_expires) / 1000)
+				});
 			}
 		};
 	};

@@ -13,13 +13,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [SvelteKit example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit/username-and-password) from the repository.
+You can get started immediately by cloning the [SvelteKit example](https://github.com/lucia-auth/examples/tree/main/sveltekit/username-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/sveltekit/username-and-password <directory_name>
+npx degit lucia-auth/examples/sveltekit/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/sveltekit/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/sveltekit/username-and-password).
 
 ## Update your database
 
@@ -94,7 +94,7 @@ Create `routes/signup/+page.svelte`. It will have a form with inputs for usernam
 
 Create `routes/signup/+page.server.ts` and define a new form action to handle form submissions.
 
-Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
+Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and, if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used to get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). Since we've setup a handle hook, `AuthRequest` is accessible as `locals.auth`.
 
@@ -242,7 +242,7 @@ Create `routes/login/+page.svelte`. It will also have a form with inputs for use
 
 ### Authenticate users
 
-Create routes/signup/+page.server.ts and define a new form action to handle form submissions.
+Create routes/login/+page.server.ts and define a new form action to handle form submissions.
 
 The key we created for the user allows us to get the user via their username, and validate their password. This can be done with [`Auth.useKey()`](/reference/lucia/interfaces/auth#usekey). If the username and password is correct, we'll create a new session just like we did before. If not, Lucia will throw an error. Make sure to make the username lowercase before calling `useKey()`.
 
@@ -281,13 +281,13 @@ export const actions: Actions = {
 		try {
 			// find user by key
 			// and validate password
-			const user = await auth.useKey(
+			const key = await auth.useKey(
 				"username",
 				username.toLowerCase(),
 				password
 			);
 			const session = await auth.createSession({
-				userId: user.userId,
+				userId: key.userId,
 				attributes: {}
 			});
 			locals.auth.setSession(session); // set session cookie
@@ -300,7 +300,7 @@ export const actions: Actions = {
 				// user does not exist
 				// or invalid password
 				return fail(400, {
-					message: "Incorrect username of password"
+					message: "Incorrect username or password"
 				});
 			}
 			return fail(500, {

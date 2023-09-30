@@ -84,11 +84,15 @@ Provides Lucia with the current server context.
 
 ### `csrfProtection`
 
-`true` by default. When set to `true`, [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) checks if the incoming request is from a trusted origin, which by default only includes where the server is hosted. You can define trusted subdomains by adding them to `csrfProtection.allowedSubdomains`. If your app is hosted on `https://foo.example.com`, adding `"bar"` will allow `https://bar.example.com`. You can add `null` in the array to allow urls without a subdomain.
+`true` by default. When set to `true`, [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) checks if the request is same-origin using the `Origin` header. You can define trusted subdomains by adding them to `csrfProtection.allowedSubdomains`. If your app is hosted on `https://foo.example.com`, adding `"bar"` will allow `https://bar.example.com`. You can add `null` in the array to allow urls without a subdomain.
+
+CSRF protection is applied to all requests except for GET, OPTIONS, HEAD, and TRACE request.
 
 ```ts
 const csrfProtection = boolean | {
-	allowedSubdomains: "*" | (string | null)[]
+	allowedSubdomains?: "*" | (string | null)[]
+	host?: string,
+	hostHeader?: string
 }
 ```
 
@@ -98,9 +102,11 @@ const csrfProtection = boolean | {
 | `false`  | CSRF protection disabled            |
 | `object` | CSRF protection enabled - see below |
 
-| name                | type              | description                                                                          |
-| ------------------- | ----------------- | ------------------------------------------------------------------------------------ |
-| `allowedSubdomains` | `"*" \| string[]` | List of allowed subdomains (not full urls/origins) - set to `*` allow all subdomains |
+| name                | type              | description                                                                          | default  |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------------ | -------- |
+| `allowedSubdomains` | `"*" \| string[]` | List of allowed subdomains (not full urls/origins) - set to `*` allow all subdomains |          |
+| `host`              | `string`          | The host of the server - this will be always used when defined                       |          |
+| `hostHeader`        | `string`          | The header Lucia will use to define the host                                         | `"Host"` |
 
 ### `getSessionAttributes()`
 
@@ -124,7 +130,7 @@ const getSessionAttributes: (
 | ------------------ |
 | `Record<any, any>` |
 
-#### Default
+##### Default
 
 ```ts
 const getSessionAttributes = () => {
@@ -152,7 +158,7 @@ const getUserAttributes: (databaseUser: UserSchema) => Record<any, any>;
 | ------------------ |
 | `Record<any, any>` |
 
-#### Default
+##### Default
 
 ```ts
 const getUserAttributes = () => {

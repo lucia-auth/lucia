@@ -11,7 +11,7 @@ Make sure to change the table names accordingly.
 
 ```ts
 // schema.js
-import { mysqlTable, bigint, varchar, boolean } from "drizzle-orm/mysql-core";
+import { mysqlTable, bigint, varchar } from "drizzle-orm/mysql-core";
 
 export const user = mysqlTable("auth_user", {
 	id: varchar("id", {
@@ -86,7 +86,7 @@ export const auth = lucia({
 });
 ```
 
-### `@planetscale/serverless`
+### `@planetscale/database`
 
 Remove all `references()` from the schema since Planetscale does not support foreign keys from `key` and `session`. For example:
 
@@ -102,10 +102,10 @@ export const key = mysqlTable("user_key", {
 });
 ```
 
-Install `@planetscale/serverless` and follow the [adapter documentation](/database-adapters/planetscale-serverless) to setup your database.
+Install `@planetscale/database` and follow the [adapter documentation](/database-adapters/planetscale-serverless) to setup your database.
 
 ```
-npm install @planetscale/serverless
+npm install @planetscale/database
 ```
 
 Create a new connection and use it to initialize both Drizzle and Lucia.
@@ -142,7 +142,7 @@ Make sure to change the table names accordingly.
 
 ```ts
 // schema.js
-import { pgTable, bigint, varchar, boolean } from "drizzle-orm/pg-core";
+import { pgTable, bigint, varchar } from "drizzle-orm/pg-core";
 
 export const user = pgTable("auth_user", {
 	id: varchar("id", {
@@ -234,7 +234,7 @@ import postgres from "postgres";
 
 export const queryClient = postgres(/* ... */);
 
-export const db: PostgresJsDatabase = drizzle(pool);
+export const db: PostgresJsDatabase = drizzle(queryClient);
 ```
 
 ```ts

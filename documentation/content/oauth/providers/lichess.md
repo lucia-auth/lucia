@@ -1,5 +1,5 @@
 ---
-title: "Lichess"
+title: "Lichess OAuth provider"
 description: "Learn how to use the Lichess OAuth provider"
 ---
 
@@ -62,9 +62,9 @@ interface LichessAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `LichessTokens`
 
@@ -89,7 +89,7 @@ type LichessUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface LichessUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	lichessUser: LichessUser;
 	lichessTokens: LichessTokens;
 }
@@ -102,6 +102,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

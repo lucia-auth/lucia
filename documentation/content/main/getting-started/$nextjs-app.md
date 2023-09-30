@@ -13,19 +13,19 @@ yarn add lucia
 
 ## Initialize Lucia
 
-Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. Make sure to pass the `nextjs()` middleware. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
+Import [`lucia()`](/reference/lucia/modules/main#lucia) from `lucia` and initialize it in its own module (file). Export `auth` and its type as `Auth`. **Make sure to pass the `nextjs_future()` middleware, and NOT `nextjs()` (will be removed in the future)**. We also need to provide an `adapter` but since it'll be specific to the database you're using, we'll cover that in the next section.
 
 Make sure to set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to `false`.
 
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
-// expect error
+// expect error (see next section)
 export const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: nextjs(),
+	middleware: nextjs_future(), // NOT nextjs()
 	sessionCookie: {
 		expires: false
 	}
@@ -41,7 +41,7 @@ Lucia uses adapters to connect to your database. We provide official adapters fo
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
@@ -49,7 +49,7 @@ const client = new PrismaClient();
 
 const auth = lucia({
 	env: "DEV", // "PROD" if deployed to HTTPS
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 	sessionCookie: {
 		expires: false
 	},
@@ -64,7 +64,7 @@ const auth = lucia({
 - [libSQL](/database-adapters/libsql): libSQL (Turso)
 - [Mongoose](/database-adapters/mongoose): MongoDB
 - [`mysql2`](/database-adapters/mysql2): MySQL
-- [`pg`](/database-adapters/pg): PostgreSQL
+- [`pg`](/database-adapters/pg): PostgreSQL (including `@neondatabase/serverless`, `@vercel/postgres`)
 - [`postgres`](/database-adapters/postgres): PostgreSQL
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
@@ -83,7 +83,7 @@ const auth = lucia({
 
 ## Set up types
 
-Create a TS declaration file (`app.d.ts`) and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
+Create a TS declaration file (`app.d.ts`) in your project root and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
 // app.d.ts
@@ -126,6 +126,6 @@ Optionally, instead of doing a side-effect import, add the `--experimental-globa
 
 ## Next steps
 
-You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/pilcrowOnPaper/lucia/tree/main/examples).
+You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/lucia-auth/lucia/tree/main/examples).
 
-Remember to check out the [Guidebook](/guidebook) for tutorials and guides!
+Remember to check out the [Guidebook](/guidebook) for tutorials and guides! If you have any questions, join our [Discord server](/discord)!

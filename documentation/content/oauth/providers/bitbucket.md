@@ -1,5 +1,5 @@
 ---
-title: "Bitbucket"
+title: "Bitbucket OAuth provider"
 description: "Learn how to use the Bitbucket OAuth provider"
 ---
 
@@ -31,12 +31,12 @@ const bitbucket: (
 
 ##### Parameters
 
-| name                   | type                                       | description                       |
-| ---------------------- | ------------------------------------------ | --------------------------------- |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |
-| `configs.clientId`     | `string`                                   | Bitbucket OAuth app client id     |
-| `configs.clientSecret` | `string`                                   | Bitbucket OAuth app client secret |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI        |
+| name                  | type                                       | description                       |
+| --------------------- | ------------------------------------------ | --------------------------------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |
+| `config.clientId`     | `string`                                   | Bitbucket OAuth app client id     |
+| `config.clientSecret` | `string`                                   | Bitbucket OAuth app client secret |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI        |
 
 ##### Returns
 
@@ -64,9 +64,9 @@ interface BitbucketAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `BitbucketTokens`
 
@@ -103,7 +103,8 @@ type BitbucketUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface BitbucketUserAuth<_Auth extends Auth>
+	extends ProviderUserAuth<_Auth> {
 	bitbucketUser: BitbucketUser;
 	bitbucketTokens: BitbucketTokens;
 }
@@ -116,6 +117,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

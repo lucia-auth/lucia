@@ -1,5 +1,5 @@
 ---
-title: "Azure Active Directory"
+title: "Azure Active Directory OAuth provider"
 description: "Learn how to use the Azure Active Directory OAuth provider"
 ---
 
@@ -68,9 +68,9 @@ interface AzureADAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `AzureADTokens`
 
@@ -101,7 +101,7 @@ type AzureADUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface AzureADUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	azureADUser: AzureADUser;
 	azureADTokens: AzureADTokens;
 }
@@ -114,6 +114,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

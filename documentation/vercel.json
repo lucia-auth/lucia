@@ -67,7 +67,7 @@
 		},
 		{
 			"source": "/github",
-			"destination": "https://github.com/pilcrowOnPaper/lucia"
+			"destination": "https://github.com/lucia-auth/lucia"
 		}
 	]
 }

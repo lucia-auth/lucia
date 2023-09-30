@@ -1,5 +1,5 @@
 ---
-title: "Box"
+title: "Box OAuth provider"
 description: "Learn how to use the Box OAuth provider"
 ---
 
@@ -27,12 +27,12 @@ const box: (
 
 ##### Parameters
 
-| name                   | type                                       | description                 |
-| ---------------------- | ------------------------------------------ | --------------------------- |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance              |
-| `configs.clientId`     | `string`                                   | Box OAuth app client id     |
-| `configs.clientSecret` | `string`                                   | Box OAuth app client secret |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI  |
+| name                  | type                                       | description                 |
+| --------------------- | ------------------------------------------ | --------------------------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance              |
+| `config.clientId`     | `string`                                   | Box OAuth app client id     |
+| `config.clientSecret` | `string`                                   | Box OAuth app client secret |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI  |
 
 ##### Returns
 
@@ -60,9 +60,9 @@ interface BoxAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `BoxTokens`
 
@@ -128,7 +128,7 @@ type BoxUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface BoxUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	boxUser: BoxUser;
 	boxTokens: BoxTokens;
 }
@@ -141,6 +141,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-session-unstorage
 
+## 2.1.0
+
+### Minor changes
+
+- [#970](https://github.com/pilcrowOnPaper/lucia/pull/970) by [@Hebilicious](https://github.com/Hebilicious) : Add ttl support
+
 ## 2.0.0
 
 ### Major changes

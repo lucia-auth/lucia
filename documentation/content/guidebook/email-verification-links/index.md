@@ -289,9 +289,9 @@ post("/login", async (request: Request) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey("email", email.toLowerCase(), password);
+		const key = await auth.useKey("email", email.toLowerCase(), password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
 		const sessionCookie = auth.createSessionCookie(session);

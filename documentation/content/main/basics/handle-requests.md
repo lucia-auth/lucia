@@ -27,16 +27,18 @@ lucia({
 });
 
 // `Auth.handleRequest()` now accepts `Request`
-auth.handleRequest(new Request());
+const authRequest = auth.handleRequest(new Request());
 ```
 
 ## List of middleware
 
 - [Astro](#astro)
+- [Elysia](#elysia)
 - [Express](#express)
 - [Fastify](#fastify)
 - [H3](#h3)
   - [Nuxt](#nuxt)
+- [Hono](#hono)
 - [Next.js](#nextjs)
 - [Node.js](#nodejs)
 - [Qwik](#qwik)
@@ -59,20 +61,34 @@ import { lucia } from "lucia/middleware";
 import { astro } from "lucia/middleware";
 ```
 
-```ts
+```astro
+---
 // .astro component
-auth.handleRequest(Astro);
+const authRequest = auth.handleRequest(Astro);
+---
 ```
 
 ```ts
 // API routes and middleware
 export const get = async (context) => {
-	auth.handleRequest(context);
+	const authRequest = auth.handleRequest(context);
 	// ...
 };
 ```
 
 We recommend storing `AuthRequest` in `locals`.
+
+### Elysia
+
+```ts
+import { elysia } from "lucia/middleware";
+```
+
+```ts
+new Elysia().get("/", async (context) => {
+	const authRequest = auth.handleRequest(context);
+});
+```
 
 ### Express
 
@@ -109,15 +125,29 @@ import { h3 } from "lucia/middleware";
 ```ts
 // api routes (server/api/index.ts)
 export default defineEventHandler(async (event) => {
-	auth.handleRequest(event);
+	const authRequest = auth.handleRequest(event);
 	// ...
+});
+```
+
+### Hono
+
+```ts
+import { hono } from "lucia/middleware";
+```
+
+```ts
+app.get("/", async (context) => {
+	const authRequest = auth.handleRequest(context);
 });
 ```
 
 ### Next.js
 
+`nextjs_future()` will replace `nextjs()` in the next next major release. While `nextjs()` isn't deprecated, we recommend considering it as a legacy API.
+
 ```ts
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 ```
 
 #### Pages router
@@ -125,15 +155,14 @@ import { nextjs } from "lucia/middleware";
 ```ts
 // pages/index.tsx
 export const getServerSideProps = async (context) => {
-	auth.handleRequest(context);
+	const authRequest = auth.handleRequest(context);
 };
 ```
 
 ```ts
 // pages/index.ts
 export default async (req: IncomingMessage, res: OutgoingMessage) => {
-	auth.handleRequest({ req, res });
-	// ...
+	const authRequest = auth.handleRequest({ req, res });
 };
 ```
 
@@ -154,28 +183,28 @@ export default async (request: NextRequest) => {
 
 #### App router
 
-We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false` when using this middleware. `request` should only be set to `null` when handling GET requests (e.g. inside `page.tsx`).
+We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false` when using this middleware.
 
 ```ts
 // app/page.tsx
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 export default () => {
-	auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
+
+	const experimentalFormActions = async () => {
+		const authRequest = auth.handleRequest("POST", context);
+	};
 	// ...
 };
 ```
 
 ```ts
 // app/routes.ts
-export const GET = async (request: NextRequest) => {
-	auth.handleRequest({
-		request,
-		cookies
-	});
+import * as context from "next/headers";
+
+export const POST = async (request: NextRequest) => {
+	const authRequest = auth.handleRequest(request.method, context);
 	// ...
 };
 ```
@@ -186,7 +215,7 @@ export const GET = async (request: NextRequest) => {
 // middleware.ts
 export const middleware = async (request: NextRequest) => {
 	// `AuthRequest.setSession()` is not supported when only `NextRequest` is passed
-	auth.handleRequest(request);
+	const authRequest = auth.handleRequest(request);
 	// ...
 	const session = await auth.createSession({
 		// ...
@@ -204,7 +233,7 @@ import { node } from "lucia/middleware";
 ```
 
 ```ts
-auth.handleRequest(incomingMessage, outgoingMessage);
+const authRequest = auth.handleRequest(incomingMessage, outgoingMessage);
 ```
 
 ### Qwik
@@ -214,8 +243,8 @@ import { qwik } from "lucia/middleware";
 ```
 
 ```ts
-auth.handleRequest(requestEvent as RequestEventLoader);
-auth.handleRequest(requestEvent as RequestEventAction);
+const authRequest = auth.handleRequest(requestEvent as RequestEventLoader);
+const authRequest = auth.handleRequest(requestEvent as RequestEventAction);
 ```
 
 ### SvelteKit
@@ -227,13 +256,13 @@ import { sveltekit } from "lucia/middleware";
 ```ts
 // +page.server.ts
 export const load = async (event) => {
-	auth.handleRequest(event);
+	const authRequest = auth.handleRequest(event);
 	// ...
 };
 
 export const actions = {
 	default: async (event) => {
-		auth.handleRequest(event);
+		const authRequest = auth.handleRequest(event);
 		// ...
 	}
 };
@@ -254,7 +283,7 @@ export const handle = async ({ event, resolve }) => {
 ```ts
 import { web } from "lucia/middleware";
 
-auth.handleRequest(request as Request);
+const authRequest = auth.handleRequest(request as Request);
 ```
 
 ```ts

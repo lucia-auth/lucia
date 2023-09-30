@@ -18,13 +18,13 @@ It will also have a route to handle verification links.
 
 ### Clone project
 
-You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password) from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/email-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-pages/email-and-password <directory_name>
+npx degit lucia-auth/examples/nextjs-pages/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/email-and-password).
 
 ## Database
 
@@ -67,12 +67,12 @@ We'll expose the user's email and verification status to the `User` object retur
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 	getUserAttributes: (data) => {
 		return {
 			email: data.email,
@@ -458,7 +458,7 @@ Authenticate the user with `"email"` as the provider id and their email as the p
 ```ts
 // pages/api/login.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { LuciaError } from "lucia";
 

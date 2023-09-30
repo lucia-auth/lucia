@@ -1,5 +1,5 @@
 ---
-title: "Discord"
+title: "Discord OAuth provider"
 description: "Learn how to use the Discord OAuth provider"
 ---
 
@@ -35,7 +35,7 @@ const discord: (
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
 | `config.clientId`     | `string`                                   | Discord OAuth app client id                        |          |
 | `config.clientSecret` | `string`                                   | Discord OAuth app client secret                    |          |
-| `configs.redirectUri` | `string`                                   | an authorized redirect URI                         |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI                         |          |
 | `config.scope`        | `string[]`                                 | an array of scopes - `identify` is always included |    ✓     |
 
 ##### Returns
@@ -64,9 +64,9 @@ interface DiscordAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `DiscordTokens`
 
@@ -107,7 +107,7 @@ type DiscordUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface DiscordUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	discordUser: DiscordUser;
 	discordTokens: DiscordTokens;
 }
@@ -120,6 +120,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

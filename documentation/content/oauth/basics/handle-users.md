@@ -1,6 +1,6 @@
 ---
-title: "Handle users with Lucia"
-description: "Learn how to use the built-in OAuth 2.0 providers"
+title: "Handle users with OAuth"
+description: "Learn how to use handle users with OAuth"
 ---
 
 After authenticating the user with OAuth, you can get an existing or create a new Lucia user using [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth). If you're using one of the built in providers, [`OAuth2ProviderAuth.validateCallback()`](reference/oauth/interfaces/oauth2providerauth#validatecallback) and [`OAuth2ProviderAuthWithPKCE.validateCallback()`](reference/oauth/interfaces/oauth2providerauthwithpkce#validatecallback) will return a provider-extended instance of it.
@@ -12,7 +12,7 @@ const githubAuth = github();
 const githubUserAuth = githubAuth.validateCallback();
 ```
 
-Alternatively, if you're using one of the OAuth helpers, you can use [`providerUserAuth()`](/reference/oauth/modules/main#provideruserauth) to manually create a new instance of it. It takes your Lucia `Auth` instance, the provider id (e.g. `"github"`), and the provider user id (e.g. Github user id).
+Alternatively, if you're using one of the OAuth helpers, you can use [`providerUserAuth()`](/reference/oauth/modules/main#provideruserauth) to manually create a new instance of it. It takes your Lucia `Auth` instance, the provider id (e.g. `"github"`), and the provider user id (e.g. GitHub user id).
 
 ```ts
 const githubUserAuth = providerUserAuth(auth, "github", githubUserId);
@@ -20,9 +20,9 @@ const githubUserAuth = providerUserAuth(auth, "github", githubUserId);
 
 ## Basic usage
 
-[`ProviderUserAuth.getExistingUser()`](/reference/oauth/interfaces/provideruserauth/#getexistinguser) will return a `User` if a Lucia user already exists for the authenticated provider account. This is based on the provider user id (e.g. Github user id) and not shared identifiers like email.
+[`ProviderUserAuth.getExistingUser()`](/reference/oauth/interfaces/provideruserauth/#getexistinguser) will return a `User` if a Lucia user already exists for the authenticated provider account. This is based on the provider user id (e.g. GitHub user id) and not shared identifiers like email.
 
-If not, you can create a new Lucia user linked to the provider with [`ProviderUserAuth.createUser()`](/reference/oauth/interfaces/provideruserauth#createuser). You can get the provider user data with `githubUser` for Github, etc.
+If not, you can create a new Lucia user linked to the provider with [`ProviderUserAuth.createUser()`](/reference/oauth/interfaces/provideruserauth#createuser). You can get the provider user data with `githubUser` for GitHub, etc.
 
 ```ts
 const getUser = async () => {

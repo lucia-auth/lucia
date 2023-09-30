@@ -9,13 +9,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [Express example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/express/username-and-password) from the repository.
+You can get started immediately by cloning the [Express example](https://github.com/lucia-auth/examples/tree/main/express/username-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/express/username-and-password <directory_name>
+npx degit lucia-auth/examples/express/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/express/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/express/username-and-password).
 
 ## Update your database
 
@@ -211,13 +211,9 @@ app.post("/login", async (req, res) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey(
-			"username",
-			username.toLowerCase(),
-			password
-		);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
 		const authRequest = auth.handleRequest(req, res);

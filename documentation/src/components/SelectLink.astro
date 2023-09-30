@@ -26,7 +26,7 @@ type Props = {
 			</span>
 		</button>
 		<div
-			class="select-menu absolute mt-1 hidden w-fit rounded-md border bg-white py-1.5 shadow"
+			class="select-menu absolute z-10 mt-1 hidden w-fit rounded-md border bg-white py-1.5 shadow"
 		>
 			<ul class="list-none">
 				{
@@ -48,13 +48,10 @@ type Props = {
 </select-link>
 
 <script>
-	import {
-		createToggleState,
-		onMenuToggle,
-		setElementVisibility
-	} from "@utils/state";
+	import { createToggleState } from "@utils/state";
+	import { setElementVisibility } from "@utils/dom";
 
-	const [toggleDropdown, onDropdownToggle] = createToggleState();
+	const [dropdownVisible, onDropdownToggle] = createToggleState();
 
 	class SelectLink extends HTMLElement {
 		constructor() {
@@ -69,7 +66,7 @@ type Props = {
 				selectMenu instanceof HTMLDivElement &&
 				buttonTitleSpan instanceof HTMLSpanElement
 			) {
-				button.addEventListener("click", toggleDropdown);
+				button.addEventListener("click", dropdownVisible.toggle);
 				onDropdownToggle((dropdownVisible) => {
 					setElementVisibility(selectMenu, dropdownVisible);
 					if (dropdownVisible) {

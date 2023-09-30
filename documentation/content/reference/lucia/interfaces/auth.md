@@ -301,7 +301,7 @@ const keys = await auth.getAllUserKeys(userId);
 Validate the user id and get all valid sessions of a user. Includes active and idle sessions, but not dead sessions.
 
 ```ts
-const getAllUserKeys: (userId: string) => Promise<Session[]>;
+const getAllUserSessions: (userId: string) => Promise<Session[]>;
 ```
 
 ##### Parameters
@@ -844,6 +844,8 @@ const key = await auth.useKey("github", githubUserId, null);
 ```
 
 ## `validateRequestOrigin()`
+
+**Deprecated: To be removed in the next major release.**
 
 Used for CSRF protection. Checks if the request origin is trusted for non-GET and non-HEAD requests (e.g. POST, PUT, DELETE), and throws an error if the origin is invalid. Trusted origins include where the server is hosted and its subdomains defined with [`csrfProtection.allowedSubdomains`](/basics/configuration#csrfprotection) configuration.
 

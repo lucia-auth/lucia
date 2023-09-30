@@ -1,22 +1,22 @@
-import type { MarkdownInstance } from "astro";
+import type { MarkdownHeading, MarkdownInstance } from "astro";
 
 type FrameworkId = keyof typeof frameworkNameDictionary;
 
+type MarkdownFile = MarkdownInstance<{
+	title: string;
+	description?: string;
+	hidden?: boolean;
+}>;
+
 const markdownImports = Object.entries(
-	import.meta.glob<
-		MarkdownInstance<{
-			title: string;
-			description?: string;
-			hidden?: boolean;
-		}>
-	>("../../content/**/*.md")
+	import.meta.glob<MarkdownFile>("../../content/**/*.md")
 ).map(([importPath, resolve]) => {
 	return [
 		importPath
 			.replace("../../content/", "")
 			.replace(".md", "")
 			.replace("/index", ""),
-		resolve
+		resolve as () => Promise<MarkdownFile>
 	] as const;
 });
 
@@ -32,10 +32,12 @@ export type Page = {
 	title: string;
 	htmlTitle: string;
 	hidden: boolean;
+	htmlDescription: string | null;
 	description: string | null;
 	versions: FrameworkVersion[];
 	frameworkId: FrameworkId | null;
 	Content: MarkdownInstance<any>["Content"];
+	headings: MarkdownHeading[];
 };
 
 const parseMarkdownCode = (text: string) => {
@@ -50,24 +52,30 @@ const removeMarkdownCode = (text: string) => {
 	return text.replaceAll("`", "");
 };
 
-export const getPages = async (collectionId: string): Promise<Page[]> => {
+export const getPages = async (collectionId?: string): Promise<Page[]> => {
 	const targetImports = markdownImports.filter(([pathname]) => {
+		if (collectionId === undefined) return true;
 		return pathname.startsWith(collectionId + "/") || pathname === collectionId;
 	});
 	const pages = await Promise.all(
 		targetImports.map(async ([pathname, resolve]): Promise<Page> => {
 			const resolvedFile = await resolve();
+			const rawDescription = resolvedFile.frontmatter.description ?? null;
 			return {
 				pathname,
 				href: getHrefFromContentPathname(pathname),
-				collectionId,
+				collectionId: pathname.split("/")[0],
 				title: removeMarkdownCode(resolvedFile.frontmatter.title),
 				htmlTitle: parseMarkdownCode(resolvedFile.frontmatter.title),
-				description: resolvedFile.frontmatter.description ?? null,
+				description: rawDescription ? removeMarkdownCode(rawDescription) : null,
+				htmlDescription: rawDescription
+					? parseMarkdownCode(rawDescription)
+					: null,
 				hidden: Boolean(resolvedFile.frontmatter.hidden),
 				versions: [],
 				frameworkId: getFrameworkIdFromContentPathname(pathname),
-				Content: resolvedFile.Content
+				Content: resolvedFile.Content,
+				headings: resolvedFile.getHeadings()
 			};
 		})
 	);
@@ -113,6 +121,9 @@ const isValidFrameworkVersion = (
 
 const frameworkNameDictionary = {
 	astro: "Astro",
+	electron: "Electron",
+	elysia: "Elysia",
+	expo: "Expo",
 	express: "Express",
 	fastify: "Fastify",
 	hono: "Hono",
@@ -122,5 +133,6 @@ const frameworkNameDictionary = {
 	qwik: "Qwik",
 	remix: "Remix",
 	solidstart: "SolidStart",
-	sveltekit: "SvelteKit"
+	sveltekit: "SvelteKit",
+	tauri: "Tauri"
 } as const;

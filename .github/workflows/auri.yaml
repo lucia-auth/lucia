@@ -7,7 +7,7 @@ on:
 env:
   AURI_GITHUB_TOKEN: ${{secrets.AURI_GITHUB_TOKEN}}
   NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
-  VERCEL_DEPLOY_HOOK: ${{secrets.VERCEL_DEPLOY_HOOK}}
+  CF_DEPLOY_HOOK: ${{secrets.CF_DEPLOY_HOOK}}
   VERCEL_PREVIEW_DEPLOY_HOOK: ${{secrets.VERCEL_PREVIEW_DEPLOY_HOOK}}
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 20.5.1
           registry-url: https://registry.npmjs.org
       - name: install dependencies
         run: |
@@ -29,9 +29,3 @@ jobs:
         run: pnpm exec auri publish
       - name: prepare
         run: pnpm exec auri prepare
-
-  publish-preview:
-    runs-on: ubuntu-latest
-    steps:
-      - name: publish preview
-        run: curl ${{env.VERCEL_PREVIEW_DEPLOY_HOOK}}

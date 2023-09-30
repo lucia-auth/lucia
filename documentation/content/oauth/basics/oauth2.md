@@ -5,7 +5,7 @@ description: "Learn how to implement OAuth 2.0"
 
 This page covers OAuth 2.0 authorization code grant type. For OAuth 2.0 providers with PKCE, see [OAuth 2.0 with PKCE](/oauth/basics/oauth2-pkce).
 
-Examples shown here uses Github OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
+Examples shown here uses GitHub OAuth but the API and overall process is nearly across providers. See each provider's documentation (from the sidebar) for specifics.
 
 ## Built-in providers
 
@@ -48,9 +48,9 @@ url.searchParams.set("response_mode", "query");
 
 ### Validate callback
 
-Upon authentication, the provider will redirect the user back to your application. The url includes a code, and a state if the provider supports it. If a state is used, make sure to check if the state in the query params is the same as the one stored as a cookie.
+Upon authentication, the provider will redirect the user back to your application (GET request). The url includes a code, and a state if the provider supports it. If a state is used, make sure to check if the state in the query params is the same as the one stored as a cookie.
 
-Validate the code using `validateCallback()`. If the code is valid, this will return a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) among provider specific items (such as provider user data and access tokens). See [Handle users with Lucia](/oauth/basics/handle-users) for how to use it.
+Validate the code using `validateCallback()`. If the code is valid, this will return a new [`ProviderUserAuth`](/reference/oauth/interfaces#provideruserauth) among provider specific items (such as provider user data and access tokens). See [Handle users with OAuth](/oauth/basics/handle-users) for how to use it.
 
 ```ts
 import { auth, githubAuth } from "$lib/lucia.js";

@@ -104,7 +104,7 @@ const getLineUser = async (
 	accessToken: string,
 	idToken: string
 ): Promise<LineUser> => {
-	const request = new Request("GET https://api.line.me/v2/profile", {
+	const request = new Request("https://api.line.me/v2/profile", {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}

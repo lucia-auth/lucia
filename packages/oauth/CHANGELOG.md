@@ -1,5 +1,47 @@
 # @lucia-auth/oauth
 
+## 3.3.0
+
+### Minor changes
+
+- [#1147](https://github.com/lucia-auth/lucia/pull/1147) by [@ollema](https://github.com/ollema) : Fix `slack()` provider
+
+### Patch changes
+
+- [#1141](https://github.com/lucia-auth/lucia/pull/1141) by [@q1b](https://github.com/q1b) : Fix `config.accessType` in `google()` provider
+
+- [#1132](https://github.com/lucia-auth/lucia/pull/1132) by [@KazuumiN](https://github.com/KazuumiN) : Fix link at `getLineUser()`
+
+## 3.2.0
+
+### Minor changes
+
+- [#1098](https://github.com/pilcrowOnPaper/lucia/pull/1098) by [@OmerSabic](https://github.com/OmerSabic) : Update `AppleUser`
+
+- [#1098](https://github.com/pilcrowOnPaper/lucia/pull/1098) by [@OmerSabic](https://github.com/OmerSabic) : Add `scope` params to `apple()`
+
+### Patch changes
+
+- [#1106](https://github.com/pilcrowOnPaper/lucia/pull/1106) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `linkedin()` provider missing default `openid` scope
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unused `identityProvider` params from `CognitoAuth.getAuthorizationUrl()`
+
+## 3.1.0
+
+### Minor changes
+
+- [#988](https://github.com/pilcrowOnPaper/lucia/pull/988) by [@tmadge](https://github.com/tmadge) : Add AWS Cognito provider
+
+- [#1072](https://github.com/pilcrowOnPaper/lucia/pull/1072) by [@infovore](https://github.com/infovore) : Add Strava provider
+
+- [#1068](https://github.com/pilcrowOnPaper/lucia/pull/1068) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `email` field `FacebookUser`
+
+### Patch changes
+
+- [#1070](https://github.com/pilcrowOnPaper/lucia/pull/1070) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update `Auth0User`
+
+- [#1065](https://github.com/pilcrowOnPaper/lucia/pull/1065) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove test files from release
+
 ## 3.0.0
 
 ### Major changes
@@ -30,7 +72,7 @@
 
 - [#1015](https://github.com/pilcrowOnPaper/lucia/pull/1015) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Line provider
 
-- [#1013](https://github.com/pilcrowOnPaper/lucia/pull/1013) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Gitlab provider
+- [#1013](https://github.com/pilcrowOnPaper/lucia/pull/1013) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add GitLab provider
 
 - [#1017](https://github.com/pilcrowOnPaper/lucia/pull/1017) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add Bitbucket provider
 

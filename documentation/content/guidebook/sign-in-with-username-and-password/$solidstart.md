@@ -13,13 +13,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [SolidStart example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/solidstart/username-and-password) from the repository.
+You can get started immediately by cloning the [SolidStart example](https://github.com/lucia-auth/examples/tree/main/solidstart/username-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/solidstart/username-and-password <directory_name>
+npx degit lucia-auth/examples/solidstart/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/solidstart/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/solidstart/username-and-password).
 
 ## Update your database
 

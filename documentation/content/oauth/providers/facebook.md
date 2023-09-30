@@ -1,5 +1,5 @@
 ---
-title: "Facebook"
+title: "Facebook OAuth provider"
 description: "Learn how to use the Facebook OAuth provider"
 ---
 
@@ -37,7 +37,7 @@ Scope `identity` is always included.
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                   |          |
 | `config.clientId`     | `string`                                   | Facebook OAuth app client id     |          |
 | `config.clientSecret` | `string`                                   | Facebook OAuth app client secret |          |
-| `configs.redirectUri` | `string`                                   | an authorized redirect URI       |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI       |          |
 | `config.scope`        | `string[]`                                 | an array of scopes               |    ✓     |
 
 ##### Returns
@@ -66,9 +66,9 @@ interface FacebookAuth<_Auth extends Auth> {
 
 ##### Generics
 
-| name    | extends    | default |
-| ------- | ---------- | ------- |
-| `_Auth` | [`Auth`]() | `Auth`  |
+| name    | extends                                    | default |
+| ------- | ------------------------------------------ | ------- |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `FacebookTokens`
 
@@ -82,10 +82,13 @@ type FacebookTokens = {
 
 ### `FacebookUser`
 
+`email` is only included if `email` scope if provided.
+
 ```ts
 type FacebookUser = {
 	id: string;
 	name: string;
+	email?: string;
 	picture: {
 		data: {
 			height: number;
@@ -102,7 +105,7 @@ type FacebookUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface FacebookUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	facebookUser: FacebookUser;
 	facebookTokens: FacebookTokens;
 }
@@ -115,6 +118,6 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 ##### Generics
 
-| name    | extends    |
-| ------- | ---------- |
-| `_Auth` | [`Auth`]() |
+| name    | extends                                    |
+| ------- | ------------------------------------------ |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |

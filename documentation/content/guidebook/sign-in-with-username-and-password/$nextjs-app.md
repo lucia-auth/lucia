@@ -13,13 +13,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/username-and-password) from the repository.
+You can get started immediately by cloning the [Next.js example](https://github.com/lucia-auth/examples/tree/main/nextjs-app/username-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-app/username-and-password <directory_name>
+npx degit lucia-auth/examples/nextjs-app/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-app/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-app/username-and-password).
 
 ## Update your database
 
@@ -47,12 +47,12 @@ Set [`sessionCookie.expires`](/basics/configuration#sessioncookie) to false sinc
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 
 	sessionCookie: {
 		expires: false
@@ -67,12 +67,12 @@ We'll also expose the user's username to the `User` object by defining [`getUser
 ```ts
 // auth/lucia.ts
 import { lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: process.env.NODE_ENV === "development" ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 	sessionCookie: {
 		expires: false
 	},
@@ -169,12 +169,12 @@ Create `app/api/signup/route.ts` and handle POST requests.
 
 Users can be created with [`Auth.createUser()`](/reference/lucia/interfaces/auth#createuser). This will create a new user, and if `key` is defined, a new key. The key here defines the connection between the user and the provided unique username (`providerUserId`) when using the username & password authentication method (`providerId`). We'll also store the password in the key. This key will be used get the user and validate the password when logging them in. The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously.
 
-After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with `cookies()` and `Request`.
+After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with the request method, `cookies()`, and `headers()..
 
 ```ts
 // app/api/signup/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
@@ -227,10 +227,7 @@ export const POST = async (request: NextRequest) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,
@@ -303,21 +300,18 @@ if (
 
 Authenticated users should be redirected to the profile page whenever they try to access the sign up page. You can validate requests by creating by calling [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate). This method returns a [`Session`](/reference/lucia/interfaces#session) if the user is authenticated or `null` if not.
 
-Since `Request` is not available in pages, set it to `null`. **This should only be done for `page.tsx` and `layout.tsx`**, and `request` should always be defined when using it inside `route.tsx`.
+For `Auth.handleRequest()`, pass `"GET"` as the request method.
 
 ```tsx
 // app/signup/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) redirect("/");
 	// ...
@@ -365,7 +359,7 @@ The key we created for the user allows us to get the user via their username, an
 ```ts
 // app/api/login/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { NextResponse } from "next/server";
 import { LuciaError } from "lucia";
 
@@ -407,19 +401,12 @@ export const POST = async (request: NextRequest) => {
 	try {
 		// find user by key
 		// and validate password
-		const user = await auth.useKey(
-			"username",
-			username.toLowerCase(),
-			password
-		);
+		const key = await auth.useKey("username", username.toLowerCase(), password);
 		const session = await auth.createSession({
-			userId: user.userId,
+			userId: key.userId,
 			attributes: {}
 		});
-		const authRequest = auth.handleRequest({
-			request,
-			cookies
-		});
+		const authRequest = auth.handleRequest(request.method, context);
 		authRequest.setSession(session);
 		return new Response(null, {
 			status: 302,
@@ -462,17 +449,14 @@ As we did in the sign up page, redirect authenticated users to the profile page.
 ```ts
 // app/login/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import Link from "next/link";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (session) redirect("/");
 	// ...
@@ -490,16 +474,13 @@ Unauthenticated users should be redirected to the login page. The user object is
 ```tsx
 // app/page.tsx
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 
 const Page = async () => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	const session = await authRequest.validate();
 	if (!session) redirect("/login");
 	return (
@@ -526,12 +507,12 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 // app/api/logout/route.ts
 import { auth } from "@/auth/lucia";
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 
 import type { NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
-	const authRequest = auth.handleRequest({ request, cookies });
+	const authRequest = auth.handleRequest(request.method, context);
 	// check if user is authenticated
 	const session = await authRequest.validate();
 	if (!session) {
@@ -554,14 +535,11 @@ export const POST = async (request: NextRequest) => {
 
 ## Additional notes
 
-For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request when `null` is passed.
+For getting the current user in `page.tsx` and `layout.tsx`, we recommend wrapping `AuthRequest.validate()` in `cache()`, which is provided by React. This should not be used inside `route.tsx` as Lucia will assume the request is a GET request.
 
 ```ts
 export const getPageSession = cache(() => {
-	const authRequest = auth.handleRequest({
-		request: null,
-		cookies
-	});
+	const authRequest = auth.handleRequest("GET", context);
 	return authRequest.validate();
 });
 ```
