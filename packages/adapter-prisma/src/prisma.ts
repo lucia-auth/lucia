@@ -233,11 +233,11 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					}
 				});
 			},
-			updateKey: async (userId, partialKey) => {
+			updateKey: async (keyId, partialKey) => {
 				await Key.update({
 					data: partialKey,
 					where: {
-						id: userId
+						id: keyId
 					}
 				});
 			}
