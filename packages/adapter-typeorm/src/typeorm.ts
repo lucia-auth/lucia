@@ -17,13 +17,13 @@ export const typeormAdapter = (
   dataSource: DataSource,
   tables: {
     user: EntityTarget<ObjectLiteral>;
-    session: EntityTarget<ObjectLiteral>;
+    session: EntityTarget<ObjectLiteral> | null;
     key: EntityTarget<ObjectLiteral>;
   }
 ): InitializeAdapter<Adapter> => {
   const repository = {
     user: dataSource.getRepository(tables.user),
-    session: dataSource.getRepository(tables.session),
+    session: tables.session && dataSource.getRepository(tables.session),
     key: dataSource.getRepository(tables.key)
   };
 
