@@ -5,16 +5,26 @@ import type {
   SessionSchema,
   UserSchema
 } from "lucia";
-import { DataSource, QueryFailedError } from "typeorm";
+import {
+  DataSource,
+  EntityTarget,
+  ObjectLiteral,
+  QueryFailedError
+} from "typeorm";
 import { Key, Session, User } from "../typeorm/schema.js";
 
 export const typeormAdapter = (
-  dataSource: DataSource
+  dataSource: DataSource,
+  tables: {
+    user: EntityTarget<ObjectLiteral>;
+    session: EntityTarget<ObjectLiteral>;
+    key: EntityTarget<ObjectLiteral>;
+  }
 ): InitializeAdapter<Adapter> => {
   const repository = {
-    user: dataSource.getRepository(User),
-    session: dataSource.getRepository(Session),
-    key: dataSource.getRepository(Key)
+    user: dataSource.getRepository(tables.user),
+    session: dataSource.getRepository(tables.session),
+    key: dataSource.getRepository(tables.key)
   };
 
   return (LuciaError) => {
@@ -46,13 +56,13 @@ export const typeormAdapter = (
         try {
           await queryRunner.startTransaction();
           const userEntity = queryRunner.manager
-            .getRepository(User)
+            .getRepository(tables.user)
             .create(user);
-          const keyEntity = queryRunner.manager.getRepository(Key).create(key);
+          const keyEntity = queryRunner.manager.getRepository(tables.key).create(key);
           const createdUser = await queryRunner.manager
-            .getRepository(User)
+            .getRepository(tables.user)
             .save(userEntity);
-          await queryRunner.manager.getRepository(Key).save(keyEntity);
+          await queryRunner.manager.getRepository(tables.key).save(keyEntity);
 
           await queryRunner.commitTransaction();
 
@@ -189,7 +199,7 @@ export const typeormAdapter = (
 };
 
 export const transformTypeORMUser = (
-  userData: User | User[] | null
+  userData: User | User[] | ObjectLiteral | null
 ): UserSchema => {
   if (!userData) {
     return null;
@@ -203,7 +213,7 @@ export const transformTypeORMUser = (
 };
 
 export const transformTypeORMSession = (
-  sessionData: Session
+  sessionData: Session | ObjectLiteral
 ): SessionSchema => {
   const { active_expires, idle_expires, ...data } = sessionData;
   return {
@@ -213,7 +223,7 @@ export const transformTypeORMSession = (
   };
 };
 
-export const transformTypeORMKey = (keyData: Key): KeySchema => {
+export const transformTypeORMKey = (keyData: Key | ObjectLiteral): KeySchema => {
   if (!keyData) {
     return keyData;
   }
