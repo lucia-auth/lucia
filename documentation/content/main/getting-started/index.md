@@ -90,6 +90,7 @@ const auth = lucia({
 - [Prisma](/database-adapters/prisma): MongoDB, MySQL, PostgreSQL, SQLite
 - [Redis](/database-adapters/redis): Redis
 - [Unstorage](/database-adapters/unstorage): Azure, Cloudflare KV, Memory, MongoDB, Planetscale, Redis, Vercel KV
+- [TypeORM](/database-adapters/typeorm): MySQL, MariaDB, PostgreSQL, CockroachDB, SQLite, Microsoft SQL Server, Oracle, SAP Hana, sql.js, MongoDB
 
 ### Provider specific adapters
 
@@ -101,6 +102,8 @@ const auth = lucia({
 
 - [Drizzle ORM](/guidebook/drizzle-orm)
 - [Kysely](/guidebook/kysely)
+<!-- TODO: Should I include TypeORM in this section? -->
+<!-- - [TypeORM](/guidebook/typeorm) -->
 
 ## Set up types
 

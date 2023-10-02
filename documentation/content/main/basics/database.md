@@ -22,6 +22,7 @@ We currently provide the following adapters:
 - [Prisma](/database-adapters/prisma)
 - [Redis](/database-adapters/redis)
 - [Unstorage](/database-adapters/unstorage)
+- [TypeORM](/database-adapters/typeorm)
 
 SDKs such as `@vercel/postgres` and `@neonserverless/database` provide drop-in replacements for existing drivers. You can also use query builders like Drizzle ORM and Kysely since they rely on underlying drivers that we provide adapters for. Refer to these guides:
 
