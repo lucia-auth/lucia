@@ -1,6 +1,7 @@
 import {
 	OAuth2ProviderAuthWithPKCE,
 	createOAuth2AuthorizationUrlWithPKCE,
+	refreshOAuth2Tokens,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
@@ -131,55 +132,6 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 		};
 	}
 }
-
-export const refreshOAuth2Tokens = async <_ResponseBody extends {}>(
-	url: string | URL,
-	options: {
-		clientId: string;
-		refreshToken: string;
-		clientPassword?: {
-			clientSecret: string;
-			authenticateWith: "client_secret" | "http_basic_auth";
-		};
-	}
-): Promise<_ResponseBody> => {
-	const body = new URLSearchParams({
-		client_id: options.clientId,
-		grant_type: "refresh_token",
-		refresh_token: options.refreshToken,
-	});
-	if (
-		options.clientPassword &&
-		options.clientPassword.authenticateWith === "client_secret"
-	) {
-		body.set("client_secret", options.clientPassword.clientSecret);
-	}
-
-	const headers = new Headers({
-		"Content-Type": "application/x-www-form-urlencoded"
-	});
-	if (
-		options.clientPassword &&
-		options.clientPassword.authenticateWith === "http_basic_auth"
-	) {
-		headers.set(
-			"Authorization",
-			authorizationHeader(
-				"basic",
-				encodeBase64(
-					`${options.clientId}:${options.clientPassword.clientSecret}`
-				)
-			)
-		);
-	}
-
-	const request = new Request(new URL(url), {
-		method: "POST",
-		headers,
-		body
-	});
-	return await handleRequest<_ResponseBody>(request);
-};
 
 const getKeycloakUser = async (domain: string, realm: string, accessToken: string): Promise<KeycloakUser> => {
 	const keycloakUserRequest = new Request(`https://${ domain }/realms/${ realm }/protocol/openid-connect/userinfo`, {
