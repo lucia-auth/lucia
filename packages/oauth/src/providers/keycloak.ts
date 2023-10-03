@@ -4,6 +4,8 @@ import {
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
+import { decodeIdToken } from "../index.js";
+import { encodeBase64 } from "../utils/encode.js";
 import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
@@ -66,7 +68,7 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 		code: string,
     codeVerifier: string
 	): Promise<KeycloakTokens> => {
-		const tokens = await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
+		const rawTokens = await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 			code,
 			`https://${ this.config.domain }/realms/${ this.config.realm }/protocol/openid-connect/token`,
 			{
@@ -79,6 +81,32 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 				}
 			}
 		);
+
+		return this.claimTokens(rawTokens)
+	};
+
+	public refreshTokens = async (
+		refreshToken: string
+	): Promise<KeycloakUserAuth<_Auth>> => {
+		const rawTokens = await refreshOAuth2Tokens<AccessTokenResponseBody>(
+			`https://${ this.config.domain }/realms/${ this.config.realm }/protocol/openid-connect/token`,
+			{
+				clientId: this.config.clientId,
+				refreshToken: refreshToken,
+				clientPassword: {
+					authenticateWith: "http_basic_auth",
+					clientSecret: this.config.clientSecret
+				}
+			}
+		);
+		const keycloakTokens = this.claimTokens(rawTokens)
+		
+		const keycloakUser = await getKeycloakUser(this.config.domain, this.config.realm, keycloakTokens.accessToken);
+		const keycloakRoles = getKeycloakRoles(keycloakTokens.accessToken)
+		return new KeycloakUserAuth(this.auth, keycloakUser, keycloakTokens, keycloakRoles);
+	};
+
+	private claimTokens = (tokens: AccessTokenResponseBody): KeycloakTokens => {
 		const tokenDecoded = decodeIdToken<Claims>(tokens.access_token)
 
 		if ("refresh_token" in tokens) {
@@ -101,8 +129,57 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 			refreshToken: null,
 			refreshTokenExpiresIn: null,
 		};
-	};
+	}
 }
+
+export const refreshOAuth2Tokens = async <_ResponseBody extends {}>(
+	url: string | URL,
+	options: {
+		clientId: string;
+		refreshToken: string;
+		clientPassword?: {
+			clientSecret: string;
+			authenticateWith: "client_secret" | "http_basic_auth";
+		};
+	}
+): Promise<_ResponseBody> => {
+	const body = new URLSearchParams({
+		client_id: options.clientId,
+		grant_type: "refresh_token",
+		refresh_token: options.refreshToken,
+	});
+	if (
+		options.clientPassword &&
+		options.clientPassword.authenticateWith === "client_secret"
+	) {
+		body.set("client_secret", options.clientPassword.clientSecret);
+	}
+
+	const headers = new Headers({
+		"Content-Type": "application/x-www-form-urlencoded"
+	});
+	if (
+		options.clientPassword &&
+		options.clientPassword.authenticateWith === "http_basic_auth"
+	) {
+		headers.set(
+			"Authorization",
+			authorizationHeader(
+				"basic",
+				encodeBase64(
+					`${options.clientId}:${options.clientPassword.clientSecret}`
+				)
+			)
+		);
+	}
+
+	const request = new Request(new URL(url), {
+		method: "POST",
+		headers,
+		body
+	});
+	return await handleRequest<_ResponseBody>(request);
+};
 
 const getKeycloakUser = async (domain: string, realm: string, accessToken: string): Promise<KeycloakUser> => {
 	const keycloakUserRequest = new Request(`https://${ domain }/realms/${ realm }/protocol/openid-connect/userinfo`, {
