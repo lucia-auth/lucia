@@ -50,7 +50,7 @@ See each database adapter package's migration guide:
 - [`@lucia-auth/adapter-session-redis`](/migrate/v2/redis)
 - [`@lucia-auth/adapter-sqlite`](/migrate/v2/sqlite)
 
-## `Lucia` namespace
+## Lucia namespace
 
 ```ts
 /// <reference types="lucia" />
