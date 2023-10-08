@@ -2,6 +2,8 @@
 // https://github.com/ai/nanoid/blob/9b748729f8ad5409503b508b65958636e55bd87a/index.browser.js
 // nanoid uses Node dependencies on default bundler settings
 
+import crypto from "crypto";
+
 const getRandomValues = (bytes: number): Uint8Array => {
 	return crypto.getRandomValues(new Uint8Array(bytes));
 };

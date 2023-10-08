@@ -1,5 +1,5 @@
-import { generateRandomString } from "lucia/utils";
 import type { KeySchema, SessionSchema, UserSchema } from "lucia";
+import { generateRandomString } from "lucia/utils";
 
 export type TestUserSchema = UserSchema & {
 	username: string;
@@ -94,7 +94,7 @@ export class Database {
 		return {
 			id: options?.id ?? generateRandomString(30),
 			user_id: keyUserId,
-			hashed_password: null
+			hashed_password: "lol"
 		};
 	};
 

@@ -1,9 +1,9 @@
 import { LuciaError } from "lucia";
 import assert from "node:assert/strict";
-import { start, finish, method, afterEach } from "../test.js";
+import { afterEach, finish, method, start } from "../test.js";
 
+import type { Adapter, KeySchema, SessionSchema, UserSchema } from "lucia";
 import type { Database } from "../database.js";
-import type { Adapter, SessionSchema, KeySchema, UserSchema } from "lucia";
 
 export const testAdapter = async (adapter: Adapter, database: Database) => {
 	await database.clear();
