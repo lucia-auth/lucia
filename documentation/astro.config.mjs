@@ -8,7 +8,14 @@ import { rehypeHeadingIds } from "@astrojs/markdown-remark";
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [tailwind(), markdown(), og(), search()],
+	integrations: [
+		tailwind({
+			applyBaseStyles: false
+		}),
+		markdown(),
+		og(),
+		search()
+	],
 	markdown: {
 		rehypePlugins: [rehypeHeadingIds],
 		shikiConfig: {

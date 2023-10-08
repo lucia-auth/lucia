@@ -41,9 +41,9 @@ const parseMarkdownCode = (text: string) => {
 										<a
 											href={href}
 											class:list={[
-												"w-full py-1 pl-8 hover:bg-indigo-50 block",
+												"w-full py-1 pl-8 hover:bg-indigo-500/20 block",
 												{
-													"bg-gray-100": selected
+													"bg-zinc-100": selected
 												}
 											]}
 											set:html={parseMarkdownCode(title)}
@@ -69,9 +69,9 @@ const parseMarkdownCode = (text: string) => {
 										<a
 											href={href}
 											class:list={[
-												"w-full py-1 pl-8 hover:bg-indigo-50 block",
+												"w-full py-1 pl-8 hover:bg-indigo-500/20 block",
 												{
-													"bg-gray-100": selected
+													"bg-zinc-100": selected
 												}
 											]}
 											set:html={parseMarkdownCode(title)}

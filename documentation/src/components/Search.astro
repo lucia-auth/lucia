@@ -18,7 +18,7 @@ import SearchIcon from "@icons/Search.astro";
 			</div>
 			<input
 				id="search-bar"
-				class="w-full text-2xl font-medium outline-none placeholder:font-medium placeholder:text-zinc-500"
+				class="w-full text-2xl bg-transparent font-medium outline-none placeholder:font-medium placeholder:text-zinc-500"
 				placeholder="Search"
 				spellcheck="false"
 			/>
@@ -67,7 +67,7 @@ import SearchIcon from "@icons/Search.astro";
 			parentAnchor.text = matchedPage.title;
 			parentAnchor.href = matchedPage.href;
 			parentAnchor.classList.add(
-				"hover:bg-indigo-50",
+				"hover:bg-indigo-500/20",
 				"block",
 				"px-2",
 				"rounded-sm"
@@ -83,7 +83,7 @@ import SearchIcon from "@icons/Search.astro";
 				childAnchor.text = matchedHeading.title;
 				childAnchor.href = matchedPage.href + "#" + matchedHeading.hash;
 				childAnchor.classList.add(
-					"hover:bg-indigo-50",
+					"hover:bg-indigo-500/20",
 					"block",
 					"px-2",
 					"rounded-sm"

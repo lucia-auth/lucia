@@ -14,8 +14,21 @@ module.exports = {
 				main: "#5f57ff",
 				"main-pastel": "#a7a6ff",
 				zinc: {
-					80: "#f7f7f7"
-				}
+					50: "rgb(var(--color-zinc-50) / <alpha-value>)",
+					80: "rgb(var(--color-zinc-80) / <alpha-value>)",
+					100: "rgb(var(--color-zinc-100) / <alpha-value>)",
+					200: "rgb(var(--color-zinc-200) / <alpha-value>)",
+					300: "rgb(var(--color-zinc-300) / <alpha-value>)",
+					400: "rgb(var(--color-zinc-400) / <alpha-value>)",
+					500: "rgb(var(--color-zinc-500) / <alpha-value>)",
+					600: "rgb(var(--color-zinc-600) / <alpha-value>)",
+					700: "rgb(var(--color-zinc-700) / <alpha-value>)",
+					800: "rgb(var(--color-zinc-800) / <alpha-value>)",
+					900: "rgb(var(--color-zinc-900) / <alpha-value>)",
+					950: "rgb(var(--color-zinc-950) / <alpha-value>)"
+				},
+				white: "rgb(var(--color-white) / <alpha-value>)",
+				black: "rgb(var(--color-black) / <alpha-value>)"
 			},
 			fontSize: {
 				"code-sm": "0.825rem",

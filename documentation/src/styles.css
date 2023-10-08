@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+	--color-white: 255 255 255;
+	--color-black: 0 0 0;
+	--color-zinc-50: 250 250 250;
+	--color-zinc-80: 247 247 247;
+	--color-zinc-100: 244 244 245;
+	--color-zinc-200: 242 242 243;
+	--color-zinc-300: 228 228 231;
+	--color-zinc-400: 161 161 170;
+	--color-zinc-500: 113 113 122;
+	--color-zinc-600: 82 82 91;
+	--color-zinc-700: 63 63 70;
+	--color-zinc-800: 39 39 42;
+	--color-zinc-900: 24 24 27;
+	--color-zinc-950: 9 9 11;
+}
+
+html.dark {
+	--color-white: 0 0 0;
+	--color-black: 255 255 255;
+	--color-zinc-950: 250 250 250;
+	--color-zinc-900: 247 247 247;
+	--color-zinc-800: 244 244 245;
+	--color-zinc-700: 242 242 243;
+	--color-zinc-600: 228 228 231;
+	--color-zinc-500: 161 161 170;
+	--color-zinc-400: 113 113 122;
+	--color-zinc-300: 82 82 91;
+	--color-zinc-200: 63 63 70;
+	--color-zinc-100: 39 39 42;
+	--color-zinc-80: 24 24 27;
+	--color-zinc-50: 9 9 11;
+	color: white;
+	color-scheme: dark;
+}
+
+html:not(.dark) #dark-theme-button {
+	display: none;
+}
+html.dark #light-theme-button {
+	display: none;
+}
+
+.dark body {
+	@apply bg-zinc-50;
+}
+.dark * {
+	@apply border-zinc-200;
+}
+
+.dark span[style="color: #24292EFF"],
+.dark span[style="color: #24292eff"] {
+	@apply !text-black;
+}

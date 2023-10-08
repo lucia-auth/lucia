@@ -1,4 +1,6 @@
 ---
+import "../styles.css";
+
 type Props = {
 	title: string;
 	description?: string | null;
@@ -88,6 +90,7 @@ const pageTitle = title === "Lucia" ? "Lucia" : `${title} · Lucia`;
 
 <script>
 	import { onSearchVisibilityUpdate } from "@utils/state";
+	import { setTheme, getTheme } from "@utils/theme";
 
 	onSearchVisibilityUpdate((visible) => {
 		if (visible) {
@@ -96,4 +99,6 @@ const pageTitle = title === "Lucia" ? "Lucia" : `${title} · Lucia`;
 			document.body.classList.remove("overflow-hidden");
 		}
 	});
+
+	setTheme(getTheme());
 </script>

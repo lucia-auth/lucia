@@ -3,6 +3,8 @@ import MenuIcon from "@icons/MenuIcon.astro";
 import MoreIcon from "@icons/MoreIcon.astro";
 import SearchIcon from "../icons/Search.astro";
 import Search from "./Search.astro";
+import LightModeIcon from "@icons/LightModeIcon.astro";
+import DarkModeIcon from "@icons/DarkModeIcon.astro";
 
 import { comparePathname } from "@utils/url";
 
@@ -48,13 +50,33 @@ const menuButtonVisible = !blogPage && !guidebook;
 					>GitHub</a
 				>
 			</div>
-			<button class="block rounded p-1 hover:bg-indigo-50" id="search-button">
+			<button
+				aria-label="Switch to dark theme"
+				id="light-theme-button"
+				class="block rounded p-1 hover:bg-bg-indigo-500/20"
+			>
+				<LightModeIcon />
+			</button>
+			<button
+				aria-label="Switch to light theme"
+				id="dark-theme-button"
+				class="block rounded p-1 hover:bg-bg-indigo-500/20"
+			>
+				<DarkModeIcon />
+			</button>
+			<button
+				class="block rounded p-1 hover:bg-bg-indigo-500/20"
+				id="search-button"
+			>
 				<div class="h-5 w-5 fill-current">
 					<SearchIcon />
 				</div>
 			</button>
 			<div class="sm:hidden">
-				<button class="block rounded p-1 hover:bg-indigo-50" id="more-button">
+				<button
+					class="block rounded p-1 hover:bg-bg-indigo-500/20"
+					id="more-button"
+				>
 					<div class="h-5 w-5 fill-current">
 						<MoreIcon />
 					</div>
@@ -65,18 +87,20 @@ const menuButtonVisible = !blogPage && !guidebook;
 				>
 					<a
 						href="/getting-started"
-						class="block px-4 py-1.5 hover:bg-indigo-50">Documentation</a
+						class="block px-4 py-1.5 hover:bg-bg-indigo-500/20">Documentation</a
 					>
-					<a href="/reference" class="block px-4 py-1.5 hover:bg-indigo-50"
-						>Reference</a
+					<a
+						href="/reference"
+						class="block px-4 py-1.5 hover:bg-bg-indigo-500/20">Reference</a
 					>
-					<a href="/guidebook" class="block px-4 py-1.5 hover:bg-indigo-50"
-						>Guidebook</a
+					<a
+						href="/guidebook"
+						class="block px-4 py-1.5 hover:bg-bg-indigo-500/20">Guidebook</a
 					>
-					<a href="/discord" class="block px-4 py-1.5 hover:bg-indigo-50"
+					<a href="/discord" class="block px-4 py-1.5 hover:bg-bg-indigo-500/20"
 						>Discord</a
 					>
-					<a href="/github" class="block px-4 py-1.5 hover:bg-indigo-50"
+					<a href="/github" class="block px-4 py-1.5 hover:bg-bg-indigo-500/20"
 						>GitHub</a
 					>
 				</div>
@@ -86,7 +110,10 @@ const menuButtonVisible = !blogPage && !guidebook;
 	{
 		menuButtonVisible && (
 			<div class="border-b px-6 py-1.5 sm:px-8 lg:hidden" id="secondary-header">
-				<button class="block rounded p-1 hover:bg-indigo-50" id="menu-button">
+				<button
+					class="hover:bg-bg-indigo-500/20 block rounded p-1"
+					id="menu-button"
+				>
 					<div class="h-5 w-5 fill-current">
 						<MenuIcon />
 					</div>
@@ -102,12 +129,15 @@ const menuButtonVisible = !blogPage && !guidebook;
 		onSearchVisibilityUpdate
 	} from "@utils/state";
 	import { setElementVisibility } from "@utils/dom";
+	import { setTheme } from "@utils/theme";
 
 	const menuButton = document.getElementById("menu-button");
 	const moreButton = document.getElementById("more-button");
 	const moreDropdownDiv = document.getElementById("more-dropdown");
 	const searchButton = document.getElementById("search-button");
 	const secondaryHeaderDiv = document.getElementById("secondary-header");
+	const lightThemeButton = document.getElementById("light-theme-button");
+	const darkThemeButton = document.getElementById("dark-theme-button");
 
 	if (!(menuButton instanceof HTMLButtonElement)) throw new Error();
 	if (!(moreButton instanceof HTMLButtonElement)) throw new Error();
@@ -130,4 +160,7 @@ const menuButtonVisible = !blogPage && !guidebook;
 			setElementVisibility(secondaryHeaderDiv, !visible);
 		});
 	}
+
+	lightThemeButton?.addEventListener("click", () => setTheme(true));
+	darkThemeButton?.addEventListener("click", () => setTheme(false));
 </script>
