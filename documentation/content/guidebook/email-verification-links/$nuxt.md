@@ -39,7 +39,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new col
 
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("@/auth/lucia").Auth;
+	type Auth = import("./utils/lucia").Auth;
 	type DatabaseUserAttributes = {
 		email: string;
 		email_verified: number;
@@ -214,7 +214,7 @@ export const useAuthenticatedUser = () => {
 Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation.
 
 ```ts
-// middleware/auth.ts
+// middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async () => {
 	const user = useUser();
 	const { data, error } = await useFetch("/api/user");

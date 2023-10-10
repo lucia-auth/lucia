@@ -8,7 +8,7 @@ format: "code"
 Invalidates the internal cache for [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) and [`AuthRequest.validateBearerToken()`](/reference/lucia/interfaces/authrequest#validatebearertoken).
 
 ```ts
-const invalidate: () => void
+const invalidate: () => void;
 ```
 
 ## `setSession()`

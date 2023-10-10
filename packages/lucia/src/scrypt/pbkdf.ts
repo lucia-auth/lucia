@@ -5,7 +5,7 @@ export const pbkdf2 = async (
 		c: number;
 		dkLen: number;
 	}
-) => {
+): Promise<Uint8Array> => {
 	const pwKey = await crypto.subtle.importKey(
 		"raw",
 		password,
@@ -23,6 +23,5 @@ export const pbkdf2 = async (
 		pwKey,
 		options.dkLen * 8
 	);
-
 	return new Uint8Array(keyBuffer);
 };

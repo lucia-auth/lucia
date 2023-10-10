@@ -3,7 +3,7 @@ title: "`mysql2` adapter"
 description: "Learn how to use mysql2 with Lucia"
 ---
 
-Adapter for [`mysql2`](https://github.com/sidorares/node-mysql) provided by the MySQL adapter package.
+Adapter for [`mysql2`](https://github.com/sidorares/node-mysql2) provided by the MySQL adapter package.
 
 ```ts
 import { mysql2 } from "@lucia-auth/adapter-mysql";

@@ -250,7 +250,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 					}
 				});
 			},
-			updateKey: async (userId, partialKey) => {
+			updateKey: async (keyId, partialKey) => {
 				await Key.update({
 					data: {
 						id: partialKey.id,
@@ -258,7 +258,7 @@ export const prismaAdapter = <_PrismaClient extends PrismaClient>(
 						hashedPassword: partialKey.hashed_password
 					},
 					where: {
-						id: userId
+						id: keyId
 					}
 				});
 			}

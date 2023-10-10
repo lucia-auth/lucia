@@ -40,7 +40,7 @@ export class Auth0Auth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
-			new URL("/authorize", this.config.appDomain),
+			new URL("/authorize", originFromDomain(this.config.appDomain)),
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
@@ -111,6 +111,13 @@ const getAuth0User = async (appDomain: string, accessToken: string) => {
 		...auth0Profile
 	};
 	return auth0User;
+};
+
+const originFromDomain = (domain: string): string => {
+	if (domain.startsWith("https://") || domain.startsWith("http://")) {
+		return domain;
+	}
+	return "https://" + domain;
 };
 
 export type Auth0Tokens = {
