@@ -1,5 +1,6 @@
 import type {
 	Adapter,
+	GlobalDatabaseSessionAttributes,
 	InitializeAdapter,
 	KeySchema,
 	SessionSchema,
@@ -21,7 +22,7 @@ type PrismaSessionSchema = {
 	userId: string;
 	activeExpires: bigint | number;
 	idleExpires: bigint | number;
-};
+} & GlobalDatabaseSessionAttributes;
 
 type PrismaKeySchema = {
 	id: string;
