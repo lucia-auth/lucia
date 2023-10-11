@@ -163,7 +163,7 @@ Create `app/login/github/route.ts` and handle GET requests. [`GithubProvider.get
 
 ```ts
 // app/login/github/route.ts
-import { auth, githubAuth } from "@/auth/lucia";
+import { githubAuth } from "@/auth/lucia";
 import * as context from "next/headers";
 
 import type { NextRequest } from "next/server";
@@ -171,7 +171,7 @@ import type { NextRequest } from "next/server";
 export const GET = async (request: NextRequest) => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 	// store state
-	cookies().set("github_oauth_state", state, {
+	context.cookies().set("github_oauth_state", state, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		path: "/",
