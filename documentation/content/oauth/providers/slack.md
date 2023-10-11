@@ -14,7 +14,7 @@ const slackAuth = slack(auth, configs);
 
 ## `slack()`
 
-Scopes `oidc` and `profile` are always included.
+Scopes `openid` and `profile` are always included.
 
 ```ts
 const slack: (
