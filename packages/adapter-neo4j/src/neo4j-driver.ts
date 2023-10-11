@@ -1,18 +1,44 @@
 import Cypher from "@neo4j/cypher-builder";
-import { LuciaError, type Adapter, type InitializeAdapter } from "lucia";
+import {
+	KeySchema,
+	SessionSchema,
+	UserSchema,
+	type Adapter,
+	type InitializeAdapter
+} from "lucia";
 import { Driver, Node as Neo4jNode } from "neo4j-driver";
 import {
-	KeyParameters,
+	BELONGS_TO_RELATION,
+	KEY_NODE,
+	SESSION_NODE,
+	USER_NODE,
+	belongsToPatten
+} from "./constants.js";
+import {
+	BelongsToUserParameters,
+	KeyProperties,
 	SessionParameters,
-	UserKeyBelongsTo,
-	UserParameters
+	SessionProperties,
+	UserParameters,
+	UserProperties
 } from "./entities.js";
 import {
-	NODE_NAMES,
+	transformKeyNode,
+	transformSessionNode,
+	transformUserNode
+} from "./node-transforming.js";
+import {
+	changeNodeRelation,
+	createNodeAndRelationBoundToExistingNode,
 	cypherNode,
-	cypherRelation,
+	deleteNode,
+	deleteNodesByRelatedNodeId,
+	executeCypherQuery,
+	executeCypherQueryInjectUserId,
+	getNodesByRelatedNodeId,
 	neo4jErrorHandler,
-	paramGenerator
+	paramGenerator,
+	updateNode
 } from "./utils.js";
 
 export const neo4jAdapter = (
@@ -26,9 +52,9 @@ export const neo4jAdapter = (
 	const getAllNodes = () => {
 		if (!nodes)
 			return {
-				User: cypherNode([NODE_NAMES.user]),
-				Session: cypherNode([NODE_NAMES.session]),
-				Key: cypherNode([NODE_NAMES.key])
+				User: USER_NODE,
+				Session: SESSION_NODE,
+				Key: KEY_NODE
 			};
 		return {
 			User: cypherNode(nodes.User.labels),
@@ -42,24 +68,17 @@ export const neo4jAdapter = (
 
 	const useAdapter: Adapter = {
 		getUser: async (userId: string) => {
-			try {
-				const matchCypher = new Cypher.Match(User)
-					.where(User, { id: new Cypher.Param(userId) })
-					.return(User);
-				const { cypher, params } = matchCypher.build();
+			const UserSchema = await executeCypherQuery<UserSchema>(
+				driverSession(),
+				User,
+				userId,
+				"getUser",
+				"user"
+			);
 
-				const userResult = await driverSession().executeRead(async (tx) =>
-					tx.run<UserParameters>(cypher, params)
-				);
-				if (!userResult) return null;
+			if (!UserSchema) return null;
 
-				const firstUser = userResult.records[0];
-				if (!firstUser) return null;
-
-				return firstUser.get("this0").properties;
-			} finally {
-				driverSession().close();
-			}
+			return transformUserNode(`GetUser-adapter`, UserSchema);
 		},
 
 		setUser: async (user, key) => {
@@ -71,248 +90,200 @@ export const neo4jAdapter = (
 				const { cypher, params } = createUserCypher.build();
 				await driverSession()
 					.executeWrite(async (tx) => tx.run<UserParameters>(cypher, params))
-					.catch((e) => neo4jErrorHandler(LuciaError, "setUser", e))
-					.then(() => driverSession().close());
+					.catch((e) => neo4jErrorHandler("setUser", "key", e))
+					.finally(() => driverSession().close());
 				return;
 			}
 
-			const userKeyBelongsToPattern = new Cypher.Pattern(Key)
-				.related(cypherRelation("BELONGS_TO"))
-				.to(User);
-
-			const createRelationship = new Cypher.Create(userKeyBelongsToPattern).set(
-				...paramGenerator(key, Key),
-				...paramGenerator(user, User)
-			);
+			const createRelationship = new Cypher.Create(
+				belongsToPatten(Key, User)
+			).set(...paramGenerator(key, Key), ...paramGenerator(user, User));
 
 			const { cypher, params } = Cypher.concat(createRelationship).build();
 
 			await driverSession()
-				.executeWrite(async (tx) => tx.run<UserKeyBelongsTo>(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "setUser", e))
-				.then(() => driverSession().close());
+				.executeWrite(async (tx) =>
+					tx.run<BelongsToUserParameters<UserProperties>>(cypher, params)
+				)
+				.catch((e) => neo4jErrorHandler("setUser", "user", e))
+				.finally(() => driverSession().close());
 		},
 		updateUser: async (userId, partialUser) => {
-			const updateUserCypher = new Cypher.Match(User)
-				.where(User, { id: new Cypher.Param(userId) })
-				.set(...paramGenerator(partialUser, User));
-			const { cypher, params } = updateUserCypher.build();
-
-			await driverSession()
-				.executeWrite(async (tx) => tx.run<UserParameters>(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "updateUser", e))
-				.then(() => driverSession().close());
+			await updateNode(
+				driverSession(),
+				User,
+				userId,
+				partialUser,
+				"updateUser-adapter",
+				"user"
+			);
 		},
 
 		deleteUser: async (userId: string) => {
-			const deleteUserCypher = new Cypher.Match(User)
-				.where(User, { id: new Cypher.Param(userId) })
-				.detachDelete(User);
-			const { cypher, params } = deleteUserCypher.build();
-			await driverSession()
-				.executeWrite(async (tx) => tx.run<UserParameters>(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "deleteUser", e))
-				.then(() => driverSession().close());
+			await deleteNode(
+				driverSession(),
+				User,
+				userId,
+				"deleteUser-adapter",
+				"user"
+			);
 		},
 
 		getSession: async (sessionId) => {
-			const matchSessionCypher = new Cypher.Match(Session)
-				.where(Session, { id: new Cypher.Param(sessionId) })
-				.return(Session);
-			const { cypher, params } = matchSessionCypher.build();
-
-			const sessionResult = await driverSession().executeRead(async (tx) =>
-				tx.run<SessionParameters>(cypher, params)
+			const SessionSchema = await executeCypherQueryInjectUserId<SessionSchema>(
+				driverSession(),
+				Session,
+				sessionId,
+				User,
+				"getSession",
+				"session"
 			);
-			if (!sessionResult) return null;
 
-			const firstSession = sessionResult.records.map((record) =>
-				record.get("this0")
-			)[0];
-			if (!firstSession) return null;
+			if (!SessionSchema) return null;
 
-			return firstSession.properties;
+			return transformSessionNode(`getSession-adapter`, SessionSchema);
 		},
+
 		getSessionsByUserId: async (userId) => {
-			if (!Session) {
-				throw new Error("Session model not defined");
-			}
-			const sessionBelongsToPattern = new Cypher.Pattern(Session)
-				.related(cypherRelation("BELONGS_TO"))
-				.to(User);
-
-			const matchSessionCypher = new Cypher.Match(sessionBelongsToPattern)
-				.where(User, { id: new Cypher.Param(userId) })
-				.return(Session);
-			const { cypher, params } = matchSessionCypher.build();
-
-			const sessionResult = await driverSession().executeRead(async (tx) =>
-				tx.run<SessionParameters>(cypher, params)
-			);
-			if (!sessionResult) return [];
-
-			const sessionProperties = sessionResult.records.map(
-				(record) => record.get("this0").properties
+			const sessionByUserId = await getNodesByRelatedNodeId<
+				SessionSchema,
+				SessionProperties
+			>(
+				driverSession(),
+				Session,
+				userId,
+				User,
+				(node) =>
+					transformSessionNode(`GetSessionByUserId-adapter`, node.properties),
+				"getSessionsByUserId",
+				"session"
 			);
 
-			if (!sessionProperties) return [];
-
-			return sessionProperties;
+			return sessionByUserId;
 		},
+
 		setSession: async (session) => {
-			if (!Session) {
-				throw new Error("Session model not defined");
-			}
-			try {
-				const createSessionCypher = new Cypher.Create(Session).set(
-					...paramGenerator(session, Session)
-				);
+			const { user_id: userId, ...sessionProperties } = session;
 
-				const { cypher, params } = createSessionCypher.build();
-				await driverSession()
-					.executeWrite(async (tx) => tx.run<SessionParameters>(cypher, params))
-					.catch((e) => neo4jErrorHandler(LuciaError, "setSession", e))
-					.then(() => driverSession().close());
-				return;
-			} catch (e) {
-				neo4jErrorHandler(LuciaError, "setUser", e);
-			}
+			const { cypher, params } = await createNodeAndRelationBoundToExistingNode(
+				User,
+				userId,
+				BELONGS_TO_RELATION,
+				Session,
+				sessionProperties
+			);
 
-
-			
+			await driverSession()
+				.executeWrite(async (tx) => tx.run<SessionParameters>(cypher, params))
+				.catch((e) => neo4jErrorHandler("setSession", "session", e))
+				.finally(() => driverSession().close());
+			return;
 		},
+
 		deleteSession: async (sessionId) => {
-			if (!Session) {
-				throw new Error("Session model not defined");
-			}
-			const deleteSessionCypher = new Cypher.Match(Session)
-				.where(Session, { id: new Cypher.Param(sessionId) })
-				.detachDelete(Session);
-			const { cypher, params } = deleteSessionCypher.build();
-			await driverSession()
-				.executeWrite(async (tx) => tx.run<SessionParameters>(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "deleteSession", e))
-				.then(() => driverSession().close());
+			await deleteNode(
+				driverSession(),
+				Session,
+				sessionId,
+				"deleteSession",
+				"session"
+			);
 		},
-		deleteSessionsByUserId: async (userId) => {
-			if (!Session) {
-				throw new Error("Session model not defined");
-			}
-			const sessionBelongsToPattern = new Cypher.Pattern(Session)
-				.related(cypherRelation("BELONGS_TO"))
-				.to(User);
-			const deleteSessionCypher = new Cypher.Match(sessionBelongsToPattern)
-				.where(User, { id: new Cypher.Param(userId) })
-				.detachDelete(Session);
-			const { cypher, params } = deleteSessionCypher.build();
 
-			await driverSession()
-				.executeWrite(async (tx) => tx.run<SessionParameters>(cypher, params))
-				.catch((e) =>
-					neo4jErrorHandler(LuciaError, "deleteSessionsByUserId", e)
-				)
-				.then(() => driverSession().close());
+		deleteSessionsByUserId: async (userId) => {
+			await deleteNodesByRelatedNodeId(
+				driverSession(),
+				Session,
+				userId,
+				User,
+				"deleteSessionsByUserId",
+				"session"
+			);
 		},
-		updateSession: async (sessionId, partialUser) => {
-			if (!Session) {
-				throw new Error("Session model not defined");
+
+		updateSession: async (sessionId, partialSession) => {
+			const { user_id: userId, ...sessionProperties } = partialSession;
+
+			if (userId) {
+				return await changeNodeRelation(
+					driverSession(),
+					Session,
+					sessionId,
+					User,
+					userId,
+					"updateSession-adapter",
+					sessionProperties,
+					"session"
+				);
 			}
-			const updateSessionCypher = new Cypher.Match(Session)
-				.where(Session, { id: new Cypher.Param(sessionId) })
-				.set(...paramGenerator(partialUser, Session));
-			const { cypher, params } = updateSessionCypher.build();
-			await driverSession()
-				.executeWrite(async (tx) => tx.run<SessionParameters>(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "updateSession", e))
-				.then(() => driverSession().close());
+
+			await updateNode(
+				driverSession(),
+				Session,
+				sessionId,
+				sessionProperties,
+				"updateSession-adapter",
+				"session"
+			);
 		},
 
 		getKey: async (keyId) => {
-			if (!Key) {
-				throw new Error("Key model not defined");
-			}
-			const matchKeyCypher = new Cypher.Match(Key)
-				.where(Key, { id: new Cypher.Param(keyId) })
-				.return(Key);
-			const { cypher, params } = matchKeyCypher.build();
-
-			const keyResult = await driverSession().executeRead(async (tx) =>
-				tx.run(cypher, params)
+			const KeySchema = await executeCypherQueryInjectUserId<KeySchema>(
+				driverSession(),
+				Key,
+				keyId,
+				User,
+				"getKey",
+				"key"
 			);
-			if (!keyResult) return null;
 
-			const firstKey = keyResult.records.map((record) =>
-				record.get("this0")
-			)[0];
-			if (!firstKey) return null;
+			if (!KeySchema) return null;
 
-			return firstKey.properties;
+			return transformKeyNode(`getKey-adapter`, KeySchema);
 		},
+
 		setKey: async (key) => {
-			if (!Key) {
-				throw new Error("Key model not defined");
-			}
+			const { user_id: userId, ...keyProperties } = key;
 
-			console.log("key", key.user_id);
-
-			const createKeyCypher = new Cypher.Create(Key).set(
-				...paramGenerator(key, Key)
+			const { cypher, params } = await createNodeAndRelationBoundToExistingNode(
+				User,
+				userId,
+				BELONGS_TO_RELATION,
+				Key,
+				keyProperties
 			);
 
-			const { cypher, params } = createKeyCypher.build();
 			await driverSession()
 				.executeWrite(async (tx) => tx.run(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "setKey", e))
-				.then(() => driverSession().close());
+				.catch((e) => neo4jErrorHandler("setKey", "key", e))
+				.finally(() => driverSession().close());
 			return;
 		},
+
 		getKeysByUserId: async (userId) => {
-			if (!Key) {
-				throw new Error("Key model not defined");
-			}
-			const userKeyBelongsToPattern = new Cypher.Pattern(Key)
-				.related(cypherRelation("BELONGS_TO"))
-				.to(User);
-
-			const matchKeyCypher = new Cypher.Match(userKeyBelongsToPattern)
-				.where(User, { id: new Cypher.Param(userId) })
-				.return(Key);
-			const { cypher, params } = matchKeyCypher.build();
-
-			const keyResult = await driverSession().executeRead(async (tx) =>
-				tx.run<KeyParameters>(cypher, params)
+			const keysByUserId = await getNodesByRelatedNodeId<
+				KeySchema,
+				KeyProperties
+			>(
+				driverSession(),
+				Key,
+				userId,
+				User,
+				(node) => transformKeyNode(`getKeysByUserId-adapter`, node.properties),
+				"getKeysByUserId",
+				"key"
 			);
 
-			if (!keyResult) return [];
-
-			const keyProperties = keyResult.records.map(
-				(record) => record.get("this0").properties
-			);
-
-			if (!keyProperties) return [];
-
-			return keyProperties;
+			return keysByUserId;
 		},
+
 		deleteKey: async (keyId) => {
-			if (!Key) {
-				throw new Error("Key model not defined");
-			}
-			const deleteKeyCypher = new Cypher.Match(Key)
-				.where(Key, { id: new Cypher.Param(keyId) })
-				.detachDelete(Key);
-
-			const { cypher, params } = deleteKeyCypher.build();
-			await driverSession()
-				.executeWrite(async (tx) => tx.run(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "deleteKey", e))
-				.then(() => driverSession().close());
+			await deleteNode(driverSession(), Key, keyId, "deleteKey-adapter", "key");
 		},
+
 		deleteKeysByUserId: async (userId) => {
-			if (!Key) {
-				throw new Error("Key model not defined");
-			}
 			const userKeyBelongsToPattern = new Cypher.Pattern(Key)
-				.related(cypherRelation("BELONGS_TO"))
+				.related(BELONGS_TO_RELATION)
 				.to(User);
 
 			const deleteKeyCypher = new Cypher.Match(userKeyBelongsToPattern)
@@ -322,21 +293,68 @@ export const neo4jAdapter = (
 			const { cypher, params } = deleteKeyCypher.build();
 			await driverSession()
 				.executeWrite(async (tx) => tx.run(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "deleteKeysByUserId", e))
-				.then(() => driverSession().close());
+				.catch((e) => neo4jErrorHandler("deleteKeysByUserId", "user", e))
+				.finally(() => driverSession().close());
 		},
+
 		updateKey: async (keyId, partialKey) => {
-			if (!Key) {
-				throw new Error("Key model not defined");
+			const { user_id: userId, ...keyProperties } = partialKey;
+
+			if (userId) {
+				return await changeNodeRelation(
+					driverSession(),
+					Key,
+					keyId,
+					User,
+					userId,
+					"updateKey-adapter",
+					keyProperties,
+					"key"
+				);
 			}
-			const updateKeyCypher = new Cypher.Match(Key)
-				.where(Key, { id: new Cypher.Param(keyId) })
-				.set(...paramGenerator(partialKey, Key));
-			const { cypher, params } = updateKeyCypher.build();
-			await driverSession()
-				.executeWrite(async (tx) => tx.run(cypher, params))
-				.catch((e) => neo4jErrorHandler(LuciaError, "updateKey", e))
-				.then(() => driverSession().close());
+
+			await updateNode(
+				driverSession(),
+				Key,
+				keyId,
+				keyProperties,
+				"updateKey-adapter",
+				"key"
+			);
+		},
+
+		getSessionAndUser: async (sessionId) => {
+			const matchSessionCypher = new Cypher.Match(
+				belongsToPatten(Session, User)
+			)
+				.where(Session, { id: new Cypher.Param(sessionId) })
+				.return(User, Session);
+
+			const { cypher, params } = matchSessionCypher.build();
+
+			const sessionResult = await driverSession()
+				.executeRead(async (tx) =>
+					tx.run<BelongsToUserParameters<SessionProperties>>(cypher, params)
+				)
+				.catch((e) => neo4jErrorHandler("getSessionAndUser", "session", e))
+				.finally(() => driverSession().close());
+
+			if (!sessionResult) return [null, null];
+
+			const [firstRecord] = sessionResult.records;
+
+			if (!firstRecord) return [null, null];
+
+			const firstKey = firstRecord.get("this0");
+
+			const user = firstRecord.get("this1");
+
+			firstKey.properties.user_id = user.properties.id;
+
+			return [
+				transformSessionNode(`getSessionAndUser-adapter`, firstKey.properties),
+				transformUserNode(`getSessionAndUser-adapter`, user.properties)
+			];
 		}
 	};
 

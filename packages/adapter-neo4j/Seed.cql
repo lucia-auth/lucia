@@ -1,7 +1,7 @@
 // Create uniqueness constraints
 CREATE CONSTRAINT IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE;
 CREATE CONSTRAINT IF NOT EXISTS FOR (uk:UserKey) REQUIRE uk.id IS UNIQUE;
-CREATE CONSTRAINT IF NOT EXISTS FOR (us:UserSession) REQUIRE us.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (us:S) REQUIRE us.id IS UNIQUE;
 
 // Merge nodes and relationships
 MERGE (user1:User {id: 'user1'})

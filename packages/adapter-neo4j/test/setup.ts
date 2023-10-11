@@ -1,5 +1,6 @@
 import { driver, session } from "./db";
 
+
 (async () => {
 	console.log("Executing setup...");
 
