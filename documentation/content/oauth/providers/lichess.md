@@ -52,7 +52,10 @@ interface LichessAuth<_Auth extends Auth> {
 	getAuthorizationUrl: () => Promise<
 		readonly [url: URL, codeVerifier: string, state: string]
 	>;
-	validateCallback: (code: string) => Promise<LichessUserAuth<_Auth>>;
+	validateCallback: (
+		code: string,
+		codeVerifier: string
+	) => Promise<LichessUserAuth<_Auth>>;
 }
 ```
 

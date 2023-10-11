@@ -112,7 +112,7 @@ export const db = new Kysely<Database>({
 ```ts
 // lucia.ts
 import { lucia } from "lucia";
-import { pg } from "@lucia-auth/adapter-mysql";
+import { pg } from "@lucia-auth/adapter-postgresql";
 
 import { pool } from "./db.js";
 
