@@ -94,7 +94,7 @@ export class Database {
 		return {
 			id: options?.id ?? generateRandomString(30),
 			user_id: keyUserId,
-			hashed_password: "lol"
+			hashed_password: null
 		};
 	};
 
