@@ -1,7 +1,6 @@
 import { debug } from "../utils/debug.js";
 
 import { LuciaError } from "./error.js";
-import { createHeadersFromObject } from "../utils/request.js";
 import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
 
 import type { Auth, Env, Session } from "./index.js";
@@ -22,24 +21,7 @@ export type Middleware<Args extends any[] = any> = (context: {
 	args: Args;
 	env: Env;
 	sessionCookieName: string;
-}) => MiddlewareRequestContext;
-
-type MiddlewareRequestContext = Omit<RequestContext, "request"> & {
-	sessionCookie?: string | null;
-	request: {
-		method: string;
-		url?: string;
-		headers:
-			| Pick<Headers, "get">
-			| {
-					origin: string | null;
-					cookie: string | null;
-					authorization: string | null;
-			  }; // remove regular object: v3
-		storedSessionCookie?: string | null; // remove: v3
-	};
-	setCookie: (cookie: Cookie) => void;
-};
+}) => RequestContext;
 
 export type CSRFProtectionConfiguration = {
 	host?: string;
@@ -207,22 +189,3 @@ export class AuthRequest<_Auth extends Auth = any> {
 		return false;
 	};
 }
-
-export const transformRequestContext = ({
-	request,
-	setCookie,
-	sessionCookie
-}: MiddlewareRequestContext): RequestContext => {
-	return {
-		request: {
-			url: request.url,
-			method: request.method,
-			headers:
-				"authorization" in request.headers
-					? createHeadersFromObject(request.headers)
-					: request.headers
-		},
-		setCookie,
-		sessionCookie: sessionCookie ?? request.storedSessionCookie
-	};
-};

@@ -5,13 +5,12 @@ import { generateRandomString } from "../utils/nanoid.js";
 import { LuciaError } from "./error.js";
 import { parseCookie } from "../utils/cookie.js";
 import { isValidDatabaseSession } from "./session.js";
-import { AuthRequest, transformRequestContext } from "./request.js";
+import { AuthRequest } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
 import { isWithinExpiration } from "../utils/date.js";
 import { createAdapter } from "./adapter.js";
 import { createKeyId } from "./database.js";
-import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
 
 import type { Cookie, SessionCookieConfiguration } from "./cookie.js";
 import type { UserSchema, SessionSchema, KeySchema } from "./database.js";
@@ -23,7 +22,6 @@ import type {
 	RegisteredAuth
 } from "../index.js";
 
-
 export type Session = Readonly<{
 	user: User;
 	sessionId: string;
@@ -31,7 +29,8 @@ export type Session = Readonly<{
 	idlePeriodExpiresAt: Date;
 	state: "idle" | "active";
 	fresh: boolean;
-}> & ReturnType<RegisteredAuth["getSessionAttributes"]>;
+}> &
+	ReturnType<RegisteredAuth["getSessionAttributes"]>;
 
 export type Key = Readonly<{
 	userId: string;
@@ -266,12 +265,13 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 
 	public createUser = async (options: {
 		userId?: string;
-		key: {
+		attributes: DatabaseUserAttributes;
+		/* @deprecated use `Auth.createUserWithKey()` instead (to be removed in v4) */
+		key?: {
 			providerId: string;
 			providerUserId: string;
 			password: string | null;
 		} | null;
-		attributes: DatabaseUserAttributes;
 	}): Promise<User> => {
 		const userId = options.userId ?? generateRandomString(15);
 		const userAttributes = options.attributes ?? {};
@@ -279,7 +279,7 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 			...userAttributes,
 			id: userId
 		} satisfies UserSchema;
-		if (options.key === null) {
+		if (options.key === null || options.key === undefined) {
 			await this.adapter.setUser(databaseUser, null);
 			return this.transformDatabaseUser(databaseUser);
 		}
@@ -296,6 +296,39 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 			hashed_password: hashedPassword
 		});
 		return this.transformDatabaseUser(databaseUser);
+	};
+
+	public createUserWithKey = async (options: {
+		userId?: string;
+		attributes: DatabaseUserAttributes;
+		key: {
+			providerId: string;
+			providerUserId: string;
+			password: string | null;
+		};
+	}): Promise<[user: User, key: Key]> => {
+		const userId = options.userId ?? generateRandomString(15);
+		const userAttributes = options.attributes ?? {};
+		const databaseUser = {
+			...userAttributes,
+			id: userId
+		} satisfies UserSchema;
+		const keyId = createKeyId(
+			options.key.providerId,
+			options.key.providerUserId
+		);
+		const password = options.key.password;
+		const hashedPassword =
+			password === null ? null : await this.passwordHash.generate(password);
+		const databaseKey = {
+			id: keyId,
+			user_id: userId,
+			hashed_password: hashedPassword
+		};
+		await this.adapter.setUser(databaseUser, databaseKey);
+		const user = this.transformDatabaseUser(databaseUser);
+		const key = this.transformDatabaseKey(databaseKey);
+		return [user, key];
 	};
 
 	public updateUserAttributes = async (
@@ -467,56 +500,6 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 		);
 	};
 
-	/**
-	 * @deprecated To be removed in next major release
-	 */
-	public validateRequestOrigin = (request: {
-		url: string | null;
-		method: string | null;
-		headers: {
-			origin: string | null;
-		};
-	}): void => {
-		if (request.method === null) {
-			debug.request.fail("Request method unavailable");
-			throw new LuciaError("AUTH_INVALID_REQUEST");
-		}
-		if (request.url === null) {
-			debug.request.fail("Request url unavailable");
-			throw new LuciaError("AUTH_INVALID_REQUEST");
-		}
-		if (
-			request.method.toUpperCase() !== "GET" &&
-			request.method.toUpperCase() !== "HEAD"
-		) {
-			const requestOrigin = request.headers.origin;
-			if (!requestOrigin) {
-				debug.request.fail("No request origin available");
-				throw new LuciaError("AUTH_INVALID_REQUEST");
-			}
-			try {
-				const url = safeParseUrl(request.url);
-				const allowedSubDomains =
-					typeof this.csrfProtection === "object"
-						? this.csrfProtection.allowedSubDomains ?? []
-						: [];
-				if (
-					url === null ||
-					!isAllowedOrigin(requestOrigin, url.origin, allowedSubDomains)
-				) {
-					throw new LuciaError("AUTH_INVALID_REQUEST");
-				}
-				debug.request.info("Valid request origin", requestOrigin);
-			} catch {
-				debug.request.fail("Invalid origin string", requestOrigin);
-				// failed to parse url
-				throw new LuciaError("AUTH_INVALID_REQUEST");
-			}
-		} else {
-			debug.request.notice("Skipping CSRF check");
-		}
-	};
-
 	public readSessionCookie = (
 		cookieHeader: string | null | undefined
 	): string | null => {
@@ -568,13 +551,11 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 			this.sessionCookieConfig.name ?? DEFAULT_SESSION_COOKIE_NAME;
 		return new AuthRequest(this, {
 			csrfProtection: this.csrfProtection,
-			requestContext: transformRequestContext(
-				middleware({
-					args,
-					env: this.env,
-					sessionCookieName: sessionCookieName
-				})
-			)
+			requestContext: middleware({
+				args,
+				env: this.env,
+				sessionCookieName: sessionCookieName
+			})
 		});
 	};
 
