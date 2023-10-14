@@ -44,6 +44,7 @@ We also have framework specific guides.
 - GitHub
 - GitLab
 - Google
+- Kakao
 - Lichess
 - Line
 - LinkedIn

@@ -50,6 +50,10 @@ See [GitLab](/oauth/providers/gitlab) provider.
 
 See [Google](/oauth/providers/google) provider.
 
+## `kakao()`
+
+See [Kakao](/oauth/providers/kakao) provider.
+
 ## `lichess()`
 
 See [Lichess](/oauth/providers/lichess) provider.
