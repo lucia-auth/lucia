@@ -83,7 +83,7 @@ export type KakaoTokens = {
 ### `KakaoUser`
 
 ```ts
-export type KakaoTokens = {
+type KakaoTokens = {
 	token_type: string;
 	access_token: string;
 	expires_in: number;
@@ -93,7 +93,7 @@ export type KakaoTokens = {
 	id_token?: string;
 };
 
-export type KakaoUser = {
+type KakaoUser = {
 	id: number;
 	has_signed_up?: boolean;
 	connected_at?: string;
