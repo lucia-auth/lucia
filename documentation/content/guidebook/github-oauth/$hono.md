@@ -214,7 +214,7 @@ You can validate requests and get the current session/user by using [`AuthReques
 You can see that `User.username` exists because we defined it with `getUserAttributes()` configuration.
 
 ```ts
-get("/user", async (context) => {
+app.get("/user", async (context) => {
 	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate();
 	if (session) {
