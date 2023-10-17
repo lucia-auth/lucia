@@ -52,7 +52,7 @@ export class KakaoAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		code: string
 	): Promise<KakaoUserAuth<_Auth>> => {
 		const kakaoTokens = await this.validateAuthorizationCode(code);
-		const kakaoUser = await getKakaoUser(kakaoTokens.access_token);
+		const kakaoUser = await getKakaoUser(kakaoTokens.accessToken);
 		return new KakaoUserAuth(this.auth, kakaoUser, kakaoTokens);
 	};
 
@@ -95,13 +95,13 @@ export class KakaoUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 }
 
 export type KakaoTokens = {
-	token_type: string;
-	access_token: string;
-	expires_in: number;
-	refresh_token: string;
-	refresh_token_expires_in: number;
+	tokenType: string;
+	accessToken: string;
+	expiresIn: number;
+	refreshToken: string;
+	refreshTokenExpiresIn: number;
 	scope?: string;
-	id_token?: string;
+	idToken?: string;
 };
 
 export type KakaoUser = {

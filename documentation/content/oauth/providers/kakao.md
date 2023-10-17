@@ -29,7 +29,7 @@ const kakao: (
 ##### Parameters
 
 | name                  | type                                       | description                   | optional |
-|-----------------------|--------------------------------------------|-------------------------------|:--------:|
+| --------------------- | ------------------------------------------ | ----------------------------- | :------: |
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                |          |
 | `config.clientId`     | `string`                                   | Kakao OAuth app client id     |          |
 | `config.clientSecret` | `string`                                   | Kakao OAuth app client secret |          |
@@ -39,7 +39,7 @@ const kakao: (
 ##### Returns
 
 | type                              | description    |
-|-----------------------------------|----------------|
+| --------------------------------- | -------------- |
 | [`KakaoProvider`](#kakaoprovider) | Kakao provider |
 
 ## Interfaces
@@ -57,26 +57,26 @@ interface KakaoAuth<_Auth extends Auth> {
 ```
 
 | type                              |
-|-----------------------------------|
+| --------------------------------- |
 | [`KakaoUserAuth`](#kakaouserauth) |
 
 ##### Generics
 
 | name    | extends                                    | default |
-|---------|--------------------------------------------|---------|
+| ------- | ------------------------------------------ | ------- |
 | `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `KakaoTokens`
 
 ```ts
-export type KakaoTokens = {
-	token_type: string;
-	access_token: string;
-	expires_in: number;
-	refresh_token: string;
-	refresh_token_expires_in: number;
-	scope?: string;
-	id_token?: string;
+type KakaoTokens = {
+    tokenType: string;
+    accessToken: string;
+    expiresIn: number;
+    refreshToken: string;
+    refreshTokenExpiresIn: number;
+    scope?: string;
+    idToken?: string;
 };
 ```
 
@@ -170,7 +170,7 @@ interface KakaoUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 ```
 
 | properties    | type                          | description       |
-|---------------|-------------------------------|-------------------|
+| ------------- | ----------------------------- | ----------------- |
 | `kakaoUser`   | [`KakaoUser`](#kakaouser)     | Kakao user        |
 | `kakaoTokens` | [`KakaoTokens`](#kakaotokens) | Access tokens etc |
 
