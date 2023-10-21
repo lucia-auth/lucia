@@ -127,7 +127,7 @@ const getKeycloakRoles = (accessToken: string): KeycloakRole[] => {
 	if (tokenDecoded.hasOwnProperty('realm_access')) {
 		for (const role of tokenDecoded.realm_access.roles) {
 			keycloakRoles.push({
-				type: 'realm',
+				role_type: 'realm',
 				client: null,
 				role: role
 			})
@@ -137,7 +137,7 @@ const getKeycloakRoles = (accessToken: string): KeycloakRole[] => {
 		for (const [key, client] of Object.entries(tokenDecoded.resource_access)) {
 			for (const role of client.roles) {
 				keycloakRoles.push({
-					type: 'resource',
+					role_type: 'resource',
 					client: key,
 					role: role
 				})
@@ -226,7 +226,7 @@ export type KeycloakUser = {
 }
 
 export type KeycloakRole = {
-	type: "realm" | "resource",
+	role_type: "realm" | "resource",
 	client: null | string, // null if realm_access
 	role: string
 }
