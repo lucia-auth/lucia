@@ -1,7 +1,6 @@
 import {
 	OAuth2ProviderAuthWithPKCE,
 	createOAuth2AuthorizationUrlWithPKCE,
-	refreshOAuth2Tokens,
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
@@ -84,27 +83,6 @@ export class KeycloakAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuthW
 		);
 
 		return this.claimTokens(rawTokens)
-	};
-
-	public refreshTokens = async (
-		refreshToken: string
-	): Promise<KeycloakUserAuth<_Auth>> => {
-		const rawTokens = await refreshOAuth2Tokens<AccessTokenResponseBody>(
-			`https://${ this.config.domain }/realms/${ this.config.realm }/protocol/openid-connect/token`,
-			{
-				clientId: this.config.clientId,
-				refreshToken: refreshToken,
-				clientPassword: {
-					authenticateWith: "http_basic_auth",
-					clientSecret: this.config.clientSecret
-				}
-			}
-		);
-		const keycloakTokens = this.claimTokens(rawTokens)
-		
-		const keycloakUser = await getKeycloakUser(this.config.domain, this.config.realm, keycloakTokens.accessToken);
-		const keycloakRoles = getKeycloakRoles(keycloakTokens.accessToken)
-		return new KeycloakUserAuth(this.auth, keycloakUser, keycloakTokens, keycloakRoles);
 	};
 
 	private claimTokens = (tokens: AccessTokenResponseBody): KeycloakTokens => {
@@ -240,6 +218,7 @@ export type KeycloakUser = {
     name: string;
     preferred_username: string;
     given_name: string;
+	locale: string;
     family_name: string;
     email: string;
     picture: string;
