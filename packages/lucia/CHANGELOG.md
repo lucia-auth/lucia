@@ -1,5 +1,11 @@
 # lucia
 
+## 2.7.2
+
+### Patch changes
+
+- [#1212](https://github.com/lucia-auth/lucia/pull/1212) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove dev dependencies for typing
+
 ## 2.7.1
 
 ### Patch changes
