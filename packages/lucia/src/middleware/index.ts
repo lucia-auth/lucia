@@ -7,18 +7,19 @@ import type {
 	RequestContext
 } from "../auth/request.js";
 
-import type {
-	IncomingMessage,
-	OutgoingMessage,
-	ServerResponse
-} from "node:http";
-import type {
-	Request as ExpressRequest,
-	Response as ExpressResponse
-} from "express";
-import type { FastifyReply, FastifyRequest } from "fastify";
+type NodeIncomingMessage = {
+	method?: string;
+	headers: Record<string, string | string[] | undefined>;
+};
 
-export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
+type NodeOutGoingMessage = {
+	getHeader: (name: string) => string | string[] | number | undefined;
+	setHeader: (name: string, value: string | number | readonly string[]) => void;
+};
+
+export const node = (): Middleware<
+	[NodeIncomingMessage, NodeOutGoingMessage]
+> => {
 	return ({ args }) => {
 		const [incomingMessage, outgoingMessage] = args;
 		const requestContext = {
@@ -27,22 +28,31 @@ export const node = (): Middleware<[IncomingMessage, OutgoingMessage]> => {
 				headers: createHeadersFromObject(incomingMessage.headers)
 			},
 			setCookie: (cookie) => {
-				const setCookieHeaderValues =
-					outgoingMessage
-						.getHeader("Set-Cookie")
-						?.toString()
-						.split(",")
-						.filter((val) => val) ?? [];
-
+				let parsedSetCookieHeaderValues: string[] = [];
+				const setCookieHeaderValue = outgoingMessage.getHeader("Set-Cookie");
+				if (typeof setCookieHeaderValue === "string") {
+					parsedSetCookieHeaderValues = [setCookieHeaderValue];
+				} else if (Array.isArray(setCookieHeaderValue)) {
+					parsedSetCookieHeaderValues = setCookieHeaderValue;
+				}
 				outgoingMessage.setHeader("Set-Cookie", [
 					cookie.serialize(),
-					...setCookieHeaderValues
+					...parsedSetCookieHeaderValues
 				]);
 			}
 		} as const satisfies RequestContext;
 
 		return requestContext;
 	};
+};
+
+type ExpressRequest = {
+	method: string;
+	headers: Record<string, string | string[] | undefined>;
+};
+
+type ExpressResponse = {
+	cookie: (name: string, val: string, options?: CookieAttributes) => void;
 };
 
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
@@ -59,6 +69,15 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 		} as const satisfies RequestContext;
 		return requestContext;
 	};
+};
+
+type FastifyRequest = {
+	method: string;
+	headers: Record<string, string | string[] | undefined>;
+};
+
+type FastifyReply = {
+	header: (name: string, val: any) => void;
 };
 
 export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
@@ -197,8 +216,8 @@ export const web = (): Middleware<[Request]> => {
 };
 
 type NextJsPagesServerContext = {
-	req: IncomingMessage;
-	res?: OutgoingMessage;
+	req: NodeIncomingMessage;
+	res?: NodeOutGoingMessage;
 };
 
 type NextCookie =
@@ -362,8 +381,8 @@ export const nextjs_future = (): Middleware<
 
 type H3Event = {
 	node: {
-		req: IncomingMessage;
-		res: ServerResponse;
+		req: NodeIncomingMessage;
+		res: NodeOutGoingMessage;
 	};
 };
 
