@@ -64,7 +64,11 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 				headers: createHeadersFromObject(req.headers)
 			},
 			setCookie: (cookie) => {
-				res.cookie(cookie.name, cookie.value, cookie.attributes);
+				const cookieMaxAge = cookie.attributes.maxAge;
+				res.cookie(cookie.name, cookie.value, {
+					...cookie.attributes,
+					maxAge: cookieMaxAge ? cookieMaxAge * 1000 : cookieMaxAge
+				});
 			}
 		} as const satisfies RequestContext;
 		return requestContext;
