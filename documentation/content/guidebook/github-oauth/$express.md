@@ -132,7 +132,7 @@ app.get("/login/github", async (req, res) => {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		path: "/",
-		maxAge: 60 * 60
+		maxAge: 60 * 60 * 1000 // 1 hour
 	});
 	return res.status(302).setHeader("Location", url.toString()).end();
 });
