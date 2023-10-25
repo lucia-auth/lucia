@@ -109,9 +109,45 @@ import { fastify } from "lucia/middleware";
 ```
 
 ```ts
-server.get("/"(request, reply) => {
+server.get("/", (request, reply) => {
 	const authRequest = auth.handleRequest(request, reply);
 });
+```
+
+to add globally for every request:
+```ts
+// luciaPlugin.ts
+import fp from `fastify-plugin`
+import { auth } from "./lucia.ts";
+
+export default fp(async (instance, opts) => {
+	instance.decorateRequest('lucia', null)
+	instance.addHook('onRequest', (request, reply, done) => {
+		request.lucia = auth.handleRequest(request, reply)
+		done()
+	}
+},{
+	name: 'lucia'
+})
+declare module 'fastify' {
+	interface FastifyRequest {
+		lucia: typeof auth.handleRequest	
+	}
+}
+```
+```ts
+// app.ts: register like any other plugin
+import luciaPlugin from './luciaPlugin.ts'
+// ...
+fastify.register(luciaPlugin)
+// ...
+```
+```ts
+// use it
+fastify.get('/', async function (request,reply) {
+	const session = request.lucia.validate()
+	// ...
+}
 ```
 
 ### H3
