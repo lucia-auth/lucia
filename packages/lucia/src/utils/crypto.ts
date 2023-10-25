@@ -1,5 +1,5 @@
 import { LuciaError } from "../auth/error.js";
-import scrypt from "../scrypt/index.js";
+import { scrypt } from "hash-wasm";
 import { generateRandomString } from "./nanoid.js";
 
 export const generateScryptHash = async (s: string): Promise<string> => {
@@ -13,17 +13,15 @@ const hashWithScrypt = async (
 	salt: string,
 	blockSize = 16
 ): Promise<string> => {
-	const keyUint8Array = await scrypt(
-		new TextEncoder().encode(s),
-		new TextEncoder().encode(salt),
-		{
-			N: 16384,
-			r: blockSize,
-			p: 1,
-			dkLen: 64
-		}
-	);
-	return convertUint8ArrayToHex(keyUint8Array);
+	return await scrypt({
+		password: new TextEncoder().encode(s),
+		salt: new TextEncoder().encode(salt),
+		costFactor: 16384,
+		blockSize: blockSize,
+		parallelism: 1,
+		hashLength: 64,
+		outputType: "hex"
+	});
 };
 
 export const validateScryptHash = async (
