@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-prisma
 
+## 3.0.2
+
+### Patch changes
+
+- [#1166](https://github.com/lucia-auth/lucia/pull/1166) by [@timnghg](https://github.com/timnghg) : Fix type `Adapter.updateKey()`, rename param `userId` to `keyId`
+
 ## 3.0.1
 
 ### Patch changes

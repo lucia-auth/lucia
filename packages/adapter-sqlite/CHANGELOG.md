@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-sqlite
 
+## 2.0.1
+
+### Patch changes
+
+- [#1202](https://github.com/lucia-auth/lucia/pull/1202) by [@ollema](https://github.com/ollema) : Update `better-sqlite3` peer dependency to include version 9.x
+
 ## 2.0.0
 
 ### Major changes
