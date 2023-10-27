@@ -1,6 +1,12 @@
 import { LuciaError } from "../auth/error.js";
-import scrypt from "../scrypt/index.js";
-import { generateRandomString } from "./nanoid.js";
+import { scryptAsync as scrypt } from "@noble/hashes/scrypt";
+import { customAlphabet } from "nanoid";
+
+export const generateRandomString = (length: number, alphabet?: string) => {
+	const DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz1234567890";
+	const customNanoid = customAlphabet(alphabet ?? DEFAULT_ALPHABET);
+	return customNanoid(length);
+};
 
 export const generateScryptHash = async (s: string): Promise<string> => {
 	const salt = generateRandomString(16);
