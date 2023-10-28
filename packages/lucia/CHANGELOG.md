@@ -1,5 +1,13 @@
 # lucia
 
+## 2.7.3
+
+### Patch changes
+
+- [#1217](https://github.com/lucia-auth/lucia/pull/1217) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `express()` middleware setting incorrect `Max-Age` cookie attribute
+
+- [#1158](https://github.com/lucia-auth/lucia/pull/1158) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update dependencies
+
 ## 2.7.2
 
 ### Patch changes
