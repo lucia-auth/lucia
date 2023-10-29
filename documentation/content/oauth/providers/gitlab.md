@@ -24,19 +24,21 @@ const gitlab: (
 		clientSecret: string;
 		redirectUri: string;
 		scope?: string[];
+		serverUrl?: string;
 	}
 ) => GitlabProvider;
 ```
 
 ##### Parameters
 
-| name                  | type                                       | description                    | optional |
-| --------------------- | ------------------------------------------ | ------------------------------ | :------: |
-| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
-| `config.clientId`     | `string`                                   | GitLab OAuth app client id     |          |
-| `config.clientSecret` | `string`                                   | GitLab OAuth app client secret |          |
-| `config.redirectUri`  | `string`                                   | an authorized redirect URI     |          |
-| `config.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
+| name                  | type                                       | description                                   | optional |
+| --------------------- | ------------------------------------------ | --------------------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                |          |
+| `config.clientId`     | `string`                                   | GitLab OAuth app client id                    |          |
+| `config.clientSecret` | `string`                                   | GitLab OAuth app client secret                |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI                    |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                            |    ✓     |
+| `config.serverUrl`    | `string`                                   | URL of GitLab, to use a self-managed instance |    ✓     |
 
 ##### Returns
 
