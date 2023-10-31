@@ -19,6 +19,7 @@ const createPreparedStatementHelper = (
 const ESCAPE_CHAR = `"`;
 
 export const escapeName = (val: string) => {
+	if (val.includes(".")) return val;
 	return `${ESCAPE_CHAR}${val}${ESCAPE_CHAR}`;
 };
 
