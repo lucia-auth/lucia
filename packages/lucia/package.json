@@ -56,5 +56,8 @@
 		"fastify": "^4.21.0",
 		"prettier": "^2.3.0",
 		"vitest": "^0.33.0"
+	},
+	"dependencies": {
+		"oslo": "^0.14.0"
 	}
 }
