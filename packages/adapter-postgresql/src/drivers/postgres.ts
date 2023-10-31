@@ -259,7 +259,7 @@ export async function get<_Schema extends {}>(
 export async function getAll<_Schema extends {}>(
 	queryPromise: PendingQuery<_Schema[]>
 ) {
-	return await queryPromise;
+	return Array.from(await queryPromise);
 }
 
 function processException(e: any) {

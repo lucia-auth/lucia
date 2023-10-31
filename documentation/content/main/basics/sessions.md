@@ -147,7 +147,7 @@ import { auth } from "./lucia.js";
 import { LuciaError } from "lucia";
 
 try {
-	const session = await auth.validateSession(sessionId);
+	const session = await auth.getSession(sessionId);
 	if (session.state === "active") {
 		// valid sessions
 	} else {

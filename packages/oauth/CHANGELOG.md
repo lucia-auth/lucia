@@ -1,5 +1,17 @@
 # @lucia-auth/oauth
 
+## 3.3.2
+
+### Patch changes
+
+- [#1226](https://github.com/lucia-auth/lucia/pull/1226) by [@nlfmt](https://github.com/nlfmt) : Fix `DiscordUser`
+
+## 3.3.1
+
+### Patch changes
+
+- [#1179](https://github.com/lucia-auth/lucia/pull/1179) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update params `appDomain` for `auth0()`
+
 ## 3.3.0
 
 ### Minor changes

@@ -11,7 +11,7 @@ Some methods shown in this page is included in [`AuthRequest`](/reference/lucia/
 
 If you're working with cookies, **CSRF protection must be implemented** to prevent [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf).
 
-Lucia offers built-in CSRF protection when validating session cookies by checking the `Origin` header. This means all GET, OPTIONS, HEAD, and TRACE requests will be rejected by default if they're not a same-origin request (domain and subdomain must match). You can disable this feature or configure its behavior with the [`csrfProtection.allowedSubdomains`](/basics/configuration#csrfprotection) configuration.
+Lucia offers built-in CSRF protection when validating session cookies by checking the `Origin` header. This means all requests that are not GET, OPTIONS, HEAD, or TRACE methods will be rejected by default if they're not a same-origin request (domain and subdomain must match). You can disable this feature or configure its behavior with the [`csrfProtection.allowedSubdomains`](/basics/configuration#csrfprotection) configuration.
 
 **GET requests are not protected by Lucia and they should not modify server state (e.g. update password and profile) without additional protections.**
 
@@ -78,7 +78,7 @@ const session = await authRequest.validate();
 
 ## Set session cookies
 
-You can set session cookies by passing `Session` to [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). You can pass `null` to
+You can set session cookies by passing `Session` to [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). You can pass `null` to delete session cookies.
 
 ```ts
 import { auth } from "./lucia.js";
