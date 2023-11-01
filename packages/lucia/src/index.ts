@@ -1,31 +1,20 @@
 import { Auth } from "./auth/index.js";
 
 export { lucia } from "./auth/index.js";
-export { DEFAULT_SESSION_COOKIE_NAME } from "./auth/cookie.js";
 export { LuciaError } from "./auth/error.js";
-export { createKeyId } from "./auth/database.js";
 
 export type {
 	User,
-	Key,
 	Session,
 	Configuration,
 	Env,
-	Auth
-} from "./auth/index.js";
-export type {
-	Adapter,
-	InitializeAdapter,
-	UserAdapter,
-	SessionAdapter
-} from "./auth/adapter.js";
-export type { UserSchema, KeySchema, SessionSchema } from "./auth/database.js";
-export type {
+	Auth,
 	RequestContext,
-	Middleware,
-	AuthRequest
-} from "./auth/request.js";
-export type { Cookie } from "./auth/cookie.js";
+	Middleware
+} from "./auth/index.js";
+export type { Adapter } from "./auth/adapter.js";
+export type { UserSchema, SessionSchema } from "./auth/database.js";
+export type { AuthRequest } from "./auth/request.js";
 export type { LuciaErrorConstructor } from "./auth/error.js";
 
 export interface Register {}

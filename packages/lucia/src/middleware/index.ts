@@ -1,21 +1,17 @@
 import { createHeadersFromObject } from "../utils/request.js";
 
-import type { CookieAttributes } from "../utils/cookie.js";
-import type {
-	LuciaRequest,
-	Middleware,
-	RequestContext
-} from "../auth/request.js";
+import type { CookieAttributes } from "oslo/cookie";
+import type { Middleware, RequestContext } from "../auth/index.js";
 
-type NodeIncomingMessage = {
+interface NodeIncomingMessage {
 	method?: string;
 	headers: Record<string, string | string[] | undefined>;
-};
+}
 
-type NodeOutGoingMessage = {
+interface NodeOutGoingMessage {
 	getHeader: (name: string) => string | string[] | number | undefined;
 	setHeader: (name: string, value: string | number | readonly string[]) => void;
-};
+}
 
 export const node = (): Middleware<
 	[NodeIncomingMessage, NodeOutGoingMessage]
@@ -46,14 +42,14 @@ export const node = (): Middleware<
 	};
 };
 
-type ExpressRequest = {
+interface ExpressRequest {
 	method: string;
 	headers: Record<string, string | string[] | undefined>;
-};
+}
 
-type ExpressResponse = {
+interface ExpressResponse {
 	cookie: (name: string, val: string, options?: CookieAttributes) => void;
-};
+}
 
 export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	return ({ args }) => {
@@ -75,14 +71,14 @@ export const express = (): Middleware<[ExpressRequest, ExpressResponse]> => {
 	};
 };
 
-type FastifyRequest = {
+interface FastifyRequest {
 	method: string;
 	headers: Record<string, string | string[] | undefined>;
-};
+}
 
-type FastifyReply = {
+interface FastifyReply {
 	header: (name: string, val: any) => void;
-};
+}
 
 export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
 	return ({ args }) => {
@@ -100,13 +96,13 @@ export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
 	};
 };
 
-type SvelteKitRequestEvent = {
+interface SvelteKitRequestEvent {
 	request: Request;
 	cookies: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
 		get: (name: string) => string | undefined;
 	};
-};
+}
 
 export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 	return ({ args, sessionCookieName }) => {
@@ -150,7 +146,7 @@ export const astro = (): Middleware<[AstroAPIContext]> => {
 	};
 };
 
-type QwikRequestEvent = {
+interface QwikRequestEvent {
 	request: Request;
 	cookie: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
@@ -158,7 +154,7 @@ type QwikRequestEvent = {
 			value: string;
 		} | null;
 	};
-};
+}
 
 export const qwik = (): Middleware<[QwikRequestEvent]> => {
 	return ({ args, sessionCookieName }) => {
@@ -174,14 +170,14 @@ export const qwik = (): Middleware<[QwikRequestEvent]> => {
 	};
 };
 
-type ElysiaContext = {
+interface ElysiaContext {
 	request: Request;
 	set: {
 		headers: Record<string, string> & {
 			["Set-Cookie"]?: string | string[];
 		};
 	};
-};
+}
 
 export const elysia = (): Middleware<[ElysiaContext]> => {
 	return ({ args }) => {
@@ -219,10 +215,10 @@ export const web = (): Middleware<[Request]> => {
 	};
 };
 
-type NextJsPagesServerContext = {
+interface NextJsPagesServerContext {
 	req: NodeIncomingMessage;
 	res?: NodeOutGoingMessage;
-};
+}
 
 type NextCookie =
 	| {
@@ -240,93 +236,26 @@ type NextHeadersFunction = () => {
 	get: (name: string) => string | null;
 };
 
-type NextRequest = Request & {
+interface NextRequest extends Request {
 	cookies: {
 		get: (name: string) => NextCookie;
 	};
-};
+}
 
-type NextJsAppServerContext = {
+interface NextJsAppServerContext {
 	cookies: NextCookiesFunction;
 	request: NextRequest | null;
-};
+}
 
-export const nextjs = (): Middleware<
-	[NextJsPagesServerContext | NextJsAppServerContext | NextRequest]
-> => {
-	return ({ args, sessionCookieName, env }) => {
-		const [serverContext] = args;
-
-		if ("cookies" in serverContext) {
-			// for some reason `"request" in NextRequest` returns true???
-			const request =
-				typeof serverContext.cookies === "function"
-					? (serverContext as NextJsAppServerContext).request
-					: (serverContext as NextRequest);
-
-			const readonlyCookieStore =
-				typeof serverContext.cookies === "function"
-					? serverContext.cookies()
-					: serverContext.cookies;
-
-			const sessionCookie =
-				readonlyCookieStore.get(sessionCookieName)?.value ?? null;
-			const requestContext = {
-				request: request ?? {
-					method: "GET",
-					headers: new Headers()
-				},
-				sessionCookie,
-				setCookie: (cookie) => {
-					if (typeof serverContext.cookies !== "function") return;
-					const cookieStore = serverContext.cookies();
-					if (!cookieStore.set) return;
-					try {
-						cookieStore.set(cookie.name, cookie.value, cookie.attributes);
-					} catch {
-						// ignore - set() is not available
-					}
-				}
-			} as const satisfies RequestContext;
-			return requestContext;
-		}
-
-		const req = "req" in serverContext ? serverContext.req : serverContext;
-		const res = "res" in serverContext ? serverContext.res : null;
-
-		const request = {
-			method: req.method ?? "",
-			headers: createHeadersFromObject(req.headers)
-		} satisfies LuciaRequest;
-
-		return {
-			request,
-			setCookie: (cookie) => {
-				if (!res) return;
-				const setCookieHeaderValues =
-					res
-						.getHeader("Set-Cookie")
-						?.toString()
-						.split(",")
-						.filter((val) => val) ?? [];
-				res.setHeader("Set-Cookie", [
-					cookie.serialize(),
-					...setCookieHeaderValues
-				]);
-			}
-		};
-	};
-};
-
-type NextJsAppServerContext_V3 = {
+interface NextJsAppServerContext {
 	headers: NextHeadersFunction;
 	cookies: NextCookiesFunction;
-};
+}
 
-export const nextjs_future = (): Middleware<
+export const nextjs = (): Middleware<
 	| [NextJsPagesServerContext]
 	| [NextRequest]
-	| [requestMethod: string, context: NextJsAppServerContext_V3]
+	| [requestMethod: string, context: NextJsAppServerContext]
 > => {
 	return ({ args, sessionCookieName }) => {
 		if (args.length === 2) {
@@ -383,12 +312,12 @@ export const nextjs_future = (): Middleware<
 	};
 };
 
-type H3Event = {
+interface H3Event {
 	node: {
 		req: NodeIncomingMessage;
 		res: NodeOutGoingMessage;
 	};
-};
+}
 
 export const h3 = (): Middleware<[H3Event]> => {
 	const nodeMiddleware = node();
@@ -403,14 +332,14 @@ export const h3 = (): Middleware<[H3Event]> => {
 	};
 };
 
-type HonoContext = {
+interface HonoContext {
 	req: {
 		url: string;
 		method: string;
 		headers: Headers;
 	};
 	header: (name: string, value: string) => void;
-};
+}
 
 export const hono = (): Middleware<[HonoContext]> => {
 	return ({ args }) => {

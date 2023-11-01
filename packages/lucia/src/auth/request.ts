@@ -1,191 +1,114 @@
 import { debug } from "../utils/debug.js";
-
 import { LuciaError } from "./error.js";
-import { isAllowedOrigin, safeParseUrl } from "../utils/url.js";
 
-import type { Auth, Env, Session } from "./index.js";
-import type { Cookie } from "./cookie.js";
-
-export type LuciaRequest = {
-	method: string;
-	url?: string;
-	headers: Pick<Headers, "get">;
-};
-export type RequestContext = {
-	sessionCookie?: string | null;
-	request: LuciaRequest;
-	setCookie: (cookie: Cookie) => void;
-};
-
-export type Middleware<Args extends any[] = any> = (context: {
-	args: Args;
-	env: Env;
-	sessionCookieName: string;
-}) => RequestContext;
-
-export type CSRFProtectionConfiguration = {
-	host?: string;
-	hostHeader?: string;
-	allowedSubDomains?: string[] | "*";
-};
+import type { SessionCookie } from "oslo/session";
+import type { Auth, Session, User } from "./index.js";
 
 export class AuthRequest<_Auth extends Auth = any> {
 	private auth: _Auth;
-	private requestContext: RequestContext;
+	private sessionCookie: string | null;
+	private bearerToken: string | null;
+	private setCookie: (cookie: SessionCookie) => void;
 
 	constructor(
 		auth: _Auth,
-		config: {
-			requestContext: RequestContext;
-			csrfProtection: boolean | CSRFProtectionConfiguration;
-		}
+		sessionCookie: string | null,
+		bearerToken: string | null,
+		setCookie: (cookie: SessionCookie) => void
 	) {
-		debug.request.init(
-			config.requestContext.request.method,
-			config.requestContext.request.url ?? "(url unknown)"
-		);
 		this.auth = auth;
-		this.requestContext = config.requestContext;
-
-		const csrfProtectionConfig =
-			typeof config.csrfProtection === "object" ? config.csrfProtection : {};
-		const csrfProtectionEnabled = config.csrfProtection !== false;
-
-		if (
-			!csrfProtectionEnabled ||
-			this.isValidRequestOrigin(csrfProtectionConfig)
-		) {
-			this.storedSessionId =
-				this.requestContext.sessionCookie ??
-				auth.readSessionCookie(
-					this.requestContext.request.headers.get("Cookie")
-				);
-		} else {
-			this.storedSessionId = null;
-		}
-		this.bearerToken = auth.readBearerToken(
-			this.requestContext.request.headers.get("Authorization")
-		);
+		this.sessionCookie = sessionCookie;
+		this.bearerToken = bearerToken;
+		this.setCookie = setCookie;
 	}
 
-	private validatePromise: Promise<Session | null> | null = null;
-	private validateBearerTokenPromise: Promise<Session | null> | null = null;
-	private storedSessionId: string | null;
-	private bearerToken: string | null;
+	private validatePromise: Promise<
+		[session: Session, user: User] | [session: null, user: null]
+	> | null = null;
+	private validateBearerTokenPromise: Promise<
+		[session: Session, user: User] | [session: null, user: null]
+	> | null = null;
 
-	public setSession = (session: Session | null) => {
-		const sessionId = session?.sessionId ?? null;
-		if (this.storedSessionId === sessionId) return;
-		this.validatePromise = null;
-		this.setSessionCookie(session);
-	};
-
-	private maybeSetSession = (session: Session | null) => {
+	public setSessionCookie(sessionId: string) {
+		if (this.sessionCookie !== sessionId) {
+			this.validatePromise = null;
+		}
 		try {
-			this.setSession(session);
+			this.setCookie(this.auth.createSessionCookie(sessionId));
+			debug.request.notice("Session cookie set", sessionId);
 		} catch {
-			// ignore error
-			// some middleware throw error
+			// ignore middleware errors
 		}
-	};
+	}
 
-	private setSessionCookie = (session: Session | null) => {
-		const sessionId = session?.sessionId ?? null;
-		if (this.storedSessionId === sessionId) return;
-		this.storedSessionId = sessionId;
-		this.requestContext.setCookie(this.auth.createSessionCookie(session));
-		if (session) {
-			debug.request.notice("Session cookie stored", session.sessionId);
-		} else {
+	public deleteSessionCookie() {
+		if (this.sessionCookie === null) return;
+		this.sessionCookie = null;
+		this.validatePromise = null;
+		try {
+			this.setCookie(this.auth.createBlankSessionCookie());
 			debug.request.notice("Session cookie deleted");
+		} catch {
+			// ignore middleware errors
 		}
-	};
+	}
 
-	public validate = async (): Promise<Session | null> => {
+	public async validate(): Promise<
+		[session: Session, user: User] | [session: null, user: null]
+	> {
 		if (this.validatePromise) {
 			debug.request.info("Using cached result for session validation");
 			return this.validatePromise;
 		}
 		this.validatePromise = new Promise(async (resolve, reject) => {
-			if (!this.storedSessionId) return resolve(null);
+			if (!this.sessionCookie) return resolve([null, null]);
 			try {
-				const session = await this.auth.validateSession(this.storedSessionId);
+				const [session, user] = await this.auth.validateSession(
+					this.sessionCookie
+				);
 				if (session.fresh) {
-					this.maybeSetSession(session);
+					this.setSessionCookie(session.sessionId);
 				}
-				return resolve(session);
-			} catch (e) {
-				if (
-					e instanceof LuciaError &&
-					e.message === "AUTH_INVALID_SESSION_ID"
-				) {
-					this.maybeSetSession(null);
-					return resolve(null);
-				}
-				return reject(e);
-			}
-		});
-
-		return await this.validatePromise;
-	};
-
-	public validateBearerToken = async (): Promise<Session | null> => {
-		if (this.validateBearerTokenPromise) {
-			debug.request.info("Using cached result for bearer token validation");
-			return this.validatePromise;
-		}
-		this.validatePromise = new Promise(async (resolve, reject) => {
-			if (!this.bearerToken) return resolve(null);
-			try {
-				const session = await this.auth.validateSession(this.bearerToken);
-				return resolve(session);
+				return resolve([session, user]);
 			} catch (e) {
 				if (e instanceof LuciaError) {
-					return resolve(null);
+					this.deleteSessionCookie();
+					return resolve([null, null]);
 				}
 				return reject(e);
 			}
 		});
 
 		return await this.validatePromise;
-	};
+	}
+
+	public async validateBearerToken(): Promise<
+		[session: Session, user: User] | [session: null, user: null]
+	> {
+		if (this.validateBearerTokenPromise) {
+			debug.request.info("Using cached result for bearer token validation");
+			return this.validateBearerTokenPromise;
+		}
+		this.validateBearerTokenPromise = new Promise(async (resolve, reject) => {
+			if (!this.bearerToken) return resolve([null, null]);
+			try {
+				const [session, user] = await this.auth.validateSession(
+					this.bearerToken
+				);
+				return resolve([session, user]);
+			} catch (e) {
+				if (e instanceof LuciaError) {
+					return resolve([null, null]);
+				}
+				return reject(e);
+			}
+		});
+
+		return await this.validateBearerTokenPromise;
+	}
 
 	public invalidate(): void {
 		this.validatePromise = null;
 		this.validateBearerTokenPromise = null;
 	}
-
-	private isValidRequestOrigin = (
-		config: CSRFProtectionConfiguration
-	): boolean => {
-		const request = this.requestContext.request;
-		const whitelist = ["GET", "HEAD", "OPTIONS", "TRACE"];
-		if (whitelist.some((val) => val === request.method.toUpperCase())) {
-			return true;
-		}
-		const requestOrigin = request.headers.get("Origin");
-		if (!requestOrigin) return false;
-		if (!requestOrigin) {
-			debug.request.fail("No request origin available");
-			return false;
-		}
-		let host: string | null = null;
-		if (config.host !== undefined) {
-			host = config.host ?? null;
-		} else if (request.url !== null && request.url !== undefined) {
-			host = safeParseUrl(request.url)?.host ?? null;
-		} else {
-			host = request.headers.get(config.hostHeader ?? "Host");
-		}
-		debug.request.info("Host", host ?? "(Host unknown)");
-		if (
-			host !== null &&
-			isAllowedOrigin(requestOrigin, host, config.allowedSubDomains ?? [])
-		) {
-			debug.request.info("Valid request origin", requestOrigin);
-			return true;
-		}
-		debug.request.info("Invalid request origin", requestOrigin);
-		return false;
-	};
 }
