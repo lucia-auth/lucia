@@ -7,7 +7,7 @@ A database is required for storing your users and sessions. Lucia connects to yo
 
 ## Database adapters
 
-There are 2 types of adapters provided by Lucia: Regular adapters, and session adapters. As the name implies, session adapters only handles queries to the session table. This useful for when you want to store your sessions in a different database then your users, such as Redis and other memory stores.
+There are 2 types of adapters provided by Lucia: Regular adapters, and session adapters. As the name implies, session adapters only handles queries to the session table. This is useful for when you want to store your sessions in a different database than your users, such as Redis and other memory stores.
 
 We currently provide the following adapters:
 
