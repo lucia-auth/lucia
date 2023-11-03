@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-postgresql
 
+## 2.0.2
+
+### Patch changes
+
+- [#1237](https://github.com/lucia-auth/lucia/pull/1237) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Stop escaping table names with a schema defined
+
 ## 2.0.1
 
 ### Patch changes
