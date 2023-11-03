@@ -1,68 +1,42 @@
-
-
 ---
-
 title: "Keycloak OAuth provider"
 
 description: "Learn how to use the Keycloak OAuth provider"
-
 ---
-
-  
 
 OAuth integration for Keycloak. Refer to [Keycloak Documentation](https://www.keycloak.org/docs/latest/authorization_services/index.html) for getting the required credentials. Provider id is `keycloak`.
 
-  
-
 ```ts
+import { keycloak } from "@lucia-auth/oauth/providers";
 
-import { keycloak } from  "@lucia-auth/oauth/providers";
+import { auth } from "./lucia.js";
 
-import { auth } from  "./lucia.js";
-
-  
-
-const  keycloakAuth = keycloak(auth, config);
-
+const keycloakAuth = keycloak(auth, config);
 ```
-
-  
 
 ## `keycloak()`
 
-  
-
 ```ts
+const keycloak: (
+	auth: Auth,
 
-const  keycloak: (
+	config: {
+		domain: string;
 
-auth: Auth,
+		realm: string;
 
-config: {
+		clientId: string;
 
-domain: string;
+		clientSecret: string;
 
-realm: string;
+		scope?: string[];
 
-clientId: string;
-
-clientSecret: string;
-
-scope?: string[];
-
-redirectUri?: string;
-
-}
-
-) =>  KeycloakProvider;
-
+		redirectUri?: string;
+	}
+) => KeycloakProvider;
 ```
 
-  
-
 ##### Parameters
-
-  
 
 | name | type | description | optional |
 
@@ -82,11 +56,7 @@ redirectUri?: string;
 
 | `config.redirectUri` | `string` | an authorized redirect URI | ✓ |
 
-  
-
 ##### Returns
-
-  
 
 | type | description |
 
@@ -94,35 +64,21 @@ redirectUri?: string;
 
 | [`KeycloakProvider`](#keycloakprovider) | Keycloak provider |
 
-  
-
 ## Interfaces
-
-  
 
 ### `KeycloakAuth`
 
-  
-
 See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
-  
-
 ```ts
-
 // implements OAuth2ProviderAuth<KeycloakAuth<_Auth>>
 
-interface  KeycloakAuth<_Auth  extends  Auth> {
+interface KeycloakAuth<_Auth extends Auth> {
+	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
 
-getAuthorizationUrl: () =>  Promise<readonly [url: URL, state: string]>;
-
-validateCallback: (code: string) =>  Promise<KeycloakUserAuth<_Auth>>;
-
+	validateCallback: (code: string) => Promise<KeycloakUserAuth<_Auth>>;
 }
-
 ```
-
-  
 
 | type |
 
@@ -130,11 +86,7 @@ validateCallback: (code: string) =>  Promise<KeycloakUserAuth<_Auth>>;
 
 | [`KeycloakUserAuth`](#keycloakuserauth) |
 
-  
-
 ##### Generics
-
-  
 
 | name | extends | default |
 
@@ -142,139 +94,103 @@ validateCallback: (code: string) =>  Promise<KeycloakUserAuth<_Auth>>;
 
 | `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth` |
 
-  
-
 ### `KeycloakTokens`
 
-  
-
 ```ts
+type KeycloakTokens = {
+	accessToken: string;
 
-type  KeycloakTokens = {
+	accessTokenExpiresIn: number;
 
-accessToken:  string;
+	authTime: number;
 
-accessTokenExpiresIn:  number;
+	idleAt: number;
 
-authTime:  number;
+	expiresAt: number;
 
-idleAt:  number;
+	refreshToken: string | null;
 
-expiresAt:  number;
-
-refreshToken:  string  |  null;
-
-refreshTokenExpiresIn:  number  |  null;
-
+	refreshTokenExpiresIn: number | null;
 };
-
 ```
-
-  
 
 ### `KeycloakUser`
 
-  
-
 ```ts
+type KeycloakUser = {
+	exp: number;
 
-type  KeycloakUser = {
+	iat: number;
 
-exp:  number;
+	auth_time: number;
 
-iat:  number;
+	jti: string;
 
-auth_time:  number;
+	iss: string;
 
-jti:  string;
+	aud: string;
 
-iss:  string;
+	sub: string;
 
-aud:  string;
+	typ: string;
 
-sub:  string;
+	azp: string;
 
-typ:  string;
+	session_state: string;
 
-azp:  string;
+	at_hash: string;
 
-session_state:  string;
+	acr: string;
 
-at_hash:  string;
+	sid: string;
 
-acr:  string;
+	email_verified: boolean;
 
-sid:  string;
+	name: string;
 
-email_verified:  boolean;
+	preferred_username: string;
 
-name:  string;
+	given_name: string;
 
-preferred_username:  string;
+	locale: string;
 
-given_name:  string;
+	family_name: string;
 
-locale:  string;
+	email: string;
 
-family_name:  string;
+	picture: string;
 
-email:  string;
-
-picture:  string;
-
-user:  any;
-
+	user: any;
 };
 ```
-
-  
 
 ### `KeycloakRole`
 
-  
-
 ```ts
+type KeycloakUser = PublicKeycloakUser | PrivateKeycloakUser;
 
-type  KeycloakUser = PublicKeycloakUser | PrivateKeycloakUser;
+type KeycloakRole = {
+	role_type: "realm" | "resource";
 
-  
+	client: null | string; // null if realm_access
 
-type  KeycloakRole= {
-
-role_type:  "realm"  |  "resource",
-
-client:  null  |  string, // null if realm_access
-
-role:  string
-
+	role: string;
 };
 ```
 
-  
-
 ### `KeycloakUserAuth`
-
-  
 
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
-  
-
 ```ts
+interface KeycloakUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+	keycloakUser: KeycloakUser;
 
-interface  KeycloakUserAuth<_Auth  extends  Auth> extends  ProviderUserAuth<_Auth> {
+	keycloakTokens: KeycloakTokens;
 
-keycloakUser: KeycloakUser;
-
-keycloakTokens: KeycloakTokens;
-
-keycloakRoles: KeycloakRoles;
-
+	keycloakRoles: KeycloakRoles;
 }
-
 ```
-
-  
 
 | properties | type | description |
 
@@ -286,11 +202,7 @@ keycloakRoles: KeycloakRoles;
 
 | `keycloakRoles` | [`KeycloakRoles`](#keycloakroles) | Keycloak roles retrieved from OIDC Token |
 
-  
-
 ##### Generics
-
-  
 
 | name | extends |
 
