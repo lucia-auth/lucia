@@ -5,7 +5,6 @@ import {
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
 import { decodeIdToken } from "../index.js";
-import { encodeBase64 } from "../utils/encode.js";
 import { handleRequest, authorizationHeader } from "../utils/request.js";
 
 import type { Auth } from "lucia";
