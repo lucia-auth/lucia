@@ -1,4 +1,3 @@
-import { LuciaError } from "./error.js";
 import { AuthRequest } from "./request.js";
 import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
@@ -8,9 +7,12 @@ import { generateRandomString, alphabet } from "oslo/random";
 import { verifyRequestOrigin } from "oslo/request";
 
 import type { SessionCookie } from "oslo/session";
-import type { UserSchema, SessionSchema } from "./database.js";
-import type { Adapter } from "./adapter.js";
-import type { DatabaseSessionAttributes, RegisteredAuth } from "../index.js";
+import type { Adapter } from "./database.js";
+import type {
+	DatabaseSessionAttributes,
+	DatabaseUserAttributes,
+	RegisteredAuth
+} from "../index.js";
 
 export interface Session
 	extends ReturnType<RegisteredAuth["getSessionAttributes"]> {
@@ -87,13 +89,13 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 	}
 
 	protected getUserAttributes: (
-		databaseUser: UserSchema
+		databaseUser: DatabaseUserAttributes
 	) => _Configuration extends Configuration<infer _UserAttributes>
 		? _UserAttributes
 		: never;
 
 	protected getSessionAttributes: (
-		databaseSession: SessionSchema
+		databaseSession: DatabaseSessionAttributes
 	) => _Configuration extends Configuration<any, infer _SessionAttributes>
 		? _SessionAttributes
 		: never;
@@ -102,88 +104,83 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 		const databaseSessions = await this.adapter.getUserSessions(userId);
 		const sessions: Session[] = [];
 		for (const databaseSession of databaseSessions) {
-			const expiresAt = new Date(Number(databaseSession.expires));
-			if (!isWithinExpirationDate(expiresAt)) {
+			if (!isWithinExpirationDate(databaseSession.expiresAt)) {
 				continue;
 			}
 			sessions.push({
-				sessionId: databaseSession.id,
-				expiresAt,
-				userId: databaseSession.user_id,
-				fresh: false
+				sessionId: databaseSession.sessionId,
+				expiresAt: databaseSession.expiresAt,
+				userId: databaseSession.userId,
+				fresh: false,
+				...this.getSessionAttributes(databaseSession)
 			});
 		}
-		const validStoredUserSessions = databaseSessions.map(
-			(databaseSession): Session => {
-				return {
-					sessionId: databaseSession.id,
-					userId: databaseSession.user_id,
-					fresh: false,
-					expiresAt: new Date(Number(databaseSession.expires)),
-					...this.getSessionAttributes(databaseSession)
-				};
-			}
-		);
-		return validStoredUserSessions;
+		return sessions;
 	}
 
 	public async validateSession(
 		sessionId: string
-	): Promise<[session: Session, user: User]> {
+	): Promise<{ user: User; session: Session } | { user: null; session: null }> {
 		const [databaseSession, databaseUser] =
 			await this.adapter.getSessionAndUser(sessionId);
 		if (!databaseSession) {
 			debug.session.fail("Session not found", sessionId);
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			return { session: null, user: null };
+		}
+		if (!databaseUser) {
+			await this.adapter.deleteSession(databaseSession.sessionId);
+			debug.session.fail("Session not found", sessionId);
+			return { session: null, user: null };
 		}
 		const sessionState = this.sessionController.getSessionState(
-			new Date(Number(databaseSession.expires))
+			databaseSession.expiresAt
 		);
 		if (sessionState === "expired") {
-			throw new LuciaError("AUTH_INVALID_SESSION_ID");
+			debug.session.fail("Session expired", sessionId);
+			await this.adapter.deleteSession(databaseSession.sessionId);
+			return { session: null, user: null };
 		}
-		let expiresAt = new Date(Number(databaseSession.expires));
+		let expiresAt = databaseSession.expiresAt;
+		let fresh = false;
 		if (sessionState === "idle") {
 			expiresAt = this.sessionController.createExpirationDate();
-			await this.adapter.updateSession(databaseSession.id, {
-				expires: expiresAt.getTime()
+			await this.adapter.updateSession(databaseSession.sessionId, {
+				expiresAt
 			});
+			fresh = true;
 		}
 		const session: Session = {
-			sessionId: databaseSession.id,
-			userId: databaseSession.user_id,
-			fresh: sessionState === "active",
+			sessionId: databaseSession.sessionId,
+			userId: databaseSession.userId,
+			fresh,
 			expiresAt,
-			...this.getSessionAttributes(databaseSession)
+			...this.getSessionAttributes(databaseSession.attributes)
 		};
 		const user: User = {
 			...this.getUserAttributes(databaseUser),
-			userId: databaseSession.id
+			userId: databaseUser.userId
 		};
-		return [session, user];
+		return { user, session };
 	}
 
-	public async createSession(options: {
-		sessionId?: string;
-		userId: string;
-		attributes: DatabaseSessionAttributes;
-	}): Promise<Session> {
-		const userId = options.userId;
-		const sessionId =
-			options?.sessionId ?? generateRandomString(40, alphabet("0-9", "a-z"));
+	public async createSession(
+		userId: string,
+		attributes: DatabaseSessionAttributes
+	): Promise<Session> {
+		const sessionId = generateRandomString(40, alphabet("0-9", "a-z"));
 		const sessionExpiresAt = this.sessionController.createExpirationDate();
-		const databaseSession = {
-			...options.attributes,
-			id: sessionId,
-			expires: sessionExpiresAt.getTime(),
-			user_id: userId
-		} satisfies SessionSchema;
+		await this.adapter.setSession({
+			sessionId,
+			userId,
+			expiresAt: sessionExpiresAt,
+			attributes
+		});
 		const session: Session = {
 			sessionId,
 			userId,
 			fresh: true,
 			expiresAt: sessionExpiresAt,
-			...this.getSessionAttributes(databaseSession)
+			...this.getSessionAttributes(attributes)
 		};
 		return session;
 	}
@@ -314,7 +311,7 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 		} else if (options.hostHeader !== undefined) {
 			host = requestContext.request.headers.get(options.hostHeader);
 		} else if (requestContext.request.url !== undefined) {
-			host = safeParseUrl(requestContext.request.url)?.host ?? null;
+			host = requestContext.request.url;
 		} else {
 			host = requestContext.request.headers.get("Host");
 		}
@@ -362,8 +359,12 @@ export interface Configuration<
 		domain?: string;
 		path?: string;
 	};
-	getSessionAttributes?: (databaseSession: SessionSchema) => _SessionAttributes;
-	getUserAttributes?: (databaseUser: UserSchema) => _UserAttributes;
+	getSessionAttributes?: (
+		databaseSessionAttributes: DatabaseSessionAttributes
+	) => _SessionAttributes;
+	getUserAttributes?: (
+		databaseUserAttributes: DatabaseUserAttributes
+	) => _UserAttributes;
 	experimental?: {
 		debugMode?: boolean;
 	};
@@ -391,11 +392,3 @@ export type Middleware<Args extends any[] = any> = (context: {
 	env: Env;
 	sessionCookieName: string;
 }) => RequestContext;
-
-function safeParseUrl(url: string): URL | null {
-	try {
-		return new URL(url);
-	} catch {
-		return null;
-	}
-}

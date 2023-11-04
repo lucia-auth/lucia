@@ -1,6 +1,3 @@
-import { debug } from "../utils/debug.js";
-import { LuciaError } from "./error.js";
-
 import type { SessionCookie } from "oslo/session";
 import type { Auth, Session, User } from "./index.js";
 
@@ -23,87 +20,58 @@ export class AuthRequest<_Auth extends Auth = any> {
 	}
 
 	private validatePromise: Promise<
-		[session: Session, user: User] | [session: null, user: null]
+		{ user: User; session: Session } | { user: null; session: null }
 	> | null = null;
 	private validateBearerTokenPromise: Promise<
-		[session: Session, user: User] | [session: null, user: null]
+		{ user: User; session: Session } | { user: null; session: null }
 	> | null = null;
 
 	public setSessionCookie(sessionId: string) {
 		if (this.sessionCookie !== sessionId) {
 			this.validatePromise = null;
 		}
-		try {
-			this.setCookie(this.auth.createSessionCookie(sessionId));
-			debug.request.notice("Session cookie set", sessionId);
-		} catch {
-			// ignore middleware errors
-		}
+		this.setCookie(this.auth.createSessionCookie(sessionId));
 	}
 
 	public deleteSessionCookie() {
 		if (this.sessionCookie === null) return;
 		this.sessionCookie = null;
 		this.validatePromise = null;
-		try {
-			this.setCookie(this.auth.createBlankSessionCookie());
-			debug.request.notice("Session cookie deleted");
-		} catch {
-			// ignore middleware errors
-		}
+		this.setCookie(this.auth.createBlankSessionCookie());
 	}
 
 	public async validate(): Promise<
-		[session: Session, user: User] | [session: null, user: null]
+		{ user: User; session: Session } | { user: null; session: null }
 	> {
-		if (this.validatePromise) {
-			debug.request.info("Using cached result for session validation");
-			return this.validatePromise;
+		if (!this.validatePromise) {
+			this.validatePromise = new Promise(async (resolve) => {
+				if (!this.sessionCookie) {
+					return resolve({ session: null, user: null });
+				}
+				const result = await this.auth.validateSession(this.sessionCookie);
+				if (result.session && result.session.fresh) {
+					const sessionCookie = this.auth.createSessionCookie(
+						result.session.sessionId
+					);
+					this.setCookie(sessionCookie);
+				}
+				return resolve(result);
+			});
 		}
-		this.validatePromise = new Promise(async (resolve, reject) => {
-			if (!this.sessionCookie) return resolve([null, null]);
-			try {
-				const [session, user] = await this.auth.validateSession(
-					this.sessionCookie
-				);
-				if (session.fresh) {
-					this.setSessionCookie(session.sessionId);
-				}
-				return resolve([session, user]);
-			} catch (e) {
-				if (e instanceof LuciaError) {
-					this.deleteSessionCookie();
-					return resolve([null, null]);
-				}
-				return reject(e);
-			}
-		});
-
 		return await this.validatePromise;
 	}
 
 	public async validateBearerToken(): Promise<
-		[session: Session, user: User] | [session: null, user: null]
+		{ user: User; session: Session } | { user: null; session: null }
 	> {
-		if (this.validateBearerTokenPromise) {
-			debug.request.info("Using cached result for bearer token validation");
-			return this.validateBearerTokenPromise;
-		}
-		this.validateBearerTokenPromise = new Promise(async (resolve, reject) => {
-			if (!this.bearerToken) return resolve([null, null]);
-			try {
-				const [session, user] = await this.auth.validateSession(
-					this.bearerToken
-				);
-				return resolve([session, user]);
-			} catch (e) {
-				if (e instanceof LuciaError) {
-					return resolve([null, null]);
+		if (!this.validateBearerTokenPromise) {
+			this.validateBearerTokenPromise = new Promise(async (resolve, reject) => {
+				if (!this.bearerToken) {
+					return resolve({ session: null, user: null });
 				}
-				return reject(e);
-			}
-		});
-
+				return await this.auth.validateSession(this.bearerToken);
+			});
+		}
 		return await this.validateBearerTokenPromise;
 	}
 

@@ -1,7 +1,6 @@
 import { Auth } from "./auth/index.js";
 
 export { lucia } from "./auth/index.js";
-export { LuciaError } from "./auth/error.js";
 
 export type {
 	User,
@@ -12,10 +11,12 @@ export type {
 	RequestContext,
 	Middleware
 } from "./auth/index.js";
-export type { Adapter } from "./auth/adapter.js";
-export type { UserSchema, SessionSchema } from "./auth/database.js";
+export type {
+	DatabaseSession,
+	DatabaseUser,
+	Adapter
+} from "./auth/database.js";
 export type { AuthRequest } from "./auth/request.js";
-export type { LuciaErrorConstructor } from "./auth/error.js";
 
 export interface Register {}
 
