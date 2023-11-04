@@ -1,6 +1,6 @@
 # Tests for Lucia adapters
 
-Testing module for Lucia v2 database adapters.
+Testing module for Lucia v3 database adapters.
 
 **[Documentation](https://lucia-auth.com/extending-lucia/database-adapters-api)**
 
@@ -10,7 +10,7 @@ Testing module for Lucia v2 database adapters.
 
 ## Installation
 
-```bash
+```
 npm i -D @lucia-auth/adapter-test
 pnpm add -D @lucia-auth/adapter-test
 yarn add -D @lucia-auth/adapter-test

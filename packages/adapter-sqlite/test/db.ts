@@ -1,9 +1,6 @@
-import sqlite from "better-sqlite3";
+import type { TableNames } from "../src/base";
 
-export const db = sqlite("test/main.db");
-
-export const TABLE_NAMES = {
-	user: "test_user",
-	session: "user_session",
-	key: "user_key"
+export const TABLE_NAMES: TableNames = {
+	user: "user",
+	session: "user_session"
 };

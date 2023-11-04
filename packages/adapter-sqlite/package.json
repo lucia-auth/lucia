@@ -58,6 +58,7 @@
 		"@libsql/client": "^0.3.0",
 		"@lucia-auth/adapter-test": "latest",
 		"@miniflare/d1": "^2.14.0",
+		"@miniflare/web-sockets": "^2.14.1",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.4.0",
 		"lucia": "latest",

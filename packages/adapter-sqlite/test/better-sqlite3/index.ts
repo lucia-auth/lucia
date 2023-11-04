@@ -1,36 +1,28 @@
-import { testAdapter, Database } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia";
+import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { BetterSQLite3Adapter } from "../../src/drivers/better-sqlite3.js";
+import { TABLE_NAMES } from "../db.js";
+import sqlite from "better-sqlite3";
 
-import { TABLE_NAMES, db } from "../db.js";
-import { betterSqlite3Adapter } from "../../src/drivers/better-sqlite3.js";
-import { escapeName, helper } from "../../src/utils.js";
+const db = sqlite(":memory:");
 
-import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
+db.exec(
+	`CREATE TABLE ${TABLE_NAMES.user} (
+	id TEXT NOT NULL PRIMARY KEY,
+	username TEXT NOT NULL UNIQUE
+)`
+).exec(`CREATE TABLE ${TABLE_NAMES.session} (
+	id TEXT NOT NULL PRIMARY KEY,
+	user_id TEXT NOT NULL,
+	expires INTEGER NOT NULL,
+	country TEXT,
+	FOREIGN KEY (user_id) REFERENCES user(id)
+)`);
 
-const createTableQueryHandler = (tableName: string): TableQueryHandler => {
-	const ESCAPED_TABLE_NAME = escapeName(tableName);
-	return {
-		get: async () => {
-			return db.prepare(`SELECT * FROM ${ESCAPED_TABLE_NAME}`).all();
-		},
-		insert: async (value: any) => {
-			const [fields, placeholders, args] = helper(value);
-			db.prepare(
-				`INSERT INTO ${ESCAPED_TABLE_NAME} ( ${fields} ) VALUES ( ${placeholders} )`
-			).run(...args);
-		},
-		clear: async () => {
-			db.exec(`DELETE FROM ${ESCAPED_TABLE_NAME}`);
-		}
-	};
-};
+db.prepare(`INSERT INTO ${TABLE_NAMES.user} (id, username) VALUES (?, ?)`).run(
+	databaseUser.userId,
+	databaseUser.attributes.username
+);
 
-const queryHandler: QueryHandler = {
-	user: createTableQueryHandler(TABLE_NAMES.user),
-	session: createTableQueryHandler(TABLE_NAMES.session),
-	key: createTableQueryHandler(TABLE_NAMES.key)
-};
+const adapter = new BetterSQLite3Adapter(db, TABLE_NAMES);
 
-const adapter = betterSqlite3Adapter(db, TABLE_NAMES)(LuciaError);
-
-testAdapter(adapter, new Database(queryHandler));
+await testAdapter(adapter);

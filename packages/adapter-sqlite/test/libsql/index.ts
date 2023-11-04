@@ -1,43 +1,38 @@
-import { testAdapter, Database } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia";
-import { createClient } from "@libsql/client";
-
+import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { LibSQLAdapter } from "../../src/drivers/libsql.js";
 import { TABLE_NAMES } from "../db.js";
-import { libsqlAdapter } from "../../src/drivers/libsql.js";
-import { escapeName, helper } from "../../src/utils.js";
+import { createClient } from "@libsql/client";
+import fs from "fs/promises";
 
-import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
+await fs.rm("test/libsql/test.db");
 
-const db = createClient({
-	url: "file:test/main.db"
+const client = createClient({
+	url: "file:test/libsql/test.db"
 });
 
-const createTableQueryHandler = (tableName: string): TableQueryHandler => {
-	const ESCAPED_TABLE_NAME = escapeName(tableName);
-	return {
-		get: async () => {
-			const { rows } = await db.execute(`SELECT * FROM ${ESCAPED_TABLE_NAME}`);
-			return rows;
-		},
-		insert: async (value: any) => {
-			const [fields, placeholders, args] = helper(value);
-			await db.execute({
-				sql: `INSERT INTO ${ESCAPED_TABLE_NAME} ( ${fields} ) VALUES ( ${placeholders} )`,
-				args
-			});
-		},
-		clear: async () => {
-			await db.execute(`DELETE FROM ${ESCAPED_TABLE_NAME}`);
-		}
-	};
-};
+await client.execute(
+	`CREATE TABLE ${TABLE_NAMES.user} (
+	id TEXT NOT NULL PRIMARY KEY,
+	username TEXT NOT NULL UNIQUE
+)`
+);
+await client.execute(`CREATE TABLE ${TABLE_NAMES.session} (
+	id TEXT NOT NULL PRIMARY KEY,
+	user_id TEXT NOT NULL,
+	expires INTEGER NOT NULL,
+	country TEXT,
+	FOREIGN KEY (user_id) REFERENCES user(id)
+)`);
 
-const queryHandler: QueryHandler = {
-	user: createTableQueryHandler(TABLE_NAMES.user),
-	session: createTableQueryHandler(TABLE_NAMES.session),
-	key: createTableQueryHandler(TABLE_NAMES.key)
-};
+await client.execute({
+	sql: `INSERT INTO ${TABLE_NAMES.user} (id, username) VALUES (?, ?)`,
+	args: [databaseUser.userId, databaseUser.attributes.username]
+});
 
-const adapter = libsqlAdapter(db, TABLE_NAMES)(LuciaError);
+const adapter = new LibSQLAdapter(client, TABLE_NAMES);
 
-testAdapter(adapter, new Database(queryHandler));
+try {
+	await testAdapter(adapter);
+} finally {
+	await fs.rm("test/libsql/test.db");
+}
