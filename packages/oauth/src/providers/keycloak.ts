@@ -105,8 +105,8 @@ export class KeycloakAuth<
 				accessToken: tokens.access_token,
 				accessTokenExpiresIn: tokens.expires_in,
 				authTime: tokenDecoded.auth_time,
-				idleAt: tokenDecoded.iat,
-				expiresAt: tokenDecoded.exp,
+				issuedAtTime: tokenDecoded.iat,
+				expirationTime: tokenDecoded.exp,
 				refreshToken: tokens.refresh_token,
 				refreshTokenExpiresIn: tokens.refresh_expires_in
 			};
@@ -115,8 +115,8 @@ export class KeycloakAuth<
 			accessToken: tokens.access_token,
 			accessTokenExpiresIn: tokens.expires_in,
 			authTime: tokenDecoded.auth_time,
-			idleAt: tokenDecoded.iat,
-			expiresAt: tokenDecoded.exp,
+			issuedAtTime: tokenDecoded.iat,
+			expirationTime: tokenDecoded.exp,
 			refreshToken: null,
 			refreshTokenExpiresIn: null
 		};
@@ -210,8 +210,8 @@ export type KeycloakTokens = {
 	accessToken: string;
 	accessTokenExpiresIn: number;
 	authTime: number;
-	idleAt: number;
-	expiresAt: number;
+	issuedAtTime: number;
+	expirationTime: number;
 	refreshToken: string | null;
 	refreshTokenExpiresIn: number | null;
 };

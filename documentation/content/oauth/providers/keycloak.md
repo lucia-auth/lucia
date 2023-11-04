@@ -104,9 +104,9 @@ type KeycloakTokens = {
 
 	authTime: number;
 
-	idleAt: number;
+	issuedAtTime: number;
 
-	expiresAt: number;
+	expirationTime: number;
 
 	refreshToken: string | null;
 
