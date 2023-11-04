@@ -1,13 +1,10 @@
-import { Auth } from "./auth/index.js";
-
-export { lucia } from "./auth/index.js";
+export { Lucia } from "./auth/index.js";
 
 export type {
 	User,
 	Session,
 	Configuration,
 	Env,
-	Auth,
 	RequestContext,
 	Middleware
 } from "./auth/index.js";
@@ -20,11 +17,13 @@ export type { AuthRequest } from "./auth/request.js";
 
 export interface Register {}
 
+import { Lucia } from "./auth/index.js";
+
 export type RegisteredAuth = Register extends {
-	Auth: Auth;
+	Lucia: Lucia;
 }
-	? Register["Auth"]
-	: Auth;
+	? Register["Lucia"]
+	: Lucia;
 
 export type DatabaseUserAttributes = Register extends {
 	DatabaseUserAttributes: {};

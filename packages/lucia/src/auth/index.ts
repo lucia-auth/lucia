@@ -28,13 +28,7 @@ export interface User extends ReturnType<RegisteredAuth["getUserAttributes"]> {
 
 export type Env = "DEV" | "PROD";
 
-export const lucia = <_Configuration extends Configuration>(
-	config: _Configuration
-): Auth<_Configuration> => {
-	return new Auth(config);
-};
-
-export class Auth<_Configuration extends Configuration = Configuration> {
+export class Lucia<_Configuration extends Configuration = Configuration> {
 	private adapter: Adapter;
 	private sessionController: SessionController;
 	private sessionCookieController: SessionCookieController;
@@ -238,7 +232,7 @@ export class Auth<_Configuration extends Configuration = Configuration> {
 
 	public handleRequest(
 		// cant reference middleware type with Lucia.Auth
-		...args: Auth<_Configuration>["middleware"] extends Middleware<infer Args>
+		...args: Lucia<_Configuration>["middleware"] extends Middleware<infer Args>
 			? Args
 			: never
 	): AuthRequest<typeof this> {

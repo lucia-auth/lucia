@@ -1,14 +1,14 @@
 import type { SessionCookie } from "oslo/session";
-import type { Auth, Session, User } from "./index.js";
+import type { Lucia, Session, User } from "./index.js";
 
-export class AuthRequest<_Auth extends Auth = any> {
-	private auth: _Auth;
+export class AuthRequest<_Lucia extends Lucia = any> {
+	private auth: _Lucia;
 	private sessionCookie: string | null;
 	private bearerToken: string | null;
 	private setCookie: (cookie: SessionCookie) => void;
 
 	constructor(
-		auth: _Auth,
+		auth: _Lucia,
 		sessionCookie: string | null,
 		bearerToken: string | null,
 		setCookie: (cookie: SessionCookie) => void
