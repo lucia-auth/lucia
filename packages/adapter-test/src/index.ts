@@ -61,9 +61,19 @@ export async function testAdapter(adapter: Adapter) {
 	testEquality("deleteSession() deletes session", result4, []);
 
 	await adapter.setSession(databaseSession);
+	databaseSession.expiresAt = new Date(new TimeSpan(100, "d").milliseconds());
+	await adapter.updateSession(databaseSession.sessionId, {
+		expiresAt: databaseSession.expiresAt
+	});
+	const result5 = await adapter.getSessionAndUser(databaseSession.sessionId);
+	testEquality("updateSession() updates session", result5, [
+		databaseSession,
+		databaseUser
+	]);
+
 	await adapter.deleteUserSessions(databaseSession.userId);
-	const result5 = await adapter.getUserSessions(databaseSession.userId);
-	testEquality("deleteUserSessions() deletes all user sessions", result5, []);
+	const result6 = await adapter.getUserSessions(databaseSession.userId);
+	testEquality("deleteUserSessions() deletes all user sessions", result6, []);
 
 	console.log(
 		`\n\x1B[32;1m[success] \x1B[0;2m Adapter passed all tests\x1B[0m\n`
