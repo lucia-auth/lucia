@@ -1,6 +1,6 @@
 import { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import { generateRandomString, alphabet } from "oslo/random";
-import { createDate, TimeSpan } from "oslo";
+import { TimeSpan } from "oslo";
 import assert from "node:assert/strict";
 
 declare module "lucia" {

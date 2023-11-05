@@ -3,7 +3,9 @@ export { Lucia } from "./auth/index.js";
 export type {
 	User,
 	Session,
-	Configuration,
+	ExperimentalOptions,
+	SessionCookieOptions,
+	CSRFProtectionOptions,
 	Env,
 	RequestContext,
 	Middleware
@@ -19,10 +21,13 @@ export interface Register {}
 
 import { Lucia } from "./auth/index.js";
 
-export type RegisteredAuth = Register extends {
-	Lucia: Lucia;
+export type RegisteredLucia = Register extends {
+	// need to infer to "copy" the generics of Lucia
+	Lucia: infer _Lucia;
 }
-	? Register["Lucia"]
+	? _Lucia extends Lucia
+		? _Lucia
+		: Lucia
 	: Lucia;
 
 export type DatabaseUserAttributes = Register extends {

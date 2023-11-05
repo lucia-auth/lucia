@@ -11,88 +11,116 @@ import type { Adapter } from "./database.js";
 import type {
 	DatabaseSessionAttributes,
 	DatabaseUserAttributes,
-	RegisteredAuth
+	RegisteredLucia
 } from "../index.js";
 
-export interface Session
-	extends ReturnType<RegisteredAuth["getSessionAttributes"]> {
+type SessionAttributes = RegisteredLucia extends Lucia<
+	any,
+	infer _SessionAttributes
+>
+	? _SessionAttributes
+	: {};
+
+type UserAttributes = RegisteredLucia extends Lucia<
+	any,
+	any,
+	infer _UserAttributes
+>
+	? _UserAttributes
+	: {};
+
+export interface Session extends SessionAttributes {
 	sessionId: string;
 	expiresAt: Date;
 	fresh: boolean;
 	userId: string;
 }
 
-export interface User extends ReturnType<RegisteredAuth["getUserAttributes"]> {
+export interface User extends UserAttributes {
 	userId: string;
 }
 
 export type Env = "DEV" | "PROD";
 
-export class Lucia<_Configuration extends Configuration = Configuration> {
+export class Lucia<
+	_Middleware extends Middleware = Middleware<[RequestContext]>,
+	_SessionAttributes extends {} = Record<never, never>,
+	_UserAttributes extends {} = Record<never, never>
+> {
 	private adapter: Adapter;
 	private sessionController: SessionController;
 	private sessionCookieController: SessionCookieController;
 	private csrfProtection: CSRFProtectionOptions | boolean;
 	private env: Env;
-	protected middleware: _Configuration["middleware"] extends Middleware
-		? _Configuration["middleware"]
-		: ReturnType<typeof defaultMiddleware> = defaultMiddleware();
+	private middleware: _Middleware;
 
 	private experimental: {
 		debugMode: boolean;
 	};
 
-	constructor(config: _Configuration) {
-		this.adapter = config.adapter;
-		this.env = config.env;
+	private getSessionAttributes: (
+		databaseSessionAttributes: DatabaseSessionAttributes
+	) => _SessionAttributes;
 
-		this.getUserAttributes = (databaseUser) => {
-			const defaultTransform = () => {
-				return {} as any;
-			};
-			const transform = config.getUserAttributes ?? defaultTransform;
-			return transform(databaseUser);
+	private getUserAttributes: (
+		databaseUserAttributes: DatabaseUserAttributes
+	) => _UserAttributes;
+
+	constructor(
+		adapter: Adapter,
+		options?: {
+			env?: Env;
+			middleware?: _Middleware;
+			csrfProtection?: boolean | CSRFProtectionOptions;
+			sessionExpiresIn?: TimeSpan;
+			sessionCookie?: SessionCookieOptions;
+			getSessionAttributes?: (
+				databaseSessionAttributes: DatabaseSessionAttributes
+			) => _SessionAttributes;
+			getUserAttributes?: (
+				databaseUserAttributes: DatabaseUserAttributes
+			) => _UserAttributes;
+			experimental?: ExperimentalOptions;
+		}
+	) {
+		this.adapter = adapter;
+		this.env = options?.env ?? "PROD";
+		this.middleware = options?.middleware ?? (defaultMiddleware() as any);
+
+		// we have to use `any` here since TS can't do conditional return types
+		this.getUserAttributes = (databaseUserAttributes): any => {
+			if (options && options.getUserAttributes) {
+				return options.getUserAttributes(databaseUserAttributes);
+			}
+			return {};
 		};
-		this.getSessionAttributes = (databaseSession) => {
-			const defaultTransform = () => {
-				return {} as any;
-			};
-			const transform = config.getSessionAttributes ?? defaultTransform;
-			return transform(databaseSession);
+		this.getSessionAttributes = (databaseSessionAttributes): any => {
+			if (options && options.getSessionAttributes) {
+				return options.getSessionAttributes(databaseSessionAttributes);
+			}
+			return {};
 		};
 		this.sessionController = new SessionController(
-			config.sessionExpiresIn ?? new TimeSpan(30, "d")
+			options?.sessionExpiresIn ?? new TimeSpan(30, "d")
 		);
 		this.sessionCookieController = new SessionCookieController(
-			config.sessionCookie?.name ?? "auth_session",
+			options?.sessionCookie?.name ?? "auth_session",
 			this.sessionController.expiresIn,
 			{
-				...config.sessionCookie,
+				...options?.sessionCookie,
 				secure: this.env === "PROD"
 			}
 		);
-		this.csrfProtection = config.csrfProtection ?? true;
-		if (config.middleware) {
-			this.middleware = config.middleware;
+		this.csrfProtection = options?.csrfProtection ?? true;
+		if (options?.middleware) {
+			this.middleware = options.middleware;
 		}
 		this.experimental = {
-			debugMode: config.experimental?.debugMode ?? false
+			debugMode: options?.experimental?.debugMode ?? false
 		};
 
 		debug.init(this.experimental.debugMode);
 	}
-
-	protected getUserAttributes: (
-		databaseUser: DatabaseUserAttributes
-	) => _Configuration extends Configuration<infer _UserAttributes>
-		? _UserAttributes
-		: never;
-
-	protected getSessionAttributes: (
-		databaseSession: DatabaseSessionAttributes
-	) => _Configuration extends Configuration<any, infer _SessionAttributes>
-		? _SessionAttributes
-		: never;
 
 	public async getUserSessions(userId: string): Promise<Session[]> {
 		const databaseSessions = await this.adapter.getUserSessions(userId);
@@ -232,9 +260,7 @@ export class Lucia<_Configuration extends Configuration = Configuration> {
 
 	public handleRequest(
 		// cant reference middleware type with Lucia.Auth
-		...args: Lucia<_Configuration>["middleware"] extends Middleware<infer Args>
-			? Args
-			: never
+		...args: _Middleware extends Middleware<infer _Args> ? _Args : []
 	): AuthRequest<typeof this> {
 		const middleware = this.middleware as Middleware;
 		const requestContext = middleware({
@@ -331,43 +357,22 @@ export class Lucia<_Configuration extends Configuration = Configuration> {
 	}
 }
 
-export interface Configuration<
-	_UserAttributes extends Record<string, any> = {},
-	_SessionAttributes extends Record<string, any> = {}
-> {
-	adapter: Adapter;
-	env: Env;
-	middleware?: Middleware;
-	csrfProtection?:
-		| boolean
-		| {
-				host?: string;
-				hostHeader?: string;
-				allowedSubDomains?: string[] | "*";
-		  };
-	sessionExpiresIn?: TimeSpan;
-	sessionCookie?: {
-		name?: string;
-		expires?: boolean;
-		sameSite?: "lax" | "strict";
-		domain?: string;
-		path?: string;
-	};
-	getSessionAttributes?: (
-		databaseSessionAttributes: DatabaseSessionAttributes
-	) => _SessionAttributes;
-	getUserAttributes?: (
-		databaseUserAttributes: DatabaseUserAttributes
-	) => _UserAttributes;
-	experimental?: {
-		debugMode?: boolean;
-	};
+export interface SessionCookieOptions {
+	name?: string;
+	expires?: boolean;
+	sameSite?: "lax" | "strict";
+	domain?: string;
+	path?: string;
 }
 
-interface CSRFProtectionOptions {
+export interface CSRFProtectionOptions {
 	host?: string;
 	hostHeader?: string;
 	allowedSubDomains?: string[] | "*";
+}
+
+export interface ExperimentalOptions {
+	debugMode?: boolean;
 }
 
 export interface LuciaRequest {
