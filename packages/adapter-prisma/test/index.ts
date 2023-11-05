@@ -1,46 +1,24 @@
-import { testAdapter, Database } from "@lucia-auth/adapter-test";
-import { LuciaError } from "lucia";
+import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
 import { PrismaClient } from "@prisma/client";
 
-import { prismaAdapter, transformPrismaSession } from "../src/prisma.js";
-
-import type { QueryHandler, TableQueryHandler } from "@lucia-auth/adapter-test";
-import type { SmartPrismaModel } from "../src/prisma.js";
+import { PrismaAdapter } from "../src/prisma.js";
 
 const client = new PrismaClient();
+const adapter = new PrismaAdapter(client, {
+	user: "User",
+	session: "Session"
+});
 
-const createTableQueryHandler = (model: any): TableQueryHandler => {
-	const Model = model as SmartPrismaModel;
-	return {
-		get: async () => {
-			return await Model.findMany();
-		},
-		insert: async (value: any) => {
-			await Model.create({
-				data: value
-			});
-		},
-		clear: async () => {
-			await Model.deleteMany();
-		}
-	};
-};
+await client.user.create({
+	data: {
+		id: databaseUser.userId,
+		...databaseUser.attributes
+	}
+});
 
-const queryHandler: QueryHandler = {
-	user: createTableQueryHandler(client.user),
-	session: {
-		...createTableQueryHandler(client.session),
-		get: async () => {
-			const Session = client.session as any as SmartPrismaModel;
-			const result = await Session.findMany();
-			return result.map((val) => transformPrismaSession(val));
-		}
-	},
-	key: createTableQueryHandler(client.key)
-};
+await testAdapter(adapter);
 
-const adapter = prismaAdapter(client)(LuciaError);
-
-await testAdapter(adapter, new Database(queryHandler));
+await client.session.deleteMany();
+await client.user.deleteMany();
 
 process.exit(0);

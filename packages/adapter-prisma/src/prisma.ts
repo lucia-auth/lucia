@@ -1,278 +1,163 @@
 import type {
 	Adapter,
-	InitializeAdapter,
-	KeySchema,
-	SessionSchema,
-	UserSchema
+	DatabaseSession,
+	DatabaseSessionAttributes,
+	DatabaseUser,
+	DatabaseUserAttributes
 } from "lucia";
 
-type PossiblePrismaError = {
-	code: string;
-	message: string;
-};
+export class PrismaAdapter<_PrismaClient extends PrismaClient>
+	implements Adapter
+{
+	public s: _PrismaClient = {} as any;
+	private userModel: PrismaModel<UserSchema>;
+	private sessionModel: PrismaModel<SessionSchema>;
+	private userModelName: string;
 
-type ExtractModelNames<_PrismaClient extends PrismaClient> = Exclude<
-	keyof _PrismaClient,
-	`$${string}`
+	constructor(
+		client: _PrismaClient,
+		modelNames: {
+			user: ModelName<_PrismaClient>;
+			session: ModelName<_PrismaClient>;
+		}
+	) {
+		this.userModelName = modelNames.user;
+		const userModelKey =
+			modelNames.user[0].toLowerCase() + modelNames.user.slice(1);
+		const sessionModelKey =
+			modelNames.session[0].toLowerCase() + modelNames.session.slice(1);
+		this.userModel = client[userModelKey];
+		this.sessionModel = client[sessionModelKey];
+	}
+
+	public async deleteSession(sessionId: string): Promise<void> {
+		try {
+			await this.sessionModel.delete({
+				where: {
+					id: sessionId
+				}
+			});
+		} catch {
+			// ignore if session id is invalid
+		}
+	}
+
+	public async deleteUserSessions(userId: string): Promise<void> {
+		await this.sessionModel.deleteMany({
+			where: {
+				userId
+			}
+		});
+	}
+
+	public async getSessionAndUser(
+		sessionId: string
+	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+		const userModelKey =
+			this.userModelName[0].toLowerCase() + this.userModelName.slice(1);
+		const result = await this.sessionModel.findUnique<{
+			// this is a lie to make TS shut up
+			user: UserSchema;
+		}>({
+			where: {
+				id: sessionId
+			},
+			include: {
+				[userModelKey]: true
+			}
+		});
+		if (!result) return [null, null];
+		const userResult: UserSchema = result[userModelKey as "user"];
+		delete result[userModelKey as keyof typeof result];
+		return [
+			transformIntoDatabaseSession(result),
+			transformIntoDatabaseUser(userResult)
+		];
+	}
+
+	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+		const result = await this.sessionModel.findMany({
+			where: {
+				userId
+			}
+		});
+		return result.map(transformIntoDatabaseSession);
+	}
+
+	public async setSession(value: DatabaseSession): Promise<void> {
+		await this.sessionModel.create({
+			data: {
+				id: value.sessionId,
+				userId: value.userId,
+				expiresAt: value.expiresAt,
+				...value.attributes
+			}
+		});
+	}
+
+	public async updateSession(
+		sessionId: string,
+		value: Partial<DatabaseSession>
+	): Promise<void> {
+		await this.sessionModel.update({
+			where: {
+				id: sessionId
+			},
+			data: {
+				id: value.sessionId,
+				userId: value.userId,
+				expiresAt: value.expiresAt,
+				...value.attributes
+			}
+		});
+	}
+}
+
+function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
+	const { id: sessionId, userId, expiresAt, ...attributes } = raw;
+	return {
+		sessionId,
+		userId,
+		expiresAt,
+		attributes
+	};
+}
+
+function transformIntoDatabaseUser(raw: UserSchema): DatabaseUser {
+	const { id: userId, ...attributes } = raw;
+	return {
+		userId,
+		attributes
+	};
+}
+
+interface PrismaClient {
+	[K: string]: any;
+	$connect: any;
+	$transaction: any;
+}
+
+type ModelName<_PrismaClient extends PrismaClient> = Capitalize<
+	Extract<Exclude<keyof _PrismaClient, `$${string}`>, string>
 >;
 
-export const prismaAdapter = <_PrismaClient extends PrismaClient>(
-	client: _PrismaClient,
-	modelNames?: {
-		user: ExtractModelNames<_PrismaClient>;
-		session: ExtractModelNames<_PrismaClient> | null;
-		key: ExtractModelNames<_PrismaClient>;
-	}
-): InitializeAdapter<Adapter> => {
-	const getModels = () => {
-		if (!modelNames) {
-			return {
-				User: client["user"] as SmartPrismaModel<UserSchema>,
-				Session: (client["session"] as SmartPrismaModel<SessionSchema>) ?? null,
-				Key: client["key"] as SmartPrismaModel<KeySchema>
-			};
-		}
-		return {
-			User: client[modelNames.user] as SmartPrismaModel<UserSchema>,
-			Session: modelNames.session
-				? (client[modelNames.session] as SmartPrismaModel<SessionSchema>)
-				: null,
-			Key: client[modelNames.key] as SmartPrismaModel<KeySchema>
-		};
-	};
-	const { User, Session, Key } = getModels();
+interface UserSchema extends DatabaseUserAttributes {
+	id: string;
+}
 
-	return (LuciaError) => {
-		return {
-			getUser: async (userId) => {
-				return await User.findUnique({
-					where: {
-						id: userId
-					}
-				});
-			},
-			setUser: async (user, key) => {
-				if (!key) {
-					await User.create({
-						data: user
-					});
-					return;
-				}
-				try {
-					await client.$transaction([
-						User.create({
-							data: user
-						}),
-						Key.create({
-							data: key
-						})
-					]);
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2002" && error.message?.includes("`id`"))
-						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					throw error;
-				}
-			},
-			deleteUser: async (userId) => {
-				try {
-					await User.delete({
-						where: {
-							id: userId
-						}
-					});
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2025") {
-						// user does not exist
-						return;
-					}
-					throw e;
-				}
-			},
-			updateUser: async (userId, partialUser) => {
-				await User.update({
-					data: partialUser,
-					where: {
-						id: userId
-					}
-				});
-			},
-			getSession: async (sessionId) => {
-				if (!Session) {
-					throw new Error("Session table not defined");
-				}
-				const result = await Session.findUnique({
-					where: {
-						id: sessionId
-					}
-				});
-				if (!result) return null;
-				return transformPrismaSession(result);
-			},
-			getSessionsByUserId: async (userId) => {
-				if (!Session) {
-					throw new Error("Session table not defined");
-				}
-				const sessions = await Session.findMany({
-					where: {
-						user_id: userId
-					}
-				});
-				return sessions.map((session) => transformPrismaSession(session));
-			},
-			setSession: async (session) => {
-				if (!Session) {
-					throw new Error("Session table not defined");
-				}
-				try {
-					await Session.create({
-						data: session
-					});
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2003") {
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					}
+// TODO:
+// `id` or `userId`: Prisma uses `id`
+interface SessionSchema extends DatabaseSessionAttributes {
+	id: string;
+	userId: string;
+	expiresAt: Date;
+}
 
-					throw error;
-				}
-			},
-			deleteSession: async (sessionId) => {
-				if (!Session) {
-					throw new Error("Session table not defined");
-				}
-				try {
-					await Session.delete({
-						where: {
-							id: sessionId
-						}
-					});
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2025") {
-						// session does not exist
-						return;
-					}
-					throw e;
-				}
-			},
-			deleteSessionsByUserId: async (userId) => {
-				if (!Session) {
-					throw new Error("Session table not defined");
-				}
-				await Session.deleteMany({
-					where: {
-						user_id: userId
-					}
-				});
-			},
-			updateSession: async (userId, partialSession) => {
-				if (!Session) {
-					throw new Error("Session table not defined");
-				}
-				await Session.update({
-					data: partialSession,
-					where: {
-						id: userId
-					}
-				});
-			},
-
-			getKey: async (keyId) => {
-				return await Key.findUnique({
-					where: {
-						id: keyId
-					}
-				});
-			},
-			getKeysByUserId: async (userId) => {
-				return await Key.findMany({
-					where: {
-						user_id: userId
-					}
-				});
-			},
-
-			setKey: async (key) => {
-				try {
-					await Key.create({
-						data: key
-					});
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2003") {
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					}
-					if (error.code === "P2002" && error.message?.includes("`id`")) {
-						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					}
-					throw error;
-				}
-			},
-			deleteKey: async (keyId) => {
-				try {
-					await Key.delete({
-						where: {
-							id: keyId
-						}
-					});
-				} catch (e) {
-					const error = e as Partial<PossiblePrismaError>;
-					if (error.code === "P2025") {
-						// key does not exist
-						return;
-					}
-					throw e;
-				}
-			},
-			deleteKeysByUserId: async (userId) => {
-				await Key.deleteMany({
-					where: {
-						user_id: userId
-					}
-				});
-			},
-			updateKey: async (keyId, partialKey) => {
-				await Key.update({
-					data: partialKey,
-					where: {
-						id: keyId
-					}
-				});
-			}
-		};
-	};
-};
-
-export const transformPrismaSession = (
-	sessionData: PrismaSession
-): SessionSchema => {
-	const { active_expires, idle_expires: idleExpires, ...data } = sessionData;
-	return {
-		...data,
-		active_expires: Number(active_expires),
-		idle_expires: Number(idleExpires)
-	};
-};
-
-type PrismaClient = {
-	$transaction: (...args: any) => any;
-} & { [K: string]: any };
-
-export type PrismaSession = Omit<
-	SessionSchema,
-	"active_expires" | "idle_expires"
-> & {
-	active_expires: BigInt | number;
-	idle_expires: BigInt | number;
-};
-
-export type SmartPrismaModel<_Schema = any> = {
+export type PrismaModel<_Schema> = {
 	findUnique: <_Included = {}>(options: {
 		where: Partial<_Schema>;
-		include?: Partial<Record<string, boolean>>;
-	}) => Promise<null | _Schema> & _Included;
+		include?: Record<string, boolean>;
+	}) => Promise<null | (_Schema & _Included)>;
 	findMany: (options?: { where: Partial<_Schema> }) => Promise<_Schema[]>;
 	create: (options: { data: _Schema }) => Promise<_Schema>;
 	delete: (options: { where: Partial<_Schema> }) => Promise<void>;
