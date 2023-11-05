@@ -11,7 +11,7 @@ await d1.exec(
 	`CREATE TABLE ${TABLE_NAMES.user} ( id TEXT NOT NULL PRIMARY KEY, username TEXT NOT NULL UNIQUE )`
 );
 await d1.exec(
-	`CREATE TABLE ${TABLE_NAMES.session} ( id TEXT NOT NULL PRIMARY KEY, user_id TEXT NOT NULL, expires INTEGER NOT NULL, country TEXT, FOREIGN KEY (user_id) REFERENCES user(id))`
+	`CREATE TABLE ${TABLE_NAMES.session} ( id TEXT NOT NULL PRIMARY KEY, user_id TEXT NOT NULL, expires_at INTEGER NOT NULL, country TEXT, FOREIGN KEY (user_id) REFERENCES user(id))`
 );
 
 await d1

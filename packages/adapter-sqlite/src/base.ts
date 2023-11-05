@@ -56,7 +56,7 @@ export class SQLiteAdapter implements Adapter {
 		const value: SessionSchema = {
 			id: databaseSession.sessionId,
 			user_id: databaseSession.userId,
-			expires: Math.floor(databaseSession.expiresAt.getTime() / 1000),
+			expires_at: Math.floor(databaseSession.expiresAt.getTime() / 1000),
 			...databaseSession.attributes
 		};
 		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
@@ -81,7 +81,7 @@ export class SQLiteAdapter implements Adapter {
 			...databaseSession.attributes
 		};
 		if (databaseSession.expiresAt) {
-			value.expires = Math.floor(databaseSession.expiresAt.getTime() / 1000);
+			value.expires_at = Math.floor(databaseSession.expiresAt.getTime() / 1000);
 		}
 		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
 		const keyValuePairs = entries.map(([k]) =>
@@ -131,7 +131,7 @@ export interface Controller {
 interface SessionSchema extends DatabaseSessionAttributes {
 	id: string;
 	user_id: string;
-	expires: number;
+	expires_at: number;
 }
 
 interface UserSchema extends DatabaseUserAttributes {
@@ -142,7 +142,7 @@ function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
 	const {
 		id: sessionId,
 		user_id: userId,
-		expires: expiresAtUnix,
+		expires_at: expiresAtUnix,
 		...attributes
 	} = raw;
 	return {
