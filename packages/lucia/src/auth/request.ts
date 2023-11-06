@@ -26,14 +26,14 @@ export class AuthRequest<_Lucia extends Lucia = Lucia> {
 		{ user: User; session: Session } | { user: null; session: null }
 	> | null = null;
 
-	public setSessionCookie(sessionId: string) {
+	public setSessionCookie(sessionId: string): void {
 		if (this.sessionCookie !== sessionId) {
 			this.validatePromise = null;
 		}
 		this.setCookie(this.auth.createSessionCookie(sessionId));
 	}
 
-	public deleteSessionCookie() {
+	public deleteSessionCookie(): void {
 		if (this.sessionCookie === null) return;
 		this.sessionCookie = null;
 		this.validatePromise = null;
