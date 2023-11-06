@@ -54,6 +54,10 @@ See [Google](/oauth/providers/google) provider.
 
 See [Kakao](/oauth/providers/kakao) provider.
 
+## `keycloak()`
+
+See [Keycloak](/oauth/providers/keycloak) provider.
+
 ## `lichess()`
 
 See [Lichess](/oauth/providers/lichess) provider.
