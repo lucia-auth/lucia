@@ -4,4 +4,3 @@ type: "minor" # "major", "minor", "patch"
 ---
 
 Adds Keycloak Provider
-Adds Keycloak Documentation
