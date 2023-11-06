@@ -217,9 +217,7 @@ export class Lucia<
 		await this.adapter.deleteUserSessions(userId);
 	}
 
-	public readSessionCookie(
-		cookieHeader: string | null | undefined
-	): string | null {
+	public readSessionCookie(cookieHeader: string): string | null {
 		const sessionId = this.sessionCookieController.parseCookies(cookieHeader);
 		if (sessionId) {
 			debug.request.info("Found session cookie", sessionId);
@@ -229,13 +227,7 @@ export class Lucia<
 		return sessionId;
 	}
 
-	public readBearerToken(
-		authorizationHeader: string | null | undefined
-	): string | null {
-		if (!authorizationHeader) {
-			debug.request.info("No token found in authorization header");
-			return null;
-		}
+	public readBearerToken(authorizationHeader: string): string | null {
 		const [authScheme, token] = authorizationHeader.split(" ") as [
 			string,
 			string | undefined
@@ -251,7 +243,6 @@ export class Lucia<
 	}
 
 	public handleRequest(
-		// cant reference middleware type with Lucia.Auth
 		...args: _Middleware extends Middleware<infer _Args> ? _Args : []
 	): AuthRequest<typeof this> {
 		const middleware = this.middleware as Middleware;
@@ -290,7 +281,7 @@ export class Lucia<
 		const sessionCookie =
 			requestContext.sessionCookie ??
 			this.sessionCookieController.parseCookies(
-				requestContext.request.headers.get("Cookie")
+				requestContext.request.headers.get("Cookie") ?? ""
 			);
 
 		return new AuthRequest(
