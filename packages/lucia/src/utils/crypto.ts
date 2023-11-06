@@ -26,7 +26,7 @@ const generateScryptKey = async (
 	return keyUint8Array;
 };
 
-export const validateScryptHash = async (
+export const verifyScryptHash = async (
 	s: string,
 	hash: string
 ): Promise<boolean> => {

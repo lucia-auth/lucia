@@ -1,4 +1,4 @@
 export {
 	generateScryptHash as generateLuciaPasswordHash,
-	validateScryptHash as validateLuciaPasswordHash
+	verifyScryptHash as verifyLuciaPasswordHash
 } from "./crypto.js";
