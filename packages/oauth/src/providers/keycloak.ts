@@ -98,15 +98,13 @@ export class KeycloakAuth<
 	};
 
 	private claimTokens = (tokens: AccessTokenResponseBody): KeycloakTokens => {
-		const tokenDecoded = decodeIdToken<Claims>(tokens.access_token);
-
 		if ("refresh_token" in tokens) {
 			return {
 				accessToken: tokens.access_token,
 				accessTokenExpiresIn: tokens.expires_in,
-				authTime: tokenDecoded.auth_time,
-				issuedAtTime: tokenDecoded.iat,
-				expiresAt: tokenDecoded.exp,
+				authTime: tokens.auth_time,
+				issuedAtTime: tokens.issued_at_time,
+				expiresAt: tokens.expires_at,
 				refreshToken: tokens.refresh_token,
 				refreshTokenExpiresIn: tokens.refresh_expires_in
 			};
@@ -114,9 +112,9 @@ export class KeycloakAuth<
 		return {
 			accessToken: tokens.access_token,
 			accessTokenExpiresIn: tokens.expires_in,
-			authTime: tokenDecoded.auth_time,
-			issuedAtTime: tokenDecoded.iat,
-			expiresAt: tokenDecoded.exp,
+			authTime: tokens.auth_time,
+			issuedAtTime: tokens.issued_at_time,
+			expiresAt: tokens.expires_at,
 			refreshToken: null,
 			refreshTokenExpiresIn: null
 		};
@@ -143,7 +141,7 @@ const getKeycloakRoles = (accessToken: string): KeycloakRole[] => {
 	const tokenDecoded: Claims = decodeIdToken<Claims>(accessToken);
 	const keycloakRoles: KeycloakRole[] = [];
 
-	if (tokenDecoded.hasOwnProperty("realm_access")) {
+	if ("realm_access" in tokenDecoded) {
 		for (const role of tokenDecoded.realm_access.roles) {
 			keycloakRoles.push({
 				role_type: "realm",
@@ -152,7 +150,7 @@ const getKeycloakRoles = (accessToken: string): KeycloakRole[] => {
 			});
 		}
 	}
-	if (tokenDecoded.hasOwnProperty("resource_access")) {
+	if ("resource_access" in tokenDecoded) {
 		for (const [key, client] of Object.entries(tokenDecoded.resource_access)) {
 			for (const role of client.roles) {
 				keycloakRoles.push({
