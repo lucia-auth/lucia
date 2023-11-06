@@ -40,8 +40,6 @@ export interface User extends UserAttributes {
 	userId: string;
 }
 
-export type Env = "DEV" | "PROD";
-
 export class Lucia<
 	_Middleware extends Middleware = Middleware<[RequestContext]>,
 	_SessionAttributes extends {} = Record<never, never>,
@@ -51,7 +49,6 @@ export class Lucia<
 	private sessionController: SessionController;
 	private sessionCookieController: SessionCookieController;
 	private csrfProtection: CSRFProtectionOptions | boolean;
-	private env: Env;
 	private middleware: _Middleware;
 
 	private experimental: {
@@ -69,7 +66,6 @@ export class Lucia<
 	constructor(
 		adapter: Adapter,
 		options?: {
-			env?: Env;
 			middleware?: _Middleware;
 			csrfProtection?: boolean | CSRFProtectionOptions;
 			sessionExpiresIn?: TimeSpan;
@@ -84,7 +80,6 @@ export class Lucia<
 		}
 	) {
 		this.adapter = adapter;
-		this.env = options?.env ?? "PROD";
 		this.middleware = options?.middleware ?? (defaultMiddleware() as any);
 
 		// we have to use `any` here since TS can't do conditional return types
@@ -106,10 +101,7 @@ export class Lucia<
 		this.sessionCookieController = new SessionCookieController(
 			options?.sessionCookie?.name ?? "auth_session",
 			this.sessionController.expiresIn,
-			{
-				...options?.sessionCookie,
-				secure: this.env === "PROD"
-			}
+			options?.sessionCookie
 		);
 		this.csrfProtection = options?.csrfProtection ?? true;
 		if (options?.middleware) {
@@ -265,7 +257,6 @@ export class Lucia<
 		const middleware = this.middleware as Middleware;
 		const requestContext = middleware({
 			args,
-			env: this.env,
 			sessionCookieName: this.sessionCookieController.cookieName
 		});
 		debug.request.init(
@@ -364,6 +355,7 @@ export interface SessionCookieOptions {
 	sameSite?: "lax" | "strict";
 	domain?: string;
 	path?: string;
+	secure?: boolean;
 }
 
 export interface CSRFProtectionOptions {
@@ -388,6 +380,5 @@ export interface RequestContext {
 
 export type Middleware<Args extends any[] = any> = (context: {
 	args: Args;
-	env: Env;
 	sessionCookieName: string;
 }) => RequestContext;

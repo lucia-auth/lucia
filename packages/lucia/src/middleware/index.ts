@@ -322,12 +322,11 @@ interface H3Event {
 export const h3 = (): Middleware<[H3Event]> => {
 	const nodeMiddleware = node();
 
-	return ({ args, sessionCookieName, env }) => {
+	return ({ args, sessionCookieName }) => {
 		const [context] = args;
 		return nodeMiddleware({
 			args: [context.node.req, context.node.res],
-			sessionCookieName,
-			env
+			sessionCookieName
 		});
 	};
 };
