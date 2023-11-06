@@ -182,7 +182,6 @@ export class AuthRequest<_Auth extends Auth = any> {
 			return true;
 		}
 		const requestOrigin = request.headers.get("Origin");
-		if (!requestOrigin) return false;
 		if (!requestOrigin) {
 			debug.request.fail("No request origin available");
 			return false;
