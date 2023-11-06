@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 3.4.0
+
+### Minor changes
+
+- [#1230](https://github.com/lucia-auth/lucia/pull/1230) by [@andr35](https://github.com/andr35) : Add `serverUrl` param to `GitlabAuth` config
+
 ## 3.3.2
 
 ### Patch changes
