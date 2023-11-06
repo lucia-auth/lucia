@@ -70,35 +70,22 @@ interface KakaoAuth<_Auth extends Auth> {
 
 ```ts
 type KakaoTokens = {
-    tokenType: string;
-    accessToken: string;
-    expiresIn: number;
-    refreshToken: string;
-    refreshTokenExpiresIn: number;
-    scope?: string;
-    idToken?: string;
+	accessToken: string;
+	expiresIn: number;
+	refreshToken: string;
+	refreshTokenExpiresIn: number;
 };
 ```
 
 ### `KakaoUser`
 
 ```ts
-type KakaoTokens = {
-	token_type: string;
-	access_token: string;
-	expires_in: number;
-	refresh_token: string;
-	refresh_token_expires_in: number;
-	scope?: string;
-	id_token?: string;
-};
-
 type KakaoUser = {
 	id: number;
 	has_signed_up?: boolean;
 	connected_at?: string;
 	synced_at?: string;
-	properties?: Properties;
+	properties?: Record<string, string>;
 	kakao_account?: KakaoAccount;
 	for_partner?: Partner;
 };
@@ -151,10 +138,6 @@ type Profile = {
 
 type Partner = {
 	uuid?: string;
-};
-
-type Properties = {
-	[key: string]: string;
 };
 ```
 

@@ -12,7 +12,6 @@ type Config = {
 	clientId: string;
 	clientSecret: string; // Kakao doesn't require clientSecret but it's recommended to use it
 	redirectUri: string;
-	scope?: string[];
 };
 
 const PROVIDER_ID = "kakao";
@@ -42,7 +41,7 @@ export class KakaoAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			"https://kauth.kakao.com/oauth/authorize",
 			{
 				clientId: this.config.clientId,
-				scope: this.config.scope ?? [],
+				scope: [],
 				redirectUri: this.config.redirectUri
 			}
 		);
@@ -59,17 +58,24 @@ export class KakaoAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	private validateAuthorizationCode = async (
 		code: string
 	): Promise<KakaoTokens> => {
-		return await validateOAuth2AuthorizationCode<KakaoTokens>(
-			code,
-			"https://kauth.kakao.com/oauth/token",
-			{
-				clientId: this.config.clientId,
-				clientPassword: {
-					clientSecret: this.config.clientSecret,
-					authenticateWith: "client_secret"
-				}
+		const result = await validateOAuth2AuthorizationCode<{
+			access_token: string;
+			expires_in: number;
+			refresh_token: string;
+			refresh_token_expires_in: number;
+		}>(code, "https://kauth.kakao.com/oauth/token", {
+			clientId: this.config.clientId,
+			clientPassword: {
+				clientSecret: this.config.clientSecret,
+				authenticateWith: "client_secret"
 			}
-		);
+		});
+		return {
+			accessToken: result.access_token,
+			expiresIn: result.expires_in,
+			refreshToken: result.refresh_token,
+			refreshTokenExpiresIn: result.refresh_token_expires_in
+		};
 	};
 }
 
@@ -95,13 +101,10 @@ export class KakaoUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 }
 
 export type KakaoTokens = {
-	tokenType: string;
 	accessToken: string;
 	expiresIn: number;
 	refreshToken: string;
 	refreshTokenExpiresIn: number;
-	scope?: string;
-	idToken?: string;
 };
 
 export type KakaoUser = {
@@ -109,7 +112,7 @@ export type KakaoUser = {
 	has_signed_up?: boolean;
 	connected_at?: string;
 	synced_at?: string;
-	properties?: Properties;
+	properties?: Record<string, string>;
 	kakao_account?: KakaoAccount;
 	for_partner?: Partner;
 };
@@ -126,7 +129,6 @@ type KakaoAccount = {
 	name_needs_agreement?: boolean;
 	name?: string;
 	age_range_needs_agreement?: boolean;
-	// "1~9, 10~14, 15~19, 20~29, 30~39, 40~49, 50~59, 60~69, 70~79, 80~89, 90~";
 	ag_range?:
 		| "1~9"
 		| "10~14"
@@ -162,8 +164,4 @@ type Profile = {
 
 type Partner = {
 	uuid?: string;
-};
-
-type Properties = {
-	[key: string]: string;
 };
