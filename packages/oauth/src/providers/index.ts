@@ -97,6 +97,15 @@ export type {
 	GoogleUserAuth
 } from "./google.js";
 
+
+export { kakao } from "./kakao.js";
+export type {
+	KakaoAuth,
+	KakaoTokens,
+	KakaoUser,
+	KakaoUserAuth
+} from "./kakao.js";
+
 export { keycloak } from "./keycloak.js";
 export type {
 	KeycloakAuth,
