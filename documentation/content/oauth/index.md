@@ -45,6 +45,7 @@ We also have framework specific guides.
 - GitLab
 - Google
 - Kakao
+- Keycloak
 - Lichess
 - Line
 - LinkedIn
