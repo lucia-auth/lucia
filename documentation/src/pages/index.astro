@@ -38,7 +38,7 @@ export const auth = lucia({
 });
 `;
 
-const code3 = `import { auth } from "./auth.js";
+const code3 = `import { auth } from "./lucia.js";
 
 const user = await auth.createUser({
 	// user identified with their username

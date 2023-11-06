@@ -20,7 +20,7 @@ Provider id is `apple`.
 
 ```ts
 import { apple } from "@lucia-auth/oauth/providers";
-import { auth } from "./auth.js";
+import { auth } from "./lucia.js";
 
 const appleAuth = apple(auth, configs);
 ```
