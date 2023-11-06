@@ -55,7 +55,6 @@
 		"vitest": "^0.33.0"
 	},
 	"dependencies": {
-		"@noble/hashes": "1.3.2",
-		"nanoid": "5.0.1"
+		"@noble/hashes": "1.3.2"
 	}
 }
