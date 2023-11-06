@@ -7,7 +7,6 @@ OAuth integration for Keycloak. Refer to [Keycloak Documentation](https://www.ke
 
 ```ts
 import { keycloak } from "@lucia-auth/oauth/providers";
-
 import { auth } from "./lucia.js";
 
 const keycloakAuth = keycloak(auth, config);
