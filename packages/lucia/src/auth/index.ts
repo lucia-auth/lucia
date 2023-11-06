@@ -323,23 +323,24 @@ export class Lucia<
 		}
 		const requestOrigin = requestContext.request.headers.get("Origin");
 		if (!requestOrigin) {
-			debug.request.fail("No request origin available");
+			debug.request.fail("Origin header unavailable");
+			return false;
 		}
-		let host: string | null = null;
-		if (options.host !== undefined) {
-			host = options.host;
-		} else if (options.hostHeader !== undefined) {
-			host = requestContext.request.headers.get(options.hostHeader);
-		} else if (requestContext.request.url !== undefined) {
-			host = requestContext.request.url;
-		} else {
-			host = requestContext.request.headers.get("Host");
+
+		const allowedDomains = options.allowedDomains ?? [];
+		const hostHeader = requestContext.request.headers.get(
+			options.hostHeader ?? "Host"
+		);
+		if (hostHeader) {
+			allowedDomains.push(hostHeader);
 		}
-		debug.request.info("Host", host ?? "(Host unknown)");
+		if (requestContext.request.url !== undefined) {
+			allowedDomains.push(requestContext.request.url);
+		}
+
+		debug.request.info("Allowed domains", allowedDomains.join(", "));
 		debug.request.info("Origin", requestOrigin ?? "(Origin unknown)");
-		const validOrigin = verifyRequestOrigin(requestOrigin, host, {
-			allowedSubdomains: options.allowedSubDomains
-		});
+		const validOrigin = verifyRequestOrigin(requestOrigin, allowedDomains);
 		if (validOrigin) {
 			debug.request.info("Valid request origin");
 			return true;
@@ -366,9 +367,8 @@ export interface SessionCookieOptions {
 }
 
 export interface CSRFProtectionOptions {
-	host?: string;
+	allowedDomains?: string[];
 	hostHeader?: string;
-	allowedSubDomains?: string[] | "*";
 }
 
 export interface ExperimentalOptions {
