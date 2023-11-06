@@ -1,9 +1,4 @@
-import { pbkdf2 } from "./pbkdf.js";
-
-/**
- * Scrypt KDF from RFC 7914.
- */
-export default async (
+export const scrypt = async (
 	password: Uint8Array,
 	salt: Uint8Array,
 	options: ScryptOptions
@@ -48,14 +43,18 @@ export default async (
 		for (let i = 0; i < blockSize32; i++) V[i] = B32[Pi + i]; // V[0] = B[i]
 		for (let i = 0, pos = 0; i < N - 1; i++) {
 			BlockMix(V, pos, V, (pos += blockSize32), r); // V[i] = BlockMix(V[i-1]);
+			await new Promise<void>((r) => r()); // await next tick
 		}
 		BlockMix(V, (N - 1) * blockSize32, B32, Pi, r); // Process last element
 		for (let i = 0; i < N; i++) {
 			// First u32 of the last 64-byte block (u32 is LE)
 			const j = B32[Pi + blockSize32 - 16] % N; // j = Integrify(X) % iterations
-			for (let k = 0; k < blockSize32; k++)
+			for (let k = 0; k < blockSize32; k++) {
 				tmp[k] = B32[Pi + k] ^ V[j * blockSize32 + k]; // tmp = B ^ V[j]
+			}
+
 			BlockMix(tmp, 0, B32, Pi, r); // B = BlockMix(B ^ V[j])
+			await new Promise<void>((r) => r()); // await next tick
 		}
 	}
 	const res = await pbkdf2(password, B, { c: 1, dkLen });
@@ -159,6 +158,34 @@ const XorAndSalsa = (
 	out[oi++] = (y15 + x15) | 0;
 };
 
+const pbkdf2 = async (
+	password: Uint8Array,
+	salt: Uint8Array,
+	options: {
+		c: number;
+		dkLen: number;
+	}
+): Promise<Uint8Array> => {
+	const pwKey = await crypto.subtle.importKey(
+		"raw",
+		password,
+		"PBKDF2",
+		false,
+		["deriveBits"]
+	);
+	const keyBuffer = await crypto.subtle.deriveBits(
+		{
+			name: "PBKDF2",
+			hash: "SHA-256",
+			salt,
+			iterations: options.c
+		},
+		pwKey,
+		options.dkLen * 8
+	);
+	return new Uint8Array(keyBuffer);
+};
+
 const BlockMix = (
 	input: Uint32Array,
 	ii: number,
@@ -191,3 +218,27 @@ type ScryptOptions = {
 	dkLen?: number;
 	maxmem?: number;
 };
+
+/*
+The MIT License (MIT)
+
+Copyright (c) 2022 Paul Miller (https://paulmillr.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE. 
+*/

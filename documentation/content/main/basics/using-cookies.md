@@ -78,7 +78,7 @@ const session = await authRequest.validate();
 
 ## Set session cookies
 
-You can set session cookies by passing `Session` to [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). You can pass `null` to
+You can set session cookies by passing `Session` to [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). You can pass `null` to delete session cookies.
 
 ```ts
 import { auth } from "./lucia.js";

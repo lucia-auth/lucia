@@ -47,7 +47,7 @@ await db.transaction((trx) => {
 	await trx.key.insert({
 		id: createKeyId("username", username),
 		user_id: userId,
-		hashed_password: generateLuciaPasswordHash(password)
+		hashed_password: await generateLuciaPasswordHash(password)
 	});
 });
 ```
