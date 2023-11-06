@@ -47,7 +47,7 @@ type UserSchema = {
 } & Lucia.DatabaseUserAttributes;
 ```
 
-In addition to the required fields shown below, you can add any additional fields to the table, in which case they should be declared in type `Lucia.DatabaseUserAttributes`. **Lucia does not support default (auto-generated) database values.**
+In addition to the required fields shown below, you can add any additional fields to the table, in which case they should be declared in type `Lucia.DatabaseUserAttributes`. If you're using an database driver adapter such as `pg()`, these fields must match your database columns. Keep this in mind if you're using an ORM such as Drizzle. **Lucia does not support default (auto-generated) database values.**
 
 ```ts
 declare namespace Lucia {
@@ -79,7 +79,7 @@ type SessionSchema = {
 } & Lucia.DatabaseSessionAttributes;
 ```
 
-In addition to the required fields shown below, you can add any additional fields to the table, in which case they should be declared in type `Lucia.DatabaseSessionAttributes`. **Lucia does not support default (auto-generated) database values.**
+In addition to the required fields shown below, you can add any additional fields to the table, in which case they should be declared in type `Lucia.DatabaseSessionAttributes`. If you're using an database driver adapter such as `pg()`, these fields must match your database columns. Keep this in mind if you're using an ORM such as Drizzle. **Lucia does not support default (auto-generated) database values.**
 
 ```ts
 declare namespace Lucia {
@@ -87,6 +87,7 @@ declare namespace Lucia {
 	type DatabaseSessionAttributes = {
 		// required fields (i.e. id) should not be defined here
 		username: string;
+		display_name: string
 	};
 }
 ```
