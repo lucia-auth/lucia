@@ -1,6 +1,5 @@
 ---
 title: "Keycloak OAuth provider"
-
 description: "Learn how to use the Keycloak OAuth provider"
 ---
 
@@ -19,18 +18,12 @@ const keycloakAuth = keycloak(auth, config);
 ```ts
 const keycloak: (
 	auth: Auth,
-
 	config: {
 		domain: string;
-
 		realm: string;
-
 		clientId: string;
-
 		clientSecret: string;
-
 		scope?: string[];
-
 		redirectUri?: string;
 	}
 ) => KeycloakProvider;
@@ -38,30 +31,20 @@ const keycloak: (
 
 ##### Parameters
 
-| name | type | description | optional |
-
-| --------------------- | ------------------------------------------ | ------------------------------ | :------: |
-
-| `auth` | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance | |
-
-| `config.domain` | `string` | Keycloak OAuth app client id (e.g. 'my.domain.com') | |
-
-| `config.realm` | `string` | Keycloak Realm of client | |
-
-| `config.clientId` | `string` | Keycloak OAuth app client id | |
-
-| `config.clientSecret` | `string` | Keycloak OAuth app client secret | |
-
-| `config.scope` | `string[]` | an array of scopes | ✓ |
-
-| `config.redirectUri` | `string` | an authorized redirect URI | ✓ |
+| name                  | type                                       | description                                         | optional |
+| --------------------- | ------------------------------------------ | --------------------------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                      |          |
+| `config.domain`       | `string`                                   | Keycloak OAuth app client id (e.g. 'my.domain.com') |          |
+| `config.realm`        | `string`                                   | Keycloak Realm of client                            |          |
+| `config.clientId`     | `string`                                   | Keycloak OAuth app client id                        |          |
+| `config.clientSecret` | `string`                                   | Keycloak OAuth app client secret                    |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                                  |    ✓     |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI                          |    ✓     |
 
 ##### Returns
 
-| type | description |
-
-| ----------------------------------- | --------------- |
-
+| type                                    | description       |
+| --------------------------------------- | ----------------- |
 | [`KeycloakProvider`](#keycloakprovider) | Keycloak provider |
 
 ## Interfaces
@@ -75,41 +58,30 @@ See [`OAuth2ProviderAuth`](/reference/oauth/interfaces/oauth2providerauth).
 
 interface KeycloakAuth<_Auth extends Auth> {
 	getAuthorizationUrl: () => Promise<readonly [url: URL, state: string]>;
-
 	validateCallback: (code: string) => Promise<KeycloakUserAuth<_Auth>>;
 }
 ```
 
-| type |
-
-| ----------------------------------- |
-
+| type                                    |
+| --------------------------------------- |
 | [`KeycloakUserAuth`](#keycloakuserauth) |
 
 ##### Generics
 
-| name | extends | default |
-
+| name    | extends                                    | default |
 | ------- | ------------------------------------------ | ------- |
-
-| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth` |
+| `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) | `Auth`  |
 
 ### `KeycloakTokens`
 
 ```ts
 type KeycloakTokens = {
 	accessToken: string;
-
 	accessTokenExpiresIn: number;
-
 	authTime: number;
-
 	issuedAtTime: number;
-
 	expirationTime: number;
-
 	refreshToken: string | null;
-
 	refreshTokenExpiresIn: number | null;
 };
 ```
@@ -119,47 +91,26 @@ type KeycloakTokens = {
 ```ts
 type KeycloakUser = {
 	exp: number;
-
 	iat: number;
-
 	auth_time: number;
-
 	jti: string;
-
 	iss: string;
-
 	aud: string;
-
 	sub: string;
-
 	typ: string;
-
 	azp: string;
-
 	session_state: string;
-
 	at_hash: string;
-
 	acr: string;
-
 	sid: string;
-
 	email_verified: boolean;
-
 	name: string;
-
 	preferred_username: string;
-
 	given_name: string;
-
 	locale: string;
-
 	family_name: string;
-
 	email: string;
-
 	picture: string;
-
 	user: any;
 };
 ```
@@ -185,27 +136,19 @@ Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 ```ts
 interface KeycloakUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	keycloakUser: KeycloakUser;
-
 	keycloakTokens: KeycloakTokens;
-
 	keycloakRoles: KeycloakRoles;
 }
 ```
 
-| properties | type | description |
-
-| -------------- | ------------------------------- | ----------------- |
-
-| `keycloakUser` | [`KeycloakUser`](#keycloakuser) | Keycloak user |
-
-| `keycloakTokens` | [`KeycloakTokens`](#keycloaktokens) | Access tokens etc |
-
-| `keycloakRoles` | [`KeycloakRoles`](#keycloakroles) | Keycloak roles retrieved from OIDC Token |
+| properties       | type                                | description                              |
+| ---------------- | ----------------------------------- | ---------------------------------------- |
+| `keycloakUser`   | [`KeycloakUser`](#keycloakuser)     | Keycloak user                            |
+| `keycloakTokens` | [`KeycloakTokens`](#keycloaktokens) | Access tokens etc                        |
+| `keycloakRoles`  | [`KeycloakRoles`](#keycloakroles)   | Keycloak roles retrieved from OIDC Token |
 
 ##### Generics
 
-| name | extends |
-
+| name    | extends                                    |
 | ------- | ------------------------------------------ |
-
 | `_Auth` | [`Auth`](/reference/lucia/interfaces/auth) |
