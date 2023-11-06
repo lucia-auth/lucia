@@ -35,9 +35,6 @@
 			],
 			"polyfill/node": [
 				"dist/polyfill/node.d.ts"
-			],
-			"utils": [
-				"dist/utils/index.d.ts"
 			]
 		}
 	},
