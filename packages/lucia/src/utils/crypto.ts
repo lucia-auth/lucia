@@ -1,6 +1,6 @@
-import { scryptAsync as scrypt } from "@noble/hashes/scrypt";
 import { encodeHex, decodeHex } from "oslo/encoding";
 import { constantTimeEqual } from "oslo/crypto";
+import { scrypt } from "../scrypt/index.js";
 
 export const generateScryptHash = async (s: string): Promise<string> => {
 	const salt = encodeHex(crypto.getRandomValues(new Uint8Array(16)));
