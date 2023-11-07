@@ -78,6 +78,7 @@ export class Auth<_Configuration extends Configuration = any> {
 	private experimental: {
 		debugMode: boolean;
 	};
+	private fetchUserAttributes: boolean;
 
 	constructor(config: _Configuration) {
 		validateConfiguration(config);
@@ -116,6 +117,7 @@ export class Auth<_Configuration extends Configuration = any> {
 		this.experimental = {
 			debugMode: config.experimental?.debugMode ?? false
 		};
+    this.fetchUserAttributes = config.getUserAttributes !== undefined;
 
 		debug.init(this.experimental.debugMode);
 	}
@@ -224,7 +226,9 @@ export class Auth<_Configuration extends Configuration = any> {
 			return [databaseSession, databaseUser];
 		}
 		const databaseSession = await this.getDatabaseSession(sessionId);
-		const databaseUser = await this.getDatabaseUser(databaseSession.user_id);
+		const databaseUser = this.fetchUserAttributes
+			? await this.getDatabaseUser(databaseSession.user_id)
+			: { id: databaseSession.user_id };
 		return [databaseSession, databaseUser];
 	};
 
