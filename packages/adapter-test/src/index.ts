@@ -15,7 +15,7 @@ declare module "lucia" {
 }
 
 export const databaseUser: DatabaseUser = {
-	userId: generateRandomString(15, alphabet("0-9", "a-z")),
+	id: generateRandomString(15, alphabet("0-9", "a-z")),
 	attributes: {
 		username: generateRandomString(15, alphabet("0-9", "a-z"))
 	}
@@ -26,22 +26,22 @@ export async function testAdapter(adapter: Adapter) {
 		`\n\x1B[38;5;63;1m[start] \x1B[0;2m Running adapter tests\x1B[0m\n`
 	);
 	const databaseSession: DatabaseSession = {
-		userId: databaseUser.userId,
-		sessionId: generateRandomString(40, alphabet("0-9", "a-z")),
+		userId: databaseUser.id,
+		id: generateRandomString(40, alphabet("0-9", "a-z")),
 		// get random date with 0ms
 		expiresAt: new Date(new TimeSpan(30, "d").milliseconds()),
 		attributes: {
 			country: "us"
 		}
 	};
-	const result1 = await adapter.getSessionAndUser(databaseSession.sessionId);
+	const result1 = await adapter.getSessionAndUser(databaseSession.id);
 	testEquality(
 		"getSessionAndUser() returns [null, null] on invalid session id",
 		result1,
 		[null, null]
 	);
 
-	const result2 = await adapter.getUserSessions(databaseUser.userId);
+	const result2 = await adapter.getUserSessions(databaseUser.id);
 	testEquality(
 		"getUserSessions() returns empty array on invalid user id",
 		result2,
@@ -49,23 +49,23 @@ export async function testAdapter(adapter: Adapter) {
 	);
 
 	await adapter.setSession(databaseSession);
-	const result3 = await adapter.getSessionAndUser(databaseSession.sessionId);
+	const result3 = await adapter.getSessionAndUser(databaseSession.id);
 	testEquality(
 		"setSession() creates session and getSessionAndUser() returns created session and associated user",
 		result3,
 		[databaseSession, databaseUser]
 	);
 
-	await adapter.deleteSession(databaseSession.sessionId);
+	await adapter.deleteSession(databaseSession.id);
 	const result4 = await adapter.getUserSessions(databaseSession.userId);
 	testEquality("deleteSession() deletes session", result4, []);
 
 	await adapter.setSession(databaseSession);
 	databaseSession.expiresAt = new Date(new TimeSpan(100, "d").milliseconds());
-	await adapter.updateSession(databaseSession.sessionId, {
+	await adapter.updateSession(databaseSession.id, {
 		expiresAt: databaseSession.expiresAt
 	});
-	const result5 = await adapter.getSessionAndUser(databaseSession.sessionId);
+	const result5 = await adapter.getSessionAndUser(databaseSession.id);
 	testEquality("updateSession() updates session", result5, [
 		databaseSession,
 		databaseUser
