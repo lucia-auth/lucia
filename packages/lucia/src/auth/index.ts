@@ -16,7 +16,8 @@ import type {
 
 type SessionAttributes = RegisteredLucia extends Lucia<
 	any,
-	infer _SessionAttributes
+	infer _SessionAttributes,
+	any
 >
 	? _SessionAttributes
 	: {};

@@ -30,7 +30,7 @@ export type RegisteredLucia = Register extends {
 	// need to infer to "copy" the generics of Lucia
 	Lucia: infer _Lucia;
 }
-	? _Lucia extends Lucia
+	? _Lucia extends Lucia<any, any, any>
 		? _Lucia
 		: Lucia
 	: Lucia;
