@@ -30,13 +30,13 @@ export interface SessionAdapter {
 }
 
 export interface DatabaseUser {
-	userId: string;
+	id: string;
 	attributes: DatabaseUserAttributes;
 }
 
 export interface DatabaseSession {
 	sessionId: string;
 	expiresAt: Date;
-	userId: string;
+	id: string;
 	attributes: DatabaseSessionAttributes;
 }

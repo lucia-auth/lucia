@@ -30,14 +30,14 @@ type UserAttributes = RegisteredLucia extends Lucia<
 	: {};
 
 export interface Session extends SessionAttributes {
-	sessionId: string;
+	id: string;
 	expiresAt: Date;
 	fresh: boolean;
 	userId: string;
 }
 
 export interface User extends UserAttributes {
-	userId: string;
+	id: string;
 }
 
 export class Lucia<
@@ -122,9 +122,9 @@ export class Lucia<
 				continue;
 			}
 			sessions.push({
-				sessionId: databaseSession.sessionId,
+				id: databaseSession.sessionId,
 				expiresAt: databaseSession.expiresAt,
-				userId: databaseSession.userId,
+				userId: databaseSession.id,
 				fresh: false,
 				...this.getSessionAttributes(databaseSession)
 			});
@@ -164,15 +164,15 @@ export class Lucia<
 			fresh = true;
 		}
 		const session: Session = {
-			sessionId: databaseSession.sessionId,
-			userId: databaseSession.userId,
+			id: databaseSession.sessionId,
+			userId: databaseSession.id,
 			fresh,
 			expiresAt,
 			...this.getSessionAttributes(databaseSession.attributes)
 		};
 		const user: User = {
 			...this.getUserAttributes(databaseUser),
-			userId: databaseUser.userId
+			id: databaseUser.id
 		};
 		return { user, session };
 	}
@@ -185,12 +185,12 @@ export class Lucia<
 		const sessionExpiresAt = this.sessionController.createExpirationDate();
 		await this.adapter.setSession({
 			sessionId,
-			userId,
+			id: userId,
 			expiresAt: sessionExpiresAt,
 			attributes
 		});
 		const session: Session = {
-			sessionId,
+			id: sessionId,
 			userId,
 			fresh: true,
 			expiresAt: sessionExpiresAt,

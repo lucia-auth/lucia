@@ -22,6 +22,7 @@ export class AuthRequest<_Lucia extends Lucia = Lucia> {
 	private validatePromise: Promise<
 		{ user: User; session: Session } | { user: null; session: null }
 	> | null = null;
+
 	private validateBearerTokenPromise: Promise<
 		{ user: User; session: Session } | { user: null; session: null }
 	> | null = null;
@@ -51,7 +52,7 @@ export class AuthRequest<_Lucia extends Lucia = Lucia> {
 				const result = await this.auth.validateSession(this.sessionCookie);
 				if (result.session && result.session.fresh) {
 					const sessionCookie = this.auth.createSessionCookie(
-						result.session.sessionId
+						result.session.id
 					);
 					this.setCookie(sessionCookie);
 				}
