@@ -66,17 +66,12 @@ const createSession: (options: {
 	userId: string;
 	attributes: Lucia.DatabaseSessionAttributes;
 }) => Promise<Session>;
-const createSession: (options: {
-	userId: string;
-	attributes: Lucia.DatabaseSessionAttributes;
-}) => Promise<Session>;
 ```
 
 ##### Parameters
 
 | name                 | type                              | description                          |
 | -------------------- | --------------------------------- | ------------------------------------ |
-| `options.userId`     | `string`                          | The user id of the session to create |
 | `options.userId`     | `string`                          | The user id of the session to create |
 | `options.attributes` | `Lucia.DatabaseSessionAttributes` | Database session attributes          |
 
