@@ -16,7 +16,7 @@ await d1.exec(
 
 await d1
 	.prepare(`INSERT INTO ${TABLE_NAMES.user} (id, username) VALUES (?, ?)`)
-	.bind(databaseUser.userId, databaseUser.attributes.username)
+	.bind(databaseUser.id, databaseUser.attributes.username)
 	.run();
 
 const adapter = new D1Adapter(d1, TABLE_NAMES);

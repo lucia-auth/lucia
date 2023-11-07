@@ -19,7 +19,7 @@ db.exec(
 )`);
 
 db.prepare(`INSERT INTO ${TABLE_NAMES.user} (id, username) VALUES (?, ?)`).run(
-	databaseUser.userId,
+	databaseUser.id,
 	databaseUser.attributes.username
 );
 

@@ -26,7 +26,7 @@ await client.execute(`CREATE TABLE ${TABLE_NAMES.session} (
 
 await client.execute({
 	sql: `INSERT INTO ${TABLE_NAMES.user} (id, username) VALUES (?, ?)`,
-	args: [databaseUser.userId, databaseUser.attributes.username]
+	args: [databaseUser.id, databaseUser.attributes.username]
 });
 
 const adapter = new LibSQLAdapter(client, TABLE_NAMES);
