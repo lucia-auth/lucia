@@ -12,6 +12,7 @@ export type {
 	ExperimentalOptions,
 	SessionCookieOptions,
 	CSRFProtectionOptions,
+	SessionCookieAttributesOptions,
 	RequestContext,
 	Middleware
 } from "./auth/index.js";

@@ -99,11 +99,21 @@ export class Lucia<
 		this.sessionController = new SessionController(
 			options?.sessionExpiresIn ?? new TimeSpan(30, "d")
 		);
-		this.sessionCookieController = new SessionCookieController(
-			options?.sessionCookie?.name ?? "auth_session",
-			this.sessionController.expiresIn,
-			options?.sessionCookie
-		);
+		const sessionCookieExpires = options?.sessionCookie?.expires ?? true;
+		const sessionCookieName = options?.sessionCookie?.name ?? "auth_session";
+		if (sessionCookieExpires === true) {
+			this.sessionCookieController = new SessionCookieController(
+				sessionCookieName,
+				this.sessionController.expiresIn,
+				options?.sessionCookie?.attributes
+			);
+		} else {
+			this.sessionCookieController = new SessionCookieController(
+				sessionCookieName,
+				new TimeSpan(365 * 2, "d"),
+				options?.sessionCookie?.attributes
+			);
+		}
 		this.csrfProtection = options?.csrfProtection ?? true;
 		if (options?.middleware) {
 			this.middleware = options.middleware;
@@ -344,6 +354,10 @@ export class Lucia<
 export interface SessionCookieOptions {
 	name?: string;
 	expires?: boolean;
+	attributes?: SessionCookieAttributesOptions;
+}
+
+export interface SessionCookieAttributesOptions {
 	sameSite?: "lax" | "strict";
 	domain?: string;
 	path?: string;
