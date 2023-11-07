@@ -122,9 +122,9 @@ export class Lucia<
 				continue;
 			}
 			sessions.push({
-				id: databaseSession.sessionId,
+				id: databaseSession.id,
 				expiresAt: databaseSession.expiresAt,
-				userId: databaseSession.id,
+				userId: databaseSession.userId,
 				fresh: false,
 				...this.getSessionAttributes(databaseSession)
 			});
@@ -142,7 +142,7 @@ export class Lucia<
 			return { session: null, user: null };
 		}
 		if (!databaseUser) {
-			await this.adapter.deleteSession(databaseSession.sessionId);
+			await this.adapter.deleteSession(databaseSession.id);
 			debug.session.fail("Session not found", sessionId);
 			return { session: null, user: null };
 		}
@@ -151,21 +151,21 @@ export class Lucia<
 		);
 		if (sessionState === "expired") {
 			debug.session.fail("Session expired", sessionId);
-			await this.adapter.deleteSession(databaseSession.sessionId);
+			await this.adapter.deleteSession(databaseSession.id);
 			return { session: null, user: null };
 		}
 		let expiresAt = databaseSession.expiresAt;
 		let fresh = false;
 		if (sessionState === "idle") {
 			expiresAt = this.sessionController.createExpirationDate();
-			await this.adapter.updateSession(databaseSession.sessionId, {
+			await this.adapter.updateSession(databaseSession.id, {
 				expiresAt
 			});
 			fresh = true;
 		}
 		const session: Session = {
-			id: databaseSession.sessionId,
-			userId: databaseSession.id,
+			id: databaseSession.id,
+			userId: databaseSession.userId,
 			fresh,
 			expiresAt,
 			...this.getSessionAttributes(databaseSession.attributes)
@@ -184,8 +184,8 @@ export class Lucia<
 		const sessionId = generateRandomString(40, alphabet("0-9", "a-z"));
 		const sessionExpiresAt = this.sessionController.createExpirationDate();
 		await this.adapter.setSession({
-			sessionId,
-			id: userId,
+			id: sessionId,
+			userId,
 			expiresAt: sessionExpiresAt,
 			attributes
 		});

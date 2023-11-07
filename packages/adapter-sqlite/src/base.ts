@@ -54,7 +54,7 @@ export class SQLiteAdapter implements Adapter {
 
 	public async setSession(databaseSession: DatabaseSession): Promise<void> {
 		const value: SessionSchema = {
-			id: databaseSession.sessionId,
+			id: databaseSession.id,
 			user_id: databaseSession.userId,
 			expires_at: Math.floor(databaseSession.expiresAt.getTime() / 1000),
 			...databaseSession.attributes
@@ -76,7 +76,7 @@ export class SQLiteAdapter implements Adapter {
 		databaseSession: Partial<DatabaseSession>
 	): Promise<void> {
 		const value: Partial<SessionSchema> = {
-			id: databaseSession.sessionId,
+			id: databaseSession.id,
 			user_id: databaseSession.userId,
 			...databaseSession.attributes
 		};
@@ -139,24 +139,19 @@ interface UserSchema extends DatabaseUserAttributes {
 }
 
 function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
-	const {
-		id: sessionId,
-		user_id: userId,
-		expires_at: expiresAtUnix,
-		...attributes
-	} = raw;
+	const { id, user_id: userId, expires_at: expiresAtUnix, ...attributes } = raw;
 	return {
 		userId,
-		sessionId,
+		id,
 		expiresAt: new Date(expiresAtUnix * 1000),
 		attributes
 	};
 }
 
 function transformIntoDatabaseUser(raw: UserSchema): DatabaseUser {
-	const { id: userId, ...attributes } = raw;
+	const { id, ...attributes } = raw;
 	return {
-		userId,
+		id,
 		attributes
 	};
 }
