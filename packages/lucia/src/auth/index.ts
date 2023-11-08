@@ -3,15 +3,15 @@ import { lucia as defaultMiddleware } from "../middleware/index.js";
 import { debug } from "../utils/debug.js";
 import { SessionController, SessionCookieController } from "oslo/session";
 import { TimeSpan, isWithinExpirationDate } from "oslo";
-import { generateRandomString, alphabet } from "oslo/random";
 import { verifyRequestOrigin } from "oslo/request";
 
 import type { SessionCookie } from "oslo/session";
 import type { Adapter } from "./database.js";
-import type {
-	DatabaseSessionAttributes,
-	DatabaseUserAttributes,
-	RegisteredLucia
+import {
+	generateId,
+	type DatabaseSessionAttributes,
+	type DatabaseUserAttributes,
+	type RegisteredLucia
 } from "../index.js";
 
 type SessionAttributes = RegisteredLucia extends Lucia<
@@ -192,7 +192,7 @@ export class Lucia<
 		userId: string,
 		attributes: DatabaseSessionAttributes
 	): Promise<Session> {
-		const sessionId = generateRandomString(40, alphabet("0-9", "a-z"));
+		const sessionId = generateId(40);
 		const sessionExpiresAt = this.sessionController.createExpirationDate();
 		await this.adapter.setSession({
 			id: sessionId,

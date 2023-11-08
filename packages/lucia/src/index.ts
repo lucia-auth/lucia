@@ -2,7 +2,8 @@ export { Lucia } from "./auth/index.js";
 export { AuthRequest } from "./auth/request.js";
 export {
 	generateScryptHash as generateLegacyLuciaPasswordHash,
-	verifyScryptHash as verifyLegacyLuciaPasswordHash
+	verifyScryptHash as verifyLegacyLuciaPasswordHash,
+	generateId
 } from "./utils/crypto.js";
 export { TimeSpan } from "oslo";
 

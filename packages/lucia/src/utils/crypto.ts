@@ -1,6 +1,7 @@
 import { encodeHex, decodeHex } from "oslo/encoding";
 import { constantTimeEqual } from "oslo/crypto";
 import { scrypt } from "../scrypt/index.js";
+import { alphabet, generateRandomString } from "oslo/random";
 
 export const generateScryptHash = async (s: string): Promise<string> => {
 	const salt = encodeHex(crypto.getRandomValues(new Uint8Array(16)));
@@ -45,3 +46,7 @@ export const verifyScryptHash = async (
 	}
 	return false;
 };
+
+export function generateId(length: number): string {
+	return generateRandomString(length, alphabet("0-9", "a-z"));
+}
