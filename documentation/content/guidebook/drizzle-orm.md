@@ -7,7 +7,7 @@ description: "Learn how to use Drizzle ORM with Lucia"
 
 ## MySQL
 
-Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`). 
+Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`).
 
 ```ts
 // schema.js
@@ -138,7 +138,7 @@ export const auth = lucia({
 
 We recommend using `pg` with TCP connections for Supabase and Neon.
 
-Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`). 
+Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`).
 
 ```ts
 // schema.js
@@ -251,7 +251,7 @@ export const auth = lucia({
 
 ## SQLite
 
-Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`). 
+Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`).
 
 ```ts
 // schema.js

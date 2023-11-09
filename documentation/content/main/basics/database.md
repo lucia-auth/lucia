@@ -23,7 +23,7 @@ We currently provide the following adapters:
 - [Redis](/database-adapters/redis)
 - [Unstorage](/database-adapters/unstorage)
 
-SDKs such as `@vercel/postgres` and `@neonserverless/database` provide drop-in replacements for existing drivers. You can also use query builders like Drizzle ORM and Kysely since they rely on underlying drivers that we provide adapters for. Refer to these guides:
+SDKs such as `@vercel/postgres` and `@neondatabase/serverless` provide drop-in replacements for existing drivers. You can also use query builders like Drizzle ORM and Kysely since they rely on underlying drivers that we provide adapters for. Refer to these guides:
 
 - [Using `@vercel/postgres`](/guidebook/vercel-postgres)
 - [Using Drizzle ORM](/guidebook/drizzle-orm)
@@ -87,7 +87,7 @@ declare namespace Lucia {
 	type DatabaseSessionAttributes = {
 		// required fields (i.e. id) should not be defined here
 		username: string;
-		display_name: string
+		display_name: string;
 	};
 }
 ```
