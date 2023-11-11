@@ -1,6 +1,6 @@
 {
 	"name": "lucia",
-	"version": "2.7.3",
+	"version": "2.7.4",
 	"description": "A simple and flexible authentication library",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

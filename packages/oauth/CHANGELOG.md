@@ -1,5 +1,13 @@
 # @lucia-auth/oauth
 
+## 3.5.0
+
+### Minor changes
+
+- [#1165](https://github.com/lucia-auth/lucia/pull/1165) by [@Ed1ks](https://github.com/Ed1ks) : Adds Keycloak Provider
+
+- [#1207](https://github.com/lucia-auth/lucia/pull/1207) by [@sjunepark](https://github.com/sjunepark) : Add Kakao provider
+
 ## 3.4.0
 
 ### Minor changes

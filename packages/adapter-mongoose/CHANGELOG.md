@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-mongoose
 
+## 3.0.1
+
+### Patch changes
+
+- [#1248](https://github.com/lucia-auth/lucia/pull/1248) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update peer dependencies
+
 ## 3.0.0
 
 ### Major changes
