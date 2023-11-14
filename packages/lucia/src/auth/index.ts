@@ -182,7 +182,7 @@ export class Lucia<
 			...this.getSessionAttributes(databaseSession.attributes)
 		};
 		const user: User = {
-			...this.getUserAttributes(databaseUser),
+			...this.getUserAttributes(databaseUser.attributes),
 			id: databaseUser.id
 		};
 		return { user, session };
