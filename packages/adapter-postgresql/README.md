@@ -1,6 +1,6 @@
 # `@lucia-auth/adapter-postgresql`
 
-PostgreSQL adapter for Lucia v2.
+PostgreSQL adapter for Lucia v3.
 
 **[Documentation](https://lucia-auth.com/reference#lucia-authadapter-postgresql)**
 

@@ -13,9 +13,9 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"auri.build": "pnpm build",
-		"test.better-sqlite3": "tsx test/better-sqlite3/index.ts",
-		"test.d1": "tsx test/d1/index.ts",
-		"test.libsql": "tsx test/libsql/index.ts"
+		"test.better-sqlite3": "tsx tests/better-sqlite3.ts",
+		"test.d1": "tsx tests/d1.ts",
+		"test.libsql": "tsx tests/libsql.ts"
 	},
 	"keywords": [
 		"lucia",

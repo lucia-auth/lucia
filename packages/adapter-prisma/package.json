@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test": "tsx test/index.ts",
+		"test": "tsx tests/prisma.ts",
 		"test-setup": "prisma db push",
 		"auri.build": "pnpm build"
 	},

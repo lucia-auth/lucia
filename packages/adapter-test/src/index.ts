@@ -23,7 +23,7 @@ export const databaseUser: DatabaseUser = {
 
 export async function testAdapter(adapter: Adapter) {
 	console.log(
-		`\n\x1B[38;5;63;1m[start] \x1B[0;2m Running adapter tests\x1B[0m\n`
+		`\n\x1B[38;5;63;1m[start]  \x1B[0mRunning adapter tests\x1B[0m\n`
 	);
 	const databaseSession: DatabaseSession = {
 		userId: databaseUser.id,
@@ -34,58 +34,57 @@ export async function testAdapter(adapter: Adapter) {
 			country: "us"
 		}
 	};
-	const result1 = await adapter.getSessionAndUser(databaseSession.id);
-	testEquality(
-		"getSessionAndUser() returns [null, null] on invalid session id",
-		result1,
-		[null, null]
-	);
 
-	const result2 = await adapter.getUserSessions(databaseUser.id);
-	testEquality(
-		"getUserSessions() returns empty array on invalid user id",
-		result2,
-		[]
-	);
-
-	await adapter.setSession(databaseSession);
-	const result3 = await adapter.getSessionAndUser(databaseSession.id);
-	testEquality(
-		"setSession() creates session and getSessionAndUser() returns created session and associated user",
-		result3,
-		[databaseSession, databaseUser]
-	);
-
-	await adapter.deleteSession(databaseSession.id);
-	const result4 = await adapter.getUserSessions(databaseSession.userId);
-	testEquality("deleteSession() deletes session", result4, []);
-
-	await adapter.setSession(databaseSession);
-	databaseSession.expiresAt = new Date(new TimeSpan(100, "d").milliseconds());
-	await adapter.updateSession(databaseSession.id, {
-		expiresAt: databaseSession.expiresAt
+	await test("getSessionAndUser() returns [null, null] on invalid session id", async () => {
+		const result = await adapter.getSessionAndUser(databaseSession.id);
+		assert.deepStrictEqual(result, [null, null]);
 	});
-	const result5 = await adapter.getSessionAndUser(databaseSession.id);
-	testEquality("updateSession() updates session", result5, [
-		databaseSession,
-		databaseUser
-	]);
 
-	await adapter.deleteUserSessions(databaseSession.userId);
-	const result6 = await adapter.getUserSessions(databaseSession.userId);
-	testEquality("deleteUserSessions() deletes all user sessions", result6, []);
+	await test("getUserSessions() returns empty array on invalid user id", async () => {
+		const result = await adapter.getUserSessions(databaseUser.id);
+		assert.deepStrictEqual(result, []);
+	});
+
+	await test("setSession() creates session and getSessionAndUser() returns created session and associated user", async () => {
+		await adapter.setSession(databaseSession);
+		const result = await adapter.getSessionAndUser(databaseSession.id);
+		assert.deepStrictEqual(result, [databaseSession, databaseUser]);
+	});
+
+	await test("deleteSession() deletes session", async () => {
+		await adapter.deleteSession(databaseSession.id);
+		const result = await adapter.getUserSessions(databaseSession.userId);
+		assert.deepStrictEqual(result, []);
+	});
+
+	await test("updateSession() updates session", async () => {
+		await adapter.setSession(databaseSession);
+		databaseSession.expiresAt = new Date(new TimeSpan(100, "d").milliseconds());
+		await adapter.updateSession(databaseSession.id, {
+			expiresAt: databaseSession.expiresAt
+		});
+		const result = await adapter.getSessionAndUser(databaseSession.id);
+		assert.deepStrictEqual(result, [databaseSession, databaseUser]);
+	});
+
+	await test("deleteUserSessions() deletes all user sessions", async () => {
+		await adapter.deleteUserSessions(databaseSession.userId);
+		const result = await adapter.getUserSessions(databaseSession.userId);
+		assert.deepStrictEqual(result, []);
+	});
 
 	console.log(
-		`\n\x1B[32;1m[success] \x1B[0;2m Adapter passed all tests\x1B[0m\n`
+		`\n\x1B[32;1m[success]  \x1B[0mAdapter passed all tests\n`
 	);
 }
 
-function testEquality(name: string, a: any, b: any) {
+async function test(name: string, runTest: () => Promise<void>): Promise<void> {
+	console.log(`\x1B[38;5;63;1m► \x1B[0m${name}\x1B[0m`);
 	try {
-		assert.deepStrictEqual(a, b);
-		console.log(`\x1B[32m✓ \x1B[0;2m${name}\x1B[0m`);
+		await runTest();
+		console.log("  \x1B[32m✓ Passed\x1B[0m\n");
 	} catch (error) {
-		console.log(`\x1B[31m✗ \x1B[0;2m${name}\x1B[0m`);
+		console.log("  \x1B[31m✓ Failed\x1B[0m\n");
 		throw error;
 	}
 }

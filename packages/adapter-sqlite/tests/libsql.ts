@@ -1,6 +1,5 @@
 import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
-import { LibSQLAdapter } from "../../src/drivers/libsql.js";
-import { TABLE_NAMES } from "../db.js";
+import { LibSQLAdapter } from "../src/drivers/libsql.js";
 import { createClient } from "@libsql/client";
 import fs from "fs/promises";
 
@@ -11,12 +10,12 @@ const client = createClient({
 });
 
 await client.execute(
-	`CREATE TABLE ${TABLE_NAMES.user} (
+	`CREATE TABLE user (
 	id TEXT NOT NULL PRIMARY KEY,
 	username TEXT NOT NULL UNIQUE
 )`
 );
-await client.execute(`CREATE TABLE ${TABLE_NAMES.session} (
+await client.execute(`CREATE TABLE user_session (
 	id TEXT NOT NULL PRIMARY KEY,
 	user_id TEXT NOT NULL,
 	expires_at INTEGER NOT NULL,
@@ -25,14 +24,28 @@ await client.execute(`CREATE TABLE ${TABLE_NAMES.session} (
 )`);
 
 await client.execute({
-	sql: `INSERT INTO ${TABLE_NAMES.user} (id, username) VALUES (?, ?)`,
+	sql: `INSERT INTO user (id, username) VALUES (?, ?)`,
 	args: [databaseUser.id, databaseUser.attributes.username]
 });
 
-const adapter = new LibSQLAdapter(client, TABLE_NAMES);
+const adapter = new LibSQLAdapter(client, {
+	user: "user",
+	session: "user_session"
+});
 
 try {
 	await testAdapter(adapter);
 } finally {
 	await fs.rm("test/libsql/test.db");
+}
+
+declare module "lucia" {
+	interface Register {
+		DatabaseUserAttributes: {
+			username: string;
+		};
+		DatabaseSessionAttributes: {
+			country: string;
+		};
+	}
 }

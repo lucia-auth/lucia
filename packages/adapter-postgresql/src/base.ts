@@ -6,7 +6,7 @@ import type {
 	DatabaseUserAttributes
 } from "lucia";
 
-export class SQLiteAdapter implements Adapter {
+export class PostgreSQLAdapter implements Adapter {
 	private controller: Controller;
 
 	private escapedUserTableName: string;
@@ -20,14 +20,14 @@ export class SQLiteAdapter implements Adapter {
 
 	public async deleteSession(sessionId: string): Promise<void> {
 		await this.controller.execute(
-			`DELETE FROM ${this.escapedSessionTableName} WHERE id = ?`,
+			`DELETE FROM ${this.escapedSessionTableName} WHERE id = $1`,
 			[sessionId]
 		);
 	}
 
 	public async deleteUserSessions(userId: string): Promise<void> {
 		await this.controller.execute(
-			`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = ?`,
+			`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = $1`,
 			[userId]
 		);
 	}
@@ -44,7 +44,7 @@ export class SQLiteAdapter implements Adapter {
 
 	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
 		const result = await this.controller.getAll<SessionSchema>(
-			`SELECT * FROM ${this.escapedSessionTableName} WHERE user_id = ?`,
+			`SELECT * FROM ${this.escapedSessionTableName} WHERE user_id = $1`,
 			[userId]
 		);
 		return result.map((val) => {
@@ -56,12 +56,14 @@ export class SQLiteAdapter implements Adapter {
 		const value: SessionSchema = {
 			id: databaseSession.id,
 			user_id: databaseSession.userId,
-			expires_at: Math.floor(databaseSession.expiresAt.getTime() / 1000),
+			expires_at: databaseSession.expiresAt,
 			...databaseSession.attributes
 		};
 		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
 		const columns = entries.map(([k]) => escapeName(k));
-		const placeholders = Array(columns.length).fill("?");
+		const placeholders = Array(columns.length)
+			.fill(null)
+			.map((_, i) => `$${i + 1}`);
 		const values = entries.map(([_, v]) => v);
 		await this.controller.execute(
 			`INSERT INTO ${this.escapedSessionTableName} (${columns.join(
@@ -81,24 +83,24 @@ export class SQLiteAdapter implements Adapter {
 			...databaseSession.attributes
 		};
 		if (databaseSession.expiresAt) {
-			value.expires_at = Math.floor(databaseSession.expiresAt.getTime() / 1000);
+			value.expires_at = databaseSession.expiresAt;
 		}
 		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
-		const keyValuePairs = entries.map(([k]) =>
-			[escapeName(k), "?"].join(" = ")
-		);
+		const keyValuePairs = entries.map(([k], i) => {
+			return [escapeName(k), `$${i + 1}`].join(" = ");
+		});
 		const values = entries.map(([_, v]) => v);
 		await this.controller.execute(
 			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(
 				", "
-			)} WHERE id = ?`,
+			)} WHERE id = $${entries.length + 1}`,
 			[...values, sessionId]
 		);
 	}
 
 	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
 		const result = await this.controller.get<SessionSchema>(
-			`SELECT * FROM ${this.escapedSessionTableName} WHERE id = ?`,
+			`SELECT * FROM ${this.escapedSessionTableName} WHERE id = $1`,
 			[sessionId]
 		);
 		if (!result) return null;
@@ -109,7 +111,7 @@ export class SQLiteAdapter implements Adapter {
 		sessionId: string
 	): Promise<DatabaseUser | null> {
 		const result = await this.controller.get<UserSchema>(
-			`SELECT ${this.escapedUserTableName}.* FROM ${this.escapedSessionTableName} INNER JOIN ${this.escapedUserTableName} ON ${this.escapedUserTableName}.id = ${this.escapedSessionTableName}.user_id WHERE ${this.escapedSessionTableName}.id = ?`,
+			`SELECT ${this.escapedUserTableName}.* FROM ${this.escapedSessionTableName} INNER JOIN ${this.escapedUserTableName} ON ${this.escapedUserTableName}.id = ${this.escapedSessionTableName}.user_id WHERE ${this.escapedSessionTableName}.id = $1`,
 			[sessionId]
 		);
 		if (!result) return null;
@@ -124,14 +126,14 @@ export interface TableNames {
 
 export interface Controller {
 	execute(sql: string, args: any[]): Promise<void>;
-	get<T>(sql: string, args: any[]): Promise<T | null>;
-	getAll<T>(sql: string, args: any[]): Promise<T[]>;
+	get<T extends {}>(sql: string, args: any[]): Promise<T | null>;
+	getAll<T extends {}>(sql: string, args: any[]): Promise<T[]>;
 }
 
 interface SessionSchema extends DatabaseSessionAttributes {
 	id: string;
 	user_id: string;
-	expires_at: number;
+	expires_at: Date;
 }
 
 interface UserSchema extends DatabaseUserAttributes {
@@ -139,11 +141,11 @@ interface UserSchema extends DatabaseUserAttributes {
 }
 
 function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
-	const { id, user_id: userId, expires_at: expiresAtUnix, ...attributes } = raw;
+	const { id, user_id: userId, expires_at: expiresAt, ...attributes } = raw;
 	return {
 		userId,
 		id,
-		expiresAt: new Date(expiresAtUnix * 1000),
+		expiresAt,
 		attributes
 	};
 }
@@ -157,5 +159,6 @@ function transformIntoDatabaseUser(raw: UserSchema): DatabaseUser {
 }
 
 function escapeName(val: string): string {
-	return "`" + val + "`";
+	if (val.includes(".")) return val;
+	return `"` + val + `"`;
 }
