@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-mysql",
-	"version": "2.1.0",
+	"version": "3.0.0-beta.0",
 	"description": "MySQL adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -12,10 +12,8 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test.mysql2": "tsx test/mysql2/index.ts",
-		"test.planetscale": "tsx test/planetscale/index.ts",
-		"test-setup.planetscale": "tsx test/planetscale/setup.ts",
-		"test-setup.mysql2": "tsx test/mysql2/setup.ts",
+		"test.mysql2": "tsx tests/mysql2.ts",
+		"test.planetscale": "tsx tests/planetscale.ts",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
@@ -39,7 +37,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "^2.0.0",
+		"lucia": "3.0.0-beta.0",
 		"mysql2": "^3.0.0",
 		"@planetscale/database": "^1.0.0"
 	},
