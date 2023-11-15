@@ -71,7 +71,7 @@ export class AuthRequest<_Lucia extends Lucia = Lucia> {
 					return resolve({ session: null, user: null });
 				}
 				const result = await this.auth.validateSession(this.bearerToken);
-				return resolve(result)
+				return resolve(result);
 			});
 		}
 		return await this.validateBearerTokenPromise;

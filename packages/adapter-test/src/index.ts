@@ -73,9 +73,7 @@ export async function testAdapter(adapter: Adapter) {
 		assert.deepStrictEqual(result, []);
 	});
 
-	console.log(
-		`\n\x1B[32;1m[success]  \x1B[0mAdapter passed all tests\n`
-	);
+	console.log(`\n\x1B[32;1m[success]  \x1B[0mAdapter passed all tests\n`);
 }
 
 async function test(name: string, runTest: () => Promise<void>): Promise<void> {

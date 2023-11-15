@@ -12,8 +12,8 @@ export const pool = new pg.Pool({
 	connectionString: process.env.PSQL_DATABASE_URL
 });
 
-await pool.query("DROP TABLE IF EXISTS public.session")
-await pool.query("DROP TABLE IF EXISTS public.user")
+await pool.query("DROP TABLE IF EXISTS public.session");
+await pool.query("DROP TABLE IF EXISTS public.user");
 
 await pool.query(`
 CREATE TABLE public.user (
@@ -41,8 +41,8 @@ const adapter = new PgAdapter(pool, {
 
 await testAdapter(adapter);
 
-await pool.query("DROP TABLE public.session")
-await pool.query("DROP TABLE public.user")
+await pool.query("DROP TABLE public.session");
+await pool.query("DROP TABLE public.user");
 
 declare module "lucia" {
 	interface Register {
@@ -54,5 +54,3 @@ declare module "lucia" {
 		};
 	}
 }
-
-
