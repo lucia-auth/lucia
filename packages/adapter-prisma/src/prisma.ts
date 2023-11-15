@@ -10,7 +10,6 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 	implements Adapter
 {
 	public s: _PrismaClient = {} as any;
-	private userModel: PrismaModel<UserSchema>;
 	private sessionModel: PrismaModel<SessionSchema>;
 	private userModelName: string;
 
@@ -22,11 +21,8 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 		}
 	) {
 		this.userModelName = modelNames.user;
-		const userModelKey =
-			modelNames.user[0].toLowerCase() + modelNames.user.slice(1);
 		const sessionModelKey =
 			modelNames.session[0].toLowerCase() + modelNames.session.slice(1);
-		this.userModel = client[userModelKey];
 		this.sessionModel = client[sessionModelKey];
 	}
 
@@ -87,7 +83,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 	public async setSession(value: DatabaseSession): Promise<void> {
 		await this.sessionModel.create({
 			data: {
-				id: value.sessionId,
+				id: value.id,
 				userId: value.userId,
 				expiresAt: value.expiresAt,
 				...value.attributes
@@ -104,7 +100,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 				id: sessionId
 			},
 			data: {
-				id: value.sessionId,
+				id: value.id,
 				userId: value.userId,
 				expiresAt: value.expiresAt,
 				...value.attributes
@@ -114,9 +110,9 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 }
 
 function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
-	const { id: sessionId, userId, expiresAt, ...attributes } = raw;
+	const { id, userId, expiresAt, ...attributes } = raw;
 	return {
-		sessionId,
+		id,
 		userId,
 		expiresAt,
 		attributes
@@ -124,9 +120,9 @@ function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
 }
 
 function transformIntoDatabaseUser(raw: UserSchema): DatabaseUser {
-	const { id: userId, ...attributes } = raw;
+	const { id, ...attributes } = raw;
 	return {
-		userId,
+		id,
 		attributes
 	};
 }
@@ -145,8 +141,6 @@ interface UserSchema extends DatabaseUserAttributes {
 	id: string;
 }
 
-// TODO:
-// `id` or `userId`: Prisma uses `id`
 interface SessionSchema extends DatabaseSessionAttributes {
 	id: string;
 	userId: string;

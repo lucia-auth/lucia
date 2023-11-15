@@ -11,7 +11,7 @@ const adapter = new PrismaAdapter(client, {
 
 await client.user.create({
 	data: {
-		id: databaseUser.userId,
+		id: databaseUser.id,
 		...databaseUser.attributes
 	}
 });
