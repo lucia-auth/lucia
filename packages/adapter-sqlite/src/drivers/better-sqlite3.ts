@@ -3,13 +3,13 @@ import { SQLiteAdapter } from "../base.js";
 import type { Controller, TableNames } from "../base.js";
 import type { Database } from "better-sqlite3";
 
-export class BetterSQLite3Adapter extends SQLiteAdapter {
+export class BetterSqlite3 extends SQLiteAdapter {
 	constructor(db: Database, tableNames: TableNames) {
-		super(new BetterSQLite3Controller(db), tableNames);
+		super(new BetterSqlite3Controller(db), tableNames);
 	}
 }
 
-class BetterSQLite3Controller implements Controller {
+class BetterSqlite3Controller implements Controller {
 	private db: Database;
 	constructor(db: Database) {
 		this.db = db;

@@ -1,5 +1,5 @@
 import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
-import { BetterSQLite3Adapter } from "../src/drivers/better-sqlite3.js";
+import { BetterSqlite3 } from "../src/drivers/better-sqlite3.js";
 import sqlite from "better-sqlite3";
 
 const db = sqlite(":memory:");
@@ -22,7 +22,7 @@ db.prepare(`INSERT INTO user (id, username) VALUES (?, ?)`).run(
 	databaseUser.attributes.username
 );
 
-const adapter = new BetterSQLite3Adapter(db, {
+const adapter = new BetterSqlite3(db, {
 	user: "user",
 	session: "user_session"
 });
