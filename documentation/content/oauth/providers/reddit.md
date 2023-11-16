@@ -31,14 +31,14 @@ const reddit: (
 
 ##### Parameters
 
-| name                    | type                                       | description                    | optional | default       |
-| ----------------------- | ------------------------------------------ | ------------------------------ | :------: | ------------- |
-| `auth`                  | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |               |
-| `configs.clientId`      | `string`                                   | Reddit OAuth app client id     |          |               |
-| `configs.clientSecret`  | `string`                                   | Reddit OAuth app client secret |          |               |
-| `configs.redirectUri`   | `string`                                   | Reddit OAuth app redirect Uri  |          |               |
-| `configs.scope`         | `string[]`                                 | an array of scopes             |    ✓     |               |
-| `configs.tokenDuration` | `"permanent" \| "temporary"`               | access token duration          |    ✓     | `"permanent"` |
+| name                   | type                                       | description                    | optional | default       |
+| ---------------------- | ------------------------------------------ | ------------------------------ | :------: | ------------- |
+| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |               |
+| `config.clientId`      | `string`                                   | Reddit OAuth app client id     |          |               |
+| `config.clientSecret`  | `string`                                   | Reddit OAuth app client secret |          |               |
+| `config.redirectUri`   | `string`                                   | Reddit OAuth app redirect Uri  |          |               |
+| `config.scope`         | `string[]`                                 | an array of scopes             |    ✓     |               |
+| `config.tokenDuration` | `"permanent" \| "temporary"`               | access token duration          |    ✓     | `"permanent"` |
 
 ##### Returns
 
@@ -234,7 +234,7 @@ type RedditUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface RedditUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	redditUser: RedditUser;
 	redditTokens: RedditTokens;
 }

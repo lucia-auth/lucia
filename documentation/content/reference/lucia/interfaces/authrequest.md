@@ -3,7 +3,13 @@ title: "AuthRequest"
 format: "code"
 ---
 
-On initialization, it will check the request origin with [`Auth.validateRequestOrigin()`](/reference/lucia/interfaces/auth#validaterequestorigin). If the request is from an untrusted origin, it will ignore all cookies sent with the request. This can be disabled with [`csrfProtection`](/basics/configuration#csrfprotection) configuration.
+## `invalidate()`
+
+Invalidates the internal cache for [`AuthRequest.validate()`](/reference/lucia/interfaces/authrequest#validate) and [`AuthRequest.validateBearerToken()`](/reference/lucia/interfaces/authrequest#validatebearertoken).
+
+```ts
+const invalidate: () => void;
+```
 
 ## `setSession()`
 

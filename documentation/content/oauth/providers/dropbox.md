@@ -31,14 +31,14 @@ const dropbox: (
 
 ##### Parameters
 
-| name                      | type                                       | description                              | optional | default    |
-| ------------------------- | ------------------------------------------ | ---------------------------------------- | :------: | ---------- |
-| `auth`                    | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                           |          |            |
-| `configs.clientId`        | `string`                                   | Dropbox OAuth app client id              |          |            |
-| `configs.clientSecret`    | `string`                                   | Dropbox OAuth app client secret          |          |            |
-| `configs.redirectUri`     | `string`                                   | an authorized redirect URI               |          |            |
-| `configs.scope`           | `string[]`                                 | an array of scopes                       |    ✓     |            |
-| `configs.tokenAccessType` | `"online" \| "offline"`                    | set to `"offline"` to get refresh tokens |    ✓     | `"online"` |
+| name                     | type                                       | description                              | optional | default    |
+| ------------------------ | ------------------------------------------ | ---------------------------------------- | :------: | ---------- |
+| `auth`                   | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                           |          |            |
+| `config.clientId`        | `string`                                   | Dropbox OAuth app client id              |          |            |
+| `config.clientSecret`    | `string`                                   | Dropbox OAuth app client secret          |          |            |
+| `config.redirectUri`     | `string`                                   | an authorized redirect URI               |          |            |
+| `config.scope`           | `string[]`                                 | an array of scopes                       |    ✓     |            |
+| `config.tokenAccessType` | `"online" \| "offline"`                    | set to `"offline"` to get refresh tokens |    ✓     | `"online"` |
 
 ##### Returns
 
@@ -124,7 +124,7 @@ type BaseDropboxUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface DropboxUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	dropboxUser: DropboxUser;
 	dropboxTokens: DropboxTokens;
 }

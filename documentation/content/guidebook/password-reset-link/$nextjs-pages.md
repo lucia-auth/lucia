@@ -10,7 +10,7 @@ This guide expects access to the user's verified email. See [Sign in with email 
 export const auth = lucia({
 	adapter: ADAPTER,
 	env: dev ? "DEV" : "PROD",
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 
 	getUserAttributes: (data) => {
 		return {
@@ -25,13 +25,13 @@ export type Auth = typeof auth;
 
 ### Clone project
 
-The [email and password Next.js example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password) includes password reset.
+The [email and password Next.js example](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/email-and-password) includes password reset.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nextjs-pages/email-and-password <directory_name>
+npx degit lucia-auth/examples/nextjs-pages/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nextjs-pages/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/email-and-password).
 
 ## Database
 

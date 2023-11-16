@@ -10,13 +10,13 @@ export const queryContent = async (
 		const matchedHeadings = page.headings.filter((heading) => {
 			return match(heading.title, keywords);
 		});
-		const pageTitleMatched = match(page.title + (page.description ?? ""), keywords)
-		if (
-			pageTitleMatched ||
-			matchedHeadings.length > 0
-		) {
+		const pageTitleMatched = match(
+			page.title + (page.description ?? ""),
+			keywords
+		);
+		if (pageTitleMatched || matchedHeadings.length > 0) {
 			matchedPages.push({
-				priority: pageTitleMatched ? 1: 0,
+				priority: pageTitleMatched ? 1 : 0,
 				title: page.title,
 				description: page.description,
 				href: page.href,
@@ -96,7 +96,7 @@ type QueryResultHeading = {
 	hash: string;
 };
 type QueryResultPage = {
-	priority: number
+	priority: number;
 	title: string;
 	description: string | null;
 	href: string;

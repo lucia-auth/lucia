@@ -1,9 +1,9 @@
 ---
-title: "Github OAuth provider"
-description: "Learn how to use the Github OAuth provider"
+title: "GitHub OAuth provider"
+description: "Learn how to use the GitHub OAuth provider"
 ---
 
-OAuth integration for Github. Refer to [Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) for getting the required credentials. Provider id is `github`.
+OAuth integration for GitHub. Refer to [Create a GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) for getting the required credentials. Provider id is `github`.
 
 ```ts
 import { github } from "@lucia-auth/oauth/providers";
@@ -31,16 +31,16 @@ const github: (
 | name                  | type                                       | description                    | optional |
 | --------------------- | ------------------------------------------ | ------------------------------ | :------: |
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                 |          |
-| `config.clientId`     | `string`                                   | Github OAuth app client id     |          |
-| `config.clientSecret` | `string`                                   | Github OAuth app client secret |          |
+| `config.clientId`     | `string`                                   | GitHub OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | GitHub OAuth app client secret |          |
 | `config.scope`        | `string[]`                                 | an array of scopes             |    ✓     |
-| `configs.redirectUri` | `string`                                   | an authorized redirect URI     |    ✓     |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI     |    ✓     |
 
 ##### Returns
 
 | type                                | description     |
 | ----------------------------------- | --------------- |
-| [`GithubProvider`](#githubprovider) | Github provider |
+| [`GithubProvider`](#githubprovider) | GitHub provider |
 
 ## Interfaces
 
@@ -148,7 +148,7 @@ type PrivateGithubUser = PublicGithubUser & {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface GithubUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	githubUser: GithubUser;
 	githubTokens: GithubTokens;
 }
@@ -156,7 +156,7 @@ interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 
 | properties     | type                            | description       |
 | -------------- | ------------------------------- | ----------------- |
-| `githubUser`   | [`GithubUser`](#githubuser)     | Github user       |
+| `githubUser`   | [`GithubUser`](#githubuser)     | GitHub user       |
 | `githubTokens` | [`GithubTokens`](#githubtokens) | Access tokens etc |
 
 ##### Generics

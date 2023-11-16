@@ -5,7 +5,7 @@ format: "code"
 
 ## `astro()`
 
-Middleware for Astro 1.x and 2.x.
+Middleware for Astro 1.x, 2.x, and 3.x.
 
 ```ts
 const astro: Middleware;
@@ -27,6 +27,30 @@ import { astro } from "lucia/middleware";
 const auth = lucia({
 	middleware: astro()
 	// ...
+});
+```
+
+## `elysia()`
+
+Middleware for Elysia.
+
+```ts
+const elysia: Middleware;
+```
+
+##### Usage
+
+```ts
+auth.handleRequest(context as Context);
+```
+
+| name      | type                                                           |
+| --------- | -------------------------------------------------------------- |
+| `context` | [`Context`](https://elysiajs.com/concept/handler.html#context) |
+
+```ts
+new Elysia().get("/", (context) => {
+	auth.handleRequest(context);
 });
 ```
 
@@ -113,6 +137,30 @@ auth.handleRequest(event as H3Event);
 | ------- | ----------------------------------------------------- |
 | `event` | [`H3Event`](https://www.jsdocs.io/package/h3#H3Event) |
 
+## `hono()`
+
+Middleware for Hono.
+
+```ts
+const hono: Middleware;
+```
+
+##### Usage
+
+```ts
+auth.handleRequest(context as Context);
+```
+
+| name      | type                                      |
+| --------- | ----------------------------------------- |
+| `context` | [`Context`](https://hono.dev/api/context) |
+
+```ts
+app.get("/", (context) => {
+	auth.handleRequest(context);
+});
+```
+
 ## `lucia()`
 
 The default middleware.
@@ -142,7 +190,12 @@ auth.handleRequest(requestContext as RequestContext);
 
 ## `nextjs()`
 
-Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when just `IncomingMessage` or `NextRequest` is passed.**
+**While this is not deprecated, it will be replaced with [`nextjs_future()`](#nextjs_future) in the next major release**.
+
+Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled** when:
+
+- Just `NextRequest` is passed
+- Used inside `getServerSideProps()` in Edge runtime
 
 ```ts
 const nextjs: () => Middleware;
@@ -162,7 +215,7 @@ const auth = lucia({
 ```ts
 auth.handleRequest({
 	req: req as IncomingMessage,
-	res: res as OutgoingMessage
+	res: res as OutgoingMessage | undefined
 });
 
 auth.handleRequest({
@@ -173,7 +226,6 @@ auth.handleRequest({
 
 ```ts
 // for middleware and API routes in edge runtime
-const authRequest = auth.handleRequest(req as IncomingMessage);
 const authRequest = auth.handleRequest(request as NextRequest);
 authRequest.setSession(); // error!
 ```
@@ -187,6 +239,68 @@ authRequest.setSession(); // error!
 | --------- | ------------------------------------------------------------------------------------------ | ---------------------------------------- |
 | `request` | [`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request)`\| null` | Should be provided when using API routes |
 | `cookies` | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies)                   |                                          |
+
+| name  | type                                                                            |
+| ----- | ------------------------------------------------------------------------------- |
+| `req` | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |
+
+| name      | type                                                                              |
+| --------- | --------------------------------------------------------------------------------- |
+| `request` | [`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request) |
+
+## `nextjs_future()`
+
+A newer version of `nextjs()` middleware for Lucia v3. We recommend using this middleware for future proofing your codebase.
+
+Middleware for Next.js v12 and v13 - supports both `pages` and `app` directory. **[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled** when:
+
+- Just `NextRequest` is passed
+- Used inside `getServerSideProps()` in Edge runtime
+
+```ts
+const nextjs_future: () => Middleware;
+```
+
+##### Usage
+
+```ts
+import { nextjs } from "lucia/middleware";
+
+const auth = lucia({
+	middleware: nextjs()
+	// ...
+});
+```
+
+```ts
+auth.handleRequest({
+	req: req as IncomingMessage,
+	res: res as OutgoingMessage | undefined
+});
+
+auth.handleRequest(requestMethod as string, {
+	cookies: cookies as Cookies,
+	headers: headers as Headers
+});
+```
+
+```ts
+// for middleware and API routes in edge runtime
+const authRequest = auth.handleRequest(req as IncomingMessage);
+const authRequest = auth.handleRequest(request as NextRequest);
+authRequest.setSession(); // error!
+```
+
+| name  | type                                                                            | optional |
+| ----- | ------------------------------------------------------------------------------- | -------- |
+| `req` | [`IncomingMessage`](https://nodejs.org/api/http.html#class-httpincomingmessage) |          |
+| `res` | [`OutgoingMessage`](https://nodejs.org/api/http.html#class-httpoutgoingmessage) |          |
+
+| name              | type                                                                     | description                |
+| ----------------- | ------------------------------------------------------------------------ | -------------------------- |
+| `requestMethod`   | `string`                                                                 | Can be upper or lower case |
+| `context.cookies` | [`Cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) |                            |
+| `context.headers` | [`Headers`](https://nextjs.org/docs/app/api-reference/functions/headers) |                            |
 
 | name  | type                                                                            |
 | ----- | ------------------------------------------------------------------------------- |
@@ -327,10 +441,9 @@ const auth = lucia({
 ```
 
 ```ts
-auth.handleRequest({ request, set } as { request: Request; set: Set });
+auth.handleRequest(context as Context);
 ```
 
-| name      | type                                                                  |
-| --------- | --------------------------------------------------------------------- |
-| `request` | [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) |
-| `set`     | [`Set`](https://elysiajs.com/concept/handler.html)                    |
+| name      | type                                                           |
+| --------- | -------------------------------------------------------------- |
+| `context` | [`Context`](https://elysiajs.com/concept/handler.html#context) |

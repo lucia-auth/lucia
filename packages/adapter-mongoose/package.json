@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-mongoose",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "Mongoose (MongoDB) adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -37,7 +37,7 @@
 	},
 	"peerDependencies": {
 		"lucia": "^2.0.0",
-		"mongoose": "6.x - 7.x"
+		"mongoose": "6.x - 8.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "latest",

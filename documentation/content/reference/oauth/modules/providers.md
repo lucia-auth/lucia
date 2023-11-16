@@ -40,15 +40,23 @@ See [Facebook](/oauth/providers/facebook) provider.
 
 ## `github()`
 
-See [Github](/oauth/providers/github) provider.
+See [GitHub](/oauth/providers/github) provider.
 
 ## `gitlab()`
 
-See [Gitlab](/oauth/providers/gitlab) provider.
+See [GitLab](/oauth/providers/gitlab) provider.
 
 ## `google()`
 
 See [Google](/oauth/providers/google) provider.
+
+## `kakao()`
+
+See [Kakao](/oauth/providers/kakao) provider.
+
+## `keycloak()`
+
+See [Keycloak](/oauth/providers/keycloak) provider.
 
 ## `lichess()`
 

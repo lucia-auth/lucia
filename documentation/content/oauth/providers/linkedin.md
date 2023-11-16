@@ -28,7 +28,7 @@ const linkedIn: (
 
 ##### Parameters
 
-Scope `r_liteprofile` is always included.
+Scope `profile` and `openid` are always included.
 
 | name                  | type                                       | description                      | optional |
 | --------------------- | ------------------------------------------ | -------------------------------- | :------: |
@@ -102,7 +102,7 @@ type LinkedInUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface LinkedInUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	linkedInUser: LinkedInUser;
 	linkedInTokens: LinkedInTokens;
 }

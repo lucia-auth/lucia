@@ -1,5 +1,79 @@
 # lucia
 
+## 2.7.4
+
+### Patch changes
+
+- [#1250](https://github.com/lucia-auth/lucia/pull/1250) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Revert #1158
+
+- [#1256](https://github.com/lucia-auth/lucia/pull/1256) by [@FredTreg](https://github.com/FredTreg) : Allow debug message to be displayed when request origin not available
+
+- [#1254](https://github.com/lucia-auth/lucia/pull/1254) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unused `svelte` field from `package.json`
+
+- [#1250](https://github.com/lucia-auth/lucia/pull/1250) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `nanoid` dependency
+
+## 2.7.3
+
+### Patch changes
+
+- [#1217](https://github.com/lucia-auth/lucia/pull/1217) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `express()` middleware setting incorrect `Max-Age` cookie attribute
+
+- [#1158](https://github.com/lucia-auth/lucia/pull/1158) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update dependencies
+
+## 2.7.2
+
+### Patch changes
+
+- [#1212](https://github.com/lucia-auth/lucia/pull/1212) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove dev dependencies for typing
+
+## 2.7.1
+
+### Patch changes
+
+- [#1171](https://github.com/lucia-auth/lucia/pull/1171) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add proper attributes for `@noble/hashes`
+
+## 2.7.0
+
+### Minor changes
+
+- [#1081](https://github.com/lucia-auth/lucia/pull/1081) by [@SkepticMystic](https://github.com/SkepticMystic) : Add experimental `joinAdapters()`
+
+- [#1148](https://github.com/lucia-auth/lucia/pull/1148) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `AuthRequest.invalidate()`
+
+### Patch changes
+
+- [#1134](https://github.com/lucia-auth/lucia/pull/1134) by [@giacomoferretti](https://github.com/giacomoferretti) : Fix unhandled rejection error when using `AuthRequest.validate()` and `AuthRequest.validateBearerToken()`
+
+- [#1144](https://github.com/lucia-auth/lucia/pull/1144) by [@MrNiceRicee](https://github.com/MrNiceRicee) : Update `elysia()` middleware types
+
+## 2.6.0
+
+### Minor changes
+
+- [#1113](https://github.com/pilcrowOnPaper/lucia/pull/1113) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `options.responseMode` params to `apple()`
+
+- [#1100](https://github.com/pilcrowOnPaper/lucia/pull/1100) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `nextjs_future()` middleware
+
+- [#1099](https://github.com/pilcrowOnPaper/lucia/pull/1099) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Mark `Auth.validateRequestOrigin()` as deprecated
+
+- [#1099](https://github.com/pilcrowOnPaper/lucia/pull/1099) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Replace type `RequestContext` with `MiddlewareRequestContext` for type `Middleware`
+
+### Patch changes
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.useKey()` accepting any password if the key password was set to `null`
+
+- [#1105](https://github.com/pilcrowOnPaper/lucia/pull/1105) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.createUser()` setting key password to `null` if `key.password` was an empty string
+
+## 2.5.0
+
+### Minor changes
+
+- [#992](https://github.com/pilcrowOnPaper/lucia/pull/992) by [@Tirke](https://github.com/Tirke) : Add `elysia()` middleware
+
+### Patch changes
+
+- [#1079](https://github.com/pilcrowOnPaper/lucia/pull/1079) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `Auth.handleRequest()` causing error in middleware when `nextjs()` was used
+
 ## 2.4.2
 
 ### Patch changes

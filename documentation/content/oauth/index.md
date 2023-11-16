@@ -37,12 +37,15 @@ We also have framework specific guides.
 - Azure Active Directory
 - Bitbucket
 - Box
+- Amazon Cognito
 - Discord
 - Dropbox
 - Facebook
-- Github
-- Gitlab
+- GitHub
+- GitLab
 - Google
+- Kakao
+- Keycloak
 - Lichess
 - Line
 - LinkedIn

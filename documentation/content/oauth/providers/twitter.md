@@ -92,7 +92,7 @@ type TwitterUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface TwitterUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	twitterUser: TwitterUser;
 	twitterTokens: TwitterTokens;
 }

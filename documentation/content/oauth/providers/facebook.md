@@ -37,7 +37,7 @@ Scope `identity` is always included.
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                   |          |
 | `config.clientId`     | `string`                                   | Facebook OAuth app client id     |          |
 | `config.clientSecret` | `string`                                   | Facebook OAuth app client secret |          |
-| `configs.redirectUri` | `string`                                   | an authorized redirect URI       |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI       |          |
 | `config.scope`        | `string[]`                                 | an array of scopes               |    ✓     |
 
 ##### Returns
@@ -105,7 +105,7 @@ type FacebookUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface FacebookUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	facebookUser: FacebookUser;
 	facebookTokens: FacebookTokens;
 }

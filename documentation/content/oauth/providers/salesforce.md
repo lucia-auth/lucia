@@ -30,13 +30,13 @@ const salesforce: (
 
 ##### Parameters
 
-| name                   | type                                       | description                        | optional |
-| ---------------------- | ------------------------------------------ | ---------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                     |          |
-| `configs.clientId`     | `string`                                   | Salesforce OAuth app client id     |          |
-| `configs.clientSecret` | `string`                                   | Salesforce OAuth app client secret |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI         |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                 |    ✓     |
+| name                  | type                                       | description                        | optional |
+| --------------------- | ------------------------------------------ | ---------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                     |          |
+| `config.clientId`     | `string`                                   | Salesforce OAuth app client id     |          |
+| `config.clientSecret` | `string`                                   | Salesforce OAuth app client secret |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI         |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                 |    ✓     |
 
 ##### Returns
 
@@ -113,7 +113,8 @@ type SalesforceUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface SalesforceUserAuth<_Auth extends Auth>
+	extends ProviderUserAuth<_Auth> {
 	salesforceUser: SalesforceUser;
 	salesforceTokens: SalesforceTokens;
 }

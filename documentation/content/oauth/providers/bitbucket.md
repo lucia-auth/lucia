@@ -31,12 +31,12 @@ const bitbucket: (
 
 ##### Parameters
 
-| name                   | type                                       | description                       |
-| ---------------------- | ------------------------------------------ | --------------------------------- |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |
-| `configs.clientId`     | `string`                                   | Bitbucket OAuth app client id     |
-| `configs.clientSecret` | `string`                                   | Bitbucket OAuth app client secret |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI        |
+| name                  | type                                       | description                       |
+| --------------------- | ------------------------------------------ | --------------------------------- |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                    |
+| `config.clientId`     | `string`                                   | Bitbucket OAuth app client id     |
+| `config.clientSecret` | `string`                                   | Bitbucket OAuth app client secret |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI        |
 
 ##### Returns
 
@@ -103,7 +103,8 @@ type BitbucketUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface BitbucketUserAuth<_Auth extends Auth>
+	extends ProviderUserAuth<_Auth> {
 	bitbucketUser: BitbucketUser;
 	bitbucketTokens: BitbucketTokens;
 }

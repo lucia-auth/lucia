@@ -9,7 +9,7 @@ One simple approach is to use exponential backoff to increase the timeout on eve
 
 ## Basic example
 
-The following example stores the attempts in memory. You can of course use a regular database but running it in within a transaction is recommended. The timeout doubles on every failed login attempt until the user is successfully authenticated. A [demo](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/other/login-throttling) is available in the repository.
+The following example stores the attempts in memory. You can of course use a regular database but running it in within a transaction is recommended. The timeout doubles on every failed login attempt until the user is successfully authenticated. A [demo](https://github.com/lucia-auth/examples/tree/main/other/login-throttling) is available in the repository.
 
 ```ts
 const loginTimeout = new Map<
@@ -51,7 +51,7 @@ try {
 
 One issue with the basic example above is that a valid user may be locked out if an attacker attempts to sign in. This is of course much better than being susceptible to brute force attacks, but one way to avoid it is to remember users/devices that signed in once and skipping the timeout for the first few attempts.
 
-The following example stores the attempts and valid device cookies in memory. When a user is authenticated, a new device cookie is created. This cookie allows the user to bypass the throttling for the first 5 login attempts if they sign out. A [demo](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/other/login-throtting-device-cookie) is available in the repository.
+The following example stores the attempts and valid device cookies in memory. When a user is authenticated, a new device cookie is created. This cookie allows the user to bypass the throttling for the first 5 login attempts if they sign out. A [demo](https://github.com/lucia-auth/examples/tree/main/other/login-throtting-device-cookie) is available in the repository.
 
 ```ts
 const loginTimeout = new Map<

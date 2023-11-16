@@ -13,13 +13,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [Nuxt example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt/username-and-password) from the repository.
+You can get started immediately by cloning the [Nuxt example](https://github.com/lucia-auth/examples/tree/main/nuxt/username-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nuxt/username-and-password <directory_name>
+npx degit lucia-auth/examples/nuxt/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nuxt/username-and-password).
 
 ## Update your database
 
@@ -32,7 +32,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new col
 
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
+	type Auth = import("./utils/lucia").Auth;
 	type DatabaseUserAttributes = {
 		username: string;
 	};
@@ -362,7 +362,7 @@ export const useAuthenticatedUser = () => {
 Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation.
 
 ```ts
-// middleware/auth.ts
+// middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async () => {
 	const user = useUser();
 	const { data, error } = await useFetch("/api/user");

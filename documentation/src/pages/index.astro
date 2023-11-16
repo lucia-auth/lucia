@@ -38,7 +38,7 @@ export const auth = lucia({
 });
 `;
 
-const code3 = `import { auth } from "./auth.js";
+const code3 = `import { auth } from "./lucia.js";
 
 const user = await auth.createUser({
 	// user identified with their username
@@ -202,7 +202,7 @@ const contributors = await getGithubContributors();
 							<a
 								href={contributor.profileLink}
 								target="_blank"
-								aria-label={`${contributor.username} Github profile`}
+								aria-label={`${contributor.username} GitHub profile`}
 							>
 								<img
 									src={contributor.avatar}
@@ -239,7 +239,7 @@ const contributors = await getGithubContributors();
 		<div class="6 pb-12 text-sm text-zinc-600 sm:px-8 md:px-16">
 			<div class="border-t pt-12">
 				<p class="text-center">Tip: Lucia is pronounced <i>loo-shya</i></p>
-				<div class="flex place-items-center place-content-center gap-6 mt-4">
+				<div class="mt-4 flex place-content-center place-items-center gap-6">
 					<a
 						href="/discord"
 						class="w-5 fill-current text-zinc-500 hover:text-zinc-700"

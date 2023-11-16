@@ -13,6 +13,7 @@ type Config = {
 	clientSecret: string;
 	redirectUri: string;
 	scope?: string[];
+	serverUrl?: string;
 };
 
 const PROVIDER_ID = "gitlab";
@@ -28,11 +29,13 @@ export class GitlabAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	GitlabUserAuth<_Auth>
 > {
 	private config: Config;
+	private readonly serverUrl: string;
 
 	constructor(auth: _Auth, config: Config) {
 		super(auth);
 
 		this.config = config;
+		this.serverUrl = config.serverUrl || "https://gitlab.com";
 	}
 
 	public getAuthorizationUrl = async (): Promise<
@@ -40,7 +43,7 @@ export class GitlabAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrl(
-			"https://gitlab.com/oauth/authorize",
+			`${this.serverUrl}/oauth/authorize`,
 			{
 				clientId: this.config.clientId,
 				redirectUri: this.config.redirectUri,
@@ -53,7 +56,10 @@ export class GitlabAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		code: string
 	): Promise<GitlabUserAuth<_Auth>> => {
 		const gitlabTokens = await this.validateAuthorizationCode(code);
-		const gitlabUser = await getGitlabUser(gitlabTokens.accessToken);
+		const gitlabUser = await getGitlabUser(
+			gitlabTokens.accessToken,
+			this.serverUrl
+		);
 		return new GitlabUserAuth(this.auth, gitlabUser, gitlabTokens);
 	};
 
@@ -64,7 +70,7 @@ export class GitlabAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			access_token: string;
 			expires_in: number;
 			refresh_token: string;
-		}>(code, "https://gitlab.com/oauth/token", {
+		}>(code, `${this.serverUrl}/oauth/token`, {
 			clientId: this.config.clientId,
 			redirectUri: this.config.redirectUri,
 			clientPassword: {
@@ -94,8 +100,11 @@ export class GitlabUserAuth<
 	}
 }
 
-const getGitlabUser = async (accessToken: string): Promise<GitlabUser> => {
-	const request = new Request("https://gitlab.com/api/v4/user", {
+const getGitlabUser = async (
+	accessToken: string,
+	serverUrl: string
+): Promise<GitlabUser> => {
+	const request = new Request(`${serverUrl}/api/v4/user`, {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}

@@ -60,7 +60,7 @@ try {
 		} // expects `Lucia.DatabaseUserAttributes`
 	});
 } catch (e) {
-	if (e instanceof LuciaError && e.message === `DUPLICATE_KEY_ID`) {
+	if (e instanceof LuciaError && e.message === `AUTH_DUPLICATE_KEY_ID`) {
 		// key already exists
 	}
 	// provided user attributes violates database rules (e.g. unique constraint)
@@ -140,6 +140,18 @@ const session = await auth.createSession({
 	attributes: {}
 }); // new session
 // store new session
+```
+
+If you're using `AuthRequest` to validate sessions, [use `AuthRequest.invalidate()`](/basics/using-cookies#invalidation) to get the latest user data when you next call `AuthRequest.validate()` and `AuthRequest.validateBearerToken()`.
+
+```ts
+await auth.updateUserAttributes(userId, {
+	username: newUsername
+});
+authRequest.invalidate();
+
+// returns latest user data
+const session = await authRequest.validate();
 ```
 
 ## Delete users

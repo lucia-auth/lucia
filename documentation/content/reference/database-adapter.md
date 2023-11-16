@@ -38,10 +38,10 @@ type Adapter = {
 	SessionAdapter;
 ```
 
-| type                                                                      |
-| ------------------------------------------------------------------------- |
-| [`UserAdapter`](/extending-lucia/database-adapters-api#useradapter)       |
-| [`SessionAdapter`](/extending-lucia/database-adapters-api#sessionadapter) |
+| type                                                            |
+| --------------------------------------------------------------- |
+| [`UserAdapter`](/reference/database-adapter/#useradapter)       |
+| [`SessionAdapter`](/reference/database-adapter/#sessionadapter) |
 
 ### `getSessionAndUser()`
 

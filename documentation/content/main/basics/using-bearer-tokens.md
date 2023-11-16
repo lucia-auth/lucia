@@ -50,3 +50,17 @@ await Promise([
 	authRequest.validateBearerToken() // waits for first call to resolve
 ]);
 ```
+
+### Invalidation
+
+After updating user attributes, for example, call [`AuthRequest.invalidate()`](/reference/lucia/interfaces/authrequest#invalidate) to invalidate internal cache so the next time you call `AuthRequest.validateBearerToken()`, it returns the latest user data.
+
+```ts
+await auth.updateUserAttributes(userId, {
+	username: newUsername
+});
+authRequest.invalidate();
+
+// returns latest user data
+const session = await authRequest.validateBearerToken();
+```

@@ -7,7 +7,7 @@ description: "Learn how to use Drizzle ORM with Lucia"
 
 ## MySQL
 
-Make sure to change the table names accordingly.
+Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`).
 
 ```ts
 // schema.js
@@ -86,7 +86,7 @@ export const auth = lucia({
 });
 ```
 
-### `@planetscale/serverless`
+### `@planetscale/database`
 
 Remove all `references()` from the schema since Planetscale does not support foreign keys from `key` and `session`. For example:
 
@@ -102,10 +102,10 @@ export const key = mysqlTable("user_key", {
 });
 ```
 
-Install `@planetscale/serverless` and follow the [adapter documentation](/database-adapters/planetscale-serverless) to setup your database.
+Install `@planetscale/database` and follow the [adapter documentation](/database-adapters/planetscale-serverless) to setup your database.
 
 ```
-npm install @planetscale/serverless
+npm install @planetscale/database
 ```
 
 Create a new connection and use it to initialize both Drizzle and Lucia.
@@ -138,7 +138,7 @@ export const auth = lucia({
 
 We recommend using `pg` with TCP connections for Supabase and Neon.
 
-Make sure to change the table names accordingly.
+Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`).
 
 ```ts
 // schema.js
@@ -234,7 +234,7 @@ import postgres from "postgres";
 
 export const queryClient = postgres(/* ... */);
 
-export const db: PostgresJsDatabase = drizzle(pool);
+export const db: PostgresJsDatabase = drizzle(queryClient);
 ```
 
 ```ts
@@ -251,7 +251,7 @@ export const auth = lucia({
 
 ## SQLite
 
-Make sure to change the table names accordingly.
+Make sure to change the table names accordingly. While you can name your Drizzle fields anything you want, the underlying column names must match what's defined in the docs (e.g `user_id`).
 
 ```ts
 // schema.js

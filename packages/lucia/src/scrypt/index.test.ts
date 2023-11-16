@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
-import scrypt from "./index.js";
-import crypto from "node:crypto";
-import { generateRandomString } from "../utils/nanoid.js";
+import { scrypt } from "./index.js";
+import { scryptSync as nodeScrypt } from "node:crypto";
+import { generateRandomString } from "../utils/crypto.js";
 
 test("scrypt() output matches crypto", async () => {
 	const password = generateRandomString(16);
@@ -17,7 +17,7 @@ test("scrypt() output matches crypto", async () => {
 		}
 	);
 	const cryptoHash = new Uint8Array(
-		crypto.scryptSync(password, salt, 64, {
+		nodeScrypt(password, salt, 64, {
 			N: 16384,
 			p: 1,
 			r: 16,

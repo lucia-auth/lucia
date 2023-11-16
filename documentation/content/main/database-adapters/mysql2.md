@@ -3,7 +3,7 @@ title: "`mysql2` adapter"
 description: "Learn how to use mysql2 with Lucia"
 ---
 
-Adapter for [`mysql2`](https://github.com/sidorares/node-mysql) provided by the MySQL adapter package.
+Adapter for [`mysql2`](https://github.com/sidorares/node-mysql2) provided by the MySQL adapter package.
 
 ```ts
 import { mysql2 } from "@lucia-auth/adapter-mysql";
@@ -62,7 +62,7 @@ const auth = lucia({
 
 ## MySQL schema
 
-You can choose any table names, just make sure to define them in the adapter argument.
+You can choose any table names, just make sure to define them in the adapter argument. **The `id` columns are not UUID types with the default configuration.**
 
 ### User table
 

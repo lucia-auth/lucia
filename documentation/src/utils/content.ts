@@ -121,7 +121,9 @@ const isValidFrameworkVersion = (
 
 const frameworkNameDictionary = {
 	astro: "Astro",
+	electron: "Electron",
 	elysia: "Elysia",
+	expo: "Expo",
 	express: "Express",
 	fastify: "Fastify",
 	hono: "Hono",
@@ -131,5 +133,6 @@ const frameworkNameDictionary = {
 	qwik: "Qwik",
 	remix: "Remix",
 	solidstart: "SolidStart",
-	sveltekit: "SvelteKit"
+	sveltekit: "SvelteKit",
+	tauri: "Tauri"
 } as const;

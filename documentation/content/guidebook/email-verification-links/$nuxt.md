@@ -18,13 +18,13 @@ It will also have a route to handle verification links.
 
 ### Clone project
 
-You can get started immediately by cloning the [Nuxt example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt/email-and-password) from the repository.
+You can get started immediately by cloning the [Nuxt example](https://github.com/lucia-auth/examples/tree/main/nuxt/email-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nuxt/email-and-password <directory_name>
+npx degit lucia-auth/examples/nuxt/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nuxt/email-and-password).
 
 ## Database
 
@@ -39,7 +39,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new col
 
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("@/auth/lucia").Auth;
+	type Auth = import("./utils/lucia").Auth;
 	type DatabaseUserAttributes = {
 		email: string;
 		email_verified: number;
@@ -214,7 +214,7 @@ export const useAuthenticatedUser = () => {
 Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation.
 
 ```ts
-// middleware/auth.ts
+// middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async () => {
 	const user = useUser();
 	const { data, error } = await useFetch("/api/user");

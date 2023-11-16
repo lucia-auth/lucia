@@ -1,31 +1,31 @@
 ---
-title: "Github OAuth in SolidStart"
-description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
+title: "GitHub OAuth in SolidStart"
+description: "Learn the basic of Lucia and the OAuth integration by implementing GitHub OAuth"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/getting-started/solidstart) and that you've implement the recommended middleware._
 
-This guide will cover how to implement Github OAuth using Lucia in SolidStart. It will have 3 parts:
+This guide will cover how to implement GitHub OAuth using Lucia in SolidStart. It will have 3 parts:
 
 - A sign up page
-- An endpoint to authenticate users with Github
+- An endpoint to authenticate users with GitHub
 - A profile page with a logout button
 
-As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+As a general overview of OAuth, the user is redirected to github.com to be authenticated, and GitHub redirects the user back to your application with a code that can be validated and used to get the user's identity.
 
 ### Clone project
 
-You can get started immediately by cloning the [SolidStart example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/solidstart/github-oauth) from the repository.
+You can get started immediately by cloning the [SolidStart example](https://github.com/lucia-auth/examples/tree/main/solidstart/github-oauth) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/solidstart/github-oauth <directory_name>
+npx degit lucia-auth/examples/solidstart/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/solidstart/github-oauth).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/solidstart/github-oauth).
 
 ## Create an OAuth app
 
-[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
+[Create a GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
 
 ```
 http://localhost:3000/login/github/callback
@@ -41,7 +41,7 @@ GITHUB_CLIENT_SECRET="..."
 
 ## Update your database
 
-Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
+Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` in `app.d.ts` whenever you add any new columns to the user table.
 
@@ -51,7 +51,7 @@ Make sure you update `Lucia.DatabaseUserAttributes` in `app.d.ts` whenever you a
 declare namespace Lucia {
 	type Auth = import("./lib/lucia").Auth;
 	type DatabaseUserAttributes = {
-		github_username: string;
+		username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }
@@ -59,7 +59,7 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-We'll expose the user's Github username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
+We'll expose the user's GitHub username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // src/auth/lucia.ts
@@ -76,7 +76,7 @@ export const auth = lucia({
 
 	getUserAttributes: (data) => {
 		return {
-			githubUsername: data.github_username
+			githubUsername: data.username
 		};
 	}
 });
@@ -94,7 +94,7 @@ pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth
 ```
 
-Import the Github OAuth integration, and initialize it using your credentials.
+Import the GitHub OAuth integration, and initialize it using your credentials.
 
 ```ts
 // src/auth/lucia.ts
@@ -117,7 +117,7 @@ export type Auth = typeof auth;
 
 ## Sign in page
 
-Create `src/routes/login/index.tsx`. It will have a "Sign in with Github" button (actually a link). Make sure you use the regular HTML anchor tags.
+Create `src/routes/login/index.tsx`. It will have a "Sign in with GitHub" button (actually a link). Make sure you use the regular HTML anchor tags.
 
 ```tsx
 // src/routes/login/index.tsx
@@ -125,7 +125,7 @@ const Page = () => {
 	return (
 		<>
 			<h1>Sign in</h1>
-			<a href="/login/github">Sign in with Github</a>
+			<a href="/login/github">Sign in with GitHub</a>
 		</>
 	);
 };
@@ -133,11 +133,11 @@ const Page = () => {
 export default Page;
 ```
 
-When a user clicks the link, the destination (`/login/github`) will redirect the user to Github to be authenticated.
+When a user clicks the link, the destination (`/login/github`) will redirect the user to GitHub to be authenticated.
 
 ## Generate authorization url
 
-Create `src/routes/login/github/index.ts` and handle GET requests. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
+Create `src/routes/login/github/index.ts` and handle GET requests. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new GitHub authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
 ```ts
 // src/routes/login/github/index.ts
@@ -173,7 +173,7 @@ export const GET = async (event: APIEvent) => {
 
 Create `src/routes/login/github/callback.ts` and handle GET requests.
 
-When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
+When the user authenticates with GitHub, GitHub will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). Since we've setup middleware, `AuthRequest` is accessible as `context.locals.auth`.
 
@@ -211,7 +211,7 @@ export const GET = async (event: APIEvent) => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
-					github_username: githubUser.login
+					username: githubUser.login
 				}
 			});
 			return user;
@@ -246,9 +246,9 @@ export const GET = async (event: APIEvent) => {
 
 ### Authenticate user with Lucia
 
-You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
+You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the GitHub user id already exists.
 
-If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously. You can access the GitHub user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
 const { getExistingUser, githubUser, createUser } =
@@ -259,7 +259,7 @@ const getUser = async () => {
 	if (existingUser) return existingUser;
 	const user = await createUser({
 		attributes: {
-			github_username: githubUser.login
+			username: githubUser.login
 		}
 	});
 	return user;
@@ -325,7 +325,7 @@ const Page = () => {
 		<>
 			<h1>Profile</h1>
 			<p>User id: {user()?.userId}</p>
-			<p>Github username: {user()?.githubUsername}</p>
+			<p>GitHub username: {user()?.githubUsername}</p>
 		</>
 	);
 };

@@ -14,7 +14,7 @@ const slackAuth = slack(auth, configs);
 
 ## `slack()`
 
-Scopes `oidc` and `profile` are always included.
+Scopes `openid` and `profile` are always included.
 
 ```ts
 const slack: (
@@ -30,13 +30,13 @@ const slack: (
 
 ##### Parameters
 
-| name                   | type                                       | description                                | optional |
-| ---------------------- | ------------------------------------------ | ------------------------------------------ | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                             |          |
-| `configs.clientId`     | `string`                                   | Slack OAuth app client id                  |          |
-| `configs.clientSecret` | `string`                                   | Slack OAuth app client secret              |          |
-| `configs.redirectUri`  | `string`                                   | an authorized redirect URI (must be HTTPS) |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                         |    ✓     |
+| name                  | type                                       | description                                | optional |
+| --------------------- | ------------------------------------------ | ------------------------------------------ | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                             |          |
+| `config.clientId`     | `string`                                   | Slack OAuth app client id                  |          |
+| `config.clientSecret` | `string`                                   | Slack OAuth app client secret              |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI (must be HTTPS) |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                         |    ✓     |
 
 ##### Returns
 
@@ -116,7 +116,7 @@ type SlackUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface SlackUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	slackUser: SlackUser;
 	slackTokens: SlackTokens;
 }

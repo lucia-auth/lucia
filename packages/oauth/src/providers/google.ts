@@ -40,7 +40,7 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 		readonly [url: URL, state: string]
 	> => {
 		const scopeConfig = this.config.scope ?? [];
-		return await createOAuth2AuthorizationUrl(
+		const [url, state] = await createOAuth2AuthorizationUrl(
 			"https://accounts.google.com/o/oauth2/v2/auth",
 			{
 				clientId: this.config.clientId,
@@ -51,6 +51,9 @@ export class GoogleAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 				]
 			}
 		);
+		const accessType = this.config.accessType ?? "online"; // ( default ) online
+		url.searchParams.set("access_type", accessType);
+		return [url, state];
 	};
 
 	public validateCallback = async (

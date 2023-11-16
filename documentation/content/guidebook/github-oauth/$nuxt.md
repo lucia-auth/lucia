@@ -1,31 +1,31 @@
 ---
-title: "Github OAuth in Nuxt"
-description: "Learn the basic of Lucia and the OAuth integration by implementing Github OAuth"
+title: "GitHub OAuth in Nuxt"
+description: "Learn the basic of Lucia and the OAuth integration by implementing GitHub OAuth"
 ---
 
 _Before starting, make sure you've [setup Lucia and your database](/getting-started/nuxt)._
 
-This guide will cover how to implement Github OAuth using Lucia in Nuxt. It will have 3 parts:
+This guide will cover how to implement GitHub OAuth using Lucia in Nuxt. It will have 3 parts:
 
 - A sign up page
-- An endpoint to authenticate users with Github
+- An endpoint to authenticate users with GitHub
 - A profile page with a logout button
 
-As a general overview of OAuth, the user is redirected to github.com to be authenticated, and Github redirects the user back to your application with a code that can be validated and used to get the user's identity.
+As a general overview of OAuth, the user is redirected to github.com to be authenticated, and GitHub redirects the user back to your application with a code that can be validated and used to get the user's identity.
 
 ### Clone project
 
-You can get started immediately by cloning the [Nuxt example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/nuxt/github-oauth) from the repository.
+You can get started immediately by cloning the [Nuxt example](https://github.com/lucia-auth/examples/tree/main/nuxt/github-oauth) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/nuxt/github-oauth <directory_name>
+npx degit lucia-auth/examples/nuxt/github-oauth <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/nuxt/github-oauth).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nuxt/github-oauth).
 
 ## Create an OAuth app
 
-[Create a Github OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
+[Create a GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
 
 ```
 http://localhost:3000/api/login/github/callback
@@ -35,8 +35,8 @@ Copy and paste the client id and client secret into your `.env` file:
 
 ```bash
 # .env
-GITHUB_CLIENT_ID="..."
-GITHUB_CLIENT_SECRET="..."
+NUXT_GITHUB_CLIENT_ID="..."
+NUXT_GITHUB_CLIENT_SECRET="..."
 ```
 
 Expose the environment variables by updating your Nuxt config.
@@ -46,15 +46,20 @@ Expose the environment variables by updating your Nuxt config.
 export default defineNuxtConfig({
 	// ...
 	runtimeConfig: {
-		githubClientId: "", // keep it empty!
-		githubClientSecret: "" // keep it empty!
+		// keep these empty!
+		githubClientId: "",
+		githubClientSecret: ""
 	}
+	// When using node < 20 we need to uncomment the following section in order to polyfill the Web Crypto API.
+	// nitro: {
+	//   moduleSideEffects: ["lucia/polyfill/node"]
+	// },
 });
 ```
 
 ## Update your database
 
-Add a `github_username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
+Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new columns to the user table.
 
@@ -63,9 +68,9 @@ Make sure you update `Lucia.DatabaseUserAttributes` whenever you add any new col
 
 /// <reference types="lucia" />
 declare namespace Lucia {
-	type Auth = import("./lucia.js").Auth;
+	type Auth = import("./utils/lucia").Auth;
 	type DatabaseUserAttributes = {
-		github_username: string;
+		username: string;
 	};
 	type DatabaseSessionAttributes = {};
 }
@@ -73,12 +78,14 @@ declare namespace Lucia {
 
 ## Configure Lucia
 
-We'll expose the user's Github username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
+We'll expose the user's GitHub username to the `User` object by defining [`getUserAttributes`](/basics/configuration#getuserattributes).
 
 ```ts
 // server/utils/lucia.ts
 import { lucia } from "lucia";
 import { h3 } from "lucia/middleware";
+// When using node < 20 uncomment the following line.
+// import 'lucia/polyfill/node'
 
 export const auth = lucia({
 	adapter: ADAPTER,
@@ -87,7 +94,7 @@ export const auth = lucia({
 
 	getUserAttributes: (data) => {
 		return {
-			githubUsername: data.github_username
+			githubUsername: data.username
 		};
 	}
 });
@@ -105,7 +112,7 @@ pnpm add @lucia-auth/oauth
 yarn add @lucia-auth/oauth
 ```
 
-Import the Github OAuth integration, and initialize it using your credentials.
+Import the GitHub OAuth integration, and initialize it using your credentials.
 
 ```ts
 // server/utils/lucia.ts
@@ -130,21 +137,21 @@ export type Auth = typeof auth;
 
 ## Sign in page
 
-Create `pages/login.vue`. It will have a "Sign in with Github" button (actually a link).
+Create `pages/login.vue`. It will have a "Sign in with GitHub" button (actually a link).
 
 ```vue
 <!-- pages/login.vue -->
 <template>
 	<h1>Sign in</h1>
-	<a href="/api/login/github">Sign in with Github</a>
+	<a href="/api/login/github">Sign in with GitHub</a>
 </template>
 ```
 
-When a user clicks the link, the destination (`/api/login/github`) will redirect the user to Github to be authenticated.
+When a user clicks the link, the destination (`/api/login/github`) will redirect the user to GitHub to be authenticated.
 
 ## Generate authorization url
 
-Create `server/api/login/github/index.get.ts`. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new Github authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
+Create `server/api/login/github/index.get.ts`. [`GithubProvider.getAuthorizationUrl()`](/oauth/providers/github#getauthorizationurl) will create a new GitHub authorization url, where the user will be authenticated in github.com. When generating an authorization url, Lucia will also create a new state. This should be stored as a http-only cookie to be used later.
 
 ```ts
 // server/api/login/github/index.get.ts
@@ -164,7 +171,7 @@ export default defineEventHandler(async (event) => {
 
 Create `server/api/login/github/callback.get.ts`
 
-When the user authenticates with Github, Github will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
+When the user authenticates with GitHub, GitHub will redirect back the user to your site with a code and a state. This state should be checked with the one stored as a cookie, and if valid, validate the code with [`GithubProvider.validateCallback()`](/oauth/providers/github#validatecallback). This will return [`GithubUserAuth`](/oauth/providers/github#githubuserauth) if the code is valid, or throw an error if not.
 
 After successfully creating a user, we'll create a new session with [`Auth.createSession()`](/reference/lucia/interfaces/auth#createsession) and store it as a cookie with [`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession). [`AuthRequest`](/reference/lucia/interfaces/authrequest) can be created by calling [`Auth.handleRequest()`](/reference/lucia/interfaces/auth#handlerequest) with `H3Event`.
 
@@ -195,7 +202,7 @@ export default defineEventHandler(async (event) => {
 			if (existingUser) return existingUser;
 			const user = await createUser({
 				attributes: {
-					github_username: githubUser.login
+					username: githubUser.login
 				}
 			});
 			return user;
@@ -231,9 +238,9 @@ export default defineEventHandler(async (event) => {
 
 ### Authenticate user with Lucia
 
-You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the Github user id already exists.
+You can check if the user has already registered with your app by checking `GithubUserAuth.getExistingUser`. Internally, this is done by checking if a [key](/basics/keys) with the GitHub user id already exists.
 
-If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `github_username` to previously. You can access the Github user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
+If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously. You can access the GitHub user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
 const { getExistingUser, githubUser, createUser } =
@@ -244,7 +251,7 @@ const getUser = async () => {
 	if (existingUser) return existingUser;
 	const user = await createUser({
 		attributes: {
-			github_username: githubUser.login
+			username: githubUser.login
 		}
 	});
 	return user;
@@ -302,10 +309,12 @@ export const useAuthenticatedUser = () => {
 Define a global `auth` middleware that gets the current user and populates the user state. This will run on every navigation.
 
 ```ts
-// middleware/auth.ts
+// middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async () => {
-	const user = await useUser();
-	if (!user.value) return navigateTo("/login");
+	const user = useUser();
+	const { data, error } = await useFetch("/api/user");
+	if (error.value) throw createError("Failed to fetch data");
+	user.value = data.value?.user ?? null;
 });
 ```
 
@@ -350,7 +359,7 @@ definePageMeta({
 	middleware: ["protected"]
 });
 
-const user = await useAuthenticatedUser();
+const user = useAuthenticatedUser();
 
 const handleSubmit = async (e: Event) => {
 	if (!(e.target instanceof HTMLFormElement)) return;
@@ -366,7 +375,7 @@ const handleSubmit = async (e: Event) => {
 <template>
 	<h1>Profile</h1>
 	<p>User id: {{ user.userId }}</p>
-	<p>Github username: {{ user.githubUsername }}</p>
+	<p>GitHub username: {{ user.githubUsername }}</p>
 	<form method="post" action="/api/logout" @submit.prevent="handleSubmit">
 		<input type="submit" value="Sign out" />
 	</form>

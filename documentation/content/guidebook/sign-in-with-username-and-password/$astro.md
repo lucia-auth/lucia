@@ -13,13 +13,13 @@ This guide will cover how to implement a simple username and password authentica
 
 ### Clone project
 
-You can get started immediately by cloning the [Astro example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/astro/username-and-password) from the repository.
+You can get started immediately by cloning the [Astro example](https://github.com/lucia-auth/examples/tree/main/astro/username-and-password) from the repository.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/astro/username-and-password <directory_name>
+npx degit lucia-auth/examples/astro/username-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/astro/username-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/astro/username-and-password).
 
 ## Update your database
 
@@ -275,7 +275,7 @@ if (Astro.request.method === "POST") {
 				password
 			);
 			const session = await auth.createSession({
-				userId: user.userId,
+				userId: key.userId,
 				attributes: {}
 			});
 			Astro.locals.auth.setSession(session); // set session cookie

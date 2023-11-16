@@ -73,7 +73,7 @@ const auth = lucia({
 
 ## Set up types
 
-Create a `.d.ts` file in your project root and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`. 
+Create a `.d.ts` file in your project root and declare a `Lucia` namespace. The import path for `Auth` is where you initialized `lucia()`.
 
 ```ts
 // app.d.ts
@@ -87,6 +87,12 @@ declare namespace Lucia {
 
 ## Next steps
 
-You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples in the repository](https://github.com/pilcrowOnPaper/lucia/tree/main/examples).
+You can learn all the concepts and general APIs of Lucia by reading the [Basics](/basics/database) section in the docs. If you prefer writing code immediately, check out the [Starter guides](/starter-guides) page or the [examples repository](https://github.com/lucia-auth/examples).
 
 Remember to check out the [Guidebook](/guidebook) for tutorials and guides! If you have any questions, join our [Discord server](/discord)!
+
+## Limitations
+
+### Cloudflare
+
+Please note that password hashing will not work on Free Bundled Workers; **the allocated 10ms CPU time is not sufficient for this**. Consider using unbound workers or paid bundled workers for hashing operations. This is not an issue when using OAuth.

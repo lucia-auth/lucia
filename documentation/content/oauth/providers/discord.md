@@ -35,7 +35,7 @@ const discord: (
 | `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                                     |          |
 | `config.clientId`     | `string`                                   | Discord OAuth app client id                        |          |
 | `config.clientSecret` | `string`                                   | Discord OAuth app client secret                    |          |
-| `configs.redirectUri` | `string`                                   | an authorized redirect URI                         |          |
+| `config.redirectUri`  | `string`                                   | an authorized redirect URI                         |          |
 | `config.scope`        | `string[]`                                 | an array of scopes - `identify` is always included |    ✓     |
 
 ##### Returns
@@ -85,20 +85,20 @@ type DiscordUser = {
 	id: string;
 	username: string;
 	discriminator: string;
-	global_name?: string;
-	avatar: string;
+	global_name: string | null;
+	avatar: string | null;
 	bot?: boolean;
 	system?: boolean;
 	mfa_enabled?: boolean;
 	verified?: boolean;
-	email?: string;
+	email?: string | null;
 	flags?: number;
-	banner?: string;
-	accent_color?: number;
+	banner?: string | null;
+	accent_color?: number | null;
 	premium_type?: number;
 	public_flags?: number;
 	locale?: string;
-	avatar_decoration?: string;
+	avatar_decoration?: string | null;
 };
 ```
 
@@ -107,7 +107,7 @@ type DiscordUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface DiscordUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	discordUser: DiscordUser;
 	discordTokens: DiscordTokens;
 }

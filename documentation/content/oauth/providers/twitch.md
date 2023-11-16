@@ -28,13 +28,13 @@ const twitch: (
 
 ##### Parameters
 
-| name                   | type                                       | description                         | optional |
-| ---------------------- | ------------------------------------------ | ----------------------------------- | :------: |
-| `auth`                 | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                      |          |
-| `configs.clientId`     | `string`                                   | Twitch OAuth app client id          |          |
-| `configs.clientSecret` | `string`                                   | Twitch OAuth app client secret      |          |
-| `configs.redirectUri`  | `string`                                   | one of the authorized redirect URIs |          |
-| `configs.scope`        | `string[]`                                 | an array of scopes                  |    ✓     |
+| name                  | type                                       | description                         | optional |
+| --------------------- | ------------------------------------------ | ----------------------------------- | :------: |
+| `auth`                | [`Auth`](/reference/lucia/interfaces/auth) | Lucia instance                      |          |
+| `config.clientId`     | `string`                                   | Twitch OAuth app client id          |          |
+| `config.clientSecret` | `string`                                   | Twitch OAuth app client secret      |          |
+| `config.redirectUri`  | `string`                                   | one of the authorized redirect URIs |          |
+| `config.scope`        | `string[]`                                 | an array of scopes                  |    ✓     |
 
 ##### Returns
 
@@ -99,7 +99,7 @@ type TwitchUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface Auth0UserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
+interface TwitchUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	twitchUser: TwitchUser;
 	twitchTokens: TwitchTokens;
 }

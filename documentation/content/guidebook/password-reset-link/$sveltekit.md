@@ -25,13 +25,13 @@ export type Auth = typeof auth;
 
 ### Clone project
 
-The [email and password SvelteKit example](https://github.com/pilcrowOnPaper/lucia/tree/main/examples/sveltekit/email-and-password) includes password reset.
+The [email and password SvelteKit example](https://github.com/lucia-auth/examples/tree/main/sveltekit/email-and-password) includes password reset.
 
 ```
-npx degit pilcrowonpaper/lucia/examples/sveltekit/email-and-password <directory_name>
+npx degit lucia-auth/examples/sveltekit/email-and-password <directory_name>
 ```
 
-Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/pilcrowOnPaper/lucia/tree/main/examples/sveltekit/email-and-password).
+Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/sveltekit/email-and-password).
 
 ## Database
 

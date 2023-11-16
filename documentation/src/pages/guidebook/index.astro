@@ -6,7 +6,9 @@ import ArticleIcon from "@icons/ArticleIcon.astro";
 import { getPages } from "@utils/content";
 
 const allPages = await getPages("guidebook");
-const parentPages = allPages.filter((page) => page.frameworkId === null);
+const parentPages = allPages.filter(
+	(page) => page.pathname.split("/").length === 2
+);
 ---
 
 <BaseLayout title="The Lucia Guidebook">
@@ -29,10 +31,10 @@ const parentPages = allPages.filter((page) => page.frameworkId === null);
 						.sort((pageA, pageB) => {
 							return pageA.title.localeCompare(pageB.title);
 						})
-						.map(({ htmlTitle, htmlDescription, pathname }) => {
+						.map(({ htmlTitle, htmlDescription, href }) => {
 							return (
 								<article class="group w-full border-b bg-white">
-									<a class=" block py-4" href={pathname}>
+									<a class=" block py-4" href={href}>
 										<h2 class="text-xl font-semibold" set:html={htmlTitle} />
 										<p set:html={htmlDescription} />
 										<div class="text-main mt-0.5 flex place-items-center gap-x-0.5">
