@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-session-redis",
-	"version": "2.1.1",
+	"version": "3.0.0-beta.0",
 	"description": "Redis session adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -14,9 +14,9 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test": "pnpm test.redis && pnpm test.upstash && pnpm test.ioredis",
-		"test.redis": "tsx test/redis.ts",
-		"test.upstash": "tsx test/upstash.ts",
-		"test.ioredis": "tsx test/ioredis.ts",
+		"test.redis": "tsx tests/redis.ts",
+		"test.upstash": "tsx tests/upstash.ts",
+		"test.ioredis": "tsx tests/ioredis.ts",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
@@ -42,7 +42,7 @@
 	"peerDependencies": {
 		"@upstash/redis": "^1.20.0",
 		"ioredis": "^5.0.0",
-		"lucia": "^2.0.0",
+		"lucia": "3.0.0-beta.8",
 		"redis": "^4.0.0"
 	},
 	"peerDependenciesMeta": {

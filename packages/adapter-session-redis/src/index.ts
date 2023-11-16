@@ -1,3 +1,3 @@
-export { redisSessionAdapter as redis } from "./drivers/redis.js";
-export { upstashSessionAdapter as upstash } from "./drivers/upstash.js";
-export { ioredisSessionAdapter as ioredis } from "./drivers/ioredis.js";
+export { RedisSessionAdapter } from "./drivers/redis.js";
+export { UpstashSessionAdapter } from "./drivers/upstash.js";
+export { IoredisSessionAdapter } from "./drivers/ioredis.js";

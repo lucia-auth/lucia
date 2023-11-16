@@ -27,7 +27,7 @@ export async function testAdapter(adapter: Adapter) {
 		userId: databaseUser.id,
 		id: generateRandomString(40, alphabet("0-9", "a-z")),
 		// get random date with 0ms
-		expiresAt: new Date(new TimeSpan(30, "d").milliseconds()),
+		expiresAt: new Date(Math.floor(Date.now() / 1000) * 1000 + 10_000),
 		attributes: {
 			country: "us"
 		}
@@ -55,12 +55,10 @@ export async function testAdapter(adapter: Adapter) {
 		assert.deepStrictEqual(result, []);
 	});
 
-	await test("updateSession() updates session", async () => {
+	await test("updateSessionExpiration() updates session", async () => {
 		await adapter.setSession(databaseSession);
-		databaseSession.expiresAt = new Date(new TimeSpan(100, "d").milliseconds());
-		await adapter.updateSession(databaseSession.id, {
-			expiresAt: databaseSession.expiresAt
-		});
+		databaseSession.expiresAt = new Date(databaseSession.expiresAt.getTime() + 10_000)
+		await adapter.updateSessionExpiration(databaseSession.id, databaseSession.expiresAt);
 		const result = await adapter.getSessionAndUser(databaseSession.id);
 		assert.deepStrictEqual(result, [databaseSession, databaseUser]);
 	});

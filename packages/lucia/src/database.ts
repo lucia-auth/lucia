@@ -5,8 +5,8 @@ export interface Adapter {
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]>;
 	getUserSessions(userId: string): Promise<DatabaseSession[]>;
-	setSession(value: DatabaseSession): Promise<void>;
-	updateSession(sessionId: string, value: Partial<DatabaseSession>): Promise<void>;
+	setSession(session: DatabaseSession): Promise<void>;
+	updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void>;
 	deleteSession(sessionId: string): Promise<void>;
 	deleteUserSessions(userId: string): Promise<void>;
 }
@@ -14,8 +14,8 @@ export interface Adapter {
 export interface SessionAdapter {
 	getSession(sessionId: string): Promise<DatabaseSession | null>;
 	getUserSessions(userId: string): Promise<DatabaseSession[]>;
-	setSession(value: DatabaseSession): Promise<void>;
-	updateSession(sessionId: string, value: Partial<DatabaseSession>): Promise<void>;
+	setSession(session: DatabaseSession): Promise<void>;
+	updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void>;
 	deleteSession(sessionId: string): Promise<void>;
 	deleteUserSessions(userId: string): Promise<void>;
 }

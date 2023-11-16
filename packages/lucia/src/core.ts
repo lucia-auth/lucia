@@ -140,9 +140,7 @@ export class Lucia<
 		let fresh = false;
 		if (sessionState === "idle") {
 			expiresAt = this.sessionController.createExpirationDate();
-			await this.adapter.updateSession(databaseSession.id, {
-				expiresAt
-			});
+			await this.adapter.updateSessionExpiration(databaseSession.id, expiresAt);
 			fresh = true;
 		}
 		const session: Session = {
@@ -180,15 +178,6 @@ export class Lucia<
 		};
 		return session;
 	}
-
-	// public updateSessionAttributes = async (
-	// 	sessionId: string,
-	// 	attributes: Partial<DatabaseSessionAttributes>
-	// ): Promise<Session> => {
-	// 	this.validateSessionIdArgument(sessionId);
-	// 	await this.adapter.updateSession(sessionId, attributes);
-	// 	return this.getSession(sessionId);
-	// };
 
 	public async invalidateSession(sessionId: string): Promise<void> {
 		await this.adapter.deleteSession(sessionId);
