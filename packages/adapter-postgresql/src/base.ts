@@ -72,28 +72,13 @@ export class PostgreSQLAdapter implements Adapter {
 		);
 	}
 
-	public async updateSession(
+	public async updateSessionExpiration(
 		sessionId: string,
-		databaseSession: Partial<DatabaseSession>
+		expiresAt: Date
 	): Promise<void> {
-		const value: Partial<SessionSchema> = {
-			id: databaseSession.id,
-			user_id: databaseSession.userId,
-			...databaseSession.attributes
-		};
-		if (databaseSession.expiresAt) {
-			value.expires_at = databaseSession.expiresAt;
-		}
-		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
-		const keyValuePairs = entries.map(([k], i) => {
-			return [escapeName(k), `$${i + 1}`].join(" = ");
-		});
-		const values = entries.map(([_, v]) => v);
 		await this.controller.execute(
-			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(", ")} WHERE id = $${
-				entries.length + 1
-			}`,
-			[...values, sessionId]
+			`UPDATE ${this.escapedSessionTableName} SET expires_at = $1 WHERE id = $2`,
+			[expiresAt, sessionId]
 		);
 	}
 

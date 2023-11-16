@@ -37,6 +37,8 @@ await testAdapter(adapter);
 await sql`DROP TABLE public.session`;
 await sql`DROP TABLE public.user`;
 
+process.exit();
+
 declare module "lucia" {
 	interface Register {
 		DatabaseUserAttributes: {

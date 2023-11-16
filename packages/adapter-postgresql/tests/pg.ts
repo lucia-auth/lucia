@@ -44,6 +44,8 @@ await testAdapter(adapter);
 await pool.query("DROP TABLE public.session");
 await pool.query("DROP TABLE public.user");
 
+process.exit();
+
 declare module "lucia" {
 	interface Register {
 		DatabaseUserAttributes: {
