@@ -3,14 +3,14 @@ import { lucia as defaultMiddleware } from "./middleware/index.js";
 import { SessionController, SessionCookieController } from "oslo/session";
 import { TimeSpan, isWithinExpirationDate } from "oslo";
 import { verifyRequestOrigin } from "oslo/request";
+import { generateId } from "./crypto.js";
 
 import type { SessionCookie } from "oslo/session";
 import type { Adapter } from "./database.js";
-import {
-	generateId,
-	type DatabaseSessionAttributes,
-	type DatabaseUserAttributes,
-	type RegisteredLucia
+import type {
+	DatabaseSessionAttributes,
+	DatabaseUserAttributes,
+	RegisteredLucia
 } from "./index.js";
 
 type SessionAttributes = RegisteredLucia extends Lucia<any, infer _SessionAttributes, any>
