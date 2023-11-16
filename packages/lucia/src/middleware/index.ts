@@ -202,9 +202,7 @@ export function web(): Middleware<[Request]> {
 		const requestContext = {
 			request,
 			setCookie: () => {
-				throw new Error(
-					"Cookies cannot be set when using the `web()` middleware"
-				);
+				throw new Error("Cookies cannot be set when using the `web()` middleware");
 			}
 		} as const satisfies RequestContext;
 		return requestContext;
@@ -288,10 +286,7 @@ export function nextjs(): Middleware<
 							?.toString()
 							.split(",")
 							.filter((val) => val) ?? [];
-					res.setHeader("Set-Cookie", [
-						cookie.serialize(),
-						...setCookieHeaderValues
-					]);
+					res.setHeader("Set-Cookie", [cookie.serialize(), ...setCookieHeaderValues]);
 				}
 			};
 		}
@@ -299,9 +294,7 @@ export function nextjs(): Middleware<
 		return {
 			request,
 			setCookie: () => {
-				throw new Error(
-					"Cookies cannot be set when using the `web()` middleware"
-				);
+				throw new Error("Cookies cannot be set when using the `web()` middleware");
 			},
 			sessionCookie: request.cookies.get(sessionCookieName)?.value ?? null
 		};

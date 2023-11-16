@@ -114,13 +114,9 @@ if (Astro.request.method === "POST") {
 	const password = formData.get("password");
 	// basic check
 	const validUsername =
-		typeof username === "string" &&
-		username.length >= 4 &&
-		username.length <= 31;
+		typeof username === "string" && username.length >= 4 && username.length <= 31;
 	const validPassword =
-		typeof password === "string" &&
-		password.length >= 6 &&
-		password.length <= 255;
+		typeof password === "string" && password.length >= 6 && password.length <= 255;
 	if (validUsername && validPassword) {
 		try {
 			const user = await auth.createUser({
@@ -142,10 +138,7 @@ if (Astro.request.method === "POST") {
 		} catch (e) {
 			// this part depends on the database you're using
 			// check for unique constraint error in user table
-			if (
-				e instanceof SomeDatabaseError &&
-				e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-			) {
+			if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 				errorMessage = "Username already taken";
 			} else {
 				errorMessage = "An unknown error occurred";
@@ -182,10 +175,7 @@ const user = await auth.createUser({
 Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/modules/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
 
 ```ts
-if (
-	e instanceof SomeDatabaseError &&
-	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-) {
+if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 	// username already taken
 }
 ```
@@ -258,22 +248,14 @@ if (Astro.request.method === "POST") {
 	const password = formData.get("password");
 	// basic check
 	const validUsername =
-		typeof username === "string" &&
-		username.length >= 4 &&
-		username.length <= 31;
+		typeof username === "string" && username.length >= 4 && username.length <= 31;
 	const validPassword =
-		typeof password === "string" &&
-		password.length >= 6 &&
-		password.length <= 255;
+		typeof password === "string" && password.length >= 6 && password.length <= 255;
 	if (validUsername && validPassword) {
 		try {
 			// find user by key
 			// and validate password
-			const key = await auth.useKey(
-				"username",
-				username.toLowerCase(),
-				password
-			);
+			const key = await auth.useKey("username", username.toLowerCase(), password);
 			const session = await auth.createSession({
 				userId: key.userId,
 				attributes: {}
@@ -283,8 +265,7 @@ if (Astro.request.method === "POST") {
 		} catch (e) {
 			if (
 				e instanceof LuciaError &&
-				(e.message === "AUTH_INVALID_KEY_ID" ||
-					e.message === "AUTH_INVALID_PASSWORD")
+				(e.message === "AUTH_INVALID_KEY_ID" || e.message === "AUTH_INVALID_PASSWORD")
 			) {
 				// user does not exist
 				// or invalid password

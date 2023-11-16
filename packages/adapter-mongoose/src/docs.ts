@@ -1,7 +1,4 @@
-import type {
-	GlobalDatabaseUserAttributes,
-	GlobalDatabaseSessionAttributes
-} from "lucia";
+import type { GlobalDatabaseUserAttributes, GlobalDatabaseSessionAttributes } from "lucia";
 
 export type UserDoc = {
 	_id: string;

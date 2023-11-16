@@ -46,9 +46,7 @@ const createOAuth2AuthorizationUrlWithPKCE: (
 		codeChallengeMethod: "S256";
 		redirectUri?: string;
 	}
-) => Promise<
-	readonly [authorizationUrl: URL, codeVerifier: string, state: string]
->;
+) => Promise<readonly [authorizationUrl: URL, codeVerifier: string, state: string]>;
 ```
 
 ##### Parameters

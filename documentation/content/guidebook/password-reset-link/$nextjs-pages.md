@@ -111,15 +111,9 @@ export const generatePasswordResetToken = async (userId: string) => {
 
 export const validatePasswordResetToken = async (token: string) => {
 	const storedToken = await db.transaction().execute(async (trx) => {
-		const storedToken = await trx
-			.table("password_reset_token")
-			.where("id", "=", token)
-			.get();
+		const storedToken = await trx.table("password_reset_token").where("id", "=", token).get();
 		if (!storedToken) throw new Error("Invalid token");
-		await trx
-			.table("password_reset_token")
-			.where("id", "=", storedToken.id)
-			.delete();
+		await trx.table("password_reset_token").where("id", "=", storedToken.id).delete();
 		return storedToken;
 	});
 	const tokenExpires = Number(storedToken.expires); // bigint => number conversion
@@ -196,10 +190,7 @@ export const POST = async (request: NextRequest) => {
 		);
 	}
 	try {
-		const storedUser = await db
-			.table("user")
-			.where("email", "=", email.toLowerCase())
-			.get();
+		const storedUser = await db.table("user").where("email", "=", email.toLowerCase()).get();
 		if (!storedUser) {
 			return new Response(
 				JSON.stringify({
@@ -246,19 +237,16 @@ const Page = () => {
 				onSubmit={async (e) => {
 					e.preventDefault();
 					const formData = new FormData(e.currentTarget);
-					const response = await fetch(
-						`/api/password-reset/${router.query.token}`,
-						{
-							method: "POST",
-							body: JSON.stringify({
-								password: formData.get("password")
-							}),
-							headers: {
-								"Content-Type": "application/json"
-							},
-							redirect: "manual"
-						}
-					);
+					const response = await fetch(`/api/password-reset/${router.query.token}`, {
+						method: "POST",
+						body: JSON.stringify({
+							password: formData.get("password")
+						}),
+						headers: {
+							"Content-Type": "application/json"
+						},
+						redirect: "manual"
+					});
 
 					if (response.status === 0) {
 						// redirected
@@ -295,11 +283,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	const { password } = req.body as {
 		password: unknown;
 	};
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 		return res.status(400).json({
 			error: "Invalid password"
 		});

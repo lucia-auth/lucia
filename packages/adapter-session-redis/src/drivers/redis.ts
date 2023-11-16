@@ -16,10 +16,7 @@ export const redisSessionAdapter = (
 			return [prefixes?.session ?? DEFAULT_SESSION_PREFIX, sessionId].join(":");
 		};
 		const userSessionsKey = (userId: string) => {
-			return [
-				prefixes?.userSessions ?? DEFAULT_USER_SESSIONS_PREFIX,
-				userId
-			].join(":");
+			return [prefixes?.userSessions ?? DEFAULT_USER_SESSIONS_PREFIX, userId].join(":");
 		};
 
 		return {
@@ -71,13 +68,9 @@ export const redisSessionAdapter = (
 					...session,
 					...partialSession
 				};
-				await client.set(
-					sessionKey(sessionId),
-					JSON.stringify(updatedSession),
-					{
-						EX: Math.floor(Number(updatedSession.idle_expires) / 1000)
-					}
-				);
+				await client.set(sessionKey(sessionId), JSON.stringify(updatedSession), {
+					EX: Math.floor(Number(updatedSession.idle_expires) / 1000)
+				});
 			}
 		};
 	};

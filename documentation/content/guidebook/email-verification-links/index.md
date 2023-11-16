@@ -131,15 +131,9 @@ export const generateEmailVerificationToken = async (userId: string) => {
 
 export const validateEmailVerificationToken = async (token: string) => {
 	const storedToken = await db.transaction(async (trx) => {
-		const storedToken = await trx
-			.table("email_verification_token")
-			.where("id", "=", token)
-			.get();
+		const storedToken = await trx.table("email_verification_token").where("id", "=", token).get();
 		if (!storedToken) throw new Error("Invalid token");
-		await trx
-			.table("email_verification_token")
-			.where("user_id", "=", storedToken.user_id)
-			.delete();
+		await trx.table("email_verification_token").where("user_id", "=", storedToken.user_id).delete();
 		return storedToken;
 	});
 	const tokenExpires = Number(storedToken.expires); // bigint => number conversion
@@ -171,11 +165,7 @@ post("/signup", async (request: Request) => {
 			status: 400
 		});
 	}
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 		return new Response("Invalid password", {
 			status: 400
 		});
@@ -211,10 +201,7 @@ post("/signup", async (request: Request) => {
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
-		if (
-			e instanceof SomeDatabaseError &&
-			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-		) {
+		if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 			return new Response("Account already exists", {
 				status: 400
 			});
@@ -277,11 +264,7 @@ post("/login", async (request: Request) => {
 			status: 400
 		});
 	}
-	if (
-		typeof password !== "string" ||
-		password.length < 1 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 1 || password.length > 255) {
 		return new Response("Invalid password", {
 			status: 400
 		});
@@ -305,8 +288,7 @@ post("/login", async (request: Request) => {
 	} catch (e) {
 		if (
 			e instanceof LuciaError &&
-			(e.message === "AUTH_INVALID_KEY_ID" ||
-				e.message === "AUTH_INVALID_PASSWORD")
+			(e.message === "AUTH_INVALID_KEY_ID" || e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			// user does not exist
 			// or invalid password

@@ -20,9 +20,7 @@ interface OAuth2ProviderAuth<_ProviderUserAuth extends ProviderUserAuth> {
 Creates a new authorization url, optional with a state.
 
 ```ts
-const getAuthorizationUrl: () => Promise<
-	readonly [url: URL, state: string | null]
->;
+const getAuthorizationUrl: () => Promise<readonly [url: URL, state: string | null]>;
 ```
 
 ##### Returns

@@ -19,17 +19,15 @@ export class SQLiteAdapter implements Adapter {
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {
-		await this.controller.execute(
-			`DELETE FROM ${this.escapedSessionTableName} WHERE id = ?`,
-			[sessionId]
-		);
+		await this.controller.execute(`DELETE FROM ${this.escapedSessionTableName} WHERE id = ?`, [
+			sessionId
+		]);
 	}
 
 	public async deleteUserSessions(userId: string): Promise<void> {
-		await this.controller.execute(
-			`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = ?`,
-			[userId]
-		);
+		await this.controller.execute(`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = ?`, [
+			userId
+		]);
 	}
 
 	public async getSessionAndUser(
@@ -84,14 +82,10 @@ export class SQLiteAdapter implements Adapter {
 			value.expires_at = Math.floor(databaseSession.expiresAt.getTime() / 1000);
 		}
 		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
-		const keyValuePairs = entries.map(([k]) =>
-			[escapeName(k), "?"].join(" = ")
-		);
+		const keyValuePairs = entries.map(([k]) => [escapeName(k), "?"].join(" = "));
 		const values = entries.map(([_, v]) => v);
 		await this.controller.execute(
-			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(
-				", "
-			)} WHERE id = ?`,
+			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(", ")} WHERE id = ?`,
 			[...values, sessionId]
 		);
 	}
@@ -105,9 +99,7 @@ export class SQLiteAdapter implements Adapter {
 		return transformIntoDatabaseSession(result);
 	}
 
-	private async getUserFromSessionId(
-		sessionId: string
-	): Promise<DatabaseUser | null> {
+	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
 		const result = await this.controller.get<UserSchema>(
 			`SELECT ${this.escapedUserTableName}.* FROM ${this.escapedSessionTableName} INNER JOIN ${this.escapedUserTableName} ON ${this.escapedUserTableName}.id = ${this.escapedSessionTableName}.user_id WHERE ${this.escapedSessionTableName}.id = ?`,
 			[sessionId]

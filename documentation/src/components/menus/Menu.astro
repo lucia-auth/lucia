@@ -97,8 +97,7 @@ const parseMarkdownCode = (text: string) => {
 		const collectionId = collectionIdElement.value;
 		const storedScrollPosition = sessionStorage.getItem("scroll_position");
 		if (storedScrollPosition !== null) {
-			const [prevCollectionId, prevScrollPosition] =
-				storedScrollPosition.split(":");
+			const [prevCollectionId, prevScrollPosition] = storedScrollPosition.split(":");
 			if (prevCollectionId === collectionId) {
 				contentNavigationElement.scrollTop = Number(prevScrollPosition);
 			}

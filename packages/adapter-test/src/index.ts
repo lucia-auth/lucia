@@ -22,9 +22,7 @@ export const databaseUser: DatabaseUser = {
 };
 
 export async function testAdapter(adapter: Adapter) {
-	console.log(
-		`\n\x1B[38;5;63;1m[start]  \x1B[0mRunning adapter tests\x1B[0m\n`
-	);
+	console.log(`\n\x1B[38;5;63;1m[start]  \x1B[0mRunning adapter tests\x1B[0m\n`);
 	const databaseSession: DatabaseSession = {
 		userId: databaseUser.id,
 		id: generateRandomString(40, alphabet("0-9", "a-z")),

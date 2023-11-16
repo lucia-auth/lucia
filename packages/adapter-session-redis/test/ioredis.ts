@@ -32,9 +32,7 @@ const queryHandler: QueryHandler = {
 	session: {
 		get: async () => {
 			const keys = await ioredisClient.keys(sessionKey("*"));
-			const sessionData = await Promise.all(
-				keys.map((key) => ioredisClient.get(key))
-			);
+			const sessionData = await Promise.all(keys.map((key) => ioredisClient.get(key)));
 			const sessions = sessionData
 				.filter((val): val is string => val !== null)
 				.map((data) => JSON.parse(data) as SessionSchema);

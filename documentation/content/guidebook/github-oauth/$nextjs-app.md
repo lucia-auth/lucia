@@ -214,8 +214,7 @@ export const GET = async (request: NextRequest) => {
 		});
 	}
 	try {
-		const { getExistingUser, githubUser, createUser } =
-			await githubAuth.validateCallback(code);
+		const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 
 		const getUser = async () => {
 			const existingUser = await getExistingUser();
@@ -265,8 +264,7 @@ You can check if the user has already registered with your app by checking `Gith
 If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously. You can access the GitHub user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
-const { getExistingUser, githubUser, createUser } =
-	await githubAuth.validateCallback(code);
+const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 
 const getUser = async () => {
 	const existingUser = await getExistingUser();
@@ -352,13 +350,7 @@ Since the form will require client side JS, we will extract it into its own clie
 
 import { useRouter } from "next/navigation";
 
-const Form = ({
-	children,
-	action
-}: {
-	children: React.ReactNode;
-	action: string;
-}) => {
+const Form = ({ children, action }: { children: React.ReactNode; action: string }) => {
 	const router = useRouter();
 	return (
 		<form

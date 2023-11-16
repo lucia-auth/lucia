@@ -16,10 +16,7 @@ export const ioredisSessionAdapter = (
 			return [prefixes?.session ?? DEFAULT_SESSION_PREFIX, sessionId].join(":");
 		};
 		const userSessionsKey = (userId: string) => {
-			return [
-				prefixes?.userSessions ?? DEFAULT_USER_SESSIONS_PREFIX,
-				userId
-			].join(":");
+			return [prefixes?.userSessions ?? DEFAULT_USER_SESSIONS_PREFIX, userId].join(":");
 		};
 
 		return {

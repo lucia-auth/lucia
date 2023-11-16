@@ -138,20 +138,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		password: unknown;
 	};
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
+	if (typeof username !== "string" || username.length < 4 || username.length > 31) {
 		return res.status(400).json({
 			error: "Invalid username"
 		});
 	}
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 		return res.status(400).json({
 			error: "Invalid password"
 		});
@@ -180,10 +172,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
-		if (
-			e instanceof SomeDatabaseError &&
-			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-		) {
+		if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 			return res.status(400).json({
 				error: "Username already taken"
 			});
@@ -222,10 +211,7 @@ const user = await auth.createUser({
 Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/modules/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
 
 ```ts
-if (
-	e instanceof SomeDatabaseError &&
-	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-) {
+if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 	// username already taken
 }
 ```
@@ -342,20 +328,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		password: unknown;
 	};
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 1 ||
-		username.length > 31
-	) {
+	if (typeof username !== "string" || username.length < 1 || username.length > 31) {
 		return res.status(400).json({
 			error: "Invalid username"
 		});
 	}
-	if (
-		typeof password !== "string" ||
-		password.length < 1 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 1 || password.length > 255) {
 		return res.status(400).json({
 			error: "Invalid password"
 		});
@@ -377,8 +355,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	} catch (e) {
 		if (
 			e instanceof LuciaError &&
-			(e.message === "AUTH_INVALID_KEY_ID" ||
-				e.message === "AUTH_INVALID_PASSWORD")
+			(e.message === "AUTH_INVALID_KEY_ID" || e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			// user does not exist
 			// or invalid password
@@ -475,9 +452,7 @@ export const getServerSideProps = async (
 	};
 };
 
-const Page = (
-	props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
+const Page = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 	const router = useRouter();
 	return (
 		<>

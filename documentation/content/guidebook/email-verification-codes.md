@@ -37,10 +37,7 @@ const code = generateRandomString(8, "0123456789");
 
 await db.transaction((trx) => {
 	// delete existing code
-	await trx
-		.table("verification_code")
-		.where("user_id", "=", session.user.userId)
-		.delete();
+	await trx.table("verification_code").where("user_id", "=", session.user.userId).delete();
 	// create new code
 	await trx.table("verification_code").insert({
 		code,

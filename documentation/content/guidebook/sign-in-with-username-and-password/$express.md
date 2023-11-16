@@ -91,18 +91,10 @@ app.get("/signup", async () => {
 app.post("/signup", async (req, res) => {
 	const { username, password } = req.body;
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 4 ||
-		username.length > 31
-	) {
+	if (typeof username !== "string" || username.length < 4 || username.length > 31) {
 		return res.status(400).send("Invalid username");
 	}
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 		return res.status(400).send("Invalid password");
 	}
 	try {
@@ -127,10 +119,7 @@ app.post("/signup", async (req, res) => {
 	} catch (e) {
 		// this part depends on the database you're using
 		// check for unique constraint error in user table
-		if (
-			e instanceof SomeDatabaseError &&
-			e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-		) {
+		if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 			return res.status(400).send("Username already taken");
 		}
 
@@ -169,10 +158,7 @@ Alternatively, you can return the session in the response and store it locally i
 Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/modules/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
 
 ```ts
-if (
-	e instanceof SomeDatabaseError &&
-	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-) {
+if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 	// username already taken
 }
 ```
@@ -194,18 +180,10 @@ app.get("/login", async (req, res) => {
 app.post("/login", async (req, res) => {
 	const { username, password } = req.body;
 	// basic check
-	if (
-		typeof username !== "string" ||
-		username.length < 1 ||
-		username.length > 31
-	) {
+	if (typeof username !== "string" || username.length < 1 || username.length > 31) {
 		return res.status(400).send("Invalid username");
 	}
-	if (
-		typeof password !== "string" ||
-		password.length < 1 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 1 || password.length > 255) {
 		return res.status(400).send("Invalid password");
 	}
 	try {
@@ -224,8 +202,7 @@ app.post("/login", async (req, res) => {
 		// check for unique constraint error in user table
 		if (
 			e instanceof LuciaError &&
-			(e.message === "AUTH_INVALID_KEY_ID" ||
-				e.message === "AUTH_INVALID_PASSWORD")
+			(e.message === "AUTH_INVALID_KEY_ID" || e.message === "AUTH_INVALID_PASSWORD")
 		) {
 			// user does not exist
 			// or invalid password

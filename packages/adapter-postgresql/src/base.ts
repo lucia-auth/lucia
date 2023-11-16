@@ -19,10 +19,9 @@ export class PostgreSQLAdapter implements Adapter {
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {
-		await this.controller.execute(
-			`DELETE FROM ${this.escapedSessionTableName} WHERE id = $1`,
-			[sessionId]
-		);
+		await this.controller.execute(`DELETE FROM ${this.escapedSessionTableName} WHERE id = $1`, [
+			sessionId
+		]);
 	}
 
 	public async deleteUserSessions(userId: string): Promise<void> {
@@ -91,9 +90,9 @@ export class PostgreSQLAdapter implements Adapter {
 		});
 		const values = entries.map(([_, v]) => v);
 		await this.controller.execute(
-			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(
-				", "
-			)} WHERE id = $${entries.length + 1}`,
+			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(", ")} WHERE id = $${
+				entries.length + 1
+			}`,
 			[...values, sessionId]
 		);
 	}
@@ -107,9 +106,7 @@ export class PostgreSQLAdapter implements Adapter {
 		return transformIntoDatabaseSession(result);
 	}
 
-	private async getUserFromSessionId(
-		sessionId: string
-	): Promise<DatabaseUser | null> {
+	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
 		const result = await this.controller.get<UserSchema>(
 			`SELECT ${this.escapedUserTableName}.* FROM ${this.escapedSessionTableName} INNER JOIN ${this.escapedUserTableName} ON ${this.escapedUserTableName}.id = ${this.escapedSessionTableName}.user_id WHERE ${this.escapedSessionTableName}.id = $1`,
 			[sessionId]

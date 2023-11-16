@@ -49,13 +49,8 @@ See [`OAuth2ProviderAuthWithPKCE`](/reference/oauth/interfaces/oauth2provideraut
 ```ts
 // implements OAuth2ProviderAuthWithPKCE<LichessAuth<_Auth>>
 interface LichessAuth<_Auth extends Auth> {
-	getAuthorizationUrl: () => Promise<
-		readonly [url: URL, codeVerifier: string, state: string]
-	>;
-	validateCallback: (
-		code: string,
-		codeVerifier: string
-	) => Promise<LichessUserAuth<_Auth>>;
+	getAuthorizationUrl: () => Promise<readonly [url: URL, codeVerifier: string, state: string]>;
+	validateCallback: (code: string, codeVerifier: string) => Promise<LichessUserAuth<_Auth>>;
 }
 ```
 

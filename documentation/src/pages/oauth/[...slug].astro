@@ -10,8 +10,7 @@ import type { InferGetStaticPropsType } from "astro";
 export const getStaticPaths = async () => {
 	const pages = await getPages("oauth");
 	return pages.map((page) => {
-		const slug =
-			page.href === "/oauth" ? undefined : page.href.replace("/oauth/", "");
+		const slug = page.href === "/oauth" ? undefined : page.href.replace("/oauth/", "");
 		return {
 			params: {
 				slug
@@ -42,18 +41,12 @@ const { page } = Astro.props;
 				/>
 			)
 		}
-		<h1
-			class="mt-1 break-words text-4xl font-semibold"
-			set:html={page.htmlTitle}
-		/>
+		<h1 class="mt-1 break-words text-4xl font-semibold" set:html={page.htmlTitle} />
 	</div>
 	{
 		page.versions.length > 0 && (
 			<p class="mb-8 text-sm text-zinc-400">
-				<i>
-					Framework and runtime specific versions of this guide are also
-					available.
-				</i>
+				<i>Framework and runtime specific versions of this guide are also available.</i>
 			</p>
 		)
 	}

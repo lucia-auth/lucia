@@ -6,9 +6,7 @@ import type {
 	DatabaseUserAttributes
 } from "lucia";
 
-export class PrismaAdapter<_PrismaClient extends PrismaClient>
-	implements Adapter
-{
+export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapter {
 	public s: _PrismaClient = {} as any;
 	private sessionModel: PrismaModel<SessionSchema>;
 	private userModelName: string;
@@ -21,8 +19,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 		}
 	) {
 		this.userModelName = modelNames.user;
-		const sessionModelKey =
-			modelNames.session[0].toLowerCase() + modelNames.session.slice(1);
+		const sessionModelKey = modelNames.session[0].toLowerCase() + modelNames.session.slice(1);
 		this.sessionModel = client[sessionModelKey];
 	}
 
@@ -49,8 +46,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 	public async getSessionAndUser(
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
-		const userModelKey =
-			this.userModelName[0].toLowerCase() + this.userModelName.slice(1);
+		const userModelKey = this.userModelName[0].toLowerCase() + this.userModelName.slice(1);
 		const result = await this.sessionModel.findUnique<{
 			// this is a lie to make TS shut up
 			user: UserSchema;
@@ -65,10 +61,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 		if (!result) return [null, null];
 		const userResult: UserSchema = result[userModelKey as "user"];
 		delete result[userModelKey as keyof typeof result];
-		return [
-			transformIntoDatabaseSession(result),
-			transformIntoDatabaseUser(userResult)
-		];
+		return [transformIntoDatabaseSession(result), transformIntoDatabaseUser(userResult)];
 	}
 
 	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
@@ -91,10 +84,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient>
 		});
 	}
 
-	public async updateSession(
-		sessionId: string,
-		value: Partial<DatabaseSession>
-	): Promise<void> {
+	public async updateSession(sessionId: string, value: Partial<DatabaseSession>): Promise<void> {
 		await this.sessionModel.update({
 			where: {
 				id: sessionId
@@ -156,8 +146,5 @@ export type PrismaModel<_Schema> = {
 	create: (options: { data: _Schema }) => Promise<_Schema>;
 	delete: (options: { where: Partial<_Schema> }) => Promise<void>;
 	deleteMany: (options?: { where: Partial<_Schema> }) => Promise<void>;
-	update: (options: {
-		data: Partial<_Schema>;
-		where: Partial<_Schema>;
-	}) => Promise<_Schema>;
+	update: (options: { data: Partial<_Schema>; where: Partial<_Schema> }) => Promise<_Schema>;
 };

@@ -8,12 +8,7 @@ export const scrypt = async (
 	const maxmem = 1024 ** 3 + 1024;
 	const blockSize = 128 * r;
 	const blockSize32 = blockSize / 4;
-	if (
-		N <= 1 ||
-		(N & (N - 1)) !== 0 ||
-		N >= 2 ** (blockSize / 8) ||
-		N > 2 ** 32
-	) {
+	if (N <= 1 || (N & (N - 1)) !== 0 || N >= 2 ** (blockSize / 8) || N > 2 ** 32) {
 		throw new Error(
 			"Scrypt: N must be larger than 1, a power of 2, less than 2^(128 * r / 8) and less than 2^32"
 		);
@@ -166,13 +161,7 @@ const pbkdf2 = async (
 		dkLen: number;
 	}
 ): Promise<Uint8Array> => {
-	const pwKey = await crypto.subtle.importKey(
-		"raw",
-		password,
-		"PBKDF2",
-		false,
-		["deriveBits"]
-	);
+	const pwKey = await crypto.subtle.importKey("raw", password, "PBKDF2", false, ["deriveBits"]);
 	const keyBuffer = await crypto.subtle.deriveBits(
 		{
 			name: "PBKDF2",
@@ -204,11 +193,7 @@ const BlockMix = (
 };
 
 const u32 = (arr: Uint8Array): Uint32Array => {
-	return new Uint32Array(
-		arr.buffer,
-		arr.byteOffset,
-		Math.floor(arr.byteLength / 4)
-	);
+	return new Uint32Array(arr.buffer, arr.byteOffset, Math.floor(arr.byteLength / 4));
 };
 
 type ScryptOptions = {

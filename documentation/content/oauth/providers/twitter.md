@@ -51,9 +51,7 @@ See [`OAuth2ProviderAuthWithPKCE`](/reference/oauth/interfaces/oauth2provideraut
 ```ts
 // implements OAuth2ProviderAuthWithPKCE<TwitterAuth<_Auth>>
 interface TwitterAuth<_Auth extends Auth> {
-	getAuthorizationUrl: () => Promise<
-		readonly [url: URL, codeVerifier: string, state: string]
-	>;
+	getAuthorizationUrl: () => Promise<readonly [url: URL, codeVerifier: string, state: string]>;
 	validateCallback: (code: string) => Promise<TwitterUserAuth<_Auth>>;
 }
 ```

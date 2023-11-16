@@ -157,8 +157,7 @@ await auth.createUser({
 ```ts
 import { generateRandomString } from "lucia/utils";
 
-const alphabet =
-	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 await auth.createUser({
 	userId: generateRandomString(15, alphabet)
@@ -362,11 +361,7 @@ await auth.createKey({
 Added new `/utils` export, which exports `generateRandomString()` among other utilities.
 
 ```ts
-import {
-	generateRandomString,
-	serializeCookie,
-	isWithinExpiration
-} from "lucia/utils";
+import { generateRandomString, serializeCookie, isWithinExpiration } from "lucia/utils";
 ```
 
 ## OAuth

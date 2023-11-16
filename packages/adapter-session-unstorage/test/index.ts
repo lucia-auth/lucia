@@ -18,17 +18,12 @@ export const queryHandler: QueryHandler = {
 	session: {
 		get: async () => {
 			const sessionIds = await storage.getKeys(DEFAULT_SESSION_PREFIX);
-			return Promise.all(
-				sessionIds.map((id) => storage.getItem(id) as Promise<SessionSchema>)
-			);
+			return Promise.all(sessionIds.map((id) => storage.getItem(id) as Promise<SessionSchema>));
 		},
 		insert: async (session) => {
 			await Promise.all([
 				storage.setItem(`${DEFAULT_SESSION_PREFIX}:${session.id}`, session),
-				storage.setItem(
-					[DEFAULT_USER_SESSION_PREFIX, session.user_id, session.id].join(":"),
-					""
-				)
+				storage.setItem([DEFAULT_USER_SESSION_PREFIX, session.user_id, session.id].join(":"), "")
 			]);
 		},
 		clear: async () => storage.clear()

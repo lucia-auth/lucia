@@ -102,8 +102,7 @@ type AtlassianUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface AtlassianUserAuth<_Auth extends Auth>
-	extends ProviderUserAuth<_Auth> {
+interface AtlassianUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	atlassianUser: AtlassianUser;
 	atlassianTokens: AtlassianTokens;
 }

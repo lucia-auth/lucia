@@ -6,9 +6,7 @@ import sqlite from "better-sqlite3";
 const db = sqlite(":memory:");
 const d1 = new D1Database(new D1DatabaseAPI(db));
 
-await d1.exec(
-	`CREATE TABLE user ( id TEXT NOT NULL PRIMARY KEY, username TEXT NOT NULL UNIQUE )`
-);
+await d1.exec(`CREATE TABLE user ( id TEXT NOT NULL PRIMARY KEY, username TEXT NOT NULL UNIQUE )`);
 await d1.exec(
 	`CREATE TABLE user_session ( id TEXT NOT NULL PRIMARY KEY, user_id TEXT NOT NULL, expires_at INTEGER NOT NULL, country TEXT, FOREIGN KEY (user_id) REFERENCES user(id))`
 );

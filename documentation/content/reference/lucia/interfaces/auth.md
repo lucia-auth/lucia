@@ -516,9 +516,7 @@ Authorization: Bearer <session_id>
 ```
 
 ```ts
-const readBearerToken: (
-	authorizationHeader: string | null | undefined
-) => string | null;
+const readBearerToken: (authorizationHeader: string | null | undefined) => string | null;
 ```
 
 ##### Parameters
@@ -539,9 +537,7 @@ const readBearerToken: (
 ```ts
 import { auth } from "./lucia.js";
 
-const sessionId = auth.readBearerToken(
-	"Bearer CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM"
-);
+const sessionId = auth.readBearerToken("Bearer CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM");
 ```
 
 ## `readSessionCookie()`
@@ -549,9 +545,7 @@ const sessionId = auth.readBearerToken(
 Takes a `Cookie` request header and returns the session cookie value if it exists. This _does not_ validate the session.
 
 ```ts
-const readSessionCookie: (
-	cookieHeader: string | null | undefined
-) => string | null;
+const readSessionCookie: (cookieHeader: string | null | undefined) => string | null;
 ```
 
 ##### Parameters
@@ -572,9 +566,7 @@ const readSessionCookie: (
 ```ts
 import { auth } from "./lucia.js";
 
-const sessionId = auth.readSessionCookie(
-	"auth_session=CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM"
-);
+const sessionId = auth.readSessionCookie("auth_session=CAbc9LAUY3Q18f0s92Jo817dna8eDtmRrUrDuVFM");
 ```
 
 ## `transformDatabaseKey()`
@@ -805,11 +797,7 @@ await auth.updateUserAttributes(userId, {
 Validates a key, including the password. `null` must be passed to parameter `password` if the password does not hold a password.
 
 ```ts
-const useKey: (
-	providerId: string,
-	providerUserId: string,
-	password: string | null
-) => Promise<Key>;
+const useKey: (providerId: string, providerUserId: string, password: string | null) => Promise<Key>;
 ```
 
 ##### Parameters

@@ -14,10 +14,7 @@ class HastElement implements HastElementInterface {
 	constructor(
 		tagName: string,
 		options: {
-			properties?: Record<
-				any,
-				string | number | boolean | (string | number)[] | null | undefined
-			>;
+			properties?: Record<any, string | number | boolean | (string | number)[] | null | undefined>;
 			children?: HastElementContent[];
 		}
 	) {
@@ -71,10 +68,7 @@ const handleBlockquoteElement = (element: HastElement) => {
 		(child): child is HastTextNode => child.type === "text"
 	)[0];
 
-	const classNames = [
-		...(element.properties.class?.toString() ?? "").split(" "),
-		"bg-default"
-	];
+	const classNames = [...(element.properties.class?.toString() ?? "").split(" "), "bg-default"];
 	if (firstTextContent.value.startsWith("(warn)")) {
 		classNames.push("bq-warn");
 		firstTextContent.value = firstTextContent.value.replace("(warn)", "");

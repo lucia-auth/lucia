@@ -51,9 +51,7 @@ export class AuthRequest<_Lucia extends Lucia = Lucia> {
 				}
 				const result = await this.auth.validateSession(this.sessionCookie);
 				if (result.session && result.session.fresh) {
-					const sessionCookie = this.auth.createSessionCookie(
-						result.session.id
-					);
+					const sessionCookie = this.auth.createSessionCookie(result.session.id);
 					this.setCookie(sessionCookie);
 				}
 				return resolve(result);

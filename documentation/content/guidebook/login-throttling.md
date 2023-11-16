@@ -73,10 +73,7 @@ const deviceCookie = new Map<
 
 ```ts
 const storedDeviceCookieId = getCookie("device_cookie") ?? null;
-const validDeviceCookie = isValidateDeviceCookie(
-	storedDeviceCookieId,
-	username
-);
+const validDeviceCookie = isValidateDeviceCookie(storedDeviceCookieId, username);
 if (!validDeviceCookie) {
 	setCookie("device_cookie", "", {
 		path: "/",
@@ -116,10 +113,7 @@ setCookie("device_cookie", newDeviceCookieId, {
 ```
 
 ```ts
-const isValidateDeviceCookie = (
-	deviceCookieId: string | null,
-	username: string
-) => {
+const isValidateDeviceCookie = (deviceCookieId: string | null, username: string) => {
 	if (!deviceCookieId) return false;
 	const deviceCookieAttributes = deviceCookie.get(deviceCookieId) ?? null;
 	if (!deviceCookieAttributes) return false;

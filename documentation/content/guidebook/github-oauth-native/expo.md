@@ -88,8 +88,7 @@ app.get("/login/github/callback", async (c) => {
 		return c.newResponse(null, 400);
 	}
 	try {
-		const { getExistingUser, githubUser, createUser } =
-			await githubAuth.validateCallback(code);
+		const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 		let user = await getExistingUser();
 		if (!user) {
 			user = await createUser({
@@ -102,9 +101,7 @@ app.get("/login/github/callback", async (c) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		return c.redirect(
-			`exp://192.168.2.100:8081/login?session_token=${session.sessionId}`
-		);
+		return c.redirect(`exp://192.168.2.100:8081/login?session_token=${session.sessionId}`);
 	} catch (e) {
 		console.log(e);
 		if (e instanceof OAuthRequestError) {

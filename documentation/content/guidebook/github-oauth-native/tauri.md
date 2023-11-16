@@ -101,8 +101,7 @@ app.get("/login/github/callback", async (c) => {
 	const redirectPort = getCookie(c, "redirect_port"); // get port we set in /login/github
 	if (!redirectPort) return c.newResponse(null, 400);
 	try {
-		const { getExistingUser, githubUser, createUser } =
-			await githubAuth.validateCallback(code);
+		const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 		let user = await getExistingUser();
 		if (!user) {
 			user = await createUser({
@@ -115,9 +114,7 @@ app.get("/login/github/callback", async (c) => {
 			userId: user.userId,
 			attributes: {}
 		});
-		return c.redirect(
-			`http://localhost:${redirectPort}?session_token=${session.sessionId}`
-		);
+		return c.redirect(`http://localhost:${redirectPort}?session_token=${session.sessionId}`);
 	} catch (e) {
 		console.log(e);
 		if (e instanceof OAuthRequestError) {

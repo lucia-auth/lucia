@@ -6,21 +6,13 @@ import { alphabet, generateRandomString } from "oslo/random";
 import type { PasswordHashingAlgorithm } from "oslo/password";
 export type { PasswordHashingAlgorithm } from "oslo/password";
 
-async function generateScryptKey(
-	s: string,
-	salt: string,
-	blockSize = 16
-): Promise<ArrayBuffer> {
-	const keyUint8Array = await scrypt(
-		new TextEncoder().encode(s),
-		new TextEncoder().encode(salt),
-		{
-			N: 16384,
-			r: blockSize,
-			p: 1,
-			dkLen: 64
-		}
-	);
+async function generateScryptKey(s: string, salt: string, blockSize = 16): Promise<ArrayBuffer> {
+	const keyUint8Array = await scrypt(new TextEncoder().encode(s), new TextEncoder().encode(salt), {
+		N: 16384,
+		r: blockSize,
+		p: 1,
+		dkLen: 64
+	});
 	return keyUint8Array;
 }
 
@@ -54,21 +46,14 @@ export class LegacyScrypt implements PasswordHashingAlgorithm {
 		const parts = hash.split(":");
 		if (parts.length === 2) {
 			const [salt, key] = parts;
-			const targetKey = await generateScryptKey(
-				password.normalize("NFKC"),
-				salt,
-				8
-			);
+			const targetKey = await generateScryptKey(password.normalize("NFKC"), salt, 8);
 			const result = constantTimeEqual(targetKey, decodeHex(key));
 			return result;
 		}
 		if (parts.length !== 3) return false;
 		const [version, salt, key] = parts;
 		if (version === "s2") {
-			const targetKey = await generateScryptKey(
-				password.normalize("NFKC"),
-				salt
-			);
+			const targetKey = await generateScryptKey(password.normalize("NFKC"), salt);
 			return constantTimeEqual(targetKey, decodeHex(key));
 		}
 		return false;

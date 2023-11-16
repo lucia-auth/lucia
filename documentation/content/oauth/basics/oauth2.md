@@ -85,14 +85,11 @@ The state should be stored as a http-only cookie if your provider supports it.
 import { createAuthorizationUrl } from "@lucia-auth/oauth";
 
 // get url to redirect the user to, with the state
-const [url, state] = await createAuthorizationUrl(
-	"https://github.com/login/oauth/authorize",
-	{
-		clientId,
-		scope: ["user:email"], // empty array if none
-		redirectUri
-	}
-);
+const [url, state] = await createAuthorizationUrl("https://github.com/login/oauth/authorize", {
+	clientId,
+	scope: ["user:email"], // empty array if none
+	redirectUri
+});
 ```
 
 ### Additional configuration

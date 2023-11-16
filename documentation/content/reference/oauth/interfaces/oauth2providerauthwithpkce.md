@@ -3,16 +3,11 @@ title: "`OAuth2ProviderAuthWithPKCE`"
 ---
 
 ```ts
-interface OAuth2ProviderAuthWithPKCE<
-	_ProviderUserAuth extends ProviderUserAuth
-> {
+interface OAuth2ProviderAuthWithPKCE<_ProviderUserAuth extends ProviderUserAuth> {
 	getAuthorizationUrl: () => Promise<
 		readonly [url: URL, codeVerifier: string, state: string | null]
 	>;
-	validateCallback: (
-		code: string,
-		codeVerifier: string
-	) => Promise<_ProviderUserAuth>;
+	validateCallback: (code: string, codeVerifier: string) => Promise<_ProviderUserAuth>;
 }
 ```
 
@@ -45,10 +40,7 @@ const getAuthorizationUrl: () => Promise<
 Validates the authorization code and code verifier, and returns a new [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth) instance.
 
 ```ts
-const validateCallback: (
-	code: string,
-	codeVerifier: string
-) => Promise<_ProviderUserAuth>;
+const validateCallback: (code: string, codeVerifier: string) => Promise<_ProviderUserAuth>;
 ```
 
 ##### Parameters

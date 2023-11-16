@@ -19,10 +19,7 @@ export const unstorageAdapter = (
 			prefixes?.session ?? DEFAULT_SESSION_PREFIX
 		);
 		const getUserSessionStorage = (userId: string) => {
-			const prefix = [
-				prefixes?.userSession ?? DEFAULT_USER_SESSION_PREFIX,
-				userId
-			].join(":");
+			const prefix = [prefixes?.userSession ?? DEFAULT_USER_SESSION_PREFIX, userId].join(":");
 			return prefixStorage<"">(storage, prefix);
 		};
 
@@ -40,9 +37,7 @@ export const unstorageAdapter = (
 					})
 				);
 				return sessionResults.filter(
-					(
-						sessionResult
-					): sessionResult is NonNullable<typeof sessionResult> => {
+					(sessionResult): sessionResult is NonNullable<typeof sessionResult> => {
 						return sessionResult !== null;
 					}
 				);

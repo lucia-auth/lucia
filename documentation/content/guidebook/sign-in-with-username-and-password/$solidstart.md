@@ -115,18 +115,10 @@ const Page = () => {
 	const [_, { Form }] = createServerAction$(async (formData: FormData) => {
 		const username = formData.get("username");
 		const password = formData.get("password");
-		if (
-			typeof username !== "string" ||
-			username.length < 4 ||
-			username.length > 31
-		) {
+		if (typeof username !== "string" || username.length < 4 || username.length > 31) {
 			throw new ServerError("Invalid username");
 		}
-		if (
-			typeof password !== "string" ||
-			password.length < 6 ||
-			password.length > 255
-		) {
+		if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 			throw new ServerError("Invalid password");
 		}
 		try {
@@ -156,10 +148,7 @@ const Page = () => {
 		} catch (e) {
 			// this part depends on the database you're using
 			// check for unique constraint error in user table
-			if (
-				e instanceof SomeDatabaseError &&
-				e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-			) {
+			if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 				throw new ServerError("Username already taken");
 			}
 			throw new ServerError("An unknown error occurred", {
@@ -197,10 +186,7 @@ const user = await auth.createUser({
 Lucia throws 2 types of errors: [`LuciaError`](/reference/lucia/modules/main#luciaerror) and database errors from the database driver or ORM you're using. Most database related errors, such as connection failure, duplicate values, and foreign key constraint errors, are thrown as is. These need to be handled as if you were using just the driver/ORM.
 
 ```ts
-if (
-	e instanceof SomeDatabaseError &&
-	e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR
-) {
+if (e instanceof SomeDatabaseError && e.message === USER_TABLE_UNIQUE_CONSTRAINT_ERROR) {
 	// username already taken
 }
 ```
@@ -215,12 +201,7 @@ Make sure to do the check inside `createServerData$()`.
 // src/routes/signup.tsx
 import { A } from "solid-start";
 import { auth } from "~/auth/lucia";
-import {
-	createServerAction$,
-	createServerData$,
-	redirect,
-	ServerError
-} from "solid-start/server";
+import { createServerAction$, createServerData$, redirect, ServerError } from "solid-start/server";
 
 export const routeData = () => {
 	return createServerData$(async (_, event) => {
@@ -284,60 +265,45 @@ import { ServerError, createServerAction$ } from "solid-start/server";
 import { LuciaError } from "lucia";
 
 const Page = () => {
-	const [enrolling, { Form }] = createServerAction$(
-		async (formData: FormData) => {
-			const username = formData.get("username");
-			const password = formData.get("password");
-			// basic check
-			if (
-				typeof username !== "string" ||
-				username.length < 1 ||
-				username.length > 31
-			) {
-				throw new ServerError("Invalid username");
-			}
-			if (
-				typeof password !== "string" ||
-				password.length < 1 ||
-				password.length > 255
-			) {
-				throw new ServerError("Invalid password");
-			}
-			try {
-				// find user by key
-				// and validate password
-				const key = await auth.useKey(
-					"username",
-					username.toLowerCase(),
-					password
-				);
-				const session = await auth.createSession({
-					userId: key.userId,
-					attributes: {}
-				});
-				const sessionCookie = auth.createSessionCookie(session);
-				// set cookie and redirect
-				return new Response(null, {
-					status: 302,
-					headers: {
-						Location: "/",
-						"Set-Cookie": sessionCookie.serialize()
-					}
-				});
-			} catch (e) {
-				if (
-					e instanceof LuciaError &&
-					(e.message === "AUTH_INVALID_KEY_ID" ||
-						e.message === "AUTH_INVALID_PASSWORD")
-				) {
-					// user does not exist
-					// or invalid password
-					throw new ServerError("Incorrect username or password");
-				}
-				throw new ServerError("An unknown error occurred");
-			}
+	const [enrolling, { Form }] = createServerAction$(async (formData: FormData) => {
+		const username = formData.get("username");
+		const password = formData.get("password");
+		// basic check
+		if (typeof username !== "string" || username.length < 1 || username.length > 31) {
+			throw new ServerError("Invalid username");
 		}
-	);
+		if (typeof password !== "string" || password.length < 1 || password.length > 255) {
+			throw new ServerError("Invalid password");
+		}
+		try {
+			// find user by key
+			// and validate password
+			const key = await auth.useKey("username", username.toLowerCase(), password);
+			const session = await auth.createSession({
+				userId: key.userId,
+				attributes: {}
+			});
+			const sessionCookie = auth.createSessionCookie(session);
+			// set cookie and redirect
+			return new Response(null, {
+				status: 302,
+				headers: {
+					Location: "/",
+					"Set-Cookie": sessionCookie.serialize()
+				}
+			});
+		} catch (e) {
+			if (
+				e instanceof LuciaError &&
+				(e.message === "AUTH_INVALID_KEY_ID" || e.message === "AUTH_INVALID_PASSWORD")
+			) {
+				// user does not exist
+				// or invalid password
+				throw new ServerError("Incorrect username or password");
+			}
+			throw new ServerError("An unknown error occurred");
+		}
+	});
 	// ...
 };
 
@@ -352,12 +318,7 @@ As we did in the sign up page, redirect authenticated users to the profile page.
 // src/routes/login.tsx
 import { A } from "solid-start";
 import { auth } from "~/auth/lucia";
-import {
-	createServerAction$,
-	createServerData$,
-	redirect,
-	ServerError
-} from "solid-start/server";
+import { createServerAction$, createServerData$, redirect, ServerError } from "solid-start/server";
 import { LuciaError } from "lucia";
 
 export const routeData = () => {
@@ -423,12 +384,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```tsx
 // src/routes/index.tsx
 import { useRouteData } from "solid-start";
-import {
-	ServerError,
-	createServerAction$,
-	createServerData$,
-	redirect
-} from "solid-start/server";
+import { ServerError, createServerAction$, createServerData$, redirect } from "solid-start/server";
 import { auth } from "~/auth/lucia";
 
 export const routeData = () => {

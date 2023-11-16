@@ -111,15 +111,9 @@ export const generatePasswordResetToken = async (userId: string) => {
 
 export const validatePasswordResetToken = async (token: string) => {
 	const storedToken = await db.transaction().execute(async (trx) => {
-		const storedToken = await trx
-			.table("password_reset_token")
-			.where("id", "=", token)
-			.get();
+		const storedToken = await trx.table("password_reset_token").where("id", "=", token).get();
 		if (!storedToken) throw new Error("Invalid token");
-		await trx
-			.table("password_reset_token")
-			.where("id", "=", storedToken.id)
-			.delete();
+		await trx.table("password_reset_token").where("id", "=", storedToken.id).delete();
 		return storedToken;
 	});
 	const tokenExpires = Number(storedToken.expires); // bigint => number conversion
@@ -152,11 +146,7 @@ const handleSubmit = async (e: Event) => {
 
 <template>
 	<h1>Reset password</h1>
-	<form
-		method="post"
-		action="/api/password-reset"
-		@submit.prevent="handleSubmit"
-	>
+	<form method="post" action="/api/password-reset" @submit.prevent="handleSubmit">
 		<label for="email">Email</label>
 		<input name="email" id="email" /><br />
 		<input type="submit" />
@@ -179,10 +169,7 @@ export default defineEventHandler(async (event) => {
 		throw createError({ status: 400, message: "Invalid email" });
 	}
 	try {
-		const storedUser = await db
-			.table("user")
-			.where("email", "=", email.toLowerCase())
-			.get();
+		const storedUser = await db.table("user").where("email", "=", email.toLowerCase()).get();
 		if (!storedUser) {
 			throw createError({ status: 400, message: "User does not exist" });
 		}
@@ -244,11 +231,7 @@ export default defineEventHandler(async (event) => {
 	const { password } = await readBody<{
 		password: unknown;
 	}>(event);
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 		throw createError({ status: 400, message: "Invalid password" });
 	}
 	try {

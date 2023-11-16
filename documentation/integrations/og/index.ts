@@ -1,12 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
-import {
-	createCanvas,
-	GlobalFonts,
-	loadImage,
-	clearAllCache
-} from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts, loadImage, clearAllCache } from "@napi-rs/canvas";
 
 import type { AstroIntegration } from "astro";
 import type { SKRSContext2D } from "@napi-rs/canvas";
@@ -43,18 +38,12 @@ export const generateOgImages = async () => {
 		console.log(htmlPathname);
 		const file = await fs.readFile(htmlPathname);
 		const htmlContent = file.toString("utf-8");
-		const titleMatches = htmlContent.match(
-			/og:title"\s*?content="([\s\S]*?)"\s*>/
-		);
+		const titleMatches = htmlContent.match(/og:title"\s*?content="([\s\S]*?)"\s*>/);
 		const title = titleMatches?.at(1)?.replace("  Lucia", "");
 		if (!title) continue;
-		const descriptionMatches = htmlContent.match(
-			/og:description"\s*?content="([\s\S]*?)"\s*>/
-		);
+		const descriptionMatches = htmlContent.match(/og:description"\s*?content="([\s\S]*?)"\s*>/);
 		const description = descriptionMatches?.at(1) || null;
-		const url = htmlPathname
-			.replace(distDirPathname, "")
-			.replace("/index.html", "");
+		const url = htmlPathname.replace(distDirPathname, "").replace("/index.html", "");
 		console.log(url);
 		pages.push({
 			title,
@@ -64,19 +53,12 @@ export const generateOgImages = async () => {
 		});
 	}
 	const concurrency = os.cpus().length;
-	console.log(
-		`Generating ${pages.length} images with ${concurrency} concurrency`
-	);
+	console.log(`Generating ${pages.length} images with ${concurrency} concurrency`);
 	const groups = groupByN(pages, concurrency);
 	for (const group of groups) {
 		await Promise.all(
 			group.map(async (page) => {
-				const imagePathname = path.join(
-					process.cwd(),
-					"dist",
-					"og",
-					page.url + ".jpg"
-				);
+				const imagePathname = path.join(process.cwd(), "dist", "og", page.url + ".jpg");
 				const image = await createImage(page.title, page.description);
 				await fs.mkdir(path.dirname(imagePathname), {
 					recursive: true
@@ -112,9 +94,7 @@ const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
 		if (contentName.includes(".")) {
 			continue;
 		}
-		readChildDirectoryPromises.push(
-			readHtmlDirectory(path.join(pathname, contentName))
-		);
+		readChildDirectoryPromises.push(readHtmlDirectory(path.join(pathname, contentName)));
 	}
 	const childDirectoryFiles = await Promise.all(readChildDirectoryPromises);
 	for (const childDirectoryFilenames of childDirectoryFiles) {
@@ -126,16 +106,11 @@ const readHtmlDirectory = async (pathname: string): Promise<string[]> => {
 GlobalFonts.registerFromPath("integrations/og/inter-semibold.ttf", "Inter");
 GlobalFonts.registerFromPath("integrations/og/inter-medium.ttf", "Inter");
 
-const logo = await fs.readFile(
-	path.join(process.cwd(), "integrations/og/logo.png")
-);
+const logo = await fs.readFile(path.join(process.cwd(), "integrations/og/logo.png"));
 
 const logoImage = await loadImage(logo);
 
-const createImage = async (
-	title: string,
-	description: string | null
-): Promise<Buffer> => {
+const createImage = async (title: string, description: string | null): Promise<Buffer> => {
 	const canvas = createCanvas(1200, 630);
 
 	const canvasContext = canvas.getContext("2d");
@@ -167,11 +142,7 @@ const createImage = async (
 
 	if (description) {
 		canvasContext.font = `500 ${36}px Inter`;
-		const wrappedDescription = wrapCanvasText(
-			canvasContext,
-			description,
-			maxLineWidth
-		);
+		const wrappedDescription = wrapCanvasText(canvasContext, description, maxLineWidth);
 		for (const [lineNum, line] of wrappedDescription.entries()) {
 			canvasContext.fillText(
 				line,
@@ -205,8 +176,7 @@ const wrapCanvasText = (
 		const wordTextWidth = canvasContext.measureText(word).width;
 		if (wordTextWidth + currentLineTextWidth < maxLineWidth) {
 			currentLineText = currentLineText + word + " ";
-			currentLineTextWidth =
-				currentLineTextWidth + wordTextWidth + spaceTextWidth;
+			currentLineTextWidth = currentLineTextWidth + wordTextWidth + spaceTextWidth;
 		} else {
 			lines.push(currentLineText);
 			currentLineText = word + " ";

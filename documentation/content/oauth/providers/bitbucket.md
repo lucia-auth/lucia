@@ -103,8 +103,7 @@ type BitbucketUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface BitbucketUserAuth<_Auth extends Auth>
-	extends ProviderUserAuth<_Auth> {
+interface BitbucketUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	bitbucketUser: BitbucketUser;
 	bitbucketTokens: BitbucketTokens;
 }

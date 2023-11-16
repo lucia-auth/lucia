@@ -69,10 +69,7 @@ Example using Node.js:
 import fs from "fs";
 import path from "path";
 
-const certificatePath = path.join(
-	process.cwd(),
-	process.env.APPLE_CERT_PATH ?? ""
-);
+const certificatePath = path.join(process.cwd(), process.env.APPLE_CERT_PATH ?? "");
 
 const certificate = fs.readFileSync(certificatePath, "utf-8");
 

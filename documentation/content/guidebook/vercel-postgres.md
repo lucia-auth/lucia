@@ -38,9 +38,7 @@ type VercelPostgresError = {
 try {
 	// ...
 } catch (e) {
-	const maybeVercelPostgresError = (
-		typeof e === "object" ? e : {}
-	) as Partial<VercelPostgresError>;
+	const maybeVercelPostgresError = (typeof e === "object" ? e : {}) as Partial<VercelPostgresError>;
 
 	// error code for unique constraint violation
 	if (maybeVercelError.code === "23505") {

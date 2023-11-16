@@ -1,10 +1,4 @@
-import type {
-	Adapter,
-	InitializeAdapter,
-	KeySchema,
-	SessionSchema,
-	UserSchema
-} from "lucia";
+import type { Adapter, InitializeAdapter, KeySchema, SessionSchema, UserSchema } from "lucia";
 import type { Model } from "mongoose";
 import type { KeyDoc, SessionDoc, UserDoc } from "./docs.js";
 
@@ -64,10 +58,7 @@ export const mongooseAdapter = (models: {
 				if (!Session) {
 					throw new Error("Session model not defined");
 				}
-				const session = await Session.findById(
-					sessionId,
-					DEFAULT_PROJECTION
-				).lean();
+				const session = await Session.findById(sessionId, DEFAULT_PROJECTION).lean();
 				if (!session) return null;
 				return transformSessionDoc(session);
 			},

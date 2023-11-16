@@ -111,15 +111,9 @@ export const generatePasswordResetToken = async (userId: string) => {
 
 export const validatePasswordResetToken = async (token: string) => {
 	const storedToken = await db.transaction().execute(async (trx) => {
-		const storedToken = await trx
-			.table("password_reset_token")
-			.where("id", "=", token)
-			.get();
+		const storedToken = await trx.table("password_reset_token").where("id", "=", token).get();
 		if (!storedToken) throw new Error("Invalid token");
-		await trx
-			.table("password_reset_token")
-			.where("id", "=", storedToken.id)
-			.delete();
+		await trx.table("password_reset_token").where("id", "=", storedToken.id).delete();
 		return storedToken;
 	});
 	const tokenExpires = Number(storedToken.expires); // bigint => number conversion
@@ -145,10 +139,7 @@ app.post("/password-reset", async (req, res) => {
 		return res.status(400).send("Invalid email");
 	}
 	try {
-		const storedUser = await db
-			.table("user")
-			.where("email", "=", email.toLowerCase())
-			.get();
+		const storedUser = await db.table("user").where("email", "=", email.toLowerCase()).get();
 		if (!storedUser) {
 			return res.status(400).send("User does not exist");
 		}
@@ -174,11 +165,7 @@ app.post("/password-reset/:token", async (req, res) => {
 	const { password } = req.body as {
 		password: unknown;
 	};
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 		return res.status(400).send("Invalid password");
 	}
 	try {

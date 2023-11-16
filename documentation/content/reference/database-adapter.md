@@ -31,9 +31,7 @@ lucia({
 
 ```ts
 type Adapter = {
-	getSessionAndUser?: (
-		sessionId: string
-	) => Promise<[SessionSchema, UserSchema] | [null, null]>;
+	getSessionAndUser?: (sessionId: string) => Promise<[SessionSchema, UserSchema] | [null, null]>;
 } & UserAdapter &
 	SessionAdapter;
 ```
@@ -53,9 +51,7 @@ type Adapter = {
 ```ts
 const getSessionAndUser: (
 	sessionId: string
-) => Promise<
-	[session: SessionSchema, user: UserSchema] | [session: null, user: null]
->;
+) => Promise<[session: SessionSchema, user: UserSchema] | [session: null, user: null]>;
 ```
 
 ##### Parameters
@@ -77,10 +73,7 @@ const getSessionAndUser: (
 type UserAdapter = Readonly<{
 	getUser: (userId: string) => Promise<UserSchema | null>;
 	setUser: (user: UserSchema, key: KeySchema | null) => Promise<void>;
-	updateUser: (
-		userId: string,
-		partialUser: Partial<UserSchema>
-	) => Promise<void>;
+	updateUser: (userId: string, partialUser: Partial<UserSchema>) => Promise<void>;
 	deleteUser: (userId: string) => Promise<void>;
 
 	getKey: (keyId: string) => Promise<KeySchema | null>;
@@ -247,10 +240,7 @@ const setUser: (user: UserSchema, key: KeySchema | null) => Promise<void>;
 - May throw error `AUTH_INVALID_KEY_ID` if target `key` does not exist
 
 ```ts
-const updateKey: (
-	keyId: string,
-	partialKey: Partial<KeySchema>
-) => Promise<void>;
+const updateKey: (keyId: string, partialKey: Partial<KeySchema>) => Promise<void>;
 ```
 
 ##### Parameters
@@ -267,10 +257,7 @@ const updateKey: (
 - May throw error `AUTH_INVALID_USER_ID` if target `key` does not exist
 
 ```ts
-const updateUser: (
-	userId: string,
-	partialUser: Partial<UserSchema>
-) => Promise<void>;
+const updateUser: (userId: string, partialUser: Partial<UserSchema>) => Promise<void>;
 ```
 
 ##### Parameters
@@ -287,10 +274,7 @@ type SessionAdapter = Readonly<{
 	getSession: (sessionId: string) => Promise<SessionSchema | null>;
 	getSessionsByUserId: (userId: string) => Promise<SessionSchema[]>;
 	setSession: (session: SessionSchema) => Promise<void>;
-	updateSession: (
-		sessionId: string,
-		partialSession: Partial<SessionSchema>
-	) => Promise<void>;
+	updateSession: (sessionId: string, partialSession: Partial<SessionSchema>) => Promise<void>;
 	deleteSession: (sessionId: string) => Promise<void>;
 	deleteSessionsByUserId: (userId: string) => Promise<void>;
 }>;
@@ -394,10 +378,7 @@ const setSession: (session: SessionSchema) => Promise<void>;
 - May throw error `AUTH_INVALID_SESSION_ID` if target `session` does not exist
 
 ```ts
-const updateSession: (
-	keyId: string,
-	partialKey: Partial<SessionSchema>
-) => Promise<void>;
+const updateSession: (keyId: string, partialKey: Partial<SessionSchema>) => Promise<void>;
 ```
 
 ##### Parameters

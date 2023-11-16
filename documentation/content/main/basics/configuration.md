@@ -27,10 +27,7 @@ type Configuration = {
 	middleware?: Middleware<any>;
 	passwordHash?: {
 		generate: (password: string) => MaybePromise<string>;
-		validate: (
-			password: string,
-			hashedPassword: string
-		) => MaybePromise<boolean>;
+		validate: (password: string, hashedPassword: string) => MaybePromise<boolean>;
 	};
 	sessionCookie?: {
 		name?: string;
@@ -113,9 +110,7 @@ const csrfProtection = boolean | {
 Generates session attributes for the user. The returned properties will be included in [`Session`](/reference/lucia/interfaces#session) as is.
 
 ```ts
-const getSessionAttributes: (
-	databaseSession: SessionSchema
-) => Record<any, any>;
+const getSessionAttributes: (databaseSession: SessionSchema) => Record<any, any>;
 ```
 
 ##### Parameters

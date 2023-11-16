@@ -114,15 +114,9 @@ export const generatePasswordResetToken = async (userId: string) => {
 
 export const validatePasswordResetToken = async (token: string) => {
 	const storedToken = await db.transaction().execute(async (trx) => {
-		const storedToken = await trx
-			.table("password_reset_token")
-			.where("id", "=", token)
-			.get();
+		const storedToken = await trx.table("password_reset_token").where("id", "=", token).get();
 		if (!storedToken) throw new Error("Invalid token");
-		await trx
-			.table("password_reset_token")
-			.where("id", "=", storedToken.id)
-			.delete();
+		await trx.table("password_reset_token").where("id", "=", storedToken.id).delete();
 		return storedToken;
 	});
 	const tokenExpires = Number(storedToken.expires); // bigint => number conversion
@@ -224,10 +218,7 @@ export const POST = async (request: NextRequest) => {
 		);
 	}
 	try {
-		const storedUser = await db
-			.table("user")
-			.where("email", "=", email.toLowerCase())
-			.get();
+		const storedUser = await db.table("user").where("email", "=", email.toLowerCase()).get();
 		if (!storedUser) {
 			return new Response(
 				JSON.stringify({
@@ -310,11 +301,7 @@ export const POST = async (
 	const formData = await request.formData();
 	const password = formData.get("password");
 	// basic check
-	if (
-		typeof password !== "string" ||
-		password.length < 6 ||
-		password.length > 255
-	) {
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
 		return new Response(
 			JSON.stringify({
 				error: "Invalid password"

@@ -1,8 +1,6 @@
 import { getBuildId } from "./build";
 
-export const queryContent = async (
-	query: string
-): Promise<QueryResultPage[]> => {
+export const queryContent = async (query: string): Promise<QueryResultPage[]> => {
 	const pages = await promise;
 	const keywords = query.split(" ").filter((val) => Boolean(val));
 	const matchedPages: QueryResultPage[] = [];
@@ -10,10 +8,7 @@ export const queryContent = async (
 		const matchedHeadings = page.headings.filter((heading) => {
 			return match(heading.title, keywords);
 		});
-		const pageTitleMatched = match(
-			page.title + (page.description ?? ""),
-			keywords
-		);
+		const pageTitleMatched = match(page.title + (page.description ?? ""), keywords);
 		if (pageTitleMatched || matchedHeadings.length > 0) {
 			matchedPages.push({
 				priority: pageTitleMatched ? 1 : 0,
@@ -53,15 +48,11 @@ const promise = new Promise<QueryResultPage[]>(async (resolve, reject) => {
 		const rawItems = rawContent.split("|");
 		const result: QueryResultPage[] = [];
 		for (let index = 0; index < rawItems.length; index += 4) {
-			const [title, href, description, rawHeadings] = rawItems.slice(
-				index,
-				index + 4
-			);
+			const [title, href, description, rawHeadings] = rawItems.slice(index, index + 4);
 			let headings: QueryResultHeading[] = [];
 			if (rawHeadings) {
 				headings = rawHeadings.split("\\").map((rawHeadingItem) => {
-					const [headingHash, ...headingTitleSections] =
-						rawHeadingItem.split(":");
+					const [headingHash, ...headingTitleSections] = rawHeadingItem.split(":");
 					return {
 						title: headingTitleSections.join(":"),
 						hash: headingHash

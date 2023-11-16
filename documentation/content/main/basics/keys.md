@@ -209,11 +209,7 @@ You can update a key's password with [`Auth.updateKeyPassword()`](/reference/luc
 import { auth } from "./lucia.js";
 
 try {
-	const key = await auth.updateKeyPassword(
-		providerId,
-		providerUserId,
-		newPassword
-	);
+	const key = await auth.updateKeyPassword(providerId, providerUserId, newPassword);
 } catch (e) {
 	if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
 		// invalid key

@@ -203,8 +203,7 @@ export const GET = async (event: APIEvent) => {
 		});
 	}
 	try {
-		const { getExistingUser, githubUser, createUser } =
-			await githubAuth.validateCallback(code);
+		const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 
 		const getUser = async () => {
 			const existingUser = await getExistingUser();
@@ -251,8 +250,7 @@ You can check if the user has already registered with your app by checking `Gith
 If they're a new user, you can create a new Lucia user (and key) with [`GithubUserAuth.createUser()`](/reference/oauth/interfaces#createuser). The type for `attributes` property is `Lucia.DatabaseUserAttributes`, which we added `username` to previously. You can access the GitHub user data with `GithubUserAuth.githubUser`, as well as the access tokens with `GithubUserAuth.githubTokens`.
 
 ```ts
-const { getExistingUser, githubUser, createUser } =
-	await githubAuth.validateCallback(code);
+const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 
 const getUser = async () => {
 	const existingUser = await getExistingUser();
@@ -342,12 +340,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```tsx
 // src/routes/index.tsx
 import { useRouteData } from "solid-start";
-import {
-	ServerError,
-	createServerAction$,
-	createServerData$,
-	redirect
-} from "solid-start/server";
+import { ServerError, createServerAction$, createServerData$, redirect } from "solid-start/server";
 import { auth } from "~/auth/lucia";
 
 export const routeData = () => {

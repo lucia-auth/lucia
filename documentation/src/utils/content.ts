@@ -8,17 +8,14 @@ type MarkdownFile = MarkdownInstance<{
 	hidden?: boolean;
 }>;
 
-const markdownImports = Object.entries(
-	import.meta.glob<MarkdownFile>("../../content/**/*.md")
-).map(([importPath, resolve]) => {
-	return [
-		importPath
-			.replace("../../content/", "")
-			.replace(".md", "")
-			.replace("/index", ""),
-		resolve as () => Promise<MarkdownFile>
-	] as const;
-});
+const markdownImports = Object.entries(import.meta.glob<MarkdownFile>("../../content/**/*.md")).map(
+	([importPath, resolve]) => {
+		return [
+			importPath.replace("../../content/", "").replace(".md", "").replace("/index", ""),
+			resolve as () => Promise<MarkdownFile>
+		] as const;
+	}
+);
 
 type FrameworkVersion = {
 	href: string;
@@ -68,9 +65,7 @@ export const getPages = async (collectionId?: string): Promise<Page[]> => {
 				title: removeMarkdownCode(resolvedFile.frontmatter.title),
 				htmlTitle: parseMarkdownCode(resolvedFile.frontmatter.title),
 				description: rawDescription ? removeMarkdownCode(rawDescription) : null,
-				htmlDescription: rawDescription
-					? parseMarkdownCode(rawDescription)
-					: null,
+				htmlDescription: rawDescription ? parseMarkdownCode(rawDescription) : null,
 				hidden: Boolean(resolvedFile.frontmatter.hidden),
 				versions: [],
 				frameworkId: getFrameworkIdFromContentPathname(pathname),
@@ -102,9 +97,7 @@ const getHrefFromContentPathname = (pathname: string): string => {
 	return "/" + pathname.replace("$", "");
 };
 
-const getFrameworkIdFromContentPathname = (
-	pathname: string
-): FrameworkId | null => {
+const getFrameworkIdFromContentPathname = (pathname: string): FrameworkId | null => {
 	const lastPathnameSegment = pathname.split("/").at(-1) ?? null;
 	if (!lastPathnameSegment) return null;
 	if (!lastPathnameSegment.startsWith("$")) return null;

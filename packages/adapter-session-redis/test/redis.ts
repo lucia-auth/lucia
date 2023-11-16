@@ -38,9 +38,7 @@ const queryHandler: QueryHandler = {
 	session: {
 		get: async () => {
 			const keys = await redisClient.keys(sessionKey("*"));
-			const sessionData = await Promise.all(
-				keys.map((key) => redisClient.get(key))
-			);
+			const sessionData = await Promise.all(keys.map((key) => redisClient.get(key)));
 			const sessions = sessionData
 				.filter((val): val is string => val !== null)
 				.map((data) => JSON.parse(data) as SessionSchema);

@@ -55,9 +55,7 @@ See [`OAuth2ProviderAuthWithPKCE`](/reference/oauth/interfaces/oauth2provideraut
 ```ts
 // implements OAuth2ProviderAuthWithPKCE<AzureADAuth<_Auth>>
 interface AzureADAuth<_Auth extends Auth> {
-	getAuthorizationUrl: () => Promise<
-		readonly [url: URL, codeVerifier: string, state: string]
-	>;
+	getAuthorizationUrl: () => Promise<readonly [url: URL, codeVerifier: string, state: string]>;
 	validateCallback: (code: string) => Promise<AzureADUserAuth<_Auth>>;
 }
 ```

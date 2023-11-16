@@ -10,8 +10,7 @@ When providing more than one ways to sign in, you may want to link multiple prov
 Here's a basic OAuth implementation using the official integration.
 
 ```ts
-const { getExistingUser, createUser, providerUser } =
-	providerAuth.validateCallback(code);
+const { getExistingUser, createUser, providerUser } = providerAuth.validateCallback(code);
 
 const getUser = async () => {
 	const existingUser = await getExistingUser();
@@ -49,9 +48,7 @@ const getUser = async () => {
 	if (!providerUser.email_verified) {
 		throw new Error("Email not verified");
 	}
-	const existingDatabaseUserWithEmail = await db.getUserByEmail(
-		providerUser.email
-	);
+	const existingDatabaseUserWithEmail = await db.getUserByEmail(providerUser.email);
 	if (existingDatabaseUserWithEmail) {
 		// transform `UserSchema` to `User`
 		const user = auth.transformDatabaseUser(existingDatabaseUserWithEmail);

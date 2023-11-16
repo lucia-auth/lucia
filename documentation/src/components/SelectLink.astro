@@ -11,17 +11,13 @@ type Props = {
 
 <select-link>
 	<div class="text-sm">
-		<button
-			class="group flex appearance-none place-items-center gap-x-0.5 rounded py-1.5"
-		>
+		<button class="group flex appearance-none place-items-center gap-x-0.5 rounded py-1.5">
 			<span
 				class="text-main select-button-text block font-medium leading-none group-hover:text-black"
 			>
 				{Astro.props.title}
 			</span>
-			<span
-				class="block h-3.5 w-3.5 fill-current text-zinc-400 group-hover:text-black"
-			>
+			<span class="block h-3.5 w-3.5 fill-current text-zinc-400 group-hover:text-black">
 				<ExpandIcon />
 			</span>
 		</button>
@@ -57,8 +53,7 @@ type Props = {
 		constructor() {
 			super();
 			const button = this.getElementsByTagName("button").item(0);
-			const buttonTitleSpan =
-				this.getElementsByClassName("select-button-text").item(0);
+			const buttonTitleSpan = this.getElementsByClassName("select-button-text").item(0);
 			const selectMenu = this.getElementsByClassName("select-menu").item(0);
 
 			if (

@@ -109,11 +109,7 @@ type BoxUser = {
 	role: string;
 	space_amount: number;
 	space_used: number;
-	status:
-		| "active"
-		| "inactive"
-		| "cannot_delete_edit"
-		| "cannot_delete_edit_upload";
+	status: "active" | "inactive" | "cannot_delete_edit" | "cannot_delete_edit_upload";
 	timezone: string;
 	tracking_codes: {
 		type: string;

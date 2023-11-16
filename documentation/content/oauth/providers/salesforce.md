@@ -113,8 +113,7 @@ type SalesforceUser = {
 Extends [`ProviderUserAuth`](/reference/oauth/interfaces/provideruserauth).
 
 ```ts
-interface SalesforceUserAuth<_Auth extends Auth>
-	extends ProviderUserAuth<_Auth> {
+interface SalesforceUserAuth<_Auth extends Auth> extends ProviderUserAuth<_Auth> {
 	salesforceUser: SalesforceUser;
 	salesforceTokens: SalesforceTokens;
 }
