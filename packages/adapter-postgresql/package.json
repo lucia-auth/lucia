@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-postgresql",
-	"version": "3.0.0-beta.0",
+	"version": "3.0.0-beta.1",
 	"description": "PostgreSQL adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -39,7 +39,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "3.0.0-beta.0",
+		"lucia": "3.0.0-beta.7",
 		"pg": "^8.8.0",
 		"postgres": "^3.3.0"
 	},
