@@ -1,7 +1,7 @@
 import type {
 	DatabaseSessionAttributes,
 	DatabaseUserAttributes
-} from "../index.js";
+} from "./index.js";
 
 export interface Adapter {
 	getSessionAndUser(

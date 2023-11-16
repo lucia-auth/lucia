@@ -1,5 +1,5 @@
 import type { SessionCookie } from "oslo/session";
-import type { Lucia, Session, User } from "./index.js";
+import type { Lucia, Session, User } from "./core.js";
 
 export class AuthRequest<_Lucia extends Lucia = Lucia> {
 	private auth: _Lucia;

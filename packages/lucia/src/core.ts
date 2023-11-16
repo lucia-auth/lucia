@@ -1,6 +1,5 @@
 import { AuthRequest } from "./request.js";
-import { lucia as defaultMiddleware } from "../middleware/index.js";
-import { debug } from "../utils/debug.js";
+import { lucia as defaultMiddleware } from "./middleware/index.js";
 import { SessionController, SessionCookieController } from "oslo/session";
 import { TimeSpan, isWithinExpirationDate } from "oslo";
 import { verifyRequestOrigin } from "oslo/request";
@@ -12,21 +11,13 @@ import {
 	type DatabaseSessionAttributes,
 	type DatabaseUserAttributes,
 	type RegisteredLucia
-} from "../index.js";
+} from "./index.js";
 
-type SessionAttributes = RegisteredLucia extends Lucia<
-	any,
-	infer _SessionAttributes,
-	any
->
+type SessionAttributes = RegisteredLucia extends Lucia<any, infer _SessionAttributes, any>
 	? _SessionAttributes
 	: {};
 
-type UserAttributes = RegisteredLucia extends Lucia<
-	any,
-	any,
-	infer _UserAttributes
->
+type UserAttributes = RegisteredLucia extends Lucia<any, any, infer _UserAttributes>
 	? _UserAttributes
 	: {};
 
@@ -52,17 +43,11 @@ export class Lucia<
 	private csrfProtection: CSRFProtectionOptions | boolean;
 	private middleware: _Middleware;
 
-	private experimental: {
-		debugMode: boolean;
-	};
-
 	private getSessionAttributes: (
 		databaseSessionAttributes: DatabaseSessionAttributes
 	) => _SessionAttributes;
 
-	private getUserAttributes: (
-		databaseUserAttributes: DatabaseUserAttributes
-	) => _UserAttributes;
+	private getUserAttributes: (databaseUserAttributes: DatabaseUserAttributes) => _UserAttributes;
 
 	constructor(
 		adapter: Adapter,
@@ -74,10 +59,7 @@ export class Lucia<
 			getSessionAttributes?: (
 				databaseSessionAttributes: DatabaseSessionAttributes
 			) => _SessionAttributes;
-			getUserAttributes?: (
-				databaseUserAttributes: DatabaseUserAttributes
-			) => _UserAttributes;
-			experimental?: ExperimentalOptions;
+			getUserAttributes?: (databaseUserAttributes: DatabaseUserAttributes) => _UserAttributes;
 		}
 	) {
 		this.adapter = adapter;
@@ -118,11 +100,6 @@ export class Lucia<
 		if (options?.middleware) {
 			this.middleware = options.middleware;
 		}
-		this.experimental = {
-			debugMode: options?.experimental?.debugMode ?? false
-		};
-
-		debug.init(this.experimental.debugMode);
 	}
 
 	public async getUserSessions(userId: string): Promise<Session[]> {
@@ -146,22 +123,16 @@ export class Lucia<
 	public async validateSession(
 		sessionId: string
 	): Promise<{ user: User; session: Session } | { user: null; session: null }> {
-		const [databaseSession, databaseUser] =
-			await this.adapter.getSessionAndUser(sessionId);
+		const [databaseSession, databaseUser] = await this.adapter.getSessionAndUser(sessionId);
 		if (!databaseSession) {
-			debug.session.fail("Session not found", sessionId);
 			return { session: null, user: null };
 		}
 		if (!databaseUser) {
 			await this.adapter.deleteSession(databaseSession.id);
-			debug.session.fail("Session not found", sessionId);
 			return { session: null, user: null };
 		}
-		const sessionState = this.sessionController.getSessionState(
-			databaseSession.expiresAt
-		);
+		const sessionState = this.sessionController.getSessionState(databaseSession.expiresAt);
 		if (sessionState === "expired") {
-			debug.session.fail("Session expired", sessionId);
 			await this.adapter.deleteSession(databaseSession.id);
 			return { session: null, user: null };
 		}
@@ -221,7 +192,6 @@ export class Lucia<
 
 	public async invalidateSession(sessionId: string): Promise<void> {
 		await this.adapter.deleteSession(sessionId);
-		debug.session.notice("Invalidated session", sessionId);
 	}
 
 	public async invalidateUserSessions(userId: string): Promise<void> {
@@ -230,24 +200,12 @@ export class Lucia<
 
 	public readSessionCookie(cookieHeader: string): string | null {
 		const sessionId = this.sessionCookieController.parseCookies(cookieHeader);
-		if (sessionId) {
-			debug.request.info("Found session cookie", sessionId);
-		} else {
-			debug.request.info("No session cookie found");
-		}
 		return sessionId;
 	}
 
 	public readBearerToken(authorizationHeader: string): string | null {
-		const [authScheme, token] = authorizationHeader.split(" ") as [
-			string,
-			string | undefined
-		];
+		const [authScheme, token] = authorizationHeader.split(" ") as [string, string | undefined];
 		if (authScheme !== "Bearer") {
-			debug.request.fail(
-				"Invalid authorization header auth scheme",
-				authScheme
-			);
 			return null;
 		}
 		return token ?? null;
@@ -261,12 +219,7 @@ export class Lucia<
 			args,
 			sessionCookieName: this.sessionCookieController.cookieName
 		});
-		debug.request.init(
-			requestContext.request.method,
-			requestContext.request.url ?? "(url unknown)"
-		);
-		const authorizationHeader =
-			requestContext.request.headers.get("Authorization");
+		const authorizationHeader = requestContext.request.headers.get("Authorization");
 		let bearerToken = authorizationHeader;
 		if (authorizationHeader) {
 			const parts = authorizationHeader.split(" ");
@@ -276,31 +229,16 @@ export class Lucia<
 		}
 		if (this.csrfProtection !== false) {
 			const options = this.csrfProtection === true ? {} : this.csrfProtection;
-			const validRequestOrigin = this.verifyRequestOrigin(
-				requestContext,
-				options
-			);
+			const validRequestOrigin = this.verifyRequestOrigin(requestContext, options);
 			if (!validRequestOrigin) {
-				return new AuthRequest(
-					this,
-					null,
-					bearerToken,
-					requestContext.setCookie
-				);
+				return new AuthRequest(this, null, bearerToken, requestContext.setCookie);
 			}
 		}
 		const sessionCookie =
 			requestContext.sessionCookie ??
-			this.sessionCookieController.parseCookies(
-				requestContext.request.headers.get("Cookie") ?? ""
-			);
+			this.sessionCookieController.parseCookies(requestContext.request.headers.get("Cookie") ?? "");
 
-		return new AuthRequest(
-			this,
-			sessionCookie,
-			bearerToken,
-			requestContext.setCookie
-		);
+		return new AuthRequest(this, sessionCookie, bearerToken, requestContext.setCookie);
 	}
 
 	private verifyRequestOrigin(
@@ -316,14 +254,10 @@ export class Lucia<
 		}
 		const requestOrigin = requestContext.request.headers.get("Origin");
 		if (!requestOrigin) {
-			debug.request.fail("Origin header unavailable");
 			return false;
 		}
-
 		const allowedDomains = options.allowedDomains ?? [];
-		const hostHeader = requestContext.request.headers.get(
-			options.hostHeader ?? "Host"
-		);
+		const hostHeader = requestContext.request.headers.get(options.hostHeader ?? "Host");
 		if (hostHeader) {
 			allowedDomains.push(hostHeader);
 		}
@@ -331,15 +265,7 @@ export class Lucia<
 			allowedDomains.push(requestContext.request.url);
 		}
 
-		debug.request.info("Allowed domains", allowedDomains.join(", "));
-		debug.request.info("Origin", requestOrigin ?? "(Origin unknown)");
-		const validOrigin = verifyRequestOrigin(requestOrigin, allowedDomains);
-		if (validOrigin) {
-			debug.request.info("Valid request origin");
-			return true;
-		}
-		debug.request.info("Invalid request origin");
-		return false;
+		return verifyRequestOrigin(requestOrigin, allowedDomains);
 	}
 
 	public createSessionCookie(sessionId: string): SessionCookie {
@@ -369,22 +295,23 @@ export interface CSRFProtectionOptions {
 	hostHeader?: string;
 }
 
-export interface ExperimentalOptions {
-	debugMode?: boolean;
-}
-
 export interface LuciaRequest {
 	method: string;
 	url?: string;
 	headers: Pick<Headers, "get">;
 }
+
 export interface RequestContext {
 	sessionCookie?: string | null;
 	request: LuciaRequest;
 	setCookie: (cookie: SessionCookie) => void;
 }
 
-export type Middleware<Args extends any[] = any> = (context: {
+export interface HandleRequestContext<Args extends any[]> {
 	args: Args;
 	sessionCookieName: string;
-}) => RequestContext;
+}
+
+export type Middleware<Args extends any[] = any> = (
+	context: HandleRequestContext<Args>
+) => RequestContext;

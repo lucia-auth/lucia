@@ -1,32 +1,29 @@
-export { Lucia } from "./auth/index.js";
-export { AuthRequest } from "./auth/request.js";
-export {
-	generateScryptHash as generateLegacyLuciaPasswordHash,
-	verifyScryptHash as verifyLegacyLuciaPasswordHash,
-	generateId
-} from "./utils/crypto.js";
+export { Lucia } from "./core.js";
+export { AuthRequest } from "./request.js";
+export { Scrypt, LegacyScrypt, generateId } from "./crypto.js";
 export { TimeSpan } from "oslo";
 
 export type {
 	User,
 	Session,
-	ExperimentalOptions,
 	SessionCookieOptions,
 	CSRFProtectionOptions,
 	SessionCookieAttributesOptions,
 	RequestContext,
-	Middleware
-} from "./auth/index.js";
+	Middleware,
+	HandleRequestContext
+} from "./core.js";
 export type {
 	DatabaseSession,
 	DatabaseUser,
 	Adapter,
 	SessionAdapter
-} from "./auth/database.js";
+} from "./database.js";
+export type { PasswordHashingAlgorithm } from "./crypto.js";
 
 export interface Register {}
 
-import type { Lucia } from "./auth/index.js";
+import type { Lucia } from "./core.js";
 
 export type RegisteredLucia = Register extends {
 	// need to infer to "copy" the generics of Lucia

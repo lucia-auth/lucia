@@ -1,6 +1,6 @@
 {
 	"name": "lucia",
-	"version": "3.0.0-beta.6",
+	"version": "3.0.0-beta.7",
 	"description": "A simple and flexible authentication library",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -25,16 +25,12 @@
 	],
 	"exports": {
 		".": "./dist/index.js",
-		"./middleware": "./dist/middleware/index.js",
-		"./polyfill/node": "./dist/polyfill/node.js"
+		"./middleware": "./dist/middleware/index.js"
 	},
 	"typesVersions": {
 		"*": {
 			"middleware": [
 				"dist/middleware/index.d.ts"
-			],
-			"polyfill/node": [
-				"dist/polyfill/node.d.ts"
 			]
 		}
 	},
