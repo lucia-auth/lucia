@@ -1,0 +1,61 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "paths": {
+      "#imports": [
+        "E:/lucia/examples/nuxt/github-oauth/.nuxt/types/nitro-imports"
+      ],
+      "#paths": [
+        "E:/lucia/node_modules/.pnpm/nuxt@3.6.5_@types+node@18.17.0/node_modules/nuxt/dist/core/runtime/nitro/paths"
+      ],
+      "~": [
+        "E:/lucia/examples/nuxt/github-oauth"
+      ],
+      "~/*": [
+        "E:/lucia/examples/nuxt/github-oauth/*"
+      ],
+      "@": [
+        "E:/lucia/examples/nuxt/github-oauth"
+      ],
+      "@/*": [
+        "E:/lucia/examples/nuxt/github-oauth/*"
+      ],
+      "~~": [
+        "E:/lucia/examples/nuxt/github-oauth"
+      ],
+      "~~/*": [
+        "E:/lucia/examples/nuxt/github-oauth/*"
+      ],
+      "@@": [
+        "E:/lucia/examples/nuxt/github-oauth"
+      ],
+      "@@/*": [
+        "E:/lucia/examples/nuxt/github-oauth/*"
+      ],
+      "assets": [
+        "E:/lucia/examples/nuxt/github-oauth/assets"
+      ],
+      "public": [
+        "E:/lucia/examples/nuxt/github-oauth/public"
+      ],
+      "public/*": [
+        "E:/lucia/examples/nuxt/github-oauth/public/*"
+      ]
+    }
+  },
+  "include": [
+    "E:/lucia/examples/nuxt/github-oauth/.nuxt/types/nitro-nuxt.d.ts",
+    "./types/nitro.d.ts",
+    "../**/*",
+    "../server/**/*"
+  ]
+}

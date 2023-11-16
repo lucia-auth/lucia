@@ -1,0 +1,61 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "paths": {
+      "#imports": [
+        "E:/lucia/examples/nuxt/username-and-password/.nuxt/types/nitro-imports"
+      ],
+      "#paths": [
+        "E:/lucia/node_modules/.pnpm/nuxt@3.6.5_@types+node@18.17.0/node_modules/nuxt/dist/core/runtime/nitro/paths"
+      ],
+      "~": [
+        "E:/lucia/examples/nuxt/username-and-password"
+      ],
+      "~/*": [
+        "E:/lucia/examples/nuxt/username-and-password/*"
+      ],
+      "@": [
+        "E:/lucia/examples/nuxt/username-and-password"
+      ],
+      "@/*": [
+        "E:/lucia/examples/nuxt/username-and-password/*"
+      ],
+      "~~": [
+        "E:/lucia/examples/nuxt/username-and-password"
+      ],
+      "~~/*": [
+        "E:/lucia/examples/nuxt/username-and-password/*"
+      ],
+      "@@": [
+        "E:/lucia/examples/nuxt/username-and-password"
+      ],
+      "@@/*": [
+        "E:/lucia/examples/nuxt/username-and-password/*"
+      ],
+      "assets": [
+        "E:/lucia/examples/nuxt/username-and-password/assets"
+      ],
+      "public": [
+        "E:/lucia/examples/nuxt/username-and-password/public"
+      ],
+      "public/*": [
+        "E:/lucia/examples/nuxt/username-and-password/public/*"
+      ]
+    }
+  },
+  "include": [
+    "E:/lucia/examples/nuxt/username-and-password/.nuxt/types/nitro-nuxt.d.ts",
+    "./types/nitro.d.ts",
+    "../**/*",
+    "../server/**/*"
+  ]
+}
