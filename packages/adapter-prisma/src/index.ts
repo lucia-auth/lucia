@@ -84,16 +84,13 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 		});
 	}
 
-	public async updateSession(sessionId: string, value: Partial<DatabaseSession>): Promise<void> {
+	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
 		await this.sessionModel.update({
 			where: {
 				id: sessionId
 			},
 			data: {
-				id: value.id,
-				userId: value.userId,
-				expiresAt: value.expiresAt,
-				...value.attributes
+				expiresAt
 			}
 		});
 	}
