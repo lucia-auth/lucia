@@ -69,22 +69,10 @@ export class MySQLAdapter implements Adapter {
 		);
 	}
 
-	public async updateSession(
-		sessionId: string,
-		databaseSession: Partial<DatabaseSession>
-	): Promise<void> {
-		const value: Partial<SessionSchema> = {
-			id: databaseSession.id,
-			user_id: databaseSession.userId,
-			expires_at: databaseSession.expiresAt,
-			...databaseSession.attributes
-		};
-		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
-		const keyValuePairs = entries.map(([k]) => [escapeName(k), "?"].join(" = "));
-		const values = entries.map(([_, v]) => v);
+	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
 		await this.controller.execute(
-			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(", ")} WHERE id = ?`,
-			[...values, sessionId]
+			`UPDATE ${this.escapedSessionTableName} SET expires_at = ? WHERE id = ?`,
+			[expiresAt, sessionId]
 		);
 	}
 
@@ -133,7 +121,8 @@ function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
 	return {
 		userId,
 		id,
-		expiresAt: new Date(expiresAtResult + " GMT"),
+		expiresAt:
+			expiresAtResult instanceof Date ? expiresAtResult : new Date(expiresAtResult + " GMT"),
 		attributes
 	};
 }

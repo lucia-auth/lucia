@@ -15,6 +15,9 @@ const connection = connect({
 	password: process.env.PLANETSCALE_PASSWORD
 });
 
+await connection.execute("DROP TABLE IF EXISTS user_session");
+await connection.execute("DROP TABLE IF EXISTS test_user");
+
 await connection.execute(`CREATE TABLE IF NOT EXISTS test_user (
 	id VARCHAR(255) PRIMARY KEY,
 	username VARCHAR(255) NOT NULL UNIQUE
@@ -38,6 +41,9 @@ const adapter = new PlanetScaleAdapter(connection, {
 });
 
 await testAdapter(adapter);
+
+await connection.execute("DROP TABLE IF EXISTS user_session");
+await connection.execute("DROP TABLE IF EXISTS test_user");
 
 process.exit();
 
