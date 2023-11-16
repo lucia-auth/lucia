@@ -28,7 +28,7 @@ Alternatively, you can [open it in StackBlitz](https://stackblitz.com/github/luc
 [Create a GitHub OAuth app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). Set the redirect uri to:
 
 ```
-http://localhost:3000/login/github/callback
+http://localhost:4321/login/github/callback
 ```
 
 Copy and paste the client id and client secret into your `.env` file:
@@ -41,7 +41,7 @@ GITHUB_CLIENT_SECRET="..."
 
 ## Update your database
 
-Add a `username` column to your table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
+Add a `username` column to your auth_user table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` in `env.d.ts` whenever you add any new columns to the user table.
 
@@ -137,7 +137,7 @@ import { githubAuth } from "../../../lib/lucia";
 
 import type { APIRoute } from "astro";
 
-export const get: APIRoute = async (context) => {
+export const GET: APIRoute = async (context) => {
 	const [url, state] = await githubAuth.getAuthorizationUrl();
 	// store state
 	context.cookies.set("github_oauth_state", state, {
@@ -165,20 +165,33 @@ import { OAuthRequestError } from "@lucia-auth/oauth";
 
 import type { APIRoute } from "astro";
 
-export const get: APIRoute = async (context) => {
+export const GET: APIRoute = async (context) => {
+	// Get state and code from request. This matches up your login token
+	// to this routine to make sure they are equal.
 	const storedState = context.cookies.get("github_oauth_state").value;
+
+	// state must match storedState.
 	const state = context.url.searchParams.get("state");
+
+	// code is used as a token to validate this callback and
+	// get the user's session information.
 	const code = context.url.searchParams.get("code");
-	// validate state
+
+	// Validate state. Implement appropriate error handling for your application. 
 	if (!storedState || !state || storedState !== state || !code) {
 		return new Response(null, {
 			status: 400
 		});
 	}
+
 	try {
+		// Validate data from GitHub. On error this will throw an exception.
 		const { getExistingUser, githubUser, createUser } =
 			await githubAuth.validateCallback(code);
 
+		/**
+		 * Get the user linked to the provider account. If the user doesn't exist, create one.
+		 */
 		const getUser = async () => {
 			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;
@@ -190,14 +203,25 @@ export const get: APIRoute = async (context) => {
 			return user;
 		};
 
+		// Get the user, creating it as needed.
 		const user = await getUser();
+
+		// https://lucia-auth.com/reference/lucia/interfaces/auth/#createsession
 		const session = await auth.createSession({
 			userId: user.userId,
 			attributes: {}
 		});
+
+		// Set session on context.locals.auth, which is
+		// setup in middleware.ts for every page load.
 		context.locals.auth.setSession(session);
-		return context.redirect("/login", 302); // redirect to profile page
+
+		// Implement your after-login logic here
+		return context.redirect("/login", 302);
 	} catch (e) {
+		// Implement your custom error logic here.
+		console.log(e.message);
+
 		if (e instanceof OAuthRequestError) {
 			// invalid code
 			return new Response(null, {
@@ -294,7 +318,7 @@ import { auth } from "../lib/lucia";
 
 import type { APIRoute } from "astro";
 
-export const post: APIRoute = async (context) => {
+export const POST: APIRoute = async (context) => {
 	const session = await context.locals.auth.validate();
 	if (!session) {
 		return new Response("Unauthorized", {
