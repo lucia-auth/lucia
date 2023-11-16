@@ -69,24 +69,10 @@ export class SQLiteAdapter implements Adapter {
 		);
 	}
 
-	public async updateSession(
-		sessionId: string,
-		databaseSession: Partial<DatabaseSession>
-	): Promise<void> {
-		const value: Partial<SessionSchema> = {
-			id: databaseSession.id,
-			user_id: databaseSession.userId,
-			...databaseSession.attributes
-		};
-		if (databaseSession.expiresAt) {
-			value.expires_at = Math.floor(databaseSession.expiresAt.getTime() / 1000);
-		}
-		const entries = Object.entries(value).filter(([_, v]) => v !== undefined);
-		const keyValuePairs = entries.map(([k]) => [escapeName(k), "?"].join(" = "));
-		const values = entries.map(([_, v]) => v);
+	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
 		await this.controller.execute(
-			`UPDATE ${this.escapedSessionTableName} SET ${keyValuePairs.join(", ")} WHERE id = ?`,
-			[...values, sessionId]
+			`UPDATE ${this.escapedSessionTableName} SET expires_at = ? WHERE id = ?`,
+			[Math.floor(expiresAt.getTime() / 1000), sessionId]
 		);
 	}
 
