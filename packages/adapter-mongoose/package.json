@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-mongoose",
-	"version": "3.0.0",
+	"version": "4.0.0-beta.0",
 	"description": "Mongoose (MongoDB) adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test": "tsx test/index.ts",
+		"test": "tsx tests/mongoose.ts",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
@@ -36,7 +36,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "^2.0.0",
+		"lucia": "3.0.0-beta.8",
 		"mongoose": "6.x - 8.x"
 	},
 	"devDependencies": {
