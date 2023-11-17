@@ -133,6 +133,14 @@ export type {
 	LinkedInUserAuth
 } from "./linkedin.js";
 
+export { onelogin } from "./onelogin.js";
+export type {
+	OneloginAuth,
+	OneloginTokens,
+	OneloginUser,
+	OneloginUserAuth
+} from "./onelogin.js";
+
 export { osu } from "./osu.js";
 export type { OsuAuth, OsuTokens, OsuUser, OsuUserAuth } from "./osu.js";
 
