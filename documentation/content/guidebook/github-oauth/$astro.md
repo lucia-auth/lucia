@@ -41,7 +41,7 @@ GITHUB_CLIENT_SECRET="..."
 
 ## Update your database
 
-Add a `username` column to your auth_user table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
+Add a `username` column to your user table. It should be a `string` (`TEXT`, `VARCHAR` etc) type (optionally unique).
 
 Make sure you update `Lucia.DatabaseUserAttributes` in `env.d.ts` whenever you add any new columns to the user table.
 
