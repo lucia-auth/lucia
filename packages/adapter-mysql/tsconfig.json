@@ -6,6 +6,7 @@
 		"target": "ES2022",
 		"outDir": "./dist",
 		"declaration": true,
+		"skipLibCheck": true,
 
 		"noImplicitAny": true,
 		"allowSyntheticDefaultImports": true
