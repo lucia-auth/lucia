@@ -60,15 +60,19 @@ export class RedisSessionAdapter implements SessionAdapter {
 	}
 
 	public async setSession(session: DatabaseSession): Promise<void> {
-        const databaseSession: SessionSchema = {
-            id: session.id,
-            expires_at: Math.floor(session.expiresAt.getTime() / 1000),
-            user_id: session.userId,
-            ...session.attributes
-        }
+		const databaseSession: SessionSchema = {
+			id: session.id,
+			expires_at: Math.floor(session.expiresAt.getTime() / 1000),
+			user_id: session.userId,
+			...session.attributes
+		};
 		await Promise.all([
 			this.controller.sadd(this.userSessionsKey(session.userId), session.id),
-			this.controller.set(this.sessionKey(session.id), JSON.stringify(databaseSession), session.expiresAt)
+			this.controller.set(
+				this.sessionKey(session.id),
+				JSON.stringify(databaseSession),
+				session.expiresAt
+			)
 		]);
 	}
 

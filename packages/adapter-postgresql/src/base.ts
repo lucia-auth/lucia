@@ -72,10 +72,7 @@ export class PostgreSQLAdapter implements Adapter {
 		);
 	}
 
-	public async updateSessionExpiration(
-		sessionId: string,
-		expiresAt: Date
-	): Promise<void> {
+	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
 		await this.controller.execute(
 			`UPDATE ${this.escapedSessionTableName} SET expires_at = $1 WHERE id = $2`,
 			[expiresAt, sessionId]
