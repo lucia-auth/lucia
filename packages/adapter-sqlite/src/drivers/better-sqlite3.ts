@@ -3,7 +3,7 @@ import { SQLiteAdapter } from "../base.js";
 import type { Controller, TableNames } from "../base.js";
 import type { Database } from "better-sqlite3";
 
-export class BetterSqlite3 extends SQLiteAdapter {
+export class BetterSqlite3Adapter extends SQLiteAdapter {
 	constructor(db: Database, tableNames: TableNames) {
 		super(new BetterSqlite3Controller(db), tableNames);
 	}

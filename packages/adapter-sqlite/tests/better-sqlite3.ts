@@ -1,5 +1,5 @@
 import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
-import { BetterSqlite3 } from "../src/drivers/better-sqlite3.js";
+import { BetterSqlite3Adapter } from "../src/drivers/better-sqlite3.js";
 import sqlite from "better-sqlite3";
 
 const db = sqlite(":memory:");
