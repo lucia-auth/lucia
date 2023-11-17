@@ -70,8 +70,7 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 		const result = await this.db
 			.select()
 			.from(this.sessionTable)
-			.where(eq(this.sessionTable.id, sessionId))
-			.limit(1);
+			.where(eq(this.sessionTable.id, sessionId));
 		if (result.length !== 1) return null;
 		return transformIntoDatabaseSession(result[0]);
 	}
