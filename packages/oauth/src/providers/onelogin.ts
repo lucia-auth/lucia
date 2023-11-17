@@ -72,7 +72,7 @@ export class OneloginAuth<
 		const tokens = await validateOAuth2AuthorizationCode<{
 			access_token: string;
 			refresh_token?: string;
-		}>(code, `https://${this.config.subdomain}>.onelogin.com/oidc/2/token`, {
+		}>(code, `https://${this.config.subdomain}.onelogin.com/oidc/2/token`, {
 			clientId: this.config.clientId,
 			redirectUri: this.config.redirectUri,
 			codeVerifier,
