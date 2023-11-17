@@ -15,7 +15,7 @@ class BunSQLiteController implements Controller {
 	}
 
 	public async get<T>(sql: string, args: any[]): Promise<T | null> {
-		return this.db.prepare(sql).get(...args) as T;
+		return this.db.prepare(sql).get(...args) as T | null;
 	}
 
 	public async getAll<T>(sql: string, args: any[]): Promise<T[]> {

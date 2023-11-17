@@ -57,7 +57,7 @@ export async function testAdapter(adapter: Adapter) {
 
 	await test("updateSessionExpiration() updates session", async () => {
 		await adapter.setSession(databaseSession);
-		databaseSession.expiresAt = new Date(databaseSession.expiresAt.getTime() + 10_000)
+		databaseSession.expiresAt = new Date(databaseSession.expiresAt.getTime() + 10_000);
 		await adapter.updateSessionExpiration(databaseSession.id, databaseSession.expiresAt);
 		const result = await adapter.getSessionAndUser(databaseSession.id);
 		assert.deepStrictEqual(result, [databaseSession, databaseUser]);

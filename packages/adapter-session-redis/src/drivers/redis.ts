@@ -16,7 +16,7 @@ export class RedisSessionAdapter extends RedisCoreSessionAdapter {
 
 class RedisController implements Controller {
 	private client: RedisClientType<any, any, any>;
-	
+
 	constructor(client: RedisClientType<any, any, any>) {
 		this.client = client;
 	}
