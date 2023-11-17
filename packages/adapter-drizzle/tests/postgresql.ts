@@ -54,10 +54,7 @@ const sessionTable = pgTable("session", {
 
 const db = drizzle(pool);
 
-const adapter = new DrizzlePostgreSQLAdapter(db, {
-	user: userTable,
-	session: sessionTable
-});
+const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
 
 await testAdapter(adapter);
 

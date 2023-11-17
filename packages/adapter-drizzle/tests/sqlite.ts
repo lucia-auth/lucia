@@ -39,10 +39,7 @@ const sessionTable = sqliteTable("user_session", {
 
 const db = drizzle(sqliteDB);
 
-const adapter = new DrizzleSQLiteAdapter(db, {
-	user: userTable,
-	session: sessionTable
-});
+const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable);
 
 await testAdapter(adapter);
 

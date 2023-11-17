@@ -12,14 +12,12 @@ export class DrizzleMySQLAdapter implements Adapter {
 
 	constructor(
 		db: MySqlDatabase<any, any>,
-		tables: {
-			session: MySQLSessionTable;
-			user: MySQLUserTable;
-		}
+		sessionTable: MySQLSessionTable,
+		userTable: MySQLUserTable
 	) {
 		this.db = db;
-		this.sessionTable = tables.session;
-		this.userTable = tables.user;
+		this.sessionTable = sessionTable;
+		this.userTable = userTable;
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {

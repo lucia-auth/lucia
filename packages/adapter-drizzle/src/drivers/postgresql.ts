@@ -12,14 +12,12 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 
 	constructor(
 		db: PgDatabase<any, any>,
-		tables: {
-			session: PostgreSQLSessionTable;
-			user: PostgreSQLUserTable;
-		}
+		sessionTable: PostgreSQLSessionTable,
+		userTable: PostgreSQLUserTable
 	) {
 		this.db = db;
-		this.sessionTable = tables.session;
-		this.userTable = tables.user;
+		this.sessionTable = sessionTable;
+		this.userTable = userTable;
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {

@@ -16,14 +16,12 @@ export class DrizzleSQLiteAdapter implements Adapter {
 
 	constructor(
 		db: BaseSQLiteDatabase<any, any>,
-		tables: {
-			session: SQLiteSessionTable;
-			user: SQLiteUserTable;
-		}
+		sessionTable: SQLiteSessionTable,
+		userTable: SQLiteUserTable
 	) {
 		this.db = db;
-		this.sessionTable = tables.session;
-		this.userTable = tables.user;
+		this.sessionTable = sessionTable;
+		this.userTable = userTable;
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {

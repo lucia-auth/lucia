@@ -68,10 +68,7 @@ const sessionTable = mysqlTable("user_session", {
 
 const db = drizzle(connection);
 
-const adapter = new DrizzleMySQLAdapter(db, {
-	user: userTable,
-	session: sessionTable
-});
+const adapter = new DrizzleMySQLAdapter(db, sessionTable, userTable);
 
 await testAdapter(adapter);
 
