@@ -98,17 +98,6 @@ export class DrizzleSQLiteAdapter implements Adapter {
 	}
 }
 
-export interface TableNames {
-	user: string;
-	session: string;
-}
-
-export interface Controller {
-	execute(sql: string, args: any[]): Promise<void>;
-	get<T>(sql: string, args: any[]): Promise<T | null>;
-	getAll<T>(sql: string, args: any[]): Promise<T[]>;
-}
-
 export type SQLiteUserTable = SQLiteTableWithColumns<{
 	dialect: "sqlite";
 	columns: {

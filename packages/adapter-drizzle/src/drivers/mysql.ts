@@ -88,17 +88,6 @@ export class DrizzleMySQLAdapter implements Adapter {
 	}
 }
 
-export interface TableNames {
-	user: string;
-	session: string;
-}
-
-export interface Controller {
-	execute(sql: string, args: any[]): Promise<void>;
-	get<T>(sql: string, args: any[]): Promise<T | null>;
-	getAll<T>(sql: string, args: any[]): Promise<T[]>;
-}
-
 export type MySQLUserTable = MySqlTableWithColumns<{
 	dialect: "mysql";
 	columns: {
