@@ -14,6 +14,7 @@
 		"build": "shx rm -rf ./dist/* && tsc",
 		"auri.build": "pnpm build",
 		"test.better-sqlite3": "tsx tests/better-sqlite3.ts",
+		"test.bun-sqlite": "bun tests/bun-sqlite.ts",
 		"test.d1": "tsx tests/d1.ts",
 		"test.libsql": "tsx tests/libsql.ts"
 	},
@@ -61,6 +62,7 @@
 		"@miniflare/web-sockets": "^2.14.1",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.4.0",
+		"bun-types": "^1.0.12",
 		"lucia": "latest",
 		"tsx": "^3.12.6"
 	}

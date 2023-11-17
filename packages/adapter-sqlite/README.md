@@ -11,6 +11,7 @@ SQLite adapter for Lucia v3.
 ## Supported drivers
 
 - [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
+- [`bun:sqlite`](https://bun.sh/docs/api/sqlite)
 - [Cloudflare D1](https://developers.cloudflare.com/d1/)
 - [libSQL](https://github.com/libsql/libsql) (Turso)
 
@@ -28,6 +29,12 @@ yarn add @lucia-auth/adapter-sqlite
 
 ```
 pnpm test.better-sqlite3
+```
+
+### Bun SQLite
+
+```
+pnpm test.bun-sqlite
 ```
 
 ### Cloudflare D1
