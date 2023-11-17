@@ -22,7 +22,7 @@ db.prepare(`INSERT INTO user (id, username) VALUES (?, ?)`).run(
 	databaseUser.attributes.username
 );
 
-const adapter = new BetterSqlite3(db, {
+const adapter = new BetterSqlite3Adapter(db, {
 	user: "user",
 	session: "user_session"
 });
