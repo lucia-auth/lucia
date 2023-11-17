@@ -40,7 +40,7 @@ export class OneloginAuth<
 	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrlWithPKCE(
-			`https://${this.config.subdomain}>.onelogin.com/oidc/2/auth`,
+			`https://${this.config.subdomain}.onelogin.com/oidc/2/auth`,
 			{
 				clientId: this.config.clientId,
 				codeChallengeMethod: "S256",
