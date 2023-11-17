@@ -7,20 +7,12 @@ import type {
 } from "lucia";
 
 export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapter {
-	public s: _PrismaClient = {} as any;
 	private sessionModel: PrismaModel<SessionSchema>;
-	private userModelName: string;
+	private userModel: PrismaModel<UserSchema>;
 
-	constructor(
-		client: _PrismaClient,
-		modelNames: {
-			user: ModelName<_PrismaClient>;
-			session: ModelName<_PrismaClient>;
-		}
-	) {
-		this.userModelName = modelNames.user;
-		const sessionModelKey = modelNames.session[0].toLowerCase() + modelNames.session.slice(1);
-		this.sessionModel = client[sessionModelKey];
+	constructor(sessionModel: BasicPrismaModel, userModel: BasicPrismaModel) {
+		this.sessionModel = sessionModel as any;
+		this.userModel = userModel as any;
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {
@@ -46,7 +38,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 	public async getSessionAndUser(
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
-		const userModelKey = this.userModelName[0].toLowerCase() + this.userModelName.slice(1);
+		const userModelKey = this.userModel.name[0].toLowerCase() + this.userModel.name.slice(1);
 		const result = await this.sessionModel.findUnique<{
 			// this is a lie to make TS shut up
 			user: UserSchema;
@@ -120,10 +112,6 @@ interface PrismaClient {
 	$transaction: any;
 }
 
-type ModelName<_PrismaClient extends PrismaClient> = Capitalize<
-	Extract<Exclude<keyof _PrismaClient, `$${string}`>, string>
->;
-
 interface UserSchema extends DatabaseUserAttributes {
 	id: string;
 }
@@ -134,7 +122,14 @@ interface SessionSchema extends DatabaseSessionAttributes {
 	expiresAt: Date;
 }
 
-export type PrismaModel<_Schema> = {
+interface BasicPrismaModel {
+	fields: any;
+	findUnique: any;
+	findMany: any;
+}
+
+interface PrismaModel<_Schema> {
+	name: string;
 	findUnique: <_Included = {}>(options: {
 		where: Partial<_Schema>;
 		include?: Record<string, boolean>;
@@ -144,4 +139,4 @@ export type PrismaModel<_Schema> = {
 	delete: (options: { where: Partial<_Schema> }) => Promise<void>;
 	deleteMany: (options?: { where: Partial<_Schema> }) => Promise<void>;
 	update: (options: { data: Partial<_Schema>; where: Partial<_Schema> }) => Promise<_Schema>;
-};
+}

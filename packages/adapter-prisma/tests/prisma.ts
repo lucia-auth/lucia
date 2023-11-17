@@ -4,10 +4,8 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "../src/index.js";
 
 const client = new PrismaClient();
-const adapter = new PrismaAdapter(client, {
-	user: "User",
-	session: "Session"
-});
+
+const adapter = new PrismaAdapter(client.session, client.user);
 
 await client.user.create({
 	data: {
