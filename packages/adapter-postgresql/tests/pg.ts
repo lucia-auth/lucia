@@ -9,7 +9,7 @@ dotenv.config({
 });
 
 export const pool = new pg.Pool({
-	connectionString: process.env.PSQL_DATABASE_URL
+	connectionString: process.env.POSTGRES_DATABASE_URL
 });
 
 await pool.query("DROP TABLE IF EXISTS public.session");

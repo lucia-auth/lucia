@@ -1,2 +1,2 @@
-export { PgAdapter } from "./drivers/pg.js";
-export { PostgresAdapter } from "./drivers/postgres.js";
+export { NodePostgresAdapter } from "./drivers/pg.js";
+export { PostgresJsAdapter } from "./drivers/postgres.js";

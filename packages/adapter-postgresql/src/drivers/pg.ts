@@ -3,13 +3,13 @@ import { PostgreSQLAdapter } from "../base.js";
 import type { Controller, TableNames } from "../base.js";
 import type { Pool } from "pg";
 
-export class PgAdapter extends PostgreSQLAdapter {
+export class NodePostgresAdapter extends PostgreSQLAdapter {
 	constructor(pool: Pool, tableNames: TableNames) {
-		super(new PgController(pool), tableNames);
+		super(new NodePostgresController(pool), tableNames);
 	}
 }
 
-class PgController implements Controller {
+class NodePostgresController implements Controller {
 	private pool: Pool;
 	constructor(pool: Pool) {
 		this.pool = pool;

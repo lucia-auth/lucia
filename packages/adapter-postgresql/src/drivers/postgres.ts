@@ -3,13 +3,13 @@ import { PostgreSQLAdapter } from "../base.js";
 import type { Controller, TableNames } from "../base.js";
 import type { Sql } from "postgres";
 
-export class PostgresAdapter extends PostgreSQLAdapter {
+export class PostgresJsAdapter extends PostgreSQLAdapter {
 	constructor(sql: Sql, tableNames: TableNames) {
-		super(new PostgresController(sql), tableNames);
+		super(new PostgresJsController(sql), tableNames);
 	}
 }
 
-class PostgresController implements Controller {
+class PostgresJsController implements Controller {
 	private sql: Sql;
 	constructor(sql: Sql) {
 		this.sql = sql;
