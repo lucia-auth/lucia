@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-session-redis",
-	"version": "3.0.0-beta.0",
+	"version": "3.0.0-beta.1",
 	"description": "Redis session adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -42,7 +42,7 @@
 	"peerDependencies": {
 		"@upstash/redis": "^1.20.0",
 		"ioredis": "^5.0.0",
-		"lucia": "3.0.0-beta.8",
+		"lucia": "3.0.0-beta.9",
 		"redis": "^4.0.0"
 	},
 	"peerDependenciesMeta": {

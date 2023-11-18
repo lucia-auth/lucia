@@ -237,11 +237,6 @@ interface NextRequest extends Request {
 }
 
 interface NextJsAppServerContext {
-	cookies: NextCookiesFunction;
-	request: NextRequest | null;
-}
-
-interface NextJsAppServerContext {
 	headers: NextHeadersFunction;
 	cookies: NextCookiesFunction;
 }
