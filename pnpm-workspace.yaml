@@ -1,3 +1,4 @@
 packages:
   - "packages/*"
   - "documentation/**"
+  - "documentation-v3/**"
