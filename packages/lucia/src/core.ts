@@ -287,7 +287,7 @@ export interface CSRFProtectionOptions {
 export interface LuciaRequest {
 	method: string;
 	url?: string;
-	headers: Pick<Headers, "get">;
+	headers: Headers;
 }
 
 export interface RequestContext {

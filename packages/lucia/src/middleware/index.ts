@@ -214,25 +214,23 @@ interface NextJsPagesServerContext {
 	res?: NodeOutGoingMessage;
 }
 
-type NextCookie =
-	| {
-			name: string;
-			value: string;
-	  }
-	| undefined;
+interface NextCookie {
+	name: string;
+	value: string;
+}
 
 type NextCookiesFunction = () => {
 	set: (name: string, value: string, options: CookieAttributes) => void;
-	get: (name: string) => NextCookie;
+	get: (name: string) => NextCookie | undefined;
 };
 
 type NextHeadersFunction = () => {
-	get: (name: string) => string | null;
+	entries: () => IterableIterator<[string, string]>;
 };
 
 interface NextRequest extends Request {
 	cookies: {
-		get: (name: string) => NextCookie;
+		get: (name: string) => NextCookie | undefined;
 	};
 }
 
@@ -252,16 +250,10 @@ export function nextjs(): Middleware<
 			return {
 				request: {
 					method: requestMethod,
-					headers: context.headers()
+					headers: new Headers(Array.from(context.headers().entries()))
 				},
 				setCookie: (cookie) => {
-					try {
-						context.cookies().set(cookie.name, cookie.value, cookie.attributes);
-					} catch {
-						// ignore error
-						// can't differentiate between page.tsx render (can't set cookies)
-						// vs API routes (can set cookies)
-					}
+					context.cookies().set(cookie.name, cookie.value, cookie.attributes);
 				},
 				sessionCookie: context.cookies().get(sessionCookieName)?.value ?? null
 			};
