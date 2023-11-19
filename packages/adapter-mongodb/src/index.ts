@@ -1,11 +1,11 @@
 import type {
+	Adapter,
 	DatabaseSession,
 	DatabaseSessionAttributes,
 	DatabaseUser,
 	DatabaseUserAttributes
 } from "lucia";
-import type { Adapter } from "lucia";
-import type { Model } from "mongoose";
+import { Collection } from "mongodb";
 
 interface UserDoc extends DatabaseUserAttributes {
 	_id: string;
@@ -19,23 +19,21 @@ interface SessionDoc extends DatabaseSessionAttributes {
 	expires_at: Date;
 }
 
-export class MongooseAdapter implements Adapter {
-	private Session: Model<SessionDoc>;
-	private User: Model<UserDoc>;
+export class MongodbAdapter implements Adapter {
+	private Session: Collection<SessionDoc>;
+	private User: Collection<UserDoc>;
 
-	constructor(Session: Model<SessionDoc>, User: Model<UserDoc>) {
+	constructor(Session: Collection<SessionDoc>, User: Collection<UserDoc>) {
 		this.Session = Session;
 		this.User = User;
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {
-		await this.Session.findByIdAndDelete(sessionId);
+		await this.Session.findOneAndDelete({ _id: sessionId });
 	}
 
 	public async deleteUserSessions(userId: string): Promise<void> {
-		await this.Session.deleteMany({
-			user_id: userId
-		});
+		await this.Session.deleteMany({ user_id: userId });
 	}
 
 	public async getSessionAndUser(
@@ -45,14 +43,14 @@ export class MongooseAdapter implements Adapter {
 			{ $match: { _id: sessionId } },
 			{
 				$lookup: {
-					from: this.User.collection.name,
+					from: this.User.collectionName,
 					localField: "user_id",
-					// reliies on _id being a String, not ObjectId.
+					// relies on _id being a String, not ObjectId.
 					foreignField: "_id",
 					as: "userDocs"
 				}
 			}
-		]).exec();
+		]).toArray();
 
 		const sessionUser = sessionUsers?.at(0) ?? null;
 		if (!sessionUser) return [null, null];
@@ -61,18 +59,24 @@ export class MongooseAdapter implements Adapter {
 		const userDoc = userDocs?.at(0) ?? null;
 		if (!userDoc) return [null, null];
 
-		const session = transformIntoDatabaseSession(sessionDoc);
+		const session = transformIntoDatabaseSession(sessionDoc as SessionDoc);
 		const user = transformIntoDatabaseUser(userDoc);
 		return [session, user];
 	}
 
 	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
 		const sessions = await this.Session.find(
+			{ user_id: userId },
 			{
-				user_id: userId
-			},
-			DEFAULT_PROJECTION
-		).lean();
+				projection: {
+					// MongoDB driver doesn't use the extra fields that Mongoose does
+					// But, if the dev is passing in mongoose.connection, these fields will be there
+					__v: 0,
+					_doc: 0
+				}
+			}
+		).toArray();
+
 		return sessions.map((val) => transformIntoDatabaseSession(val));
 	}
 
@@ -83,21 +87,14 @@ export class MongooseAdapter implements Adapter {
 			expires_at: session.expiresAt,
 			...session.attributes
 		};
-		await new this.Session(value).save();
+
+		await this.Session.insertOne(value);
 	}
 
 	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
-		await this.Session.findByIdAndUpdate(sessionId, {
-			expires_at: expiresAt
-		}).lean();
+		await this.Session.findOneAndUpdate({ _id: sessionId }, { $set: { expires_at: expiresAt } });
 	}
 }
-
-const DEFAULT_PROJECTION = {
-	$__: 0,
-	__v: 0,
-	_doc: 0
-};
 
 function transformIntoDatabaseUser(value: UserDoc): DatabaseUser {
 	delete value.__v;

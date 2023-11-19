@@ -1,18 +1,16 @@
-import mongodb from "mongoose";
+import { databaseUser, testAdapter } from "@lucia-auth/adapter-test";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 import { resolve } from "path";
-import { MongooseAdapter } from "../src/index.js";
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { MongodbAdapter } from "../src/index.js";
 
-dotenv.config({
-	path: `${resolve()}/.env`
-});
+dotenv.config({ path: `${resolve()}/.env` });
 
-await mongodb.connect(process.env.MONGODB_URL!);
+await mongoose.connect(process.env.MONGODB_URL!);
 
-const User = mongodb.model(
+const User = mongoose.model(
 	"User",
-	new mongodb.Schema(
+	new mongoose.Schema(
 		{
 			_id: {
 				type: String,
@@ -28,9 +26,9 @@ const User = mongodb.model(
 	)
 );
 
-const Session = mongodb.model(
+const Session = mongoose.model(
 	"Session",
-	new mongodb.Schema(
+	new mongoose.Schema(
 		{
 			_id: {
 				type: String,
@@ -53,7 +51,10 @@ const Session = mongodb.model(
 	)
 );
 
-const adapter = new MongooseAdapter(Session, User);
+const adapter = new MongodbAdapter(
+	mongoose.connection.collection("sessions"),
+	mongoose.connection.collection("users")
+);
 
 await User.deleteMany();
 await Session.deleteMany();
