@@ -115,17 +115,17 @@ export function sveltekit(): Middleware<[SvelteKitRequestEvent]> {
 	};
 }
 
-type AstroAPIContext = {
+interface AstroCookie {
+	value: string | undefined;
+}
+
+interface AstroAPIContext {
 	request: Request;
 	cookies: {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
-		get: (name: string) =>
-			| {
-					value: string | undefined;
-			  }
-			| undefined;
+		get: (name: string) => AstroCookie | undefined;
 	};
-};
+}
 
 export function astro(): Middleware<[AstroAPIContext]> {
 	return ({ args, sessionCookieName }) => {
