@@ -12,7 +12,8 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test": "tsx tests/mongodb.ts && tsx tests/mongoose.ts",
+		"test.mongodb": "tsx tests/mongodb.ts",
+		"test.mongoose": "tsx tests/mongoose.ts",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [

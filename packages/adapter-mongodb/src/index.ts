@@ -67,7 +67,14 @@ export class MongodbAdapter implements Adapter {
 	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
 		const sessions = await this.Session.find(
 			{ user_id: userId },
-			{ projection: DEFAULT_PROJECTION }
+			{
+				projection: {
+					// MongoDB driver doesn't use the extra fields that Mongoose does
+					// But, if the dev is passing in mongoose.connection, these fields will be there
+					__v: 0,
+					_doc: 0
+				}
+			}
 		).toArray();
 
 		return sessions.map((val) => transformIntoDatabaseSession(val));
@@ -88,13 +95,6 @@ export class MongodbAdapter implements Adapter {
 		await this.Session.findOneAndUpdate({ _id: sessionId }, { $set: { expires_at: expiresAt } });
 	}
 }
-
-// MongoDB driver doesn't use the extra fields that Mongoose does
-// But, if the dev is passing in mongoose.connection, these fields will be there
-const DEFAULT_PROJECTION = {
-	__v: 0,
-	_doc: 0
-};
 
 function transformIntoDatabaseUser(value: UserDoc): DatabaseUser {
 	delete value.__v;
