@@ -13,6 +13,8 @@ npm install @lucia-auth/adapter-mysql
 
 ## Schema
 
+You can change the `varchar` length as necessary. `session(id)` should be able to hold at least 40 chars.
+
 ```sql
 CREATE TABLE auth_user (
     id VARCHAR(255) PRIMARY KEY
