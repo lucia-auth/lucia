@@ -17,15 +17,14 @@ const { session } = await authRequest.validateBearerToken();
 Parameters for `Lucia.handleRequest()` will depend on the middleware you use. We provide middleware for most popular frameworks.
 
 ```ts
-import { web } from "lucia/middleware";
+import { node } from "lucia/middleware";
 
 const auth = new Lucia(adapter, {
-	// ...
-	middleware: web() // pass Web middleware
+	middleware: node()
 });
 
-// it now accepts `Request`
-const authRequest = auth.handleRequest(new Request());
+// it now accepts `IncomingMessage` and `OutgoingMessage`
+const authRequest = auth.handleRequest(incomingMessage, outgoingMessage);
 ```
 
 ## List of middleware
@@ -227,20 +226,4 @@ export const handle = async ({ event, resolve }) => {
 	event.locals.auth = auth.handleRequest(event);
 	// ...
 };
-```
-
-### Web standard
-
-**[`AuthRequest.setSession()`](/reference/lucia/interfaces/authrequest#setsession) is disabled when using the `web()` middleware.** We recommend setting [`sessionCookie.expires`](/basics/configuration#sessioncookie) configuration to `false` when using this middleware.
-
-```ts
-import { web } from "lucia/middleware";
-
-const authRequest = auth.handleRequest(request as Request);
-```
-
-```ts
-const authRequest = auth.handleRequest(request);
-await authRequest.validate();
-await authRequest.setSession(session); // error!
 ```
