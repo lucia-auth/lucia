@@ -63,14 +63,15 @@ Use [`Lucia.verifyRequestOrigin()`]() to verify the request origin (CSRF protect
 After validating the session, set a new session cookie to update the session expiration if `Session.fresh` is `true`.
 
 ```ts
-const headers = new Headers();
-
-const validRequestOrigin = auth.verifyRequestOrigin(headers);
-if (!validRequestOrigin) {
-	throw new Error("Invalid request origin");
+if (request.method !== "GET") {
+	// only do CSRF check for non-GET requests (e.g. POST)
+	const validRequestOrigin = auth.verifyRequestOrigin(request.headers);
+	if (!validRequestOrigin) {
+		throw new Error("Invalid request origin");
+	}
 }
 
-const sessionId = auth.readSessionCookie(headers.get("Cookie") ?? "");
+const sessionId = auth.readSessionCookie(request.headers.get("Cookie") ?? "");
 if (!sessionId) {
 	throw new Error("Missing session cookie");
 }
@@ -82,6 +83,7 @@ if (!session) {
 	throw new Error("Not authenticated");
 }
 if (session.fresh) {
+	// session expiration was extended
 	const sessionCookie = auth.createSessionCookie(session.id);
 	setResponseHeader("Set-Cookie", sessionCookie.serialize());
 }
