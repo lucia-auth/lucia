@@ -10,12 +10,14 @@ If you're working with cookies, **CSRF protection must be implemented** to preve
 
 By default, session cookies have the following attributes:
 
-- `HttpOnly`
-- `SameSite: Lax`
-- `Path: /`
-- `Secure`
+```
+HttpOnly
+SameSite: Lax
+Path: /
+Secure
+```
 
-**This means by default, session cookies don't work in `localhost`**. You can configure some of these attributes, as well the cookie name and if the cookie expires or not, with the [`sessionCookie` configuration]().
+**This means by default, session cookies don't work in `localhost` due to the `Secure` flag**. You can configure some of these attributes, as well the cookie name and if the cookie expires or not, with the [`sessionCookie` configuration]().
 
 ## Using `AuthRequest`
 
