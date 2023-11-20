@@ -11,15 +11,6 @@ export interface Adapter {
 	deleteUserSessions(userId: string): Promise<void>;
 }
 
-export interface SessionAdapter {
-	getSession(sessionId: string): Promise<DatabaseSession | null>;
-	getUserSessions(userId: string): Promise<DatabaseSession[]>;
-	setSession(session: DatabaseSession): Promise<void>;
-	updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void>;
-	deleteSession(sessionId: string): Promise<void>;
-	deleteUserSessions(userId: string): Promise<void>;
-}
-
 export interface DatabaseUser {
 	id: string;
 	attributes: DatabaseUserAttributes;

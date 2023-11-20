@@ -40,7 +40,8 @@ export class Lucia<
 	private adapter: Adapter;
 	private sessionController: SessionController;
 	private sessionCookieController: SessionCookieController;
-	private csrfProtection: CSRFProtectionOptions | boolean;
+	private csrfProtectionEnabled = true;
+	private csrfProtectionOptions: CSRFProtectionOptions = {};
 	private middleware: _Middleware;
 
 	private getSessionAttributes: (
@@ -96,7 +97,15 @@ export class Lucia<
 				options?.sessionCookie?.attributes
 			);
 		}
-		this.csrfProtection = options?.csrfProtection ?? true;
+		if (options?.csrfProtection !== undefined) {
+			if (typeof options.csrfProtection === "boolean") {
+				this.csrfProtectionEnabled = options.csrfProtection;
+				this.csrfProtectionOptions = {};
+			} else {
+				this.csrfProtectionEnabled = true;
+				this.csrfProtectionOptions = options.csrfProtection;
+			}
+		}
 		if (options?.middleware) {
 			this.middleware = options.middleware;
 		}
@@ -208,7 +217,7 @@ export class Lucia<
 			args,
 			sessionCookieName: this.sessionCookieController.cookieName
 		});
-		const authorizationHeader = requestContext.request.headers.get("Authorization");
+		const authorizationHeader = requestContext.headers.get("Authorization");
 		let bearerToken = authorizationHeader;
 		if (authorizationHeader) {
 			const parts = authorizationHeader.split(" ");
@@ -216,44 +225,31 @@ export class Lucia<
 				bearerToken = parts[1];
 			}
 		}
-		if (this.csrfProtection !== false) {
-			const options = this.csrfProtection === true ? {} : this.csrfProtection;
-			const validRequestOrigin = this.verifyRequestOrigin(requestContext, options);
+		const whitelistMethods = ["GET", "HEAD", "OPTIONS", "TRACE"];
+		const whitelistedMethod = whitelistMethods.includes(requestContext.method.toUpperCase());
+		if (this.csrfProtectionEnabled && !whitelistedMethod) {
+			const validRequestOrigin = this.verifyRequestOrigin(requestContext.headers);
 			if (!validRequestOrigin) {
 				return new AuthRequest(this, null, bearerToken, requestContext.setCookie);
 			}
 		}
 		const sessionCookie =
 			requestContext.sessionCookie ??
-			this.sessionCookieController.parseCookies(requestContext.request.headers.get("Cookie") ?? "");
+			this.sessionCookieController.parseCookies(requestContext.headers.get("Cookie") ?? "");
 
 		return new AuthRequest(this, sessionCookie, bearerToken, requestContext.setCookie);
 	}
 
-	private verifyRequestOrigin(
-		requestContext: RequestContext,
-		options: CSRFProtectionOptions
-	): boolean {
-		const whitelist = ["GET", "HEAD", "OPTIONS", "TRACE"];
-		const allowedMethod = whitelist.some(
-			(val) => val === requestContext.request.method.toUpperCase()
-		);
-		if (allowedMethod) {
-			return true;
-		}
-		const requestOrigin = requestContext.request.headers.get("Origin");
+	public verifyRequestOrigin(headers: Headers): boolean {
+		const requestOrigin = headers.get("Origin");
 		if (!requestOrigin) {
 			return false;
 		}
-		const allowedDomains = options.allowedDomains ?? [];
-		const hostHeader = requestContext.request.headers.get(options.hostHeader ?? "Host");
+		const allowedDomains = this.csrfProtectionOptions.allowedDomains ?? [];
+		const hostHeader = headers.get(this.csrfProtectionOptions.hostHeader ?? "Host");
 		if (hostHeader) {
 			allowedDomains.push(hostHeader);
 		}
-		if (requestContext.request.url !== undefined) {
-			allowedDomains.push(requestContext.request.url);
-		}
-
 		return verifyRequestOrigin(requestOrigin, allowedDomains);
 	}
 
@@ -284,15 +280,10 @@ export interface CSRFProtectionOptions {
 	hostHeader?: string;
 }
 
-export interface LuciaRequest {
-	method: string;
-	url?: string;
-	headers: Headers;
-}
-
 export interface RequestContext {
 	sessionCookie?: string | null;
-	request: LuciaRequest;
+	method: string;
+	headers: Headers;
 	setCookie: (cookie: SessionCookie) => void;
 }
 

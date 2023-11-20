@@ -13,7 +13,7 @@ export type {
 	Middleware,
 	HandleRequestContext
 } from "./core.js";
-export type { DatabaseSession, DatabaseUser, Adapter, SessionAdapter } from "./database.js";
+export type { DatabaseSession, DatabaseUser, Adapter } from "./database.js";
 export type { PasswordHashingAlgorithm } from "./crypto.js";
 
 export interface Register {}
