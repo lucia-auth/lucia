@@ -91,7 +91,7 @@ if (session.fresh) {
 
 ### Set session cookies
 
-You can create a new [`Cookie`]() with [`Lucia.createSessionCookie()`](), which takes a session ID. You can either use `Cookie.serialize()` to set cookies via the `Set-Cookie` header or use its properties to set cookies with the API provided by your framework/library.
+You can create a new [`Cookie`]() for a session cookie with [`Lucia.createSessionCookie()`](), which takes a session ID. You can either use `Cookie.serialize()` to set the cookie via the `Set-Cookie` header or use its properties to set cookies with APIs provided by your framework/library.
 
 ```ts
 const sessionCookie = auth.createSessionCookie(sessionId);
