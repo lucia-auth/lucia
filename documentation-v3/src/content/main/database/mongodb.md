@@ -10,19 +10,29 @@ npm install @lucia-auth/adapter-mongodb
 
 ## Usage
 
+You must handle the database connection manually.
+
 ```ts
 import { Lucia } from "lucia";
 import { MongoDBAdapter } from "@lucia-auth/adapter-mongodb";
 import { Collection, MongoClient } from "mongodb";
 
-import type { UserDoc, SessionDoc } from "@lucia-auth/adapter-mongodb";
-
 const client = new MongoClient();
 await client.connect();
-const db = client.db();
 
+const db = client.db();
 const User = db.collection("users") as Collection<UserDoc>;
 const Session = db.collection("sessions") as Collection<SessionDoc>;
 
 const auth = new Lucia(new MongodbAdapter(Session, User));
+
+interface UserDoc {
+	_id: string;
+}
+
+interface Session {
+	_id: string;
+	expires_at: Date;
+	user_id: string;
+}
 ```

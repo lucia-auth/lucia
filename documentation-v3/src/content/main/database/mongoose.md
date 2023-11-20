@@ -2,13 +2,15 @@
 title: "Mongoose"
 ---
 
-You can use the MongoDB adapter from the `@lucia-auth/adapter-mongodb` package with Mongoose.
+You can use the [MongoDB adapter]() from the `@lucia-auth/adapter-mongodb` package with Mongoose.
 
 ```
 npm install @lucia-auth/adapter-mongodb
 ```
 
 ## Usage
+
+You must handle the database connection manually.
 
 ```ts
 import { Lucia } from "lucia";
