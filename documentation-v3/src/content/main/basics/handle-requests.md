@@ -27,6 +27,8 @@ const auth = new Lucia(adapter, {
 const authRequest = auth.handleRequest(incomingMessage, outgoingMessage);
 ```
 
+When no middleware is defined, `Lucia.handleRequest()` takes a [`RequestContext`]().
+
 ## List of middleware
 
 - [Astro](/handle-requests/astro)
