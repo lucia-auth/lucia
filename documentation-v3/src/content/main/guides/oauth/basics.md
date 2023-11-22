@@ -128,7 +128,7 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
-			const session = await auth.createSession(userId, {});
+			const session = await auth.createSession(existingUser.id, {});
 			const sessionCookie = auth.createSessionCookie(session.id);
 			return new Response(null, {
 				status: 302,
