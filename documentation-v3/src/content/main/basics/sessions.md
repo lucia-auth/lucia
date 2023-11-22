@@ -57,6 +57,11 @@ const session = await auth.createSession();
 session.ipCountry;
 ```
 
+We do not automatically expose all database columns as
+
+1. Each project has their code styling rules
+2. You generally don't want to expose sensitive data (even worse if you send the entire session object to the client)
+
 ## Create sessions
 
 You can create a new session with `Lucia.createSession()`, which takes a user ID and an empty object.
