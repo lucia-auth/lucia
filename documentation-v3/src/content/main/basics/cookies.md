@@ -21,7 +21,7 @@ Secure
 
 ## Using `AuthRequest`
 
-In addition to the core `Lucia` instance, you can create `AuthRequest` the interact with requests and responses. See [Handle requests]() page to learn how to initialize it.
+You can create an [`AuthRequest`]() instance to interact with requests and responses in most frameworks. See [Handle requests]() page to learn how to initialize it.
 
 ```ts
 const authRequest = auth.handleRequest(/* ... */);
