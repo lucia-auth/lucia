@@ -112,7 +112,7 @@ app.post("/signup", async (request: Request) => {
 import { Argon2id, Scrypt, Bcrypt } from "oslo/password";
 ```
 
-For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing), which also uses Argon2id by default. For other runtimes, Lucia provided a pure-JS implementation of [`Scrypt`]() that works in any environment. However, we do not recommend this for Node.js as it can be 2~3 times slower than the Node-only version. If you're migrating from Lucia v2, you should use [`LegacyScrypt`]().
+For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing), which also uses Argon2id by default. For other runtimes, Lucia provides a pure-JS implementation of Scrypt with [`Scrypt`]() that works in any environment. However, we do not recommend this for Node.js as it can be 2~3 times slower than the Node-only version. If you're migrating from Lucia v2, you should use [`LegacyScrypt`]().
 
 ```ts
 import { Scrypt, LegacyScrypt } from "lucia";
