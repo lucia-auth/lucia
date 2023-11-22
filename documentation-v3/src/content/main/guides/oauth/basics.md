@@ -4,15 +4,13 @@ title: "OAuth basics"
 
 For a step-by-step, framework specific tutorial, see the [GitHub OAuth]() starter guide.
 
-We recommend using [Arctic]() for implementing OAuth 2.0. It is a lightweight library that provides APIs for creating authorization URLs, validating callbacks, getting the current user, and refreshing access tokens. This is the easiest way to implement OAuth with Lucia. It supports all major providers, and you can find the full list of OAuth providers [here](). In this page, we'll be using GitHub.
+We recommend using [Arctic]() for implementing OAuth 2.0. It is a lightweight library that provides APIs for creating authorization URLs, validating callbacks, getting the current user, and refreshing access tokens. This is the easiest way to implement OAuth with Lucia. It supports all major providers, and you can find the full list of OAuth providers [here](). This page will use GitHub, and while most providers have similar APIs, there might be some minor differences between them.
 
 ```
 npm install arctic
 ```
 
-## Create an OAuth app
-
-Create an OAuth app following [GitHub's documentation](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). The callback URL will `<domain>/login/github/callback`, for example `http://localhost:3000/login/github/callback`. Make sure to store the client ID and secret.
+For this guide, the callback URL is `<domain>/login/github/callback`, for example `http://localhost:3000/login/github/callback`.
 
 ## Update database
 
@@ -110,7 +108,7 @@ import { parseCookies } from "oslo/cookie";
 
 app.get("/login/github/callback", async (request: Request): Promise<Response> => {
 	const cookies = parseCookies(request.headers.get("Cookie") ?? "");
-	const stateCookie = cookies.get("oauth_state")?.value ?? null;
+	const stateCookie = cookies.get("oauth_state") ?? null;
 
 	const url = new URL(request.url);
 	const state = url.searchParams.get("state");
