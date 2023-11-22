@@ -1,0 +1,173 @@
+---
+title: "OAuth basics"
+---
+
+For a step-by-step, framework specific tutorial, see the [GitHub OAuth]() starter guide.
+
+We recommend using [Arctic]() for implementing OAuth 2.0. It is a lightweight library that provides APIs for creating authorization URLs, validating callbacks, getting the current user, and refreshing access tokens. This is the easiest way to implement OAuth with Lucia. It supports all major providers, and you can find the full list of OAuth providers [here](). In this page, we'll be using GitHub.
+
+```
+npm install arctic
+```
+
+## Create an OAuth app
+
+Create an OAuth app following [GitHub's documentation](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). The callback URL will `<domain>/login/github/callback`, for example `http://localhost:3000/login/github/callback`. Make sure to store the client ID and secret.
+
+## Update database
+
+Add a `username` and a unique `github_id` column to the user table.
+
+| column      | type     | attributes |
+| ----------- | -------- | ---------- |
+| `username`  | `string` |            |
+| `github_id` | `string` | unique     |
+
+Declare the type with `DatabaseUserAttributes` and add the attributes the user object using the `getUserAttributes()` configuration.
+
+```ts
+// auth.ts
+import { Lucia } from "lucia";
+
+export const auth = new Lucia(adapter, {
+	sessionCookie: {
+		attributes: {
+			secure: env === "PRODUCTION" // set `Secure` flag in HTTPS
+		}
+	},
+	getUserAttributes: (attributes) => {
+		return {
+			githubId: attributes.github_id,
+			username: attributes.username
+		};
+	}
+});
+
+declare module "lucia" {
+	interface Register {
+		Lucia: typeof auth;
+		DatabaseUserAttributes: {
+			github_id: string;
+			username: string;
+		};
+	}
+}
+```
+
+## Initialize OAuth provider
+
+Import `GitHub` from Arctic and initialize it with the client ID and secret.
+
+```ts
+// auth.ts
+import { GitHub } from "arctic";
+
+export const githubAuth = new Github(clientId, clientSecret);
+```
+
+## Creating authorization URL
+
+Create a route to handle authorization. Generate a new state, create a new authorization URL with `createAuthorizationURL()`, store the state, and redirect the user to the authorization URL. The user will be prompted to sign in with GitHub.
+
+```ts
+import { githubAuth } from "./auth.js";
+import { generateState } from "arctic";
+import { serializeCookie } from "oslo/cookie";
+
+app.get("/login/github", async (): Promise<Response> => {
+	const state = generateState();
+	const url = await github.createAuthorizationURL(state);
+	return new Response(null, {
+		status: 302,
+		headers: {
+			Location: url.toString(),
+			"Set-Cookie": serializeCookie("oauth_state", state, {
+				httpOnly: true,
+				secure: env === "PRODUCTION", // set `Secure` flag in HTTPS
+				maxAge: 60 * 10, // 10 minutes
+				path: "/"
+			})
+		}
+	});
+});
+```
+
+You can now create a sign in button with just an anchor tag.
+
+```html
+<a href="/login/github">Sign in with GitHub</a>
+```
+
+## Validate callback
+
+In the callback route, first get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`]() if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
+
+```ts
+import { githubAuth, auth } from "./auth.js";
+import { OAuth2RequestError } from "arctic";
+import { generateId } from "lucia";
+import { parseCookies } from "oslo/cookie";
+
+app.get("/login/github/callback", async (request: Request): Promise<Response> => {
+	const cookies = parseCookies(request.headers.get("Cookie") ?? "");
+	const stateCookie = cookies.get("oauth_state")?.value ?? null;
+
+	const url = new URL(request.url);
+	const state = url.searchParams.get("state");
+	const code = url.searchParams.get("code");
+
+	// verify state
+	if (!state || !stateCookie || !code || stateCookie !== state) {
+		return new Response(null, {
+			status: 400
+		});
+	}
+
+	try {
+		const tokens = await githubAuth.validateAuthorizationCode(code);
+		const githubUser = await githubAuth.getUser(tokens.accessToken);
+
+		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
+
+		if (existingUser) {
+			const session = await auth.createSession(userId, {});
+			const sessionCookie = auth.createSessionCookie(session.id);
+			return new Response(null, {
+				status: 302,
+				headers: {
+					Location: "/",
+					"Set-Cookie": sessionCookie.serialize()
+				}
+			});
+		}
+
+		const userId = generateId(15);
+		await db.table("user").insert({
+			id: userId,
+			username: github.login,
+			github_id: github.id
+		});
+
+		const session = await auth.createSession(userId, {});
+		const sessionCookie = auth.createSessionCookie(session.id);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: "/",
+				"Set-Cookie": sessionCookie.serialize()
+			}
+		});
+	} catch (e) {
+		console.log(e);
+		if (e instanceof OAuth2RequestError) {
+			// bad verification code, invalid credentials, etc
+			return new Response(null, {
+				status: 400
+			});
+		}
+		return new Response(null, {
+			status: 500
+		});
+	}
+});
+```
