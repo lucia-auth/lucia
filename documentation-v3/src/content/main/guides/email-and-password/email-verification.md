@@ -109,7 +109,10 @@ When resending verification emails, make sure to implement rate limiting based o
 Extract the email verification token from the URL and validate by checking the expiration date and email. If the token is valid, invalidate all existing user sessions and create a new session.
 
 ```ts
+import { isWithinExpiration } from "oslo";
+
 app.get("email-verification/*", async () => {
+	
 	// ...
 
 	// there are better ways to do this - check your framework's API

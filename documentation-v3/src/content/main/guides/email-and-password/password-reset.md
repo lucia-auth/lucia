@@ -67,7 +67,9 @@ Make sure to implement rate limiting based on IP addresses.
 Extract the verification token from the URL and validate by checking the expiration date. If the token is valid, invalidate all existing user sessions, update the database, and create a new session.
 
 ```ts
-app.get("/reset-password/*", async () => {
+import { isWithinExpiration } from "oslo";
+
+app.post("/reset-password/*", async () => {
 	let password: string;
 
 	// ...
