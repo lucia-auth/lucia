@@ -36,7 +36,6 @@ declare module "lucia" {
 		Lucia: typeof auth;
 		DatabaseUserAttributes: {
 			email: string;
-			hashed_password: string;
 		};
 	}
 }
