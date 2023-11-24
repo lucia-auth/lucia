@@ -54,9 +54,9 @@ app.post("/reset-password", async () => {
 	const verificationLink = "http://localhost:3000/reset-password/" + verificationToken;
 
 	await sendPasswordResetToken(email, verificationLink);
-    return new Response(null, {
-        status: 200
-    })
+	return new Response(null, {
+		status: 200
+	});
 });
 ```
 
@@ -67,12 +67,12 @@ Make sure to implement rate limiting based on IP addresses.
 Extract the verification token from the URL and validate by checking the expiration date. If the token is valid, invalidate all existing user sessions, update the database, and create a new session.
 
 ```ts
-// there are better ways to do this with your framework's API
 app.get("/reset-password/*", async () => {
 	let password: string;
 
 	// ...
 
+	// there are better ways to do this - check your framework's API
 	const verificationToken = request.url.replace("http://localhost:3000/reset-password/", "");
 
 	await db.beginTransaction();

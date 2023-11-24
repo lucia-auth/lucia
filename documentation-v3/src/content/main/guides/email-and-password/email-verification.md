@@ -109,9 +109,10 @@ When resending verification emails, make sure to implement rate limiting based o
 Extract the email verification token from the URL and validate by checking the expiration date and email. If the token is valid, invalidate all existing user sessions and create a new session.
 
 ```ts
-// there are better ways to do this with your framework's API
 app.get("email-verification/*", async () => {
 	// ...
+
+	// there are better ways to do this - check your framework's API
 	const verificationToken = request.url.replace("http://localhost:3000/email-verification/", "");
 
 	await db.beginTransaction();
