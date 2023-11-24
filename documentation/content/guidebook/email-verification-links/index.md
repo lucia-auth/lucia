@@ -35,8 +35,8 @@ Create a new `email_verification_token` table. This will have 3 fields.
 
 | name      | type                        | primary | references | description                                |
 | --------- | --------------------------- | :-----: | ---------- | ------------------------------------------ |
-| `id`      | `string`                    |         |            | Token to send inside the verification link |
-| `expires` | `bigint` (unsigned 8 bytes) |    ✓    |            | Expiration (in milliseconds)               |
+| `id`      | `string`                    |    ✓    |            | Token to send inside the verification link |
+| `expires` | `bigint` (unsigned 8 bytes) |         |            | Expiration (in milliseconds)               |
 | `user_id` | `string`                    |         | `user(id)` |                                            |
 
 We'll be storing the expiration date as a `bigint` since Lucia uses handles expiration in milliseconds, but you can of course store it in seconds or the native `timestamp` type. Just make sure to adjust the expiration check accordingly.
