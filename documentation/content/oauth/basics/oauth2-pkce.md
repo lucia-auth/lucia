@@ -33,11 +33,13 @@ const [url, codeVerifier, state] = await twitterAuth.getAuthorizationUrl();
 setCookie("twitter_code_verifier", codeVerifier, {
 	path: "/",
 	httpOnly: true, // only readable in the server
+	secure: false, // set to `true` in production (HTTPS)
 	maxAge: 60 * 60 // a reasonable expiration date
 });
 setCookie("twitter_oauth_state", state, {
 	path: "/",
 	httpOnly: true, // only readable in the server
+	secure: false, // set to `true` in production (HTTPS)
 	maxAge: 60 * 60 // a reasonable expiration date
 });
 

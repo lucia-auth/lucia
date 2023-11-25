@@ -33,6 +33,7 @@ const [url, state] = await githubAuth.getAuthorizationUrl();
 setCookie("github_oauth_state", state, {
 	path: "/",
 	httpOnly: true, // only readable in the server
+	secure: false, // set to `true` in production (HTTPS)
 	maxAge: 60 * 60 // a reasonable expiration date
 });
 
