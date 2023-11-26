@@ -27,7 +27,6 @@ CREATE TABLE oauth_account (
     provider_id VARCHAR(255) NOT NULL,
     provider_user_id VARCHAR(255) NOT NULL,
     user_id VARCHAR(255) NOT NULL REFERENCES user(id),
-
     PRIMARY KEY (provider_id, provider_user_id)
 );
 
@@ -42,9 +41,9 @@ The SQL below creates a dedicated table `password` for storing user passwords. T
 
 ```sql
 CREATE TABLE password (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    hashed_password TEXT NOT NULL,
-    user_id TEXT NOT NULL REFERENCES user(id)
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    hashed_password VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL REFERENCES user(id)
 );
 
 INSERT INTO password (hashed_password, user_id)

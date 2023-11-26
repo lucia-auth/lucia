@@ -44,7 +44,6 @@ CREATE TABLE oauth_account (
     provider_id TEXT NOT NULL,
     provider_user_id TEXT NOT NULL,
     user_id TEXT NOT NULL REFERENCES user(id),
-
     PRIMARY KEY (provider_id, provider_user_id)
 );
 
