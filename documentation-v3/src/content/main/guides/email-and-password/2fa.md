@@ -2,7 +2,7 @@
 title: "Two-factor authorization"
 ---
 
-This guide shows how to implement two-factor authorization using time-based OTP (TOTP) and authenticator apps.
+The guide covers how to implement two-factor authorization using time-based OTP (TOTP) and authenticator apps.
 
 ## Update database
 
@@ -77,6 +77,8 @@ await db
 	.update({
 		two_factor_secret: encodeHex(twoFactorSecret)
 	});
+
+// pass the website's name and the user identifier (e.g. email, username)
 const uri = createTOTPKeyURI("my-app", user.email, twoFactorSecret);
 
 // use any image generator
