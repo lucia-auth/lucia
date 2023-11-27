@@ -52,7 +52,7 @@ You can keep using the key table, but we recommend using dedicated tables for ea
 
 ### OAuth
 
-This creates a dedicated model for storing all user OAuth accounts.
+This creates a dedicated model for user OAuth accounts.
 
 ```prisma
 model User {
@@ -87,7 +87,7 @@ WHERE "hashed_password" IS NULL;
 
 ### Email/password
 
-This creates a dedicated model for storing passwords.
+This creates a dedicated model for user passwords.
 
 ```prisma
 model User {
