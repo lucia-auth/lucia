@@ -17,7 +17,9 @@ model Session {
 }
 ```
 
-Run `prisma migrate` **with the `--create-only` flag.**
+If you're fine with clearing your session table, you can now migrate your database and you're done updating it.
+
+However, if you'd like to keep your session data, first run `prisma migrate` **with the `--create-only` flag.**
 
 ```
 npx prisma migrate dev --name updated_session --create-only
