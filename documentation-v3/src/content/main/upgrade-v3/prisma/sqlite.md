@@ -20,10 +20,10 @@ model Session {
 Run `prisma migrate` **with the `--create-only` flag.**
 
 ```
-npx prisma migrate dev --name update_session --create-only
+npx prisma migrate dev --name updated_session --create-only
 ```
 
-Find the migration file inside `prisma/migrations/X_update_session` and replace it with the SQL below. Make sure to alter it if you have custom session attributes.
+Find the migration file inside `prisma/migrations/X_updated_session` and replace it with the SQL below. Make sure to alter it if you have custom session attributes.
 
 ```sql
 CREATE TABLE "new_Session" (
@@ -43,7 +43,7 @@ ALTER TABLE "new_Session" RENAME TO "Session";
 Finally, run the migration:
 
 ```
-npx prisma migrate dev --name update_session
+npx prisma migrate dev --name updated_session
 ```
 
 ## Replace key table

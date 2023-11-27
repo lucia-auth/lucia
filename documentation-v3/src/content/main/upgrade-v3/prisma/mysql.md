@@ -20,10 +20,10 @@ model Session {
 Run `prisma migrate` **with the `--create-only` flag.**
 
 ```
-npx prisma migrate dev --name update_session --create-only
+npx prisma migrate dev --name updated_session --create-only
 ```
 
-Find the migration file inside `prisma/migrations/X_update_session` and replace it with the SQL below. Make sure to alter it if you have custom session attributes.
+Find the migration file inside `prisma/migrations/X_updated_session` and replace it with the SQL below. Make sure to alter it if you have custom session attributes.
 
 ```sql
 ALTER TABLE `Session` ADD `expiresAt` DATETIME(3), DROP FOREIGN KEY `Session_user_id_fkey`;
@@ -41,7 +41,7 @@ ADD CONSTRAINT `Session_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`i
 Finally, run the migration:
 
 ```
-npx prisma migrate dev --name update_session
+npx prisma migrate dev --name updated_session
 ```
 
 ## Replace key table
