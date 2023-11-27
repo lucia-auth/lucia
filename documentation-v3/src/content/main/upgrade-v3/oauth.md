@@ -2,10 +2,9 @@
 title: "Upgrade OAuth setup to v3"
 ---
 
-
 ## Update database
 
-You can continue using the keys table but recommend creating a dedicated table for storing OAuth accounts, as shown in the database migration guides.
+You can continue using the keys table but we recommend creating a dedicated table for storing OAuth accounts, as shown in the database migration guides.
 
 ## Replace OAuth integration
 
@@ -72,14 +71,19 @@ const tokens = await githubAuth.validateAuthorizationCode(code);
 // use the access token to get the user
 const githubUser = await githubAuth.getUser(tokens.accessToken);
 
-// manually check instead of using `getExistingUser()`
-const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
+const existingAccount = await db
+	.table("oauth_account")
+	.where("provider_id", "=", "github")
+	.where("provider_user_id", "=", githubUser.id)
+	.get();
 
-if (existingUser) {
+if (existingAccount) {
 	// simplified `createSession()` - seconds params for session attributes
 	const session = await auth.createSession(existingUser.id, {});
+
 	// `createSessionCookie()` now takes a session ID instead of the entire session object
 	const sessionCookie = auth.createSessionCookie(session.id);
+
 	// set session cookie as usual (using `Response` as example)
 	return new Response(null, {
 		status: 302,
@@ -92,12 +96,20 @@ if (existingUser) {
 
 // v2 IDs have length of 15
 const userId = generateId(15);
+
+await db.beginTransaction();
 // create user manually
 await db.table("user").insert({
 	id: userId,
-	username: github.login,
-	github_id: github.id
+	username: github.login
 });
+// store oauth account
+await db.table("oauth_account").insert({
+	provider_id: "github",
+	provider_user_id: githubUser.id,
+	user_id: userId
+});
+await db.commit();
 
 // simplified `createSession()` - seconds params for session attributes
 const session = await auth.createSession(userId, {});

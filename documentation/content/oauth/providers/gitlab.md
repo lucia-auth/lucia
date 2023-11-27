@@ -114,7 +114,7 @@ type GitlabUser = {
 	color_scheme_id: number;
 	projects_limit: number;
 	current_sign_in_at: string;
-	identities: { provider: string; extern_uid: string }[];
+	identities: { provider_id string; extern_uid: string }[];
 	can_create_group: boolean;
 	can_create_project: boolean;
 	two_factor_enabled: boolean;
