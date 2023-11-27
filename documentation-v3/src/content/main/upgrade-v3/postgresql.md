@@ -62,7 +62,7 @@ SELECT hashed_password, user_id FROM user_key
 WHERE SUBSTRING(id, 1, POSITION(':' IN id)-1) = 'email';
 ```
 
-Alternatively, you can store the user's credentials in the user table.
+Alternatively, you can store the user's credentials in the user table if you only work with email/password.
 
 ```sql
 START TRANSACTION;

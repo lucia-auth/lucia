@@ -67,7 +67,7 @@ SELECT hashed_password, user_id FROM key
 WHERE substr(id, 1, instr(id, ':')-1) = 'email';
 ```
 
-Alternatively, you can store the user's credentials in the user table. Unfortunately, since SQLite's `ALTER` statement only supports a limited number of operations, you'd have to recreate tables that references the user table.
+Alternatively, you can store the user's credentials in the user table if you only work with email/password. Unfortunately, since SQLite's `ALTER` statement only supports a limited number of operations, you'd have to recreate tables that references the user table.
 
 ```sql
 BEGIN TRANSACTION;
