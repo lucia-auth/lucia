@@ -43,9 +43,9 @@ import { mongoose } from "@lucia-auth/adapter-mongoose";
 import mongodb from "mongoose";
 
 // see next section for schema
-const User = mongoose.model();
-const Key = mongoose.model();
-const Session = mongoose.model();
+const User = mongodb.model();
+const Key = mongodb.model();
+const Session = mongodb.model();
 
 const auth = lucia({
 	adapter: mongoose({
