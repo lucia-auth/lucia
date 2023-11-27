@@ -1,5 +1,5 @@
 ---
-title: "Upgrade password based setup to v3"
+title: "Upgrade password-based auth to v3"
 ---
 
 ## Update database
