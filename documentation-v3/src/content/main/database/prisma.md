@@ -12,12 +12,12 @@ npm install @lucia-auth/adapter-prisma
 
 ```prisma
 model User {
-  id       String    @id @unique
+  id       String    @id
   sessions Session[]
 }
 
 model Session {
-  id        String   @id @unique
+  id        String   @id
   userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)

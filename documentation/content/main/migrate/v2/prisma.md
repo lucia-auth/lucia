@@ -36,7 +36,7 @@ Remove `Key(primary_key)` and `Key(expires)` from the schema.
 
 ```prisma
 model AuthKey {
-  id              String   @id @unique
+  id              String   @id
   hashed_password String?
   user_id         String
   auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)

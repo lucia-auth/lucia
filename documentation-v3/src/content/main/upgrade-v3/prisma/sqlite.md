@@ -10,7 +10,7 @@ The main changes to the session table is that `idle_expires` and `active_expires
 
 ```prisma
 model Session {
-    id        String   @id @unique
+    id        String   @id
     userId    String
     expiresAt DateTime
     user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
@@ -28,12 +28,12 @@ Find the migration file inside `prisma/migrations/X_update_session` and replace 
 ```sql
 CREATE TABLE "new_Session" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "userId" TEXT NOT NULL REFERENCES user(id),
+    "userId" TEXT NOT NULL REFERENCES "User"("id"),
     "expiresAt" DATETIME NOT NULL
 );
 
-INSERT INTO "new_Session" (id, userId, expiresAt)
-SELECT id, user_id, idle_expires FROM "Session";
+INSERT INTO "new_Session" ("id", "userId", "expiresAt")
+SELECT "id", "user_id", "idle_expires" FROM "Session";
 
 DROP TABLE "Session";
 
@@ -56,7 +56,7 @@ This creates a dedicated model for storing all user OAuth accounts.
 
 ```prisma
 model User {
-    id            String         @id @unique
+    id            String         @id
     sessions      Session[]
     oauthAccounts OauthAccount[]
 }
@@ -80,9 +80,9 @@ npx prisma migrate dev --name added_oauth_account_table
 Finally, copy the data from the key table. This assumes all keys where `hashed_password` column is null are for OAuth accounts.
 
 ```sql
-INSERT INTO OauthAccount (providerId, providerUserId, userId)
-SELECT substr(id, 1, instr(id, ':')-1), substr(id, instr(id, ':')+1), user_id FROM "Key"
-WHERE hashed_password IS NULL;
+INSERT INTO "OauthAccount" ("providerId", "providerUserId", "userId")
+SELECT substr("id", 1, instr("id", ':')-1), substr("id", instr("id", ':')+1), "user_id" FROM "Key"
+WHERE "hashed_password" IS NULL;
 ```
 
 ### Email/password
@@ -91,7 +91,7 @@ This creates a dedicated model for storing passwords.
 
 ```prisma
 model User {
-    id        String         @id @unique
+    id        String         @id
     sessions  Session[]
     passwords OauthAccount[]
 }
@@ -113,7 +113,7 @@ npx prisma migrate dev --name added_password_table
 Finally, copy the data from the key table. This assumes the provider id for emails was `email` and that you're already storing the users' emails in the user table.
 
 ```sql
-INSERT INTO Password (hashedPassword, userId)
-SELECT hashed_password, user_id FROM Key
-WHERE substr(id, 1, instr(id, ':')-1) = 'email';
+INSERT INTO "Password" ("hashedPassword", "userId")
+SELECT "hashed_password", "user_id" FROM "Key"
+WHERE substr("id", 1, instr("id", ':')-1) = 'email';
 ```

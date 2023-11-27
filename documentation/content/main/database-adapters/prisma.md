@@ -81,14 +81,14 @@ You can add additional columns to the user model to store user attributes, and t
 
 ```prisma
 model User {
-  id           String    @id @unique
+  id           String    @id
 
   auth_session Session[]
   key          Key[]
 }
 
 model Session {
-  id             String @id @unique
+  id             String @id
   user_id        String
   active_expires BigInt
   idle_expires   BigInt
@@ -98,7 +98,7 @@ model Session {
 }
 
 model Key {
-  id              String  @id @unique
+  id              String  @id
   hashed_password String?
   user_id         String
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
