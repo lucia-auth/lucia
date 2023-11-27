@@ -27,6 +27,8 @@ npx prisma migrate dev --name updated_session --create-only
 
 Find the migration file inside `prisma/migrations/X_updated_session` and replace it with the SQL below. Make sure to alter it if you have custom session attributes.
 
+**This script assumes your session and user models are named `Session` and `User`.**
+
 ```sql
 ALTER TABLE "Session"
 DROP CONSTRAINT "Session_user_id_fkey",

@@ -2,11 +2,49 @@
 title: "Upgrade your SQLite database to v3"
 ---
 
+## Update the adapter
+
+Install the latest version of the SQLite adapter package.
+
+```
+npm install @lucia-auth/adapter-sqlite@latest
+```
+
+Initialize the adapter:
+
+```ts
+import {
+	BetterSqlite3Adapter,
+	CloudflareD1Adapter,
+	LibSQLAdapter
+} from "@lucia-auth/adapter-mysql";
+
+new BetterSqlite3Adapter(db, {
+	// table names
+	user: "user",
+	session: "session"
+});
+
+new CloudflareD1Adapter(d1, {
+	// table names
+	user: "user",
+	session: "session"
+});
+
+new LibSQLAdapter(db, {
+	// table names
+	user: "user",
+	session: "session"
+});
+```
+
 ## Update session table
 
 The main changes to the session table is that `idle_expires` and `active_expires` columns are replaced with a single `expires_at` column. Unlike the previous columns, this takes a UNIX time in _seconds_.
 
 Make sure to use transactions and add any additional columns in your existing session table when creating the new table and copying the data.
+
+**Check your table names before running the code.**
 
 ```sql
 BEGIN TRANSACTION;

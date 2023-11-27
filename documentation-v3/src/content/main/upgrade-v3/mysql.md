@@ -2,9 +2,37 @@
 title: "Upgrade your MySQL database to v3"
 ---
 
+## Update the adapter
+
+Install the latest version of the MySQL adapter package.
+
+```
+npm install @lucia-auth/adapter-mysql@latest
+```
+
+Initialize the adapter:
+
+```ts
+import { Mysql2Adapter, PlanetScaleAdapter } from "@lucia-auth/adapter-mysql";
+
+new Mysql2Adapter(pool, {
+	// table names
+	user: "user",
+	session: "user_session"
+});
+
+new PlanetScaleAdapter(connection, {
+	// table names
+	user: "user",
+	session: "user_session"
+});
+```
+
 ## Update session table
 
 The main changes to the session table is that `idle_expires` and `active_expires` columns are replaced with a single `expires_at` column. Unlike the previous columns, it's a `DATETIME` column.
+
+**Check your table names before running the code.**
 
 ```sql
 ALTER TABLE user_session ADD expires_at DATETIME;

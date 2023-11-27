@@ -2,9 +2,39 @@
 title: "Upgrade your PostgreSQL database to v3"
 ---
 
+## Update the adapter
+
+Install the latest version of the PostgreSQL adapter package.
+
+```
+npm install @lucia-auth/adapter-postgresql@latest
+```
+
+Initialize the adapter:
+
+```ts
+import { NodePostgresAdapter, PostgresJsAdapter } from "@lucia-auth/adapter-postgresql";
+
+// previously named `pg` adapter
+new NodePostgresAdapter(pool, {
+	// table names
+	user: "auth_user",
+	session: "user_session"
+});
+
+// previously named `postgres` adapter
+new PostgresJsAdapter(sql, {
+	// table names
+	user: "auth_user",
+	session: "user_session"
+});
+```
+
 ## Update session table
 
 The main changes to the session table is that `idle_expires` and `active_expires` columns are replaced with a single `expires_at` column. Unlike the previous columns, it's a `DATETIME` column.
+
+**Check your table names before running the code.**
 
 ```sql
 START TRANSACTION;
