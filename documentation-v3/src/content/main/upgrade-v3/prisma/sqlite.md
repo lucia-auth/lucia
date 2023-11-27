@@ -6,34 +6,7 @@ The v3 Prisma adapter now requires all fields to be `camelCase`.
 
 ## Update session table
 
-The main changes to the session table is that `idle_expires` and `active_expires` fields are replaced with a single `expiresAt` field. Unlike the previous columns, it's a `DateTime` type.
-
-Make sure to use transactions and add any additional columns in your existing session table when creating the new table and copying the data.
-
-```sql
-BEGIN TRANSACTION;
-
-CREATE TABLE NewSession (
-    id TEXT NOT NULL PRIMARY KEY,
-    userId TEXT NOT NULL REFERENCES user(id),
-    expiresAt INTEGER NOT NULL
-);
-
-INSERT INTO NewSession (id, userId, expiresAt)
-SELECT id, user_id, idle_expires / 1000 FROM Session;
-
-DROP TABLE Session;
-
-ALTER TABLE NewSession RENAME TO Session;
-```
-
-Check your new `session` table looks right. If not run `ROLLBACK` to rollback the transaction. If you're ready, commit the transaction:
-
-```sql
-COMMIT;
-```
-
-Next add a `Session` model.
+The main changes to the session table is that `idle_expires` and `active_expires` fields are replaced with a single `expiresAt` field. Unlike the previous columns, it's a `DateTime` type. Update the `Session` model. Make sure to add any custom attributes you previously had. 
 
 ```prisma
 model Session {
@@ -44,10 +17,33 @@ model Session {
 }
 ```
 
-Finally, generate the Prisma client types (**Do not use `migrate`**):
+Run `prisma migrate` **with the `--create-only` flag.**
 
 ```
-npx prisma generate
+npx prisma migrate dev --name update_session --create-only
+```
+
+Find the migration file inside `prisma/migrations/X_update_session` and replace it with the SQL below. Make sure to alter it if you have custom session attributes.
+
+```sql
+CREATE TABLE "new_Session" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL REFERENCES user(id),
+    "expiresAt" DATETIME NOT NULL
+);
+
+INSERT INTO "new_Session" (id, userId, expiresAt)
+SELECT id, user_id, idle_expires FROM "Session";
+
+DROP TABLE "Session";
+
+ALTER TABLE "new_Session" RENAME TO "Session";
+```
+
+Finally, run the migration:
+
+```
+npx prisma migrate dev --name update_session
 ```
 
 ## Replace key table
@@ -84,8 +80,8 @@ npx prisma migrate dev --name added_oauth_account_table
 Finally, copy the data from the key table. This assumes all keys where `hashed_password` column is null are for OAuth accounts.
 
 ```sql
-INSERT INTO oauth_account (providerId, providerUserId, user_id)
-SELECT substr(id, 1, instr(id, ':')-1), substr(id, instr(id, ':')+1), user_id FROM key
+INSERT INTO OauthAccount (providerId, providerUserId, userId)
+SELECT substr(id, 1, instr(id, ':')-1), substr(id, instr(id, ':')+1), user_id FROM "Key"
 WHERE hashed_password IS NULL;
 ```
 
@@ -117,7 +113,7 @@ npx prisma migrate dev --name added_password_table
 Finally, copy the data from the key table. This assumes the provider id for emails was `email` and that you're already storing the users' emails in the user table.
 
 ```sql
-INSERT INTO password (hashed_password, user_id)
-SELECT hashed_password, user_id FROM key
+INSERT INTO Password (hashedPassword, userId)
+SELECT hashed_password, user_id FROM Key
 WHERE substr(id, 1, instr(id, ':')-1) = 'email';
 ```
