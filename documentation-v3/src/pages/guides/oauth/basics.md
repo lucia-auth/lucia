@@ -61,7 +61,7 @@ Import `GitHub` from Arctic and initialize it with the client ID and secret.
 // auth.ts
 import { GitHub } from "arctic";
 
-export const githubAuth = new Github(clientId, clientSecret);
+export const githubAuth = new GitHub(clientId, clientSecret);
 ```
 
 ## Creating authorization URL

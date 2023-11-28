@@ -3,6 +3,18 @@ layout: "@layouts/MainLayout.astro"
 title: "Getting started"
 ---
 
+This guide is also available for:
+
+- [Astro]()
+- [Elysia]()
+- [Express]()
+- [Hono]()
+- [Next.js App router]()
+- [Next.js Pages router]()
+- [Node.js]()
+- [Nuxt]()
+- [SvelteKit]()
+
 ## Installation
 
 Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [`oslo`](), which Lucia is built on, for various auth utilities (which this docs use).
