@@ -1,4 +1,5 @@
 ---
+layout: "@layouts/MainLayout.astro"
 title: "Upgrade password-based auth to v3"
 ---
 

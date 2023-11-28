@@ -1,0 +1,92 @@
+---
+import { isSelected } from "./shared";
+import type { Content, Page } from "./shared";
+
+const starterGuidesPages: Page[] = [
+	["Github OAuth", "/starter-guides/github-oauth"],
+	["Username and password", "/starter-guides/username-and-password"]
+];
+
+const basicsPages: Page[] = [
+	["Sessions", "/basics/sessions"],
+	["Users", "/basics/users"],
+	["Handle requests", "/basics/handle-requests"],
+	["Using cookies", "/basics/cookies"],
+	["Using bearer tokens", "/basics/bearer-tokens"],
+	["Configuration", "/basics/configuration"],
+	["Troubleshooting", "/basics/help"]
+];
+
+const guidesPages: Page[] = [
+	["OAuth", "/guides/oauth"],
+	["Email and password", "/guides/email-and-password"],
+	["Passkeys", "/guides/passkeys"],
+	["Improving sessions", "/guides/improving-sessions"]
+];
+
+const content: Content = [
+	["Getting-started", "/getting-started"],
+	["Upgrade to v3", "/upgrade-v3"],
+	["Database", "/database"],
+	{
+		title: "Starter guides",
+		pages: starterGuidesPages
+	},
+	{
+		title: "Basics",
+		pages: basicsPages
+	},
+	{
+		title: "Guides",
+		pages: guidesPages
+	}
+];
+---
+
+<ul class="">
+	{
+		content.map((item) => {
+			if (Array.isArray(item)) {
+				return (
+					<li class="my-1">
+						<a
+							class:list={[
+								"hover:underline",
+								{
+									"text-indigo-400": isSelected(item[1], Astro.url.pathname)
+								}
+							]}
+							href={item[1]}
+						>
+							{item[0]}
+						</a>{" "}
+					</li>
+				);
+			}
+			return (
+				<li class="mt-4">
+					<p class="text-sm font-medium">{item.title}</p>
+					<ul>
+						{item.pages.map((page) => {
+							return (
+								<li class="my-1">
+									<a
+										class:list={[
+											"hover:underline",
+											{
+												"text-indigo-400": isSelected(page[1], Astro.url.pathname)
+											}
+										]}
+										href={page[1]}
+									>
+										{page[0]}
+									</a>{" "}
+								</li>
+							);
+						})}
+					</ul>
+				</li>
+			);
+		})
+	}
+</ul>

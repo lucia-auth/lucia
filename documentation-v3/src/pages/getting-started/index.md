@@ -1,4 +1,5 @@
 ---
+layout: "@layouts/MainLayout.astro"
 title: "Getting started"
 ---
 
@@ -6,7 +7,7 @@ title: "Getting started"
 
 Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [`oslo`](), which Lucia is built on, for various auth utilities (which this docs use).
 
-```npm
+```
 npm install lucia oslo
 pnpm add lucia oslo
 yarn add lucia oslo

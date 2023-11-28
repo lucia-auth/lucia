@@ -1,4 +1,5 @@
 ---
+layout: "@layouts/MainLayout.astro"
 title: "Upgrade OAuth setup to v3"
 ---
 

@@ -1,4 +1,5 @@
 ---
+layout: "@layouts/MainLayout.astro"
 title: "Upgrade your PostgreSQL database to v3"
 ---
 

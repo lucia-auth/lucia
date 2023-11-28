@@ -1,4 +1,5 @@
 ---
+layout: "@layouts/MainLayout.astro"
 title: "Upgrade Prisma and your MySQL database to v3"
 ---
 

@@ -1,0 +1,45 @@
+<article class="w-full md">
+	<slot />
+</article>
+
+<style>
+	:global(.md h1) {
+		@apply mb-10 break-words text-3xl font-semibold md:text-4xl;
+	}
+	:global(.md h2) {
+		@apply mb-4 mt-12 text-2xl font-medium md:text-3xl;
+	}
+	:global(.md h3) {
+		@apply text-xl font-medium;
+	}
+	:global(.md > p) {
+		@apply my-4;
+	}
+	:global(.md > ul) {
+		@apply mb-6 mt-4 list-inside list-disc pl-2;
+	}
+	:global(.md > ul > li > ul) {
+		@apply list-inside list-disc pl-6;
+	}
+	:global(.md p a) {
+		@apply text-indigo-400 underline hover:no-underline;
+	}
+	:global(.md li a) {
+		@apply text-indigo-400 underline hover:no-underline;
+	}
+	:global(.md p > code, .md li > code, .md p > a > code, .md li > a > code) {
+		@apply text-sm;
+	}
+	:global(.md pre code a) {
+		@apply underline decoration-indigo-400 hover:text-indigo-400 hover:no-underline;
+	}
+	:global(.md pre) {
+		@apply mb-6 mt-4 w-full overflow-auto rounded-md bg-zinc-100 p-4 text-sm leading-snug;
+	}
+	:root {
+		--astro-code-color-background: rgb(246, 246, 246);
+		--astro-code-token-keyword: rgb(235, 72, 105);
+		--astro-code-token-string-expression: rgb(77, 102, 183);
+		--astro-code-token-comment: rgb(175, 175, 175);
+	}
+</style>

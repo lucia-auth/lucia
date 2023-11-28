@@ -1,4 +1,5 @@
 ---
+layout: "@layouts/MainLayout.astro"
 title: "Upgrade Prisma and your SQLite database to v3"
 ---
 

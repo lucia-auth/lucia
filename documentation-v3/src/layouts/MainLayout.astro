@@ -1,0 +1,27 @@
+---
+import MarkdownArticle from "src/components/MarkdownArticle.astro";
+import MainNavMenu from "../components/nav-menus/MainNavMenu.astro";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body class="w-full flex">
+		<main class="max-w-5xl mx-auto pt-12 w-full">
+			<div class="fixed w-72 shrink-0 hidden md:block h-screen overflow-auto pb-24 mt-8">
+				<MainNavMenu />
+			</div>
+			<div class="ml-72 px-4">
+				<h1 class="text-4xl font-semibold">{Astro.props.content.title}</h1>
+				<MarkdownArticle>
+					<slot />
+				</MarkdownArticle>
+			</div>
+		</main>
+	</body>
+</html>

@@ -1,4 +1,5 @@
 ---
+layout: "@layouts/MainLayout.astro"
 title: "Custom OAuth 2.0 providers"
 ---
 
