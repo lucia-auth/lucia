@@ -1,6 +1,6 @@
 ---
 layout: "@layouts/DocLayout.astro"
-title: "Upgrade Prisma project to v3"
+title: "Upgrade your Prisma project to v3"
 ---
 
 ## Update the adapter
@@ -24,6 +24,6 @@ new PrismaAdapter(client.session, client.user);
 
 ## Update schema and database
 
-- [MySQL]()
-- [PostgreSQL]()
-- [SQLite]()
+- [MySQL](/upgrade-v3/prisma/mysql)
+- [PostgreSQL](/upgrade-v3/prisma/postgresql)
+- [SQLite](/upgrade-v3/prisma/sqlite)

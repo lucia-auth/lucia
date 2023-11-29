@@ -107,17 +107,19 @@ declare module "lucia" {
 
 Refer to each database migration guide:
 
-- [Mongoose]()
-- [MySQL]()
-- [PostgreSQL]()
-- [Prisma]()
-- [SQLite]()
+- [Mongoose](/upgrade-v3/mongoose)
+- [MySQL](/upgrade-v3/mysql)
+- [PostgreSQL](/upgrade-v3/postgresql)
+- [Prisma](/upgrade-v3/prisma)
+- [SQLite](/upgrade-v3/sqlite)
 
 The following packages are deprecated:
 
 - `@lucia-auth/adapter-mongoose` (see Mongoose migration guide)
 - `@lucia-auth/adapter-session-redis`
 - `@lucia-auth/adapter-session-unstorage`
+
+If you're using a session adapter, we recommend building a [custom adapter]() as the API have been greatly simplified.
 
 ## Session validation
 
@@ -164,8 +166,8 @@ authRequest.deleteSessionCookie();
 
 Refer to these guides:
 
-- [Upgrade OAuth setup to v3]()
-- [Upgrade Password-based auth to v3]()
+- [Upgrade OAuth setup to v3](/upgrade-v3/oauth)
+- [Upgrade Password-based auth to v3](/upgrade-v3/password)
 
 ## Framework specific changes
 
