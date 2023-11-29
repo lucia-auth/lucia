@@ -10,7 +10,7 @@ type Props = MarkdownLayoutProps<{
 ---
 
 <MainLayout title={Astro.props.frontmatter.title}>
-    <h1 class="text-4xl font-semibold">{Astro.props.frontmatter.title}</h1>
+    <h1 class="text-4xl font-semibold mb-4">{Astro.props.frontmatter.title}</h1>
     <MarkdownArticle>
         <slot />
     </MarkdownArticle>
