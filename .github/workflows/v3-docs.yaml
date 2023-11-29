@@ -1,0 +1,28 @@
+name: "Deploy v3 docs"
+on:
+  push:
+    branches:
+      - docs-v3
+
+jobs:
+  auri:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup actions
+        uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.5.1
+          registry-url: https://registry.npmjs.org
+      - name: install dependencies
+        run: |
+          npm i -g pnpm
+          pnpm install --no-frozen-lockfile
+      - name: build
+        run: (cd documentation-v3 && pnpm build)
+      - name: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy dist --project-name lucia-v3 --branch main
