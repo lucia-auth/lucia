@@ -4,8 +4,6 @@ export interface Section {
 	pages: Page[];
 }
 
-export type Content = Array<Page | Section>;
-
 export function isSelected(href: string, currentPathname: string): boolean {
 	if (removeLeadingSlash(href) === removeLeadingSlash(currentPathname)) {
 		return true;

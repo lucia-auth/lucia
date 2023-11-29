@@ -3,13 +3,13 @@ layout: "@layouts/MainLayout.astro"
 title: "Upgrade to Lucia v3"
 ---
 
-Lucia v3 is a big change to the project. The library is now more focused and even more flexible, while keeping everything easy to use and understand.
+Version 3.0 rethinks Lucia and the role it should play into your application. We have stripped out all the annoying bits, and everything else we kept has been refined even more. Everything is more flexible, and just all around easier to understand and work with. 
 
 We estimate it shouldn't take longer than an hour to upgrade your project. If you're having issues with the migration or have any questions, feel free to ask on our [Discord]() server. Click [here for the full changelog]().
 
 ## Major changes
 
-The biggest change in Lucia v3 is that keys have been removed. We believe it was too limiting and ultimately an unnecessary concept that made many projects more complex than it needed to. Another big change is that Lucia no longer handles user creation, so `createUser()` among other APIs have been removed.
+The biggest change to Lucia is that keys have been removed entirely. We believe it was too limiting and ultimately an unnecessary concept that made many projects more complex than it needed to be. Another big change is that Lucia no longer handles user creation, so `createUser()` among other APIs have been removed.
 
 For a simple password based auth, the password can just be stored in the user table.
 

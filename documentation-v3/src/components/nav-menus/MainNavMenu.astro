@@ -1,6 +1,12 @@
 ---
 import { isSelected } from "./shared";
-import type { Content, Page } from "./shared";
+import type { Section, Page } from "./shared";
+
+const startHerePages: Page[] = [
+	["Getting-started", "/getting-started"],
+	["Upgrade to v3", "/upgrade-v3"],
+	["Database", "/database"]
+];
 
 const starterGuidesPages: Page[] = [
 	["GitHub OAuth", "/starter-guides/github-oauth"],
@@ -24,10 +30,17 @@ const guidesPages: Page[] = [
 	["Improving sessions", "/guides/improving-sessions"]
 ];
 
-const content: Content = [
-	["Getting-started", "/getting-started"],
-	["Upgrade to v3", "/upgrade-v3"],
-	["Database", "/database"],
+const communityPages: Page[] = [
+	["Discord", "/_"],
+	["GitHub", "/_"],
+	["Twitter", "/_"],
+];
+
+const sections: Section[] = [
+	{
+		title: "Start here",
+		pages: startHerePages
+	},
 	{
 		title: "Starter guides",
 		pages: starterGuidesPages
@@ -39,48 +52,36 @@ const content: Content = [
 	{
 		title: "Guides",
 		pages: guidesPages
+	},
+	{
+		title: "Community",
+		pages: communityPages
 	}
 ];
 ---
 
-<ul class="">
+<ul class="text-sm">
 	{
-		content.map((item) => {
-			if (Array.isArray(item)) {
-				return (
-					<li class="my-1">
-						<a
-							class:list={[
-								"hover:underline",
-								{
-									"text-indigo-400": isSelected(item[1], Astro.url.pathname)
-								}
-							]}
-							href={item[1]}
-						>
-							{item[0]}
-						</a>{" "}
-					</li>
-				);
-			}
+		sections.map((section) => {
 			return (
-				<li class="mt-4">
-					<p class="text-sm font-medium">{item.title}</p>
+				<li class="mt-6">
+					<p class="mb-1 text-sm font-medium">{section.title}</p>
 					<ul>
-						{item.pages.map((page) => {
+						{section.pages.map((page) => {
 							return (
 								<li class="my-1">
 									<a
 										class:list={[
 											"hover:underline",
 											{
-												"text-indigo-400": isSelected(page[1], Astro.url.pathname)
+												"text-zinc-600": !isSelected(page[1], Astro.url.pathname),
+												"text-main": isSelected(page[1], Astro.url.pathname)
 											}
 										]}
 										href={page[1]}
 									>
-										{page[0]}
-									</a>{" "}
+										{page[0] }
+									</a>
 								</li>
 							);
 						})}

@@ -1,6 +1,12 @@
 ---
 import MarkdownArticle from "src/components/MarkdownArticle.astro";
 import MainNavMenu from "../components/nav-menus/MainNavMenu.astro";
+
+import type { MarkdownLayoutProps } from "astro";
+
+type Props = MarkdownLayoutProps<{
+	title: string;
+}>;
 ---
 
 <html lang="en">
@@ -9,19 +15,49 @@ import MainNavMenu from "../components/nav-menus/MainNavMenu.astro";
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>{Astro.props.frontmatter.title}</title>
 	</head>
-	<body class="w-full flex">
-		<main class="max-w-5xl mx-auto pt-12 w-full">
-			<div class="fixed w-72 shrink-0 hidden md:block h-screen overflow-auto pb-24 mt-8">
-				<MainNavMenu />
+	<body class="text-zinc-900 leading-relaxed">
+		<!-- <header class="border-b w-full fixed pt-3 pb-2 bg-white px-4 md:px-8 lg:px-16">
+			<div class="mx-auto max-w-5xl w-full">
+				<a href="/" class="font-medium text-xl">Lucia</a>
 			</div>
-			<div class="ml-72 px-4">
-				<h1 class="text-4xl font-semibold">{Astro.props.content.title}</h1>
-				<MarkdownArticle>
-					<slot />
-				</MarkdownArticle>
+		</header> -->
+		<main class="w-full md:px-4">
+			<nav class="md:hidden w-full fixed border-b bg-white pt-3 pb-2 max-h-screen flex flex-col">
+				<header class="flex place-items-center place-content-between px-4">
+					<a href="/" class="font-medium text-xl">Lucia</a>
+					<button id="nav-button">Open</button>
+				</header>
+				<div class="px-4 overflow-auto overscroll-contain hidden pb-4" id="mobile-nav-menu">
+					<MainNavMenu />
+				</div>
+			</nav>
+			<div class="max-w-5xl mx-auto w-full px-4 md:px-0">
+				<div class="fixed w-60 shrink-0 hidden md:block h-screen pt-8 pr-4">
+					<a href="/" class="font-medium text-2xl">Lucia</a>
+					<div class="overflow-auto h-full pb-24">
+						<MainNavMenu />
+					</div>
+				</div>
+				<div class="md:ml-60 pt-20 md:pt-12 pb-16">
+					<h1 class="text-4xl font-semibold">{Astro.props.frontmatter.title}</h1>
+					<MarkdownArticle>
+						<slot />
+					</MarkdownArticle>
+				</div>
 			</div>
 		</main>
 	</body>
 </html>
+
+<script>
+	document.getElementById("nav-button")!.addEventListener("click", (e) => {
+		const navMenu = document.getElementById("mobile-nav-menu")!;
+		if (navMenu.classList.contains("hidden")) {
+			navMenu.classList.remove("hidden");
+		} else {
+			navMenu.classList.add("hidden");
+		}
+	});
+</script>
