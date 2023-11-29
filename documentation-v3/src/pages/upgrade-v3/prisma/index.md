@@ -8,7 +8,7 @@ title: "Upgrade your Prisma project to v3"
 Install the latest version of the Prisma adapter.
 
 ```
-npm install @lucia-auth/adapter-prisma@latest
+npm install @lucia-auth/adapter-prisma@beta
 ```
 
 Initialize the adapter:

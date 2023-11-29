@@ -8,7 +8,7 @@ title: "Upgrade your PostgreSQL database to v3"
 Install the latest version of the PostgreSQL adapter package.
 
 ```
-npm install @lucia-auth/adapter-postgresql@latest
+npm install @lucia-auth/adapter-postgresql@beta
 ```
 
 Initialize the adapter:

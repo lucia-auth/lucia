@@ -27,7 +27,7 @@ await db.table("user").insert({
 Lucia is also now built with [Oslo]() which provides useful auth-related utilities. While not required, we recommend installing it alongside Lucia as all guides in the documentation use it some way or another.
 
 ```
-npm install lucia@latest oslo@latest
+npm install lucia@beta oslo@beta
 ```
 
 ## Initialize Lucia

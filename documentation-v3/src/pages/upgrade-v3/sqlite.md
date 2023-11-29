@@ -8,7 +8,7 @@ title: "Upgrade your SQLite database to v3"
 Install the latest version of the SQLite adapter package.
 
 ```
-npm install @lucia-auth/adapter-sqlite@latest
+npm install @lucia-auth/adapter-sqlite@beta
 ```
 
 Initialize the adapter:
