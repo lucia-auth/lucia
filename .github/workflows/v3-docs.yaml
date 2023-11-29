@@ -5,7 +5,7 @@ on:
       - docs-v3
 
 jobs:
-  auri:
+  v3-docs:
     runs-on: ubuntu-latest
     steps:
       - name: setup actions
