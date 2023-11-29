@@ -1,4 +1,4 @@
 ---
-layout: "@layouts/MainLayout.astro"
+layout: "@layouts/DocLayout.astro"
 title: "GitHub OAuth"
 ---

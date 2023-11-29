@@ -1,12 +1,9 @@
 ---
-import MarkdownArticle from "src/components/MarkdownArticle.astro";
 import MainNavMenu from "../components/nav-menus/MainNavMenu.astro";
 
-import type { MarkdownLayoutProps } from "astro";
-
-type Props = MarkdownLayoutProps<{
-	title: string;
-}>;
+interface Props {
+    title: string
+}
 ---
 
 <html lang="en">
@@ -15,14 +12,9 @@ type Props = MarkdownLayoutProps<{
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{Astro.props.frontmatter.title}</title>
+		<title>{Astro.props.title}</title>
 	</head>
 	<body class="text-zinc-900 leading-relaxed">
-		<!-- <header class="border-b w-full fixed pt-3 pb-2 bg-white px-4 md:px-8 lg:px-16">
-			<div class="mx-auto max-w-5xl w-full">
-				<a href="/" class="font-medium text-xl">Lucia</a>
-			</div>
-		</header> -->
 		<main class="w-full md:px-4">
 			<nav class="md:hidden w-full fixed border-b bg-white pt-3 pb-2 max-h-screen flex flex-col">
 				<header class="flex place-items-center place-content-between px-4">
@@ -41,15 +33,21 @@ type Props = MarkdownLayoutProps<{
 					</div>
 				</div>
 				<div class="md:ml-60 pt-20 md:pt-12 pb-16">
-					<h1 class="text-4xl font-semibold">{Astro.props.frontmatter.title}</h1>
-					<MarkdownArticle>
-						<slot />
-					</MarkdownArticle>
+					<slot/>
 				</div>
 			</div>
 		</main>
 	</body>
 </html>
+
+<style>
+    	:root {
+		--astro-code-color-background: rgb(246, 246, 246);
+		--astro-code-token-keyword: rgb(235, 72, 105);
+		--astro-code-token-string-expression: rgb(77, 102, 183);
+		--astro-code-token-comment: rgb(175, 175, 175);
+	}
+</style>
 
 <script>
 	document.getElementById("nav-button")!.addEventListener("click", (e) => {

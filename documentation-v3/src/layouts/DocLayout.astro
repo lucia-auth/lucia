@@ -1,0 +1,17 @@
+---
+import MarkdownArticle from "src/components/MarkdownArticle.astro";
+
+import type { MarkdownLayoutProps } from "astro";
+import MainLayout from "./MainLayout.astro";
+
+type Props = MarkdownLayoutProps<{
+	title: string;
+}>;
+---
+
+<MainLayout title={Astro.props.frontmatter.title}>
+    <h1 class="text-4xl font-semibold">{Astro.props.frontmatter.title}</h1>
+    <MarkdownArticle>
+        <slot />
+    </MarkdownArticle>
+</MainLayout>

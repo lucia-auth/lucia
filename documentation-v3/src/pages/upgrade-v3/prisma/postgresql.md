@@ -1,5 +1,5 @@
 ---
-layout: "@layouts/MainLayout.astro"
+layout: "@layouts/DocLayout.astro"
 title: "Upgrade Prisma and your PostgreSQL database to v3"
 ---
 

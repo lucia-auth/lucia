@@ -1,5 +1,5 @@
 ---
-layout: "@layouts/MainLayout.astro"
+layout: "@layouts/DocLayout.astro"
 title: "Upgrade Prisma project to v3"
 ---
 

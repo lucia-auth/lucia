@@ -1,5 +1,5 @@
 ---
-layout: "@layouts/MainLayout.astro"
+layout: "@layouts/DocLayout.astro"
 title: "Upgrade to Lucia v3"
 ---
 
