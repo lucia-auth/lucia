@@ -6,7 +6,7 @@ title: "Mongoose"
 You can use the [MongoDB adapter]() from the `@lucia-auth/adapter-mongodb` package with Mongoose.
 
 ```
-npm install @lucia-auth/adapter-mongodb
+npm install @lucia-auth/adapter-mongodb@beta
 ```
 
 ## Usage

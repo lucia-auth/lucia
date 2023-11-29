@@ -11,7 +11,7 @@ The `@lucia-auth/adapter-sqlite` package provides adapters for SQLites drivers:
 - LibSQL (Turso)
 
 ```
-npm install @lucia-auth/adapter-sqlite
+npm install @lucia-auth/adapter-sqlite@beta
 ```
 
 ## Schema

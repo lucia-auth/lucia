@@ -6,7 +6,7 @@ title: "Prisma"
 The `@lucia-auth/adapter-prisma` package provides adapters for Prisma.
 
 ```
-npm install @lucia-auth/adapter-prisma
+npm install @lucia-auth/adapter-prisma@beta
 ```
 
 ## Schema

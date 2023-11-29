@@ -9,7 +9,7 @@ title: "PostgreSQL"
 - Postgres.js (`postgres`)
 
 ```
-npm install @lucia-auth/adapter-postgresql
+npm install @lucia-auth/adapter-postgresql@beta
 ```
 
 ## Schema

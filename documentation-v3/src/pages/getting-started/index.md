@@ -17,12 +17,10 @@ A framework-specific guide is also available for:
 
 ## Installation
 
-Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [`oslo`](), which Lucia is built on, for various auth utilities (which this docs use).
+Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
 
 ```
-npm install lucia oslo
-pnpm add lucia oslo
-yarn add lucia oslo
+npm install lucia@beta oslo
 ```
 
 ## Setup your database
