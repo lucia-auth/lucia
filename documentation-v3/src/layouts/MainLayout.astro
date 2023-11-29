@@ -2,7 +2,7 @@
 import MainNavMenu from "../components/nav-menus/MainNavMenu.astro";
 
 interface Props {
-    title: string
+	title: string;
 }
 ---
 
@@ -12,6 +12,23 @@ interface Props {
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{Astro.props.title}</title>
+
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:site" content="@lucia_auth" />
+		<meta name="twitter:title" content={Astro.props.title} />
+		<meta
+			name="twitter:description"
+			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
+		/>
+		<!-- <meta property="og:image" content="" /> -->
+
+        <meta property="og:site_name" content="Lucia" />
+		<meta property="og:title" content={Astro.props.title} />
+		<meta property="og:url" content="https://v3.lucia-auth.com" />
+		<meta
+			property="og:description"
+			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
+		/>
 	</head>
 	<body class="text-zinc-900 leading-relaxed">
 		<main class="w-full md:px-4">
@@ -32,7 +49,7 @@ interface Props {
 					</div>
 				</div>
 				<div class="md:ml-60 pt-20 md:pt-12 pb-24">
-					<slot/>
+					<slot />
 				</div>
 			</div>
 		</main>
@@ -40,7 +57,7 @@ interface Props {
 </html>
 
 <style>
-    	:root {
+	:root {
 		--astro-code-color-background: rgb(246, 246, 246);
 		--astro-code-token-keyword: rgb(235, 72, 105);
 		--astro-code-token-string-expression: rgb(77, 102, 183);
