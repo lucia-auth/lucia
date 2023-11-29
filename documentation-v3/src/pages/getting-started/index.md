@@ -3,7 +3,7 @@ layout: "@layouts/DocLayout.astro"
 title: "Getting started"
 ---
 
-This guide is also available for:
+A framework-specific guide is also available for:
 
 - [Astro]()
 - [Elysia]()
