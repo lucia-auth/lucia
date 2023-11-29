@@ -2,7 +2,7 @@ name: "Deploy v3 docs"
 on:
   push:
     branches:
-      - docs-v3
+      - v3-docs
 
 jobs:
   v3-docs:
