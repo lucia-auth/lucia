@@ -5,7 +5,7 @@ title: "Upgrade to Lucia v3"
 
 Version 3.0 rethinks Lucia and the role it should play into your application. We have stripped out all the annoying bits, and everything else we kept has been refined even more. Everything is more flexible, and just all around easier to understand and work with. 
 
-We estimate it shouldn't take longer than an hour to upgrade your project. If you're having issues with the migration or have any questions, feel free to ask on our [Discord]() server. Click [here for the full changelog]().
+We estimate it shouldn't take longer than an hour to upgrade your project. If you're having issues with the migration or have any questions, feel free to ask on our [Discord server](https://discord.com/invite/PwrK3kpVR3). Click [here for the full changelog]().
 
 ## Major changes
 
