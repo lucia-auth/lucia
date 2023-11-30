@@ -5,7 +5,7 @@ title: "Using cookies"
 
 Cookies is the preferred way of storing and sending session ids when the frontend and backend is hosted on the same domain.
 
-If you're working with cookies, **CSRF protection must be implemented** to prevent [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf).
+If you're working with cookies, **CSRF protection must be implemented** to prevent [cross site request forgery (CSRF)](https://owasp.org/www-community/attacks/csrf). CSRF protection is enabled by default when [using `AuthRequest`](#using-authrequest).
 
 ## Session cookies
 
@@ -22,7 +22,7 @@ Secure
 
 ## Using `AuthRequest`
 
-You can create an [`AuthRequest`]() instance to interact with requests and responses in most frameworks. See [Handle requests]() page to learn how to initialize it.
+You can create an [`AuthRequest`]() instance to interact with requests and responses in most frameworks. See [Handle requests]() page to learn how to initialize it. This is the easiest way to work with cookies as Lucia will handle CSRF protection, cookies, and session validation.
 
 ```ts
 const authRequest = auth.handleRequest(/* ... */);
@@ -30,7 +30,7 @@ const authRequest = auth.handleRequest(/* ... */);
 
 ### Validate requests
 
-Use [`AuthRequest.validate()`]() to validate the request origin and session cookie. You can configure the CSRF protection with the [`csrfProtection` configuration]().
+Use [`AuthRequest.validate()`]() to validate the request origin and session cookie. CSRF protection is done by comparing the `Origin` and `Host` header. You can configure the CSRF protection with the [`csrfProtection` configuration]().
 
 ```ts
 const { session, user } = await authRequest.validate();
