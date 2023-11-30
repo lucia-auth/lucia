@@ -25,6 +25,7 @@ jobs:
       - name: install wrangler
         run: npm i -g wrangler
       - name: build
-        run: (cd documentation-v3 && pnpm build)
+        working-directory: documentation-v3
+        run: pnpm build
       - name: deploy
-        run: wrangler pages deploy dist --project-name lucia-v3
+        run: wrangler pages deploy documentation-v3/dist --project-name lucia-v3
