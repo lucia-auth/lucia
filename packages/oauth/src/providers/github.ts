@@ -13,9 +13,7 @@ type Config = {
 	clientSecret: string;
 	scope?: string[];
 	redirectUri?: string;
-	enterprise?: {
-		serverUrl: string;
-	};
+	enterpriseUrl?: string;
 };
 
 const PROVIDER_ID = "github";
@@ -41,7 +39,7 @@ export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
-		const endpoint = this.isEnterprise() ? this.config.enterprise!.serverUrl : "https://github.com/";
+		const endpoint = this.isEnterprise() ? this.config.enterpriseUrl : "https://github.com/";
 
 		return await createOAuth2AuthorizationUrl(
 			`${endpoint}login/oauth/authorize`,
@@ -91,7 +89,7 @@ export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	};
 
 	private isEnterprise = (): boolean => {
-		return this.config.enterprise !== undefined;
+		return this.config.enterpriseUrl !== undefined;
 	};
 }
 
