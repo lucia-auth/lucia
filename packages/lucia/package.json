@@ -25,12 +25,12 @@
 	],
 	"exports": {
 		".": "./dist/index.js",
-		"./middleware": "./dist/middleware/index.js"
+		"./request": "./dist/request/index.js"
 	},
 	"typesVersions": {
 		"*": {
-			"middleware": [
-				"dist/middleware/index.d.ts"
+			"request": [
+				"dist/request/index.d.ts"
 			]
 		}
 	},

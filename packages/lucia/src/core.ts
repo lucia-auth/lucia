@@ -73,21 +73,17 @@ export class Lucia<
 		this.sessionController = new SessionController(
 			options?.sessionExpiresIn ?? new TimeSpan(30, "d")
 		);
-		const sessionCookieExpires = options?.sessionCookie?.expires ?? true;
+
 		const sessionCookieName = options?.sessionCookie?.name ?? "auth_session";
-		if (sessionCookieExpires === true) {
-			this.sessionCookieController = new SessionCookieController(
-				sessionCookieName,
-				this.sessionController.expiresIn,
-				options?.sessionCookie?.attributes
-			);
-		} else {
-			this.sessionCookieController = new SessionCookieController(
-				sessionCookieName,
-				new TimeSpan(365 * 2, "d"),
-				options?.sessionCookie?.attributes
-			);
+		let sessionExpiresIn = this.sessionController.expiresIn;
+		if (options?.sessionCookie?.expires === false) {
+			sessionExpiresIn = new TimeSpan(365 * 2, "d");
 		}
+		this.sessionCookieController = new SessionCookieController(
+			sessionCookieName,
+			sessionExpiresIn,
+			options?.sessionCookie?.attributes
+		);
 	}
 
 	public async getUserSessions(userId: string): Promise<Session[]> {
