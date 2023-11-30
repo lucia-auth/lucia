@@ -3,7 +3,7 @@ layout: "@layouts/DocLayout.astro"
 title: "OAuth basics"
 ---
 
-For a step-by-step, framework specific tutorial, see the [GitHub OAuth]() starter guide.
+For a step-by-step, framework specific tutorial, see the [GitHub OAuth](/tutorials/) tutorial.
 
 We recommend using [Arctic]() for implementing OAuth 2.0. It is a lightweight library that provides APIs for creating authorization URLs, validating callbacks, getting the current user, and refreshing access tokens. This is the easiest way to implement OAuth with Lucia. It supports all major providers, and you can find the full list of OAuth providers [here](). This page will use GitHub, and while most providers have similar APIs, there might be some minor differences between them.
 

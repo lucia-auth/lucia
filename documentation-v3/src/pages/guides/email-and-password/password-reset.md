@@ -3,6 +3,8 @@ layout: "@layouts/DocLayout.astro"
 title: "Password reset"
 ---
 
+Allow users to reset their password by sending them a reset link to their inbox.
+
 ## Update database
 
 Create a table for storing for password reset tokens.
