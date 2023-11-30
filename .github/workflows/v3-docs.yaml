@@ -23,7 +23,7 @@ jobs:
           npm i -g pnpm
           pnpm i --no-frozen-lockfile
       - name: install wrangler
-        run: pnpm i -g wrangler
+        run: npm i -g wrangler
       - name: build
         run: (cd documentation-v3 && pnpm build)
       - name: deploy
