@@ -38,7 +38,7 @@ Here's the base config. Lucia is now initialized using the `Lucia` class, which 
 import { Lucia, TimeSpan } from "lucia";
 import { astro } from "lucia/middleware";
 
-export const lucia = new Lucia(adapter, {
+export const auth = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			secure: env === "PRODUCTION" // replaces `env` config
@@ -53,7 +53,7 @@ Here's the full updated configuration.
 import { Lucia, TimeSpan } from "lucia";
 import { astro } from "lucia/middleware";
 
-export const lucia = new Lucia(adapter, {
+export const auth = new Lucia(adapter, {
 	getSessionAttributes: (attributes) => {
 		return {
 			ipCountry: attributes.ip_country
@@ -88,7 +88,7 @@ export const lucia = new Lucia(adapter, {
 Lucia v3 uses the newer module syntax instead of `.d.ts` files for declaring types for improved agronomics and monorepo support. The `Lucia` type declaration is required.
 
 ```ts
-export const lucia = new Lucia();
+export const auth = new Lucia();
 
 declare module "lucia" {
 	interface Register {
@@ -143,7 +143,7 @@ const sessionId = session.id;
 
 ```ts
 // v3
-const { session, user } = await lucia.validateSession(sessionId);
+const { session, user } = await auth.validateSession(sessionId);
 if (!session) {
 	// invalid session
 }
@@ -161,8 +161,8 @@ const { session, user } = await authRequest.validate(sessionId);
 `createSessionCookie()` now takes a session ID instead of a session object, and `createBlankSessionCookie()` should be used for creating blank session cookies.
 
 ```ts
-const sessionCookie = lucia.createSessionCookie(session.id);
-const blankSessionCookie = lucia.createBlankSessionCookie(session.id);
+const sessionCookie = auth.createSessionCookie(session.id);
+const blankSessionCookie = auth.createBlankSessionCookie(session.id);
 ```
 
 `AuthRequest.setSession()` has been replaced by `AuthRequest.setSessionCookie()` (which takes a session ID), and you must use `AuthRequest.deleteSessionCookie()` to a delete session cookie.
