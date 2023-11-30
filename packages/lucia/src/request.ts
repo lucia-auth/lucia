@@ -1,82 +1,91 @@
-import type { SessionCookie } from "oslo/session";
-import type { Lucia, Session, User } from "./core.js";
+import { verifyRequestOrigin } from "oslo/request";
 
-export class AuthRequest<_Lucia extends Lucia = Lucia> {
-	private auth: _Lucia;
-	private sessionCookie: string | null;
-	private bearerToken: string | null;
-	private setCookie: (cookie: SessionCookie) => void;
+import type { Lucia, RequestContext, Session, User } from "./core.js";
 
-	constructor(
-		auth: _Lucia,
-		sessionCookie: string | null,
-		bearerToken: string | null,
-		setCookie: (cookie: SessionCookie) => void
-	) {
+export class AuthRequest {
+	private auth: Lucia;
+	private requestContext: RequestContext;
+
+	constructor(auth: Lucia, requestContext: RequestContext) {
 		this.auth = auth;
-		this.sessionCookie = sessionCookie;
-		this.bearerToken = bearerToken;
-		this.setCookie = setCookie;
+		this.requestContext = requestContext;
 	}
 
-	private validatePromise: Promise<
-		{ user: User; session: Session } | { user: null; session: null }
-	> | null = null;
-
-	private validateBearerTokenPromise: Promise<
-		{ user: User; session: Session } | { user: null; session: null }
-	> | null = null;
-
 	public setSessionCookie(sessionId: string): void {
-		if (this.sessionCookie !== sessionId) {
-			this.validatePromise = null;
-		}
-		this.setCookie(this.auth.createSessionCookie(sessionId));
+		this.requestContext.setCookie(this.auth.createSessionCookie(sessionId));
 	}
 
 	public deleteSessionCookie(): void {
-		if (this.sessionCookie === null) return;
-		this.sessionCookie = null;
-		this.validatePromise = null;
-		this.setCookie(this.auth.createBlankSessionCookie());
+		this.requestContext.setCookie(this.auth.createBlankSessionCookie());
 	}
 
-	public async validate(): Promise<
-		{ user: User; session: Session } | { user: null; session: null }
-	> {
-		if (!this.validatePromise) {
-			this.validatePromise = new Promise(async (resolve) => {
-				if (!this.sessionCookie) {
-					return resolve({ session: null, user: null });
-				}
-				const result = await this.auth.validateSession(this.sessionCookie);
-				if (result.session && result.session.fresh) {
-					const sessionCookie = this.auth.createSessionCookie(result.session.id);
-					this.setCookie(sessionCookie);
-				}
-				return resolve(result);
-			});
+	public async validateSessionCookie(csrfOptions?: {
+		allowedSubdomains?: string[] | "*";
+		hostHeader?: string;
+	}): Promise<{ user: User; session: Session } | { user: null; session: null }> {
+		const whitelistMethods = ["GET", "HEAD", "OPTIONS", "TRACE"];
+		const whitelistedMethod = whitelistMethods.includes(this.requestContext.method.toUpperCase());
+		const allowedDomains = csrfOptions?.allowedSubdomains ?? [];
+		if (!whitelistedMethod && allowedDomains !== "*") {
+			const hostHeaderName = csrfOptions?.hostHeader ?? "Host";
+			const host = this.requestContext.headers.get(hostHeaderName);
+			if (host) {
+				allowedDomains.push(host);
+			}
+			const originHeader = this.requestContext.headers.get("Origin") ?? "";
+			const validRequestOrigin = verifyRequestOrigin(originHeader, allowedDomains);
+			if (!validRequestOrigin) {
+				return {
+					session: null,
+					user: null
+				};
+			}
 		}
-		return await this.validatePromise;
+		const cookieHeader = this.requestContext.headers.get("Cookie");
+		if (!cookieHeader) {
+			return {
+				session: null,
+				user: null
+			};
+		}
+		const sessionCookie = this.auth.readSessionCookie(cookieHeader);
+		if (!sessionCookie) {
+			return {
+				session: null,
+				user: null
+			};
+		}
+		const { session, user } = await this.auth.validateSession(sessionCookie);
+		if (!session) {
+			return { session, user };
+		}
+		if (session.fresh) {
+			const sessionCookie = this.auth.createSessionCookie(session.id);
+			this.requestContext.setCookie(sessionCookie);
+		}
+		return {
+			session,
+			user
+		};
 	}
 
 	public async validateBearerToken(): Promise<
 		{ user: User; session: Session } | { user: null; session: null }
 	> {
-		if (!this.validateBearerTokenPromise) {
-			this.validateBearerTokenPromise = new Promise(async (resolve, reject) => {
-				if (!this.bearerToken) {
-					return resolve({ session: null, user: null });
-				}
-				const result = await this.auth.validateSession(this.bearerToken);
-				return resolve(result);
-			});
+		const authorizationHeader = this.requestContext.headers.get("Authorization");
+		if (!authorizationHeader) {
+			return {
+				session: null,
+				user: null
+			};
 		}
-		return await this.validateBearerTokenPromise;
-	}
-
-	public invalidate(): void {
-		this.validatePromise = null;
-		this.validateBearerTokenPromise = null;
+		const parts = authorizationHeader.split(" ");
+		if (parts.length !== 2 || parts[0] !== "Bearer") {
+			return {
+				session: null,
+				user: null
+			};
+		}
+		return await this.auth.validateSession(parts[1]);
 	}
 }

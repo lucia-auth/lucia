@@ -1,8 +1,6 @@
 import { AuthRequest } from "./request.js";
-import { lucia as defaultMiddleware } from "./middleware/index.js";
 import { SessionController, SessionCookieController } from "oslo/session";
 import { TimeSpan, isWithinExpirationDate } from "oslo";
-import { verifyRequestOrigin } from "oslo/request";
 import { generateId } from "./crypto.js";
 
 import type { SessionCookie } from "oslo/session";
@@ -13,11 +11,11 @@ import type {
 	RegisteredLucia
 } from "./index.js";
 
-type SessionAttributes = RegisteredLucia extends Lucia<any, infer _SessionAttributes, any>
+type SessionAttributes = RegisteredLucia extends Lucia<infer _SessionAttributes, any>
 	? _SessionAttributes
 	: {};
 
-type UserAttributes = RegisteredLucia extends Lucia<any, any, infer _UserAttributes>
+type UserAttributes = RegisteredLucia extends Lucia<any, infer _UserAttributes>
 	? _UserAttributes
 	: {};
 
@@ -33,16 +31,12 @@ export interface User extends UserAttributes {
 }
 
 export class Lucia<
-	_Middleware extends Middleware = Middleware<[RequestContext]>,
 	_SessionAttributes extends {} = Record<never, never>,
 	_UserAttributes extends {} = Record<never, never>
 > {
 	private adapter: Adapter;
 	private sessionController: SessionController;
 	private sessionCookieController: SessionCookieController;
-	private csrfProtectionEnabled = true;
-	private csrfProtectionOptions: CSRFProtectionOptions = {};
-	private middleware: _Middleware;
 
 	private getSessionAttributes: (
 		databaseSessionAttributes: DatabaseSessionAttributes
@@ -53,8 +47,6 @@ export class Lucia<
 	constructor(
 		adapter: Adapter,
 		options?: {
-			middleware?: _Middleware;
-			csrfProtection?: boolean | CSRFProtectionOptions;
 			sessionExpiresIn?: TimeSpan;
 			sessionCookie?: SessionCookieOptions;
 			getSessionAttributes?: (
@@ -64,7 +56,6 @@ export class Lucia<
 		}
 	) {
 		this.adapter = adapter;
-		this.middleware = options?.middleware ?? (defaultMiddleware() as any);
 
 		// we have to use `any` here since TS can't do conditional return types
 		this.getUserAttributes = (databaseUserAttributes): any => {
@@ -96,18 +87,6 @@ export class Lucia<
 				new TimeSpan(365 * 2, "d"),
 				options?.sessionCookie?.attributes
 			);
-		}
-		if (options?.csrfProtection !== undefined) {
-			if (typeof options.csrfProtection === "boolean") {
-				this.csrfProtectionEnabled = options.csrfProtection;
-				this.csrfProtectionOptions = {};
-			} else {
-				this.csrfProtectionEnabled = true;
-				this.csrfProtectionOptions = options.csrfProtection;
-			}
-		}
-		if (options?.middleware) {
-			this.middleware = options.middleware;
 		}
 	}
 
@@ -209,48 +188,8 @@ export class Lucia<
 		return token ?? null;
 	}
 
-	public handleRequest(
-		...args: _Middleware extends Middleware<infer _Args> ? _Args : []
-	): AuthRequest<typeof this> {
-		const middleware = this.middleware as Middleware;
-		const requestContext = middleware({
-			args,
-			sessionCookieName: this.sessionCookieController.cookieName
-		});
-		const authorizationHeader = requestContext.headers.get("Authorization");
-		let bearerToken = authorizationHeader;
-		if (authorizationHeader) {
-			const parts = authorizationHeader.split(" ");
-			if (parts.length === 2 && parts[0] === "Bearer") {
-				bearerToken = parts[1];
-			}
-		}
-		const whitelistMethods = ["GET", "HEAD", "OPTIONS", "TRACE"];
-		const whitelistedMethod = whitelistMethods.includes(requestContext.method.toUpperCase());
-		if (this.csrfProtectionEnabled && !whitelistedMethod) {
-			const validRequestOrigin = this.verifyRequestOrigin(requestContext.headers);
-			if (!validRequestOrigin) {
-				return new AuthRequest(this, null, bearerToken, requestContext.setCookie);
-			}
-		}
-		const sessionCookie =
-			requestContext.sessionCookie ??
-			this.sessionCookieController.parseCookies(requestContext.headers.get("Cookie") ?? "");
-
-		return new AuthRequest(this, sessionCookie, bearerToken, requestContext.setCookie);
-	}
-
-	public verifyRequestOrigin(headers: Headers): boolean {
-		const requestOrigin = headers.get("Origin");
-		if (!requestOrigin) {
-			return false;
-		}
-		const allowedDomains = this.csrfProtectionOptions.allowedDomains ?? [];
-		const hostHeader = headers.get(this.csrfProtectionOptions.hostHeader ?? "Host");
-		if (hostHeader) {
-			allowedDomains.push(hostHeader);
-		}
-		return verifyRequestOrigin(requestOrigin, allowedDomains);
+	public handleRequest(requestContext: RequestContext): AuthRequest {
+		return new AuthRequest(this, requestContext);
 	}
 
 	public createSessionCookie(sessionId: string): SessionCookie {
@@ -281,17 +220,7 @@ export interface CSRFProtectionOptions {
 }
 
 export interface RequestContext {
-	sessionCookie?: string | null;
 	method: string;
 	headers: Headers;
 	setCookie: (cookie: SessionCookie) => void;
 }
-
-export interface HandleRequestContext<Args extends any[]> {
-	args: Args;
-	sessionCookieName: string;
-}
-
-export type Middleware<Args extends any[] = any> = (
-	context: HandleRequestContext<Args>
-) => RequestContext;
