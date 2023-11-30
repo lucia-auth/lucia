@@ -32,7 +32,7 @@ npm install lucia@beta oslo
 
 ## Initialize Lucia
 
-Here's the base config. Lucia is now initialized using the `Lucia` class, which takes an adapter and an options object. **Make sure to set the `sessionCookie` config**.
+Here's the base config. Lucia is now initialized using the `Lucia` class, which takes an adapter and an options object. **Make sure to configure the `sessionCookie` option**.
 
 ```ts
 import { Lucia, TimeSpan } from "lucia";

@@ -41,7 +41,7 @@ const lucia = new Lucia(adapter, {
 
 ## Can't validate POST requests
 
-If you're using `AuthRequest.validate()` and it returns `null` even if the session cookie exists, it's likely caused by Lucia's CSRF protection. To debug, check the `Origin` and `Host` header. The hostname (domain) must exactly match. You can use a different header to get the host, manually add allowed domains, or disable CSRF protection entirely (not recommended).
+If you're using `AuthRequest.validate()` and it returns `null` even if the session cookie exists, it's likely caused by Lucia's CSRF protection. To debug, check the `Origin` and `Host` header. The hostname (domain) must exactly match. You can use a different header to get the host, manually add allowed domains, or disable CSRF protection entirely (not recommended) using the [`csrfProtection`]() option.
 
 ```ts
 import { Lucia } from "lucia";
