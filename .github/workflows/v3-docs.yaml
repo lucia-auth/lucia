@@ -28,4 +28,4 @@ jobs:
         working-directory: documentation-v3
         run: pnpm build
       - name: deploy
-        run: wrangler pages deploy documentation-v3/dist --project-name lucia-v3
+        run: wrangler pages deploy documentation-v3/dist --project-name lucia-v3 --branch main
