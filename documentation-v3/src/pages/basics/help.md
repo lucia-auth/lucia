@@ -12,7 +12,7 @@ Make sure you've registered your types. Check the `typeof auth` is indeed an ins
 ```ts
 import { Lucia } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	// no ts errors
 });
 
@@ -30,7 +30,7 @@ By default, session cookies have a `Secure` flag, which require HTTPS. You can d
 ```ts
 import { Lucia } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			secure: !devMode // disable when `devMode` is `true`
@@ -46,7 +46,7 @@ If you're using `AuthRequest.validate()` and it returns `null` even if the sessi
 ```ts
 import { Lucia } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	csrfProtection: {
         hostHeader: "X-Forwarded-Host", // use X-Forwarded-Host instead of Host
         allowedDomains: ["api.example.com"] // allow api.example.com
@@ -54,7 +54,7 @@ const auth = new Lucia(adapter, {
 });
 
 // disable CSRF protection
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	csrfProtection: false
 });
 ```

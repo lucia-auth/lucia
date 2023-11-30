@@ -24,7 +24,7 @@ const db = new Kysely<Database>({
 	})
 });
 
-const auth = new Lucia(new Mysql2Adapter(pool, tableNames));
+const adapter = new Mysql2Adapter(pool, tableNames);
 
 interface Database {
 	user: UserTable;
@@ -61,7 +61,7 @@ const db = new Kysely<Database>({
 	})
 });
 
-const auth = new Lucia(new NodePostgresAdapter(pool, tableNames));
+const adapter = new NodePostgresAdapter(pool, tableNames);
 
 interface Database {
 	user: UserTable;
@@ -98,7 +98,7 @@ export const db = new Kysely<Database>({
 	})
 });
 
-const auth = new Lucia(new BetterSqlite3Adapter(sqliteDatabase, tableNames));
+const adapter = new BetterSqlite3Adapter(sqliteDatabase, tableNames);
 
 interface Database {
 	user: UserTable;

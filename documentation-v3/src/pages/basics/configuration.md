@@ -26,7 +26,7 @@ See [middleware]().
 import { Lucia } from "lucia";
 import { sveltekit } from "lucia/middleware";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	middleware: sveltekit()
 });
 ```
@@ -40,7 +40,7 @@ By default, Lucia uses the `Host` header to determine the current domain. You ca
 ```ts
 import { Lucia } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	csrfProtection: {
 		allowedHeaders: ["api.example.com"],
 		hostHeader: "X-Forwarded-Host" // default: `Host`
@@ -55,7 +55,7 @@ Configures how long a session is valid max for inactive users. Sessions expirati
 ```ts
 import { Lucia, TimeSpan } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	sessionExpiresIn: new TimeSpan(2, "w")
 });
 ```
@@ -67,7 +67,7 @@ Configures the session cookie. See [Using cookies]() for the default session coo
 ```ts
 import { Lucia } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		name: "session",
 		expires: false, // session cookies have very long lifespan (2 years)
@@ -87,7 +87,7 @@ Transforms database session attributes, which is typed as `DatabaseSessionAttrib
 ```ts
 import { Lucia } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	getSessionAttributes: (attributes) => {
 		return {
 			ipCountry: attributes.ip_country
@@ -112,7 +112,7 @@ Transforms database user attributes, which is typed as `DatabaseUserAttributes`.
 ```ts
 import { Lucia } from "lucia";
 
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	getUserAttributes: (attributes) => {
 		return {
 			username: attributes.username

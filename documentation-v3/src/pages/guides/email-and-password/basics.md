@@ -15,10 +15,10 @@ Add a unique `email` and `hashed_password` column to the user table.
 Declare the type with `DatabaseUserAttributes` and add the attributes the user object using the `getUserAttributes()` configuration.
 
 ```ts
-// auth.ts
+// lucia.ts
 import { Lucia } from "lucia";
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			secure: env === "PRODUCTION" // set `Secure` flag in HTTPS
@@ -57,7 +57,7 @@ export function isValidEmail(email: string): boolean {
 Create a `/signup` route. This will accept POST requests with an email and password. Hash the password, create a new user, and create a new session.
 
 ```ts
-import { auth } from "./auth.js";
+import { lucia } from "./auth.js";
 import { generateId } from "lucia";
 import { Argon2id } from "oslo/password";
 
@@ -86,8 +86,8 @@ app.post("/signup", async (request: Request) => {
 			hashed_password: hashedPassword
 		});
 
-		const session = await auth.createSession(userId, {});
-		const sessionCookie = auth.createSessionCookie(session.id);
+		const session = await lucia.createSession(userId, {});
+		const sessionCookie = lucia.createSessionCookie(session.id);
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -123,7 +123,7 @@ import { Scrypt, LegacyScrypt } from "lucia";
 Create a `/login` route. This will accept POST requests with an email and password. Get the user with the email, verify the password against the hash, and create a new session.
 
 ```ts
-import { auth } from "./auth.js";
+import { lucia } from "./auth.js";
 import { generateId } from "lucia";
 import { Argon2id } from "oslo/password";
 
@@ -158,8 +158,8 @@ app.post("/login", async (request: Request) => {
 		});
 	}
 
-	const session = await auth.createSession(user.id, {});
-	const sessionCookie = auth.createSessionCookie(session.id);
+	const session = await lucia.createSession(user.id, {});
+	const sessionCookie = lucia.createSessionCookie(session.id);
 	return new Response(null, {
 		status: 302,
 		headers: {

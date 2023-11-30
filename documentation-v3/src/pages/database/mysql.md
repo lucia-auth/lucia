@@ -39,14 +39,12 @@ import { Lucia } from "lucia";
 import { Mysql2Adapter } from "@lucia-auth/adapter-mysql";
 import mysql from "mysql2/promise";
 
-const pool = mysql.createPool()
+const pool = mysql.createPool();
 
-const lucia = new Lucia(
-	new Mysql2Adapter(pool, {
-		user: "user",
-		session: "user_session"
-	})
-);
+const adapter = new Mysql2Adapter(pool, {
+	user: "user",
+	session: "user_session"
+});
 ```
 
 ### PlanetScale serverless
@@ -60,10 +58,8 @@ import { connect } from "@planetscale/database";
 
 const connection = connect();
 
-const lucia = new Lucia(
-	new PlanetScaleAdapter(connection, {
-		user: "user",
-		session: "user_session"
-	})
-);
+const adapter = new PlanetScaleAdapter(connection, {
+	user: "user",
+	session: "user_session"
+});
 ```

@@ -25,7 +25,7 @@ const db = client.db();
 const User = db.collection("users") as Collection<UserDoc>;
 const Session = db.collection("sessions") as Collection<SessionDoc>;
 
-const auth = new Lucia(new MongodbAdapter(Session, User));
+const adapter = new MongodbAdapter(Session, User);
 
 interface UserDoc {
 	_id: string;

@@ -14,7 +14,6 @@ npm install @lucia-auth/adapter-sqlite@beta
 `DrizzleMySQLAdapter` takes a `Database` instance, the session table, and the user table. You can change the `varchar` length. `session(id)` should be able to hold at least 40 chars.
 
 ```ts
-import { Lucia } from "lucia";
 import { DrizzleMySQLAdapter } from "@lucia-auth/adapter-drizzle";
 
 import mysql from "mysql2/promise";
@@ -42,7 +41,7 @@ const sessionTable = mysqlTable("session", {
 	expiresAt: datetime("expires_at").notNull()
 });
 
-const auth = new Lucia(new DrizzleMySQLAdapter(db, sessionTable, userTable));
+const adapter = new DrizzleMySQLAdapter(db, sessionTable, userTable);
 ```
 
 ## PostgreSQL
@@ -50,7 +49,6 @@ const auth = new Lucia(new DrizzleMySQLAdapter(db, sessionTable, userTable));
 `DrizzlePostgreSQLAdapter` takes a `Database` instance, the session table, and the user table.
 
 ```ts
-import { Lucia } from "lucia";
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 
 import pg from "pg";
@@ -75,7 +73,7 @@ const sessionTable = pgTable("session", {
 	}).notNull()
 });
 
-const auth = new Lucia(new DrizzlePostgreSQLAdapter(db, sessionTable, userTable));
+const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
 ```
 
 ## SQLite
@@ -83,7 +81,6 @@ const auth = new Lucia(new DrizzlePostgreSQLAdapter(db, sessionTable, userTable)
 `DrizzleSQLiteAdapter` takes a `Database` instance, the session table, and the user table.
 
 ```ts
-import { Lucia } from "lucia";
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 
 import sqlite from "better-sqlite3";
@@ -105,5 +102,5 @@ const sessionTable = sqliteTable("user_session", {
 	expiresAt: integer("expires_at").notNull()
 });
 
-const auth = new Lucia(new DrizzleSQLiteAdapter(db, sessionTable, userTable));
+const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable);
 ```

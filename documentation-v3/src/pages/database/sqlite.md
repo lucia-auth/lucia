@@ -42,12 +42,10 @@ import sqlite from "better-sqlite3";
 
 const db = sqlite();
 
-const lucia = new Lucia(
-	new BetterSqlite3Adapter(db, {
-		user: "user",
-		session: "session"
-	})
-);
+const adapter = new BetterSqlite3Adapter(db, {
+	user: "user",
+	session: "session"
+});
 ```
 
 ### Bun SQLite
@@ -61,12 +59,10 @@ import { Database } from "bun:sqlite";
 
 const db = new Database();
 
-const lucia = new Lucia(
-	new BunSQLiteAdapter(db, {
-		user: "user",
-		session: "session"
-	})
-);
+const adapter = new BunSQLiteAdapter(db, {
+	user: "user",
+	session: "session"
+});
 ```
 
 ### Cloudflare D1
@@ -80,12 +76,11 @@ import { Lucia } from "lucia";
 import { CloudflareD1Adapter } from "@lucia-auth/adapter-sqlite";
 
 export function initializeLucia(D1: D1Database) {
-	return new Lucia(
-		new CloudflareD1Adapter(D1, {
-			user: "user",
-			session: "session"
-		})
-	);
+	const adapter = new CloudflareD1Adapter(D1, {
+		user: "user",
+		session: "session"
+	});
+	return new Lucia(adapter);
 }
 
 declare module "lucia" {
@@ -108,10 +103,8 @@ const db = createClient({
 	url: "file:test/main.db"
 });
 
-const lucia = new Lucia(
-	new LibSQLAdapter(db, {
-		user: "user",
-		session: "session"
-	})
-);
+const adapter = new LibSQLAdapter(db, {
+	user: "user",
+	session: "session"
+});
 ```

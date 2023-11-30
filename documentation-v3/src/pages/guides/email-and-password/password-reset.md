@@ -91,14 +91,14 @@ app.post("/reset-password/*", async () => {
 		return new Response(400);
 	}
 
-	await auth.invalidateUserSessions(user.id);
+	await lucia.invalidateUserSessions(user.id);
 	const hashedPassword = new Argon2id().hash(password);
 	await db.table("user").where("id", "=", user.id).update({
 		hashed_password: hashedPassword
 	});
 
-	const session = await auth.createSession(user.id, {});
-	const sessionCookie = auth.createSessionCookie(session.id);
+	const session = await lucia.createSession(user.id, {});
+	const sessionCookie = lucia.createSessionCookie(session.id);
 	return new Response(null, {
 		status: 302,
 		headers: {

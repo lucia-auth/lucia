@@ -25,7 +25,7 @@ Secure
 You can create an [`AuthRequest`]() instance to interact with requests and responses in most frameworks. See [Handle requests]() page to learn how to initialize it. This is the easiest way to work with cookies as Lucia will handle CSRF protection, cookies, and session validation.
 
 ```ts
-const authRequest = auth.handleRequest(/* ... */);
+const authRequest = lucia.handleRequest(/* ... */);
 ```
 
 ### Validate requests
@@ -66,26 +66,26 @@ After validating the session, set a new session cookie to update the session exp
 ```ts
 if (request.method !== "GET") {
 	// only do CSRF check for non-GET requests (e.g. POST)
-	const validRequestOrigin = auth.verifyRequestOrigin(request.headers);
+	const validRequestOrigin = lucia.verifyRequestOrigin(request.headers);
 	if (!validRequestOrigin) {
 		throw new Error("Invalid request origin");
 	}
 }
 
-const sessionId = auth.readSessionCookie(request.headers.get("Cookie") ?? "");
+const sessionId = lucia.readSessionCookie(request.headers.get("Cookie") ?? "");
 if (!sessionId) {
 	throw new Error("Missing session cookie");
 }
 
-const { session } = await auth.validateSession(sessionId);
+const { session } = await lucia.validateSession(sessionId);
 if (!session) {
-	const blankSessionCookie = auth.createBlankSessionCookie();
+	const blankSessionCookie = lucia.createBlankSessionCookie();
 	setResponseHeader("Set-Cookie", blankSessionCookie.serialize());
 	throw new Error("Not authenticated");
 }
 if (session.fresh) {
 	// session expiration was extended
-	const sessionCookie = auth.createSessionCookie(session.id);
+	const sessionCookie = lucia.createSessionCookie(session.id);
 	setResponseHeader("Set-Cookie", sessionCookie.serialize());
 }
 ```
@@ -95,7 +95,7 @@ if (session.fresh) {
 You can create a new [`Cookie`]() for a session cookie with [`Lucia.createSessionCookie()`](), which takes a session ID. You can either use `Cookie.serialize()` to set the cookie via the `Set-Cookie` header or use its properties to set cookies with APIs provided by your framework/library.
 
 ```ts
-const sessionCookie = auth.createSessionCookie(sessionId);
+const sessionCookie = lucia.createSessionCookie(sessionId);
 
 // both works
 setResponseHeader("Set-Cookie", sessionCookie.serialize());
@@ -107,7 +107,7 @@ setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 Use [`Lucia.createBlankSessionCookie()`]() to create a blank session cookie that immediately expires. Works similar to `Lucia.createSessionCookie()`.
 
 ```ts
-const blankSessionCookie = auth.createBlankSessionCookie();
+const blankSessionCookie = lucia.createBlankSessionCookie();
 
 // both works
 setResponseHeader("Set-Cookie", blankSessionCookie.serialize());

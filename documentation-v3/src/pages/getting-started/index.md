@@ -23,37 +23,16 @@ Install Lucia using your package manager of your choice. While not strictly nece
 npm install lucia@beta oslo
 ```
 
-## Setup your database
-
-Lucia provides various database adapters. See these guides on various drivers, ORMs, and 
-
-- [Drizzle ORM]()
-- [MongoDB]()
-- [Mongoose]()
-- [MySQL]()
-    - [`mysql2`]()
-    - [PlanetScale serverless]()
-- [PostgreSQL]()
-    - [node-postgres]()
-    - [Postgres.js]()
-- [Prisma]()
-- [SQLite]()
-    - [`better-sqlite3`]()
-    - [Bun SQLite]() (`bun:sqlite`)
-    - [Cloudflare D1]()
-    - [LibSQL]() (Turso)
-
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Make sure to configure your cookies and register your `Lucia` instance type. 
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. **Make sure to configure the `sessionCookie` option and register your `Lucia` instance type.**
 
 ```ts
 import { Lucia } from "lucia";
-import { BetterSQLite3Adapter } from "@lucia-auth/adapter-sqlite"; // your adapter
 
-const adapter = new BetterSQLite3Adapter(db);
+const adapter = new BetterSQLite3Adapter(db); // your adapter
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
             // IMPORTANT!
@@ -62,7 +41,7 @@ export const auth = new Lucia(adapter, {
 	}
 });
 
- // IMPORTANT!
+// IMPORTANT!
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof auth;

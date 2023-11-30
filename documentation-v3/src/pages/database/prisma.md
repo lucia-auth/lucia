@@ -36,5 +36,5 @@ import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
 
-const lucia = new Lucia(new PrismaAdapter(client.session, client.user));
+const adapter = new PrismaAdapter(client.session, client.user);
 ```

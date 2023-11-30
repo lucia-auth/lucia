@@ -46,7 +46,7 @@ app.get("/login/twitter", async (): Promise<Response> => {
 Get the code verifier stored as a cookie and use it alongside the authorization code to validate the callback.
 
 ```ts
-import { twitterAuth, auth } from "./auth.js";
+import { twitterAuth, lucia } from "./auth.js";
 import { parseCookies } from "oslo/cookie";
 
 app.get("/login/twitter/callback", async (request: Request): Promise<Response> => {

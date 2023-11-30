@@ -42,7 +42,7 @@ const existingAccount = await db
 	.get();
 
 if (existingAccount) {
-	const session = await auth.createSession(existingAccount.user_id, {});
+	const session = await lucia.createSession(existingAccount.user_id, {});
 
     // ...
 }
@@ -61,7 +61,7 @@ await db.table("oauth_account").insert({
 });
 await db.commit();
 
-const session = await auth.createSession(userId, {});
+const session = await lucia.createSession(userId, {});
 
 // ...
 ```

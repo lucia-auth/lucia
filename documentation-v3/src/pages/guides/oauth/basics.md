@@ -25,10 +25,10 @@ Add a `username` and a unique `github_id` column to the user table.
 Declare the type with `DatabaseUserAttributes` and add the attributes the user object using the `getUserAttributes()` configuration.
 
 ```ts
-// auth.ts
+// lucia.ts
 import { Lucia } from "lucia";
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			secure: env === "PRODUCTION" // set `Secure` flag in HTTPS
@@ -58,7 +58,7 @@ declare module "lucia" {
 Import `GitHub` from Arctic and initialize it with the client ID and secret.
 
 ```ts
-// auth.ts
+// lucia.ts
 import { GitHub } from "arctic";
 
 export const githubAuth = new GitHub(clientId, clientSecret);
@@ -102,7 +102,7 @@ You can now create a sign in button with just an anchor tag.
 In the callback route, first get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`]() if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
 
 ```ts
-import { githubAuth, auth } from "./auth.js";
+import { githubAuth, lucia } from "./auth.js";
 import { OAuth2RequestError } from "arctic";
 import { generateId } from "lucia";
 import { parseCookies } from "oslo/cookie";
@@ -129,8 +129,8 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
-			const session = await auth.createSession(existingUser.id, {});
-			const sessionCookie = auth.createSessionCookie(session.id);
+			const session = await lucia.createSession(existingUser.id, {});
+			const sessionCookie = lucia.createSessionCookie(session.id);
 			return new Response(null, {
 				status: 302,
 				headers: {
@@ -147,8 +147,8 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 			github_id: github.id
 		});
 
-		const session = await auth.createSession(userId, {});
-		const sessionCookie = auth.createSessionCookie(session.id);
+		const session = await lucia.createSession(userId, {});
+		const sessionCookie = lucia.createSessionCookie(session.id);
 		return new Response(null, {
 			status: 302,
 			headers: {

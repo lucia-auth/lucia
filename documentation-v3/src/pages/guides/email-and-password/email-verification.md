@@ -12,7 +12,7 @@ Add a `email_verified` column. Keep in mind that some database don't supported b
 ```ts
 import { Lucia } from "lucia";
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			secure: env === "PRODUCTION" // set `Secure` flag in HTTPS
@@ -91,8 +91,8 @@ app.post("/signup", async () => {
 	const verificationLink = "http://localhost:3000/email-verification/" + verificationToken;
 	await sendVerificationEmail(email, verificationLink);
 
-	const session = await auth.createSession(userId, {});
-	const sessionCookie = auth.createSessionCookie(session.id);
+	const session = await lucia.createSession(userId, {});
+	const sessionCookie = lucia.createSessionCookie(session.id);
 	return new Response(null, {
 		status: 302,
 		headers: {
@@ -140,13 +140,13 @@ app.get("email-verification/*", async () => {
 		return new Response(400);
 	}
 
-	await auth.invalidateUserSessions(user.id);
+	await lucia.invalidateUserSessions(user.id);
 	await db.table("user").where("id", "=", user.id).update({
 		email_verified: true
 	});
 
-	const session = await auth.createSession(user.id, {});
-	const sessionCookie = auth.createSessionCookie(session.id);
+	const session = await lucia.createSession(user.id, {});
+	const sessionCookie = lucia.createSessionCookie(session.id);
 	return new Response(null, {
 		status: 302,
 		headers: {

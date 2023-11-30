@@ -51,7 +51,7 @@ declare module "lucia" {
 You can then include them into the user object with the `getUserAttributes()` configuration.
 
 ```ts
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	getUserAttributes: (attributes) => {
 		return {
 			username
@@ -59,7 +59,7 @@ const auth = new Lucia(adapter, {
 	}
 });
 
-const { user } = await auth.validateSession();
+const { user } = await lucia.validateSession();
 if (user) {
 	const username = user.username;
 }

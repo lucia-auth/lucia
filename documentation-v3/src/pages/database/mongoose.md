@@ -48,14 +48,14 @@ const Session = mongoose.model(
 			expires_at: {
 				type: Date,
 				required: true
-			},
+			}
 		} as const,
 		{ _id: false }
 	)
 );
 
-const auth = new Lucia(new MongodbAdapter(
+const adapter = new MongodbAdapter(
 	mongoose.connection.collection("sessions"),
 	mongoose.connection.collection("users")
-););
+);
 ```

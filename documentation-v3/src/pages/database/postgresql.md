@@ -39,12 +39,10 @@ import pg from "pg";
 
 const pool = new pg.Pool();
 
-const lucia = new Lucia(
-	new NodePostgresAdapter(pool, {
-		user: "user",
-		session: "session"
-	})
-);
+const adapter = new NodePostgresAdapter(pool, {
+	user: "user",
+	session: "session"
+});
 ```
 
 ### Postgres.js
@@ -58,10 +56,8 @@ import postgres from "postgres";
 
 const sql = postgres();
 
-const lucia = new Lucia(
-	new PostgresJsAdapter(sql, {
-		user: "user",
-		session: "session"
-	})
-);
+const adapter = new PostgresJsAdapter(sql, {
+	user: "user",
+	session: "session"
+});
 ```

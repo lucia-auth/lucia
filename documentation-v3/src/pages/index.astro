@@ -6,10 +6,10 @@ import { getGithubContributors } from "../utils/github";
 
 const code = `import { Lucia } from "lucia"
 
-const auth = new Lucia(new Adapter(db));
+const lucia = new Lucia(new Adapter(db));
 
-const session = await auth.createSession(userId, {});
-await auth.validateSession(session.id);`;
+const session = await lucia.createSession(userId, {});
+await lucia.validateSession(session.id);`;
 
 const contributors = await getGithubContributors();
 ---

@@ -9,7 +9,7 @@ A database is required for storing your users and sessions. Lucia connects to yo
 import { Lucia } from "lucia";
 import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 
-const auth = new Lucia(new BetterSqlite3Adapter(db));
+const lucia = new Lucia(new BetterSqlite3Adapter(db));
 ```
 
 See [`Adapter`]() for building your own adapters

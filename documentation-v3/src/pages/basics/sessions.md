@@ -23,7 +23,7 @@ More specifically, if the session expiration is set to 30 days (default), Lucia 
 ```ts
 import { Lucia, TimeSpan } from "lucia";
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	sessionExpiresIn: new TimeSpan(2, "w") // 2 weeks
 });
 ```
@@ -46,7 +46,7 @@ declare module "lucia" {
 You can then include them into the session object with the `getSessionAttributes()` configuration.
 
 ```ts
-const auth = new Lucia(adapter, {
+const lucia = new Lucia(adapter, {
 	getSessionAttributes: (attributes) => {
 		return {
 			ipCountry: attributes.ip_country
@@ -54,7 +54,7 @@ const auth = new Lucia(adapter, {
 	}
 });
 
-const session = await auth.createSession();
+const session = await lucia.createSession();
 session.ipCountry;
 ```
 
@@ -68,13 +68,13 @@ We do not automatically expose all database columns as
 You can create a new session with `Lucia.createSession()`, which takes a user ID and an empty object.
 
 ```ts
-const session = await auth.createSession(userId, {});
+const session = await lucia.createSession(userId, {});
 ```
 
 If you have database attributes defined, pass their values as the second argument.
 
 ```ts
-const session = await auth.createSession(userId, {
+const session = await lucia.createSession(userId, {
 	ip_country: "us"
 });
 
@@ -93,7 +93,7 @@ declare module "lucia" {
 Use `Lucia.validateSession()` to validate a session using its ID. This will return an object containing a session and user. Both of these will be `null` if the session does not exist in the database or is expired.
 
 ```ts
-const { session, user } = await auth.validateSession(sessionId);
+const { session, user } = await lucia.validateSession(sessionId);
 if (session) {
 	const userId = user.id;
 } else {
@@ -104,7 +104,7 @@ if (session) {
 If `Session.fresh` is `true`, you need to set the session cookie again.
 
 ```ts
-const { session } = await auth.validateSession(sessionId);
+const { session } = await lucia.validateSession(sessionId);
 if (session && session.fresh) {
 	// set session cookie
 }
@@ -115,7 +115,7 @@ if (session && session.fresh) {
 Use `Lucia.invalidateSession()` to invalidate a session. This should be used to sign out users. This will succeed even if the session ID is invalid.
 
 ```ts
-await auth.invalidateSession(sessionId);
+await lucia.invalidateSession(sessionId);
 ```
 
 ### Invalidate all user sessions
@@ -123,7 +123,7 @@ await auth.invalidateSession(sessionId);
 Use `Lucia.invalidateUserSessions()` to invalidate all sessions belonging to a user.
 
 ```ts
-await auth.invalidateUserSessions(userId);
+await lucia.invalidateUserSessions(userId);
 ```
 
 ## Get all user sessions
@@ -131,5 +131,5 @@ await auth.invalidateUserSessions(userId);
 Use `Lucia.getUserSessions()` to get all sessions belonging to a user. This will return an empty array if the user does not exist. Invalid sessions will be omitted from the array.
 
 ```ts
-const sessions = await auth.getUserSessions(userId);
+const sessions = await lucia.getUserSessions(userId);
 ```

@@ -80,10 +80,10 @@ const existingAccount = await db
 
 if (existingAccount) {
 	// simplified `createSession()` - seconds params for session attributes
-	const session = await auth.createSession(existingUser.id, {});
+	const session = await lucia.createSession(existingUser.id, {});
 
 	// `createSessionCookie()` now takes a session ID instead of the entire session object
-	const sessionCookie = auth.createSessionCookie(session.id);
+	const sessionCookie = lucia.createSessionCookie(session.id);
 
 	// set session cookie as usual (using `Response` as example)
 	return new Response(null, {
@@ -113,9 +113,9 @@ await db.table("oauth_account").insert({
 await db.commit();
 
 // simplified `createSession()` - seconds params for session attributes
-const session = await auth.createSession(userId, {});
+const session = await lucia.createSession(userId, {});
 // `createSessionCookie()` now takes a session ID instead of the entire session object
-const sessionCookie = auth.createSessionCookie(session.id);
+const sessionCookie = lucia.createSessionCookie(session.id);
 // set session cookie as usual (using `Response` as example)
 return new Response(null, {
 	status: 302,

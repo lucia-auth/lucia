@@ -12,7 +12,7 @@ Update the user table to include `two_factor_secret` column. You can of course s
 ```ts
 import { Lucia } from "lucia";
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			secure: env === "PRODUCTION" // set `Secure` flag in HTTPS
@@ -64,7 +64,7 @@ Generate a new secret (minimum 20 bytes) and create a new key URI with [`createT
 import { encodeHex } from "oslo/encoding";
 import { createTOTPKeyURI } from "oslo/otp";
 
-const { user } = await auth.validateSession(sessionId);
+const { user } = await lucia.validateSession(sessionId);
 if (!user) {
 	return new Response(null, {
 		status: 401
@@ -96,7 +96,7 @@ import { TOTPController } from "oslo/otp";
 
 let otp: string;
 
-const { user } = await auth.validateSession(sessionId);
+const { user } = await lucia.validateSession(sessionId);
 if (!user) {
 	return new Response(null, {
 		status: 401

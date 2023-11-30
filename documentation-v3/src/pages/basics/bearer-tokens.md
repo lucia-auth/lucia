@@ -14,7 +14,7 @@ Authorization: Bearer <session_id>
 You can create an [`AuthRequest`]() instance to interact with requests and responses in most frameworks. See [Handle requests]() page to learn how to initialize it.
 
 ```ts
-const authRequest = auth.handleRequest(/* ... */);
+const authRequest = lucia.handleRequest(/* ... */);
 ```
 
 ### Validate requests
@@ -32,10 +32,10 @@ Use [`Lucia.readBearerToken()`]() to parse the `Authorization` HTTP header.
 ```ts
 const headers = new Headers();
 
-const sessionId = auth.readBearerToken(headers.get("Authorization") ?? "");
+const sessionId = lucia.readBearerToken(headers.get("Authorization") ?? "");
 if (!sessionId) {
 	throw new Error("Missing session cookie");
 }
 
-const { session } = await auth.validateSession(sessionId);
+const { session } = await lucia.validateSession(sessionId);
 ```
