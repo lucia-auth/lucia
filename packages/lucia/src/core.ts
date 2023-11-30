@@ -1,4 +1,4 @@
-import { AuthRequest } from "./request.js";
+import { LuciaRequest } from "./request.js";
 import { SessionController, SessionCookieController } from "oslo/session";
 import { TimeSpan, isWithinExpirationDate } from "oslo";
 import { generateId } from "./crypto.js";
@@ -188,8 +188,8 @@ export class Lucia<
 		return token ?? null;
 	}
 
-	public handleRequest(requestContext: RequestContext): AuthRequest {
-		return new AuthRequest(this, requestContext);
+	public handleRequest(requestContext: RequestContext): LuciaRequest {
+		return new LuciaRequest(this, requestContext);
 	}
 
 	public createSessionCookie(sessionId: string): SessionCookie {

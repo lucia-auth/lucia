@@ -2,7 +2,7 @@ import { verifyRequestOrigin } from "oslo/request";
 
 import type { Lucia, RequestContext, Session, User } from "./core.js";
 
-export class AuthRequest {
+export class LuciaRequest {
 	private auth: Lucia;
 	private requestContext: RequestContext;
 

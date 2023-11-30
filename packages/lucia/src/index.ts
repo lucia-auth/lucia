@@ -1,5 +1,5 @@
 export { Lucia } from "./core.js";
-export { AuthRequest } from "./request.js";
+export { LuciaRequest } from "./request.js";
 export { Scrypt, LegacyScrypt, generateId } from "./crypto.js";
 export { TimeSpan } from "oslo";
 export { SessionCookie } from "oslo/session";
