@@ -13,6 +13,9 @@ type Config = {
 	clientSecret: string;
 	scope?: string[];
 	redirectUri?: string;
+	enterprise?: {
+		serverUrl: string;
+	};
 };
 
 const PROVIDER_ID = "github";
@@ -38,8 +41,10 @@ export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 	public getAuthorizationUrl = async (): Promise<
 		readonly [url: URL, state: string]
 	> => {
+		const endpoint = this.isEnterprise() ? this.config.enterprise!.serverUrl : "https://github.com/";
+
 		return await createOAuth2AuthorizationUrl(
-			"https://github.com/login/oauth/authorize",
+			`${endpoint}login/oauth/authorize`,
 			{
 				clientId: this.config.clientId,
 				scope: this.config.scope ?? [],
@@ -84,10 +89,16 @@ export class GithubAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			accessTokenExpiresIn: null
 		};
 	};
+
+	private isEnterprise = (): boolean => {
+		return this.config.enterprise !== undefined;
+	};
 }
 
-const getGithubUser = async (accessToken: string): Promise<GithubUser> => {
-	const githubUserRequest = new Request("https://api.github.com/user", {
+const getGithubUser = async (accessToken: string, enterpriseUrl?: string): Promise<GithubUser> => {
+	const endpoint = enterpriseUrl !== undefined ? `${enterpriseUrl}/api/v3/user` : "https://api.github.com/user";
+
+	const githubUserRequest = new Request(endpoint, {
 		headers: {
 			Authorization: authorizationHeader("bearer", accessToken)
 		}
