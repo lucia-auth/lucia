@@ -5,15 +5,14 @@ title: "Getting started"
 
 A framework-specific guide is also available for:
 
-- [Astro]()
-- [Elysia]()
-- [Express]()
-- [Hono]()
-- [Next.js App router]()
-- [Next.js Pages router]()
-- [Node.js]()
-- [Nuxt]()
-- [SvelteKit]()
+- [Astro](/getting-started/astro)
+- [Elysia](/getting-started/elysia)
+- [Express](/getting-started/express)
+- [Hono](/getting-started/hono)
+- [Next.js App router](/getting-started/nextjs-app)
+- [Next.js Pages router](/getting-started/nextjs-pages)
+- [Nuxt](/getting-started/nuxt)
+- [SvelteKit](/getting-started/sveltekit)
 
 ## Installation
 
@@ -25,7 +24,10 @@ npm install lucia@beta oslo
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. **Make sure to configure the `sessionCookie` option and register your `Lucia` instance type.**
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure you:
+
+- Configure the `sessionCookie` option
+- Register your `Lucia` instance type
 
 ```ts
 import { Lucia } from "lucia";
@@ -35,8 +37,8 @@ const adapter = new BetterSQLite3Adapter(db); // your adapter
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
-            // IMPORTANT!
-			secure: PRODUCTION === true // `true` when deploying to HTTPS (production)
+			// set to `true` when using HTTPS
+			secure: process.env.NODE_ENV === "production"
 		}
 	}
 });
@@ -44,7 +46,7 @@ export const lucia = new Lucia(adapter, {
 // IMPORTANT!
 declare module "lucia" {
 	interface Register {
-		Lucia: typeof auth;
+		Lucia: typeof lucia;
 	}
 }
 ```

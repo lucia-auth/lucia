@@ -92,7 +92,7 @@ export const lucia = new Lucia();
 
 declare module "lucia" {
 	interface Register {
-		Lucia: typeof auth;
+		Lucia: typeof lucia;
 		DatabaseUserAttributes: {
 			username: string;
 		};

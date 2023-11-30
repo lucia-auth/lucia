@@ -35,7 +35,7 @@ Defining custom session attributes requires 2 steps. First, add the required col
 ```ts
 declare module "lucia" {
 	interface Register {
-		Lucia: typeof auth;
+		Lucia: typeof lucia;
 		DatabaseSessionAttributes: {
 			ip_country: string;
 		};
@@ -80,7 +80,7 @@ const session = await lucia.createSession(userId, {
 
 declare module "lucia" {
 	interface Register {
-		Lucia: typeof auth;
+		Lucia: typeof lucia;
 		DatabaseSessionAttributes: {
 			ip_country: string;
 		};

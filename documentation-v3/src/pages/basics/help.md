@@ -7,7 +7,7 @@ Here are some common issues and how to resolve them. Feel free to ask for help i
 
 ## `User` and `Session` are typed as `any`
 
-Make sure you've registered your types. Check the `typeof auth` is indeed an instance of `Lucia` (not a function that returns `Lucia`) and that there are no TS errors (including `@ts-ignore`) when declaring `Lucia`. `Register` must be an `interface`, not `type`.
+Make sure you've registered your types. Check the `typeof lucia` is indeed an instance of `Lucia` (not a function that returns `Lucia`) and that there are no TS errors (including `@ts-ignore`) when declaring `Lucia`. `Register` must be an `interface`, not `type`.
 
 ```ts
 import { Lucia } from "lucia";
@@ -18,7 +18,7 @@ const lucia = new Lucia(adapter, {
 
 declare module "lucia" {
 	interface Register {
-		Lucia: typeof auth;
+		Lucia: typeof lucia;
 	}
 }
 ```

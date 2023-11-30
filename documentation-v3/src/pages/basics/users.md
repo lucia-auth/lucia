@@ -40,7 +40,7 @@ Defining custom session attributes requires 2 steps. First, add the required col
 ```ts
 declare module "lucia" {
 	interface Register {
-		Lucia: typeof auth;
+		Lucia: typeof lucia;
 		DatabaseUserAttributes: {
 			username: string;
 		};
