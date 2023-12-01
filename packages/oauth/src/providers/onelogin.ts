@@ -118,10 +118,7 @@ const getOneloginUser = async (
 			}
 		}
 	);
-	const oneloginUserResult = await handleRequest<{
-		data: OneloginUser;
-	}>(request);
-	return oneloginUserResult.data;
+	return await handleRequest(request);
 };
 
 export type OneloginTokens = {
