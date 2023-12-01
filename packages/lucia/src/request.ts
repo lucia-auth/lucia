@@ -79,13 +79,13 @@ export class RequestHandler {
 				user: null
 			};
 		}
-		const parts = authorizationHeader.split(" ");
-		if (parts.length !== 2 || parts[0] !== "Bearer") {
+		const sessionId = this.lucia.readBearerToken(authorizationHeader)
+		if (!sessionId) {
 			return {
 				session: null,
 				user: null
 			};
 		}
-		return await this.lucia.validateSession(parts[1]);
+		return await this.lucia.validateSession(sessionId);
 	}
 }
