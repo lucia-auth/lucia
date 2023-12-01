@@ -111,7 +111,7 @@ const getOneloginUser = async (
 	subdomain: string
 ): Promise<OneloginUser> => {
 	const request = new Request(
-		`https://${subdomain}.onelogin.com/oidc/2/token`,
+		`https://${subdomain}.onelogin.com/oidc/2/me`,
 		{
 			headers: {
 				Authorization: authorizationHeader("bearer", accessToken)
