@@ -4,7 +4,7 @@ export { ExpressRequestContext } from "./express.js";
 export { FastifyRequestContext } from "./fastify.js";
 export { H3RequestContext } from "./h3.js";
 export { HonoRequestContext } from "./hono.js";
-export { NextJsAppRequestContext, NextJsPagesRequestContext } from "./nextjs.js";
+export { NextJsRequestContext } from "./nextjs.js";
 export { NodeIncomingMessage } from "./node.js";
 export { QwikCityRequestContext } from "./qwik-city.js";
 export { SvelteKitRequestContext } from "./sveltekit.js";
