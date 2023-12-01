@@ -2,7 +2,7 @@ import { verifyRequestOrigin } from "oslo/request";
 
 import type { Lucia, RequestContext, Session, User } from "./core.js";
 
-export class LuciaRequest {
+export class RequestHandler {
 	private auth: Lucia;
 	private requestContext: RequestContext;
 
@@ -57,11 +57,11 @@ export class LuciaRequest {
 		}
 		const { session, user } = await this.auth.validateSession(sessionCookie);
 		if (!session) {
+			this.deleteSessionCookie();
 			return { session, user };
 		}
 		if (session.fresh) {
-			const sessionCookie = this.auth.createSessionCookie(session.id);
-			this.requestContext.setCookie(sessionCookie);
+			this.setSessionCookie(session.id);
 		}
 		return {
 			session,
