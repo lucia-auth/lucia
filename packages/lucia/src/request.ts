@@ -3,20 +3,20 @@ import { verifyRequestOrigin } from "oslo/request";
 import type { Lucia, RequestContext, Session, User } from "./core.js";
 
 export class RequestHandler {
-	private auth: Lucia;
+	private lucia: Lucia;
 	private requestContext: RequestContext;
 
-	constructor(auth: Lucia, requestContext: RequestContext) {
-		this.auth = auth;
+	constructor(lucia: Lucia, requestContext: RequestContext) {
+		this.lucia = lucia;
 		this.requestContext = requestContext;
 	}
 
 	public setSessionCookie(sessionId: string): void {
-		this.requestContext.setCookie(this.auth.createSessionCookie(sessionId));
+		this.requestContext.setCookie(this.lucia.createSessionCookie(sessionId));
 	}
 
 	public deleteSessionCookie(): void {
-		this.requestContext.setCookie(this.auth.createBlankSessionCookie());
+		this.requestContext.setCookie(this.lucia.createBlankSessionCookie());
 	}
 
 	public async validateSessionCookie(csrfOptions?: {
@@ -48,14 +48,14 @@ export class RequestHandler {
 				user: null
 			};
 		}
-		const sessionCookie = this.auth.readSessionCookie(cookieHeader);
+		const sessionCookie = this.lucia.readSessionCookie(cookieHeader);
 		if (!sessionCookie) {
 			return {
 				session: null,
 				user: null
 			};
 		}
-		const { session, user } = await this.auth.validateSession(sessionCookie);
+		const { session, user } = await this.lucia.validateSession(sessionCookie);
 		if (!session) {
 			this.deleteSessionCookie();
 			return { session, user };
@@ -86,6 +86,6 @@ export class RequestHandler {
 				user: null
 			};
 		}
-		return await this.auth.validateSession(parts[1]);
+		return await this.lucia.validateSession(parts[1]);
 	}
 }
