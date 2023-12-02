@@ -144,9 +144,12 @@ export class Lucia<
 
 	public async createSession(
 		userId: string,
-		attributes: DatabaseSessionAttributes
+		attributes: DatabaseSessionAttributes,
+		options?: {
+			sessionId?: string;
+		}
 	): Promise<Session> {
-		const sessionId = generateId(40);
+		const sessionId = options?.sessionId ?? generateId(40);
 		const sessionExpiresAt = this.sessionController.createExpirationDate();
 		await this.adapter.setSession({
 			id: sessionId,
