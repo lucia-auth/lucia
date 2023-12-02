@@ -23,17 +23,6 @@
 		"authentication",
 		"auth"
 	],
-	"exports": {
-		".": "./dist/index.js",
-		"./request": "./dist/request/index.js"
-	},
-	"typesVersions": {
-		"*": {
-			"request": [
-				"dist/request/index.d.ts"
-			]
-		}
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pilcrowOnPaper/lucia",

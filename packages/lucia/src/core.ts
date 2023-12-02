@@ -1,4 +1,3 @@
-import { RequestHandler } from "./request.js";
 import { SessionController, SessionCookieController } from "oslo/session";
 import { TimeSpan, isWithinExpirationDate } from "oslo";
 import { generateId } from "./crypto.js";
@@ -44,6 +43,8 @@ export class Lucia<
 
 	private getUserAttributes: (databaseUserAttributes: DatabaseUserAttributes) => _UserAttributes;
 
+	public readonly sessionCookieName: string;
+
 	constructor(
 		adapter: Adapter,
 		options?: {
@@ -74,13 +75,13 @@ export class Lucia<
 			options?.sessionExpiresIn ?? new TimeSpan(30, "d")
 		);
 
-		const sessionCookieName = options?.sessionCookie?.name ?? "auth_session";
+		this.sessionCookieName = options?.sessionCookie?.name ?? "auth_session";
 		let sessionExpiresIn = this.sessionController.expiresIn;
 		if (options?.sessionCookie?.expires === false) {
 			sessionExpiresIn = new TimeSpan(365 * 2, "d");
 		}
 		this.sessionCookieController = new SessionCookieController(
-			sessionCookieName,
+			this.sessionCookieName,
 			sessionExpiresIn,
 			options?.sessionCookie?.attributes
 		);
@@ -182,10 +183,6 @@ export class Lucia<
 			return null;
 		}
 		return token ?? null;
-	}
-
-	public handleRequest(requestContext: RequestContext): RequestHandler {
-		return new RequestHandler(this, requestContext);
 	}
 
 	public createSessionCookie(sessionId: string): SessionCookie {
