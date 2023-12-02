@@ -38,9 +38,9 @@ declare module "lucia" {
 
 ## Setup middleware
 
-We recommend setting up a middleware to validate requests. The validated user will be available as `local.user`. Since Astro doesn't implement CSRF protection out of the box, it must be implemented.
+We recommend setting up a middleware to validate requests. The validated user will be available as `local.user`. You can just copy-paste the code into `src/middleware.ts`. 
 
-If you're curious about what's happening here, see the [Validating requests](/basics/validate-requests/astro) page.
+It's a bit verbose, but it just reads the session cookie, validates it, and sets a new cookie if necessary. Since Astro doesn't implement CSRF protection out of the box, it must be implemented. If you're curious about what's happening here, see the [Validating requests](/basics/validate-requests/astro) page.
 
 ```ts
 // src/middleware.ts

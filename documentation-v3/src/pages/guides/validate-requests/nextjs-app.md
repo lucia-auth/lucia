@@ -3,7 +3,7 @@ layout: "@layouts/DocLayout.astro"
 title: "Validate requests in Next.js App router"
 ---
 
-Next.js throws an error when you attempt to set a cookie when rendering the component, so we unfortunately have to have 2 different functions for validating requests. This is a known issue but Vercel has yet to acknowledge or fix the issue.
+Next.js throws an error when you attempt to set a cookie when rendering the component, so we unfortunately have to write and use 2 different functions for validating requests. This is a known issue but Vercel has yet to acknowledge or fix the issue.
 
 ## Server components
 
