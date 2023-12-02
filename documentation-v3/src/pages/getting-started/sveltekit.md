@@ -11,22 +11,16 @@ npm install lucia@beta oslo
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure you:
-
-- Use the `sveltekit` middleware
-- Configure the `sessionCookie` option
-- Register your `Lucia` instance type
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type
 
 ```ts
 // src/lib/server/auth.ts
 import { Lucia } from "lucia";
-import { sveltekit } from "lucia/middleware";
 import { prod } from "$app/environment";
 
 const adapter = new BetterSQLite3Adapter(db); // your adapter
 
 export const lucia = new Lucia(adapter, {
-	middleware: sveltekit(),
 	sessionCookie: {
 		attributes: {
 			// set to `true` when using HTTPS
@@ -35,7 +29,6 @@ export const lucia = new Lucia(adapter, {
 	}
 });
 
-// IMPORTANT!
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
@@ -43,9 +36,11 @@ declare module "lucia" {
 }
 ```
 
-## Setup middleware
+## Setup hooks
 
-If you're planning to use cookies to store the session, we recommend setting up middleware to make `AuthRequest` available in all routes.
+We recommend setting up a handle hook to validate requests. The validated user will be available as `local.user`.
+
+If you're curious about what's happening here, see the [Validating requests](/basics/validate-requests/sveltekit) page.
 
 ```ts
 // src/hooks.server.ts
@@ -53,9 +48,25 @@ import { lucia } from "$lib/server/auth";
 import type { Handle } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
-	// we can pass `event` because we used the SvelteKit middleware
-	event.locals.lucia = lucia.handleRequest(event);
-	return await resolve(event);
+	const sessionId = event.cookies.get(lucia.sessionCookieName);
+	if (!sessionId) {
+		event.locals.user = null;
+		return resolve(event);
+	}
+
+	const { session, user } = await lucia.validateSession(sessionId);
+	if (session && session.fresh) {
+		// update session expiration
+		const sessionCookie = lucia.createSessionCookie(session.id);
+		event.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	}
+	if (!session) {
+		// delete session cookie if invalid
+		const sessionCookie = lucia.createBlankSessionCookie();
+		event.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	}
+	event.locals.user = user;
+	return resolve(event);
 };
 ```
 
@@ -66,7 +77,7 @@ Make sure sure to type `App.Locals` as well.
 declare global {
 	namespace App {
 		interface Locals {
-			lucia: import("lucia").AuthRequest;
+			user: import("lucia").User;
 		}
 	}
 }
