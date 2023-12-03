@@ -3,7 +3,19 @@ layout: "@layouts/DocLayout.astro"
 title: "Validate requests in Next.js App router"
 ---
 
-Next.js throws an error when you attempt to set a cookie when rendering the component, so we unfortunately have to write and use 2 different functions for validating requests. This is a known issue but Vercel has yet to acknowledge or fix the issue.
+Next.js throws an error when you attempt to set a cookie when rendering components, so we unfortunately have to write 2 different functions for validating requests. This is a known issue but Vercel has yet to acknowledge or fix the issue.
+
+This also means you'll need to set `sessionCookie.expires` option to `false` so the session cookie persists for a long time.
+
+```ts
+import { Lucia } from "lucia";
+
+const lucia = new Lucia(adapter, {
+	sessionCookie: {
+		expires: false
+	}
+});
+```
 
 ## Server components
 

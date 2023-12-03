@@ -21,7 +21,12 @@ export default defineEventHandler((event) => {
 	// this is VERY important
 	// you may want to skip the check for HEAD and OPTIONS requests too
 	if (context.request.method !== "GET") {
-		const validRequestOrigin = validateRequestOrigin(context.request);
+		const originHeader = getHeader(event, "Origin") ?? null;
+		const hostHeader = getHeader(event, "Host") ?? null;
+		if (!originHeader || !hostHeader) {
+			return event.node.res.writeHead(403).end();
+		}
+		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
 		if (!validRequestOrigin) {
 			return event.node.res.writeHead(403).end();
 		}
@@ -45,15 +50,6 @@ export default defineEventHandler((event) => {
 		event.context.user = user;
 	}
 });
-
-function validateRequestOrigin(event: H3Event): boolean {
-	const originHeader = getHeader(event, "Origin") ?? null;
-	const hostHeader = getHeader(event, "Host") ?? null;
-	if (!originHeader || !hostHeader) {
-		return false;
-	}
-	return verifyRequestOrigin(originHeader, [hostHeader]);
-}
 
 declare module "h3" {
 	interface H3EventContext {

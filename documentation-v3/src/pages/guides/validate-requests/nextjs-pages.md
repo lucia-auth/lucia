@@ -15,12 +15,10 @@ async function validateRequest(req: NextApiRequest, res: NextApiResponse): Promi
 	}
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (!session) {
-		const sessionCookie = lucia.createBlankSessionCookie();
-		res.headers.set("Set-Cookie", sessionCookie.serialize());
+		res.setHeader("Set-Cookie", lucia.createBlankSessionCookie().serialize());
 	}
 	if (session && session.fresh) {
-		const sessionCookie = lucia.createSessionCookie(session.id);
-		res.headers.set("Set-Cookie", sessionCookie.serialize());
+		res.setHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 	}
 	return user;
 }

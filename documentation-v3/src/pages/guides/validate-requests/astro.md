@@ -20,7 +20,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// this is VERY important
 	// you may want to skip the check for HEAD and OPTIONS requests too
 	if (context.request.method !== "GET") {
-		const validRequestOrigin = validateRequestOrigin(context.request);
+		const originHeader = request.headers.get("Origin");
+		const hostHeader = request.headers.get("Host");
+		if (!originHeader || !hostHeader) {
+			return new Response(null, {
+				status: 403
+			});
+		}
+		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
 		if (!validRequestOrigin) {
 			return new Response(null, {
 				status: 403
@@ -48,15 +55,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	context.locals.user = user;
 	return resolve(event);
 });
-
-function validateRequestOrigin(request: Request): boolean {
-	const originHeader = request.headers.get("Origin");
-	const hostHeader = request.headers.get("Host");
-	if (!originHeader || !hostHeader) {
-		return false;
-	}
-	return verifyRequestOrigin(originHeader, [hostHeader]);
-}
 ```
 
 Make sure sure to type `App.Locals` as well.
