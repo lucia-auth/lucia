@@ -7,19 +7,6 @@ We recommend using session cookies for most applications.
 
 **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
-```ts
-import { verifyRequestOrigin } from "oslo/request";
-
-function validateRequestOrigin(request: Request): boolean {
-	const originHeader = request.headers.get("Origin");
-	const hostHeader = request.headers.get("Host");
-	if (!originHeader || !hostHeader) {
-		return false;
-	}
-	return verifyRequestOrigin(originHeader, [hostHeader]);
-}
-```
-
 We recommend creating a middleware to validate requests and store the current user inside `locals`. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
 ```ts
@@ -40,7 +27,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			});
 		}
 	}
-    
+
 	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
 	if (!sessionId) {
 		context.locals.user = null;
@@ -61,6 +48,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	context.locals.user = user;
 	return resolve(event);
 });
+
+function validateRequestOrigin(request: Request): boolean {
+	const originHeader = request.headers.get("Origin");
+	const hostHeader = request.headers.get("Host");
+	if (!originHeader || !hostHeader) {
+		return false;
+	}
+	return verifyRequestOrigin(originHeader, [hostHeader]);
+}
 ```
 
 Make sure sure to type `App.Locals` as well.
@@ -87,7 +83,6 @@ if (!Astro.locals.user) {
 ```
 
 ```ts
-// +server.ts
 import { lucia } from "$lib/server/auth";
 
 export function GET(context: APIContext): Promise<Response> {
