@@ -1,20 +1,20 @@
 ---
 layout: "@layouts/DocLayout.astro"
-title: "Validate requests"
+title: "Validate session cookies"
 ---
 
 This guide is also available for:
 
-- [Astro](/guides/validate-requests/astro)
-- [Elysia](/guides/validate-requests/elysia)
-- [Express](/guides/validate-requests/express)
-- [Hono](/guides/validate-requests/hono)
-- [Next.js App router](/guides/validate-requests/nextjs-app)
-- [Next.js Pages router](/guides/validate-requests/nextjs-pages)
-- [Nuxt](/guides/validate-requests/nuxt)
-- [SvelteKit](/guides/validate-requests/sveltekit)
+- [Astro](/guides/validate-session-cookies/astro)
+- [Elysia](/guides/validate-session-cookies/elysia)
+- [Express](/guides/validate-session-cookies/express)
+- [Hono](/guides/validate-session-cookies/hono)
+- [Next.js App router](/guides/validate-session-cookies/nextjs-app)
+- [Next.js Pages router](/guides/validate-session-cookies/nextjs-pages)
+- [Nuxt](/guides/validate-session-cookies/nuxt)
+- [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
-We recommend using session cookies for most applications. **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
+ **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
 ```ts
 import { verifyRequestOrigin } from "oslo/request";
@@ -41,12 +41,7 @@ if (!validRequestOrigin) {
 }
 
 const cookieHeader = request.headers.get("Cookie");
-if (cookieHeader) {
-	return new Response(null, {
-		status: 401
-	});
-}
-const sessionId = lucia.readSessionCookie(cookieHeader);
+const sessionId = lucia.readSessionCookie(cookieHeader ?? "");
 if (!sessionId) {
 	return new Response(null, {
 		status: 401

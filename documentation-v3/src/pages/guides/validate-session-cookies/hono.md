@@ -1,9 +1,9 @@
 ---
 layout: "@layouts/DocLayout.astro"
-title: "Validate requests in Hono"
+title: "Validate session cookies in Hono"
 ---
 
-We recommend using session cookies for most applications.
+
 
 **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
@@ -67,7 +67,8 @@ This will allow you to access the current user with `Context.get()`.
 app.get("/", async (c) => {
 	const user = c.get("user");
 	if (!user) {
-		return c.body(null, 401s);
+		return c.body(null, 401);
 	}
+    // ...
 });
 ```

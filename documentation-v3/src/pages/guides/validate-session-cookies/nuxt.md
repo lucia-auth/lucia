@@ -1,9 +1,9 @@
 ---
 layout: "@layouts/DocLayout.astro"
-title: "Validate requests in Nuxt"
+title: "Validate session cookies in Nuxt"
 ---
 
-We recommend using session cookies for most applications.
+
 
 **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 

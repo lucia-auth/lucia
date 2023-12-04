@@ -1,9 +1,9 @@
 ---
 layout: "@layouts/DocLayout.astro"
-title: "Validate requests in SvelteKit"
+title: "Validate session cookies in SvelteKit"
 ---
 
-We recommend using session cookies for most applications.
+
 
 SvelteKit has basic CSRF protection by default. We recommend creating a handle hook to validate requests and store the current user inside `locals`. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 

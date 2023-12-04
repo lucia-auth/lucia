@@ -105,7 +105,14 @@ if (session && session.fresh) {
 }
 ```
 
-See the [Validate requests]() guide for a full example for validating session cookies and bearer tokens.
+You can use [`Lucia.readSessionCookie()`]() and [`Lucia.readBearerToken()`]() to get the session ID from the `Cookie` and `Authorization` header respectively.
+
+```ts
+const sessionId = lucia.readSessionCookie("auth_session=abc");
+const sessionId = lucia.rearerBearerToken("Bearer abc");
+```
+
+See the [Validate session cookies]() and [Validate bearer tokens]() guide for a full example for validating session cookies.
 
 ## Session cookies
 
