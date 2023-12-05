@@ -70,6 +70,10 @@ See [Line](/oauth/providers/line) provider.
 
 See [LinkedIn](/oauth/providers/linkedin) provider.
 
+## `onelogin()`
+
+See [OneLogin](/oauth/providers/onelogin) provider.
+
 ## `osu()`
 
 See [osu!](/oauth/providers/osu) provider.

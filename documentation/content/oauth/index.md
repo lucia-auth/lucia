@@ -49,6 +49,7 @@ We also have framework specific guides.
 - Lichess
 - Line
 - LinkedIn
+- OneLogin
 - osu!
 - Patreon
 - Reddit

@@ -23,7 +23,7 @@ const strava: (
 		scope?: string[];
 		redirectUri?: string;
 	}
-) => GithubProvider;
+) => StravaProvider;
 ```
 
 ##### Parameters
