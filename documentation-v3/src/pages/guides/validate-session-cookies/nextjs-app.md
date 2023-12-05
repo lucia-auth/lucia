@@ -54,10 +54,6 @@ async function Page() {
 
 Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
-Since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented for non-GET requests**, including POST requests, if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. You may want to add the CSRF protection inside middleware.
-
-If you're only using server actions, you can remove the CSRF check.
-
 ```ts
 import { lucia } from "@/utils/auth";
 import { cookies, headers } from "next/headers";
@@ -65,12 +61,6 @@ import { cookies, headers } from "next/headers";
 import type { User } from "lucia";
 
 async function validateRequest(): Promise<User | null> {
-	const originHeader = headers().get("Origin");
-	const hostHeader = headers().get("Host");
-	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-		return null;
-	}
-
 	const sessionId = cookies().get(lucia.sessionCookieName);
 	if (!sessionId) return null;
 	const { session, user } = await lucia.validateSession(sessionId);
@@ -103,9 +93,20 @@ async function Page() {
 }
 ```
 
+Since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented for non-GET requests**, including POST requests, if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. You may want to add the CSRF protection inside middleware.
+
 ```ts
 // app/api/route.ts
+import { verifyRequestOrigin } from "oslo/request";
+
 export async function POST(request: NextRequest) {
+	const originHeader = headers().get("Origin");
+	const hostHeader = headers().get("Host");
+	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
+		return new Response(null, {
+			status: 403
+		});
+	}
 	const user = await validateRequest();
 	if (!user) {
 		return new Response(null, {
