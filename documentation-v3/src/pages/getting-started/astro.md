@@ -38,7 +38,7 @@ declare module "lucia" {
 
 ## Setup middleware
 
-We recommend setting up a middleware to validate requests. The validated user will be available as `local.user`. You can just copy-paste the code into `src/middleware.ts`. 
+We recommend setting up a middleware to validate requests. The validated user will be available as `local.user`. You can just copy-paste the code into `src/middleware.ts`.
 
 It's a bit verbose, but it just reads the session cookie, validates it, and sets a new cookie if necessary. Since Astro doesn't implement CSRF protection out of the box, it must be implemented. If you're curious about what's happening here, see the [Validating requests](/basics/validate-session-cookies/astro) page.
 
@@ -53,17 +53,27 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// this is VERY important
 	// you may want to skip the check for HEAD and OPTIONS requests too
 	if (context.request.method !== "GET") {
-		const validRequestOrigin = validateRequestOrigin(context.request);
+		const originHeader = request.headers.get("Origin");
+		const hostHeader = request.headers.get("Header");
+		if (!originHeader || !hostHeader) {
+			return new Response(null, {
+				status: 403
+			});
+		}
+		// check if the hostname matches
+		// to allow more domains, add them into the array
+		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
 		if (!validRequestOrigin) {
 			return new Response(null, {
 				status: 403
 			});
 		}
 	}
+
 	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
 	if (!sessionId) {
 		context.locals.user = null;
-		return resolve(event);
+		return next();
 	}
 
 	const { session, user } = await lucia.validateSession(sessionId);
@@ -78,19 +88,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
 	context.locals.user = user;
-	return resolve(event);
+	return next();
 });
-
-function validateRequestOrigin(request: Request): boolean {
-	const originHeader = request.headers.get("Origin");
-	const hostHeader = request.headers.get("Header");
-	if (!originHeader || !hostHeader) {
-		return false;
-	}
-	// check if the hostname matches
-	// to allow more domains, add them into the array
-	return verifyRequestOrigin(originHeader, [hostHeader]);
-}
 ```
 
 Make sure sure to type `App.Locals` as well.

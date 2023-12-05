@@ -12,7 +12,11 @@ import { Lucia } from "lucia";
 
 const lucia = new Lucia(adapter, {
 	sessionCookie: {
-		expires: false
+		expires: false,
+		attributes: {
+			// set to `true` when using HTTPS
+			secure: process.env.NODE_ENV === "production"
+		}
 	}
 });
 ```
@@ -48,15 +52,31 @@ async function Page() {
 
 ## Server actions and API routes
 
-Next.js implements basic CSRF protection for server actions. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
+Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
+
+Since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented for non-GET requests**, including POST requests, if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. You may want to add the CSRF protection inside middleware.
+
+If you're only using server actions, you can remove the CSRF check.
 
 ```ts
 import { lucia } from "@/utils/auth";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import type { User } from "lucia";
 
 async function validateRequest(): Promise<User | null> {
+	const originHeader = headers().get("Origin");
+	const hostHeader = headers().get("Host");
+	if (!originHeader || !hostHeader) {
+		return null;
+	}
+	// check if the hostname matches
+	// to allow more domains, add them into the array
+	const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
+	if (!validRequestOrigin) {
+		return null;
+	}
+
 	const sessionId = cookies().get(lucia.sessionCookieName);
 	if (!sessionId) return null;
 	const { session, user } = await lucia.validateSession(sessionId);
@@ -91,31 +111,9 @@ async function Page() {
 }
 ```
 
-Since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented for non-GET requests**, including POST requests, if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. You may want to add the CSRF protection inside middleware.
-
-```ts
-import { headers } from "next/headers";
-import { verifyRequestOrigin } from "oslo/request";
-
-function validateRequestOrigin(): boolean {
-	const originHeader = request.headers.get("Origin");
-	const hostHeader = request.headers.get("Host");
-	if (!originHeader || !hostHeader) {
-		return false;
-	}
-	return verifyRequestOrigin(originHeader, [hostHeader]);
-}
-```
-
 ```ts
 // app/api/route.ts
 export async function POST(request: NextRequest) {
-	const validRequestOrigin = validateRequestOrigin();
-	if (!validRequestOrigin) {
-		return new Response(null, {
-			status: 403
-		});
-	}
 	const user = await validateRequest();
 	if (!user) {
 		return new Response(null, {

@@ -3,11 +3,9 @@ layout: "@layouts/DocLayout.astro"
 title: "Validate session cookies in Express"
 ---
 
-
-
 **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
-We recommend creating a middleware to validate requests and store the current user inside `Response.locals`. You can get the cookie with `Lucia.readSessionCookie()` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
+We recommend creating 2 middleware for CSRF protection and validating requests. You can get the cookie with `Lucia.readSessionCookie()` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
 ```ts
 // src/middleware.ts
@@ -16,42 +14,40 @@ import { verifyRequestOrigin } from "oslo/request";
 
 import type { User } from "lucia";
 
-app.use((req, res, next) => {
-	if (req.method !== "GET") {
-		const originHeader = req.headers.origin;
-		const hostHeader = req.headers.host;
-		if (!originHeader || !hostHeader) {
+app
+	.use((req, res, next) => {
+		if (req.method === "GET") {
+			return next();
+		}
+		if (!req.headers.origin || !req.headers.host) {
 			return res.status(403).end();
 		}
-		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
+		// check if the hostname matches
+		// to allow more domains, add them into the array
+		const validRequestOrigin = verifyRequestOrigin(req.headers.origin, [req.headers.host]);
 		if (!validRequestOrigin) {
 			return c.res.status(403).end();
 		}
-	}
+	})
+	.use((req, res, next) => {
+		const sessionId = lucia.readSessionCookie(req.headers.cookie ?? "");
+		if (!sessionId) {
+			res.locals.user = null;
+			return next();
+		}
 
-	const cookieHeader = req.headers.cookie;
-	if (!cookieHeader) {
-		res.locals.user = null;
+		const { session, user } = await lucia.validateSession(sessionId);
+		if (session && session.fresh) {
+			// update session expiration
+			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+		}
+		if (!session) {
+			// delete session cookie if invalid
+			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+		}
+		res.locals.user = user;
 		return next();
-	}
-	const sessionId = lucia.readSessionCookie(req.headers.cookie);
-	if (!sessionId) {
-		res.locals.user = null;
-		return next();
-	}
-
-	const { session, user } = await lucia.validateSession(sessionId);
-	if (session && session.fresh) {
-		// update session expiration
-		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
-	}
-	if (!session) {
-		// delete session cookie if invalid
-		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
-	}
-	res.locals.user = user;
-	return next();
-});
+	});
 ```
 
 Create a `.d.ts` file inside your project to declare types for `Locals`.

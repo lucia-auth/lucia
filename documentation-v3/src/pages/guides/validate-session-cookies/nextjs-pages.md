@@ -5,10 +5,28 @@ title: "Validate session cookies in Next.js Pages router"
 
 You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
+You can also use this inside API routes but **CSRF protection must be implemented** for non-GET requests, including POST requests. This can be easily done by comparing the `Origin` and `Host` header.
+
 ```ts
+import { verifyRequestOrigin } from "oslo/request";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 
 async function validateRequest(req: NextApiRequest, res: NextApiResponse): Promise<User | null> {
+	if (req.method !== "GET") {
+		const originHeader = request.headers.origin;
+		const hostHeader = request.headers.host;
+		if (!originHeader || !hostHeader) {
+			return null;
+		}
+		// check if the hostname matches
+		// to allow more domains, add them into the array
+		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
+		if (!validRequestOrigin) {
+			return null;
+		}
+	}
+
 	const sessionId = req.cookies.get(lucia.sessionCookieName);
 	if (!sessionId) {
 		return null;
@@ -43,30 +61,10 @@ export function getServerSideProps(context: GetServerSidePropsContext) {
 }
 ```
 
-You can also use this inside API routes but **CSRF protection must be implemented** for non-GET requests, including POST requests. This can be easily done by comparing the `Origin` and `Host` header.
-
-```ts
-import type { NextApiRequest, NextApiResponse } from "next";
-
-function validateRequestOrigin(req: NextApiRequest): boolean {
-	const originHeader = request.headers.origin;
-	const hostHeader = request.headers.host;
-	if (!originHeader || !hostHeader) {
-		return false;
-	}
-	return verifyRequestOrigin(originHeader, [hostHeader]);
-}
-```
-
 ```ts
 import type { NextApiRequest, NextApiResponse } from "next";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-	if (req.method !== "POST") return res.status(405);
-	const validRequestOrigin = validateRequestOrigin();
-	if (!validRequestOrigin) {
-		return res.status(403).end();
-	}
 	const user = await validateRequest(req, res);
 	if (!user) {
 		return res.status(401).end();

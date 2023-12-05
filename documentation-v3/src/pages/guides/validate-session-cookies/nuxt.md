@@ -3,8 +3,6 @@ layout: "@layouts/DocLayout.astro"
 title: "Validate session cookies in Nuxt"
 ---
 
-
-
 **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
 We recommend creating a middleware to validate requests and store the current user inside `context`. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
@@ -32,23 +30,24 @@ export default defineEventHandler((event) => {
 		}
 	}
 
-	event.context.user = null;
-
 	const sessionId = getCookie(event, lucia.sessionCookieName) ?? null;
-	if (sessionId) {
-		const { session, user } = await lucia.validateSession(sessionId);
-		if (session && session.fresh) {
-			// update session expiration
-			const sessionCookie = lucia.createSessionCookie(session.id);
-			setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-		}
-		if (!session) {
-			// delete session cookie if invalid
-			const sessionCookie = lucia.createBlankSessionCookie();
-			setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-		}
-		event.context.user = user;
+	if (!sessionId) {
+		event.context.user = null;
+		return;
 	}
+
+	const { session, user } = await lucia.validateSession(sessionId);
+	if (session && session.fresh) {
+		// update session expiration
+		const sessionCookie = lucia.createSessionCookie(session.id);
+		setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	}
+	if (!session) {
+		// delete session cookie if invalid
+		const sessionCookie = lucia.createBlankSessionCookie();
+		setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	}
+	event.context.user = user;
 });
 
 declare module "h3" {

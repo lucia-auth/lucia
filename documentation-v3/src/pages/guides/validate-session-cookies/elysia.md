@@ -3,8 +3,6 @@ layout: "@layouts/DocLayout.astro"
 title: "Validate session cookies in Elysia"
 ---
 
-
-
 **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
 We recommend creating a middleware to validate requests and store the current user inside `Context` with `App.derive()`. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
@@ -17,16 +15,18 @@ import type { User } from "lucia";
 
 const app = new Elysia()
 	.onRequest((context) => {
-		if (req.method === "GET") {
+		if (context.request.method === "GET") {
 			return;
 		}
-		const originHeader = req.headers.origin;
-		const hostHeader = req.headers.host;
+		const originHeader = context.request.headers.get("Origin");
+		const hostHeader = context.request.headers.get("Host");
 		if (!originHeader || !hostHeader) {
 			return new Response(null, {
 				status: 403
 			});
 		}
+		// check if the hostname matches
+		// to allow more domains, add them into the array
 		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
 		if (!validRequestOrigin) {
 			return new Response(null, {
@@ -40,12 +40,8 @@ const app = new Elysia()
 		): Promise<{
 			user: User | null;
 		}> => {
-			const cookieHeader = context.request.headers.get("Cookie");
-			if (!cookieHeader) {
-				return {
-					user: null
-				};
-			}
+			// use headers instead of Cookie API to prevent type coercion
+			const cookieHeader = context.request.headers.get("Cookie") ?? "";
 			const sessionId = lucia.readSessionCookie(cookieHeader);
 			if (!sessionId) {
 				return {
@@ -70,9 +66,9 @@ const app = new Elysia()
 					...sessionCookie.attributes
 				});
 			}
-            return {
-                user
-            }
+			return {
+				user
+			};
 		}
 	);
 ```
@@ -83,8 +79,8 @@ This will allow you to access the current user with `Context.user`.
 app.get("/", async (context) => {
 	if (!context.user) {
 		return new Response(null, {
-            status: 401
-        })
+			status: 401
+		});
 	}
 	// ...
 });

@@ -3,8 +3,6 @@ layout: "@layouts/DocLayout.astro"
 title: "Validate session cookies in Astro"
 ---
 
-
-
 **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
 We recommend creating a middleware to validate requests and store the current user inside `locals`. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
@@ -21,12 +19,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// you may want to skip the check for HEAD and OPTIONS requests too
 	if (context.request.method !== "GET") {
 		const originHeader = request.headers.get("Origin");
-		const hostHeader = request.headers.get("Host");
+		const hostHeader = request.headers.get("Header");
 		if (!originHeader || !hostHeader) {
 			return new Response(null, {
 				status: 403
 			});
 		}
+		// check if the hostname matches
+		// to allow more domains, add them into the array
 		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
 		if (!validRequestOrigin) {
 			return new Response(null, {
@@ -38,7 +38,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
 	if (!sessionId) {
 		context.locals.user = null;
-		return resolve(event);
+		return next();
 	}
 
 	const { session, user } = await lucia.validateSession(sessionId);
@@ -53,7 +53,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
 	context.locals.user = user;
-	return resolve(event);
+	return next();
 });
 ```
 

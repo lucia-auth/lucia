@@ -14,26 +14,22 @@ This guide is also available for:
 - [Nuxt](/guides/validate-session-cookies/nuxt)
 - [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
- **CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
-
-```ts
-import { verifyRequestOrigin } from "oslo/request";
-
-function validateRequestOrigin(request: Request): boolean {
-	const originHeader = request.headers.get("Origin");
-	const hostHeader = request.headers.get("Host");
-	if (!originHeader || !hostHeader) {
-		return false;
-	}
-	return verifyRequestOrigin(originHeader, [hostHeader]);
-}
-```
+**CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
 
 For non-GET requests, check the request origin. You can use `readSessionCookie()` to get the session cookie from a HTTP `Cookie` header, and validate it with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
 ```ts
+import { verifyRequestOrigin } from "oslo/request";
+
 // only required in non-GET requests (POST, PUT, DELETE, PATCH, etc)
-const validRequestOrigin = validateRequestOrigin(request);
+const originHeader = request.headers.get("Origin");
+const hostHeader = request.headers.get("Host");
+if (!originHeader || !hostHeader) {
+	return new Response(null, {
+		status: 403
+	});
+}
+const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
 if (!validRequestOrigin) {
 	return new Response(null, {
 		status: 403
