@@ -77,11 +77,7 @@ export default defineEventHandler((event) => {
 	if (context.request.method !== "GET") {
 		const originHeader = getHeader(event, "Origin") ?? null;
 		const hostHeader = getHeader(event, "Host") ?? null;
-		if (!originHeader || !hostHeader) {
-			return event.node.res.writeHead(403).end();
-		}
-		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
-		if (!validRequestOrigin) {
+		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 			return event.node.res.writeHead(403).end();
 		}
 	}
@@ -91,7 +87,7 @@ export default defineEventHandler((event) => {
 		event.context.user = null;
 		return;
 	}
-	
+
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
 		// update session expiration

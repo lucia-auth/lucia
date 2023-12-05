@@ -67,13 +67,7 @@ import type { User } from "lucia";
 async function validateRequest(): Promise<User | null> {
 	const originHeader = headers().get("Origin");
 	const hostHeader = headers().get("Host");
-	if (!originHeader || !hostHeader) {
-		return null;
-	}
-	// check if the hostname matches
-	// to allow more domains, add them into the array
-	const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
-	if (!validRequestOrigin) {
+	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 		return null;
 	}
 
@@ -81,12 +75,10 @@ async function validateRequest(): Promise<User | null> {
 	if (!sessionId) return null;
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
-		// update session expiration
 		const sessionCookie = lucia.createSessionCookie(session.id);
 		cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
 	if (!session) {
-		// delete session cookie if invalid
 		const sessionCookie = lucia.createBlankSessionCookie();
 		cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}

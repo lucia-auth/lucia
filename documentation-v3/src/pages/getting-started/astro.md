@@ -49,21 +49,10 @@ import { verifyRequestOrigin } from "oslo/request";
 import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
-	// CSRF protection
-	// this is VERY important
-	// you may want to skip the check for HEAD and OPTIONS requests too
 	if (context.request.method !== "GET") {
 		const originHeader = request.headers.get("Origin");
 		const hostHeader = request.headers.get("Header");
-		if (!originHeader || !hostHeader) {
-			return new Response(null, {
-				status: 403
-			});
-		}
-		// check if the hostname matches
-		// to allow more domains, add them into the array
-		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
-		if (!validRequestOrigin) {
+		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 			return new Response(null, {
 				status: 403
 			});
@@ -78,12 +67,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
-		// update session expiration
 		const sessionCookie = lucia.createSessionCookie(session.id);
 		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
 	if (!session) {
-		// delete session cookie if invalid
 		const sessionCookie = lucia.createBlankSessionCookie();
 		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}

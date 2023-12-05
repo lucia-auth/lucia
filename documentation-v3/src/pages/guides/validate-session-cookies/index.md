@@ -24,13 +24,7 @@ import { verifyRequestOrigin } from "oslo/request";
 // only required in non-GET requests (POST, PUT, DELETE, PATCH, etc)
 const originHeader = request.headers.get("Origin");
 const hostHeader = request.headers.get("Host");
-if (!originHeader || !hostHeader) {
-	return new Response(null, {
-		status: 403
-	});
-}
-const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
-if (!validRequestOrigin) {
+if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 	return new Response(null, {
 		status: 403
 	});

@@ -19,13 +19,11 @@ app
 		if (req.method === "GET") {
 			return next();
 		}
-		if (!req.headers.origin || !req.headers.host) {
-			return res.status(403).end();
-		}
-		// check if the hostname matches
-		// to allow more domains, add them into the array
-		const validRequestOrigin = verifyRequestOrigin(req.headers.origin, [req.headers.host]);
-		if (!validRequestOrigin) {
+		if (
+			!req.headers.origin ||
+			!req.headers.host ||
+			!verifyRequestOrigin(req.headers.origin, [req.headers.host])
+		) {
 			return c.res.status(403).end();
 		}
 	})
@@ -38,11 +36,9 @@ app
 
 		const { session, user } = await lucia.validateSession(sessionId);
 		if (session && session.fresh) {
-			// update session expiration
 			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 		}
 		if (!session) {
-			// delete session cookie if invalid
 			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 		}
 		res.locals.user = user;

@@ -13,64 +13,51 @@ import { verifyRequestOrigin } from "oslo/request";
 
 import type { User } from "lucia";
 
-const app = new Elysia()
-	.onRequest((context) => {
-		if (context.request.method === "GET") {
-			return;
-		}
-		const originHeader = context.request.headers.get("Origin");
-		const hostHeader = context.request.headers.get("Host");
-		if (!originHeader || !hostHeader) {
-			return new Response(null, {
-				status: 403
-			});
-		}
-		// check if the hostname matches
-		// to allow more domains, add them into the array
-		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
-		if (!validRequestOrigin) {
-			return new Response(null, {
-				status: 403
-			});
-		}
-	})
-	.derive(
-		async (
-			context
-		): Promise<{
-			user: User | null;
-		}> => {
-			// use headers instead of Cookie API to prevent type coercion
-			const cookieHeader = context.request.headers.get("Cookie") ?? "";
-			const sessionId = lucia.readSessionCookie(cookieHeader);
-			if (!sessionId) {
+const app = new Elysia().derive(
+	async (
+		context
+	): Promise<{
+		user: User | null;
+	}> => {
+		if (context.request.method !== "GET") {
+			const originHeader = context.request.headers.get("Origin");
+			const hostHeader = context.request.headers.get("Host");
+			if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 				return {
 					user: null
 				};
 			}
+		}
 
-			const { session, user } = await lucia.validateSession(sessionId);
-			if (session && session.fresh) {
-				// update session expiration
-				const sessionCookie = lucia.createSessionCookie(session.id);
-				context.cookie[sessionCookie.name].set({
-					value: sessionCookie.value,
-					...sessionCookie.attributes
-				});
-			}
-			if (!session) {
-				// delete session cookie if invalid
-				const sessionCookie = lucia.createBlankSessionCookie();
-				context.cookie[sessionCookie.name].set({
-					value: sessionCookie.value,
-					...sessionCookie.attributes
-				});
-			}
+		// use headers instead of Cookie API to prevent type coercion
+		const cookieHeader = context.request.headers.get("Cookie") ?? "";
+		const sessionId = lucia.readSessionCookie(cookieHeader);
+		if (!sessionId) {
 			return {
-				user
+				user: null
 			};
 		}
-	);
+
+		const { session, user } = await lucia.validateSession(sessionId);
+		if (session && session.fresh) {
+			const sessionCookie = lucia.createSessionCookie(session.id);
+			context.cookie[sessionCookie.name].set({
+				value: sessionCookie.value,
+				...sessionCookie.attributes
+			});
+		}
+		if (!session) {
+			const sessionCookie = lucia.createBlankSessionCookie();
+			context.cookie[sessionCookie.name].set({
+				value: sessionCookie.value,
+				...sessionCookie.attributes
+			});
+		}
+		return {
+			user
+		};
+	}
+);
 ```
 
 This will allow you to access the current user with `Context.user`.

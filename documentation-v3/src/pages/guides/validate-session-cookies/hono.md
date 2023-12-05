@@ -28,13 +28,7 @@ app
 		}
 		const originHeader = c.req.headers.get("Origin");
 		const hostHeader = c.req.headers.get("Host");
-		if (!originHeader || !hostHeader) {
-			return c.body(null, 403);
-		}
-		// check if the hostname matches
-		// to allow more domains, add them into the array
-		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
-		if (!validRequestOrigin) {
+		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 			return c.body(null, 403);
 		}
 		return next();
@@ -47,14 +41,12 @@ app
 		}
 		const { session, user } = await lucia.validateSession(sessionId);
 		if (session && session.fresh) {
-			// update session expiration
 			// use `header()` instead of `setCookie()` to avoid TS errors
 			c.header("Set-Cookie", lucia.createSessionCookie(session.id).serialize(), {
 				append: true
 			});
 		}
 		if (!session) {
-			// delete session cookie if invalid
 			c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
 				append: true
 			});

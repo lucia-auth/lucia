@@ -16,13 +16,7 @@ async function validateRequest(req: NextApiRequest, res: NextApiResponse): Promi
 	if (req.method !== "GET") {
 		const originHeader = request.headers.origin;
 		const hostHeader = request.headers.host;
-		if (!originHeader || !hostHeader) {
-			return null;
-		}
-		// check if the hostname matches
-		// to allow more domains, add them into the array
-		const validRequestOrigin = verifyRequestOrigin(originHeader, [hostHeader]);
-		if (!validRequestOrigin) {
+		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 			return null;
 		}
 	}
