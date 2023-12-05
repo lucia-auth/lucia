@@ -3,7 +3,7 @@ layout: "@layouts/DocLayout.astro"
 title: "Validate session cookies in Elysia"
 ---
 
-**CSRF protection must be implemented when using cookies.** This can be easily done by comparing the `Origin` and `Host` header.
+**CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header.
 
 We recommend creating a middleware to validate requests and store the current user inside `Context` with `App.derive()`. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
@@ -19,6 +19,7 @@ const app = new Elysia().derive(
 	): Promise<{
 		user: User | null;
 	}> => {
+		// CSRF check
 		if (context.request.method !== "GET") {
 			const originHeader = context.request.headers.get("Origin");
 			const hostHeader = context.request.headers.get("Host");
