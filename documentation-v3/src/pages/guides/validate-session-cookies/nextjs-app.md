@@ -93,7 +93,7 @@ async function Page() {
 }
 ```
 
-Since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented for non-GET requests**, including POST requests, if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. You may want to add the CSRF protection inside middleware.
+Since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented for non-GET requests** if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. You may want to add the CSRF protection inside middleware.
 
 ```ts
 // app/api/route.ts
