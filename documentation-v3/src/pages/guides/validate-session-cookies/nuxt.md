@@ -31,12 +31,10 @@ export default defineEventHandler((event) => {
 
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
-		const sessionCookie = lucia.createSessionCookie(session.id);
-		setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		appendResponseHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 	}
 	if (!session) {
-		const sessionCookie = lucia.createBlankSessionCookie();
-		setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		appendResponseHeader(event, "Set-Cookie", lucia.createBlankSessionCookie().serialize());
 	}
 	event.context.user = user;
 });

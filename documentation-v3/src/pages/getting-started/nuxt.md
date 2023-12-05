@@ -71,9 +71,6 @@ import type { H3Event } from "h3";
 import type { User } from "lucia";
 
 export default defineEventHandler((event) => {
-	// CSRF protection
-	// this is VERY important
-	// you may want to skip the check for HEAD and OPTIONS requests too
 	if (context.request.method !== "GET") {
 		const originHeader = getHeader(event, "Origin") ?? null;
 		const hostHeader = getHeader(event, "Host") ?? null;
@@ -90,14 +87,10 @@ export default defineEventHandler((event) => {
 
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
-		// update session expiration
-		const sessionCookie = lucia.createSessionCookie(session.id);
-		setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		appendResponseHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 	}
 	if (!session) {
-		// delete session cookie if invalid
-		const sessionCookie = lucia.createBlankSessionCookie();
-		setCookie(event, sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		appendResponseHeader(event, "Set-Cookie", lucia.createBlankSessionCookie().serialize());
 	}
 	event.context.user = user;
 });
