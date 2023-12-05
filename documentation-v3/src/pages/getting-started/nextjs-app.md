@@ -59,6 +59,19 @@ globalThis.crypto = webcrypto as Crypto;
 node --experimental-web-crypto index.js
 ```
 
+## Configure
+
+If you've installed Oslo, we recommend marking the package external to prevent it from getting bundled. Strictly speaking, this is only required when using `oslo/password` module.
+
+```ts
+// next.config.ts
+const config = {
+	experimental: {
+		serverComponentsExternalPackages: ["oslo"]
+	}
+};
+```
+
 ## Next steps
 
 You can learn all the concepts and APIs by reading the [Basics section](/basics/sessions) in the docs. If you prefer writing code immediately, check out the [Tutorials](/tutorials) page or the [examples repository](/https://github.com/lucia-auth/examples).
