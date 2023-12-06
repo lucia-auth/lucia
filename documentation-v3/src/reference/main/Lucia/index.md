@@ -24,7 +24,16 @@ function constructor<
 		middleware?: _Middleware;
 		csrfProtection?: boolean | $$CSRFProtectionOptions;
 		sessionExpiresIn?: $$TimeSpan;
-		sessionCookie?: $$SessionCookieOptions;
+		sessionCookie?: {
+			name?: string;
+			expires?: boolean;
+			attributes: {
+				sameSite?: "lax" | "strict";
+				domain?: string;
+				path?: string;
+				secure?: boolean;
+			};
+		};
 		getSessionAttributes?: (
 			databaseSessionAttributes: $$DatabaseSessionAttributes
 		) => _SessionAttributes;
@@ -37,12 +46,19 @@ function constructor<
 
 - `adapter`: Database adapter
 - `options`:
-    - `middleware`: Middleware
-    - `csrfProtection`: If CSRF protection is enabled and its options (default: `true`)
-    - `sessionExpiresIn`: How long a session lasts for maximum for inactive users
-    - `sessionCookie`: Session cookie options
-    - `getSessionAttributes()`: Transforms database session attributes and the returned object is added to the [`Session`](ref:main) object
-    - `getUserAttributes()`: Transforms database user attributes and the returned object is added to the [`User`](ref:main) object
+  - `middleware`: Middleware
+  - `csrfProtection`: If CSRF protection is enabled and its options (default: `true`)
+  - `sessionExpiresIn`: How long a session lasts for maximum for inactive users
+  - `sessionCookie`: Session cookie options
+  	- `name`: Cookie name (default: `auth_session`)
+	- `expires`: Set to `false` for cookies to persist indefinitely (default: `true`)
+	- `attributes`: Cookie attributes
+		- `sameSite`
+		- `domain`
+		- `path`
+		- `secure`
+  - `getSessionAttributes()`: Transforms database session attributes and the returned object is added to the [`Session`](ref:main) object
+  - `getUserAttributes()`: Transforms database user attributes and the returned object is added to the [`User`](ref:main) object
 
 ## Method
 
