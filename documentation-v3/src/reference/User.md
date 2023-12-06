@@ -13,7 +13,6 @@ interface Session extends UserAttributes {
 }
 ```
 
-
 ### Properties
 
 - `id`
