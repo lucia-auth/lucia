@@ -1,0 +1,63 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import MarkdownArticle from "src/components/MarkdownArticle.astro";
+
+import type { Section, Page } from "@components/NavMenu.astro";
+import type { MarkdownLayoutProps } from "astro";
+
+type Props = MarkdownLayoutProps<{
+	type: string;
+    title?: string
+}>;
+
+const functionPages: Page[] = [["generateId()", "/reference/generateId"]];
+
+const classPages: Page[] = [
+	["LegacyScrypt", "/reference/LegacyScrypt"],
+	["Lucia", "/reference/Lucia"],
+	["SessionCookie", "/reference/SessionCookie"],
+	["Scrypt", "/reference/Scrypt"],
+	["TimeSpan", "/reference/TimeSpan"]
+];
+
+const interfacePages: Page[] = [
+	["Adapter", "/reference/Adapter"],
+	["DatabaseSession", "/reference/DatabaseSession"],
+	["DatabaseSessionAttributes", "/reference/DatabaseSessionAttributes"],
+	["DatabaseUser", "/reference/DatabaseUser"],
+	["DatabaseUserAttributes", "/reference/DatabaseUserAttributes"],
+	["Session", "/reference/Session"],
+	["User", "/reference/User"]
+];
+
+const sections: Section[] = [
+	{
+		title: "Functions",
+		pages: functionPages
+	},
+	{
+		title: "Classes",
+		pages: classPages
+	},
+	{
+		title: "Interfaces",
+		pages: interfacePages
+	}
+];
+
+const type = Astro.props.frontmatter.type;
+let displayName = Astro.url.pathname
+	.split("/")
+	.filter((val) => val !== "")
+	.at(-1)!;
+if (type === "function" || type === "method") {
+	displayName = displayName + "()";
+}
+---
+
+<BaseLayout title={Astro.props.frontmatter.title ?? displayName} sections={sections}>
+	<h1 class="text-4xl font-semibold mb-4">{Astro.props.frontmatter.title ?? displayName}</h1>
+	<MarkdownArticle>
+		<slot />
+	</MarkdownArticle>
+</BaseLayout>

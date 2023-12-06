@@ -1,77 +1,70 @@
 ---
-import MainNavMenu from "../components/nav-menus/MainNavMenu.astro";
+import BaseLayout from "./BaseLayout.astro";
+
+import type { Section, Page } from "@components/NavMenu.astro";
 
 interface Props {
 	title: string;
 }
+
+const startHerePages: Page[] = [
+	["Getting-started", "/getting-started"],
+	["Upgrade to v3", "/upgrade-v3"],
+	["Database", "/database"]
+];
+
+const tutorialPages: Page[] = [
+	["GitHub OAuth", "/tutorials/github-oauth"],
+	["Username and password", "/tutorials/username-and-password"]
+];
+
+const basicsPages: Page[] = [
+	["Sessions", "/basics/sessions"],
+	["Users", "/basics/users"],
+	["Configuration", "/basics/configuration"],
+	["Troubleshooting", "/basics/help"],
+	["API reference", "/reference"]
+];
+
+const guidesPages: Page[] = [
+	["Validate session cookies", "/guides/validate-session-cookies"],
+	["Validate bearer tokens", "/guides/validate-bearer-tokens"],
+	["OAuth", "/guides/oauth"],
+	["Email and password", "/guides/email-and-password"],
+	["Passkeys", "/guides/passkeys"],
+	["Improving sessions", "/guides/improving-sessions"]
+];
+
+const communityPages: Page[] = [
+	["Discord", "https://discord.com/invite/PwrK3kpVR3"],
+	["GitHub", "https://github.com/lucia-auth/lucia"],
+	["Twitter", "https://twitter.com/lucia-auth"]
+];
+
+const sections: Section[] = [
+	{
+		title: "Start here",
+		pages: startHerePages
+	},
+	{
+		title: "Tutorials",
+		pages: tutorialPages
+	},
+	{
+		title: "Basics",
+		pages: basicsPages
+	},
+	{
+		title: "Guides",
+		pages: guidesPages
+	},
+	{
+		title: "Community",
+		pages: communityPages
+	}
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{Astro.props.title}</title>
-
-		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:site" content="@lucia_auth" />
-		<meta name="twitter:title" content={Astro.props.title} />
-		<meta
-			name="twitter:description"
-			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
-		/>
-		<!-- <meta property="og:image" content="" /> -->
-
-		<meta property="og:site_name" content="Lucia" />
-		<meta property="og:title" content={Astro.props.title} />
-		<meta property="og:url" content="https://v3.lucia-auth.com" />
-		<meta
-			property="og:description"
-			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
-		/>
-	</head>
-	<body class="text-zinc-900 leading-relaxed">
-		<main class="w-full md:px-4">
-			<nav class="md:hidden w-full fixed border-b bg-white pt-3 pb-2 max-h-screen flex flex-col">
-				<header class="flex place-items-center place-content-between px-4">
-					<a href="/" class="font-medium text-xl">Lucia</a>
-					<button id="nav-button">Open</button>
-				</header>
-				<div class="px-4 overflow-auto overscroll-contain hidden pb-4" id="mobile-nav-menu">
-					<MainNavMenu />
-				</div>
-			</nav>
-			<div class="max-w-5xl mx-auto w-full px-4 md:px-0">
-				<div class="fixed w-60 shrink-0 hidden md:block h-screen pt-8 pr-4">
-					<a href="/" class="font-medium text-2xl">Lucia</a>
-					<div class="overflow-auto h-full pb-24">
-						<MainNavMenu />
-					</div>
-				</div>
-				<div class="md:ml-60 pt-20 md:pt-12 pb-24">
-					<slot />
-				</div>
-			</div>
-		</main>
-	</body>
-</html>
-
-<style>
-	:root {
-		--astro-code-color-background: rgb(246, 246, 246);
-		--astro-code-token-keyword: rgb(235, 72, 105);
-		--astro-code-token-string-expression: rgb(77, 102, 183);
-		--astro-code-token-comment: rgb(175, 175, 175);
-	}
-</style>
-
-<script>
-	document.getElementById("nav-button")!.addEventListener("click", (e) => {
-		const navMenu = document.getElementById("mobile-nav-menu")!;
-		if (navMenu.classList.contains("hidden")) {
-			navMenu.classList.remove("hidden");
-		} else {
-			navMenu.classList.add("hidden");
-		}
-	});
-</script>
+<BaseLayout title={Astro.props.title} sections={sections}>
+	<slot />
+</BaseLayout>

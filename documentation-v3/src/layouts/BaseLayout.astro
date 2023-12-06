@@ -1,0 +1,58 @@
+---
+import Head from "@components/Head.astro";
+import NavMenu from "@components/NavMenu.astro";
+
+import type { Section } from "@components/NavMenu.astro";
+
+
+interface Props {
+	title: string;
+	sections: Section[];
+}
+---
+
+<html lang="en">
+	<Head title={Astro.props.title} />
+	<body class="text-zinc-900 leading-relaxed">
+		<main class="w-full md:px-4">
+			<nav class="md:hidden w-full fixed border-b bg-white pt-3 pb-2 max-h-screen flex flex-col">
+				<header class="flex place-items-center place-content-between px-4">
+					<a href="/" class="font-medium text-xl">Lucia</a>
+					<button id="nav-button">Open</button>
+				</header>
+				<div class="px-4 overflow-auto overscroll-contain hidden pb-4" id="mobile-nav-menu">
+					<NavMenu sections={Astro.props.sections}/>
+				</div>
+			</nav>
+			<div class="max-w-5xl mx-auto w-full px-4 md:px-0">
+				<div class="fixed w-60 shrink-0 hidden md:block h-screen pt-8 pr-4">
+					<a href="/" class="font-medium text-2xl">Lucia</a>
+					<div class="overflow-auto h-full pb-24">
+						<NavMenu sections={Astro.props.sections}/>
+					</div>
+				</div>
+				<div class="md:ml-60 pt-20 md:pt-12 pb-24">
+					<slot />
+				</div>
+			</div>
+		</main>
+	</body><style>
+		:root {
+			--astro-code-color-background: rgb(246, 246, 246);
+			--astro-code-token-keyword: rgb(235, 72, 105);
+			--astro-code-token-string-expression: rgb(77, 102, 183);
+			--astro-code-token-comment: rgb(175, 175, 175);
+		}
+	</style>
+
+	<script>
+		document.getElementById("nav-button")!.addEventListener("click", (e) => {
+			const navMenu = document.getElementById("mobile-nav-menu")!;
+			if (navMenu.classList.contains("hidden")) {
+				navMenu.classList.remove("hidden");
+			} else {
+				navMenu.classList.add("hidden");
+			}
+		});
+	</script>
+</html>
