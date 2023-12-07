@@ -7,8 +7,6 @@ This page shows all the options for [`Lucia`]() to configure Lucia.
 
 ```ts
 interface Options {
-	middleware?: _Middleware;
-	csrfProtection?: boolean | CSRFProtectionOptions;
 	sessionExpiresIn?: TimeSpan;
 	sessionCookie?: SessionCookieOptions;
 	getSessionAttributes?: (
@@ -16,36 +14,6 @@ interface Options {
 	) => _SessionAttributes;
 	getUserAttributes?: (databaseUserAttributes: DatabaseUserAttributes) => _UserAttributes;
 }
-```
-
-## `middleware`
-
-See [middleware]().
-
-```ts
-import { Lucia } from "lucia";
-import { sveltekit } from "lucia/middleware";
-
-const lucia = new Lucia(adapter, {
-	middleware: sveltekit()
-});
-```
-
-## `csrfProtection`
-
-CSRF protection is enabled (`true`) by default for [`AuthRequest.handleRequest()`](). Disable it by passing `false`. You can configure the behavior for `AuthRequest.handleRequest()` or [`Lucia.verifyRequestOrigin()`]() by passing an object.
-
-By default, Lucia uses the `Host` header to determine the current domain. You can change that with the `hostHeader` option or manually defining domains in `allowedHeaders`.
-
-```ts
-import { Lucia } from "lucia";
-
-const lucia = new Lucia(adapter, {
-	csrfProtection: {
-		allowedHeaders: ["api.example.com"],
-		hostHeader: "X-Forwarded-Host" // default: `Host`
-	}
-});
 ```
 
 ## `sessionExpiresIn`

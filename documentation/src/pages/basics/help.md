@@ -41,28 +41,17 @@ const lucia = new Lucia(adapter, {
 
 ## Can't validate POST requests
 
-If you're using `AuthRequest.validate()` and it returns `null` even if the session cookie exists, it's likely caused by Lucia's CSRF protection. To debug, check the `Origin` and `Host` header. The hostname (domain) must exactly match. You can use a different header to get the host, manually add allowed domains, or disable CSRF protection entirely (not recommended) using the [`csrfProtection`]() option.
+Check your CSRF protection implementation. If you're using the code provided by the documentation, check the `Origin` and `Host` header. The hostname must match exactly. You can add additional domains to the array to allow more domains.
 
 ```ts
-import { Lucia } from "lucia";
+import { verifyRequestOrigin } from "oslo/request";
 
-const lucia = new Lucia(adapter, {
-	csrfProtection: {
-        hostHeader: "X-Forwarded-Host", // use X-Forwarded-Host instead of Host
-        allowedDomains: ["api.example.com"] // allow api.example.com
-    }
-});
-
-// disable CSRF protection
-const lucia = new Lucia(adapter, {
-	csrfProtection: false
-});
+verifyRequestOrigin(originHeader, [hostHeader, "api.example.com" /*...*/]);
 ```
 
 ## `crypto` is not defined
 
 You're likely using a runtime that doesn't support the Web Crypto API, such as Node.js 18 and below. Polyfill it by importing `webcrypto`.
-
 
 ```ts
 import { webcrypto } from "node:crypto";
