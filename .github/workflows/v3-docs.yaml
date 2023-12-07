@@ -2,7 +2,7 @@ name: "Deploy v3 docs"
 on:
   push:
     branches:
-      - v3-docs
+      - v3
 
 env:
   CLOUDFLARE_API_TOKEN: ${{secrets.CLOUDFLARE_API_TOKEN}}
@@ -25,7 +25,7 @@ jobs:
       - name: install wrangler
         run: npm i -g wrangler
       - name: build
-        working-directory: documentation-v3
+        working-directory: documentation
         run: pnpm build
       - name: deploy
-        run: wrangler pages deploy documentation-v3/dist --project-name lucia-v3 --branch main
+        run: wrangler pages deploy documentation/dist --project-name lucia-v3 --branch main
