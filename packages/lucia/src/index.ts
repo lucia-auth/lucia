@@ -1,7 +1,7 @@
 export { Lucia } from "./core.js";
-export { AuthRequest } from "./request.js";
 export { Scrypt, LegacyScrypt, generateId } from "./crypto.js";
 export { TimeSpan } from "oslo";
+export { SessionCookie } from "oslo/session";
 
 export type {
 	User,
@@ -9,9 +9,7 @@ export type {
 	SessionCookieOptions,
 	CSRFProtectionOptions,
 	SessionCookieAttributesOptions,
-	RequestContext,
-	Middleware,
-	HandleRequestContext
+	RequestContext
 } from "./core.js";
 export type { DatabaseSession, DatabaseUser, Adapter } from "./database.js";
 export type { PasswordHashingAlgorithm } from "./crypto.js";
@@ -24,7 +22,7 @@ export type RegisteredLucia = Register extends {
 	// need to infer to "copy" the generics of Lucia
 	Lucia: infer _Lucia;
 }
-	? _Lucia extends Lucia<any, any, any>
+	? _Lucia extends Lucia<any, any>
 		? _Lucia
 		: Lucia
 	: Lucia;
