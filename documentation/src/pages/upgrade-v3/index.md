@@ -24,7 +24,9 @@ await db.table("user").insert({
 });
 ```
 
-Lucia is also now built with [Oslo]() which provides useful auth-related utilities. While not required, we recommend installing it alongside Lucia as all guides in the documentation use it some way or another.
+Another change is that APIs for request handling have been removed. We now just provide code snippets in the docs that you can copy-paste.
+
+Lucia is now built with [Oslo](), a library that provides useful auth-related utilities. While not required, we recommend installing it alongside Lucia as all guides in the documentation use it some way or another.
 
 ```
 npm install lucia@beta oslo
@@ -47,7 +49,7 @@ export const auth = new Lucia(adapter, {
 });
 ```
 
-Here's the full updated configuration.
+Here's the fully updated configuration for reference. `middleware` and `csrfProtection` has been removed.
 
 ```ts
 import { Lucia, TimeSpan } from "lucia";
@@ -63,12 +65,6 @@ export const auth = new Lucia(adapter, {
 		return {
 			username: attributes.username
 		};
-	},
-	middleware: astro(),
-	csrfProtection: {
-		host,
-		hostHeader,
-		allowedDomains: ["admin.example.com"] // replaced `allowedSubdomains`
 	},
 	sessionExpiresIn: new TimeSpan(30, "d"), // no more active/idle
 	sessionCookie: {
@@ -88,7 +84,7 @@ export const auth = new Lucia(adapter, {
 Lucia v3 uses the newer module syntax instead of `.d.ts` files for declaring types for improved agronomics and monorepo support. The `Lucia` type declaration is required.
 
 ```ts
-export const auth = new Lucia();
+export const lucia = new Lucia();
 
 declare module "lucia" {
 	interface Register {
@@ -131,7 +127,20 @@ The following packages are deprecated:
 
 If you're using a session adapter, we recommend building a [custom adapter]() as the API have been greatly simplified.
 
-## Session validation
+## Sessions
+
+### Session validation
+
+Middleware, `Auth.handleRequest()`, and `AuthRequest` have been removed. **This means Lucia no longer provides strict CSRF protection**. For replacing `AuthRequest.validate()`, see the [Validating session cookies](/guides/validate-session-cookies) guide or a framework specific version of it as these need to be re-implemented from scratch (though it's just copy-pasting code from the guides):
+
+- [Astro](/guides/validate-session-cookies/astro)
+- [Elysia](/guides/validate-session-cookies/elysia)
+- [Express](/guides/validate-session-cookies/express)
+- [Hono](/guides/validate-session-cookies/hono)
+- [Next.js App router](/guides/validate-session-cookies/nextjs-app)
+- [Next.js Pages router](/guides/validate-session-cookies/nextjs-pages)
+- [Nuxt](/guides/validate-session-cookies/nuxt)
+- [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
 `Session.sessionId` has been renamed to `Session.id`
 
@@ -149,14 +158,7 @@ if (!session) {
 }
 ```
 
-Similar changes have been made to `AuthRequest.validate()`:
-
-```ts
-// v3
-const { session, user } = await authRequest.validate(sessionId);
-```
-
-## Session cookies
+### Session cookies
 
 `createSessionCookie()` now takes a session ID instead of a session object, and `createBlankSessionCookie()` should be used for creating blank session cookies.
 
@@ -165,22 +167,9 @@ const sessionCookie = auth.createSessionCookie(session.id);
 const blankSessionCookie = auth.createBlankSessionCookie(session.id);
 ```
 
-`AuthRequest.setSession()` has been replaced by `AuthRequest.setSessionCookie()` (which takes a session ID), and you must use `AuthRequest.deleteSessionCookie()` to a delete session cookie.
-
-```ts
-authRequest.setSessionCookie(session.id);
-authRequest.deleteSessionCookie();
-```
-
 ## Update authentication
 
 Refer to these guides:
 
 - [Upgrade OAuth setup to v3](/upgrade-v3/oauth)
 - [Upgrade Password-based auth to v3](/upgrade-v3/password)
-
-## Framework specific changes
-
-- `nextjs_future()` middleware is now just `nextjs()`
-- Next.js middleware no longer accepts just a request object (cannot be used in Next.js middleware or Pages router edge API route)
-- Removed `web()` middleware
