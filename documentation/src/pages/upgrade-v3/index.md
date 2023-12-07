@@ -81,7 +81,7 @@ export const lucia = new Lucia(adapter, {
 
 ### Type declaration
 
-Lucia v3 uses the newer module syntax instead of `.d.ts` files for declaring types for improved agronomics and monorepo support. The `Lucia` type declaration is required.
+Lucia v3 uses the newer module syntax instead of `.d.ts` files for declaring types for improved ergonomics and monorepo support. The `Lucia` type declaration is required.
 
 ```ts
 export const lucia = new Lucia();
