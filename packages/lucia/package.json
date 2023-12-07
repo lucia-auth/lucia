@@ -5,7 +5,6 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"module": "dist/index.js",
-	"svelte": "dist/index.js",
 	"type": "module",
 	"files": [
 		"/dist/",

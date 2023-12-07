@@ -1,5 +1,17 @@
 # lucia
 
+## 2.7.4
+
+### Patch changes
+
+- [#1250](https://github.com/lucia-auth/lucia/pull/1250) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Revert #1158
+
+- [#1256](https://github.com/lucia-auth/lucia/pull/1256) by [@FredTreg](https://github.com/FredTreg) : Allow debug message to be displayed when request origin not available
+
+- [#1254](https://github.com/lucia-auth/lucia/pull/1254) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove unused `svelte` field from `package.json`
+
+- [#1250](https://github.com/lucia-auth/lucia/pull/1250) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Remove `nanoid` dependency
+
 ## 2.7.3
 
 ### Patch changes
