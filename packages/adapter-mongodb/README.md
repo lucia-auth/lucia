@@ -4,16 +4,16 @@
 
 **[Documentation](https://lucia-auth.com/reference#lucia-authadapter-mongodb)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-mongodb/CHANGELOG.md)**
 
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-mongodb
-pnpm install @lucia-auth/adapter-mongodb
-yarn add @lucia-auth/adapter-mongodb
+npm install @lucia-auth/adapter-mongodb@beta
+pnpm add @lucia-auth/adapter-mongodb@beta
+yarn add @lucia-auth/adapter-mongodb@beta
 ```
 
 ## Testing

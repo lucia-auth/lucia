@@ -4,7 +4,7 @@ SQLite adapter for Lucia v3.
 
 **[Documentation](https://lucia-auth.com/reference#lucia-authadapter-prisma)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-sqlite/CHANGELOG.md)**
 
@@ -18,9 +18,9 @@ SQLite adapter for Lucia v3.
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-sqlite
-pnpm add @lucia-auth/adapter-sqlite
-yarn add @lucia-auth/adapter-sqlite
+npm install @lucia-auth/adapter-sqlite@beta
+pnpm add @lucia-auth/adapter-sqlite@beta
+yarn add @lucia-auth/adapter-sqlite@beta
 ```
 
 ## Testing

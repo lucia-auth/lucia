@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-sqlite",
-	"version": "3.0.0-beta.8",
+	"version": "3.0.0-beta.9",
 	"description": "SQLite adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -44,7 +44,7 @@
 	"peerDependencies": {
 		"@libsql/client": "^0.3.0",
 		"better-sqlite3": "8.x - 9.x",
-		"lucia": "3.0.0-beta.9"
+		"lucia": "3.0.0-beta.11"
 	},
 	"peerDependenciesMeta": {
 		"better-sqlite3": {
@@ -57,13 +57,13 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230518.0",
 		"@libsql/client": "^0.3.0",
-		"@lucia-auth/adapter-test": "latest",
+		"@lucia-auth/adapter-test": "5.0.0-beta.4",
 		"@miniflare/d1": "^2.14.0",
 		"@miniflare/web-sockets": "^2.14.1",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.4.0",
 		"bun-types": "^1.0.12",
-		"lucia": "latest",
+		"lucia": "3.0.0-beta.11",
 		"tsx": "^3.12.6"
 	}
 }

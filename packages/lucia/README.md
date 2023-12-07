@@ -8,8 +8,8 @@ A simple authentication library for managing users and sessions.
 
 ## Installation
 
-```bash
-npm install lucia
-pnpm add lucia
-yarn add lucia
+```
+npm install lucia@beta
+pnpm add lucia@beta
+yarn add lucia@beta
 ```

@@ -4,7 +4,7 @@ MySQL adapter for Lucia v2.
 
 **[Documentation](https://lucia-auth.com/reference#lucia-authadapter-mysql)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-mysql/CHANGELOG.md)**
 
@@ -15,9 +15,9 @@ MySQL adapter for Lucia v2.
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-postgresql
-pnpm add @lucia-auth/adapter-postgresql
-yarn add @lucia-auth/adapter-postgresql
+npm install @lucia-auth/adapter-postgresql@beta
+pnpm add @lucia-auth/adapter-postgresql@beta
+yarn add @lucia-auth/adapter-postgresql@beta
 ```
 
 ## Testing
