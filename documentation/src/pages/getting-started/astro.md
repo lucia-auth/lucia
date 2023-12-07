@@ -16,7 +16,6 @@ Import `Lucia` and initialize it with your adapter. Refer to the [Database](/dat
 ```ts
 // src/auth.ts
 import { Lucia } from "lucia";
-import { prod } from "$app/environment";
 
 const adapter = new BetterSQLite3Adapter(db); // your adapter
 
@@ -24,7 +23,7 @@ export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			// set to `true` when using HTTPS
-			secure: !dev
+			secure: import.meta.env.PROD
 		}
 	}
 });
