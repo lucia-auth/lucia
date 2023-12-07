@@ -164,7 +164,7 @@ if (!session) {
 
 ```ts
 const sessionCookie = auth.createSessionCookie(session.id);
-const blankSessionCookie = auth.createBlankSessionCookie(session.id);
+const blankSessionCookie = auth.createBlankSessionCookie();
 ```
 
 ## Update authentication
