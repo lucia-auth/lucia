@@ -40,7 +40,7 @@ Here's the base config. Lucia is now initialized using the `Lucia` class, which 
 import { Lucia, TimeSpan } from "lucia";
 import { astro } from "lucia/middleware";
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			secure: env === "PRODUCTION" // replaces `env` config
@@ -55,7 +55,7 @@ Here's the fully updated configuration for reference. `middleware` and `csrfProt
 import { Lucia, TimeSpan } from "lucia";
 import { astro } from "lucia/middleware";
 
-export const auth = new Lucia(adapter, {
+export const lucia = new Lucia(adapter, {
 	getSessionAttributes: (attributes) => {
 		return {
 			ipCountry: attributes.ip_country
