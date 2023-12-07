@@ -90,24 +90,54 @@ declare module "lucia" {
 
 ## Validate sessions
 
-Use `Lucia.validateSession()` to validate a session using its ID. This will return an object containing a session and user. Both of these will be `null` if the session does not exist in the database or is expired.
+Use `Lucia.validateSession()` to validate a session using its ID. This will return an object containing a session and user. Both of these will be `null` if the session is invalid.
 
 ```ts
 const { session, user } = await lucia.validateSession(sessionId);
-if (session) {
-	const userId = user.id;
-} else {
-	// delete session cookie
-}
 ```
 
-If `Session.fresh` is `true`, you need to set the session cookie again.
+If `Session.fresh` is `true`, it indicates the session expiration has been extended and you should set a new session cookie. If you cannot always set a new session cookie due to limitations of your framework, set the [`sessionCookie.expires`]() option to `false`.
 
 ```ts
 const { session } = await lucia.validateSession(sessionId);
 if (session && session.fresh) {
 	// set session cookie
 }
+```
+
+You can use [`Lucia.readSessionCookie()`]() and [`Lucia.readBearerToken()`]() to get the session ID from the `Cookie` and `Authorization` header respectively.
+
+```ts
+const sessionId = lucia.readSessionCookie("auth_session=abc");
+const sessionId = lucia.rearerBearerToken("Bearer abc");
+```
+
+See the [Validate session cookies]() and [Validate bearer tokens]() guide for a full example for validating session cookies.
+
+## Session cookies
+
+### Create session cookies
+
+You can create a session cookie for a session with [`Lucia.createSessionCookie()`](). It takes a session and returns a new [`SessionCookie`]() instance. You can either use [`SessionCookie.serialize()`]() to create `Set-Cookie` HTTP header value, or use your framework's API by accessing the name, value, and session.
+
+```ts
+const sessionCookie = lucia.createSessionCookie(session.id);
+
+// set cookie directly
+headers.set("Set-Cookie", sessionCookie.serialize());
+// use your framework's cookie utility
+setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+```
+
+### Delete session cookie
+
+You can delete a session cookie by setting a blank cookie created using [`Lucia.createBlankSessionCookie()`]().
+
+```ts
+const sessionCookie = lucia.createBlankSessionCookie();
+
+headers.set("Set-Cookie", sessionCookie.serialize());
+setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 ```
 
 ## Invalidate sessions

@@ -6,9 +6,6 @@ title: "Getting started"
 A framework-specific guide is also available for:
 
 - [Astro](/getting-started/astro)
-- [Elysia](/getting-started/elysia)
-- [Express](/getting-started/express)
-- [Hono](/getting-started/hono)
 - [Next.js App router](/getting-started/nextjs-app)
 - [Next.js Pages router](/getting-started/nextjs-pages)
 - [Nuxt](/getting-started/nuxt)

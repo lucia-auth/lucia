@@ -28,8 +28,7 @@ export const lucia = new Lucia(adapter, {
 	middleware: nextjs(),
 	sessionCookie: {
 		// this sets cookies with super long expiration
-		// since Next.js doesn't allow Lucia to extend cookie expiration
-		// in certain situations
+		// since Next.js doesn't allow Lucia to extend cookie expiration when rendering pages
 		expires: false,
 		attributes: {
 			// set to `true` when using HTTPS
@@ -58,6 +57,19 @@ globalThis.crypto = webcrypto as Crypto;
 
 ```
 node --experimental-web-crypto index.js
+```
+
+## Configure
+
+If you've installed Oslo, we recommend marking the package external to prevent it from getting bundled. Strictly speaking, this is only required when using `oslo/password` module.
+
+```ts
+// next.config.ts
+const config = {
+	experimental: {
+		serverComponentsExternalPackages: ["oslo"]
+	}
+};
 ```
 
 ## Next steps

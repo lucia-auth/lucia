@@ -11,31 +11,24 @@ npm install lucia@beta oslo
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure you:
-
-- Use the `astro` middleware
-- Configure the `sessionCookie` option
-- Register your `Lucia` instance type
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type
 
 ```ts
 // src/auth.ts
 import { Lucia } from "lucia";
-import { astro } from "lucia/middleware";
+import { prod } from "$app/environment";
 
 const adapter = new BetterSQLite3Adapter(db); // your adapter
 
 export const lucia = new Lucia(adapter, {
-	middleware: astro(),
 	sessionCookie: {
-		// IMPORTANT!
 		attributes: {
 			// set to `true` when using HTTPS
-			secure: import.meta.env.PROD
+			secure: !dev
 		}
 	}
 });
 
-// IMPORTANT!
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
@@ -45,18 +38,45 @@ declare module "lucia" {
 
 ## Setup middleware
 
-If you're planning to use cookies to store the session, we recommend setting up middleware to make `AuthRequest` available in all routes.
+We recommend setting up a middleware to validate requests. The validated user will be available as `local.user`. You can just copy-paste the code into `src/middleware.ts`.
+
+It's a bit verbose, but it just reads the session cookie, validates it, and sets a new cookie if necessary. Since Astro doesn't implement CSRF protection out of the box, it must be implemented. If you're curious about what's happening here, see the [Validating requests](/basics/validate-session-cookies/astro) page.
 
 ```ts
 // src/middleware.ts
-import { lucia } from "./lucia";
+import { lucia } from "./auth";
+import { verifyRequestOrigin } from "oslo/request";
+import { defineMiddleware } from "astro:middleware";
 
-import type { MiddlewareResponseHandler } from "astro";
+export const onRequest = defineMiddleware(async (context, next) => {
+	if (context.request.method !== "GET") {
+		const originHeader = request.headers.get("Origin");
+		const hostHeader = request.headers.get("Header");
+		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
+			return new Response(null, {
+				status: 403
+			});
+		}
+	}
 
-export const onRequest: MiddlewareResponseHandler = async (context, next) => {
-	context.locals.lucia = lucia.handleRequest(context);
-	return await next();
-};
+	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
+	if (!sessionId) {
+		context.locals.user = null;
+		return next();
+	}
+
+	const { session, user } = await lucia.validateSession(sessionId);
+	if (session && session.fresh) {
+		const sessionCookie = lucia.createSessionCookie(session.id);
+		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	}
+	if (!session) {
+		const sessionCookie = lucia.createBlankSessionCookie();
+		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	}
+	context.locals.user = user;
+	return next();
+});
 ```
 
 Make sure sure to type `App.Locals` as well.
@@ -67,7 +87,7 @@ Make sure sure to type `App.Locals` as well.
 /// <reference types="astro/client" />
 declare namespace App {
 	interface Locals {
-		lucia: import("lucia").AuthRequest;
+		user: import("lucia").User;
 	}
 }
 ```
