@@ -1,0 +1,70 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+import type { Section, Page } from "@components/NavMenu.astro";
+
+interface Props {
+	title: string;
+}
+
+const startHerePages: Page[] = [
+	["Getting-started", "/getting-started"],
+	["Upgrade to v3", "/upgrade-v3"],
+	["Database", "/database"]
+];
+
+const tutorialPages: Page[] = [
+	["GitHub OAuth", "/tutorials/github-oauth"],
+	["Username and password", "/tutorials/username-and-password"]
+];
+
+const basicsPages: Page[] = [
+	["Sessions", "/basics/sessions"],
+	["Users", "/basics/users"],
+	["Configuration", "/basics/configuration"],
+	["Troubleshooting", "/basics/help"],
+	["API reference", "/reference"]
+];
+
+const guidesPages: Page[] = [
+	["Validate session cookies", "/guides/validate-session-cookies"],
+	["Validate bearer tokens", "/guides/validate-bearer-tokens"],
+	["OAuth", "/guides/oauth"],
+	["Email and password", "/guides/email-and-password"],
+	["Passkeys", "/guides/passkeys"],
+	["Improving sessions", "/guides/improving-sessions"]
+];
+
+const communityPages: Page[] = [
+	["Discord", "https://discord.com/invite/PwrK3kpVR3"],
+	["GitHub", "https://github.com/lucia-auth/lucia"],
+	["Twitter", "https://twitter.com/lucia-auth"]
+];
+
+const sections: Section[] = [
+	{
+		title: "Start here",
+		pages: startHerePages
+	},
+	{
+		title: "Tutorials",
+		pages: tutorialPages
+	},
+	{
+		title: "Basics",
+		pages: basicsPages
+	},
+	{
+		title: "Guides",
+		pages: guidesPages
+	},
+	{
+		title: "Community",
+		pages: communityPages
+	}
+];
+---
+
+<BaseLayout title={Astro.props.title} sections={sections}>
+	<slot />
+</BaseLayout>

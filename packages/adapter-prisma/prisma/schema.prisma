@@ -11,13 +11,13 @@ datasource db {
 }
 
 model User {
-  id           String    @id @unique
+  id           String    @id
   username     String    @unique
   auth_session Session[]
 }
 
 model Session {
-  id        String   @id @unique
+  id        String   @id
   userId    String
   expiresAt DateTime
   country   String
