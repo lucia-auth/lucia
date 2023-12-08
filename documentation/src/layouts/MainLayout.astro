@@ -7,60 +7,53 @@ interface Props {
 	title: string;
 }
 
-const startHerePages: Page[] = [
-	["Getting-started", "/getting-started"],
-	["Database", "/database"],
-	["Upgrade to v3", "/upgrade-v3"]
-];
-
-const tutorialPages: Page[] = [
-	["GitHub OAuth", "/tutorials/github-oauth"],
-	["Username and password", "/tutorials/username-and-password"]
-];
-
-const basicsPages: Page[] = [
-	["Sessions", "/basics/sessions"],
-	["Users", "/basics/users"],
-	["Configuration", "/basics/configuration"],
-	["Troubleshooting", "/basics/help"],
-	["API reference", "/reference"]
-];
-
-const guidesPages: Page[] = [
-	["Validate session cookies", "/guides/validate-session-cookies"],
-	["Validate bearer tokens", "/guides/validate-bearer-tokens"],
-	["OAuth", "/guides/oauth"],
-	["Email and password", "/guides/email-and-password"],
-	["Passkeys", "/guides/passkeys"],
-	["Improving sessions", "/guides/improving-sessions"]
-];
-
-const communityPages: Page[] = [
-	["Discord", "https://discord.com/invite/PwrK3kpVR3"],
-	["GitHub", "https://github.com/lucia-auth/lucia"],
-	["Twitter", "https://twitter.com/lucia-auth"]
-];
-
 const sections: Section[] = [
 	{
 		title: "Start here",
-		pages: startHerePages
+		pages: [
+			["Getting-started", "/getting-started"],
+			["Database", "/database"],
+			["Upgrade to v3", "/upgrade-v3"]
+		]
 	},
 	{
 		title: "Tutorials",
-		pages: tutorialPages
+		pages: [
+			["GitHub OAuth", "/tutorials/github-oauth"],
+			["Username and password", "/tutorials/username-and-password"]
+		]
 	},
 	{
 		title: "Basics",
-		pages: basicsPages
+		pages: [
+			["Sessions", "/basics/sessions"],
+			["Users", "/basics/users"],
+			["Configuration", "/basics/configuration"],
+			["Troubleshooting", "/basics/help"]
+		]
 	},
 	{
 		title: "Guides",
-		pages: guidesPages
+		pages: [
+			["Validate session cookies", "/guides/validate-session-cookies"],
+			["Validate bearer tokens", "/guides/validate-bearer-tokens"],
+			["OAuth", "/guides/oauth"],
+			["Email and password", "/guides/email-and-password"],
+			["Passkeys", "/guides/passkeys"],
+			["Improving sessions", "/guides/improving-sessions"]
+		]
+	},
+	{
+		title: "API reference",
+		pages: [["lucia", "/reference/main", "code"]]
 	},
 	{
 		title: "Community",
-		pages: communityPages
+		pages: [
+			["Discord", "https://discord.com/invite/PwrK3kpVR3"],
+			["GitHub", "https://github.com/lucia-auth/lucia"],
+			["Twitter", "https://twitter.com/lucia-auth"]
+		]
 	}
 ];
 ---

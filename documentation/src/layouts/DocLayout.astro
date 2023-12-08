@@ -6,11 +6,23 @@ import type { MarkdownLayoutProps } from "astro";
 
 type Props = MarkdownLayoutProps<{
 	title: string;
+	format?: "code";
 }>;
 ---
 
 <MainLayout title={Astro.props.frontmatter.title}>
-	<h1 class="text-4xl font-semibold mb-4">{Astro.props.frontmatter.title}</h1>
+	{
+		Astro.props.frontmatter.format === "code" ? (
+			<h1 class="mb-4 break-words text-3xl font-semibold sm:text-4xl">
+				<code>{Astro.props.frontmatter.title}</code>
+			</h1>
+		) : (
+			<h1 class="mb-4 break-words text-3xl font-semibold sm:text-4xl">
+				{Astro.props.frontmatter.title}
+			</h1>
+		)
+	}
+
 	<MarkdownArticle>
 		<slot />
 	</MarkdownArticle>

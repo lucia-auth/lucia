@@ -8,7 +8,7 @@ export interface Section {
 	pages: Page[];
 }
 
-export type Page = [title: string, href: string];
+export type Page = [title: string, href: string, format?: "code"];
 
 function isSelected(href: string, currentPathname: string): boolean {
 	if (removeLeadingSlash(href) === removeLeadingSlash(currentPathname)) {
@@ -28,9 +28,9 @@ function removeLeadingSlash(s: string): string {
 <ul class="text-sm">
 	{
 		Astro.props.sections.map((section) => {
-            if (section.pages.length < 1) {
-                return null
-            }
+			if (section.pages.length < 1) {
+				return null;
+			}
 			return (
 				<li class="mt-6">
 					<p class="mb-1 text-sm font-medium">{section.title}</p>
@@ -48,7 +48,7 @@ function removeLeadingSlash(s: string): string {
 										]}
 										href={page[1]}
 									>
-										{page[0]}
+										{page[2] === "code" ? <code>{page[0]}</code> : page[0]}
 									</a>
 								</li>
 							);
