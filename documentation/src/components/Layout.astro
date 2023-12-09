@@ -35,44 +35,42 @@ type Props = MarkdownLayoutProps<{
 			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
 		/>
 	</head>
-	<body class="leading-relaxed text-zinc-900 lg:overflow-auto">
-		<main class="w-full lg:px-8">
-			<button
-				id="mobile-nav-button"
-				class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mt-12 md:mr-8 lg:hidden"
-			>
-				<MenuIcon />
-			</button>
-			<div
-				class="fixed hidden h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:pt-12 md:px-8 lg:hidden"
-				id="mobile-nav-menu"
-			>
-				<div class="flex place-content-between">
-					<a href="/" class="text-xl font-medium">Lucia</a>
-					<button id="mobile-nav-close-button" class="h-8 w-8 rounded p-2 lg:hidden">
-						<CloseIcon />
-					</button>
-				</div>
-				<div class="mt-4">
-					<NavMenu />
-				</div>
+	<body class="leading-relaxed text-zinc-900 lg:overflow-auto w-full lg:px-8">
+		<button
+			id="mobile-nav-button"
+			class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mt-12 md:mr-8 lg:hidden"
+		>
+			<MenuIcon />
+		</button>
+		<div
+			class="fixed hidden h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:pt-12 md:px-8 lg:hidden"
+			id="mobile-nav-menu"
+		>
+			<div class="flex place-content-between">
+				<a href="/" class="text-xl font-medium">Lucia</a>
+				<button id="mobile-nav-close-button" class="h-8 w-8 rounded p-2 lg:hidden">
+					<CloseIcon />
+				</button>
 			</div>
-			<div class="mx-auto w-full max-w-5xl px-4 md:px-8 lg:px-0">
-				<div class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:block">
-					<div class="flex h-full flex-col">
-						<a href="/" class="text-2xl font-medium">Lucia</a>
-						<div class="mt-4 overflow-auto pb-4">
-							<NavMenu />
-						</div>
+			<div class="mt-4">
+				<NavMenu />
+			</div>
+		</div>
+		<div class="mx-auto w-full max-w-5xl px-4 md:px-8 lg:px-0">
+			<div class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:block">
+				<div class="flex h-full flex-col">
+					<a href="/" class="text-2xl font-medium">Lucia</a>
+					<div class="mt-4 overflow-auto pb-4">
+						<NavMenu />
 					</div>
 				</div>
-				<div class="pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4">
-					<article class="md w-full overflow-hidden">
-						<slot />
-					</article>
-				</div>
 			</div>
-		</main>
+			<div class="pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4">
+				<main class="md w-full overflow-hidden">
+					<slot />
+				</main>
+			</div>
+		</div>
 	</body>
 </html>
 
@@ -118,7 +116,7 @@ type Props = MarkdownLayoutProps<{
 		@apply my-4;
 	}
 	:global(.md > ul) {
-		@apply mb-6 mt-4 list-inside list-disc pl-2;
+		@apply my-4 list-inside list-disc;
 	}
 	:global(.md ul > li > ul) {
 		@apply list-inside list-disc pl-6;
