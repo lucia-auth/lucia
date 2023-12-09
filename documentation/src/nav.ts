@@ -1,5 +1,4 @@
----
-const sections: Section[] = [
+export const sections: Section[] = [
 	{
 		title: "Start here",
 		pages: [
@@ -49,56 +48,9 @@ const sections: Section[] = [
 	}
 ];
 
-function isSelected(href: string, currentPathname: string): boolean {
-	if (removeLeadingSlash(href) === removeLeadingSlash(currentPathname)) {
-		return true;
-	}
-	return currentPathname.startsWith(removeLeadingSlash(href) + "/");
-}
-
-function removeLeadingSlash(s: string): string {
-	if (s.endsWith("/")) {
-		return s.split("/").slice(0, -1).join("/");
-	}
-	return s;
-}
-
-interface Section {
+export interface Section {
 	title: string;
 	pages: Page[];
 }
 
-type Page = [title: string, href: string, format?: "code"];
----
-
-<ul class="flex flex-col gap-y-4 text-sm">
-	{
-		sections.map((section) => {
-			return (
-				<li>
-					<p class="mb-1 font-medium">{section.title}</p>
-					<ul>
-						{section.pages.map((page) => {
-							return (
-								<li class="my-1">
-									<a
-										class:list={[
-											"hover:underline",
-											{
-												"text-zinc-600": !isSelected(page[1], Astro.url.pathname),
-												"text-main": isSelected(page[1], Astro.url.pathname)
-											}
-										]}
-										href={page[1]}
-									>
-										{page[2] === "code" ? <code>{page[0]}</code> : page[0]}
-									</a>
-								</li>
-							);
-						})}
-					</ul>
-				</li>
-			);
-		})
-	}
-</ul>
+export type Page = [title: string, href: string, format?: "code"];

@@ -1,9 +1,10 @@
 ---
-import NavMenu from "@components/NavMenu.astro";
 import MenuIcon from "@components/MenuIcon.astro";
 
 import type { MarkdownLayoutProps } from "astro";
 import CloseIcon from "./CloseIcon.astro";
+import { sections } from "src/nav";
+import NavSection from "./NavSection.astro";
 
 type Props = MarkdownLayoutProps<{
 	title: string;
@@ -17,6 +18,10 @@ type Props = MarkdownLayoutProps<{
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{Astro.props.frontmatter.title}</title>
+		<meta
+			name="description"
+			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
+		/>
 
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:site" content="@lucia_auth" />
@@ -35,41 +40,50 @@ type Props = MarkdownLayoutProps<{
 			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
 		/>
 	</head>
-	<body class="leading-relaxed text-zinc-900 lg:overflow-auto w-full lg:px-8">
+	<body class="leading-relaxed lg:overflow-auto px-4 sm:px-8">
 		<button
 			id="mobile-nav-button"
-			class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mt-12 md:mr-8 lg:hidden"
+			class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mt-12 sm:mr-8 lg:hidden"
+			aria-label="Open menu"
 		>
 			<MenuIcon />
 		</button>
 		<div
-			class="fixed hidden h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:pt-12 md:px-8 lg:hidden"
+			class="fixed hidden h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:pt-12 sm:px-8 lg:hidden"
 			id="mobile-nav-menu"
 		>
-			<div class="flex place-content-between">
+			<div class="flex place-content-between mb-4">
 				<a href="/" class="text-xl font-medium">Lucia</a>
-				<button id="mobile-nav-close-button" class="h-8 w-8 rounded p-2 lg:hidden">
+				<button
+					id="mobile-nav-close-button"
+					class="h-8 w-8 rounded p-2 lg:hidden"
+					aria-label="Close menu"
+				>
 					<CloseIcon />
 				</button>
 			</div>
-			<div class="mt-4">
-				<NavMenu />
-			</div>
+			<nav class="flex flex-col gap-y-4">
+				{
+					sections.map((section) => {
+						return <NavSection title={section.title} pages={section.pages} />;
+					})
+				}
+			</nav>
 		</div>
-		<div class="mx-auto w-full max-w-5xl px-4 md:px-8 lg:px-0">
-			<div class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:block">
-				<div class="flex h-full flex-col">
-					<a href="/" class="text-2xl font-medium">Lucia</a>
-					<div class="mt-4 overflow-auto pb-4">
-						<NavMenu />
-					</div>
-				</div>
-			</div>
-			<div class="pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4">
-				<main class="md w-full overflow-hidden">
-					<slot />
-				</main>
-			</div>
+		<div class="mx-auto w-full max-w-5xl">
+			<aside class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:flex lg:flex-col">
+				<a href="/" class="text-2xl font-medium">Lucia</a>
+				<nav class="flex flex-col gap-y-4 mt-4 overflow-auto pb-4">
+					{
+						sections.map((section) => {
+							return <NavSection title={section.title} pages={section.pages} />;
+						})
+					}
+				</nav>
+			</aside>
+			<main class="pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4 overflow-hidden">
+				<slot />
+			</main>
 		</div>
 	</body>
 </html>
@@ -103,52 +117,52 @@ type Props = MarkdownLayoutProps<{
 		--astro-code-token-comment: rgb(143, 143, 143);
 	}
 
-	:global(.md h1) {
+	:global(main h1) {
 		@apply mb-8 break-words text-3xl  font-semibold sm:text-4xl;
 	}
-	:global(.md h2) {
+	:global(main h2) {
 		@apply mb-4 mt-8 text-2xl font-semibold;
 	}
-	:global(.md h3) {
+	:global(main h3) {
 		@apply text-xl font-medium;
 	}
-	:global(.md > p) {
+	:global(main > p) {
 		@apply my-4;
 	}
-	:global(.md > ul) {
+	:global(main > ul) {
 		@apply my-4 list-inside list-disc;
 	}
-	:global(.md ul > li > ul) {
+	:global(main ul > li > ul) {
 		@apply list-inside list-disc pl-6;
 	}
-	:global(.md p a) {
+	:global(main p a) {
 		@apply text-main hover:underline;
 	}
-	:global(.md li a) {
+	:global(main li a) {
 		@apply text-main hover:underline;
 	}
-	:global(.md p > code, .md li > code, .md p > a > code, .md li > a > code) {
+	:global(main p > code, main li > code, main p > a > code, main li > a > code) {
 		@apply text-sm;
 	}
-	:global(.md pre code a) {
+	:global(main pre code a) {
 		@apply decoration-main hover:text-main underline hover:no-underline;
 	}
-	:global(.md pre) {
+	:global(main pre) {
 		@apply mb-6 mt-4 w-full overflow-auto rounded-md bg-zinc-100 p-4 text-sm leading-snug;
 	}
-	:global(.md table) {
+	:global(main table) {
 		@apply my-2 w-full table-auto border-collapse text-left text-sm;
 	}
-	:global(.md .table-wrapper) {
+	:global(main .table-wrapper) {
 		@apply w-full overflow-auto whitespace-nowrap;
 	}
-	:global(.md table thead tr) {
+	:global(main table thead tr) {
 		@apply w-full border-b border-zinc-200;
 	}
-	:global(.md table :is(td, th)) {
+	:global(main table :is(td, th)) {
 		@apply border-b border-zinc-200 px-1 py-1;
 	}
-	:global(.md table th) {
+	:global(main table th) {
 		@apply text-xs font-medium;
 	}
 </style>
