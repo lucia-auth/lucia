@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Custom OAuth 2.0 providers"
 ---
+
+# Custom OAuth 2.0 providers
 
 If you're looking to implement OAuth 2.0 for a provider that Arctic doesn't support, we recommend using Oslo's [`OAuth2Client`]().
 

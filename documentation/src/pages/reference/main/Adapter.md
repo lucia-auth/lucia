@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Adapter"
-format: "code"
 ---
+
+# `Adapter`
 
 Represents a database adapter.
 

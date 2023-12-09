@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "MySQL"
 ---
+
+# MySQL
 
 `@lucia-auth/adapter-mysql` package provides adapters for MySQL drivers:
 

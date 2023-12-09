@@ -1,7 +1,8 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "TimeSpan"
-format: "code"
 ---
+
+# `TimeSpan`
 
 See [`TimeSpan`](https://oslo.js.org/reference/main/main/TimeSpan/) from `oslo`.

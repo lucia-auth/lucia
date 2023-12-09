@@ -1,7 +1,11 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Getting started in Sveltekit"
 ---
+
+# Getting started in Sveltekit
+
+## Installation
 
 Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
 

@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "MongoDB"
 ---
+
+# MongoDB
 
 The `@lucia-auth/adapter-mongodb` package provides adapters for MongoDB.
 

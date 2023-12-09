@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.createSessionCookie()"
-format: "code"
 ---
+
+# `Lucia.createSessionCookie()`
 
 Method of [`Lucia`](/reference/main/Lucia). Creates a new session cookie.
 

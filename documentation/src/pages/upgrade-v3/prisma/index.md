@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Upgrade your Prisma project to v3"
 ---
+
+# Upgrade your Prisma project to v3
 
 ## Update the adapter
 

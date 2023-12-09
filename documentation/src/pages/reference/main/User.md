@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "User"
-format: "code"
 ---
+
+# `User`
 
 Represents a user.
 

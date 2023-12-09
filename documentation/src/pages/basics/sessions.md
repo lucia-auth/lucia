@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Sessions"
 ---
+
+# Sessions
 
 Sessions allow Lucia to keep track of requests made by authenticated users. The id can be stored in a cookie or used as a traditional token manually added to each request. They should be created and stored on registration and login, validated on every request, and deleted on sign out.
 

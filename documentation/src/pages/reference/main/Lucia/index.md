@@ -1,10 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia"
-format: "code"
 ---
 
-The core API.
+# `Lucia`
 
 ## Constructor
 

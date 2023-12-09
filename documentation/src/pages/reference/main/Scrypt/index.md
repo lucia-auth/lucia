@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Scrypt"
-format: "code"
 ---
+
+# `Scrypt`
 
 A pure JS implementation of Scrypt. Provides methods for hashing passwords and verifying hashes with [scrypt](https://datatracker.ietf.org/doc/html/rfc7914). By default, the configuration is set to [the recommended values](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
 

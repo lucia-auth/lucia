@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Kysely"
 ---
+
+# Kysely
 
 Lucia doesn't provide an adapter for Kysely but does provide adapters for drivers supported by Kysely.
 

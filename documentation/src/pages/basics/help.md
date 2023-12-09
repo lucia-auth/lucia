@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Troubleshooting"
 ---
+
+# Troubleshooting
 
 Here are some common issues and how to resolve them. Feel free to ask for help in our Discord server.
 

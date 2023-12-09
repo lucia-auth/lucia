@@ -7,7 +7,8 @@
 		"start": "astro dev",
 		"build": "astro check && astro build",
 		"preview": "astro preview",
-		"astro": "astro"
+		"astro": "astro",
+		"format": "prettier -w . --plugin=prettier-plugin-astro"
 	},
 	"dependencies": {
 		"@astrojs/tailwind": "^5.0.0",

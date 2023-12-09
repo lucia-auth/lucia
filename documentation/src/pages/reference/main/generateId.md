@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "generateId()"
-format: "code"
 ---
+
+# `generateId()`
 
 Generates a cryptographically strong random string made of `a-z` (lowercase) and `0-9`.
 

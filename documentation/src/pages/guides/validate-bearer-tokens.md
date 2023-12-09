@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Validate bearer tokens"
 ---
+
+# Validate bearer tokens
 
 For apps that can't use cookies, store the session ID in localstorage and send it to the server as a bearer token.
 

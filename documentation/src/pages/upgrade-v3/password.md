@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Upgrade password-based auth to v3"
 ---
+
+# Upgrade password-based auth to v3
 
 ## Update database
 

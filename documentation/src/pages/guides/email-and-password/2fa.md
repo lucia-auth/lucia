@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Two-factor authorization"
 ---
+
+# Two-factor authorization
 
 The guide covers how to implement two-factor authorization using time-based OTP (TOTP) and authenticator apps.
 

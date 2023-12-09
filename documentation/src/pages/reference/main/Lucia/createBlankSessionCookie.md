@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.createBlankSessionCookie()"
-format: "code"
 ---
+
+# `Lucia.createBlankSessionCookie()`
 
 Method of [`Lucia`](/reference/main/Lucia). Creates a new cookie with a blank value that expires immediately to delete the existing session cookie.
 

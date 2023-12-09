@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Users"
 ---
+
+# Users
 
 While Lucia does not provide APIs for creating and managing users, it still interacts with the user table.
 

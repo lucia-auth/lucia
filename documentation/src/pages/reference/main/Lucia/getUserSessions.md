@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.getUserSessions()"
-format: "code"
 ---
+
+# `Lucia.getUserSessions()`
 
 Method of [`Lucia`](/reference/main/Lucia). Gets all sessions of a user.
 

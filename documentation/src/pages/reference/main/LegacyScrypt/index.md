@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "LegacyScrypt"
-format: "code"
 ---
+
+# `LegacyScrypt`
 
 A pure JS implementation of Scrypt for projects that used Lucia v1/v2. For new projects, use [`Scrypt`]().
 

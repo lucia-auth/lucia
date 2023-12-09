@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "LegacyScrypt.verify()"
-format: "code"
 ---
+
+# `LegacyScrypt.verify()`
 
 Method of [`LegacyScrypt`](/reference/main/LegacyScrypt). Verifies the password with the hash using scrypt.
 

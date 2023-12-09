@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Upgrade Prisma and your PostgreSQL database to v3"
 ---
+
+# Upgrade Prisma and your PostgreSQL database to v3
 
 The v3 Prisma adapter now requires all fields to be `camelCase`.
 

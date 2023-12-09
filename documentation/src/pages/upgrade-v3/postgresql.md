@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Upgrade your PostgreSQL database to v3"
 ---
+
+# Upgrade your PostgreSQL database to v3
 
 ## Update the adapter
 

@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Upgrade OAuth setup to v3"
 ---
+
+# Upgrade OAuth setup to v3
 
 ## Update database
 

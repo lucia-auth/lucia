@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.readBearerToken()"
-format: "code"
 ---
+
+# `Lucia.readBearerToken()`
 
 Method of [`Lucia`](/reference/main/Lucia). Reads the bearer token from the ` Authorization`` header. Returns  `null` if the token doesn't exist.
 

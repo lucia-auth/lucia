@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "DatabaseUser"
-format: "code"
 ---
+
+# `DatabaseUser`
 
 Represents a session stored in a database.
 

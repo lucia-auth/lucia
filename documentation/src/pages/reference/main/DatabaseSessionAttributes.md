@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "DatabaseSessionAttributes"
-format: "code"
 ---
+
+# `DatabaseSessionAttributes`
 
 Additional data stored in the session table.
 

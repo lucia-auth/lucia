@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Validate session cookies in Hono"
 ---
+
+# Validate session cookies in Hono
 
 **CSRF protection must be implemented when using cookies and forms** This can be easily done by comparing the `Origin` and `Host` header.
 

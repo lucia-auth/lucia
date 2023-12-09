@@ -1,0 +1,156 @@
+---
+import NavMenu from "@components/NavMenu.astro";
+import MenuIcon from "@components/MenuIcon.astro";
+
+import type { MarkdownLayoutProps } from "astro";
+import CloseIcon from "./CloseIcon.astro";
+
+type Props = MarkdownLayoutProps<{
+	title: string;
+	format?: "code";
+}>;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{Astro.props.frontmatter.title}</title>
+
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:site" content="@lucia_auth" />
+		<meta name="twitter:title" content={Astro.props.frontmatter.title} />
+		<meta
+			name="twitter:description"
+			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
+		/>
+		<!-- <meta property="og:image" content="" /> -->
+
+		<meta property="og:site_name" content="Lucia" />
+		<meta property="og:title" content={Astro.props.frontmatter.title} />
+		<meta property="og:url" content="https://v3.lucia-auth.com" />
+		<meta
+			property="og:description"
+			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
+		/>
+	</head>
+	<body class="leading-relaxed text-zinc-900 lg:overflow-auto">
+		<main class="w-full lg:px-8">
+			<button
+				id="mobile-nav-button"
+				class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mt-12 md:mr-8 lg:hidden"
+			>
+				<MenuIcon />
+			</button>
+			<div
+				class="fixed hidden h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:pt-12 md:px-8 lg:hidden"
+				id="mobile-nav-menu"
+			>
+				<div class="flex place-content-between">
+					<a href="/" class="text-xl font-medium">Lucia</a>
+					<button id="mobile-nav-close-button" class="h-8 w-8 rounded p-2 lg:hidden">
+						<CloseIcon />
+					</button>
+				</div>
+				<div class="mt-4">
+					<NavMenu />
+				</div>
+			</div>
+			<div class="mx-auto w-full max-w-5xl px-4 md:px-8 lg:px-0">
+				<div class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:block">
+					<div class="flex h-full flex-col">
+						<a href="/" class="text-2xl font-medium">Lucia</a>
+						<div class="mt-8 overflow-auto pb-4">
+							<NavMenu />
+						</div>
+					</div>
+				</div>
+				<div class="pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4">
+					<article class="md w-full overflow-hidden">
+						<slot />
+					</article>
+				</div>
+			</div>
+		</main>
+	</body>
+</html>
+
+<script>
+	document.getElementById("mobile-nav-button")!.addEventListener("click", (e) => {
+		const navMenu = document.getElementById("mobile-nav-menu")!;
+		if (navMenu.classList.contains("hidden")) {
+			document.getElementById("mobile-nav-button")!.classList.add("hidden");
+			navMenu.classList.remove("hidden");
+			document.body.classList.add("overflow-hidden");
+		} else {
+			closeMenu();
+		}
+	});
+
+	document.getElementById("mobile-nav-close-button")!.addEventListener("click", closeMenu);
+
+	function closeMenu() {
+		document.getElementById("mobile-nav-menu")!.classList.add("hidden");
+		document.getElementById("mobile-nav-button")!.classList.remove("hidden");
+		document.body.classList.remove("overflow-hidden");
+	}
+</script>
+
+<style>
+	:root {
+		--astro-code-color-background: rgb(246, 246, 246);
+		--astro-code-token-keyword: rgb(243, 89, 104);
+		/* --astro-code-token-function: rgb(171, 61, 131); */
+		--astro-code-token-comment: rgb(143, 143, 143);
+	}
+
+	:global(.md h1) {
+		@apply mb-8 break-words text-3xl  font-semibold sm:text-4xl;
+	}
+	:global(.md h2) {
+		@apply mb-4 mt-8 text-2xl font-semibold;
+	}
+	:global(.md h3) {
+		@apply text-xl font-medium;
+	}
+	:global(.md > p) {
+		@apply my-4;
+	}
+	:global(.md > ul) {
+		@apply mb-6 mt-4 list-inside list-disc pl-2;
+	}
+	:global(.md ul > li > ul) {
+		@apply list-inside list-disc pl-6;
+	}
+	:global(.md p a) {
+		@apply text-main hover:underline;
+	}
+	:global(.md li a) {
+		@apply text-main hover:underline;
+	}
+	:global(.md p > code, .md li > code, .md p > a > code, .md li > a > code) {
+		@apply text-sm;
+	}
+	:global(.md pre code a) {
+		@apply decoration-main hover:text-main underline hover:no-underline;
+	}
+	:global(.md pre) {
+		@apply mb-6 mt-4 w-full overflow-auto rounded-md bg-zinc-100 p-4 text-sm leading-snug;
+	}
+	:global(.md table) {
+		@apply my-2 w-full table-auto border-collapse text-left text-sm;
+	}
+	:global(.md .table-wrapper) {
+		@apply w-full overflow-auto whitespace-nowrap;
+	}
+	:global(.md table thead tr) {
+		@apply w-full border-b border-zinc-200;
+	}
+	:global(.md table :is(td, th)) {
+		@apply border-b border-zinc-200 px-1 py-1;
+	}
+	:global(.md table th) {
+		@apply text-xs font-medium;
+	}
+</style>

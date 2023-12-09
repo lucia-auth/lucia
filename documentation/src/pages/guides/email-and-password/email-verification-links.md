@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Email verification links"
 ---
+
+# Email verification links
 
 We recommend using [email verification codes]() instead as it's more user-friendly.
 

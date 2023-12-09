@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Validate session cookies in Next.js App router"
 ---
+
+# Validate session cookies in Next.js App router
 
 You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`. We have to wrap it inside a try/catch block since Next.js doesn't allow you to set cookies when rendering the page. This is a known issue but Vercel has yet to acknowledge or address the issue.
 

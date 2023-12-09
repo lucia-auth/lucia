@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.createSession()"
-format: "code"
 ---
+
+# `Lucia.createSession()`
 
 Method of [`Lucia`](/reference/main/Lucia). Creates a new session.
 

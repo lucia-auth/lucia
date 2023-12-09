@@ -1,7 +1,8 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "SessionCookie"
-format: "code"
 ---
+
+# `SessionCookie`
 
 See [`SessionCookie`](https://oslo.js.org/reference/main/session/SessionCookie/) from `oslo/session`.

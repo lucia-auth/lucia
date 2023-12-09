@@ -1,10 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
-title: "lucia"
-format: "code"
+layout: "@components/Layout.astro"
+title: "lucia API reference"
 ---
 
-API reference for `lucia`.
+# `lucia` API reference
 
 ## Functions
 

@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "OAuth basics"
 ---
+
+# OAuth basics
 
 For a step-by-step, framework specific tutorial, see the [GitHub OAuth](/tutorials/) tutorial.
 

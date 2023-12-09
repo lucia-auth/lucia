@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "PostgreSQL"
 ---
+
+# PostgreSQL
 
 `@lucia-auth/adapter-postgresql` package provides adapters for PostgreSQL drivers:
 

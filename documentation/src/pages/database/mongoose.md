@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Mongoose"
 ---
+
+# Mongoose
 
 You can use the [MongoDB adapter]() from the `@lucia-auth/adapter-mongodb` package with Mongoose.
 

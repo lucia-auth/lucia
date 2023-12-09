@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "PKCE flow"
 ---
+
+# PKCE flow
 
 ## Create authorization URL
 

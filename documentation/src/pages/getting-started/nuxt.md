@@ -1,7 +1,11 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Getting started in Nuxt"
 ---
+
+# Getting started in Nuxt
+
+## Installation
 
 Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
 
@@ -25,7 +29,6 @@ import { nuxt } from "lucia/middleware";
 const adapter = new BetterSQLite3Adapter(db); // your adapter
 
 export const lucia = new Lucia(adapter, {
-	middleware: nuxt(),
 	sessionCookie: {
 		// IMPORTANT!
 		attributes: {

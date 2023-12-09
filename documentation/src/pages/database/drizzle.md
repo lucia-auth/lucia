@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Drizzle ORM"
 ---
+
+# Drizzle ORM
 
 Adapters for Drizzle ORM are provided by `@lucia-auth/adapter-drizzle`. Supports MySQL, PostgreSQL, and SQLite. You're free to rename the underlying table and column names as long as the field names are the same (e.g. `expiresAt`).
 

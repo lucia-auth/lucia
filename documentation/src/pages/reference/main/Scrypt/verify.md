@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Scrypt.verify()"
-format: "code"
 ---
+
+# `Scrypt.verify()`
 
 Method of [`Scrypt`](/reference/main/Scrypt). Verifies the password with the hash using scrypt.
 

@@ -1,7 +1,11 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Getting started in Next.js App router"
 ---
+
+# Getting started in Next.js App router
+
+## Installation
 
 Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
 
@@ -20,12 +24,10 @@ Import `Lucia` and initialize it with your adapter. Refer to the [Database](/dat
 ```ts
 // src/auth.ts
 import { Lucia } from "lucia";
-import { nextjs } from "lucia/middleware";
 
 const adapter = new BetterSQLite3Adapter(db); // your adapter
 
 export const lucia = new Lucia(adapter, {
-	middleware: nextjs(),
 	sessionCookie: {
 		// this sets cookies with super long expiration
 		// since Next.js doesn't allow Lucia to extend cookie expiration when rendering pages

@@ -1,14 +1,53 @@
 ---
-interface Props {
-	sections: Section[];
-}
-
-export interface Section {
-	title: string;
-	pages: Page[];
-}
-
-export type Page = [title: string, href: string, format?: "code"];
+const sections: Section[] = [
+	{
+		title: "Start here",
+		pages: [
+			["Getting-started", "/getting-started"],
+			["Database", "/database"],
+			["Upgrade to v3", "/upgrade-v3"]
+		]
+	},
+	{
+		title: "Tutorials",
+		pages: [
+			["GitHub OAuth", "/tutorials/github-oauth"],
+			["Username and password", "/tutorials/username-and-password"]
+		]
+	},
+	{
+		title: "Basics",
+		pages: [
+			["Sessions", "/basics/sessions"],
+			["Users", "/basics/users"],
+			["Configuration", "/basics/configuration"],
+			["Troubleshooting", "/basics/help"]
+		]
+	},
+	{
+		title: "Guides",
+		pages: [
+			["Validate session cookies", "/guides/validate-session-cookies"],
+			["Validate bearer tokens", "/guides/validate-bearer-tokens"],
+			["OAuth", "/guides/oauth"],
+			["Email and password", "/guides/email-and-password"],
+			["Passkeys", "/guides/passkeys"],
+			["Improving sessions", "/guides/improving-sessions"]
+		]
+	},
+	{
+		title: "API reference",
+		pages: [["lucia", "/reference/main", "code"]]
+	},
+	{
+		title: "Community",
+		pages: [
+			["Discord", "https://discord.com/invite/PwrK3kpVR3"],
+			["GitHub", "https://github.com/lucia-auth/lucia"],
+			["Twitter", "https://twitter.com/lucia-auth"]
+		]
+	}
+];
 
 function isSelected(href: string, currentPathname: string): boolean {
 	if (removeLeadingSlash(href) === removeLeadingSlash(currentPathname)) {
@@ -23,17 +62,21 @@ function removeLeadingSlash(s: string): string {
 	}
 	return s;
 }
+
+interface Section {
+	title: string;
+	pages: Page[];
+}
+
+type Page = [title: string, href: string, format?: "code"];
 ---
 
-<ul class="text-sm">
+<ul class="flex flex-col gap-y-4 text-sm">
 	{
-		Astro.props.sections.map((section) => {
-			if (section.pages.length < 1) {
-				return null;
-			}
+		sections.map((section) => {
 			return (
-				<li class="mt-6">
-					<p class="mb-1  font-medium">{section.title}</p>
+				<li>
+					<p class="mb-1 font-medium">{section.title}</p>
 					<ul>
 						{section.pages.map((page) => {
 							return (

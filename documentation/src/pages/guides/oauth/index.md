@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "OAuth"
 ---
+
+# OAuth
 
 OAuth, or social sign in, is the easiest way to implement authentication as you won't have to worry about email verification, passwords, and two-factor authorization.
 

@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Configuration"
 ---
+
+# Configuration
 
 This page shows all the options for [`Lucia`]() to configure Lucia.
 

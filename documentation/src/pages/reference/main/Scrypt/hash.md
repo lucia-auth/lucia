@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Scrypt.hash()"
-format: "code"
 ---
+
+# `Scrypt.hash()`
 
 Method of [`Scrypt`](/reference/main/Scrypt). Hashes the provided password with scrypt.
 

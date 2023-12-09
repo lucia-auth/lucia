@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Multiple OAuth providers"
 ---
+
+# Multiple OAuth providers
 
 ## Database
 

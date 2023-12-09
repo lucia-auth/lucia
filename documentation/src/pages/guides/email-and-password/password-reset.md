@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Password reset"
 ---
+
+# Password reset
 
 Allow users to reset their password by sending them a reset link to their inbox.
 

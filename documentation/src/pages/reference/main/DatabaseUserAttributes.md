@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "DatabaseUserAttributes"
-format: "code"
 ---
+
+# `DatabaseUserAttributes`
 
 Additional data stored in the user table.
 

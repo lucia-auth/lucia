@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "LegacyScrypt.hash()"
-format: "code"
 ---
+
+# `LegacyScrypt.hash()`
 
 Method of [`LegacyScrypt`](/reference/main/LegacyScrypt). Hashes the provided password with scrypt.
 

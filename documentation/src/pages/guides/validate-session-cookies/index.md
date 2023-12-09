@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Validate session cookies"
 ---
+
+# Validate session cookies
 
 This guide is also available for:
 

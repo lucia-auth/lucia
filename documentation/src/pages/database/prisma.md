@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Prisma"
 ---
+
+# Prisma
 
 The `@lucia-auth/adapter-prisma` package provides adapters for Prisma.
 

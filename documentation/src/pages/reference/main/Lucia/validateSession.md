@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.validateSession()"
-format: "code"
 ---
+
+# `Lucia.validateSession()`
 
 Method of [`Lucia`](/reference/main/Lucia). Validates a session with the session ID. Extends the session expiration if in idle state.
 

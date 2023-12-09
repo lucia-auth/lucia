@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.invalidateSession()"
-format: "code"
 ---
+
+# `Lucia.invalidateSession()`
 
 Method of [`Lucia`](/reference/main/Lucia). Invalidates a session.
 

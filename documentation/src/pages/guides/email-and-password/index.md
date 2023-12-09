@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Email and password"
 ---
+
+# Email and password
 
 Email based auth requires a lot of components so be prepared to do some work!
 

@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Session"
-format: "code"
 ---
+
+# `Session`
 
 Represents a session.
 

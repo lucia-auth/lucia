@@ -1,8 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Lucia.readSessionCookie()"
-format: "code"
 ---
+
+# `Lucia.readSessionCookie()`
 
 Method of [`Lucia`](/reference/main/Lucia). Reads the session cookie from the `Cookie` header. Returns `null` if the cookie doesn't exist.
 

@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Getting started"
 ---
+
+# Getting started
 
 A framework-specific guide is also available for:
 

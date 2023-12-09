@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "Upgrade your SQLite database to v3"
 ---
+
+# Upgrade your SQLite database to v3
 
 ## Update the adapter
 

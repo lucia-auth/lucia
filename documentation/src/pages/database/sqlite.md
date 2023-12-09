@@ -1,7 +1,9 @@
 ---
-layout: "@layouts/DocLayout.astro"
+layout: "@components/Layout.astro"
 title: "SQLite"
 ---
+
+# SQLite
 
 The `@lucia-auth/adapter-sqlite` package provides adapters for SQLites drivers:
 
