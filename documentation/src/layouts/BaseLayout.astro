@@ -20,18 +20,18 @@ interface Props {
 					<a href="/" class="font-medium text-xl">Lucia</a>
 					<button id="nav-button">Open</button>
 				</header>
-				<div class="px-4 overflow-auto overscroll-contain hidden pb-4" id="mobile-nav-menu">
+				<div class="px-4 md:px-8 overflow-auto overscroll-contain hidden pb-4" id="mobile-nav-menu">
 					<NavMenu sections={Astro.props.sections}/>
 				</div>
 			</nav>
 			<div class="max-w-5xl mx-auto w-full px-4 md:px-8 lg:px-0">
-				<div class="fixed w-60 shrink-0 hidden lg:block h-screen pt-8 pr-4">
+				<div class="fixed w-56 shrink-0 hidden lg:block h-screen pt-8 pr-4">
 					<a href="/" class="font-medium text-2xl">Lucia</a>
 					<div class="overflow-auto h-full pb-24">
 						<NavMenu sections={Astro.props.sections}/>
 					</div>
 				</div>
-				<div class="lg:ml-60 pt-20 lg:pt-12 pb-24">
+				<div class="lg:ml-56 pt-20 lg:pt-12 pb-24">
 					<slot />
 				</div>
 			</div>
@@ -41,7 +41,7 @@ interface Props {
 			--astro-code-color-background: rgb(246, 246, 246);
 			--astro-code-token-keyword: rgb(235, 72, 105);
 			--astro-code-token-string-expression: rgb(77, 102, 183);
-			--astro-code-token-comment: rgb(175, 175, 175);
+			--astro-code-token-comment: rgb(143, 143, 143);
 		}
 	</style>
 
