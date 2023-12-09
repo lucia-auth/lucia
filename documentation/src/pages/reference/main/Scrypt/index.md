@@ -4,7 +4,7 @@ title: "Scrypt"
 format: "code"
 ---
 
-A pure JS implementation of Scrypt. Provides methods for hashing passwords and verifying hashes with [scrypt](https://datatracker.ietf.org/doc/html/rfc7914). By default, the configuration is set to [the recommended values](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html). 
+A pure JS implementation of Scrypt. Provides methods for hashing passwords and verifying hashes with [scrypt](https://datatracker.ietf.org/doc/html/rfc7914). By default, the configuration is set to [the recommended values](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
 
 The output hash is a combination of the scrypt hash and the 32-bytes salt, in the format of `<salt>:<hash>`.
 

@@ -44,13 +44,13 @@ function constructor<
 - `options`:
   - `sessionExpiresIn`: How long a session lasts for maximum for inactive users
   - `sessionCookie`: Session cookie options
-  	- `name`: Cookie name (default: `auth_session`)
-  	- `expires`: Set to `false` for cookies to persist indefinitely (default: `true`)
-  	- `attributes`: Cookie attributes
-    	- `sameSite`
-    	- `domain`
-    	- `path`
-    	- `secure`
+    - `name`: Cookie name (default: `auth_session`)
+    - `expires`: Set to `false` for cookies to persist indefinitely (default: `true`)
+    - `attributes`: Cookie attributes
+      - `sameSite`
+      - `domain`
+      - `path`
+      - `secure`
   - `getSessionAttributes()`: Transforms database session attributes and the returned object is added to the [`Session`](/reference/main/Session) object
   - `getUserAttributes()`: Transforms database user attributes and the returned object is added to the [`User`](/reference/main/User) object
 

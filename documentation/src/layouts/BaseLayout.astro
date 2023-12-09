@@ -4,7 +4,6 @@ import NavMenu from "@components/NavMenu.astro";
 
 import type { Section } from "@components/NavMenu.astro";
 
-
 interface Props {
 	title: string;
 	sections: Section[];
@@ -13,46 +12,47 @@ interface Props {
 
 <html lang="en">
 	<Head title={Astro.props.title} />
-	<body class="text-zinc-900 leading-relaxed">
+	<body class="leading-relaxed text-zinc-900">
 		<main class="w-full lg:px-8">
-			<nav class="lg:hidden w-full fixed border-b bg-white pt-3 pb-2 max-h-screen flex flex-col">
-				<header class="flex place-items-center place-content-between px-4 md:px-8">
-					<a href="/" class="font-medium text-xl">Lucia</a>
+			<nav class="fixed flex max-h-screen w-full flex-col border-b bg-white pb-2 pt-3 lg:hidden">
+				<header class="flex place-content-between place-items-center px-4 md:px-8">
+					<a href="/" class="text-xl font-medium">Lucia</a>
 					<button id="nav-button">Open</button>
 				</header>
-				<div class="px-4 md:px-8 overflow-auto overscroll-contain hidden pb-4" id="mobile-nav-menu">
-					<NavMenu sections={Astro.props.sections}/>
+				<div class="hidden overflow-auto overscroll-contain px-4 pb-4 md:px-8" id="mobile-nav-menu">
+					<NavMenu sections={Astro.props.sections} />
 				</div>
 			</nav>
-			<div class="max-w-5xl mx-auto w-full px-4 md:px-8 lg:px-0">
-				<div class="fixed w-56 shrink-0 hidden lg:block h-screen pt-8 pr-4">
-					<a href="/" class="font-medium text-2xl">Lucia</a>
-					<div class="overflow-auto h-full pb-24">
-						<NavMenu sections={Astro.props.sections}/>
+			<div class="mx-auto w-full max-w-5xl px-4 md:px-8 lg:px-0">
+				<div class="fixed hidden h-screen w-56 shrink-0 pr-4 pt-8 lg:block">
+					<a href="/" class="text-2xl font-medium">Lucia</a>
+					<div class="h-full overflow-auto pb-24">
+						<NavMenu sections={Astro.props.sections} />
 					</div>
 				</div>
-				<div class="lg:ml-56 pt-20 lg:pt-12 pb-24">
+				<div class="pb-24 pt-20 lg:ml-56 lg:pt-12">
 					<slot />
 				</div>
 			</div>
 		</main>
-	</body><style>
-		:root {
-			--astro-code-color-background: rgb(246, 246, 246);
-			--astro-code-token-keyword: rgb(235, 72, 105);
-			--astro-code-token-string-expression: rgb(77, 102, 183);
-			--astro-code-token-comment: rgb(143, 143, 143);
-		}
-	</style>
-
-	<script>
-		document.getElementById("nav-button")!.addEventListener("click", (e) => {
-			const navMenu = document.getElementById("mobile-nav-menu")!;
-			if (navMenu.classList.contains("hidden")) {
-				navMenu.classList.remove("hidden");
-			} else {
-				navMenu.classList.add("hidden");
+		<style>
+			:root {
+				--astro-code-color-background: rgb(246, 246, 246);
+				--astro-code-token-keyword: rgb(235, 72, 105);
+				--astro-code-token-string-expression: rgb(77, 102, 183);
+				--astro-code-token-comment: rgb(143, 143, 143);
 			}
-		});
-	</script>
+		</style>
+
+		<script>
+			document.getElementById("nav-button")!.addEventListener("click", (e) => {
+				const navMenu = document.getElementById("mobile-nav-menu")!;
+				if (navMenu.classList.contains("hidden")) {
+					navMenu.classList.remove("hidden");
+				} else {
+					navMenu.classList.add("hidden");
+				}
+			});
+		</script>
+	</body>
 </html>

@@ -17,7 +17,7 @@ Initialize the adapter:
 import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 
-const client = new PrismaClient()
+const client = new PrismaClient();
 
 new PrismaAdapter(client.session, client.user);
 ```

@@ -115,7 +115,6 @@ Extract the email verification token from the URL and validate by checking the e
 import { isWithinExpiration } from "oslo";
 
 app.get("email-verification/*", async () => {
-	
 	// ...
 
 	// there are better ways to do this - check your framework's API

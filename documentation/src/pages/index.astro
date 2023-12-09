@@ -15,31 +15,38 @@ const contributors = await getGithubContributors();
 ---
 
 <MainLayout title="Lucia">
-	<h1 class="text-5xl font-semibold py-6"><span class="text-main">Lucia</span><br>Auth, simple and clean</h1>
+	<h1 class="py-6 text-5xl font-semibold">
+		<span class="text-main">Lucia</span><br />Auth, simple and clean
+	</h1>
 	<p class="mt-6">
 		Lucia is an auth library that abstracts away the complexity of handling sessions. It works
 		alongside your database to provide an API that's easy to use, understand, and extend. <a
 			href="/getting-started"
-			class="hover:underline text-main w-fit">Get started →</a
+			class="text-main w-fit hover:underline">Get started →</a
 		>
 	</p>
 
 	<Code code={code} theme="css-variables" lang="ts" />
 	<section class="my-12">
-		<h2 class="text-3xl font-medium mb-4">It just works</h2>
+		<h2 class="mb-4 text-3xl font-medium">It just works</h2>
 		<ul>
-			<li><span class="font-medium text-main">✓</span> No more endless configuration and callbacks</li>
-			<li><span class="font-medium text-main">✓</span> Fully typed</li>
-			<li><span class="font-medium text-main">✓</span> Works in any runtime - Node.js, Bun, Deno, Cloudflare Workers</li>
-			<li><span class="font-medium text-main">✓</span> Extensive database support</li>
-			<li><span class="font-medium text-main">✓</span> Built-in support for popular frameworks</li>
-			<li><span class="font-medium text-main">✓</span> Comprehensive documentation and guides</li>
+			<li>
+				<span class="text-main font-medium">✓</span> No more endless configuration and callbacks
+			</li>
+			<li><span class="text-main font-medium">✓</span> Fully typed</li>
+			<li>
+				<span class="text-main font-medium">✓</span> Works in any runtime - Node.js, Bun, Deno, Cloudflare
+				Workers
+			</li>
+			<li><span class="text-main font-medium">✓</span> Extensive database support</li>
+			<li><span class="text-main font-medium">✓</span> Built-in support for popular frameworks</li>
+			<li><span class="text-main font-medium">✓</span> Comprehensive documentation and guides</li>
 		</ul>
 	</section>
 	<section class="my-12">
-		<h2 class="text-3xl font-medium mb-4">Free and open source</h2>
+		<h2 class="mb-4 text-3xl font-medium">Free and open source</h2>
 		<p>Lucia is a free and open source project, made possible by our contributors!</p>
-		<div class="flex w-full max-w-4xl flex-wrap place-content-center gap-2 mt-6">
+		<div class="mt-6 flex w-full max-w-4xl flex-wrap place-content-center gap-2">
 			{
 				contributors.map((contributor) => {
 					return (

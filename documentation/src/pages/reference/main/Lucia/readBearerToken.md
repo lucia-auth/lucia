@@ -4,12 +4,12 @@ title: "Lucia.readBearerToken()"
 format: "code"
 ---
 
-Method of [`Lucia`](/reference/main/Lucia). Reads the bearer token from the `Authorization`` header. Returns `null` if the token doesn't exist.
+Method of [`Lucia`](/reference/main/Lucia). Reads the bearer token from the ` Authorization`` header. Returns  `null` if the token doesn't exist.
 
 ## Definition
 
 ```ts
-function readBearerToken(authorizationHeader: string): string | null
+function readBearerToken(authorizationHeader: string): string | null;
 ```
 
 ### Parameters

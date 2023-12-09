@@ -1,4 +1,4 @@
-<article class="w-full md overflow-hidden">
+<article class="md w-full overflow-hidden">
 	<slot />
 </article>
 
@@ -28,7 +28,7 @@
 		@apply text-sm;
 	}
 	:global(.md pre code a) {
-		@apply underline decoration-main hover:text-main hover:no-underline;
+		@apply decoration-main hover:text-main underline hover:no-underline;
 	}
 	:global(.md pre) {
 		@apply mb-6 mt-4 w-full overflow-auto rounded-md bg-zinc-100 p-4 text-sm leading-snug;

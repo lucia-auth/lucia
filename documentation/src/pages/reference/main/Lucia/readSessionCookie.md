@@ -9,7 +9,7 @@ Method of [`Lucia`](/reference/main/Lucia). Reads the session cookie from the `C
 ## Definition
 
 ```ts
-function readSessionCookie(cookieHeader: string): string | null
+function readSessionCookie(cookieHeader: string): string | null;
 ```
 
 ### Parameters

@@ -40,7 +40,7 @@ declare module "lucia" {
 
 ## Create QR code
 
-When the user signs up, set `two_factor_secret` to `null` to indicate the user has yet to set up two-factor authorization. 
+When the user signs up, set `two_factor_secret` to `null` to indicate the user has yet to set up two-factor authorization.
 
 ```ts
 app.post("/signup", async () => {
