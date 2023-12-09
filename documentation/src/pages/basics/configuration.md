@@ -5,7 +5,7 @@ title: "Configuration"
 
 # Configuration
 
-This page shows all the options for [`Lucia`]() to configure Lucia.
+This page shows all the options for [`Lucia`](/reference/main/Lucia) to configure Lucia.
 
 ```ts
 interface Options {
@@ -20,7 +20,7 @@ interface Options {
 
 ## `sessionExpiresIn`
 
-Configures how long a session is valid max for inactive users. Sessions expiration are automatically extended for active users. Also see [`TimeSpan`]().
+Configures how long a session is valid max for inactive users. Sessions expiration are automatically extended for active users. Also see [`TimeSpan`](/reference/main/TimeSpan).
 
 ```ts
 import { Lucia, TimeSpan } from "lucia";
@@ -32,7 +32,7 @@ const lucia = new Lucia(adapter, {
 
 ## `sessionCookie`
 
-Configures the session cookie. See [Using cookies]() for the default session cookie attributes.
+Configures the session cookie.
 
 ```ts
 import { Lucia } from "lucia";

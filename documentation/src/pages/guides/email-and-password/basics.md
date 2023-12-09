@@ -5,7 +5,7 @@ title: "Password basics"
 
 # Password basics
 
-This page covers how to implement a password-based auth with Lucia. If you're looking for a step-by-step, framework specific tutorial, you may want to check out the [Username and password]() tutorial. Keep in mind that email based auth requires more than just passwords!
+This page covers how to implement a password-based auth with Lucia. If you're looking for a step-by-step, framework specific tutorial, you may want to check out the [Username and password](/tutorials/username-and-password) tutorial. Keep in mind that email based auth requires more than just passwords!
 
 ## Update database
 
@@ -48,7 +48,7 @@ declare module "lucia" {
 
 ## Email check
 
-Before creating routes, create a basic utility to verify emails. Emails are notoriously complicated, so here we're just checking if an `@` exists with at least 1 character on each side. We're just checking for typos anyway. For verifying emails, see the [email verification]() page.
+Before creating routes, create a basic utility to verify emails. Emails are notoriously complicated, so here we're just checking if an `@` exists with at least 1 character on each side. We just need to check for obvious typos here. For verifying emails, see the [email verification]() page.
 
 ```ts
 export function isValidEmail(email: string): boolean {
@@ -110,13 +110,13 @@ app.post("/signup", async (request: Request) => {
 
 ### Hashing passwords
 
-`oslo/password` currently provides [`Argon2id`](), [`Scrypt`](), and [`Bcrypt`](). These rely on the fastest available libraries but only work in Node.js. Passwords are salted and hashed using settings recommended by OWASP.
+`oslo/password` currently provides [`Argon2id`](https://oslo.js.org/reference/password/Argon2id/), [`Scrypt`](https://oslo.js.org/reference/password/Scrypt), and [`Bcrypt`](https://oslo.js.org/reference/password/Bcrypt). These rely on the fastest available libraries but only work in Node.js. Passwords are salted and hashed using settings recommended by OWASP.
 
 ```ts
 import { Argon2id, Scrypt, Bcrypt } from "oslo/password";
 ```
 
-For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing), which also uses Argon2id by default. For other runtimes, Lucia provides a pure-JS implementation of Scrypt with [`Scrypt`]() that works in any environment. However, we do not recommend this for Node.js as it can be 2~3 times slower than the Node-only version. If you're migrating from Lucia v2, you should use [`LegacyScrypt`]().
+For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing), which also uses Argon2id by default. For other runtimes, Lucia provides a pure-JS implementation of Scrypt with [`Scrypt`](/reference/main/Scrypt) that works in any environment. However, we do not recommend this for Node.js as it can be 2~3 times slower than the Node-only version. If you're migrating from Lucia v2, you should use [`LegacyScrypt`](/reference/main/LegacyScrypt).
 
 ```ts
 import { Scrypt, LegacyScrypt } from "lucia";

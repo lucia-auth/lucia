@@ -15,7 +15,7 @@ fetch("https://api.example.com", {
 });
 ```
 
-In the server, you can use [`Lucia.readBearerToken()`]() to get the session ID from the authorization header and validate the session with [`Lucia.validateSession()`]().
+In the server, you can use [`Lucia.readBearerToken()`](/reference/main/Lucia/readBearerToken) to get the session ID from the authorization header and validate the session with [`Lucia.validateSession()`](/reference/main/Lucia/validateSession).
 
 ```ts
 const authorizationHeader = request.headers.get("Authorization");

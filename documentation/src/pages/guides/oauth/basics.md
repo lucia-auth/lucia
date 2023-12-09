@@ -7,7 +7,7 @@ title: "OAuth basics"
 
 For a step-by-step, framework specific tutorial, see the [GitHub OAuth](/tutorials/) tutorial.
 
-We recommend using [Arctic]() for implementing OAuth 2.0. It is a lightweight library that provides APIs for creating authorization URLs, validating callbacks, getting the current user, and refreshing access tokens. This is the easiest way to implement OAuth with Lucia. It supports all major providers, and you can find the full list of OAuth providers [here](). This page will use GitHub, and while most providers have similar APIs, there might be some minor differences between them.
+We recommend using [Arctic](https://github.com/pilcrowonpaper/arctic) for implementing OAuth 2.0. It is a lightweight library that provides APIs for creating authorization URLs, validating callbacks, and refreshing access tokens. This is the easiest way to implement OAuth with Lucia and it supports most major providers. This page will use GitHub, and while most providers have similar APIs, there might be some minor differences between them.
 
 ```
 npm install arctic
@@ -101,7 +101,7 @@ You can now create a sign in button with just an anchor tag.
 
 ## Validate callback
 
-In the callback route, first get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`]() if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
+In the callback route, first get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError/) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
 
 ```ts
 import { githubAuth, lucia } from "./auth.js";

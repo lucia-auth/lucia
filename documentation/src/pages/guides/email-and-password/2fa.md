@@ -60,7 +60,7 @@ app.post("/signup", async () => {
 });
 ```
 
-Generate a new secret (minimum 20 bytes) and create a new key URI with [`createTOTPKeyURI()`](). The user should scan the QR code using their authenticator app.
+Generate a new secret (minimum 20 bytes) and create a new key URI with [`createTOTPKeyURI()`](https://oslo.js.org/reference/otp/createTOTPKeyURI/). The user should scan the QR code using their authenticator app.
 
 ```ts
 import { encodeHex } from "oslo/encoding";
@@ -90,7 +90,7 @@ const qrcode = createQRCode(uri);
 
 ## Validate OTP
 
-Validate TOTP with [`TOTPController`]() using the stored user's secret.
+Validate TOTP with [`TOTPController`](https://oslo.js.org/reference/otp/TOTPController/) using the stored user's secret.
 
 ```ts
 import { decodeHex } from "oslo/encoding";

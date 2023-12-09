@@ -11,7 +11,7 @@ You can continue using the keys table but we recommend creating a dedicated tabl
 
 ## Replace OAuth integration
 
-The OAuth integration has been replaced with [`arctic`](), which provides everything the integration did without Lucia specific APIs. It supports all the OAuth providers that the integration supported.
+The OAuth integration has been replaced with [Arctic](https://github.com/pilcrowonpaper/arctic), which provides everything the integration did without Lucia specific APIs. It supports all the OAuth providers that the integration supported.
 
 ```
 npm install arctic

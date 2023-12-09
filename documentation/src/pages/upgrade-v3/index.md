@@ -28,7 +28,7 @@ await db.table("user").insert({
 
 Another change is that APIs for request handling have been removed. We now just provide code snippets in the docs that you can copy-paste.
 
-Lucia is now built with [Oslo](), a library that provides useful auth-related utilities. While not required, we recommend installing it alongside Lucia as all guides in the documentation use it some way or another.
+Lucia is now built with [Oslo](https://oslo.js.org), a library that provides useful auth-related utilities. While not required, we recommend installing it alongside Lucia as all guides in the documentation use it some way or another.
 
 ```
 npm install lucia@beta oslo
@@ -127,7 +127,7 @@ The following packages are deprecated:
 - `@lucia-auth/adapter-session-redis`
 - `@lucia-auth/adapter-session-unstorage`
 
-If you're using a session adapter, we recommend building a [custom adapter]() as the API have been greatly simplified.
+If you're using a session adapter, we recommend building a custom adapter as the API have been greatly simplified.
 
 ## Sessions
 

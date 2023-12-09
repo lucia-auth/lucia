@@ -21,4 +21,4 @@ const session = await lucia.createSession(userId, {});
 await lucia.validateSession(session.id);
 ```
 
-Lucia is an open source library released under the MIT license, with the help of [100+ contributors](https://github.com/lucia-auth/lucia/graphs/contributors)! Join us on [Discord]() if you have any questions.
+Lucia is an open source library released under the MIT license, with the help of [100+ contributors](https://github.com/lucia-auth/lucia/graphs/contributors)! Join us on [Discord](https://discord.com/invite/PwrK3kpVR3) if you have any questions.

@@ -1,6 +1,6 @@
 # `@lucia-auth/adapter-drizzle`
 
-[Drizzle ORM]() adapter for Lucia v3.
+[Drizzle ORM](https://orm.drizzle.team) adapter for Lucia v3.
 
 **[Documentation](https://orm.drizzle.team)**
 

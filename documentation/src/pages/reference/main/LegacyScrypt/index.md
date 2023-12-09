@@ -5,7 +5,7 @@ title: "LegacyScrypt"
 
 # `LegacyScrypt`
 
-A pure JS implementation of Scrypt for projects that used Lucia v1/v2. For new projects, use [`Scrypt`]().
+A pure JS implementation of Scrypt for projects that used Lucia v1/v2. For new projects, use [`Scrypt`](/reference/main/Scrypt).
 
 The output hash is a combination of the scrypt hash and the 32-bytes salt, in the format of `<salt>:<hash>`.
 

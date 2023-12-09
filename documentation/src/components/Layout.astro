@@ -40,19 +40,19 @@ type Props = MarkdownLayoutProps<{
 			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
 		/>
 	</head>
-	<body class="leading-relaxed lg:overflow-auto px-4 sm:px-8">
+	<body class="px-4 leading-relaxed sm:px-8 lg:overflow-auto">
 		<button
 			id="mobile-nav-button"
-			class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mt-12 sm:mr-8 lg:hidden"
+			class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mr-8 sm:mt-12 lg:hidden"
 			aria-label="Open menu"
 		>
 			<MenuIcon />
 		</button>
 		<div
-			class="fixed hidden h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:pt-12 sm:px-8 lg:hidden"
+			class="fixed hidden h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:px-8 sm:pt-12 lg:hidden"
 			id="mobile-nav-menu"
 		>
-			<div class="flex place-content-between mb-4">
+			<div class="mb-4 flex place-content-between">
 				<a href="/" class="text-xl font-medium">Lucia</a>
 				<button
 					id="mobile-nav-close-button"
@@ -73,7 +73,7 @@ type Props = MarkdownLayoutProps<{
 		<div class="mx-auto w-full max-w-5xl">
 			<aside class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:flex lg:flex-col">
 				<a href="/" class="text-2xl font-medium">Lucia</a>
-				<nav class="flex flex-col gap-y-4 mt-4 overflow-auto pb-4">
+				<nav class="mt-4 flex flex-col gap-y-4 overflow-auto pb-4">
 					{
 						sections.map((section) => {
 							return <NavSection title={section.title} pages={section.pages} />;
@@ -81,7 +81,7 @@ type Props = MarkdownLayoutProps<{
 					}
 				</nav>
 			</aside>
-			<main class="pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4 overflow-hidden">
+			<main class="overflow-hidden pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4">
 				<slot />
 			</main>
 		</div>

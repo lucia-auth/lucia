@@ -9,7 +9,7 @@ A pure JS implementation of Scrypt. Provides methods for hashing passwords and v
 
 The output hash is a combination of the scrypt hash and the 32-bytes salt, in the format of `<salt>:<hash>`.
 
-Since it's pure JS, it is anywhere from 2~3 times slower than implementations based on native code. See Oslo's [`Scrypt`]() for a faster API (Node.js-only).
+Since it's pure JS, it is anywhere from 2~3 times slower than implementations based on native code. See Oslo's [`Scrypt`](https://oslo.js.org/reference/password/Scrypt/) for a faster API (Node.js-only).
 
 ## Constructor
 

@@ -1,9 +1,9 @@
 ---
-import type { Page } from 'src/nav';
+import type { Page } from "src/nav";
 
 interface Props {
-    title: string
-    pages: Page[]
+	title: string;
+	pages: Page[];
 }
 
 function isSelected(href: string, currentPathname: string): boolean {
@@ -22,25 +22,27 @@ function removeLeadingSlash(s: string): string {
 ---
 
 <section class="text-sm">
-    <h2 class="mb-1 font-medium">{Astro.props.title}</h2>
-    <ul>
-        {Astro.props.pages.map((page) => {
-            return (
-                <li class="my-1">
-                    <a
-                        class:list={[
-                            "hover:underline",
-                            {
-                                "text-zinc-600": !isSelected(page[1], Astro.url.pathname),
-                                "text-main": isSelected(page[1], Astro.url.pathname)
-                            }
-                        ]}
-                        href={page[1]}
-                    >
-                        {page[2] === "code" ? <code>{page[0]}</code> : page[0]}
-                    </a>
-                </li>
-            );
-        })}
-    </ul>
+	<h2 class="mb-1 font-medium">{Astro.props.title}</h2>
+	<ul>
+		{
+			Astro.props.pages.map((page) => {
+				return (
+					<li class="my-1">
+						<a
+							class:list={[
+								"hover:underline",
+								{
+									"text-zinc-600": !isSelected(page[1], Astro.url.pathname),
+									"text-main": isSelected(page[1], Astro.url.pathname)
+								}
+							]}
+							href={page[1]}
+						>
+							{page[2] === "code" ? <code>{page[0]}</code> : page[0]}
+						</a>
+					</li>
+				);
+			})
+		}
+	</ul>
 </section>

@@ -9,7 +9,7 @@ Lucia doesn't provide an adapter for Kysely but does provide adapters for driver
 
 ## MySQL
 
-See the [MySQL]() page for the schema.
+See the [MySQL](/database/mysql) page for the schema.
 
 ```ts
 import { Lucia } from "lucia";
@@ -46,7 +46,7 @@ interface SessionTable {
 
 ## PostgreSQL
 
-See the [PostgreSQL]() page for the schema.
+See the [PostgreSQL](/database/postgresql) page for the schema.
 
 ```ts
 import { Lucia } from "lucia";
@@ -83,7 +83,7 @@ interface SessionTable {
 
 ## SQLite
 
-See the [SQLite]() page for the schema.
+See the [SQLite](/database/sqlite) page for the schema.
 
 ```ts
 import { Lucia } from "lucia";

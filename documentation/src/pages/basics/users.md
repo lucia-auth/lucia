@@ -25,7 +25,7 @@ await db.createUser({
 });
 ```
 
-Use Oslo's [`generateRandomString()`]() if you're looking for a more customizable option.
+Use Oslo's [`generateRandomString()`](https://oslo.js.org/reference/random/generateRandomString/) if you're looking for a more customizable option.
 
 ```ts
 import { generateRandomString, alphabet } from "oslo/random";

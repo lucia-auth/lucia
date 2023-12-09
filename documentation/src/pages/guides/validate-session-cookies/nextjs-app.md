@@ -7,7 +7,7 @@ title: "Validate session cookies in Next.js App router"
 
 You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`. We have to wrap it inside a try/catch block since Next.js doesn't allow you to set cookies when rendering the page. This is a known issue but Vercel has yet to acknowledge or address the issue.
 
-We recommend wrapping the function with [`cache()`]() so it can be called multiple times without incurring multiple database calls.
+We recommend wrapping the function with [`cache()`](https://nextjs.org/docs/app/building-your-application/caching#react-cache-function) so it can be called multiple times without incurring multiple database calls.
 
 ```ts
 import { lucia } from "@/utils/auth";
