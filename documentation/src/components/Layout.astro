@@ -40,50 +40,49 @@ type Props = MarkdownLayoutProps<{
 			content="Lucia is an open source auth library that abstracts away the complexity of handling sessions."
 		/>
 	</head>
-	<body class="px-4 leading-relaxed sm:px-8 lg:overflow-auto">
-		<button
-			id="mobile-nav-button"
-			class="fixed right-0 mr-4 mt-8 h-8 w-8 rounded border bg-zinc-100 p-2 sm:mr-8 sm:mt-12 lg:hidden"
-			aria-label="Open menu"
-		>
-			<MenuIcon />
-		</button>
-		<div
-			class="fixed left-0 h-full max-h-screen w-full overflow-auto overscroll-contain bg-white px-4 pb-4 pt-8 sm:pt-12 hidden lg:hidden"
-			id="mobile-nav-menu"
-		>
-			<div class="mb-4 flex place-content-between">
-				<a href="/" class="text-xl font-medium">Lucia</a>
-				<button
-					id="mobile-nav-close-button"
-					class="h-8 w-8 rounded p-2 lg:hidden"
-					aria-label="Close menu"
+	<body class="leading-relaxed lg:overflow-auto">
+		<div class="border-b px-4 sm:px-8 lg:hidden">
+			<div class="max-w-5xl w-full mx-auto">
+				<header class="flex place-items-center place-content-between pt-1.5 pb-1">
+					<a href="/" class="text-lg font-medium">Lucia</a>
+					<button
+						id="mobile-nav-button"
+						class="h-8 w-8 rounded p-2 lg:hidden"
+						aria-label="Open menu"
+					>
+						<MenuIcon />
+					</button>
+				</header>
+				<div
+					class="w-full overflow-auto overscroll-contain bg-white hidden lg:hidden py-2"
+					id="mobile-nav-menu"
 				>
-					<CloseIcon />
-				</button>
+					<nav class="flex flex-col gap-y-4">
+						{
+							sections.map((section) => {
+								return <NavSection title={section.title} pages={section.pages} />;
+							})
+						}
+					</nav>
+				</div>
 			</div>
-			<nav class="flex flex-col gap-y-4">
-				{
-					sections.map((section) => {
-						return <NavSection title={section.title} pages={section.pages} />;
-					})
-				}
-			</nav>
 		</div>
-		<div class="mx-auto w-full max-w-5xl">
-			<aside class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:flex lg:flex-col">
-				<a href="/" class="text-2xl font-medium">Lucia</a>
-				<nav class="mt-4 flex flex-col gap-y-4 overflow-auto pb-4">
-					{
-						sections.map((section) => {
-							return <NavSection title={section.title} pages={section.pages} />;
-						})
-					}
-				</nav>
-			</aside>
-			<main class="overflow-hidden pb-24 pt-8 sm:pt-12 lg:ml-56 lg:pl-4">
-				<slot />
-			</main>
+		<div class="px-4 sm:px-8">
+			<div class="mx-auto w-full max-w-5xl">
+				<aside class="fixed hidden h-screen w-56 shrink-0 pt-12 lg:flex lg:flex-col">
+					<a href="/" class="text-2xl font-medium">Lucia</a>
+					<nav class="mt-4 flex flex-col gap-y-4 overflow-auto pb-4">
+						{
+							sections.map((section) => {
+								return <NavSection title={section.title} pages={section.pages} />;
+							})
+						}
+					</nav>
+				</aside>
+				<main class="overflow-hidden pb-24 pt-8 lg:pt-12 lg:ml-56 lg:pl-4">
+					<slot />
+				</main>
+			</div>
 		</div>
 	</body>
 </html>
@@ -92,7 +91,6 @@ type Props = MarkdownLayoutProps<{
 	document.getElementById("mobile-nav-button")!.addEventListener("click", (e) => {
 		const navMenu = document.getElementById("mobile-nav-menu")!;
 		if (navMenu.classList.contains("hidden")) {
-			document.getElementById("mobile-nav-button")!.classList.add("hidden");
 			navMenu.classList.remove("hidden");
 			document.body.classList.add("overflow-hidden");
 		} else {
@@ -104,7 +102,6 @@ type Props = MarkdownLayoutProps<{
 
 	function closeMenu() {
 		document.getElementById("mobile-nav-menu")!.classList.add("hidden");
-		document.getElementById("mobile-nav-button")!.classList.remove("hidden");
 		document.body.classList.remove("overflow-hidden");
 	}
 </script>
