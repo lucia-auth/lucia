@@ -33,9 +33,9 @@ export const lucia = new Lucia(adapter, {
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
-		DatabaseUserAttributes: {
-			two_factor_secret: string | null;
-		};
+	}
+	interface DatabaseUserAttributes {
+		two_factor_secret: string | null;
 	}
 }
 ```

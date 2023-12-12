@@ -68,9 +68,9 @@ const lucia = new Lucia(adapter, {
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
-		DatabaseSessionAttributes: {
-			ip_country: string;
-		};
+	}
+	interface DatabaseSessionAttributes {
+		country: string;
 	}
 }
 ```
@@ -93,9 +93,9 @@ const lucia = new Lucia(adapter, {
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
-		DatabaseUserAttributes: {
-			username: string;
-		};
+	}
+	interface DatabaseUserAttributes {
+		username: string;
 	}
 }
 ```
