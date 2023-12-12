@@ -1,16 +1,13 @@
 import { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import { generateRandomString, alphabet } from "oslo/random";
-import { TimeSpan } from "oslo";
 import assert from "node:assert/strict";
 
 declare module "lucia" {
-	interface Register {
-		DatabaseUserAttributes: {
-			username: string;
-		};
-		DatabaseSessionAttributes: {
-			country: string;
-		};
+	interface DatabaseUserAttributes {
+		username: string;
+	}
+	interface DatabaseSessionAttributes {
+		country: string;
 	}
 }
 

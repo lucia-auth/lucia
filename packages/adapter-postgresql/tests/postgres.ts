@@ -40,12 +40,10 @@ await sql`DROP TABLE public.user`;
 process.exit();
 
 declare module "lucia" {
-	interface Register {
-		DatabaseUserAttributes: {
-			username: string;
-		};
-		DatabaseSessionAttributes: {
-			country: string;
-		};
+	interface DatabaseUserAttributes {
+		username: string;
+	}
+	interface DatabaseSessionAttributes {
+		country: string;
 	}
 }

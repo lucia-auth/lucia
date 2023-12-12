@@ -36,7 +36,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "3.0.0-beta.11",
+		"lucia": "3.0.0-beta.12",
 		"mongodb": "^4.1.1"
 	},
 	"devDependencies": {
@@ -44,7 +44,7 @@
 		"dotenv": "^16.0.3",
 		"tsx": "^3.12.6",
 		"mongodb": "^4.1.1",
-		"lucia": "latest",
+		"lucia": "workspace:*",
 		"mongoose": "^6.0.11"
 	}
 }

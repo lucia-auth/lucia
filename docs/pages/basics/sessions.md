@@ -32,15 +32,15 @@ export const lucia = new Lucia(adapter, {
 
 ## Define session attributes
 
-Defining custom session attributes requires 2 steps. First, add the required columns to the session table. You can type it by declaring the `DatabaseSessionAttributes` type.
+Defining custom session attributes requires 2 steps. First, add the required columns to the session table. You can type it by declaring the `DatabaseSessionAttributes` type (must be an interface)'.
 
 ```ts
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
-		DatabaseSessionAttributes: {
-			ip_country: string;
-		};
+	}
+	interface DatabaseSessionAttributes {
+		country: string;
 	}
 }
 ```
@@ -77,15 +77,15 @@ If you have database attributes defined, pass their values as the second argumen
 
 ```ts
 const session = await lucia.createSession(userId, {
-	ip_country: "us"
+	country: "us"
 });
 
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
-		DatabaseSessionAttributes: {
-			ip_country: string;
-		};
+	}
+	interface DatabaseSessionAttributes {
+		country: string;
 	}
 }
 ```
