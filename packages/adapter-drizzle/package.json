@@ -36,7 +36,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "3.0.0-beta.11"
+		"lucia": "3.0.0-beta.12"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "5.0.0-beta.4",
@@ -44,7 +44,7 @@
 		"better-sqlite3": "^8.4.0",
 		"dotenv": "^16.0.3",
 		"drizzle-orm": "^0.29.0",
-		"lucia": "latest",
+		"lucia": "workspace:*",
 		"mysql2": "^3.2.3",
 		"pg": "^8.8.0",
 		"tsx": "^3.12.6"

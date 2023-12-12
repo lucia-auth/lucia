@@ -41,10 +41,10 @@
 	},
 	"peerDependencies": {
 		"@prisma/client": "^4.2.0 || ^5.0.0",
-		"lucia": "3.0.0-beta.11"
+		"lucia": "3.0.0-beta.12"
 	},
 	"devDependencies": {
-		"lucia": "latest",
+		"lucia": "workspace:*",
 		"@lucia-auth/adapter-test": "5.0.0-beta.4",
 		"@prisma/client": "^5.0.0",
 		"prisma": "^4.9.0",

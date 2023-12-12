@@ -39,7 +39,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "3.0.0-beta.11",
+		"lucia": "3.0.0-beta.12",
 		"pg": "^8.8.0",
 		"postgres": "^3.3.0"
 	},
@@ -55,7 +55,7 @@
 		"@lucia-auth/adapter-test": "5.0.0-beta.4",
 		"@types/pg": "^8.6.5",
 		"dotenv": "^16.0.3",
-		"lucia": "latest",
+		"lucia": "workspace:*",
 		"tsx": "^3.12.6"
 	},
 	"dependencies": {
