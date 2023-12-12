@@ -18,14 +18,15 @@ jobs:
         with:
           node-version: 20.5.1
           registry-url: https://registry.npmjs.org
-      - name: install dependencies
+      - name: install malta
+        working-directory: docs
         run: |
-          npm i -g pnpm
-          pnpm i --no-frozen-lockfile
+          curl -o malta.tgz -L https://github.com/pilcrowonpaper/malta/releases/latest/download/linux-amd64.tgz
+          tar -xvzf malta.tgz
+      - name: build
+        working-directory: docs
+        run: ./linux-amd64/malta
       - name: install wrangler
         run: npm i -g wrangler
-      - name: build
-        working-directory: documentation
-        run: pnpm build
       - name: deploy
-        run: wrangler pages deploy documentation/dist --project-name lucia-v3 --branch main
+        run: wrangler pages deploy docs/dist --project-name malta-cli --branch main
