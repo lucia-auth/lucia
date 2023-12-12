@@ -126,7 +126,12 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 
 	try {
 		const tokens = await githubAuth.validateAuthorizationCode(code);
-		const githubUser = await githubAuth.getUser(tokens.accessToken);
+		const githubUserResponse = await fetch("https://api.github.com/user", {
+			headers: {
+				Authorization: `Bearer ${tokens.accessToken}`
+			}
+		});
+		const githubUserResult: GitHubUserResult = await githubUserResponse.json();
 
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
@@ -171,4 +176,9 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 		});
 	}
 });
+
+interface GitHubUserResult {
+	id: number;
+	login: string; // username
+}
 ```
