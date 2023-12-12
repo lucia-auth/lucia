@@ -29,4 +29,4 @@ jobs:
       - name: install wrangler
         run: npm i -g wrangler
       - name: deploy
-        run: wrangler pages deploy docs/dist --project-name malta-cli --branch main
+        run: wrangler pages deploy docs/dist --project-name lucia-v3 --branch main
