@@ -5,4 +5,4 @@ title: "SessionCookie"
 
 # `SessionCookie`
 
-See [`SessionCookie`](https://oslo.js.org/reference/main/session/SessionCookie/) from `oslo/session`.
+See [`SessionCookie`](https://oslo.js.org/reference/main/session/SessionCookie) from `oslo/session`.

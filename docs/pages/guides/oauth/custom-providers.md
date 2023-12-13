@@ -5,7 +5,7 @@ title: "Custom OAuth 2.0 providers"
 
 # Custom OAuth 2.0 providers
 
-If you're looking to implement OAuth 2.0 for a provider that Arctic doesn't support, we recommend using Oslo's [`OAuth2Client`](https://oslo.js.org/reference/oauth2/OAuth2Client/).
+If you're looking to implement OAuth 2.0 for a provider that Arctic doesn't support, we recommend using Oslo's [`OAuth2Client`](https://oslo.js.org/reference/oauth2/OAuth2Client).
 
 ## Initialization
 
@@ -24,7 +24,7 @@ const oauth2Client = new OAuth2Client(clientId, authorizeEndpoint, tokenEndpoint
 
 ## Create authorization URL
 
-Create an authorization URL with [`OAuth2Client.createAuthorizationURL()`](https://oslo.js.org/reference/oauth2/OAuth2Client/createAuthorizationURL/). This optionally accepts a `state`, `codeVerifier` for PKCE flows, and `scope`.
+Create an authorization URL with [`OAuth2Client.createAuthorizationURL()`](https://oslo.js.org/reference/oauth2/OAuth2Client/createAuthorizationURL). This optionally accepts a `state`, `codeVerifier` for PKCE flows, and `scope`.
 
 ```ts
 import { generateState, generateCodeVerifier } from "oslo/oauth2";
@@ -41,9 +41,9 @@ const url = await oauth2Client.createAuthorizationURL({
 
 ## Validate authorization callback
 
-Use [`OAuth2Client.validateAuthorizationCode()`](https://oslo.js.org/reference/oauth2/OAuth2Client/validateAuthorizationCode/) to validate authorization codes. By default, it sends the client secret, if provided, using the HTTP basic auth scheme. To send it inside the request body (i.e. search params), set the `authenticateWith` option to `"request_body"`.
+Use [`OAuth2Client.validateAuthorizationCode()`](https://oslo.js.org/reference/oauth2/OAuth2Client/validateAuthorizationCode) to validate authorization codes. By default, it sends the client secret, if provided, using the HTTP basic auth scheme. To send it inside the request body (i.e. search params), set the `authenticateWith` option to `"request_body"`.
 
-This throws an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError/) on error responses.
+This throws an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) on error responses.
 
 You can add additional response JSON fields by passing a type.
 
@@ -77,7 +77,7 @@ await oauth2Client.validateAuthorizationCode<{
 
 ## Refresh access tokens
 
-Use [`OAuth2Client.validateAuthorizationCode()`](https://oslo.js.org/reference/oauth2/OAuth2Client/refreshAccessToken/) to refresh an access token. The API is similar to `validateAuthorizationCode()` and it also throws an `OAuth2RequestError` on error responses.
+Use [`OAuth2Client.validateAuthorizationCode()`](https://oslo.js.org/reference/oauth2/OAuth2Client/refreshAccessToken) to refresh an access token. The API is similar to `validateAuthorizationCode()` and it also throws an `OAuth2RequestError` on error responses.
 
 ```ts
 try {

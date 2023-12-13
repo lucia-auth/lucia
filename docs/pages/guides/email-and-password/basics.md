@@ -110,7 +110,7 @@ app.post("/signup", async (request: Request) => {
 
 ### Hashing passwords
 
-`oslo/password` currently provides [`Argon2id`](https://oslo.js.org/reference/password/Argon2id/), [`Scrypt`](https://oslo.js.org/reference/password/Scrypt), and [`Bcrypt`](https://oslo.js.org/reference/password/Bcrypt). These rely on the fastest available libraries but only work in Node.js. Passwords are salted and hashed using settings recommended by OWASP.
+`oslo/password` currently provides [`Argon2id`](https://oslo.js.org/reference/password/Argon2id), [`Scrypt`](https://oslo.js.org/reference/password/Scrypt), and [`Bcrypt`](https://oslo.js.org/reference/password/Bcrypt). These rely on the fastest available libraries but only work in Node.js. Passwords are salted and hashed using settings recommended by OWASP.
 
 ```ts
 import { Argon2id, Scrypt, Bcrypt } from "oslo/password";
