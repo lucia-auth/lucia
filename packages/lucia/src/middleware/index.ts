@@ -103,7 +103,7 @@ export const fastify = (): Middleware<[FastifyRequest, FastifyReply]> => {
 type SvelteKitRequestEvent = {
 	request: Request;
 	cookies: {
-		set: (name: string, value: string, options?: CookieAttributes) => void;
+		set: (name: string, value: string, options: CookieAttributes & { path: string }) => void;
 		get: (name: string) => string | undefined;
 	};
 };
@@ -115,7 +115,7 @@ export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 			request: event.request,
 			sessionCookie: event.cookies.get(sessionCookieName) ?? null,
 			setCookie: (cookie) => {
-				event.cookies.set(cookie.name, cookie.value, cookie.attributes);
+				event.cookies.set(cookie.name, cookie.value, { path: '/', ...cookie.attributes });
 			}
 		} as const satisfies RequestContext;
 
@@ -129,8 +129,8 @@ type AstroAPIContext = {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
 		get: (name: string) =>
 			| {
-					value: string | undefined;
-			  }
+				value: string | undefined;
+			}
 			| undefined;
 	};
 };
@@ -226,9 +226,9 @@ type NextJsPagesServerContext = {
 
 type NextCookie =
 	| {
-			name: string;
-			value: string;
-	  }
+		name: string;
+		value: string;
+	}
 	| undefined;
 
 type NextCookiesFunction = () => {
