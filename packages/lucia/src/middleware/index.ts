@@ -129,8 +129,8 @@ type AstroAPIContext = {
 		set: (name: string, value: string, options?: CookieAttributes) => void;
 		get: (name: string) =>
 			| {
-				value: string | undefined;
-			}
+					value: string | undefined;
+			  }
 			| undefined;
 	};
 };
@@ -226,9 +226,9 @@ type NextJsPagesServerContext = {
 
 type NextCookie =
 	| {
-		name: string;
-		value: string;
-	}
+			name: string;
+			value: string;
+	  }
 	| undefined;
 
 type NextCookiesFunction = () => {
