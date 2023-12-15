@@ -3,4 +3,4 @@ package: "lucia"
 type: "patch"
 ---
 
-Adds a default path of `/` to cookies set with the SvelteKit middleware.
+Update SvelteKit middleware to be compatible with SvelteKit v2
