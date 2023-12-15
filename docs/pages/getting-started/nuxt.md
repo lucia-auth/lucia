@@ -84,6 +84,7 @@ export default defineEventHandler((event) => {
 
 	const sessionId = getCookie(event, lucia.sessionCookieName) ?? null;
 	if (!sessionId) {
+		event.context.session = null;
 		event.context.user = null;
 		return;
 	}
@@ -95,12 +96,14 @@ export default defineEventHandler((event) => {
 	if (!session) {
 		appendResponseHeader(event, "Set-Cookie", lucia.createBlankSessionCookie().serialize());
 	}
+	event.context.session = session;
 	event.context.user = user;
 });
 
 declare module "h3" {
 	interface H3EventContext {
 		user: User | null;
+		session: Session | null;
 	}
 }
 ```

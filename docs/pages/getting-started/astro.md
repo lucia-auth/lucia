@@ -65,6 +65,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
 	if (!sessionId) {
 		context.locals.user = null;
+		context.locals.session = null;
 		return next();
 	}
 
@@ -77,6 +78,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const sessionCookie = lucia.createBlankSessionCookie();
 		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
+	context.locals.session = session;
 	context.locals.user = user;
 	return next();
 });
@@ -90,7 +92,8 @@ Make sure sure to type `App.Locals` as well.
 /// <reference types="astro/client" />
 declare namespace App {
 	interface Locals {
-		user: import("lucia").User;
+		session: import("lucia").Session | null;
+		user: import("lucia").User | null;
 	}
 }
 ```

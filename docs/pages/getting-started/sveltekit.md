@@ -55,6 +55,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
 	if (!sessionId) {
 		event.locals.user = null;
+		event.locals.session = null;
 		return resolve(event);
 	}
 
@@ -68,6 +69,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
 	event.locals.user = user;
+	event.locals.session = session;
 	return resolve(event);
 };
 ```
@@ -79,7 +81,8 @@ Make sure sure to type `App.Locals` as well.
 declare global {
 	namespace App {
 		interface Locals {
-			user: import("lucia").User;
+			user: import("lucia").User | null;
+			session: import("lucia").Session | null;
 		}
 	}
 }

@@ -3,8 +3,9 @@ layout: "@components/Layout.astro"
 title: "Username and password"
 ---
 
-# Username and password
+# Tutorial: Basic username and password auth
 
-```
-still working on this one!
-```
+- [Astro](/tutorials/github-oauth/astro)
+- [Next.js App router](/tutorials/github-oauth/nextjs-app)
+- [Next.js Pages router](/tutorials/github-oauth/nextjs-pages)
+- [SvelteKit](/tutorials/github-oauth/sveltekit)
