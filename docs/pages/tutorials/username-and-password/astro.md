@@ -231,7 +231,7 @@ export async function POST(context: APIContext): Promise<Response> {
 ```
 
 ```html
-<form method="POST" acton="/api/logout">
+<form method="post" action="/api/logout">
 	<button>Sign out</button>
 </form>
 ```
