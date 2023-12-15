@@ -115,7 +115,7 @@ export const sveltekit = (): Middleware<[SvelteKitRequestEvent]> => {
 			request: event.request,
 			sessionCookie: event.cookies.get(sessionCookieName) ?? null,
 			setCookie: (cookie) => {
-				event.cookies.set(cookie.name, cookie.value, { path: '/', ...cookie.attributes });
+				event.cookies.set(cookie.name, cookie.value, { path: "", ...cookie.attributes });
 			}
 		} as const satisfies RequestContext;
 
