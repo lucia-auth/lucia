@@ -1,5 +1,11 @@
 # lucia
 
+## 2.7.5
+
+### Patch changes
+
+- [#1301](https://github.com/lucia-auth/lucia/pull/1301) by [@matteopolak](https://github.com/matteopolak) : Update SvelteKit middleware to be compatible with SvelteKit v2
+
 ## 2.7.4
 
 ### Patch changes
