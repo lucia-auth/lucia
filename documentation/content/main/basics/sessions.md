@@ -189,7 +189,7 @@ import { auth } from "./lucia.js";
 await auth.invalidateSession(sessionId);
 ```
 
-### Invalid all user sessions
+### Invalidate all user sessions
 
 [`Auth.invalidateAllUserSessions()`](/reference/lucia/interfaces/auth#invalidateallusersessions) can be used to invalidate all sessions belonging to a user. This will succeed regardless of the validity of the user id.
 
