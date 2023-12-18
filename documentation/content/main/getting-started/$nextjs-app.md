@@ -36,17 +36,7 @@ export type Auth = typeof auth;
 
 ## Setup your database
 
-Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/reference/database-adapter). The schema and usage are described in each adapter's documentation.
-
-The example below is for the Prisma adapter. Install the prisma adapter:
-
-```
-npm i @lucia-auth/adapter-prisma
-pnpm add @lucia-auth/adapter-prisma
-yarn add @lucia-auth/adapter-prisma
-```
-
-And then, you will be able to configure it:
+Lucia uses adapters to connect to your database. We provide official adapters for a wide range of database options, but you can always [create your own](/reference/database-adapter). The schema and usage are described in each adapter's documentation. The example below is for the Prisma adapter. Install the prisma adapter:
 
 ```ts
 // auth/lucia.ts
@@ -67,6 +57,8 @@ const auth = lucia({
 	adapter: prisma(client)
 });
 ```
+
+Read the [Prisma adapter](/database-adapters/prisma) documentation to finish this example setup. Otherwise, chose the specific adapter that works for you from the following list:
 
 ### Adapters for database drivers and ORMs
 
