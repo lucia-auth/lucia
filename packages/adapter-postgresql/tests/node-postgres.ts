@@ -1,5 +1,5 @@
 import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
-import { PgAdapter } from "../src/drivers/pg.js";
+import { NodePostgresAdapter } from "../src/drivers/node-postgres.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import pg from "pg";
@@ -34,7 +34,7 @@ await pool.query(`INSERT INTO public.user (id, username) VALUES ($1, $2)`, [
 	databaseUser.attributes.username
 ]);
 
-const adapter = new PgAdapter(pool, {
+const adapter = new NodePostgresAdapter(pool, {
 	user: "public.user",
 	session: "public.session"
 });

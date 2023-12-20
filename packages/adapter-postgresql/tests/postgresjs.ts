@@ -1,5 +1,5 @@
 import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
-import { PostgresAdapter } from "../src/drivers/postgres.js";
+import { PostgresJsAdapter } from "../src/drivers/postgresjs.js";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import postgres from "postgres";
@@ -27,7 +27,7 @@ await sql`CREATE TABLE public.session (
 
 await sql`INSERT INTO public.user (id, username) VALUES (${databaseUser.id}, ${databaseUser.attributes.username})`;
 
-const adapter = new PostgresAdapter(sql, {
+const adapter = new PostgresJsAdapter(sql, {
 	user: "public.user",
 	session: "public.session"
 });
