@@ -32,7 +32,7 @@ CREATE TABLE user_session (
 
 ### node-postgres
 
-`NodePostgresAdapter` takes a `Pool` instance and a list of table names.
+`NodePostgresAdapter` takes a `Pool` or `Client` instance and a list of table names.
 
 ```ts
 import { Lucia } from "lucia";
