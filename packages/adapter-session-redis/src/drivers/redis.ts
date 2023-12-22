@@ -43,7 +43,7 @@ export const redisSessionAdapter = (
 				await Promise.all([
 					client.sAdd(userSessionsKey(session.user_id), session.id),
 					client.set(sessionKey(session.id), JSON.stringify(session), {
-						EX: Math.floor(Number(session.idle_expires) / 1000)
+						EXAT: Math.floor(Number(session.idle_expires) / 1000)
 					})
 				]);
 			},
@@ -75,7 +75,7 @@ export const redisSessionAdapter = (
 					sessionKey(sessionId),
 					JSON.stringify(updatedSession),
 					{
-						EX: Math.floor(Number(updatedSession.idle_expires) / 1000)
+						EXAT: Math.floor(Number(updatedSession.idle_expires) / 1000)
 					}
 				);
 			}

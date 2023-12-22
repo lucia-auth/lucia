@@ -50,7 +50,7 @@ export const upstashSessionAdapter = (
 				const pipeline = upstashClient.pipeline();
 				pipeline.sadd(userSessionsKey(session.user_id), session.id);
 				pipeline.set(sessionKey(session.id), JSON.stringify(session), {
-					ex: Math.floor(Number(session.idle_expires) / 1000)
+					exat: Math.floor(Number(session.idle_expires) / 1000)
 				});
 				await pipeline.exec();
 			},
@@ -85,7 +85,7 @@ export const upstashSessionAdapter = (
 					sessionKey(sessionId),
 					JSON.stringify(updatedSession),
 					{
-						ex: Math.floor(Number(updatedSession.idle_expires) / 1000)
+						exat: Math.floor(Number(updatedSession.idle_expires) / 1000)
 					}
 				);
 			}
