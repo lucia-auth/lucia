@@ -44,7 +44,7 @@
 	"peerDependencies": {
 		"@libsql/client": "^0.3.0",
 		"better-sqlite3": "8.x - 9.x",
-		"lucia": "3.0.0-beta.12"
+		"lucia": "workspace:*"
 	},
 	"peerDependenciesMeta": {
 		"better-sqlite3": {

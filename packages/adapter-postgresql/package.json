@@ -39,7 +39,7 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "3.0.0-beta.12",
+		"lucia": "workspace:*",
 		"pg": "^8.8.0",
 		"postgres": "^3.3.0"
 	},
