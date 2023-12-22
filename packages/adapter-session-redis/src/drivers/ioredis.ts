@@ -45,7 +45,7 @@ export const ioredisSessionAdapter = (
 					client.set(
 						sessionKey(session.id),
 						JSON.stringify(session),
-						"EX",
+						"EXAT",
 						Math.floor(Number(session.idle_expires) / 1000)
 					)
 				]);
@@ -77,7 +77,7 @@ export const ioredisSessionAdapter = (
 				await client.set(
 					sessionKey(sessionId),
 					JSON.stringify(updatedSession),
-					"EX",
+					"EXAT",
 					Math.floor(Number(updatedSession.idle_expires) / 1000)
 				);
 			}
