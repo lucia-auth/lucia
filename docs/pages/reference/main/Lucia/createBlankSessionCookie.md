@@ -10,6 +10,6 @@ Method of [`Lucia`](/reference/main/Lucia). Creates a new cookie with a blank va
 ## Definition
 
 ```ts
-//$ SessionCookie=/reference/main/SessionCookie
-function createBlankSessionCookie(): $$SessionCookie;
+//$ Cookie=/reference/cookie/Cookie
+function createBlankSessionCookie(): $$Cookie;
 ```

@@ -120,7 +120,7 @@ See the [Validate session cookies](/guides/validate-session-cookies) and [Valida
 
 ### Create session cookies
 
-You can create a session cookie for a session with [`Lucia.createSessionCookie()`](/reference/main/Lucia/createSessionCookie). It takes a session and returns a new [`SessionCookie`](/reference/main/SessionCookie) instance. You can either use [`SessionCookie.serialize()`](https://oslo.js.org/reference/session/SessionCookie/serialize) to create `Set-Cookie` HTTP header value, or use your framework's API by accessing the name, value, and session.
+You can create a session cookie for a session with [`Lucia.createSessionCookie()`](/reference/main/Lucia/createSessionCookie). It takes a session and returns a new [`Cookie`](/reference/main/Cookie) instance. You can either use [`Cookie.serialize()`](https://oslo.js.org/reference/cookie/Cookie/serialize) to create `Set-Cookie` HTTP header value, or use your framework's API by accessing the name, value, and session.
 
 ```ts
 const sessionCookie = lucia.createSessionCookie(session.id);

@@ -60,7 +60,7 @@ If your framework provides utilities for cookies, you can get the session cookie
 const sessionId = getCookie(lucia.sessionCookieName);
 ```
 
-When setting cookies you can get the cookies name, value, and attributes from the `SessionCookie` object.
+When setting cookies you can get the cookies name, value, and attributes from the `Cookie` object.
 
 ```ts
 const sessionCookie = lucia.createSessionCookie(sessionId);

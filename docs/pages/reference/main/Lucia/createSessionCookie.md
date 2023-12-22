@@ -10,6 +10,6 @@ Method of [`Lucia`](/reference/main/Lucia). Creates a new session cookie.
 ## Definition
 
 ```ts
-//$ SessionCookie=/reference/main/SessionCookie
-function createSessionCookie(sessionId: string): $$SessionCookie;
+//$ Cookie=/reference/cookie/Cookie
+function createSessionCookie(sessionId: string): $$Cookie;
 ```
