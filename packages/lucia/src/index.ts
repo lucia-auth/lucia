@@ -1,19 +1,18 @@
 export { Lucia } from "./core.js";
 export { Scrypt, LegacyScrypt, generateId } from "./crypto.js";
 export { TimeSpan } from "oslo";
-export { SessionCookie } from "oslo/session";
+export { Cookie } from "oslo/cookie";
 export { verifyRequestOrigin } from "oslo/request";
 
 export type {
 	User,
 	Session,
 	SessionCookieOptions,
-	CSRFProtectionOptions,
-	SessionCookieAttributesOptions,
-	RequestContext
+	SessionCookieAttributesOptions
 } from "./core.js";
 export type { DatabaseSession, DatabaseUser, Adapter } from "./database.js";
 export type { PasswordHashingAlgorithm } from "./crypto.js";
+export type { CookieAttributes } from "oslo/cookie";
 
 import type { Lucia } from "./core.js";
 

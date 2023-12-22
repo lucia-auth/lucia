@@ -1,14 +1,15 @@
-import { SessionController, SessionCookieController } from "oslo/session";
-import { TimeSpan, isWithinExpirationDate } from "oslo";
+import { TimeSpan, createDate, isWithinExpirationDate } from "oslo";
 import { generateId } from "./crypto.js";
+import { CookieController } from "oslo/cookie";
 
-import type { SessionCookie } from "oslo/session";
+import type { Cookie } from "oslo/cookie";
 import type { Adapter } from "./database.js";
 import type {
 	DatabaseSessionAttributes,
 	DatabaseUserAttributes,
 	RegisteredLucia
 } from "./index.js";
+import { CookieAttributes } from "oslo/cookie";
 
 type SessionAttributes = RegisteredLucia extends Lucia<infer _SessionAttributes, any>
 	? _SessionAttributes
@@ -34,8 +35,8 @@ export class Lucia<
 	_UserAttributes extends {} = Record<never, never>
 > {
 	private adapter: Adapter;
-	private sessionController: SessionController;
-	private sessionCookieController: SessionCookieController;
+	private sessionExpiresIn: TimeSpan;
+	private sessionCookieController: CookieController;
 
 	private getSessionAttributes: (
 		databaseSessionAttributes: DatabaseSessionAttributes
@@ -71,19 +72,25 @@ export class Lucia<
 			}
 			return {};
 		};
-		this.sessionController = new SessionController(
-			options?.sessionExpiresIn ?? new TimeSpan(30, "d")
-		);
-
+		this.sessionExpiresIn = options?.sessionExpiresIn ?? new TimeSpan(30, "d");
 		this.sessionCookieName = options?.sessionCookie?.name ?? "auth_session";
-		let sessionExpiresIn = this.sessionController.expiresIn;
+		let sessionCookieExpiresIn = this.sessionExpiresIn;
 		if (options?.sessionCookie?.expires === false) {
-			sessionExpiresIn = new TimeSpan(365 * 2, "d");
+			sessionCookieExpiresIn = new TimeSpan(365 * 2, "d");
 		}
-		this.sessionCookieController = new SessionCookieController(
+		const baseSessionCookieAttributes: CookieAttributes = {
+			httpOnly: true,
+			secure: true,
+			sameSite: "lax",
+			path: "/",
+			...options?.sessionCookie?.attributes
+		};
+		this.sessionCookieController = new CookieController(
 			this.sessionCookieName,
-			sessionExpiresIn,
-			options?.sessionCookie?.attributes
+			baseSessionCookieAttributes,
+			{
+				expiresIn: sessionCookieExpiresIn
+			}
 		);
 	}
 
@@ -116,25 +123,25 @@ export class Lucia<
 			await this.adapter.deleteSession(databaseSession.id);
 			return { session: null, user: null };
 		}
-		const sessionState = this.sessionController.getSessionState(databaseSession.expiresAt);
-		if (sessionState === "expired") {
+		if (!isWithinExpirationDate(databaseSession.expiresAt)) {
 			await this.adapter.deleteSession(databaseSession.id);
 			return { session: null, user: null };
 		}
-		let expiresAt = databaseSession.expiresAt;
-		let fresh = false;
-		if (sessionState === "idle") {
-			expiresAt = this.sessionController.createExpirationDate();
-			await this.adapter.updateSessionExpiration(databaseSession.id, expiresAt);
-			fresh = true;
-		}
+		const activePeriodExpirationDate = new Date(
+			databaseSession.expiresAt.getTime() - this.sessionExpiresIn.milliseconds() / 2
+		);
 		const session: Session = {
+			...this.getSessionAttributes(databaseSession.attributes),
 			id: databaseSession.id,
 			userId: databaseSession.userId,
-			fresh,
-			expiresAt,
-			...this.getSessionAttributes(databaseSession.attributes)
+			fresh: false,
+			expiresAt: databaseSession.expiresAt
 		};
+		if (!isWithinExpirationDate(activePeriodExpirationDate)) {
+			session.fresh = true;
+			session.expiresAt = createDate(this.sessionExpiresIn);
+			await this.adapter.updateSessionExpiration(databaseSession.id, session.expiresAt);
+		}
 		const user: User = {
 			...this.getUserAttributes(databaseUser.attributes),
 			id: databaseUser.id
@@ -150,7 +157,7 @@ export class Lucia<
 		}
 	): Promise<Session> {
 		const sessionId = options?.sessionId ?? generateId(40);
-		const sessionExpiresAt = this.sessionController.createExpirationDate();
+		const sessionExpiresAt = createDate(this.sessionExpiresIn);
 		await this.adapter.setSession({
 			id: sessionId,
 			userId,
@@ -176,7 +183,7 @@ export class Lucia<
 	}
 
 	public readSessionCookie(cookieHeader: string): string | null {
-		const sessionId = this.sessionCookieController.parseCookies(cookieHeader);
+		const sessionId = this.sessionCookieController.parse(cookieHeader);
 		return sessionId;
 	}
 
@@ -188,12 +195,12 @@ export class Lucia<
 		return token ?? null;
 	}
 
-	public createSessionCookie(sessionId: string): SessionCookie {
-		return this.sessionCookieController.createSessionCookie(sessionId);
+	public createSessionCookie(sessionId: string): Cookie {
+		return this.sessionCookieController.createCookie(sessionId);
 	}
 
-	public createBlankSessionCookie(): SessionCookie {
-		return this.sessionCookieController.createBlankSessionCookie();
+	public createBlankSessionCookie(): Cookie {
+		return this.sessionCookieController.createBlankCookie();
 	}
 }
 
@@ -208,15 +215,4 @@ export interface SessionCookieAttributesOptions {
 	domain?: string;
 	path?: string;
 	secure?: boolean;
-}
-
-export interface CSRFProtectionOptions {
-	allowedDomains?: string[];
-	hostHeader?: string;
-}
-
-export interface RequestContext {
-	method: string;
-	headers: Headers;
-	setCookie: (cookie: SessionCookie) => void;
 }
