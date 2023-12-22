@@ -78,7 +78,7 @@ export const actions: Actions = {
 			typeof username !== "string" ||
 			username.length < 3 ||
 			username.length > 31 ||
-			/^[a-z0-9_-]+$/.test(username)
+			!/^[a-z0-9_-]+$/.test(username)
 		) {
 			return fail(400, {
 				message: "Invalid username"
@@ -90,8 +90,8 @@ export const actions: Actions = {
 			});
 		}
 
-		const hashedPassword = await new Argon2id().hash(password);
 		const userId = generateId(15);
+		const hashedPassword = await new Argon2id().hash(password);
 
 		// TODO: check if username is already taken
 		await db.table("user").insert({
@@ -100,11 +100,14 @@ export const actions: Actions = {
 			hashed_password: hashedPassword
 		});
 
-		const session = await lucia.createSession(userId);
+		const session = await lucia.createSession(userId, {});
 		const sessionCookie = lucia.createSessionCookie(session.id);
-		event.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: ".",
+			...sessionCookie.attributes
+		});
 
-		throw redirect(302, "/");
+		return redirect(302, "/");
 	}
 };
 ```
@@ -161,7 +164,7 @@ export const actions: Actions = {
 			typeof username !== "string" ||
 			username.length < 3 ||
 			username.length > 31 ||
-			/^[a-z0-9_-]+$/.test(username)
+			!/^[a-z0-9_-]+$/.test(username)
 		) {
 			return fail(400, {
 				message: "Invalid username"
@@ -183,18 +186,21 @@ export const actions: Actions = {
 			});
 		}
 
-		const validPassword = await Argon2id().verify(existingUser.hashed_password, password);
+		const validPassword = await new Argon2id().verify(existingUser.hashed_password, password);
 		if (!validPassword) {
 			return fail(400, {
 				message: "Incorrect username or password"
 			});
 		}
 
-		const session = await lucia.createSession(userId);
+		const session = await lucia.createSession(userId, {});
 		const sessionCookie = lucia.createSessionCookie(session.id);
-		event.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: ".",
+			...sessionCookie.attributes
+		});
 
-		throw redirect(302, "/");
+		return redirect(302, "/");
 	}
 };
 ```
@@ -236,13 +242,12 @@ export const actions: Actions = {
 			return fail(401);
 		}
 		await auth.invalidateSession(event.locals.session.id);
-		const blankSessionCookie = lucia.createBlankSessionCookie();
-		context.cookies(
-			blankSessionCookie.name,
-			blankSessionCookie.value,
-			blankSessionCookie.attributes
-		);
-		throw redirect(302, "/login");
+		const sessionCookie = lucia.createBlankSessionCookie();
+		context.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: ".",
+			...sessionCookie.attributes
+		});
+		return redirect(302, "/login");
 	}
 };
 ```

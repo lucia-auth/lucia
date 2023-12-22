@@ -8,7 +8,7 @@ Before starting, make sure you've setup your database and middleware as describe
 
 ## Update database
 
-Add a `username` column to your user table with a type of string. Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
+Add a `username` column (unique) and `password` column to your user table with a type of string. Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
 
 ```ts
 import { Lucia } from "lucia";
@@ -64,6 +64,7 @@ Create an API route in `pages/api/signup.ts`. First do a very basic input valida
 import { lucia } from "../../lucia";
 import { generateId } from "lucia";
 import { Argon2id } from "oslo/password";
+
 import type { APIContext } from "astro";
 
 export async function POST(context: APIContext): Promise<Response> {
@@ -75,7 +76,7 @@ export async function POST(context: APIContext): Promise<Response> {
 		typeof username !== "string" ||
 		username.length < 3 ||
 		username.length > 31 ||
-		/^[a-z0-9_-]+$/.test(username)
+		!/^[a-z0-9_-]+$/.test(username)
 	) {
 		return new Response("Invalid username", {
 			status: 400
@@ -88,8 +89,8 @@ export async function POST(context: APIContext): Promise<Response> {
 		});
 	}
 
-	const hashedPassword = await new Argon2id().hash(password);
 	const userId = generateId(15);
+	const hashedPassword = await new Argon2id().hash(password);
 
 	// TODO: check if username is already taken
 	await db.table("user").insert({
@@ -98,9 +99,9 @@ export async function POST(context: APIContext): Promise<Response> {
 		hashed_password: hashedPassword
 	});
 
-	const session = await lucia.createSession(userId);
+	const session = await lucia.createSession(userId, {});
 	const sessionCookie = lucia.createSessionCookie(session.id);
-	context.setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
 	return context.redirect("/");
 }
@@ -146,6 +147,7 @@ Create an API route as `pages/api/signup.ts`. First do a very basic input valida
 // pages/api/login.ts
 import { lucia } from "../../lucia";
 import { Argon2id } from "oslo/password";
+
 import type { APIContext } from "astro";
 
 export async function POST(context: APIContext): Promise<Response> {
@@ -155,7 +157,7 @@ export async function POST(context: APIContext): Promise<Response> {
 		typeof username !== "string" ||
 		username.length < 3 ||
 		username.length > 31 ||
-		/^[a-z0-9_-]+$/.test(username)
+		!/^[a-z0-9_-]+$/.test(username)
 	) {
 		return new Response("Invalid username", {
 			status: 400
@@ -178,16 +180,16 @@ export async function POST(context: APIContext): Promise<Response> {
 		});
 	}
 
-	const validPassword = await Argon2id().verify(existingUser.hashed_password, password);
+	const validPassword = await new Argon2id().verify(existingUser.password, password);
 	if (!validPassword) {
 		return new Response("Incorrect username or password", {
 			status: 400
 		});
 	}
 
-	const session = await lucia.createSession(userId);
+	const session = await lucia.createSession(userId, {});
 	const sessionCookie = lucia.createSessionCookie(session.id);
-	context.setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+	context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
 	return context.redirect("/");
 }
@@ -223,8 +225,8 @@ export async function POST(context: APIContext): Promise<Response> {
 
 	await lucia.invalidateSession(context.locals.session.id);
 
-	const blankSessionCookie = lucia.createBlankSessionCookie();
-	context.cookies(blankSessionCookie.name, blankSessionCookie.value, blankSessionCookie.attributes);
+	const sessionCookie = lucia.createBlankSessionCookie();
+	context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
 	return Astro.redirect("/login");
 }
