@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-session-redis
 
+## 2.1.2
+
+### Patch changes
+
+- [#1314](https://github.com/lucia-auth/lucia/pull/1314) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix expiration
+
 ## 2.1.1
 
 ### Patch changes
