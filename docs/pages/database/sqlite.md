@@ -69,16 +69,16 @@ const adapter = new BunSQLiteAdapter(db, {
 
 ### Cloudflare D1
 
-`CloudflareD1Adapter` takes a `D1Database` instance and a list of table names.
+`D1Adapter` takes a `D1Database` instance and a list of table names.
 
 Since the D1 binding is included with the request, create an `initializeLucia()` function to create a new `Lucia` instance on every request.
 
 ```ts
 import { Lucia } from "lucia";
-import { CloudflareD1Adapter } from "@lucia-auth/adapter-sqlite";
+import { D1Adapter } from "@lucia-auth/adapter-sqlite";
 
 export function initializeLucia(D1: D1Database) {
-	const adapter = new CloudflareD1Adapter(D1, {
+	const adapter = new D1Adapter(D1, {
 		user: "user",
 		session: "session"
 	});
