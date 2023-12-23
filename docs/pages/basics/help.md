@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Troubleshooting"
 ---
 
@@ -46,7 +45,7 @@ const lucia = new Lucia(adapter, {
 Check your CSRF protection implementation. If you're using the code provided by the documentation, check the `Origin` and `Host` header. The hostname must match exactly. You can add additional domains to the array to allow more domains.
 
 ```ts
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 verifyRequestOrigin(originHeader, [hostHeader, "api.example.com" /*...*/]);
 ```

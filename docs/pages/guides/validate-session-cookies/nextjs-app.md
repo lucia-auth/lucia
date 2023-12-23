@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Validate session cookies in Next.js App router"
 ---
 
@@ -77,7 +76,7 @@ For API routes, since Next.js do not implement CSRF protection for API routes, *
 
 ```ts
 // app/api/route.ts
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 export async function POST(request: NextRequest) {
 	const originHeader = headers().get("Origin");

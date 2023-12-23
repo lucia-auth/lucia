@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Upgrade your Mongoose project to v3"
 ---
 

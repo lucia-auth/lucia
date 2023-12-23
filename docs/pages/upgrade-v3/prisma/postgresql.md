@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Upgrade Prisma and your PostgreSQL database to v3"
 ---
 

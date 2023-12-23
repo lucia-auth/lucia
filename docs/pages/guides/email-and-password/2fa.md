@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Two-factor authorization"
 ---
 

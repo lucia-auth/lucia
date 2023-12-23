@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Validate session cookies"
 ---
 
@@ -21,7 +20,7 @@ This guide is also available for:
 For non-GET requests, check the request origin. You can use `readSessionCookie()` to get the session cookie from a HTTP `Cookie` header, and validate it with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
 ```ts
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 // only required in non-GET requests (POST, PUT, DELETE, PATCH, etc)
 const originHeader = request.headers.get("Origin");

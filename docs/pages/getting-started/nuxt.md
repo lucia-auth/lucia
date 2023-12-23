@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Getting started in Nuxt"
 ---
 
@@ -68,7 +67,7 @@ It's a bit verbose, but it just reads the session cookie, validates it, and sets
 
 ```ts
 // server/middleware/auth.ts
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 import type { H3Event } from "h3";
 import type { User } from "lucia";

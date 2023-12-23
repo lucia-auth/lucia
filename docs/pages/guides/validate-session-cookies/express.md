@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Validate session cookies in Express"
 ---
 
@@ -12,7 +11,7 @@ We recommend creating 2 middleware for CSRF protection and validating requests. 
 ```ts
 // src/middleware.ts
 import { lucia } from "./auth.js";
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 import type { User } from "lucia";
 

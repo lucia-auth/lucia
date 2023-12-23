@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Validate session cookies in Elysia"
 ---
 
@@ -11,7 +10,7 @@ We recommend creating a middleware to validate requests and store the current us
 
 ```ts
 // src/middleware.ts
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 import type { User } from "lucia";
 

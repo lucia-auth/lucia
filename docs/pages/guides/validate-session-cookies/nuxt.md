@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Validate session cookies in Nuxt"
 ---
 
@@ -11,7 +10,7 @@ We recommend creating a middleware to validate requests and store the current us
 
 ```ts
 // server/middleware/auth.ts
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 import type { H3Event } from "h3";
 import type { User } from "lucia";

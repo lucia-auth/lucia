@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "OAuth basics"
 ---
 
@@ -22,12 +21,12 @@ Add a `username` and a unique `github_id` column to the user table.
 | column      | type     | attributes |
 | ----------- | -------- | ---------- |
 | `username`  | `string` |            |
-| `github_id` | `string` | unique     |
+| `github_id` | `number` | unique     |
 
 Declare the type with `DatabaseUserAttributes` and add the attributes the user object using the `getUserAttributes()` configuration.
 
 ```ts
-// lucia.ts
+// auth.ts
 import { Lucia } from "lucia";
 
 export const lucia = new Lucia(adapter, {
@@ -49,7 +48,7 @@ declare module "lucia" {
 		Lucia: typeof lucia;
 	}
 	interface DatabaseUserAttributes {
-		github_id: string;
+		github_id: number;
 		username: string;
 	}
 }
@@ -60,7 +59,7 @@ declare module "lucia" {
 Import `GitHub` from Arctic and initialize it with the client ID and secret.
 
 ```ts
-// lucia.ts
+// auth.ts
 import { GitHub } from "arctic";
 
 export const githubAuth = new GitHub(clientId, clientSecret);

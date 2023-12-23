@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Users"
 ---
 

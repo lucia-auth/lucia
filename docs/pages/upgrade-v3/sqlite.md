@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Upgrade your SQLite database to v3"
 ---
 

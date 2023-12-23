@@ -62,7 +62,7 @@ Create a form action in `routes/signup/+page.server.ts`. First do a very basic i
 
 ```ts
 // routes/signup/+page.server.ts
-import { lucia } from "$lib/server/lucia";
+import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 
 import type { Actions } from "./$types";
@@ -149,7 +149,7 @@ Create `routes/login/+page.svelte` and set up a basic form.
 Create an API route as `pages/api/signup.ts`. First do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
-import { lucia } from "$lib/server/lucia";
+import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 
 import type { Actions } from "./$types";
@@ -227,7 +227,7 @@ Sign out users by invalidating their session with `Lucia.invalidateSession()`. M
 
 ```ts
 // routes/+page.server.ts
-import { lucia } from "$lib/server/lucia";
+import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 
 import type { Actions, PageServerLoad } from "./$types";

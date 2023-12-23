@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Validate session cookies in Next.js Pages router"
 ---
 
@@ -10,7 +9,7 @@ You can get the cookie name with `Lucia.sessionCookieName` and validate the sess
 You can also use this inside API routes but **CSRF protection must be implemented**. This can be easily done by comparing the `Origin` and `Host` header. While CSRF protection is strictly not necessary when using JSON requests, it should be implemented in Next.js as it doesn't differentiate between JSON and form submissions.
 
 ```ts
-import { verifyRequestOrigin } from "oslo/request";
+import { verifyRequestOrigin } from "lucia";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 

@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Custom OAuth 2.0 providers"
 ---
 

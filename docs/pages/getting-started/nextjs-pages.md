@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Getting started in Next.js Pages router"
 ---
 

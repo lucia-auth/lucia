@@ -1,5 +1,4 @@
 ---
-layout: "@components/Layout.astro"
 title: "Password basics"
 ---
 
@@ -19,7 +18,7 @@ Add a unique `email` and `hashed_password` column to the user table.
 Declare the type with `DatabaseUserAttributes` and add the attributes the user object using the `getUserAttributes()` configuration.
 
 ```ts
-// lucia.ts
+// auth.ts
 import { Lucia } from "lucia";
 
 export const lucia = new Lucia(adapter, {
