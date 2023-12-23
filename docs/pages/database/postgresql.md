@@ -42,8 +42,8 @@ import pg from "pg";
 const pool = new pg.Pool();
 
 const adapter = new NodePostgresAdapter(pool, {
-	user: "user",
-	session: "session"
+	user: "auth_user",
+	session: "user_session"
 });
 ```
 
@@ -59,7 +59,7 @@ import postgres from "postgres";
 const sql = postgres();
 
 const adapter = new PostgresJsAdapter(sql, {
-	user: "user",
-	session: "session"
+	user: "auth_user",
+	session: "user_session"
 });
 ```
