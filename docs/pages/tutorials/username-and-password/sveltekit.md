@@ -2,7 +2,7 @@
 title: "Tutorial: Username and password auth in SvelteKit"
 ---
 
-# Tutorial: Username and password auth in Astro
+# Tutorial: Username and password auth in SvelteKit
 
 Before starting, make sure you've setup your database and middleware as described in the [Getting started](/getting-started/astro) page.
 
