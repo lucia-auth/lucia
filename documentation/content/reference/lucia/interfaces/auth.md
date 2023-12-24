@@ -669,7 +669,7 @@ const transformDatabaseUser: (databaseUser: UserSchema) => User;
 import { auth } from "./lucia.js";
 
 const databaseUser = await db.getUser(userId);
-const user = auth.transformDatabaseSession(databaseUser);
+const user = auth.transformDatabaseUser(databaseUser);
 ```
 
 ## `updateKeyPassword()`
