@@ -326,6 +326,7 @@ export default function Page({ user }: InferGetServerSidePropsType<typeof getSer
 Sign out users by invalidating their session with `Lucia.invalidateSession()`. Make sure to remove their session cookie by setting a blank session cookie created with `Lucia.createBlankSessionCookie()`.
 
 ```ts
+// pages/api/logout.ts
 import { lucia, validateRequest } from "@/lib/auth";
 
 import type { NextApiRequest, NextApiResponse } from "next";
