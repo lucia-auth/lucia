@@ -1,5 +1,5 @@
 ---
-title: "Username and password"
+title: "Tutorial: Username and password"
 ---
 
 # Tutorial: Username and password auth
