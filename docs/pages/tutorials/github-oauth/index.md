@@ -9,4 +9,5 @@ The tutorials go over how to implement a basic GitHub OAuth and covers the basic
 - [Astro](/tutorials/github-oauth/astro)
 - [Next.js App router](/tutorials/github-oauth/nextjs-app)
 - [Next.js Pages router](/tutorials/github-oauth/nextjs-pages)
+- [Nuxt](/tutorials/github-oauth/nuxt)
 - [SvelteKit](/tutorials/github-oauth/sveltekit)

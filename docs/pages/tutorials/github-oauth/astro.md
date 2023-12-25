@@ -133,7 +133,6 @@ import { OAuth2RequestError } from "arctic";
 import { generateId } from "lucia";
 
 import type { APIContext } from "astro";
-import type { DatabaseUser } from "../../../lib/db";
 
 export async function GET(context: APIContext): Promise<Response> {
 	const code = context.url.searchParams.get("code");
@@ -210,7 +209,7 @@ const username = user.username;
 Sign out users by invalidating their session with `Lucia.invalidateSession()`. Make sure to remove their session cookie by setting a blank session cookie created with `Lucia.createBlankSessionCookie()`.
 
 ```ts
-import { lucia } from "../../auth";
+import { lucia } from "@lib/auth";
 import type { APIContext } from "astro";
 
 export async function POST(context: APIContext): Promise<Response> {

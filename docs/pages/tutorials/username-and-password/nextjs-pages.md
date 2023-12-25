@@ -65,14 +65,16 @@ export default function Page() {
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formElement = e.target as HTMLFormElement;
-		await fetch(formElement.action, {
+		const response = await fetch(formElement.action, {
 			method: formElement.method,
 			body: JSON.stringify(Object.fromEntries(new FormData(formElement).entries())),
 			headers: {
 				"Content-Type": "application/json"
 			}
 		});
-		router.push("/");
+		if (response.ok) {
+			router.push("/");
+		}
 	}
 
 	return (
@@ -171,14 +173,16 @@ export default function Page() {
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formElement = e.target as HTMLFormElement;
-		await fetch(formElement.action, {
+		const response = await fetch(formElement.action, {
 			method: formElement.method,
 			body: JSON.stringify(Object.fromEntries(new FormData(formElement).entries())),
 			headers: {
 				"Content-Type": "application/json"
 			}
 		});
-		router.push("/");
+		if (response.ok) {
+			router.push("/");
+		}
 	}
 
 	return (

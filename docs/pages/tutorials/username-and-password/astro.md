@@ -74,7 +74,7 @@ Create an API route in `pages/api/signup.ts`. First do a very basic input valida
 
 ```ts
 // pages/api/signup.ts
-import { lucia } from "../../auth";
+import { lucia } from "@lib/auth";
 import { generateId } from "lucia";
 import { Argon2id } from "oslo/password";
 
@@ -158,7 +158,7 @@ Create an API route as `pages/api/signup.ts`. First do a very basic input valida
 
 ```ts
 // pages/api/login.ts
-import { lucia } from "../../auth";
+import { lucia } from "@lib/auth";
 import { Argon2id } from "oslo/password";
 
 import type { APIContext } from "astro";
@@ -226,7 +226,7 @@ const username = user.username;
 Sign out users by invalidating their session with `Lucia.invalidateSession()`. Make sure to remove their session cookie by setting a blank session cookie created with `Lucia.createBlankSessionCookie()`.
 
 ```ts
-import { lucia } from "../../auth";
+import { lucia } from "@lib/auth";
 import type { APIContext } from "astro";
 
 export async function POST(context: APIContext): Promise<Response> {

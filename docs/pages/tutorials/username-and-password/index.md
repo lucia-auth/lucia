@@ -9,4 +9,5 @@ The tutorials go over how to implement a basic username and password auth and co
 - [Astro](/tutorials/username-and-password/astro)
 - [Next.js App router](/tutorials/username-and-password/nextjs-app)
 - [Next.js Pages router](/tutorials/username-and-password/nextjs-pages)
+- [Nuxt](/tutorials/username-and-password/nuxt)
 - [SvelteKit](/tutorials/username-and-password/sveltekit)
