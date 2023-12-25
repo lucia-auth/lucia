@@ -13,6 +13,7 @@ This guide is also available for:
 - [Next.js App router](/guides/validate-session-cookies/nextjs-app)
 - [Next.js Pages router](/guides/validate-session-cookies/nextjs-pages)
 - [Nuxt](/guides/validate-session-cookies/nuxt)
+- [SolidStart](/guides/validate-session-cookies/solidstart)
 - [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
 **CSRF protection must be implemented when using cookies and forms** This can be easily done by comparing the `Origin` and `Host` header.
