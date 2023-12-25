@@ -12,13 +12,14 @@ We recommend creating a middleware to validate requests and store the current us
 // src/middleware.ts
 import { verifyRequestOrigin } from "lucia";
 
-import type { User } from "lucia";
+import type { User, Session } from "lucia";
 
 const app = new Elysia().derive(
 	async (
 		context
 	): Promise<{
 		user: User | null;
+		session: Session | null;
 	}> => {
 		// CSRF check
 		if (context.request.method !== "GET") {
@@ -26,7 +27,8 @@ const app = new Elysia().derive(
 			const hostHeader = context.request.headers.get("Host");
 			if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 				return {
-					user: null
+					user: null,
+					session: null
 				};
 			}
 		}
@@ -36,7 +38,8 @@ const app = new Elysia().derive(
 		const sessionId = lucia.readSessionCookie(cookieHeader);
 		if (!sessionId) {
 			return {
-				user: null
+				user: null,
+				session: null
 			};
 		}
 
@@ -56,7 +59,8 @@ const app = new Elysia().derive(
 			});
 		}
 		return {
-			user
+			user,
+			session
 		};
 	}
 );

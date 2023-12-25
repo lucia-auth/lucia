@@ -22,40 +22,42 @@ const app = new Hono<{
 	};
 }>();
 
-app
-	.use("*", (c, next) => {
-		// CSRF middleware
-		if (c.req.method === "GET") {
-			return next();
-		}
-		const originHeader = c.req.headers.get("Origin");
-		const hostHeader = c.req.headers.get("Host");
-		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-			return c.body(null, 403);
-		}
+app.use("*", (c, next) => {
+	// CSRF middleware
+	if (c.req.method === "GET") {
 		return next();
-	})
-	.use("*", (c, next) => {
-		const sessionId = getCookie(lucia.sessionCookieName) ?? null;
-		if (!sessionId) {
-			c.set("user", null);
-			return next();
-		}
-		const { session, user } = await lucia.validateSession(sessionId);
-		if (session && session.fresh) {
-			// use `header()` instead of `setCookie()` to avoid TS errors
-			c.header("Set-Cookie", lucia.createSessionCookie(session.id).serialize(), {
-				append: true
-			});
-		}
-		if (!session) {
-			c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
-				append: true
-			});
-		}
-		c.set("user", user);
+	}
+	const originHeader = c.req.headers.get("Origin");
+	const hostHeader = c.req.headers.get("Host");
+	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
+		return c.body(null, 403);
+	}
+	return next();
+});
+
+app.use("*", (c, next) => {
+	const sessionId = getCookie(lucia.sessionCookieName) ?? null;
+	if (!sessionId) {
+		c.set("user", null);
+		c.set("session", null);
 		return next();
-	});
+	}
+	const { session, user } = await lucia.validateSession(sessionId);
+	if (session && session.fresh) {
+		// use `header()` instead of `setCookie()` to avoid TS errors
+		c.header("Set-Cookie", lucia.createSessionCookie(session.id).serialize(), {
+			append: true
+		});
+	}
+	if (!session) {
+		c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
+			append: true
+		});
+	}
+	c.set("user", user);
+	c.set("session", session);
+	return next();
+});
 ```
 
 This will allow you to access the current user with `Context.get()`.

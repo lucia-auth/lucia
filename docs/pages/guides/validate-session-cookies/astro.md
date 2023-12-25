@@ -28,6 +28,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
 	if (!sessionId) {
 		context.locals.user = null;
+		context.locals.session = null;
 		return next();
 	}
 
@@ -41,6 +42,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
 	context.locals.user = user;
+	context.locals.user = session;
 	return next();
 });
 ```
@@ -54,6 +56,7 @@ Make sure sure to type `App.Locals` as well.
 declare namespace App {
 	interface Locals {
 		user: import("lucia").User;
+		session: import("lucia").Session;
 	}
 }
 ```

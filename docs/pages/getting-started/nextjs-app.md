@@ -14,11 +14,7 @@ npm install lucia@beta oslo
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure you:
-
-- Use the `nextjs` middleware
-- Configure the `sessionCookie` option
-- Register your `Lucia` instance type
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
 
 ```ts
 // src/auth.ts
@@ -75,6 +71,6 @@ const config = {
 
 ## Next steps
 
-You can learn all the concepts and APIs by reading the [Basics section](/basics/sessions) in the docs. If you prefer writing code immediately, check out the [Tutorials](/tutorials) page or the [examples repository](https://github.com/lucia-auth/examples).
+You can learn all the concepts and APIs by reading the [Basics section](/basics/sessions) in the docs. If you prefer writing code immediately, check out the [Tutorials](/tutorials) page or the [examples repository](https://github.com/lucia-auth/examples/tree/v3).
 
 If you have any questions, [join our Discord server](https://discord.com/invite/PwrK3kpVR3)!

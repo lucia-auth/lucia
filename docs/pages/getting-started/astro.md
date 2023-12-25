@@ -52,7 +52,7 @@ import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	if (context.request.method !== "GET") {
-		const originHeader =context. request.headers.get("Origin");
+		const originHeader = context.request.headers.get("Origin");
 		const hostHeader = context.request.headers.get("Host");
 		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 			return new Response(null, {
@@ -99,6 +99,6 @@ declare namespace App {
 
 ## Next steps
 
-You can learn all the concepts and APIs by reading the [Basics section](/basics/sessions) in the docs. If you prefer writing code immediately, check out the [Tutorials](/tutorials) page or the [examples repository](https://github.com/lucia-auth/examples).
+You can learn all the concepts and APIs by reading the [Basics section](/basics/sessions) in the docs. If you prefer writing code immediately, check out the [Tutorials](/tutorials) page or the [examples repository](https://github.com/lucia-auth/examples/tree/v3).
 
 If you have any questions, [join our Discord server](https://discord.com/invite/PwrK3kpVR3)!

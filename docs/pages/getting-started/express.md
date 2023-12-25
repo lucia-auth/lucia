@@ -1,18 +1,8 @@
 ---
-title: "Getting started"
+title: "Getting started in Express"
 ---
 
-# Getting started
-
-A framework-specific guide is also available for:
-
-- [Astro](/getting-started/astro)
-- [Express](/getting-started/express)
-- [Next.js App router](/getting-started/nextjs-app)
-- [Next.js Pages router](/getting-started/nextjs-pages)
-- [Nuxt](/getting-started/nuxt)
-- [SolidStart](/getting-started/solidstart)
-- [SvelteKit](/getting-started/sveltekit)
+# Getting started in Express
 
 ## Installation
 
@@ -61,3 +51,9 @@ globalThis.crypto = webcrypto as Crypto;
 ```
 node --experimental-web-crypto index.js
 ```
+
+## Next steps
+
+You can learn all the concepts and APIs by reading the [Basics section](/basics/sessions) in the docs. If you prefer writing code immediately, check out the [Tutorials](/tutorials) page or the [examples repository](https://github.com/lucia-auth/examples/tree/v3).
+
+If you have any questions, [join our Discord server](https://discord.com/invite/PwrK3kpVR3)!

@@ -16,6 +16,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
 	if (!sessionId) {
 		event.locals.user = null;
+		event.locals.session = null;
 		return resolve(event);
 	}
 
@@ -29,6 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	}
 	event.locals.user = user;
+	event.locals.session = session;
 	return resolve(event);
 };
 ```
@@ -41,6 +43,7 @@ declare global {
 	namespace App {
 		interface Locals {
 			user: import("lucia").User;
+			session: import("lucia").Session;
 		}
 	}
 }

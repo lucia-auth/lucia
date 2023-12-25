@@ -15,45 +15,43 @@ import { verifyRequestOrigin } from "lucia";
 
 import type { User } from "lucia";
 
-app
-	.use((req, res, next) => {
-		if (req.method === "GET") {
-			return next();
-		}
-		if (
-			!req.headers.origin ||
-			!req.headers.host ||
-			!verifyRequestOrigin(req.headers.origin, [req.headers.host])
-		) {
-			return c.res.status(403).end();
-		}
-	})
-	.use((req, res, next) => {
-		const sessionId = lucia.readSessionCookie(req.headers.cookie ?? "");
-		if (!sessionId) {
-			res.locals.user = null;
-			return next();
-		}
-
-		const { session, user } = await lucia.validateSession(sessionId);
-		if (session && session.fresh) {
-			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
-		}
-		if (!session) {
-			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
-		}
-		res.locals.user = user;
+app.use((req, res, next) => {
+	if (req.method === "GET") {
 		return next();
-	});
-```
+	}
+	const originHeader = req.headers.origin ?? null;
+	const hostHeader = req.headers.host ?? null;
+	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
+		return res.status(403).end();
+	}
+});
 
-Create a `.d.ts` file inside your project to declare types for `Locals`.
+app.use((req, res, next) => {
+	const sessionId = lucia.readSessionCookie(req.headers.cookie ?? "");
+	if (!sessionId) {
+		res.locals.user = null;
+		res.locals.session = null;
+		return next();
+	}
 
-```ts
-// app.d.ts
-declare namespace Express {
-	interface Locals {
-		user: import("lucia").User | null;
+	const { session, user } = await lucia.validateSession(sessionId);
+	if (session && session.fresh) {
+		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+	}
+	if (!session) {
+		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+	}
+	res.locals.user = user;
+	res.locals.session = session;
+	return next();
+});
+
+declare global {
+	namespace Express {
+		interface Locals {
+			user: User | null;
+			session: Session | null;
+		}
 	}
 }
 ```

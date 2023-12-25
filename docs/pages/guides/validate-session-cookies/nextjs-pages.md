@@ -4,9 +4,30 @@ title: "Validate session cookies in Next.js Pages router"
 
 # Validate session cookies in Next.js Pages router
 
-You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
+When working with cookies, **CSRF protection must be implemented**. This can be easily done by comparing the `Origin` and `Host` header. While CSRF protection is strictly not necessary when using JSON requests, it should be implemented in Next.js as it doesn't differentiate between JSON and form submissions. We recommend using middleware for this.
 
-You can also use this inside API routes but **CSRF protection must be implemented**. This can be easily done by comparing the `Origin` and `Host` header. While CSRF protection is strictly not necessary when using JSON requests, it should be implemented in Next.js as it doesn't differentiate between JSON and form submissions.
+```ts
+// middleware.ts
+import { verifyRequestOrigin } from "lucia";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+	if (request.method === "GET") {
+		return NextResponse.next();
+	}
+	const originHeader = request.headers.get("Origin");
+	const hostHeader = request.headers.get("Host");
+	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
+		return new NextResponse(null, {
+			status: 403
+		});
+	}
+	return NextResponse.next();
+}
+```
+
+You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
 ```ts
 import { verifyRequestOrigin } from "lucia";
@@ -14,14 +35,6 @@ import { verifyRequestOrigin } from "lucia";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 async function validateRequest(req: NextApiRequest, res: NextApiResponse): Promise<User | null> {
-	if (req.method !== "GET") {
-		const originHeader = request.headers.origin;
-		const hostHeader = request.headers.host;
-		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-			return null;
-		}
-	}
-
 	const sessionId = req.cookies.get(lucia.sessionCookieName);
 	if (!sessionId) {
 		return null;

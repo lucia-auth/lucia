@@ -8,6 +8,8 @@ You can get the cookie name with `Lucia.sessionCookieName` and validate the sess
 
 We recommend wrapping the function with [`cache()`](https://nextjs.org/docs/app/building-your-application/caching#react-cache-function) so it can be called multiple times without incurring multiple database calls.
 
+**CSRF protection is only handled by Next.js when using form actions.** If you're using API routes, it must be implemented by yourself (see below).
+
 ```ts
 import { lucia } from "@/utils/auth";
 import { cookies } from "next/headers";
@@ -72,26 +74,25 @@ async function Page() {
 }
 ```
 
-For API routes, since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented when dealing with forms** if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. You may want to add the CSRF protection inside middleware.
+For API routes, since Next.js do not implement CSRF protection for API routes, **CSRF protection must be implemented when dealing with forms** if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. We recommend using middleware for this.
 
 ```ts
-// app/api/route.ts
+// middleware.ts
 import { verifyRequestOrigin } from "lucia";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function POST(request: NextRequest) {
-	const originHeader = headers().get("Origin");
-	const hostHeader = headers().get("Host");
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+	if (request.method === "GET") {
+		return NextResponse.next();
+	}
+	const originHeader = request.headers.get("Origin");
+	const hostHeader = request.headers.get("Host");
 	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-		return new Response(null, {
+		return new NextResponse(null, {
 			status: 403
 		});
 	}
-	const user = await validateRequest();
-	if (!user) {
-		return new Response(null, {
-			status: 401
-		});
-	}
-	//
+	return NextResponse.next();
 }
 ```
