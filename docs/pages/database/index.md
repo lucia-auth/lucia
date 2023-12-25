@@ -22,15 +22,7 @@ Refer to these guides on setting up your database, ORMs, and query builders:
 - [Drizzle ORM](/database/drizzle)
 - [MongoDB](/database/mongodb)
 - [Mongoose](/database/mongoose)
-- [MySQL](/database/mysql)
-  - `mysql2`
-  - PlanetScale serverless
-- [PostgreSQL](/database/postgresql)
-  - node-postgres (`pg`)
-  - Postgres.js (`postgres`)
+- [MySQL](/database/mysql): `mysql2`, PlanetScale serverless
+- [PostgreSQL](/database/postgresql): node-postgres (`pg`), Postgres.js (`postgres`)
 - [Prisma](/database/prisma)
-- [SQLite](/database/sqlite)
-  - `better-sqlite3`
-  - Bun SQLite (`bun:sqlite`)
-  - Cloudflare D1
-  - LibSQL (Turso)
+- [SQLite](/database/sqlite): `better-sqlite3`, Bun SQLite (`bun:sqlite`), Cloudflare D1, LibSQL (Turso)
