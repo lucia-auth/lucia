@@ -40,7 +40,7 @@ import { dev } from "$app/environment";
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
-			secure: dev
+			secure: !dev
 		}
 	},
 	getUserAttributes: (attributes) => {
@@ -197,49 +197,6 @@ interface GitHubUser {
 	id: string;
 	login: string;
 }
-```
-
-## Validate requests
-
-You can validate requests by checking `locals.user`. The field `user.username` is available since we defined the `getUserAttributes()` option. You can protect pages, such as `/`, by redirecting unauthenticated users to the login page.
-
-```ts
-const user = Astro.locals.user;
-if (!user) {
-	return Astro.redirect("/login");
-}
-
-const username = user.username;
-```
-
-## Sign out
-
-Sign out users by invalidating their session with `Lucia.invalidateSession()`. Make sure to remove their session cookie by setting a blank session cookie created with `Lucia.createBlankSessionCookie()`.
-
-```ts
-import { lucia } from "../../auth";
-import type { APIContext } from "astro";
-
-export async function POST(context: APIContext): Promise<Response> {
-	if (!context.locals.session) {
-		return new Response(null, {
-			status: 401
-		});
-	}
-
-	await lucia.invalidateSession(context.locals.session.id);
-
-	const sessionCookie = lucia.createBlankSessionCookie();
-	context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-
-	return Astro.redirect("/login");
-}
-```
-
-```html
-<form method="post" action="/api/logout">
-	<button>Sign out</button>
-</form>
 ```
 
 ## Validate requests

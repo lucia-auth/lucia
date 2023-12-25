@@ -28,7 +28,7 @@ import { dev } from "$app/environment";
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
-			secure: dev
+			secure: !dev
 		}
 	},
 	getUserAttributes: (attributes) => {
