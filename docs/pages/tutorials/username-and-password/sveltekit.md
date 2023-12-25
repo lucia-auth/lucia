@@ -93,7 +93,7 @@ export const actions: Actions = {
 		const userId = generateId(15);
 		const hashedPassword = await new Argon2id().hash(password);
 
-		// TODO: check if username is already taken
+		// TODO: check if username is already used
 		await db.table("user").insert({
 			id: userId,
 			username: username,

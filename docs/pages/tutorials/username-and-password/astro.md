@@ -16,7 +16,7 @@ import { Lucia } from "lucia";
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
-			secure: PROD
+			secure: import.meta.env.PROD
 		}
 	},
 	getUserAttributes: (attributes) => {
@@ -92,7 +92,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	const userId = generateId(15);
 	const hashedPassword = await new Argon2id().hash(password);
 
-	// TODO: check if username is already taken
+	// TODO: check if username is already used
 	await db.table("user").insert({
 		id: userId,
 		username: username,

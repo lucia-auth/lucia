@@ -4,7 +4,7 @@ title: "Username and password"
 
 # Tutorial: Username and password auth
 
-The tutorials go over how to implement a basic username and password auth and covers the basics of Lucia along the way. As a prerequisite, you should be fairly comfortable with your framework and its APIs. For a more in-depth guide, see the [Email and password](/guides/email-and-password/) guides.
+The tutorials go over how to implement a basic username and password auth and covers the basics of Lucia along the way. As a prerequisite, you should be fairly comfortable with your framework and its APIs. For a more in-depth guide, see the [Email and password](/guides/email-and-password/) guides. Basic example projects are available in the [examples repository](https://github.com/lucia-auth/examples/tree/v3).
 
 - [Astro](/tutorials/username-and-password/astro)
 - [Next.js App router](/tutorials/username-and-password/nextjs-app)
