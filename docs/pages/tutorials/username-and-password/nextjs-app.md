@@ -14,7 +14,14 @@ npx degit https://github.com/lucia-auth/examples/tree/v3/nextjs-app/username-and
 
 ## Update database
 
-Add a `username` column (unique) and `password` column to your user table with a type of string. Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
+Add a `username` and `password` column to your user table.
+
+| column     | type     | attributes |
+| ---------- | -------- | ---------- |
+| `username` | `string` | unique     |
+| `password` | `string` |            |
+
+Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
 
 ```ts
 import { Lucia } from "lucia";
