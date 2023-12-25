@@ -6,6 +6,13 @@ title: "Tutorial: Username and password auth in SvelteKit"
 
 Before starting, make sure you've setup your database and middleware as described in the [Getting started](/getting-started/astro) page.
 
+An [example project](https://github.com/lucia-auth/examples/tree/v3/sveltekit/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/sveltekit/username-and-password).
+
+```
+npx degit https://github.com/lucia-auth/examples/tree/v3/sveltekit/username-and-password <directory_name>
+```
+
+
 ## Update database
 
 Add a `username` column to your user table with a type of string. Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
