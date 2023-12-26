@@ -2,15 +2,6 @@ import { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import { generateRandomString, alphabet } from "oslo/random";
 import assert from "node:assert/strict";
 
-declare module "lucia" {
-	interface DatabaseUserAttributes {
-		username: string;
-	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-}
-
 export const databaseUser: DatabaseUser = {
 	id: generateRandomString(15, alphabet("0-9", "a-z")),
 	attributes: {

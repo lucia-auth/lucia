@@ -1,4 +1,7 @@
-import type { DatabaseSessionAttributes, DatabaseUserAttributes } from "./index.js";
+import type {
+	RegisteredDatabaseSessionAttributes,
+	RegisteredDatabaseUserAttributes
+} from "./index.js";
 
 export interface Adapter {
 	getSessionAndUser(
@@ -13,12 +16,12 @@ export interface Adapter {
 
 export interface DatabaseUser {
 	id: string;
-	attributes: DatabaseUserAttributes;
+	attributes: RegisteredDatabaseUserAttributes;
 }
 
 export interface DatabaseSession {
 	userId: string;
 	expiresAt: Date;
 	id: string;
-	attributes: DatabaseSessionAttributes;
+	attributes: RegisteredDatabaseSessionAttributes;
 }

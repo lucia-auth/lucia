@@ -76,12 +76,3 @@ await connection.execute("DROP TABLE IF EXISTS user_session");
 await connection.execute("DROP TABLE IF EXISTS test_user");
 
 process.exit();
-
-declare module "lucia" {
-	interface DatabaseUserAttributes {
-		username: string;
-	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-}

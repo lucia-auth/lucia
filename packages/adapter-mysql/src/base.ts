@@ -1,9 +1,9 @@
 import type {
 	Adapter,
 	DatabaseSession,
-	DatabaseSessionAttributes,
+	RegisteredDatabaseSessionAttributes,
 	DatabaseUser,
-	DatabaseUserAttributes
+	RegisteredDatabaseUserAttributes
 } from "lucia";
 
 export class MySQLAdapter implements Adapter {
@@ -106,13 +106,13 @@ export interface Controller {
 	getAll<T>(sql: string, args: any[]): Promise<T[]>;
 }
 
-interface SessionSchema extends DatabaseSessionAttributes {
+interface SessionSchema extends RegisteredDatabaseSessionAttributes {
 	id: string;
 	user_id: string;
 	expires_at: Date | string;
 }
 
-interface UserSchema extends DatabaseUserAttributes {
+interface UserSchema extends RegisteredDatabaseUserAttributes {
 	id: string;
 }
 

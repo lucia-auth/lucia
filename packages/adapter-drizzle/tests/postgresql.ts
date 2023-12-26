@@ -62,12 +62,3 @@ await pool.query("DROP TABLE public.session");
 await pool.query("DROP TABLE public.user");
 
 process.exit();
-
-declare module "lucia" {
-	interface DatabaseUserAttributes {
-		username: string;
-	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-}

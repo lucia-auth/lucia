@@ -16,16 +16,24 @@ export type { CookieAttributes } from "oslo/cookie";
 
 import type { Lucia } from "./core.js";
 
-export interface DatabaseUserAttributes {}
-export interface DatabaseSessionAttributes {}
-
 export interface Register {}
 
 export type RegisteredLucia = Register extends {
-	// need to infer to "copy" the generics of Lucia
 	Lucia: infer _Lucia;
 }
 	? _Lucia extends Lucia<any, any>
 		? _Lucia
 		: Lucia
 	: Lucia;
+
+export type RegisteredDatabaseUserAttributes = Register extends {
+	DatabaseUserAttributes: infer _DatabaseUserAttributes;
+}
+	? _DatabaseUserAttributes
+	: {};
+
+export type RegisteredDatabaseSessionAttributes = Register extends {
+	DatabaseSessionAttributes: infer _DatabaseSessionAttributes;
+}
+	? _DatabaseSessionAttributes
+	: {};

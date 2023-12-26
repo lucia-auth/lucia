@@ -42,12 +42,3 @@ const db = drizzle(sqliteDB);
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable);
 
 await testAdapter(adapter);
-
-declare module "lucia" {
-	interface DatabaseUserAttributes {
-		username: string;
-	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-}

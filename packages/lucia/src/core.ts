@@ -5,8 +5,8 @@ import { CookieController } from "oslo/cookie";
 import type { Cookie } from "oslo/cookie";
 import type { Adapter } from "./database.js";
 import type {
-	DatabaseSessionAttributes,
-	DatabaseUserAttributes,
+	RegisteredDatabaseSessionAttributes,
+	RegisteredDatabaseUserAttributes,
 	RegisteredLucia
 } from "./index.js";
 import { CookieAttributes } from "oslo/cookie";
@@ -39,10 +39,12 @@ export class Lucia<
 	private sessionCookieController: CookieController;
 
 	private getSessionAttributes: (
-		databaseSessionAttributes: DatabaseSessionAttributes
+		databaseSessionAttributes: RegisteredDatabaseSessionAttributes
 	) => _SessionAttributes;
 
-	private getUserAttributes: (databaseUserAttributes: DatabaseUserAttributes) => _UserAttributes;
+	private getUserAttributes: (
+		databaseUserAttributes: RegisteredDatabaseUserAttributes
+	) => _UserAttributes;
 
 	public readonly sessionCookieName: string;
 
@@ -52,9 +54,11 @@ export class Lucia<
 			sessionExpiresIn?: TimeSpan;
 			sessionCookie?: SessionCookieOptions;
 			getSessionAttributes?: (
-				databaseSessionAttributes: DatabaseSessionAttributes
+				databaseSessionAttributes: RegisteredDatabaseSessionAttributes
 			) => _SessionAttributes;
-			getUserAttributes?: (databaseUserAttributes: DatabaseUserAttributes) => _UserAttributes;
+			getUserAttributes?: (
+				databaseUserAttributes: RegisteredDatabaseUserAttributes
+			) => _UserAttributes;
 		}
 	) {
 		this.adapter = adapter;
@@ -151,7 +155,7 @@ export class Lucia<
 
 	public async createSession(
 		userId: string,
-		attributes: DatabaseSessionAttributes,
+		attributes: RegisteredDatabaseSessionAttributes,
 		options?: {
 			sessionId?: string;
 		}

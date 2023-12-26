@@ -1,9 +1,9 @@
 import type {
 	Adapter,
 	DatabaseSession,
-	DatabaseSessionAttributes,
+	RegisteredDatabaseSessionAttributes,
 	DatabaseUser,
-	DatabaseUserAttributes
+	RegisteredDatabaseUserAttributes
 } from "lucia";
 
 export class PostgreSQLAdapter implements Adapter {
@@ -109,13 +109,13 @@ export interface Controller {
 	getAll<T extends {}>(sql: string, args: any[]): Promise<T[]>;
 }
 
-interface SessionSchema extends DatabaseSessionAttributes {
+interface SessionSchema extends RegisteredDatabaseSessionAttributes {
 	id: string;
 	user_id: string;
 	expires_at: Date;
 }
 
-interface UserSchema extends DatabaseUserAttributes {
+interface UserSchema extends RegisteredDatabaseUserAttributes {
 	id: string;
 }
 

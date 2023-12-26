@@ -1,18 +1,18 @@
 import type {
 	Adapter,
 	DatabaseSession,
-	DatabaseSessionAttributes,
+	RegisteredDatabaseSessionAttributes,
 	DatabaseUser,
-	DatabaseUserAttributes
+	RegisteredDatabaseUserAttributes
 } from "lucia";
 import { Collection } from "mongodb";
 
-interface UserDoc extends DatabaseUserAttributes {
+interface UserDoc extends RegisteredDatabaseUserAttributes {
 	_id: string;
 	__v?: any;
 }
 
-interface SessionDoc extends DatabaseSessionAttributes {
+interface SessionDoc extends RegisteredDatabaseSessionAttributes {
 	_id: string;
 	__v?: any;
 	user_id: string;

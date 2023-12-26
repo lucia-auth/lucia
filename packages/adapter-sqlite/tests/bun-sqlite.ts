@@ -30,12 +30,3 @@ const adapter = new BunSQLiteAdapter(db, {
 });
 
 await testAdapter(adapter);
-
-declare module "lucia" {
-	interface DatabaseUserAttributes {
-		username: string;
-	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-}

@@ -22,12 +22,3 @@ const adapter = new D1Adapter(d1, {
 });
 
 await testAdapter(adapter);
-
-declare module "lucia" {
-	interface DatabaseUserAttributes {
-		username: string;
-	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-}

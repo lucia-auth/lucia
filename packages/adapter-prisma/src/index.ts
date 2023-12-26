@@ -1,9 +1,9 @@
 import type {
 	Adapter,
 	DatabaseSession,
-	DatabaseSessionAttributes,
+	RegisteredDatabaseSessionAttributes,
 	DatabaseUser,
-	DatabaseUserAttributes
+	RegisteredDatabaseUserAttributes
 } from "lucia";
 
 export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapter {
@@ -112,11 +112,11 @@ interface PrismaClient {
 	$transaction: any;
 }
 
-interface UserSchema extends DatabaseUserAttributes {
+interface UserSchema extends RegisteredDatabaseUserAttributes {
 	id: string;
 }
 
-interface SessionSchema extends DatabaseSessionAttributes {
+interface SessionSchema extends RegisteredDatabaseSessionAttributes {
 	id: string;
 	userId: string;
 	expiresAt: Date;

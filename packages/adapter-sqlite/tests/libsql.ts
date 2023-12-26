@@ -38,12 +38,3 @@ try {
 } finally {
 	await fs.rm("test/libsql/test.db");
 }
-
-declare module "lucia" {
-	interface DatabaseUserAttributes {
-		username: string;
-	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-}
