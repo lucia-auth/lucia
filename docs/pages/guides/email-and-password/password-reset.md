@@ -73,13 +73,17 @@ Extract the verification token from the URL and validate by checking the expirat
 ```ts
 import { isWithinExpiration } from "oslo";
 
-app.post("/reset-password/*", async () => {
-	let password: string;
+app.post("/reset-password/:token", async () => {
+	let password = formData.get("password");
+	if (typeof password !== "string" || password.length < 8) {
+		return new Response(null, {
+			status: 400
+		});
+	}
+	// check your framework's API
+	const verificationToken = params.token;
 
 	// ...
-
-	// there are better ways to do this - check your framework's API
-	const verificationToken = request.url.replace("http://localhost:3000/reset-password/", "");
 
 	await db.beginTransaction();
 	const token = await db.table("password_reset_token").where("id", "=", verificationToken).get();
@@ -87,11 +91,15 @@ app.post("/reset-password/*", async () => {
 	await db.commit();
 
 	if (!token) {
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 	if (!isWithinExpiration(token.expires_at)) {
 		await db.table("password_reset_token").where("id", "=", token.id).delete();
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 
 	await lucia.invalidateUserSessions(user.id);

@@ -4,7 +4,7 @@ title: "Email and password"
 
 # Email and password
 
-Email based auth requires a lot of components so be prepared to do some work! For a step-by-step, framework specific tutorial to learn the basics of password based auth and Lucia, see the [Username and password](/tutorials/username-and-password) tutorial. 
+Email based auth requires a lot of components so be prepared to do some work! For a step-by-step, framework specific tutorial to learn the basics of password based auth and Lucia, see the [Username and password](/tutorials/username-and-password) tutorial.
 
 - [Password basics](/guides/email-and-password/basics)
 - Email verification

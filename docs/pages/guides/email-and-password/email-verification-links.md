@@ -130,11 +130,15 @@ app.get("email-verification/:token", async () => {
 	await db.commit();
 
 	if (!token || !isWithinExpiration(token.expires_at)) {
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 	const user = await db.table("user").where("id", "=", token.user_id).get();
 	if (!user || user.email !== token.email) {
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 
 	await lucia.invalidateUserSessions(user.id);

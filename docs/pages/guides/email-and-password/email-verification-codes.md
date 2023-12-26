@@ -125,12 +125,16 @@ app.post("/email-verification", async () => {
 	// ...
 	const { user } = await lucia.validateSession(sessionId);
 	if (!user) {
-		return new Response(401);
+		return new Response(null, {
+			status: 401
+		});
 	}
 	const code = formData.get("code");
 	// check for length
 	if (typeof code !== "string" || code.length !== 8) {
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 
 	await db.beginTransaction();
@@ -144,13 +148,19 @@ app.post("/email-verification", async () => {
 	await db.commit();
 
 	if (!databaseCode || databaseCode.code !== code) {
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 	if (!isWithinExpiration(databaseCode.expires_at)) {
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 	if (!user || user.email !== databaseCode.email) {
-		return new Response(400);
+		return new Response(null, {
+			status: 400
+		});
 	}
 
 	await lucia.invalidateUserSessions(user.id);
