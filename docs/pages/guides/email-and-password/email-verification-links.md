@@ -4,13 +4,13 @@ title: "Email verification links"
 
 # Email verification links
 
-We recommend using [email verification codes]() instead as it's more user-friendly.
+We recommend using [email verification codes](/guides/email-and-password/email-verification-codes) instead as it's more user-friendly.
 
 ## Update database
 
 ### User table
 
-Add a `email_verified` column. Keep in mind that some database don't supported booleans.
+Add a `email_verified` column (boolean).
 
 ```ts
 import { Lucia } from "lucia";
@@ -110,16 +110,16 @@ When resending verification emails, make sure to implement rate limiting based o
 
 ## Verify token and email
 
-Extract the email verification token from the URL and validate by checking the expiration date and email. If the token is valid, invalidate all existing user sessions and create a new session.
+Extract the email verification token from the URL and validate by checking the expiration date and email. If the token is valid, invalidate all existing user sessions and create a new session. Make sure to invalidate all user sessions.
 
 ```ts
 import { isWithinExpiration } from "oslo";
 
-app.get("email-verification/*", async () => {
+app.get("email-verification/:token", async () => {
 	// ...
 
-	// there are better ways to do this - check your framework's API
-	const verificationToken = request.url.replace("http://localhost:3000/email-verification/", "");
+	// check your framework's API
+	const verificationToken = params.token;
 
 	await db.beginTransaction();
 	const token = await db
@@ -128,17 +128,12 @@ app.get("email-verification/*", async () => {
 		.get();
 	await db.table("email_verification_token").where("id", "=", verificationToken).delete();
 	await db.commit();
-	if (!token) {
-		return new Response(400);
-	}
-	if (!isWithinExpiration(token.expires_at)) {
-		await db.table("email_verification_token").where("id", "=", token.id).delete();
-		return new Response(400);
-	}
 
+	if (!token || !isWithinExpiration(token.expires_at)) {
+		return new Response(400);
+	}
 	const user = await db.table("user").where("id", "=", token.user_id).get();
 	if (!user || user.email !== token.email) {
-		await db.table("email_verification_token").where("id", "=", token.id).delete();
 		return new Response(400);
 	}
 
