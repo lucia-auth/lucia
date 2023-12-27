@@ -110,7 +110,7 @@ You can use [`Lucia.readSessionCookie()`](/reference/main/Lucia/readSessionCooki
 
 ```ts
 const sessionId = lucia.readSessionCookie("auth_session=abc");
-const sessionId = lucia.rearerBearerToken("Bearer abc");
+const sessionId = lucia.readBearerToken("Bearer abc");
 ```
 
 See the [Validate session cookies](/guides/validate-session-cookies) and [Validate bearer tokens](/guides/validate-bearer-tokens) guide for a full example for validating session cookies.
