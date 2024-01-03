@@ -22,6 +22,7 @@ The token should be valid for at most few hours.
 
 ```ts
 import { TimeSpan, createDate } from "oslo";
+import { generateId } from "lucia";
 
 async function createPasswordResetToken(userId: string): Promise<string> {
 	// optionally invalidate all existing tokens
