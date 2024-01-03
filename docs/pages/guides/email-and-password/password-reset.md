@@ -105,7 +105,7 @@ app.post("/reset-password/:token", async () => {
 	}
 
 	await lucia.invalidateUserSessions(user.id);
-	const hashedPassword = new Argon2id().hash(password);
+	const hashedPassword = await new Argon2id().hash(password);
 	await db.table("user").where("id", "=", user.id).update({
 		hashed_password: hashedPassword
 	});
