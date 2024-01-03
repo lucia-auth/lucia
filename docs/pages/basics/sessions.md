@@ -39,7 +39,7 @@ declare module "lucia" {
 		Lucia: typeof lucia;
 	}
 	interface DatabaseSessionAttributes {
-		country: string;
+		ip_country: string;
 	}
 }
 ```
