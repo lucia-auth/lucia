@@ -73,6 +73,7 @@ Extract the verification token from the URL and validate by checking the expirat
 
 ```ts
 import { isWithinExpirationDate } from "oslo";
+import { Argon2id } from 'oslo/password';
 
 app.post("/reset-password/:token", async () => {
 	let password = formData.get("password");
