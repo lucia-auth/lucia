@@ -55,7 +55,7 @@ app.post("/reset-password", async () => {
 		});
 	}
 
-	const verificationToken = await createPasswordResetToken(userId);
+	const verificationToken = encodeHex(await createPasswordResetToken(userId));
 	const verificationLink = "http://localhost:3000/reset-password/" + verificationToken;
 
 	await sendPasswordResetToken(email, verificationLink);
