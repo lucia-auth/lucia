@@ -7,7 +7,9 @@ import type { PasswordHashingAlgorithm } from "oslo/password";
 export type { PasswordHashingAlgorithm } from "oslo/password";
 
 async function generateScryptKey(s: string, salt: string, blockSize = 16): Promise<ArrayBuffer> {
-	const keyUint8Array = await scrypt(new TextEncoder().encode(s), new TextEncoder().encode(salt), {
+	const encodedData = new TextEncoder().encode(s);
+	const encodedSalt = new TextEncoder().encode(salt);
+	const keyUint8Array = await scrypt(encodedData, encodedSalt, {
 		N: 16384,
 		r: blockSize,
 		p: 1,
