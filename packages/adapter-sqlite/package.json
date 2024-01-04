@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-sqlite",
-	"version": "3.0.0-beta.11",
+	"version": "3.0.0-beta.12",
 	"description": "SQLite adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

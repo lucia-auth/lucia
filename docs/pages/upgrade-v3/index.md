@@ -90,13 +90,16 @@ export const lucia = new Lucia();
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
+		DatabaseSessionAttributes: DatabaseSessionAttributes;
+		DatabaseUserAttributes: DatabaseUserAttributes;
 	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
-	interface DatabaseUserAttributes {
-		username: string;
-	}
+}
+
+interface DatabaseSessionAttributes {
+	country: string;
+}
+interface DatabaseUserAttributes {
+	username: string;
 }
 ```
 
