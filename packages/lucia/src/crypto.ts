@@ -4,7 +4,6 @@ import { scrypt } from "./scrypt/index.js";
 import { alphabet, generateRandomString } from "oslo/random";
 
 import type { PasswordHashingAlgorithm } from "oslo/password";
-export type { PasswordHashingAlgorithm } from "oslo/password";
 
 async function generateScryptKey(data: string, salt: string, blockSize = 16): Promise<ArrayBuffer> {
 	const encodedData = new TextEncoder().encode(data);
