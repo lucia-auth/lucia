@@ -110,7 +110,7 @@ export class Lucia<
 				expiresAt: databaseSession.expiresAt,
 				userId: databaseSession.userId,
 				fresh: false,
-				...this.getSessionAttributes(databaseSession)
+				...this.getSessionAttributes(databaseSession.attributes)
 			});
 		}
 		return sessions;
