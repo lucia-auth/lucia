@@ -13,7 +13,7 @@ import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 const lucia = new Lucia(new BetterSqlite3Adapter(db));
 ```
 
-See [`Adapter`](/reference/main/Adapter) for building your own adapters
+See [`Adapter`](/reference/main/Adapter) for building your own adapters.
 
 ## Database setup
 
