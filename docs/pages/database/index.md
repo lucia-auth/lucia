@@ -20,6 +20,7 @@ See [`Adapter`](/reference/main/Adapter) for building your own adapters
 Refer to these guides on setting up your database, ORMs, and query builders:
 
 - [Drizzle ORM](/database/drizzle)
+- [Kysely](/database/kysely)
 - [MongoDB](/database/mongodb)
 - [Mongoose](/database/mongoose)
 - [MySQL](/database/mysql): `mysql2`, PlanetScale serverless
