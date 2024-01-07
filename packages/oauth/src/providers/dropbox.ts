@@ -68,7 +68,7 @@ export class DropboxAuth<_Auth extends Auth = Auth> extends OAuth2ProviderAuth<
 			access_token: string;
 			expires_in: number;
 			refresh_token?: string;
-		}>(code, "https://www.dropbox.com/oauth2/token", {
+		}>(code, "https://api.dropboxapi.com/oauth2/token", {
 			clientId: this.config.clientId,
 			redirectUri: this.config.redirectUri,
 			clientPassword: {
@@ -106,6 +106,7 @@ const getDropboxUser = async (accessToken: string): Promise<DropboxUser> => {
 	const request = new Request(
 		"https://api.dropboxapi.com/2/users/get_current_account",
 		{
+			method: "POST",
 			headers: {
 				Authorization: authorizationHeader("bearer", accessToken)
 			}
