@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 3.5.1
+
+### Patch changes
+
+- [#1323](https://github.com/lucia-auth/lucia/pull/1323) by [@NuttyShrimp](https://github.com/NuttyShrimp) : Fix Dropbox provider
+
 ## 3.5.0
 
 ### Minor changes
