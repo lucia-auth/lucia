@@ -13,13 +13,14 @@ import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 const lucia = new Lucia(new BetterSqlite3Adapter(db));
 ```
 
-See [`Adapter`](/reference/main/Adapter) for building your own adapters
+See [`Adapter`](/reference/main/Adapter) for building your own adapters.
 
 ## Database setup
 
 Refer to these guides on setting up your database, ORMs, and query builders:
 
 - [Drizzle ORM](/database/drizzle)
+- [Kysely](/database/kysely)
 - [MongoDB](/database/mongodb)
 - [Mongoose](/database/mongoose)
 - [MySQL](/database/mysql): `mysql2`, PlanetScale serverless

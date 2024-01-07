@@ -36,16 +36,18 @@ await db.createUser({
 
 ## Define user attributes
 
-Defining custom session attributes requires 2 steps. First, add the required columns to the user table. You can type it by declaring the `DatabaseUserAttributes` type (must be an interface).
+Defining custom session attributes requires 2 steps. First, add the required columns to the user table. You can type it by declaring the `Register.DatabaseUserAttributes` type (must be an interface).
 
 ```ts
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
+		DatabaseUserAttributes: DatabaseUserAttributes;
 	}
-	interface DatabaseUserAttributes {
-		username: string;
-	}
+}
+
+interface DatabaseUserAttributes {
+	username: string;
 }
 ```
 

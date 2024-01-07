@@ -59,7 +59,7 @@ import { Lucia } from "lucia";
 const lucia = new Lucia(adapter, {
 	getSessionAttributes: (attributes) => {
 		return {
-			ipCountry: attributes.ip_country
+			country: attributes.country
 		};
 	}
 });
@@ -67,10 +67,12 @@ const lucia = new Lucia(adapter, {
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
+		DatabaseSessionAttributes: DatabaseSessionAttributes;
 	}
-	interface DatabaseSessionAttributes {
-		country: string;
-	}
+}
+
+interface DatabaseSessionAttributes {
+	country: string;
 }
 ```
 
@@ -92,9 +94,11 @@ const lucia = new Lucia(adapter, {
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
+		DatabaseUserAttributes: DatabaseUserAttributes;
 	}
-	interface DatabaseUserAttributes {
-		username: string;
-	}
+}
+
+interface DatabaseUserAttributes {
+	username: string;
 }
 ```
