@@ -21,9 +21,9 @@ CREATE TABLE auth_user (
 )
 
 CREATE TABLE user_session (
-    id TEXT NOT NULL PRIMARY KEY,
+    id TEXT PRIMARY KEY,
     expires_at TIMESTAMPTZ NOT NULL,
-    user_id TEXT NOT NULL REFERENCES user(id)
+    user_id TEXT NOT NULL REFERENCES auth_user(id)
 )
 ```
 
@@ -35,7 +35,7 @@ CREATE TABLE user_session (
 
 ```ts
 import { Lucia } from "lucia";
-import { NodePostgresAdapter } from "@lucia-auth/adapter-sqlite";
+import { NodePostgresAdapter } from "@lucia-auth/adapter-postgresql";
 import pg from "pg";
 
 const pool = new pg.Pool();
@@ -52,7 +52,7 @@ const adapter = new NodePostgresAdapter(pool, {
 
 ```ts
 import { Lucia } from "lucia";
-import { PostgresJsAdapter } from "@lucia-auth/adapter-sqlite";
+import { PostgresJsAdapter } from "@lucia-auth/adapter-postgresql";
 import postgres from "postgres";
 
 const sql = postgres();
