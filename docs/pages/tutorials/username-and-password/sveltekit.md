@@ -260,7 +260,7 @@ export const actions: Actions = {
 		}
 		await auth.invalidateSession(event.locals.session.id);
 		const sessionCookie = lucia.createBlankSessionCookie();
-		lucia.cookies.set(sessionCookie.name, sessionCookie.value, {
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes
 		});
