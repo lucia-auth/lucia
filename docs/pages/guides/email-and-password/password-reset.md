@@ -41,7 +41,6 @@ When a user requests a password reset email, check if the email is valid and cre
 
 ```ts
 import { generateId } from "lucia";
-import { encodeHex } from "oslo/encoding";
 
 app.post("/reset-password", async () => {
 	let email: string;
@@ -55,7 +54,7 @@ app.post("/reset-password", async () => {
 		});
 	}
 
-	const verificationToken = encodeHex(await createPasswordResetToken(userId));
+	const verificationToken = await createPasswordResetToken(userId);
 	const verificationLink = "http://localhost:3000/reset-password/" + verificationToken;
 
 	await sendPasswordResetToken(email, verificationLink);
