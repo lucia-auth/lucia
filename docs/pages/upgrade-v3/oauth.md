@@ -96,7 +96,7 @@ if (existingAccount) {
 	});
 }
 
-// v3 IDs have length of 15
+// v2 IDs have length of 15
 const userId = generateId(15);
 
 await db.beginTransaction();
