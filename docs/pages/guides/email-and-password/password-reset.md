@@ -22,6 +22,7 @@ The token should be valid for at most few hours.
 
 ```ts
 import { TimeSpan, createDate } from "oslo";
+import { generateId } from "lucia";
 
 async function createPasswordResetToken(userId: string): Promise<string> {
 	// optionally invalidate all existing tokens
@@ -40,7 +41,6 @@ When a user requests a password reset email, check if the email is valid and cre
 
 ```ts
 import { generateId } from "lucia";
-import { encodeHex } from "oslo/encoding";
 
 app.post("/reset-password", async () => {
 	let email: string;
@@ -71,7 +71,8 @@ Make sure to implement rate limiting based on IP addresses.
 Extract the verification token from the URL and validate by checking the expiration date. If the token is valid, invalidate all existing user sessions, update the database, and create a new session.
 
 ```ts
-import { isWithinExpiration } from "oslo";
+import { isWithinExpirationDate } from "oslo";
+import { Argon2id } from "oslo/password";
 
 app.post("/reset-password/:token", async () => {
 	let password = formData.get("password");
@@ -95,7 +96,7 @@ app.post("/reset-password/:token", async () => {
 			status: 400
 		});
 	}
-	if (!isWithinExpiration(token.expires_at)) {
+	if (!isWithinExpirationDate(token.expires_at)) {
 		await db.table("password_reset_token").where("id", "=", token.id).delete();
 		return new Response(null, {
 			status: 400
@@ -103,7 +104,7 @@ app.post("/reset-password/:token", async () => {
 	}
 
 	await lucia.invalidateUserSessions(user.id);
-	const hashedPassword = new Argon2id().hash(password);
+	const hashedPassword = await new Argon2id().hash(password);
 	await db.table("user").where("id", "=", user.id).update({
 		hashed_password: hashedPassword
 	});

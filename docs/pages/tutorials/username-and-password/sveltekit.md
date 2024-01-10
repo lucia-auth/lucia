@@ -79,6 +79,7 @@ Create a form action in `routes/signup/+page.server.ts`. First do a very basic i
 // routes/signup/+page.server.ts
 import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
+import { Argon2id } from "oslo/password";
 
 import type { Actions } from "./$types";
 
@@ -166,6 +167,7 @@ Create an API route as `pages/api/signup.ts`. First do a very basic input valida
 ```ts
 import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
+import { Argon2id } from "oslo/password";
 
 import type { Actions } from "./$types";
 
@@ -258,7 +260,7 @@ export const actions: Actions = {
 		}
 		await auth.invalidateSession(event.locals.session.id);
 		const sessionCookie = lucia.createBlankSessionCookie();
-		context.cookies.set(sessionCookie.name, sessionCookie.value, {
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes
 		});
