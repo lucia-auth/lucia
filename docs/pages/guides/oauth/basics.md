@@ -103,7 +103,7 @@ You can now create a sign in button with just an anchor tag.
 In the callback route, first get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
 
 ```ts
-import { githubAuth, lucia } from "./auth.js";
+import { github, lucia } from "./auth.js";
 import { OAuth2RequestError } from "arctic";
 import { generateId } from "lucia";
 import { parseCookies } from "oslo/cookie";
@@ -132,7 +132,7 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 		});
 		const githubUserResult: GitHubUserResult = await githubUserResponse.json();
 
-		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
+		const existingUser = await db.table("user").where("github_id", "=", githubUserResult.id).get();
 
 		if (existingUser) {
 			const session = await lucia.createSession(existingUser.id, {});
@@ -149,8 +149,8 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 		const userId = generateId(15);
 		await db.table("user").insert({
 			id: userId,
-			username: github.login,
-			github_id: github.id
+			username: githubUserResult.login,
+			github_id: githubUserResult.id
 		});
 
 		const session = await lucia.createSession(userId, {});
