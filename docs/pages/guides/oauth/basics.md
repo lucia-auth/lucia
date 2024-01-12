@@ -62,7 +62,7 @@ Import `GitHub` from Arctic and initialize it with the client ID and secret.
 // auth.ts
 import { GitHub } from "arctic";
 
-export const githubAuth = new GitHub(clientId, clientSecret);
+export const github = new GitHub(clientId, clientSecret);
 ```
 
 ## Creating authorization URL
@@ -70,7 +70,7 @@ export const githubAuth = new GitHub(clientId, clientSecret);
 Create a route to handle authorization. Generate a new state, create a new authorization URL with `createAuthorizationURL()`, store the state, and redirect the user to the authorization URL. The user will be prompted to sign in with GitHub.
 
 ```ts
-import { githubAuth } from "./auth.js";
+import { github } from "./auth.js";
 import { generateState } from "arctic";
 import { serializeCookie } from "oslo/cookie";
 
