@@ -124,7 +124,7 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 	}
 
 	try {
-		const tokens = await githubAuth.validateAuthorizationCode(code);
+		const tokens = await github.validateAuthorizationCode(code);
 		const githubUserResponse = await fetch("https://api.github.com/user", {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken}`
