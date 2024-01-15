@@ -16,6 +16,7 @@ type Config = {
 	clientSecret: string;
 	scope?: string[];
 	redirectUri?: string;
+	insecure?: boolean;
 };
 
 const PROVIDER_ID = "keycloak";
@@ -42,15 +43,15 @@ export class KeycloakAuth<
 		readonly [url: URL, codeVerifier: string, state: string]
 	> => {
 		const scopeConfig = this.config.scope ?? [];
-		return await createOAuth2AuthorizationUrlWithPKCE(
-			`https://${this.config.domain}/realms/${this.config.realm}/protocol/openid-connect/auth`,
-			{
-				clientId: this.config.clientId,
-				scope: ["profile", "openid", ...scopeConfig],
-				redirectUri: this.config.redirectUri,
-				codeChallengeMethod: "S256"
-			}
-		);
+		const protocol = this.config.insecure ? "http" : "https";
+		const url = `${protocol}://${this.config.domain}/realms/${this.config.realm}/protocol/openid-connect/auth`;
+
+		return await createOAuth2AuthorizationUrlWithPKCE(url, {
+			clientId: this.config.clientId,
+			scope: ["profile", "openid", ...scopeConfig],
+			redirectUri: this.config.redirectUri,
+			codeChallengeMethod: "S256"
+		});
 	};
 
 	public validateCallback = async (
@@ -64,7 +65,8 @@ export class KeycloakAuth<
 		const keycloakUser = await getKeycloakUser(
 			this.config.domain,
 			this.config.realm,
-			keycloakTokens.accessToken
+			keycloakTokens.accessToken,
+			this.config.insecure
 		);
 		const keycloakRoles = getKeycloakRoles(keycloakTokens.accessToken);
 		return new KeycloakUserAuth(
@@ -79,10 +81,13 @@ export class KeycloakAuth<
 		code: string,
 		codeVerifier: string
 	): Promise<KeycloakTokens> => {
+		const protocol = this.config.insecure ? "http" : "https";
+		const url = `${protocol}://${this.config.domain}/realms/${this.config.realm}/protocol/openid-connect/token`;
+
 		const rawTokens =
 			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 				code,
-				`https://${this.config.domain}/realms/${this.config.realm}/protocol/openid-connect/token`,
+				url,
 				{
 					clientId: this.config.clientId,
 					redirectUri: this.config.redirectUri,
@@ -124,16 +129,17 @@ export class KeycloakAuth<
 const getKeycloakUser = async (
 	domain: string,
 	realm: string,
-	accessToken: string
+	accessToken: string,
+	insecure = false
 ): Promise<KeycloakUser> => {
-	const keycloakUserRequest = new Request(
-		`https://${domain}/realms/${realm}/protocol/openid-connect/userinfo`,
-		{
-			headers: {
-				Authorization: authorizationHeader("bearer", accessToken)
-			}
+	const protocol = insecure ? "http" : "https";
+	const url = `${protocol}://${domain}/realms/${realm}/protocol/openid-connect/userinfo`;
+
+	const keycloakUserRequest = new Request(url, {
+		headers: {
+			Authorization: authorizationHeader("bearer", accessToken)
 		}
-	);
+	});
 	return await handleRequest<KeycloakUser>(keycloakUserRequest);
 };
 

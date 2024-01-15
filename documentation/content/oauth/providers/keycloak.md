@@ -24,6 +24,7 @@ const keycloak: (
 		clientSecret: string;
 		scope?: string[];
 		redirectUri?: string;
+		insecure?: boolean;
 	}
 ) => KeycloakProvider;
 ```
@@ -39,6 +40,7 @@ const keycloak: (
 | `config.clientSecret` | `string`                                   | Keycloak OAuth app client secret                    |          |
 | `config.scope`        | `string[]`                                 | an array of scopes                                  |    ✓     |
 | `config.redirectUri`  | `string`                                   | an authorized redirect URI                          |    ✓     |
+| `config.insecure`     | `boolean`                                  | redirects to http instead of https when true        |    ✓     |
 
 ##### Returns
 
