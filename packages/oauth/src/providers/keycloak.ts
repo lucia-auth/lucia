@@ -90,7 +90,7 @@ export class KeycloakAuth<
 			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 				code,
 				new URL(
-					`realms/${this.config.realm}/protocol/openid-connect/token`,
+					`/realms/${this.config.realm}/protocol/openid-connect/token`,
 					originFromDomain(this.config.domain)
 				),
 				{
