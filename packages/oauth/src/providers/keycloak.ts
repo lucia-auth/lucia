@@ -138,7 +138,7 @@ const getKeycloakUser = async (
 ): Promise<KeycloakUser> => {
 	const keycloakUserRequest = new Request(
 		new URL(
-			`realms/${realm}/protocol/openid-connect/userinfo`,
+			`/realms/${realm}/protocol/openid-connect/userinfo`,
 			originFromDomain(domain)
 		),
 		{
