@@ -5,7 +5,11 @@ import {
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
 import { decodeIdToken } from "../index.js";
-import { handleRequest, authorizationHeader } from "../utils/request.js";
+import {
+	handleRequest,
+	authorizationHeader,
+	originFromDomain
+} from "../utils/request.js";
 
 import type { Auth } from "lucia";
 
@@ -43,7 +47,10 @@ export class KeycloakAuth<
 	> => {
 		const scopeConfig = this.config.scope ?? [];
 		return await createOAuth2AuthorizationUrlWithPKCE(
-			`https://${this.config.domain}/realms/${this.config.realm}/protocol/openid-connect/auth`,
+			new URL(
+				`/realms/${this.config.realm}/protocol/openid-connect/auth`,
+				originFromDomain(this.config.domain)
+			),
 			{
 				clientId: this.config.clientId,
 				scope: ["profile", "openid", ...scopeConfig],
@@ -82,7 +89,10 @@ export class KeycloakAuth<
 		const rawTokens =
 			await validateOAuth2AuthorizationCode<AccessTokenResponseBody>(
 				code,
-				`https://${this.config.domain}/realms/${this.config.realm}/protocol/openid-connect/token`,
+				new URL(
+					`/realms/${this.config.realm}/protocol/openid-connect/token`,
+					originFromDomain(this.config.domain)
+				),
 				{
 					clientId: this.config.clientId,
 					redirectUri: this.config.redirectUri,
@@ -127,7 +137,10 @@ const getKeycloakUser = async (
 	accessToken: string
 ): Promise<KeycloakUser> => {
 	const keycloakUserRequest = new Request(
-		`https://${domain}/realms/${realm}/protocol/openid-connect/userinfo`,
+		new URL(
+			`/realms/${realm}/protocol/openid-connect/userinfo`,
+			originFromDomain(domain)
+		),
 		{
 			headers: {
 				Authorization: authorizationHeader("bearer", accessToken)

@@ -36,3 +36,10 @@ export const authorizationHeader = (
 	}
 	throw new TypeError("Invalid token type");
 };
+
+export const originFromDomain = (domain: string): string => {
+	if (domain.startsWith("https://") || domain.startsWith("http://")) {
+		return domain;
+	}
+	return "https://" + domain;
+};

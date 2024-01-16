@@ -4,7 +4,11 @@ import {
 	validateOAuth2AuthorizationCode
 } from "../core/oauth2.js";
 import { ProviderUserAuth } from "../core/provider.js";
-import { handleRequest, authorizationHeader } from "../utils/request.js";
+import {
+	handleRequest,
+	authorizationHeader,
+	originFromDomain
+} from "../utils/request.js";
 
 import type { Auth } from "lucia";
 
@@ -111,13 +115,6 @@ const getAuth0User = async (appDomain: string, accessToken: string) => {
 		...auth0Profile
 	};
 	return auth0User;
-};
-
-const originFromDomain = (domain: string): string => {
-	if (domain.startsWith("https://") || domain.startsWith("http://")) {
-		return domain;
-	}
-	return "https://" + domain;
 };
 
 export type Auth0Tokens = {
