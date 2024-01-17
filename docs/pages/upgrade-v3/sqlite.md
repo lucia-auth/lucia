@@ -19,7 +19,7 @@ import {
 	BetterSqlite3Adapter,
 	CloudflareD1Adapter,
 	LibSQLAdapter
-} from "@lucia-auth/adapter-mysql";
+} from "@lucia-auth/adapter-sqlite";
 
 new BetterSqlite3Adapter(db, {
 	// table names
