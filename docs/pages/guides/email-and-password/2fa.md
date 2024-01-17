@@ -105,5 +105,5 @@ if (!user) {
 }
 
 const result = await db.table("user").where("id", "=", user.id).get("two_factor_secret");
-const validOTP = new TOTPController().verify(decodeHex(result.two_factor_secret, otp));
+const validOTP = await new TOTPController().verify(otp, decodeHex(result.two_factor_secret));
 ```
