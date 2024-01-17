@@ -12,11 +12,10 @@ We recommend creating a middleware to validate requests and store the current us
 // server/middleware/auth.ts
 import { verifyRequestOrigin } from "lucia";
 
-import type { H3Event } from "h3";
-import type { User } from "lucia";
+import type { Session, User } from "lucia";
 
-export default defineEventHandler((event) => {
-	if (context.request.method !== "GET") {
+export default defineEventHandler(async (event) => {
+	if (event.method !== "GET") {
 		const originHeader = getHeader(event, "Origin") ?? null;
 		const hostHeader = getHeader(event, "Host") ?? null;
 		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
@@ -26,6 +25,7 @@ export default defineEventHandler((event) => {
 
 	const sessionId = getCookie(event, lucia.sessionCookieName) ?? null;
 	if (!sessionId) {
+		event.context.session = null;
 		event.context.user = null;
 		return;
 	}
@@ -37,12 +37,14 @@ export default defineEventHandler((event) => {
 	if (!session) {
 		appendResponseHeader(event, "Set-Cookie", lucia.createBlankSessionCookie().serialize());
 	}
+	event.context.session = session;
 	event.context.user = user;
 });
 
 declare module "h3" {
 	interface H3EventContext {
 		user: User | null;
+		session: Session | null;
 	}
 }
 ```
