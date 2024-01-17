@@ -67,11 +67,10 @@ It's a bit verbose, but it just reads the session cookie, validates it, and sets
 // server/middleware/auth.ts
 import { verifyRequestOrigin } from "lucia";
 
-import type { H3Event } from "h3";
-import type { User } from "lucia";
+import type { Session, User } from "lucia";
 
-export default defineEventHandler((event) => {
-	if (context.request.method !== "GET") {
+export default defineEventHandler(async (event) => {
+	if (event.method !== "GET") {
 		const originHeader = getHeader(event, "Origin") ?? null;
 		const hostHeader = getHeader(event, "Host") ?? null;
 		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
