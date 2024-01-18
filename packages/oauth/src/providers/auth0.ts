@@ -111,7 +111,7 @@ const getAuth0User = async (appDomain: string, accessToken: string) => {
 	});
 	const auth0Profile = await handleRequest<Auth0UserInfoResult>(request);
 	const auth0User: Auth0User = {
-		id: auth0Profile.sub.split("|")[1],
+		id: auth0Profile.sub,
 		...auth0Profile
 	};
 	return auth0User;
