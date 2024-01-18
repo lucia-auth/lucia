@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 3.5.2
+
+### Patch changes
+
+- [#1337](https://github.com/lucia-auth/lucia/pull/1337) by [@AmruthPillai](https://github.com/AmruthPillai) : Update Keycloak provider to accept domain argument with protocol
+
 ## 3.5.1
 
 ### Patch changes
