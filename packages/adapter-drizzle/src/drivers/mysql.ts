@@ -99,7 +99,7 @@ export type MySQLUserTable = MySqlTableWithColumns<{
 				data: string;
 				driverParam: any;
 				notNull: true;
-				hasDefault: any;
+				hasDefault: boolean; // must be boolean instead of any to allow default values
 				enumValues: any;
 				baseColumn: any;
 			},
@@ -122,7 +122,7 @@ export type MySQLSessionTable = MySqlTableWithColumns<{
 				columnType: any;
 				data: string;
 				driverParam: any;
-				hasDefault: any;
+				hasDefault: false;
 				name: any;
 			},
 			object
@@ -136,7 +136,7 @@ export type MySQLSessionTable = MySqlTableWithColumns<{
 				columnType: any;
 				data: Date;
 				driverParam: any;
-				hasDefault: any;
+				hasDefault: false;
 				name: any;
 			},
 			object
@@ -150,7 +150,7 @@ export type MySQLSessionTable = MySqlTableWithColumns<{
 				columnType: any;
 				data: string;
 				driverParam: any;
-				hasDefault: any;
+				hasDefault: false;
 				name: any;
 			},
 			object

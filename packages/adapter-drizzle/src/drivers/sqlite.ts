@@ -110,7 +110,7 @@ export type SQLiteUserTable = SQLiteTableWithColumns<{
 				data: string;
 				driverParam: any;
 				notNull: true;
-				hasDefault: any;
+				hasDefault: boolean; // must be boolean instead of any to allow default values
 				enumValues: any;
 				baseColumn: any;
 			},
@@ -133,7 +133,7 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				columnType: any;
 				data: string;
 				driverParam: any;
-				hasDefault: any;
+				hasDefault: false;
 				name: any;
 			},
 			object
@@ -147,7 +147,7 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				columnType: any;
 				data: number;
 				driverParam: any;
-				hasDefault: any;
+				hasDefault: false;
 				name: any;
 			},
 			object
@@ -161,7 +161,7 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				columnType: any;
 				data: string;
 				driverParam: any;
-				hasDefault: any;
+				hasDefault: false;
 				name: any;
 			},
 			object
