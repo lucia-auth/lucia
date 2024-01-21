@@ -8,7 +8,7 @@ Here are some common issues and how to resolve them. Feel free to ask for help i
 
 ## `User` and `Session` are typed as `any`
 
-Make sure you've registered your types. Check the `typeof lucia` is indeed an instance of `Lucia` (not a function that returns `Lucia`) and that there are no TS errors (including `@ts-ignore`) when declaring `Lucia`. `Register` must be an `interface`, not `type`.
+Make sure you've registered your types. Check that the `typeof lucia` is indeed an instance of `Lucia` (not a function that returns `Lucia`) and that there are no TS errors (including `@ts-ignore`) when declaring `Lucia`. `Register` must be an `interface`, not a `type`.
 
 ```ts
 import { Lucia } from "lucia";
@@ -26,7 +26,7 @@ declare module "lucia" {
 
 ## Session cookies are not set in `localhost`
 
-By default, session cookies have a `Secure` flag, which require HTTPS. You can disable it for development with the `sessionCookie.attributes.secure` configuration.
+By default, session cookies have a `Secure` flag, which requires HTTPS. You can disable it for development with the `sessionCookie.attributes.secure` configuration.
 
 ```ts
 import { Lucia } from "lucia";

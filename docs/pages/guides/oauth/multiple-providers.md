@@ -30,7 +30,7 @@ We can then remove the `github_id` column etc from the user table.
 
 ## Validating callback
 
-Instead of the user table, we can now use the OAuth account table to check if a user is already registered. If not, in an transaction, create the user and OAuth account.
+Instead of the user table, we can now use the OAuth account table to check if a user is already registered. If not, in a transaction, create the user and OAuth account.
 
 ```ts
 const tokens = await githubAuth.validateAuthorizationCode(code);

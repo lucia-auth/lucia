@@ -14,7 +14,7 @@ npm install lucia@beta oslo
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type
 
 ```ts
 // src/auth.ts
@@ -38,7 +38,7 @@ declare module "lucia" {
 }
 ```
 
-## Setup middleware
+## Set up middleware
 
 We recommend setting up a middleware to validate requests. The validated user will be available as `local.user`. You can just copy-paste the code into `src/middleware.ts`.
 
