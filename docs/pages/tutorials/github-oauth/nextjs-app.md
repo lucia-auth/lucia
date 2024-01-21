@@ -4,7 +4,7 @@ title: "GitHub OAuth in Next.js App router"
 
 # Tutorial: GitHub OAuth in Next.js App router
 
-Before starting, make sure you've setup your database and middleware as described in the [Getting started](/getting-started/nextjs-app) page.
+Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/nextjs-app) page.
 
 An [example project](https://github.com/lucia-auth/examples/tree/v3/nextjs-app/github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/nextjs-app/github-oauth).
 
@@ -125,7 +125,7 @@ export async function GET(): Promise<Response> {
 
 ## Validate callback
 
-Create an API route in `app/login/github/callback/route.ts` to handle the callback. First, get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
+Create an API route in `app/login/github/callback/route.ts` to handle the callback. First, get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID, and create a new user if they aren't. Finally, create a new session and set the session cookie.
 
 ```ts
 // app/login/github/callback/route.ts
@@ -204,7 +204,7 @@ interface GitHubUser {
 
 ## Validate requests
 
-Create `validateRequest()`. This will check for the session cookie, validates it, and sets a new cookie if necessary. Make sure to catch errors when setting cookies and wrap the function with `cache()` to prevent unnecessary database calls. To learn more, see the [Validating requests](/basics/validate-session-cookies/nextjs-app) page.
+Create `validateRequest()`. This will check for the session cookie, validate it, and set a new cookie if necessary. Make sure to catch errors when setting cookies and wrap the function with `cache()` to prevent unnecessary database calls. To learn more, see the [Validating requests](/basics/validate-session-cookies/nextjs-app) page.
 
 CSRF protection should be implemented but Next.js handles it when using form actions (but not for API routes).
 

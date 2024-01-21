@@ -34,7 +34,7 @@ new PostgresJsAdapter(sql, {
 
 ## Update session table
 
-The main changes to the session table is that `idle_expires` and `active_expires` columns are replaced with a single `expires_at` column. Unlike the previous columns, it's a `DATETIME` column.
+The main change to the session table is that the `idle_expires` and `active_expires` columns are replaced with a single `expires_at` column. Unlike the previous columns, it's a `DATETIME` column.
 
 **Check your table names before running the code.**
 
@@ -80,7 +80,7 @@ WHERE hashed_password IS NULL;
 
 ### Email/password
 
-The SQL below creates a dedicated table `password` for storing user passwords. This assumes the provider id for emails was `email` and that you're already storing the users' emails in the user table.
+The SQL below creates a dedicated table `password` for storing user passwords. This assumes the provider ID for emails was `email` and that you're already storing the users' emails in the user table.
 
 ```sql
 CREATE TABLE password (

@@ -4,7 +4,7 @@ title: "GitHub OAuth in Nuxt"
 
 # Tutorial: GitHub OAuth in Nuxt
 
-Before starting, make sure you've setup your database and middleware as described in the [Getting started](/getting-started/nuxt) page.
+Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/nuxt) page.
 
 An [example project](https://github.com/lucia-auth/examples/tree/v3/nuxt/github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/nuxt/github-oauth).
 
@@ -118,7 +118,7 @@ export default defineEventHandler(async (event) => {
 
 ## Validate callback
 
-Create an API route in `server/routes/login/github/callback.get.ts` to handle the callback. First, get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
+Create an API route in `server/routes/login/github/callback.get.ts` to handle the callback. First, get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID, and create a new user if they aren't. Finally, create a new session and set the session cookie.
 
 ```ts
 // server/routes/login/github/callback.get.ts

@@ -40,7 +40,7 @@ function constructor<
 
 - `adapter`: Database adapter
 - `options`:
-  - `sessionExpiresIn`: How long a session lasts for maximum for inactive users
+  - `sessionExpiresIn`: How long a session lasts for inactive users
   - `sessionCookie`: Session cookie options
     - `name`: Cookie name (default: `auth_session`)
     - `expires`: Set to `false` for cookies to persist indefinitely (default: `true`)

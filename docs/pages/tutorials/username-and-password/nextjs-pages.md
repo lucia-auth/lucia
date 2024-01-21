@@ -4,7 +4,7 @@ title: "Tutorial: Username and password auth in Next.js Pages router"
 
 # Tutorial: Username and password auth in Next.js Pages router
 
-Before starting, make sure you've setup your database and middleware as described in the [Getting started](/getting-started/nextjs-pages) page.
+Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/nextjs-pages) page.
 
 An [example project](https://github.com/lucia-auth/examples/tree/v3/nextjs-pages/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/nextjs-pages/username-and-password).
 
@@ -96,7 +96,7 @@ export default function Page() {
 }
 ```
 
-Create an API route in `pages/api/signup.ts`. First do a very basic input validation. Hash the password, generate a new user ID, and create a new user. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
+Create an API route in `pages/api/signup.ts`. First, do a very basic input validation. Hash the password, generate a new user ID, and create a new user. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
 // pages/api/signup.ts
@@ -204,7 +204,7 @@ export default function Page() {
 }
 ```
 
-Create an API route as `pages/api/signup.ts`. First do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
+Create an API route as `pages/api/signup.ts`. First, do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
 // pages/api/login.ts
@@ -264,7 +264,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 ## Validate requests
 
-Create `validateRequest()`. This will check for the session cookie, validates it, and sets a new cookie if necessary. To learn more, see the [Validating requests](/basics/validate-session-cookies/nextjs-pages) page.
+Create `validateRequest()`. This will check for the session cookie, validate it, and set a new cookie if necessary. To learn more, see the [Validating requests](/basics/validate-session-cookies/nextjs-pages) page.
 
 CSRF protection should be implemented and you should already have a middleware for it.
 

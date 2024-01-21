@@ -42,7 +42,7 @@ new LibSQLAdapter(db, {
 
 ## Update session table
 
-The main changes to the session table is that `idle_expires` and `active_expires` columns are replaced with a single `expires_at` column. Unlike the previous columns, this takes a UNIX time in _seconds_.
+The main change to the session table is that the `idle_expires` and `active_expires` columns are replaced with a single `expires_at` column. Unlike the previous columns, this takes a UNIX time in _seconds_.
 
 Make sure to use transactions and add any additional columns in your existing session table when creating the new table and copying the data.
 
@@ -94,7 +94,7 @@ WHERE hashed_password IS NULL;
 
 ### Email/password
 
-The SQL below creates a dedicated table `password` for storing user passwords. This assumes the provider id for emails was `email` and that you're already storing the users' emails in the user table.
+The SQL below creates a dedicated table `password` for storing user passwords. This assumes the provider ID for emails was `email` and that you're already storing the users' emails in the user table.
 
 ```sql
 CREATE TABLE password (
@@ -107,7 +107,7 @@ SELECT hashed_password, user_id FROM key
 WHERE substr(id, 1, instr(id, ':')-1) = 'email';
 ```
 
-Alternatively, you can store the user's credentials in the user table if you only work with email/password. Unfortunately, since SQLite's `ALTER` statement only supports a limited number of operations, you'd have to recreate tables that references the user table.
+Alternatively, you can store the user's credentials in the user table if you only work with email/password. Unfortunately, since SQLite's `ALTER` statement only supports a limited number of operations, you'd have to recreate tables that reference the user table.
 
 ```sql
 BEGIN TRANSACTION;

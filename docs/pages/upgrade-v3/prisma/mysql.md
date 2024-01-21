@@ -8,7 +8,7 @@ The v3 Prisma adapter now requires all fields to be `camelCase`.
 
 ## Update session table
 
-The main changes to the session table is that `idle_expires` and `active_expires` fields are replaced with a single `expiresAt` field. Unlike the previous columns, it's a `DateTime` type. Update the `Session` model. Make sure to add any custom attributes you previously had.
+The main change to the session table is that the `idle_expires` and `active_expires` fields are replaced with a single `expiresAt` field. Unlike the previous columns, it's a `DateTime` type. Update the `Session` model. Make sure to add any custom attributes you previously had.
 
 ```prisma
 model Session {
@@ -114,7 +114,7 @@ Update your database:
 npx prisma migrate dev --name added_password_table
 ```
 
-Finally, copy the data from the key table. This assumes the provider id for emails was `email` and that you're already storing the users' emails in the user table.
+Finally, copy the data from the key table. This assumes the provider ID for emails was `email` and that you're already storing the users' emails in the user table.
 
 ```sql
 INSERT INTO Password (`hashedPassword`, `userId`)

@@ -10,7 +10,7 @@ You can continue using the keys table but we recommend creating a dedicated tabl
 
 ## Replace OAuth integration
 
-The OAuth integration has been replaced with [Arctic](https://github.com/pilcrowonpaper/arctic), which provides everything the integration did without Lucia specific APIs. It supports all the OAuth providers that the integration supported.
+The OAuth integration has been replaced with [Arctic](https://github.com/pilcrowonpaper/arctic), which provides everything the integration did without Lucia-specific APIs. It supports all the OAuth providers that the integration supported.
 
 ```
 npm install arctic
@@ -57,7 +57,7 @@ setCookie("github_oauth_state", state, {
 
 The `state` check stays the same.
 
-`validateAuthorizationCode()` replaces `validateCallback()`. Instead of returning tokens, users, and database methods, it just returns tokens. Use the access token to get the user, check if the user is already registered, and create a new user if not.
+`validateAuthorizationCode()` replaces `validateCallback()`. Instead of returning tokens, users, and database methods, it just returns tokens. Use the access token to get the user, then check if the user is already registered and create a new user if they aren't.
 
 You now have to create users and manage OAuth accounts by yourself.
 
@@ -80,7 +80,7 @@ const existingAccount = await db
 	.get();
 
 if (existingAccount) {
-	// simplified `createSession()` - seconds params for session attributes
+	// simplified `createSession()` - second param for session attributes
 	const session = await lucia.createSession(existingUser.id, {});
 
 	// `createSessionCookie()` now takes a session ID instead of the entire session object
@@ -96,7 +96,7 @@ if (existingAccount) {
 	});
 }
 
-// v2 IDs have length of 15
+// v2 IDs have a length of 15
 const userId = generateId(15);
 
 await db.beginTransaction();
@@ -113,7 +113,7 @@ await db.table("oauth_account").insert({
 });
 await db.commit();
 
-// simplified `createSession()` - seconds params for session attributes
+// simplified `createSession()` - second param for session attributes
 const session = await lucia.createSession(userId, {});
 // `createSessionCookie()` now takes a session ID instead of the entire session object
 const sessionCookie = lucia.createSessionCookie(session.id);
@@ -129,7 +129,7 @@ return new Response(null, {
 
 ### Error handling
 
-Error handling has improved with v3. `validateAuthorizationCode()` throws `OAuth2RequestError`, which includes proper error messages and descriptions.
+Error handling has improved with v3. `validateAuthorizationCode()` throws an `OAuth2RequestError`, which includes proper error messages and descriptions.
 
 ```ts
 try {

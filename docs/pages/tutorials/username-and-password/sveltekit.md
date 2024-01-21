@@ -4,7 +4,7 @@ title: "Tutorial: Username and password auth in SvelteKit"
 
 # Tutorial: Username and password auth in SvelteKit
 
-Before starting, make sure you've setup your database and middleware as described in the [Getting started](/getting-started/astro) page.
+Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/astro) page.
 
 An [example project](https://github.com/lucia-auth/examples/tree/v3/sveltekit/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/sveltekit/username-and-password).
 
@@ -73,7 +73,7 @@ Create `routes/signup/+page.svelte` and set up a basic form.
 </form>
 ```
 
-Create a form action in `routes/signup/+page.server.ts`. First do a very basic input validation. Hash the password, generate a new user ID, and create a new user. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
+Create a form action in `routes/signup/+page.server.ts`. First, do a very basic input validation. Hash the password, generate a new user ID, and create a new user. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
 // routes/signup/+page.server.ts
@@ -162,7 +162,7 @@ Create `routes/login/+page.svelte` and set up a basic form.
 </form>
 ```
 
-Create an API route as `pages/api/signup.ts`. First do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
+Create an API route as `pages/api/signup.ts`. First, do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
 import { lucia } from "$lib/server/auth";

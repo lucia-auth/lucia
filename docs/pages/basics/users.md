@@ -51,7 +51,7 @@ interface DatabaseUserAttributes {
 }
 ```
 
-You can then include them into the user object with the `getUserAttributes()` configuration.
+You can then include them in the user object with the `getUserAttributes()` configuration.
 
 ```ts
 const lucia = new Lucia(adapter, {
@@ -70,5 +70,5 @@ if (user) {
 
 We do not automatically expose all database columns as
 
-1. Each project has their code styling rules
+1. Each project has its own code styling rules
 2. You generally don't want to expose sensitive data such as hashed passwords (even worse if you send the entire user object to the client)

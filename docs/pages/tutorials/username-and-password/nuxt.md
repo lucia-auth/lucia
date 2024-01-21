@@ -4,7 +4,7 @@ title: "Tutorial: Username and password auth in Nuxt"
 
 # Tutorial: Username and password auth in Nuxt
 
-Before starting, make sure you've setup your database and middleware as described in the [Getting started](/getting-started/nuxt) page.
+Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/nuxt) page.
 
 An [example project](https://github.com/lucia-auth/examples/tree/v3/nuxt/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/nuxt/username-and-password).
 
@@ -85,7 +85,7 @@ async function signup(e: Event) {
 </template>
 ```
 
-Create an API route in `server/api/signup.post.ts`. First do a very basic input validation. Hash the password, generate a new user ID, and create a new user. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
+Create an API route in `server/api/signup.post.ts`. First, do a very basic input validation. Hash the password, generate a new user ID, and create a new user. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
 // server/api/signup.post.ts
@@ -176,7 +176,7 @@ async function login(e: Event) {
 </template>
 ```
 
-Create an API route as `server/api/login.post.ts`. First do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
+Create an API route as `server/api/login.post.ts`. First, do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
 // server/api/login.post.ts
