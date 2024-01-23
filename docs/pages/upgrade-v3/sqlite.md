@@ -4,7 +4,7 @@ title: "Upgrade your SQLite database to v3"
 
 # Upgrade your SQLite database to v3
 
-**Migration must be handled manually or else there's a high likelihood you will lose all your data**. **Do NOT use automated tools as is.** Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
+**Migration must be handled manually or else you will lose all your data**. **Do NOT use automated tools as is.** Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
 
 ## Update the adapter
 

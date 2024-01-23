@@ -6,7 +6,7 @@ title: "Upgrade Prisma and your MySQL database to v3"
 
 The v3 Prisma adapter now requires all fields to be `camelCase`.
 
-**Migration must be handled manually or else there's a high likelihood you will lose all your data**. **Do NOT use Prisma's migration tools as is**. Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
+**Migration must be handled manually or else you will lose all your data**. **Do NOT use Prisma's migration tools as is**. Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
 
 ## Update session table
 
