@@ -1,4 +1,4 @@
-import { eq, lte, sql } from "drizzle-orm";
+import { eq, lte } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import type { MySqlColumn, MySqlDatabase, MySqlTableWithColumns } from "drizzle-orm/mysql-core";
