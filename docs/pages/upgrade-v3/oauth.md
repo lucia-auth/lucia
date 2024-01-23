@@ -16,7 +16,7 @@ The OAuth integration has been replaced with [Arctic](https://github.com/pilcrow
 npm install arctic
 ```
 
-You can initialize the providers without passing the Lucia instance.
+You can initialize the providers without passing the Lucia instance and it does not accept scopes.
 
 ```ts
 import { GitHub } from "arctic";
@@ -41,7 +41,9 @@ const state = generateState();
 
 // pass state (and code verifier for PKCE)
 // returns the authorization url only
-const authorizationURL = await githubAuth.createAuthorizationURL(state);
+const authorizationURL = await githubAuth.createAuthorizationURL(state, {
+	scopes: ["email"] // pass scopes here instead
+});
 
 setCookie("github_oauth_state", state, {
 	secure: true, // set to false in localhost
