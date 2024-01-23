@@ -76,6 +76,13 @@ export class SQLiteAdapter implements Adapter {
 		);
 	}
 
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.controller.execute(
+			`DELETE FROM ${this.escapedSessionTableName} WHERE expires_at <= ?`,
+			[Math.floor(Date.now() / 1000)]
+		);
+	}
+
 	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
 		const result = await this.controller.get<SessionSchema>(
 			`SELECT * FROM ${this.escapedSessionTableName} WHERE id = ?`,

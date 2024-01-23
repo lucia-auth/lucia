@@ -79,6 +79,13 @@ export class PostgreSQLAdapter implements Adapter {
 		);
 	}
 
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.controller.execute(
+			`DELETE FROM ${this.escapedSessionTableName} WHERE expires_at <= $1`,
+			[new Date()]
+		);
+	}
+
 	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
 		const result = await this.controller.get<SessionSchema>(
 			`SELECT * FROM ${this.escapedSessionTableName} WHERE id = $1`,
@@ -104,9 +111,9 @@ export interface TableNames {
 }
 
 export interface Controller {
-	execute(sql: string, args: any[]): Promise<void>;
-	get<T extends {}>(sql: string, args: any[]): Promise<T | null>;
-	getAll<T extends {}>(sql: string, args: any[]): Promise<T[]>;
+	execute(sql: string, args?: any[]): Promise<void>;
+	get<T extends {}>(sql: string, args?: any[]): Promise<T | null>;
+	getAll<T extends {}>(sql: string, args?: any[]): Promise<T[]>;
 }
 
 interface SessionSchema extends RegisteredDatabaseSessionAttributes {

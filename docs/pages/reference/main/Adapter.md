@@ -12,6 +12,7 @@ Represents a database adapter.
 //$ DatabaseSession=/reference/main/DatabaseSession
 //$ DatabaseUser=/reference/main/DatabaseUser
 interface Adapter {
+	deleteExpiredSessions(): Promise<void>;
 	deleteSession(sessionId: string): Promise<void>;
 	deleteUserSessions(userId: string): Promise<void>;
 	getSessionAndUser(
@@ -25,6 +26,7 @@ interface Adapter {
 
 ### Methods
 
+- `deleteExpiredSessions`: Deletes all sessions where `expires_at` is equal to or less than current timestamp (machine time)
 - `deleteSession()`: Deletes the session
 - `deleteUserSessions()`: Deletes all sessions linked to the user
 - `getSessionAndUser()`: Returns the session and the user linked to the session

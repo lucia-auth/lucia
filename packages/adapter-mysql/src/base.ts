@@ -76,6 +76,13 @@ export class MySQLAdapter implements Adapter {
 		);
 	}
 
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.controller.execute(
+			`DELETE FROM ${this.escapedSessionTableName} WHERE expires_at <= ?`,
+			[new Date()]
+		);
+	}
+
 	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
 		const result = await this.controller.get<SessionSchema>(
 			`SELECT * FROM ${this.escapedSessionTableName} WHERE id = ?`,
@@ -101,9 +108,9 @@ export interface TableNames {
 }
 
 export interface Controller {
-	execute(sql: string, args: any[]): Promise<void>;
-	get<T>(sql: string, args: any[]): Promise<T | null>;
-	getAll<T>(sql: string, args: any[]): Promise<T[]>;
+	execute(sql: string, args?: any[]): Promise<void>;
+	get<T>(sql: string, args?: any[]): Promise<T | null>;
+	getAll<T>(sql: string, args?: any[]): Promise<T[]>;
 }
 
 interface SessionSchema extends RegisteredDatabaseSessionAttributes {

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, lte, sql } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import type { PgColumn, PgDatabase, PgTableWithColumns } from "drizzle-orm/pg-core";
@@ -64,6 +64,10 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 				expiresAt
 			})
 			.where(eq(this.sessionTable.id, sessionId));
+	}
+
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.db.delete(this.sessionTable).where(lte(this.sessionTable.expiresAt, new Date()));
 	}
 
 	private async getSession(sessionId: string): Promise<DatabaseSession | null> {

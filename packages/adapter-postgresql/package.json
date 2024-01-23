@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-postgresql",
-	"version": "3.0.0-beta.9",
+	"version": "3.0.0-beta.10",
 	"description": "PostgreSQL adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -12,8 +12,8 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test.pg": "tsx tests/pg.ts",
-		"test.postgres": "tsx tests/postgres.ts",
+		"test.node-postgres": "tsx tests/node-postgres.ts",
+		"test.postgresjs": "tsx tests/postgresjs.ts",
 		"auri.build": "pnpm build"
 	},
 	"keywords": [
@@ -52,7 +52,7 @@
 		}
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "5.0.0-beta.4",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@types/pg": "^8.6.5",
 		"dotenv": "^16.0.3",
 		"lucia": "workspace:*",

@@ -57,6 +57,7 @@ function constructor<
 - [`createBlankSessionCookie()`](/reference/main/Lucia/createBlankSessionCookie)
 - [`createSession()`](/reference/main/Lucia/createSession)
 - [`createSessionCookie()`](/reference/main/Lucia/createSessionCookie)
+- [`deleteExpiredSessions()`](/reference/main/Lucia/deleteExpiredSessions)
 - [`getUserSessions()`](/reference/main/Lucia/getUserSessions)
 - [`handleRequest()`](/reference/main/Lucia/handleRequest)
 - [`createSessionCookie()`](/reference/main/Lucia/createSessionCookie)

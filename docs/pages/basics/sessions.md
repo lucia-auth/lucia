@@ -167,3 +167,11 @@ Use `Lucia.getUserSessions()` to get all sessions belonging to a user. This will
 ```ts
 const sessions = await lucia.getUserSessions(userId);
 ```
+
+## Delete all expired sessions
+
+Use `Lucia.deleteExpiredSessions()` to delete all expired sessions in the database. We recommend setting up a cron-job to clean up your database on a set interval.
+
+```ts
+await lucia.deleteExpiredSessions();
+```

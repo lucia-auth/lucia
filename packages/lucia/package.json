@@ -1,6 +1,6 @@
 {
 	"name": "lucia",
-	"version": "3.0.0-beta.14",
+	"version": "3.0.0-beta.15",
 	"description": "A simple and flexible authentication library",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -35,6 +35,6 @@
 		"vitest": "^0.33.0"
 	},
 	"dependencies": {
-		"oslo": "^0.27.0"
+		"oslo": "0.27.1"
 	}
 }

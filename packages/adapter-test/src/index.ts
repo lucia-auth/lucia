@@ -51,6 +51,21 @@ export async function testAdapter(adapter: Adapter) {
 		assert.deepStrictEqual(result, [databaseSession, databaseUser]);
 	});
 
+	await test("deleteExpiredSessions() deletes all expired sessions", async () => {
+		const expiredSession: DatabaseSession = {
+			userId: databaseUser.id,
+			id: generateRandomString(40, alphabet("0-9", "a-z")),
+			expiresAt: new Date(Math.floor(Date.now() / 1000) * 1000 - 10_000),
+			attributes: {
+				country: "us"
+			}
+		};
+		await adapter.setSession(expiredSession);
+		await adapter.deleteExpiredSessions();
+		const result = await adapter.getUserSessions(databaseSession.userId);
+		assert.deepStrictEqual(result, [databaseSession]);
+	});
+
 	await test("deleteUserSessions() deletes all user sessions", async () => {
 		await adapter.deleteUserSessions(databaseSession.userId);
 		const result = await adapter.getUserSessions(databaseSession.userId);

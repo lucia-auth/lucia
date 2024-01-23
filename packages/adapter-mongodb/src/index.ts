@@ -94,6 +94,14 @@ export class MongodbAdapter implements Adapter {
 	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
 		await this.Session.findOneAndUpdate({ _id: sessionId }, { $set: { expires_at: expiresAt } });
 	}
+
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.Session.deleteMany({
+			expires_at: {
+				$lte: new Date()
+			}
+		});
+	}
 }
 
 function transformIntoDatabaseUser(value: UserDoc): DatabaseUser {

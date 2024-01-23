@@ -29,14 +29,14 @@ Set PostgreSQL database connection url in `.env`:
 POSTGRES_DATABASE_URL="postgresql://localhost/lucia"
 ```
 
-### `pg`
+### node-postgres
 
 ```
-pnpm test.pg
+pnpm test.node-postgres
 ```
 
-### `postgres`
+### Postgres.js
 
 ```
-pnpm test.postgres
+pnpm test.postgresjs
 ```

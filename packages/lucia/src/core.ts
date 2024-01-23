@@ -186,6 +186,10 @@ export class Lucia<
 		await this.adapter.deleteUserSessions(userId);
 	}
 
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.adapter.deleteExpiredSessions();
+	}
+
 	public readSessionCookie(cookieHeader: string): string | null {
 		const sessionId = this.sessionCookieController.parse(cookieHeader);
 		return sessionId;

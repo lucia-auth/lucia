@@ -12,6 +12,7 @@ export interface Adapter {
 	updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void>;
 	deleteSession(sessionId: string): Promise<void>;
 	deleteUserSessions(userId: string): Promise<void>;
+	deleteExpiredSessions(): Promise<void>;
 }
 
 export interface DatabaseUser {

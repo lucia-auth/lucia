@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, lte } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import type {
@@ -73,6 +73,12 @@ export class DrizzleSQLiteAdapter implements Adapter {
 			})
 			.where(eq(this.sessionTable.id, sessionId))
 			.run();
+	}
+
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.db
+			.delete(this.sessionTable)
+			.where(lte(this.sessionTable.expiresAt, Math.floor(Date.now() / 1000)));
 	}
 
 	private async getSession(sessionId: string): Promise<DatabaseSession | null> {

@@ -11,8 +11,8 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 	private userModel: PrismaModel<UserSchema>;
 
 	constructor(sessionModel: BasicPrismaModel, userModel: BasicPrismaModel) {
-		this.sessionModel = sessionModel as any;
-		this.userModel = userModel as any;
+		this.sessionModel = sessionModel as any as PrismaModel<SessionSchema>;
+		this.userModel = userModel as any as PrismaModel<UserSchema>;
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {
@@ -86,6 +86,16 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 			}
 		});
 	}
+
+	public async deleteExpiredSessions(): Promise<void> {
+		await this.sessionModel.deleteMany({
+			where: {
+				expiresAt: {
+					lte: new Date()
+				}
+			}
+		});
+	}
 }
 
 function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
@@ -128,15 +138,23 @@ interface BasicPrismaModel {
 	findMany: any;
 }
 
-interface PrismaModel<_Schema> {
+type PrismaWhere<_Schema extends {}> = {
+	[K in keyof _Schema]?:
+		| _Schema[K]
+		| {
+				lte?: _Schema[K];
+		  };
+};
+
+interface PrismaModel<_Schema extends {}> {
 	name: string;
 	findUnique: <_Included = {}>(options: {
-		where: Partial<_Schema>;
+		where: PrismaWhere<_Schema>;
 		include?: Record<string, boolean>;
 	}) => Promise<null | (_Schema & _Included)>;
-	findMany: (options?: { where: Partial<_Schema> }) => Promise<_Schema[]>;
+	findMany: (options?: { where: PrismaWhere<_Schema> }) => Promise<_Schema[]>;
 	create: (options: { data: _Schema }) => Promise<_Schema>;
-	delete: (options: { where: Partial<_Schema> }) => Promise<void>;
-	deleteMany: (options?: { where: Partial<_Schema> }) => Promise<void>;
-	update: (options: { data: Partial<_Schema>; where: Partial<_Schema> }) => Promise<_Schema>;
+	delete: (options: { where: PrismaWhere<_Schema> }) => Promise<void>;
+	deleteMany: (options?: { where: PrismaWhere<_Schema> }) => Promise<void>;
+	update: (options: { data: Partial<_Schema>; where: PrismaWhere<_Schema> }) => Promise<_Schema>;
 }
