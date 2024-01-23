@@ -21,7 +21,7 @@ app.get("/login/twitter", async (): Promise<Response> => {
 	const headers = new Headers();
 	headers.append(
 		"Set-Cookie",
-		serializeCookie("state", state, {
+		serializeCookie("twitter_oauth_state", state, {
 			httpOnly: true,
 			secure: env === "PRODUCTION", // set `Secure` flag in HTTPS
 			maxAge: 60 * 10, // 10 minutes
@@ -52,7 +52,7 @@ import { parseCookies } from "oslo/cookie";
 
 app.get("/login/twitter/callback", async (request: Request): Promise<Response> => {
 	const cookies = parseCookies(request.headers.get("Cookie") ?? "");
-	const stateCookie = cookies.get("oauth_state") ?? null;
+	const stateCookie = cookies.get("twitter_oauth_state") ?? null;
 	const codeVerifier = cookies.get("code_verifier") ?? null;
 
 	const url = new URL(request.url);

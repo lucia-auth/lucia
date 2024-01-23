@@ -15,7 +15,7 @@ Lucia provides `LegacyScrypt` for hashing and comparing passwords using the algo
 ```ts
 import { generateId, LegacyScrypt } from "lucia";
 
-// v2 IDs have length of 15
+// v2 IDs have a length of 15
 const userId = generateId(15);
 
 await db.beginTransaction();
@@ -31,7 +31,7 @@ await db.table("password").insert({
 });
 await db.commit();
 
-// simplified `createSession()` - seconds params for session attributes
+// simplified `createSession()` - second param for session attributes
 const session = await lucia.createSession(userId, {});
 // `createSessionCookie()` now takes a session ID instead of the entire session object
 const sessionCookie = lucia.createSessionCookie(session.id);

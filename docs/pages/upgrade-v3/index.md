@@ -4,15 +4,15 @@ title: "Upgrade to Lucia v3"
 
 # Upgrade to Lucia v3
 
-Version 3.0 rethinks Lucia and the role it should play into your application. We have stripped out all the annoying bits, and everything else we kept has been refined even more. Everything is more flexible, and just all around easier to understand and work with.
+Version 3.0 rethinks Lucia and the role it should play in your application. We have stripped out all the annoying bits, and everything else we kept has been refined even more. Everything is more flexible, and just all around easier to understand and work with.
 
 We estimate it will take about an hour or two to upgrade your project, though it depends on how big your application is. If you're having issues with the migration or have any questions, feel free to ask on our [Discord server](https://discord.com/invite/PwrK3kpVR3).
 
 ## Major changes
 
-The biggest change to Lucia is that keys have been removed entirely. We believe it was too limiting and ultimately an unnecessary concept that made many projects more complex than it needed to be. Another big change is that Lucia no longer handles user creation, so `createUser()` among other APIs have been removed.
+The biggest change to Lucia is that keys have been removed entirely. We believe it was too limiting and ultimately an unnecessary concept that made many projects more complex than they needed to be. Another big change is that Lucia no longer handles user creation, so `createUser()` among other APIs has been removed.
 
-For a simple password based auth, the password can just be stored in the user table.
+For a simple password-based auth, the password can just be stored in the user table.
 
 ```ts
 const hashedPassword = await new Argon2id().hash(password);
@@ -50,7 +50,7 @@ export const lucia = new Lucia(adapter, {
 });
 ```
 
-Here's the fully updated configuration for reference. `middleware` and `csrfProtection` has been removed.
+Here's the fully updated configuration for reference. `middleware` and `csrfProtection` have been removed.
 
 ```ts
 import { Lucia, TimeSpan } from "lucia";
@@ -129,13 +129,13 @@ The following packages are deprecated:
 - `@lucia-auth/adapter-session-redis`
 - `@lucia-auth/adapter-session-unstorage`
 
-If you're using a session adapter, we recommend building a custom adapter as the API have been greatly simplified.
+If you're using a session adapter, we recommend building a custom adapter as the API has been greatly simplified.
 
 ## Sessions
 
 ### Session validation
 
-Middleware, `Auth.handleRequest()`, and `AuthRequest` have been removed. **This means Lucia no longer provides strict CSRF protection**. For replacing `AuthRequest.validate()`, see the [Validating session cookies](/guides/validate-session-cookies) guide or a framework specific version of it as these need to be re-implemented from scratch (though it's just copy-pasting code from the guides):
+Middleware, `Auth.handleRequest()`, and `AuthRequest` have been removed. **This means Lucia no longer provides strict CSRF protection**. For replacing `AuthRequest.validate()`, see the [Validating session cookies](/guides/validate-session-cookies) guide or a framework-specific version of it as these need to be re-implemented from scratch (though it's just copy-pasting code from the guides):
 
 - [Astro](/guides/validate-session-cookies/astro)
 - [Elysia](/guides/validate-session-cookies/elysia)

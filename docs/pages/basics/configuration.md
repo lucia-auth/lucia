@@ -19,7 +19,7 @@ interface Options {
 
 ## `sessionExpiresIn`
 
-Configures how long a session is valid max for inactive users. Sessions expiration are automatically extended for active users. Also see [`TimeSpan`](/reference/main/TimeSpan).
+Configures how long a session stays valid for inactive users. Session expirations are automatically extended for active users. Also see [`TimeSpan`](/reference/main/TimeSpan).
 
 ```ts
 import { Lucia, TimeSpan } from "lucia";

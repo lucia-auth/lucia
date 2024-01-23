@@ -4,7 +4,7 @@ title: "Password basics"
 
 # Password basics
 
-This page covers how to implement a password-based auth with Lucia. If you're looking for a step-by-step, framework specific tutorial, you may want to check out the [Username and password](/tutorials/username-and-password) tutorial. Keep in mind that email based auth requires more than just passwords!
+This page covers how to implement a password-based auth with Lucia. If you're looking for a step-by-step, framework-specific tutorial, you may want to check out the [Username and password](/tutorials/username-and-password) tutorial. Keep in mind that email-based auth requires more than just passwords!
 
 ## Update database
 
@@ -15,7 +15,7 @@ Add a unique `email` and `hashed_password` column to the user table.
 | `email`           | `string` | unique     |
 | `hashed_password` | `string` |            |
 
-Declare the type with `DatabaseUserAttributes` and add the attributes the user object using the `getUserAttributes()` configuration.
+Declare the type with `DatabaseUserAttributes` and add the attributes to the user object using the `getUserAttributes()` configuration.
 
 ```ts
 // auth.ts

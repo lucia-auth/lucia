@@ -4,7 +4,7 @@ title: "Validate session cookies in Express"
 
 # Validate session cookies in Express
 
-**CSRF protection must be implemented when using cookies and forms** This can be easily done by comparing the `Origin` and `Host` header.
+**CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header.
 
 We recommend creating 2 middleware for CSRF protection and validating requests. You can get the cookie with `Lucia.readSessionCookie()` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 

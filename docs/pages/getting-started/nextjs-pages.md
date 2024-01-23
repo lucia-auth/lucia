@@ -14,7 +14,7 @@ npm install lucia@beta oslo
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to setup your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
 
 ```ts
 // src/auth.ts
@@ -53,7 +53,7 @@ globalThis.crypto = webcrypto as Crypto;
 node --experimental-web-crypto index.js
 ```
 
-## Setup middleware
+## Set up middleware
 
 If you're planning to use cookies, you must implement CSRF protection.
 

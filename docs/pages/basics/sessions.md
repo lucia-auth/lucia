@@ -4,7 +4,7 @@ title: "Sessions"
 
 # Sessions
 
-Sessions allow Lucia to keep track of requests made by authenticated users. The id can be stored in a cookie or used as a traditional token manually added to each request. They should be created and stored on registration and login, validated on every request, and deleted on sign out.
+Sessions allow Lucia to keep track of requests made by authenticated users. The ID can be stored in a cookie or used as a traditional token manually added to each request. They should be created and stored on registration and login, validated on every request, and deleted on sign out.
 
 ```ts
 interface Session extends SessionAttributes {
@@ -17,9 +17,9 @@ interface Session extends SessionAttributes {
 
 ## Session lifetime
 
-Sessions do not have an absolute expiration. The expiration gets extended whenever they're used. This ensures that active users are signed in, while inactive users are signed out.
+Sessions do not have an absolute expiration. The expiration gets extended whenever they're used. This ensures that active users remain signed in, while inactive users are signed out.
 
-More specifically, if the session expiration is set to 30 days (default), Lucia will extend the expiration by another 30 days when there's less than 15 days (half of the expiration) until expiration. You can configure the expiration with the `sessionExpiresIn` configuration.
+More specifically, if the session expiration is set to 30 days (default), Lucia will extend the expiration by another 30 days when there are less than 15 days (half of the expiration) until expiration. You can configure the expiration with the `sessionExpiresIn` configuration.
 
 ```ts
 import { Lucia, TimeSpan } from "lucia";
@@ -45,7 +45,7 @@ declare module "lucia" {
 }
 ```
 
-You can then include them into the session object with the `getSessionAttributes()` configuration.
+You can then include them in the session object with the `getSessionAttributes()` configuration.
 
 ```ts
 const lucia = new Lucia(adapter, {
@@ -62,7 +62,7 @@ session.ipCountry;
 
 We do not automatically expose all database columns as
 
-1. Each project has their code styling rules
+1. Each project has its own code styling rules
 2. You generally don't want to expose sensitive data (even worse if you send the entire session object to the client)
 
 ## Create sessions
@@ -116,7 +116,7 @@ const sessionId = lucia.readSessionCookie("auth_session=abc");
 const sessionId = lucia.readBearerToken("Bearer abc");
 ```
 
-See the [Validate session cookies](/guides/validate-session-cookies) and [Validate bearer tokens](/guides/validate-bearer-tokens) guide for a full example for validating session cookies.
+See the [Validate session cookies](/guides/validate-session-cookies) and [Validate bearer tokens](/guides/validate-bearer-tokens) guide for a full example of validating session cookies.
 
 ## Session cookies
 

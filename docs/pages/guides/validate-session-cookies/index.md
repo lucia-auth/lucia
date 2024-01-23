@@ -16,7 +16,7 @@ This guide is also available for:
 - [SolidStart](/guides/validate-session-cookies/solidstart)
 - [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
-**CSRF protection must be implemented when using cookies and forms** This can be easily done by comparing the `Origin` and `Host` header.
+**CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header.
 
 For non-GET requests, check the request origin. You can use `readSessionCookie()` to get the session cookie from a HTTP `Cookie` header, and validate it with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 

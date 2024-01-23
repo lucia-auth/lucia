@@ -4,7 +4,7 @@ title: "OAuth basics"
 
 # OAuth basics
 
-For a step-by-step, framework specific tutorial, see the [GitHub OAuth](/tutorials) tutorial.
+For a step-by-step, framework-specific tutorial, see the [GitHub OAuth](/tutorials) tutorial.
 
 We recommend using [Arctic](https://github.com/pilcrowonpaper/arctic) for implementing OAuth 2.0. It is a lightweight library that provides APIs for creating authorization URLs, validating callbacks, and refreshing access tokens. This is the easiest way to implement OAuth with Lucia and it supports most major providers. This page will use GitHub, and while most providers have similar APIs, there might be some minor differences between them.
 
@@ -23,7 +23,7 @@ Add a `username` and a unique `github_id` column to the user table.
 | `username`  | `string` |            |
 | `github_id` | `number` | unique     |
 
-Declare the type with `DatabaseUserAttributes` and add the attributes the user object using the `getUserAttributes()` configuration.
+Declare the type with `DatabaseUserAttributes` and add the attributes to the user object using the `getUserAttributes()` configuration.
 
 ```ts
 // auth.ts
@@ -81,7 +81,7 @@ app.get("/login/github", async (): Promise<Response> => {
 		status: 302,
 		headers: {
 			Location: url.toString(),
-			"Set-Cookie": serializeCookie("oauth_state", state, {
+			"Set-Cookie": serializeCookie("github_oauth_state", state, {
 				httpOnly: true,
 				secure: env === "PRODUCTION", // set `Secure` flag in HTTPS
 				maxAge: 60 * 10, // 10 minutes
@@ -100,7 +100,7 @@ You can now create a sign in button with just an anchor tag.
 
 ## Validate callback
 
-In the callback route, first get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw a [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID and create a new user if not. Finally, create a new session and set the session cookie.
+In the callback route, first get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID, and create a new user if they aren't. Finally, create a new session and set the session cookie.
 
 ```ts
 import { github, lucia } from "./auth.js";
@@ -110,7 +110,7 @@ import { parseCookies } from "oslo/cookie";
 
 app.get("/login/github/callback", async (request: Request): Promise<Response> => {
 	const cookies = parseCookies(request.headers.get("Cookie") ?? "");
-	const stateCookie = cookies.get("oauth_state") ?? null;
+	const stateCookie = cookies.get("github_oauth_state") ?? null;
 
 	const url = new URL(request.url);
 	const state = url.searchParams.get("state");
