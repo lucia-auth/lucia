@@ -2,6 +2,8 @@
 title: "Upgrade your MySQL database to v3"
 ---
 
+**Migration must be handled manually or else there's a high likelihood you will lose all your data**. **Do NOT use automated tools as is.** Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
+
 # Upgrade your MySQL database to v3
 
 ## Update the adapter
@@ -43,6 +45,8 @@ UPDATE user_session SET expires_at = FROM_UNIXTIME(idle_expires / 1000);
 
 ALTER TABLE user_session DROP active_expires, DROP idle_expires, MODIFY expires_at DATETIME NOT NULL;
 ```
+
+You may also just delete the session table and replace it with the [new schema](/database/mysql#schema).
 
 ## Replace key table
 

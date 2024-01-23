@@ -4,6 +4,8 @@ title: "Upgrade your PostgreSQL database to v3"
 
 # Upgrade your PostgreSQL database to v3
 
+**Migration must be handled manually or else there's a high likelihood you will lose all your data**. **Do NOT use automated tools as is.** Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
+
 ## Update the adapter
 
 Install the latest version of the PostgreSQL adapter package.
@@ -56,6 +58,8 @@ Do a final check and commit the transaction.
 ```sql
 COMMIT;
 ```
+
+You may also just delete the session table and replace it with the [new schema](/database/postgresql#schema).
 
 ## Replace key table
 

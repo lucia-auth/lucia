@@ -6,6 +6,9 @@ title: "Upgrade Prisma and your PostgreSQL database to v3"
 
 The v3 Prisma adapter now requires all fields to be `camelCase`.
 
+**Migration must be handled manually or else there's a high likelihood you will lose all your data**. **Do NOT use Prisma's migration tools as is**. Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
+
+
 ## Update session table
 
 The main change to the session table is that the `idle_expires` and `active_expires` fields are replaced with a single `expiresAt` field. Unlike the previous columns, it's a `DateTime` type. Update the `Session` model. Make sure to add any custom attributes you previously had.

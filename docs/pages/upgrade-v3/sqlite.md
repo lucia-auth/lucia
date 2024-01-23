@@ -4,6 +4,8 @@ title: "Upgrade your SQLite database to v3"
 
 # Upgrade your SQLite database to v3
 
+**Migration must be handled manually or else there's a high likelihood you will lose all your data**. **Do NOT use automated tools as is.** Read this guide carefully as some parts depend on your current structure (**especially the table names**), and feel free to ask questions on our Discord server if you have any questions.
+
 ## Update the adapter
 
 Install the latest version of the SQLite adapter package.
@@ -70,6 +72,8 @@ Check your new `session` table looks right. If not run `ROLLBACK` to rollback th
 ```sql
 COMMIT;
 ```
+
+You may also just delete the session table and replace it with the [new schema](/database/sqlite#schema).
 
 ## Replace key table
 
