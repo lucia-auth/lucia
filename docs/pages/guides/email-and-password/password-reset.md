@@ -88,16 +88,12 @@ app.post("/reset-password/:token", async () => {
 
 	await db.beginTransaction();
 	const token = await db.table("password_reset_token").where("id", "=", verificationToken).get();
-	await db.table("password_reset_token").where("id", "=", verificationToken).delete();
+	if (token) {
+		await db.table("password_reset_token").where("id", "=", verificationToken).delete();
+	}
 	await db.commit();
 
-	if (!token) {
-		return new Response(null, {
-			status: 400
-		});
-	}
-	if (!isWithinExpirationDate(token.expires_at)) {
-		await db.table("password_reset_token").where("id", "=", token.id).delete();
+	if (!token || !isWithinExpirationDate(token.expires_at)) {
 		return new Response(null, {
 			status: 400
 		});
