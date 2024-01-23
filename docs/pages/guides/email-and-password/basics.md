@@ -148,7 +148,16 @@ app.post("/login", async (request: Request) => {
 	const user = await db.table("user").where("email", "=", email).get();
 
 	if (!user) {
-		// invalid email
+		// NOTE:
+		// Returning immediately allows malicious actors to figure out valid emails from response times,
+		// allowing them to only focus on guessing passwords in brute-force attacks.
+		// As a preventive measure, you may want to hash passwords even for invalid emails.
+		// However, valid emails can be already be revealed with the signup page
+		// and a similar timing issue can likely be found in password reset implementation.
+		// It will also be much more resource intensive.
+		// Since protecting against this is none-trivial,
+		// it is crucial your implementation is protected against brute-force attacks with login throttling etc.
+		// If emails/usernames are public, you may outright tell the user that the username is invalid.
 		return new Response("Invalid email or password", {
 			status: 400
 		});

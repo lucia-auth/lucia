@@ -28,6 +28,7 @@ app.use("*", (c, next) => {
 		return next();
 	}
 	const originHeader = c.req.headers.get("Origin");
+	// NOTE: You may need to use `X-Forwarded-Host` instead
 	const hostHeader = c.req.headers.get("Host");
 	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 		return c.body(null, 403);

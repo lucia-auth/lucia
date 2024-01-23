@@ -20,6 +20,7 @@ app.use((req, res, next) => {
 		return next();
 	}
 	const originHeader = req.headers.origin ?? null;
+	// NOTE: You may need to use `X-Forwarded-Host` instead
 	const hostHeader = req.headers.host ?? null;
 	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 		return res.status(403).end();

@@ -123,7 +123,7 @@ export const actions: Actions = {
 			...sessionCookie.attributes
 		});
 
-		 redirect(302, "/");
+		redirect(302, "/");
 	}
 };
 ```
@@ -198,6 +198,15 @@ export const actions: Actions = {
 			.where("username", "=", username.toLowerCase())
 			.get();
 		if (!existingUser) {
+			// NOTE:
+			// Returning immediately allows malicious actors to figure out valid usernames from response times,
+			// allowing them to only focus on guessing passwords in brute-force attacks.
+			// As a preventive measure, you may want to hash passwords even for invalid usernames.
+			// However, valid usernames can be already be revealed with the signup page among other methods.
+			// It will also be much more resource intensive.
+			// Since protecting against this is none-trivial,
+			// it is crucial your implementation is protected against brute-force attacks with login throttling etc.
+			// If usernames are public, you may outright tell the user that the username is invalid.
 			return fail(400, {
 				message: "Incorrect username or password"
 			});
@@ -217,7 +226,7 @@ export const actions: Actions = {
 			...sessionCookie.attributes
 		});
 
-		 redirect(302, "/");
+		redirect(302, "/");
 	}
 };
 ```
@@ -231,7 +240,7 @@ You can validate requests by checking `locals.user`. The field `user.username` i
 import type { PageServerLoad, Actions } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user)  redirect(302, "/login");
+	if (!event.locals.user) redirect(302, "/login");
 	return {
 		username: event.locals.user.username
 	};
@@ -264,7 +273,7 @@ export const actions: Actions = {
 			path: ".",
 			...sessionCookie.attributes
 		});
-		 redirect(302, "/login");
+		redirect(302, "/login");
 	}
 };
 ```

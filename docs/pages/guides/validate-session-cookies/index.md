@@ -16,15 +16,16 @@ This guide is also available for:
 - [SolidStart](/guides/validate-session-cookies/solidstart)
 - [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
-**CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header.
+**CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header. 
 
 For non-GET requests, check the request origin. You can use `readSessionCookie()` to get the session cookie from a HTTP `Cookie` header, and validate it with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
 ```ts
 import { verifyRequestOrigin } from "lucia";
 
-// only required in non-GET requests (POST, PUT, DELETE, PATCH, etc)
+// Only required in non-GET requests (POST, PUT, DELETE, PATCH, etc)
 const originHeader = request.headers.get("Origin");
+// NOTE: You may need to use `X-Forwarded-Host` instead
 const hostHeader = request.headers.get("Host");
 if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 	return new Response(null, {

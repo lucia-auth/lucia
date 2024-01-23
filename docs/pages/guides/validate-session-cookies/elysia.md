@@ -24,6 +24,7 @@ const app = new Elysia().derive(
 		// CSRF check
 		if (context.request.method !== "GET") {
 			const originHeader = context.request.headers.get("Origin");
+			// NOTE: You may need to use `X-Forwarded-Host` instead
 			const hostHeader = context.request.headers.get("Host");
 			if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 				return {
