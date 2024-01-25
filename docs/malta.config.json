@@ -9,7 +9,8 @@
 			"pages": [
 				["Getting-started", "/getting-started"],
 				["Database", "/database"],
-				["Upgrade to v3", "/upgrade-v3"]
+				["Upgrade to v3", "/upgrade-v3"],
+				["v3 documentation", "https://v2.lucia-auth.com"]
 			]
 		},
 		{
