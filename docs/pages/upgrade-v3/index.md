@@ -177,3 +177,17 @@ Refer to these guides:
 
 - [Upgrade OAuth setup to v3](/upgrade-v3/oauth)
 - [Upgrade Password-based auth to v3](/upgrade-v3/password)
+
+## Next.js
+
+If you installed Oslo, mark its dependencies as external to prevent it from getting bundled. This is only required when using the `oslo/password` module.
+
+```ts
+// next.config.ts
+const nextConfig = {
+	webpack: (config) => {
+		config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
+		return config;
+	}
+};
+```

@@ -58,7 +58,7 @@ node --experimental-web-crypto index.js
 
 ## Update configuration
 
-If you've installed Oslo, we recommend marking its dependencies as external to prevent it from getting bundled. This is only required when using the `oslo/password` module.
+If you've installed Oslo, mark its dependencies as external to prevent it from getting bundled. This is only required when using the `oslo/password` module.
 
 ```ts
 // next.config.ts
