@@ -1,19 +1,19 @@
 # `@lucia-auth/adapter-mongodb`
 
-[MongoDB](https://mongodb.com) adapter for Lucia v3.
+[MongoDB](https://mongodb.com) adapter for Lucia. Can also be used with [Mongoose](https://github.com/Automattic/mongoose).
 
-**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-mongodb)**
+**[Documentation](https://lucia-auth.com/database/mongodb)**
 
-**[Lucia documentation](https://v3.lucia-auth.com)**
+**[Lucia documentation](https://lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-mongodb/CHANGELOG.md)**
 
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-mongodb@beta
-pnpm add @lucia-auth/adapter-mongodb@beta
-yarn add @lucia-auth/adapter-mongodb@beta
+npm install @lucia-auth/adapter-mongodb
+pnpm add @lucia-auth/adapter-mongodb
+yarn add @lucia-auth/adapter-mongodb
 ```
 
 ## Testing

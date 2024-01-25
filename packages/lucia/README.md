@@ -1,6 +1,6 @@
 # `lucia`
 
-A simple authentication library for managing users and sessions.
+An open source auth library that abstracts away the complexity of handling sessions. It works alongside your database to provide an API that's easy to use, understand, and extend.
 
 **[Documentation](https://lucia-auth.com)**
 
@@ -9,7 +9,7 @@ A simple authentication library for managing users and sessions.
 ## Installation
 
 ```
-npm install lucia@beta
-pnpm add lucia@beta
-yarn add lucia@beta
+npm install lucia
+pnpm add lucia
+yarn add lucia
 ```

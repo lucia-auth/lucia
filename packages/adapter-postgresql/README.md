@@ -1,10 +1,10 @@
 # `@lucia-auth/adapter-postgresql`
 
-PostgreSQL adapter for Lucia v3.
+PostgreSQL adapter for Lucia.
 
-**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-postgresql)**
+**[Documentation](https://lucia-auth.com/database/postgresql)**
 
-**[Lucia documentation](https://v3.lucia-auth.com)**
+**[Lucia documentation](https://lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-postgresql/CHANGELOG.md)**
 
@@ -16,9 +16,9 @@ PostgreSQL adapter for Lucia v3.
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-postgresql@beta
-pnpm add @lucia-auth/adapter-postgresql@beta
-yarn add @lucia-auth/adapter-postgresql@beta
+npm install @lucia-auth/adapter-postgresql
+pnpm add @lucia-auth/adapter-postgresql
+yarn add @lucia-auth/adapter-postgresql
 ```
 
 ## Testing
