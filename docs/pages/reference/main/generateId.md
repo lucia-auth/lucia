@@ -19,7 +19,7 @@ function generateId(length: number): string;
 ## Example
 
 ```ts
-import { generateId } from "oslo/random";
+import { generateId } from "lucia";
 
 // 10-characters long string
 generateId(10);

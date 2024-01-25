@@ -1,7 +1,6 @@
 import { encodeHex, decodeHex } from "oslo/encoding";
-import { constantTimeEqual } from "oslo/crypto";
+import { constantTimeEqual, generateRandomString, alphabet } from "oslo/crypto";
 import { scrypt } from "./scrypt/index.js";
-import { alphabet, generateRandomString } from "oslo/random";
 
 import type { PasswordHashingAlgorithm } from "oslo/password";
 

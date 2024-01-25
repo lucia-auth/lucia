@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { scrypt } from "./index.js";
 import { scryptSync as nodeScrypt } from "node:crypto";
-import { generateRandomString, alphabet } from "oslo/random";
+import { generateRandomString, alphabet } from "oslo/crypto";
 import { encodeHex } from "oslo/encoding";
 
 test("scrypt() output matches crypto", async () => {

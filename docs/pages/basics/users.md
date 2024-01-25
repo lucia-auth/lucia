@@ -24,10 +24,10 @@ await db.createUser({
 });
 ```
 
-Use Oslo's [`generateRandomString()`](https://oslo.js.org/reference/random/generateRandomString) if you're looking for a more customizable option.
+Use Oslo's [`generateRandomString()`](https://oslo.js.org/reference/crypto/generateRandomString) if you're looking for a more customizable option.
 
 ```ts
-import { generateRandomString, alphabet } from "oslo/random";
+import { generateRandomString, alphabet } from "oslo/crypto";
 
 await db.createUser({
 	id: generateRandomString(15, alphabet("a-z", "A-Z", "0-9"))

@@ -1,5 +1,5 @@
 import { Adapter, DatabaseSession, DatabaseUser } from "lucia";
-import { generateRandomString, alphabet } from "oslo/random";
+import { generateRandomString, alphabet } from "oslo/crypto";
 import assert from "node:assert/strict";
 
 export const databaseUser: DatabaseUser = {

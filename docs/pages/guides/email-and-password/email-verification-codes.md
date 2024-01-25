@@ -56,7 +56,7 @@ The code should be valid for few minutes and linked to a single email.
 
 ```ts
 import { TimeSpan, createDate } from "oslo";
-import { generateRandomString, alphabet } from "oslo/random";
+import { generateRandomString, alphabet } from "oslo/crypto";
 
 async function generateEmailVerificationCode(userId: string, email: string): Promise<string> {
 	await db.table("email_verification_code").where("user_id", "=", userId).deleteAll();

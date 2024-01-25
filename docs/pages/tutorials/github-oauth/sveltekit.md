@@ -118,7 +118,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		sameSite: "lax"
 	});
 
-	 redirect(302, url.toString());
+	redirect(302, url.toString());
 }
 ```
 
@@ -210,7 +210,7 @@ You can validate requests by checking `locals.user`. The field `user.username` i
 import type { PageServerLoad, Actions } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
-	if (!event.locals.user)  redirect(302, "/login");
+	if (!event.locals.user) redirect(302, "/login");
 	return {
 		username: event.locals.user.username
 	};
@@ -243,7 +243,7 @@ export const actions: Actions = {
 			path: ".",
 			...sessionCookie.attributes
 		});
-		 redirect(302, "/login");
+		redirect(302, "/login");
 	}
 };
 ```
