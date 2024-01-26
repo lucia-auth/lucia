@@ -4,6 +4,4 @@ title: "Improving sessions"
 
 # Improving sessions
 
-```
-still working on this one!
-```
+_Work in progress_
