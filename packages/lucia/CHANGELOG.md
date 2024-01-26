@@ -1,5 +1,11 @@
 # lucia
 
+## 2.7.6
+
+### Patch changes
+
+- [#1309](https://github.com/lucia-auth/lucia/pull/1309) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `setCookie()` method in SvelteKit middleware
+
 ## 2.7.5
 
 ### Patch changes
