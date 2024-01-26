@@ -1,5 +1,11 @@
 # @lucia-auth/oauth
 
+## 3.5.3
+
+### Patch changes
+
+- [#1353](https://github.com/lucia-auth/lucia/pull/1353) by [@xyassini](https://github.com/xyassini) : Fixed the endpoint used for exchanging authorization codes for the Atlassian provider
+
 ## 3.5.2
 
 ### Patch changes
