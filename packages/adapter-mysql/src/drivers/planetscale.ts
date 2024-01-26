@@ -3,7 +3,7 @@ import { MySQLAdapter } from "../base.js";
 import type { Controller, TableNames } from "../base.js";
 import type { Connection } from "@planetscale/database";
 
-export class PlanetScaleAdapter extends MySQLAdapter {
+export class PlanetScaleAdapter<TUserId> extends MySQLAdapter<TUserId> {
 	constructor(connection: Connection, tableNames: TableNames) {
 		super(new PlanetScaleController(connection), tableNames);
 	}

@@ -3,7 +3,7 @@ import { MySQLAdapter } from "../base.js";
 import type { Controller, TableNames } from "../base.js";
 import type { Pool, Connection } from "mysql2/promise";
 
-export class Mysql2Adapter extends MySQLAdapter {
+export class Mysql2Adapter<TUserId> extends MySQLAdapter<TUserId> {
 	constructor(connection: Pool | Connection, tableNames: TableNames) {
 		super(new Mysql2Controller(connection), tableNames);
 	}
