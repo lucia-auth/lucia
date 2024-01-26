@@ -4,16 +4,16 @@ import type { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import type { MySqlColumn, MySqlDatabase, MySqlTableWithColumns } from "drizzle-orm/mysql-core";
 import type { InferSelectModel } from "drizzle-orm";
 
-export class DrizzleMySQLAdapter implements Adapter {
+export class DrizzleMySQLAdapter<TUserId> implements Adapter<TUserId> {
 	private db: MySqlDatabase<any, any>;
 
-	private sessionTable: MySQLSessionTable;
-	private userTable: MySQLUserTable;
+	private sessionTable: MySQLSessionTable<TUserId>;
+	private userTable: MySQLUserTable<TUserId>;
 
 	constructor(
 		db: MySqlDatabase<any, any>,
-		sessionTable: MySQLSessionTable,
-		userTable: MySQLUserTable
+		sessionTable: MySQLSessionTable<TUserId>,
+		userTable: MySQLUserTable<TUserId>
 	) {
 		this.db = db;
 		this.sessionTable = sessionTable;
@@ -24,13 +24,13 @@ export class DrizzleMySQLAdapter implements Adapter {
 		await this.db.delete(this.sessionTable).where(eq(this.sessionTable.id, sessionId));
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: TUserId): Promise<void> {
 		await this.db.delete(this.sessionTable).where(eq(this.sessionTable.userId, userId));
 	}
 
 	public async getSessionAndUser(
 		sessionId: string
-	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+	): Promise<[session: DatabaseSession<TUserId> | null, user: DatabaseUser<TUserId> | null]> {
 		const [databaseSession, databaseUser] = await Promise.all([
 			this.getSession(sessionId),
 			this.getUserFromSessionId(sessionId)
@@ -38,7 +38,7 @@ export class DrizzleMySQLAdapter implements Adapter {
 		return [databaseSession, databaseUser];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: TUserId): Promise<DatabaseSession<TUserId>[]> {
 		const result = await this.db
 			.select()
 			.from(this.sessionTable)
@@ -48,7 +48,7 @@ export class DrizzleMySQLAdapter implements Adapter {
 		});
 	}
 
-	public async setSession(session: DatabaseSession): Promise<void> {
+	public async setSession(session: DatabaseSession<TUserId>): Promise<void> {
 		await this.db.insert(this.sessionTable).values({
 			id: session.id,
 			userId: session.userId,
@@ -70,7 +70,7 @@ export class DrizzleMySQLAdapter implements Adapter {
 		await this.db.delete(this.sessionTable).where(lte(this.sessionTable.expiresAt, new Date()));
 	}
 
-	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
+	private async getSession(sessionId: string): Promise<DatabaseSession<TUserId> | null> {
 		const result = await this.db
 			.select()
 			.from(this.sessionTable)
@@ -79,7 +79,7 @@ export class DrizzleMySQLAdapter implements Adapter {
 		return transformIntoDatabaseSession(result[0]);
 	}
 
-	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
+	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser<TUserId> | null> {
 		const { _, $inferInsert, $inferSelect, getSQL, ...userColumns } = this.userTable;
 		const result = await this.db
 			.select(userColumns)
@@ -91,7 +91,7 @@ export class DrizzleMySQLAdapter implements Adapter {
 	}
 }
 
-export type MySQLUserTable = MySqlTableWithColumns<{
+export type MySQLUserTable<TUserId> = MySqlTableWithColumns<{
 	dialect: "mysql";
 	columns: {
 		id: MySqlColumn<
@@ -100,7 +100,7 @@ export type MySQLUserTable = MySqlTableWithColumns<{
 				tableName: any;
 				dataType: any;
 				columnType: any;
-				data: string;
+				data: TUserId;
 				driverParam: any;
 				notNull: true;
 				hasDefault: boolean; // must be boolean instead of any to allow default values
@@ -114,7 +114,7 @@ export type MySQLUserTable = MySqlTableWithColumns<{
 	name: any;
 }>;
 
-export type MySQLSessionTable = MySqlTableWithColumns<{
+export type MySQLSessionTable<TUserId> = MySqlTableWithColumns<{
 	dialect: "mysql";
 	columns: {
 		id: MySqlColumn<
@@ -152,7 +152,7 @@ export type MySQLSessionTable = MySqlTableWithColumns<{
 				enumValues: any;
 				tableName: any;
 				columnType: any;
-				data: string;
+				data: TUserId;
 				driverParam: any;
 				hasDefault: false;
 				name: any;
@@ -164,7 +164,9 @@ export type MySQLSessionTable = MySqlTableWithColumns<{
 	name: any;
 }>;
 
-function transformIntoDatabaseSession(raw: InferSelectModel<MySQLSessionTable>): DatabaseSession {
+function transformIntoDatabaseSession<TUserId>(
+	raw: InferSelectModel<MySQLSessionTable<TUserId>>
+): DatabaseSession<TUserId> {
 	const { id, userId, expiresAt, ...attributes } = raw;
 	return {
 		userId,
@@ -174,7 +176,9 @@ function transformIntoDatabaseSession(raw: InferSelectModel<MySQLSessionTable>):
 	};
 }
 
-function transformIntoDatabaseUser(raw: InferSelectModel<MySQLUserTable>): DatabaseUser {
+function transformIntoDatabaseUser<TUserId>(
+	raw: InferSelectModel<MySQLUserTable<TUserId>>
+): DatabaseUser<TUserId> {
 	const { id, ...attributes } = raw;
 	return {
 		id,

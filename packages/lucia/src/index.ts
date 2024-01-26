@@ -21,7 +21,7 @@ export interface Register {}
 export type RegisteredLucia = Register extends {
 	Lucia: infer _Lucia;
 }
-	? _Lucia extends Lucia<any, any>
+	? _Lucia extends Lucia<any, any, any>
 		? _Lucia
 		: Lucia
 	: Lucia;

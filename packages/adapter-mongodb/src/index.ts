@@ -19,7 +19,8 @@ interface SessionDoc extends RegisteredDatabaseSessionAttributes {
 	expires_at: Date;
 }
 
-export class MongodbAdapter implements Adapter {
+// Mongodb's _id might be string
+export class MongodbAdapter implements Adapter<string> {
 	private Session: Collection<SessionDoc>;
 	private User: Collection<UserDoc>;
 
@@ -38,7 +39,7 @@ export class MongodbAdapter implements Adapter {
 
 	public async getSessionAndUser(
 		sessionId: string
-	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+	): Promise<[session: DatabaseSession<string> | null, user: DatabaseUser<string> | null]> {
 		const sessionUsers = await this.Session.aggregate([
 			{ $match: { _id: sessionId } },
 			{
@@ -64,7 +65,7 @@ export class MongodbAdapter implements Adapter {
 		return [session, user];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: string): Promise<DatabaseSession<string>[]> {
 		const sessions = await this.Session.find(
 			{ user_id: userId },
 			{
@@ -80,7 +81,7 @@ export class MongodbAdapter implements Adapter {
 		return sessions.map((val) => transformIntoDatabaseSession(val));
 	}
 
-	public async setSession(session: DatabaseSession): Promise<void> {
+	public async setSession(session: DatabaseSession<string>): Promise<void> {
 		const value: SessionDoc = {
 			_id: session.id,
 			user_id: session.userId,
@@ -104,7 +105,7 @@ export class MongodbAdapter implements Adapter {
 	}
 }
 
-function transformIntoDatabaseUser(value: UserDoc): DatabaseUser {
+function transformIntoDatabaseUser(value: UserDoc): DatabaseUser<string> {
 	delete value.__v;
 	const { _id: id, ...attributes } = value;
 	return {
@@ -113,7 +114,7 @@ function transformIntoDatabaseUser(value: UserDoc): DatabaseUser {
 	};
 }
 
-function transformIntoDatabaseSession(value: SessionDoc): DatabaseSession {
+function transformIntoDatabaseSession(value: SessionDoc): DatabaseSession<string> {
 	delete value.__v;
 	const { _id: id, user_id: userId, expires_at: expiresAt, ...attributes } = value;
 	return {

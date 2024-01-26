@@ -6,7 +6,7 @@ import type {
 	RegisteredDatabaseUserAttributes
 } from "lucia";
 
-export class PostgreSQLAdapter implements Adapter {
+export class PostgreSQLAdapter<TUserId> implements Adapter<TUserId> {
 	private controller: Controller;
 
 	private escapedUserTableName: string;
@@ -24,7 +24,7 @@ export class PostgreSQLAdapter implements Adapter {
 		]);
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: TUserId): Promise<void> {
 		await this.controller.execute(
 			`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = $1`,
 			[userId]
@@ -33,7 +33,7 @@ export class PostgreSQLAdapter implements Adapter {
 
 	public async getSessionAndUser(
 		sessionId: string
-	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+	): Promise<[session: DatabaseSession<TUserId> | null, user: DatabaseUser<TUserId> | null]> {
 		const [databaseSession, databaseUser] = await Promise.all([
 			this.getSession(sessionId),
 			this.getUserFromSessionId(sessionId)
@@ -41,8 +41,8 @@ export class PostgreSQLAdapter implements Adapter {
 		return [databaseSession, databaseUser];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
-		const result = await this.controller.getAll<SessionSchema>(
+	public async getUserSessions(userId: TUserId): Promise<DatabaseSession<TUserId>[]> {
+		const result = await this.controller.getAll<SessionSchema<TUserId>>(
 			`SELECT * FROM ${this.escapedSessionTableName} WHERE user_id = $1`,
 			[userId]
 		);
@@ -51,8 +51,8 @@ export class PostgreSQLAdapter implements Adapter {
 		});
 	}
 
-	public async setSession(databaseSession: DatabaseSession): Promise<void> {
-		const value: SessionSchema = {
+	public async setSession(databaseSession: DatabaseSession<TUserId>): Promise<void> {
+		const value: SessionSchema<TUserId> = {
 			id: databaseSession.id,
 			user_id: databaseSession.userId,
 			expires_at: databaseSession.expiresAt,
@@ -86,8 +86,8 @@ export class PostgreSQLAdapter implements Adapter {
 		);
 	}
 
-	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
-		const result = await this.controller.get<SessionSchema>(
+	private async getSession(sessionId: string): Promise<DatabaseSession<TUserId> | null> {
+		const result = await this.controller.get<SessionSchema<TUserId>>(
 			`SELECT * FROM ${this.escapedSessionTableName} WHERE id = $1`,
 			[sessionId]
 		);
@@ -95,8 +95,8 @@ export class PostgreSQLAdapter implements Adapter {
 		return transformIntoDatabaseSession(result);
 	}
 
-	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
-		const result = await this.controller.get<UserSchema>(
+	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser<TUserId> | null> {
+		const result = await this.controller.get<UserSchema<TUserId>>(
 			`SELECT ${this.escapedUserTableName}.* FROM ${this.escapedSessionTableName} INNER JOIN ${this.escapedUserTableName} ON ${this.escapedUserTableName}.id = ${this.escapedSessionTableName}.user_id WHERE ${this.escapedSessionTableName}.id = $1`,
 			[sessionId]
 		);
@@ -116,17 +116,19 @@ export interface Controller {
 	getAll<T extends {}>(sql: string, args?: any[]): Promise<T[]>;
 }
 
-interface SessionSchema extends RegisteredDatabaseSessionAttributes {
+interface SessionSchema<TUserId> extends RegisteredDatabaseSessionAttributes {
 	id: string;
-	user_id: string;
+	user_id: TUserId;
 	expires_at: Date;
 }
 
-interface UserSchema extends RegisteredDatabaseUserAttributes {
-	id: string;
+interface UserSchema<TUserId> extends RegisteredDatabaseUserAttributes {
+	id: TUserId;
 }
 
-function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
+function transformIntoDatabaseSession<TUserId>(
+	raw: SessionSchema<TUserId>
+): DatabaseSession<TUserId> {
 	const { id, user_id: userId, expires_at: expiresAt, ...attributes } = raw;
 	return {
 		userId,
@@ -136,7 +138,7 @@ function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
 	};
 }
 
-function transformIntoDatabaseUser(raw: UserSchema): DatabaseUser {
+function transformIntoDatabaseUser<TUserId>(raw: UserSchema<TUserId>): DatabaseUser<TUserId> {
 	const { id, ...attributes } = raw;
 	return {
 		id,

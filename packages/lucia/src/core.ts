@@ -19,22 +19,23 @@ type UserAttributes = RegisteredLucia extends Lucia<any, infer _UserAttributes>
 	? _UserAttributes
 	: {};
 
-export interface Session extends SessionAttributes {
+export interface Session<TUserId> extends SessionAttributes {
 	id: string;
 	expiresAt: Date;
 	fresh: boolean;
-	userId: string;
+	userId: TUserId;
 }
 
-export interface User extends UserAttributes {
-	id: string;
+export interface User<TUserId> extends UserAttributes {
+	id: TUserId;
 }
 
 export class Lucia<
+	_TUserId = any,
 	_SessionAttributes extends {} = Record<never, never>,
 	_UserAttributes extends {} = Record<never, never>
 > {
-	private adapter: Adapter;
+	private adapter: Adapter<any>;
 	private sessionExpiresIn: TimeSpan;
 	private sessionCookieController: CookieController;
 
@@ -49,7 +50,7 @@ export class Lucia<
 	public readonly sessionCookieName: string;
 
 	constructor(
-		adapter: Adapter,
+		adapter: Adapter<_TUserId>,
 		options?: {
 			sessionExpiresIn?: TimeSpan;
 			sessionCookie?: SessionCookieOptions;
@@ -98,9 +99,9 @@ export class Lucia<
 		);
 	}
 
-	public async getUserSessions(userId: string): Promise<Session[]> {
+	public async getUserSessions(userId: _TUserId): Promise<Session<_TUserId>[]> {
 		const databaseSessions = await this.adapter.getUserSessions(userId);
-		const sessions: Session[] = [];
+		const sessions: Session<_TUserId>[] = [];
 		for (const databaseSession of databaseSessions) {
 			if (!isWithinExpirationDate(databaseSession.expiresAt)) {
 				continue;
@@ -118,7 +119,7 @@ export class Lucia<
 
 	public async validateSession(
 		sessionId: string
-	): Promise<{ user: User; session: Session } | { user: null; session: null }> {
+	): Promise<{ user: User<_TUserId>; session: Session<_TUserId> } | { user: null; session: null }> {
 		const [databaseSession, databaseUser] = await this.adapter.getSessionAndUser(sessionId);
 		if (!databaseSession) {
 			return { session: null, user: null };
@@ -134,7 +135,7 @@ export class Lucia<
 		const activePeriodExpirationDate = new Date(
 			databaseSession.expiresAt.getTime() - this.sessionExpiresIn.milliseconds() / 2
 		);
-		const session: Session = {
+		const session: Session<_TUserId> = {
 			...this.getSessionAttributes(databaseSession.attributes),
 			id: databaseSession.id,
 			userId: databaseSession.userId,
@@ -146,7 +147,7 @@ export class Lucia<
 			session.expiresAt = createDate(this.sessionExpiresIn);
 			await this.adapter.updateSessionExpiration(databaseSession.id, session.expiresAt);
 		}
-		const user: User = {
+		const user: User<_TUserId> = {
 			...this.getUserAttributes(databaseUser.attributes),
 			id: databaseUser.id
 		};
@@ -154,12 +155,12 @@ export class Lucia<
 	}
 
 	public async createSession(
-		userId: string,
+		userId: _TUserId,
 		attributes: RegisteredDatabaseSessionAttributes,
 		options?: {
 			sessionId?: string;
 		}
-	): Promise<Session> {
+	): Promise<Session<_TUserId>> {
 		const sessionId = options?.sessionId ?? generateId(40);
 		const sessionExpiresAt = createDate(this.sessionExpiresIn);
 		await this.adapter.setSession({
@@ -168,7 +169,7 @@ export class Lucia<
 			expiresAt: sessionExpiresAt,
 			attributes
 		});
-		const session: Session = {
+		const session: Session<_TUserId> = {
 			id: sessionId,
 			userId,
 			fresh: true,

@@ -6,7 +6,10 @@ import type {
 	RegisteredDatabaseUserAttributes
 } from "lucia";
 
-export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapter {
+/**
+ * IDK how should i play with prisma now, so i just leave it here
+ */
+export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapter<string> {
 	private sessionModel: PrismaModel<SessionSchema>;
 	private userModel: PrismaModel<UserSchema>;
 
@@ -37,7 +40,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 
 	public async getSessionAndUser(
 		sessionId: string
-	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+	): Promise<[session: DatabaseSession<string> | null, user: DatabaseUser<string> | null]> {
 		const userModelKey = this.userModel.name[0].toLowerCase() + this.userModel.name.slice(1);
 		const result = await this.sessionModel.findUnique<{
 			// this is a lie to make TS shut up
@@ -56,7 +59,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 		return [transformIntoDatabaseSession(result), transformIntoDatabaseUser(userResult)];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: string): Promise<DatabaseSession<string>[]> {
 		const result = await this.sessionModel.findMany({
 			where: {
 				userId
@@ -65,7 +68,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 		return result.map(transformIntoDatabaseSession);
 	}
 
-	public async setSession(value: DatabaseSession): Promise<void> {
+	public async setSession(value: DatabaseSession<string>): Promise<void> {
 		await this.sessionModel.create({
 			data: {
 				id: value.id,
@@ -98,7 +101,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 	}
 }
 
-function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
+function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession<string> {
 	const { id, userId, expiresAt, ...attributes } = raw;
 	return {
 		id,
@@ -108,7 +111,7 @@ function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
 	};
 }
 
-function transformIntoDatabaseUser(raw: UserSchema): DatabaseUser {
+function transformIntoDatabaseUser(raw: UserSchema): DatabaseUser<string> {
 	const { id, ...attributes } = raw;
 	return {
 		id,

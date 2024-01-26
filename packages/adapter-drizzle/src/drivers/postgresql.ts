@@ -4,16 +4,16 @@ import type { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 import type { PgColumn, PgDatabase, PgTableWithColumns } from "drizzle-orm/pg-core";
 import type { InferSelectModel } from "drizzle-orm";
 
-export class DrizzlePostgreSQLAdapter implements Adapter {
+export class DrizzlePostgreSQLAdapter<TUserId> implements Adapter<TUserId> {
 	private db: PgDatabase<any, any>;
 
-	private sessionTable: PostgreSQLSessionTable;
-	private userTable: PostgreSQLUserTable;
+	private sessionTable: PostgreSQLSessionTable<TUserId>;
+	private userTable: PostgreSQLUserTable<TUserId>;
 
 	constructor(
 		db: PgDatabase<any, any>,
-		sessionTable: PostgreSQLSessionTable,
-		userTable: PostgreSQLUserTable
+		sessionTable: PostgreSQLSessionTable<TUserId>,
+		userTable: PostgreSQLUserTable<TUserId>
 	) {
 		this.db = db;
 		this.sessionTable = sessionTable;
@@ -24,13 +24,13 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 		await this.db.delete(this.sessionTable).where(eq(this.sessionTable.id, sessionId));
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: TUserId): Promise<void> {
 		await this.db.delete(this.sessionTable).where(eq(this.sessionTable.userId, userId));
 	}
 
 	public async getSessionAndUser(
 		sessionId: string
-	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+	): Promise<[session: DatabaseSession<TUserId> | null, user: DatabaseUser<TUserId> | null]> {
 		const [databaseSession, databaseUser] = await Promise.all([
 			this.getSession(sessionId),
 			this.getUserFromSessionId(sessionId)
@@ -38,7 +38,7 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 		return [databaseSession, databaseUser];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: TUserId): Promise<DatabaseSession<TUserId>[]> {
 		const result = await this.db
 			.select()
 			.from(this.sessionTable)
@@ -48,7 +48,7 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 		});
 	}
 
-	public async setSession(session: DatabaseSession): Promise<void> {
+	public async setSession(session: DatabaseSession<TUserId>): Promise<void> {
 		await this.db.insert(this.sessionTable).values({
 			id: session.id,
 			userId: session.userId,
@@ -70,7 +70,7 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 		await this.db.delete(this.sessionTable).where(lte(this.sessionTable.expiresAt, new Date()));
 	}
 
-	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
+	private async getSession(sessionId: string): Promise<DatabaseSession<TUserId> | null> {
 		const result = await this.db
 			.select()
 			.from(this.sessionTable)
@@ -79,7 +79,7 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 		return transformIntoDatabaseSession(result[0]);
 	}
 
-	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
+	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser<TUserId> | null> {
 		const { _, $inferInsert, $inferSelect, getSQL, ...userColumns } = this.userTable;
 		const result = await this.db
 			.select(userColumns)
@@ -91,7 +91,7 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 	}
 }
 
-export type PostgreSQLUserTable = PgTableWithColumns<{
+export type PostgreSQLUserTable<TUserId> = PgTableWithColumns<{
 	dialect: "pg";
 	columns: {
 		id: PgColumn<
@@ -100,7 +100,7 @@ export type PostgreSQLUserTable = PgTableWithColumns<{
 				tableName: any;
 				dataType: any;
 				columnType: any;
-				data: string;
+				data: TUserId;
 				driverParam: any;
 				notNull: true;
 				hasDefault: boolean; // must be boolean instead of any to allow default values
@@ -114,7 +114,7 @@ export type PostgreSQLUserTable = PgTableWithColumns<{
 	name: any;
 }>;
 
-export type PostgreSQLSessionTable = PgTableWithColumns<{
+export type PostgreSQLSessionTable<TUserId> = PgTableWithColumns<{
 	dialect: "pg";
 	columns: {
 		id: PgColumn<
@@ -152,7 +152,7 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 				enumValues: any;
 				tableName: any;
 				columnType: any;
-				data: string;
+				data: TUserId;
 				driverParam: any;
 				hasDefault: false;
 				name: any;
@@ -164,9 +164,9 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 	name: any;
 }>;
 
-function transformIntoDatabaseSession(
-	raw: InferSelectModel<PostgreSQLSessionTable>
-): DatabaseSession {
+function transformIntoDatabaseSession<TUserId>(
+	raw: InferSelectModel<PostgreSQLSessionTable<TUserId>>
+): DatabaseSession<TUserId> {
 	const { id, userId, expiresAt, ...attributes } = raw;
 	return {
 		userId,
@@ -176,7 +176,9 @@ function transformIntoDatabaseSession(
 	};
 }
 
-function transformIntoDatabaseUser(raw: InferSelectModel<PostgreSQLUserTable>): DatabaseUser {
+function transformIntoDatabaseUser<TUserId>(
+	raw: InferSelectModel<PostgreSQLUserTable<TUserId>>
+): DatabaseUser<TUserId> {
 	const { id, ...attributes } = raw;
 	return {
 		id,
