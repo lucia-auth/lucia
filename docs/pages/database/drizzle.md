@@ -95,7 +95,7 @@ const userTable = sqliteTable("user", {
 	id: text("id").notNull().primaryKey()
 });
 
-const sessionTable = sqliteTable("user_session", {
+const sessionTable = sqliteTable("session", {
 	id: text("id").notNull().primaryKey(),
 	userId: text("user_id")
 		.notNull()
