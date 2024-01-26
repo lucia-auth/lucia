@@ -67,7 +67,7 @@ export class AtlassianAuth<
 			access_token: string;
 			expires_in: number;
 			refresh_token?: string;
-		}>(code, "https://auth.atlassian.com/token", {
+		}>(code, "https://auth.atlassian.com/oauth/token", {
 			clientId: this.config.clientId,
 			redirectUri: this.config.redirectUri,
 			clientPassword: {
