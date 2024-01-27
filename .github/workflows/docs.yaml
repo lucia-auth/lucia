@@ -5,7 +5,7 @@ on:
       - v3
 
 env:
-  CLOUDFLARE_API_TOKEN: ${{secrets.CLOUDFLARE_API_TOKEN}}
+  CLOUDFLARE_API_TOKEN: ${{secrets.CLOUDFLARE_PAGES_API_TOKEN}}
 
 jobs:
   publish-docs:
