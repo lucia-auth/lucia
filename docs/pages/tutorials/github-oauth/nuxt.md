@@ -6,10 +6,10 @@ title: "GitHub OAuth in Nuxt"
 
 Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/nuxt) page.
 
-An [example project](https://github.com/lucia-auth/examples/tree/v3/nuxt/github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/nuxt/github-oauth).
+An [example project](https://github.com/lucia-auth/examples/tree/main/nuxt/github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/nuxt/github-oauth).
 
 ```
-npx degit https://github.com/lucia-auth/examples/tree/v3/nuxt/github-oauth <directory_name>
+npx degit https://github.com/lucia-auth/examples/tree/main/nuxt/github-oauth <directory_name>
 ```
 
 ## Create an OAuth App
