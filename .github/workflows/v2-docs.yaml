@@ -19,3 +19,15 @@ jobs:
         with:
           node-version: 20.5.1
           registry-url: https://registry.npmjs.org
+      - name: Install PNPM
+        run: npm i -g pnpm
+      - name: Install dependencies
+        run: pnpm i
+      - name: Build
+        working-directory: documentation
+        run: pnpm build
+      - name: Install wrangler
+        run: npm i -g wrangler
+      - name: deploy
+        working-directory: documentation
+        run: wrangler pages deploy dist --project-name lucia-v2 --branch v2
