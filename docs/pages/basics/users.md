@@ -57,7 +57,7 @@ You can then include them in the user object with the `getUserAttributes()` conf
 const lucia = new Lucia(adapter, {
 	getUserAttributes: (attributes) => {
 		return {
-			username
+			username: attributes.username
 		};
 	}
 });
