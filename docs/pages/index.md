@@ -22,4 +22,4 @@ await lucia.validateSession(session.id);
 
 Lucia is an open source library released under the MIT license, with the help of [100+ contributors](https://github.com/lucia-auth/lucia/graphs/contributors)! Join us on [Discord](https://discord.com/invite/PwrK3kpVR3) if you have any questions.
 
-> In case you missed the news, we've recently released Lucia 3.0! [Read the announcement]().
+> In case you missed the news, we've recently released Lucia 3.0! [Read the announcement](https://github.com/lucia-auth/lucia/discussions/1361).
