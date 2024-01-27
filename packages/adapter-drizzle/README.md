@@ -2,9 +2,9 @@
 
 [Drizzle ORM](https://orm.drizzle.team) adapter for Lucia.
 
-**[Documentation](https://lucia-auth.com/database/drizzle)**
+**[Documentation](https://v3.lucia-auth.com/database/drizzle)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-drizzle/CHANGELOG.md)**
 

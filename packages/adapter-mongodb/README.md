@@ -2,9 +2,9 @@
 
 [MongoDB](https://mongodb.com) adapter for Lucia. Can also be used with [Mongoose](https://github.com/Automattic/mongoose).
 
-**[Documentation](https://lucia-auth.com/database/mongodb)**
+**[Documentation](https://v3.lucia-auth.com/database/mongodb)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-mongodb/CHANGELOG.md)**
 

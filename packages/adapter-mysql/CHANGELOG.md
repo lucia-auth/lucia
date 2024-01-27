@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-mysql
 
+## 3.0.0
+
+See the [migration guide](https://v3.lucia-auth.com/upgrade-v3/mysql).
+
 ## 2.1.0
 
 ### Minor changes

@@ -1,5 +1,9 @@
 # lucia
 
+## 3.0.0
+
+See the [migration guide](https://v3.lucia-auth.com/upgrade-v3).
+
 ## 2.7.6
 
 ### Patch changes

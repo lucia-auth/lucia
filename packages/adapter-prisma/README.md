@@ -2,9 +2,9 @@
 
 [Prisma](https://www.prisma.io) adapter for Lucia.
 
-**[Documentation](https://lucia-auth.com/database/prisma)**
+**[Documentation](https://v3.lucia-auth.com/database/prisma)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-prisma/CHANGELOG.md)**
 

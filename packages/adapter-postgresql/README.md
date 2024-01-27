@@ -2,9 +2,9 @@
 
 PostgreSQL adapter for Lucia.
 
-**[Documentation](https://lucia-auth.com/database/postgresql)**
+**[Documentation](https://v3.lucia-auth.com/database/postgresql)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-postgresql/CHANGELOG.md)**
 

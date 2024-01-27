@@ -2,7 +2,7 @@
 
 Testing module for Lucia database adapters.
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-test/CHANGELOG.md)**
 
