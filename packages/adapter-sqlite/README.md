@@ -1,16 +1,18 @@
 # `@lucia-auth/adapter-sqlite`
 
-SQLite adapter for Lucia v2.
+SQLite adapter for Lucia.
 
-**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-prisma)**
+**[Documentation](https://v3.lucia-auth.com/database/sqlite)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-sqlite/CHANGELOG.md)**
 
 ## Supported drivers
 
 - [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
+- [`bun:sqlite`](https://bun.sh/docs/api/sqlite)
+- [Cloudflare D1](https://developers.cloudflare.com/d1/)
 - [libSQL](https://github.com/libsql/libsql) (Turso)
 
 ## Installation
@@ -29,25 +31,13 @@ yarn add @lucia-auth/adapter-sqlite
 pnpm test.better-sqlite3
 ```
 
+### Bun SQLite
+
+```
+pnpm test.bun-sqlite
+```
+
 ### Cloudflare D1
-
-Make sure [Wrangler is installed](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
-
-Create a new `d1` database by running:
-
-```ts
-wrangler d1 create <DATABASE_NAME>
-```
-
-This will return the database binding, name, and id. Set those in `.env`:
-
-```bash
-D1_DATABASE_BINDING=""
-D1_DATABASE_NAME=""
-D1_DATABASE_ID=""
-```
-
-Finally, run:
 
 ```
 pnpm test.d1

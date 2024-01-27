@@ -11,28 +11,17 @@ datasource db {
 }
 
 model User {
-  id           String    @id @unique
+  id           String    @id
   username     String    @unique
   auth_session Session[]
-  auth_key     Key[]
 }
 
 model Session {
-  id             String @id @unique
-  user_id        String
-  active_expires BigInt
-  idle_expires   BigInt
-  country        String
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  country   String
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  @@index([user_id])
-}
-
-model Key {
-  id              String  @id @unique
-  hashed_password String?
-  user_id         String
-  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
-
-  @@index([user_id])
+  @@index([userId])
 }

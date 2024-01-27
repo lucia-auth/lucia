@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-postgresql
 
+## 3.0.0
+
+See the [migration guide](https://v3.lucia-auth.com/upgrade-v3/postgresql).
+
 ## 2.0.2
 
 ### Patch changes

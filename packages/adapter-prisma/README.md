@@ -1,10 +1,10 @@
 # `@lucia-auth/adapter-prisma`
 
-[Prisma](https://www.prisma.io) adapter for Lucia v2.
+[Prisma](https://www.prisma.io) adapter for Lucia.
 
-**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-prisma)**
+**[Documentation](https://v3.lucia-auth.com/database/prisma)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-prisma/CHANGELOG.md)**
 
@@ -18,7 +18,7 @@ yarn add @lucia-auth/adapter-prisma
 
 ## Testing
 
-```bash
+```
 pnpm test-setup
 pnpm test
 ```

@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-prisma",
-	"version": "3.0.2",
+	"version": "4.0.0",
 	"description": "Prisma adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"test": "tsx test/index.ts",
+		"test": "tsx tests/prisma.ts",
 		"test-setup": "prisma db push",
 		"auri.build": "pnpm build"
 	},
@@ -41,11 +41,11 @@
 	},
 	"peerDependencies": {
 		"@prisma/client": "^4.2.0 || ^5.0.0",
-		"lucia": "^2.0.0"
+		"lucia": "3.x"
 	},
 	"devDependencies": {
-		"lucia": "latest",
-		"@lucia-auth/adapter-test": "latest",
+		"lucia": "workspace:*",
+		"@lucia-auth/adapter-test": "workspace:*",
 		"@prisma/client": "^5.0.0",
 		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"

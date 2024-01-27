@@ -1,211 +1,29 @@
-import { helper, getSetArgs, escapeName } from "../utils.js";
+import { SQLiteAdapter } from "../base.js";
 
-import type {
-	SessionSchema,
-	Adapter,
-	InitializeAdapter,
-	UserSchema,
-	KeySchema
-} from "lucia";
-import type { Database, SqliteError } from "better-sqlite3";
+import type { Controller, TableNames } from "../base.js";
+import type { Database } from "better-sqlite3";
 
-type BetterSQLiteError = InstanceType<SqliteError>;
-
-export const betterSqlite3Adapter = (
-	db: Database,
-	tables: {
-		user: string;
-		session: string | null;
-		key: string;
+export class BetterSqlite3Adapter extends SQLiteAdapter {
+	constructor(db: Database, tableNames: TableNames) {
+		super(new BetterSqlite3Controller(db), tableNames);
 	}
-): InitializeAdapter<Adapter> => {
-	const transaction = <_Query extends () => any>(query: _Query): void => {
-		try {
-			db.exec("BEGIN TRANSACTION");
-			const result = query();
-			db.exec("COMMIT");
-			return result;
-		} catch (e) {
-			if (db.inTransaction) {
-				db.exec("ROLLBACK");
-			}
-			throw e;
-		}
-	};
+}
 
-	const ESCAPED_USER_TABLE_NAME = escapeName(tables.user);
-	const ESCAPED_SESSION_TABLE_NAME = tables.session
-		? escapeName(tables.session)
-		: null;
-	const ESCAPED_KEY_TABLE_NAME = escapeName(tables.key);
+class BetterSqlite3Controller implements Controller {
+	private db: Database;
+	constructor(db: Database) {
+		this.db = db;
+	}
 
-	return (LuciaError) => {
-		return {
-			getUser: async (userId) => {
-				const result: UserSchema | undefined = db
-					.prepare(`SELECT * FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`)
-					.get(userId);
-				return result ?? null;
-			},
-			setUser: async (user, key) => {
-				const insertUser = () => {
-					const [userFields, userValues, userArgs] = helper(user);
-					db.prepare(
-						`INSERT INTO ${ESCAPED_USER_TABLE_NAME} ( ${userFields} ) VALUES ( ${userValues} )`
-					).run(...userArgs);
-				};
-				if (!key) return insertUser();
-				try {
-					transaction(() => {
-						insertUser();
-						const [keyFields, keyValues, keyArgs] = helper(key);
-						db.prepare(
-							`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${keyFields} ) VALUES ( ${keyValues} )`
-						).run(...keyArgs);
-					});
-				} catch (e) {
-					const error = e as Partial<BetterSQLiteError>;
-					if (
-						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-						error.message?.includes(".id")
-					) {
-						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					}
-					throw e;
-				}
-			},
-			deleteUser: async (userId) => {
-				db.prepare(`DELETE FROM ${ESCAPED_USER_TABLE_NAME} WHERE id = ?`).run(
-					userId
-				);
-			},
-			updateUser: async (userId, partialUser) => {
-				const [fields, values, args] = helper(partialUser);
-				db.prepare(
-					`UPDATE ${ESCAPED_USER_TABLE_NAME} SET ${getSetArgs(
-						fields,
-						values
-					)} WHERE id = ?`
-				).run(...args, userId);
-			},
+	public async get<T>(sql: string, args: any[]): Promise<T | null> {
+		return this.db.prepare(sql).get(...args);
+	}
 
-			getSession: async (sessionId) => {
-				if (!ESCAPED_SESSION_TABLE_NAME) {
-					throw new Error("Session table not defined");
-				}
-				const result: SessionSchema | undefined = db
-					.prepare(`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`)
-					.get(sessionId);
-				return result ?? null;
-			},
-			getSessionsByUserId: async (userId) => {
-				if (!ESCAPED_SESSION_TABLE_NAME) {
-					throw new Error("Session table not defined");
-				}
-				const result: SessionSchema[] = db
-					.prepare(
-						`SELECT * FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
-					)
-					.all(userId);
-				return result;
-			},
-			setSession: async (session) => {
-				if (!ESCAPED_SESSION_TABLE_NAME) {
-					throw new Error("Session table not defined");
-				}
-				try {
-					const [fields, values, args] = helper(session);
-					db.prepare(
-						`INSERT INTO ${ESCAPED_SESSION_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`
-					).run(...args);
-				} catch (e) {
-					const error = e as Partial<BetterSQLiteError>;
-					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					}
-					throw e;
-				}
-			},
-			deleteSession: async (sessionId) => {
-				if (!ESCAPED_SESSION_TABLE_NAME) {
-					throw new Error("Session table not defined");
-				}
-				db.prepare(
-					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE id = ?`
-				).run(sessionId);
-			},
-			deleteSessionsByUserId: async (userId) => {
-				if (!ESCAPED_SESSION_TABLE_NAME) {
-					throw new Error("Session table not defined");
-				}
-				db.prepare(
-					`DELETE FROM ${ESCAPED_SESSION_TABLE_NAME} WHERE user_id = ?`
-				).run(userId);
-			},
-			updateSession: async (sessionId, partialSession) => {
-				if (!ESCAPED_SESSION_TABLE_NAME) {
-					throw new Error("Session table not defined");
-				}
-				const [fields, values, args] = helper(partialSession);
-				db.prepare(
-					`UPDATE ${ESCAPED_SESSION_TABLE_NAME} SET ${getSetArgs(
-						fields,
-						values
-					)} WHERE id = ?`
-				).run(...args, sessionId);
-			},
+	public async getAll<T>(sql: string, args: any[]): Promise<T[]> {
+		return this.db.prepare(sql).all(...args);
+	}
 
-			getKey: async (keyId) => {
-				const result: KeySchema | undefined = db
-					.prepare(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`)
-					.get(keyId);
-				return result ?? null;
-			},
-			getKeysByUserId: async (userId) => {
-				const result: KeySchema[] = db
-					.prepare(`SELECT * FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`)
-					.all(userId);
-				return result;
-			},
-			setKey: async (key) => {
-				try {
-					const [fields, values, args] = helper(key);
-					db.prepare(
-						`INSERT INTO ${ESCAPED_KEY_TABLE_NAME} ( ${fields} ) VALUES ( ${values} )`
-					).run(...args);
-				} catch (e) {
-					const error = e as Partial<BetterSQLiteError>;
-					if (error.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
-						throw new LuciaError("AUTH_INVALID_USER_ID");
-					}
-					if (
-						error.code === "SQLITE_CONSTRAINT_PRIMARYKEY" &&
-						error.message?.includes(".id")
-					) {
-						throw new LuciaError("AUTH_DUPLICATE_KEY_ID");
-					}
-					throw e;
-				}
-			},
-			deleteKey: async (keyId) => {
-				db.prepare(`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE id = ?`).run(
-					keyId
-				);
-			},
-			deleteKeysByUserId: async (userId) => {
-				db.prepare(
-					`DELETE FROM ${ESCAPED_KEY_TABLE_NAME} WHERE user_id = ?`
-				).run(userId);
-			},
-			updateKey: async (keyId, partialKey) => {
-				const [fields, values, args] = helper(partialKey);
-				db.prepare(
-					`UPDATE ${ESCAPED_KEY_TABLE_NAME} SET ${getSetArgs(
-						fields,
-						values
-					)} WHERE id = ?`
-				).run(...args, keyId);
-			}
-		};
-	};
-};
+	public async execute(sql: string, args: any[]): Promise<void> {
+		await this.db.prepare(sql).run(...args);
+	}
+}

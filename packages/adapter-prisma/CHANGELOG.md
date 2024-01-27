@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-prisma
 
+## 4.0.0
+
+See the [migration guide](https://v3.lucia-auth.com/upgrade-v3/prisma).
+
 ## 3.0.2
 
 ### Patch changes

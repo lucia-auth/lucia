@@ -1,17 +1,17 @@
 # `@lucia-auth/adapter-postgresql`
 
-PostgreSQL adapter for Lucia v2.
+PostgreSQL adapter for Lucia.
 
-**[Documentation](https://lucia-auth.com/reference#lucia-authadapter-postgresql)**
+**[Documentation](https://v3.lucia-auth.com/database/postgresql)**
 
-**[Lucia documentation](https://lucia-auth.com)**
+**[Lucia documentation](https://v3.lucia-auth.com)**
 
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-postgresql/CHANGELOG.md)**
 
 ## Supported drivers
 
-- [`pg`](https://github.com/brianc/node-postgres)
-- [`postgres`](https://github.com/porsager/postgres)
+- [node-postgres (`pg`)](https://github.com/brianc/node-postgres)
+- [Postgres.js (`postgres`)](https://github.com/porsager/postgres)
 
 ## Installation
 
@@ -26,17 +26,17 @@ yarn add @lucia-auth/adapter-postgresql
 Set PostgreSQL database connection url in `.env`:
 
 ```bash
-PSQL_DATABASE_URL="postgresql://localhost/lucia"
+POSTGRES_DATABASE_URL="postgresql://localhost/lucia"
 ```
 
-### `pg`
+### node-postgres
 
 ```
-pnpm test.pg
+pnpm test.node-postgres
 ```
 
-### `postgres`
+### Postgres.js
 
 ```
-pnpm test.postgres
+pnpm test.postgresjs
 ```

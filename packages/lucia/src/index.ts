@@ -1,31 +1,39 @@
-export { lucia } from "./auth/index.js";
-export { DEFAULT_SESSION_COOKIE_NAME } from "./auth/cookie.js";
-export { LuciaError } from "./auth/error.js";
-export { createKeyId } from "./auth/database.js";
-
-export type GlobalAuth = Lucia.Auth;
-export type GlobalDatabaseUserAttributes = Lucia.DatabaseUserAttributes;
-export type GlobalDatabaseSessionAttributes = Lucia.DatabaseSessionAttributes;
+export { Lucia } from "./core.js";
+export { Scrypt, LegacyScrypt, generateId } from "./crypto.js";
+export { TimeSpan } from "oslo";
+export { Cookie } from "oslo/cookie";
+export { verifyRequestOrigin } from "oslo/request";
 
 export type {
 	User,
-	Key,
 	Session,
-	Configuration,
-	Env,
-	Auth
-} from "./auth/index.js";
-export type {
-	Adapter,
-	InitializeAdapter,
-	UserAdapter,
-	SessionAdapter
-} from "./auth/adapter.js";
-export type { UserSchema, KeySchema, SessionSchema } from "./auth/database.js";
-export type {
-	RequestContext,
-	Middleware,
-	AuthRequest
-} from "./auth/request.js";
-export type { Cookie } from "./auth/cookie.js";
-export type { LuciaErrorConstructor } from "./auth/error.js";
+	SessionCookieOptions,
+	SessionCookieAttributesOptions
+} from "./core.js";
+export type { DatabaseSession, DatabaseUser, Adapter } from "./database.js";
+export type { PasswordHashingAlgorithm } from "./crypto.js";
+export type { CookieAttributes } from "oslo/cookie";
+
+import type { Lucia } from "./core.js";
+
+export interface Register {}
+
+export type RegisteredLucia = Register extends {
+	Lucia: infer _Lucia;
+}
+	? _Lucia extends Lucia<any, any>
+		? _Lucia
+		: Lucia
+	: Lucia;
+
+export type RegisteredDatabaseUserAttributes = Register extends {
+	DatabaseUserAttributes: infer _DatabaseUserAttributes;
+}
+	? _DatabaseUserAttributes
+	: {};
+
+export type RegisteredDatabaseSessionAttributes = Register extends {
+	DatabaseSessionAttributes: infer _DatabaseSessionAttributes;
+}
+	? _DatabaseSessionAttributes
+	: {};

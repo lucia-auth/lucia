@@ -1,19 +1,44 @@
-export const scrypt = async (
+/*
+The MIT License (MIT)
+
+Copyright (c) 2022 Paul Miller (https://paulmillr.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE. 
+*/
+
+export async function scrypt(
 	password: Uint8Array,
 	salt: Uint8Array,
-	options: ScryptOptions
-): Promise<Uint8Array> => {
+	options: {
+		N: number;
+		r: number;
+		p: number;
+		dkLen?: number;
+		maxmem?: number;
+	}
+): Promise<Uint8Array> {
 	const { N, r, p } = options;
 	const dkLen = options.dkLen ?? 32;
 	const maxmem = 1024 ** 3 + 1024;
 	const blockSize = 128 * r;
 	const blockSize32 = blockSize / 4;
-	if (
-		N <= 1 ||
-		(N & (N - 1)) !== 0 ||
-		N >= 2 ** (blockSize / 8) ||
-		N > 2 ** 32
-	) {
+	if (N <= 1 || (N & (N - 1)) !== 0 || N >= 2 ** (blockSize / 8) || N > 2 ** 32) {
 		throw new Error(
 			"Scrypt: N must be larger than 1, a power of 2, less than 2^(128 * r / 8) and less than 2^32"
 		);
@@ -62,18 +87,20 @@ export const scrypt = async (
 	V.fill(0);
 	tmp.fill(0);
 	return res;
-};
+}
 
-const rotl = (a: number, b: number): number => (a << b) | (a >>> (32 - b));
+function rotl(a: number, b: number): number {
+	return (a << b) | (a >>> (32 - b));
+}
 
-const XorAndSalsa = (
+function XorAndSalsa(
 	prev: Uint32Array,
 	pi: number,
 	input: Uint32Array,
 	ii: number,
 	out: Uint32Array,
 	oi: number
-): void => {
+): void {
 	const y00 = prev[pi++] ^ input[ii++],
 		y01 = prev[pi++] ^ input[ii++];
 	const y02 = prev[pi++] ^ input[ii++],
@@ -156,23 +183,17 @@ const XorAndSalsa = (
 	out[oi++] = (y13 + x13) | 0;
 	out[oi++] = (y14 + x14) | 0;
 	out[oi++] = (y15 + x15) | 0;
-};
+}
 
-const pbkdf2 = async (
+async function pbkdf2(
 	password: Uint8Array,
 	salt: Uint8Array,
 	options: {
 		c: number;
 		dkLen: number;
 	}
-): Promise<Uint8Array> => {
-	const pwKey = await crypto.subtle.importKey(
-		"raw",
-		password,
-		"PBKDF2",
-		false,
-		["deriveBits"]
-	);
+): Promise<Uint8Array> {
+	const pwKey = await crypto.subtle.importKey("raw", password, "PBKDF2", false, ["deriveBits"]);
 	const keyBuffer = await crypto.subtle.deriveBits(
 		{
 			name: "PBKDF2",
@@ -184,15 +205,9 @@ const pbkdf2 = async (
 		options.dkLen * 8
 	);
 	return new Uint8Array(keyBuffer);
-};
+}
 
-const BlockMix = (
-	input: Uint32Array,
-	ii: number,
-	out: Uint32Array,
-	oi: number,
-	r: number
-): void => {
+function BlockMix(input: Uint32Array, ii: number, out: Uint32Array, oi: number, r: number): void {
 	let head = oi + 0;
 	let tail = oi + 16 * r;
 	for (let i = 0; i < 16; i++) out[tail + i] = input[ii + (2 * r - 1) * 16 + i];
@@ -201,44 +216,8 @@ const BlockMix = (
 		if (i > 0) tail += 16;
 		XorAndSalsa(out, head, input, (ii += 16), out, tail);
 	}
-};
+}
 
-const u32 = (arr: Uint8Array): Uint32Array => {
-	return new Uint32Array(
-		arr.buffer,
-		arr.byteOffset,
-		Math.floor(arr.byteLength / 4)
-	);
-};
-
-type ScryptOptions = {
-	N: number;
-	r: number;
-	p: number;
-	dkLen?: number;
-	maxmem?: number;
-};
-
-/*
-The MIT License (MIT)
-
-Copyright (c) 2022 Paul Miller (https://paulmillr.com)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the “Software”), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE. 
-*/
+function u32(arr: Uint8Array): Uint32Array {
+	return new Uint32Array(arr.buffer, arr.byteOffset, Math.floor(arr.byteLength / 4));
+}

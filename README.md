@@ -1,30 +1,22 @@
 # Lucia
 
-Lucia is a simple and flexible user and session management library that provides an
-abstraction layer between your app and your database. It's bare-bones by design, keeping
-everything easy to use and understand.
+Lucia is an auth library written in TypeScript that abstracts away the complexity of handling sessions. It works alongside your database to provide an API that's easy to use, understand, and extend.
 
-### Code sample
-
-Working with Lucia looks something like this. In the code below, you're creating a new user with an email/password method, creating a new session, and creating a cookie that you can set to the user.
+- No more endless configuration and callbacks
+- Fully typed
+- Works in any runtime - Node.js, Bun, Deno, Cloudflare Workers
+- Extensive database support out of the box
 
 ```ts
-const user = await auth.createUser({
-	key: {
-		providerId: "email",
-		providerUserId: email,
-		password
-	},
-	attributes: {
-		email
-	}
-});
-const session = await auth.createSession({
-	userId: user.userId,
-	attributes: {}
-});
-const sessionCookie = auth.createSessionCookie(session);
+import { Lucia } from "lucia";
+
+const lucia = new Lucia(new Adapter(db));
+
+const session = await lucia.createSession(userId, {});
+await lucia.validateSession(session.id);
 ```
+
+Lucia is an open source library released under the MIT license, with the help of [100+ contributors](https://github.com/lucia-auth/lucia/graphs/contributors)!
 
 ## Resources
 
@@ -45,9 +37,3 @@ npm i lucia
 pnpm add lucia
 yarn add lucia
 ```
-
-## Attributions
-
-This project would not have been possible without our contributors, thank you!
-
-Logo by [@dawidmachon](https://github.com/dawidmachon), licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).

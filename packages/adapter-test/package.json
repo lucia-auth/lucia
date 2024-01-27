@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-test",
-	"version": "4.1.1",
+	"version": "5.0.0",
 	"description": "Testing module for Lucia database adapters",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -34,12 +34,13 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^10.0.1",
-		"lucia": "latest"
+		"lucia": "workspace:*"
 	},
 	"peerDependencies": {
-		"lucia": "^2.0.0"
+		"lucia": "3.x"
 	},
 	"dependencies": {
-		"mocha": "^10.2.0"
+		"mocha": "^10.2.0",
+		"oslo": "0.28.2"
 	}
 }

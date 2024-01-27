@@ -13,22 +13,20 @@ body:
       label: Package
       description: What package is affected?
       options:
-        - lucia-auth
-        - ​@lucia-auth/oauth
-        - ​@lucia-auth/tokens
-        - ​@lucia-auth/adapter-mongoose
+        - lucia
+        - ​@lucia-auth/adapter-test
+        - ​@lucia-auth/adapter-mongodb
         - ​@lucia-auth/adapter-mysql
         - ​@lucia-auth/adapter-postgresql
         - ​@lucia-auth/adapter-prisma
         - ​@lucia-auth/adapter-sqlite
-        - ​@lucia-auth/session-adapter-redis
-        - ​@lucia-auth/adapter-test
+        - ​@lucia-auth/session-drizzle
     validations:
       required: true
   - type: textarea
     id: description
     attributes:
       label: Describe the bug
-      description: Also tell us, what was the expected behavior? Reproduction is helpful for weeeird bugs!
+      description: Also tell us, what was the expected behavior? Reproduction will be super helpful!
     validations:
       required: true

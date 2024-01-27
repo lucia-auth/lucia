@@ -1,11 +1,13 @@
 {
 	"compilerOptions": {
+		"baseUrl": ".",
 		"strict": true,
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"target": "ES2022",
 		"outDir": "./dist",
 		"declaration": true,
+		"skipLibCheck": true,
 
 		"noImplicitAny": true,
 		"allowSyntheticDefaultImports": true

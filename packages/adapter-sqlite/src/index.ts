@@ -1,3 +1,4 @@
-export { betterSqlite3Adapter as betterSqlite3 } from "./drivers/better-sqlite3.js";
-export { d1Adapter as d1 } from "./drivers/d1.js";
-export { libsqlAdapter as libsql } from "./drivers/libsql.js";
+export { BetterSqlite3Adapter } from "./drivers/better-sqlite3.js";
+export { D1Adapter } from "./drivers/d1.js";
+export { LibSQLAdapter } from "./drivers/libsql.js";
+export { BunSQLiteAdapter } from "./drivers/bun-sqlite.js";

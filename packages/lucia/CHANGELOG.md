@@ -1,10 +1,8 @@
 # lucia
 
-## 2.7.7
+## 3.0.0
 
-### Patch changes
-
-- [#1359](https://github.com/lucia-auth/lucia/pull/1359) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Allow `SameSite=None` session cookies
+See the [migration guide](https://v3.lucia-auth.com/upgrade-v3).
 
 ## 2.7.6
 

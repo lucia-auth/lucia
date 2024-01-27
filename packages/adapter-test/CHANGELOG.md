@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-test
 
+## 5.0.0
+
+- Update API to support Lucia v3
+
 ## 4.1.1
 
 ### Patch changes

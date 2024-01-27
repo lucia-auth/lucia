@@ -1,11 +1,12 @@
 import { expect, test } from "vitest";
 import { scrypt } from "./index.js";
 import { scryptSync as nodeScrypt } from "node:crypto";
-import { generateRandomString } from "../utils/crypto.js";
+import { generateRandomString, alphabet } from "oslo/crypto";
+import { encodeHex } from "oslo/encoding";
 
 test("scrypt() output matches crypto", async () => {
-	const password = generateRandomString(16);
-	const salt = generateRandomString(16);
+	const password = generateRandomString(16, alphabet("a-z", "A-Z", "0-9"));
+	const salt = encodeHex(crypto.getRandomValues(new Uint8Array(16)));
 	const scryptHash = await scrypt(
 		new TextEncoder().encode(password),
 		new TextEncoder().encode(salt),
