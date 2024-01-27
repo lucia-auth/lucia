@@ -6,10 +6,10 @@ title: "GitHub OAuth in Next.js Pages router"
 
 Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/nextjs-pages) page.
 
-An [example project](https://github.com/lucia-auth/examples/tree/v3/nextjs-pages/github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/nextjs-pages/github-oauth).
+An [example project](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/github-oauth).
 
 ```
-npx degit https://github.com/lucia-auth/examples/tree/v3/nextjs-pages/github-oauth <directory_name>
+npx degit https://github.com/lucia-auth/examples/tree/main/nextjs-pages/github-oauth <directory_name>
 ```
 
 ## Create an OAuth App
