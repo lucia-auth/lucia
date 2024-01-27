@@ -1,4 +1,4 @@
-name: "Deploy v3 docs"
+name: "Publish v3 docs"
 on:
   push:
     branches:
@@ -8,7 +8,8 @@ env:
   CLOUDFLARE_API_TOKEN: ${{secrets.CLOUDFLARE_API_TOKEN}}
 
 jobs:
-  v3-docs:
+  publish-docs:
+    name: Publish docs
     runs-on: ubuntu-latest
     steps:
       - name: setup actions
