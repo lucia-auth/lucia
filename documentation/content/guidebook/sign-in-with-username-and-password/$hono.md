@@ -239,7 +239,7 @@ When logging out users, it's critical that you invalidate the user's session. Th
 ```ts
 import { auth } from "./lucia.js";
 
-app.post("/logout", async (context) => {
+app.get("/logout", async (context) => {
 	const authRequest = auth.handleRequest(context);
 	const session = await authRequest.validate(); // or `authRequest.validateBearerToken()`
 	if (!session) {
