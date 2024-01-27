@@ -1,5 +1,11 @@
 # lucia
 
+## 2.7.7
+
+### Patch changes
+
+- [#1359](https://github.com/lucia-auth/lucia/pull/1359) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Allow `SameSite=None` session cookies
+
 ## 2.7.6
 
 ### Patch changes
