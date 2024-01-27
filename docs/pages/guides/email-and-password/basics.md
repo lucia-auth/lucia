@@ -47,7 +47,7 @@ declare module "lucia" {
 
 ## Email check
 
-Before creating routes, create a basic utility to verify emails. Emails are notoriously complicated, so here we're just checking if an `@` exists with at least 1 character on each side. We just need to check for obvious typos here. For verifying emails, see the [email verification]() page.
+Before creating routes, create a basic utility to verify emails. Emails are notoriously complicated, so here we're just checking if an `@` exists with at least 1 character on each side. We just need to check for obvious typos here. For verifying emails, see one of the email verification guides.
 
 ```ts
 export function isValidEmail(email: string): boolean {

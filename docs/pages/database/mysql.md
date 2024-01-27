@@ -10,7 +10,7 @@ title: "MySQL"
 - PlanetScale serverless
 
 ```
-npm install @lucia-auth/adapter-mysql@beta
+npm install @lucia-auth/adapter-mysql
 ```
 
 ## Schema

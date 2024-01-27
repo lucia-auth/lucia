@@ -7,7 +7,7 @@ title: "MongoDB"
 The `@lucia-auth/adapter-mongodb` package provides adapters for MongoDB.
 
 ```
-npm install @lucia-auth/adapter-mongodb@beta
+npm install @lucia-auth/adapter-mongodb
 ```
 
 ## Usage

@@ -30,7 +30,7 @@ Another change is that APIs for request handling have been removed. We now just 
 Lucia is now built with [Oslo](https://oslo.js.org), a library that provides useful auth-related utilities. While not required, we recommend installing it alongside Lucia as all guides in the documentation use it some way or another.
 
 ```
-npm install lucia@beta oslo
+npm install lucia oslo
 ```
 
 ## Initialize Lucia

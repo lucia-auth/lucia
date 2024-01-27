@@ -11,7 +11,7 @@ title: "Upgrade your MySQL database to v3"
 Install the latest version of the MySQL adapter package.
 
 ```
-npm install @lucia-auth/adapter-mysql@beta
+npm install @lucia-auth/adapter-mysql
 ```
 
 Initialize the adapter:

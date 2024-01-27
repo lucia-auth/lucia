@@ -9,7 +9,7 @@ title: "Getting started in Nuxt"
 Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
 
 ```
-npm install lucia@beta oslo
+npm install lucia oslo
 ```
 
 ## Initialize Lucia

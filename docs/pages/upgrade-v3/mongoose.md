@@ -11,7 +11,7 @@ Read this guide carefully as some parts depend on your current structure (**espe
 The Mongoose adapter has been replaced with the MongoDB adapter.
 
 ```
-npm install @lucia-auth/adapter-mongodb@beta
+npm install @lucia-auth/adapter-mongodb
 ```
 
 Initialize the adapter:
