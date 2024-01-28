@@ -18,4 +18,4 @@ test("LegacyScrypt", async () => {
 	await expect(scrypt.verify(hash, password)).resolves.toBe(true);
 	const falsePassword = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
 	await expect(scrypt.verify(hash, falsePassword)).resolves.toBe(false);
-})
+});

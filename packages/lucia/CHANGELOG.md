@@ -1,5 +1,9 @@
 # lucia
 
+## 3.0.1
+
+- Fix `LegacyScrypt` generating malformed hash (see [#1370](https://github.com/lucia-auth/lucia/pull/1370)) - no security concerns
+
 ## 3.0.0
 
 See the [migration guide](https://v3.lucia-auth.com/upgrade-v3).
