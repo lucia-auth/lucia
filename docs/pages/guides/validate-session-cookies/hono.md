@@ -28,9 +28,9 @@ app.use("*", (c, next) => {
 	if (c.req.method === "GET") {
 		return next();
 	}
-	const originHeader = c.req.raw.headers.get("Origin");
+	const originHeader = c.req.header("Origin");
 	// NOTE: You may need to use `X-Forwarded-Host` instead
-	const hostHeader = c.req.raw.headers.get("Host");
+	const hostHeader = c.req.header("Host");
 	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 		return c.body(null, 403);
 	}
