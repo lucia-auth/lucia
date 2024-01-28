@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { Scrypt } from "./crypto.js";
+import { Scrypt, LegacyScrypt } from "./crypto.js";
 import { encodeHex } from "oslo/encoding";
 
 test("validateScryptHash() validates hashes generated with generateScryptHash()", async () => {
@@ -10,3 +10,12 @@ test("validateScryptHash() validates hashes generated with generateScryptHash()"
 	const falsePassword = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
 	await expect(scrypt.verify(hash, falsePassword)).resolves.toBe(false);
 });
+
+test("LegacyScrypt", async () => {
+	const password = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
+	const scrypt = new LegacyScrypt();
+	const hash = await scrypt.hash(password);
+	await expect(scrypt.verify(hash, password)).resolves.toBe(true);
+	const falsePassword = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
+	await expect(scrypt.verify(hash, falsePassword)).resolves.toBe(false);
+})

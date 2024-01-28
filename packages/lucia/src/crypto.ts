@@ -42,7 +42,7 @@ export class LegacyScrypt implements PasswordHashingAlgorithm {
 	async hash(password: string): Promise<string> {
 		const salt = encodeHex(crypto.getRandomValues(new Uint8Array(16)));
 		const key = await generateScryptKey(password.normalize("NFKC"), salt);
-		return `${salt}:${encodeHex(key)}`;
+		return `s2:${salt}:${encodeHex(key)}`;
 	}
 	async verify(hash: string, password: string): Promise<boolean> {
 		const parts = hash.split(":");
