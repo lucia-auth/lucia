@@ -6,7 +6,7 @@ title: "Tutorial: Username and password auth in SvelteKit"
 
 Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/astro) page.
 
-An [example project](https://github.com/lucia-auth/examples/tree/main/sveltekit/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/v3/sveltekit/username-and-password).
+An [example project](https://github.com/lucia-auth/examples/tree/main/sveltekit/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/sveltekit/username-and-password).
 
 ```
 npx degit https://github.com/lucia-auth/examples/tree/main/sveltekit/username-and-password <directory_name>
@@ -24,6 +24,7 @@ Add a `username` and `hashed_password` column to your user table.
 Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
 
 ```ts
+// src/lib/server/auth.ts
 import { Lucia } from "lucia";
 import { dev } from "$app/environment";
 
@@ -79,6 +80,7 @@ Create a form action in `routes/signup/+page.server.ts`. First, do a very basic 
 // routes/signup/+page.server.ts
 import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
+import { generateId } from "lucia";
 import { Argon2id } from "oslo/password";
 
 import type { Actions } from "./$types";
@@ -267,7 +269,7 @@ export const actions: Actions = {
 		if (!event.locals.session) {
 			return fail(401);
 		}
-		await auth.invalidateSession(event.locals.session.id);
+		await lucia.invalidateSession(event.locals.session.id);
 		const sessionCookie = lucia.createBlankSessionCookie();
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
