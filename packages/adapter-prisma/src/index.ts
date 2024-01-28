@@ -30,7 +30,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 	public async deleteUserSessions(userId: string): Promise<void> {
 		await this.sessionModel.deleteMany({
 			where: {
-				userId
+				user_id: userId
 			}
 		});
 	}
@@ -59,7 +59,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
 		const result = await this.sessionModel.findMany({
 			where: {
-				userId
+				user_id: userId
 			}
 		});
 		return result.map(transformIntoDatabaseSession);
@@ -82,7 +82,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 				id: sessionId
 			},
 			data: {
-				expiresAt
+				expires_at: expiresAt
 			}
 		});
 	}
@@ -90,7 +90,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 	public async deleteExpiredSessions(): Promise<void> {
 		await this.sessionModel.deleteMany({
 			where: {
-				expiresAt: {
+				expires_at: {
 					lte: new Date()
 				}
 			}
@@ -99,11 +99,11 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 }
 
 function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
-	const { id, userId, expiresAt, ...attributes } = raw;
+	const { id, user_id, expires_at, ...attributes } = raw;
 	return {
 		id,
-		userId,
-		expiresAt,
+		userId: user_id,
+		expiresAt: expires_at,
 		attributes
 	};
 }
@@ -128,8 +128,8 @@ interface UserSchema extends RegisteredDatabaseUserAttributes {
 
 interface SessionSchema extends RegisteredDatabaseSessionAttributes {
 	id: string;
-	userId: string;
-	expiresAt: Date;
+	user_id: string;
+	expires_at: Date;
 }
 
 interface BasicPrismaModel {
