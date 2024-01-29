@@ -61,31 +61,3 @@ globalThis.crypto = webcrypto as Crypto;
 ```
 node --experimental-web-crypto index.js
 ```
-
-## Update bundler configuration
-
-This is only required if you're using `oslo/password`.
-
-### Vite
-
-This is not required if you're Nuxt, SolidStart, or SvelteKit.
-
-```ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
-	// ...
-	optimizeDeps: {
-		exclude: ["oslo"]
-	}
-});
-```
-
-### Webpack
-
-```ts
-module.exports = {
-	// ...
-	externals: ["@node-rs/argon2", "@node-rs/bcrypt"]
-};
-```
