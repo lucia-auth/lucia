@@ -5,7 +5,7 @@ import type {
 	DatabaseUser,
 	RegisteredDatabaseUserAttributes
 } from "lucia";
-import { Collection } from "mongodb";
+import { Collection } from "mongoose";
 
 interface UserDoc extends RegisteredDatabaseUserAttributes {
 	_id: string;
