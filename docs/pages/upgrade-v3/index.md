@@ -198,6 +198,8 @@ export default defineConfig({
 
 ### Next.js
 
+**`oslo/password` does NOT work with Turbopack.**
+
 ```ts
 // next.config.ts
 const nextConfig = {
