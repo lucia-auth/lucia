@@ -196,7 +196,7 @@ const nextConfig = {
 
 ### Vite
 
-This is not required when using Nuxt, SolidStart, and SvelteKit. This is required from Astro and Remix (currently debugging the issue).
+This is not required when using Nuxt, SolidStart, and SvelteKit. This is required for Astro and Remix (currently debugging the issue).
 
 ```ts
 // astro.config.mjs
