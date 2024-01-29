@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-mongodb",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "MongoDB adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -37,7 +37,7 @@
 	},
 	"peerDependencies": {
 		"lucia": "3.x",
-		"mongodb": "4.x | 6.x"
+		"mongodb": "4.x || 6.x"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
