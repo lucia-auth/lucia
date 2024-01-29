@@ -19,7 +19,7 @@ If you've installed `oslo`, add `oslo` to `vite.optimizeDeps.exclude`.
 ```ts
 // astro.config.mjs
 export default defineConfig({
-	// vite
+	// ...
 	vite: {
 		optimizeDeps: {
 			exclude: ["oslo"]

@@ -187,7 +187,7 @@ If you installed Oslo, you must prevent `oslo` from getting bundled. This is onl
 ```ts
 // astro.config.mjs
 export default defineConfig({
-	// vite
+	// ...
 	vite: {
 		optimizeDeps: {
 			exclude: ["oslo"]
@@ -207,3 +207,5 @@ const nextConfig = {
 	}
 };
 ```
+
+
