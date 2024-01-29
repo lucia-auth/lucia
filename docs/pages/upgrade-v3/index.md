@@ -182,6 +182,20 @@ Refer to these guides:
 
 If you installed Oslo, you must prevent `oslo` from getting bundled. This is only required when using the `oslo/password` module.
 
+### Astro
+
+```ts
+// astro.config.mjs
+export default defineConfig({
+	// ...
+	vite: {
+		optimizeDeps: {
+			exclude: ["oslo"]
+		}
+	}
+});
+```
+
 ### Next.js
 
 ```ts
@@ -194,18 +208,4 @@ const nextConfig = {
 };
 ```
 
-### Vite
 
-This is not required when using Nuxt, SolidStart, and SvelteKit. This is required for Astro and Remix (currently debugging the issue).
-
-```ts
-// astro.config.mjs
-import { defineConfig } from "vite";
-
-export default defineConfig({
-	// ...
-	optimizeDeps: {
-		exclude: ["oslo"]
-	}
-});
-```
