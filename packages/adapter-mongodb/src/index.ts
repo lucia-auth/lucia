@@ -39,18 +39,19 @@ export class MongodbAdapter implements Adapter {
 	public async getSessionAndUser(
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
-		const sessionUsers = await this.Session.aggregate([
-			{ $match: { _id: sessionId } },
-			{
-				$lookup: {
-					from: this.User.collectionName,
-					localField: "user_id",
-					// relies on _id being a String, not ObjectId.
-					foreignField: "_id",
-					as: "userDocs"
-				}
-			}
-		]).toArray();
+		const cursor = await this.Session.aggregate([
+            { $match: { _id: sessionId } },
+            {
+                $lookup: {
+                    from: this.User.collectionName,
+                    localField: "user_id",
+                    // relies on _id being a String, not ObjectId.
+                    foreignField: "_id",
+                    as: "userDocs"
+                }
+            }
+        ]);
+        const sessionUsers = await cursor.toArray();
 
 		const sessionUser = sessionUsers?.at(0) ?? null;
 		if (!sessionUser) return [null, null];
