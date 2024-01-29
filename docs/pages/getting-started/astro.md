@@ -12,6 +12,22 @@ Install Lucia using your package manager of your choice. While not strictly nece
 npm install lucia oslo
 ```
 
+## Update Vite
+
+If you've installed `oslo`, add `oslo` to `vite.optimizeDeps.exclude`.
+
+```ts
+// astro.config.mjs
+import { defineConfig } from "vite";
+
+export default defineConfig({
+	// ...
+	optimizeDeps: {
+		exclude: ["oslo"]
+	}
+});
+```
+
 ## Initialize Lucia
 
 Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type

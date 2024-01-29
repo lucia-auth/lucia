@@ -178,9 +178,11 @@ Refer to these guides:
 - [Upgrade OAuth setup to v3](/upgrade-v3/oauth)
 - [Upgrade Password-based auth to v3](/upgrade-v3/password)
 
-## Next.js
+## Framework specific configuration
 
-If you installed Oslo, mark its dependencies as external to prevent it from getting bundled. This is only required when using the `oslo/password` module.
+If you installed Oslo, you must prevent `oslo` from getting bundled. This is only required when using the `oslo/password` module.
+
+### Next.js
 
 ```ts
 // next.config.ts
@@ -190,4 +192,20 @@ const nextConfig = {
 		return config;
 	}
 };
+```
+
+### Vite
+
+This is not required when using Nuxt, SolidStart, and SvelteKit. This is required for Astro and Remix (currently debugging the issue).
+
+```ts
+// astro.config.mjs
+import { defineConfig } from "vite";
+
+export default defineConfig({
+	// ...
+	optimizeDeps: {
+		exclude: ["oslo"]
+	}
+});
 ```
