@@ -46,10 +46,10 @@ export const lucia = new Lucia(adapter, {
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
-	}
-	interface DatabaseUserAttributes {
-		github_id: number;
-		username: string;
+		DatabaseUserAttributes: {
+			github_id: number;
+			username: string;
+		};
 	}
 }
 ```
