@@ -12,6 +12,8 @@ Install Lucia using your package manager of your choice. While not strictly nece
 npm install lucia oslo
 ```
 
+**`oslo/password` does NOT work with Turbopack.**
+
 ## Initialize Lucia
 
 Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
