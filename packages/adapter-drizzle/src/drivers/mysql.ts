@@ -54,7 +54,7 @@ export class DrizzleMySQLAdapter implements Adapter {
 			userId: session.userId,
 			expiresAt: session.expiresAt,
 			...session.attributes
-		});
+		}).execute();
 	}
 
 	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
