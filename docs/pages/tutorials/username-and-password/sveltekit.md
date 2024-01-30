@@ -221,7 +221,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const session = await lucia.createSession(userId, {});
+		const session = await lucia.createSession(existingUser.id, {});
 		const sessionCookie = lucia.createSessionCookie(session.id);
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
