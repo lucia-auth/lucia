@@ -16,7 +16,7 @@ You must handle the database connection manually.
 
 ```ts
 import { Lucia } from "lucia";
-import { MongoDBAdapter } from "@lucia-auth/adapter-mongodb";
+import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
 import mongoose from "mongoose";
 
 await mongoose.connect();
