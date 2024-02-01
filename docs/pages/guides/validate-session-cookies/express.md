@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 	}
 	if (!session) {
-		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+		res.appendHeader("Set-Cookie", lucia.createBlankSessionCookie().serialize());
 	}
 	res.locals.user = user;
 	res.locals.session = session;
