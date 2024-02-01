@@ -56,7 +56,7 @@ await db.table("user").insert({
 	username: githubUser.login
 });
 await db.table("oauth_account").insert({
-	provider_id "github",
+	provider_id: "github",
 	provider_user_id: githubUser.id,
 	user_id: userId
 });
