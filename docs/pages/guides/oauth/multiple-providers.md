@@ -53,10 +53,10 @@ const userId = generateId(15);
 await db.beginTransaction();
 await db.table("user").insert({
 	id: userId,
-	username: github.login
+	username: githubUser.login
 });
 await db.table("oauth_account").insert({
-	provider_id "github",
+	provider_id: "github",
 	provider_user_id: githubUser.id,
 	user_id: userId
 });
