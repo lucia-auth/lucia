@@ -5,7 +5,7 @@
 	"scripts": {
 		"publish-setup": "pnpm i --no-frozen-lockfile && cd packages/lucia && pnpm build && cd ../adapter-test && pnpm build && cd ../../",
 		"format": "pnpm exec prettier --write . --plugin=prettier-plugin-astro",
-		"format:docs": "pnpm exec prettier --write documentation --plugin=prettier-plugin-astro",
+		"format:docs": "pnpm exec prettier --write docs --plugin=prettier-plugin-astro",
 		"preinstall": "npx only-allow pnpm",
 		"auri.format": "pnpm format",
 		"auri.publish_setup": "pnpm publish-setup"
