@@ -242,7 +242,7 @@ async function login(_: any, formData: FormData): Promise<ActionResult> {
 
 ## Validate requests
 
-Create `validateRequest()`. This will check for the session cookie, validate it, and set a new cookie if necessary. Make sure to catch errors when setting cookies and wrap the function with `cache()` to prevent unnecessary database calls. To learn more, see the [Validating requests](/basics/validate-session-cookies/nextjs-app) page.
+Create `validateRequest()`. This will check for the session cookie, validate it, and set a new cookie if necessary. Make sure to catch errors when setting cookies and wrap the function with `cache()` to prevent unnecessary database calls. To learn more, see the [Validating requests](/guides/validate-session-cookies/nextjs-app) page.
 
 CSRF protection should be implemented but Next.js handles it when using form actions (but not for API routes).
 
