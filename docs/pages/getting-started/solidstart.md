@@ -42,7 +42,7 @@ declare module "lucia" {
 
 We recommend setting up a middleware to validate requests. The validated user will be available as `context.user`. You can just copy-paste the code into `src/middleware.ts`.
 
-It's a bit verbose, but it just reads the session cookie, validates it, and sets a new cookie if necessary. Since SolidStart doesn't implement CSRF protection out of the box, it must be implemented when working with cookies. If you're curious about what's happening here, see the [Validating requests](/basics/validate-session-cookies/solidstart) page.
+It's a bit verbose, but it just reads the session cookie, validates it, and sets a new cookie if necessary. Since SolidStart doesn't implement CSRF protection out of the box, it must be implemented when working with cookies. If you're curious about what's happening here, see the [Validating requests](/guides/validate-session-cookies/solidstart) page.
 
 ```ts
 // src/middleware.ts

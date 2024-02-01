@@ -209,5 +209,3 @@ const nextConfig = {
 	}
 };
 ```
-
-

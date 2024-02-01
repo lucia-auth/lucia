@@ -273,7 +273,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 ## Validate requests
 
-Create `validateRequest()`. This will check for the session cookie, validate it, and set a new cookie if necessary. To learn more, see the [Validating requests](/basics/validate-session-cookies/nextjs-pages) page.
+Create `validateRequest()`. This will check for the session cookie, validate it, and set a new cookie if necessary. To learn more, see the [Validating requests](/guides/validate-session-cookies/nextjs-pages) page.
 
 CSRF protection should be implemented and you should already have a middleware for it.
 

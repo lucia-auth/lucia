@@ -61,7 +61,7 @@ node --experimental-web-crypto index.js
 
 We recommend setting up a middleware to validate requests. The validated user will be available as `event.context.user`. You can just copy-paste the code into `server/middleware/auth.ts`.
 
-It's a bit verbose, but it just reads the session cookie, validates it, and sets a new cookie if necessary. Since Nuxt doesn't implement CSRF protection out of the box, it must be implemented. If you're curious about what's happening here, see the [Validating requests](/basics/validate-session-cookies/nuxt) page.
+It's a bit verbose, but it just reads the session cookie, validates it, and sets a new cookie if necessary. Since Nuxt doesn't implement CSRF protection out of the box, it must be implemented. If you're curious about what's happening here, see the [Validating requests](/guides/validate-session-cookies/nuxt) page.
 
 ```ts
 // server/middleware/auth.ts
