@@ -42,9 +42,9 @@
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"dotenv": "^16.0.3",
-		"tsx": "^3.12.6",
-		"mongodb": "^4.1.1",
 		"lucia": "workspace:*",
-		"mongoose": "^6.0.11"
+		"mongodb": "^6.3.0",
+		"mongoose": "^8.0.0",
+		"tsx": "^3.12.6"
 	}
 }
