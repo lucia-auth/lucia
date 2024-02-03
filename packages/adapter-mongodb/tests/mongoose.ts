@@ -70,3 +70,11 @@ await User.deleteMany();
 await Session.deleteMany();
 
 process.exit(0);
+
+declare module "lucia" {
+	interface Register {
+		DatabaseUserAttributes: {
+			username: string;
+		};
+	}
+}
