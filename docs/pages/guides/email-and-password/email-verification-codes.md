@@ -96,7 +96,7 @@ app.post("/signup", async () => {
 	});
 
 	const verificationCode = await generateEmailVerificationCode(userId, email);
-	await verificationCode(email, verificationCode);
+	await sendVerificationCode(email, verificationCode);
 
 	const session = await lucia.createSession(userId, {});
 	const sessionCookie = lucia.createSessionCookie(session.id);
@@ -120,6 +120,7 @@ Validate the verification code by comparing it against your database and checkin
 
 ```ts
 import { isWithinExpiration } from "oslo";
+import type { User } from "lucia";
 
 app.post("/email-verification", async () => {
 	// ...
@@ -129,35 +130,16 @@ app.post("/email-verification", async () => {
 			status: 401
 		});
 	}
+
 	const code = formData.get("code");
-	// check for length
-	if (typeof code !== "string" || code.length !== 8) {
+	if (typeof code !== "string") {
 		return new Response(null, {
 			status: 400
 		});
 	}
 
-	await db.beginTransaction();
-	const databaseCode = await db
-		.table("email_verification_code")
-		.where("user_id", "=", user.id)
-		.get();
-	if (databaseCode) {
-		await db.table("email_verification_code").where("id", "=", databaseCode.id).delete();
-	}
-	await db.commit();
-
-	if (!databaseCode || databaseCode.code !== code) {
-		return new Response(null, {
-			status: 400
-		});
-	}
-	if (!isWithinExpiration(databaseCode.expires_at)) {
-		return new Response(null, {
-			status: 400
-		});
-	}
-	if (!user || user.email !== databaseCode.email) {
+	const validCode = await verifyVerificationCode(user, code);
+	if (!validCode) {
 		return new Response(null, {
 			status: 400
 		});
@@ -178,4 +160,26 @@ app.post("/email-verification", async () => {
 		}
 	});
 });
+
+async function verifyVerificationCode(user: User, code: string): Promise<boolean> {
+	await db.beginTransaction();
+	const databaseCode = await db
+		.table("email_verification_code")
+		.where("user_id", "=", user.id)
+		.get();
+	if (!databaseCode || databaseCode.code !== code) {
+		await db.commit();
+		return false;
+	}
+	await db.table("email_verification_code").where("id", "=", code.id).delete();
+	await db.commit();
+
+	if (!isWithinExpiration(databaseCode.expires_at)) {
+		return false;
+	}
+	if (databaseCode.email !== user.email) {
+		return false;
+	}
+	return true;
+}
 ```
