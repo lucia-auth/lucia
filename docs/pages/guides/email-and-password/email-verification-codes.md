@@ -127,14 +127,14 @@ app.post("/email-verification", async () => {
 	const { user } = await lucia.validateSession(sessionId);
 	if (!user) {
 		return new Response(null, {
-			status: 302
+			status: 401
 		});
 	}
 
 	const code = formData.get("code");
 	if (typeof code !== "string") {
 		return new Response(null, {
-			status: 401
+			status: 400
 		});
 	}
 
