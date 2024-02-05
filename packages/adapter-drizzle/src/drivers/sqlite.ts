@@ -35,11 +35,20 @@ export class DrizzleSQLiteAdapter implements Adapter {
 	public async getSessionAndUser(
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
-		const [databaseSession, databaseUser] = await Promise.all([
-			this.getSession(sessionId),
-			this.getUserFromSessionId(sessionId)
-		]);
-		return [databaseSession, databaseUser];
+		const result = await this.db
+			.select({
+				user: this.userTable,
+				session: this.sessionTable
+			})
+			.from(this.sessionTable)
+			.innerJoin(this.userTable, eq(this.sessionTable.userId, this.userTable.id))
+			.where(eq(this.sessionTable.id, sessionId))
+			.get();
+		if (!result) return [null, null];
+		return [
+			transformIntoDatabaseSession(result.session),
+			transformIntoDatabaseUser(result.user)
+		];
 	}
 
 	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
@@ -79,28 +88,6 @@ export class DrizzleSQLiteAdapter implements Adapter {
 		await this.db
 			.delete(this.sessionTable)
 			.where(lte(this.sessionTable.expiresAt, Math.floor(Date.now() / 1000)));
-	}
-
-	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
-		const result = await this.db
-			.select()
-			.from(this.sessionTable)
-			.where(eq(this.sessionTable.id, sessionId))
-			.get();
-		if (!result) return null;
-		return transformIntoDatabaseSession(result);
-	}
-
-	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
-		const { _, $inferInsert, $inferSelect, getSQL, ...userColumns } = this.userTable;
-		const result = await this.db
-			.select(userColumns)
-			.from(this.sessionTable)
-			.innerJoin(this.userTable, eq(this.sessionTable.userId, this.userTable.id))
-			.where(eq(this.sessionTable.id, sessionId))
-			.get();
-		if (!result) return null;
-		return transformIntoDatabaseUser(result);
 	}
 }
 

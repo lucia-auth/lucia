@@ -31,11 +31,19 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 	public async getSessionAndUser(
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
-		const [databaseSession, databaseUser] = await Promise.all([
-			this.getSession(sessionId),
-			this.getUserFromSessionId(sessionId)
-		]);
-		return [databaseSession, databaseUser];
+		const result = await this.db
+			.select({
+				user: this.userTable,
+				session: this.sessionTable
+			})
+			.from(this.sessionTable)
+			.innerJoin(this.userTable, eq(this.sessionTable.userId, this.userTable.id))
+			.where(eq(this.sessionTable.id, sessionId));
+		if (result.length !== 1) return [null, null];
+		return [
+			transformIntoDatabaseSession(result[0].session),
+			transformIntoDatabaseUser(result[0].user)
+		];
 	}
 
 	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
@@ -68,26 +76,6 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 
 	public async deleteExpiredSessions(): Promise<void> {
 		await this.db.delete(this.sessionTable).where(lte(this.sessionTable.expiresAt, new Date()));
-	}
-
-	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
-		const result = await this.db
-			.select()
-			.from(this.sessionTable)
-			.where(eq(this.sessionTable.id, sessionId));
-		if (result.length !== 1) return null;
-		return transformIntoDatabaseSession(result[0]);
-	}
-
-	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
-		const { _, $inferInsert, $inferSelect, getSQL, ...userColumns } = this.userTable;
-		const result = await this.db
-			.select(userColumns)
-			.from(this.sessionTable)
-			.innerJoin(this.userTable, eq(this.sessionTable.userId, this.userTable.id))
-			.where(eq(this.sessionTable.id, sessionId));
-		if (result.length !== 1) return null;
-		return transformIntoDatabaseUser(result[0]);
 	}
 }
 
