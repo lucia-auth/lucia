@@ -10,8 +10,8 @@ MySQL adapter for Lucia.
 
 ## Supported drivers
 
-- [`mysql2`](https://github.com/sidorares/node-mysql2)
-- [Planetscale serverless driver](https://github.com/planetscale/database-js)
+-   [`mysql2`](https://github.com/sidorares/node-mysql2)
+-   [Planetscale serverless driver](https://github.com/planetscale/database-js)
 
 ## Installation
 

@@ -14,4 +14,4 @@ function readBearerToken(authorizationHeader: string): string | null;
 
 ### Parameters
 
-- `authorizationHeader`: HTTP `Authorization` header
+-   `authorizationHeader`: HTTP `Authorization` header

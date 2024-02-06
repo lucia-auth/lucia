@@ -132,7 +132,10 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 		});
 		const githubUserResult: GitHubUserResult = await githubUserResponse.json();
 
-		const existingUser = await db.table("user").where("github_id", "=", githubUserResult.id).get();
+		const existingUser = await db
+			.table("user")
+			.where("github_id", "=", githubUserResult.id)
+			.get();
 
 		if (existingUser) {
 			const session = await lucia.createSession(existingUser.id, {});

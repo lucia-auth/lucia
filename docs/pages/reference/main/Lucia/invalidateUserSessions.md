@@ -14,4 +14,4 @@ function invalidateUserSessions(userId: string): Promise<void>;
 
 ### Parameters
 
-- `userId`
+-   `userId`

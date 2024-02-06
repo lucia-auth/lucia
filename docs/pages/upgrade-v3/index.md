@@ -117,17 +117,17 @@ globalThis.crypto = webcrypto as Crypto;
 
 Refer to each database migration guide:
 
-- [Mongoose](/upgrade-v3/mongoose)
-- [MySQL](/upgrade-v3/mysql)
-- [PostgreSQL](/upgrade-v3/postgresql)
-- [Prisma](/upgrade-v3/prisma)
-- [SQLite](/upgrade-v3/sqlite)
+-   [Mongoose](/upgrade-v3/mongoose)
+-   [MySQL](/upgrade-v3/mysql)
+-   [PostgreSQL](/upgrade-v3/postgresql)
+-   [Prisma](/upgrade-v3/prisma)
+-   [SQLite](/upgrade-v3/sqlite)
 
 The following packages are deprecated:
 
-- `@lucia-auth/adapter-mongoose` (see Mongoose migration guide)
-- `@lucia-auth/adapter-session-redis`
-- `@lucia-auth/adapter-session-unstorage`
+-   `@lucia-auth/adapter-mongoose` (see Mongoose migration guide)
+-   `@lucia-auth/adapter-session-redis`
+-   `@lucia-auth/adapter-session-unstorage`
 
 If you're using a session adapter, we recommend building a custom adapter as the API has been greatly simplified.
 
@@ -137,14 +137,14 @@ If you're using a session adapter, we recommend building a custom adapter as the
 
 Middleware, `Auth.handleRequest()`, and `AuthRequest` have been removed. **This means Lucia no longer provides strict CSRF protection**. For replacing `AuthRequest.validate()`, see the [Validating session cookies](/guides/validate-session-cookies) guide or a framework-specific version of it as these need to be re-implemented from scratch (though it's just copy-pasting code from the guides):
 
-- [Astro](/guides/validate-session-cookies/astro)
-- [Elysia](/guides/validate-session-cookies/elysia)
-- [Express](/guides/validate-session-cookies/express)
-- [Hono](/guides/validate-session-cookies/hono)
-- [Next.js App router](/guides/validate-session-cookies/nextjs-app)
-- [Next.js Pages router](/guides/validate-session-cookies/nextjs-pages)
-- [Nuxt](/guides/validate-session-cookies/nuxt)
-- [SvelteKit](/guides/validate-session-cookies/sveltekit)
+-   [Astro](/guides/validate-session-cookies/astro)
+-   [Elysia](/guides/validate-session-cookies/elysia)
+-   [Express](/guides/validate-session-cookies/express)
+-   [Hono](/guides/validate-session-cookies/hono)
+-   [Next.js App router](/guides/validate-session-cookies/nextjs-app)
+-   [Next.js Pages router](/guides/validate-session-cookies/nextjs-pages)
+-   [Nuxt](/guides/validate-session-cookies/nuxt)
+-   [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
 `Session.sessionId` has been renamed to `Session.id`
 
@@ -175,8 +175,8 @@ const blankSessionCookie = auth.createBlankSessionCookie();
 
 Refer to these guides:
 
-- [Upgrade OAuth setup to v3](/upgrade-v3/oauth)
-- [Upgrade Password-based auth to v3](/upgrade-v3/password)
+-   [Upgrade OAuth setup to v3](/upgrade-v3/oauth)
+-   [Upgrade Password-based auth to v3](/upgrade-v3/password)
 
 ## Framework specific configuration
 

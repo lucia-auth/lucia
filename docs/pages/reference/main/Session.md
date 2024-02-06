@@ -20,7 +20,7 @@ interface Session extends SessionAttributes {
 
 ### Properties
 
-- `id`
-- `expiresAt`
-- `fresh`: `true` if session was newly created or its expiration was extended
-- `userId`
+-   `id`
+-   `expiresAt`
+-   `fresh`: `true` if session was newly created or its expiration was extended
+-   `userId`

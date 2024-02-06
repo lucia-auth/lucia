@@ -6,10 +6,10 @@ title: "Lucia documentation"
 
 Lucia is an auth library for your server that abstracts away the complexity of handling sessions. It works alongside your database to provide an API that's easy to use, understand, and extend. [Get started →](/getting-started)
 
-- No more endless configuration and callbacks
-- Fully typed
-- Works in any runtime - Node.js, Bun, Deno, Cloudflare Workers
-- Extensive database support out of the box
+-   No more endless configuration and callbacks
+-   Fully typed
+-   Works in any runtime - Node.js, Bun, Deno, Cloudflare Workers
+-   Extensive database support out of the box
 
 ```ts
 import { Lucia } from "lucia";

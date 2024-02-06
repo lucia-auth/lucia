@@ -16,5 +16,5 @@ function createSession(userId: string, attributes: $$DatabaseSessionAttributes):
 
 ### Parameters
 
-- `userId`
-- `attributes`: Database session attributes
+-   `userId`
+-   `attributes`: Database session attributes

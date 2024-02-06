@@ -16,16 +16,16 @@ function constructor(options?: { N?: number; r?: number; p?: number; dkLen?: num
 
 ### Parameters
 
-- `options`
-  - `N` (default: `16384`)
-  - `r` (default: `16`)
-  - `p` (default: `1`)
-  - `dkLen` (default: `64`)
+-   `options`
+    -   `N` (default: `16384`)
+    -   `r` (default: `16`)
+    -   `p` (default: `1`)
+    -   `dkLen` (default: `64`)
 
 ## Methods
 
-- [`hash()`](/reference/main/LegacyScrypt/hash)
-- [`verify()`](/reference/main/LegacyScrypt/verify)
+-   [`hash()`](/reference/main/LegacyScrypt/hash)
+-   [`verify()`](/reference/main/LegacyScrypt/verify)
 
 ## Example
 

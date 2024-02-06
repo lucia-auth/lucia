@@ -18,16 +18,16 @@ function constructor(options?: { N?: number; r?: number; p?: number; dkLen?: num
 
 ### Parameters
 
-- `options`
-  - `N` (default: `16384`)
-  - `r` (default: `16`)
-  - `p` (default: `1`)
-  - `dkLen` (default: `64`)
+-   `options`
+    -   `N` (default: `16384`)
+    -   `r` (default: `16`)
+    -   `p` (default: `1`)
+    -   `dkLen` (default: `64`)
 
 ## Methods
 
-- [`hash()`](ref:password/Argon2id)
-- [`verify()`](ref:password/Argon2id)
+-   [`hash()`](ref:password/Argon2id)
+-   [`verify()`](ref:password/Argon2id)
 
 ## Example
 

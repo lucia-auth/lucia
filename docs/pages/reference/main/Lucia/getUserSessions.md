@@ -15,4 +15,4 @@ function getUserSessions(userId: string): Promise<Session[]>;
 
 ### Parameters
 
-- `userId`
+-   `userId`

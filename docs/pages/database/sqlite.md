@@ -6,10 +6,10 @@ title: "SQLite"
 
 The `@lucia-auth/adapter-sqlite` package provides adapters for SQLites drivers:
 
-- `better-sqlite3`
-- Bun SQLite (`bun:sqlite`)
-- Cloudflare D1
-- LibSQL (Turso)
+-   `better-sqlite3`
+-   Bun SQLite (`bun:sqlite`)
+-   Cloudflare D1
+-   LibSQL (Turso)
 
 ```
 npm install @lucia-auth/adapter-sqlite

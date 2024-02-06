@@ -25,6 +25,6 @@ new PrismaAdapter(client.session, client.user);
 
 ## Update schema and database
 
-- [MySQL](/upgrade-v3/prisma/mysql)
-- [PostgreSQL](/upgrade-v3/prisma/postgresql)
-- [SQLite](/upgrade-v3/prisma/sqlite)
+-   [MySQL](/upgrade-v3/prisma/mysql)
+-   [PostgreSQL](/upgrade-v3/prisma/postgresql)
+-   [SQLite](/upgrade-v3/prisma/sqlite)

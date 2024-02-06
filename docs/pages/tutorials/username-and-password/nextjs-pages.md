@@ -114,7 +114,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const body: null | Partial<{ username: string; password: string }> = req.body;
 	const username = body?.username;
-	if (!username || username.length < 3 || username.length > 31 || !/^[a-z0-9_-]+$/.test(username)) {
+	if (
+		!username ||
+		username.length < 3 ||
+		username.length > 31 ||
+		!/^[a-z0-9_-]+$/.test(username)
+	) {
 		res.status(400).json({
 			error: "Invalid username"
 		});
@@ -139,8 +144,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	});
 
 	const session = await lucia.createSession(userId, {});
-	res
-		.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize())
+	res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize())
 		.status(200)
 		.end();
 }
@@ -221,7 +225,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const body: null | Partial<{ username: string; password: string }> = req.body;
 	const username = body?.username;
-	if (!username || username.length < 3 || username.length > 31 || !/^[a-z0-9_-]+$/.test(username)) {
+	if (
+		!username ||
+		username.length < 3 ||
+		username.length > 31 ||
+		!/^[a-z0-9_-]+$/.test(username)
+	) {
 		res.status(400).json({
 			error: "Invalid username"
 		});
@@ -264,8 +273,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	const session = await lucia.createSession(existingUser.id, {});
-	res
-		.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize())
+	res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize())
 		.status(200)
 		.end();
 }

@@ -20,7 +20,7 @@ interface DatabaseSession {
 
 ### Properties
 
-- `id`
-- `userId`
-- `expiresAt`
-- `attributes`
+-   `id`
+-   `userId`
+-   `expiresAt`
+-   `attributes`

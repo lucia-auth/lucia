@@ -32,7 +32,11 @@ export default defineEventHandler((event) => {
 
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
-		appendResponseHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+		appendResponseHeader(
+			event,
+			"Set-Cookie",
+			lucia.createSessionCookie(session.id).serialize()
+		);
 	}
 	if (!session) {
 		appendResponseHeader(event, "Set-Cookie", lucia.createBlankSessionCookie().serialize());

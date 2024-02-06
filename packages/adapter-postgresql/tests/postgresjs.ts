@@ -8,7 +8,7 @@ dotenv.config({
 	path: resolve(".env")
 });
 
-export const sql = postgres(process.env.POSTGRES_DATABASE_URL ?? "");
+const sql = postgres(process.env.POSTGRES_DATABASE_URL ?? "");
 
 await sql`DROP TABLE IF EXISTS public.session`;
 await sql`DROP TABLE IF EXISTS public.user`;
@@ -38,3 +38,11 @@ await sql`DROP TABLE public.session`;
 await sql`DROP TABLE public.user`;
 
 process.exit();
+
+declare module "lucia" {
+	interface Register {
+		DatabaseUserAttributes: {
+			username: string;
+		};
+	}
+}

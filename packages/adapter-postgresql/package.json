@@ -12,6 +12,7 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
+		"test.neon-http": "tsx tests/neon-http.ts",
 		"test.node-postgres": "tsx tests/node-postgres.ts",
 		"test.postgresjs": "tsx tests/postgresjs.ts",
 		"auri.build": "pnpm build"
@@ -41,7 +42,8 @@
 	"peerDependencies": {
 		"lucia": "3.x",
 		"pg": "^8.8.0",
-		"postgres": "^3.3.0"
+		"postgres": "^3.3.0",
+		"@neondatabase/serverless": "0.7.x"
 	},
 	"peerDependenciesMeta": {
 		"pg": {
@@ -49,10 +51,14 @@
 		},
 		"postgres": {
 			"optional": true
+		},
+		"@neondatabase/serverless": {
+			"optional": true
 		}
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
+		"@neondatabase/serverless": "^0.7.2",
 		"@types/pg": "^8.6.5",
 		"dotenv": "^16.0.3",
 		"lucia": "workspace:*",

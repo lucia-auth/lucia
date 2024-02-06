@@ -25,9 +25,10 @@ export class SQLiteAdapter implements Adapter {
 	}
 
 	public async deleteUserSessions(userId: string): Promise<void> {
-		await this.controller.execute(`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = ?`, [
-			userId
-		]);
+		await this.controller.execute(
+			`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = ?`,
+			[userId]
+		);
 	}
 
 	public async getSessionAndUser(

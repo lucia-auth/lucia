@@ -2,10 +2,10 @@
 
 Lucia is an auth library written in TypeScript that abstracts away the complexity of handling sessions. It works alongside your database to provide an API that's easy to use, understand, and extend.
 
-- No more endless configuration and callbacks
-- Fully typed
-- Works in any runtime - Node.js, Bun, Deno, Cloudflare Workers
-- Extensive database support out of the box
+-   No more endless configuration and callbacks
+-   Fully typed
+-   Works in any runtime - Node.js, Bun, Deno, Cloudflare Workers
+-   Extensive database support out of the box
 
 ```ts
 import { Lucia } from "lucia";
