@@ -16,7 +16,7 @@ You must handle the database connection manually.
 
 ```ts
 import { Lucia } from "lucia";
-import { MongoDBAdapter } from "@lucia-auth/adapter-mongodb";
+import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
 import { Collection, MongoClient } from "mongodb";
 
 const client = new MongoClient();
