@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-postgresql",
-	"version": "3.0.0",
+	"version": "3.1.0",
 	"description": "PostgreSQL adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
