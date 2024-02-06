@@ -18,4 +18,4 @@ function validateSession(
 
 ### Parameters
 
-- `sessionId`
+-   `sessionId`

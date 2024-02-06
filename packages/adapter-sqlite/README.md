@@ -10,10 +10,10 @@ SQLite adapter for Lucia.
 
 ## Supported drivers
 
-- [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
-- [`bun:sqlite`](https://bun.sh/docs/api/sqlite)
-- [Cloudflare D1](https://developers.cloudflare.com/d1/)
-- [libSQL](https://github.com/libsql/libsql) (Turso)
+-   [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3)
+-   [`bun:sqlite`](https://bun.sh/docs/api/sqlite)
+-   [Cloudflare D1](https://developers.cloudflare.com/d1/)
+-   [libSQL](https://github.com/libsql/libsql) (Turso)
 
 ## Installation
 

@@ -45,7 +45,7 @@ const existingAccount = await db
 if (existingAccount) {
 	const session = await lucia.createSession(existingAccount.user_id, {});
 
-    // ...
+	// ...
 }
 
 const userId = generateId(15);

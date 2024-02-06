@@ -94,7 +94,10 @@ export class MongodbAdapter implements Adapter {
 	}
 
 	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
-		await this.Session.findOneAndUpdate({ _id: sessionId }, { $set: { expires_at: expiresAt } });
+		await this.Session.findOneAndUpdate(
+			{ _id: sessionId },
+			{ $set: { expires_at: expiresAt } }
+		);
 	}
 
 	public async deleteExpiredSessions(): Promise<void> {

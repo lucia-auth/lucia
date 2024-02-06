@@ -8,8 +8,8 @@ OAuth, or social sign in, is the easiest way to implement authentication as you 
 
 For a step-by-step, framework-specific tutorial, see the [GitHub OAuth](/tutorials/github-oauth) tutorial.
 
-- [OAuth basics](/guides/oauth/basics)
-- [Multiple OAuth providers](/guides/oauth/multiple-providers)
-- [PKCE](/guides/oauth/pkce)
-- [Account linking](/guides/oauth/account-linking)
-- [Custom OAuth providers](/guides/oauth/custom-providers)
+-   [OAuth basics](/guides/oauth/basics)
+-   [Multiple OAuth providers](/guides/oauth/multiple-providers)
+-   [PKCE](/guides/oauth/pkce)
+-   [Account linking](/guides/oauth/account-linking)
+-   [Custom OAuth providers](/guides/oauth/custom-providers)

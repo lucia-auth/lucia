@@ -3,30 +3,30 @@ description: Something ain't right...
 title: "[Bug]: "
 labels: ["bug"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thanks for taking the time to fill out this bug report! Before you start, make sure you have the latest versions of the packages you're using, including adapters. For security issues, please contact the maintainers directly.
-  - type: dropdown
-    id: package
-    attributes:
-      label: Package
-      description: What package is affected?
-      options:
-        - lucia
-        - ​@lucia-auth/adapter-test
-        - ​@lucia-auth/adapter-mongodb
-        - ​@lucia-auth/adapter-mysql
-        - ​@lucia-auth/adapter-postgresql
-        - ​@lucia-auth/adapter-prisma
-        - ​@lucia-auth/adapter-sqlite
-        - ​@lucia-auth/session-drizzle
-    validations:
-      required: true
-  - type: textarea
-    id: description
-    attributes:
-      label: Describe the bug
-      description: Also tell us, what was the expected behavior? Reproduction will be super helpful!
-    validations:
-      required: true
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for taking the time to fill out this bug report! Before you start, make sure you have the latest versions of the packages you're using, including adapters. For security issues, please contact the maintainers directly.
+    - type: dropdown
+      id: package
+      attributes:
+          label: Package
+          description: What package is affected?
+          options:
+              - lucia
+              - ​@lucia-auth/adapter-test
+              - ​@lucia-auth/adapter-mongodb
+              - ​@lucia-auth/adapter-mysql
+              - ​@lucia-auth/adapter-postgresql
+              - ​@lucia-auth/adapter-prisma
+              - ​@lucia-auth/adapter-sqlite
+              - ​@lucia-auth/session-drizzle
+      validations:
+          required: true
+    - type: textarea
+      id: description
+      attributes:
+          label: Describe the bug
+          description: Also tell us, what was the expected behavior? Reproduction will be super helpful!
+      validations:
+          required: true

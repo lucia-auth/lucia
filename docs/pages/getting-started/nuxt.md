@@ -16,8 +16,8 @@ npm install lucia oslo
 
 Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
 
-- Configure the `sessionCookie` option
-- Register your `Lucia` instance type
+-   Configure the `sessionCookie` option
+-   Register your `Lucia` instance type
 
 ```ts
 // server/utils/auth.ts
@@ -87,7 +87,11 @@ export default defineEventHandler(async (event) => {
 
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
-		appendResponseHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+		appendResponseHeader(
+			event,
+			"Set-Cookie",
+			lucia.createSessionCookie(session.id).serialize()
+		);
 	}
 	if (!session) {
 		appendResponseHeader(event, "Set-Cookie", lucia.createBlankSessionCookie().serialize());

@@ -6,8 +6,8 @@ title: "MySQL"
 
 `@lucia-auth/adapter-mysql` package provides adapters for MySQL drivers:
 
-- `mysql2`
-- PlanetScale serverless
+-   `mysql2`
+-   PlanetScale serverless
 
 ```
 npm install @lucia-auth/adapter-mysql

@@ -14,4 +14,4 @@ function readSessionCookie(cookieHeader: string): string | null;
 
 ### Parameters
 
-- `cookieHeader`: HTTP `Cookie` header
+-   `cookieHeader`: HTTP `Cookie` header

@@ -6,15 +6,15 @@ title: "Validate session cookies"
 
 This guide is also available for:
 
-- [Astro](/guides/validate-session-cookies/astro)
-- [Elysia](/guides/validate-session-cookies/elysia)
-- [Express](/guides/validate-session-cookies/express)
-- [Hono](/guides/validate-session-cookies/hono)
-- [Next.js App router](/guides/validate-session-cookies/nextjs-app)
-- [Next.js Pages router](/guides/validate-session-cookies/nextjs-pages)
-- [Nuxt](/guides/validate-session-cookies/nuxt)
-- [SolidStart](/guides/validate-session-cookies/solidstart)
-- [SvelteKit](/guides/validate-session-cookies/sveltekit)
+-   [Astro](/guides/validate-session-cookies/astro)
+-   [Elysia](/guides/validate-session-cookies/elysia)
+-   [Express](/guides/validate-session-cookies/express)
+-   [Hono](/guides/validate-session-cookies/hono)
+-   [Next.js App router](/guides/validate-session-cookies/nextjs-app)
+-   [Next.js Pages router](/guides/validate-session-cookies/nextjs-pages)
+-   [Nuxt](/guides/validate-session-cookies/nuxt)
+-   [SolidStart](/guides/validate-session-cookies/solidstart)
+-   [SvelteKit](/guides/validate-session-cookies/sveltekit)
 
 **CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header.
 

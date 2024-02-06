@@ -14,7 +14,7 @@ function hash(password: string): Promise<string>;
 
 ### Parameters
 
-- `password`
+-   `password`
 
 ## Example
 

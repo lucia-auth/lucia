@@ -14,8 +14,8 @@ function verify(hash: string, password: string): Promise<boolean>;
 
 ### Parameters
 
-- `hash`
-- `password`
+-   `hash`
+-   `password`
 
 ## Example
 

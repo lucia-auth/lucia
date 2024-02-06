@@ -17,4 +17,4 @@ interface User extends UserAttributes {
 
 ### Properties
 
-- `id`
+-   `id`

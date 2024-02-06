@@ -14,7 +14,7 @@ function generateId(length: number): string;
 
 ### Parameters
 
-- `length`
+-   `length`
 
 ## Example
 
