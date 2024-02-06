@@ -2,7 +2,7 @@
 
 ## 1.0.2
 
-- Add patch for Mongoose
+- Fix Mongoose compatibility issues
 
 ## 1.0.1
 
