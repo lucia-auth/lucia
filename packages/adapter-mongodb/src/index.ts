@@ -39,7 +39,8 @@ export class MongodbAdapter implements Adapter {
 	public async getSessionAndUser(
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
-		const sessionUsers = await this.Session.aggregate([
+		// await necessary for mongoose
+		const cursor = await this.Session.aggregate([
 			{ $match: { _id: sessionId } },
 			{
 				$lookup: {
@@ -50,7 +51,8 @@ export class MongodbAdapter implements Adapter {
 					as: "userDocs"
 				}
 			}
-		]).toArray();
+		]);
+		const sessionUsers = await cursor.toArray();
 
 		const sessionUser = sessionUsers?.at(0) ?? null;
 		if (!sessionUser) return [null, null];
