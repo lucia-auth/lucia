@@ -6,8 +6,9 @@ title: "PostgreSQL"
 
 `@lucia-auth/adapter-postgresql` package provides adapters for PostgreSQL drivers:
 
-- node-postgres (`pg`)
-- Postgres.js (`postgres`)
+-   Neon HTTP serverless driver (`@neondatabase/serverless`)
+-   node-postgres (`pg`)
+-   Postgres.js (`postgres`)
 
 ```
 npm install @lucia-auth/adapter-postgresql
@@ -28,6 +29,23 @@ CREATE TABLE user_session (
 ```
 
 ## Drivers
+
+### Neon HTTP serverless driver
+
+`NeonHTTPAdapter` takes a `NeonQueryFunction` and a list of table names. Supports both `fullResults` configuration. Use the node-postgres adapter for the WebSocket driver.
+
+```ts
+import { Lucia } from "lucia";
+import { NeonHTTPAdapter } from "@lucia-auth/adapter-postgresql";
+import { neon } from "@neondatabase/serverless";
+
+const sql = neon();
+
+const adapter = new NeonHTTPAdapter(sql, {
+	user: "auth_user",
+	session: "user_session"
+});
+```
 
 ### node-postgres
 
