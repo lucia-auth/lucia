@@ -1,0 +1,53 @@
+{
+	"name": "@lucia-auth/adapter-surrealdb",
+	"version": "3.0.0",
+	"description": "Surrealdb adapter for Lucia",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
+	"type": "module",
+	"files": [
+		"/dist/",
+		"CHANGELOG.md"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc",
+		"auri.build": "pnpm build",
+		"test.surreal": "tsx tests/surrealdb2.ts"
+	},
+	"keywords": [
+		"lucia",
+		"auth",
+		"surrealdb",
+		"authentication",
+		"adapter",
+		"sql"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/adapter-surrealdb"
+	},
+	"author": "var-che",
+	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"peerDependencies": {
+		"lucia": "3.x",
+		"surrealdb.js": "^0.11.0"
+		
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20230518.0",
+		"@libsql/client": "^0.3.0",
+		"dotenv": "^16.0.3",
+		"@lucia-auth/adapter-test": "workspace:*",
+		"@miniflare/d1": "^2.14.0",
+		"@miniflare/web-sockets": "^2.14.1",
+		"bun-types": "^1.0.12",
+		"lucia": "workspace:*",
+		"tsx": "^3.12.6",
+		"surrealdb.js": "^0.11.0"
+	}
+}
