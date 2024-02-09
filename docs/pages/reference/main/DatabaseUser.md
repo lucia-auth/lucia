@@ -4,7 +4,7 @@ title: "DatabaseUser"
 
 # `DatabaseUser`
 
-Represents a session stored in a database.
+Represents a user stored in a database.
 
 ## Definition
 
@@ -19,6 +19,4 @@ interface DatabaseUser {
 ### Properties
 
 -   `id`
--   `userId`
--   `expiresAt`
 -   `attributes`
