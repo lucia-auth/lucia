@@ -34,6 +34,7 @@ Add a `github_id` and `username` column to your user table.
 Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `githubId` and `username` field to it, use the `getUserAttributes()` option.
 
 ```ts
+// src/lib/server/auth.ts
 import { Lucia } from "lucia";
 import { dev } from "$app/environment";
 
@@ -76,6 +77,7 @@ npm install arctic
 Initialize the GitHub provider with the client ID and secret.
 
 ```ts
+// src/lib/server/auth.ts
 import { GitHub } from "arctic";
 
 export const github = new GitHub(
