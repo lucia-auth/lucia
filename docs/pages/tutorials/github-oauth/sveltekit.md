@@ -156,6 +156,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			}
 		});
 		const githubUser: GitHubUser = await githubUserResponse.json();
+
+      // ! [Change] Using your DB/ORM find user where github_id === githubUser.id
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
@@ -169,6 +171,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		} else {
 			const userId = generateId(15);
 			
+         // ! [Change] Using your DB/ORM insert a new user
          await db.table("user").insert({
 				id: userId,
 				github_id: githubUser.id,
@@ -256,7 +259,7 @@ export const actions: Actions = {
 			path: ".",
 			...sessionCookie.attributes
 		});
-      
+
 		redirect(302, "/login");
 	}
 };
