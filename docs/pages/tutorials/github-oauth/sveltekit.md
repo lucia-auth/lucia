@@ -157,7 +157,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 		const githubUser: GitHubUser = await githubUserResponse.json();
 
-      // ! [Change] Using your DB/ORM find user where github_id === githubUser.id
+      // TODO: Replace this with your own DB client:.
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
