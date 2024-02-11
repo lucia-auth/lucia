@@ -144,8 +144,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get("code");
 	const state = event.url.searchParams.get("state");
 	const storedState = event.cookies.get("github_oauth_state") ?? null;
-	
-   if (!code || !state || !storedState || state !== storedState) {
+
+	if (!code || !state || !storedState || state !== storedState) {
 		return new Response(null, {
 			status: 400
 		});
@@ -160,31 +160,31 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 		const githubUser: GitHubUser = await githubUserResponse.json();
 
-      // TODO: Replace this with your own DB client:.
+		// TODO: Replace this with your own DB client:.
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
 			const session = await lucia.createSession(existingUser.id, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
-			
-         event.cookies.set(sessionCookie.name, sessionCookie.value, {
+
+			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: ".",
 				...sessionCookie.attributes
 			});
 		} else {
 			const userId = generateId(15);
-			
-      // TODO: Replace this with your own DB client:.
-         await db.table("user").insert({
+
+			// TODO: Replace this with your own DB client:.
+			await db.table("user").insert({
 				id: userId,
 				github_id: githubUser.id,
 				username: githubUser.login
 			});
-			
-         const session = await lucia.createSession(userId, {});
+
+			const session = await lucia.createSession(userId, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
-			
-         event.cookies.set(sessionCookie.name, sessionCookie.value, {
+
+			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: ".",
 				...sessionCookie.attributes
 			});
@@ -256,10 +256,10 @@ export const actions: Actions = {
 		}
 
 		await lucia.invalidateSession(event.locals.session.id);
-		
-      const sessionCookie = lucia.createBlankSessionCookie();
-		
-      context.cookies.set(sessionCookie.name, sessionCookie.value, {
+
+		const sessionCookie = lucia.createBlankSessionCookie();
+
+		context.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes
 		});
