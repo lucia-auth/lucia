@@ -171,7 +171,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		} else {
 			const userId = generateId(15);
 			
-         // ! [Change] Using your DB/ORM insert a new user
+      // TODO: Replace this with your own DB client:.
          await db.table("user").insert({
 				id: userId,
 				github_id: githubUser.id,
