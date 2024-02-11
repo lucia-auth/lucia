@@ -259,7 +259,7 @@ export const actions: Actions = {
 
 		const sessionCookie = lucia.createBlankSessionCookie();
 
-		context.cookies.set(sessionCookie.name, sessionCookie.value, {
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes
 		});
