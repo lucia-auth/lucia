@@ -104,10 +104,12 @@ Create an API route in `routes/login/github/+server.ts`. Generate a new state, c
 
 ```ts
 // routes/login/github/+server.ts
-import { type RequestEvent, redirect } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 import { generateState } from "arctic";
 
 import { github } from "$lib/server/auth";
+
+import type { RequestEvent } from "@sveltejs/kit";
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const state = generateState();
@@ -131,11 +133,12 @@ Create an API route in `routes/login/github/callback/+server.ts` to handle the c
 
 ```ts
 // routes/login/github/callback/+server.ts
-import type { RequestEvent } from "@sveltejs/kit";
 import { OAuth2RequestError } from "arctic";
 import { generateId } from "lucia";
 
 import { github, lucia } from "$lib/server/auth";
+
+import type { RequestEvent } from "@sveltejs/kit";
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get("code");
@@ -219,7 +222,7 @@ You can validate requests by checking `locals.user`. The field `user.username` i
 
 ```ts
 // routes/+page.server.ts
-import type { PageServerLoad, Actions } from "./$types";
+import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) redirect(302, "/login");
@@ -239,6 +242,7 @@ Sign out users by invalidating their session with `Lucia.invalidateSession()`. M
 import { fail, redirect } from "@sveltejs/kit";
 
 import { lucia } from "$lib/server/auth";
+
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
