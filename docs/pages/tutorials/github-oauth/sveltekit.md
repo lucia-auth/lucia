@@ -36,7 +36,6 @@ Create a `DatabaseUserAttributes` interface in the module declaration and add yo
 ```ts
 // src/lib/server/auth.ts
 import { Lucia } from "lucia";
-
 import { dev } from "$app/environment";
 
 export const lucia = new Lucia(adapter, {
@@ -106,7 +105,6 @@ Create an API route in `routes/login/github/+server.ts`. Generate a new state, c
 // routes/login/github/+server.ts
 import { redirect } from "@sveltejs/kit";
 import { generateState } from "arctic";
-
 import { github } from "$lib/server/auth";
 
 import type { RequestEvent } from "@sveltejs/kit";
@@ -135,7 +133,6 @@ Create an API route in `routes/login/github/callback/+server.ts` to handle the c
 // routes/login/github/callback/+server.ts
 import { OAuth2RequestError } from "arctic";
 import { generateId } from "lucia";
-
 import { github, lucia } from "$lib/server/auth";
 
 import type { RequestEvent } from "@sveltejs/kit";
@@ -240,7 +237,6 @@ Sign out users by invalidating their session with `Lucia.invalidateSession()`. M
 ```ts
 // routes/+page.server.ts
 import { fail, redirect } from "@sveltejs/kit";
-
 import { lucia } from "$lib/server/auth";
 
 import type { Actions, PageServerLoad } from "./$types";
