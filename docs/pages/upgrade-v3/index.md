@@ -212,7 +212,7 @@ const nextConfig = {
 
 ### SvelteKit
 
-???
+(Is this neccessary? For Svelte only maybe? Or other sveltekit adapters?)
 
 ```ts
 // vite.config.ts
