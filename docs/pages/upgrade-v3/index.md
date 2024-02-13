@@ -209,3 +209,21 @@ const nextConfig = {
 	}
 };
 ```
+
+### SvelteKit
+
+???
+
+```ts
+// vite.config.ts
+export default defineConfig({
+	// ...
+	optimizeDeps: {
+		exclude: ["oslo"]
+	}
+});
+```
+
+#### @sveltejs/adapter-node
+
+Install `oslo` as a `dependency`, not as `devDependency` to prevent `@sveltejs/adapter-node` to bundle `oslo`.
