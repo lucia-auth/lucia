@@ -55,7 +55,7 @@ interface DatabaseUserAttributes {
 
 ## Sign up user
 
-Create `pages/signup.nuxt` and set up a basic form.
+Create `pages/signup.vue` and set up a basic form.
 
 ```vue
 <!--pages/signup.vue-->
@@ -73,7 +73,7 @@ async function signup(e: Event) {
 
 <template>
 	<h1>Create an account</h1>
-	<form method="post" action="/api/login" @submit.prevent="signup">
+	<form method="post" action="/api/signup" @submit.prevent="signup">
 		<label htmlFor="username">Username</label>
 		<input name="username" id="username" />
 		<br />
