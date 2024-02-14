@@ -11,15 +11,17 @@ Explore our tutorials for implementing Lucia Auth with GitHub OAuth or tradition
 Learn to set up GitHub OAuth, handle authentication, and manage user sessions.
 
 -   [Astro](/tutorials/github-oauth/astro)
--   [SvelteKit](/tutorials/github-oauth/sveltekit)
+-   [Next.js App router](/tutorials/github-oauth/nextjs-app)
+-   [Next.js Pages router](/tutorials/github-oauth/nextjs-pages)
 -   [Nuxt](/tutorials/github-oauth/nuxt)
--   [Next.js](/tutorials/github-oauth/nextjs)
+-   [SvelteKit](/tutorials/github-oauth/sveltekit)
 
 ## Username and Password
 
 Understand how to implement a secure username and password authentication system.
 
 -   [Astro](/tutorials/username-and-password/astro)
--   [SvelteKit](/tutorials/username-and-password/sveltekit)
+-   [Next.js App router](/tutorials/username-and-password/nextjs-app)
+-   [Next.js Pages router](/tutorials/username-and-password/nextjs-pages)
 -   [Nuxt](/tutorials/username-and-password/nuxt)
--   [Next.js](/tutorials/username-and-password/nextjs)
+-   [SvelteKit](/tutorials/username-and-password/sveltekit)
