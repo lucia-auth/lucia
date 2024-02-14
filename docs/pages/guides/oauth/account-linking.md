@@ -17,6 +17,8 @@ const tokens = await github.validateAuthorizationCode(code);
 const userResponse = await fetch("https://api.github.com/user", {
 	headers: {
 		Authorization: `Bearer ${tokens.accessToken}`
+		'User-Agent': 'Application-Name',
+		
 	}
 });
 const githubUser = await userResponse.json();
