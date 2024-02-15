@@ -292,6 +292,6 @@ async function logout(): Promise<ActionResult> {
 }
 
 interface ActionResult {
-  error: string | null;
+	error: string | null;
 }
 ```
