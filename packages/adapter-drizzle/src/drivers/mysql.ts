@@ -5,13 +5,13 @@ import type { MySqlColumn, MySqlDatabase, MySqlTableWithColumns } from "drizzle-
 import type { InferSelectModel } from "drizzle-orm";
 
 export class DrizzleMySQLAdapter implements Adapter {
-	private db: MySqlDatabase<any, any>;
+	private db: MySqlDatabase<any, any, any>;
 
 	private sessionTable: MySQLSessionTable;
 	private userTable: MySQLUserTable;
 
 	constructor(
-		db: MySqlDatabase<any, any>,
+		db: MySqlDatabase<any, any, any>,
 		sessionTable: MySQLSessionTable,
 		userTable: MySQLUserTable
 	) {
