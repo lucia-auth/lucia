@@ -5,13 +5,13 @@ import type { PgColumn, PgDatabase, PgTableWithColumns } from "drizzle-orm/pg-co
 import type { InferSelectModel } from "drizzle-orm";
 
 export class DrizzlePostgreSQLAdapter implements Adapter {
-	private db: PgDatabase<any, any>;
+	private db: PgDatabase<any, any, any>;
 
 	private sessionTable: PostgreSQLSessionTable;
 	private userTable: PostgreSQLUserTable;
 
 	constructor(
-		db: PgDatabase<any, any>,
+		db: PgDatabase<any, any, any>,
 		sessionTable: PostgreSQLSessionTable,
 		userTable: PostgreSQLUserTable
 	) {

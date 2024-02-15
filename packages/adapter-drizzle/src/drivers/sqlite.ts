@@ -15,7 +15,7 @@ export class DrizzleSQLiteAdapter implements Adapter {
 	private userTable: SQLiteUserTable;
 
 	constructor(
-		db: BaseSQLiteDatabase<any, any>,
+		db: BaseSQLiteDatabase<any, any, any>,
 		sessionTable: SQLiteSessionTable,
 		userTable: SQLiteUserTable
 	) {
