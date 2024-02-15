@@ -295,4 +295,8 @@ async function logout(): Promise<ActionResult> {
 	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	return redirect("/login");
 }
+
+interface ActionResult {
+	error: string | null;
+}
 ```
