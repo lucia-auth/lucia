@@ -14,7 +14,7 @@ npm install -D lucia
 
 While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
 
-If you use `@sveltejs/adapter-node`, make sure to install `oslo` as a `dependency`, not as `devDependency` to prevent Rollup from bundling `oslo`.[^1]
+If you use `@sveltejs/adapter-node`, make sure to install `oslo` as a `dependency`, not as `devDependency` to prevent Rollup from bundling `oslo`. See the [SvelteKit documentation](https://kit.svelte.dev/docs/adapter-node#deploying) for details.
 
 ```
 npm install oslo
