@@ -6,11 +6,21 @@ title: "Getting started in Sveltekit"
 
 ## Installation
 
-Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
+Install Lucia using your package manager of your choice.
 
 ```
-npm install lucia oslo
+npm install -D lucia
 ```
+
+While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
+
+If you use `@sveltejs/adapter-node`, make sure to install `oslo` as a `dependency`, not as `devDependency` to prevent Rollup from bundling `oslo`.[^1]
+
+```
+npm install oslo
+```
+
+[^1]: See [SvelteKit documentation](https://kit.svelte.dev/docs/adapter-node#deploying) for details.
 
 ## Initialize Lucia
 
