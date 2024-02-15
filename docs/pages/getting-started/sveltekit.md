@@ -20,7 +20,6 @@ If you use `@sveltejs/adapter-node`, make sure to install `oslo` as a `dependenc
 npm install oslo
 ```
 
-[^1]: See [SvelteKit documentation](https://kit.svelte.dev/docs/adapter-node#deploying) for details.
 
 ## Initialize Lucia
 
