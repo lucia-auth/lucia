@@ -34,6 +34,7 @@ Add a `github_id` and `username` column to your user table.
 Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `githubId` and `username` field to it, use the `getUserAttributes()` option.
 
 ```ts
+// src/lib/server/auth.ts
 import { Lucia } from "lucia";
 import { dev } from "$app/environment";
 
@@ -76,6 +77,8 @@ npm install arctic
 Initialize the GitHub provider with the client ID and secret.
 
 ```ts
+// src/lib/server/auth.ts
+// ...
 import { GitHub } from "arctic";
 
 export const github = new GitHub(
@@ -100,9 +103,9 @@ Create an API route in `routes/login/github/+server.ts`. Generate a new state, c
 
 ```ts
 // routes/login/github/+server.ts
-import { github } from "$lib/server/auth";
-import { generateState } from "arctic";
 import { redirect } from "@sveltejs/kit";
+import { generateState } from "arctic";
+import { github } from "$lib/server/auth";
 
 import type { RequestEvent } from "@sveltejs/kit";
 
@@ -128,9 +131,9 @@ Create an API route in `routes/login/github/callback/+server.ts` to handle the c
 
 ```ts
 // routes/login/github/callback/+server.ts
-import { github, lucia } from "$lib/server/auth";
 import { OAuth2RequestError } from "arctic";
 import { generateId } from "lucia";
+import { github, lucia } from "$lib/server/auth";
 
 import type { RequestEvent } from "@sveltejs/kit";
 
@@ -138,6 +141,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get("code");
 	const state = event.url.searchParams.get("state");
 	const storedState = event.cookies.get("github_oauth_state") ?? null;
+
 	if (!code || !state || !storedState || state !== storedState) {
 		return new Response(null, {
 			status: 400
@@ -152,6 +156,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			}
 		});
 		const githubUser: GitHubUser = await githubUserResponse.json();
+
+		// Replace this with your own DB client.
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
@@ -163,11 +169,14 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			});
 		} else {
 			const userId = generateId(15);
+
+			// Replace this with your own DB client.
 			await db.table("user").insert({
 				id: userId,
 				github_id: githubUser.id,
 				username: githubUser.login
 			});
+
 			const session = await lucia.createSession(userId, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
@@ -206,11 +215,12 @@ interface GitHubUser {
 You can validate requests by checking `locals.user`. The field `user.username` is available since we defined the `getUserAttributes()` option. You can protect pages, such as `/`, by redirecting unauthenticated users to the login page.
 
 ```ts
-// +page.server.ts
-import type { PageServerLoad, Actions } from "./$types";
+// routes/+page.server.ts
+import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) redirect(302, "/login");
+
 	return {
 		username: event.locals.user.username
 	};
@@ -223,8 +233,8 @@ Sign out users by invalidating their session with `Lucia.invalidateSession()`. M
 
 ```ts
 // routes/+page.server.ts
-import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
+import { lucia } from "$lib/server/auth";
 
 import type { Actions, PageServerLoad } from "./$types";
 
