@@ -209,3 +209,15 @@ const nextConfig = {
 	}
 };
 ```
+
+### SvelteKit
+
+#### @sveltejs/adapter-node
+
+Make sure to install `oslo` as a `dependency`, not as `devDependency` to prevent `@sveltejs/adapter-node` from bundling `oslo`.
+
+As per SvelteKit documentation :
+
+>Development dependencies will be bundled into your app using Rollup. To control whether a given package is bundled or externalised, place it in devDependencies or dependencies respectively in your package.json.
+
+See [SvelteKit documentation](https://kit.svelte.dev/docs/adapter-node#deploying) for details.
