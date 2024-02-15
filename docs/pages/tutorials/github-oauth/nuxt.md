@@ -144,6 +144,8 @@ export default defineEventHandler(async (event) => {
 			}
 		});
 		const githubUser: GitHubUser = await githubUserResponse.json();
+
+		// Replace this with your own DB client.
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
@@ -153,11 +155,14 @@ export default defineEventHandler(async (event) => {
 		}
 
 		const userId = generateId(15);
+
+		// Replace this with your own DB client.
 		await db.table("user").insert({
 			id: userId,
 			github_id: githubUser.id,
 			username: githubUser.login
 		});
+
 		const session = await lucia.createSession(userId, {});
 		appendHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 		return sendRedirect(event, "/");

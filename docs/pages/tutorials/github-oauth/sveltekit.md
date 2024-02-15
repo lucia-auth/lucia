@@ -157,13 +157,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 		const githubUser: GitHubUser = await githubUserResponse.json();
 
-		// TODO: Replace this with your own DB client:.
+		// Replace this with your own DB client.
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
 		if (existingUser) {
 			const session = await lucia.createSession(existingUser.id, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
-
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: ".",
 				...sessionCookie.attributes
@@ -171,7 +170,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		} else {
 			const userId = generateId(15);
 
-			// TODO: Replace this with your own DB client:.
+			// Replace this with your own DB client.
 			await db.table("user").insert({
 				id: userId,
 				github_id: githubUser.id,
@@ -180,7 +179,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 			const session = await lucia.createSession(userId, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
-
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
 				path: ".",
 				...sessionCookie.attributes
@@ -200,7 +198,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				status: 400
 			});
 		}
-
 		return new Response(null, {
 			status: 500
 		});
@@ -250,16 +247,12 @@ export const actions: Actions = {
 		if (!event.locals.session) {
 			return fail(401);
 		}
-
 		await lucia.invalidateSession(event.locals.session.id);
-
 		const sessionCookie = lucia.createBlankSessionCookie();
-
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes
 		});
-
 		redirect(302, "/login");
 	}
 };
