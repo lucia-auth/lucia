@@ -119,7 +119,7 @@ When resending verification emails, make sure to implement rate limiting based o
 Validate the verification code by comparing it against your database and checking the expiration and email. Make sure to invalidate all user sessions.
 
 ```ts
-import { isWithinExpiration } from "oslo";
+import { isWithinExpirationDate } from "oslo";
 import type { User } from "lucia";
 
 app.post("/email-verification", async () => {
@@ -174,7 +174,7 @@ async function verifyVerificationCode(user: User, code: string): Promise<boolean
 	await db.table("email_verification_code").where("id", "=", code.id).delete();
 	await db.commit();
 
-	if (!isWithinExpiration(databaseCode.expires_at)) {
+	if (!isWithinExpirationDate(databaseCode.expires_at)) {
 		return false;
 	}
 	if (databaseCode.email !== user.email) {
