@@ -20,3 +20,11 @@ await client.session.deleteMany();
 await client.user.deleteMany();
 
 process.exit(0);
+
+declare module "lucia" {
+	interface Register {
+		DatabaseUserAttributes: {
+			username: string;
+		};
+	}
+}

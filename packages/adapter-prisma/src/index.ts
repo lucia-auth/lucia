@@ -39,10 +39,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
 		const userModelKey = this.userModel.name[0].toLowerCase() + this.userModel.name.slice(1);
-		const result = await this.sessionModel.findUnique<{
-			// this is a lie to make TS shut up
-			user: UserSchema;
-		}>({
+		const result = await this.sessionModel.findUnique({
 			where: {
 				id: sessionId
 			},
@@ -51,7 +48,9 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 			}
 		});
 		if (!result) return [null, null];
-		const userResult: UserSchema = result[userModelKey as "user"];
+		const userResult: UserSchema = result[
+			userModelKey as keyof typeof result
+		] as any as UserSchema;
 		delete result[userModelKey as keyof typeof result];
 		return [transformIntoDatabaseSession(result), transformIntoDatabaseUser(userResult)];
 	}
