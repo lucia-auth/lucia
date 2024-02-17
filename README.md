@@ -26,8 +26,6 @@ Lucia is an open source library released under the MIT license, with the help of
 
 **[Examples](https://github.com/lucia-auth/examples)**
 
-**[Contributing](https://lucia-auth.com/contributing/)**
-
 **[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
 
 ## Installation
