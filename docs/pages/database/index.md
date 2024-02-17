@@ -19,6 +19,7 @@ See [`Adapter`](/reference/main/Adapter) for building your own adapters.
 
 Refer to these guides on setting up your database, ORMs, and query builders:
 
+- 	[SurrealDB](/database/surrealdb)
 -   [Drizzle ORM](/database/drizzle)
 -   [Kysely](/database/kysely)
 -   [MongoDB](/database/mongodb)
