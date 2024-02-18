@@ -4,6 +4,8 @@ title: "PostgreSQL"
 
 # PostgreSQL
 
+> If you use `drizzle-orm` in your project you should use the `@lucia-auth/adapter-drizzle` package instead, even if you do use one of the lower postgres drivers mentioned below. The reason being is that `drizzle-orm` will alter the parsing of database types (like `TIMESTAMP`) and the `@lucia-auth/adapter-drizzle` package will handle that for you in accordance with your schema definitions.
+
 `@lucia-auth/adapter-postgresql` package provides adapters for PostgreSQL drivers:
 
 -   Neon HTTP serverless driver (`@neondatabase/serverless`)
