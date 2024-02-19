@@ -4,7 +4,7 @@ title: "Tutorial: Username and password auth in SvelteKit"
 
 # Tutorial: Username and password auth in SvelteKit
 
-Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/astro) page.
+Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/sveltekit) page.
 
 An [example project](https://github.com/lucia-auth/examples/tree/main/sveltekit/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/sveltekit/username-and-password).
 
