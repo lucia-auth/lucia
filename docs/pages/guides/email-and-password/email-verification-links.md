@@ -76,7 +76,6 @@ When a user signs up, set `email_verified` to `false`, create and send a verific
 
 ```ts
 import { generateId } from "lucia";
-import { encodeHex } from "oslo/encoding";
 
 app.post("/signup", async () => {
 	// ...
