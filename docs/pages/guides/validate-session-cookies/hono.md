@@ -37,7 +37,7 @@ app.use("*", (c, next) => {
 	return next();
 });
 
-app.use("*", (c, next) => {
+app.use("*", async (c, next) => {
 	const sessionId = getCookie(lucia.sessionCookieName) ?? null;
 	if (!sessionId) {
 		c.set("user", null);
