@@ -228,9 +228,9 @@ Then, create a global middleware in `middleware/auth.global.ts` to populate it.
 // middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async () => {
 	const user = useUser();
-	const { data } = await useFetch("/api/user");
-	if (data.value) {
-		user.value = data.value;
+	const data = await useRequestFetch()("/api/user");
+	if (data) {
+		user.value = data;
 	}
 });
 ```
@@ -263,10 +263,10 @@ export default eventHandler(async (event) => {
 ```vue
 <script lang="ts" setup>
 async function logout() {
-	await useFetch("/api/logout", {
+	await $fetch("/api/logout", {
 		method: "POST"
 	});
-	navigateTo("/login");
+	await navigateTo("/login");
 }
 </script>
 
