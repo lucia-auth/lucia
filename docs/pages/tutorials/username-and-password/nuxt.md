@@ -61,13 +61,11 @@ Create `pages/signup.vue` and set up a basic form.
 <!--pages/signup.vue-->
 <script lang="ts" setup>
 async function signup(e: Event) {
-	const result = await useFetch("/api/signup", {
+	await $fetch("/api/signup", {
 		method: "POST",
 		body: new FormData(e.target as HTMLFormElement)
 	});
-	if (!result.error.value) {
-		await navigateTo("/");
-	}
+	await navigateTo("/");
 }
 </script>
 
@@ -152,13 +150,11 @@ Create `pages/login.vue` and set up a basic form.
 <!--pages/login.vue-->
 <script lang="ts" setup>
 async function login(e: Event) {
-	const result = await useFetch("/api/login", {
+	await $fetch("/api/login", {
 		method: "POST",
 		body: new FormData(e.target as HTMLFormElement)
 	});
-	if (!result.error.value) {
-		await navigateTo("/");
-	}
+	await navigateTo("/");
 }
 </script>
 
@@ -279,9 +275,9 @@ Then, create a global middleware in `middleware/auth.global.ts` to populate it.
 // middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async () => {
 	const user = useUser();
-	const { data } = await useFetch("/api/user");
-	if (data.value) {
-		user.value = data.value;
+	const data = await useRequestFetch()("/api/user");
+	if (data) {
+		user.value = data;
 	}
 });
 ```
@@ -314,10 +310,10 @@ export default eventHandler(async (event) => {
 ```vue
 <script lang="ts" setup>
 async function logout() {
-	await useFetch("/api/logout", {
+	await $fetch("/api/logout", {
 		method: "POST"
 	});
-	navigateTo("/login");
+	await navigateTo("/login");
 }
 </script>
 
