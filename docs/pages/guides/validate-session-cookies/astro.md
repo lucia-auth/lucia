@@ -56,8 +56,8 @@ Make sure sure to type `App.Locals` as well.
 /// <reference types="astro/client" />
 declare namespace App {
 	interface Locals {
-		user: import("lucia").User;
-		session: import("lucia").Session;
+		user: import("lucia").User | null;
+		session: import("lucia").Session | null;
 	}
 }
 ```
