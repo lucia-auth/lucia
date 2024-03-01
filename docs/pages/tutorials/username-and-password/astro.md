@@ -61,7 +61,7 @@ Create `pages/signup.astro` and set up a basic form.
 <html lang="en">
 	<body>
 		<h1>Sign up</h1>
-		<form method="post" action="/api/login">
+		<form method="post" action="/api/signup">
 			<label for="username">Username</label>
 			<input id="username" name="username" />
 			<label for="password">Password</label>
