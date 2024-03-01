@@ -102,7 +102,7 @@ This creates a dedicated model for user passwords.
 model User {
     id         String         @id
     sessions   Session[]
-	passwordId String?
+    passwordId String?
     password   Password?      @relation(references: [id], fields: [passwordId], onDelete: Cascade)
 }
 
