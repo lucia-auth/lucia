@@ -100,10 +100,9 @@ This creates a dedicated model for user passwords.
 
 ```prisma
 model User {
-    id         String         @id
+    id         String     @id
     sessions   Session[]
-    passwordId String?
-    password   Password?      @relation(references: [id], fields: [passwordId], onDelete: Cascade)
+    passwords  Password[]
 }
 
 model Password {
