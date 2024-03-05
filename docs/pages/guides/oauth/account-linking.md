@@ -11,6 +11,12 @@ This guide uses the database schema shown in the [Multiple OAuth providers](/gui
 In general, you'd want to link accounts with the same email. Keep in mind that the email can be not verified and you should always assume it isn't. Make sure to verify that the email has been verified.
 
 ```ts
+const url = await github.createAuthorizationURL(state, {
+	scopes: ["user:email"]
+});
+```
+
+```ts
 import { generateId } from "lucia";
 
 const tokens = await github.validateAuthorizationCode(code);
