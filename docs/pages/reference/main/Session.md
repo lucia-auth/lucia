@@ -10,11 +10,12 @@ Represents a session.
 
 ```ts
 //$ SessionAttributes=/reference/main/SessionAttributes
-interface Session extends SessionAttributes {
+//$ UserId=/reference/main/UserId
+interface Session extends $$SessionAttributes {
 	id: string;
 	expiresAt: Date;
 	fresh: boolean;
-	userId: string;
+	userId: $$UserId;
 }
 ```
 
