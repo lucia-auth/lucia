@@ -1,8 +1,12 @@
 # lucia
 
+## 3.1.0
+
+-   [#1472](https://github.com/lucia-auth/lucia/pull/1472) : Add option to configure user ID type
+
 ## 3.0.1
 
--   Fix `LegacyScrypt` generating malformed hash (see [#1370](https://github.com/lucia-auth/lucia/pull/1370)) - no security concerns
+-   Fix `LegacyScrypt` generating malformed hash (see [#1370](https://github.com/lucia-auth/lucia/pull/1370) - no security concerns)
 
 ## 3.0.0
 
