@@ -4,7 +4,7 @@ title: "UserId"
 
 # `UserId`
 
-User Id.
+User ID.
 
 ## Definition
 
