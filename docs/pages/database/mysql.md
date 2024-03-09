@@ -52,16 +52,16 @@ const adapter = new Mysql2Adapter(pool, {
 
 ### PlanetScale serverless
 
-`PlanetScaleAdapter` takes a `Connection` instance and a list of table names.
+`PlanetScaleAdapter` takes a `Client` or `Connection` instance and a list of table names.
 
 ```ts
 import { Lucia } from "lucia";
 import { PlanetScaleAdapter } from "@lucia-auth/adapter-mysql";
-import { connect } from "@planetscale/database";
+import { Client } from "@planetscale/database";
 
-const connection = connect();
+const client = new Client();
 
-const adapter = new PlanetScaleAdapter(connection, {
+const adapter = new PlanetScaleAdapter(client, {
 	user: "user",
 	session: "user_session"
 });
