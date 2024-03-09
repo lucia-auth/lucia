@@ -7,7 +7,8 @@ import type { Adapter } from "./database.js";
 import type {
 	RegisteredDatabaseSessionAttributes,
 	RegisteredDatabaseUserAttributes,
-	RegisteredLucia
+	RegisteredLucia,
+	UserId
 } from "./index.js";
 import { CookieAttributes } from "oslo/cookie";
 
@@ -23,11 +24,11 @@ export interface Session extends SessionAttributes {
 	id: string;
 	expiresAt: Date;
 	fresh: boolean;
-	userId: string;
+	userId: UserId;
 }
 
 export interface User extends UserAttributes {
-	id: string;
+	id: UserId;
 }
 
 export class Lucia<
@@ -98,7 +99,7 @@ export class Lucia<
 		);
 	}
 
-	public async getUserSessions(userId: string): Promise<Session[]> {
+	public async getUserSessions(userId: UserId): Promise<Session[]> {
 		const databaseSessions = await this.adapter.getUserSessions(userId);
 		const sessions: Session[] = [];
 		for (const databaseSession of databaseSessions) {
@@ -154,7 +155,7 @@ export class Lucia<
 	}
 
 	public async createSession(
-		userId: string,
+		userId: UserId,
 		attributes: RegisteredDatabaseSessionAttributes,
 		options?: {
 			sessionId?: string;
@@ -182,7 +183,7 @@ export class Lucia<
 		await this.adapter.deleteSession(sessionId);
 	}
 
-	public async invalidateUserSessions(userId: string): Promise<void> {
+	public async invalidateUserSessions(userId: UserId): Promise<void> {
 		await this.adapter.deleteUserSessions(userId);
 	}
 

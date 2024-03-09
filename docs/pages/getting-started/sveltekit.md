@@ -20,7 +20,6 @@ If you use `@sveltejs/adapter-node`, make sure to install `oslo` as a `dependenc
 npm install oslo
 ```
 
-
 ## Initialize Lucia
 
 Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type

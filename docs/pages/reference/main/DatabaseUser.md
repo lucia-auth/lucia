@@ -10,8 +10,9 @@ Represents a user stored in a database.
 
 ```ts
 //$ DatabaseUserAttributes=/reference/main/DatabaseUserAttributes
+//$ UserId=/reference/main/UserId
 interface DatabaseUser {
-	id: string;
+	id: $$UserId;
 	attributes: DatabaseUserAttributes;
 }
 ```

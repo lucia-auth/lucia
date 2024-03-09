@@ -18,6 +18,12 @@ import type { Lucia } from "./core.js";
 
 export interface Register {}
 
+export type UserId = Register extends {
+	UserId: infer _UserId;
+}
+	? _UserId
+	: string;
+
 export type RegisteredLucia = Register extends {
 	Lucia: infer _Lucia;
 }

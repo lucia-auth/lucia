@@ -72,3 +72,18 @@ We do not automatically expose all database columns as
 
 1. Each project has its own code styling rules
 2. You generally don't want to expose sensitive data such as hashed passwords (even worse if you send the entire user object to the client)
+
+### Define user ID type
+
+User IDs are typed as strings by default. You can override this by declaring `Register.UserId`.
+
+```ts
+declare module "lucia" {
+	interface Register {
+		Lucia: typeof lucia;
+		UserId: number;
+	}
+}
+
+const session = await lucia.createSession(0, {});
+```

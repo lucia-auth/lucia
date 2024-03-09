@@ -10,8 +10,9 @@ Represents a user.
 
 ```ts
 //$ UserAttributes=/reference/main/UserAttributes
-interface User extends UserAttributes {
-	id: string;
+//$ UserId=/reference/main/UserId
+interface User extends $$UserAttributes {
+	id: $$UserId;
 }
 ```
 

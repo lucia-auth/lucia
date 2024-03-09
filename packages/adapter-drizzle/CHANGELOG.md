@@ -2,7 +2,7 @@
 
 ## 1.0.2
 
--	Fix Drizzle type definitions ([#1426](https://github.com/lucia-auth/lucia/pull/1426))
+-   Fix Drizzle type definitions ([#1426](https://github.com/lucia-auth/lucia/pull/1426))
 
 ## 1.0.1
 

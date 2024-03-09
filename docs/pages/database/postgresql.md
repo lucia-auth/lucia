@@ -4,7 +4,7 @@ title: "PostgreSQL"
 
 # PostgreSQL
 
-> If you use Drizzle ORM in your project, use the [Drizzle adapter](https://lucia-auth.com/database/drizzle#postgresql) instead as Drizzle ORM overrides how your database driver handles dates. 
+> If you use Drizzle ORM in your project, use the [Drizzle adapter](https://lucia-auth.com/database/drizzle#postgresql) instead as Drizzle ORM overrides how your database driver handles dates.
 
 `@lucia-auth/adapter-postgresql` package provides adapters for PostgreSQL drivers:
 
