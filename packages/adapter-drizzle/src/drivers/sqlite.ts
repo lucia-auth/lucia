@@ -1,6 +1,6 @@
 import { eq, lte } from "drizzle-orm";
 
-import type { Adapter, DatabaseSession, DatabaseUser } from "lucia";
+import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
 import type {
 	SQLiteColumn,
 	BaseSQLiteDatabase,
@@ -28,7 +28,7 @@ export class DrizzleSQLiteAdapter implements Adapter {
 		await this.db.delete(this.sessionTable).where(eq(this.sessionTable.id, sessionId));
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: UserId): Promise<void> {
 		await this.db.delete(this.sessionTable).where(eq(this.sessionTable.userId, userId));
 	}
 
@@ -51,7 +51,7 @@ export class DrizzleSQLiteAdapter implements Adapter {
 		];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: UserId): Promise<DatabaseSession[]> {
 		const result = await this.db
 			.select()
 			.from(this.sessionTable)

@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-mongodb
 
+## 1.0.3
+
+-   Update dependencies.
+
 ## 1.0.2
 
 -   Fix Mongoose compatibility issues
