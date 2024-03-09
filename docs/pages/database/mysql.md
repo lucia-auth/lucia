@@ -17,6 +17,8 @@ npm install @lucia-auth/adapter-mysql
 
 You can change the `varchar` length as necessary. `session(id)` should be able to hold at least 40 chars.
 
+User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
+
 ```sql
 CREATE TABLE user (
     id VARCHAR(255) PRIMARY KEY

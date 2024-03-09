@@ -18,6 +18,8 @@ npm install @lucia-auth/adapter-postgresql
 
 ## Schema
 
+User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
+
 ```sql
 CREATE TABLE auth_user (
     id TEXT PRIMARY KEY

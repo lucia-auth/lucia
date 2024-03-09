@@ -17,6 +17,8 @@ npm install @lucia-auth/adapter-sqlite
 
 ## Schema
 
+User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
+
 ```sql
 CREATE TABLE user (
     id TEXT NOT NULL PRIMARY KEY
