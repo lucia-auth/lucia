@@ -22,8 +22,8 @@ export interface DatabaseUser {
 }
 
 export interface DatabaseSession {
-	userId: string;
+	userId: UserId;
 	expiresAt: Date;
-	id: UserId;
+	id: string;
 	attributes: RegisteredDatabaseSessionAttributes;
 }

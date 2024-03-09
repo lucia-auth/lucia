@@ -46,7 +46,7 @@ Create a table for storing for email verification codes.
 | ------------ | -------- | ------------------- |
 | `id`         | any      | auto increment, etc |
 | `code`       | `string` |                     |
-| `user_id`    | `string` | unique              |
+| `user_id`    | any      | unique              |
 | `email`      | `string` |                     |
 | `expires_at` | `Date`   |                     |
 

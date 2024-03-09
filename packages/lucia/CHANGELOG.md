@@ -1,8 +1,12 @@
 # lucia
 
+## 3.1.1
+
+-   Fix types.
+
 ## 3.1.0
 
--   [#1472](https://github.com/lucia-auth/lucia/pull/1472) : Add option to configure user ID type
+-   Add option to configure user ID type ([#1472](https://github.com/lucia-auth/lucia/pull/1472)).
 
 ## 3.0.1
 

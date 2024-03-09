@@ -47,7 +47,7 @@ Create a table for storing for email verification tokens.
 | column       | type     | attributes  |
 | ------------ | -------- | ----------- |
 | `id`         | `string` | primary key |
-| `user_id`    | `string` |             |
+| `user_id`    | any      |             |
 | `email`      | `string` |             |
 | `expires_at` | `Date`   |             |
 
