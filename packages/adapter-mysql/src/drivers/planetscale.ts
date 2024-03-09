@@ -1,19 +1,17 @@
-import { MySQLAdapter } from "./base.js";
+import { MySQLAdapter } from "../base.js";
 
-import type { Controller, TableNames } from "./base.js";
+import type { Controller, TableNames } from "../base.js";
 import type { Client, Connection } from "@planetscale/database";
 
-type PlanetScaleClient = Client | Connection;
-
 export class PlanetScaleAdapter extends MySQLAdapter {
-	constructor(client: PlanetScaleClient, tableNames: TableNames) {
+	constructor(client: Client | Connection, tableNames: TableNames) {
 		super(new PlanetScaleController(client), tableNames);
 	}
 }
 
 class PlanetScaleController implements Controller {
-	private client: PlanetScaleClient;
-	constructor(client: PlanetScaleClient) {
+	private client: Client | Connection;
+	constructor(client: Client | Connection) {
 		this.client = client;
 	}
 
