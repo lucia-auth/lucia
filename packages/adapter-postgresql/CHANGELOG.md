@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-postgresql
 
+## 3.1.2
+
+-   PlanetScale adapter accepts both `Client` and `Connection` ([#1459](https://github.com/lucia-auth/lucia/pull/1459)).
+
 ## 3.1.1
 
 -   Update dependencies.
