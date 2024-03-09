@@ -3,7 +3,8 @@ import type {
 	DatabaseSession,
 	RegisteredDatabaseSessionAttributes,
 	DatabaseUser,
-	RegisteredDatabaseUserAttributes
+	RegisteredDatabaseUserAttributes,
+	UserId
 } from "lucia";
 
 export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapter {
@@ -27,7 +28,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 		}
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: UserId): Promise<void> {
 		await this.sessionModel.deleteMany({
 			where: {
 				userId
@@ -55,7 +56,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 		return [transformIntoDatabaseSession(result), transformIntoDatabaseUser(userResult)];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: UserId): Promise<DatabaseSession[]> {
 		const result = await this.sessionModel.findMany({
 			where: {
 				userId
@@ -122,12 +123,12 @@ interface PrismaClient {
 }
 
 interface UserSchema extends RegisteredDatabaseUserAttributes {
-	id: string;
+	id: UserId;
 }
 
 interface SessionSchema extends RegisteredDatabaseSessionAttributes {
 	id: string;
-	userId: string;
+	userId: UserId;
 	expiresAt: Date;
 }
 

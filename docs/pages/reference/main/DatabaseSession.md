@@ -10,9 +10,10 @@ Represents a session stored in a database.
 
 ```ts
 //$ DatabaseSessionAttributes=/reference/main/DatabaseSessionAttributes
+//$ UserId=/reference/main/UserId
 interface DatabaseSession {
 	id: string;
-	userId: string;
+	userId: $$UserId;
 	expiresAt: Date;
 	attributes: $$DatabaseSessionAttributes;
 }

@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-postgresql
 
+## 3.1.1
+
+-   Update dependencies.
+
 ## 3.1.0
 
 -   Add Neon HTTP adapter ([#1413](https://github.com/lucia-auth/lucia/pull/1413))

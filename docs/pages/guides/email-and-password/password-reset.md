@@ -13,7 +13,7 @@ Create a table for storing for password reset tokens.
 | column       | type     | attributes  |
 | ------------ | -------- | ----------- |
 | `id`         | `string` | primary key |
-| `user_id`    | `string` |             |
+| `user_id`    | any      |             |
 | `expires_at` | `Date`   |             |
 
 ## Create verification token

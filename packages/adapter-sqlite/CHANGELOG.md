@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-sqlite
 
+## 3.0.1
+
+-   Update dependencies
+
 ## 3.0.0
 
 See the [migration guide](https://v3.lucia-auth.com/upgrade-v3/sqlite).

@@ -11,14 +11,15 @@ Represents a database adapter.
 ```ts
 //$ DatabaseSession=/reference/main/DatabaseSession
 //$ DatabaseUser=/reference/main/DatabaseUser
+//$ UserId=/reference/main/UserId
 interface Adapter {
 	deleteExpiredSessions(): Promise<void>;
 	deleteSession(sessionId: string): Promise<void>;
-	deleteUserSessions(userId: string): Promise<void>;
+	deleteUserSessions(userId: $$UserId): Promise<void>;
 	getSessionAndUser(
 		sessionId: string
 	): Promise<[session: $$DatabaseSession | null, user: $$DatabaseUser | null]>;
-	getUserSessions(userId: string): Promise<$$DatabaseSession[]>;
+	getUserSessions(userId: $$UserId): Promise<$$DatabaseSession[]>;
 	setSession(session: $$DatabaseSession): Promise<void>;
 	updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void>;
 }

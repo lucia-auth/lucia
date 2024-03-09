@@ -11,7 +11,11 @@ Method of [`Lucia`](/reference/main/Lucia). Creates a new session.
 ```ts
 //$ DatabaseSessionAttributes=/reference/main/DatabaseSessionAttributes
 //$ Session=/reference/main/Session
-function createSession(userId: string, attributes: $$DatabaseSessionAttributes): Promise<$$Session>;
+//$ UserId=/reference/main/UserId
+function createSession(
+	userId: $$UserId,
+	attributes: $$DatabaseSessionAttributes
+): Promise<$$Session>;
 ```
 
 ### Parameters

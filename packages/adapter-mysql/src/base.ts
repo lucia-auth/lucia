@@ -3,7 +3,8 @@ import type {
 	DatabaseSession,
 	RegisteredDatabaseSessionAttributes,
 	DatabaseUser,
-	RegisteredDatabaseUserAttributes
+	RegisteredDatabaseUserAttributes,
+	UserId
 } from "lucia";
 
 export class MySQLAdapter implements Adapter {
@@ -24,7 +25,7 @@ export class MySQLAdapter implements Adapter {
 		]);
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: UserId): Promise<void> {
 		await this.controller.execute(
 			`DELETE FROM ${this.escapedSessionTableName} WHERE user_id = ?`,
 			[userId]
@@ -41,7 +42,7 @@ export class MySQLAdapter implements Adapter {
 		return [databaseSession, databaseUser];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: UserId): Promise<DatabaseSession[]> {
 		const result = await this.controller.getAll<SessionSchema>(
 			`SELECT * FROM ${this.escapedSessionTableName} WHERE user_id = ?`,
 			[userId]

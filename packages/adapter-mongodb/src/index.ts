@@ -3,19 +3,20 @@ import type {
 	DatabaseSession,
 	RegisteredDatabaseSessionAttributes,
 	DatabaseUser,
-	RegisteredDatabaseUserAttributes
+	RegisteredDatabaseUserAttributes,
+	UserId
 } from "lucia";
 import { Collection } from "mongodb";
 
 interface UserDoc extends RegisteredDatabaseUserAttributes {
-	_id: string;
+	_id: UserId;
 	__v?: any;
 }
 
 interface SessionDoc extends RegisteredDatabaseSessionAttributes {
 	_id: string;
 	__v?: any;
-	user_id: string;
+	user_id: UserId;
 	expires_at: Date;
 }
 
@@ -32,7 +33,7 @@ export class MongodbAdapter implements Adapter {
 		await this.Session.findOneAndDelete({ _id: sessionId });
 	}
 
-	public async deleteUserSessions(userId: string): Promise<void> {
+	public async deleteUserSessions(userId: UserId): Promise<void> {
 		await this.Session.deleteMany({ user_id: userId });
 	}
 
@@ -66,7 +67,7 @@ export class MongodbAdapter implements Adapter {
 		return [session, user];
 	}
 
-	public async getUserSessions(userId: string): Promise<DatabaseSession[]> {
+	public async getUserSessions(userId: UserId): Promise<DatabaseSession[]> {
 		const sessions = await this.Session.find(
 			{ user_id: userId },
 			{

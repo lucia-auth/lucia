@@ -10,7 +10,8 @@ Method of [`Lucia`](/reference/main/Lucia). Gets all sessions of a user.
 
 ```ts
 //$ Session=/reference/main/Session
-function getUserSessions(userId: string): Promise<Session[]>;
+//$ UserId=/reference/main/UserId
+function getUserSessions(userId: $$UserId): Promise<Session[]>;
 ```
 
 ### Parameters

@@ -14,6 +14,8 @@ npm install @lucia-auth/adapter-mongodb
 
 You must handle the database connection manually.
 
+User ID can be numeric or object ID (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
+
 ```ts
 import { Lucia } from "lucia";
 import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
