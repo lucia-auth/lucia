@@ -12,12 +12,6 @@ Install Lucia using your package manager of your choice. While not strictly nece
 npm install lucia oslo
 ```
 
-If you plan to use `oslo/password` to hash passwords in Next.js server actions deployed to Vercel, you may need to manually install dependencies.
-
-```
-npm install @node-rs/argon2 @node-rs/bcrypt
-```
-
 ## Initialize Lucia
 
 Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
@@ -64,7 +58,7 @@ node --experimental-web-crypto index.js
 
 ## Update configuration
 
-If you've installed Oslo, mark its dependencies as external to prevent it from getting bundled. This is only required when using the `oslo/password` module.
+If you're planning to use `oslo/password` for hashing passwords, mark its dependencies as external to prevent it from getting bundled.
 
 ```ts
 // next.config.ts
@@ -75,6 +69,14 @@ const nextConfig = {
 	}
 };
 ```
+
+In addition, if you're deploying to Vercel, you may need to manually install its dependencies.
+
+```
+npm install @node-rs/argon2 @node-rs/bcrypt
+```
+
+Currently, `oslo/password` cannot be used with Turbopack.
 
 ## Next steps
 
