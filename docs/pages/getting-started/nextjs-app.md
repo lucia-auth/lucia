@@ -12,7 +12,11 @@ Install Lucia using your package manager of your choice. While not strictly nece
 npm install lucia oslo
 ```
 
-**`oslo/password` does NOT work with Turbopack.**
+If you plan to use `oslo/password` to hash passwords in Next.js server actions deployed to Vercel, you may need to manually install dependencies.
+
+```
+npm install @node-rs/argon2 @node-rs/bcrypt
+```
 
 ## Initialize Lucia
 
