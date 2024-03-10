@@ -76,7 +76,7 @@ await oauth2Client.validateAuthorizationCode<{
 
 ## Refresh access tokens
 
-Use [`OAuth2Client.validateAuthorizationCode()`](https://oslo.js.org/reference/oauth2/OAuth2Client/refreshAccessToken) to refresh an access token. The API is similar to `validateAuthorizationCode()` and it also throws an `OAuth2RequestError` on error responses.
+Use [`OAuth2Client.refreshAccessToken()`](https://oslo.js.org/reference/oauth2/OAuth2Client/refreshAccessToken) to refresh an access token. The API is similar to `validateAuthorizationCode()` and it also throws an `OAuth2RequestError` on error responses.
 
 ```ts
 try {
