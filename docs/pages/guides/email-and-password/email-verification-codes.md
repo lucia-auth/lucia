@@ -4,6 +4,8 @@ title: "Email verification codes"
 
 # Email verification codes
 
+We recommend reading through the [email verification guide](https://thecopenhagenbook.com/email-verification) in the Copenhagen Book.
+
 ## Update database
 
 ### User table

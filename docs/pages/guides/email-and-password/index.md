@@ -13,3 +13,5 @@ Email-based auth requires a lot of components so be prepared to do some work! Fo
 -   [Password reset](/guides/email-and-password/password-reset)
 -   [Login throttling](/guides/email-and-password/login-throttling)
 -   [Two-factor authorization](/guides/email-and-password/2fa)
+
+We recommend reading through the [password authentication guide](https://thecopenhagenbook.com/password-authentication) in the Copenhagen Book.

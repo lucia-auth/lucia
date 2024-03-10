@@ -89,3 +89,7 @@ module.exports = {
 	externals: ["@node-rs/argon2", "@node-rs/bcrypt"]
 };
 ```
+
+## The Copenhagen Book
+
+This documentation often references [the Copenhagen Book](https://thecopenhagenbook.com/mfa). This is an open-source guide on implementing auth and should come in handy when implementing anything auth, including passkeys, multi-factor authentication, and a bit of cryptography. We recommend reading it to learn more about auth in web applications.
