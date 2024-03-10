@@ -67,7 +67,7 @@ async function generateEmailVerificationCode(userId: string, email: string): Pro
 		user_id: userId,
 		email,
 		code,
-		expires_at: createDate(new TimeSpan(5, "m")) // 5 minutes
+		expires_at: createDate(new TimeSpan(15, "m")) // 15 minutes
 	});
 	return code;
 }
