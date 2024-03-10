@@ -35,7 +35,6 @@ model Session {
 `PrismaAdapter` takes a session and user model.
 
 ```ts
-import { Lucia } from "lucia";
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
