@@ -13,3 +13,5 @@ For a step-by-step, framework-specific tutorial, see the [GitHub OAuth](/tutoria
 -   [PKCE](/guides/oauth/pkce)
 -   [Account linking](/guides/oauth/account-linking)
 -   [Custom OAuth providers](/guides/oauth/custom-providers)
+
+We recommend reading through the [OAuth guide](https://thecopenhagenbook.com/oauth) in the Copenhagen Book.

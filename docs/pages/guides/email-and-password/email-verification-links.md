@@ -4,7 +4,13 @@ title: "Email verification links"
 
 # Email verification links
 
-We recommend using [email verification codes](/guides/email-and-password/email-verification-codes) instead as it's more user-friendly.
+Email verification works by storing a secret token inside a link. The user's email address is verified when they visit the link.
+
+```
+https://example.com/email-verification/<TOKEN>
+```
+
+We recommend using [email verification codes](/guides/email-and-password/email-verification-codes) instead as it's more user-friendly. We also recommend reading through the [email verification guide](https://thecopenhagenbook.com/email-verification) in the Copenhagen Book.
 
 ## Update database
 
@@ -153,7 +159,8 @@ app.get("email-verification/:token", async () => {
 		status: 302,
 		headers: {
 			Location: "/",
-			"Set-Cookie": sessionCookie.serialize()
+			"Set-Cookie": sessionCookie.serialize(),
+			"Referrer-Policy": "no-referrer"
 		}
 	});
 });
