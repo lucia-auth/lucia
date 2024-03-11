@@ -133,6 +133,9 @@ async function signup(_: any, formData: FormData): Promise<ActionResult> {
 }
 ```
 
+> [!NOTE]  
+> If you are using MongoDB as your database provider, make sure to set `_id` as the user's id (uid).
+
 We recommend using Argon2id, but Oslo also provides Scrypt and Bcrypt. These only work in Node.js. If you're planning to deploy your project to a non-Node.js runtime, use `Scrypt` provided by `lucia`. This is a pure JS implementation but 2~3 times slower. For Bun, use [`Bun.password`](https://bun.sh/docs/api/hashing#bun-password).
 
 ```ts
