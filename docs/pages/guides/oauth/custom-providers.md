@@ -23,7 +23,7 @@ const oauth2Client = new OAuth2Client(clientId, authorizeEndpoint, tokenEndpoint
 
 ## Create authorization URL
 
-Create an authorization URL with [`OAuth2Client.createAuthorizationURL()`](https://oslo.js.org/reference/oauth2/OAuth2Client/createAuthorizationURL). This optionally accepts a `state`, `codeVerifier` for PKCE flows, and `scope`.
+Create an authorization URL with [`OAuth2Client.createAuthorizationURL()`](https://oslo.js.org/reference/oauth2/OAuth2Client/createAuthorizationURL). This optionally accepts a `state`, `codeVerifier` for PKCE flows, and `scopes`.
 
 ```ts
 import { generateState, generateCodeVerifier } from "oslo/oauth2";
@@ -33,7 +33,7 @@ const codeVerifier = generateCodeVerifier(); // for PKCE flow
 
 const url = await oauth2Client.createAuthorizationURL({
 	state,
-	scope: ["user:email"],
+	scopes: ["user:email"],
 	codeVerifier
 });
 ```
