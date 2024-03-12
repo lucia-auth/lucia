@@ -100,7 +100,7 @@ export type SQLiteUserTable = SQLiteTableWithColumns<{
 				tableName: any;
 				dataType: any;
 				columnType: any;
-				data: string;
+				data: UserId;
 				driverParam: any;
 				notNull: true;
 				hasDefault: boolean; // must be boolean instead of any to allow default values
@@ -152,7 +152,7 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				enumValues: any;
 				tableName: any;
 				columnType: any;
-				data: string;
+				data: UserId;
 				driverParam: any;
 				hasDefault: false;
 				name: any;
