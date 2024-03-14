@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-drizzle
 
+## 1.0.4
+
+-   Fix table types.
+
 ## 1.0.3
 
 -   Update dependencies.
