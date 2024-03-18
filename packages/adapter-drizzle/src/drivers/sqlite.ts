@@ -133,7 +133,7 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 		>;
 		expiresAt: SQLiteColumn<
 			{
-				dataType: "number";
+				dataType: any;
 				notNull: true;
 				enumValues: any;
 				tableName: any;

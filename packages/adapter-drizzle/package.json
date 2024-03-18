@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-drizzle",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Drizzle ORM adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
