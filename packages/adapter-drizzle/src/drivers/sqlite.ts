@@ -147,7 +147,7 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 		>;
 		userId: SQLiteColumn<
 			{
-				dataType: "string";
+				dataType: any;
 				notNull: true;
 				enumValues: any;
 				tableName: any;
