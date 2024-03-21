@@ -2,7 +2,7 @@
 
 ## 1.0.7
 
-- Fix previous revert in 1.0.6.
+- Fix previous revert in 1.0.6. ([#1501](https://github.com/lucia-auth/lucia/pull/1501))
 
 ## 1.0.6
 
