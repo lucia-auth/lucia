@@ -31,19 +31,21 @@ export class DrizzleMySQLAdapter implements Adapter {
 	public async getSessionAndUser(
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+		// https://github.com/drizzle-team/drizzle-orm/issues/555
+		const [databaseSession, databaseUser] = await Promise.all([
+			this.getSession(sessionId),
+			this.getUserFromSessionId(sessionId)
+		]);
+		return [databaseSession, databaseUser];
+	}
+
+	private async getSession(sessionId: string): Promise<DatabaseSession | null> {
 		const result = await this.db
-			.select({
-				user: this.userTable,
-				session: this.sessionTable
-			})
+			.select()
 			.from(this.sessionTable)
-			.innerJoin(this.userTable, eq(this.sessionTable.userId, this.userTable.id))
 			.where(eq(this.sessionTable.id, sessionId));
-		if (result.length !== 1) return [null, null];
-		return [
-			transformIntoDatabaseSession(result[0].session),
-			transformIntoDatabaseUser(result[0].user)
-		];
+		if (result.length !== 1) return null;
+		return transformIntoDatabaseSession(result[0]);
 	}
 
 	public async getUserSessions(userId: UserId): Promise<DatabaseSession[]> {
@@ -54,6 +56,17 @@ export class DrizzleMySQLAdapter implements Adapter {
 		return result.map((val) => {
 			return transformIntoDatabaseSession(val);
 		});
+	}
+
+	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
+		const { _, $inferInsert, $inferSelect, getSQL, ...userColumns } = this.userTable;
+		const result = await this.db
+			.select(userColumns)
+			.from(this.sessionTable)
+			.innerJoin(this.userTable, eq(this.sessionTable.userId, this.userTable.id))
+			.where(eq(this.sessionTable.id, sessionId));
+		if (result.length !== 1) return null;
+		return transformIntoDatabaseUser(result[0]);
 	}
 
 	public async setSession(session: DatabaseSession): Promise<void> {
