@@ -1,12 +1,16 @@
 # @lucia-auth/adapter-drizzle
 
+## 1.0.7
+
+-   Fix previous revert in 1.0.6. ([#1501](https://github.com/lucia-auth/lucia/pull/1501))
+
 ## 1.0.6
 
-- Revert previous optimization for D1 support.
+-   Revert previous optimization for D1 support ([#1500](https://github.com/lucia-auth/lucia/pull/1500)).
 
 ## 1.0.5
 
-- Fix table types ([#1495](https://github.com/lucia-auth/lucia/pull/1495)).
+-   Fix table types ([#1495](https://github.com/lucia-auth/lucia/pull/1495)).
 
 ## 1.0.4
 

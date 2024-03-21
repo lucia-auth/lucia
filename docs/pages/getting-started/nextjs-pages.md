@@ -84,5 +84,4 @@ You can learn all the concepts and APIs by reading the [Basics section](/basics/
 
 This documentation often references [the Copenhagen Book](https://thecopenhagenbook.com/mfa). This is an open-source guide on implementing auth and should come in handy when implementing anything auth, including passkeys, multi-factor authentication, and a bit of cryptography. We recommend reading it to learn more about auth in web applications.
 
-
 If you have any questions, [join our Discord server](https://discord.com/invite/PwrK3kpVR3)!

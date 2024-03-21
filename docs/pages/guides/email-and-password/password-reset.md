@@ -83,7 +83,7 @@ app.get("/reset-password/:token", async () => {
 			"Referrer-Policy": "no-referrer"
 		}
 	});
-})
+});
 ```
 
 Extract the verification token from the URL and validate by checking the expiration date. If the token is valid, invalidate all existing user sessions, update the database, and create a new session. Make sure to set the `Referrer-Policy` header here as well.
@@ -107,10 +107,7 @@ app.post("/reset-password/:token", async () => {
 	// ...
 
 	const tokenHash = encodeHex(await sha256(new TextEncoder().encode(verificationToken)));
-	const token = await db
-		.table("password_reset_token")
-		.where("token_hash", "=", tokenHash)
-		.get();
+	const token = await db.table("password_reset_token").where("token_hash", "=", tokenHash).get();
 	if (token) {
 		await db.table("password_reset_token").where("token_hash", "=", tokenHash).delete();
 	}
@@ -139,5 +136,3 @@ app.post("/reset-password/:token", async () => {
 	});
 });
 ```
-
-
