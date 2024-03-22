@@ -118,13 +118,13 @@ app.post("/reset-password/:token", async () => {
 		});
 	}
 
-	await lucia.invalidateUserSessions(user.id);
+	await lucia.invalidateUserSessions(token.user_id);
 	const hashedPassword = await new Argon2id().hash(password);
-	await db.table("user").where("id", "=", user.id).update({
+	await db.table("user").where("id", "=", token.user_id).update({
 		hashed_password: hashedPassword
 	});
 
-	const session = await lucia.createSession(user.id, {});
+	const session = await lucia.createSession(token.user_id, {});
 	const sessionCookie = lucia.createSessionCookie(session.id);
 	return new Response(null, {
 		status: 302,
