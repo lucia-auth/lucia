@@ -16,7 +16,7 @@ import { serializeCookie } from "oslo/cookie";
 app.get("/login/twitter", async (): Promise<Response> => {
 	const state = generateState();
 	const codeVerifier = generateCodeVerifier();
-	const url = await twitterAuth.createAuthorizationURL(codeVerifier, state);
+	const url = await twitterAuth.createAuthorizationURL(state, codeVerifier);
 
 	const headers = new Headers();
 	headers.append(
