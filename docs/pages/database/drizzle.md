@@ -14,7 +14,7 @@ npm install @lucia-auth/adapter-drizzle
 
 `DrizzleMySQLAdapter` takes a `Database` instance, the session table, and the user table. You can change the `varchar` length. `session(id)` should be able to hold at least 40 chars.
 
-User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
+User ID can be numeric (see [Define user ID type](docs/basics/users#define-user-id-type)) but session ID must be a string type.
 
 ```ts
 import { DrizzleMySQLAdapter } from "@lucia-auth/adapter-drizzle";
@@ -51,7 +51,7 @@ const adapter = new DrizzleMySQLAdapter(db, sessionTable, userTable);
 
 `DrizzlePostgreSQLAdapter` takes a `Database` instance, the session table, and the user table.
 
-User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
+User ID can be numeric (see [Define user ID type](docs/basics/users#define-user-id-type)) but session ID must be a string type.
 
 ```ts
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
@@ -85,7 +85,7 @@ const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
 
 `DrizzleSQLiteAdapter` takes a `Database` instance, the session table, and the user table.
 
-User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
+User ID can be numeric (see [Define user ID type](docs/basics/users#define-user-id-type)) but session ID must be a string type.
 
 ```ts
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
