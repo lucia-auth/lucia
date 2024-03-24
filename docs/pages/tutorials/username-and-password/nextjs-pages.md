@@ -169,7 +169,7 @@ const length = new TextEncoder().encode(password).length;
 Create `pages/login.tsx` and set up a basic form.
 
 ```tsx
-// pages/signup.tsx
+// pages/login.tsx
 import { useRouter } from "next/router";
 import type { FormEvent } from "react";
 
@@ -193,7 +193,7 @@ export default function Page() {
 
 	return (
 		<>
-			<h1>Create an account</h1>
+			<h1>Sign in</h1>
 			<form method="post" action="/api/login" onSubmit={onSubmit}>
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
