@@ -169,7 +169,7 @@ const length = new TextEncoder().encode(password).length;
 Create `pages/login.tsx` and set up a basic form.
 
 ```tsx
-// pages/signup.tsx
+// pages/login.tsx
 import { useRouter } from "next/router";
 import type { FormEvent } from "react";
 
@@ -193,7 +193,7 @@ export default function Page() {
 
 	return (
 		<>
-			<h1>Create an account</h1>
+			<h1>Sign in</h1>
 			<form method="post" action="/api/login" onSubmit={onSubmit}>
 				<label htmlFor="username">Username</label>
 				<input name="username" id="username" />
@@ -255,7 +255,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		// As a preventive measure, you may want to hash passwords even for invalid usernames.
 		// However, valid usernames can be already be revealed with the signup page among other methods.
 		// It will also be much more resource intensive.
-		// Since protecting against this is none-trivial,
+		// Since protecting against this is non-trivial,
 		// it is crucial your implementation is protected against brute-force attacks with login throttling etc.
 		// If usernames are public, you may outright tell the user that the username is invalid.
 		res.status(400).json({
