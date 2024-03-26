@@ -23,7 +23,7 @@ const app = new Hono<{
 	};
 }>();
 
-app.use("*", (c, next) => {
+app.use("*", async (c, next) => {
 	// CSRF middleware
 	if (c.req.method === "GET") {
 		return next();
@@ -38,7 +38,7 @@ app.use("*", (c, next) => {
 });
 
 app.use("*", async (c, next) => {
-	const sessionId = getCookie(lucia.sessionCookieName) ?? null;
+	const sessionId = getCookie(c, lucia.sessionCookieName) ?? null;
 	if (!sessionId) {
 		c.set("user", null);
 		c.set("session", null);
