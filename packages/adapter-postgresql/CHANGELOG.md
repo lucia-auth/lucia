@@ -1,5 +1,9 @@
 # @lucia-auth/adapter-postgresql
 
+## 3.1.2
+
+- Update peer dependencies.
+
 ## 3.1.1
 
 -   Update dependencies.
