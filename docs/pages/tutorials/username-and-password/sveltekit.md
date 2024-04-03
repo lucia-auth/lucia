@@ -167,6 +167,7 @@ Create `routes/login/+page.svelte` and set up a basic form.
 Create a form action in `routes/login/+page.server.ts`. First, do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
+<!-- routes/login/+page.server.ts -->
 import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 import { Argon2id } from "oslo/password";
