@@ -2,7 +2,7 @@
 
 ## 3.1.2
 
-- Update peer dependencies.
+-   Update peer dependencies.
 
 ## 3.1.1
 

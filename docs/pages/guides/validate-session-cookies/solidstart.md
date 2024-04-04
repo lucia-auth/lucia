@@ -10,42 +10,48 @@ We recommend creating a middleware to validate requests and store the current us
 
 ```ts
 // src/middleware.ts
-import { createMiddleware, appendHeader, getCookie, getHeader } from "@solidjs/start/server";
+import { createMiddleware } from "@solidjs/start/middleware";
+import { appendHeader, getCookie, getHeader } from "vinxi/http";
 import { Session, User, verifyRequestOrigin } from "lucia";
 import { lucia } from "./lib/auth";
 
-export default defineEventHandler((event) => {
-	if (context.request.method !== "GET") {
-		const originHeader = getHeader(event, "Origin") ?? null;
-		// NOTE: You may need to use `X-Forwarded-Host` instead
-		const hostHeader = getHeader(event, "Host") ?? null;
-		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-			return event.node.res.writeHead(403).end();
+export default createMiddleware({
+	onRequest: async (event) => {
+		const { nativeEvent } = event;
+		if (event.request.method !== "GET") {
+			const originHeader = getHeader(nativeEvent, "Origin") ?? null;
+			// NOTE: You may need to use `X-Forwarded-Host` instead
+			const hostHeader = getHeader(nativeEvent, "Host") ?? null;
+			if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
+				nativeEvent.node.res.writeHead(403).end();
+				return;
+			}
 		}
-	}
+		const sessionId = getCookie(nativeEvent, lucia.sessionCookieName) ?? null;
+		if (!sessionId) {
+			event.locals.session = null;
+			event.locals.user = null;
+			return;
+		}
 
-	const sessionId = getCookie(event, lucia.sessionCookieName) ?? null;
-	if (!sessionId) {
-		event.context.user = null;
-		return;
+		const { session, user } = await lucia.validateSession(sessionId);
+		if (session && session.fresh) {
+			appendHeader(
+				nativeEvent,
+				"Set-Cookie",
+				lucia.createSessionCookie(session.id).serialize()
+			);
+		}
+		if (!session) {
+			appendHeader(nativeEvent, "Set-Cookie", lucia.createBlankSessionCookie().serialize());
+		}
+		event.locals.session = session;
+		event.locals.user = user;
 	}
-
-	const { session, user } = await lucia.validateSession(sessionId);
-	if (session && session.fresh) {
-		appendResponseHeader(
-			event,
-			"Set-Cookie",
-			lucia.createSessionCookie(session.id).serialize()
-		);
-	}
-	if (!session) {
-		appendResponseHeader(event, "Set-Cookie", lucia.createBlankSessionCookie().serialize());
-	}
-	event.context.user = user;
 });
 
-declare module "vinxi/server" {
-	interface H3EventContext {
+declare module "@solidjs/start/server" {
+	interface RequestEventLocals {
 		user: User | null;
 		session: Session | null;
 	}
@@ -70,5 +76,5 @@ This will allow you to access the current user inside server contexts.
 ```ts
 import { getRequestEvent } from "solid-js/web";
 
-const user = getRequestEvent()!.context.user;
+const user = getRequestEvent()!.locals.user;
 ```
