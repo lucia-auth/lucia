@@ -11,23 +11,22 @@ We recommend creating a middleware to validate requests and store the current us
 ```ts
 // src/middleware.ts
 import { createMiddleware } from "@solidjs/start/middleware";
-import { appendHeader, getCookie, getHeader } from "vinxi/http";
+import { appendResponseHeader, getCookie, getRequestHeader } from "vinxi/http";
 import { Session, User, verifyRequestOrigin } from "lucia";
 import { lucia } from "./lib/auth";
 
 export default createMiddleware({
 	onRequest: async (event) => {
-		const { nativeEvent } = event;
 		if (event.request.method !== "GET") {
-			const originHeader = getHeader(nativeEvent, "Origin") ?? null;
+			const originHeader = getRequestHeader("Origin") ?? null;
 			// NOTE: You may need to use `X-Forwarded-Host` instead
-			const hostHeader = getHeader(nativeEvent, "Host") ?? null;
+			const hostHeader = getRequestHeader("Host") ?? null;
 			if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-				nativeEvent.node.res.writeHead(403).end();
+				event.nativeEvent.node.res.writeHead(403).end();
 				return;
 			}
 		}
-		const sessionId = getCookie(nativeEvent, lucia.sessionCookieName) ?? null;
+		const sessionId = getCookie(lucia.sessionCookieName) ?? null;
 		if (!sessionId) {
 			event.locals.session = null;
 			event.locals.user = null;
@@ -36,14 +35,10 @@ export default createMiddleware({
 
 		const { session, user } = await lucia.validateSession(sessionId);
 		if (session && session.fresh) {
-			appendHeader(
-				nativeEvent,
-				"Set-Cookie",
-				lucia.createSessionCookie(session.id).serialize()
-			);
+			appendResponseHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 		}
 		if (!session) {
-			appendHeader(nativeEvent, "Set-Cookie", lucia.createBlankSessionCookie().serialize());
+			appendResponseHeader("Set-Cookie", lucia.createBlankSessionCookie().serialize());
 		}
 		event.locals.session = session;
 		event.locals.user = user;
