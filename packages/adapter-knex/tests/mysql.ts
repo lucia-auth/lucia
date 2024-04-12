@@ -15,7 +15,6 @@ const db = knex({
     host: "localhost",
     database: process.env.MYSQL_DATABASE,
     password: process.env.MYSQL_PASSWORD,
-    port: Number(process.env.MYSQL_PORT || 3306)
   }
 });
 
