@@ -1,7 +1,7 @@
 import knex from "knex";
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { KnexPostgreSQLAdapter } from "../src/index.js";
+import { KnexMySQLAdapter } from "../src/index.js";
 import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
 
 dotenv.config({
@@ -9,12 +9,13 @@ dotenv.config({
 });
 
 const db = knex({
-  client: "pg",
+  client: "mysql",
   connection: {
     user: "root",
     host: "localhost",
-    database: process.env.POSTGRES_DATABASE,
-    password: process.env.POSTGRES_PASSWORD
+    database: process.env.MYSQL_DATABASE,
+    password: process.env.MYSQL_PASSWORD,
+    port: Number(process.env.MYSQL_PORT || 3306)
   }
 });
 
@@ -60,7 +61,7 @@ await db("user")
     username: databaseUser.attributes.username
   });
 
-const adapter = new KnexPostgreSQLAdapter(db, {
+const adapter = new KnexMySQLAdapter(db, {
   users: "user",
   sessions: "session"
 });

@@ -1,7 +1,7 @@
 import type { Knex } from "knex";
 import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
 
-type KnexPostgreSQLAdapterTables = ({
+type KnexMySQLAdapterTables = ({
   users: string;
   sessions: string;
 });
@@ -28,11 +28,11 @@ function transformIntoDatabaseUser(raw: KnexUserTable): DatabaseUser {
   return ({ id: userId, attributes });
 }
 
-export default class KnexPostgreSQLAdapter implements Adapter {
+export default class KnexMySQLAdapter implements Adapter {
   private readonly knex: Knex;
-  private readonly tables: KnexPostgreSQLAdapterTables;
+  private readonly tables: KnexMySQLAdapterTables;
 
-  public constructor(knex: Knex, tables: KnexPostgreSQLAdapterTables) {
+  public constructor(knex: Knex, tables: KnexMySQLAdapterTables) {
     this.knex = knex;
     this.tables = tables;
   }
@@ -40,12 +40,10 @@ export default class KnexPostgreSQLAdapter implements Adapter {
   public async getSessionAndUser(sessionId: string): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
     const [result] = ((
       await this.knex<KnexSessionTable>(this.tables.sessions)
-        .select([
-          this.knex.raw(`TO_JSON(${this.knex.ref(this.tables.users)}.*) AS user`),
-          this.knex.raw(`TO_JSON(${this.knex.ref(this.tables.sessions)}.*) AS session`)
-        ])
+        .select("*")
         .innerJoin<KnexUserTable>(this.tables.users, `${this.tables.sessions}.userId`, "=", `${this.tables.users}.userId`)
         .where(this.knex.ref(`${this.tables.sessions}.sessionId`), "=", sessionId)
+        .options({ nestTables: true })
     ) as unknown[] as ({ user: KnexUserTable, session: KnexSessionTable })[]);
 
     if (result === undefined) {
