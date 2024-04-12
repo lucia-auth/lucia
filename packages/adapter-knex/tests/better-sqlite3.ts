@@ -9,54 +9,39 @@ dotenv.config({
 });
 
 const db = knex({
-  client: "better-sqlite3",
-  connection: {
-    filename: ":memory:"
-  }
+	client: "better-sqlite3",
+	connection: {
+		filename: ":memory:"
+	}
 });
 
 await db.schema.createTable("user", (table) => {
-  table
-    .string("userId")
-    .primary();
-  
-  table
-    .string("username")
-    .notNullable()
-    .unique();
+	table.string("userId").primary();
+
+	table.string("username").notNullable().unique();
 });
 
 await db.schema.createTable("session", (table) => {
-  table
-    .string("country");
+	table.string("country");
 
-  table
-    .string("sessionId")
-    .primary();
-  
-  table
-    .timestamp("expiresAtTimestamp")
-    .notNullable();
-  
-  table
-    .string("userId")
-    .notNullable();
+	table.string("sessionId").primary();
 
-  table
-    .foreign("userId")
-    .references("user.userId");
+	table.timestamp("expiresAtTimestamp").notNullable();
+
+	table.string("userId").notNullable();
+
+	table.foreign("userId").references("user.userId");
 });
 
-await db("user")
-  .insert({
-    userId: databaseUser.id,
-    // @ts-ignore
-    username: databaseUser.attributes.username
-  });
+await db("user").insert({
+	userId: databaseUser.id,
+	// @ts-ignore
+	username: databaseUser.attributes.username
+});
 
 const adapter = new KnexBetterSQLite3Adapter(db, {
-  users: "user",
-  sessions: "session"
+	users: "user",
+	sessions: "session"
 });
 
 await testAdapter(adapter);
