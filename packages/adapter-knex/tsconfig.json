@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"target": "ES2022",
+		"outDir": "./dist",
+		"declaration": true,
+		"skipLibCheck": true,
+
+		"noImplicitAny": true,
+		"allowSyntheticDefaultImports": true
+	},
+	"include": ["src"],
+	"exclude": ["node_modules/", "**/*.test.ts"]
+}

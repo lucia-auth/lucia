@@ -1,0 +1,49 @@
+{
+	"name": "@lucia-auth/adapter-knex",
+	"version": "1.0.7",
+	"description": "KnexJS adapter for Lucia",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
+	"type": "module",
+	"files": [
+		"/dist/",
+		"CHANGELOG.md"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc",
+		"auri.build": "pnpm build",
+		"test.mysql": "tsx tests/mysql.ts",
+		"test.postgresql": "tsx tests/postgresql.ts",
+		"test.sqlite": "tsx tests/sqlite.ts"
+	},
+	"keywords": [
+		"lucia",
+		"auth",
+		"authentication",
+		"adapter",
+		"knex",
+		"knexjs"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/adapter-knex"
+	},
+	"author": "pilcrowonpaper",
+	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"peerDependencies": {
+		"lucia": "3.x"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"dotenv": "^16.0.3",
+		"knex": "^3.1.0",
+		"lucia": "workspace:*",
+		"pg": "^8.8.0",
+		"tsx": "^3.12.6"
+	}
+}
