@@ -87,7 +87,7 @@ import { generateId } from "lucia";
 app.post("/signup", async () => {
 	// ...
 
-	const userId = generateId();
+	const userId = generateId(15);
 
 	await db.table("user").insert({
 		id: userId,

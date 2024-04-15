@@ -50,7 +50,7 @@ if (existingUser) {
 		user_id: existingUser.id
 	});
 } else {
-	const userId = generateId();
+	const userId = generateId(15);
 	await db.beginTransaction();
 	await db.table("user").insert({
 		id: userId,

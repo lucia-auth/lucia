@@ -47,7 +47,7 @@ When the user signs up, set `two_factor_secret` to `null` to indicate the user h
 app.post("/signup", async () => {
 	// ...
 
-	const userId = generateId();
+	const userId = generateId(15);
 
 	await db.table("user").insert({
 		id: userId,
