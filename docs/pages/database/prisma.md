@@ -49,6 +49,6 @@ To include relations in the user object, pass an object with the relations to in
 
 ```ts
 const adapter = new PrismaAdapter(client.session, client.user, {
-	user: true
+	settings: true
 });
 ```
