@@ -10,10 +10,16 @@ import type {
 export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapter {
 	private sessionModel: PrismaModel<SessionSchema>;
 	private userModel: PrismaModel<UserSchema>;
+	private userInclude: PrismaInclude<UserSchema>;
 
-	constructor(sessionModel: BasicPrismaModel, userModel: BasicPrismaModel) {
+	constructor(
+		sessionModel: BasicPrismaModel,
+		userModel: BasicPrismaModel,
+		userInclude?: PrismaInclude<UserSchema>
+	) {
 		this.sessionModel = sessionModel as any as PrismaModel<SessionSchema>;
 		this.userModel = userModel as any as PrismaModel<UserSchema>;
+		this.userInclude = userInclude ?? {};
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {
@@ -45,7 +51,7 @@ export class PrismaAdapter<_PrismaClient extends PrismaClient> implements Adapte
 				id: sessionId
 			},
 			include: {
-				[userModelKey]: true
+				[userModelKey]: { include: this.userInclude }
 			}
 		});
 		if (!result) return [null, null];
@@ -146,11 +152,19 @@ type PrismaWhere<_Schema extends {}> = {
 		  };
 };
 
+type PrismaNestedInclude<_Schema> = _Schema extends Record<string, any>
+	? { include?: PrismaInclude<_Schema> } | boolean
+	: never;
+
+type PrismaInclude<_Schema extends {}> = {
+	[K in keyof _Schema]?: PrismaNestedInclude<_Schema[K]>;
+};
+
 interface PrismaModel<_Schema extends {}> {
 	name: string;
 	findUnique: <_Included = {}>(options: {
 		where: PrismaWhere<_Schema>;
-		include?: Record<string, boolean>;
+		include?: PrismaInclude<_Schema>;
 	}) => Promise<null | (_Schema & _Included)>;
 	findMany: (options?: { where: PrismaWhere<_Schema> }) => Promise<_Schema[]>;
 	create: (options: { data: _Schema }) => Promise<_Schema>;

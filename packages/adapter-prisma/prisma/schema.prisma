@@ -14,6 +14,7 @@ model User {
   id           String    @id
   username     String    @unique
   auth_session Session[]
+  settings     Settings?
 }
 
 model Session {
@@ -22,6 +23,14 @@ model Session {
   expiresAt DateTime
   country   String
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Settings {
+  userId String @id @unique
+  theme  String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
