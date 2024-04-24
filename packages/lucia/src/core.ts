@@ -220,7 +220,7 @@ export interface SessionCookieOptions {
 }
 
 export interface SessionCookieAttributesOptions {
-	sameSite?: "lax" | "strict";
+	sameSite?: "lax" | "strict" | "none";
 	domain?: string;
 	path?: string;
 	secure?: boolean;

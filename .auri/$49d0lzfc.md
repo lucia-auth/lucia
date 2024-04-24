@@ -3,4 +3,4 @@ package: "lucia" # package name
 type: "patch" # "major", "minor", "patch"
 ---
 
-Fix `LegacyScrypt` generating malformed hash (see PR for fix)
+Fix `options.sessionCookie` parameter type in `Lucia`
