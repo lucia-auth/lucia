@@ -132,7 +132,7 @@ Create an API route in `app/login/github/callback/route.ts` to handle the callba
 import { github, lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { OAuth2RequestError } from "arctic";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 
 export async function GET(request: Request): Promise<Response> {
 	const url = new URL(request.url);
@@ -169,7 +169,7 @@ export async function GET(request: Request): Promise<Response> {
 			});
 		}
 
-		const userId = generateId(15);
+		const userId = generateIdFromEntropySize(10); // 16 characters long
 
 		// Replace this with your own DB client.
 		await db.table("user").insert({

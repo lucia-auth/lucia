@@ -105,7 +105,7 @@ In the callback route, first get the state from the cookie and the search params
 ```ts
 import { github, lucia } from "./auth.js";
 import { OAuth2RequestError } from "arctic";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 import { parseCookies } from "oslo/cookie";
 
 app.get("/login/github/callback", async (request: Request): Promise<Response> => {
@@ -149,7 +149,7 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 			});
 		}
 
-		const userId = generateId(15);
+		const userId = generateIdFromEntropySize(10); // 16 characters long
 		await db.table("user").insert({
 			id: userId,
 			username: githubUserResult.login,

@@ -1,5 +1,4 @@
 import { TimeSpan, createDate, isWithinExpirationDate } from "oslo";
-import { generateId } from "./crypto.js";
 import { CookieController } from "oslo/cookie";
 
 import type { Cookie } from "oslo/cookie";
@@ -11,6 +10,7 @@ import type {
 	UserId
 } from "./index.js";
 import { CookieAttributes } from "oslo/cookie";
+import { generateIdFromEntropySize } from "./crypto.js";
 
 type SessionAttributes = RegisteredLucia extends Lucia<infer _SessionAttributes, any>
 	? _SessionAttributes
@@ -161,7 +161,7 @@ export class Lucia<
 			sessionId?: string;
 		}
 	): Promise<Session> {
-		const sessionId = options?.sessionId ?? generateId(40);
+		const sessionId = options?.sessionId ?? generateIdFromEntropySize(25);
 		const sessionExpiresAt = createDate(this.sessionExpiresIn);
 		await this.adapter.setSession({
 			id: sessionId,

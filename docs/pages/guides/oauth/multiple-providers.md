@@ -48,7 +48,7 @@ if (existingAccount) {
 	// ...
 }
 
-const userId = generateId(15);
+const userId = generateIdFromEntropySize(10); // 16 characters long
 
 await db.beginTransaction();
 await db.table("user").insert({

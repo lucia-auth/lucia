@@ -130,7 +130,7 @@ Create an API route in `routes/login/github/callback/+server.ts` to handle the c
 ```ts
 // routes/login/github/callback/+server.ts
 import { OAuth2RequestError } from "arctic";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 import { github, lucia } from "$lib/server/auth";
 
 import type { RequestEvent } from "@sveltejs/kit";
@@ -166,7 +166,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				...sessionCookie.attributes
 			});
 		} else {
-			const userId = generateId(15);
+			const userId = generateIdFromEntropySize(10); // 16 characters long
 
 			// Replace this with your own DB client.
 			await db.table("user").insert({

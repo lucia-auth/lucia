@@ -80,7 +80,7 @@ Create a form action in `routes/signup/+page.server.ts`. First, do a very basic 
 // routes/signup/+page.server.ts
 import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 import { Argon2id } from "oslo/password";
 
 import type { Actions } from "./$types";
@@ -108,7 +108,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const userId = generateId(15);
+		const userId = generateIdFromEntropySize(10); // 16 characters long
 		const hashedPassword = await new Argon2id().hash(password);
 
 		// TODO: check if username is already used

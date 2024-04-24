@@ -61,7 +61,7 @@ Create a `/signup` route. This will accept POST requests with an email and passw
 
 ```ts
 import { lucia } from "./auth.js";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 import { Argon2id } from "oslo/password";
 
 app.post("/signup", async (request: Request) => {
@@ -80,7 +80,7 @@ app.post("/signup", async (request: Request) => {
 	}
 
 	const hashedPassword = await new Argon2id().hash(password);
-	const userId = generateId(15);
+	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	try {
 		await db.table("user").insert({
@@ -127,7 +127,6 @@ Create a `/login` route. This will accept POST requests with an email and passwo
 
 ```ts
 import { lucia } from "./auth.js";
-import { generateId } from "lucia";
 import { Argon2id } from "oslo/password";
 
 app.post("/login", async (request: Request) => {

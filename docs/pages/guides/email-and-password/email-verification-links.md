@@ -67,7 +67,7 @@ import { TimeSpan, createDate } from "oslo";
 async function createEmailVerificationToken(userId: string, email: string): Promise<string> {
 	// optionally invalidate all existing tokens
 	await db.table("email_verification_token").where("user_id", "=", userId).deleteAll();
-	const tokenId = generateId(40);
+	const tokenId = generateIdFromEntropySize(25); // 40 characters long
 	await db.table("email_verification_token").insert({
 		id: tokenId,
 		user_id: userId,
@@ -81,12 +81,12 @@ async function createEmailVerificationToken(userId: string, email: string): Prom
 When a user signs up, set `email_verified` to `false`, create and send a verification token, and create a new session. You can either store the token as part of the pathname or inside the search params of the verification endpoint.
 
 ```ts
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 
 app.post("/signup", async () => {
 	// ...
 
-	const userId = generateId(15);
+	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	await db.table("user").insert({
 		id: userId,

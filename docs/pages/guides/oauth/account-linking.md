@@ -11,8 +11,7 @@ This guide uses the database schema shown in the [Multiple OAuth providers](/gui
 In general, you'd want to link accounts with the same email. Keep in mind that the email can be not verified and you should always assume it isn't. Make sure to verify that the email has been verified.
 
 ```ts
-import { generateId } from "lucia";
-
+import { generateIdFromEntropySize } from "lucia";
 // Make sure you requested for the "user:email" scope.
 const tokens = await github.validateAuthorizationCode(code);
 const userResponse = await fetch("https://api.github.com/user", {
@@ -50,7 +49,7 @@ if (existingUser) {
 		user_id: existingUser.id
 	});
 } else {
-	const userId = generateId(15);
+	const userId = generateIdFromEntropySize(10); // 16 characters long
 	await db.beginTransaction();
 	await db.table("user").insert({
 		id: userId,

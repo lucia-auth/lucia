@@ -123,7 +123,7 @@ Create an API route in `server/routes/login/github/callback.get.ts` to handle th
 ```ts
 // server/routes/login/github/callback.get.ts
 import { OAuth2RequestError } from "arctic";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 
 export default defineEventHandler(async (event) => {
 	const query = getQuery(event);
@@ -154,7 +154,7 @@ export default defineEventHandler(async (event) => {
 			return sendRedirect(event, "/");
 		}
 
-		const userId = generateId(15);
+		const userId = generateIdFromEntropySize(10); // 16 characters long
 
 		// Replace this with your own DB client.
 		await db.table("user").insert({

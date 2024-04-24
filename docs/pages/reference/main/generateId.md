@@ -6,6 +6,8 @@ title: "generateId()"
 
 Generates a cryptographically strong random string made of `a-z` (lowercase) and `0-9`.
 
+Unless you have a strict length requirement, use [`generateIdFromEntropySize()`](/reference/main/generateIdFromEntropySize) which provides better performance.
+
 ## Definition
 
 ```ts

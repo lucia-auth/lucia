@@ -26,12 +26,12 @@ The token should be valid for at most few hours. The token should be hashed befo
 import { TimeSpan, createDate } from "oslo";
 import { sha256 } from "oslo/crypto";
 import { encodeHex } from "oslo/encoding";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 
 async function createPasswordResetToken(userId: string): Promise<string> {
 	// optionally invalidate all existing tokens
 	await db.table("password_reset_token").where("user_id", "=", userId).deleteAll();
-	const tokenId = generateId(40);
+	const tokenId = generateIdFromEntropySize(25); // 40 character
 	const tokenHash = encodeHex(await sha256(new TextEncoder().encode(tokenId)));
 	await db.table("password_reset_token").insert({
 		token_hash: tokenHash,
@@ -45,8 +45,6 @@ async function createPasswordResetToken(userId: string): Promise<string> {
 When a user requests a password reset email, check if the email is valid and create a new link.
 
 ```ts
-import { generateId } from "lucia";
-
 app.post("/reset-password", async () => {
 	let email: string;
 
