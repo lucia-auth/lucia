@@ -48,7 +48,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 });
 ```
 
-Make sure sure to type `App.Locals` as well.
+Make sure to type `App.Locals` as well.
 
 ```ts
 // src/env.d.ts
