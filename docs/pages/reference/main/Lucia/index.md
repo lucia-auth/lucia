@@ -22,7 +22,7 @@ function constructor<
 			name?: string;
 			expires?: boolean;
 			attributes: {
-				sameSite?: "lax" | "strict";
+				sameSite?: "lax" | "strict" | "none";
 				domain?: string;
 				path?: string;
 				secure?: boolean;
