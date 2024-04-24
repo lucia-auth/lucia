@@ -7,6 +7,8 @@ title: "lucia API reference"
 ## Functions
 
 -   [`generateId()`](/reference/main/generateId)
+-   [`generateIdFromEntropySize()`](/reference/main/generateIdFromEntropySize)
+-   [`verifyRequestOrigin()`](/reference/main/verifyRequestOrigin)
 
 ## Classes
 
