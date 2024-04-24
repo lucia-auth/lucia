@@ -30,6 +30,8 @@ test("generateIdFromEntropySize()", () => {
 	// check output length
 	const id1 = generateIdFromEntropySize(25);
 	expect(id1.length).toBe(40);
-	const id2 = generateIdFromEntropySize(24);
-	expect(id2.length).toBe(39);
+
+	// check padding is omitted
+	const id3 = generateIdFromEntropySize(8);
+	expect(id3).not.toMatch(/=/);
 });
