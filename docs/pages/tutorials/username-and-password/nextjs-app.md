@@ -90,7 +90,7 @@ import { Argon2id } from "oslo/password";
 import { cookies } from "next/headers";
 import { lucia } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 
 export default async function Page() {}
 
@@ -117,7 +117,7 @@ async function signup(_: any, formData: FormData): Promise<ActionResult> {
 	}
 
 	const hashedPassword = await new Argon2id().hash(password);
-	const userId = generateId(15);
+	const userId = generateIdFromEntropySize(10);
 
 	// TODO: check if username is already used
 	await db.table("user").insert({

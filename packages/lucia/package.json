@@ -35,6 +35,6 @@
 		"vitest": "^0.33.0"
 	},
 	"dependencies": {
-		"oslo": "1.0.1"
+		"oslo": "1.2.0"
 	}
 }

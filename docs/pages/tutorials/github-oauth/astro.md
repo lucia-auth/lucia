@@ -132,7 +132,7 @@ Create an API route in `pages/login/github/callback.ts` to handle the callback. 
 // pages/login/github/callback.ts
 import { github, lucia } from "@lib/auth";
 import { OAuth2RequestError } from "arctic";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 
 import type { APIContext } from "astro";
 
@@ -165,7 +165,7 @@ export async function GET(context: APIContext): Promise<Response> {
 			return context.redirect("/");
 		}
 
-		const userId = generateId(15);
+		const userId = generateIdFromEntropySize(10);
 
 		// Replace this with your own DB client.
 		await db.table("user").insert({

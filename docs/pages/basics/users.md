@@ -14,24 +14,27 @@ interface Session extends UserAttributes {
 
 ## Create users
 
-When creating users, you can use `generateId()` to generate user IDs, which takes the length of the output string. This will generate a cryptographically secure random string consisting of lowercase letters and numbers.
+When creating users, you can use [`generateIdFromEntropySize()`](/reference/main/generateIdFromEntropySize) to generate user IDs, which takes the entropy size in bytes. This will generate a cryptographically secure random string consisting of lowercase letters and numbers.
+
+```ts
+import { generateIdFromEntropySize } from "lucia";
+
+await db.createUser({
+	// 16 characters long
+	id: generateIdFromEntropySize(10)
+});
+```
+
+Use Lucia's [`generateId()`](/reference/main/generateIdFromEntropySize) or Oslo's [`generateRandomString()`](https://oslo.js.org/reference/crypto/generateRandomString) if you're looking for a more customizable option.
 
 ```ts
 import { generateId } from "lucia";
 
-await db.createUser({
-	id: generateId(15)
-});
-```
+const id = generateId(15);
 
-Use Oslo's [`generateRandomString()`](https://oslo.js.org/reference/crypto/generateRandomString) if you're looking for a more customizable option.
-
-```ts
 import { generateRandomString, alphabet } from "oslo/crypto";
 
-await db.createUser({
-	id: generateRandomString(15, alphabet("a-z", "A-Z", "0-9"))
-});
+const id = generateRandomString(15, alphabet("a-z", "A-Z", "0-9"));
 ```
 
 ## Define user attributes

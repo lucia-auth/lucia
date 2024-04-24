@@ -77,7 +77,7 @@ Create an API route in `pages/api/signup.ts`. First, do a very basic input valid
 ```ts
 // pages/api/signup.ts
 import { lucia } from "@lib/auth";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 import { Argon2id } from "oslo/password";
 
 import type { APIContext } from "astro";
@@ -104,7 +104,7 @@ export async function POST(context: APIContext): Promise<Response> {
 		});
 	}
 
-	const userId = generateId(15);
+	const userId = generateIdFromEntropySize(10);
 	const hashedPassword = await new Argon2id().hash(password);
 
 	// TODO: check if username is already used

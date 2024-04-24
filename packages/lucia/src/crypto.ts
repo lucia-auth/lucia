@@ -1,4 +1,4 @@
-import { encodeHex, decodeHex } from "oslo/encoding";
+import { encodeHex, decodeHex, base32 } from "oslo/encoding";
 import { constantTimeEqual, generateRandomString, alphabet } from "oslo/crypto";
 import { scrypt } from "./scrypt/index.js";
 
@@ -20,6 +20,15 @@ async function generateScryptKey(data: string, salt: string, blockSize = 16): Pr
 
 export function generateId(length: number): string {
 	return generateRandomString(length, alphabet("0-9", "a-z"));
+}
+
+export function generateIdFromEntropySize(size: number): string {
+	const buffer = crypto.getRandomValues(new Uint8Array(size));
+	return base32
+		.encode(buffer, {
+			includePadding: false
+		})
+		.toLowerCase();
 }
 
 export class Scrypt implements PasswordHashingAlgorithm {

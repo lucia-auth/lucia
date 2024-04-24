@@ -88,7 +88,7 @@ Create an API route in `server/api/signup.post.ts`. First, do a very basic input
 ```ts
 // server/api/signup.post.ts
 import { Argon2id } from "oslo/password";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 import { SqliteError } from "better-sqlite3";
 
 export default eventHandler(async (event) => {
@@ -114,7 +114,7 @@ export default eventHandler(async (event) => {
 	}
 
 	const hashedPassword = await new Argon2id().hash(password);
-	const userId = generateId(15);
+	const userId = generateIdFromEntropySize(10);
 
 	// TODO: check if username is already used
 	await db.table("user").insert({

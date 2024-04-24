@@ -82,12 +82,12 @@ const code = generateRandomString(6, alphabet("0-9", "A-Z"));
 When a user signs up, set `email_verified` to `false`, create and send a verification code, and create a new session.
 
 ```ts
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 
 app.post("/signup", async () => {
 	// ...
 
-	const userId = generateId(15);
+	const userId = generateIdFromEntropySize(10);
 
 	await db.table("user").insert({
 		id: userId,
