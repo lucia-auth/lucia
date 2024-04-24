@@ -89,7 +89,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 ```
 
-Make sure sure to type `App.Locals` as well.
+Make sure to type `App.Locals` as well.
 
 ```ts
 // src/app.d.ts
