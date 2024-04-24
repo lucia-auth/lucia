@@ -1,5 +1,17 @@
 # lucia
 
+## 3.2.0
+
+### Minor changes
+
+-   [#1548](https://github.com/lucia-auth/lucia/pull/1548) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Add `generateIdFromEntropySize()`
+
+### Patch changes
+
+-   [#1546](https://github.com/lucia-auth/lucia/pull/1546) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Fix `options.sessionCookie` parameter type in `Lucia`
+
+-   [#1548](https://github.com/lucia-auth/lucia/pull/1548) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Optimize session ID generation
+
 ## 3.1.1
 
 -   Fix types.
