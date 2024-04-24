@@ -49,7 +49,7 @@ if (existingUser) {
 		user_id: existingUser.id
 	});
 } else {
-	const userId = generateIdFromEntropySize(10);
+	const userId = generateIdFromEntropySize(10); // 16 characters long
 	await db.beginTransaction();
 	await db.table("user").insert({
 		id: userId,

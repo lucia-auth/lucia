@@ -80,7 +80,7 @@ app.post("/signup", async (request: Request) => {
 	}
 
 	const hashedPassword = await new Argon2id().hash(password);
-	const userId = generateIdFromEntropySize(10);
+	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	try {
 		await db.table("user").insert({

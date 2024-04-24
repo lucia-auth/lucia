@@ -134,7 +134,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	const hashedPassword = await new Argon2id().hash(password);
-	const userId = generateIdFromEntropySize(10);
+	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	// TODO: check if username is already used
 	await db.table("user").insert({

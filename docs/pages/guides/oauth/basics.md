@@ -149,7 +149,7 @@ app.get("/login/github/callback", async (request: Request): Promise<Response> =>
 			});
 		}
 
-		const userId = generateIdFromEntropySize(10);
+		const userId = generateIdFromEntropySize(10); // 16 characters long
 		await db.table("user").insert({
 			id: userId,
 			username: githubUserResult.login,

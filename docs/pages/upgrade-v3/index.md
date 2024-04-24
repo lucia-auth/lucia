@@ -16,7 +16,7 @@ For a simple password-based auth, the password can just be stored in the user ta
 
 ```ts
 const hashedPassword = await new Argon2id().hash(password);
-const userId = generateIdFromEntropySize(10);
+const userId = generateIdFromEntropySize(10); // 16 characters long
 
 await db.table("user").insert({
 	id: userId,

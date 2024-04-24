@@ -87,7 +87,7 @@ import { generateIdFromEntropySize } from "lucia";
 app.post("/signup", async () => {
 	// ...
 
-	const userId = generateIdFromEntropySize(10);
+	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	await db.table("user").insert({
 		id: userId,

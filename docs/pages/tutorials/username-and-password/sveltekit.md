@@ -108,7 +108,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const userId = generateIdFromEntropySize(10);
+		const userId = generateIdFromEntropySize(10); // 16 characters long
 		const hashedPassword = await new Argon2id().hash(password);
 
 		// TODO: check if username is already used
