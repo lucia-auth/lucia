@@ -23,6 +23,7 @@ const app = new Hono<{
 	};
 }>();
 
+// see https://hono.dev/middleware/builtin/csrf for more options
 app.use(csrf());
 
 app.use("*", async (c, next) => {
