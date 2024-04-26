@@ -11,8 +11,8 @@ We recommend creating 2 middleware for CSRF protection and validating requests. 
 ```ts
 // src/middleware.ts
 import { lucia } from "./auth.js";
-import { verifyRequestOrigin } from "lucia";
 import { getCookie } from "hono/cookie";
+import { csrf } from "hono/csrf";
 
 import type { User, Session } from "lucia";
 
@@ -23,19 +23,7 @@ const app = new Hono<{
 	};
 }>();
 
-app.use("*", async (c, next) => {
-	// CSRF middleware
-	if (c.req.method === "GET") {
-		return next();
-	}
-	const originHeader = c.req.header("Origin");
-	// NOTE: You may need to use `X-Forwarded-Host` instead
-	const hostHeader = c.req.header("Host");
-	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-		return c.body(null, 403);
-	}
-	return next();
-});
+app.use(csrf());
 
 app.use("*", async (c, next) => {
 	const sessionId = getCookie(c, lucia.sessionCookieName) ?? null;
