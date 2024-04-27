@@ -142,6 +142,7 @@ Argon2id should be your first choice for hashing passwords, followed by Scrypt a
 -   For other runtimes (e.g. Cloudflare Workers), your choice is very limited. [`@noble/hashes`](https://github.com/paulmillr/noble-hashes) provides pure-js implementations of various hashing algorithms, but because it's written in JS, you may hit into CPU limitations of your service. If possible, avoid these runtimes when you need to hash passwords.
 
 Make sure to check the [recommended minimum parameters for your hashing algorithm](https://thecopenhagenbook.com/password-authentication#password-storage).
+
 ## Sign in user
 
 Create `pages/login.vue` and set up a basic form.

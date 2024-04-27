@@ -11,7 +11,9 @@ This guide uses [Oslo](https://oslo.js.org), a library that provides various aut
 ```
 npm i oslo
 ```
+
 ˝
+
 -   [Password basics](/guides/email-and-password/basics)
 -   Email verification
     -   [Email verification codes](/guides/email-and-password/email-verification-codes) (preferred)
