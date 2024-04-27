@@ -127,7 +127,7 @@ db.users.aggregate([
 
 ### Password accounts
 
-This database command moves the `password_hash` field from the keys collection to the users collection.
+This database command moves the `hashed_password` field from the keys collection to the users collection.
 
 ```ts
 db.users.aggregate([
@@ -140,7 +140,7 @@ db.users.aggregate([
 			pipeline: [
 				{
 					$match: {
-						password_hash: {
+						hashed_password: {
 							$ne: null
 						}
 					}
@@ -157,7 +157,7 @@ db.users.aggregate([
 	},
 	{
 		$set: {
-			password_hash: { $arrayElemAt: ["$password_accounts.password_hash", 0] }
+			hashed_password: { $arrayElemAt: ["$password_accounts.hashed_password", 0] }
 		}
 	},
 	{

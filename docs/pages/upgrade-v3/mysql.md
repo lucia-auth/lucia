@@ -54,7 +54,7 @@ You can keep using the key table, but we recommend using dedicated tables for ea
 
 ### OAuth
 
-The SQL below creates a dedicated table `oauth_account` for storing all user OAuth accounts. This assumes all keys where `password_hash` column is null are for OAuth accounts. You may also separate them by the OAuth provider. You should adjust the `VARCHAR` length accordingly.
+The SQL below creates a dedicated table `oauth_account` for storing all user OAuth accounts. This assumes all keys where `hashed_password` column is null are for OAuth accounts. You may also separate them by the OAuth provider. You should adjust the `VARCHAR` length accordingly.
 
 ```sql
 CREATE TABLE oauth_account (
@@ -66,7 +66,7 @@ CREATE TABLE oauth_account (
 
 INSERT INTO oauth_account (provider_id, provider_user_id, user_id)
 SELECT SUBSTRING(id, 1, POSITION(':' IN id)-1), SUBSTRING(id, POSITION(':' IN id)+1), user_id FROM user_key
-WHERE password_hash IS NULL;
+WHERE hashed_password IS NULL;
 ```
 
 ### Email/password
@@ -76,23 +76,23 @@ The SQL below creates a dedicated table `password` for storing user passwords. T
 ```sql
 CREATE TABLE password (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    password_hash VARCHAR(255) NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
     user_id VARCHAR(255) NOT NULL REFERENCES user(id)
 );
 
-INSERT INTO password (password_hash, user_id)
-SELECT password_hash, user_id FROM user_key
+INSERT INTO password (hashed_password, user_id)
+SELECT hashed_password, user_id FROM user_key
 WHERE SUBSTRING(id, 1, POSITION(':' IN id)-1) = 'email';
 ```
 
 Alternatively, you can store the user's credentials in the user table if you only work with email/password.
 
 ```sql
-ALTER TABLE user ADD password_hash VARCHAR(255);
+ALTER TABLE user ADD hashed_password VARCHAR(255);
 
 UPDATE user INNER JOIN user_key ON user_key.user_id = user.id
-SET user.password_hash = user_key.password_hash
-WHERE user_key.password_hash IS NOT NULL;
+SET user.hashed_password = user_key.hashed_password
+WHERE user_key.hashed_password IS NOT NULL;
 
-ALTER TABLE user MODIFY password_hash VARCHAR(255) NOT NULL;
+ALTER TABLE user MODIFY hashed_password VARCHAR(255) NOT NULL;
 ```
