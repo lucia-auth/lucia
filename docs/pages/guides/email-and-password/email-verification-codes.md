@@ -92,7 +92,7 @@ app.post("/signup", async () => {
 	await db.table("user").insert({
 		id: userId,
 		email,
-		hashed_password: hashedPassword,
+		password_hash: passwordHash,
 		email_verified: false
 	});
 

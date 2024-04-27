@@ -8,12 +8,12 @@ This page covers how to implement a password-based auth with Lucia. If you're lo
 
 ## Update database
 
-Add a unique `email` and `hashed_password` column to the user table.
+Add a unique `email` and `password_hash` column to the user table.
 
-| column            | type     | attributes |
-| ----------------- | -------- | ---------- |
-| `email`           | `string` | unique     |
-| `hashed_password` | `string` |            |
+| column          | type     | attributes |
+| --------------- | -------- | ---------- |
+| `email`         | `string` | unique     |
+| `password_hash` | `string` |            |
 
 Declare the type with `DatabaseUserAttributes` and add the attributes to the user object using the `getUserAttributes()` configuration.
 
@@ -29,7 +29,7 @@ export const lucia = new Lucia(adapter, {
 	},
 	getUserAttributes: (attributes) => {
 		return {
-			// we don't need to expose the hashed password!
+			// we don't need to expose the password hash!
 			email: attributes.email
 		};
 	}
@@ -62,7 +62,7 @@ Create a `/signup` route. This will accept POST requests with an email and passw
 ```ts
 import { lucia } from "./auth.js";
 import { generateIdFromEntropySize } from "lucia";
-import { Argon2id } from "oslo/password";
+import { hash } from "@node-rs/argon2";
 
 app.post("/signup", async (request: Request) => {
 	const formData = await request.formData();
@@ -79,14 +79,20 @@ app.post("/signup", async (request: Request) => {
 		});
 	}
 
-	const hashedPassword = await new Argon2id().hash(password);
+	const passwordHash = await hash(password, {
+		// recommended minimum parameters
+		memorySize: 19456,
+		iterations: 2,
+		tagLength: 32,
+		parallelism: 1
+	});
 	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	try {
 		await db.table("user").insert({
 			id: userId,
 			email,
-			hashed_password: hashedPassword
+			password_hash: passwordHash
 		});
 
 		const session = await lucia.createSession(userId, {});
@@ -109,16 +115,19 @@ app.post("/signup", async (request: Request) => {
 
 ### Hashing passwords
 
-`oslo/password` currently provides [`Argon2id`](https://oslo.js.org/reference/password/Argon2id), [`Scrypt`](https://oslo.js.org/reference/password/Scrypt), and [`Bcrypt`](https://oslo.js.org/reference/password/Bcrypt). These rely on the fastest available libraries but only work in Node.js. Passwords are salted and hashed using settings recommended by OWASP.
+Argon2id should be your first choice for hashing passwords, followed by Scrypt and Bcrypt. Hashing is by definition computationally expensive so you should use the most performant option for your runtime.
+
+-   For Node.js we recommend using [`@node-rs/argon2`](https://github.com/napi-rs/node-rs).
+-   For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing).
+-   Use Deno-specific packages for Deno.
+-   For other runtimes (e.g. Cloudflare Workers), your choice is very limited. [`@noble/hashes`](https://github.com/paulmillr/noble-hashes) provides pure-js implementations of various hashing algorithms, but because it's written in JS, you may hit into CPU limitations of your service. If possible, avoid these runtimes when you need to hash passwords.
+
+Make sure to check the [recommended minimum parameters for your hashing algorithm](https://thecopenhagenbook.com/password-authentication#password-storage).
+
+If you're migrating from Lucia v2, you should use [`LegacyScrypt`](/reference/main/LegacyScrypt).
 
 ```ts
-import { Argon2id, Scrypt, Bcrypt } from "oslo/password";
-```
-
-For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing), which also uses Argon2id by default. For other runtimes, Lucia provides a pure-JS implementation of Scrypt with [`Scrypt`](/reference/main/Scrypt) that works in any environment. However, we do not recommend this for Node.js as it can be 2~3 times slower than the Node-only version. If you're migrating from Lucia v2, you should use [`LegacyScrypt`](/reference/main/LegacyScrypt).
-
-```ts
-import { Scrypt, LegacyScrypt } from "lucia";
+import { LegacyScrypt } from "lucia";
 ```
 
 ## Sign in user
@@ -127,7 +136,7 @@ Create a `/login` route. This will accept POST requests with an email and passwo
 
 ```ts
 import { lucia } from "./auth.js";
-import { Argon2id } from "oslo/password";
+import { verify } from "@node-rs/argon2";
 
 app.post("/login", async (request: Request) => {
 	const formData = await request.formData();
@@ -162,7 +171,12 @@ app.post("/login", async (request: Request) => {
 		});
 	}
 
-	const validPassword = await new Argon2id().verify(user.hashed_password, password);
+	const validPassword = await verify(user.password_hash, password, {
+		memorySize: 19456,
+		iterations: 2,
+		tagLength: 32,
+		parallelism: 1
+	});
 	if (!validPassword) {
 		return new Response("Invalid email or password", {
 			status: 400

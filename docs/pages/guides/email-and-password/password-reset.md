@@ -88,7 +88,7 @@ Extract the verification token from the URL and validate by checking the expirat
 
 ```ts
 import { isWithinExpirationDate } from "oslo";
-import { Argon2id } from "oslo/password";
+import { hash } from "@node-rs/argon2";
 import { sha256 } from "oslo/crypto";
 import { encodeHex } from "oslo/encoding";
 
@@ -117,9 +117,15 @@ app.post("/reset-password/:token", async () => {
 	}
 
 	await lucia.invalidateUserSessions(token.user_id);
-	const hashedPassword = await new Argon2id().hash(password);
+	const passwordHash = await hash(password, {
+		// recommended minimum parameters
+		memorySize: 19456,
+		iterations: 2,
+		tagLength: 32,
+		parallelism: 1
+	});
 	await db.table("user").where("id", "=", token.user_id).update({
-		hashed_password: hashedPassword
+		password_hash: passwordHash
 	});
 
 	const session = await lucia.createSession(token.user_id, {});

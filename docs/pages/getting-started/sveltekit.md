@@ -12,14 +12,6 @@ Install Lucia using your package manager of your choice.
 npm install -D lucia
 ```
 
-While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
-
-If you use `@sveltejs/adapter-node`, make sure to install `oslo` as a `dependency`, not as `devDependency` to prevent Rollup from bundling `oslo`. See the [SvelteKit documentation](https://kit.svelte.dev/docs/adapter-node#deploying) for details.
-
-```
-npm install oslo
-```
-
 ## Initialize Lucia
 
 Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type

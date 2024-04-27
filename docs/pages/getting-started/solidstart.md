@@ -6,10 +6,10 @@ title: "Getting started in SolidStart"
 
 ## Installation
 
-Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
+Install Lucia using your package manager of your choice.
 
 ```
-npm install lucia oslo
+npm install lucia
 ```
 
 ## Initialize Lucia
