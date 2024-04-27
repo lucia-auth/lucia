@@ -67,7 +67,7 @@ You can keep using the key table, but we recommend using dedicated tables for ea
 
 ### OAuth
 
-The SQL below creates a dedicated table `oauth_account` for storing all user OAuth accounts. This assumes all keys where `hashed_password` column is null are for OAuth accounts. You may also separate them by the OAuth provider.
+The SQL below creates a dedicated table `oauth_account` for storing all user OAuth accounts. This assumes all keys where `password_hash` column is null are for OAuth accounts. You may also separate them by the OAuth provider.
 
 ```sql
 CREATE TABLE oauth_account (
@@ -79,7 +79,7 @@ CREATE TABLE oauth_account (
 
 INSERT INTO oauth_account (provider_id, provider_user_id, user_id)
 SELECT SUBSTRING(id, 1, POSITION(':' IN id)-1), SUBSTRING(id, POSITION(':' IN id)+1), user_id FROM user_key
-WHERE hashed_password IS NULL;
+WHERE password_hash IS NULL;
 ```
 
 ### Email/password
@@ -89,12 +89,12 @@ The SQL below creates a dedicated table `password` for storing user passwords. T
 ```sql
 CREATE TABLE password (
     id SERIAL PRIMARY KEY,
-    hashed_password TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
     user_id TEXT NOT NULL REFERENCES auth_user(id)
 );
 
-INSERT INTO password (hashed_password, user_id)
-SELECT hashed_password, user_id FROM user_key
+INSERT INTO password (password_hash, user_id)
+SELECT password_hash, user_id FROM user_key
 WHERE SUBSTRING(id, 1, POSITION(':' IN id)-1) = 'email';
 ```
 
@@ -103,13 +103,13 @@ Alternatively, you can store the user's credentials in the user table if you onl
 ```sql
 START TRANSACTION;
 
-ALTER TABLE auth_user ADD COLUMN hashed_password TEXT;
+ALTER TABLE auth_user ADD COLUMN password_hash TEXT;
 
-UPDATE auth_user SET hashed_password = user_key.hashed_password FROM user_key
+UPDATE auth_user SET password_hash = user_key.password_hash FROM user_key
 WHERE user_key.user_id = auth_user.id
-AND user_key.hashed_password IS NOT NULL;
+AND user_key.password_hash IS NOT NULL;
 
-ALTER TABLE auth_user ALTER COLUMN hashed_password SET NOT NULL;
+ALTER TABLE auth_user ALTER COLUMN password_hash SET NOT NULL;
 
 COMMIT;
 ```

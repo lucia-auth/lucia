@@ -6,10 +6,10 @@ title: "Getting started in Next.js App router"
 
 ## Installation
 
-Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides in the docs use).
+Install Lucia using your package manager of your choice.
 
 ```
-npm install lucia oslo
+npm install lucia
 ```
 
 ## Initialize Lucia
@@ -55,28 +55,6 @@ globalThis.crypto = webcrypto as Crypto;
 ```
 node --experimental-web-crypto index.js
 ```
-
-## Update configuration
-
-If you're planning to use `oslo/password` for hashing passwords, mark its dependencies as external to prevent it from getting bundled.
-
-```ts
-// next.config.ts
-const nextConfig = {
-	webpack: (config) => {
-		config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
-		return config;
-	}
-};
-```
-
-In addition, if you're deploying to Vercel, you may need to manually install its dependencies.
-
-```
-npm install @node-rs/argon2 @node-rs/bcrypt
-```
-
-Currently, `oslo/password` cannot be used with Turbopack.
 
 ## Next steps
 

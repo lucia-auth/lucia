@@ -26,7 +26,7 @@ await db.table("user").insert({
 });
 // store oauth account
 await db.table("password").insert({
-	hashed_password: await new LegacyScrypt().hash(password),
+	password_hash: await new LegacyScrypt().hash(password),
 	user_id: userId
 });
 await db.commit();
@@ -66,7 +66,7 @@ if (!user) {
 	});
 }
 
-const validPassword = await new LegacyScrypt().verify(credentials.hashed_password, password);
+const validPassword = await new LegacyScrypt().verify(credentials.password_hash, password);
 if (!validPassword) {
 	return new Response("Invalid username or password", {
 		status: 400

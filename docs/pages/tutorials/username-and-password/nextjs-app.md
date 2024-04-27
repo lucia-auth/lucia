@@ -14,12 +14,12 @@ npx degit https://github.com/lucia-auth/examples/tree/main/nextjs-app/username-a
 
 ## Update database
 
-Add a `username` and `hashed_password` column to your user table.
+Add a `username` and `password_hash` column to your user table.
 
-| column            | type     | attributes |
-| ----------------- | -------- | ---------- |
-| `username`        | `string` | unique     |
-| `hashed_password` | `string` |            |
+| column          | type     | attributes |
+| --------------- | -------- | ---------- |
+| `username`      | `string` | unique     |
+| `password_hash` | `string` |            |
 
 Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
 
@@ -86,7 +86,7 @@ In the form action, first do a very basic input validation. Hash the password, g
 
 ```tsx
 import { db } from "@/lib/db";
-import { Argon2id } from "oslo/password";
+import { hash } from "@node-rs/argon2";
 import { cookies } from "next/headers";
 import { lucia } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -116,14 +116,20 @@ async function signup(_: any, formData: FormData): Promise<ActionResult> {
 		};
 	}
 
-	const hashedPassword = await new Argon2id().hash(password);
+	const passwordHash = await hash(password, {
+		// recommended minimum parameters
+		memorySize: 19456,
+		iterations: 2,
+		tagLength: 32,
+		parallelism: 1
+	});
 	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	// TODO: check if username is already used
 	await db.table("user").insert({
 		id: userId,
 		username: username,
-		hashed_password: hashedPassword
+		password_hash: passwordHash
 	});
 
 	const session = await lucia.createSession(userId, {});
@@ -133,18 +139,28 @@ async function signup(_: any, formData: FormData): Promise<ActionResult> {
 }
 ```
 
-We recommend using Argon2id, but Oslo also provides Scrypt and Bcrypt. These only work in Node.js. If you're planning to deploy your project to a non-Node.js runtime, use `Scrypt` provided by `lucia`. This is a pure JS implementation but 2~3 times slower. For Bun, use [`Bun.password`](https://bun.sh/docs/api/hashing#bun-password).
+Argon2id should be your first choice for hashing passwords, followed by Scrypt and Bcrypt. Hashing is by definition computationally expensive so you should use the most performant option for your runtime.
+
+-   For Node.js we recommend using [`@node-rs/argon2`](https://github.com/napi-rs/node-rs).
+-   For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing).
+-   Use Deno-specific packages for Deno.
+-   For other runtimes (e.g. Cloudflare Workers), your choice is very limited. [`@noble/hashes`](https://github.com/paulmillr/noble-hashes) provides pure-js implementations of various hashing algorithms, but because it's written in JS, you may hit into CPU limitations of your service. If possible, avoid these runtimes when you need to hash passwords.
+
+Make sure to check the [recommended minimum parameters for your hashing algorithm](https://thecopenhagenbook.com/password-authentication#password-storage).
+
+### @node-rs/argon2
+
+If you're using `@node-rs/argon2`, make sure to set it as an external dependency to prevent it from getting bundled. This package [does NOT work with Turbopack](https://github.com/vercel/next.js/issues/63850).
 
 ```ts
-import { Scrypt } from "lucia";
+// next.config.js
+const nextConfig = {
+	experimental: {
+		serverComponentsExternalPackages: ["@node-rs/argon2"]
+	}
+};
 
-new Scrypt().hash(password);
-```
-
-**If you're using Bcrypt, [set the maximum password length to 64 _bytes_](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#input-limits-of-bcrypt).**
-
-```ts
-const length = new TextEncoder().encode(password).length;
+module.exports = nextConfig;
 ```
 
 ## Sign in user
@@ -180,7 +196,7 @@ interface ActionResult {
 In the form action, first do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```tsx
-import { Argon2id } from "oslo/password";
+import { verify } from "@node-rs/argon2";
 import { cookies } from "next/headers";
 import { lucia } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -226,7 +242,12 @@ async function login(_: any, formData: FormData): Promise<ActionResult> {
 		};
 	}
 
-	const validPassword = await new Argon2id().verify(existingUser.password, password);
+	const validPassword = await verify(existingUser.password, password, {
+		memorySize: 19456,
+		iterations: 2,
+		tagLength: 32,
+		parallelism: 1
+	});
 	if (!validPassword) {
 		return {
 			error: "Incorrect username or password"

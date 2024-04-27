@@ -86,12 +86,12 @@ Update your database:
 npx prisma migrate dev --name added_oauth_account_table
 ```
 
-Finally, copy the data from the key table. This assumes all keys where `hashed_password` column is null are for OAuth accounts.
+Finally, copy the data from the key table. This assumes all keys where `password_hash` column is null are for OAuth accounts.
 
 ```sql
 INSERT INTO "OauthAccount" ("providerId", "providerUserId", "userId")
 SELECT SUBSTRING("id", 1, POSITION(':' IN "id")-1), SUBSTRING("id", POSITION(':' IN id)+1), "user_id" FROM "Key"
-WHERE "hashed_password" IS NULL;
+WHERE "password_hash" IS NULL;
 ```
 
 ### Email/password
@@ -107,7 +107,7 @@ model User {
 
 model Password {
     id             Int    @id @default(autoincrement())
-    hashedPassword String
+    passwordHash String
     userId         String
     user           User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
@@ -122,7 +122,7 @@ npx prisma migrate dev --name added_password_table
 Finally, copy the data from the key table. This assumes the provider ID for emails was `email` and that you're already storing the users' emails in the user table.
 
 ```sql
-INSERT INTO "Password" ("hashedPassword", "userId")
-SELECT "hashed_password", "user_id" FROM "Key"
+INSERT INTO "Password" ("passwordHash", "userId")
+SELECT "password_hash", "user_id" FROM "Key"
 WHERE SUBSTRING("id", 1, POSITION(':' IN "id")-1) = 'email';
 ```

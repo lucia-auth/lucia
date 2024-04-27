@@ -15,13 +15,19 @@ The biggest change to Lucia is that keys have been removed entirely. We believe 
 For a simple password-based auth, the password can just be stored in the user table.
 
 ```ts
-const hashedPassword = await new Argon2id().hash(password);
+const passwordHash = await hash(password, {
+	// recommended minimum parameters
+	memorySize: 19456,
+	iterations: 2,
+	tagLength: 32,
+	parallelism: 1
+});
 const userId = generateIdFromEntropySize(10); // 16 characters long
 
 await db.table("user").insert({
 	id: userId,
 	email,
-	hashed_password: hashedPassword
+	password_hash: passwordHash
 });
 ```
 
@@ -177,47 +183,3 @@ Refer to these guides:
 
 -   [Upgrade OAuth setup to v3](/upgrade-v3/oauth)
 -   [Upgrade Password-based auth to v3](/upgrade-v3/password)
-
-## Framework specific configuration
-
-If you installed Oslo, you must prevent `oslo` from getting bundled. This is only required when using the `oslo/password` module.
-
-### Astro
-
-```ts
-// astro.config.mjs
-export default defineConfig({
-	// ...
-	vite: {
-		optimizeDeps: {
-			exclude: ["oslo"]
-		}
-	}
-});
-```
-
-### Next.js
-
-**`oslo/password` does NOT work with Turbopack.**
-
-```ts
-// next.config.ts
-const nextConfig = {
-	webpack: (config) => {
-		config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
-		return config;
-	}
-};
-```
-
-### SvelteKit
-
-#### @sveltejs/adapter-node
-
-Make sure to install `oslo` as a `dependency`, not as `devDependency` to prevent `@sveltejs/adapter-node` from bundling `oslo`.
-
-As per SvelteKit documentation :
-
-> Development dependencies will be bundled into your app using Rollup. To control whether a given package is bundled or externalised, place it in devDependencies or dependencies respectively in your package.json.
-
-See [SvelteKit documentation](https://kit.svelte.dev/docs/adapter-node#deploying) for details.

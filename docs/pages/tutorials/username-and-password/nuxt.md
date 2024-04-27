@@ -14,12 +14,12 @@ npx degit https://github.com/lucia-auth/examples/tree/main/nuxt/username-and-pas
 
 ## Update database
 
-Add a `username` and `hashed_password` column to your user table.
+Add a `username` and `password_hash` column to your user table.
 
-| column            | type     | attributes |
-| ----------------- | -------- | ---------- |
-| `username`        | `string` | unique     |
-| `hashed_password` | `string` |            |
+| column          | type     | attributes |
+| --------------- | -------- | ---------- |
+| `username`      | `string` | unique     |
+| `password_hash` | `string` |            |
 
 Create a `DatabaseUserAttributes` interface in the module declaration and add your database columns. By default, Lucia will not expose any database columns to the `User` type. To add a `username` field to it, use the `getUserAttributes()` option.
 
@@ -87,7 +87,7 @@ Create an API route in `server/api/signup.post.ts`. First, do a very basic input
 
 ```ts
 // server/api/signup.post.ts
-import { Argon2id } from "oslo/password";
+import { hash } from "@node-rs/argon2";
 import { generateIdFromEntropySize } from "lucia";
 import { SqliteError } from "better-sqlite3";
 
@@ -113,14 +113,20 @@ export default eventHandler(async (event) => {
 		});
 	}
 
-	const hashedPassword = await new Argon2id().hash(password);
+	const passwordHash = await hash(password, {
+		// recommended minimum parameters
+		memorySize: 19456,
+		iterations: 2,
+		tagLength: 32,
+		parallelism: 1
+	});
 	const userId = generateIdFromEntropySize(10); // 16 characters long
 
 	// TODO: check if username is already used
 	await db.table("user").insert({
 		id: userId,
 		username: username,
-		hashed_password: hashedPassword
+		password_hash: passwordHash
 	});
 
 	const session = await lucia.createSession(userId, {});
@@ -128,20 +134,14 @@ export default eventHandler(async (event) => {
 });
 ```
 
-We recommend using Argon2id, but Oslo also provides Scrypt and Bcrypt. These only work in Node.js. If you're planning to deploy your project to a non-Node.js runtime, use `Scrypt` provided by `lucia`. This is a pure JS implementation but 2~3 times slower. For Bun, use [`Bun.password`](https://bun.sh/docs/api/hashing#bun-password).
+Argon2id should be your first choice for hashing passwords, followed by Scrypt and Bcrypt. Hashing is by definition computationally expensive so you should use the most performant option for your runtime.
 
-```ts
-import { Scrypt } from "lucia";
+-   For Node.js we recommend using [`@node-rs/argon2`](https://github.com/napi-rs/node-rs).
+-   For Bun, we recommend using [`Bun.password`](https://bun.sh/docs/api/hashing).
+-   Use Deno-specific packages for Deno.
+-   For other runtimes (e.g. Cloudflare Workers), your choice is very limited. [`@noble/hashes`](https://github.com/paulmillr/noble-hashes) provides pure-js implementations of various hashing algorithms, but because it's written in JS, you may hit into CPU limitations of your service. If possible, avoid these runtimes when you need to hash passwords.
 
-new Scrypt().hash(password);
-```
-
-**If you're using Bcrypt, [set the maximum password length to 64 _bytes_](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#input-limits-of-bcrypt).**
-
-```ts
-const length = new TextEncoder().encode(password).length;
-```
-
+Make sure to check the [recommended minimum parameters for your hashing algorithm](https://thecopenhagenbook.com/password-authentication#password-storage).
 ## Sign in user
 
 Create `pages/login.vue` and set up a basic form.
@@ -176,7 +176,7 @@ Create an API route as `server/api/login.post.ts`. First, do a very basic input 
 
 ```ts
 // server/api/login.post.ts
-import { Argon2id } from "oslo/password";
+import { verify } from "@node-rs/argon2";
 
 export default eventHandler(async (event) => {
 	const formData = await readFormData(event);
@@ -220,7 +220,12 @@ export default eventHandler(async (event) => {
 		});
 	}
 
-	const validPassword = await new Argon2id().verify(existingUser.password, password);
+	const validPassword = await verify(existingUser.password, password, {
+		memorySize: 19456,
+		iterations: 2,
+		tagLength: 32,
+		parallelism: 1
+	});
 	if (!validPassword) {
 		throw createError({
 			message: "Incorrect username or password",

@@ -6,26 +6,10 @@ title: "Getting started in Astro"
 
 ## Installation
 
-Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
+Install Lucia using your package manager of your choice.
 
 ```
-npm install lucia oslo
-```
-
-## Update Vite
-
-If you've installed `oslo`, add `oslo` to `vite.optimizeDeps.exclude`.
-
-```ts
-// astro.config.mjs
-export default defineConfig({
-	// ...
-	vite: {
-		optimizeDeps: {
-			exclude: ["oslo"]
-		}
-	}
-});
+npm install lucia
 ```
 
 ## Initialize Lucia

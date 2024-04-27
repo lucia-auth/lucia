@@ -81,7 +81,7 @@ You can keep using the key table, but we recommend using dedicated tables for ea
 
 ### OAuth
 
-The SQL below creates a dedicated table `oauth_account` for storing all user OAuth accounts. This assumes all keys where `hashed_password` column is null are for OAuth accounts. You may also separate them by the OAuth provider.
+The SQL below creates a dedicated table `oauth_account` for storing all user OAuth accounts. This assumes all keys where `password_hash` column is null are for OAuth accounts. You may also separate them by the OAuth provider.
 
 ```sql
 CREATE TABLE oauth_account (
@@ -93,7 +93,7 @@ CREATE TABLE oauth_account (
 
 INSERT INTO oauth_account (provider_id, provider_user_id, user_id)
 SELECT substr(id, 1, instr(id, ':')-1), substr(id, instr(id, ':')+1), user_id FROM key
-WHERE hashed_password IS NULL;
+WHERE password_hash IS NULL;
 ```
 
 ### Email/password
@@ -102,12 +102,12 @@ The SQL below creates a dedicated table `password` for storing user passwords. T
 
 ```sql
 CREATE TABLE password (
-    hashed_password TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
     user_id TEXT NOT NULL REFERENCES user(id)
 );
 
-INSERT INTO password (hashed_password, user_id)
-SELECT hashed_password, user_id FROM key
+INSERT INTO password (password_hash, user_id)
+SELECT password_hash, user_id FROM key
 WHERE substr(id, 1, instr(id, ':')-1) = 'email';
 ```
 
@@ -119,12 +119,12 @@ BEGIN TRANSACTION;
 CREATE TABLE new_user (
     id TEXT NOT NULL PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,
-    hashed_password TEXT NOT NULL
+    password_hash TEXT NOT NULL
 );
 
-INSERT INTO new_user (id, email, hashed_password)
-SELECT user.id, email, hashed_password FROM user INNER JOIN key ON key.user_id = user.id
-WHERE hashed_password IS NOT NULL;
+INSERT INTO new_user (id, email, password_hash)
+SELECT user.id, email, password_hash FROM user INNER JOIN key ON key.user_id = user.id
+WHERE password_hash IS NOT NULL;
 
 CREATE TABLE new_session (
     id TEXT NOT NULL PRIMARY KEY,

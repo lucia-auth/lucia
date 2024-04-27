@@ -16,10 +16,10 @@ A framework-specific guide is also available for:
 
 ## Installation
 
-Install Lucia using your package manager of your choice. While not strictly necessary, we recommend installing [Oslo](https://oslo.js.org), which Lucia is built on, for various auth utilities (which a lot of the guides use).
+Install Lucia using your package manager of your choice.
 
 ```
-npm install lucia oslo
+npm install lucia
 ```
 
 ## Initialize Lucia
@@ -60,34 +60,6 @@ globalThis.crypto = webcrypto as Crypto;
 
 ```
 node --experimental-web-crypto index.js
-```
-
-## Update bundler configuration
-
-This is only required if you're using `oslo/password`.
-
-### Vite
-
-This is not required if you're Nuxt, SolidStart, or SvelteKit.
-
-```ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
-	// ...
-	optimizeDeps: {
-		exclude: ["oslo"]
-	}
-});
-```
-
-### Webpack
-
-```ts
-module.exports = {
-	// ...
-	externals: ["@node-rs/argon2", "@node-rs/bcrypt"]
-};
 ```
 
 ## The Copenhagen Book
