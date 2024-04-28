@@ -4,15 +4,15 @@ title: "Validate session cookies in Hono"
 
 # Validate session cookies in Hono
 
-**CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header.
+**CSRF protection must be implemented when using cookies and forms.** This can be done using the `csrf()` middleware provided by Hono.
 
-We recommend creating 2 middleware for CSRF protection and validating requests. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
+After csrf protection, we recommend adding a middleware for validating requests. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
 ```ts
 // src/middleware.ts
 import { lucia } from "./auth.js";
-import { verifyRequestOrigin } from "lucia";
 import { getCookie } from "hono/cookie";
+import { csrf } from "hono/csrf";
 
 import type { User, Session } from "lucia";
 
@@ -23,19 +23,8 @@ const app = new Hono<{
 	};
 }>();
 
-app.use("*", async (c, next) => {
-	// CSRF middleware
-	if (c.req.method === "GET") {
-		return next();
-	}
-	const originHeader = c.req.header("Origin");
-	// NOTE: You may need to use `X-Forwarded-Host` instead
-	const hostHeader = c.req.header("Host");
-	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-		return c.body(null, 403);
-	}
-	return next();
-});
+// see https://hono.dev/middleware/builtin/csrf for more options
+app.use(csrf());
 
 app.use("*", async (c, next) => {
 	const sessionId = getCookie(c, lucia.sessionCookieName) ?? null;
