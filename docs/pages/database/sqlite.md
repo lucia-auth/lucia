@@ -95,7 +95,7 @@ declare module "lucia" {
 
 ### LibSQL
 
-`LibSQLAdapter` takes a `D1Database` instance and a list of table names.
+`LibSQLAdapter` takes a `Client` instance and a list of table names.
 
 ```ts
 import { Lucia } from "lucia";
