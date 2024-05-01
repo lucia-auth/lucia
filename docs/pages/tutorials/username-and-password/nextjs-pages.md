@@ -135,9 +135,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const passwordHash = await hash(password, {
 		// recommended minimum parameters
-		memorySize: 19456,
-		iterations: 2,
-		tagLength: 32,
+		memoryCost: 19456,
+		timeCost: 2,
+		outputLen: 32,
 		parallelism: 1
 	});
 	const userId = generateIdFromEntropySize(10); // 16 characters long
@@ -266,9 +266,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	const validPassword = await verify(existingUser.password, password, {
-		memorySize: 19456,
-		iterations: 2,
-		tagLength: 32,
+		memoryCost: 19456,
+		timeCost: 2,
+		outputLen: 32,
 		parallelism: 1
 	});
 	if (!validPassword) {
