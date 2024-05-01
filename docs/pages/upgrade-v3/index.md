@@ -17,9 +17,9 @@ For a simple password-based auth, the password can just be stored in the user ta
 ```ts
 const passwordHash = await hash(password, {
 	// recommended minimum parameters
-	memorySize: 19456,
-	iterations: 2,
-	tagLength: 32,
+	memoryCost: 19456,
+	timeCost: 2,
+	outputLen: 32,
 	parallelism: 1
 });
 const userId = generateIdFromEntropySize(10); // 16 characters long

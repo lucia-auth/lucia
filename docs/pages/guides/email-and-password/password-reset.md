@@ -119,9 +119,9 @@ app.post("/reset-password/:token", async () => {
 	await lucia.invalidateUserSessions(token.user_id);
 	const passwordHash = await hash(password, {
 		// recommended minimum parameters
-		memorySize: 19456,
-		iterations: 2,
-		tagLength: 32,
+		memoryCost: 19456,
+		timeCost: 2,
+		outputLen: 32,
 		parallelism: 1
 	});
 	await db.table("user").where("id", "=", token.user_id).update({
