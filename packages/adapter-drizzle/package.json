@@ -37,7 +37,7 @@
 	},
 	"peerDependencies": {
 		"lucia": "3.x",
-		"drizzle-orm": "^0"
+		"drizzle-orm": ">= 0.29 <1"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
