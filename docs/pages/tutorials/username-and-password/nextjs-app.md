@@ -224,7 +224,7 @@ async function login(_: any, formData: FormData): Promise<ActionResult> {
 	}
 
 	const existingUser = await db
-		.table("username")
+		.table("user")
 		.where("username", "=", username.toLowerCase())
 		.get();
 	if (!existingUser) {
