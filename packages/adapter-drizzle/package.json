@@ -36,14 +36,15 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"lucia": "3.x"
+		"lucia": "3.x",
+		"drizzle-orm": ">= 0.29 <1"
 	},
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.4.0",
 		"dotenv": "^16.0.3",
-		"drizzle-orm": "^0.29.0",
+		"drizzle-orm": "^0",
 		"lucia": "workspace:*",
 		"mysql2": "^3.2.3",
 		"pg": "^8.8.0",
