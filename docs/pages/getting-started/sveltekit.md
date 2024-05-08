@@ -9,7 +9,7 @@ title: "Getting started in Sveltekit"
 Install Lucia using your package manager of your choice.
 
 ```
-npm install -D lucia
+npm install lucia
 ```
 
 ## Initialize Lucia
