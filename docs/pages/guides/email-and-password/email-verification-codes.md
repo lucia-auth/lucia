@@ -172,7 +172,7 @@ async function verifyVerificationCode(user: User, code: string): Promise<boolean
 		await db.commit();
 		return false;
 	}
-	await db.table("email_verification_code").where("id", "=", code.id).delete();
+	await db.table("email_verification_code").where("id", "=", databaseCode.id).delete();
 	await db.commit();
 
 	if (!isWithinExpirationDate(databaseCode.expires_at)) {
