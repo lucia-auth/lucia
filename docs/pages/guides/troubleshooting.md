@@ -24,6 +24,8 @@ declare module "lucia" {
 }
 ```
 
+**Also check that you're passing `typeof lucia` and not `typeof Lucia`** (notice the capitalization - `lucia` is an instance of class `Lucia`).
+
 ## Session cookies are not set in `localhost`
 
 By default, session cookies have a `Secure` flag, which requires HTTPS. You can disable it for development with the `sessionCookie.attributes.secure` configuration.
