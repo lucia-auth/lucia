@@ -39,7 +39,7 @@ const id = generateRandomString(15, alphabet("a-z", "A-Z", "0-9"));
 
 ## Define user attributes
 
-Defining custom session attributes requires 2 steps. First, add the required columns to the user table. You can type it by declaring the `Register.DatabaseUserAttributes` type (must be an interface).
+Defining custom user attributes requires 2 steps. First, add the required columns to the user table. You can type it by declaring the `Register.DatabaseUserAttributes` type (must be an interface).
 
 ```ts
 declare module "lucia" {
