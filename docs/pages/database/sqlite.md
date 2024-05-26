@@ -88,7 +88,7 @@ export function initializeLucia(D1: D1Database) {
 
 declare module "lucia" {
 	interface Register {
-		Auth: ReturnType<typeof initializeLucia>;
+		Lucia: ReturnType<typeof initializeLucia>;
 	}
 }
 ```
