@@ -34,7 +34,7 @@ interface UserDoc {
 	_id: string;
 }
 
-interface Session {
+interface SessionDoc {
 	_id: string;
 	expires_at: Date;
 	user_id: string;
