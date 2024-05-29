@@ -257,7 +257,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	const sessionCookie = lucia.createBlankSessionCookie();
 	context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
-	return Astro.redirect("/login");
+	return context.redirect("/login");
 }
 ```
 
