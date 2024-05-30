@@ -229,9 +229,9 @@ export async function POST(context: APIContext): Promise<Response> {
 You can validate requests by checking `locals.user`. The field `user.username` is available since we defined the `getUserAttributes()` option. You can protect pages, such as `/`, by redirecting unauthenticated users to the login page.
 
 ```ts
-const user = Astro.locals.user;
+const user = context.locals.user;
 if (!user) {
-	return Astro.redirect("/login");
+	return context.redirect("/login");
 }
 
 const username = user.username;
@@ -257,7 +257,7 @@ export async function POST(context: APIContext): Promise<Response> {
 	const sessionCookie = lucia.createBlankSessionCookie();
 	context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
-	return Astro.redirect("/login");
+	return context.redirect("/login");
 }
 ```
 
