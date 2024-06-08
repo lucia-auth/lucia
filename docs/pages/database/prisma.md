@@ -12,7 +12,7 @@ npm install @lucia-auth/adapter-prisma
 
 ## Schema
 
-While Lucia does not enforce model names, the relation name (`user`) in the session model must be the camel-case version of the user model name. For example, if the user model was named `AuthUser`, the relation must be named `Session.authUser`.
+The data field names and types must exactly match the ones in the schema below. While you can change the model names, the relation name in the session model (`Session.user`) must be the camel-case version of the user model name. For example, if the user model was named `AuthUser`, the relation must be named `Session.authUser`.
 
 User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
 
@@ -26,6 +26,7 @@ model Session {
   id        String   @id
   userId    String
   expiresAt DateTime
+
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 ```
