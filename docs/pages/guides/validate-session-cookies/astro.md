@@ -4,7 +4,19 @@ title: "Validate session cookies in Astro"
 
 # Validate session cookies in Astro
 
-**CSRF protection must be implemented when using cookies and forms.** This can be easily done by comparing the `Origin` and `Host` header.
+**CSRF protection must be implemented when using cookies and forms.** This can be easily done by updating your Astro config (available Astro 4.9+).
+
+```ts
+// astro.config.js
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+	// ...
+	security: {
+		checkOrigin: true
+	}
+});
+```
 
 We recommend creating a middleware to validate requests and store the current user inside `locals`. You can get the cookie name with `Lucia.sessionCookieName` and validate the session cookie with `Lucia.validateSession()`. Make sure to delete the session cookie if it's invalid and create a new session cookie when the expiration gets extended, which is indicated by `Session.fresh`.
 
@@ -15,17 +27,6 @@ import { verifyRequestOrigin } from "lucia";
 import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
-	if (context.request.method !== "GET") {
-		const originHeader = request.headers.get("Origin");
-		// NOTE: You may need to use `X-Forwarded-Host` instead
-		const hostHeader = request.headers.get("Host");
-		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-			return new Response(null, {
-				status: 403
-			});
-		}
-	}
-
 	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
 	if (!sessionId) {
 		context.locals.user = null;

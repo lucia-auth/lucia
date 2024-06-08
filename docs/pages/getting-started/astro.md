@@ -12,6 +12,24 @@ Install Lucia using your package manager of your choice.
 npm install lucia
 ```
 
+## Enable CSRF protection
+
+Make sure you're using the latest version of Astro and enable CSRF protection.
+
+```ts
+// astro.config.js
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+	// ...
+	security: {
+		checkOrigin: true
+	}
+});
+```
+
+If you're using version below 4.9, you must [manually implement CSRF protection](https://lucia-auth.com/guides/validate-session-cookies/).
+
 ## Initialize Lucia
 
 Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type
@@ -51,16 +69,6 @@ import { verifyRequestOrigin } from "lucia";
 import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
-	if (context.request.method !== "GET") {
-		const originHeader = context.request.headers.get("Origin");
-		const hostHeader = context.request.headers.get("Host");
-		if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-			return new Response(null, {
-				status: 403
-			});
-		}
-	}
-
 	const sessionId = context.cookies.get(lucia.sessionCookieName)?.value ?? null;
 	if (!sessionId) {
 		context.locals.user = null;
