@@ -78,6 +78,7 @@ Create an API route in `pages/api/signup.ts`. First, do a very basic input valid
 // pages/api/signup.ts
 import { lucia } from "@lib/auth";
 import { hash } from "@node-rs/argon2";
+import { generateIdFromEntropySize } from "lucia";
 
 import type { APIContext } from "astro";
 
