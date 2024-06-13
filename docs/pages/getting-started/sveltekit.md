@@ -41,7 +41,7 @@ declare module "lucia" {
 
 ## Setup hooks
 
-We recommend setting up a handle hook to validate requests. The validated user will be available as `local.user`.
+We recommend setting up a handle hook to validate requests. The validated user will be available as `locals.user`.
 
 If you're curious about what's happening here, see the [Validating requests](/guides/validate-session-cookies/sveltekit) page.
 
