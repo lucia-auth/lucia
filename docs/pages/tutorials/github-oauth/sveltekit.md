@@ -140,7 +140,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const state = event.url.searchParams.get("state");
 	const storedState = event.cookies.get("github_oauth_state") ?? null;
 
-	if (!code || !state || !storedState || state !== storedState) {
+	if (!code || !state || !storedState ) {
 		return new Response(null, {
 			status: 400
 		});
@@ -162,7 +162,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			const session = await lucia.createSession(existingUser.id, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: ".",
+				path: "/",
 				...sessionCookie.attributes
 			});
 		} else {
@@ -178,7 +178,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			const session = await lucia.createSession(userId, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);
 			event.cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: ".",
+				path: "/",
 				...sessionCookie.attributes
 			});
 		}
@@ -248,7 +248,7 @@ export const actions: Actions = {
 		await lucia.invalidateSession(event.locals.session.id);
 		const sessionCookie = lucia.createBlankSessionCookie();
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: ".",
+			path: "/",
 			...sessionCookie.attributes
 		});
 		redirect(302, "/login");
