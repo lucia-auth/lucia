@@ -27,3 +27,9 @@ Refer to these guides on setting up your database, ORMs, and query builders:
 -   [PostgreSQL](/database/postgresql): Neon HTTP serverless driver, node-postgres (`pg`), Postgres.js (`postgres`)
 -   [Prisma](/database/prisma)
 -   [SQLite](/database/sqlite): `better-sqlite3`, Bun SQLite (`bun:sqlite`), Cloudflare D1, LibSQL (Turso)
+
+## Community-maintained database adapters
+
+These adapters are not routinely checked by the maintainers of Lucia. Make sure to check the source code and use them at your own risk!
+
+- [Astro DB adapter by Pilcrow](https://github.com/pilcrowOnPaper/lucia-adapter-astrodb)
