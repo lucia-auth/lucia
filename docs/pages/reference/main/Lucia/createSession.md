@@ -14,7 +14,10 @@ Method of [`Lucia`](/reference/main/Lucia). Creates a new session.
 //$ UserId=/reference/main/UserId
 function createSession(
 	userId: $$UserId,
-	attributes: $$DatabaseSessionAttributes
+	attributes: $$DatabaseSessionAttributes,
+	options?: {
+		sessionId?: string;
+	}
 ): Promise<$$Session>;
 ```
 
@@ -22,3 +25,5 @@ function createSession(
 
 -   `userId`
 -   `attributes`: Database session attributes
+-   `options`:
+    -   `sessionId`
