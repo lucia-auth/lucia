@@ -16,6 +16,8 @@ Learn to set up GitHub OAuth, handle authentication, and manage user sessions.
 -   [Nuxt](/tutorials/github-oauth/nuxt)
 -   [SvelteKit](/tutorials/github-oauth/sveltekit)
 
+Example projects for [Express](https://github.com/lucia-auth/examples/tree/main/express/github-oauth) and [Hono](https://github.com/lucia-auth/examples/tree/main/hono/github-oauth) are also available.
+
 ## Username and Password
 
 Understand how to implement a secure username and password authentication system.
@@ -25,3 +27,5 @@ Understand how to implement a secure username and password authentication system
 -   [Next.js Pages router](/tutorials/username-and-password/nextjs-pages)
 -   [Nuxt](/tutorials/username-and-password/nuxt)
 -   [SvelteKit](/tutorials/username-and-password/sveltekit)
+
+Example projects for [Express](https://github.com/lucia-auth/examples/tree/main/express/username-and-password) and [Hono](https://github.com/lucia-auth/examples/tree/main/hono/username-and-password) are also available.
