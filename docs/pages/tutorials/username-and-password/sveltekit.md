@@ -82,6 +82,7 @@ import { lucia } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 import { generateIdFromEntropySize } from "lucia";
 import { hash } from "@node-rs/argon2";
+import { user } from "$lib/server/schema";
 
 import type { Actions } from "./$types";
 
@@ -118,7 +119,7 @@ export const actions: Actions = {
 		});
 
 		// TODO: check if username is already used
-		await db.table("user").insert({
+		await db.insert(user).values({
 			id: userId,
 			username: username,
 			password_hash: passwordHash
