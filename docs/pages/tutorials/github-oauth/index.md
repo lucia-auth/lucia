@@ -11,3 +11,5 @@ The tutorials go over how to implement a basic GitHub OAuth and cover the basics
 -   [Next.js Pages router](/tutorials/github-oauth/nextjs-pages)
 -   [Nuxt](/tutorials/github-oauth/nuxt)
 -   [SvelteKit](/tutorials/github-oauth/sveltekit)
+
+Example projects for [Express](https://github.com/lucia-auth/examples/tree/main/express/github-oauth) and [Hono](https://github.com/lucia-auth/examples/tree/main/hono/github-oauth) are also available.
