@@ -51,7 +51,9 @@ app.post("/reset-password", async () => {
 	// ...
 
 	const user = await db.table("user").where("email", "=", email).get();
-	if (!user || !user.email_verified) {
+	if (!user) {
+		// If you want to avoid disclosing valid emails,
+		// this can be a normal 200 response.
 		return new Response("Invalid email", {
 			status: 400
 		});
