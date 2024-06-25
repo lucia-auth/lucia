@@ -160,7 +160,7 @@ app.get("email-verification/:token", async () => {
 		headers: {
 			Location: "/",
 			"Set-Cookie": sessionCookie.serialize(),
-			"Referrer-Policy": "no-referrer"
+			"Referrer-Policy": "strict-origin"
 		}
 	});
 });
