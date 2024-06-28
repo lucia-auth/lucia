@@ -33,3 +33,4 @@ Refer to these guides on setting up your database, ORMs, and query builders:
 These adapters are not routinely checked by the maintainers of Lucia. Make sure to check the source code and use them at your own risk!
 
 - [Astro DB adapter by Pilcrow](https://github.com/pilcrowOnPaper/lucia-adapter-astrodb)
+- [DynamoDB adapter by GNK Softworks](https://github.com/gnk-softworks/lucia-dynamodb-adapter)
