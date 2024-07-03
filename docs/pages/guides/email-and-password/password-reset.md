@@ -51,7 +51,9 @@ app.post("/reset-password", async () => {
 	// ...
 
 	const user = await db.table("user").where("email", "=", email).get();
-	if (!user || !user.email_verified) {
+	if (!user) {
+		// If you want to avoid disclosing valid emails,
+		// this can be a normal 200 response.
 		return new Response("Invalid email", {
 			status: 400
 		});
@@ -71,14 +73,14 @@ Make sure to implement rate limiting based on IP addresses.
 
 ## Verify token
 
-Make sure to set the `Referrer-Policy` header of the password reset page to `no-referrer` to protect the token from referrer leakage.
+Make sure to set the `Referrer-Policy` header of the password reset page to `strict-origin` to protect the token from referrer leakage.
 
 ```ts
 app.get("/reset-password/:token", async () => {
 	// ...
 	return new Response(html, {
 		headers: {
-			"Referrer-Policy": "no-referrer"
+			"Referrer-Policy": "strict-origin"
 		}
 	});
 });
@@ -135,7 +137,7 @@ app.post("/reset-password/:token", async () => {
 		headers: {
 			Location: "/",
 			"Set-Cookie": sessionCookie.serialize(),
-			"Referrer-Policy": "no-referrer"
+			"Referrer-Policy": "strict-origin"
 		}
 	});
 });

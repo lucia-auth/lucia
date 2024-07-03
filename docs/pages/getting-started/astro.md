@@ -65,7 +65,6 @@ It's a bit verbose, but it just reads the session cookie, validates it, and sets
 ```ts
 // src/middleware.ts
 import { lucia } from "./auth";
-import { verifyRequestOrigin } from "lucia";
 import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -109,6 +108,6 @@ declare namespace App {
 
 You can learn all the concepts and APIs by reading the [Basics section](/basics/sessions) in the docs. If you prefer writing code immediately, check out the [Tutorials](/tutorials) page or the [examples repository](https://github.com/lucia-auth/examples/tree/main).
 
-This documentation often references [the Copenhagen Book](https://thecopenhagenbook.com/mfa). This is an open-source guide on implementing auth and should come in handy when implementing anything auth, including passkeys, multi-factor authentication, and a bit of cryptography. We recommend reading it to learn more about auth in web applications.
+This documentation often references [the Copenhagen Book](https://thecopenhagenbook.com). This is an open-source guide on implementing auth and should come in handy when implementing anything auth, including passkeys, multi-factor authentication, and a bit of cryptography. We recommend reading it to learn more about auth in web applications.
 
 If you have any questions, [join our Discord server](https://discord.com/invite/PwrK3kpVR3)!

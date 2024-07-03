@@ -92,6 +92,16 @@ interface DatabaseSessionAttributes {
 }
 ```
 
+### Custom session IDs
+
+You use your own session IDs with the `sessionId` option, though we recommend sticking with Lucia's default IDs as they provide a good balance between entropy and compactness. If you're using UUIDs, make sure they're generated using a cryptographically secure random source. Object IDs should not be used as session IDs as they do not provide enough entropy.
+
+```ts
+const session = await lucia.createSession(userId, attributes, {
+	sessionId: generate
+});
+```
+
 ## Validate sessions
 
 Use `Lucia.validateSession()` to validate a session using its ID. This will return an object containing a session and user. Both of these will be `null` if the session is invalid.

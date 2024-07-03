@@ -7,12 +7,13 @@ title: "Getting started"
 A framework-specific guide is also available for:
 
 -   [Astro](/getting-started/astro)
--   [Express](/getting-started/express)
 -   [Next.js App router](/getting-started/nextjs-app)
 -   [Next.js Pages router](/getting-started/nextjs-pages)
 -   [Nuxt](/getting-started/nuxt)
 -   [SolidStart](/getting-started/solidstart)
 -   [SvelteKit](/getting-started/sveltekit)
+
+Example projects for Astro, Express, Hono, Next.js App Router, Next.js Pages Router, Nuxt, and SvelteKit are available in the [example repository](https://github.com/lucia-auth/examples).
 
 ## Installation
 
@@ -64,4 +65,4 @@ node --experimental-web-crypto index.js
 
 ## The Copenhagen Book
 
-This documentation often references [the Copenhagen Book](https://thecopenhagenbook.com/mfa). This is an open-source guide on implementing auth and should come in handy when implementing anything auth, including passkeys, multi-factor authentication, and a bit of cryptography. We recommend reading it to learn more about auth in web applications.
+This documentation often references [the Copenhagen Book](https://thecopenhagenbook.com). This is an open-source guide on implementing auth and should come in handy when implementing anything auth, including passkeys, multi-factor authentication, and a bit of cryptography. We recommend reading it to learn more about auth in web applications.
