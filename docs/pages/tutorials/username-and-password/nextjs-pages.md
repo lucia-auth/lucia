@@ -9,7 +9,7 @@ Before starting, make sure you've set up your database and middleware as describ
 An [example project](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/username-and-password).
 
 ```
-npx degit https://github.com/lucia-auth/examples/tree/main/nextjs-pages/username-and-password <directory_name>
+npx degit https://github.com/lucia-auth/examples/nextjs-pages/username-and-password <directory_name>
 ```
 
 ## Update database

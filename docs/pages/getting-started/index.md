@@ -7,7 +7,6 @@ title: "Getting started"
 A framework-specific guide is also available for:
 
 -   [Astro](/getting-started/astro)
--   [Express](/getting-started/express)
 -   [Next.js App router](/getting-started/nextjs-app)
 -   [Next.js Pages router](/getting-started/nextjs-pages)
 -   [Nuxt](/getting-started/nuxt)

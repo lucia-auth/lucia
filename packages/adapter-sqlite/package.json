@@ -1,6 +1,6 @@
 {
 	"name": "@lucia-auth/adapter-sqlite",
-	"version": "3.0.1",
+	"version": "3.0.2",
 	"description": "SQLite adapter for Lucia",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -61,7 +61,7 @@
 		"@miniflare/d1": "^2.14.0",
 		"@miniflare/web-sockets": "^2.14.1",
 		"@types/better-sqlite3": "^7.6.3",
-		"better-sqlite3": "^8.4.0",
+		"better-sqlite3": "^11.1.2",
 		"bun-types": "^1.0.12",
 		"lucia": "workspace:*",
 		"tsx": "^3.12.6"
