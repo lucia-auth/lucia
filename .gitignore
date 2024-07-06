@@ -4,3 +4,5 @@ pnpm-lock.yaml
 .vscode
 .idea
 *.p8
+bun.lockb
+*bun.lockb
