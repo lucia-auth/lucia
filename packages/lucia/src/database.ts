@@ -2,7 +2,7 @@ import type {
 	RegisteredDatabaseSessionAttributes,
 	RegisteredDatabaseUserAttributes,
 	UserId
-} from "./index.js";
+} from "./index.ts";
 
 export interface Adapter {
 	getSessionAndUser(
