@@ -1,10 +1,11 @@
-import { eq, lte } from "drizzle-orm";
+import { eq, lte, is } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
-import type {
-	SQLiteColumn,
-	BaseSQLiteDatabase,
-	SQLiteTableWithColumns
+import {
+	type SQLiteColumn,
+	SQLiteTimestamp,
+	type BaseSQLiteDatabase,
+	type SQLiteTableWithColumns
 } from "drizzle-orm/sqlite-core";
 import type { InferSelectModel } from "drizzle-orm";
 
@@ -80,7 +81,10 @@ export class DrizzleSQLiteAdapter implements Adapter {
 			.values({
 				id: session.id,
 				userId: session.userId,
-				expiresAt: Math.floor(session.expiresAt.getTime() / 1000),
+				// If the drizzle schema is set to `mode: "timestamp"` drizzle will already expect a date from us so we shouldn't convert
+				expiresAt: is(this.sessionTable.expiresAt, SQLiteTimestamp)
+					? session.expiresAt
+					: Math.floor(session.expiresAt.getTime() / 1000),
 				...session.attributes
 			})
 			.run();
