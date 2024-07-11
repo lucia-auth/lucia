@@ -94,7 +94,10 @@ export class DrizzleSQLiteAdapter implements Adapter {
 		await this.db
 			.update(this.sessionTable)
 			.set({
-				expiresAt: Math.floor(expiresAt.getTime() / 1000)
+				// If the drizzle schema is set to `mode: "timestamp"` drizzle will already expect a date from us so we shouldn't convert
+				expiresAt: is(this.sessionTable.expiresAt, SQLiteTimestamp)
+					? expiresAt
+					: Math.floor(expiresAt.getTime() / 1000)
 			})
 			.where(eq(this.sessionTable.id, sessionId))
 			.run();
@@ -103,7 +106,14 @@ export class DrizzleSQLiteAdapter implements Adapter {
 	public async deleteExpiredSessions(): Promise<void> {
 		await this.db
 			.delete(this.sessionTable)
-			.where(lte(this.sessionTable.expiresAt, Math.floor(Date.now() / 1000)));
+			.where(
+				lte(
+					this.sessionTable.expiresAt,
+					is(this.sessionTable.expiresAt, SQLiteTimestamp)
+						? new Date()
+						: Math.floor(Date.now() / 1000)
+				)
+			);
 	}
 }
 
