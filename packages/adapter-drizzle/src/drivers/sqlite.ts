@@ -1,12 +1,12 @@
 import { eq, lte, is } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
-import {
-	type SQLiteColumn,
-	SQLiteTimestamp,
-	type BaseSQLiteDatabase,
-	type SQLiteTableWithColumns
+import type {
+	SQLiteColumn,
+	BaseSQLiteDatabase,
+	SQLiteTableWithColumns
 } from "drizzle-orm/sqlite-core";
+import { SQLiteTimestamp } from "drizzle-orm/sqlite-core";
 import type { InferSelectModel } from "drizzle-orm";
 
 export class DrizzleSQLiteAdapter implements Adapter {
