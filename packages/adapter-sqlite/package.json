@@ -42,8 +42,8 @@
 		".": "./dist/index.js"
 	},
 	"peerDependencies": {
-		"@libsql/client": "^0.3.0",
-		"better-sqlite3": "8.x - 11.x",
+		"@libsql/client": ">= 0.3.0",
+		"better-sqlite3": "8.x - 9.x",
 		"lucia": "3.x"
 	},
 	"peerDependenciesMeta": {
@@ -56,7 +56,7 @@
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230518.0",
-		"@libsql/client": "^0.3.0",
+		"@libsql/client": "^0.8.0",
 		"@lucia-auth/adapter-test": "workspace:*",
 		"@miniflare/d1": "^2.14.0",
 		"@miniflare/web-sockets": "^2.14.1",
