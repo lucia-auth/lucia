@@ -12,4 +12,5 @@ Testing module for Lucia database adapters.
 npm i -D @lucia-auth/adapter-test
 pnpm add -D @lucia-auth/adapter-test
 yarn add -D @lucia-auth/adapter-test
+bun add -D @lucia-auth/adapter-test
 ```

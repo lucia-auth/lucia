@@ -34,4 +34,5 @@ Lucia is an open source library released under the MIT license, with the help of
 npm i lucia
 pnpm add lucia
 yarn add lucia
+bun add lucia
 ```

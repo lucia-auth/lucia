@@ -21,6 +21,7 @@ SQLite adapter for Lucia.
 npm install @lucia-auth/adapter-sqlite
 pnpm add @lucia-auth/adapter-sqlite
 yarn add @lucia-auth/adapter-sqlite
+bun add @lucia-auth/adapter-sqlite
 ```
 
 ## Testing
