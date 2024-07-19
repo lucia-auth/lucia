@@ -48,8 +48,8 @@ Make sure to type `App.Locals` as well.
 declare global {
 	namespace App {
 		interface Locals {
-			user: import("lucia").User;
-			session: import("lucia").Session;
+			user: import("lucia").User | null;
+			session: import("lucia").Session | null;
 		}
 	}
 }
