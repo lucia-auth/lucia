@@ -245,7 +245,7 @@ export const actions: Actions = {
 You can validate requests by checking `locals.user`. The field `user.username` is available since we defined the `getUserAttributes()` option. You can protect pages, such as `/`, by redirecting unauthenticated users to the login page.
 
 ```ts
-// +page.server.ts
+// routes/+page.server.ts
 import type { PageServerLoad, Actions } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
