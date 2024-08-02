@@ -14,7 +14,7 @@ title: "lucia API reference"
 
 -   [`LegacyScrypt`](/reference/main/LegacyScrypt)
 -   [`Lucia`](/reference/main/Lucia)
--   [`Cookie`](/reference/main/SessionCookie)
+-   [`Cookie`](/reference/main/Cookie)
 -   [`Scrypt`](/reference/main/Scrypt)
 -   [`TimeSpan`](/reference/main/TimeSpan)
 
