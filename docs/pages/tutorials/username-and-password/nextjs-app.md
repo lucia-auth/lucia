@@ -57,7 +57,7 @@ interface DatabaseUserAttributes {
 
 Create `app/signup/page.tsx` and set up a basic form and action.
 
-```tsx
+```ts
 export default async function Page() {
 	return (
 		<>
@@ -84,7 +84,7 @@ interface ActionResult {
 
 In the form action, first do a very basic input validation. Hash the password, generate a new user ID, and create a new user. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
-```tsx
+```ts
 import { db } from "@/lib/db";
 import { hash } from "@node-rs/argon2";
 import { cookies } from "next/headers";
@@ -167,7 +167,7 @@ module.exports = nextConfig;
 
 Create `app/login/page.tsx` and set up a basic form and action.
 
-```tsx
+```ts
 // app/login/page.tsx
 export default async function Page() {
 	return (
@@ -195,7 +195,7 @@ interface ActionResult {
 
 In the form action, first do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
-```tsx
+```ts
 import { verify } from "@node-rs/argon2";
 import { cookies } from "next/headers";
 import { lucia } from "@/lib/auth";
@@ -304,7 +304,7 @@ export const validateRequest = cache(
 
 This function can then be used in server components and form actions to get the current session and user.
 
-```tsx
+```ts
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth";
 
@@ -321,7 +321,7 @@ export default async function Page() {
 
 Sign out users by invalidating their session with `Lucia.invalidateSession()`. Make sure to remove their session cookie by setting a blank session cookie created with `Lucia.createBlankSessionCookie()`.
 
-```tsx
+```ts
 import { lucia, validateRequest } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
