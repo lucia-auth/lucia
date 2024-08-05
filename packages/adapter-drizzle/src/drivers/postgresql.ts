@@ -2,7 +2,10 @@ import { eq, lte } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
 import type { PgColumn, PgDatabase, PgTableWithColumns } from "drizzle-orm/pg-core";
+import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import type { InferSelectModel } from "drizzle-orm";
+
+
 
 export class DrizzlePostgreSQLAdapter implements Adapter {
 	private db: PgDatabase<any, any, any>;
@@ -79,6 +82,9 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 	}
 }
 
+const db:NeonHttpDatabase = {} as any
+const a = new DrizzlePostgreSQLAdapter(db, {}as any, {}as any)
+
 export type PostgreSQLUserTable = PgTableWithColumns<{
 	dialect: "pg";
 	columns: {
@@ -94,6 +100,10 @@ export type PostgreSQLUserTable = PgTableWithColumns<{
 				hasDefault: boolean; // must be boolean instead of any to allow default values
 				enumValues: any;
 				baseColumn: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -116,6 +126,10 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -130,6 +144,10 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -144,6 +162,10 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
