@@ -53,7 +53,8 @@ export class DrizzleSQLiteAdapter implements Adapter {
 	}
 
 	private async getUserFromSessionId(sessionId: string): Promise<DatabaseUser | null> {
-		const { _, $inferInsert, $inferSelect, getSQL, ...userColumns } = this.userTable;
+		const { _, $inferInsert, $inferSelect, getSQL, shouldOmitSQLParens, ...userColumns } =
+			this.userTable;
 		const result = await this.db
 			.select(userColumns)
 			.from(this.sessionTable)
@@ -118,6 +119,10 @@ export type SQLiteUserTable = SQLiteTableWithColumns<{
 				hasDefault: boolean; // must be boolean instead of any to allow default values
 				enumValues: any;
 				baseColumn: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -140,6 +145,10 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -154,6 +163,10 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -168,6 +181,10 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
