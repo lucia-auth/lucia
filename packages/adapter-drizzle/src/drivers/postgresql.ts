@@ -2,6 +2,7 @@ import { eq, lte } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
 import type { PgColumn, PgDatabase, PgTableWithColumns } from "drizzle-orm/pg-core";
+
 import type { InferSelectModel } from "drizzle-orm";
 
 export class DrizzlePostgreSQLAdapter implements Adapter {
@@ -94,6 +95,10 @@ export type PostgreSQLUserTable = PgTableWithColumns<{
 				hasDefault: boolean; // must be boolean instead of any to allow default values
 				enumValues: any;
 				baseColumn: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -116,6 +121,10 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -130,6 +139,10 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
@@ -144,6 +157,10 @@ export type PostgreSQLSessionTable = PgTableWithColumns<{
 				driverParam: any;
 				hasDefault: false;
 				name: any;
+				isPrimaryKey: any;
+				isAutoincrement: any;
+				hasRuntimeDefault: any;
+				generated: any;
 			},
 			object
 		>;
