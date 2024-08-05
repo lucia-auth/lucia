@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-drizzle
 
+## 1.1.0
+
+### Minor changes
+
+-   [#1653](https://github.com/lucia-auth/lucia/pull/1653) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update types to latest.
+
 ## 1.0.7
 
 -   Fix previous revert in 1.0.6. ([#1501](https://github.com/lucia-auth/lucia/pull/1501))
