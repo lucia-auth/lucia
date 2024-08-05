@@ -2,10 +2,8 @@ import { eq, lte } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
 import type { PgColumn, PgDatabase, PgTableWithColumns } from "drizzle-orm/pg-core";
-import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
+
 import type { InferSelectModel } from "drizzle-orm";
-
-
 
 export class DrizzlePostgreSQLAdapter implements Adapter {
 	private db: PgDatabase<any, any, any>;
@@ -81,9 +79,6 @@ export class DrizzlePostgreSQLAdapter implements Adapter {
 		await this.db.delete(this.sessionTable).where(lte(this.sessionTable.expiresAt, new Date()));
 	}
 }
-
-const db:NeonHttpDatabase = {} as any
-const a = new DrizzlePostgreSQLAdapter(db, {}as any, {}as any)
 
 export type PostgreSQLUserTable = PgTableWithColumns<{
 	dialect: "pg";
