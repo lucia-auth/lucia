@@ -3,6 +3,7 @@
 	"description": "Lucia is an open source auth library that abstracts away the complexity of handling sessions.",
 	"domain": "https://v3.lucia-auth.com",
 	"twitter": "@lucia_auth",
+	"asset_hashing": true,
 	"sidebar": [
 		{
 			"title": "Start here",
