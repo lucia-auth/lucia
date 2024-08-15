@@ -1,0 +1,48 @@
+{
+	"name": "@lucia-auth/adapter-firestore",
+	"version": "1.0.0",
+	"description": "Firebase Firestore adapter for Lucia",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
+	"type": "module",
+	"files": [
+		"/dist/",
+		"CHANGELOG.md"
+	],
+	"scripts": {
+		"build": "shx rm -rf ./dist/* && tsc",
+		"test": "tsx tests/firestore.ts",
+		"auri.build": "pnpm build"
+	},
+	"keywords": [
+		"lucia",
+		"lucia",
+		"auth",
+		"authentication",
+		"adapter",
+		"firebase",
+		"firestore"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"directory": "packages/adapter-firestore"
+	},
+	"author": "Isax03",
+	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"peerDependencies": {
+		"firebase": "10.x",
+		"lucia": "3.x"
+	},
+	"devDependencies": {
+		"@lucia-auth/adapter-test": "workspace:*",
+		"dotenv": "^16.0.3",
+		"firebase": "^10.12.5",
+		"lucia": "workspace:*",
+		"tsx": "^3.12.6"
+	}
+}
