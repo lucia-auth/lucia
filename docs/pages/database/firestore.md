@@ -27,6 +27,12 @@ import { Firestore } from "@lucia-auth/adapter-firestore";
 import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
 import { collection, getFirestore } from 'firebase/firestore';
 
+dotenv.config({ path: `${resolve()}/.env` });
+
+const clientConfig = {
+	projectId: process.env.FIREBASE_PROJECT_ID
+};
+
 const getClientApp = (): FirebaseApp => {
 	if (getApps().length)
 		return getApp();
