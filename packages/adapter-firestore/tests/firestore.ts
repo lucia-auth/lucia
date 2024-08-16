@@ -12,7 +12,7 @@ import { FirestoreAdapter } from "../src/index.js";
 /**
  * Environment variables configuration. Change with .env.example or create a .env file.
  */
-dotenv.config({ path: `${resolve()}/.env` });
+dotenv.config({ path: `${resolve()}/.env.example` });
 
 if(!process.env.FIREBASE_PROJECT_ID)
 	throw new Error("FIREBASE_PROJECT_ID is not defined");
@@ -49,7 +49,10 @@ const Session = collection(db, "sessions");
 
 await wipeCollections();
 
-const adapter = new FirestoreAdapter(User, Session);
+const adapter = new FirestoreAdapter(db, {
+	user: "users",
+	session: "sessions"
+});
 
 /**
  * Add a user to the Firestore database.

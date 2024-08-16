@@ -41,7 +41,7 @@
 	"devDependencies": {
 		"@lucia-auth/adapter-test": "workspace:*",
 		"dotenv": "^16.0.3",
-		"firebase": "^10.12.5",
+		"firebase": "^10.13.0",
 		"lucia": "workspace:*",
 		"tsx": "^3.12.6"
 	}

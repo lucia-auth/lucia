@@ -2,6 +2,7 @@ import {
 	collection,
 	deleteDoc,
 	doc,
+	Firestore,
 	getDoc,
 	getDocs,
 	getFirestore,
@@ -35,9 +36,9 @@ export class FirestoreAdapter implements Adapter {
 	private sessionCollection: ReturnType<typeof collection>;
 	private userCollection: ReturnType<typeof collection>;
 
-	constructor(users: ReturnType<typeof collection>, sessions: ReturnType<typeof collection>) {
-		this.sessionCollection = sessions
-		this.userCollection = users
+	constructor(firestoreDb: Firestore, {user, session}: {user: string, session: string}) {
+		this.sessionCollection = collection(firestoreDb, session);
+		this.userCollection = collection(firestoreDb, user);
 	}
 
 	public async deleteSession(sessionId: string): Promise<void> {
