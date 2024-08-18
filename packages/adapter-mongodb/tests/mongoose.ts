@@ -12,17 +12,12 @@ const User = mongoose.model(
 	"User",
 	new mongoose.Schema(
 		{
-			_id: {
-				type: String,
-				required: true
-			},
 			username: {
 				unique: true,
 				type: String,
 				required: true
 			}
-		} as const,
-		{ _id: false }
+		}
 	)
 );
 
