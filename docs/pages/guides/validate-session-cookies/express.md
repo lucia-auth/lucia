@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 	if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
 		return res.status(403).end();
 	}
+	return next();
 });
 
 app.use((req, res, next) => {
