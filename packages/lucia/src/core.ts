@@ -142,7 +142,7 @@ export class Lucia<
 			fresh: false,
 			expiresAt: databaseSession.expiresAt
 		};
-		if (!isWithinExpirationDate(activePeriodExpirationDate)) {
+		if (isWithinExpirationDate(activePeriodExpirationDate)) {
 			session.fresh = true;
 			session.expiresAt = createDate(this.sessionExpiresIn);
 			await this.adapter.updateSessionExpiration(databaseSession.id, session.expiresAt);
