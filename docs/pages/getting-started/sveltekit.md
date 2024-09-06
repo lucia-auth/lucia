@@ -6,7 +6,7 @@ title: "Getting started in Sveltekit"
 
 ## Installation
 
-Install Lucia using your package manager of your choice.
+Install Lucia using your package manager of your choice, for example with npm:
 
 ```
 npm install -D lucia
@@ -14,24 +14,31 @@ npm install -D lucia
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure to configure the `sessionCookie` option and register your `Lucia` instance type
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the appropriate adapter. In this quickstart, we use the [SQLite adapter](/database/sqlite), but you can easily substitute another adapter:
 
 ```ts
 // src/lib/server/auth.ts
 import { Lucia } from "lucia";
+import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 import { dev } from "$app/environment";
+import { db } from './db';
 
-const adapter = new BetterSQLite3Adapter(db); // your adapter
+// configure adapter database and auth tables
+const adapter = new BetterSqlite3Adapter(db, {
+	user: "user",
+	session: "session"
+});
 
+// configure the session cookie behavior
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
-			// set to `true` when using HTTPS
-			secure: !dev
+			secure: !dev // 'true' when using HTTPS
 		}
 	}
 });
 
+// register your 'Lucia' instance type
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
@@ -41,9 +48,7 @@ declare module "lucia" {
 
 ## Setup hooks
 
-We recommend setting up a handle hook to validate requests. The validated user will be available as `locals.user`.
-
-If you're curious about what's happening here, see the [Validating requests](/guides/validate-session-cookies/sveltekit) page.
+We recommend setting up a handle hook to validate requests. This ensures that every time a SvelteKit route is accessed, the user and session state is validated, updated and made available throughout the app as `locals.user` and `locals.session`:
 
 ```ts
 // src/hooks.server.ts
@@ -51,23 +56,26 @@ import { lucia } from "$lib/server/auth";
 import type { Handle } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
+	// get the cookie
 	const sessionId = event.cookies.get(lucia.sessionCookieName);
+	// do nothing if no cookie is found
 	if (!sessionId) {
 		event.locals.user = null;
 		event.locals.session = null;
 		return resolve(event);
 	}
-
+	// load the session if a cookie is found
 	const { session, user } = await lucia.validateSession(sessionId);
+	// recover existing session if it exists
 	if (session && session.fresh) {
 		const sessionCookie = lucia.createSessionCookie(session.id);
-		// sveltekit types deviates from the de-facto standard
-		// you can use 'as any' too
+		// SvelteKit types are non-standard: you can use 'as any' too
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
 			path: ".",
 			...sessionCookie.attributes
 		});
 	}
+	// create a new session if it doesn't
 	if (!session) {
 		const sessionCookie = lucia.createBlankSessionCookie();
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
@@ -75,6 +83,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			...sessionCookie.attributes
 		});
 	}
+	// set the locals and return
 	event.locals.user = user;
 	event.locals.session = session;
 	return resolve(event);
@@ -96,6 +105,7 @@ declare global {
 
 export {};
 ```
+If you want to learn more about what's happening in `hook.server.ts`, see the [validating requests](/guides/validate-session-cookies/sveltekit) page in the SvelteKit docs.
 
 ## Next steps
 
