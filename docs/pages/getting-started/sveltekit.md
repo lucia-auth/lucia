@@ -20,6 +20,7 @@ Import `Lucia` and initialize it with your adapter. Refer to the [Database](/dat
 // src/lib/server/auth.ts
 import { Lucia } from "lucia";
 import { dev } from "$app/environment";
+import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 
 const adapter = new BetterSQLite3Adapter(db); // your adapter
 
