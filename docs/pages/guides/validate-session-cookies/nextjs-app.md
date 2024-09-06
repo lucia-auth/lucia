@@ -8,7 +8,7 @@ You can get the cookie name with `Lucia.sessionCookieName` and validate the sess
 
 We recommend wrapping the function with [`cache()`](https://nextjs.org/docs/app/building-your-application/caching#react-cache-function) so it can be called multiple times without incurring multiple database calls.
 
-**CSRF protection is only handled by Next.js when using form actions.** If you're using API routes, it must be implemented by yourself (see below).
+**CSRF protection is only handled by Next.js when using form actions.** If you're using Route Handlers, it must be implemented by yourself (see below).
 
 ```ts
 import { lucia } from "@/utils/auth";
@@ -74,7 +74,7 @@ async function Page() {
 }
 ```
 
-For API routes, since Next.js does not implement CSRF protection for API routes, **CSRF protection must be implemented when dealing with forms** if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. We recommend using middleware for this.
+For Route Handlers, since Next.js does not implement CSRF protection for Route Handlers, **CSRF protection must be implemented when dealing with forms** if you're dealing with forms. This can be easily done by comparing the `Origin` and `Host` header. We recommend using middleware for this.
 
 ```ts
 // middleware.ts
