@@ -98,11 +98,11 @@ const sqliteDB = sqlite(":memory:");
 const db = drizzle(sqliteDB);
 
 const userTable = sqliteTable("user", {
-	id: text("id").notNull().primaryKey()
+	id: text("id").primaryKey()
 });
 
 const sessionTable = sqliteTable("session", {
-	id: text("id").notNull().primaryKey(),
+	id: text("id").primaryKey(),
 	userId: text("user_id")
 		.notNull()
 		.references(() => userTable.id),
