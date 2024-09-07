@@ -6,7 +6,7 @@ title: "Getting started in Next.js App router"
 
 ## Installation
 
-Install Lucia using your package manager of your choice.
+Install Lucia using your package manager of your choice, for example with npm:
 
 ```
 npm install lucia
@@ -14,27 +14,33 @@ npm install lucia
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the appropriate adapter. In this quickstart, we use the [SQLite adapter](/database/sqlite), but you can easily substitute another adapter:
 
 ```ts
 // src/auth.ts
 import { Lucia } from "lucia";
+import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
+import { db } from './db';
 
-const adapter = new BetterSQLite3Adapter(db); // your adapter
-
-export const lucia = new Lucia(adapter, {
-	sessionCookie: {
-		// this sets cookies with super long expiration
-		// since Next.js doesn't allow Lucia to extend cookie expiration when rendering pages
-		expires: false,
-		attributes: {
-			// set to `true` when using HTTPS
-			secure: process.env.NODE_ENV === "production"
-		}
-	}
+// configure adapter database and auth tables
+const adapter = new BetterSqlite3Adapter(db, {
+	user: "user",
+	session: "session"
 });
 
-// IMPORTANT!
+// configure the session cookie behavior
+export const lucia = new Lucia(adapter, {
+	sessionCookie: {
+		attributes: {
+			secure: process.env.NODE_ENV === "production" // 'true' when using HTTPS
+		},
+		expires: false, // extend expiration time *
+	}
+});
+// * Next.js doesn't allow Lucia to extend cookie 
+// expiration when rendering pages
+
+// register your 'Lucia' instance type
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
