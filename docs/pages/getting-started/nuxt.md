@@ -6,7 +6,7 @@ title: "Getting started in Nuxt"
 
 ## Installation
 
-Install Lucia using your package manager of your choice.
+Install Lucia using your package manager of your choice, for example with npm:
 
 ```
 npm install lucia
@@ -14,28 +14,30 @@ npm install lucia
 
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the adapter. Make sure you configure the `sessionCookie` option and register your `Lucia` instance type.
-
--   Configure the `sessionCookie` option
--   Register your `Lucia` instance type
+Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the appropriate adapter. In this quickstart, we use the [SQLite adapter](/database/sqlite), but you can easily substitute another adapter:
 
 ```ts
 // server/utils/auth.ts
 import { Lucia } from "lucia";
+import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
+import { db } from './db';
 
-const adapter = new BetterSQLite3Adapter(db); // your adapter
+// configure adapter database and auth tables
+const adapter = new BetterSqlite3Adapter(db, {
+	user: "user",
+	session: "session"
+});
 
+// configure the session cookie behavior
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
-		// IMPORTANT!
 		attributes: {
-			// set to `true` when using HTTPS
-			secure: !process.dev
+			secure: !process.dev // 'true' when using HTTPS
 		}
 	}
 });
 
-// IMPORTANT!
+// register your 'Lucia' instance type
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
