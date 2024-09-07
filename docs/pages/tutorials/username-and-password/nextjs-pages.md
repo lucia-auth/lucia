@@ -209,7 +209,7 @@ export default function Page() {
 }
 ```
 
-Create an API route as `pages/api/signup.ts`. First, do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
+Create an API route as `pages/api/login.ts`. First, do a very basic input validation. Get the user with the username and verify the password. If successful, create a new session with `Lucia.createSession()` and set a new session cookie.
 
 ```ts
 // pages/api/login.ts
