@@ -99,7 +99,7 @@ export default async function Page() {
 
 ## Create authorization URL
 
-Create an API route in `app/login/github/route.ts`. Generate a new state, create a new authorization URL with createAuthorizationURL(), store the state, and redirect the user to the authorization URL. The user will be prompted to sign in with GitHub.
+Create an Route Handlers in `app/login/github/route.ts`. Generate a new state, create a new authorization URL with createAuthorizationURL(), store the state, and redirect the user to the authorization URL. The user will be prompted to sign in with GitHub.
 
 ```ts
 // app/login/github/route.ts
@@ -125,7 +125,7 @@ export async function GET(): Promise<Response> {
 
 ## Validate callback
 
-Create an API route in `app/login/github/callback/route.ts` to handle the callback. First, get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID, and create a new user if they aren't. Finally, create a new session and set the session cookie.
+Create an Route Handlers in `app/login/github/callback/route.ts` to handle the callback. First, get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID, and create a new user if they aren't. Finally, create a new session and set the session cookie.
 
 ```ts
 // app/login/github/callback/route.ts
@@ -211,7 +211,7 @@ interface GitHubUser {
 
 Create `validateRequest()`. This will check for the session cookie, validate it, and set a new cookie if necessary. Make sure to catch errors when setting cookies and wrap the function with `cache()` to prevent unnecessary database calls. To learn more, see the [Validating requests](/guides/validate-session-cookies/nextjs-app) page.
 
-CSRF protection should be implemented but Next.js handles it when using form actions (but not for API routes).
+CSRF protection should be implemented but Next.js handles it when using form actions (but not for Route Handlers).
 
 ```ts
 import { cookies } from "next/headers";
