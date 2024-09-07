@@ -24,12 +24,12 @@ sqliteDB
 	.run(databaseUser.id, databaseUser.attributes.username);
 
 const userTable = sqliteTable("user", {
-	id: text("id").notNull().primaryKey(),
+	id: text("id").primaryKey(),
 	username: text("username").notNull().unique()
 });
 
 const sessionTable = sqliteTable("user_session", {
-	id: text("id").notNull().primaryKey(),
+	id: text("id").primaryKey(),
 	userId: text("user_id")
 		.notNull()
 		.references(() => userTable.id),
