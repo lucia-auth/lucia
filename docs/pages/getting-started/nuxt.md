@@ -12,9 +12,17 @@ Install Lucia using your package manager of your choice, for example with npm:
 npm install lucia
 ```
 
+In this quickstart, we use the [SQLite adapter](/database/sqlite), but you can easily substitute another adapter:
+
+```
+npm install @lucia-auth/adapter-sqlite
+```
+
+Refer to the [Database](/database) page to learn how to set up your database and initialize the appropriate adapter.
+
 ## Initialize Lucia
 
-Import `Lucia` and initialize it with your adapter. Refer to the [Database](/database) page to learn how to set up your database and initialize the appropriate adapter. In this quickstart, we use the [SQLite adapter](/database/sqlite), but you can easily substitute another adapter:
+Import Lucia, your adapter and the database and initialize them:
 
 ```ts
 // server/utils/auth.ts
