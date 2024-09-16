@@ -243,6 +243,7 @@ const username = user.username;
 Sign out users by invalidating their session with `Lucia.invalidateSession()`. Make sure to remove their session cookie by setting a blank session cookie created with `Lucia.createBlankSessionCookie()`.
 
 ```ts
+// pages/api/logout.ts
 import { lucia } from "@lib/auth";
 import type { APIContext } from "astro";
 
