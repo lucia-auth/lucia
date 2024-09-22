@@ -10,7 +10,7 @@ Session IDs can either be stored using cookies or local storage in browsers. We 
 
 This guide has 2 sections on sessions:
 
-- Database: Define your session API using your database driver/ORM of choice.
+- Basic session API: Create a basic session API using your database driver/ORM of choice.
 - Cookies: Define your session cookie using your JavaScript framework of choice.
 
 To learn how to implement auth using the API you created, see the tutorials section. If you want to learn from real-life projects, see the examples section.
