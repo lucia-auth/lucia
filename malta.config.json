@@ -9,7 +9,7 @@
 			"title": "Sessions",
 			"pages": [
 				["Overview", "/sessions/overview"],
-				["Database", "/sessions/database"],
+				["Storage", "/sessions/storage"],
 				["Cookies", "/sessions/cookies"]
 			]
 		},

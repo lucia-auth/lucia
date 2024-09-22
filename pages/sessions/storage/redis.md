@@ -4,8 +4,6 @@ title: "Sessions with Redis"
 
 # Sessions with Redis
 
-## Create your API
-
 Here's what our API will look like. What each method does should be pretty self explanatory.
 
 ```ts

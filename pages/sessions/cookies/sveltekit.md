@@ -4,7 +4,7 @@ title: "Session cookies in SvelteKit"
 
 # Session cookies in SvelteKit
 
-_This page builds upon the API defined in the [Database](/sessions/database) page._
+[Storage]_This page builds upon the API defined in the [Storage](/sessions/storage) page._
 
 ## Cookies
 

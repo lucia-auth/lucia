@@ -4,7 +4,7 @@ title: "Session cookies"
 
 # Session cookies
 
-_This page builds upon the API defined in the [Database](/sessions/database) page._
+_This page builds upon the API defined in the [Storage](/sessions/storage) page._
 
 Framework and library specific guides are also available:
 
