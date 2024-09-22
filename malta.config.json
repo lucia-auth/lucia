@@ -1,0 +1,42 @@
+{
+	"name": "Lucia",
+	"description": "ok",
+	"domain": "https://lucia-auth.com",
+	"twitter": "@lucia_auth",
+	"asset_hashing": true,
+	"sidebar": [
+		{
+			"title": "Sessions",
+			"pages": [
+				["Overview", "/sessions/overview"],
+				["Database", "/sessions/database"],
+				["Cookies", "/sessions/cookies"]
+			]
+		},
+		{
+			"title": "Tutorials",
+			"pages": [
+				["GitHub OAuth", "/tutorials/github-oauth"],
+				["Google OAuth", "/tutorials/google-oauth"]
+			]
+		},
+		{
+			"title": "Example projects",
+			"pages": [
+				["GitHub OAuth", "/examples/github-oauth"],
+				["Google OAuth", "/examples/google-oauth"],
+				["Email and password with 2FA", "/examples/email-password-2fa"],
+				["Email and password with 2FA and WebAuthn", "/examples/email-password-2fa-webauthn"]
+			]
+		},
+		{
+			"title": "Community",
+			"pages": [
+				["GitHub", "https://github.com/lucia-auth/lucia"],
+				["Discord", "https://discord.com/invite/PwrK3kpVR3"],
+				["Twitter", "https://x.com/lucia_auth"],
+				["Donate", "https://github.com/sponsors/pilcrowOnPaper"]
+			]
+		}
+	]
+}
