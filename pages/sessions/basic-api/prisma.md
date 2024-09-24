@@ -67,9 +67,9 @@ import { encodeBase32 } from "@oslojs/encoding";
 // ...
 
 export function generateSessionToken(): string {
-	const tokenBytes = new Uint8Array(20);
-	crypto.getRandomValues(tokenBytes);
-	const token = encodeBase32(tokenBytes).toLowerCase();
+	const bytes = new Uint8Array(20);
+	crypto.getRandomValues(bytes);
+	const token = encodeBase32(bytes).toLowerCase();
 	return token;
 }
 ```
@@ -170,9 +170,9 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import type { User, Session } from "@prisma/client";
 
 export function generateSessionToken(): string {
-	const tokenBytes = new Uint8Array(20);
-	crypto.getRandomValues(tokenBytes);
-	const token = encodeBase32(tokenBytes).toLowerCase();
+	const bytes = new Uint8Array(20);
+	crypto.getRandomValues(bytes);
+	const token = encodeBase32(bytes).toLowerCase();
 	return token;
 }
 
