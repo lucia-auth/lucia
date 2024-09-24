@@ -37,6 +37,14 @@
 				["Twitter", "https://x.com/lucia_auth"],
 				["Donate", "https://github.com/sponsors/pilcrowOnPaper"]
 			]
+		},
+		{
+			"title": "Related projects",
+			"pages": [
+				["The Copenhagen Book", "https://thecopenhagenbook.com"],
+				["Oslo", "https://oslojs.dev"],
+				["Arctic", "https://arcticjs.dev"]
+			]
 		}
 	]
 }
