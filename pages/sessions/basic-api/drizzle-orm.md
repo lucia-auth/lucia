@@ -139,7 +139,7 @@ import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
 	crypto.getRandomValues(bytes);
-	const token = encodeBase32(bytes).toLowerCase();
+	const token = encodeBase32LowerCaseNoPadding(bytes)
 	return token;
 }
 ```
@@ -231,7 +231,7 @@ Here's the full code:
 ```ts
 import { db, userTable, sessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
 import type { User, Session } from "./db.js";
@@ -239,7 +239,7 @@ import type { User, Session } from "./db.js";
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
 	crypto.getRandomValues(bytes);
-	const token = encodeBase32(bytes).toLowerCase();
+	const token = encodeBase32LowerCaseNoPadding(bytes)
 	return token;
 }
 

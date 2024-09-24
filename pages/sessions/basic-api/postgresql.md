@@ -70,14 +70,14 @@ The example uses the Web Crypto API for generating random bytes, which is availa
 - [`react-native-get-random-bytes`](https://github.com/LinusU/react-native-get-random-values) for React Native.
 
 ```ts
-import { encodeBase32 } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
 
 // ...
 
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
 	crypto.getRandomValues(bytes);
-	const token = encodeBase32(bytes).toLowerCase();
+	const token = encodeBase32LowerCaseNoPadding(bytes)
 	return token;
 }
 ```
@@ -181,7 +181,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
 	crypto.getRandomValues(bytes);
-	const token = encodeBase32(bytes).toLowerCase();
+	const token = encodeBase32LowerCaseNoPadding(bytes)
 	return token;
 }
 
