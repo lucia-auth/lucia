@@ -10,7 +10,7 @@ The main section is on implementing sessions with your database, library, and fr
 
 We also recommend checking out [the Copenhagen Book](https://thecopenhagenbook.com). This is a free, online resource covering the various auth concepts in web applications.
 
-If you have any questions on anything related to auth, please ask them in our [Discord server](https://discord.com/invite/PwrK3kpVR3) or on [GitHub discussions](https://github.com/lucia-auth/lucia/discussions). 
+If you have any questions on anything related to auth, feel free to ask them in our [Discord server](https://discord.com/invite/PwrK3kpVR3) or on [GitHub discussions](https://github.com/lucia-auth/lucia/discussions)!
 
 ## Why not a library?
 
