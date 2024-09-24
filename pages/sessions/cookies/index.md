@@ -46,38 +46,26 @@ If the frontend and backend are hosted on the same domain, session cookies shoul
 - `Path=/`: Cookies can be accessed from all routes
 
 ```ts
-export async function createSession(userId: number): Promise<Session> {
-	// ...
-}
-
-export async function validateSession(sessionId: string): Promise<SessionValidationResult> {
-	// ...
-}
-
-export async function invalidateSession(sessionId: string): Promise<void> {
-	// ...
-}
-
 // `HTTPResponse` is a generic interface.
 // Adjust this code to fit your framework's API.
 
-export function setSessionCookie(response: HTTPResponse, session: Session): void {
+export function setSessionTokenCookie(response: HTTPResponse, token: string, expiresAt): void {
 	if (env === Env.PROD) {
 		// When deployed over HTTPS
 		response.headers.add(
 			"Set-Cookie",
-			`session=${session.id}; HttpOnly; SameSite=Lax; Expires=${session.expiresAt.toUTCString()}; Path=/; Secure;`
+			`session=${token}; HttpOnly; SameSite=Lax; Expires=${expiresAt.toUTCString()}; Path=/; Secure;`
 		);
 	} else {
 		// When deployed over HTTP (localhost)
 		response.headers.add(
 			"Set-Cookie",
-			`session=${session.id}; HttpOnly; SameSite=Lax; Expires=${session.expiresAt.toUTCString()}; Path=/`
+			`session=${token}; HttpOnly; SameSite=Lax; Expires=${expiresAt.toUTCString()}; Path=/`
 		);
 	}
 }
 
-export function deleteSessionCookie(response: HTTPResponse): void {
+export function deleteSessionTokenCookie(response: HTTPResponse): void {
 	if (env === Env.PROD) {
 		// When deployed over HTTPS
 		response.headers.add("Set-Cookie", "session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/; Secure;");
@@ -86,12 +74,6 @@ export function deleteSessionCookie(response: HTTPResponse): void {
 		response.headers.add("Set-Cookie", "session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/");
 	}
 }
-
-interface Session {
-	id: string;
-	userId: number;
-	expiresAt: Date;
-}
 ```
 
 ## Session validation
@@ -99,6 +81,8 @@ interface Session {
 Sessions can be validated by getting the cookie and using the `validateSession()` function we created. If the session is invalid, delete the session cookie. Importantly, we recommend setting a new session cookie after validation to persist the cookie for an extended time.
 
 ```ts
+import { validateSessionToken, deleteSessionTokenCookie, setSessionTokenCookie } from "./auth.js";
+
 // `HTTPRequest` and `HTTPResponse` are generic interfaces.
 // Adjust this code to fit your framework's API.
 
@@ -115,18 +99,19 @@ function handleRequest(request: HTTPRequest, response: HTTPResponse): void {
 
 	// session validation
 	const cookies = parseCookieHeader(request.headers.get("Cookie") ?? "");
-	const sessionId = cookies.get("session");
+	const token = cookies.get("session");
 	if (sessionId === null) {
 		response.setStatusCode(401);
 		return;
 	}
 
-	const { session, user } = await validateSession(sessionId);
+	const { session, user } = await validateSessionToken(token);
 	if (session === null) {
+		deleteSessionTokenCookie(response);
 		response.setStatusCode(401);
 		return;
 	}
-	setSessionCookie(response, session);
+	setSessionTokenCookie(response, token, session, expiresAt);
 
 	// ...
 }

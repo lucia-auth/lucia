@@ -28,7 +28,15 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 			status: 403
 		});
 	}
-	if (new URL(originHeader).host !== hostHeader) {
+	let origin: URL;
+	try {
+		origin = new URL(originHeader);
+	} catch {
+		return new NextResponse(null, {
+			status: 403
+		});
+	}
+	if (origin.host !== hostHeader) {
 		return new NextResponse(null, {
 			status: 403
 		});
@@ -52,29 +60,17 @@ import { cookies } from "next/headers";
 
 // ...
 
-export async function createSession(userId: number): Promise<Session> {
-	// ...
-}
-
-export async function validateSession(sessionId: string): Promise<SessionValidationResult> {
-	// ...
-}
-
-export async function invalidateSession(sessionId: string): Promise<void> {
-	// ...
-}
-
-export function setSessionCookie(session: Session): void {
-	cookies().set("session", session.id, {
+export function setSessionTokenCookie(token: string, expiresAt: Date): void {
+	cookies().set("session", token, {
 		httpOnly: true,
 		sameSite: "lax",
 		secure: process.env.NODE_ENV === "production",
-		expires: session.expiresAt,
+		expires: expiresAt,
 		path: "/"
 	});
 }
 
-export function deleteSessionCookie(): void {
+export function deleteSessionTokenCookie(): void {
 	cookies().set("session", "", {
 		httpOnly: true,
 		sameSite: "lax",
@@ -85,7 +81,7 @@ export function deleteSessionCookie(): void {
 }
 ```
 
-Since we can't extend set cookies in server components due to a limitation with Next.js, we recommend continuously extending the cookie expiration inside middleware.
+Since we can't extend set cookies insides server components due to a limitation with React, we recommend continuously extending the cookie expiration inside middleware.
 
 ```ts
 // middleware.ts
@@ -95,14 +91,14 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-	const sessionId = cookies().get("session")?.value ?? null;
-	if (sessionId !== null) {
+	const token = cookies().get("session")?.value ?? null;
+	if (token !== null) {
 		// Not using `setSessionCookie()` to avoid accidentally importing Node-only modules.
-		cookies().set("session", sessionId, {
+		cookies().set("session", token, {
 			httpOnly: true,
 			sameSite: "lax",
 			secure: process.env.NODE_ENV === "production",
-			maxAge: 60 * 60 * 24 * 30,
+			maxAge: 60 * 60 * 24 * 30, // 30 days
 			path: "/"
 		});
 	}
@@ -115,24 +111,23 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
 ## Session validation
 
-Sessions can be validated by getting the cookie and using the `validateSession()` function we created. If the session is invalid, delete the session cookie.
+Sessions can be validated by getting the cookie and using the `validateSessionToken()` function we created.
 
 ```ts
-import { validateSession, deleteSessionCookie, setSessionCookie } from "$lib/server/auth";
+import { validateSessionToken } from "$lib/server/auth";
 
 import type { APIContext } from "astro";
 
 export async function GET(context: APIContext): Promise<Response> {
-	const sessionId = cookies().get("session")?.value ?? null;
-	if (sessionId === null) {
+	const token = cookies().get("session")?.value ?? null;
+	if (token === null) {
 		return new Response(null, {
 			status: 401
 		});
 	}
 
-	const { session, user } = await validateSession(sessionId);
+	const { session, user } = await validateSessionToken(token);
 	if (session === null) {
-		deleteSessionCookie(context);
 		return new Response(null, {
 			status: 401
 		});
@@ -148,32 +143,14 @@ We recommend creating a reusable function and wrapping the it with `cache()` so 
 import { cookies } from "next/headers";
 import { cache } from "react";
 
-export async function createSession(userId: number): Promise<Session> {
-	// ...
-}
-
-export async function validateSession(sessionId: string): Promise<SessionValidationResult> {
-	// ...
-}
-
-export async function invalidateSession(sessionId: string): Promise<void> {
-	// ...
-}
-
-export function setSessionCookie(session: Session): void {
-	// ...
-}
-
-export function deleteSessionCookie(): void {
-	// ...
-}
+// ...
 
 export const getCurrentSession = cache(async (): Promise<SessionValidationResult> => {
-	const sessionId = cookies().get("session")?.value ?? null;
-	if (sessionId === null) {
+	const token = cookies().get("session")?.value ?? null;
+	if (token === null) {
 		return { session: null, user: null };
 	}
-	const result = await lucia.validateSession(sessionId);
+	const result = await validateSessionToken(token);
 	return result;
 });
 ```

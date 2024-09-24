@@ -4,7 +4,7 @@ title: "Session cookies in SvelteKit"
 
 # Session cookies in SvelteKit
 
-[Basic session API]_This page builds upon the API defined in the [Basic session API](/sessions/basic-api) page._
+_This page builds upon the API defined in the [Basic session API](/sessions/basic-api) page._
 
 ## Cookies
 
@@ -25,28 +25,16 @@ import type { RequestEvent } from "@sveltejs/kit";
 
 // ...
 
-export async function createSession(userId: number): Promise<Session> {
-	// ...
-}
-
-export async function validateSession(sessionId: string): Promise<SessionValidationResult> {
-	// ...
-}
-
-export async function invalidateSession(sessionId: string): Promise<void> {
-	// ...
-}
-
-export function setSessionCookie(event: RequestEvent, session: Session): void {
-	context.cookies.set("session", session.id, {
+export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date): void {
+	context.cookies.set("session", token, {
 		httpOnly: true,
 		sameSite: "lax",
-		expires: session.expiresAt,
+		expires: expiresAt,
 		path: "/"
 	});
 }
 
-export function deleteSessionCookie(event: RequestEvent): void {
+export function deleteSessionTokenCookie(event: RequestEvent): void {
 	context.cookies.set("session", "", {
 		httpOnly: true,
 		sameSite: "lax",
@@ -63,14 +51,27 @@ Sessions can be validated by getting the cookie and using the `validateSession()
 ```ts
 // +page.server.ts
 import { fail, redirect } from "@sveltejs/kit";
-import { validateSession, deleteSessionCookie, setSessionCookie } from "$lib/server/auth";
+import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/auth";
 
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
-	if (event.locals.user === null) {
-		redirect("/login");
+	const token = event.cookies.get("session") ?? null;
+	if (token === null) {
+		return new Response(null, {
+			status: 401
+		});
 	}
+
+	const { session, user } = await validateSessionToken(token);
+	if (session === null) {
+		deleteSessionTokenCookie(event);
+		return new Response(null, {
+			status: 401
+		});
+	}
+	setSessionTokenCookie(event, token, session.expiresAt);
+
 	// ...
 };
 ```
@@ -95,23 +96,23 @@ export {};
 
 ```ts
 // src/hooks.server.ts
-import { validateSession, setSessionCookie, deleteSessionCookie } from "./lib/server/auth";
+import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "./lib/server/auth";
 
 import type { Handle } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const sessionId = event.cookies.get("session") ?? null;
-	if (sessionId === null) {
+	const token = event.cookies.get("session") ?? null;
+	if (token === null) {
 		event.locals.user = null;
 		event.locals.session = null;
 		return next();
 	}
 
-	const { session, user } = await validateSession(sessionId);
+	const { session, user } = await validateSessionToken(token);
 	if (session !== null) {
-		setSessionCookie(event, session);
+		setSessionTokenCookie(event, token, session.expiresAt);
 	} else {
-		deleteSessionCookie(event);
+		deleteSessionTokenCookie(event);
 	}
 
 	event.locals.session = session;
@@ -130,7 +131,7 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user === null) {
-		redirect("/login");
+		return redirect("/login");
 	}
 	// ...
 };

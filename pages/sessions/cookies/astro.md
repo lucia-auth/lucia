@@ -35,29 +35,17 @@ import type { APIContext } from "astro";
 
 // ...
 
-export async function createSession(userId: number): Promise<Session> {
-	// ...
-}
-
-export async function validateSession(sessionId: string): Promise<SessionValidationResult> {
-	// ...
-}
-
-export async function invalidateSession(sessionId: string): Promise<void> {
-	// ...
-}
-
-export function setSessionCookie(context: APIContext, session: Session): void {
-	context.cookies.set("session", session.id, {
+export function setSessionTokenCookie(context: APIContext, token: string, expiresAt: Date): void {
+	context.cookies.set("session", token, {
 		httpOnly: true,
 		sameSite: "lax",
 		secure: import.meta.env.PROD,
-		expires: session.expiresAt,
+		expires: expiresAt,
 		path: "/"
 	});
 }
 
-export function deleteSessionCookie(context: APIContext): void {
+export function deleteSessionTokenCookie(context: APIContext): void {
 	context.cookies.set("session", "", {
 		httpOnly: true,
 		sameSite: "lax",
@@ -70,29 +58,29 @@ export function deleteSessionCookie(context: APIContext): void {
 
 ## Session validation
 
-Sessions can be validated by getting the cookie and using the `validateSession()` function we created. If the session is invalid, delete the session cookie. Importantly, we recommend setting a new session cookie after validation to persist the cookie for an extended time.
+Sessions can be validated by getting the cookie and using the `validateSessionToken()` function we created. If the session is invalid, delete the session cookie. Importantly, we recommend setting a new session cookie after validation to persist the cookie for an extended time.
 
 ```ts
-import { validateSession, deleteSessionCookie, setSessionCookie } from "$lib/server/auth";
+import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/auth";
 
 import type { APIContext } from "astro";
 
 export async function GET(context: APIContext): Promise<Response> {
-	const sessionId = context.cookies.get("session")?.value ?? null;
-	if (sessionId === null) {
+	const token = context.cookies.get("session")?.value ?? null;
+	if (token === null) {
 		return new Response(null, {
 			status: 401
 		});
 	}
 
-	const { session, user } = await validateSession(sessionId);
+	const { session, user } = await validateSessionToken(token);
 	if (session === null) {
-		deleteSessionCookie(context);
+		deleteSessionTokenCookie(context);
 		return new Response(null, {
 			status: 401
 		});
 	}
-	setSessionCookie(context, session);
+	setSessionTokenCookie(context, token, session.expiresAt);
 
 	// ...
 }
@@ -115,22 +103,22 @@ declare namespace App {
 
 ```ts
 // src/middleware.ts
-import { validateSession, setSessionCookie, deleteSessionCookie } from "./lib/server/auth";
+import { validateSession, setSessionTokenCookie, deleteSessionTokenCookie } from "./lib/server/auth";
 import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
-	const sessionId = context.cookies.get("session")?.value ?? null;
-	if (sessionId === null) {
+	const token = context.cookies.get("session")?.value ?? null;
+	if (token === null) {
 		context.locals.user = null;
 		context.locals.session = null;
 		return next();
 	}
 
-	const { session, user } = await validateSession(sessionId);
+	const { session, user } = await validateSessionToken(token);
 	if (session !== null) {
-		setSessionCookie(context, session);
+		setSessionTokenCookie(context, token, session.expiresAt);
 	} else {
-		deleteSessionCookie(context);
+		deleteSessionTokenCookie(context);
 	}
 
 	context.locals.session = session;

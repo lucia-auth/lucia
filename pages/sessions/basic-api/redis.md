@@ -4,16 +4,22 @@ title: "Sessions with Redis"
 
 # Sessions with Redis
 
+Users will use a session token linked to a session instead of the ID directly. The session ID will be the SHA-256 hash of the token. SHA-256 is a one-way hash function. This ensures that even if the database contents were leaked, the attacker won't be able retrieve valid tokens.
+
 Here's what our API will look like. What each method does should be pretty self explanatory.
 
 ```ts
 import { redis } from "./redis.js";
 
-export async function createSession(userId: number): Promise<Session> {
+export function generateSessionToken(): string {
 	// TODO
 }
 
-export async function validateSession(sessionId: string): Promise<Session> {
+export async function createSession(token: string, userId: number): Promise<Session> {
+	// TODO
+}
+
+export async function validateSessionToken(token: string): Promise<Session> {
 	// TODO
 }
 
@@ -28,7 +34,7 @@ export interface Session {
 }
 ```
 
-The session ID should be a random string. We recommend generating at least 20 random bytes from a secure source (**DO NOT USE `Math.random()`**) and encoding it with base32. You can use any encoding schemes, but base32 is case insensitive unlike base64 and only uses alphanumeric letters while being more compact than hex encoding. We'll set the expiration to 30 days.
+The session token should be a random string. We recommend generating at least 20 random bytes from a secure source (**DO NOT USE `Math.random()`**) and encoding it with base32. You can use any encoding schemes, but base32 is case insensitive unlike base64 and only uses alphanumeric letters while being more compact than hex encoding.
 
 The example uses the Web Crypto API for generating random bytes, which is available in most modern runtimes. If your runtime doesn't support it, similar runtime-specific alternatives are available. Do not use user-land RNGs.
 
@@ -37,15 +43,31 @@ The example uses the Web Crypto API for generating random bytes, which is availa
 - [`react-native-get-random-bytes`](https://github.com/LinusU/react-native-get-random-values) for React Native.
 
 ```ts
-import { redis } from "./redis.js";
 import { encodeBase32 } from "@oslojs/encoding";
 
 // ...
 
-export async function createSession(userId: number): Promise<Session> {
-	const sessionIdBytes = new Uint8Array(20);
-	crypto.getRandomValues(sessionIdBytes);
-	const sessionId = encodeBase32(sessionIdBytes).toLowerCase();
+export function generateSessionToken(): string {
+	const tokenBytes = new Uint8Array(20);
+	crypto.getRandomValues(tokenBytes);
+	const token = encodeBase32(tokenBytes).toLowerCase();
+	return token;
+}
+```
+
+> Throughout the site, we will use packages from [Oslo](https://oslojs.dev) for various operations. Oslo packages are fully-typed, lightweight, and has minimal dependencies. You can of course replace them with your own code, runtime-specific modules, or your preferred library.
+
+The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days.
+
+```ts
+import { redis } from "./redis.js";
+import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { sha256 } from "@oslojs/crypto/sha2";
+
+// ...
+
+export async function createSession(token: string, userId: number): Session {
+	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
 		id: sessionId,
 		userId,
@@ -77,13 +99,15 @@ For convenience, we'll return both the session and user object tied to the sessi
 
 ```ts
 import { redis } from "./redis.js";
+import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
 
-export async function validateSession(sessionId: string): Promise<Session> {
+export async function validateSessionToken(token: string): Promise<Session> {
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
-		return { session: null, user: null };
+		return null;
 	}
 	const result = JSON.parse(item);
 	const session: Session = {
@@ -92,12 +116,22 @@ export async function validateSession(sessionId: string): Promise<Session> {
 		expiresAt: new Date(result.expires_at * 1000)
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		db.execute("DELETE FROM session WHERE id = ?", session.id);
+		await redis.delete(sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		db.execute("UPDATE session SET expires_at = ? WHERE id = ?", Math.floor(session.expiresAt / 1000), session.id);
+		await redis.set(
+			`session:${session.id}`,
+			JSON.stringify({
+				id: session.id,
+				user_id: session.userId,
+				expires_at: Math.floor(session.expiresAt / 1000)
+			}),
+			{
+				EXAT: Math.floor(session.expiresAt / 1000)
+			}
+		);
 	}
 	return session;
 }
@@ -119,12 +153,18 @@ Here's the full code:
 
 ```ts
 import { redis } from "./redis.js";
-import { encodeBase32 } from "@oslojs/encoding";
+import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { sha256 } from "@oslojs/crypto/sha2";
 
-export async function createSession(userId: number): Promise<Session> {
-	const sessionIdBytes = new Uint8Array(20);
-	crypto.getRandomValues(sessionIdBytes);
-	const sessionId = encodeBase32(sessionIdBytes).toLowerCase();
+export function generateSessionToken(): string {
+	const tokenBytes = new Uint8Array(20);
+	crypto.getRandomValues(tokenBytes);
+	const token = encodeBase32(tokenBytes).toLowerCase();
+	return token;
+}
+
+export async function createSession(token: string, userId: number): Session {
+	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
 		id: sessionId,
 		userId,
@@ -144,10 +184,10 @@ export async function createSession(userId: number): Promise<Session> {
 	return session;
 }
 
-export async function validateSession(sessionId: string): Promise<Session> {
+export async function validateSessionToken(token: string): Promise<Session> {
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
-		return { session: null, user: null };
+		return null;
 	}
 	const result = JSON.parse(item);
 	const session: Session = {
@@ -156,12 +196,22 @@ export async function validateSession(sessionId: string): Promise<Session> {
 		expiresAt: new Date(result.expires_at * 1000)
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		db.execute("DELETE FROM session WHERE id = ?", session.id);
+		await redis.delete(sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		db.execute("UPDATE session SET expires_at = ? WHERE id = ?", Math.floor(session.expiresAt / 1000), session.id);
+		await redis.set(
+			`session:${session.id}`,
+			JSON.stringify({
+				id: session.id,
+				user_id: session.userId,
+				expires_at: Math.floor(session.expiresAt / 1000)
+			}),
+			{
+				EXAT: Math.floor(session.expiresAt / 1000)
+			}
+		);
 	}
 	return session;
 }
@@ -176,3 +226,28 @@ export interface Session {
 	expiresAt: Date;
 }
 ```
+
+## Using your API
+
+When a user signs in, generate a session token with `generateSessionToken()` and create a session linked to it with `createSession()`. The token is provided to the user client.
+
+```ts
+import { generateSessionToken, createSession } from "./auth.js";
+
+const token = generateSessionToken();
+const session = createSession(token, userId);
+setSessionTokenCookie(session);
+```
+
+Validate a user-provided token with `validateSessionToken()`.
+
+```ts
+import { validateSessionToken } from "./auth.js";
+
+const token = cookies.get("session");
+if (token !== null) {
+	const { session, user } = validateSessionToken(token);
+}
+```
+
+To learn how to store the token on the client, see the [Session cookies](/sessions/cookies) page.
