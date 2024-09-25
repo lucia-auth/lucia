@@ -4,11 +4,11 @@ title: "GitHub OAuth"
 
 # GitHub OAuth
 
-## Repositories
+Basic example project with GitHub OAuth and rate limiting.
 
-- [Astro](https://github.com/lucia-auth/github-oauth-astro)
-- [Next.js](https://github.com/lucia-auth/github-oauth-nextjs)
-- [Nuxt](https://github.com/lucia-auth/github-oauth-nuxt)
-- [SvelteKit](https://github.com/lucia-auth/github-oauth-sveltekit)
+## GitHub repositories
 
-## Important points
+- [Astro](https://github.com/lucia-auth/example-astro-github-oauth)
+- [Next.js](https://github.com/lucia-auth/example-nextjs-github-oauth)
+- [Nuxt](https://github.com/lucia-auth/example-nuxt-github-oauth)
+- [SvelteKit](https://github.com/lucia-auth/example-sveltekit-github-oauth)
