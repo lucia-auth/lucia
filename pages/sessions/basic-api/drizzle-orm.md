@@ -8,7 +8,7 @@ Users will use a session token linked to a session instead of the ID directly. T
 
 ## Declare your schema
 
-Create a session model with a field for an ID, user ID, and expiration.
+Create a session table with a field for an ID, user ID, and expiration.
 
 ### MySQL
 
