@@ -30,6 +30,8 @@ Session cookies should have the following attributes:
 - `Max-Age` or `Expires`: Must be defined to persist cookies
 - `Path=/`: Cookies can be accessed from all routes
 
+> Lucia v3 used `auth_session` as the session cookie name.
+
 ```ts
 import type { APIContext } from "astro";
 

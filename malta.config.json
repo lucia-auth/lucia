@@ -10,7 +10,8 @@
 			"pages": [
 				["Overview", "/sessions/overview"],
 				["Basic API", "/sessions/basic-api"],
-				["Cookies", "/sessions/cookies"]
+				["Cookies", "/sessions/cookies"],
+				["Migrate from Lucia v3", "/sessions/migrate-lucia-v3"]
 			]
 		},
 		{

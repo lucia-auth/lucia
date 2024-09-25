@@ -25,5 +25,3 @@ We came to the conclusion that at least for the core of auth - sessions - it's b
 - [The Copenhagen Book](https://thecopenhagenbook.com): A free online resource covering the various auth concepts in web applications.
 - [Oslo](https://oslojs.dev): Simple, runtime agnostic, and fully-typed packages with minimal dependency for auth and cryptography.
 - [Arctic](https://arcticjs.dev): OAuth 2.0 client library with support for 50+ providers.
-
-

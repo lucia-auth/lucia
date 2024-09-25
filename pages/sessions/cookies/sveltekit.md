@@ -20,6 +20,8 @@ Session cookies should have the following attributes:
 
 SvelteKit automatically sets the `Secure` flag when deployed to production.
 
+> Lucia v3 used `auth_session` as the session cookie name.
+
 ```ts
 import type { RequestEvent } from "@sveltejs/kit";
 

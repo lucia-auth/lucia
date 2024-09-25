@@ -45,6 +45,8 @@ If the frontend and backend are hosted on the same domain, session cookies shoul
 - `Max-Age` or `Expires`: Must be defined to persist cookies
 - `Path=/`: Cookies can be accessed from all routes
 
+> Lucia v3 used `auth_session` as the session cookie name.
+
 ```ts
 // `HTTPResponse` is a generic interface.
 // Adjust this code to fit your framework's API.
