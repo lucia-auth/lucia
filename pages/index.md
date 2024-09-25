@@ -8,7 +8,7 @@ Lucia is an open source project to provide resources on implementing authenticat
 
 The main section is on implementing sessions with your database, library, and framework of choice. Using the API you just created, you can continue learning by going through the tutorials or by referencing the many fully-fledged examples.
 
-If you have any questions on anything related to auth, feel free to ask them in our [Discord server](https://discord.com/invite/PwrK3kpVR3) or on [GitHub discussions](https://github.com/lucia-auth/lucia/discussions)!
+If you have any questions on anything related to auth, feel free to ask them in our [Discord server](https://discord.com/invite/PwrK3kpVR3) or on [GitHub Discussions](https://github.com/lucia-auth/lucia/discussions)!
 
 ## Why not a library?
 
