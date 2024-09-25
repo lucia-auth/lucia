@@ -6,7 +6,7 @@ title: "Tutorial: GitHub OAuth in Astro"
 
 _Before starting, make sure you've created the session and cookie API outlined in the [Sessions](/sessions/overview) page._
 
-An [example project](https://github.com/lucia-auth/example-astro-gitub-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/example-astro-gitub-oauth).
+An [example project](https://github.com/lucia-auth/example-astro-github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/example-astro-github-oauth).
 
 ```
 git clone git@github.com:lucia-auth/example-astro-github-oauth.git
@@ -66,18 +66,18 @@ Create `pages/login/index.astro` and add a basic sign in button, which should be
 
 ## Create authorization URL
 
-Create an API route in `pages/login/github/index.ts`. Generate a new state, create a new authorization URL with createAuthorizationURL(), store the state, and redirect the user to the authorization URL. The user will be prompted to sign in with GitHub.
+Create an API route in `pages/login/github/index.ts`. Generate a new state and create a new authorization URL. Store the state and redirect the user to the authorization URL. The user will be redirected to GitHub's sign in page.
 
 ```ts
 // pages/login/github/index.ts
 import { generateState } from "arctic";
-import { github } from "@lib/auth";
+import { github } from "@lib/oauth";
 
 import type { APIContext } from "astro";
 
 export async function GET(context: APIContext): Promise<Response> {
 	const state = generateState();
-	const url = await github.createAuthorizationURL(state);
+	const url = await github.createAuthorizationURL(state, []);
 
 	context.cookies.set("github_oauth_state", state, {
 		path: "/",
@@ -93,7 +93,7 @@ export async function GET(context: APIContext): Promise<Response> {
 
 ## Validate callback
 
-Create an API route in `pages/login/github/callback.ts` to handle the callback. First, get the state from the cookie and the search params and compare them. Validate the authorization code in the search params with `validateAuthorizationCode()`. This will throw an [`OAuth2RequestError`](https://oslo.js.org/reference/oauth2/OAuth2RequestError) if the code or credentials are invalid. After validating the code, get the user's profile using the access token. Check if the user is already registered with the GitHub ID, and create a new user if they aren't. Finally, create a new session and set the session cookie.
+Create an API route in `pages/login/github/callback.ts` to handle the callback. Check that the state in the URL matches the one that's stored. Then, validate the authorization code and stored code verifier. Use the access token to get the user's profile with the GitHub API. Check if the user is already registered; if not, create a new user. Finally, create a new session and set the session cookie to complete the authentication process.
 
 ```ts
 // pages/login/github/callback.ts
@@ -134,11 +134,11 @@ export async function GET(context: APIContext): Promise<Response> {
 		}
 	});
 	const githubUser = await githubUserResponse.json();
-	const githubId = githubUser.id;
+	const githubUserId = githubUser.id;
 	const githubUsername = githubUser.login;
 
 	// TODO: Replace this with your own DB query.
-	const existingUser = await getUserFromGitHubId(githubId);
+	const existingUser = await getUserFromGitHubId(githubUserId);
 
 	if (existingUser !== null) {
 		const token = generateSessionToken();
@@ -148,7 +148,7 @@ export async function GET(context: APIContext): Promise<Response> {
 	}
 
 	// TODO: Replace this with your own DB query.
-	const user = await createUser(githubId, githubUsername);
+	const user = await createUser(githubUserId, githubUsername);
 
 	const sessionToken = generateSessionToken();
 	const session = await createSession(sessionToken, user.id);
