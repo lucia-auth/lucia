@@ -107,7 +107,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (token === null) {
 		event.locals.user = null;
 		event.locals.session = null;
-		return next();
+		return resolve();
 	}
 
 	const { session, user } = await validateSessionToken(token);
@@ -119,7 +119,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	event.locals.session = session;
 	event.locals.user = user;
-	return next();
+	return resolve();
 };
 ```
 
