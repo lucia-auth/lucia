@@ -233,7 +233,7 @@ export type SessionValidationResult = { session: Session; user: User } | { sessi
 When a user signs in, generate a session token with `generateSessionToken()` and create a session linked to it with `createSession()`. The token is provided to the user client.
 
 ```ts
-import { generateSessionToken, createSession } from "./auth.js";
+import { generateSessionToken, createSession } from "./session.js";
 
 const token = generateSessionToken();
 const session = createSession(token, userId);
@@ -243,7 +243,7 @@ setSessionTokenCookie(session);
 Validate a user-provided token with `validateSessionToken()`.
 
 ```ts
-import { validateSessionToken } from "./auth.js";
+import { validateSessionToken } from "./session.js";
 
 const token = cookies.get("session");
 if (token !== null) {

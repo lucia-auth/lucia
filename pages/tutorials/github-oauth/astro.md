@@ -97,7 +97,7 @@ Create an API route in `pages/login/github/callback.ts` to handle the callback. 
 
 ```ts
 // pages/login/github/callback.ts
-import { generateSessionToken, createSession, setSessionTokenCookie } from "@lib/auth";
+import { generateSessionToken, createSession, setSessionTokenCookie } from "@lib/session";
 import { github } from "@lib/oauth";
 import { OAuth2RequestError } from "arctic";
 
@@ -174,7 +174,7 @@ const username = Astro.locals.user.username;
 Sign out users by invalidating their session. Make sure to remove the session cookie as well.
 
 ```ts
-import { invalidateSession, deleteSessionTokenCookie } from "@lib/auth";
+import { invalidateSession, deleteSessionTokenCookie } from "@lib/session";
 
 import type { APIContext } from "astro";
 

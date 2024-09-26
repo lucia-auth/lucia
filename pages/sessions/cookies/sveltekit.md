@@ -53,7 +53,7 @@ Sessions can be validated by getting the cookie and using the `validateSession()
 ```ts
 // +page.server.ts
 import { fail, redirect } from "@sveltejs/kit";
-import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/auth";
+import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/session";
 
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -87,8 +87,8 @@ declare global {
 	namespace App {
 		// Note: 'import {} from ""' syntax does not work in .d.ts files.
 		interface Locals {
-			session: import("./lib/server/auth").Session | null;
-			user: import("./lib/server/auth").User | null;
+			session: import("./lib/server/session").Session | null;
+			user: import("./lib/server/session").User | null;
 		}
 	}
 }
@@ -98,7 +98,7 @@ export {};
 
 ```ts
 // src/hooks.server.ts
-import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "./lib/server/auth";
+import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "./lib/server/session";
 
 import type { Handle } from "@sveltejs/kit";
 
@@ -150,7 +150,7 @@ export const actions: Actions = {
 
 ```ts
 // +server.ts
-import { lucia } from "$lib/server/auth";
+import { lucia } from "$lib/server/session";
 
 export function GET(event: RequestEvent): Promise<Response> {
 	if (event.locals.user === null) {

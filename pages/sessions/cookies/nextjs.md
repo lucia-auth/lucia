@@ -116,7 +116,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 Sessions can be validated by getting the cookie and using the `validateSessionToken()` function we created.
 
 ```ts
-import { validateSessionToken } from "$lib/server/auth";
+import { validateSessionToken } from "$lib/server/session";
 
 import type { APIContext } from "astro";
 

@@ -63,7 +63,7 @@ export function deleteSessionTokenCookie(context: APIContext): void {
 Sessions can be validated by getting the cookie and using the `validateSessionToken()` function we created. If the session is invalid, delete the session cookie. Importantly, we recommend setting a new session cookie after validation to persist the cookie for an extended time.
 
 ```ts
-import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/auth";
+import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/session";
 
 import type { APIContext } from "astro";
 
@@ -97,15 +97,15 @@ We recommend handling session validation in middleware and passing the current a
 declare namespace App {
 	// Note: 'import {} from ""' syntax does not work in .d.ts files.
 	interface Locals {
-		session: import("./lib/server/auth").Session | null;
-		user: import("./lib/server/auth").User | null;
+		session: import("./lib/server/session").Session | null;
+		user: import("./lib/server/session").User | null;
 	}
 }
 ```
 
 ```ts
 // src/middleware.ts
-import { validateSession, setSessionTokenCookie, deleteSessionTokenCookie } from "./lib/server/auth";
+import { validateSession, setSessionTokenCookie, deleteSessionTokenCookie } from "./lib/server/session";
 import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {

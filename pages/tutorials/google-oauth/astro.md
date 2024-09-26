@@ -109,7 +109,7 @@ Create an API route in `pages/login/google/callback.ts` to handle the callback. 
 
 ```ts
 // pages/login/google/callback.ts
-import { generateSessionToken, createSession, setSessionTokenCookie } from "@lib/auth";
+import { generateSessionToken, createSession, setSessionTokenCookie } from "@lib/server/session";
 import { google } from "@lib/oauth";
 import { decodeIdToken } from "arctic";
 
@@ -182,7 +182,7 @@ const username = Astro.locals.user.name;
 Sign out users by invalidating their session. Make sure to remove the session cookie as well.
 
 ```ts
-import { invalidateSession, deleteSessionTokenCookie } from "@lib/auth";
+import { invalidateSession, deleteSessionTokenCookie } from "@lib/server/session";
 
 import type { APIContext } from "astro";
 
