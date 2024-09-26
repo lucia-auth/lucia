@@ -22,13 +22,13 @@ User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-t
 ```sql
 CREATE TABLE user (
     id VARCHAR(255) PRIMARY KEY
-)
+);
 
 CREATE TABLE user_session (
     id VARCHAR(255) PRIMARY KEY,
     expires_at DATETIME NOT NULL,
     user_id VARCHAR(255) NOT NULL REFERENCES user(id)
-)
+);
 ```
 
 ## Drivers
