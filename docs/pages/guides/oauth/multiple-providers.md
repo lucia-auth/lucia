@@ -17,13 +17,13 @@ To support multiple OAuth sign-in methods, we can store the OAuth credentials in
 Here's an example with SQLite:
 
 ```sql
-CREATE TABLE oauth_account {
+CREATE TABLE oauth_account (
     provider_id TEXT NOT NULL,
     provider_user_id TEXT NOT NULL,
     user_id TEXT NOT NULL,
     PRIMARY KEY (provider_id, provider_user_id),
     FOREIGN KEY (user_id) REFERENCES user(id)
-}
+);
 ```
 
 We can then remove the `github_id` column etc from the user table.
