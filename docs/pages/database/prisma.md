@@ -43,3 +43,13 @@ const client = new PrismaClient();
 
 const adapter = new PrismaAdapter(client.session, client.user);
 ```
+
+### Including Relations
+
+To include relations in the user object, pass an object with the relations to include.
+
+```ts
+const adapter = new PrismaAdapter(client.session, client.user, {
+	settings: true
+});
+```

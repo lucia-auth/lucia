@@ -9,10 +9,10 @@ export const databaseUser: DatabaseUser = {
 	}
 };
 
-export async function testAdapter(adapter: Adapter) {
+export async function testAdapter(adapter: Adapter, _databaseUser: DatabaseUser = databaseUser) {
 	console.log(`\n\x1B[38;5;63;1m[start]  \x1B[0mRunning adapter tests\x1B[0m\n`);
 	const databaseSession: DatabaseSession = {
-		userId: databaseUser.id,
+		userId: _databaseUser.id,
 		id: generateRandomString(40, alphabet("0-9", "a-z")),
 		// get random date with 0ms
 		expiresAt: new Date(Math.floor(Date.now() / 1000) * 1000 + 10_000),
@@ -27,14 +27,14 @@ export async function testAdapter(adapter: Adapter) {
 	});
 
 	await test("getUserSessions() returns empty array on invalid user id", async () => {
-		const result = await adapter.getUserSessions(databaseUser.id);
+		const result = await adapter.getUserSessions(_databaseUser.id);
 		assert.deepStrictEqual(result, []);
 	});
 
 	await test("setSession() creates session and getSessionAndUser() returns created session and associated user", async () => {
 		await adapter.setSession(databaseSession);
 		const result = await adapter.getSessionAndUser(databaseSession.id);
-		assert.deepStrictEqual(result, [databaseSession, databaseUser]);
+		assert.deepStrictEqual(result, [databaseSession, _databaseUser]);
 	});
 
 	await test("deleteSession() deletes session", async () => {
@@ -48,12 +48,12 @@ export async function testAdapter(adapter: Adapter) {
 		databaseSession.expiresAt = new Date(databaseSession.expiresAt.getTime() + 10_000);
 		await adapter.updateSessionExpiration(databaseSession.id, databaseSession.expiresAt);
 		const result = await adapter.getSessionAndUser(databaseSession.id);
-		assert.deepStrictEqual(result, [databaseSession, databaseUser]);
+		assert.deepStrictEqual(result, [databaseSession, _databaseUser]);
 	});
 
 	await test("deleteExpiredSessions() deletes all expired sessions", async () => {
 		const expiredSession: DatabaseSession = {
-			userId: databaseUser.id,
+			userId: _databaseUser.id,
 			id: generateRandomString(40, alphabet("0-9", "a-z")),
 			expiresAt: new Date(Math.floor(Date.now() / 1000) * 1000 - 10_000),
 			attributes: {
