@@ -69,11 +69,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		});
 	}
 	if (!session) {
-		const sessionCookie = lucia.createBlankSessionCookie();
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: ".",
-			...sessionCookie.attributes
-		});
+		event.cookies.delete(lucia.sessionCookieName, { path: "." });
 	}
 	event.locals.user = user;
 	event.locals.session = session;
