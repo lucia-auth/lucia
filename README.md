@@ -12,4 +12,4 @@ malta dev
 
 ## License
 
-All example code are licensed under the [Zero-Clause BSD license](./0BSD-LICENSE), while everything else is licensed under the [MIT license](./LICENSE-MIT).
+All example code are licensed under the [Zero-Clause BSD license](./LICENSE-0BSD), while everything else is licensed under the [MIT license](./LICENSE-MIT).
