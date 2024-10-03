@@ -25,3 +25,9 @@ We came to the conclusion that at least for the core of auth - sessions - it's b
 - [The Copenhagen Book](https://thecopenhagenbook.com): A free online resource covering the various auth concepts in web applications.
 - [Oslo](https://oslojs.dev): Simple, runtime agnostic, and fully-typed packages with minimal dependency for auth and cryptography.
 - [Arctic](https://arcticjs.dev): OAuth 2.0 client library with support for 50+ providers.
+
+## Disclaimer
+
+All example code in this site is licensed under the [Zero-Clause BSD license](https://github.com/lucia-auth/next/blob/main/LICENSE-0BSD). You're free to use, copy, modify, and distribute it without any attribution. The license is approved by [the Open Source Initiative (OSI)](https://opensource.org/license/0bsd) and [Google](https://opensource.google/documentation/reference/patching#forbidden).
+
+Everything else including the documentation text is licensed under the [MIT license](https://github.com/lucia-auth/next/blob/main/LICENSE-MIT).
