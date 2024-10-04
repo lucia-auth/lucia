@@ -74,11 +74,10 @@ import type { RequestEvent } from "@sveltejs/kit";
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const state = generateState();
-	const url = await github.createAuthorizationURL(state);
+	const url = github.createAuthorizationURL(state, []);
 
 	event.cookies.set("github_oauth_state", state, {
 		path: "/",
-		secure: import.meta.env.PROD,
 		httpOnly: true,
 		maxAge: 60 * 10,
 		sameSite: "lax"
@@ -96,7 +95,6 @@ Create an API route in `routes/login/github/callback/+server.ts` to handle the c
 // routes/login/github/callback/+server.ts
 import { generateSessionToken, createSession, setSessionTokenCookie } from "$lib/server/session";
 import { github } from "$lib/server/oauth";
-import { OAuth2RequestError } from "arctic";
 
 import type { RequestEvent } from "@sveltejs/kit";
 import type { OAuth2Tokens } from "arctic";
