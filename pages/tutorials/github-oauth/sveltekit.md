@@ -46,8 +46,9 @@ Initialize the GitHub provider with the client ID and secret.
 
 ```ts
 import { GitHub } from "arctic";
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "$env/static/private";
 
-export const github = new GitHub(import.meta.env.GITHUB_CLIENT_ID, import.meta.env.GITHUB_CLIENT_SECRET, null);
+export const github = new GitHub(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, null);
 ```
 
 ## Sign in page
@@ -83,7 +84,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		sameSite: "lax"
 	});
 
-	redirect(302, url.toString());
+	return new Response(null, {
+		status: 302,
+		headers: {
+			Location: url.toString()
+		}
+	});
 }
 ```
 
