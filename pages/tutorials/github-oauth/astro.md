@@ -46,6 +46,7 @@ Initialize the GitHub provider with the client ID and secret.
 
 ```ts
 import { GitHub } from "arctic";
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "$env/static/private";
 
 export const github = new GitHub(import.meta.env.GITHUB_CLIENT_ID, import.meta.env.GITHUB_CLIENT_SECRET, null);
 ```
@@ -166,7 +167,7 @@ if (Astro.locals.user === null) {
 	return Astro.redirect("/login");
 }
 
-const username = Astro.locals.user.username;
+const user = Astro.locals.user;
 ```
 
 ## Sign out
