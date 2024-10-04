@@ -10,5 +10,4 @@ Basic example project with Google OAuth and rate limiting.
 
 - [Astro](https://github.com/lucia-auth/example-astro-google-oauth)
 - [Next.js](https://github.com/lucia-auth/example-nextjs-google-oauth)
-- [Nuxt](https://github.com/lucia-auth/example-nuxt-google-oauth)
 - [SvelteKit](https://github.com/lucia-auth/example-sveltekit-google-oauth)

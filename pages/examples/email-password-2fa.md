@@ -18,5 +18,4 @@ Example project with:
 
 - [Astro](https://github.com/lucia-auth/example-astro-email-password-2fa)
 - [Next.js](https://github.com/lucia-auth/example-nextjs-email-password-2fa)
-- [Nuxt](https://github.com/lucia-auth/example-nuxt-email-password-2fa)
 - [SvelteKit](https://github.com/lucia-auth/example-sveltekit-email-password-2fa)

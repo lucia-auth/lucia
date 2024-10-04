@@ -10,7 +10,6 @@ Framework and library specific guides are also available:
 
 - [Astro](/sessions/cookies/astro)
 - [Next.js](/sessions/cookies/nextjs)
-- [Nuxt](/sessions/cookies/nuxt)
 - [SvelteKit](/sessions/cookies/sveltekit)
 
 ## CSRF protection

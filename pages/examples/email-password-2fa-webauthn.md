@@ -20,5 +20,4 @@ Example project with:
 
 - [Astro](https://github.com/lucia-auth/example-astro-email-password-webauthn)
 - [Next.js](https://github.com/lucia-auth/example-nextjs-email-password-webauthn)
-- [Nuxt](https://github.com/lucia-auth/example-nuxt-email-password-webauthn)
 - [SvelteKit](https://github.com/lucia-auth/example-sveltekit-email-password-webauthn)
