@@ -78,7 +78,7 @@ import type { APIContext } from "astro";
 
 export async function GET(context: APIContext): Promise<Response> {
 	const state = generateState();
-	const url = await github.createAuthorizationURL(state, []);
+	const url = github.createAuthorizationURL(state, []);
 
 	context.cookies.set("github_oauth_state", state, {
 		path: "/",
@@ -100,7 +100,6 @@ Create an API route in `pages/login/github/callback.ts` to handle the callback. 
 // pages/login/github/callback.ts
 import { generateSessionToken, createSession, setSessionTokenCookie } from "@lib/session";
 import { github } from "@lib/oauth";
-import { OAuth2RequestError } from "arctic";
 
 import type { APIContext } from "astro";
 import type { OAuth2Tokens } from "arctic";
