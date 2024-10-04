@@ -32,4 +32,4 @@ All example code in this site is licensed under the [Zero-Clause BSD license](ht
 
 Everything else is licensed under the [MIT license](https://github.com/lucia-auth/next/blob/main/LICENSE-MIT).
 
-*Copyright © 2024 pilcrow and contributors*
+_Copyright © 2024 pilcrow and contributors_
