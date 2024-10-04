@@ -73,7 +73,7 @@ Create an Route Handlers in `app/login/github/route.ts`. Generate a new state an
 ```ts
 // app/login/github/route.ts
 import { generateState } from "arctic";
-import { github } from "../../../lib/auth";
+import { github } from "@/lib/oauth";
 import { cookies } from "next/headers";
 
 export async function GET(): Promise<Response> {
@@ -170,11 +170,6 @@ export async function GET(request: Request): Promise<Response> {
 			Location: "/"
 		}
 	});
-}
-
-interface GitHubUser {
-	id: string;
-	login: string;
 }
 ```
 

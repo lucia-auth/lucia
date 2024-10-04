@@ -82,7 +82,7 @@ import type { APIContext } from "astro";
 export async function GET(context: APIContext): Promise<Response> {
 	const state = generateState();
 	const codeVerifier = generateCodeVerifier();
-	const url = await google.createAuthorizationURL(state, codeVerifier, ["openid", "profile"]);
+	const url = google.createAuthorizationURL(state, codeVerifier, ["openid", "profile"]);
 
 	context.cookies.set("google_oauth_state", state, {
 		path: "/",
@@ -174,7 +174,7 @@ if (Astro.locals.user === null) {
 	return Astro.redirect("/login");
 }
 
-const username = Astro.locals.user.name;
+const user = Astro.locals.user;
 ```
 
 ## Sign out
