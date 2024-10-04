@@ -6,9 +6,9 @@ title: "Lucia"
 
 Lucia is an open source project to provide resources on implementing authentication with JavaScript and TypeScript.
 
-The main section is on implementing sessions with your database, library, and framework of choice. Using the API you just created, you can continue learning by going through the tutorials or by referencing the many fully-fledged examples.
+The main section is on implementing sessions with your database, library, and framework of choice. Using the API you just created, you can continue learning by going through the tutorials or by referencing one of the fully-fledged examples.
 
-If you have any questions on anything related to auth, feel free to ask them in our [Discord server](https://discord.com/invite/PwrK3kpVR3) or on [GitHub Discussions](https://github.com/lucia-auth/lucia/discussions)!
+If you have any questions on auth, feel free to ask them in our [Discord server](https://discord.com/invite/PwrK3kpVR3) or on [GitHub Discussions](https://github.com/lucia-auth/lucia/discussions)!
 
 ## Why not a library?
 
@@ -28,6 +28,8 @@ We came to the conclusion that at least for the core of auth - sessions - it's b
 
 ## Disclaimer
 
-All example code in this site is licensed under the [Zero-Clause BSD license](https://github.com/lucia-auth/next/blob/main/LICENSE-0BSD). You're free to use, copy, modify, and distribute it without any attribution. The license is approved by [the Open Source Initiative (OSI)](https://opensource.org/license/0bsd) and [Google](https://opensource.google/documentation/reference/patching#forbidden).
+All example code in this site is licensed under the [Zero-Clause BSD license](https://github.com/lucia-auth/next/blob/main/LICENSE-0BSD). You're free to use, copy, modify, and distribute it without any attribution. The license is approved by the [Open Source Initiative (OSI)](https://opensource.org/license/0bsd) and [Google](https://opensource.google/documentation/reference/patching#forbidden).
 
-Everything else including the documentation text is licensed under the [MIT license](https://github.com/lucia-auth/next/blob/main/LICENSE-MIT).
+Everything else is licensed under the [MIT license](https://github.com/lucia-auth/next/blob/main/LICENSE-MIT).
+
+*Copyright © 2019-present Pilcrow and contributors*
