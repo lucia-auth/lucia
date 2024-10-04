@@ -166,14 +166,14 @@ import { redirect } from "next/navigation";
 async function Page() {
 	const { user } = await getUser();
 	if (user === null) {
-		redirect("/login");
+		return redirect("/login");
 	}
 
 	async function action() {
 		"use server";
 		const { user } = await getUser();
 		if (user === null) {
-			redirect("/login");
+			return redirect("/login");
 		}
 		// ...
 	}
