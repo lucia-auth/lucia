@@ -8,7 +8,7 @@ Because Lucia v3 is lightweight and relatively low-level, migrating your project
 
 The one change to how sessions work is that session tokens are now hashed before storage. The pre-hash token is the client-assigned session ID and the hash is the internal session ID. The easiest option would be to purge all existing sessions, but if you want keep existing sessions, SHA-256 and hex-encode the session IDs stored in the database. Or, you can skip the hashing altogether. Hashing is a good measure against database leaks, but not absolutely necessary.
 
-APIs on sessions are covered in the [Basic API](/sessions/basic-api) page.
+APIs on sessions are covered in the [Basic session API](/sessions/basic-api) page.
 
 - `Lucia.createSession()` => `generateSessionToken()` and `createSession()`
 - `Lucia.validateSession()` => `validateSessionToken()`
