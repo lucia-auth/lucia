@@ -53,7 +53,7 @@ interface Bucket {
 
 ```ts
 // Bucket that has 10 tokens max and refills at a rate of 2 tokens/sec
-const bucket = new TokenBucket(10, 2);
+const bucket = new TokenBucket<string>(10, 2);
 
 if (!bucket.consume(ip, 1)) {
 	throw new Error("Too many requests");
@@ -118,7 +118,7 @@ export class TokenBucket {
 		this.refillIntervalSeconds = refillIntervalSeconds;
 	}
 
-	public async consume(key: _Key, cost: number): Promise<boolean> {
+	public async consume(key: string, cost: number): Promise<boolean> {
 		const result = await client.EVALSHA(SCRIPT_SHA, {
 			keys: [`${this.storageKey}:${key}`],
 			arguments: [

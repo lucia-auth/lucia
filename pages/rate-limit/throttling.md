@@ -48,7 +48,7 @@ export class Throttler<_Key> {
 Here, on each failed sign in attempt, the lockout gets extended with a max of 5 minutes.
 
 ```ts
-const throttler = new Throttler([0, 1, 2, 4, 8, 16, 30, 60, 180, 300]);
+const throttler = new Throttler<number>([0, 1, 2, 4, 8, 16, 30, 60, 180, 300]);
 
 if (!throttler.consume(userId)) {
 	throw new Error("Too many requests");
