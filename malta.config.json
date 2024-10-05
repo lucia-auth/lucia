@@ -31,6 +31,12 @@
 			]
 		},
 		{
+			"title": "Rate limiting",
+			"pages": [
+				["Token bucket", "/rate-limit/token-bucket"]
+			]
+		},
+		{
 			"title": "Community",
 			"pages": [
 				["GitHub", "https://github.com/lucia-auth/lucia"],
