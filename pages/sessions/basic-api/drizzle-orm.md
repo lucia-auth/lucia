@@ -120,7 +120,9 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
-export type SessionValidationResult = { session: Session; user: User } | { session: null; user: null };
+export type SessionValidationResult =
+	| { session: Session; user: User }
+	| { session: null; user: null };
 ```
 
 The session token should be a random string. We recommend generating at least 20 random bytes from a secure source (**DO NOT USE `Math.random()`**) and encoding it with base32. You can use any encoding schemes, but base32 is case insensitive unlike base64 and only uses alphanumeric letters while being more compact than hex encoding.
@@ -285,7 +287,9 @@ export async function invalidateSession(sessionId: string): void {
 	await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
 }
 
-export type SessionValidationResult = { session: Session; user: User } | { session: null; user: null };
+export type SessionValidationResult =
+	| { session: Session; user: User }
+	| { session: null; user: null };
 ```
 
 ## Using your API

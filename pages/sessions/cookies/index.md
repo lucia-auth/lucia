@@ -69,7 +69,10 @@ export function setSessionTokenCookie(response: HTTPResponse, token: string, exp
 export function deleteSessionTokenCookie(response: HTTPResponse): void {
 	if (env === Env.PROD) {
 		// When deployed over HTTPS
-		response.headers.add("Set-Cookie", "session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/; Secure;");
+		response.headers.add(
+			"Set-Cookie",
+			"session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/; Secure;"
+		);
 	} else {
 		// When deployed over HTTP (localhost)
 		response.headers.add("Set-Cookie", "session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/");
@@ -82,7 +85,11 @@ export function deleteSessionTokenCookie(response: HTTPResponse): void {
 Sessions can be validated by getting the cookie and using the `validateSession()` function we created. If the session is invalid, delete the session cookie. Importantly, we recommend setting a new session cookie after validation to persist the cookie for an extended time.
 
 ```ts
-import { validateSessionToken, deleteSessionTokenCookie, setSessionTokenCookie } from "./session.js";
+import {
+	validateSessionToken,
+	deleteSessionTokenCookie,
+	setSessionTokenCookie
+} from "./session.js";
 
 // `HTTPRequest` and `HTTPResponse` are generic interfaces.
 // Adjust this code to fit your framework's API.

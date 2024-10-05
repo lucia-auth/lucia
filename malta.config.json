@@ -32,9 +32,7 @@
 		},
 		{
 			"title": "Rate limiting",
-			"pages": [
-				["Token bucket", "/rate-limit/token-bucket"]
-			]
+			"pages": [["Token bucket", "/rate-limit/token-bucket"]]
 		},
 		{
 			"title": "Community",

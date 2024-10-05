@@ -48,7 +48,9 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
-export type SessionValidationResult = { session: Session; user: User } | { session: null; user: null };
+export type SessionValidationResult =
+	| { session: Session; user: User }
+	| { session: null; user: null };
 
 export interface Session {
 	id: string;
@@ -237,7 +239,9 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.execute("DELETE FROM user_session WHERE id = ?", sessionId);
 }
 
-export type SessionValidationResult = { session: Session; user: User } | { session: null; user: null };
+export type SessionValidationResult =
+	| { session: Session; user: User }
+	| { session: null; user: null };
 
 export interface Session {
 	id: string;

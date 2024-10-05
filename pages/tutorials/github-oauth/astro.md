@@ -47,7 +47,11 @@ Initialize the GitHub provider with the client ID and secret.
 ```ts
 import { GitHub } from "arctic";
 
-export const github = new GitHub(import.meta.env.GITHUB_CLIENT_ID, import.meta.env.GITHUB_CLIENT_SECRET, null);
+export const github = new GitHub(
+	import.meta.env.GITHUB_CLIENT_ID,
+	import.meta.env.GITHUB_CLIENT_SECRET,
+	null
+);
 ```
 
 ## Sign in page

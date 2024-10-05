@@ -48,7 +48,9 @@ export function invalidateSession(sessionId: string): void {
 	// TODO
 }
 
-export type SessionValidationResult = { session: Session; user: User } | { session: null; user: null };
+export type SessionValidationResult =
+	| { session: Session; user: User }
+	| { session: null; user: null };
 
 export interface Session {
 	id: string;
@@ -149,7 +151,11 @@ export function validateSessionToken(token: string): SessionValidationResult {
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		db.execute("UPDATE session SET expires_at = ? WHERE id = ?", Math.floor(session.expiresAt / 1000), session.id);
+		db.execute(
+			"UPDATE session SET expires_at = ? WHERE id = ?",
+			Math.floor(session.expiresAt / 1000),
+			session.id
+		);
 	}
 	return { session, user };
 }
@@ -220,7 +226,11 @@ export function validateSessionToken(token: string): SessionValidationResult {
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-		db.execute("UPDATE session SET expires_at = ? WHERE id = ?", Math.floor(session.expiresAt / 1000), session.id);
+		db.execute(
+			"UPDATE session SET expires_at = ? WHERE id = ?",
+			Math.floor(session.expiresAt / 1000),
+			session.id
+		);
 	}
 	return { session, user };
 }
@@ -229,7 +239,9 @@ export function invalidateSession(sessionId: string): void {
 	db.execute("DELETE FROM session WHERE id = ?", sessionId);
 }
 
-export type SessionValidationResult = { session: Session; user: User } | { session: null; user: null };
+export type SessionValidationResult =
+	| { session: Session; user: User }
+	| { session: null; user: null };
 
 export interface Session {
 	id: string;

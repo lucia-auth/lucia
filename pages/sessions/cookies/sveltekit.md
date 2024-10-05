@@ -53,7 +53,11 @@ Sessions can be validated by getting the cookie and using the `validateSession()
 ```ts
 // +page.server.ts
 import { fail, redirect } from "@sveltejs/kit";
-import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/session";
+import {
+	validateSessionToken,
+	setSessionTokenCookie,
+	deleteSessionTokenCookie
+} from "$lib/server/session";
 
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -98,7 +102,11 @@ export {};
 
 ```ts
 // src/hooks.server.ts
-import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "./lib/server/session";
+import {
+	validateSessionToken,
+	setSessionTokenCookie,
+	deleteSessionTokenCookie
+} from "./lib/server/session";
 
 import type { Handle } from "@sveltejs/kit";
 
