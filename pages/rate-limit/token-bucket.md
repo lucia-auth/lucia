@@ -138,7 +138,8 @@ export class TokenBucket {
 // Ensure that the storage key is unique.
 const bucket = new TokenBucket("global_ip", 10, 2);
 
-if (!bucket.consume(ip, 1)) {
+const valid = await bucket.consume(ip, 1);
+if (!valid) {
 	throw new Error("Too many requests");
 }
 ```
