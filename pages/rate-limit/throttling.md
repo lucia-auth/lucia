@@ -23,18 +23,18 @@ export class Throttler<_Key> {
 		const now = Date.now();
 		if (counter === null) {
 			counter = {
-				timeout: 0,
+				index: 0,
 				updatedAt: now
 			};
 			this.storage.set(key, counter);
 			return true;
 		}
-		const allowed = now - counter.updatedAt >= this.timeoutSeconds[counter.timeout] * 1000;
+		const allowed = now - counter.updatedAt >= this.timeoutSeconds[counter.index] * 1000;
 		if (!allowed) {
 			return false;
 		}
 		counter.updatedAt = now;
-		counter.timeout = Math.min(counter.timeout + 1, this.timeoutSeconds.length - 1);
+		counter.index = Math.min(counter.index + 1, this.timeoutSeconds.length - 1);
 		this.storage.set(key, counter);
 		return true;
 	}
@@ -42,6 +42,11 @@ export class Throttler<_Key> {
 	public reset(key: _Key): void {
 		this.storage.delete(key);
 	}
+}
+
+interface ThrottlingCounter {
+	index: number;
+	updatedAt: number;
 }
 ```
 
