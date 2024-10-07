@@ -1,5 +1,11 @@
 # lucia
 
+## 3.2.1
+
+### Patch changes
+
+-   [#1708](https://github.com/lucia-auth/lucia/pull/1708) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update dependencies.
+
 ## 3.2.0
 
 ### Minor changes
