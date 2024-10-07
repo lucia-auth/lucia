@@ -158,21 +158,15 @@ export async function GET(context: APIContext): Promise<Response> {
 		// Replace this with your own DB client.
 		const existingUser = await db.table("user").where("github_id", "=", githubUser.id).get();
 
-		if (existingUser) {
-			const session = await lucia.createSession(existingUser.id, {});
-			const sessionCookie = lucia.createSessionCookie(session.id);
-			context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-			return context.redirect("/");
+		const userId = existingUser.id ?? generateIdFromEntropySize(10); // 16 characters long
+		if (!existingUser) {
+			// Replace this with your own DB client.
+			await db.table("user").insert({
+				id: userId,
+				github_id: githubUser.id,
+				username: githubUser.login
+			});
 		}
-
-		const userId = generateIdFromEntropySize(10); // 16 characters long
-
-		// Replace this with your own DB client.
-		await db.table("user").insert({
-			id: userId,
-			github_id: githubUser.id,
-			username: githubUser.login
-		});
 
 		const session = await lucia.createSession(userId, {});
 		const sessionCookie = lucia.createSessionCookie(session.id);
