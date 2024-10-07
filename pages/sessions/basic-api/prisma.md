@@ -25,6 +25,14 @@ model Session {
 }
 ```
 
+## Install dependencies
+
+This page uses [Oslo](https://oslojs.dev) for various operations to support a wide range of runtimes. Oslo packages are fully-typed, lightweight, and has minimal dependencies. These packages are optional and can be replaced by runtime built-ins.
+
+```
+npm i @oslojs/encoding @oslojs/crypto
+```
+
 ## Create your API
 
 Here's what our API will look like. What each method does should be pretty self explanatory.
@@ -75,8 +83,6 @@ export function generateSessionToken(): string {
 	return token;
 }
 ```
-
-> Throughout the site, we will use packages from [Oslo](https://oslojs.dev) for various operations. Oslo packages are fully-typed, lightweight, and has minimal dependencies. You can of course replace them with your own code, runtime-specific modules, or your preferred library.
 
 The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days.
 

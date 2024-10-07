@@ -6,6 +6,12 @@ title: "Sessions with Redis"
 
 Users will use a session token linked to a session instead of the ID directly. The session ID will be the SHA-256 hash of the token. SHA-256 is a one-way hash function. This ensures that even if the database contents were leaked, the attacker won't be able retrieve valid tokens.
 
+This page uses [Oslo](https://oslojs.dev) for various operations to support a wide range of runtimes. Oslo packages are fully-typed, lightweight, and has minimal dependencies. These packages are optional and can be replaced by runtime built-ins.
+
+```
+npm i @oslojs/encoding @oslojs/crypto
+```
+
 Here's what our API will look like. What each method does should be pretty self explanatory.
 
 ```ts
