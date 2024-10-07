@@ -25,16 +25,12 @@ await db.createUser({
 });
 ```
 
-Use Lucia's [`generateId()`](/reference/main/generateIdFromEntropySize) or Oslo's [`generateRandomString()`](https://oslo.js.org/reference/crypto/generateRandomString) if you're looking for a more customizable option.
+Use Lucia's [`generateId()`](/reference/main/generateIdFromEntropySize).
 
 ```ts
 import { generateId } from "lucia";
 
 const id = generateId(15);
-
-import { generateRandomString, alphabet } from "oslo/crypto";
-
-const id = generateRandomString(15, alphabet("a-z", "A-Z", "0-9"));
 ```
 
 ## Define user attributes
