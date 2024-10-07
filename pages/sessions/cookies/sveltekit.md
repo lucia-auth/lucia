@@ -87,17 +87,20 @@ We recommend handling session validation in the handle hook and passing the curr
 ```ts
 // src/app.d.ts
 
+import type { User } from "$lib/server/user";
+import type { Session } from "$lib/server/session";
+
 declare global {
 	namespace App {
-		// Note: 'import {} from ""' syntax does not work in .d.ts files.
 		interface Locals {
-			session: import("./lib/server/session").Session | null;
-			user: import("./lib/server/session").User | null;
+			user: User | null;
+			session: Session | null;
 		}
 	}
 }
 
 export {};
+
 ```
 
 ```ts
