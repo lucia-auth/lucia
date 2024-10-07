@@ -1,5 +1,11 @@
 # @lucia-auth/adapter-test
 
+## 5.0.2
+
+### Patch changes
+
+-   [#1708](https://github.com/lucia-auth/lucia/pull/1708) by [@pilcrowOnPaper](https://github.com/pilcrowOnPaper) : Update dependencies.
+
 ## 5.0.1
 
 -   Update dependencies
