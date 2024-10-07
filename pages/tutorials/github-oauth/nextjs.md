@@ -179,7 +179,7 @@ export async function GET(request: Request): Promise<Response> {
 
 ## Validate requests
 
-Use the `getCurrentUser()` function from the [Session cookies in Astro](/sessions/cookies/astro) page to get the current user and session.
+Use the `getCurrentUser()` function from the [Session cookies in Next.js](/sessions/cookies/nextjs) page to get the current user and session.
 
 ```tsx
 import { redirect } from "next/navigation";
