@@ -4,7 +4,7 @@ import { scryptSync as nodeScrypt } from "node:crypto";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 
 test("scrypt() output matches crypto", async () => {
-	const password = "";
+	const password = "2uY379HYD&@#Uう２雨h";
 	const salt = encodeHexLowerCase(crypto.getRandomValues(new Uint8Array(16)));
 	const scryptHash = await scrypt(
 		new TextEncoder().encode(password),
