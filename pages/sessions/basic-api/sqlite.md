@@ -114,7 +114,7 @@ export function createSession(token: string, userId: number): Session {
 		"INSERT INTO session (id, user_id, expires_at) VALUES (?, ?, ?)",
 		session.id,
 		session.userId,
-		Math.floor(session.expiresAt / 1000)
+		Math.floor(session.expiresAt.getTime() / 1000)
 	);
 	return session;
 }
@@ -161,7 +161,7 @@ export function validateSessionToken(token: string): SessionValidationResult {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		db.execute(
 			"UPDATE session SET expires_at = ? WHERE id = ?",
-			Math.floor(session.expiresAt / 1000),
+			Math.floor(session.expiresAt.getTime() / 1000),
 			session.id
 		);
 	}
@@ -206,7 +206,7 @@ export function createSession(token: string, userId: number): Session {
 		"INSERT INTO session (id, user_id, expires_at) VALUES (?, ?, ?)",
 		session.id,
 		session.userId,
-		Math.floor(session.expiresAt / 1000)
+		Math.floor(session.expiresAt.getTime() / 1000)
 	);
 	return session;
 }
@@ -236,7 +236,7 @@ export function validateSessionToken(token: string): SessionValidationResult {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		db.execute(
 			"UPDATE session SET expires_at = ? WHERE id = ?",
-			Math.floor(session.expiresAt / 1000),
+			Math.floor(session.expiresAt.getTime() / 1000),
 			session.id
 		);
 	}
