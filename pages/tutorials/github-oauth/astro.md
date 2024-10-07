@@ -144,9 +144,9 @@ export async function GET(context: APIContext): Promise<Response> {
 	const existingUser = await getUserFromGitHubId(githubUserId);
 
 	if (existingUser !== null) {
-		const token = generateSessionToken();
-		const session = await createSession(token, existingUser.id);
-		setSessionTokenCookie(context, token, session.expiresAt);
+		const sessionToken = generateSessionToken();
+		const session = await createSession(sessionToken, existingUser.id);
+		setSessionTokenCookie(context, sessionToken, session.expiresAt);
 		return context.redirect("/");
 	}
 
@@ -155,7 +155,7 @@ export async function GET(context: APIContext): Promise<Response> {
 
 	const sessionToken = generateSessionToken();
 	const session = await createSession(sessionToken, user.id);
-	setSessionTokenCookie(context, token, session.expiresAt);
+	setSessionTokenCookie(context, sessionToken, session.expiresAt);
 	return context.redirect("/");
 }
 ```

@@ -144,7 +144,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	if (existingUser) {
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, user.id);
-		setSessionTokenCookie(event, token, session.expiresAt);
+		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -158,7 +158,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	const sessionToken = generateSessionToken();
 	const session = await createSession(sessionToken, user.id);
-	setSessionTokenCookie(event, token, session.expiresAt);
+	setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
 	return new Response(null, {
 		status: 302,

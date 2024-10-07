@@ -153,9 +153,9 @@ export async function GET(request: Request): Promise<Response> {
 	const existingUser = await getUserFromGoogleId(googleUserId);
 
 	if (existingUser !== null) {
-		const token = generateSessionToken();
-		const session = await createSession(token, existingUser.id);
-		setSessionTokenCookie(token, session.expiresAt);
+		const sessionToken = generateSessionToken();
+		const session = await createSession(sessionToken, existingUser.id);
+		setSessionTokenCookie(sessionToken, session.expiresAt);
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -169,7 +169,7 @@ export async function GET(request: Request): Promise<Response> {
 
 	const sessionToken = generateSessionToken();
 	const session = await createSession(sessionToken, user.id);
-	setSessionTokenCookie(token, session.expiresAt);
+	setSessionTokenCookie(sessionToken, session.expiresAt);
 	return new Response(null, {
 		status: 302,
 		headers: {
