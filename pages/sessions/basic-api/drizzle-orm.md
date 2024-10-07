@@ -154,6 +154,8 @@ export function generateSessionToken(): string {
 }
 ```
 
+> You can use UUID v4 here but the RFC does not mandate that IDs are generated using a secure random source. Do not use libraries that are not clear on the source they use. Do not use other UUID versions as they do not offer the same entropy size as v4. Consider using [`Crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID).
+
 The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days.
 
 ```ts

@@ -61,7 +61,7 @@ export function generateSessionToken(): string {
 }
 ```
 
-> Throughout the site, we will use packages from [Oslo](https://oslojs.dev) for various operations. Oslo packages are fully-typed, lightweight, and has minimal dependencies. You can of course replace them with your own code, runtime-specific modules, or your preferred library.
+> You can use UUID v4 here but the RFC does not mandate that IDs are generated using a secure random source. Do not use libraries that are not clear on the source they use. Do not use other UUID versions as they do not offer the same entropy size as v4. Consider using [`Crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID).
 
 The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days.
 
