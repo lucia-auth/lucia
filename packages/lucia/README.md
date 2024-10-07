@@ -12,4 +12,5 @@ An open source auth library that abstracts away the complexity of handling sessi
 npm install lucia
 pnpm add lucia
 yarn add lucia
+bun add lucia
 ```

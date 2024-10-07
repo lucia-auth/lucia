@@ -19,6 +19,7 @@ MySQL adapter for Lucia.
 npm install @lucia-auth/adapter-postgresql
 pnpm add @lucia-auth/adapter-postgresql
 yarn add @lucia-auth/adapter-postgresql
+bun add @lucia-auth/adapter-postgresql
 ```
 
 ## Testing

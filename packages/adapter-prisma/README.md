@@ -14,6 +14,7 @@
 npm install @lucia-auth/adapter-prisma
 pnpm add @lucia-auth/adapter-prisma
 yarn add @lucia-auth/adapter-prisma
+bun add @lucia-auth/adapter-prisma
 ```
 
 ## Testing

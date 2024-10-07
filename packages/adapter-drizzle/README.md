@@ -14,6 +14,7 @@
 npm install @lucia-auth/adapter-drizzle
 pnpm add @lucia-auth/adapter-drizzle
 yarn add @lucia-auth/adapter-drizzle
+bun add @lucia-auth/adapter-drizzle
 ```
 
 ## Testing

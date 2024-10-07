@@ -14,6 +14,7 @@
 npm install @lucia-auth/adapter-mongodb
 pnpm add @lucia-auth/adapter-mongodb
 yarn add @lucia-auth/adapter-mongodb
+bun add @lucia-auth/adapter-mongodb
 ```
 
 ## Testing
