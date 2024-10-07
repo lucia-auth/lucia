@@ -1,4 +1,4 @@
-import { eq, lte } from "drizzle-orm";
+import { eq, lte, is } from "drizzle-orm";
 
 import type { Adapter, DatabaseSession, DatabaseUser, UserId } from "lucia";
 import type {
@@ -6,6 +6,7 @@ import type {
 	BaseSQLiteDatabase,
 	SQLiteTableWithColumns
 } from "drizzle-orm/sqlite-core";
+import { SQLiteTimestamp } from "drizzle-orm/sqlite-core";
 import type { InferSelectModel } from "drizzle-orm";
 
 export class DrizzleSQLiteAdapter implements Adapter {
@@ -81,7 +82,10 @@ export class DrizzleSQLiteAdapter implements Adapter {
 			.values({
 				id: session.id,
 				userId: session.userId,
-				expiresAt: Math.floor(session.expiresAt.getTime() / 1000),
+				// If the drizzle schema is set to `mode: "timestamp"` drizzle will already expect a date from us so we shouldn't convert
+				expiresAt: is(this.sessionTable.expiresAt, SQLiteTimestamp)
+					? session.expiresAt
+					: Math.floor(session.expiresAt.getTime() / 1000),
 				...session.attributes
 			})
 			.run();
@@ -91,7 +95,10 @@ export class DrizzleSQLiteAdapter implements Adapter {
 		await this.db
 			.update(this.sessionTable)
 			.set({
-				expiresAt: Math.floor(expiresAt.getTime() / 1000)
+				// If the drizzle schema is set to `mode: "timestamp"` drizzle will already expect a date from us so we shouldn't convert
+				expiresAt: is(this.sessionTable.expiresAt, SQLiteTimestamp)
+					? expiresAt
+					: Math.floor(expiresAt.getTime() / 1000)
 			})
 			.where(eq(this.sessionTable.id, sessionId))
 			.run();
@@ -100,7 +107,14 @@ export class DrizzleSQLiteAdapter implements Adapter {
 	public async deleteExpiredSessions(): Promise<void> {
 		await this.db
 			.delete(this.sessionTable)
-			.where(lte(this.sessionTable.expiresAt, Math.floor(Date.now() / 1000)));
+			.where(
+				lte(
+					this.sessionTable.expiresAt,
+					is(this.sessionTable.expiresAt, SQLiteTimestamp)
+						? new Date()
+						: Math.floor(Date.now() / 1000)
+				)
+			);
 	}
 }
 
@@ -159,7 +173,7 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 				enumValues: any;
 				tableName: any;
 				columnType: any;
-				data: number;
+				data: number | Date;
 				driverParam: any;
 				hasDefault: false;
 				name: any;
@@ -194,11 +208,12 @@ export type SQLiteSessionTable = SQLiteTableWithColumns<{
 }>;
 
 function transformIntoDatabaseSession(raw: InferSelectModel<SQLiteSessionTable>): DatabaseSession {
-	const { id, userId, expiresAt: expiresAtUnix, ...attributes } = raw;
+	const { id, userId, expiresAt: expiresAtRaw, ...attributes } = raw;
 	return {
 		userId,
 		id,
-		expiresAt: new Date(expiresAtUnix * 1000),
+		// If the drizzle schema is set to `mode: "timestamp"` drizzle will already return a date for us so we shouldn't convert
+		expiresAt: expiresAtRaw instanceof Date ? expiresAtRaw : new Date(expiresAtRaw * 1000),
 		attributes
 	};
 }

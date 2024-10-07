@@ -15,7 +15,8 @@
 		"auri.build": "pnpm build",
 		"test.mysql": "tsx tests/mysql.ts",
 		"test.postgresql": "tsx tests/postgresql.ts",
-		"test.sqlite": "tsx tests/sqlite.ts"
+		"test.sqlite": "tsx tests/sqlite.ts",
+		"test.sqlite-timestamp": "tsx tests/sqlite-timestamp.ts"
 	},
 	"keywords": [
 		"lucia",
