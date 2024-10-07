@@ -5,11 +5,11 @@ import type {
 	DatabaseUser,
 	RegisteredDatabaseUserAttributes,
 	UserId
-} from "lucia";
-import { Collection } from "mongodb";
+} from 'lucia';
+import { Collection, ObjectId } from 'mongodb';
 
 interface UserDoc extends RegisteredDatabaseUserAttributes {
-	_id: UserId;
+	_id: ObjectId;
 	__v?: any;
 }
 
@@ -41,25 +41,12 @@ export class MongodbAdapter implements Adapter {
 		sessionId: string
 	): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
 		// await necessary for mongoose
-		const cursor = await this.Session.aggregate([
-			{ $match: { _id: sessionId } },
-			{
-				$lookup: {
-					from: this.User.collectionName,
-					localField: "user_id",
-					// relies on _id being a String, not ObjectId.
-					foreignField: "_id",
-					as: "userDocs"
-				}
-			}
-		]);
-		const sessionUsers = await cursor.toArray();
+		const sessionDoc = await this.Session.findOne({ _id: sessionId });
+		if (!sessionDoc) return [null, null];
 
-		const sessionUser = sessionUsers?.at(0) ?? null;
-		if (!sessionUser) return [null, null];
-
-		const { userDocs, ...sessionDoc } = sessionUser;
-		const userDoc = userDocs?.at(0) ?? null;
+		const userDoc = await this.User.findOne({
+			_id: new ObjectId(sessionDoc.user_id)
+		});
 		if (!userDoc) return [null, null];
 
 		const session = transformIntoDatabaseSession(sessionDoc as SessionDoc);
@@ -94,7 +81,10 @@ export class MongodbAdapter implements Adapter {
 		await this.Session.insertOne(value);
 	}
 
-	public async updateSessionExpiration(sessionId: string, expiresAt: Date): Promise<void> {
+	public async updateSessionExpiration(
+		sessionId: string,
+		expiresAt: Date
+	): Promise<void> {
 		await this.Session.findOneAndUpdate(
 			{ _id: sessionId },
 			{ $set: { expires_at: expiresAt } }
@@ -114,14 +104,19 @@ function transformIntoDatabaseUser(value: UserDoc): DatabaseUser {
 	delete value.__v;
 	const { _id: id, ...attributes } = value;
 	return {
-		id,
+		id: id.toString(),
 		attributes
 	};
 }
 
 function transformIntoDatabaseSession(value: SessionDoc): DatabaseSession {
 	delete value.__v;
-	const { _id: id, user_id: userId, expires_at: expiresAt, ...attributes } = value;
+	const {
+		_id: id,
+		user_id: userId,
+		expires_at: expiresAt,
+		...attributes
+	} = value;
 	return {
 		id,
 		userId,
