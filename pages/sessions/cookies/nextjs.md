@@ -168,14 +168,14 @@ Use `getCurrentSession()` to get the current user in server components, server a
 import { redirect } from "next/navigation";
 
 async function Page() {
-	const { user } = await getUser();
+	const { user } = await getCurrentUser();
 	if (user === null) {
 		return redirect("/login");
 	}
 
 	async function action() {
 		"use server";
-		const { user } = await getUser();
+		const { user } = await getCurrentUser();
 		if (user === null) {
 			return redirect("/login");
 		}
