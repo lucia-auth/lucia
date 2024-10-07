@@ -1,6 +1,6 @@
 {
 	"name": "Lucia",
-	"description": "ok",
+	"description": "An open source resource on implementing authentication with JavaScript",
 	"domain": "https://lucia-auth.com",
 	"twitter": "@lucia_auth",
 	"asset_hashing": true,
