@@ -165,8 +165,8 @@ export async function GET(request: Request): Promise<Response> {
 	// TODO: Replace this with your own DB query.
 	const user = await createUser(githubUserId, githubUsername);
 
-	const sessionToken = generateSessionToken();
-	const session = await createSession(sessionToken, user.id);
+	const token = generateSessionToken();
+	const session = await createSession(token, user.id);
 	setSessionTokenCookie(token, session.expiresAt);
 	return new Response(null, {
 		status: 302,
