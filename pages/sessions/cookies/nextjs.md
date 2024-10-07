@@ -83,7 +83,7 @@ export function deleteSessionTokenCookie(): void {
 }
 ```
 
-Since we can't extend set cookies insides server components due to a limitation with React, we recommend continuously extending the cookie expiration inside middleware. However, this comes with its own issue. Next.js revalidates the server component when a server action response sets a cookie directly with `cookies()` or indirectly with `NextResponse.cookies` via middleware. We also can't detect if a new cookie was set inside server actions or route handlers from middleware. As such, we'll only extend the cookie expiration on GET requests.
+Since we can't extend set cookies insides server components due to a limitation with React, we recommend continuously extending the cookie expiration inside middleware. However, this comes with its own issue. Next.js revalidates the server component when a server action response sets a cookie directly with `cookies()` or indirectly with `NextResponse.cookies` via middleware. This can be solved by using `NextResponse.cookies`. But, we also can't detect if a new cookie was set inside server actions or route handlers from middleware. This becomes an issue if we need to assign a new session inside server actions (e.g. after updating the password) as the middleware cookie will override it. As such, we'll only extend the cookie expiration on GET requests.
 
 ```ts
 // middleware.ts
