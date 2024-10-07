@@ -1,22 +1,22 @@
 import { test, expect } from "vitest";
 import { Scrypt, LegacyScrypt, generateIdFromEntropySize } from "./crypto.js";
-import { encodeHex } from "oslo/encoding";
+import { encodeHexLowerCase } from "@oslojs/encoding";
 
 test("validateScryptHash() validates hashes generated with generateScryptHash()", async () => {
-	const password = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
+	const password = encodeHexLowerCase(crypto.getRandomValues(new Uint8Array(32)));
 	const scrypt = new Scrypt();
 	const hash = await scrypt.hash(password);
 	await expect(scrypt.verify(hash, password)).resolves.toBe(true);
-	const falsePassword = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
+	const falsePassword = encodeHexLowerCase(crypto.getRandomValues(new Uint8Array(32)));
 	await expect(scrypt.verify(hash, falsePassword)).resolves.toBe(false);
 });
 
 test("LegacyScrypt", async () => {
-	const password = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
+	const password = encodeHexLowerCase(crypto.getRandomValues(new Uint8Array(32)));
 	const scrypt = new LegacyScrypt();
 	const hash = await scrypt.hash(password);
 	await expect(scrypt.verify(hash, password)).resolves.toBe(true);
-	const falsePassword = encodeHex(crypto.getRandomValues(new Uint8Array(32)));
+	const falsePassword = encodeHexLowerCase(crypto.getRandomValues(new Uint8Array(32)));
 	await expect(scrypt.verify(hash, falsePassword)).resolves.toBe(false);
 });
 

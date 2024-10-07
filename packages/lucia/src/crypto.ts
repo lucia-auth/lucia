@@ -1,12 +1,11 @@
-import { encodeHex, decodeHex, base32 } from "oslo/encoding";
-import { constantTimeEqual, generateRandomString, alphabet } from "oslo/crypto";
+import { decodeHex, encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
+import { generateRandomString } from "@oslojs/crypto/random";
+import { constantTimeEqual } from "@oslojs/crypto/subtle";
 import { scrypt } from "./scrypt/index.js";
 
-import type { PasswordHashingAlgorithm } from "oslo/password";
+import type { RandomReader } from "@oslojs/crypto/random";
 
-export type { PasswordHashingAlgorithm } from "oslo/password";
-
-async function generateScryptKey(data: string, salt: string, blockSize = 16): Promise<ArrayBuffer> {
+async function generateScryptKey(data: string, salt: string, blockSize = 16): Promise<Uint8Array> {
 	const encodedData = new TextEncoder().encode(data);
 	const encodedSalt = new TextEncoder().encode(salt);
 	const keyUint8Array = await scrypt(encodedData, encodedSalt, {
@@ -15,27 +14,30 @@ async function generateScryptKey(data: string, salt: string, blockSize = 16): Pr
 		p: 1,
 		dkLen: 64
 	});
-	return keyUint8Array;
+	return new Uint8Array(keyUint8Array);
 }
 
+const random: RandomReader = {
+	read(bytes: Uint8Array): void {
+		crypto.getRandomValues(bytes);
+	}
+};
+
 export function generateId(length: number): string {
-	return generateRandomString(length, alphabet("0-9", "a-z"));
+	const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+	return generateRandomString(random, alphabet, length);
 }
 
 export function generateIdFromEntropySize(size: number): string {
 	const buffer = crypto.getRandomValues(new Uint8Array(size));
-	return base32
-		.encode(buffer, {
-			includePadding: false
-		})
-		.toLowerCase();
+	return encodeBase32LowerCaseNoPadding(buffer);
 }
 
 export class Scrypt implements PasswordHashingAlgorithm {
 	async hash(password: string): Promise<string> {
-		const salt = encodeHex(crypto.getRandomValues(new Uint8Array(16)));
+		const salt = encodeHexLowerCase(crypto.getRandomValues(new Uint8Array(16)));
 		const key = await generateScryptKey(password.normalize("NFKC"), salt);
-		return `${salt}:${encodeHex(key)}`;
+		return `${salt}:${encodeHexLowerCase(key)}`;
 	}
 	async verify(hash: string, password: string): Promise<boolean> {
 		const parts = hash.split(":");
@@ -49,9 +51,9 @@ export class Scrypt implements PasswordHashingAlgorithm {
 
 export class LegacyScrypt implements PasswordHashingAlgorithm {
 	async hash(password: string): Promise<string> {
-		const salt = encodeHex(crypto.getRandomValues(new Uint8Array(16)));
+		const salt = encodeHexLowerCase(crypto.getRandomValues(new Uint8Array(16)));
 		const key = await generateScryptKey(password.normalize("NFKC"), salt);
-		return `s2:${salt}:${encodeHex(key)}`;
+		return `s2:${salt}:${encodeHexLowerCase(key)}`;
 	}
 	async verify(hash: string, password: string): Promise<boolean> {
 		const parts = hash.split(":");
@@ -69,4 +71,9 @@ export class LegacyScrypt implements PasswordHashingAlgorithm {
 		}
 		return false;
 	}
+}
+
+export interface PasswordHashingAlgorithm {
+	hash(password: string): Promise<string>;
+	verify(hash: string, password: string): Promise<boolean>;
 }

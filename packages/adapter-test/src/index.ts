@@ -1,11 +1,10 @@
-import { Adapter, DatabaseSession, DatabaseUser } from "lucia";
-import { generateRandomString, alphabet } from "oslo/crypto";
+import { Adapter, DatabaseSession, DatabaseUser, generateId } from "lucia";
 import assert from "node:assert/strict";
 
 export const databaseUser: DatabaseUser = {
-	id: generateRandomString(15, alphabet("0-9", "a-z")),
+	id: generateId(15),
 	attributes: {
-		username: generateRandomString(15, alphabet("0-9", "a-z"))
+		username: generateId(15)
 	}
 };
 
@@ -13,7 +12,7 @@ export async function testAdapter(adapter: Adapter) {
 	console.log(`\n\x1B[38;5;63;1m[start]  \x1B[0mRunning adapter tests\x1B[0m\n`);
 	const databaseSession: DatabaseSession = {
 		userId: databaseUser.id,
-		id: generateRandomString(40, alphabet("0-9", "a-z")),
+		id: generateId(40),
 		// get random date with 0ms
 		expiresAt: new Date(Math.floor(Date.now() / 1000) * 1000 + 10_000),
 		attributes: {
@@ -54,7 +53,7 @@ export async function testAdapter(adapter: Adapter) {
 	await test("deleteExpiredSessions() deletes all expired sessions", async () => {
 		const expiredSession: DatabaseSession = {
 			userId: databaseUser.id,
-			id: generateRandomString(40, alphabet("0-9", "a-z")),
+			id: generateId(40),
 			expiresAt: new Date(Math.floor(Date.now() / 1000) * 1000 - 10_000),
 			attributes: {
 				country: "us"
