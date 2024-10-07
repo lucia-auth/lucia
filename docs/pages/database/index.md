@@ -35,3 +35,4 @@ These adapters are not routinely checked by the maintainers of Lucia. Make sure 
 -   [Astro DB adapter by Pilcrow](https://github.com/pilcrowOnPaper/lucia-adapter-astrodb)
 -   [DynamoDB adapter by GNK Softworks](https://github.com/gnk-softworks/lucia-dynamodb-adapter)
 -   [remult adapter by jycouet](https://github.com/jycouet/firstly/tree/main/packages/firstly/src/lib/auth)
+-   [unstorage adapter by Shinosaki](https://github.com/shinosaki/lucia-adapter-unstorage)
