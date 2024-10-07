@@ -21,7 +21,7 @@ function constructor(name: string, value: string, attributes?: $$CookieAttribute
 
 ## Methods
 
--   [`serialize()`](/reference/cookie/Cookie/serialize)
+-   [`serialize()`](/reference/main/Cookie/serialize)
 
 ## Properties
 
