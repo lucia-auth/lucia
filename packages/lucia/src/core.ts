@@ -1,7 +1,7 @@
-import { TimeSpan, createDate, isWithinExpirationDate } from "oslo";
-import { CookieController } from "oslo/cookie";
+import { TimeSpan, createDate, isWithinExpirationDate } from "./date.js";
+import { CookieController } from "./cookie.js";
+import { generateIdFromEntropySize } from "./crypto.js";
 
-import type { Cookie } from "oslo/cookie";
 import type { Adapter } from "./database.js";
 import type {
 	RegisteredDatabaseSessionAttributes,
@@ -9,8 +9,7 @@ import type {
 	RegisteredLucia,
 	UserId
 } from "./index.js";
-import { CookieAttributes } from "oslo/cookie";
-import { generateIdFromEntropySize } from "./crypto.js";
+import type { Cookie, CookieAttributes } from "./cookie.js";
 
 type SessionAttributes = RegisteredLucia extends Lucia<infer _SessionAttributes, any>
 	? _SessionAttributes
