@@ -145,7 +145,7 @@ export async function GET(context: APIContext): Promise<Response> {
 }
 ```
 
-We recommend creating a reusable function and wrapping the it with `cache()` so it can be called multiple times without incurring multiple database calls.
+We recommend creating a reusable `getCurrentSession()` function that wraps the validation logic with `cache()` so it can be called multiple times without incurring multiple database calls.
 
 ```ts
 import { cookies } from "next/headers";
@@ -163,7 +163,7 @@ export const getCurrentSession = cache(async (): Promise<SessionValidationResult
 });
 ```
 
-Use `getCurrentSession()` to get the current user in server components, server actions, and route handlers. Keep in mind that each server action function
+This function can be used in server components, server actions, and route handlers (but importantly not middleware).
 
 ```ts
 // app/api/page.tsx
