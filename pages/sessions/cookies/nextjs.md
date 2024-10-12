@@ -170,14 +170,14 @@ This function can be used in server components, server actions, and route handle
 import { redirect } from "next/navigation";
 
 async function Page() {
-	const { user } = await getCurrentUser();
+	const { user } = await getCurrentSession();
 	if (user === null) {
 		return redirect("/login");
 	}
 
 	async function action() {
 		"use server";
-		const { user } = await getCurrentUser();
+		const { user } = await getCurrentSession();
 		if (user === null) {
 			return redirect("/login");
 		}

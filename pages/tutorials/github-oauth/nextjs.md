@@ -179,14 +179,14 @@ export async function GET(request: Request): Promise<Response> {
 
 ## Validate requests
 
-Use the `getCurrentUser()` function from the [Session cookies in Next.js](/sessions/cookies/nextjs) page to get the current user and session.
+Use the `getCurrentSession()` function from the [Session cookies in Next.js](/sessions/cookies/nextjs) page to get the current user and session.
 
 ```tsx
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/session";
+import { getCurrentSession } from "@/lib/session";
 
 export default async function Page() {
-	const { user } = await getCurrentUser();
+	const { user } = await getCurrentSession();
 	if (user === null) {
 		return redirect("/login");
 	}
