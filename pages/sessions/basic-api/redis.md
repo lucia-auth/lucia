@@ -67,7 +67,7 @@ The session ID will be SHA-256 hash of the token. We'll set the expiration to 30
 
 ```ts
 import { redis } from "./redis.js";
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
@@ -105,7 +105,7 @@ For convenience, we'll return both the session and user object tied to the sessi
 
 ```ts
 import { redis } from "./redis.js";
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
@@ -159,7 +159,7 @@ Here's the full code:
 
 ```ts
 import { redis } from "./redis.js";
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
 export function generateSessionToken(): string {

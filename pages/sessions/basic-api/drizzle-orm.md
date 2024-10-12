@@ -161,7 +161,7 @@ The session ID will be SHA-256 hash of the token. We'll set the expiration to 30
 ```ts
 import { db, userTable, sessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
@@ -190,7 +190,7 @@ For convenience, we'll return both the session and user object tied to the sessi
 ```ts
 import { db, userTable, sessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
