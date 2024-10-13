@@ -232,7 +232,7 @@ import { db, userTable, sessionTable } from "./db.js";
 // ...
 
 export async function invalidateSession(sessionId: string): void {
-	await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
+	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
 }
 ```
 
@@ -292,7 +292,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 }
 
 export async function invalidateSession(sessionId: string): void {
-	await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
+	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
 }
 
 export type SessionValidationResult =
