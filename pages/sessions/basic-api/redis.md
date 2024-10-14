@@ -101,8 +101,6 @@ Sessions are validated in 2 steps:
 
 We'll also extend the session expiration when it's close to expiration. This ensures active sessions are persisted, while inactive ones will eventually expire. We'll handle this by checking if there's less than 15 days (half of the 30 day expiration) before expiration.
 
-For convenience, we'll return both the session and user object tied to the session ID.
-
 ```ts
 import { redis } from "./redis.js";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
@@ -252,7 +250,7 @@ import { validateSessionToken } from "./session.js";
 
 const token = cookies.get("session");
 if (token !== null) {
-	const { session, user } = validateSessionToken(token);
+	const session = validateSessionToken(token);
 }
 ```
 
