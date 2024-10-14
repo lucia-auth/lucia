@@ -108,7 +108,7 @@ function handleRequest(request: HTTPRequest, response: HTTPResponse): void {
 	// session validation
 	const cookies = parseCookieHeader(request.headers.get("Cookie") ?? "");
 	const token = cookies.get("session");
-	if (sessionId === null) {
+	if (token === null) {
 		response.setStatusCode(401);
 		return;
 	}
