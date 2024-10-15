@@ -109,6 +109,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 // ...
 
 export async function validateSessionToken(token: string): Promise<Session> {
+	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
 		return null;
@@ -189,6 +190,7 @@ export async function createSession(token: string, userId: number): Session {
 }
 
 export async function validateSessionToken(token: string): Promise<Session> {
+	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
 		return null;
