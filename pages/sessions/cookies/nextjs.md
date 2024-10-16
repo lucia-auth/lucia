@@ -76,7 +76,7 @@ export function deleteSessionTokenCookie(): void {
 	cookies().set("session", "", {
 		httpOnly: true,
 		sameSite: "lax",
-		secure: import.meta.env.PROD,
+		secure: process.env.NODE_ENV === "production",
 		maxAge: 0,
 		path: "/"
 	});
@@ -124,10 +124,10 @@ Sessions can be validated by getting the cookie and using the `validateSessionTo
 ```ts
 import { validateSessionToken } from "$lib/server/session";
 
-import type { APIContext } from "astro";
+import type { NextRequest } from "next/server";
 
-export async function GET(context: APIContext): Promise<Response> {
-	const token = cookies().get("session")?.value ?? null;
+export async function GET(request: NextRequest): Promise<Response> {
+	const token = request.cookies.get("session")?.value ?? null;
 	if (token === null) {
 		return new Response(null, {
 			status: 401
