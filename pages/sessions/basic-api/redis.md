@@ -25,7 +25,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 	// TODO
 }
 
-export async function validateSessionToken(token: string): Promise<Session> {
+export async function validateSessionToken(token: string): Promise<Session | null> {
 	// TODO
 }
 
@@ -72,7 +72,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
 
-export async function createSession(token: string, userId: number): Session {
+export async function createSession(token: string, userId: number): Promise<Session> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
 		id: sessionId,
@@ -108,7 +108,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
 
-export async function validateSessionToken(token: string): Promise<Session> {
+export async function validateSessionToken(token: string): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
@@ -168,7 +168,7 @@ export function generateSessionToken(): string {
 	return token;
 }
 
-export async function createSession(token: string, userId: number): Session {
+export async function createSession(token: string, userId: number): Promise<Session> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session = {
 		id: sessionId,
@@ -189,7 +189,7 @@ export async function createSession(token: string, userId: number): Session {
 	return session;
 }
 
-export async function validateSessionToken(token: string): Promise<Session> {
+export async function validateSessionToken(token: string): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
