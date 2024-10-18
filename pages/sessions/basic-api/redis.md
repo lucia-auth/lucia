@@ -121,7 +121,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 		expiresAt: new Date(result.expires_at * 1000)
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		await redis.delete(sessionId);
+		await redis.delete(`session:${sessionId}`);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -150,7 +150,7 @@ import { redis } from "./redis.js";
 // ...
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-	await redis.delete(sessionId);
+	await redis.delete(`session:${sessionId}`);
 }
 ```
 
@@ -202,7 +202,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 		expiresAt: new Date(result.expires_at * 1000)
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		await redis.delete(sessionId);
+		await redis.delete(`session:${sessionId}`);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -223,7 +223,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-	await redis.delete(sessionId);
+	await redis.delete(`session:${sessionId}`);
 }
 
 export interface Session {
