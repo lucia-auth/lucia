@@ -28,8 +28,8 @@ We came to the conclusion that at least for the core of auth - sessions - it's b
 
 ## Disclaimer
 
-All example code in this site is licensed under the [Zero-Clause BSD license](https://github.com/lucia-auth/next/blob/main/LICENSE-0BSD). You're free to use, copy, modify, and distribute it without any attribution. The license is approved by the [Open Source Initiative (OSI)](https://opensource.org/license/0bsd) and [Google](https://opensource.google/documentation/reference/patching#forbidden).
+All example code in this site is licensed under the [Zero-Clause BSD license](https://github.com/lucia-auth/lucia/blob/main/LICENSE-0BSD). You're free to use, copy, modify, and distribute it without any attribution. The license is approved by the [Open Source Initiative (OSI)](https://opensource.org/license/0bsd) and [Google](https://opensource.google/documentation/reference/patching#forbidden).
 
-Everything else is licensed under the [MIT license](https://github.com/lucia-auth/next/blob/main/LICENSE-MIT).
+Everything else is licensed under the [MIT license](https://github.com/lucia-auth/lucia/blob/main/LICENSE-MIT).
 
 _Copyright © 2024 pilcrow and contributors_
