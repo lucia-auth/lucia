@@ -132,7 +132,7 @@ function transformIntoDatabaseSession(raw: SessionSchema): DatabaseSession {
 	return {
 		userId,
 		id,
-		expiresAt,
+		expiresAt: expiresAt instanceof Date ? expiresAt : new Date(expiresAt),
 		attributes
 	};
 }
