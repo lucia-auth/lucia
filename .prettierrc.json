@@ -1,15 +1,5 @@
 {
 	"useTabs": true,
-	"printWidth": 100,
 	"trailingComma": "none",
-	"plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-astro"],
-	"overrides": [
-		{
-			"files": "*.astro",
-			"options": {
-				"parser": "astro"
-			}
-		}
-	],
-	"pluginSearchDirs": ["."]
+	"printWidth": 100
 }

@@ -1,9 +1,10 @@
+---
+title: "Lucia"
+---
+
 # Lucia
 
-**Link: [lucia-auth.com](https://lucia-auth.com)**
-
-> [!IMPORTANT]  
-> Lucia v3 will be deprecated by March 2025. Lucia is now a learning resource on implementing auth from scratch. See the [announcement](https://github.com/lucia-auth/lucia/discussions/1714) for details and migration path. The source code for v3 is available in the `v3` branch.
+*Lucia is now a learning resource on implementing auth from scratch. See the [announcement](https://github.com/lucia-auth/lucia/discussions/1714) for details and migration path.*
 
 Lucia is an open source project to provide resources on implementing authentication with JavaScript and TypeScript.
 
@@ -29,8 +30,8 @@ We came to the conclusion that at least for the core of auth - sessions - it's b
 
 ## Disclaimer
 
-All example code in the site is licensed under the [Zero-Clause BSD license](https://github.com/lucia-auth/lucia/blob/main/LICENSE-0BSD). You're free to use, copy, modify, and distribute it without any attribution. The license is approved by the [Open Source Initiative (OSI)](https://opensource.org/license/0bsd) and [Google](https://opensource.google/documentation/reference/patching#forbidden).
+All example code in this site is licensed under the [Zero-Clause BSD license](https://github.com/lucia-auth/lucia/blob/main/LICENSE-0BSD). You're free to use, copy, modify, and distribute it without any attribution. The license is approved by the [Open Source Initiative (OSI)](https://opensource.org/license/0bsd) and [Google](https://opensource.google/documentation/reference/patching#forbidden).
 
-Everything else this repository is licensed under the [MIT license](https://github.com/lucia-auth/lucia/blob/main/LICENSE-MIT).
+Everything else is licensed under the [MIT license](https://github.com/lucia-auth/lucia/blob/main/LICENSE-MIT).
 
 _Copyright © 2024 pilcrow and contributors_

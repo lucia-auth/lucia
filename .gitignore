@@ -1,6 +1,5 @@
-node_modules
-.DS_Store
+dist
 pnpm-lock.yaml
-.vscode
-.idea
-*.p8
+node_modules
+package-lock.json
+.DS_Store

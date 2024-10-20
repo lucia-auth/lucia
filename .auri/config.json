@@ -1,7 +1,0 @@
-{
-	"repository": "https://github.com/lucia-auth/lucia",
-	"scripts": {
-		"format": "pnpm format"
-	},
-	"debug": true
-}

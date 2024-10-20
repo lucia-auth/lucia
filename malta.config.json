@@ -1,0 +1,58 @@
+{
+	"name": "Lucia",
+	"description": "An open source resource on implementing authentication with JavaScript",
+	"domain": "https://lucia-auth.com",
+	"twitter": "@lucia_auth",
+	"asset_hashing": true,
+	"sidebar": [
+		{
+			"title": "Sessions",
+			"pages": [
+				["Overview", "/sessions/overview"],
+				["Basic API", "/sessions/basic-api"],
+				["Cookies", "/sessions/cookies"],
+				["Migrate from Lucia v3", "/sessions/migrate-lucia-v3"]
+			]
+		},
+		{
+			"title": "Tutorials",
+			"pages": [
+				["GitHub OAuth", "/tutorials/github-oauth"],
+				["Google OAuth", "/tutorials/google-oauth"]
+			]
+		},
+		{
+			"title": "Example projects",
+			"pages": [
+				["GitHub OAuth", "/examples/github-oauth"],
+				["Google OAuth", "/examples/google-oauth"],
+				["Email and password with 2FA", "/examples/email-password-2fa"],
+				["Email and password with 2FA and WebAuthn", "/examples/email-password-2fa-webauthn"]
+			]
+		},
+		{
+			"title": "Rate limiting",
+			"pages": [
+				["Token bucket", "/rate-limit/token-bucket"],
+				["Throttling", "/rate-limit/throttling"]
+			]
+		},
+		{
+			"title": "Community",
+			"pages": [
+				["GitHub", "https://github.com/lucia-auth/lucia"],
+				["Discord", "https://discord.com/invite/PwrK3kpVR3"],
+				["Twitter", "https://x.com/lucia_auth"],
+				["Donate", "https://github.com/sponsors/pilcrowOnPaper"]
+			]
+		},
+		{
+			"title": "Related projects",
+			"pages": [
+				["The Copenhagen Book", "https://thecopenhagenbook.com"],
+				["Oslo", "https://oslojs.dev"],
+				["Arctic", "https://arcticjs.dev"]
+			]
+		}
+	]
+}
