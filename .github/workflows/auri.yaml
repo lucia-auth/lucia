@@ -2,7 +2,7 @@ name: "Auri"
 on:
     push:
         branches:
-            - main
+            - v3
 
 env:
     AURI_GITHUB_TOKEN: ${{secrets.AURI_GITHUB_TOKEN}}

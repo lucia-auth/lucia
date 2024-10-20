@@ -80,7 +80,7 @@ export class Lucia<
 		this.sessionCookieName = options?.sessionCookie?.name ?? "auth_session";
 		let sessionCookieExpiresIn = this.sessionExpiresIn;
 		if (options?.sessionCookie?.expires === false) {
-			sessionCookieExpiresIn = new TimeSpan(365 * 2, "d");
+			sessionCookieExpiresIn = new TimeSpan(400, "d");
 		}
 		const baseSessionCookieAttributes: CookieAttributes = {
 			httpOnly: true,
