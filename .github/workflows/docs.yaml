@@ -2,7 +2,7 @@ name: "Publish v3 docs"
 on:
     push:
         branches:
-            - main
+            - v3
 
 env:
     CLOUDFLARE_API_TOKEN: ${{secrets.CLOUDFLARE_PAGES_API_TOKEN}}
