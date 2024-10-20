@@ -1,0 +1,15 @@
+{
+	"name": "lucia-next",
+	"scripts": {
+		"format": "prettier -w ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lucia-auth/next"
+	},
+	"author": "pilcrowOnPaper",
+	"license": "MIT",
+	"devDependencies": {
+		"prettier": "^3.0.3"
+	}
+}
