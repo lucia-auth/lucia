@@ -231,7 +231,7 @@ import { db, userTable, sessionTable } from "./db.js";
 
 // ...
 
-export async function invalidateSession(sessionId: string): void {
+export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
 }
 ```
