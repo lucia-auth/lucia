@@ -1,5 +1,11 @@
 # lucia
 
+## 3.2.2
+
+### Patch changes
+
+-   Fix cookie expiration.
+
 ## 3.2.1
 
 ### Patch changes
