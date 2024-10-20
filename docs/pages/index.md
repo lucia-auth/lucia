@@ -1,8 +1,10 @@
 ---
-title: "Lucia documentation"
+title: "Lucia v3 documentation"
 ---
 
-# Lucia documentation
+# Lucia v3 documentation
+
+**Lucia v3 will be deprecated by March 2025.**
 
 Lucia is an auth library for your server that abstracts away the complexity of handling sessions. It works alongside your database to provide an API that's easy to use, understand, and extend. [Get started →](/getting-started)
 
