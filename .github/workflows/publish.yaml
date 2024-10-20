@@ -28,4 +28,4 @@ jobs:
       - name: install wrangler
         run: npm i -g wrangler
       - name: deploy
-        run: wrangler pages deploy dist --project-name lucia-next --branch main
+        run: wrangler pages deploy dist --project-name lucia --branch main
