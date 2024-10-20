@@ -1,6 +1,0 @@
-node_modules
-.DS_Store
-pnpm-lock.yaml
-.vscode
-.idea
-*.p8
