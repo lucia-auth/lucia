@@ -1,11 +1,11 @@
 {
-	"name": "lucia-next",
+	"name": "lucia",
 	"scripts": {
 		"format": "prettier -w ."
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/lucia-auth/next"
+		"url": "https://github.com/lucia-auth/lucia"
 	},
 	"author": "pilcrowOnPaper",
 	"license": "MIT",
