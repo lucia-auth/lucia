@@ -317,6 +317,8 @@ export default async function Page() {
 }
 ```
 
+> Note: This code is not suitable for use in `layout.tsx` files. Layouts do not re-render on page transitions, so the authentication check won't run for each route change.
+
 ## Sign out
 
 Sign out users by invalidating their session with `Lucia.invalidateSession()`. Make sure to remove their session cookie by setting a blank session cookie created with `Lucia.createBlankSessionCookie()`.

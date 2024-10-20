@@ -248,7 +248,7 @@ export const validateRequest = cache(
 );
 ```
 
-This function can then be used in server components and form actions to get the current session and user.
+This function can then be used in server components and form actions to get the current session and user. 
 
 ```tsx
 import { redirect } from "next/navigation";
@@ -262,6 +262,8 @@ export default async function Page() {
 	return <h1>Hi, {user.username}!</h1>;
 }
 ```
+
+> Note: This code is not suitable for use in `layout.tsx` files. Layouts do not re-render on page transitions, so the authentication check won't run for each route change.
 
 ## Sign out
 
