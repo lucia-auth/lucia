@@ -6,7 +6,7 @@ title: "Tutorial: Username and password auth in Next.js Pages router"
 
 Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/nextjs-pages) page.
 
-An [example project](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/username-and-password) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/nextjs-pages/username-and-password).
+An [example project](https://github.com/lucia-auth/examples/tree/main/nextjs-pages/username-and-password) based on this tutorial is also available.
 
 ```
 npx degit https://github.com/lucia-auth/examples/nextjs-pages/username-and-password <directory_name>

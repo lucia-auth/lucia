@@ -6,7 +6,7 @@ title: "GitHub OAuth in Astro"
 
 Before starting, make sure you've set up your database and middleware as described in the [Getting started](/getting-started/astro) page.
 
-An [example project](https://github.com/lucia-auth/examples/tree/main/astro/github-oauth) based on this tutorial is also available. You can clone the example locally or [open it in StackBlitz](https://stackblitz.com/github/lucia-auth/examples/tree/main/astro/github-oauth).
+An [example project](https://github.com/lucia-auth/examples/tree/main/astro/github-oauth) based on this tutorial is also available.
 
 ```
 npx degit https://github.com/lucia-auth/examples/astro/github-oauth <directory_name>
