@@ -7,7 +7,6 @@ node_modules
 .env.*
 !.env.example
 /.vscode
-/.auri/*.md
 
 docs/dist
 packages/*/dist

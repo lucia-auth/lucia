@@ -248,7 +248,7 @@ export const validateRequest = cache(
 );
 ```
 
-This function can then be used in server components and form actions to get the current session and user. 
+This function can then be used in server components and form actions to get the current session and user.
 
 ```tsx
 import { redirect } from "next/navigation";

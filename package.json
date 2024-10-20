@@ -6,9 +6,7 @@
 		"publish-setup": "pnpm i --no-frozen-lockfile && cd packages/lucia && pnpm build && cd ../adapter-test && pnpm build && cd ../../",
 		"format": "pnpm exec prettier --write . --plugin=prettier-plugin-astro",
 		"format:docs": "pnpm exec prettier --write docs --plugin=prettier-plugin-astro",
-		"preinstall": "npx only-allow pnpm",
-		"auri.format": "pnpm format",
-		"auri.publish_setup": "pnpm publish-setup"
+		"preinstall": "npx only-allow pnpm"
 	},
 	"repository": {
 		"type": "git",
@@ -21,7 +19,6 @@
 		"@types/node": "~18.15.13",
 		"@typescript-eslint/eslint-plugin": "^5.59.6",
 		"@typescript-eslint/parser": "^5.59.6",
-		"auri": "^0.7.4",
 		"eslint": "^8.40.0",
 		"eslint-config-prettier": "^8.8.0",
 		"prettier": "^2.8.8",

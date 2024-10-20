@@ -13,8 +13,7 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test": "tsx tests/prisma.ts",
-		"test-setup": "prisma db push && prisma generate",
-		"auri.build": "pnpm build"
+		"test-setup": "prisma db push && prisma generate"
 	},
 	"keywords": [
 		"lucia",

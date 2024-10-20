@@ -14,8 +14,7 @@
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test.neon-http": "tsx tests/neon-http.ts",
 		"test.node-postgres": "tsx tests/node-postgres.ts",
-		"test.postgresjs": "tsx tests/postgresjs.ts",
-		"auri.build": "pnpm build"
+		"test.postgresjs": "tsx tests/postgresjs.ts"
 	},
 	"keywords": [
 		"lucia",

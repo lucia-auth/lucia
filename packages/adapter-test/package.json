@@ -11,8 +11,7 @@
 		"CHANGELOG.md"
 	],
 	"scripts": {
-		"build": "shx rm -rf ./dist/* && tsc",
-		"auri.build": "pnpm build"
+		"build": "shx rm -rf ./dist/* && tsc"
 	},
 	"keywords": [
 		"lucia",

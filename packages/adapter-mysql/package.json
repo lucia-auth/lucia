@@ -13,8 +13,7 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test.mysql2": "tsx tests/mysql2.ts",
-		"test.planetscale": "tsx tests/planetscale.ts",
-		"auri.build": "pnpm build"
+		"test.planetscale": "tsx tests/planetscale.ts"
 	},
 	"keywords": [
 		"lucia",

@@ -12,7 +12,6 @@
 	],
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
-		"auri.build": "pnpm build",
 		"test.mysql": "tsx tests/mysql.ts",
 		"test.postgresql": "tsx tests/postgresql.ts",
 		"test.sqlite": "tsx tests/sqlite.ts"

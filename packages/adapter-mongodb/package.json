@@ -13,8 +13,7 @@
 	"scripts": {
 		"build": "shx rm -rf ./dist/* && tsc",
 		"test.mongodb": "tsx tests/mongodb.ts",
-		"test.mongoose": "tsx tests/mongoose.ts",
-		"auri.build": "pnpm build"
+		"test.mongoose": "tsx tests/mongoose.ts"
 	},
 	"keywords": [
 		"lucia",
