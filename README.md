@@ -3,7 +3,7 @@
 **Link: [lucia-auth.com](https://lucia-auth.com)**
 
 > [!IMPORTANT]  
-> Lucia v3 will be deprecated by March 2025. Lucia is now a learning resource on implementing auth from scratch. See the [announcement]() for details and migration path. The source code for v3 is available in the `v3` branch.
+> Lucia v3 will be deprecated by March 2025. Lucia is now a learning resource on implementing auth from scratch. See the [announcement](https://github.com/lucia-auth/lucia/discussions/1714) for details and migration path. The source code for v3 is available in the `v3` branch.
 
 Lucia is an open source project to provide resources on implementing authentication with JavaScript and TypeScript.
 

@@ -4,6 +4,8 @@ title: "Lucia"
 
 # Lucia
 
+*Lucia is now a learning resource on implementing auth from scratch. See the [announcement](https://github.com/lucia-auth/lucia/discussions/1714) for details and migration path.*
+
 Lucia is an open source project to provide resources on implementing authentication with JavaScript and TypeScript.
 
 The main section is on implementing sessions with your database, library, and framework of choice. Using the API you just created, you can continue learning by going through the tutorials or by referencing one of the fully-fledged examples.
