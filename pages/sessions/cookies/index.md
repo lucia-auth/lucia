@@ -82,7 +82,7 @@ export function deleteSessionTokenCookie(response: HTTPResponse): void {
 
 ## Session validation
 
-Sessions can be validated by getting the cookie and using the `validateSession()` function we created. If the session is invalid, delete the session cookie. Importantly, we recommend setting a new session cookie after validation to persist the cookie for an extended time.
+Session tokens can be validated using the `validateSessionToken()` function from the [Basic session API](/sessions/basic-api/) page. If the session is invalid, delete the session cookie. Importantly, we recommend setting a new session cookie after validation to persist the cookie for an extended time.
 
 ```ts
 import {

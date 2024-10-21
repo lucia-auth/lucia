@@ -119,7 +119,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
 ## Session validation
 
-Sessions can be validated by getting the cookie and using the `validateSessionToken()` function we created.
+Session tokens can be validated using the `validateSessionToken()` function from the [Basic session API](/sessions/basic-api/) page.
 
 ```ts
 import { validateSessionToken } from "$lib/server/session";
