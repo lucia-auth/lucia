@@ -151,7 +151,7 @@ export function validateSessionToken(token: string): SessionValidationResult {
 		expiresAt: new Date(row[2] * 1000)
 	};
 	const user: User = {
-		id: row[3]
+		id: row[1]
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		db.execute("DELETE FROM session WHERE id = ?", session.id);
@@ -226,7 +226,7 @@ export function validateSessionToken(token: string): SessionValidationResult {
 		expiresAt: new Date(row[2] * 1000)
 	};
 	const user: User = {
-		id: row[3]
+		id: row[1]
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		db.execute("DELETE FROM session WHERE id = ?", session.id);
