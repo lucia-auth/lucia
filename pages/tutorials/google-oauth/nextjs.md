@@ -83,14 +83,15 @@ export async function GET(): Promise<Response> {
 	const codeVerifier = generateCodeVerifier();
 	const url = google.createAuthorizationURL(state, codeVerifier, ["openid", "profile"]);
 
-	(await cookies()).set("google_oauth_state", state, {
+	const cookieStore = await cookies();
+	cookieStore.set("google_oauth_state", state, {
 		path: "/",
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		maxAge: 60 * 10, // 10 minutes
 		sameSite: "lax"
 	});
-	(await cookies()).set("google_code_verifier", codeVerifier, {
+	cookieStore.set("google_code_verifier", codeVerifier, {
 		path: "/",
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
@@ -123,8 +124,9 @@ export async function GET(request: Request): Promise<Response> {
 	const url = new URL(request.url);
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
-	const storedState = (await cookies()).get("google_oauth_state")?.value ?? null;
-	const codeVerifier = (await cookies()).get("google_code_verifier")?.value ?? null;
+	const cookieStore = await cookies();
+	const storedState = cookieStore.get("google_oauth_state")?.value ?? null;
+	const codeVerifier = cookieStore.get("google_code_verifier")?.value ?? null;
 	if (code === null || state === null || storedState === null || codeVerifier === null) {
 		return new Response(null, {
 			status: 400
