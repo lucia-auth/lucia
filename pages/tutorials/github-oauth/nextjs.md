@@ -84,7 +84,7 @@ export async function GET(): Promise<Response> {
 	const state = generateState();
 	const url = github.createAuthorizationURL(state, []);
 
-	cookies().set("github_oauth_state", state, {
+	(await cookies()).set("github_oauth_state", state, {
 		path: "/",
 		secure: process.env.NODE_ENV === "production",
 		httpOnly: true,
@@ -117,7 +117,7 @@ export async function GET(request: Request): Promise<Response> {
 	const url = new URL(request.url);
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
-	const storedState = cookies().get("github_oauth_state")?.value ?? null;
+	const storedState = (await cookies()).get("github_oauth_state")?.value ?? null;
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
 			status: 400

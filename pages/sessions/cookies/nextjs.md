@@ -62,8 +62,8 @@ import { cookies } from "next/headers";
 
 // ...
 
-export function setSessionTokenCookie(token: string, expiresAt: Date): void {
-	cookies().set("session", token, {
+export async function setSessionTokenCookie(token: string, expiresAt: Date): Promise<void> {
+	(await cookies()).set("session", token, {
 		httpOnly: true,
 		sameSite: "lax",
 		secure: process.env.NODE_ENV === "production",
@@ -72,8 +72,8 @@ export function setSessionTokenCookie(token: string, expiresAt: Date): void {
 	});
 }
 
-export function deleteSessionTokenCookie(): void {
-	cookies().set("session", "", {
+export async function deleteSessionTokenCookie(): Promise<void> {
+	(await cookies()).set("session", "", {
 		httpOnly: true,
 		sameSite: "lax",
 		secure: process.env.NODE_ENV === "production",
@@ -82,6 +82,8 @@ export function deleteSessionTokenCookie(): void {
 	});
 }
 ```
+
+> Before Next.js 15, `cookies()` was synchronous. If you are using an older version, you should replace `(await cookies())` with `cookies()`, switch the return type to `void`, and remove the `async` keyword.
 
 Since we can't extend set cookies insides server components due to a limitation with React, we recommend continuously extending the cookie expiration inside middleware. However, this comes with its own issue. We can't detect if a new cookie was set inside server actions or route handlers from middleware. This becomes an issue if we need to assign a new session inside server actions (e.g. after updating the password) as the middleware cookie will override it. As such, we'll only extend the cookie expiration on GET requests.
 
@@ -154,7 +156,7 @@ import { cache } from "react";
 // ...
 
 export const getCurrentSession = cache(async (): Promise<SessionValidationResult> => {
-	const token = cookies().get("session")?.value ?? null;
+	const token = (await cookies()).get("session")?.value ?? null;
 	if (token === null) {
 		return { session: null, user: null };
 	}
@@ -162,6 +164,8 @@ export const getCurrentSession = cache(async (): Promise<SessionValidationResult
 	return result;
 });
 ```
+
+> On versions of Next.js below 15, replace `(await cookies())` with `cookies()`.
 
 This function can be used in server components, server actions, and route handlers (but importantly not middleware).
 
