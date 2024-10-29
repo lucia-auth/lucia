@@ -58,7 +58,8 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 
 export type SessionValidationResult =
 	| { session: Session; user: User }
-	| { session: null; user: null };
+	| { session: null; user: null }
+	| null;
 
 export interface Session {
 	id: string;
@@ -249,7 +250,8 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 
 export type SessionValidationResult =
 	| { session: Session; user: User }
-	| { session: null; user: null };
+	| { session: null; user: null }
+	| null;
 
 export interface Session {
 	id: string;
