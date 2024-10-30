@@ -4,7 +4,7 @@ title: "Lucia"
 
 # Lucia
 
-*Lucia is now a learning resource on implementing auth from scratch. See the [announcement](https://github.com/lucia-auth/lucia/discussions/1714) for details and migration path.*
+_Lucia is now a learning resource on implementing auth from scratch. See the [announcement](https://github.com/lucia-auth/lucia/discussions/1714) for details and migration path._
 
 Lucia is an open source project to provide resources on implementing authentication with JavaScript and TypeScript.
 

@@ -100,7 +100,6 @@ declare global {
 }
 
 export {};
-
 ```
 
 ```ts
