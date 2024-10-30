@@ -117,6 +117,7 @@ Create an Route Handlers in `app/login/google/callback/route.ts` to handle the c
 import { generateSessionToken, createSession, setSessionTokenCookie } from "@/lib/session";
 import { google } from "@/lib/oauth";
 import { cookies } from "next/headers";
+import { decodeIdToken } from "arctic";
 
 import type { OAuth2Tokens } from "arctic";
 
