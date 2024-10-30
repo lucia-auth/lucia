@@ -110,6 +110,7 @@ Create an API route in `routes/login/google/callback/+server.ts` to handle the c
 // routes/login/google/callback/+server.ts
 import { generateSessionToken, createSession, setSessionTokenCookie } from "$lib/server/session";
 import { google } from "$lib/server/oauth";
+import { decodeIdToken } from "arctic";
 
 import type { RequestEvent } from "@sveltejs/kit";
 import type { OAuth2Tokens } from "arctic";

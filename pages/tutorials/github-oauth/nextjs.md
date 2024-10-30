@@ -84,7 +84,8 @@ export async function GET(): Promise<Response> {
 	const state = generateState();
 	const url = github.createAuthorizationURL(state, []);
 
-	cookies().set("github_oauth_state", state, {
+	const cookieStore = await cookies();
+	cookieStore.set("github_oauth_state", state, {
 		path: "/",
 		secure: process.env.NODE_ENV === "production",
 		httpOnly: true,
@@ -117,7 +118,8 @@ export async function GET(request: Request): Promise<Response> {
 	const url = new URL(request.url);
 	const code = url.searchParams.get("code");
 	const state = url.searchParams.get("state");
-	const storedState = cookies().get("github_oauth_state")?.value ?? null;
+	const cookieStore = await cookies();
+	const storedState = cookieStore.get("github_oauth_state")?.value ?? null;
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
 			status: 400
@@ -153,7 +155,7 @@ export async function GET(request: Request): Promise<Response> {
 	if (existingUser !== null) {
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, existingUser.id);
-		setSessionTokenCookie(sessionToken, session.expiresAt);
+		await setSessionTokenCookie(sessionToken, session.expiresAt);
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -167,7 +169,7 @@ export async function GET(request: Request): Promise<Response> {
 
 	const sessionToken = generateSessionToken();
 	const session = await createSession(sessionToken, user.id);
-	setSessionTokenCookie(sessionToken, session.expiresAt);
+	await setSessionTokenCookie(sessionToken, session.expiresAt);
 	return new Response(null, {
 		status: 302,
 		headers: {
@@ -221,7 +223,7 @@ async function logout(): Promise<ActionResult> {
 	}
 
 	await invalidateSession(session.id);
-	deleteSessionTokenCookie();
+	await deleteSessionTokenCookie();
 	return redirect("/login");
 }
 

@@ -15,7 +15,7 @@ CSRF protection is a must when using cookies. From Astro v5.0, basic CSRF protec
 export default defineConfig({
 	output: "server",
 	security: {
-		checkOrigin: false
+		checkOrigin: true
 	}
 });
 ```
