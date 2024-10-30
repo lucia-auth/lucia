@@ -164,7 +164,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		await db.execute(
 			"UPDATE user_session SET expires_at = ? WHERE id = ?",
 			[
-				Math.floor(session.expiresAt / 1000),
+				Math.floor(session.expiresAt.getTime() / 1000),
 				session.id
 			]
 		);
@@ -243,7 +243,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		await db.execute(
 			"UPDATE user_session SET expires_at = ? WHERE id = ?",
 			[
-				Math.floor(session.expiresAt / 1000),
+				Math.floor(session.expiresAt.getTime() / 1000),
 				session.id
 			]
 		);
