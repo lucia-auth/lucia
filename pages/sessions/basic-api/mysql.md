@@ -185,7 +185,7 @@ Here's the full code:
 
 ```ts
 import { db } from "./db.js";
-import { encodeBase32LowerCaseNoPadding, encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
 export function generateSessionToken(): string {
