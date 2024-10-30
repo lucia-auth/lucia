@@ -19,7 +19,7 @@ CREATE TABLE user (
 CREATE TABLE user_session (
     id VARCHAR(255) NOT NULL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES user(id),
-    expires_at DATETIME NOT NULL,
+    expires_at DATETIME NOT NULL
 );
 ```
 

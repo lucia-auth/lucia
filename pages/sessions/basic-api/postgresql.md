@@ -148,7 +148,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	const session: Session = {
 		id: row[0],
 		userId: row[1],
-		expiresAt: new Date(row[2] * 1000)
+		expiresAt: row[2]
 	};
 	const user: User = {
 		id: row[3]
@@ -161,7 +161,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await db.execute(
 			"UPDATE user_session SET expires_at = ? WHERE id = ?",
-			Math.floor(session.expiresAt / 1000),
+			session.expiresAt,
 			session.id
 		);
 	}
@@ -223,7 +223,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	const session: Session = {
 		id: row[0],
 		userId: row[1],
-		expiresAt: new Date(row[2] * 1000)
+		expiresAt: row[2]
 	};
 	const user: User = {
 		id: row[3]
@@ -236,7 +236,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await db.execute(
 			"UPDATE user_session SET expires_at = ? WHERE id = ?",
-			Math.floor(session.expiresAt / 1000),
+			session.expiresAt,
 			session.id
 		);
 	}
