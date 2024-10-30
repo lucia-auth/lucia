@@ -148,7 +148,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	const session: Session = {
 		id: row[0],
 		userId: row[1],
-		expiresAt: row[3]
+		expiresAt: row[2]
 	};
 	const user: User = {
 		id: row[3]
@@ -223,7 +223,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	const session: Session = {
 		id: row[0],
 		userId: row[1],
-		expiresAt: row[3]
+		expiresAt: row[2]
 	};
 	const user: User = {
 		id: row[3]
