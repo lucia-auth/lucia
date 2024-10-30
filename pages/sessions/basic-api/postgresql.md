@@ -155,7 +155,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await db.execute("DELETE FROM user_session WHERE id = ?", session.id);
-		return null;
+		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
@@ -230,7 +230,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await db.execute("DELETE FROM user_session WHERE id = ?", session.id);
-		return null;
+		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
