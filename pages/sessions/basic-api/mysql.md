@@ -112,9 +112,11 @@ export async function createSession(token: string, userId: number): Promise<Sess
 	};
 	await db.execute(
 		"INSERT INTO user_session (id, user_id, expires_at) VALUES (?, ?, ?)",
-		session.id,
-		session.userId,
-		session.expiresAt
+		[
+			session.id,
+			session.userId,
+			session.expiresAt
+		]
 	);
 	return session;
 }
@@ -138,7 +140,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const row = await db.queryOne(
+	const row = await db.query(
 		"SELECT user_session.id, user_session.user_id, user_session.expires_at, user.id FROM user_session INNER JOIN user ON user.id = user_session.user_id WHERE id = ?",
 		sessionId
 	);
@@ -161,8 +163,10 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await db.execute(
 			"UPDATE user_session SET expires_at = ? WHERE id = ?",
-			Math.floor(session.expiresAt / 1000),
-			session.id
+			[
+				Math.floor(session.expiresAt / 1000),
+				session.id
+			]
 		);
 	}
 	return { session, user };
@@ -204,16 +208,18 @@ export async function createSession(token: string, userId: number): Promise<Sess
 	};
 	await db.execute(
 		"INSERT INTO user_session (id, user_id, expires_at) VALUES (?, ?, ?)",
-		session.id,
-		session.userId,
-		session.expiresAt
+		[
+			session.id,
+			session.userId,
+			session.expiresAt
+		]
 	);
 	return session;
 }
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const row = await db.queryOne(
+	const row = await db.query(
 		"SELECT user_session.id, user_session.user_id, user_session.expires_at, user.id FROM user_session INNER JOIN user ON user.id = user_session.user_id WHERE id = ?",
 		sessionId
 	);
@@ -236,8 +242,10 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await db.execute(
 			"UPDATE user_session SET expires_at = ? WHERE id = ?",
-			Math.floor(session.expiresAt / 1000),
-			session.id
+			[
+				Math.floor(session.expiresAt / 1000),
+				session.id
+			]
 		);
 	}
 	return { session, user };
