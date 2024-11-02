@@ -166,7 +166,7 @@ import { prisma } from "./db.js";
 // ...
 
 export async function invalidateSession(sessionId: string): void {
-	await prisma.session.delete(sessionId);
+	await prisma.session.delete({ where: { id: sessionId } });
 }
 ```
 
