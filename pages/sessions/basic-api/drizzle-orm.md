@@ -202,7 +202,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		.from(sessionTable)
 		.innerJoin(userTable, eq(sessionTable.userId, userTable.id))
 		.where(eq(sessionTable.id, sessionId));
-	if (result.length < 1) {
+	if (!result[0]) {
 		return { session: null, user: null };
 	}
 	const { user, session } = result[0];
@@ -271,7 +271,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 		.from(sessionTable)
 		.innerJoin(userTable, eq(sessionTable.userId, userTable.id))
 		.where(eq(sessionTable.id, sessionId));
-	if (result.length < 1) {
+	if (!result[0]) {
 		return { session: null, user: null };
 	}
 	const { user, session } = result[0];
