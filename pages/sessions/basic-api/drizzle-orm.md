@@ -47,6 +47,8 @@ import pg from "pg";
 import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/node-postgres";
 
+import type { InferSelectModel } from "drizzle-orm";
+
 const pool = new pg.Pool();
 const db = drizzle(pool);
 
@@ -75,6 +77,8 @@ export type Session = InferSelectModel<typeof sessionTable>;
 import sqlite from "better-sqlite3";
 import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
 import { drizzle } from "drizzle-orm/better-sqlite3";
+
+import type { InferSelectModel } from "drizzle-orm";
 
 const sqliteDB = sqlite(":memory:");
 const db = drizzle(sqliteDB);
