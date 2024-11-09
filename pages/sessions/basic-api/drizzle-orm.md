@@ -52,11 +52,11 @@ import type { InferSelectModel } from "drizzle-orm";
 const pool = new pg.Pool();
 const db = drizzle(pool);
 
-const userTable = pgTable("user", {
+export const userTable = pgTable("user", {
 	id: serial("id").primaryKey()
 });
 
-const sessionTable = pgTable("session", {
+export const sessionTable = pgTable("session", {
 	id: text("id").primaryKey(),
 	userId: integer("user_id")
 		.notNull()
@@ -83,11 +83,11 @@ import type { InferSelectModel } from "drizzle-orm";
 const sqliteDB = sqlite(":memory:");
 const db = drizzle(sqliteDB);
 
-const userTable = sqliteTable("user", {
+export const userTable = sqliteTable("user", {
 	id: integer("id").primaryKey()
 });
 
-const sessionTable = sqliteTable("session", {
+export const sessionTable = sqliteTable("session", {
 	id: text("id").primaryKey(),
 	userId: integer("user_id")
 		.notNull()
