@@ -165,7 +165,7 @@ import { prisma } from "./db.js";
 
 // ...
 
-export async function invalidateSession(sessionId: string): void {
+export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
 }
 ```
@@ -231,7 +231,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	return { session, user };
 }
 
-export async function invalidateSession(sessionId: string): void {
+export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.session.delete({ where: { id: sessionId } });
 }
 
