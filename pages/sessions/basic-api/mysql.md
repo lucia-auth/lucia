@@ -25,7 +25,7 @@ CREATE TABLE user_session (
 
 ## Install dependencies
 
-This page uses [Oslo](https://oslojs.dev) for various operations to support a wide range of runtimes. Oslo packages are fully-typed, lightweight, and has minimal dependencies. These packages are optional and can be replaced by runtime built-ins.
+This page uses [Oslo](https://oslojs.dev) for various operations to support a wide range of runtimes. Oslo packages are fully-typed, lightweight, and have minimal dependencies. These packages are optional and can be replaced by runtime built-ins.
 
 ```
 npm i @oslojs/encoding @oslojs/crypto
