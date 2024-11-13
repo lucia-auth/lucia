@@ -81,6 +81,7 @@ The example uses the Web Crypto API for generating random bytes, which is availa
 
 ```ts
 import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
+import crypto from "crypto";
 
 // ...
 
@@ -187,6 +188,7 @@ Here's the full code:
 import { db } from "./db.js";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
+import crypto from "crypto";
 
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
