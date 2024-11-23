@@ -125,13 +125,12 @@ import { sha256 } from "@oslojs/crypto/sha2";
 export function validateSessionToken(token: string): SessionValidationResult {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const user = await db.collection('users').findOne(
-		{'sessions.id': sessionId},
-		{ sessions: { $elemMatch: { id: sessionId } } }
+		{'sessions.id': sessionId}
 	)
 	if (user === null) {
 		return { session: null, user: null };
 	}
-	const session: Session = user.sessions[0]
+	const session: Session = user.sessions.find(s => s.id == sessionId)
 	if (Date.now() >= session.expiresAt.getTime()) {
 		db.collection('users').updateOne(
 			{'sessions.id': session.id}, 
