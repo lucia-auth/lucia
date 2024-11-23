@@ -49,8 +49,8 @@ export function invalidateSession(sessionId: string): void {
 }
 
 export type SessionValidationResult =  
-    | { user: User, session: Session } 
-    | { user: null, session: null }
+	| { user: User, session: Session } 
+	| { user: null, session: null }
 
 export interface Session {
 	id: string;
@@ -59,7 +59,7 @@ export interface Session {
 
 export interface User {
 	_id: ObjectId;
-    sessions: Session[];
+	sessions: Session[];
 }
 ```
 
@@ -101,7 +101,7 @@ export function createSession(token: string, userId: ObjectId): Session {
 		id: sessionId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-    db.collection('users').updateOne({_id: userId}, {$push: {sessions: session}})
+	db.collection('users').updateOne({_id: userId}, {$push: {sessions: session}})
 	return session;
 }
 ```
@@ -124,27 +124,27 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 export function validateSessionToken(token: string): SessionValidationResult {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-    const user = await db.collection('users').findOne(
-        {'sessions.id': sessionId},
-        { sessions: { $elemMatch: { id: sessionId } } }
-    )
+	const user = await db.collection('users').findOne(
+		{'sessions.id': sessionId},
+		{ sessions: { $elemMatch: { id: sessionId } } }
+	)
 	if (user === null) {
 		return { session: null, user: null };
 	}
 	const session: Session = user.sessions[0]
 	if (Date.now() >= session.expiresAt.getTime()) {
-        db.collection('users').updateOne(
-            {'sessions.id': session.id}, 
-            {$pull: {sessions: {id: session.id}}},
-        )
+		db.collection('users').updateOne(
+			{'sessions.id': session.id}, 
+			{$pull: {sessions: {id: session.id}}},
+		)
 		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-        db.collection('users').updateOne(
-            {'sessions.id': session.id}, 
-            {$set: {'sessions.$.expiresAt': session.expiresAt}},
-        )
+		db.collection('users').updateOne(
+			{'sessions.id': session.id}, 
+			{$set: {'sessions.$.expiresAt': session.expiresAt}},
+		)
 	}
 	return { session: user.session, user };
 }
@@ -158,10 +158,10 @@ import { db } from "./db.js";
 // ...
 
 export function invalidateSession(sessionId: string): void {
-    db.collection('users').updateOne(
-        {'sessions.id': sessionId}, 
-        {$pull: {sessions: {id: sessionId}}},
-    )
+	db.collection('users').updateOne(
+		{'sessions.id': sessionId}, 
+		{$pull: {sessions: {id: sessionId}}},
+	)
 }
 ```
 
@@ -185,39 +185,39 @@ export function createSession(token: string, userId: number): Session {
 		id: sessionId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-    db.collection('users').updateOne({_id: userId}, {$push: {sessions: session}})
+	db.collection('users').updateOne({_id: userId}, {$push: {sessions: session}})
 	return session;
 }
 
 export function validateSessionToken(token: string): SessionValidationResult {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-    const user = await db.collection('users').findOne({'sessions.id': sessionId})
+				const user = await db.collection('users').findOne({'sessions.id': sessionId})
 	if (user === null) {
 		return { session: null, user: null };
 	}
 	const session: Session = user.sessions.find(x => x.id == sessionId)
 	if (Date.now() >= session.expiresAt.getTime()) {
-        db.collection('users').updateOne(
-            {'sessions.id': session.id}, 
-            {$pull: {sessions: {id: session.id}}},
-        )
+		db.collection('users').updateOne(
+			{'sessions.id': session.id}, 
+			{$pull: {sessions: {id: session.id}}},
+		)
 		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-        db.collection('users').updateOne(
-            {'sessions.id': session.id}, 
-            {$set: {'sessions.$.expiresAt': session.expiresAt}},
-        )
+		db.collection('users').updateOne(
+			{'sessions.id': session.id}, 
+			{$set: {'sessions.$.expiresAt': session.expiresAt}},
+		)
 	}
 	return { session: user.session, user };
 }
 
 export function invalidateSession(sessionId: string): void {
-    db.collection('users').updateOne(
-        {'sessions.id': sessionId}, 
-        {$pull: {sessions: {id: sessionId}}},
-    )
+	db.collection('users').updateOne(
+		{'sessions.id': sessionId}, 
+		{$pull: {sessions: {id: sessionId}}},
+	)
 }
 
 export type SessionValidationResult =
@@ -231,7 +231,7 @@ export interface Session {
 
 export interface User {
 	id: number;
-    sessions: Session[]
+	sessions: Session[]
 }
 ```
 
