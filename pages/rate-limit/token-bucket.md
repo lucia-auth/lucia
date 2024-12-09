@@ -76,19 +76,19 @@ local fields = redis.call("HGETALL", key)
 
 if #fields == 0 then
 	local expiresInSeconds = cost * refillIntervalSeconds
-    redis.call("HSET", key, "count", max - cost, "refilled_at", now)
+	redis.call("HSET", key, "count", max - cost, "refilled_at", now)
 	redis.call("EXPIRE", key, expiresInSeconds)
-    return {1}
+	return {1}
 end
 
 local count = 0
 local refilledAt = 0
 for i = 1, #fields, 2 do
 	if fields[i] == "count" then
-        count = tonumber(fields[i+1])
-    elseif fields[i] == "refilled_at" then
-        refilledAt = tonumber(fields[i+1])
-    end
+		count = tonumber(fields[i+1])
+	elseif fields[i] == "refilled_at" then
+		refilledAt = tonumber(fields[i+1])
+	end
 end
 
 local refill = math.floor((now - refilledAt) / refillIntervalSeconds)
@@ -98,7 +98,7 @@ refilledAt = refilledAt + refill * refillIntervalSeconds
 if count < cost then
 	local expiresInSeconds = max * refillIntervalSeconds
 	redis.call("EXPIRE", key, expiresInSeconds)
-    return {0}
+	return {0}
 end
 
 count = count - cost
