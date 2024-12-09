@@ -96,8 +96,6 @@ count = math.min(count + refill, max)
 refilledAt = refilledAt + refill * refillIntervalSeconds
 
 if count < cost then
-	local expiresInSeconds = max * refillIntervalSeconds
-	redis.call("EXPIRE", key, expiresInSeconds)
 	return {0}
 end
 
