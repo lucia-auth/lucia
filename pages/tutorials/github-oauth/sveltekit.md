@@ -67,7 +67,6 @@ Create an API route in `routes/login/github/+server.ts`. Generate a new state an
 
 ```ts
 // routes/login/github/+server.ts
-import { redirect } from "@sveltejs/kit";
 import { generateState } from "arctic";
 import { github } from "$lib/server/oauth";
 
