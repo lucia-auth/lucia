@@ -37,7 +37,7 @@ npm i @oslojs/encoding @oslojs/crypto
 
 Here's what our API will look like. What each method does should be pretty self explanatory.
 
-If you just need the code full code without the explanation, skip to the end of this section.
+If you just need the full code without the explanation, skip to the end of this section.
 
 ```ts
 import type { User, Session } from "@prisma/client";
