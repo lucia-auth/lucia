@@ -56,6 +56,10 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export type SessionValidationResult =
 	| { session: Session; user: User }
 	| { session: null; user: null };
@@ -181,6 +185,23 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 }
 ```
 
+Additionally, we can invalidate all sessions for a specific user by checking their user ID and expiration times.
+
+```ts
+import { db } from "./db.js";
+
+// ...
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await db.execute(
+		"DELETE FROM user_session WHERE user_id = ? AND expires_at > ?",
+		userId,
+		new Date()
+	);
+}
+```
+
+
 Here's the full code:
 
 ```ts
@@ -245,6 +266,14 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.execute("DELETE FROM user_session WHERE id = ?", sessionId);
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await db.execute(
+		"DELETE FROM user_session WHERE user_id = ? AND expires_at > ?",
+		userId,
+		new Date()
+	);
 }
 
 export type SessionValidationResult =
