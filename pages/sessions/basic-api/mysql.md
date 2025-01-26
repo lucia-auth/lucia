@@ -201,7 +201,6 @@ export async function invalidateAllSessions(userId: number): Promise<void> {
 }
 ```
 
-
 Here's the full code:
 
 ```ts

@@ -132,6 +132,10 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export type SessionValidationResult =
 	| { session: Session; user: User }
 	| { session: null; user: null };
@@ -240,11 +244,26 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 }
 ```
 
+Additionally, we can invalidate all sessions for a specific user by checking their user ID and expiration times.
+
+```ts
+import { and, gt, eq } from "drizzle-orm";
+import { db, sessionTable } from "./db.js";
+
+// ...
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+    await db.delete(sessionTable).where(
+        and(eq(sessionTable.userId, userId), gt(sessionTable.expiresAt, new Date()))
+    );
+}
+```
+
 Here's the full code:
 
 ```ts
 import { db, userTable, sessionTable } from "./db.js";
-import { eq } from "drizzle-orm";
+import { and, gt, eq  } from "drizzle-orm";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
@@ -297,6 +316,12 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 
 export async function invalidateSession(sessionId: string): void {
 	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+    await db.delete(sessionTable).where(
+        and(eq(sessionTable.userId, userId), gt(sessionTable.expiresAt, new Date()))
+    );
 }
 
 export type SessionValidationResult =

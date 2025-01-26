@@ -58,6 +58,10 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export type SessionValidationResult =
 	| { session: Session; user: User }
 	| { session: null; user: null };
@@ -170,6 +174,25 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 }
 ```
 
+Additionally, we can invalidate all sessions for a specific user by checking their user ID and expiration times.
+
+```ts
+import { prisma } from "./db.js";
+
+// ...
+
+export async function invalidateAllSessions(userId: number): Promise <void> {
+    await prisma.session.deleteMany({
+        where: {
+            userId: userId,
+            expiresAt: {
+                gt: new Date(),
+            },
+        },
+    });
+}
+```
+
 Here's the full code:
 
 ```ts
@@ -233,6 +256,17 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
+}
+
+export async function invalidateAllSessions(userId: number): Promise <void> {
+    await prisma.session.deleteMany({
+        where: {
+            userId: userId,
+            expiresAt: {
+                gt: new Date(),
+            },
+        },
+    });
 }
 
 export type SessionValidationResult =
