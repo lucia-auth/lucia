@@ -33,6 +33,10 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export interface Session {
 	id: string;
 	userId: number;
@@ -90,6 +94,8 @@ export async function createSession(token: string, userId: number): Promise<Sess
 			EXAT: Math.floor(session.expiresAt / 1000)
 		}
 	);
+	await redis.sadd(`user_sessions:${userId}`, sessionId);
+
 	return session;
 }
 ```
@@ -108,12 +114,19 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
 
-export async function validateSessionToken(token: string): Promise<Session | null> {
+export async function validateSessionToken(token: string, userId: number): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
 		return null;
 	}
+
+	const isSessionValidForUser = await redis.sismember(`user_sessions:${userId}`, sessionId);
+	if (isSessionValidForUser !== 1) {
+        await redis.delete(`session:${sessionId}`);
+        return null;
+    }
+
 	const result = JSON.parse(item);
 	const session: Session = {
 		id: result.id,
@@ -122,6 +135,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await redis.delete(`session:${sessionId}`);
+		await redis.srem(`user_sessions:${userId}`, sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -149,8 +163,31 @@ import { redis } from "./redis.js";
 
 // ...
 
-export async function invalidateSession(sessionId: string): Promise<void> {
+export async function invalidateSession(sessionId: string, userId: number): Promise<void> {
 	await redis.delete(`session:${sessionId}`);
+	await redis.srem(`user_sessions:${userId}`, sessionId);
+}
+```
+
+Additionally, we can invalidate all sessions for a specific user by retrieving all session IDs associated with the user from Redis and then deleting them in a batch operation.
+
+```ts
+import { redis } from "./redis.js";
+
+// ...
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	const sessionIds = await redis.smembers(`user_sessions:${userId}`);
+    if (sessionIds.length === 0) return;
+
+	const pipeline = redis.pipeline();
+
+	for (const sessionId of sessionIds) {
+        pipeline.unlink(`session:${sessionId}`);
+    }
+	pipeline.unlink(`user_sessions:${userId}`)
+
+	await pipeline.exec();
 }
 ```
 
@@ -186,15 +223,24 @@ export async function createSession(token: string, userId: number): Promise<Sess
 			EXAT: Math.floor(session.expiresAt / 1000)
 		}
 	);
+	await redis.sadd(`user_sessions:${userId}`, sessionId);
+
 	return session;
 }
 
-export async function validateSessionToken(token: string): Promise<Session | null> {
+export async function validateSessionToken(token: string, userId: number): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
 		return null;
 	}
+
+	const isSessionValidForUser = await redis.sismember(`user_sessions:${userId}`, sessionId);
+	if (isSessionValidForUser !== 1) {
+        await redis.delete(`session:${sessionId}`);
+        return null;
+    }
+
 	const result = JSON.parse(item);
 	const session: Session = {
 		id: result.id,
@@ -203,6 +249,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await redis.delete(`session:${sessionId}`);
+		await redis.srem(`user_sessions:${userId}`, sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -222,8 +269,23 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	return session;
 }
 
-export async function invalidateSession(sessionId: string): Promise<void> {
+export async function invalidateSession(sessionId: string, userId: number): Promise<void> {
 	await redis.delete(`session:${sessionId}`);
+	await redis.srem(`user_sessions:${userId}`, sessionId);
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	const sessionIds = await redis.smembers(`user_sessions:${userId}`);
+    if (sessionIds.length === 0) return;
+
+	const pipeline = redis.pipeline();
+
+	for (const sessionId of sessionIds) {
+        pipeline.unlink(`session:${sessionId}`);
+    }
+	pipeline.unlink(`user_sessions:${userId}`)
+
+	await pipeline.exec();
 }
 
 export interface Session {
