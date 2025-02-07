@@ -4,10 +4,10 @@ title: "Mongoose"
 
 # Mongoose
 
-You can use the [MongoDB adapter](/database/mongodb) from the `@lucia-auth/adapter-mongodb` package with Mongoose.
+You can use the [MongoDB adapter](/database/mongodb) from the `@lifeworld/adapter-mongodb` package with Mongoose.
 
 ```
-npm install @lucia-auth/adapter-mongodb
+npm install @lifeworld/adapter-mongodb
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ User ID can be numeric or object ID (see [Define user ID type](/basics/users#def
 
 ```ts
 import { Lucia } from "lucia";
-import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
+import { MongodbAdapter } from "@lifeworld/adapter-mongodb";
 import mongoose from "mongoose";
 
 await mongoose.connect();

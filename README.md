@@ -1,5 +1,10 @@
 # Lucia
 
+THIS IS A FORK FROM LUCIA: ORIGINAL SOURCE CODE HERE:
+https://github.com/lucia-auth/lucia
+
+s.o pilcrow n em
+
 Lucia is an auth library written in TypeScript that abstracts away the complexity of handling sessions. It works alongside your database to provide an API that's easy to use, understand, and extend.
 
 -   No more endless configuration and callbacks
@@ -26,7 +31,7 @@ Lucia is an open source library released under the MIT license, with the help of
 
 **[Examples](https://github.com/lucia-auth/examples)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
+**[Changelog](https://github.com/1ifeworld/lucia/blob/main/packages/lucia/CHANGELOG.md)**
 
 ## Installation
 

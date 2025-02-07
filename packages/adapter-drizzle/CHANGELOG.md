@@ -1,4 +1,4 @@
-# @lucia-auth/adapter-drizzle
+# @lifeworld/adapter-drizzle
 
 ## 1.1.0
 

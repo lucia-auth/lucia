@@ -12,7 +12,7 @@ See the [MySQL](/database/mysql) page for the schema.
 
 ```ts
 import { Lucia } from "lucia";
-import { Mysql2Adapter } from "@lucia-auth/adapter-mysql";
+import { Mysql2Adapter } from "@lifeworld/adapter-mysql";
 
 import { createPool } from "mysql2/promise";
 import { Kysely, MysqlDialect } from "kysely";
@@ -49,7 +49,7 @@ See the [PostgreSQL](/database/postgresql) page for the schema.
 
 ```ts
 import { Lucia } from "lucia";
-import { NodePostgresAdapter } from "@lucia-auth/adapter-postgresql";
+import { NodePostgresAdapter } from "@lifeworld/adapter-postgresql";
 
 import { Pool } from "pg";
 import { Kysely, PostgresDialect } from "kysely";
@@ -86,7 +86,7 @@ See the [SQLite](/database/sqlite) page for the schema.
 
 ```ts
 import { Lucia } from "lucia";
-import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
+import { BetterSqlite3Adapter } from "@lifeworld/adapter-sqlite";
 
 import sqlite from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";

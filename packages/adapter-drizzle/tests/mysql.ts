@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { DrizzleMySQLAdapter } from "../src/drivers/mysql.js";
 import mysql from "mysql2/promise";
 

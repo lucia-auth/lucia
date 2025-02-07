@@ -4,10 +4,10 @@ title: "Prisma"
 
 # Prisma
 
-The `@lucia-auth/adapter-prisma` package provides adapters for Prisma.
+The `@lifeworld/adapter-prisma` package provides adapters for Prisma.
 
 ```
-npm install @lucia-auth/adapter-prisma
+npm install @lifeworld/adapter-prisma
 ```
 
 ## Schema
@@ -36,7 +36,7 @@ model Session {
 `PrismaAdapter` takes a session and user model.
 
 ```ts
-import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
+import { PrismaAdapter } from "@lifeworld/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();

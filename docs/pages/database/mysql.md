@@ -4,13 +4,13 @@ title: "MySQL"
 
 # MySQL
 
-`@lucia-auth/adapter-mysql` package provides adapters for MySQL drivers:
+`@lifeworld/adapter-mysql` package provides adapters for MySQL drivers:
 
 -   `mysql2`
 -   PlanetScale serverless
 
 ```
-npm install @lucia-auth/adapter-mysql
+npm install @lifeworld/adapter-mysql
 ```
 
 ## Schema
@@ -39,7 +39,7 @@ CREATE TABLE user_session (
 
 ```ts
 import { Lucia } from "lucia";
-import { Mysql2Adapter } from "@lucia-auth/adapter-mysql";
+import { Mysql2Adapter } from "@lifeworld/adapter-mysql";
 import mysql from "mysql2/promise";
 
 const pool = mysql.createPool();
@@ -56,7 +56,7 @@ const adapter = new Mysql2Adapter(pool, {
 
 ```ts
 import { Lucia } from "lucia";
-import { PlanetScaleAdapter } from "@lucia-auth/adapter-mysql";
+import { PlanetScaleAdapter } from "@lifeworld/adapter-mysql";
 import { Client } from "@planetscale/database";
 
 const client = new Client();

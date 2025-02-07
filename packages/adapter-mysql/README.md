@@ -1,4 +1,4 @@
-# `@lucia-auth/adapter-mysql`
+# `@lifeworld/adapter-mysql`
 
 MySQL adapter for Lucia.
 
@@ -6,7 +6,7 @@ MySQL adapter for Lucia.
 
 **[Lucia documentation](https://v3.lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-mysql/CHANGELOG.md)**
+**[Changelog](https://github.com/1ifeworld/lucia/blob/main/packages/adapter-mysql/CHANGELOG.md)**
 
 ## Supported drivers
 
@@ -16,9 +16,9 @@ MySQL adapter for Lucia.
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-postgresql
-pnpm add @lucia-auth/adapter-postgresql
-yarn add @lucia-auth/adapter-postgresql
+npm install @lifeworld/adapter-postgresql
+pnpm add @lifeworld/adapter-postgresql
+yarn add @lifeworld/adapter-postgresql
 ```
 
 ## Testing

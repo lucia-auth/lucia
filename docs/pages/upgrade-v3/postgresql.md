@@ -11,13 +11,13 @@ title: "Upgrade your PostgreSQL database to v3"
 Install the latest version of the PostgreSQL adapter package.
 
 ```
-npm install @lucia-auth/adapter-postgresql
+npm install @lifeworld/adapter-postgresql
 ```
 
 Initialize the adapter:
 
 ```ts
-import { NodePostgresAdapter, PostgresJsAdapter } from "@lucia-auth/adapter-postgresql";
+import { NodePostgresAdapter, PostgresJsAdapter } from "@lifeworld/adapter-postgresql";
 
 // previously named `pg` adapter
 new NodePostgresAdapter(pool, {

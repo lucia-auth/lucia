@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { NeonHTTPAdapter } from "../src/drivers/neon-http.js";
 import dotenv from "dotenv";
 import { resolve } from "path";

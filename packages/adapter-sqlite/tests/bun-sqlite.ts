@@ -1,5 +1,5 @@
 /// <reference types="bun-types" />
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { BunSQLiteAdapter } from "../src/drivers/bun-sqlite.js";
 import { Database } from "bun:sqlite";
 

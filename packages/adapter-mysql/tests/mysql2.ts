@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { Mysql2Adapter } from "../src/drivers/mysql2.js";
 import mysql from "mysql2/promise";
 

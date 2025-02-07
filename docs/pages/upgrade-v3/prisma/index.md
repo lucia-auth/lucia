@@ -9,14 +9,14 @@ title: "Upgrade your Prisma project to v3"
 Install the latest version of the Prisma adapter.
 
 ```
-npm install @lucia-auth/adapter-prisma
+npm install @lifeworld/adapter-prisma
 ```
 
 Initialize the adapter:
 
 ```ts
 import { PrismaClient } from "@prisma/client";
-import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
+import { PrismaAdapter } from "@lifeworld/adapter-prisma";
 
 const client = new PrismaClient();
 

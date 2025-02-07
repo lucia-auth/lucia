@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { BetterSqlite3Adapter } from "../src/drivers/better-sqlite3.js";
 import sqlite from "better-sqlite3";
 

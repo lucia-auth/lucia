@@ -1,5 +1,5 @@
 {
-	"name": "@lucia-auth/adapter-mongodb",
+	"name": "@lifeworld/adapter-mongodb",
 	"version": "1.0.3",
 	"description": "MongoDB adapter for Lucia",
 	"main": "dist/index.js",
@@ -27,7 +27,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"url": "https://github.com/1ifeworld/lucia",
 		"directory": "packages/adapter-mongodb"
 	},
 	"author": "pilcrowonpaper",
@@ -40,7 +40,7 @@
 		"mongodb": "4.x || 6.x"
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "workspace:*",
+		"@lifeworld/adapter-test": "workspace:*",
 		"dotenv": "^16.0.3",
 		"lucia": "workspace:*",
 		"mongodb": "^6.3.0",

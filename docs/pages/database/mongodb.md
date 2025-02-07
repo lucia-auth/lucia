@@ -4,10 +4,10 @@ title: "MongoDB"
 
 # MongoDB
 
-The `@lucia-auth/adapter-mongodb` package provides adapters for MongoDB.
+The `@lifeworld/adapter-mongodb` package provides adapters for MongoDB.
 
 ```
-npm install @lucia-auth/adapter-mongodb
+npm install @lifeworld/adapter-mongodb
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ User ID can be numeric or object ID (see [Define user ID type](/basics/users#def
 
 ```ts
 import { Lucia } from "lucia";
-import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
+import { MongodbAdapter } from "@lifeworld/adapter-mongodb";
 import { Collection, MongoClient } from "mongodb";
 
 const client = new MongoClient();

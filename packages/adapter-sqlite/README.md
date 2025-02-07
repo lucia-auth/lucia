@@ -1,4 +1,4 @@
-# `@lucia-auth/adapter-sqlite`
+# `@lifeworld/adapter-sqlite`
 
 SQLite adapter for Lucia.
 
@@ -6,7 +6,7 @@ SQLite adapter for Lucia.
 
 **[Lucia documentation](https://v3.lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-sqlite/CHANGELOG.md)**
+**[Changelog](https://github.com/1ifeworld/lucia/blob/main/packages/adapter-sqlite/CHANGELOG.md)**
 
 ## Supported drivers
 
@@ -18,9 +18,9 @@ SQLite adapter for Lucia.
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-sqlite
-pnpm add @lucia-auth/adapter-sqlite
-yarn add @lucia-auth/adapter-sqlite
+npm install @lifeworld/adapter-sqlite
+pnpm add @lifeworld/adapter-sqlite
+yarn add @lifeworld/adapter-sqlite
 ```
 
 ## Testing

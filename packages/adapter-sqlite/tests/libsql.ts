@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { LibSQLAdapter } from "../src/drivers/libsql.js";
 import { createClient } from "@libsql/client";
 import fs from "fs/promises";

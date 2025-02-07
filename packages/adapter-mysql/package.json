@@ -1,5 +1,5 @@
 {
-	"name": "@lucia-auth/adapter-mysql",
+	"name": "@lifeworld/adapter-mysql",
 	"version": "3.0.2",
 	"description": "MySQL adapter for Lucia",
 	"main": "dist/index.js",
@@ -28,7 +28,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"url": "https://github.com/1ifeworld/lucia",
 		"directory": "packages/adapter-mysql"
 	},
 	"author": "pilcrowonpaper",
@@ -50,7 +50,7 @@
 		}
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "workspace:*",
+		"@lifeworld/adapter-test": "workspace:*",
 		"@planetscale/database": "^1.8.0",
 		"dotenv": "^16.0.3",
 		"lucia": "workspace:*",

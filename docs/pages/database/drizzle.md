@@ -4,10 +4,10 @@ title: "Drizzle ORM"
 
 # Drizzle ORM
 
-Adapters for Drizzle ORM are provided by `@lucia-auth/adapter-drizzle`. Supports MySQL, PostgreSQL, and SQLite. You're free to rename the underlying table and column names as long as the field names are the same (e.g. `expiresAt`).
+Adapters for Drizzle ORM are provided by `@lifeworld/adapter-drizzle`. Supports MySQL, PostgreSQL, and SQLite. You're free to rename the underlying table and column names as long as the field names are the same (e.g. `expiresAt`).
 
 ```
-npm install @lucia-auth/adapter-drizzle
+npm install @lifeworld/adapter-drizzle
 ```
 
 ## MySQL
@@ -17,7 +17,7 @@ npm install @lucia-auth/adapter-drizzle
 User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
 
 ```ts
-import { DrizzleMySQLAdapter } from "@lucia-auth/adapter-drizzle";
+import { DrizzleMySQLAdapter } from "@lifeworld/adapter-drizzle";
 
 import mysql from "mysql2/promise";
 import { mysqlTable, varchar, datetime } from "drizzle-orm/mysql-core";
@@ -54,7 +54,7 @@ const adapter = new DrizzleMySQLAdapter(db, sessionTable, userTable);
 User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
 
 ```ts
-import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
+import { DrizzlePostgreSQLAdapter } from "@lifeworld/adapter-drizzle";
 
 import pg from "pg";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
@@ -88,7 +88,7 @@ const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
 User ID can be numeric (see [Define user ID type](/basics/users#define-user-id-type)) but session ID must be a string type.
 
 ```ts
-import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
+import { DrizzleSQLiteAdapter } from "@lifeworld/adapter-drizzle";
 
 import sqlite from "better-sqlite3";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";

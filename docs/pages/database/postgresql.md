@@ -6,14 +6,14 @@ title: "PostgreSQL"
 
 > If you use Drizzle ORM in your project, use the [Drizzle adapter](https://lucia-auth.com/database/drizzle#postgresql) instead as Drizzle ORM overrides how your database driver handles dates.
 
-`@lucia-auth/adapter-postgresql` package provides adapters for PostgreSQL drivers:
+`@lifeworld/adapter-postgresql` package provides adapters for PostgreSQL drivers:
 
 -   Neon HTTP serverless driver (`@neondatabase/serverless`)
 -   node-postgres (`pg`)
 -   Postgres.js (`postgres`)
 
 ```
-npm install @lucia-auth/adapter-postgresql
+npm install @lifeworld/adapter-postgresql
 ```
 
 ## Schema
@@ -40,7 +40,7 @@ CREATE TABLE user_session (
 
 ```ts
 import { Lucia } from "lucia";
-import { NeonHTTPAdapter } from "@lucia-auth/adapter-postgresql";
+import { NeonHTTPAdapter } from "@lifeworld/adapter-postgresql";
 import { neon } from "@neondatabase/serverless";
 
 const sql = neon();
@@ -57,7 +57,7 @@ const adapter = new NeonHTTPAdapter(sql, {
 
 ```ts
 import { Lucia } from "lucia";
-import { NodePostgresAdapter } from "@lucia-auth/adapter-postgresql";
+import { NodePostgresAdapter } from "@lifeworld/adapter-postgresql";
 import pg from "pg";
 
 const pool = new pg.Pool();
@@ -74,7 +74,7 @@ const adapter = new NodePostgresAdapter(pool, {
 
 ```ts
 import { Lucia } from "lucia";
-import { PostgresJsAdapter } from "@lucia-auth/adapter-postgresql";
+import { PostgresJsAdapter } from "@lifeworld/adapter-postgresql";
 import postgres from "postgres";
 
 const sql = postgres();

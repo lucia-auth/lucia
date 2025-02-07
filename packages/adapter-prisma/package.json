@@ -1,5 +1,5 @@
 {
-	"name": "@lucia-auth/adapter-prisma",
+	"name": "@lifeworld/adapter-prisma",
 	"version": "4.0.1",
 	"description": "Prisma adapter for Lucia",
 	"main": "dist/index.js",
@@ -31,7 +31,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"url": "https://github.com/1ifeworld/lucia",
 		"directory": "packages/adapter-prisma"
 	},
 	"author": "pilcrowonpaper",
@@ -45,7 +45,7 @@
 	},
 	"devDependencies": {
 		"lucia": "workspace:*",
-		"@lucia-auth/adapter-test": "workspace:*",
+		"@lifeworld/adapter-test": "workspace:*",
 		"@prisma/client": "^5.0.0",
 		"prisma": "^4.9.0",
 		"tsx": "^3.12.6"

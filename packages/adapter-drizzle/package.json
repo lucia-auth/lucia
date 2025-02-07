@@ -1,5 +1,5 @@
 {
-	"name": "@lucia-auth/adapter-drizzle",
+	"name": "@lifeworld/adapter-drizzle",
 	"version": "1.1.0",
 	"description": "Drizzle ORM adapter for Lucia",
 	"main": "dist/index.js",
@@ -27,7 +27,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pilcrowOnPaper/lucia",
+		"url": "https://github.com/1ifeworld/lucia",
 		"directory": "packages/adapter-drizzle"
 	},
 	"author": "pilcrowonpaper",
@@ -40,7 +40,7 @@
 		"drizzle-orm": ">= 0.29 <1"
 	},
 	"devDependencies": {
-		"@lucia-auth/adapter-test": "workspace:*",
+		"@lifeworld/adapter-test": "workspace:*",
 		"@types/better-sqlite3": "^7.6.3",
 		"better-sqlite3": "^8.4.0",
 		"dotenv": "^16.0.3",

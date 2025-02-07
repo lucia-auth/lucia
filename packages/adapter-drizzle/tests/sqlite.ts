@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { DrizzleSQLiteAdapter } from "../src/drivers/sqlite.js";
 import sqlite from "better-sqlite3";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";

@@ -14,12 +14,12 @@ body:
           description: What package is affected?
           options:
               - lucia
-              - ​@lucia-auth/adapter-test
-              - ​@lucia-auth/adapter-mongodb
-              - ​@lucia-auth/adapter-mysql
-              - ​@lucia-auth/adapter-postgresql
-              - ​@lucia-auth/adapter-prisma
-              - ​@lucia-auth/adapter-sqlite
+              - ​@lifeworld/adapter-test
+              - ​@lifeworld/adapter-mongodb
+              - ​@lifeworld/adapter-mysql
+              - ​@lifeworld/adapter-postgresql
+              - ​@lifeworld/adapter-prisma
+              - ​@lifeworld/adapter-sqlite
               - ​@lucia-auth/session-drizzle
       validations:
           required: true

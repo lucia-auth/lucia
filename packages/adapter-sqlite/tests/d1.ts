@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { D1Adapter } from "../src/drivers/d1.js";
 import { D1Database, D1DatabaseAPI } from "@miniflare/d1";
 import sqlite from "better-sqlite3";

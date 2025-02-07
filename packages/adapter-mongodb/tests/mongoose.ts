@@ -1,4 +1,4 @@
-import { databaseUser, testAdapter } from "@lucia-auth/adapter-test";
+import { databaseUser, testAdapter } from "@lifeworld/adapter-test";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { resolve } from "path";

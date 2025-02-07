@@ -1,4 +1,4 @@
-# @lucia-auth/adapter-mongodb
+# @lifeworld/adapter-mongodb
 
 ## 1.0.3
 

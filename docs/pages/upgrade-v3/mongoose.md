@@ -11,13 +11,13 @@ Read this guide carefully as some parts depend on your current structure (**espe
 The Mongoose adapter has been replaced with the MongoDB adapter.
 
 ```
-npm install @lucia-auth/adapter-mongodb
+npm install @lifeworld/adapter-mongodb
 ```
 
 Initialize the adapter:
 
 ```ts
-import { MongoDBAdapter } from "@lucia-auth/adapter-mongodb";
+import { MongoDBAdapter } from "@lifeworld/adapter-mongodb";
 import mongoose from "mongoose";
 
 const adapter = new MongodbAdapter(

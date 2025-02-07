@@ -4,7 +4,7 @@ title: "SQLite"
 
 # SQLite
 
-The `@lucia-auth/adapter-sqlite` package provides adapters for SQLites drivers:
+The `@lifeworld/adapter-sqlite` package provides adapters for SQLites drivers:
 
 -   `better-sqlite3`
 -   Bun SQLite (`bun:sqlite`)
@@ -12,7 +12,7 @@ The `@lucia-auth/adapter-sqlite` package provides adapters for SQLites drivers:
 -   LibSQL (Turso)
 
 ```
-npm install @lucia-auth/adapter-sqlite
+npm install @lifeworld/adapter-sqlite
 ```
 
 ## Schema
@@ -40,7 +40,7 @@ CREATE TABLE session (
 
 ```ts
 import { Lucia } from "lucia";
-import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
+import { BetterSqlite3Adapter } from "@lifeworld/adapter-sqlite";
 import sqlite from "better-sqlite3";
 
 const db = sqlite();
@@ -57,7 +57,7 @@ const adapter = new BetterSqlite3Adapter(db, {
 
 ```ts
 import { Lucia } from "lucia";
-import { BunSQLiteAdapter } from "@lucia-auth/adapter-sqlite";
+import { BunSQLiteAdapter } from "@lifeworld/adapter-sqlite";
 import { Database } from "bun:sqlite";
 
 const db = new Database();
@@ -76,7 +76,7 @@ Since the D1 binding is included with the request, create an `initializeLucia()`
 
 ```ts
 import { Lucia } from "lucia";
-import { D1Adapter } from "@lucia-auth/adapter-sqlite";
+import { D1Adapter } from "@lifeworld/adapter-sqlite";
 
 export function initializeLucia(D1: D1Database) {
 	const adapter = new D1Adapter(D1, {
@@ -99,7 +99,7 @@ declare module "lucia" {
 
 ```ts
 import { Lucia } from "lucia";
-import { LibSQLAdapter } from "@lucia-auth/adapter-sqlite";
+import { LibSQLAdapter } from "@lifeworld/adapter-sqlite";
 import { createClient } from "@libsql/client";
 
 const db = createClient({

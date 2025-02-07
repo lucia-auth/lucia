@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { PlanetScaleAdapter } from "../src/drivers/planetscale.js";
 import { connect } from "@planetscale/database";
 

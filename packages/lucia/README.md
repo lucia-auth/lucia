@@ -4,7 +4,7 @@ An open source auth library that abstracts away the complexity of handling sessi
 
 **[Documentation](https://v3.lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/lucia/CHANGELOG.md)**
+**[Changelog](https://github.com/1ifeworld/lucia/blob/main/packages/lucia/CHANGELOG.md)**
 
 ## Installation
 

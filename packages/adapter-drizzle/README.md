@@ -1,4 +1,4 @@
-# `@lucia-auth/adapter-drizzle`
+# `@lifeworld/adapter-drizzle`
 
 [Drizzle ORM](https://orm.drizzle.team) adapter for Lucia.
 
@@ -6,14 +6,14 @@
 
 **[Lucia documentation](https://v3.lucia-auth.com)**
 
-**[Changelog](https://github.com/pilcrowOnPaper/lucia/blob/main/packages/adapter-drizzle/CHANGELOG.md)**
+**[Changelog](https://github.com/1ifeworld/lucia/blob/main/packages/adapter-drizzle/CHANGELOG.md)**
 
 ## Installation
 
 ```
-npm install @lucia-auth/adapter-drizzle
-pnpm add @lucia-auth/adapter-drizzle
-yarn add @lucia-auth/adapter-drizzle
+npm install @lifeworld/adapter-drizzle
+pnpm add @lifeworld/adapter-drizzle
+yarn add @lifeworld/adapter-drizzle
 ```
 
 ## Testing

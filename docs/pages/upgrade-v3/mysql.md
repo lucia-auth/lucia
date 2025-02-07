@@ -11,13 +11,13 @@ title: "Upgrade your MySQL database to v3"
 Install the latest version of the MySQL adapter package.
 
 ```
-npm install @lucia-auth/adapter-mysql
+npm install @lifeworld/adapter-mysql
 ```
 
 Initialize the adapter:
 
 ```ts
-import { Mysql2Adapter, PlanetScaleAdapter } from "@lucia-auth/adapter-mysql";
+import { Mysql2Adapter, PlanetScaleAdapter } from "@lifeworld/adapter-mysql";
 
 new Mysql2Adapter(pool, {
 	// table names

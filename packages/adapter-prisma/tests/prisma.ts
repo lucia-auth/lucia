@@ -1,4 +1,4 @@
-import { testAdapter, databaseUser } from "@lucia-auth/adapter-test";
+import { testAdapter, databaseUser } from "@lifeworld/adapter-test";
 import { PrismaClient } from "@prisma/client";
 
 import { PrismaAdapter } from "../src/index.js";

@@ -11,7 +11,7 @@ title: "Upgrade your SQLite database to v3"
 Install the latest version of the SQLite adapter package.
 
 ```
-npm install @lucia-auth/adapter-sqlite
+npm install @lifeworld/adapter-sqlite
 ```
 
 Initialize the adapter:
@@ -21,7 +21,7 @@ import {
 	BetterSqlite3Adapter,
 	CloudflareD1Adapter,
 	LibSQLAdapter
-} from "@lucia-auth/adapter-sqlite";
+} from "@lifeworld/adapter-sqlite";
 
 new BetterSqlite3Adapter(db, {
 	// table names
