@@ -295,7 +295,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 	return { session, user };
 }
 
-export async function invalidateSession(sessionId: string): void {
+export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
 }
 
