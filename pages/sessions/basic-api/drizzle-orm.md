@@ -168,6 +168,8 @@ import { eq } from "drizzle-orm";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
+import type { User, Session } from "./db.js";
+
 // ...
 
 export async function createSession(token: string, userId: number): Promise<Session> {
@@ -196,6 +198,8 @@ import { db, userTable, sessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
+
+import type { User, Session } from "./db.js";
 
 // ...
 
