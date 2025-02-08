@@ -20,7 +20,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import type { InferSelectModel } from "drizzle-orm";
 
 const connection = await mysql.createConnection();
-const db = drizzle(connection);
+export const db = drizzle(connection);
 
 export const userTable = mysqlTable("user", {
 	id: int("id").primaryKey().autoincrement()
@@ -81,7 +81,7 @@ import { drizzle } from "drizzle-orm/better-sqlite3";
 import type { InferSelectModel } from "drizzle-orm";
 
 const sqliteDB = sqlite(":memory:");
-const db = drizzle(sqliteDB);
+export const db = drizzle(sqliteDB);
 
 export const userTable = sqliteTable("user", {
 	id: integer("id").primaryKey()
