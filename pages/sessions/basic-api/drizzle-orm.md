@@ -50,7 +50,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import type { InferSelectModel } from "drizzle-orm";
 
 const pool = new pg.Pool();
-const db = drizzle(pool);
+export const db = drizzle(pool);
 
 export const userTable = pgTable("user", {
 	id: serial("id").primaryKey()
