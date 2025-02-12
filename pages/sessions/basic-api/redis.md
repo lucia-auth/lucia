@@ -67,7 +67,7 @@ export function generateSessionToken(): string {
 
 > You can use UUID v4 here but the RFC does not mandate that IDs are generated using a secure random source. Do not use libraries that are not clear on the source they use. Do not use other UUID versions as they do not offer the same entropy size as v4. Consider using [`Crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID).
 
-The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days.
+The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days. We'll also keep a list of sessions linked to each user.
 
 ```ts
 import { redis } from "./redis.js";
@@ -123,9 +123,9 @@ export async function validateSessionToken(token: string, userId: number): Promi
 
 	const isSessionValidForUser = await redis.sismember(`user_sessions:${userId}`, sessionId);
 	if (isSessionValidForUser !== 1) {
-        await redis.delete(`session:${sessionId}`);
-        return null;
-    }
+		await redis.delete(`session:${sessionId}`);
+		return null;
+	}
 
 	const result = JSON.parse(item);
 	const session: Session = {
@@ -167,25 +167,19 @@ export async function invalidateSession(sessionId: string, userId: number): Prom
 	await redis.delete(`session:${sessionId}`);
 	await redis.srem(`user_sessions:${userId}`, sessionId);
 }
-```
-
-Additionally, we can invalidate all sessions for a specific user by retrieving all session IDs associated with the user from Redis and then deleting them in a batch operation.
-
-```ts
-import { redis } from "./redis.js";
-
-// ...
 
 export async function invalidateAllSessions(userId: number): Promise<void> {
 	const sessionIds = await redis.smembers(`user_sessions:${userId}`);
-    if (sessionIds.length === 0) return;
+	if (sessionIds.length < 1) {
+		return;
+	}
 
 	const pipeline = redis.pipeline();
 
 	for (const sessionId of sessionIds) {
-        pipeline.unlink(`session:${sessionId}`);
-    }
-	pipeline.unlink(`user_sessions:${userId}`)
+		pipeline.unlink(`session:${sessionId}`);
+	}
+	pipeline.unlink(`user_sessions:${userId}`);
 
 	await pipeline.exec();
 }
@@ -237,9 +231,9 @@ export async function validateSessionToken(token: string, userId: number): Promi
 
 	const isSessionValidForUser = await redis.sismember(`user_sessions:${userId}`, sessionId);
 	if (isSessionValidForUser !== 1) {
-        await redis.delete(`session:${sessionId}`);
-        return null;
-    }
+		await redis.delete(`session:${sessionId}`);
+		return null;
+	}
 
 	const result = JSON.parse(item);
 	const session: Session = {
@@ -276,14 +270,16 @@ export async function invalidateSession(sessionId: string, userId: number): Prom
 
 export async function invalidateAllSessions(userId: number): Promise<void> {
 	const sessionIds = await redis.smembers(`user_sessions:${userId}`);
-    if (sessionIds.length === 0) return;
+	if (sessionIds.length < 1) {
+		return;
+	}
 
 	const pipeline = redis.pipeline();
 
 	for (const sessionId of sessionIds) {
-        pipeline.unlink(`session:${sessionId}`);
-    }
-	pipeline.unlink(`user_sessions:${userId}`)
+		pipeline.unlink(`session:${sessionId}`);
+	}
+	pipeline.unlink(`user_sessions:${userId}`);
 
 	await pipeline.exec();
 }

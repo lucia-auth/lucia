@@ -183,24 +183,11 @@ import { db } from "./db.js";
 export function invalidateSession(sessionId: string): void {
 	db.execute("DELETE FROM session WHERE id = ?", sessionId);
 }
-```
-
-Additionally, we can invalidate all sessions for a specific user by checking their user ID and expiration times.
-
-```ts
-import { db } from "./db.js";
-
-// ...
 
 export async function invalidateAllSessions(userId: number): Promise<void> {
-	await db.execute(
-		"DELETE FROM user_session WHERE user_id = ? AND expires_at > ?",
-		userId,
-		Math.floor(Date.now() / 1000)
-	);
+	await db.execute("DELETE FROM user_session WHERE user_id = ?", userId);
 }
 ```
-
 
 Here's the full code:
 
