@@ -114,16 +114,10 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
 
-export async function validateSessionToken(token: string, userId: number): Promise<Session | null> {
+export async function validateSessionToken(token: string): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
-		return null;
-	}
-
-	const isSessionValidForUser = await redis.sismember(`user_sessions:${userId}`, sessionId);
-	if (isSessionValidForUser !== 1) {
-		await redis.delete(`session:${sessionId}`);
 		return null;
 	}
 
@@ -222,16 +216,10 @@ export async function createSession(token: string, userId: number): Promise<Sess
 	return session;
 }
 
-export async function validateSessionToken(token: string, userId: number): Promise<Session | null> {
+export async function validateSessionToken(token: string): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const item = await redis.get(`session:${sessionId}`);
 	if (item === null) {
-		return null;
-	}
-
-	const isSessionValidForUser = await redis.sismember(`user_sessions:${userId}`, sessionId);
-	if (isSessionValidForUser !== 1) {
-		await redis.delete(`session:${sessionId}`);
 		return null;
 	}
 
