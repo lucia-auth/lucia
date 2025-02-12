@@ -256,11 +256,7 @@ export function invalidateSession(sessionId: string): void {
 }
 
 export async function invalidateAllSessions(userId: number): Promise<void> {
-	await db.execute(
-		"DELETE FROM user_session WHERE user_id = ? AND expires_at > ?",
-		userId,
-		Math.floor(Date.now() / 1000)
-	);
+	await db.execute("DELETE FROM user_session WHERE user_id = ?", userId);
 }
 
 export type SessionValidationResult =
