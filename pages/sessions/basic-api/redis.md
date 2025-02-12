@@ -33,6 +33,10 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export interface Session {
 	id: string;
 	userId: number;
@@ -63,7 +67,7 @@ export function generateSessionToken(): string {
 
 > You can use UUID v4 here but the RFC does not mandate that IDs are generated using a secure random source. Do not use libraries that are not clear on the source they use. Do not use other UUID versions as they do not offer the same entropy size as v4. Consider using [`Crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID).
 
-The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days.
+The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days. We'll also keep a list of sessions linked to each user.
 
 ```ts
 import { redis } from "./redis.js";
@@ -90,6 +94,8 @@ export async function createSession(token: string, userId: number): Promise<Sess
 			EXAT: Math.floor(session.expiresAt / 1000)
 		}
 	);
+	await redis.sadd(`user_sessions:${userId}`, sessionId);
+
 	return session;
 }
 ```
@@ -114,6 +120,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	if (item === null) {
 		return null;
 	}
+
 	const result = JSON.parse(item);
 	const session: Session = {
 		id: result.id,
@@ -122,6 +129,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await redis.delete(`session:${sessionId}`);
+		await redis.srem(`user_sessions:${userId}`, sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -149,8 +157,25 @@ import { redis } from "./redis.js";
 
 // ...
 
-export async function invalidateSession(sessionId: string): Promise<void> {
+export async function invalidateSession(sessionId: string, userId: number): Promise<void> {
 	await redis.delete(`session:${sessionId}`);
+	await redis.srem(`user_sessions:${userId}`, sessionId);
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	const sessionIds = await redis.smembers(`user_sessions:${userId}`);
+	if (sessionIds.length < 1) {
+		return;
+	}
+
+	const pipeline = redis.pipeline();
+
+	for (const sessionId of sessionIds) {
+		pipeline.unlink(`session:${sessionId}`);
+	}
+	pipeline.unlink(`user_sessions:${userId}`);
+
+	await pipeline.exec();
 }
 ```
 
@@ -186,6 +211,8 @@ export async function createSession(token: string, userId: number): Promise<Sess
 			EXAT: Math.floor(session.expiresAt / 1000)
 		}
 	);
+	await redis.sadd(`user_sessions:${userId}`, sessionId);
+
 	return session;
 }
 
@@ -195,6 +222,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	if (item === null) {
 		return null;
 	}
+
 	const result = JSON.parse(item);
 	const session: Session = {
 		id: result.id,
@@ -203,6 +231,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
 		await redis.delete(`session:${sessionId}`);
+		await redis.srem(`user_sessions:${userId}`, sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -222,8 +251,25 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 	return session;
 }
 
-export async function invalidateSession(sessionId: string): Promise<void> {
+export async function invalidateSession(sessionId: string, userId: number): Promise<void> {
 	await redis.delete(`session:${sessionId}`);
+	await redis.srem(`user_sessions:${userId}`, sessionId);
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	const sessionIds = await redis.smembers(`user_sessions:${userId}`);
+	if (sessionIds.length < 1) {
+		return;
+	}
+
+	const pipeline = redis.pipeline();
+
+	for (const sessionId of sessionIds) {
+		pipeline.unlink(`session:${sessionId}`);
+	}
+	pipeline.unlink(`user_sessions:${userId}`);
+
+	await pipeline.exec();
 }
 
 export interface Session {

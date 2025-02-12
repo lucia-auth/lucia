@@ -58,6 +58,10 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export type SessionValidationResult =
 	| { session: Session; user: User }
 	| { session: null; user: null };
@@ -168,6 +172,14 @@ import { prisma } from "./db.js";
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
 }
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await prisma.session.deleteMany({
+		where: {
+			userId: userId
+		}
+	});
+}
 ```
 
 Here's the full code:
@@ -233,6 +245,14 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await prisma.session.deleteMany({
+		where: {
+			userId: userId
+		}
+	});
 }
 
 export type SessionValidationResult =

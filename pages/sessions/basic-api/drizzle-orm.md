@@ -132,6 +132,10 @@ export async function invalidateSession(sessionId: string): Promise<void> {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export type SessionValidationResult =
 	| { session: Session; user: User }
 	| { session: null; user: null };
@@ -230,13 +234,17 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 Finally, invalidate sessions by simply deleting it from the database.
 
 ```ts
-import { eq } from "drizzle-orm";
 import { db, userTable, sessionTable } from "./db.js";
+import { eq } from "drizzle-orm";
 
 // ...
 
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
 }
 ```
 
@@ -297,6 +305,10 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
 }
 
 export type SessionValidationResult =
