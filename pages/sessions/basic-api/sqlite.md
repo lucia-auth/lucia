@@ -56,6 +56,10 @@ export function invalidateSession(sessionId: string): void {
 	// TODO
 }
 
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	// TODO
+}
+
 export type SessionValidationResult =
 	| { session: Session; user: User }
 	| { session: null; user: null };
@@ -179,6 +183,10 @@ import { db } from "./db.js";
 export function invalidateSession(sessionId: string): void {
 	db.execute("DELETE FROM session WHERE id = ?", sessionId);
 }
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await db.execute("DELETE FROM user_session WHERE user_id = ?", userId);
+}
 ```
 
 Here's the full code:
@@ -245,6 +253,10 @@ export function validateSessionToken(token: string): SessionValidationResult {
 
 export function invalidateSession(sessionId: string): void {
 	db.execute("DELETE FROM session WHERE id = ?", sessionId);
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await db.execute("DELETE FROM user_session WHERE user_id = ?", userId);
 }
 
 export type SessionValidationResult =

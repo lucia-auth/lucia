@@ -37,7 +37,7 @@ npm i @oslojs/encoding @oslojs/crypto
 
 Here's what our API will look like. What each method does should be pretty self explanatory.
 
-If you just need the code full code without the explanation, skip to the end of this section.
+If you just need the full code without the explanation, skip to the end of this section.
 
 ```ts
 import type { User, Session } from "@prisma/client";
@@ -55,6 +55,10 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
+	// TODO
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
 	// TODO
 }
 
@@ -168,6 +172,14 @@ import { prisma } from "./db.js";
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
 }
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await prisma.session.deleteMany({
+		where: {
+			userId: userId
+		}
+	});
+}
 ```
 
 Here's the full code:
@@ -233,6 +245,14 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 
 export async function invalidateSession(sessionId: string): Promise<void> {
 	await prisma.session.delete({ where: { id: sessionId } });
+}
+
+export async function invalidateAllSessions(userId: number): Promise<void> {
+	await prisma.session.deleteMany({
+		where: {
+			userId: userId
+		}
+	});
 }
 
 export type SessionValidationResult =

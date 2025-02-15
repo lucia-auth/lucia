@@ -69,7 +69,6 @@ Create an API route in `routes/login/google/+server.ts`. Generate a new state an
 
 ```ts
 // routes/login/google/+server.ts
-import { redirect } from "@sveltejs/kit";
 import { generateState, generateCodeVerifier } from "arctic";
 import { google } from "$lib/server/oauth";
 

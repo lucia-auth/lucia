@@ -70,7 +70,7 @@ export default async function Page() {
 
 ## Create authorization URL
 
-Create an API route in `pages/login/google/index.ts`. Generate a new state and code verifier, and create a new authorization URL. Add the `openid` and `profile` scope to have access to the user's profile later on. Store the state and code verifier, and redirect the user to the authorization URL. The user will be redirected to Google's sign in page.
+Create an API route in `app/login/google/route.ts`. Generate a new state and code verifier, and create a new authorization URL. Add the `openid` and `profile` scope to have access to the user's profile later on. Store the state and code verifier, and redirect the user to the authorization URL. The user will be redirected to Google's sign in page.
 
 ```ts
 // app/login/google/route.ts

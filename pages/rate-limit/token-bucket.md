@@ -8,10 +8,10 @@ Each user has their own bucket of tokens that gets refilled at a set interval. A
 
 ## Memory storage
 
-This will only work if memory is persisted across requests. It won't work in serverless environments.
+This requires the server to persist its memory across requests and will not work in serverless environments.
 
 ```ts
-export class TokenBucket<_Key> {
+export class TokenBucketRateLimit<_Key> {
 	public max: number;
 	public refillIntervalSeconds: number;
 
@@ -35,7 +35,7 @@ export class TokenBucket<_Key> {
 		}
 		const refill = Math.floor((now - bucket.refilledAt) / (this.refillIntervalSeconds * 1000));
 		bucket.count = Math.min(bucket.count + refill, this.max);
-		bucket.refilledAt = now;
+		bucket.refilledAt = bucket.refilledAt + refill * this.refillIntervalSeconds;
 		if (bucket.count < cost) {
 			return false;
 		}
@@ -53,9 +53,9 @@ interface Bucket {
 
 ```ts
 // Bucket that has 10 tokens max and refills at a rate of 2 tokens/sec
-const bucket = new TokenBucket<string>(10, 2);
+const ratelimit = new TokenBucketRateLimit<string>(10, 2);
 
-if (!bucket.consume(ip, 1)) {
+if (!ratelimit.consume(ip, 1)) {
 	throw new Error("Too many requests");
 }
 ```
@@ -73,27 +73,36 @@ local cost                  = tonumber(ARGV[3])
 local now                   = tonumber(ARGV[4]) -- Current unix time in seconds
 
 local fields = redis.call("HGETALL", key)
+
 if #fields == 0 then
-    redis.call("HSET", key, "count", max - cost, "refilled_at", now)
-    return {1}
+	local expiresInSeconds = cost * refillIntervalSeconds
+	redis.call("HSET", key, "count", max - cost, "refilled_at", now)
+	redis.call("EXPIRE", key, expiresInSeconds)
+	return {1}
 end
+
 local count = 0
 local refilledAt = 0
 for i = 1, #fields, 2 do
 	if fields[i] == "count" then
-        count = tonumber(fields[i+1])
-    elseif fields[i] == "refilled_at" then
-        refilledAt = tonumber(fields[i+1])
-    end
+		count = tonumber(fields[i+1])
+	elseif fields[i] == "refilled_at" then
+		refilledAt = tonumber(fields[i+1])
+	end
 end
+
 local refill = math.floor((now - refilledAt) / refillIntervalSeconds)
 count = math.min(count + refill, max)
-refilledAt = now
+refilledAt = refilledAt + refill * refillIntervalSeconds
+
 if count < cost then
-    return {0}
+	return {0}
 end
+
 count = count - cost
+local expiresInSeconds = (max - count) * refillIntervalSeconds
 redis.call("HSET", key, "count", count, "refilled_at", now)
+redis.call("EXPIRE", key, expiresInSeconds)
 return {1}
 ```
 
@@ -106,7 +115,7 @@ const SCRIPT_SHA = await client.scriptLoad(script);
 Reference the script with the hash.
 
 ```ts
-export class TokenBucket {
+export class TokenBucketRateLimit {
 	private storageKey: string;
 
 	public max: number;
@@ -136,9 +145,9 @@ export class TokenBucket {
 ```ts
 // Bucket that has 10 tokens max and refills at a rate of 2 tokens/sec.
 // Ensure that the storage key is unique.
-const bucket = new TokenBucket("global_ip", 10, 2);
+const ratelimit = new TokenBucketRateLimit("global_ip", 10, 2);
 
-const valid = await bucket.consume(ip, 1);
+const valid = await ratelimit.consume(ip, 1);
 if (!valid) {
 	throw new Error("Too many requests");
 }
