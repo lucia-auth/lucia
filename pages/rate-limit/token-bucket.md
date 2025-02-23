@@ -35,7 +35,7 @@ export class TokenBucketRateLimit<_Key> {
 		}
 		const refill = Math.floor((now - bucket.refilledAt) / (this.refillIntervalSeconds * 1000));
 		bucket.count = Math.min(bucket.count + refill, this.max);
-		bucket.refilledAt = bucket.refilledAt + refill * this.refillIntervalSeconds;
+		bucket.refilledAt = bucket.refilledAt + refill * this.refillIntervalSeconds * 1000;
 		if (bucket.count < cost) {
 			return false;
 		}
