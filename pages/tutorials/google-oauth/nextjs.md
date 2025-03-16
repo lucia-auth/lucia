@@ -76,7 +76,6 @@ Create an API route in `app/login/google/route.ts`. Generate a new state and cod
 // app/login/google/route.ts
 import { generateState, generateCodeVerifier } from "arctic";
 import { google } from "@/lib/auth";
-import { cookies } from "next/headers";
 
 export async function GET(): Promise<Response> {
 	const state = generateState();
