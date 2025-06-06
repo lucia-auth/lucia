@@ -4,7 +4,15 @@ title: "Migrate from Lucia v3"
 
 # Migrate from Lucia v3
 
-Because Lucia v3 is lightweight and relatively low-level, migrating your project shouldn't take long. Moreover, most of your knowledge will still be very useful. No database migrations are necessary.
+Lucia v3 has been deprecated. Lucia is now a learning resource for implementing sessions and more.
+
+## Background
+
+We ultimately came to the conclusion that it'd be easier and faster to just implement sessions from scratch. The database adapter model wasn't flexible enough for such a low-level library and severely limited the library design.
+
+## Migration path
+
+Replacing Lucia v3 with your own implementation should be a straight-forward path, especially since most of your knowledge will still be very useful. No database migrations are necessary.
 
 APIs on sessions are covered in the [Basic session API](/sessions/basic-api) page.
 
