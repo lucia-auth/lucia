@@ -58,8 +58,8 @@ interface Bucket {
 ```ts
 // Bucket that has 10 tokens max and refills at a rate of 30 seconds/token
 const ratelimit = new TokenBucketRateLimit<string>(5, 30);
-
-if (!ratelimit.consume(ip, 1)) {
+const valid = ratelimit.consume(ip, 1);
+if (!valid) {
 	throw new Error("Too many requests");
 }
 ```
@@ -150,8 +150,8 @@ export class TokenBucketRateLimit {
 ```ts
 // Bucket that has 10 tokens max and refills at a rate of 30 seconds/token
 const ratelimit = new TokenBucketRateLimit<string>("ip", 5, 30);
-
-if (!ratelimit.consume(ip, 1)) {
+const valid = await ratelimit.consume(ip, 1);
+if (!valid) {
 	throw new Error("Too many requests");
 }
 ```
