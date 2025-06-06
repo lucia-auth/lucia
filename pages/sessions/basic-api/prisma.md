@@ -8,12 +8,13 @@ Users will use a session token linked to a session instead of the ID directly. T
 
 ## Declare your schema
 
-Create a session model with a field for a text ID, user ID, and expiration.
+Create a session model with a field for a text ID, user ID, and expiration. Add a relation field to your user table.
 
 ```
 // your user table
 model User {
   id       Int       @id @default(autoincrement())
+  username String
   sessions Session[]
 }
 
