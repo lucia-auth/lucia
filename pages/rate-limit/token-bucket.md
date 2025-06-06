@@ -33,9 +33,12 @@ export class TokenBucketRateLimit<_Key> {
 			this.storage.set(key, bucket);
 			return true;
 		}
-		const refill = Math.floor((now - bucket.refilledAtMilliseconds) / (this.refillIntervalSeconds * 1000));
+		const refill = Math.floor(
+			(now - bucket.refilledAtMilliseconds) / (this.refillIntervalSeconds * 1000)
+		);
 		bucket.count = Math.min(bucket.count + refill, this.max);
-		bucket.refilledAtSeconds = bucket.refilledAtMilliseconds + refill * this.refillIntervalSeconds * 1000;
+		bucket.refilledAtSeconds =
+			bucket.refilledAtMilliseconds + refill * this.refillIntervalSeconds * 1000;
 		if (bucket.count < cost) {
 			this.storage.set(key, bucket);
 			return false;
@@ -53,8 +56,8 @@ interface Bucket {
 ```
 
 ```ts
-// Bucket that has 10 tokens max and refills at a rate of 2 tokens/sec
-const ratelimit = new TokenBucketRateLimit<string>(10, 2);
+// Bucket that has 10 tokens max and refills at a rate of 30 seconds/token
+const ratelimit = new TokenBucketRateLimit<string>(5, 30);
 
 if (!ratelimit.consume(ip, 1)) {
 	throw new Error("Too many requests");
@@ -129,8 +132,9 @@ export class TokenBucketRateLimit {
 	}
 
 	public async consume(key: string, cost: number): Promise<boolean> {
+		const key = `token_bucket.v1:${this.storageKey}:${refillIntervalSeconds}:${key}`;
 		const result = await client.EVALSHA(SCRIPT_SHA, {
-			keys: [`${this.storageKey}:${key}`],
+			keys: [key],
 			arguments: [
 				this.max.toString(),
 				this.refillIntervalSeconds.toString(),
@@ -144,12 +148,10 @@ export class TokenBucketRateLimit {
 ```
 
 ```ts
-// Bucket that has 10 tokens max and refills at a rate of 2 tokens/sec.
-// Ensure that the storage key is unique.
-const ratelimit = new TokenBucketRateLimit("global_ip", 10, 2);
+// Bucket that has 10 tokens max and refills at a rate of 30 seconds/token
+const ratelimit = new TokenBucketRateLimit<string>("ip", 5, 30);
 
-const valid = await ratelimit.consume(ip, 1);
-if (!valid) {
+if (!ratelimit.consume(ip, 1)) {
 	throw new Error("Too many requests");
 }
 ```
