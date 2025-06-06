@@ -33,10 +33,11 @@ export class TokenBucketRateLimit<_Key> {
 			this.storage.set(key, bucket);
 			return true;
 		}
-		const refill = Math.floor((now - bucket.refilledAt) / (this.refillIntervalSeconds * 1000));
+		const refill = Math.floor((now - bucket.refilledAtMilliseconds) / (this.refillIntervalSeconds * 1000));
 		bucket.count = Math.min(bucket.count + refill, this.max);
-		bucket.refilledAt = bucket.refilledAt + refill * this.refillIntervalSeconds * 1000;
+		bucket.refilledAtSeconds = bucket.refilledAtMilliseconds + refill * this.refillIntervalSeconds * 1000;
 		if (bucket.count < cost) {
+			this.storage.set(key, bucket);
 			return false;
 		}
 		bucket.count -= cost;
@@ -47,7 +48,7 @@ export class TokenBucketRateLimit<_Key> {
 
 interface Bucket {
 	count: number;
-	refilledAt: number;
+	refilledAtMilliseconds: number;
 }
 ```
 
@@ -70,30 +71,30 @@ local key                   = KEYS[1]
 local max                   = tonumber(ARGV[1])
 local refillIntervalSeconds = tonumber(ARGV[2])
 local cost                  = tonumber(ARGV[3])
-local now                   = tonumber(ARGV[4]) -- Current unix time in seconds
+local nowMilliseconds       = tonumber(ARGV[4]) -- Current unix time in ms
 
 local fields = redis.call("HGETALL", key)
 
 if #fields == 0 then
 	local expiresInSeconds = cost * refillIntervalSeconds
-	redis.call("HSET", key, "count", max - cost, "refilled_at", now)
+	redis.call("HSET", key, "count", max - cost, "refilled_at_ms", nowMilliseconds)
 	redis.call("EXPIRE", key, expiresInSeconds)
 	return {1}
 end
 
 local count = 0
-local refilledAt = 0
+local refilledAtMilliseconds = 0
 for i = 1, #fields, 2 do
 	if fields[i] == "count" then
 		count = tonumber(fields[i+1])
-	elseif fields[i] == "refilled_at" then
-		refilledAt = tonumber(fields[i+1])
+	elseif fields[i] == "refilled_at_ms" then
+		refilledAtMilliseconds = tonumber(fields[i+1])
 	end
 end
 
-local refill = math.floor((now - refilledAt) / refillIntervalSeconds)
+local refill = math.floor((now - refilledAtMilliseconds) / (refillIntervalSeconds * 1000))
 count = math.min(count + refill, max)
-refilledAt = refilledAt + refill * refillIntervalSeconds
+refilledAtMilliseconds = refilledAtMilliseconds + refill * refillIntervalSeconds * 1000
 
 if count < cost then
 	return {0}
@@ -101,7 +102,7 @@ end
 
 count = count - cost
 local expiresInSeconds = (max - count) * refillIntervalSeconds
-redis.call("HSET", key, "count", count, "refilled_at", now)
+redis.call("HSET", key, "count", count, "refilled_at_ms", refilledAtMilliseconds)
 redis.call("EXPIRE", key, expiresInSeconds)
 return {1}
 ```
@@ -134,7 +135,7 @@ export class TokenBucketRateLimit {
 				this.max.toString(),
 				this.refillIntervalSeconds.toString(),
 				cost.toString(),
-				Math.floor(Date.now() / 1000).toString()
+				Date.now().toString()
 			]
 		});
 		return Boolean(result[0]);
