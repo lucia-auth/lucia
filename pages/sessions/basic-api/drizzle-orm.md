@@ -25,7 +25,7 @@ const db = drizzle(connection);
 // your user table
 export const userTable = mysqlTable("user", {
 	id: int("id").primaryKey().autoincrement(),
-	username: varchar("user_name", {
+	username: varchar("username", {
 		length: 31
 	}).notNull()
 });
@@ -59,7 +59,7 @@ const db = drizzle(pool);
 // your user table
 export const userTable = pgTable("user", {
 	id: serial("id").primaryKey(),
-	username: text("user_name").notNull()
+	username: text("username").notNull()
 });
 
 export const userSessionTable = pgTable("user_session", {
@@ -92,7 +92,7 @@ const db = drizzle(sqliteDB);
 // your user table
 export const userTable = sqliteTable("user", {
 	id: integer("id").primaryKey(),
-	username: text("user_name").notNull()
+	username: text("username").notNull()
 });
 
 export const userSessionTable = sqliteTable("user_session", {
