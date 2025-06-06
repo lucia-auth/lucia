@@ -50,7 +50,11 @@ If the frontend and backend are hosted on the same domain, session cookies shoul
 // `HTTPResponse` is a generic interface.
 // Adjust this code to fit your framework's API.
 
-export function setSessionTokenCookie(response: HTTPResponse, token: string, expiresAt: Date): void {
+export function setSessionTokenCookie(
+	response: HTTPResponse,
+	token: string,
+	expiresAt: Date
+): void {
 	if (env === Env.PROD) {
 		// When deployed over HTTPS
 		response.headers.add(

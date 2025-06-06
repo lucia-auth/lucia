@@ -84,7 +84,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
 	await redis.set(
-		`session:${session.id}`,
+		`user_session:${session.id}`,
 		JSON.stringify({
 			id: session.id,
 			user_id: session.userId,
@@ -116,7 +116,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 export async function validateSessionToken(token: string): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const item = await redis.get(`session:${sessionId}`);
+	const item = await redis.get(`user_session:${sessionId}`);
 	if (item === null) {
 		return null;
 	}
@@ -128,14 +128,14 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 		expiresAt: new Date(result.expires_at * 1000)
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		await redis.delete(`session:${sessionId}`);
+		await redis.delete(`user_session:${sessionId}`);
 		await redis.srem(`user_sessions:${userId}`, sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await redis.set(
-			`session:${session.id}`,
+			`user_session:${session.id}`,
 			JSON.stringify({
 				id: session.id,
 				user_id: session.userId,
@@ -158,7 +158,7 @@ import { redis } from "./redis.js";
 // ...
 
 export async function invalidateSession(sessionId: string, userId: number): Promise<void> {
-	await redis.delete(`session:${sessionId}`);
+	await redis.delete(`user_session:${sessionId}`);
 	await redis.srem(`user_sessions:${userId}`, sessionId);
 }
 
@@ -171,7 +171,7 @@ export async function invalidateAllSessions(userId: number): Promise<void> {
 	const pipeline = redis.pipeline();
 
 	for (const sessionId of sessionIds) {
-		pipeline.unlink(`session:${sessionId}`);
+		pipeline.unlink(`user_session:${sessionId}`);
 	}
 	pipeline.unlink(`user_sessions:${userId}`);
 
@@ -201,7 +201,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
 	await redis.set(
-		`session:${session.id}`,
+		`user_session:${session.id}`,
 		JSON.stringify({
 			id: session.id,
 			user_id: session.userId,
@@ -218,7 +218,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 
 export async function validateSessionToken(token: string): Promise<Session | null> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const item = await redis.get(`session:${sessionId}`);
+	const item = await redis.get(`user_session:${sessionId}`);
 	if (item === null) {
 		return null;
 	}
@@ -230,14 +230,14 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 		expiresAt: new Date(result.expires_at * 1000)
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		await redis.delete(`session:${sessionId}`);
+		await redis.delete(`user_session:${sessionId}`);
 		await redis.srem(`user_sessions:${userId}`, sessionId);
 		return null;
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await redis.set(
-			`session:${session.id}`,
+			`user_session:${session.id}`,
 			JSON.stringify({
 				id: session.id,
 				user_id: session.userId,
@@ -252,7 +252,7 @@ export async function validateSessionToken(token: string): Promise<Session | nul
 }
 
 export async function invalidateSession(sessionId: string, userId: number): Promise<void> {
-	await redis.delete(`session:${sessionId}`);
+	await redis.delete(`user_session:${sessionId}`);
 	await redis.srem(`user_sessions:${userId}`, sessionId);
 }
 
@@ -265,7 +265,7 @@ export async function invalidateAllSessions(userId: number): Promise<void> {
 	const pipeline = redis.pipeline();
 
 	for (const sessionId of sessionIds) {
-		pipeline.unlink(`session:${sessionId}`);
+		pipeline.unlink(`user_session:${sessionId}`);
 	}
 	pipeline.unlink(`user_sessions:${userId}`);
 

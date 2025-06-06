@@ -22,11 +22,15 @@ import type { InferSelectModel } from "drizzle-orm";
 const connection = await mysql.createConnection();
 const db = drizzle(connection);
 
+// your user table
 export const userTable = mysqlTable("user", {
-	id: int("id").primaryKey().autoincrement()
+	id: int("id").primaryKey().autoincrement(),
+	username: varchar("username", {
+		length: 31
+	}).notNull()
 });
 
-export const sessionTable = mysqlTable("session", {
+export const userSessionTable = mysqlTable("user_session", {
 	id: varchar("id", {
 		length: 255
 	}).primaryKey(),
@@ -37,7 +41,7 @@ export const sessionTable = mysqlTable("session", {
 });
 
 export type User = InferSelectModel<typeof userTable>;
-export type Session = InferSelectModel<typeof sessionTable>;
+export type Session = InferSelectModel<typeof userSessionTable>;
 ```
 
 ### PostgreSQL
@@ -52,11 +56,13 @@ import type { InferSelectModel } from "drizzle-orm";
 const pool = new pg.Pool();
 const db = drizzle(pool);
 
+// your user table
 export const userTable = pgTable("user", {
-	id: serial("id").primaryKey()
+	id: serial("id").primaryKey(),
+	username: text("username").notNull()
 });
 
-export const sessionTable = pgTable("session", {
+export const userSessionTable = pgTable("user_session", {
 	id: text("id").primaryKey(),
 	userId: integer("user_id")
 		.notNull()
@@ -68,7 +74,7 @@ export const sessionTable = pgTable("session", {
 });
 
 export type User = InferSelectModel<typeof userTable>;
-export type Session = InferSelectModel<typeof sessionTable>;
+export type Session = InferSelectModel<typeof userSessionTable>;
 ```
 
 ### SQLite
@@ -83,11 +89,13 @@ import type { InferSelectModel } from "drizzle-orm";
 const sqliteDB = sqlite(":memory:");
 const db = drizzle(sqliteDB);
 
+// your user table
 export const userTable = sqliteTable("user", {
-	id: integer("id").primaryKey()
+	id: integer("id").primaryKey(),
+	username: text("username").notNull()
 });
 
-export const sessionTable = sqliteTable("session", {
+export const userSessionTable = sqliteTable("user_session", {
 	id: text("id").primaryKey(),
 	userId: integer("user_id")
 		.notNull()
@@ -98,7 +106,7 @@ export const sessionTable = sqliteTable("session", {
 });
 
 export type User = InferSelectModel<typeof userTable>;
-export type Session = InferSelectModel<typeof sessionTable>;
+export type Session = InferSelectModel<typeof userSessionTable>;
 ```
 
 ## Install dependencies
@@ -167,7 +175,7 @@ export function generateSessionToken(): string {
 The session ID will be SHA-256 hash of the token. We'll set the expiration to 30 days.
 
 ```ts
-import { db, userTable, sessionTable } from "./db.js";
+import { db, userTable, userSessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
@@ -181,7 +189,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-	await db.insert(sessionTable).values(session);
+	await db.insert(userSessionTable).values(session);
 	return session;
 }
 ```
@@ -196,7 +204,7 @@ We'll also extend the session expiration when it's close to expiration. This ens
 For convenience, we'll return both the session and user object tied to the session ID.
 
 ```ts
-import { db, userTable, sessionTable } from "./db.js";
+import { db, userTable, userSessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
@@ -206,26 +214,26 @@ import { sha256 } from "@oslojs/crypto/sha2";
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const result = await db
-		.select({ user: userTable, session: sessionTable })
-		.from(sessionTable)
-		.innerJoin(userTable, eq(sessionTable.userId, userTable.id))
-		.where(eq(sessionTable.id, sessionId));
+		.select({ user: userTable, session: userSessionTable })
+		.from(userSessionTable)
+		.innerJoin(userTable, eq(userSessionTable.userId, userTable.id))
+		.where(eq(userSessionTable.id, sessionId));
 	if (result.length < 1) {
 		return { session: null, user: null };
 	}
 	const { user, session } = result[0];
 	if (Date.now() >= session.expiresAt.getTime()) {
-		await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
+		await db.delete(userSessionTable).where(eq(userSessionTable.id, session.id));
 		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await db
-			.update(sessionTable)
+			.update(userSessionTable)
 			.set({
 				expiresAt: session.expiresAt
 			})
-			.where(eq(sessionTable.id, session.id));
+			.where(eq(userSessionTable.id, session.id));
 	}
 	return { session, user };
 }
@@ -234,24 +242,24 @@ export async function validateSessionToken(token: string): Promise<SessionValida
 Finally, invalidate sessions by simply deleting it from the database.
 
 ```ts
-import { db, userTable, sessionTable } from "./db.js";
+import { db, userTable, userSessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
 
 // ...
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+	await db.delete(userSessionTable).where(eq(userSessionTable.id, sessionId));
 }
 
 export async function invalidateAllSessions(userId: number): Promise<void> {
-	await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+	await db.delete(userSessionTable).where(eq(userSessionTable.userId, userId));
 }
 ```
 
 Here's the full code:
 
 ```ts
-import { db, userTable, sessionTable } from "./db.js";
+import { db, userTable, userSessionTable } from "./db.js";
 import { eq } from "drizzle-orm";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
@@ -272,43 +280,43 @@ export async function createSession(token: string, userId: number): Promise<Sess
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
-	await db.insert(sessionTable).values(session);
+	await db.insert(userSessionTable).values(session);
 	return session;
 }
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const result = await db
-		.select({ user: userTable, session: sessionTable })
-		.from(sessionTable)
-		.innerJoin(userTable, eq(sessionTable.userId, userTable.id))
-		.where(eq(sessionTable.id, sessionId));
+		.select({ user: userTable, session: userSessionTable })
+		.from(userSessionTable)
+		.innerJoin(userTable, eq(userSessionTable.userId, userTable.id))
+		.where(eq(userSessionTable.id, sessionId));
 	if (result.length < 1) {
 		return { session: null, user: null };
 	}
 	const { user, session } = result[0];
 	if (Date.now() >= session.expiresAt.getTime()) {
-		await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
+		await db.delete(userSessionTable).where(eq(userSessionTable.id, session.id));
 		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 		await db
-			.update(sessionTable)
+			.update(userSessionTable)
 			.set({
 				expiresAt: session.expiresAt
 			})
-			.where(eq(sessionTable.id, session.id));
+			.where(eq(userSessionTable.id, session.id));
 	}
 	return { session, user };
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-	await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+	await db.delete(userSessionTable).where(eq(userSessionTable.id, sessionId));
 }
 
 export async function invalidateAllSessions(userId: number): Promise<void> {
-	await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+	await db.delete(userSessionTable).where(eq(userSessionTable.userId, userId));
 }
 
 export type SessionValidationResult =

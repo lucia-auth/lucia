@@ -11,6 +11,8 @@ Users will use a session token linked to a session instead of the ID directly. T
 Create a session table with a field for a text ID, user ID, and expiration.
 
 ```
+-- your user table
+-- "app_user" instead of "user" to avoid name collisions
 CREATE TABLE app_user (
     id SERIAL PRIMARY KEY,
     username TEXT NOT NULL UNIQUE
@@ -142,6 +144,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	// TODO: update query to match your user table
 	const row = await db.queryOne(
 		"SELECT user_session.id, user_session.user_id, user_session.expires_at, app_user.id FROM user_session INNER JOIN user ON app_user.id = user_session.user_id WHERE id = ?",
 		sessionId
@@ -221,6 +224,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	// TODO: update query to match your user table
 	const row = await db.queryOne(
 		"SELECT user_session.id, user_session.user_id, user_session.expires_at, app_user.id FROM user_session INNER JOIN user ON app_user.id = user_session.user_id WHERE id = ?",
 		sessionId
