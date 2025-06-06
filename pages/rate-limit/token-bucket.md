@@ -4,7 +4,7 @@ title: "Token bucket"
 
 # Token bucket
 
-Each user has their own bucket of tokens that gets refilled at a set interval. A token is removed on every request until none is left and the request is rejected. While a bit more complex than the fixed-window algorithm, it allows you to handle initial bursts and process requests more smoothly overall.
+Each user has their own bucket of tokens that gets refilled at a set interval. A token is removed on every request until none is left and the request is rejected. While a bit more complex than the fixed or sliding window algorithm, it allows you to handle initial bursts and process requests more smoothly overall.
 
 ## Memory storage
 
@@ -33,10 +33,14 @@ export class TokenBucketRateLimit<_Key> {
 			this.storage.set(key, bucket);
 			return true;
 		}
-		const refill = Math.floor((now - bucket.refilledAt) / (this.refillIntervalSeconds * 1000));
+		const refill = Math.floor(
+			(now - bucket.refilledAtMilliseconds) / (this.refillIntervalSeconds * 1000)
+		);
 		bucket.count = Math.min(bucket.count + refill, this.max);
-		bucket.refilledAt = bucket.refilledAt + refill * this.refillIntervalSeconds * 1000;
+		bucket.refilledAtSeconds =
+			bucket.refilledAtMilliseconds + refill * this.refillIntervalSeconds * 1000;
 		if (bucket.count < cost) {
+			this.storage.set(key, bucket);
 			return false;
 		}
 		bucket.count -= cost;
@@ -47,15 +51,15 @@ export class TokenBucketRateLimit<_Key> {
 
 interface Bucket {
 	count: number;
-	refilledAt: number;
+	refilledAtMilliseconds: number;
 }
 ```
 
 ```ts
-// Bucket that has 10 tokens max and refills at a rate of 2 tokens/sec
-const ratelimit = new TokenBucketRateLimit<string>(10, 2);
-
-if (!ratelimit.consume(ip, 1)) {
+// Bucket that has 10 tokens max and refills at a rate of 30 seconds/token
+const ratelimit = new TokenBucketRateLimit<string>(5, 30);
+const valid = ratelimit.consume(ip, 1);
+if (!valid) {
 	throw new Error("Too many requests");
 }
 ```
@@ -70,30 +74,30 @@ local key                   = KEYS[1]
 local max                   = tonumber(ARGV[1])
 local refillIntervalSeconds = tonumber(ARGV[2])
 local cost                  = tonumber(ARGV[3])
-local now                   = tonumber(ARGV[4]) -- Current unix time in seconds
+local nowMilliseconds       = tonumber(ARGV[4]) -- Current unix time in ms
 
 local fields = redis.call("HGETALL", key)
 
 if #fields == 0 then
 	local expiresInSeconds = cost * refillIntervalSeconds
-	redis.call("HSET", key, "count", max - cost, "refilled_at", now)
+	redis.call("HSET", key, "count", max - cost, "refilled_at_ms", nowMilliseconds)
 	redis.call("EXPIRE", key, expiresInSeconds)
 	return {1}
 end
 
 local count = 0
-local refilledAt = 0
+local refilledAtMilliseconds = 0
 for i = 1, #fields, 2 do
 	if fields[i] == "count" then
 		count = tonumber(fields[i+1])
-	elseif fields[i] == "refilled_at" then
-		refilledAt = tonumber(fields[i+1])
+	elseif fields[i] == "refilled_at_ms" then
+		refilledAtMilliseconds = tonumber(fields[i+1])
 	end
 end
 
-local refill = math.floor((now - refilledAt) / refillIntervalSeconds)
+local refill = math.floor((now - refilledAtMilliseconds) / (refillIntervalSeconds * 1000))
 count = math.min(count + refill, max)
-refilledAt = refilledAt + refill * refillIntervalSeconds
+refilledAtMilliseconds = refilledAtMilliseconds + refill * refillIntervalSeconds * 1000
 
 if count < cost then
 	return {0}
@@ -101,7 +105,7 @@ end
 
 count = count - cost
 local expiresInSeconds = (max - count) * refillIntervalSeconds
-redis.call("HSET", key, "count", count, "refilled_at", now)
+redis.call("HSET", key, "count", count, "refilled_at_ms", refilledAtMilliseconds)
 redis.call("EXPIRE", key, expiresInSeconds)
 return {1}
 ```
@@ -128,13 +132,14 @@ export class TokenBucketRateLimit {
 	}
 
 	public async consume(key: string, cost: number): Promise<boolean> {
+		const key = `token_bucket.v1:${this.storageKey}:${refillIntervalSeconds}:${key}`;
 		const result = await client.EVALSHA(SCRIPT_SHA, {
-			keys: [`${this.storageKey}:${key}`],
+			keys: [key],
 			arguments: [
 				this.max.toString(),
 				this.refillIntervalSeconds.toString(),
 				cost.toString(),
-				Math.floor(Date.now() / 1000).toString()
+				Date.now().toString()
 			]
 		});
 		return Boolean(result[0]);
@@ -143,10 +148,8 @@ export class TokenBucketRateLimit {
 ```
 
 ```ts
-// Bucket that has 10 tokens max and refills at a rate of 2 tokens/sec.
-// Ensure that the storage key is unique.
-const ratelimit = new TokenBucketRateLimit("global_ip", 10, 2);
-
+// Bucket that has 10 tokens max and refills at a rate of 30 seconds/token
+const ratelimit = new TokenBucketRateLimit<string>("ip", 5, 30);
 const valid = await ratelimit.consume(ip, 1);
 if (!valid) {
 	throw new Error("Too many requests");
