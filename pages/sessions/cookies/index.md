@@ -119,7 +119,7 @@ function handleRequest(request: HTTPRequest, response: HTTPResponse): void {
 		response.setStatusCode(401);
 		return;
 	}
-	setSessionTokenCookie(response, token, session, expiresAt);
+	setSessionTokenCookie(response, token, session.expiresAt);
 
 	// ...
 }
