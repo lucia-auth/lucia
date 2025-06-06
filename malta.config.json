@@ -10,8 +10,7 @@
 			"pages": [
 				["Overview", "/sessions/overview"],
 				["Basic API", "/sessions/basic-api"],
-				["Cookies", "/sessions/cookies"],
-				["Migrate from Lucia v3", "/sessions/migrate-lucia-v3"]
+				["Cookies", "/sessions/cookies"]
 			]
 		},
 		{
@@ -33,6 +32,10 @@
 		{
 			"title": "Rate limiting",
 			"pages": [["Token bucket", "/rate-limit/token-bucket"]]
+		},
+		{
+			"title": "Lucia v3",
+			"pages": [["Migrate", "/lucia-v3/migrate"]]
 		},
 		{
 			"title": "Community",
