@@ -4,7 +4,7 @@ title: "Token bucket"
 
 # Token bucket
 
-Each user has their own bucket of tokens that gets refilled at a set interval. A token is removed on every request until none is left and the request is rejected. While a bit more complex than the fixed-window algorithm, it allows you to handle initial bursts and process requests more smoothly overall.
+Each user has their own bucket of tokens that gets refilled at a set interval. A token is removed on every request until none is left and the request is rejected. While a bit more complex than the fixed or sliding window algorithm, it allows you to handle initial bursts and process requests more smoothly overall.
 
 ## Memory storage
 
