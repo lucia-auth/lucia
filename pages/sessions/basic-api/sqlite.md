@@ -11,12 +11,13 @@ Users will use a session token linked to a session instead of the ID directly. T
 Create a session table with a field for a text ID, user ID, and expiration. We'll store the expiration date as a UNIX timestamp (seconds) here.
 
 ```
+-- your user table
 CREATE TABLE user (
     id INTEGER NOT NULL PRIMARY KEY
 );
 
 
-CREATE TABLE session (
+CREATE TABLE user_session (
     id TEXT NOT NULL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES user(id),
     expires_at INTEGER NOT NULL
@@ -142,8 +143,9 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 export function validateSessionToken(token: string): SessionValidationResult {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	// TODO: update query to match your user table
 	const row = db.queryOne(
-		"SELECT session.id, session.user_id, session.expires_at, user.id FROM session INNER JOIN user ON user.id = session.user_id WHERE id = ?",
+		"SELECT user_session.id, user_session.user_id, user_session.expires_at, user.id FROM user_session INNER JOIN user ON user.id = user_session.user_id WHERE id = ?",
 		sessionId
 	);
 	if (row === null) {
@@ -158,7 +160,7 @@ export function validateSessionToken(token: string): SessionValidationResult {
 		id: row[3]
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		db.execute("DELETE FROM session WHERE id = ?", session.id);
+		db.execute("DELETE FROM user_session WHERE id = ?", session.id);
 		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -181,7 +183,7 @@ import { db } from "./db.js";
 // ...
 
 export function invalidateSession(sessionId: string): void {
-	db.execute("DELETE FROM session WHERE id = ?", sessionId);
+	db.execute("DELETE FROM user_session WHERE id = ?", sessionId);
 }
 
 export async function invalidateAllSessions(userId: number): Promise<void> {
@@ -211,7 +213,7 @@ export function createSession(token: string, userId: number): Session {
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
 	};
 	db.execute(
-		"INSERT INTO session (id, user_id, expires_at) VALUES (?, ?, ?)",
+		"INSERT INTO user_session (id, user_id, expires_at) VALUES (?, ?, ?)",
 		session.id,
 		session.userId,
 		Math.floor(session.expiresAt.getTime() / 1000)
@@ -221,8 +223,9 @@ export function createSession(token: string, userId: number): Session {
 
 export function validateSessionToken(token: string): SessionValidationResult {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	// TODO: update query to match your user table
 	const row = db.queryOne(
-		"SELECT session.id, session.user_id, session.expires_at, user.id FROM session INNER JOIN user ON user.id = session.user_id WHERE id = ?",
+		"SELECT user_session.id, user_session.user_id, user_session.expires_at, user.id FROM user_session INNER JOIN user ON user.id = session.user_id WHERE id = ?",
 		sessionId
 	);
 	if (row === null) {
@@ -237,7 +240,7 @@ export function validateSessionToken(token: string): SessionValidationResult {
 		id: row[3]
 	};
 	if (Date.now() >= session.expiresAt.getTime()) {
-		db.execute("DELETE FROM session WHERE id = ?", session.id);
+		db.execute("DELETE FROM user_session WHERE id = ?", session.id);
 		return { session: null, user: null };
 	}
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
@@ -252,7 +255,7 @@ export function validateSessionToken(token: string): SessionValidationResult {
 }
 
 export function invalidateSession(sessionId: string): void {
-	db.execute("DELETE FROM session WHERE id = ?", sessionId);
+	db.execute("DELETE FROM user_session WHERE id = ?", sessionId);
 }
 
 export async function invalidateAllSessions(userId: number): Promise<void> {

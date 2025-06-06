@@ -11,12 +11,13 @@ Users will use a session token linked to a session instead of the ID directly. T
 Create a session model with a field for a text ID, user ID, and expiration.
 
 ```
+// your user table
 model User {
   id       Int       @id @default(autoincrement())
   sessions Session[]
 }
 
-model Session {
+model UserSession {
   id        String   @id
   userId    Int
   expiresAt DateTime
@@ -40,17 +41,17 @@ Here's what our API will look like. What each method does should be pretty self 
 If you just need the full code without the explanation, skip to the end of this section.
 
 ```ts
-import type { User, Session } from "@prisma/client";
+import type { User, UserSession } from "@prisma/client";
 
 export function generateSessionToken(): string {
 	// TODO
 }
 
-export async function createSession(token: string, userId: number): Promise<Session> {
+export async function createSession(token: string, userId: number): Promise<UserSession> {
 	// TODO
 }
 
-export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
+export async function validateSessionToken(token: string): Promise<UserSessionValidationResult> {
 	// TODO
 }
 
@@ -62,8 +63,8 @@ export async function invalidateAllSessions(userId: number): Promise<void> {
 	// TODO
 }
 
-export type SessionValidationResult =
-	| { session: Session; user: User }
+export type UserSessionValidationResult =
+	| { session: UserSession; user: User }
 	| { session: null; user: null };
 ```
 
@@ -99,9 +100,9 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
 
-export async function createSession(token: string, userId: number): Promise<Session> {
+export async function createSession(token: string, userId: number): Promise<UserSession> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const session: Session = {
+	const session: UserSession = {
 		id: sessionId,
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
@@ -129,7 +130,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 
 // ...
 
-export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
+export async function validateSessionToken(token: string): Promise<UserSessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const result = await prisma.session.findUnique({
 		where: {
@@ -189,7 +190,7 @@ import { prisma } from "./db.js";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 
-import type { User, Session } from "@prisma/client";
+import type { User, UserSession } from "@prisma/client";
 
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
@@ -198,9 +199,9 @@ export function generateSessionToken(): string {
 	return token;
 }
 
-export async function createSession(token: string, userId: number): Promise<Session> {
+export async function createSession(token: string, userId: number): Promise<UserSession> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const session: Session = {
+	const session: UserSession = {
 		id: sessionId,
 		userId,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
@@ -211,7 +212,7 @@ export async function createSession(token: string, userId: number): Promise<Sess
 	return session;
 }
 
-export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
+export async function validateSessionToken(token: string): Promise<UserSessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const result = await prisma.session.findUnique({
 		where: {
@@ -255,8 +256,8 @@ export async function invalidateAllSessions(userId: number): Promise<void> {
 	});
 }
 
-export type SessionValidationResult =
-	| { session: Session; user: User }
+export type UserSessionValidationResult =
+	| { session: UserSession; user: User }
 	| { session: null; user: null };
 ```
 
