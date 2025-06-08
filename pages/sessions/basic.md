@@ -112,9 +112,11 @@ interface Session {
 }
 ```
 
-## Validating sessions
+## Validating session tokens
 
-To validate sessions, get the session with the ID, validate the expiration, and compare the secret against the hash. Use constant-time comparison for checking secrets and derived hashes. We recommend setting an expiration for all sessions. Implement an [inactivity timeout](/sessions/inactivity-timeout) instead if you want to keep active users signed in.
+To validate a sessions token, parse out the ID and secret, get the session with the ID, check the expiration, and compare the secret against the hash. Use constant-time comparison for checking secrets and derived hashes.
+
+We recommend setting an expiration for all sessions. Implement an [inactivity timeout](/sessions/inactivity-timeout) instead if you want to keep active users signed in.
 
 ```ts
 const sessionExpiresInSeconds = 60 * 60 * 24; // 1 day
