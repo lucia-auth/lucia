@@ -6,7 +6,7 @@ title: "Basic session implementation"
 
 ## Overview
 
-Sessions have an ID and secret. We're going to use a separate ID and secret to prevent any possibility of a timing attacks via string comparisons. The secret is hashed before storage to minimize the impact of breaches and leaks.
+Sessions have an ID and secret. We're using a separate ID and secret to prevent any possibility of a timing attacks. The secret is hashed before storage to minimize the impact of breaches and leaks.
 
 ```ts
 interface Session {
