@@ -34,8 +34,6 @@ CREATE TABLE session (
 ) STRICT;
 ```
 
-> `session` is a reserved name in MySQL. Consider using a more specific name like `app_session` or `user_session`.
-
 > `STRICT` is an SQLite-specific feature that prevents type coercion.
 
 ## Generating IDs and secrets
