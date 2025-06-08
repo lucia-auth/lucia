@@ -6,7 +6,7 @@ title: "Basic session implementation"
 
 ## Overview
 
-Sessions are stored in a database with their ID and hash of the secret. The secret is hashed before storage to minimize the impact of breaches and leaks. Once a token is lost, the server cannot re-issue it.
+Sessions have an ID and secret. We're going to use a separate ID and secret to prevent any possibility of a timing attacks via string comparisons. The secret is hashed before storage to minimize the impact of breaches and leaks.
 
 ```ts
 interface Session {
@@ -16,7 +16,7 @@ interface Session {
 }
 ```
 
-Tokens issued to clients include both the ID and secret:
+Tokens issued to clients include both the ID and un-hashed secret.
 
 ```
 <SESSION_ID>.<SESSION_SECRET>
