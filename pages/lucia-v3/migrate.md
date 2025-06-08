@@ -14,7 +14,7 @@ We ultimately came to the conclusion that it'd be easier and faster to just impl
 
 Replacing Lucia v3 with your own implementation should be a straight-forward path, especially since most of your knowledge will still be very useful. No database migrations are necessary.
 
-If you're fine with invalidating all sessions (and signing out everyone), consider reading through the [new implementation guide](/sessions/basic).
+If you're fine with invalidating all sessions (and signing out everyone), consider reading through the [new implementation guide](/sessions/basic). The new API is more secure and patches out a very impractical timing attack (see code below for details).
 
 ### Sessions
 
@@ -46,6 +46,13 @@ export function createSession(dbPool: DBPool, userId: number): Promise<Session> 
 
 export function validateSession(dbPool: DBPool, sessionId: string): Promise<Session | null> {
 	const now = Date.now();
+
+	// This may be vulnerable to a timing attack where an attacker can measure the response times
+	// to guess a valid session ID.
+	// A more common pattern is a string comparison against a secret using the === operator.
+	// The === operator is not constant time and the same can be said about SQL = operators.
+	// Some remote timing attacks has been proven to be possible but there hasn't been a successful
+	// recorded attack on real-world applications targeting similar vulnerabilities.
 	const result = dbPool.executeQuery(
 		dbPool,
 		"SELECT id, user_id, expires_at FROM session WHERE id = ?",
