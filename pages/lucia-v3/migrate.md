@@ -10,36 +10,119 @@ Lucia v3 has been deprecated. Lucia is now a learning resource for implementing 
 
 We ultimately came to the conclusion that it'd be easier and faster to just implement sessions from scratch. The database adapter model wasn't flexible enough for such a low-level library and severely limited the library design.
 
-## Migration path
+## Migrating your project
 
 Replacing Lucia v3 with your own implementation should be a straight-forward path, especially since most of your knowledge will still be very useful. No database migrations are necessary.
 
-APIs on sessions are covered in the [Basic session API](/sessions/basic-api) page.
+If you're fine with invalidating all sessions (and signing out everyone), consider reading through the [new implementation guide](/sessions/basic).
 
-- `Lucia.createSession()` => `generateSessionToken()` and `createSession()`
-- `Lucia.validateSession()` => `validateSessionToken()`
-- `Lucia.invalidateSession()` => `invalidateSession()`
-
-APIs on cookies are covered in the [Session cookies](/sessions/cookies) page.
-
-- `Lucia.createSessionCookie()` => `setSessionTokenCookie()`
-- `Lucia.createBlankSessionCookie()` => `deleteSessionTokenCookie()`
-
-The one change to how sessions work is that session tokens are now hashed before storage. The pre-hash token is the client-assigned session ID and the hash is the internal session ID. The easiest option would be to purge all existing sessions, but if you want keep existing sessions, SHA-256 and hex-encode the session IDs stored in the database. Or, you can skip the hashing altogether. Hashing is a good measure against database leaks, but not absolutely necessary.
+### Sessions
 
 ```ts
-export function createSession(userId: number): Session {
-	const bytes = new Uint8Array(20);
+function generateSessionId(): string {
+	const bytes = new Uint8Array(25);
 	crypto.getRandomValues(bytes);
-	const sessionId = encodeBase32LowerCaseNoPadding(bytes);
-	// Insert session into database.
+	const token = encodeBase32LowerCaseNoPadding(bytes);
+	return token;
+}
+
+const sessionExpiresInSeconds = 60 * 60 * 24 * 30; // 30 days
+
+export function createSession(dbPool: DBPool, userId: number): Promise<Session> {
+	const now = new Date();
+	const sessionId = generateSessionId();
+	const session: Session = {
+		id: sessionId,
+		userId,
+		expiresAt: new Date(now.getTime() + 1000 * sessionExpiresInSeconds)
+	};
+	await executeQuery(
+		dbPool,
+		"INSERT INTO user_session (id, user_id, expires_at) VALUES (?, ?, ?)",
+		[session.id, session.userId, Math.floor(session.expiresAt.getTime() / 1000)]
+	);
 	return session;
 }
 
-export function validateSessionToken(sessionId: string): SessionValidationResult {
-	// Get and validate session
-	return { session, user };
+export function validateSession(dbPool: DBPool, sessionId: string): Promise<Session | null> {
+	const now = Date.now();
+	const result = dbPool.executeQuery(
+		dbPool,
+		"SELECT id, user_id, expires_at FROM session WHERE id = ?",
+		[sessionId]
+	);
+	if (result.rows.length < 1) {
+		return null;
+	}
+	const row = result.rows[0];
+	const session: Session = {
+		id: row[0],
+		userId: row[1],
+		expiresAt: new Date(row[2] * 1000)
+	};
+	if (now.getTime() >= session.expiresAt.getTime()) {
+		await executeQuery(dbPool, "DELETE FROM user_session WHERE id = ?", [session.id]);
+		return null;
+	}
+	if (now.getTime() >= session.expiresAt.getTime() - (1000 * sessionExpiresInSeconds) / 2) {
+		session.expiresAt = new Date(Date.now() + 1000 * sessionExpiresInSeconds);
+		await executeQuery(dbPool, "UPDATE session SET expires_at = ? WHERE id = ?", [
+			Math.floor(session.expiresAt.getTime() / 1000),
+			session.id
+		]);
+	}
+	return session;
+}
+
+export async function invalidateSession(dbPool: DBPool, sessionId: string): Promise<void> {
+	await executeQuery(dbPool, "DELETE FROM user_session WHERE id = ?", [sessionId]);
+}
+
+export async function invalidateAllSessions(dbPool: DBPool, userId: number): Promise<void> {
+	await executeQuery(dbPool, "DELETE FROM user_session WHERE user_id = ?", [userId]);
+}
+
+export interface Session {
+	id: string;
+	userId: number;
+	expiresAt: Date;
 }
 ```
 
-If you need help or have any questions, please ask them on [Discord](https://discord.com/invite/PwrK3kpVR3) or on [GitHub discussions](https://github.com/lucia-auth/lucia/discussions).
+### Cookies
+
+Cookies should have the following attributes:
+
+- `HttpOnly`: Cookies are only accessible server-side.
+- `SameSite=Lax`: Use Strict for critical websites.
+- `Secure`: Cookies can only be sent over HTTPS (should be omitted when testing on localhost).
+- `Max-Age` or `Expires`: Must be defined to persist cookies.
+- `Path=/`: Cookies can be accessed from all routes.
+
+```ts
+export function setSessionCookie(response: HTTPResponse, sessionId: string, expiresAt: Date): void {
+	if (env === ENV.PROD) {
+		response.headers.add(
+			"Set-Cookie",
+			`session=${sessionId}; HttpOnly; SameSite=Lax; Expires=${expiresAt.toUTCString()}; Path=/; Secure;`
+		);
+	} else {
+		response.headers.add(
+			"Set-Cookie",
+			`session=${sessionId}; HttpOnly; SameSite=Lax; Expires=${expiresAt.toUTCString()}; Path=/`
+		);
+	}
+}
+
+// Set empty session cookie that expires immediately.
+export function deleteSessionCookie(response: HTTPResponse): void {
+	if (env === ENV.PROD) {
+		response.headers.add(
+			"Set-Cookie",
+			"session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/; Secure;"
+		);
+	} else {
+		response.headers.add("Set-Cookie", "session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/");
+	}
+}
+```
