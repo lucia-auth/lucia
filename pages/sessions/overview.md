@@ -4,13 +4,10 @@ title: "Sessions"
 
 # Sessions
 
-Sessions are a way to persist state in the server. It is especially useful for managing the authentication state, such as the client's identity. We can assign each session with a unique ID and store it on the server to use it as a token. The client can then associate subsequent requests with a session, and by extension, with the user, by sending its ID.
+HTTP is by design a stateless protocol. The server doesn't know if 2 requests came from the same client.
 
-Session IDs can either be stored using cookies or local storage in browsers. We recommend using cookies since it provides some protection against XSS and the easiest to deal with overall.
+Browsers offer client-side storage cookies and local storage but you can't trust anything sent by the client. If you identify users with a "user" cookie, how do you stop users from editing the value and impersonating other users? How do you keep all that state in the server?
 
-This guide has 2 sections on sessions:
+This is where sessions come in. Whenever you want to start persisting state across requests, for example a "signed in" state, you create a session. Requests associated with a session share the same state, for example the current authenticated users. To allow clients to associate a request with a session, you can issue session tokens. Assuming that token is unguessable, you can assume requests with the token are linked to that particular session.
 
-- Basic session API: Create a basic session API using your database driver/ORM of choice.
-- Cookies: Define your session cookie using your JavaScript framework of choice.
-
-To learn how to implement auth using the API you created, see the tutorials section. If you want to learn from real-life projects, see the examples section.
+Learn how to implement a basic session securely by reading the [Basic session implementation](/sessions/basic) page. We also recommend looking at the [Inactivity timeout](/sessions/inactivity-timeout) page if you plan to use sessions for user authentication.

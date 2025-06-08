@@ -9,8 +9,10 @@
 			"title": "Sessions",
 			"pages": [
 				["Overview", "/sessions/overview"],
-				["Basic API", "/sessions/basic-api"],
-				["Cookies", "/sessions/cookies"]
+				["Basic implementation", "/sessions/basic"],
+				["Inactivity timeout", "/sessions/inactivity-timeout"],
+				["Stateless tokens", "/sessions/stateless-tokens"],
+				["Frameworks", "/sessions/frameworks"]
 			]
 		},
 		{
