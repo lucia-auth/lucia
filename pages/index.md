@@ -12,7 +12,7 @@ If you have any questions on auth, feel free to ask them in our [Discord server]
 
 - The code example in this website uses the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) (`crypto`). It's not anything great but it is available in many modern runtimes. Use whatever secure crypto package is available in your runtime.
 - We may also reference packages from the [Oslo project](https://oslojs.dev). As a disclaimer, this package is written by the main author of Lucia. These packages are runtime-agnostic and light-weight, but can be considered as a placeholder for your own implementation or preferred packages.
-- SQLite is used for SQL queries but the TypeScript code uses a generic placeholder API unless specified otherwise.
+- SQLite is used for SQL queries but the TypeScript code uses a placeholder database client.
 
 ## Related projects
 
