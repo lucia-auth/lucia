@@ -54,7 +54,7 @@ async function validateSessionToken(dbPool: DBPool, token: string): Promise<Sess
 		return null;
 	}
 
-	if (now.getTime() - session.lastVerifiedAt.getTime() >= activityCheckIntervalSeconds) {
+	if (now.getTime() - session.lastVerifiedAt.getTime() >= activityCheckIntervalSeconds * 1000) {
 		session.lastVerifiedAt = now;
 		await executeQuery(dbPool, "UPDATE session SET last_verified_at = ? WHERE id = ?", [
 			Math.floor(session.lastVerifiedAt.getTime() / 1000),
