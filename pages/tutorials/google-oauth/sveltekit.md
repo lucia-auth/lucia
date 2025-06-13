@@ -43,6 +43,7 @@ npm install arctic
 Initialize the Google provider with the client ID, client secret, and redirect URI.
 
 ```ts
+// src/lib/server/oauth.ts
 import { Google } from "arctic";
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "$env/static/private";
 
