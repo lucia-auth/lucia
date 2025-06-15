@@ -95,7 +95,7 @@ async function createSession(dbPool: DBPool): Promise<SessionWithToken> {
 	return session;
 }
 
-async function hashSecret(secret: string): Uint8Array {
+async function hashSecret(secret: string): Promise<Uint8Array> {
 	const secretBytes = new TextEncoder().encode(secret);
 	const secretHashBuffer = await crypto.subtle.digest("SHA-256", secretBytes);
 	return new Uint8Array(secretHashBuffer);
