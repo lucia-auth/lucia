@@ -42,12 +42,15 @@ if (validatedSession === null) {
 }
 ```
 
-Here is a basic JWT implementation with HMAC SHA-256. The JWT should only be valid for at most 5 minutes. We recommend using an asymmetric signing algorithm like Ed25519 or ECDSA if sessions are issued by a main auth server but needs to be validated in many servers. Make sure to securely store and manage your signing key.
+Here is a basic JWT implementation with HMAC SHA-256. The JWT should only be valid for at most 5 minutes. We recommend using an asymmetric signing algorithm like Ed25519 or ECDSA if sessions are issued by a main auth server but needs to be validated in many servers. 
 
 > [`jose`](https://github.com/panva/jose) and [`jsonwebtoken`](https://github.com/auth0/node-jsonwebtoken) are popular NPM packages for creating and validating JWTs.
 
 ```ts
 import * as oslo_encoding from "@oslojs/encoding";
+import "dotenv/config"
+const signature = process.env.SIGNING_KEY
+
 
 // Randomly generated key
 // For HMAC with SHA-256, the key must be 32 bytes
@@ -88,7 +91,7 @@ async function createSessionJWT(session: Session): Promise<string> {
 		["sign"],
 	);
 	const signature = await crypto.subtle.sign("HMAC", hmacCryptoKey, headerAndBodyBytes);
-	const encodedSignature = oslo_jwt.encodeJWT(headerJSON, bodyJSON);
+	const encodedSignature = oslo_jwt.encodeJWT(headerJSON, bodyJSON, signature);
 
 	const jw = headerAndBody + "." + encodedSignature;
 	return jwt;
@@ -194,3 +197,15 @@ interface ValidatedSession {
 	createdAt: Date;
 }
 ```
+Please create a seperate .env file, for example named `secrets.env`, in which the variable SIGNING_KEY is set. Load the environment variables in at the start of your application (in the index.js or app.js file). Below is shown an example using the `dotenv` library. Please also make sure the .env files are in your .gitignore file, to prevent undesired leaking of the key.
+
+```ts
+import dotenv from 'dotenv';
+
+dotenv.config({ path: "././secrets.env" });
+```
+The random key should be kept secret at all time. You can create your key by running the following commands:
+1. Run `ssh-keygen -t rsa -b 4096`
+2. Type in a secret passphrase
+
+
