@@ -28,7 +28,7 @@ export class TokenBucketRateLimit<_Key> {
 		if (bucket === null) {
 			bucket = {
 				count: this.max - cost,
-				refilledAt: now
+				refilledAtMilliseconds: now
 			};
 			this.storage.set(key, bucket);
 			return true;
@@ -37,7 +37,7 @@ export class TokenBucketRateLimit<_Key> {
 			(now - bucket.refilledAtMilliseconds) / (this.refillIntervalSeconds * 1000)
 		);
 		bucket.count = Math.min(bucket.count + refill, this.max);
-		bucket.refilledAtSeconds =
+		bucket.refilledAtMilliseconds =
 			bucket.refilledAtMilliseconds + refill * this.refillIntervalSeconds * 1000;
 		if (bucket.count < cost) {
 			this.storage.set(key, bucket);
