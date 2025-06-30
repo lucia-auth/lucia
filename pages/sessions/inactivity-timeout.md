@@ -44,7 +44,7 @@ async function validateSessionToken(dbPool: DBPool, token: string): Promise<Sess
 		return null;
 	}
 	const sessionId = tokenParts[0];
-	const sessionSecret = tokensParts[1];
+	const sessionSecret = tokenParts[1];
 
 	const session = await getSession(dbPool, sessionId);
 
