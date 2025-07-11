@@ -40,13 +40,16 @@ async function validateSessionToken(dbPool: DBPool, token: string): Promise<Sess
 	const now = new Date();
 
 	const tokenParts = token.split(".");
-	if (tokenParts.length != 2) {
+	if (tokenParts.length !== 2) {
 		return null;
 	}
 	const sessionId = tokenParts[0];
-	const sessionSecret = tokensParts[1];
+	const sessionSecret = tokenParts[1];
 
 	const session = await getSession(dbPool, sessionId);
+    if (!session) {
+        return null;
+    }
 
 	const tokenSecretHash = await hashSecret(sessionSecret);
 	const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
@@ -86,7 +89,7 @@ async function getSession(dbPool: DBPool, sessionId: string): Promise<Session | 
 
 	// Inactivity timeout
 	if (now.getTime() - session.lastVerifiedAt.getTime() >= inactivityTimeoutSeconds * 1000) {
-		await deleteSession(sessionId);
+		await deleteSession(dbPool, sessionId);
 		return null;
 	}
 
