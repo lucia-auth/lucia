@@ -28,9 +28,9 @@ The secret hash is stored as a raw binary value. You can hex- or base64-encode i
 
 ```
 CREATE TABLE session (
-    id TEXT NOT NULL PRIMARY KEY,
-    secret_hash BLOB NOT NULL, -- blob is a SQLite data type for raw binary
-    created_at INTEGER NOT NULL -- unix time (seconds)
+	id TEXT NOT NULL PRIMARY KEY,
+	secret_hash BLOB NOT NULL, -- blob is a SQLite data type for raw binary
+	created_at INTEGER NOT NULL -- unix time (seconds)
 ) STRICT;
 ```
 
@@ -132,9 +132,9 @@ async function validateSessionToken(dbPool: DBPool, token: string): Promise<Sess
 	const sessionSecret = tokenParts[1];
 
 	const session = await getSession(dbPool, sessionId);
-    if (!session) {
-        return null;
-    }
+	if (!session) {
+		return null;
+	}
 
 	const tokenSecretHash = await hashSecret(sessionSecret);
 	const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);

@@ -21,10 +21,10 @@ interface Session {
 
 ```
 CREATE TABLE session (
-    id TEXT NOT NULL PRIMARY KEY,
-    secret_hash BLOB NOT NULL,
-    last_verified_at INTEGER NOT NULL, -- unix (seconds)
-    created_at INTEGER NOT NULL,
+	id TEXT NOT NULL PRIMARY KEY,
+	secret_hash BLOB NOT NULL,
+	last_verified_at INTEGER NOT NULL, -- unix (seconds)
+	created_at INTEGER NOT NULL,
 ) STRICT;
 ```
 
@@ -47,9 +47,9 @@ async function validateSessionToken(dbPool: DBPool, token: string): Promise<Sess
 	const sessionSecret = tokenParts[1];
 
 	const session = await getSession(dbPool, sessionId);
-    if (!session) {
-        return null;
-    }
+	if (!session) {
+		return null;
+	}
 
 	const tokenSecretHash = await hashSecret(sessionSecret);
 	const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
