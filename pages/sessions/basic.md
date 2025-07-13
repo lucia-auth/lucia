@@ -28,9 +28,9 @@ The secret hash is stored as a raw binary value. You can hex- or base64-encode i
 
 ```
 CREATE TABLE session (
-    id TEXT NOT NULL PRIMARY KEY,
-    secret_hash BLOB NOT NULL, -- blob is a SQLite data type for raw binary
-    created_at INTEGER NOT NULL -- unix time (seconds)
+	id TEXT NOT NULL PRIMARY KEY,
+	secret_hash BLOB NOT NULL, -- blob is a SQLite data type for raw binary
+	created_at INTEGER NOT NULL -- unix time (seconds)
 ) STRICT;
 ```
 
@@ -47,7 +47,7 @@ Since these strings will be used as secrets as well, it's crucial to use a crypt
 ```ts
 function generateSecureRandomString(): string {
 	// Human readable alphabet (a-z, 0-9 without l, o, 0, 1 to avoid confusion)
-	const alphabet = "abcdefghijklmnpqrstuvwxyz23456789";
+	const alphabet = "abcdefghijkmnpqrstuvwxyz23456789";
 
 	// Generate 24 bytes = 192 bits of entropy.
 	// We're only going to use 5 bits per byte so the total entropy will be 192 * 5 / 8 = 120 bits
@@ -56,7 +56,7 @@ function generateSecureRandomString(): string {
 
 	let id = "";
 	for (let i = 0; i < bytes.length; i++) {
-		// >> 3 s"removes" the right-most 3 bits of the byte
+		// >> 3 "removes" the right-most 3 bits of the byte
 		id += alphabet[bytes[i] >> 3];
 	}
 	return id;
@@ -125,13 +125,16 @@ async function createSession(dbPool: DBPool): Promise<SessionWithToken> {
 
 async function validateSessionToken(dbPool: DBPool, token: string): Promise<Session | null> {
 	const tokenParts = token.split(".");
-	if (tokenParts.length != 2) {
+	if (tokenParts.length !== 2) {
 		return null;
 	}
 	const sessionId = tokenParts[0];
 	const sessionSecret = tokenParts[1];
 
 	const session = await getSession(dbPool, sessionId);
+	if (!session) {
+		return null;
+	}
 
 	const tokenSecretHash = await hashSecret(sessionSecret);
 	const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
