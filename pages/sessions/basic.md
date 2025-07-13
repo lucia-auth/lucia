@@ -133,7 +133,7 @@ async function validateSessionToken(dbPool: DBPool, token: string): Promise<Sess
 
 	const session = await getSession(dbPool, sessionId);
 
-	const tokenSecretHash = hashSecret(sessionSecret);
+	const tokenSecretHash = await hashSecret(sessionSecret);
 	const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
 	if (!validSecret) {
 		return null;
@@ -173,7 +173,7 @@ async function deleteSession(dbPool: DBPool, sessionId: string): Promise<void> {
 	await executeQuery(dbPool, "DELETE FROM session WHERE id = ?", [sessionId]);
 }
 
-async function hashSecret(secret: string): Uint8Array {
+async function hashSecret(secret: string): Promise<Uint8Array> {
 	// ...
 }
 
