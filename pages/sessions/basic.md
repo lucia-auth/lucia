@@ -133,7 +133,7 @@ async function validateSessionToken(dbPool: DBPool, token: string): Promise<Sess
 
 	const session = await getSession(dbPool, sessionId);
 
-	const tokenSecretHash = hashSecret(sessionSecret);
+	const tokenSecretHash = await hashSecret(sessionSecret);
 	const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
 	if (!validSecret) {
 		return null;
