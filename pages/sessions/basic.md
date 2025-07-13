@@ -173,7 +173,7 @@ async function deleteSession(dbPool: DBPool, sessionId: string): Promise<void> {
 	await executeQuery(dbPool, "DELETE FROM session WHERE id = ?", [sessionId]);
 }
 
-async function hashSecret(secret: string): Uint8Array {
+async function hashSecret(secret: string): Promise<Uint8Array> {
 	// ...
 }
 
