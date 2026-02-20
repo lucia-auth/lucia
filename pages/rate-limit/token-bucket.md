@@ -56,7 +56,7 @@ interface Bucket {
 ```
 
 ```ts
-// Bucket that has 10 tokens max and refills at a rate of 30 seconds/token
+// Bucket that has 5 tokens max and refills at a rate of 30 seconds/token
 const ratelimit = new TokenBucketRateLimit<string>(5, 30);
 const valid = ratelimit.consume(ip, 1);
 if (!valid) {
