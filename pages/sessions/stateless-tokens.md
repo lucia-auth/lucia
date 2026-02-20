@@ -87,9 +87,9 @@ async function createSessionJWT(session: Session): Promise<string> {
 		false
 	);
 	const signature = await crypto.subtle.sign("HMAC", hmacCryptoKey, headerAndBodyBytes);
-	const encodedSignature = oslo_jwt.encodeJWT(headerJSON, bodyJSON);
+	const encodedSignature = oslo_encoding.encodeBase64url(new Uint8Array(signature));
 
-	const jw = headerAndBody + "." + encodedSignature;
+	const jwt = headerAndBody + "." + encodedSignature;
 	return jwt;
 }
 
