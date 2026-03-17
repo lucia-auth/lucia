@@ -84,12 +84,13 @@ async function createSessionJWT(session: Session): Promise<string> {
 			name: "HMAC",
 			hash: "SHA-256"
 		},
-		false
+		false,
+		["sign"]
 	);
-	const signature = await crypto.subtle.sign("HMAC", hmacCryptoKey, headerAndBodyBytes);
-	const encodedSignature = oslo_jwt.encodeJWT(headerJSON, bodyJSON);
+	const signatureBuffer = await crypto.subtle.sign("HMAC", hmacCryptoKey, headerAndBodyBytes);
+	const encodedSignature = oslo_encoding.encodeBase64url(new Uint8Array(signatureBuffer));
 
-	const jw = headerAndBody + "." + encodedSignature;
+	const jwt = headerAndBody + "." + encodedSignature;
 	return jwt;
 }
 
@@ -133,7 +134,8 @@ async function validateSessionJWT(jwt: string): Promise<ValidatedSession | null>
 			name: "HMAC",
 			hash: "SHA-256"
 		},
-		false
+		false,
+		["verify"]
 	);
 	const validSignature = await crypto.subtle.verify(
 		"HMAC",
