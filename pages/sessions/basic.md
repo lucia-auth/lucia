@@ -240,22 +240,28 @@ While the `SameSite` cookie attribute provides some CSRF protection, it doesn't 
 For websites only targeting modern browsers (post-2020), the `Origin` header can be used to check the request origin. Requests without the `Origin` header should be blocked with a status of `403` or similar. Some frameworks already have a similar CSRF protection built in, including Next.js (only for server actions), SvelteKit, and Astro (v5+).
 
 ```ts
-function verifyRequestOrigin(method: string, originHeader: string): boolean {
+function verifyRequestOrigin(method: string, originHeader: string | null): boolean {
 	if (method === "GET" || method === "HEAD") {
 		return true;
 	}
-	return originHeader === "example.com";
+	if (originHeader === null) {
+		return false;
+	}
+	return new URL(originHeader).host === "example.com";
 }
 
 // Enable strict origin check only on production environments.
-function verifyRequestOrigin(method: string, originHeader: string): boolean {
+function verifyRequestOrigin(method: string, originHeader: string | null): boolean {
 	if (env !== ENV.PROD) {
 		return true;
 	}
 	if (method === "GET" || method === "HEAD") {
 		return true;
 	}
-	return originHeader === "example.com";
+	if (originHeader === null) {
+		return false;
+	}
+	return new URL(originHeader).host === "example.com";
 }
 ```
 
