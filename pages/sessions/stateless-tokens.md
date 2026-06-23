@@ -6,7 +6,7 @@ title: "Stateless tokens"
 
 This page builds upon the [Basic session implementation](/sessions/basic) page.
 
-Stateless tokens are self-validating tokens, with the most common format being JSON Web Tokens (JWTs). Using them as session tokens can reduce how often your database needs to be queried when validating sessions. They token body may look like something like this:
+Stateless tokens are self-validating tokens, with the most common format being JSON Web Tokens (JWTs). Using them as session tokens can reduce how often your database needs to be queried when validating sessions. Their token body may look like something like this:
 
 ```json
 {
