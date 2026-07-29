@@ -1,0 +1,25 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+	"files": {
+		"includes": ["**/*.json", "**/*.js", "**/*.css", "**/*.html", "**/*.ts"]
+	},
+	"vcs": {
+		"useIgnoreFile": true
+	},
+	"linter": {
+		"enabled": false
+	},
+	"assist": {
+		"enabled": false
+	},
+	"formatter": {
+		"enabled": true,
+		"lineWidth": 120,
+		"indentStyle": "tab"
+	},
+	"html": {
+		"formatter": {
+			"enabled": true
+		}
+	}
+}
