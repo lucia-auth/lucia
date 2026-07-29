@@ -43,7 +43,7 @@ A simple method is to check the Sec-Fetch-Site request header on non-GET request
 
 Uint8Array.toBase64() are supported on Node.js 25, the latest version of Deno, and the latest version of Deno.
 
-This file is licensed under the Zero-Clause BSD license (see the end of the file).
+This file is licensed under the Zero-Clause BSD license (see ./LICENSE).
 You're free to use, copy, modify, and distribute it without any attribution.
 */
 
@@ -188,18 +188,3 @@ function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
 	}
 	return c === 0;
 }
-
-/*
-Copyright (c) 2026 pilcrowonpaper
-
-Permission to use, copy, modify, and/or distribute this software for
-any purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED “AS IS” AND THE AUTHOR DISCLAIMS ALL
-WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
-FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY
-DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
-AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
-OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/

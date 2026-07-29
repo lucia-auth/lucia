@@ -24,12 +24,6 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v4
 
-      - name: Copy code files
-        run: |
-          mkdir ./lucia-auth.com/code
-          cp ./code/LICENSE ./lucia-auth.com/code/LICENSE.txt
-          cp ./code/auth_session.ts ./lucia-auth.com/code/auth_session.ts.txt
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
